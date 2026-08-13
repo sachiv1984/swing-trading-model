@@ -1,11 +1,299 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-12 (groom backlog post-ship closure 2026-08-11__release-v8.6 — 26 items archived: BLG-FEAT-32, BLG-FEAT-56, BLG-BE-91, BLG-FE-147, BLG-FE-148, BLG-FE-149, BLG-FE-150, BLG-FE-153, BLG-FE-154, BLG-FE-155, BLG-BE-88, BLG-BE-92, BLG-BE-93, BLG-SEC-29, BLG-QA-136, BLG-QA-137, BLG-QA-138, BLG-QA-139, BLG-OPS-136, BLG-OPS-137, BLG-OPS-138, BLG-GOV-294, BLG-GOV-295, BLG-GOV-296, BLG-GOV-297, BLG-GOV-298; 1 ephemeral Release Slice section removed — v8.6); prior — 2026-08-10 (groom backlog post-ship closure 2026-08-08__release-v8.5 — 25 items archived); prior — 2026-08-08 (groom backlog post-ship closure 2026-08-07__release-v8.4 — 31 items archived; 2 ephemeral Release Slice sections removed — v8.3, v8.4); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
+**Last Updated:** 2026-08-13 (ad hoc backlog audit, session-initiated, not a full `groom backlog` run — 10 items archived as already-shipped/already-fixed but never marked done: BLG-BE-30, BLG-GOV-290, BLG-SPEC-62, BLG-GOV-154, BLG-SPEC-68, BLG-OPS-104, BLG-GOV-143, BLG-GOV-137, BLG-SEC-14, BLG-SPEC-111); prior — 2026-08-12 (groom backlog post-ship closure 2026-08-11__release-v8.6 — 26 items archived; 1 ephemeral Release Slice section removed — v8.6); prior — 2026-08-10 (groom backlog post-ship closure 2026-08-08__release-v8.5 — 25 items archived); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-BE-30 — SI-04 schema requirements pre-design
+
+**Status at retirement:** ✅ Complete (superseded — target feature already shipped; item's own question was answered directly at implementation time, no separate pre-design doc was ever needed)
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-13
+**Shipped in:** v7.7 (SI-04 itself, BLG-FEAT-75; this item's schema question resolved at that time with no new schema added — confirmed retroactively by v8.7 ST-12)
+**Evidence:** docs/product/changelog.md (SI-04 / BLG-FEAT-75, v7.7); backend/database.py::ensure_strategy_version_at_entry_columns(); backend/routers/analytics.py GET /analytics/strategy-version-comparison; claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-04.md (Stale Story Finding)
+
+### BLG-BE-30 — SI-04 schema requirements pre-design
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Data Model
+**Owner:** Data Model, Domain & Schema Owner; Backend Engineering Patterns Owner
+**Source:** IDEA-data-model-20260601-01 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038; gate cleared: BLG-GOV-88 shipped v5.0)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+> ⚠️ **Gate removed (2026-08-11, roadmap rebalance, IDEA-challenger-20260809-01, DL-078):** The prior gate ("SI-04 sprint planning imminent") was self-referential — this item's entire purpose is small (~1 day) pre-design work meant to happen *ahead of* SI-04 entering a sprint, to avoid same-sprint data model debt, which the gate wording prevented by construction. Un-gated by Product Owner decision; now Actionable-now (A-category). No `**Gate criteria:**` field — this item is ready for `plan release` consideration on its own merits.
+
+**Problem**
+SI-04 strategy version comparison requires linking trade_plans to historical strategy_rules.md versions. Whether this is a new strategy_versions table, a foreign key, or a snapshot field must be decided before SI-04 sprint to avoid same-sprint data model debt. BLG-SPEC-43 (API contract) exists; data model pre-design is the remaining gap.
+
+**Scope**
+- Evaluate three schema options: new table (strategy_versions), FK on trade_plans (strategy_version), snapshot field (strategy_snapshot JSON)
+- Recommend approach with rationale (versioning overhead vs query simplicity)
+- Define migration path for existing trade_plans (backfill strategy)
+
+**Acceptance Criteria**
+- Schema pre-design document produced with recommended approach
+- Reviewed by Data Model, Domain & Schema Owner and Strategy Rules & System Intent Owner
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-GOV-290 — CLAUDE.md §8 has no rule for a shared JSON field's schema shape drifting mid-sprint between sibling EPIC branches
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-13
+**Shipped in:** v8.7 (ST-18, EPIC-07)
+**Evidence:** CLAUDE.md §8, step "2b. Shared-JSON-field schema-shape drift check" — text cites "ST-18, BLG-GOV-290, v8.7" directly as its own source
+
+### BLG-GOV-290 — CLAUDE.md §8 has no rule for a shared JSON field's schema shape drifting mid-sprint between sibling EPIC branches
+**Priority:** P2 (Medium) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** ST-30 (EPIC-07), dry-run of the cross-EPIC merge conflict runbook — 2026-08-08 | **Effort:** S | **Provisional-Target:** TBD
+
+**Problem**
+The same dry-run (`docs/ops/cross_epic_merge_runbook_dry_run_2026-08-08.md`) found `execution_state.json`'s `open_escalations` field had diverged in *shape*, not just content, between two sibling EPIC branches active in the same sprint — one branch reshaped it from a `list` of strings to a `dict` of `{ESC-ID: status}` mid-session, while the sibling branch (which had already forked from the pre-reshape state) kept the original `list` shape. `git merge` reports this as an ordinary content conflict, but resolving it correctly requires reconciling a schema, not just picking a value — and `CLAUDE.md` §8 has no guidance for this class of conflict at all.
+
+**Scope**
+- Add a rule to `CLAUDE.md` §8 (or `shared_standards.md` §16.13's `execution_state.json` schema note) covering one of: (a) require any mid-sprint schema-shape change to a shared JSON field to be applied uniformly across all sibling EPIC branches active that sprint, not just the branch making the change; or (b) prohibit shape changes to already-initialised shared fields mid-sprint entirely, deferring the shape change to the next cycle's STEP 0
+- Apply the standard governance file edit checklist (version bump, `OPERATIONAL_GUIDE.md` §14 sync, `prompt_change_log.md` entry) per `CLAUDE.md` §6
+
+**Acceptance Criteria**
+- `CLAUDE.md` §8 (or `shared_standards.md` §16.13) covers mid-sprint schema-shape drift on shared JSON fields
+- Head of Specs Team sign-off
+
+---
+
+### BLG-SPEC-62 — Open Positions panel spec backfill
+
+**Status at retirement:** ✅ Complete (superseded — backfill already done the same cycle this item was raised)
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-13
+**Shipped in:** v6.4 (ST-08, BLG-FEAT-54)
+**Evidence:** docs/specs/frontend/pages/strategy_benchmark.md §4.5 "Panel 0 — Open Positions"; Change Log row "0.2 | 2026-07-02 | v6.4 EPIC-03 ST-08 (BLG-FEAT-54)"
+
+### BLG-SPEC-62 — Open Positions panel spec backfill
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20260702-01 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
+**Provisional-Target:** TBD
+**Effort:** S (~0.5 day)
+
+**Problem**
+BLG-FEAT-54 (Open Positions panel, v6.4) shipped with a UX spec (`docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md`) but no corresponding entry was backfilled into the canonical `docs/specs/frontend/pages/strategy_benchmark.md` page spec, leaving the page spec incomplete relative to what shipped.
+
+**Scope**
+- Backfill Panel 0 (Open Positions) into `docs/specs/frontend/pages/strategy_benchmark.md`
+- Cross-reference the existing UX spec and API contract
+
+**Acceptance Criteria**
+- `strategy_benchmark.md` page spec includes Panel 0 documentation
+- Reviewed by Frontend Specifications & UX Documentation Owner
+
+---
+
+### BLG-GOV-154 — API contract deprecation marker convention
+
+**Status at retirement:** ✅ Complete (superseded)
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-13
+**Shipped in:** v8.3 (ST-20, EPIC-04, BLG-SPEC-96)
+**Evidence:** docs/specs/api_contracts/conventions.md §14 "API Endpoint Deprecation-Window Policy" (v1.3, 2026-08-06) — defines the `**Deprecated:** <date> — removal no earlier than...` marker convention under `## METHOD /path` headings, exactly as scoped here
+
+### BLG-GOV-154 — API contract deprecation marker convention
+**Priority:** P3 (Low)
+**Type:** Governance / API Design
+**Owner:** API Contracts & Documentation Owner
+**Source:** IDEA-api-contracts-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
+**Provisional-Target:** TBD
+**Effort:** S (~0.5 day)
+
+**Problem**
+No formal process exists for marking an API contract's endpoint as deprecated once its backing implementation is retired. BLG-BE-40 (v6.4) removed a deprecated-table read path but the affected contract sections were updated ad hoc rather than via a defined convention.
+
+**Scope**
+- Define a `**Deprecated:**` marker convention for `## METHOD /path` headings in `docs/specs/api_contracts/`
+- Document in the API contracts style guide / openapi.yaml preamble
+
+**Acceptance Criteria**
+- Deprecation marker convention documented
+- Reviewed by Head of Specs Team
+
+---
+
+### BLG-SPEC-68 — Deprecation lifecycle policy for removed/renamed endpoints
+
+**Status at retirement:** ✅ Complete (superseded — same fix as BLG-GOV-154)
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-13
+**Shipped in:** v8.3 (ST-20, EPIC-04, BLG-SPEC-96)
+**Evidence:** docs/specs/api_contracts/conventions.md §14 "API Endpoint Deprecation-Window Policy" (v1.3, 2026-08-06) — covers sunset/notice-window rules (§14.2), marking procedure (§14.3), and api_changelog.md entry requirement (§14.4), referenced from the api_contracts documentation index
+
+### BLG-SPEC-68 — Deprecation lifecycle policy for removed/renamed endpoints
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** IDEA-api-contracts-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+No documented policy exists for how an endpoint is deprecated (sunset header, changelog entry, removal timeline) — the current process is ad hoc.
+
+**Scope**
+- Author a short policy doc: sunset-header convention, minimum deprecation window, changelog entry format
+
+**Acceptance Criteria**
+- Policy doc authored and referenced from `api_contracts` documentation index
+
+---
+
+### BLG-OPS-104 — Contract drift dashboard
+
+**Status at retirement:** ✅ Complete (superseded — same fix as BLG-GOV-143)
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-13
+**Shipped in:** v8.3 (ST-17, EPIC-04, BLG-QA-94)
+**Evidence:** scripts/openapi_3way_drift_sweep.py — standalone, manually-runnable script cross-checking `backend/routers/` decorators against contract files and openapi.yaml, built explicitly as the pre-PR "missing third leg" this item asked for
+
+### BLG-OPS-104 — Contract drift dashboard
+**Priority:** P3 (Low)
+**Type:** Operations / Governance
+**Owner:** API Contracts & Documentation Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-api-contracts-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Routes missing a `docs/specs/api_contracts` entry are currently only caught when the CI OpenAPI Drift Detection gate fires on a PR — there is no proactive, pre-PR way to see the gap.
+
+**Proposed solution**
+Add a simple script/report surfacing any `backend/routers/` endpoint lacking a matching contract entry, runnable ahead of opening a PR.
+
+---
+
+### BLG-GOV-143 — OpenAPI completeness validation in CI (endpoint count reconciliation)
+
+**Status at retirement:** ✅ Complete (superseded — same underlying gap closed by BLG-QA-94/ST-17's script, delivered as a standalone manual sweep rather than a CI step)
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-13
+**Shipped in:** v8.3 (ST-17, EPIC-04, BLG-QA-94)
+**Evidence:** scripts/openapi_3way_drift_sweep.py implements the "routes → openapi/contracts" backward-coverage check this item scoped; delivered as a manually-run script rather than a blocking CI step, a deliberate design choice documented in the script's own header
+
+### BLG-GOV-143 — OpenAPI completeness validation in CI (endpoint count reconciliation)
+**Priority:** P3 (Low)
+**Type:** Governance Process / CI
+**Owner:** API Contracts & Documentation Owner; Head of Specs Team
+**Source:** IDEA-api-contracts-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Coverage methodology assessment confirming this complements (not duplicates) the existing OpenAPI drift detection in `quality_gate.yml`.
+
+**Problem**
+The existing `quality_gate.yml` drift detection checks `openapi.yaml` for new endpoints mentioned in contract files. BLG-GOV-134 adds advisory CI annotation. This item proposes a complementary check: validate that `openapi.yaml` covers 100% of routes in `backend/routers/`. These are distinct checks (forward vs backward coverage). Gate: confirm no duplication before implementing.
+
+**Scope**
+- Assess current coverage gap between quality_gate.yml (contract → openapi) and a hypothetical route scan (routes → openapi)
+- If gap confirmed: author CI step to scan `backend/routers/` for `@router.[get|post|put|delete]` and cross-reference against openapi.yaml paths
+- Gate condition assessment first; CI implementation only if gap confirmed
+
+**Acceptance Criteria**
+- Coverage gap assessment document produced
+- If gap confirmed: CI step implemented as advisory (non-blocking, analogous to BLG-GOV-134)
+- Gate condition verified before implementation
+
+---
+
+### BLG-GOV-137 — API contract version tagging for all api_contracts documents
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-13
+**Shipped in:** N/A — pre-existing convention, applied incrementally as contract docs were created/amended over many cycles; no single shipping item identified
+**Evidence:** Full-corpus scan 2026-08-13: all 40 files in docs/specs/api_contracts/ carry a **Version:** header field (0 missing), each with a Change Log table recording version bump history
+
+### BLG-GOV-137 — API contract version tagging for all api_contracts documents
+**Priority:** P3 (Low)
+**Type:** Governance Process / Spec Quality
+**Owner:** Head of Specs Team; API Contracts & Documentation Owner
+**Source:** IDEA-head-of-specs-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Tooling assessment confirming version tagging adds drift detection value not already covered by `quality_gate.yml` OpenAPI validation.
+
+**Problem**
+API contract documents in `docs/specs/api_contracts/` do not carry a version field. When a contract is amended (endpoint added, field type changed), there is no audit trail of which version was in force when a sprint was planned. Version tagging creates a lightweight reference that enables contract consumers to identify changes.
+
+**Scope**
+- Add `version:` field to each api_contracts document (start at v1.0 for all existing docs)
+- Define version bump rules: patch for additive changes, minor for breaking changes
+- Update checklist for new endpoint authoring to include version bump step
+
+**Acceptance Criteria**
+- All api_contracts documents carry a `version:` field
+- Version bump rules documented
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-SEC-14 — AI journal generation audit trail
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-13
+**Shipped in:** v3.0 (ST-14/BLG-AI-01 — ai_audit_log table; ST-16/BLG-AI-02 — AI journal model version contract)
+**Evidence:** backend/services/ai_audit_service.py (model_version column, logged per run); docs/specs/ai_journal_model_contract.md; docs/product/changelog.md#v3.0 (2026-04-25)
+
+### BLG-SEC-14 — AI journal generation audit trail
+**Priority:** P3 (Low)
+**Type:** Security / Compliance
+**Owner:** AI Compliance & Governance Officer
+**Source:** Idea intake IW-20260710-01 (IDEA-ai-compliance-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Generated AI journal entries do not currently log which model/version produced them, limiting compliance traceability if AI output quality or behaviour is later questioned.
+
+**Proposed solution**
+Log model identifier and version alongside each AI-generated journal entry at generation time.
+
+---
+
+### BLG-SPEC-111 — Document GET /test/quick-health and POST /test/rate-limit-scenarios
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-13
+**Shipped in:** v8.4 (ST-02, BLG-SPEC-116, EPIC-02)
+**Evidence:** docs/specs/api_contracts/health_endpoints.md Change Log row "1.4 | 2026-08-07 | ST-02 (BLG-SPEC-116, EPIC-02, v8.4): Added GET /test/quick-health and POST /test/rate-limit-scenarios"; docs/reference/openapi.yaml paths /test/quick-health, /test/rate-limit-scenarios
+
+### BLG-SPEC-111 — Document GET /test/quick-health and POST /test/rate-limit-scenarios
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-17 (BLG-QA-94, EPIC-04) quarterly OpenAPI 3-way drift sweep, sprint execution `2026-08-05__release-v8.3` — 2026-08-06
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/routers/test.py` defines two endpoints, `GET /test/quick-health` and `POST /test/rate-limit-scenarios`, that are undocumented in both `docs/specs/api_contracts/` and `docs/reference/openapi.yaml`. They are internal test-harness routes (not consumed by the frontend or external clients), the same category as the already-documented `POST /test/endpoints` — but these two siblings were never added when that entry was written.
+
+**Scope**
+- Document both endpoints in `health_endpoints.md` and `openapi.yaml`, matching the existing `POST /test/endpoints` entry's format
+- Or, if documentation is judged unnecessary for internal-only test tooling, explicitly extend the `conventions.md` §11/§13.3 test-endpoint exemption to name both endpoints (currently only `/health`, `/health/detailed`, `/test/endpoints` are named)
+
+**Acceptance Criteria**
+- Either both endpoints have a canonical contract + openapi.yaml entry, or both are explicitly named in the conventions.md test-endpoint exemption list
+- `scripts/openapi_3way_drift_sweep.py` run clean (0 drift) after the fix
 
 ---
 

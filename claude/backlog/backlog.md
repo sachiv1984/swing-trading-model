@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-13 (session — 2 new items added: BLG-FE-160, BLG-SEC-33, from sibling EPIC-03/EPIC-05 branches); prior — 2026-08-12 (session — 2 new items added: BLG-FE-159, BLG-SPEC-129); prior — 2026-08-12 (Release Planning v8.7 — Release Slice section added, 21 items across 7 EPICs, marker RP:v8.7:2026-08-12__release-v8.7); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-13 (session — backlog audit for already-shipped items: 10 items archived as ✅ Complete (BLG-BE-30, BLG-GOV-290, BLG-SPEC-62, BLG-GOV-154, BLG-SPEC-68, BLG-OPS-104, BLG-GOV-143, BLG-GOV-137, BLG-SEC-14, BLG-SPEC-111 — see `backlog_archive.md`); 6 items flagged partially-pre-met with narrowing notes for PO review (BLG-OPS-76, BLG-GOV-29, BLG-FEAT-34, BLG-FEAT-35, BLG-OPS-51, BLG-OPS-53)); prior — 2026-08-13 (session — 2 new items added: BLG-FE-160, BLG-SEC-33, from sibling EPIC-03/EPIC-05 branches); prior — 2026-08-12 (session — 2 new items added: BLG-FE-159, BLG-SPEC-129); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -112,22 +112,6 @@ When a design-gate escalation changes an item's scope/AC/effort after the cycle'
 
 **Acceptance Criteria**
 - `design_gate_prompt.md` patched with the addendum mechanism
-- Head of Specs Team sign-off
-
----
-
-### BLG-GOV-290 — CLAUDE.md §8 has no rule for a shared JSON field's schema shape drifting mid-sprint between sibling EPIC branches
-**Priority:** P2 (Medium) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** ST-30 (EPIC-07), dry-run of the cross-EPIC merge conflict runbook — 2026-08-08 | **Effort:** S | **Provisional-Target:** TBD
-
-**Problem**
-The same dry-run (`docs/ops/cross_epic_merge_runbook_dry_run_2026-08-08.md`) found `execution_state.json`'s `open_escalations` field had diverged in *shape*, not just content, between two sibling EPIC branches active in the same sprint — one branch reshaped it from a `list` of strings to a `dict` of `{ESC-ID: status}` mid-session, while the sibling branch (which had already forked from the pre-reshape state) kept the original `list` shape. `git merge` reports this as an ordinary content conflict, but resolving it correctly requires reconciling a schema, not just picking a value — and `CLAUDE.md` §8 has no guidance for this class of conflict at all.
-
-**Scope**
-- Add a rule to `CLAUDE.md` §8 (or `shared_standards.md` §16.13's `execution_state.json` schema note) covering one of: (a) require any mid-sprint schema-shape change to a shared JSON field to be applied uniformly across all sibling EPIC branches active that sprint, not just the branch making the change; or (b) prohibit shape changes to already-initialised shared fields mid-sprint entirely, deferring the shape change to the next cycle's STEP 0
-- Apply the standard governance file edit checklist (version bump, `OPERATIONAL_GUIDE.md` §14 sync, `prompt_change_log.md` entry) per `CLAUDE.md` §6
-
-**Acceptance Criteria**
-- `CLAUDE.md` §8 (or `shared_standards.md` §16.13) covers mid-sprint schema-shape drift on shared JSON fields
 - Head of Specs Team sign-off
 
 ---
@@ -314,6 +298,8 @@ Trade plans are currently created and immediately actionable without a formal re
 
 **Gate criteria:** `plan_id` linkage live on closed trades (PT-05 shipped and plans actively used).
 
+> ⚠️ **Partially pre-met (backlog audit 2026-08-13):** The gate has cleared and most of the core scope already shipped — `backend/services/plan_vs_reality_service.py` (`GET /trades/{id}/plan-vs-reality`) already links trades to their governing plan and computes `r_achieved` vs `r_target` (`r_delta`) per closed trade, contradicting this item's problem statement that the comparison "cannot currently be attributed." Only the aggregate "plan-adhered vs plan-deviated outcome comparison" scope bullet appears unbuilt. Recommend Product Owner narrow this item to that residual aggregate-reporting scope at next `groom backlog`/`plan release`.
+
 **Problem**
 Closed trade P&L cannot currently be attributed back to the trade plan that governed the entry. Without `plan_id` on position records, it is impossible to compare planned R-risk vs realised R-multiple or evaluate whether adhering to a plan improved outcomes vs discretionary deviation.
 
@@ -338,6 +324,8 @@ Closed trade P&L cannot currently be attributed back to the trade plan that gove
 **Provisional-Target:** Unscheduled
 
 **Gate criteria:** ≥ 20 closed trades with linked trade plans AND `entry_delta_pct` field captured on closed trades.
+
+> ⚠️ **Partially pre-met (backlog audit 2026-08-13):** `entry_delta_pct` is already captured at trade close (`backend/services/plan_vs_reality_service.py::_compute_entry_delta_pct()`), contradicting this item's problem statement that it "is not yet captured." Half the gate condition is therefore met — only the ≥20-linked-trades count remains to verify. The discipline metric and R-multiple correlation reporting layer remain unbuilt. Recommend Product Owner re-check the trade-count gate and narrow this item to the reporting-layer scope if still open.
 
 **Problem**
 No metric tracks whether entries were executed within the planned entry zone. `entry_delta_pct` (actual entry vs planned entry midpoint) is a candidate field but is not yet captured at trade close. Without this data, it is impossible to assess entry zone discipline or its correlation with trade outcome.
@@ -1265,31 +1253,6 @@ SI-02 drift service queries trade_plans and trade_history with window functions 
 
 ---
 
-### BLG-BE-30 — SI-04 schema requirements pre-design
-**Priority:** P2 (Medium)
-**Type:** Backend Engineering / Data Model
-**Owner:** Data Model, Domain & Schema Owner; Backend Engineering Patterns Owner
-**Source:** IDEA-data-model-20260601-01 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038; gate cleared: BLG-GOV-88 shipped v5.0)
-**Effort:** S (~1 day)
-**Provisional-Target:** Unscheduled
-
-> ⚠️ **Gate removed (2026-08-11, roadmap rebalance, IDEA-challenger-20260809-01, DL-078):** The prior gate ("SI-04 sprint planning imminent") was self-referential — this item's entire purpose is small (~1 day) pre-design work meant to happen *ahead of* SI-04 entering a sprint, to avoid same-sprint data model debt, which the gate wording prevented by construction. Un-gated by Product Owner decision; now Actionable-now (A-category). No `**Gate criteria:**` field — this item is ready for `plan release` consideration on its own merits.
-
-**Problem**
-SI-04 strategy version comparison requires linking trade_plans to historical strategy_rules.md versions. Whether this is a new strategy_versions table, a foreign key, or a snapshot field must be decided before SI-04 sprint to avoid same-sprint data model debt. BLG-SPEC-43 (API contract) exists; data model pre-design is the remaining gap.
-
-**Scope**
-- Evaluate three schema options: new table (strategy_versions), FK on trade_plans (strategy_version), snapshot field (strategy_snapshot JSON)
-- Recommend approach with rationale (versioning overhead vs query simplicity)
-- Define migration path for existing trade_plans (backfill strategy)
-
-**Acceptance Criteria**
-- Schema pre-design document produced with recommended approach
-- Reviewed by Data Model, Domain & Schema Owner and Strategy Rules & System Intent Owner
-- Gate condition verified before sprint planning
-
----
-
 ### BLG-BE-31 — Arc 4 PO-04 reflection-outcome correlation data prerequisites
 **Priority:** P3 (Low)
 **Type:** Backend Engineering / Data Model
@@ -2047,27 +2010,6 @@ BLG-SPEC-46 (Arc 4 API surface area) is a gate-conditional spec planning item th
 
 ---
 
-### BLG-SPEC-111 — Document GET /test/quick-health and POST /test/rate-limit-scenarios
-**Priority:** P3 (Low)
-**Type:** Spec Debt
-**Owner:** API Contracts & Documentation Owner
-**Source:** ST-17 (BLG-QA-94, EPIC-04) quarterly OpenAPI 3-way drift sweep, sprint execution `2026-08-05__release-v8.3` — 2026-08-06
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Problem**
-`backend/routers/test.py` defines two endpoints, `GET /test/quick-health` and `POST /test/rate-limit-scenarios`, that are undocumented in both `docs/specs/api_contracts/` and `docs/reference/openapi.yaml`. They are internal test-harness routes (not consumed by the frontend or external clients), the same category as the already-documented `POST /test/endpoints` — but these two siblings were never added when that entry was written.
-
-**Scope**
-- Document both endpoints in `health_endpoints.md` and `openapi.yaml`, matching the existing `POST /test/endpoints` entry's format
-- Or, if documentation is judged unnecessary for internal-only test tooling, explicitly extend the `conventions.md` §11/§13.3 test-endpoint exemption to name both endpoints (currently only `/health`, `/health/detailed`, `/test/endpoints` are named)
-
-**Acceptance Criteria**
-- Either both endpoints have a canonical contract + openapi.yaml entry, or both are explicitly named in the conventions.md test-endpoint exemption list
-- `scripts/openapi_3way_drift_sweep.py` run clean (0 drift) after the fix
-
----
-
 ### BLG-GOV-26 — Arc velocity tracking dashboard
 **Priority:** P3 (Low)
 **Type:** Governance Process
@@ -2128,6 +2070,8 @@ Current arcs (Arc 2, Arc 3, Arc 4) have informal dependency tracking (noted in r
 **Provisional-Target:** Unscheduled
 
 **Gate criteria:** AI trade plan analysis feature scoped and scheduled (i.e., a story exists in the backlog that adds AI-generated trade plan summaries or analysis).
+
+> ⚠️ **Partially pre-met (backlog audit 2026-08-13):** The gate has cleared — `POST /trade-plans/{plan_id}/generate-thesis` (backend/routers/trade_plans.py) already generates AI trade plan summaries via Claude, and already logs to an append-only `claude_audit_log` table (backend/database.py::ensure_claude_audit_log_table) with `endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, generated_at`. This covers the item's intent but uses different field names than the AC's proposed schema (`plan_id, model_version, prompt_version, input_hash, output_hash`) and no explicit 90-day retention policy is confirmed for this specific table. Recommend Product Owner confirm whether the existing `claude_audit_log` schema satisfies this item's governance requirement as-is, or whether the field-level gap needs closing.
 
 **Problem**
 If an AI-assisted trade plan analysis feature is scoped (generating text summaries, recommendations, or signals using an LLM), an audit log is required per governance policy (AI-generated content must be traceable to the model version, prompt version, and input at time of generation). Without a pre-designed audit log schema, retrofitting this after feature delivery creates governance debt.
@@ -2251,6 +2195,8 @@ BLG-GOV-63 (shipped v4.2) requires a quarterly review of the claude_audit_log. F
 **Effort:** S (~0.5 day)
 **Provisional-Target:** SI-04 sprint (whenever GET /analytics/strategy-version-comparison is implemented)
 
+> ⚠️ **Partially pre-met (backlog audit 2026-08-13):** The trigger condition (endpoint implemented) has been true since v7.7, and `docs/ops/api_performance_baseline.md` §34 already carries a row for `GET /analytics/strategy-version-comparison` (added v8.4, ST-02/BLG-SPEC-116) — but the row is explicitly marked "Pending live timing run" with estimated, not measured, p50/p95 values. The AC's "≥5 staging samples" requirement is still unmet. Recommend Product Owner confirm this item's remaining scope is narrowed to "run the live timing measurement," not building the row from scratch.
+
 **Problem**
 v4.8 ST-07 added a placeholder entry for GET /analytics/strategy-version-comparison to openapi.yaml (pre-authored contract; not yet implemented). Once implemented, this endpoint will need p50/p95 latency measurement and an entry in docs/ops/api_performance_baseline.md.
 
@@ -2273,6 +2219,8 @@ v4.8 ST-07 added a placeholder entry for GET /analytics/strategy-version-compari
 **Provisional-Target:** Unscheduled
 
 **Gate criteria:** claude_audit_log table 6+ months old (~Nov 2026, since v4.0 ship 2026-05-22). BLG-OPS-31 (Render log retention policy) shipped v4.7; this extends scope to Supabase query logs and claude_audit_log.
+
+> ⚠️ **Partially pre-met (backlog audit 2026-08-13):** `docs/governance/ai_audit_log_retention_policy.md` already defines a 12-month rolling retention period with an automated purge function — satisfying the `claude_audit_log` half of this item's scope verbatim (the item's own example: "12 months rolling"). The Supabase-query-log retention definition and archiving-trigger scope remain open. Recommend Product Owner narrow this item to the Supabase-log sub-scope at next `groom backlog`/`plan release`.
 
 **Problem**
 BLG-OPS-31 defined Render log retention. claude_audit_log (shipped v4.0) and Supabase query logs have no defined retention policy. As audit log volume grows, query performance and storage cost may degrade without archiving strategy.
@@ -2649,31 +2597,6 @@ Arc 4 AI-driven features (PO-02/03/04) introduce Playwright test challenges not 
 
 ---
 
-### BLG-GOV-137 — API contract version tagging for all api_contracts documents
-**Priority:** P3 (Low)
-**Type:** Governance Process / Spec Quality
-**Owner:** Head of Specs Team; API Contracts & Documentation Owner
-**Source:** IDEA-head-of-specs-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled
-
-**Gate criteria:** Tooling assessment confirming version tagging adds drift detection value not already covered by `quality_gate.yml` OpenAPI validation.
-
-**Problem**
-API contract documents in `docs/specs/api_contracts/` do not carry a version field. When a contract is amended (endpoint added, field type changed), there is no audit trail of which version was in force when a sprint was planned. Version tagging creates a lightweight reference that enables contract consumers to identify changes.
-
-**Scope**
-- Add `version:` field to each api_contracts document (start at v1.0 for all existing docs)
-- Define version bump rules: patch for additive changes, minor for breaking changes
-- Update checklist for new endpoint authoring to include version bump step
-
-**Acceptance Criteria**
-- All api_contracts documents carry a `version:` field
-- Version bump rules documented
-- Gate condition verified before sprint planning
-
----
-
 ### BLG-GOV-138 — Sprint velocity trend alert in run_manifest (rolling 3-cycle drop)
 **Priority:** P3 (Low)
 **Type:** Governance Process / Metrics
@@ -2799,31 +2722,6 @@ v6.2 AI features have a per-use cost (Anthropic API call for each briefing and c
 
 ---
 
-### BLG-GOV-143 — OpenAPI completeness validation in CI (endpoint count reconciliation)
-**Priority:** P3 (Low)
-**Type:** Governance Process / CI
-**Owner:** API Contracts & Documentation Owner; Head of Specs Team
-**Source:** IDEA-api-contracts-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled
-
-**Gate criteria:** Coverage methodology assessment confirming this complements (not duplicates) the existing OpenAPI drift detection in `quality_gate.yml`.
-
-**Problem**
-The existing `quality_gate.yml` drift detection checks `openapi.yaml` for new endpoints mentioned in contract files. BLG-GOV-134 adds advisory CI annotation. This item proposes a complementary check: validate that `openapi.yaml` covers 100% of routes in `backend/routers/`. These are distinct checks (forward vs backward coverage). Gate: confirm no duplication before implementing.
-
-**Scope**
-- Assess current coverage gap between quality_gate.yml (contract → openapi) and a hypothetical route scan (routes → openapi)
-- If gap confirmed: author CI step to scan `backend/routers/` for `@router.[get|post|put|delete]` and cross-reference against openapi.yaml paths
-- Gate condition assessment first; CI implementation only if gap confirmed
-
-**Acceptance Criteria**
-- Coverage gap assessment document produced
-- If gap confirmed: CI step implemented as advisory (non-blocking, analogous to BLG-GOV-134)
-- Gate condition verified before implementation
-
----
-
 ### BLG-GOV-144 — Agent role charter annual review schedule (consolidated)
 **Priority:** P3 (Low)
 **Type:** Governance Process / HR
@@ -2933,6 +2831,8 @@ The Playwright E2E suite provides functional coverage but no accessibility valid
 **Provisional-Target:** [TBD — gate-conditional]
 **Gate criteria:** BLG-OPS-25 (automated staging smoke test) complete AND ≥3 external dependency failures observed in production logs
 
+> ⚠️ **Partially pre-met (backlog audit 2026-08-13):** `backend/services/health_service.py::get_external_api_health()` already surfaces external dependency status (Alpaca/Yahoo Finance — last successful call, error rate, p95 latency) on `GET /health`, and `src/pages/SystemStatus.js` already renders it (shipped v3.0, ST-08/BLG-OPS-12). The literal AC (`?extended=true` opt-in param, unchanged default response) and Anthropic API coverage remain unbuilt. Recommend Product Owner narrow this item's scope to the residual gap at next `groom backlog`/`plan release`, rather than treating it as a from-scratch build.
+
 **Problem**
 GET /health returns only internal service health (database connectivity, scheduler status). External dependency status (Alpaca API reachability, Anthropic API reachability, Yahoo Finance fallback) is not surfaced in the health check, making degraded-run detection reactive rather than proactive.
 
@@ -2973,27 +2873,6 @@ All market data (OHLCV, signals, news) is sourced exclusively from Alpaca and Ya
 
 ---
 
-
-### BLG-GOV-154 — API contract deprecation marker convention
-**Priority:** P3 (Low)
-**Type:** Governance / API Design
-**Owner:** API Contracts & Documentation Owner
-**Source:** IDEA-api-contracts-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
-**Provisional-Target:** TBD
-**Effort:** S (~0.5 day)
-
-**Problem**
-No formal process exists for marking an API contract's endpoint as deprecated once its backing implementation is retired. BLG-BE-40 (v6.4) removed a deprecated-table read path but the affected contract sections were updated ad hoc rather than via a defined convention.
-
-**Scope**
-- Define a `**Deprecated:**` marker convention for `## METHOD /path` headings in `docs/specs/api_contracts/`
-- Document in the API contracts style guide / openapi.yaml preamble
-
-**Acceptance Criteria**
-- Deprecation marker convention documented
-- Reviewed by Head of Specs Team
-
----
 
 ### BLG-GOV-156 — Base44 prompt template versioning
 **Priority:** P3 (Low)
@@ -3036,27 +2915,6 @@ No test data fixtures or state-reset mechanism exists between Playwright runs. N
 **Acceptance Criteria**
 - Fixture isolation tooling implemented once gate condition met
 - Gate condition (demonstrated failure) verified before commencing
-
----
-
-### BLG-SPEC-62 — Open Positions panel spec backfill
-**Priority:** P3 (Low)
-**Type:** Spec Debt
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** IDEA-frontend-specs-20260702-01 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
-**Provisional-Target:** TBD
-**Effort:** S (~0.5 day)
-
-**Problem**
-BLG-FEAT-54 (Open Positions panel, v6.4) shipped with a UX spec (`docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md`) but no corresponding entry was backfilled into the canonical `docs/specs/frontend/pages/strategy_benchmark.md` page spec, leaving the page spec incomplete relative to what shipped.
-
-**Scope**
-- Backfill Panel 0 (Open Positions) into `docs/specs/frontend/pages/strategy_benchmark.md`
-- Cross-reference the existing UX spec and API contract
-
-**Acceptance Criteria**
-- `strategy_benchmark.md` page spec includes Panel 0 documentation
-- Reviewed by Frontend Specifications & UX Documentation Owner
 
 ---
 
@@ -3735,26 +3593,6 @@ The `openapi.yaml` completeness check currently only fires at PR/CI time — a l
 
 ---
 
-### BLG-SPEC-68 — Deprecation lifecycle policy for removed/renamed endpoints
-**Priority:** P3 (Low)
-**Type:** Spec Debt
-**Owner:** API Contracts & Documentation Owner
-**Source:** IDEA-api-contracts-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
-**Effort:** S (~1 day)
-**Provisional-Target:** Unscheduled
-**Gate criteria:** None
-
-**Problem**
-No documented policy exists for how an endpoint is deprecated (sunset header, changelog entry, removal timeline) — the current process is ad hoc.
-
-**Scope**
-- Author a short policy doc: sunset-header convention, minimum deprecation window, changelog entry format
-
-**Acceptance Criteria**
-- Policy doc authored and referenced from `api_contracts` documentation index
-
----
-
 ### BLG-GOV-180 — Base44 prompt versioning changelog
 **Priority:** P3 (Low)
 **Type:** Governance / Tooling
@@ -4332,23 +4170,6 @@ Product Owner reviews each Priority 3 item and confirms it is still deliberately
 
 ---
 
-### BLG-SEC-14 — AI journal generation audit trail
-**Priority:** P3 (Low)
-**Type:** Security / Compliance
-**Owner:** AI Compliance & Governance Officer
-**Source:** Idea intake IW-20260710-01 (IDEA-ai-compliance-20260710-01), roadmap rebalance 2026-07-10__scheduled
-**Effort:** S (~0.5-2 days)
-**Provisional-Target:** Unscheduled
-**Gate criteria:** None
-
-**Problem**
-Generated AI journal entries do not currently log which model/version produced them, limiting compliance traceability if AI output quality or behaviour is later questioned.
-
-**Proposed solution**
-Log model identifier and version alongside each AI-generated journal entry at generation time.
-
----
-
 ### BLG-SPEC-74 — OpenAPI response examples for Arc 5 endpoints
 **Priority:** P3 (Low)
 **Type:** Spec Debt
@@ -4363,23 +4184,6 @@ Log model identifier and version alongside each AI-generated journal entry at ge
 
 **Proposed solution**
 Add representative example payloads to the Arc 5 endpoint definitions in `openapi.yaml`.
-
----
-
-### BLG-OPS-104 — Contract drift dashboard
-**Priority:** P3 (Low)
-**Type:** Operations / Governance
-**Owner:** API Contracts & Documentation Owner
-**Source:** Idea intake IW-20260710-01 (IDEA-api-contracts-20260710-02), roadmap rebalance 2026-07-10__scheduled
-**Effort:** S (~0.5-2 days)
-**Provisional-Target:** Unscheduled
-**Gate criteria:** None
-
-**Problem**
-Routes missing a `docs/specs/api_contracts` entry are currently only caught when the CI OpenAPI Drift Detection gate fires on a PR — there is no proactive, pre-PR way to see the gap.
-
-**Proposed solution**
-Add a simple script/report surfacing any `backend/routers/` endpoint lacking a matching contract entry, runnable ahead of opening a PR.
 
 ---
 
