@@ -34,3 +34,37 @@ Cycle: 2026-08-12__release-v8.7
 ## Escalations (Phase 3)
 
 None this cycle. No `execution_escalations.md` file was required — no blocker went unresolved within a session.
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-08-12__release-v8.7
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-08-13
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-08-11__release-v8.6 (`lessons_learnt_cycle.md` `## Phase 4`) — 3 friction items, all deferred, all with named target prompt sections. Checked each against `prompt_change_log.md` by patch-ID tag per the §3.7 matching requirement (LL-v8.6-P4-01b): (1) `execution_prompt.md` §3.2.A roll-up re-trigger (`LL-v8.4-P4-01a`) — **applied** 2026-08-12, `execution_prompt.md` v3.67→v3.68. (2) DoQ sign-off CI-green restatement requirement (`LL-v8.5-P4-01`, then a 2nd carry-forward) — **applied** 2026-08-12, `qa_evidence_template.md` v1.9→v1.10. (3) Resolved-deviation carve-out (`LL-v8.6-P4-03`) — **applied** 2026-08-12, `delivery_verification_prompt.md` v3.7→v3.8 (visible directly in this prompt's own §7, used this cycle at STEP 3). All 3 were applied the same day (2026-08-12, lifecycle audit AUD-2026-08-12 / v8.6 post-ship closure), before this cycle's sprint execution began — none carried into this cycle as open items; no recurrence escalation triggered.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| `qa_evidence_EPIC-03.md`'s Comments field applied the new `LL-v8.5-P4-01` post-open-CI-fix restatement requirement (`qa_evidence_template.md` v1.10, applied the day before this cycle began) to ST-08's Playwright scenarios (restated run ID `31681930191`) but not to ST-09's own post-open CI-triggered fix (commit `0d135715`, fixing a test-isolation bug caught only in real CI Phase B) — left as "awaiting final re-run confirmation" rather than restating the confirming run ID. The confirmation exists (`gh pr view 1387`: `Pytest Phase B` `SUCCESS` at 2026-08-13T09:29:52Z, run `31686733812`, part of the same merge-gating check set) — independently re-confirmed this session (§3/§9 of `verification_report.md`) rather than a genuine unresolved gap, but the newly-applied patch's requirement was not fully carried through within the same EPIC's own evidence log on its first cycle of use. | Phase 4 | D | defer | The requirement in `qa_evidence_template.md` v1.10 / `execution_prompt.md §5.3` should be read as applying per CI-triggered-fix, not once per EPIC — when an EPIC has multiple stories each needing a post-open CI fix, each story's own restatement is required, not just the first. Recommend a one-line clarification at the point the requirement is stated. | Head of Specs Team | next `qa_evidence_template.md` or `execution_prompt.md §5.3` revision |
+| ST-07 (EPIC-02) and ST-13 (EPIC-05) and ST-15 (EPIC-06) all independently hit the same "no live staging/production/Render-dashboard access in this sandbox" constraint this cycle, each disclosing it separately in its own qa_evidence entry with slightly different phrasing ("best-available-proxy", "same constraint class as ST-07"). No single canonical named constraint/disclosure convention exists to point to — each qa_evidence entry re-derives its own disclosure language. | Phase 4 | B | defer | Consider a named, canonical "Sandbox Access Constraint" disclosure block (short, reusable phrasing + a stable ID like `SBX-NO-LIVE-DB`/`SBX-NO-LIVE-STAGING`) in `shared_standards.md`, so future qa_evidence entries hitting this same recurring constraint class reference one canonical statement rather than re-deriving similar-but-not-identical prose each time. | Head of Specs Team | next `shared_standards.md` revision |
+
+**Recurrence Notes:** Friction item 1 is a new finding — the first real-world exercise of the `LL-v8.5-P4-01` patch found a narrower gap in how it was applied (once-per-EPIC rather than once-per-fix). Friction item 2 is a new observation this cycle (3 independent best-available-proxy disclosures in one sprint, a higher density than prior cycles) — not a recurrence of a previously-filed item, but flagged given the pattern's frequency this cycle.
+
+## Recurrence Escalations (Phase 4)
+
+None. Both friction items above are newly identified this cycle, not carried-forward recurrences of open v8.6 Phase 4 items (all 3 of which were confirmed applied — see Prior cycle checked note above).
+
+## Process improvements actioned this run (Phase 4)
+
+- Independently re-confirmed EPIC-03/PR #1387's final CI outcome via `gh pr view` (all checks `SUCCESS`, merged) to close the gap identified in friction item 1 for this cycle's own verification record — see `verification_report.md §3`/§9.
+- Status-line update applied to `docs/System_status_report.md` (`Sprint_Complete — pending verification` → `Verified — 2026-08-13`), per BLG-GOV-170 routine behaviour.
+
+## Outstanding deferred patches (Phase 4)
+
+- `qa_evidence_template.md`/`execution_prompt.md §5.3`'s CI-green restatement requirement should be clarified as per-fix, not per-EPIC (friction item 1) — Head of Specs Team, next revision touching either file.
+- Canonical "Sandbox Access Constraint" disclosure block for `shared_standards.md`, to reduce re-derived disclosure prose across qa_evidence entries hitting the same recurring no-live-access constraint (friction item 2) — Head of Specs Team, next `shared_standards.md` revision.
+
+## Escalations (Phase 4)
+
+None beyond the deferred patches recorded above.
