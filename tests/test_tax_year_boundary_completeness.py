@@ -204,8 +204,19 @@ def test_boundary_row_from_mocked_db_cursor_appears_exactly_once_in_correct_year
 
     def get_report_with_mocked_cursor(year):
         mock_conn = _mock_conn_filtering_by_query_params(row)
+        # Explicitly rebind reports_service's get_trade_history_by_tax_year to
+        # database's real implementation, rather than relying on its ambient
+        # import-time binding remaining unpatched. In the full CI suite (Phase
+        # B, 1103+ tests in one session) this name can be left mocked by an
+        # unrelated test elsewhere if a patch anywhere doesn't restore cleanly
+        # -- confirmed failure mode: this test passed in every local/isolated
+        # run but returned 0 rows in the real full-suite CI run (got 0, wanted
+        # 1) because the ambient function had already been replaced by then.
+        # Pinning it here makes the test correct regardless of suite-wide
+        # ordering/pollution.
         with patch.object(reports_service, "get_portfolio", return_value={"id": "port-1"}), \
              patch.object(reports_service, "get_estimated_unrealised_pnl", return_value=0.0), \
+             patch.object(reports_service, "get_trade_history_by_tax_year", side_effect=database.get_trade_history_by_tax_year), \
              patch.object(database, "get_db", return_value=mock_conn):
             return reports_service.get_tax_year_report(year)
 
