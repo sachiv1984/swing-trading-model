@@ -1149,6 +1149,8 @@ def ensure_trade_plans_table():
     ensure_regime_context_text_column()
     ensure_trade_plan_tags_column()
     ensure_thesis_provenance_columns()
+    ensure_invalidation_condition_column()
+    ensure_is_ai_draft_column()
 
 
 def create_trade_plan(portfolio_id: str, data: dict) -> dict:
@@ -1164,8 +1166,9 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     planned_quantity, planned_entry_price, planned_stop_price,
                     signal_id, risk_percent_used, portfolio_value_at_entry,
                     pre_entry_validation_snapshot, effective_settings_snapshot, trade_tags,
-                    strategy_version_at_entry, thesis_model_version, thesis_prompt_version)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s,%s,%s,%s)
+                    strategy_version_at_entry, thesis_model_version, thesis_prompt_version,
+                    invalidation_condition, is_ai_draft)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s)
                    RETURNING *""",
                 (
                     portfolio_id,
@@ -1199,6 +1202,8 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     # generate-plan/generate-thesis AI response and saved as-is (not user-edited).
                     data.get("thesis_model_version"),
                     data.get("thesis_prompt_version"),
+                    data.get("invalidation_condition"),
+                    bool(data.get("is_ai_draft")),
                 ),
             )
             row = cur.fetchone()
@@ -1263,6 +1268,7 @@ def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict
         "pre_entry_override_acknowledged", "thesis_feedback",
         "planned_quantity", "planned_entry_price", "planned_stop_price",
         "trade_tags", "thesis_model_version", "thesis_prompt_version",
+        "invalidation_condition", "is_ai_draft",
     }
     fields = {k: v for k, v in data.items() if k in allowed}
     if not fields:
@@ -1630,6 +1636,38 @@ def ensure_thesis_provenance_columns():
             )
             cur.execute(
                 "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS thesis_prompt_version VARCHAR(20)"
+            )
+        conn.commit()
+
+
+def ensure_invalidation_condition_column():
+    """Add invalidation_condition TEXT to trade_plans (idempotent).
+
+    ST-01 (BLG-FEAT-84, EPIC-01, v8.7) -- optional, manually-authored
+    "what would prove this thesis wrong?" field, trade_plan.md §5.1.
+    Nullable, no backfill -- existing rows unaffected.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS invalidation_condition TEXT"
+            )
+        conn.commit()
+
+
+def ensure_is_ai_draft_column():
+    """Add is_ai_draft BOOLEAN to trade_plans (idempotent).
+
+    ST-03 (BLG-BE-95, EPIC-01, v8.7) -- persists the AI-origin flag server-side
+    so TradeEntry.js's Setup Thesis Digest panel (trade_plan.md §10.5) can show
+    the "AI draft" badge for a *linked* plan, not just the plan's own editor
+    session (client-only isAiDraft state was never persisted -- DEV-v8.6-ST02-01).
+    Default false, nullable-equivalent, no backfill -- existing rows read false.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS is_ai_draft BOOLEAN NOT NULL DEFAULT FALSE"
             )
         conn.commit()
 

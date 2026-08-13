@@ -1,9 +1,9 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.10
-**Last Updated:** 2026-08-12 (ST-03, EPIC-02, v8.6, BLG-BE-91 — PUT /trade-plans/{id} status='active' now requires a position_id; new Errors section)
-**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07)
+**Version:** 0.11
+**Last Updated:** 2026-08-12 (ST-01/ST-03, EPIC-01, v8.7 — add invalidation_condition, is_ai_draft to POST/PUT /trade-plans request schema); prior — 2026-08-12 (ST-03, EPIC-02, v8.6, BLG-BE-91 — PUT /trade-plans/{id} status='active' now requires a position_id; new Errors section); prior — 2026-08-07 (ST-12, EPIC-03, v8.4, BLG-BE-70 — added thesis_model_version/thesis_prompt_version)
+**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07); 2026-08-12__release-v8.7 (ST-01/ST-03)
 
 ---
 
@@ -67,6 +67,8 @@ Create a new trade plan.
 | trade_tags | array of string | No | *(v0.6 — ST-05)* Data-independent tag field on `trade_plans`. Lowercase, alphanumeric+hyphen, max 20 chars per tag, max 10 tags. Invalid entries silently dropped server-side. Default: `[]`. |
 | thesis_model_version | string | No | *(v0.9 — ST-12, BLG-BE-70)* AI compliance/audit provenance field. Frontend-passed and persisted without validation — set only when `setup_thesis`/`entry_rationale`/etc. were saved as-received from a prior `POST /trade-plans/generate-plan` or `POST /trade-plans/{id}/generate-thesis` response (see that response's `model_version` field), not user-edited before save. Null when the plan's narrative fields were typed manually. Nullable. No backfill of existing rows. |
 | thesis_prompt_version | string | No | *(v0.9 — ST-12, BLG-BE-70)* Companion to `thesis_model_version` — the generate-plan/generate-thesis response's `prompt_version` field, saved the same way. Nullable. |
+| invalidation_condition | string | No | *(v0.11 — ST-01, EPIC-01, v8.7, BLG-FEAT-84)* Optional, manually authored "what would prove this thesis wrong?" field. `trade_plan.md` §5.1. Nullable. |
+| is_ai_draft | boolean | No | *(v0.11 — ST-03, EPIC-01, v8.7, BLG-BE-95)* AI-origin flag — true when a narrative field was populated via "Improve with AI" and not yet manually edited since. Default: `false`. `trade_plan.md` §10.5. |
 
 ### Response (201 Created)
 
@@ -510,6 +512,7 @@ score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.11 | 2026-08-12 | ST-01/ST-03 (EPIC-01, v8.7, BLG-FEAT-84/BLG-BE-95): Add `invalidation_condition` (optional manual textarea) and `is_ai_draft` (AI-origin flag, default false) to POST/PUT /trade-plans request schema. `trade_plan.md` §5.1, §10.5. |
 | 0.10 | 2026-08-12 | ST-03 (EPIC-02, v8.6, BLG-BE-91): `PUT /trade-plans/{id}` — `status: 'active'` now requires a `position_id` (either already on the plan, or supplied in this same update); 400 if neither. New Errors section documents this alongside the pre-existing (previously undocumented) abandonment-rule 400s and 404. DB-level backstop: `docs/specs/data_model.md` DS-12. |
 | 0.9 | 2026-08-07 | ST-12 (EPIC-03, v8.4, BLG-BE-70): Add `thesis_model_version`/`thesis_prompt_version` to POST/PUT /trade-plans request schema — AI compliance provenance fields, frontend-passed, persisted only when the narrative fields were saved as-received from a generate-plan/generate-thesis response. Nullable, no backfill. Authority: AI Compliance & Governance Officer. |
 | 0.8 | 2026-07-24 | ST-07 (EPIC-07, v7.7, BLG-GOV-28): Retroactive §13 boundary review of GET /trade-plans/setup-quality-score — PASS. No contract/behaviour change; added §13 Compliance reference to the endpoint section. See `docs/product/decisions/decisions--2026-07-21__release-v7.7--PT-04-section13-review.md`. |

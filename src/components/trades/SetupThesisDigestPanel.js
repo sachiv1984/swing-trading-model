@@ -1,7 +1,7 @@
 'use strict';
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp, FileText } from "lucide-react";
+import { ChevronDown, ChevronUp, FileText, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const THESIS_SENTENCE_LIMIT = 3;
@@ -48,6 +48,12 @@ export default function SetupThesisDigestPanel({ plan }) {
         <h3 className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
           <FileText className="w-3.5 h-3.5" />
           Setup Thesis Digest
+          {plan?.is_ai_draft && (
+            <span data-testid="ai-draft-badge" className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-violet-500/20 text-violet-300 border border-violet-500/30 normal-case tracking-normal">
+              <Sparkles size={10} />
+              AI draft
+            </span>
+          )}
         </h3>
         <button
           type="button"

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-12 (Release Planning v8.7 — Release Slice section added, 21 items across 7 EPICs, marker RP:v8.7:2026-08-12__release-v8.7); prior — 2026-08-12 (lifecycle audit AUD-2026-08-12 — 1 new item added: BLG-OPS-142); prior — 2026-08-12 (groom backlog post-ship closure 2026-08-11__release-v8.6 — 26 shipped items archived to backlog_archive.md; 1 ephemeral Release Slice section removed (v8.6); 11 governance-prompt duplicate candidates found, 0 genuine; Gate Field Normalisation: 0; Effort Day-Range Validation: PASS); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-12 (session — 2 new items added: BLG-FE-159, BLG-SPEC-129); prior — 2026-08-12 (Release Planning v8.7 — Release Slice section added, 21 items across 7 EPICs, marker RP:v8.7:2026-08-12__release-v8.7); prior — 2026-08-12 (lifecycle audit AUD-2026-08-12 — 1 new item added: BLG-OPS-142); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -1042,6 +1042,28 @@ ST-03 added `trade_plan_linked` (boolean) and `trade_plan_id` (string|null) to `
 **Acceptance Criteria**
 - Position-entry flow visibly confirms (or flags the absence of) trade-plan linkage using the response fields ST-03 already ships
 - Playwright coverage or recorded staging sign-off per `CLAUDE.md`'s frontend-visible-change rule
+
+---
+
+### BLG-FE-159 — PositionEntryModal.js has no reachable mount point — resolve dead-code status or restore Playwright coverage
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-06/EPIC-01 (`2026-08-12__release-v8.7`) — 2026-08-12
+**Effort:** XS (~<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+While converting `src/components/signals/PositionEntryModal.js` from hardcoded `bg-slate-900`/`text-white` to theme-aware `bg-background`/`text-foreground` tokens (ST-06, `BLG-FE-156`), a repo-wide search found no other file under `src/` imports or renders `<PositionEntryModal>` — it is dead/orphaned code, apparently left over from an earlier signals-to-position-entry flow iteration. The token conversion itself was applied via code review (same mechanical fix as the other 3 modals in `BLG-FE-156`'s scope), but the AC's "no visual regression" requirement could not get Playwright coverage or a staging sign-off, because there is no way to reach or mount the component through real app navigation.
+
+**Scope**
+- Decide whether `PositionEntryModal.js` should be wired into an actual trigger point (if the signals-to-position-entry flow it was built for is still intended) or removed as dead code
+- If restored: add Playwright coverage for its light/dark theming, matching the pattern used for the other 3 modals in `BLG-FE-156`
+- If removed: confirm no other in-flight work depends on it before deletion
+
+**Acceptance Criteria**
+- `PositionEntryModal.js` is either reachable via a real user-navigable trigger with Playwright coverage of its light/dark theming, or removed from the codebase
+- No orphaned/unreachable modal component remains without an explicit decision recorded
 
 ---
 
@@ -5335,6 +5357,14 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 **Problem:** When `strategy_rules.md` is version-bumped, there is no required template ensuring the change cites the trade-history evidence (if any) motivating it — SI-04 (Strategy Version Comparison) will eventually need this history to be traceable.
 **Scope:** Add a change-justification template section to `strategy_rules.md`'s own change-log convention.
 **Acceptance Criteria:** Template added; applied to the next `strategy_rules.md` version bump; Strategy Rules & System Intent Owner sign-off.
+
+---
+
+### BLG-SPEC-129 — Correct trade_plan.md §5.1's stale "Risk/Reward Notes" field anchor
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Head of Specs Team | **Source:** ST-01/EPIC-01 (`2026-08-12__release-v8.7`) | **Effort:** XS | **Provisional-Target:** TBD
+**Problem:** `docs/specs/frontend/pages/trade_plan.md` §5.1's form-fields table lists "Risk/Reward Notes" as a live field and anchors the v1.5 Invalidation Condition field's placement to it ("after Risk/Reward Notes") — but no such field exists anywhere in `src/pages/TradePlan.js` (confirmed via grep: zero `risk_reward_notes` binding). The nearest same-role successor, "R Target", is structurally unrelated (top grid, alongside Market/Status/Regime). Found during ST-01 implementation; Product Owner agent-mediated sign-off confirmed the field's actual placement (grouped with Confirmation Criteria / Early Exit Conditions) as the correct reading of spec intent, but the stale anchor itself was left uncorrected as out of this story's scope.
+**Scope:** Correct §5.1's anchor reference from "Risk/Reward Notes" to "Early Exit Conditions".
+**Acceptance Criteria:** §5.1 anchor corrected; Head of Specs Team sign-off.
 
 ---
 

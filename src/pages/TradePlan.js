@@ -277,6 +277,7 @@ const EMPTY_FORM = {
   r_target: "",
   early_exit_conditions: "",
   confirmation_criteria: "",
+  invalidation_condition: "",
   checklist_completed: false,
   checklist_items: DEFAULT_CHECKLIST_ITEMS.map((i) => ({ ...i })),
   status: "draft",
@@ -409,6 +410,7 @@ export default function TradePlan() {
         planned_stop_price: existingPlan.planned_stop_price != null ? String(existingPlan.planned_stop_price) : "",
         early_exit_conditions: existingPlan.early_exit_conditions || "",
         confirmation_criteria: existingPlan.confirmation_criteria || "",
+        invalidation_condition: existingPlan.invalidation_condition || "",
         checklist_items: checklistItems,
         checklist_completed: checklistItems.every((i) => i.checked),
         status: existingPlan.status || "draft",
@@ -419,6 +421,7 @@ export default function TradePlan() {
         thesis_model_version: existingPlan.thesis_model_version || null,
         thesis_prompt_version: existingPlan.thesis_prompt_version || null,
       });
+      setIsClaudeDraft(!!existingPlan.is_ai_draft);
     }
   }, [existingPlan]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -588,6 +591,7 @@ export default function TradePlan() {
       planned_quantity: toNum(form.planned_quantity, v => parseInt(v, 10)),
       planned_entry_price: toNum(form.planned_entry_price, parseFloat),
       planned_stop_price: toNum(form.planned_stop_price, parseFloat),
+      is_ai_draft: isClaudeDraft,
     };
     if (editId) {
       updateMutation.mutate({ id: editId, data: payload });
@@ -1067,6 +1071,16 @@ export default function TradePlan() {
             value={form.early_exit_conditions}
             onChange={setNarrativeField("early_exit_conditions")}
             placeholder="Under what conditions would you exit before the stop is hit?"
+          />
+        </Field>
+
+        <Field label="Invalidation Condition">
+          <TextArea
+            rows={2}
+            data-testid="invalidation-condition-input"
+            value={form.invalidation_condition}
+            onChange={set("invalidation_condition")}
+            placeholder="What would prove this thesis wrong? (optional)"
           />
         </Field>
 

@@ -400,8 +400,8 @@ function TaxYearReport() {
 
           {/* Unrealised P&L Card */}
           {(reportData?.estimated_unrealised_pnl != null) && (
-            <div className="rounded-xl border border-slate-600/50 bg-slate-800/30 p-5">
-              <h3 className="text-sm font-semibold text-slate-300 mb-3">
+            <div className="rounded-xl border border-slate-300 dark:border-slate-600/50 bg-white dark:bg-slate-800/30 p-5">
+              <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
                 Indicative Unrealised P&L (current positions)
               </h3>
               <p className={`text-2xl font-bold mb-3 ${(reportData.estimated_unrealised_pnl ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
@@ -484,21 +484,21 @@ function SI02GateStatusSection() {
   );
 
   return (
-    <div data-testid="si02-gate-status-section" className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
+    <div data-testid="si02-gate-status-section" className="bg-slate-100 dark:bg-slate-800/50 rounded-lg border border-slate-300 dark:border-slate-700/50 overflow-hidden">
       <button
         type="button"
         data-testid="si02-gate-status-toggle"
         onClick={() => setCollapsed(!collapsed)}
-        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-slate-700/20 transition-colors"
+        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-slate-200/60 dark:hover:bg-slate-700/20 transition-colors"
       >
-        <h3 className="text-sm font-semibold text-white">SI-02 Gate Status</h3>
-        {collapsed ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronUp className="w-4 h-4 text-slate-400" />}
+        <h3 className="text-sm font-semibold text-slate-900 dark:text-white">SI-02 Gate Status</h3>
+        {collapsed ? <ChevronDown className="w-4 h-4 text-slate-500 dark:text-slate-400" /> : <ChevronUp className="w-4 h-4 text-slate-500 dark:text-slate-400" />}
       </button>
 
       {!collapsed && (
-        <div className="px-6 py-5 border-t border-slate-700/50">
+        <div className="px-6 py-5 border-t border-slate-300 dark:border-slate-700/50">
           {isLoading ? (
-            <div className="h-16 rounded-lg bg-slate-800/50 animate-pulse" />
+            <div className="h-16 rounded-lg bg-slate-200/60 dark:bg-slate-800/50 animate-pulse" />
           ) : isError ? (
             <p className="text-sm text-slate-600 dark:text-slate-400">Unable to load gate status</p>
           ) : (
@@ -506,24 +506,24 @@ function SI02GateStatusSection() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Total Closed Trades</p>
-                  <p className="text-lg font-semibold text-white">{data.totalClosedTrades} total closed trades</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">{data.totalClosedTrades} total closed trades</p>
                 </div>
                 <div>
                   <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Linked to a Trade Plan</p>
-                  <p className="text-lg font-semibold text-white">{data.linkedClosedTrades} linked to a trade plan</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">{data.linkedClosedTrades} linked to a trade plan</p>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="flex items-center justify-between rounded-lg bg-slate-800/50 border border-slate-700/50 px-4 py-3">
-                  <span className="text-sm text-slate-300">Gate Condition 1</span>
+                <div className="flex items-center justify-between rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700/50 px-4 py-3">
+                  <span className="text-sm text-slate-700 dark:text-slate-300">Gate Condition 1</span>
                   <GateBadge met={data.gateCondition1Met} />
                 </div>
-                <div className="flex items-center justify-between rounded-lg bg-slate-800/50 border border-slate-700/50 px-4 py-3">
-                  <span className="text-sm text-slate-300">Gate Condition 2</span>
+                <div className="flex items-center justify-between rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700/50 px-4 py-3">
+                  <span className="text-sm text-slate-700 dark:text-slate-300">Gate Condition 2</span>
                   <GateBadge met={data.gateCondition2Met} />
                 </div>
-                <div className="flex items-center justify-between rounded-lg bg-slate-800/50 border border-slate-700/50 px-4 py-3">
-                  <span className="text-sm text-slate-300">Gate Condition 3</span>
+                <div className="flex items-center justify-between rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700/50 px-4 py-3">
+                  <span className="text-sm text-slate-700 dark:text-slate-300">Gate Condition 3</span>
                   <GateBadge met={data.gateCondition3Met} />
                 </div>
               </div>
@@ -531,17 +531,17 @@ function SI02GateStatusSection() {
               {data.driftInsufficientData && (
                 <div
                   data-testid="si02-insufficient-data-streak"
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-700/50"
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-300 dark:border-slate-700/50"
                 >
                   <div>
                     <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Insufficient-Data Streak</p>
-                    <p className="text-lg font-semibold text-white" data-testid="si02-streak-days">
+                    <p className="text-lg font-semibold text-slate-900 dark:text-white" data-testid="si02-streak-days">
                       {data.driftStreakDays}{data.driftStreakCapped ? "+" : ""} days
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Trade Count Trend</p>
-                    <p className="text-lg font-semibold text-white capitalize" data-testid="si02-trend">
+                    <p className="text-lg font-semibold text-slate-900 dark:text-white capitalize" data-testid="si02-trend">
                       {data.driftTrend ?? "—"}
                     </p>
                   </div>
@@ -806,8 +806,8 @@ function MonthlyPnlTable() {
 
       {/* ST-14 (BLG-FEAT-70, v7.0): Unrealised P&L Card — reuses the Tax Year tab's approved pattern verbatim */}
       {estimatedUnrealisedPnl != null && (
-        <div data-testid="monthly-unrealised-pnl-card" className="rounded-xl border border-slate-600/50 bg-slate-800/30 p-5">
-          <h3 className="text-sm font-semibold text-slate-300 mb-3">
+        <div data-testid="monthly-unrealised-pnl-card" className="rounded-xl border border-slate-300 dark:border-slate-600/50 bg-white dark:bg-slate-800/30 p-5">
+          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
             Indicative Unrealised P&L (current positions)
           </h3>
           <p className={`text-2xl font-bold mb-3 ${(estimatedUnrealisedPnl ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
@@ -817,7 +817,7 @@ function MonthlyPnlTable() {
             {unrealisedNote}
           </p>
           {/* Combined Total line (satisfies AC-02 regression check) */}
-          <p data-testid="monthly-combined-total" className="text-sm font-semibold text-white mt-4 pt-3 border-t border-slate-700/50">
+          <p data-testid="monthly-combined-total" className="text-sm font-semibold text-slate-900 dark:text-white mt-4 pt-3 border-t border-slate-300 dark:border-slate-700/50">
             Total (Realised + Unrealised): {formatGBP(combinedTotal)}
           </p>
         </div>

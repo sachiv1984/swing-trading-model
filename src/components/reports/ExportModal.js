@@ -204,9 +204,9 @@ export default function ExportModal({ open, onClose, positions, metrics, period,
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md">
+      <DialogContent className="bg-background border-border text-foreground max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl !font-bold text-white">Export Report</DialogTitle>
+          <DialogTitle className="text-xl !font-bold text-foreground">Export Report</DialogTitle>
           <DialogDescription className="text-slate-600 dark:text-slate-400">
             Export your {period.toLowerCase()} trading data
           </DialogDescription>
