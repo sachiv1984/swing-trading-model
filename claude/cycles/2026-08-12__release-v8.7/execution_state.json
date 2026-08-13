@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-13T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-13T00:15:00Z",
+  "last_updated_utc": "2026-08-13T00:40:00Z",
   "epics": {
     "EPIC-01": {
       "status": "done",
@@ -16,7 +16,8 @@
       "qa_evidence_log": "claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/e2e/reports-theme-fix-si02-unrealised-pnl.spec.js",
-        "tests/e2e/modal-theming-token-conversion.spec.js"
+        "tests/e2e/modal-theming-token-conversion.spec.js",
+        "tests/e2e/trade-plan-invalidation-link-toast-ai-badge.spec.js"
       ],
       "stories": {
         "ST-01": {
@@ -34,7 +35,8 @@
           "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/trade_plan.md#5.1 Form Fields",
-            "docs/specs/api_contracts/trade_plan_endpoints.md"
+            "docs/specs/api_contracts/trade_plan_endpoints.md",
+            "tests/e2e/trade-plan-invalidation-link-toast-ai-badge.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
@@ -49,7 +51,7 @@
             ],
             "cleared_utc": "2026-08-13T00:10:00Z"
           },
-          "notes": "Code complete: backend column+migration+model fields, frontend form field. AC-03 (Product Owner sign-off on field placement/copy) pending -- design already cleared at Design Gate per sprint_backlog.md note."
+          "notes": "Code complete + Playwright coverage (SC-INV-01/02): backend column+migration+model fields, frontend form field. AC-03 (Product Owner sign-off on field placement/copy) CLEARED -- see sign_off_record."
         },
         "ST-02": {
           "title": "Consume trade_plan_linked/trade_plan_id in the position-entry flow",
@@ -65,14 +67,15 @@
           "completed_utc": "2026-08-13T00:15:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/trade_plan.md#10.6 Post-Submission Link Confirmation"
+            "docs/specs/frontend/pages/trade_plan.md#10.6 Post-Submission Link Confirmation",
+            "tests/e2e/trade-plan-invalidation-link-toast-ai-badge.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Code complete: sonner toast added to TradeEntry.js createMutation.onSuccess reading trade_plan_linked/ticker from POST /portfolio/position response."
+          "notes": "Code complete + Playwright coverage (SC-LNK-01/02): sonner toast added to TradeEntry.js createMutation.onSuccess reading trade_plan_linked/ticker from POST /portfolio/position response."
         },
         "ST-03": {
           "title": "Persist isAiDraft flag on trade_plans for AI-origin display badges",
@@ -90,14 +93,15 @@
           "spec_references": [
             "docs/specs/frontend/pages/trade_plan.md#10.5 Setup Thesis Digest at Order Placement",
             "docs/specs/api_contracts/trade_plan_endpoints.md",
-            "docs/specs/data_model.md"
+            "docs/specs/data_model.md",
+            "tests/e2e/trade-plan-invalidation-link-toast-ai-badge.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Backend spec locked (trade_plan.md already documented is_ai_draft badge behaviour at v1.4). Engine completed directly (spec unambiguous) rather than parking for human delegation -- see qa_evidence for rationale. Implementation decision: is_ai_draft mirrors isClaudeDraft (real 'Improve with AI' generation only), not isAiDraft (also set by client-side template fill) -- see intent-check note in qa_evidence_EPIC-01.md."
+          "notes": "Backend spec locked (trade_plan.md already documented is_ai_draft badge behaviour at v1.4). Engine completed directly (spec unambiguous) rather than parking for human delegation -- see qa_evidence for rationale. Implementation decision: is_ai_draft mirrors isClaudeDraft (real 'Improve with AI' generation only), not isAiDraft (also set by client-side template fill) -- see intent-check note in qa_evidence_EPIC-01.md. Playwright coverage added (SC-AID-01/02)."
         },
         "ST-04": {
           "title": "SI-02 Gate Status section (Reports.js) light/dark theme fix",
