@@ -1,0 +1,203 @@
+{
+  "cycle_id": "2026-08-12__release-v8.7",
+  "sprint_goal": "Deliver v8.7's user-facing feature and theme-consistency completion work while closing the mandatory trade-plan data-integrity carryover from v8.6, backed by expanded test, security, reliability, and governance coverage across the release's remaining six EPICs.",
+  "backlog_slice_source": "claude/cycles/2026-08-12__release-v8.7/stage4_backlog_slice.md",
+  "invoked_utc": "2026-08-13T00:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-08-13T00:15:00Z",
+  "epics": {
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-08-12__release-v8.7/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/e2e/reports-theme-fix-si02-unrealised-pnl.spec.js",
+        "tests/e2e/modal-theming-token-conversion.spec.js"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "Thesis pre-mortem / invalidation-condition capture at trade-plan entry",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1364,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-01",
+          "commit_sha": "b43deb7f72be4b655e457e8d6129ba37d1fbb2f3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T00:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#5.1 Form Fields",
+            "docs/specs/api_contracts/trade_plan_endpoints.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "required_by": "Product Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "Field placement approved as implemented (grouped with Confirmation Criteria/Early Exit Conditions) -- spec's literal 'after Risk/Reward Notes' anchor is stale/non-existent in the codebase; BLG-SPEC-129 filed to correct the spec"
+            ],
+            "cleared_utc": "2026-08-13T00:10:00Z"
+          },
+          "notes": "Code complete: backend column+migration+model fields, frontend form field. AC-03 (Product Owner sign-off on field placement/copy) pending -- design already cleared at Design Gate per sprint_backlog.md note."
+        },
+        "ST-02": {
+          "title": "Consume trade_plan_linked/trade_plan_id in the position-entry flow",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1365,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-01",
+          "commit_sha": "b43deb7f72be4b655e457e8d6129ba37d1fbb2f3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T00:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#10.6 Post-Submission Link Confirmation"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Code complete: sonner toast added to TradeEntry.js createMutation.onSuccess reading trade_plan_linked/ticker from POST /portfolio/position response."
+        },
+        "ST-03": {
+          "title": "Persist isAiDraft flag on trade_plans for AI-origin display badges",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1366,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-01",
+          "commit_sha": "b43deb7f72be4b655e457e8d6129ba37d1fbb2f3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T00:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#10.5 Setup Thesis Digest at Order Placement",
+            "docs/specs/api_contracts/trade_plan_endpoints.md",
+            "docs/specs/data_model.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Backend spec locked (trade_plan.md already documented is_ai_draft badge behaviour at v1.4). Engine completed directly (spec unambiguous) rather than parking for human delegation -- see qa_evidence for rationale. Implementation decision: is_ai_draft mirrors isClaudeDraft (real 'Improve with AI' generation only), not isAiDraft (also set by client-side template fill) -- see intent-check note in qa_evidence_EPIC-01.md."
+        },
+        "ST-04": {
+          "title": "SI-02 Gate Status section (Reports.js) light/dark theme fix",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1367,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-01",
+          "commit_sha": "b43deb7f72be4b655e457e8d6129ba37d1fbb2f3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T00:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Card Hierarchy",
+            "tests/e2e/reports-theme-fix-si02-unrealised-pnl.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Playwright coverage added (SC-TF-01..04)."
+        },
+        "ST-05": {
+          "title": "Unrealised P&L card (Reports.js) light/dark theme fix",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1368,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-01",
+          "commit_sha": "b43deb7f72be4b655e457e8d6129ba37d1fbb2f3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T00:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Card Hierarchy",
+            "tests/e2e/reports-theme-fix-si02-unrealised-pnl.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Playwright coverage added (SC-TF-05/06). Both duplicate card instances (Tax Year tab + Monthly tab) fixed for consistency."
+        },
+        "ST-06": {
+          "title": "Convert 4 hardcoded dark-only modals to theme-aware tokens",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1369,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-01",
+          "commit_sha": "b43deb7f72be4b655e457e8d6129ba37d1fbb2f3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T00:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Modal / Dialog Theming",
+            "tests/e2e/modal-theming-token-conversion.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "3 of 4 files (WatchlistModal.js, ExportModal.js, WidgetLibrary.js) converted + Playwright-covered. 4th (PositionEntryModal.js) converted via code review only -- component has no reachable mount point in the app (dead code); BLG-FE-159 filed per CLAUDE.md hard gate."
+        }
+      }
+    }
+  },
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05",
+    "ST-06"
+  ],
+  "open_escalations": [],
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": [
+      "EPIC-01",
+      "EPIC-02",
+      "EPIC-03",
+      "EPIC-04",
+      "EPIC-05",
+      "EPIC-06",
+      "EPIC-07"
+    ],
+    "all_merged": false
+  },
+  "sealed": false,
+  "sealed_utc": null
+}
