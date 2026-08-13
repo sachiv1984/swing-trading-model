@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.159
-**Last Updated:** 2026-08-12
+**Version:** 4.160
+**Last Updated:** 2026-08-13
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1455,8 +1455,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.159 |
-| Last Updated | 2026-08-12 |
+| Version | 4.160 |
+| Last Updated | 2026-08-13 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.160 | 2026-08-13 | **Sprint execution `2026-08-12__release-v8.7` EPIC-07/ST-18 (BLG-GOV-290) — `CLAUDE.md` §8 (no version field, logged here per the established convention) gains new step 2b.** Change: a new mandatory pre-resolution check for shared-JSON-field schema-shape drift between sibling EPIC branches — `git merge` sees no conflict when two branches independently add/modify the same field name with a different shape or meaning and their edits land on non-overlapping lines, unlike 2a's version-number-collision case which at least has visible identical text to compare. Requires diffing the set of field names each branch touched (not just trusting a clean auto-merge) before accepting a shared JSON file's merge result. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-18, 2026-08-13). |
 | 4.159 | 2026-08-12 | **Lifecycle audit AUD-2026-08-12-003, action-all-audit-points session — backlog_management_prompt.md v1.13→v1.14: STEP 1.5 Ephemeral Section Cleanup gains a 4th ephemeral type.** §6M source prompts updated (backlog_management_prompt.md v1.13→v1.14). §14 Backlog Management Engine v1.13→v1.14. §14 Version 4.158→4.159/2026-08-12. Change: Roadmap Rebalance/Delivery Verification idea-intake "New Items" sections are now a recognised ephemeral type — unlike types 1–3, items in them carry no completion marker, so all items must be relocated to their §1–§8 type section unconditionally at the next groom run. Root cause: 4 such sections (`2026-07-24__scheduled` through `2026-08-11__scheduled`) accumulated unpromoted across 4+ groom runs since the type was never named in STEP 1.5's original 3-type list; `backlog.md` was found missing its `## 5.`/`## 7.`/`## 8.` type-section headers entirely as a direct symptom. Authority: Head of Specs Team (lifecycle audit AUD-2026-08-12). |
 | 4.158 | 2026-08-12 | **Lifecycle audit AUD-2026-08-12, action-all-audit-points session — lessons_learnt_prompt.md v1.10→v1.11: §3.7 Cross-Cycle Recurrence Check gains a patch-ID matching requirement.** §14 Lessons Learnt Prompt v1.10→v1.11. §14 Version 4.157→4.158/2026-08-12. Change: when checking whether a deferred patch was subsequently applied, search `prompt_change_log.md` by the friction item's own patch-ID tag (LL-v8.6-P4-01b), not by date range or filename alone — closes a confirmed false-positive recurrence claim (`2026-08-08__release-v8.5`'s closure incorrectly reported the `execution_prompt.md` `test_scenarios` roll-up patch as "still unapplied" when it had already shipped). Authority: Head of Specs Team (lifecycle audit AUD-2026-08-12). |
 | 4.157 | 2026-08-12 | **Lifecycle audit AUD-2026-08-12, action-all-audit-points session — execution_prompt.md v3.67→v3.68 + qa_evidence_template.md v1.9→v1.10: DoQ/QA evidence protocol gains 3 fixes.** §8 source prompt header v3.67→v3.68 (line 886). §14 Execution Engine Source v3.67→v3.68; QA Evidence Template v1.9→v1.10. §14 Version 4.155→4.157/2026-08-12 (see self-drift note below). Changes: (1) §3.2.A roll-up backstop gains a re-trigger clause (LL-v8.4-P4-01a) for post-seal `spec_references` edits. (2) §5.3 gains a quantitative/"already verified" claim second-review-pass requirement (LL-v8.6-P3-01), closing a 3-occurrence-in-1-sprint pattern found at `2026-08-11__release-v8.6`. (3) `qa_evidence_template.md` Standard Sign-Off Block gains a post-open CI-fix restatement requirement (LL-v8.5-P4-01, 2nd carry-forward). **Self-caught SELF-DRIFT found in the same session (not caused by this edit):** this document's own §14 self-row (`Version | 4.155`) had drifted 1 version behind the header and Change Log top row (both already `4.156` from the immediately preceding entry) — the `execution_prompt.md` v3.67 edit that added the mandatory governance-drift Step 1b invocation was itself never run against `OPERATIONAL_GUIDE.md`'s own subsequent `4.156` bump (a delivery_verification_prompt.md-only edit that had no EPIC/story attached to trigger the new check). Corrected the self-row to `4.157` in this same write. Authority: Head of Specs Team (lifecycle audit AUD-2026-08-12, action-all-audit-points session). |
