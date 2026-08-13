@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.25
-**Last Updated:** 2026-08-11 (ST-03, EPIC-02, v8.6, BLG-BE-91 — DS-12 trade_plans active-status-requires-position CHECK constraint)
+**Version:** 2.26
+**Last Updated:** 2026-08-13 (ST-07, EPIC-02, v8.7, BLG-BE-96 — DS-12 verification note, best-available-proxy execution, AC-02 residual gap disclosed); prior — 2026-08-11 (ST-03, EPIC-02, v8.6, BLG-BE-91 — DS-12 trade_plans active-status-requires-position CHECK constraint)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1954,8 +1954,22 @@ Reversible: drops the constraint only; no column/table changes to reverse.
 - Data Model & Domain Schema Owner: Accepted — 2026-08-12 (agent-mediated; single new CHECK constraint, `NOT VALID` so no risk to existing rows, no existing column/table structure touched)
 - Product Owner (design + risk acceptance): Accepted — 2026-08-12. Explicitly accepts the `NOT VALID`/going-forward-only design and the disclosed staging-verification gap (`BLG-BE-96`, elevated P1) as a reasonable trade-off, not a silently-ignored risk — full reasoning in `qa_evidence_EPIC-02.md`'s Product Owner Decision block. **This is not the same thing as the PR's merge-gate Product Owner acceptance** (`CLAUDE.md` §2, always-human, satisfied only by an actual human clicking accept on the PR) — that remains outstanding. (This entry briefly and incorrectly stated a bare "Accepted" for the merge-gate sense on 2026-08-11; corrected 2026-08-12 after an independent agent-mediated review of PR #1362 flagged the discrepancy, before being re-recorded here in its narrower, correct sense.)
 
+### Verification note (ST-07, EPIC-02, v8.7, BLG-BE-96 — best-available-proxy execution)
+
+No new migration. `BLG-BE-96` (ST-07) required staging/production verification of the linkage default and this constraint's live state; staging/live-Postgres access remains unavailable in this sandbox (unchanged since v8.6 — no `DATABASE_URL`, no `psql`, no outbound reachability to a live Postgres host). Product Owner (agent-mediated, 2026-08-12, `sprint_planning_notes.md`) authorised proceeding via best-available proxy rather than deferring again. Findings:
+
+- **AC-01 (linkage-by-default) — confirmed via code path + test suite, not live staging.** `position_service.py::add_position()`'s auto-link step is the sole code path that ever sets `trade_plans.status = 'active'`, and it always sets `position_id` in the same `UPDATE` (see this section's own description above). Regression coverage: `tests/test_position_trade_plan_link.py` (447 lines, `TestAddPositionExplicitTradePlanLink` and ticker/market best-effort match cases). Proxy confidence: High — this is the same code path DS-12 itself was written to backstop, already reviewed at v8.6 ST-03.
+- **AC-03 (constraint present on live table) — confirmed via startup-invocation code path, not a live `pg_constraint` query.** `ensure_trade_plans_active_requires_position_constraint()` (this section's Up Migration) is invoked unconditionally on every backend boot (`backend/main.py` startup sequence), with a startup log line on success and an error log on failure — i.e. the constraint is (re)applied idempotently on every deploy, and a failure to apply it would be visible in boot logs. Proxy confidence: High for "the migration runs on every deploy"; **not equivalent** to running the `### Verification` query above against the live table, which was not executed.
+- **AC-02 (legacy orphaned-row audit) — not proxyable; residual gap, disclosed not silently met.** No mechanism in this sandbox can substitute for the live query (`SELECT ... WHERE status='active' AND position_id IS NULL`) against the 11 known pre-`BLG-BE-46` legacy rows. This AC is **not** verified this cycle. The v8.6-established escalation condition carries forward unchanged and remains the operative safeguard: **if a future live check of those 11 rows finds any with `status='active'`, that finding escalates to its own P0 immediately**, independent of this story's own timeline.
+
+**Residual gap:** AC-02 remains open pending genuine staging/production database access. `BLG-BE-96` is not closed by this proxy execution — see `qa_evidence_EPIC-02.md` for the disposition and backlog carry-forward.
+
+**Sign-off:**
+- Signed off by: Sprint Execution Engine (agent-mediated, Head of Engineering role — §5.3) — 2026-08-13. Code-path and startup-invocation evidence for AC-01/AC-03 reviewed and found sufficient as best-available proxy; AC-02 correctly left unproxied rather than asserted met.
+- Signed off by: Sprint Execution Engine (agent-mediated, Data Model & Domain Schema Owner role — §5.3) — 2026-08-13. Confirms no schema/migration change accompanies this note; DS-12's `NOT VALID` posture and its documented open risk (above) are unchanged by this verification pass.
+
 ---
 
-**Document Version:** 2.25
+**Document Version:** 2.26
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-08-11
+**Last Review:** 2026-08-13
