@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://internal/claude/schemas/execution_state.schema.json",
+  "title": "Sprint execution_state.json schema",
+  "description": "Validates claude/cycles/<cycle_id>/execution_state.json — introduced to make CLAUDE.md §8 step 2b (shared-JSON-field schema-shape drift) partly CI-checked instead of purely manual. Tested against all 73 historical execution_state.json files under claude/cycles/ before being wired into CI (see claude/schemas/README.md for the validation run). That history showed the top-level envelope, per-epic fields, and even per-story fields (e.g. `delivery_note`, `sign_off_record`) legitimately gain new one-off fields and shapes release to release — a single engine evolving its own output over time, not the concurrent-sibling-branch risk §8 2b describes. Locking those with additionalProperties:false produced constant false positives against real history, so this schema stays additionalProperties:true throughout and only type-checks the *known* fields when present (catches a field being silently repurposed to a different JSON type — e.g. `status` becoming a number — without fighting organic field growth). The one place additionalProperties:false is used is `trackedItemEntry` (blocked_items/delegated_items entries): that shape validated 100% clean across all 73 historical files despite real historical variety (plain ST-id strings, EPIC-qualified strings, free-text status strings, and — in v4.0 — a full object), so it is the one part of this schema precise enough to safely reject an unreviewed new shape. The true concurrent-branch case (two sibling EPIC branches independently adding the *same new field name* with *different* shapes, which this static schema cannot see since neither shape is 'known' yet) is instead caught by the separate sibling-branch diff job in execution-state-schema-check.yml — see that workflow's own comments.",
+  "type": "object",
+  "required": ["cycle_id", "status", "epics"],
+  "properties": {
+    "cycle_id": { "type": "string" },
+    "sprint_goal": { "type": "string" },
+    "backlog_slice_source": { "type": "string" },
+    "invoked_utc": { "type": "string" },
+    "mode": { "type": "string", "enum": ["strict", "standard"] },
+    "status": { "type": "string" },
+    "last_updated_utc": { "type": "string" },
+    "sealed": { "type": "boolean" },
+    "sealed_utc": { "type": ["string", "null"] },
+    "epics": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/epicRecord" }
+    },
+    "blocked_items": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/trackedItemEntry" }
+    },
+    "delegated_items": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/trackedItemEntry" }
+    },
+    "completed_items": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "open_escalations": { "type": ["object", "array"] },
+    "merge_gate": {
+      "type": "object",
+      "properties": {
+        "epics_merged": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true,
+  "definitions": {
+    "epicRecord": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "string" },
+        "branch": { "type": ["string", "null"] },
+        "pr_number": { "type": ["integer", "string", "null"] },
+        "pr_status": { "type": ["string", "null"] },
+        "qa_signed_off": { "type": "boolean" },
+        "qa_evidence_log": { "type": ["string", "null"] },
+        "test_scenarios": { "type": ["array", "string"] },
+        "stories": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/storyRecord" }
+        }
+      },
+      "required": ["status", "stories"],
+      "additionalProperties": true
+    },
+    "storyRecord": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "classification": { "type": ["string", "null"] },
+        "status": { "type": "string" },
+        "assigned_to": { "type": ["string", "null"] },
+        "github_issue": { "type": ["integer", "null"] },
+        "branch": { "type": ["string", "null"] },
+        "commit_sha": { "type": ["string", "null"] },
+        "delegation_record_id": { "type": ["string", "null"] },
+        "blocked_since_utc": { "type": ["string", "null"] },
+        "unblock_criteria": { "type": ["string", "null"] },
+        "completed_utc": { "type": ["string", "null"] },
+        "acceptance_verified": { "type": ["boolean", "null"] },
+        "spec_references": { "type": "array", "items": { "type": "string" } },
+        "spec_reference_not_applicable": { "type": "boolean" },
+        "spec_reference_not_applicable_reason": { "type": ["string", "null"] },
+        "deviations_filed": { "type": "boolean" },
+        "last_completed_substep": { "type": ["string", "null"] },
+        "sign_off_record": { "type": ["object", "string", "null"] },
+        "delivery_note": { "type": "string" },
+        "notes": { "type": ["string", "null"] }
+      },
+      "required": ["status"],
+      "additionalProperties": true
+    },
+    "trackedItemEntry": {
+      "description": "blocked_items / delegated_items entries. Accepts the real historical shapes (bare ST-id, EPIC-qualified ST-id, free-text status string, or the v4.0-style detail object) but rejects any other object shape, so a new shape must be added here deliberately rather than slip through a clean merge. Validated 100% clean across all 73 historical execution_state.json files — the one field in this schema precise enough to be additionalProperties:false without false positives.",
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "properties": {
+            "item": { "type": "string" },
+            "delegation_record_id": { "type": ["string", "null"] },
+            "status": { "type": "string" },
+            "unblocked_utc": { "type": ["string", "null"] },
+            "blocked_since_utc": { "type": ["string", "null"] },
+            "unblock_criteria": { "type": ["string", "null"] },
+            "commit_sha": { "type": ["string", "null"] }
+          },
+          "required": ["item", "status"],
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}
