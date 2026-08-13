@@ -4,6 +4,7 @@ import { base44, apiFetch, api } from "../api/base44Client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -102,8 +103,13 @@ export default function TradeEntry() {
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Position.create(data),
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["positions"] });
+      if (response?.trade_plan_linked) {
+        toast.success(`Linked to trade plan for ${response.ticker}.`);
+      } else {
+        toast.info("No matching plan found — logged unlinked.");
+      }
       // If opened from watchlist, delete the watchlist entry then go to Positions
       if (prefill?.id) {
         fetch(`${API_BASE_URL}/watchlist/${prefill.id}`, { method: "DELETE" })

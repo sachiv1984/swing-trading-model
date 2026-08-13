@@ -64,9 +64,9 @@ export default function WidgetLibrary({ open, onClose, onAddWidget, activeWidget
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white !max-w-2xl max-h-[80vh] overflow-hidden !flex !flex-col">
+      <DialogContent className="bg-popover border-border text-popover-foreground !max-w-2xl max-h-[80vh] overflow-hidden !flex !flex-col">
         <DialogHeader>
-          <DialogTitle className="text-xl !font-bold text-white">Widget Library</DialogTitle>
+          <DialogTitle className="text-xl !font-bold text-popover-foreground">Widget Library</DialogTitle>
           <DialogDescription className="text-slate-600 dark:text-slate-400">
             Add widgets to customize your dashboard
           </DialogDescription>

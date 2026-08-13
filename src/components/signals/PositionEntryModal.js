@@ -37,7 +37,7 @@ export default function PositionEntryModal({ signal, open, onClose, onConfirm })
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md">
+      <DialogContent className="bg-background border-border text-foreground max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-cyan-400 text-xl">
             <CheckCircle2 className="w-6 h-6" />
@@ -54,11 +54,11 @@ export default function PositionEntryModal({ signal, open, onClose, onConfirm })
             <div className="grid grid-cols-2 gap-3 text-center">
               <div>
                 <div className="text-xs text-slate-600 dark:text-slate-400">Ticker</div>
-                <div className="text-lg font-bold text-white">{signal.ticker}</div>
+                <div className="text-lg font-bold text-slate-900 dark:text-white">{signal.ticker}</div>
               </div>
               <div>
                 <div className="text-xs text-slate-600 dark:text-slate-400">Market</div>
-                <div className="text-lg font-bold text-white">{signal.market} {isUS ? "🇺🇸" : "🇬🇧"}</div>
+                <div className="text-lg font-bold text-slate-900 dark:text-white">{signal.market} {isUS ? "🇺🇸" : "🇬🇧"}</div>
               </div>
             </div>
           </div>

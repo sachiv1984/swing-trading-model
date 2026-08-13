@@ -13,9 +13,9 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md">
+      <DialogContent className="bg-background border-border text-foreground max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-white">
+          <DialogTitle className="text-foreground">
             {isEdit ? `Edit ${entry.ticker}` : "Add Ticker to Watchlist"}
           </DialogTitle>
           <DialogDescription className="text-slate-600 dark:text-slate-400">

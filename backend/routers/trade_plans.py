@@ -100,6 +100,11 @@ class TradePlanCreate(BaseModel):
     # model_version/prompt_version), not user-edited before save.
     thesis_model_version: Optional[str] = None
     thesis_prompt_version: Optional[str] = None
+    # ST-01 (EPIC-01, v8.7, BLG-FEAT-84): optional manually-authored "what would
+    # prove this thesis wrong?" field, trade_plan.md §5.1
+    invalidation_condition: Optional[str] = None
+    # ST-03 (EPIC-01, v8.7, BLG-BE-95): AI-origin flag, trade_plan.md §10.5
+    is_ai_draft: Optional[bool] = None
 
 
 class TradePlanUpdate(BaseModel):
@@ -123,6 +128,8 @@ class TradePlanUpdate(BaseModel):
     trade_tags: Optional[List[str]] = None
     thesis_model_version: Optional[str] = None
     thesis_prompt_version: Optional[str] = None
+    invalidation_condition: Optional[str] = None
+    is_ai_draft: Optional[bool] = None
 
 
 class BulkTagRequest(BaseModel):
