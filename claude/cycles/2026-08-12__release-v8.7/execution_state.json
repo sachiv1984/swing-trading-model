@@ -67,6 +67,51 @@
         }
       }
     },
+    "EPIC-02": {
+      "status": "merged",
+      "branch": "exec/2026-08-12__release-v8.7/EPIC-02",
+      "pr_number": 1386,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-02.md",
+      "test_scenarios": [
+        "tests/test_position_trade_plan_link.py"
+      ],
+      "stories": {
+        "ST-07": {
+          "title": "Staging verification of ST-03's (v8.6) trade-plan-linkage enforcement, and legacy orphaned-row audit",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Head of Engineering; Data Model, Domain & Schema Owner",
+          "github_issue": 1370,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-02",
+          "commit_sha": "36d9550593eb424eb1803a1f623b4f9193d8f0d6",
+          "delegation_record_id": "DEL-20260813-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T08:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-12"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked_in_session",
+          "sign_off_record": {
+            "required_by": "Head of Engineering; Data Model, Domain & Schema Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "AC-01/AC-03 accepted via best-available-proxy code-path and startup-invocation evidence",
+              "AC-02 correctly left unproxied and disclosed as residual gap rather than asserted met"
+            ],
+            "cleared_utc": "2026-08-13T08:18:00Z"
+          },
+          "notes": "delegated_backend, unblocked in-session per Product Owner (agent-mediated) best-available-proxy authority recorded at sprint planning (sprint_planning_notes.md). AC-01 and AC-03 verified via code review/startup-invocation proxy; AC-02 (legacy-row live query) not proxyable -- BLG-BE-96 remains open, P0-escalation condition on the 11 known legacy rows carries forward unchanged. No source code changed; spec-only verification story."
+        }
+      }
+    },
     "EPIC-01": {
       "status": "merged",
       "branch": "exec/2026-08-12__release-v8.7/EPIC-01",
@@ -247,16 +292,17 @@
     "ST-04",
     "ST-05",
     "ST-06",
+    "ST-07",
     "ST-08",
     "ST-09"
   ],
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
-      "EPIC-01"
+      "EPIC-01",
+      "EPIC-02"
     ],
     "epics_pending": [
-      "EPIC-02",
       "EPIC-03",
       "EPIC-04",
       "EPIC-05",
