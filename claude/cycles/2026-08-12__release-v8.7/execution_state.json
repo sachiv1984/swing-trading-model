@@ -7,6 +7,117 @@
   "status": "Running",
   "last_updated_utc": "2026-08-13T08:05:00Z",
   "epics": {
+    "EPIC-07": {
+      "status": "done",
+      "branch": "exec/2026-08-12__release-v8.7/EPIC-07",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-07.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-18": {
+          "title": "CLAUDE.md §8 rule for shared JSON schema drift mid-sprint between sibling EPIC branches",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1381,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-07",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T13:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "CLAUDE.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "New CLAUDE.md §8 step 2b: shared-JSON-field schema-shape drift check. OPERATIONAL_GUIDE.md v4.159->v4.160, prompt_change_log.md appended. governance-drift skill self-consistency check found+fixed 1 self-drift (§14 self-row) before sign-off."
+        },
+        "ST-19": {
+          "title": "Roadmap Unlock Tracker — consolidated view of all gated features and their conditions",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1382,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-07",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T13:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/roadmap_unlock_tracker.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "claude/roadmap/* is outside Sprint Execution write scope -- tracker built at docs/product/ instead, current_roadmap.md §6 cross-reference flagged for next run roadmap/manage roadmap pass. Corrected stale SI-04 premise + 2 tracking gaps found (PO-02, PO-05)."
+        },
+        "ST-20": {
+          "title": "§13 policy question: preview analytics vs deterministic/non-predictive boundary",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1383,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-07",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T13:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/decisions--2026-08-12__release-v8.7--confidence-interval-preview-analytics-section13-policy.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "required_by": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "Determination: Permitted, with 4 conditions -- scoped away from genuinely forward-looking analytics (PS-03)"
+            ],
+            "cleared_utc": "2026-08-13T13:05:00Z"
+          },
+          "notes": "strategy_rules.md itself outside write scope -- recorded as linked policy note per the AC's own permitted alternative."
+        },
+        "ST-21": {
+          "title": "Canonical gated DataState variant and visual/interaction spec",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1384,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-07",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T13:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Pre-met: gated DataState variant already fully specified and approved at this cycle's own Design Gate (commit 31590f41, design_system.md v1.10), before Sprint Execution began. Verified by direct inspection, not assumed."
+        }
+      }
+    },
     "EPIC-01": {
       "status": "merged",
       "branch": "exec/2026-08-12__release-v8.7/EPIC-01",
@@ -186,7 +297,11 @@
     "ST-03",
     "ST-04",
     "ST-05",
-    "ST-06"
+    "ST-06",
+    "ST-18",
+    "ST-19",
+    "ST-20",
+    "ST-21"
   ],
   "open_escalations": [],
   "merge_gate": {
