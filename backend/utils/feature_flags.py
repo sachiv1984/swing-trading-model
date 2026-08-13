@@ -12,6 +12,14 @@ Usage:
 
 §13 compliance: feature flags control feature visibility only — they never
 substitute for human decision steps or bypass governance gates.
+
+ST-16 (BLG-OPS-140, EPIC-06, v8.7): `feature_flags.json` does not exist in
+this repo today (confirmed absent as of this note) but is a currently-flagged
+gap in docs/ops/render_build_deploy_path_filter_audit.md -- if it is ever
+added, add it to `.github/workflows/staging-deploy.yml`'s `paths:` list and
+production's Render dashboard Build Filters in the same commit, or a deploy
+may silently skip picking up changes to it. Read that doc before adding the
+file.
 """
 
 import os
