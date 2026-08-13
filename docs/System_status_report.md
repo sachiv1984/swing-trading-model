@@ -1,9 +1,37 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.28
-**Last Updated:** 2026-08-12 (delivery verification 2026-08-11__release-v8.6 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-08-12 (sprint close 2026-08-11__release-v8.6); prior — 2026-08-10 (sprint close 2026-08-08__release-v8.5); prior history retained — see prior entries in version control.
+**Version:** 4.29
+**Last Updated:** 2026-08-13 (sprint close 2026-08-12__release-v8.7); prior — 2026-08-12 (delivery verification 2026-08-11__release-v8.6 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-08-12 (sprint close 2026-08-11__release-v8.6); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-08-12__release-v8.7
+**Date:** 2026-08-13
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Thesis pre-mortem / invalidation-condition capture at trade-plan entry (Product Owner sign-off cleared on field placement); position-entry flow consumes `trade_plan_linked`/`trade_plan_id` (sonner toast on link); `is_ai_draft` flag persisted on `trade_plans` for AI-origin badges; SI-02 Gate Status card + Unrealised P&L card (`Reports.js`) light/dark theme fixes; 4 hardcoded dark-only modals converted to theme-aware tokens (`WatchlistModal.js`, `ExportModal.js`, `WidgetLibrary.js`; `PositionEntryModal.js` code-review-only — dead code, `BLG-FE-159` filed) | `docs/specs/frontend/pages/trade_plan.md#5.1`/`#10.5`/`#10.6`; `docs/specs/api_contracts/trade_plan_endpoints.md`; `docs/specs/data_model.md`; `docs/specs/frontend/design_system.md#Card Hierarchy`/`#Modal / Dialog Theming` | None new — `BLG-SPEC-129` (spec anchor correction) and `BLG-FE-159` (dead-code disclosure) filed |
+| EPIC-02 | Staging verification of v8.6's trade-plan-linkage enforcement, and legacy orphaned-row audit — completed via best-available-proxy code-path/startup-invocation evidence (no live staging/production DB access in this sandbox); AC-02 (legacy-row live query) not proxyable, disclosed residual gap | `docs/specs/data_model.md#DS-12` | None new — `BLG-BE-96` (P1, pre-existing v8.6 carryover) unchanged |
+| EPIC-03 | Playwright coverage for 5 of 7 remaining shadcn token call-site families (ring/accent/destructive/border new, popover cross-referenced); `card`/`secondary` have zero reachable live call sites, code-reviewed only (`BLG-FE-160` filed); end-to-end integration test for tax-year-boundary trade rows exercising the real `get_tax_year_report()` chain | `tests/e2e/shadcn-token-remaining-families.spec.js`; `tests/test_tax_year_boundary_completeness.py` | None new — `BLG-FE-160` filed |
+| EPIC-04 | Gemini/Claude API call sites wrapped in retry/backoff (extends the BLG-BE-57 pattern); N+1 query fix on `GET /positions` (prefetched-position param); SI-04 schema requirements pre-design confirmed retroactively (feature already shipped v7.7 — stale story, `BLG-BE-30` recommended for PO resolution) | `tests/test_gemini_claude_retry_backoff.py`; `tests/test_position_lifecycle_n_plus_1_fix.py`; `docs/design/2026-07-21__release-v7.7/si04-strategy-version-comparison/data_model_pre_design.md` | None new |
+| EPIC-05 | Prompt-injection resistance test suite for the Gemini thesis-generation endpoint (Cybersecurity & Trust Lead sign-off cleared; no system/user role separation found, `BLG-SEC-33` P3 filed); rate-limit audit refresh on unauthenticated/low-auth endpoints — no gap found | `tests/test_gemini_prompt_injection_resistance.py`; `docs/security/rate_limit_audit_2026-08-13.md` | None new — `BLG-SEC-33` filed |
+| EPIC-06 | Render Starter-tier headroom reassessment (Hold recommendation, proxy-derived); Render dashboard-only build/deploy path filter documentation refreshed to v1.2; `check_api_performance_baseline_drift.py`'s `find_missing_endpoints()` substring-match false negatives fixed (table-row/heading-only match; 3 genuine gaps grandfathered into `KNOWN_GAPS`) | `docs/ops/render_starter_tier_headroom_reassessment_2026-08-13.md`; `docs/ops/render_build_deploy_path_filter_audit.md`; `tests/test_api_performance_baseline_drift_check.py` | None new |
+| EPIC-07 | CLAUDE.md §8 shared-JSON-field schema-shape drift check between sibling EPIC branches; Roadmap Unlock Tracker (consolidated view of gated features and unlock conditions, `docs/product/`); §13 policy determination — preview analytics permitted with 4 conditions, scoped away from forward-looking analytics (Strategy Rules & System Intent Owner sign-off cleared); canonical gated `DataState` variant and visual/interaction spec (pre-met at this cycle's Design Gate) | `CLAUDE.md`; `docs/product/roadmap_unlock_tracker.md`; `docs/product/decisions/decisions--2026-08-12__release-v8.7--confidence-interval-preview-analytics-section13-policy.md`; `docs/specs/frontend/design_system.md` | None new |
+
+### Capabilities deferred or returned
+
+None — all 21 ST items reached `done`/`merged` status this sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: `qa_evidence_EPIC-01.md` through `qa_evidence_EPIC-07.md`
+- Deviations filed: None (0 spec deviations this sprint — `BLG-BE-96` is a pre-existing v8.6 carryover, unchanged)
+- Test scenarios referenced: `tests/e2e/reports-theme-fix-si02-unrealised-pnl.spec.js`; `tests/e2e/modal-theming-token-conversion.spec.js`; `tests/e2e/trade-plan-invalidation-link-toast-ai-badge.spec.js`; `tests/test_position_trade_plan_link.py`; `tests/e2e/shadcn-token-remaining-families.spec.js`; `tests/test_tax_year_boundary_completeness.py`; `tests/test_gemini_claude_retry_backoff.py`; `tests/test_position_lifecycle_n_plus_1_fix.py`; `tests/test_gemini_prompt_injection_resistance.py`; `tests/test_api_performance_baseline_drift_check.py`
 
 ---
 
