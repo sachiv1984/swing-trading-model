@@ -135,15 +135,30 @@ def _build_lifecycle_fields(position: dict) -> dict:
     }
 
 
-def refresh_position_lifecycle(position_id: str) -> Optional[dict]:
+def refresh_position_lifecycle(position_id: str, prefetched_position: Optional[dict] = None) -> Optional[dict]:
     """Compute and persist lifecycle state for one position.
 
     Returns the raw DB row after update, or None if position not found.
     State history is appended when state transitions occur.
+
+    ST-11 (BLG-BE-90, EPIC-04, v8.7 — N+1 query audit): `prefetched_position`
+    lets a caller that has already fetched the full position row (any
+    `SELECT *`-shaped dict carrying `position_state`/`state_history`/
+    `state_entered_at`, e.g. via `get_position_by_id()` or
+    `get_positions()`) pass it straight through, skipping the redundant
+    re-fetch this function otherwise always performed. Every current caller
+    of this function already has such a row in hand by the time it calls
+    in (see `get_lifecycle_fields_for_position()` below and its own
+    callers) — this was a clearly-attributable N+1/duplicate-query case,
+    not a broader refactor. If omitted, behaviour is unchanged: fetches the
+    row itself.
     """
-    raw = get_position_by_id(position_id)
-    if not raw:
-        return None
+    if prefetched_position is not None:
+        raw = prefetched_position
+    else:
+        raw = get_position_by_id(position_id)
+        if not raw:
+            return None
     pos = decimal_to_float(dict(raw))
 
     new_state = compute_position_state(pos)
@@ -184,7 +199,7 @@ def get_lifecycle_fields_for_position(position: dict) -> dict:
         return {"position_state": UNKNOWN, "state_entered_at": None, "days_in_state": 0}
 
     try:
-        updated = refresh_position_lifecycle(position_id)
+        updated = refresh_position_lifecycle(position_id, prefetched_position=position)
         if updated:
             updated = decimal_to_float(dict(updated))
             state_entered_at = updated.get("state_entered_at")
