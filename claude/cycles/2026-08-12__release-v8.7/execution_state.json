@@ -7,6 +7,66 @@
   "status": "Running",
   "last_updated_utc": "2026-08-13T08:05:00Z",
   "epics": {
+    "EPIC-03": {
+      "status": "done",
+      "branch": "exec/2026-08-12__release-v8.7/EPIC-03",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-03.md",
+      "test_scenarios": [
+        "tests/e2e/shadcn-token-remaining-families.spec.js",
+        "tests/test_tax_year_boundary_completeness.py"
+      ],
+      "stories": {
+        "ST-08": {
+          "title": "Playwright coverage for the remaining shadcn token call-site families left untested by v8.6/ST-04",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1371,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T09:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/shadcn-token-remaining-families.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "5 of 7 token families covered (ring/accent/destructive/border new; popover cross-referenced from ST-06/EPIC-01's existing SC-MTC-05/06 coverage). card/secondary have zero reachable live call sites in the app (verified via exhaustive grep + empirical tailwindcss cascade-override build) -- code-reviewed only, BLG-FE-160 filed. Playwright unsupported on this sandbox's OS (ubuntu26.04-x64) -- tests authored and statically verified (parses, lints consistent with precedent, every selector manually traced) but not executed locally; real-CI confirmation pending at PR open, per qa_evidence_EPIC-03.md Sandbox Execution Limitation note."
+        },
+        "ST-09": {
+          "title": "End-to-end integration assertion for tax-year boundary trade rows",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1372,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T09:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_tax_year_boundary_completeness.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "New test mocks get_trade_history_by_tax_year()'s DB cursor (not the function itself) with a fabricated boundary-day row, exercising the real get_tax_year_report() chain end-to-end. Run locally via backend/.venv/bin/python3 -m pytest -- 4/4 passing in the file, no regressions to the 3 pre-existing v8.6 tests."
+        }
+      }
+    },
     "EPIC-01": {
       "status": "merged",
       "branch": "exec/2026-08-12__release-v8.7/EPIC-01",
