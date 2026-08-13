@@ -81,10 +81,13 @@ def test_create_trade_plan_leaves_thesis_provenance_null_when_absent():
         database.create_trade_plan("portfolio-1", data)
 
     call = mock_cursor.execute.call_args_list[0]
-    params = call.args[1]
-    # thesis_model_version/thesis_prompt_version are the last two positional params
-    assert params[-2] is None
-    assert params[-1] is None
+    sql, params = call.args[0], call.args[1]
+    # ST-01/ST-03 (EPIC-01, v8.7) added invalidation_condition/is_ai_draft after
+    # thesis_model_version/thesis_prompt_version in the INSERT column list, so
+    # thesis provenance is now params[-4]/params[-3], not params[-2]/params[-1].
+    assert sql.index("thesis_model_version") < sql.index("invalidation_condition")
+    assert params[-4] is None
+    assert params[-3] is None
 
 
 def test_update_trade_plan_accepts_thesis_provenance_fields():
