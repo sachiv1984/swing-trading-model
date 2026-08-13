@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-12 (session — 2 new items added: BLG-FE-159, BLG-SPEC-129); prior — 2026-08-12 (Release Planning v8.7 — Release Slice section added, 21 items across 7 EPICs, marker RP:v8.7:2026-08-12__release-v8.7); prior — 2026-08-12 (lifecycle audit AUD-2026-08-12 — 1 new item added: BLG-OPS-142); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-13 (session — 1 new item added: BLG-SEC-33); prior — 2026-08-12 (session — 2 new items added: BLG-FE-159, BLG-SPEC-129); prior — 2026-08-12 (Release Planning v8.7 — Release Slice section added, 21 items across 7 EPICs, marker RP:v8.7:2026-08-12__release-v8.7); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -5131,6 +5131,29 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 **Problem:** The recurring dependency-vulnerability re-scan cadence (`BLG-SEC-15`) checks for vulnerabilities but not license compliance; no scan has confirmed all dependencies carry compatible licenses.
 **Scope:** Run a license compliance scan across `backend/requirements.txt` and `package.json`; document findings.
 **Acceptance Criteria:** Scan run; any incompatible license flagged and resolved; Cybersecurity & Trust Lead sign-off.
+
+---
+
+### BLG-SEC-33 — Add system/user role separation to Claude thesis-generation prompts
+**Priority:** P3 (Low)
+**Type:** Security
+**Owner:** Cybersecurity & Trust Lead; Backend Engineering Patterns Owner
+**Source:** ST-13 (`BLG-SEC-30`, EPIC-05, `2026-08-12__release-v8.7` — prompt-injection resistance test suite) — 2026-08-13
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** TBD
+
+**Problem**
+`gemini_service.py`'s `generate_full_plan()`/`generate_setup_thesis()` send the entire prompt (trusted "Rules" instructions plus untrusted user-supplied fields — `ticker`, `setup_type`, `signal_data`) as a single undifferentiated `role: "user"` message to Claude, with no `system` parameter. Best practice for LLM API calls handling untrusted input is to place trusted instructions in a `system` parameter, which model providers weight more heavily against user-message override attempts. Compounding factor: the `_FULL_PLAN_PROMPT` template places the untrusted field block (Ticker/Market/Setup type/etc.) *before* the trusted Rules section, not after. Confirmed via `tests/test_gemini_prompt_injection_resistance.py` (ST-13). No confirmed exploit found — impact is bounded, since the only "action" a successful injection could take is influencing the text of the requesting user's own trade-plan draft fields (which that user could type directly anyway); no cross-user data exposure, no privileged action, no secret ever present in the prompt to leak. This is a hardening recommendation, not a confirmed vulnerability, hence P3 rather than P1/P0.
+
+**Scope**
+- Move the "Rules" instruction block into a `system` parameter on the `anthropic.Anthropic().messages.create()` call
+- Reorder or otherwise clearly delimit the untrusted user-field block so it cannot be mistaken for part of the instruction set
+- Re-run `tests/test_gemini_prompt_injection_resistance.py` after the change, updating its architecture-finding assertions to reflect the new, hardened structure
+
+**Acceptance Criteria**
+- `generate_full_plan()` and `generate_setup_thesis()` pass their trusted instructions via the `system` parameter, not interleaved with untrusted user data in a single user message
+- `tests/test_gemini_prompt_injection_resistance.py`'s `test_no_system_role_separation_used` is updated to assert the new (hardened) behaviour
+- No regression to existing `generate_full_plan()`/`generate_setup_thesis()` test coverage
 
 ---
 

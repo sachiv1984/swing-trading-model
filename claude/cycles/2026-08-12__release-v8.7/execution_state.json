@@ -7,6 +7,84 @@
   "status": "Running",
   "last_updated_utc": "2026-08-13T08:05:00Z",
   "epics": {
+    "EPIC-05": {
+      "status": "done",
+      "branch": "exec/2026-08-12__release-v8.7/EPIC-05",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-05.md",
+      "test_scenarios": [
+        "tests/test_gemini_prompt_injection_resistance.py"
+      ],
+      "stories": {
+        "ST-13": {
+          "title": "Prompt-injection resistance test for the Gemini thesis-generation endpoint",
+          "classification": "delegated_qa",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1376,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T11:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_gemini_prompt_injection_resistance.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "required_by": "Cybersecurity & Trust Lead",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "No Python-level format-string injection vulnerability found",
+              "No system/user role separation used -- P3 hardening finding, BLG-SEC-33 filed",
+              "No secrets present in constructed prompt; no unsanitized-output XSS path in frontend"
+            ],
+            "cleared_utc": "2026-08-13T11:05:00Z"
+          },
+          "notes": "Best-available-proxy: no live staging/Claude access in this sandbox. White-box test suite confirms our own code handles adversarial input safely; genuine model-level resistance not confirmed (disclosed). 8/8 tests passing locally."
+        },
+        "ST-14": {
+          "title": "Rate-limit audit on unauthenticated/low-auth endpoints",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1377,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T11:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/security/rate_limit_audit_2026-08-13.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "required_by": "Cybersecurity & Trust Lead",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "3 new endpoints since 2026-07-29 refresh, all Bucket C3 (no external call) -- no gap",
+              "Unauthenticated (/health) and 5 LLM-calling endpoints re-confirmed rate-limited, unchanged since v7.8"
+            ],
+            "cleared_utc": "2026-08-13T11:05:00Z"
+          },
+          "notes": "Second refresh of the v7.8/v7.10-originated rate-limit audit chain. No gap found; no follow-up backlog item required."
+        }
+      }
+    },
     "EPIC-01": {
       "status": "merged",
       "branch": "exec/2026-08-12__release-v8.7/EPIC-01",
@@ -186,7 +264,9 @@
     "ST-03",
     "ST-04",
     "ST-05",
-    "ST-06"
+    "ST-06",
+    "ST-13",
+    "ST-14"
   ],
   "open_escalations": [],
   "merge_gate": {
