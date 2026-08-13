@@ -476,6 +476,14 @@ def get_positions_endpoint():
         for pos in positions:
             lifecycle = get_lifecycle_fields_for_position(pos)
             pos.update(lifecycle)
+            # ST-11 (BLG-BE-90, EPIC-04, v8.7): position_state/state_entered_at
+            # are overwritten above with the authoritative post-refresh
+            # values from `lifecycle`; state_history was only carried on
+            # `pos` as prefetch input for refresh_position_lifecycle() (see
+            # get_positions_with_prices()) and was never part of this
+            # endpoint's documented response contract -- drop it so the
+            # response shape is unchanged from before this optimisation.
+            pos.pop("state_history", None)
         return positions
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))

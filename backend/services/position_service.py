@@ -207,6 +207,19 @@ def get_positions_with_prices() -> List[Dict]:
         # Build position dict
         positions_list.append({
             "id": str(pos['id']),
+            # ST-11 (BLG-BE-90, EPIC-04, v8.7 — N+1 query audit): carry the
+            # raw lifecycle columns through so get_lifecycle_fields_for_position()
+            # (called once per position by the /positions endpoint) can pass
+            # this dict straight to refresh_position_lifecycle() as
+            # prefetched_position, instead of that function re-fetching the
+            # same row via get_position_by_id() per position (a
+            # clearly-attributable N+1: 1 list query + N redundant
+            # single-row re-fetches). Not part of the endpoint's own
+            # documented response contract -- popped back off before the
+            # API response is returned, see get_positions_endpoint().
+            "position_state": pos.get("position_state"),
+            "state_history": pos.get("state_history"),
+            "state_entered_at": pos.get("state_entered_at"),
             "ticker": display_ticker,
             "market": pos['market'],
             "initial_stop": round(initial_stop, 2) if initial_stop is not None else None,
