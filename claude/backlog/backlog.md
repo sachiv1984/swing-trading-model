@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-13 (groom backlog post-ship closure 2026-08-12__release-v8.7 — 19 shipped items archived (BLG-FEAT-84, BLG-FE-158, BLG-BE-95, BLG-FE-151, BLG-FE-152, BLG-FE-156, BLG-BE-96, BLG-FE-157, BLG-QA-148, BLG-BE-89, BLG-BE-90, BLG-SEC-30, BLG-SEC-31, BLG-OPS-139, BLG-OPS-140, BLG-OPS-142, BLG-GOV-303, BLG-GOV-305, BLG-SPEC-124 — see `backlog_archive.md`); 1 ephemeral Release Slice section removed (v8.7); Gate Field Normalisation: 0; Effort Day-Range Validation: PASS; Governance Prompt Duplicate Cross-Check: 19 raw candidates, 0 genuine (spot-reviewed — all false positives, same file touched for unrelated reasons); ID uniqueness: 5 genuine legacy duplicates in backlog_archive.md unchanged from prior run, 0 new); prior — 2026-08-13 (session — backlog audit for already-shipped items: 10 items archived as ✅ Complete; 6 items flagged partially-pre-met with narrowing notes for PO review); prior — 2026-08-13 (session — 2 new items added: BLG-FE-160, BLG-SEC-33, from sibling EPIC-03/EPIC-05 branches); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-13 (session — 1 new item added: BLG-GOV-307); prior — 2026-08-13 (groom backlog post-ship closure 2026-08-12__release-v8.7 — 19 shipped items archived, 1 ephemeral Release Slice section removed (v8.7), health=PASS — see `backlog_archive.md`); prior — 2026-08-13 (session — backlog audit for already-shipped items: 10 items archived as ✅ Complete; 6 items flagged partially-pre-met with narrowing notes for PO review); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -147,6 +147,31 @@ When a design-gate escalation changes an item's scope/AC/effort after the cycle'
 **Acceptance Criteria**
 - `prior_cycle` is written unconditionally by exactly one engine's terminal step, documented as that field's authoritative owner
 - Confirmed correct at the next cycle transition (reads the cycle that closed immediately prior, not an older one)
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-307 — Extract PVR and Skill-Silo metrics from last_rebalance_outcome prose into top-level state fields
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Governance-automation tooling review — 2026-08-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`.claude_current_state.json`'s `last_rebalance_outcome` field carries the Product Value Ratio (PVR) and Skill-Silo rolling-average readings that `roadmap_prompt.md` computes each rebalance — including Alert-tier thresholds (PVR < 0.30; a worsening 3-cycle Skill-Silo streak) that trigger mandatory pull-forward behaviour — but only as free text embedded in a long prose outcome summary. There is no direct field to read either number from; any automation wanting to trend-alert on these readings (e.g. a scheduled check that flags a new Alert-tier reading without waiting for the next `run roadmap` session) has to parse prose, which is brittle against wording changes. Raised alongside a governance-automation review that added `claude/schemas/state_field_owners.json`, `claude/schemas/execution_state.schema.json`, and three new hooks/workflows (branch `chore/governance-automation-tooling`) — this item is the one improvement from that review requiring an actual change to governance content (`claude/system/lifecycle_schema.json`, `claude/system/roadmap_prompt.md`), so it is filed here for the roadmap engine's own sanctioned process rather than made ad hoc.
+
+**Scope**
+- Add `last_rebalance_pvr` (number) and `last_skill_silo_rolling_avg` (number) top-level fields to `claude/system/lifecycle_schema.json`
+- Update `roadmap_prompt.md` to write both fields directly at the same STEP that currently composes `last_rebalance_outcome`'s prose summary, alongside the existing text (not a replacement — the prose stays, for narrative context)
+- Add both new fields to `claude/schemas/state_field_owners.json` (owner: `roadmap_prompt.md`, Phase 1) in the same change
+- Apply the standard governance file edit checklist per CLAUDE.md §6 (version bump, OPERATIONAL_GUIDE.md §14, prompt_change_log.md)
+
+**Acceptance Criteria**
+- `last_rebalance_pvr` and `last_skill_silo_rolling_avg` are present as top-level numeric fields in `.claude_current_state.json` after the next `run roadmap` invocation
+- Both fields are documented in `claude/schemas/state_field_owners.json`
+- `last_rebalance_outcome`'s existing prose summary is unchanged in content (fields are additive, not a replacement)
 - Head of Specs Team sign-off
 
 ---

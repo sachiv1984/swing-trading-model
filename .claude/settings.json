@@ -38,6 +38,10 @@
           {
             "type": "command",
             "command": "/root/swing-trading-model/.claude/hooks/check-pr-merge.sh"
+          },
+          {
+            "type": "command",
+            "command": "/root/swing-trading-model/.claude/hooks/check-governance-version-sync.sh"
           }
         ]
       }
@@ -49,6 +53,10 @@
           {
             "type": "command",
             "command": "/root/swing-trading-model/.claude/hooks/lint-feedback.sh"
+          },
+          {
+            "type": "command",
+            "command": "/root/swing-trading-model/.claude/hooks/check-state-field-ownership.sh"
           }
         ]
       }

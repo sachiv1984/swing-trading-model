@@ -1,0 +1,219 @@
+name: Execution State Schema Check
+
+# [GOVERNANCE] Automated companion to CLAUDE.md §8 step 2b (shared-JSON-field
+# schema-shape drift). Two jobs:
+#
+#   schema-validate: validates any changed claude/cycles/*/execution_state.json
+#   against claude/schemas/execution_state.schema.json. Type-checks known
+#   fields (catches a field silently being repurposed to a different JSON
+#   type) and strictly locks blocked_items/delegated_items entry shape — the
+#   one part of the schema precise enough to safely reject an unreviewed new
+#   shape (validated 0/73 against every historical execution_state.json; see
+#   claude/schemas/README.md). Blocking.
+#
+#   sibling-branch-shape-diff: the schema above can't see a brand-new field
+#   name that hasn't been added to it yet — which is exactly the §8 2b risk
+#   (two sibling EPIC branches in the same cycle independently add the same
+#   new field with different shapes; git merges cleanly because the additions
+#   usually land on non-overlapping lines). This job looks for *other open PRs
+#   from the same cycle* (branch exec/<cycle_id>/EPIC-*) and flags any field
+#   path both PRs added with a different JSON type. Advisory only — it never
+#   blocks merge, since cross-PR diffing is heuristic and false positives are
+#   plausible (e.g. two unrelated fields that happen to share a name).
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'claude/cycles/**/execution_state.json'
+      - 'claude/schemas/execution_state.schema.json'
+
+jobs:
+  schema-validate:
+    name: Schema Validate (execution_state.json)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install jsonschema
+        run: pip install jsonschema
+
+      - name: Validate changed execution_state.json files
+        run: |
+          python3 - <<'PYEOF'
+          import json
+          import subprocess
+          import sys
+          import jsonschema
+
+          base = subprocess.run(
+              ["git", "diff", "--name-only", "origin/${{ github.base_ref }}...HEAD"],
+              capture_output=True, text=True
+          ).stdout.splitlines()
+
+          targets = [
+              f for f in base
+              if f.startswith("claude/cycles/") and f.endswith("execution_state.json")
+          ]
+
+          if not targets:
+              print("No execution_state.json files changed — nothing to validate.")
+              sys.exit(0)
+
+          schema = json.load(open("claude/schemas/execution_state.schema.json"))
+
+          failed = False
+          for f in targets:
+              try:
+                  data = json.load(open(f))
+              except FileNotFoundError:
+                  continue  # file deleted in this PR
+              except json.JSONDecodeError as e:
+                  print(f"::error file={f}::Malformed JSON: {e}")
+                  failed = True
+                  continue
+              try:
+                  jsonschema.validate(data, schema)
+                  print(f"OK: {f}")
+              except jsonschema.ValidationError as e:
+                  path = " -> ".join(str(p) for p in e.absolute_path) or "(root)"
+                  print(f"::error file={f}::Schema violation at {path}: {e.message}")
+                  failed = True
+
+          if failed:
+              print(
+                  "\nSee claude/schemas/execution_state.schema.json's own "
+                  "description for what this checks and why. If this is a "
+                  "genuine new field/shape rather than a mistake, update the "
+                  "schema in the same PR and re-run the historical validation "
+                  "command in claude/schemas/README.md before merging."
+              )
+              sys.exit(1)
+          PYEOF
+
+  sibling-branch-shape-diff:
+    name: Sibling-Branch Shape Diff (advisory)
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Compare against sibling open PRs on the same cycle
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BRANCH: ${{ github.head_ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          python3 - <<'PYEOF'
+          import json
+          import os
+          import re
+          import subprocess
+
+          branch = os.environ["PR_BRANCH"]
+          m = re.match(r'^exec/([^/]+)/EPIC-\d+$', branch)
+          if not m:
+              print(f"Branch {branch} doesn't match exec/<cycle_id>/EPIC-xx — skipping (not a sprint EPIC branch).")
+              raise SystemExit(0)
+          cycle_id = m.group(1)
+
+          def leaf_paths(obj, prefix=""):
+              """Yield (dotted path, JSON type name) for every leaf/object-with-own-keys."""
+              if isinstance(obj, dict):
+                  for k, v in obj.items():
+                      p = f"{prefix}.{k}" if prefix else k
+                      yield p, "object" if isinstance(v, (dict, list)) else type(v).__name__
+                      yield from leaf_paths(v, p)
+              elif isinstance(obj, list):
+                  for i, v in enumerate(obj):
+                      p = f"{prefix}[{i}]"
+                      yield from leaf_paths(v, p)
+
+          def added_field_types(base_json, head_json):
+              base_paths = dict(leaf_paths(base_json)) if base_json else {}
+              head_paths = dict(leaf_paths(head_json)) if head_json else {}
+              return {p: t for p, t in head_paths.items() if p not in base_paths}
+
+          # This PR's own added fields, relative to its merge-base with main.
+          exec_state_path = f"claude/cycles/{cycle_id}/execution_state.json"
+          merge_base = subprocess.run(
+              ["git", "merge-base", "origin/main", "HEAD"], capture_output=True, text=True
+          ).stdout.strip()
+
+          def read_at(rev, path):
+              r = subprocess.run(["git", "show", f"{rev}:{path}"], capture_output=True, text=True)
+              if r.returncode != 0:
+                  return None
+              try:
+                  return json.loads(r.stdout)
+              except json.JSONDecodeError:
+                  return None
+
+          this_base = read_at(merge_base, exec_state_path)
+          this_head = read_at("HEAD", exec_state_path)
+          if this_head is None:
+              print("This PR doesn't touch execution_state.json for its cycle — skipping.")
+              raise SystemExit(0)
+          this_added = added_field_types(this_base, this_head)
+
+          if not this_added:
+              print("No new fields added by this PR — nothing to compare.")
+              raise SystemExit(0)
+
+          # Find open sibling PRs on the same cycle.
+          siblings_raw = subprocess.run(
+              ["gh", "pr", "list", "--repo", os.environ["REPO"], "--state", "open",
+               "--json", "number,headRefName", "--limit", "50"],
+              capture_output=True, text=True
+          ).stdout
+          siblings = json.loads(siblings_raw) if siblings_raw.strip() else []
+
+          this_pr_number = int(os.environ["PR_NUMBER"])
+          collisions = []
+          for s in siblings:
+              if s["number"] == this_pr_number:
+                  continue
+              sm = re.match(rf'^exec/{re.escape(cycle_id)}/EPIC-\d+$', s["headRefName"])
+              if not sm:
+                  continue
+              subprocess.run(["git", "fetch", "origin", s["headRefName"]], capture_output=True, text=True)
+              sib_head = read_at(f"origin/{s['headRefName']}", exec_state_path)
+              if sib_head is None:
+                  continue
+              sib_added = added_field_types(this_base, sib_head)
+              for path, this_type in this_added.items():
+                  if path in sib_added and sib_added[path] != this_type:
+                      collisions.append((path, this_type, sib_added[path], s["number"]))
+
+          if collisions:
+              lines = "\n".join(
+                  f"  {p}: this PR adds it as `{t1}`, PR #{n} adds it as `{t2}`"
+                  for p, t1, t2, n in collisions
+              )
+              print(
+                  "::warning::Possible shared-JSON-field schema-shape drift "
+                  "(CLAUDE.md §8 step 2b) — this PR and another open sibling "
+                  f"PR on the same cycle both add new field(s) with different "
+                  f"shapes:\n{lines}\n\nThis is advisory: confirm before "
+                  "merging whether these are genuinely the same field meaning "
+                  "two different things, or a coincidental name collision."
+              )
+          else:
+              print("No shape collisions found against open sibling PRs.")
+          PYEOF

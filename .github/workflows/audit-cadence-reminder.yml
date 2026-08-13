@@ -1,0 +1,108 @@
+name: Audit Cadence Reminder
+
+# [GOVERNANCE] claude/audit.py's own header states its cadence: "every 3
+# cycles" (see the "Governance — lifecycle audit" row in CLAUDE.md §1). That
+# cadence was tracked (completed_cycle_count vs last_audit_cycle_count in
+# .claude_current_state.json) but nothing ever prompted anyone to check the
+# gap — it relied on someone remembering to run `run audit`. Same shape of
+# problem sprint_close_reminder.yml was built to solve for sprint close being
+# skipped (BLG-GOV-17); this is that pattern applied to audit cadence.
+#
+# Runs on a schedule (not tied to any PR event, since audit due-ness is a
+# time/cycle-count fact, not a code-change fact) and opens/updates a single
+# tracking issue when the gap reaches the 3-cycle threshold. Idempotent: it
+# looks for an existing open issue with the `audit-due` label before creating
+# a new one, and closes that issue automatically once the gap clears.
+
+on:
+  schedule:
+    # Once a day — cheap to check, cadence is measured in cycles/days not
+    # minutes, and this only ever opens/updates one issue.
+    - cron: '17 6 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check-audit-cadence:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure audit-due label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "audit-due" --color "b60205" \
+            --description "claude/audit.py cadence (every 3 cycles) is overdue" \
+            --repo "${{ github.repository }}" 2>/dev/null || true
+
+      - name: Compute cadence gap and reconcile the reminder issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          python3 - <<'PYEOF'
+          import json
+          import os
+          import subprocess
+
+          state = json.load(open(".claude_current_state.json"))
+          completed = state.get("completed_cycle_count")
+          last_audit = state.get("last_audit_cycle_count")
+          last_audit_id = state.get("last_audit_id", "(unknown)")
+
+          if completed is None or last_audit is None:
+              print("completed_cycle_count or last_audit_cycle_count missing — skipping.")
+              raise SystemExit(0)
+
+          gap = completed - last_audit
+          repo = os.environ["REPO"]
+
+          existing_raw = subprocess.run(
+              ["gh", "issue", "list", "--repo", repo, "--label", "audit-due",
+               "--state", "open", "--json", "number", "--limit", "5"],
+              capture_output=True, text=True
+          ).stdout
+          existing = json.loads(existing_raw) if existing_raw.strip() else []
+
+          THRESHOLD = 3
+
+          if gap >= THRESHOLD:
+              body = (
+                  f"claude/audit.py's documented cadence is every {THRESHOLD} cycles. "
+                  f"`completed_cycle_count` is {completed}, `last_audit_cycle_count` "
+                  f"is {last_audit} (last run: {last_audit_id}) — a gap of {gap} "
+                  f"cycles.\n\nRun `run audit` to close this gap. This issue is "
+                  f"maintained automatically by "
+                  f".github/workflows/audit-cadence-reminder.yml and will close "
+                  f"itself once `last_audit_cycle_count` catches up."
+              )
+              if existing:
+                  num = existing[0]["number"]
+                  subprocess.run(
+                      ["gh", "issue", "comment", str(num), "--repo", repo, "--body", body],
+                      check=False
+                  )
+                  print(f"Updated existing audit-due issue #{num} (gap={gap}).")
+              else:
+                  subprocess.run(
+                      ["gh", "issue", "create", "--repo", repo,
+                       "--title", f"[GOVERNANCE] Audit overdue — {gap} cycles since {last_audit_id}",
+                       "--body", body, "--label", "audit-due"],
+                      check=False
+                  )
+                  print(f"Opened new audit-due issue (gap={gap}).")
+          else:
+              print(f"Audit cadence OK (gap={gap}, threshold={THRESHOLD}).")
+              for issue in existing:
+                  subprocess.run(
+                      ["gh", "issue", "close", str(issue["number"]), "--repo", repo,
+                       "--comment", f"Audit cadence gap now {gap} (< {THRESHOLD}) — closing."],
+                      check=False
+                  )
+                  print(f"Closed audit-due issue #{issue['number']}.")
+          PYEOF
