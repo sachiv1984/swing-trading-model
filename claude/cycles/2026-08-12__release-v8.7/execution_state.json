@@ -26,7 +26,7 @@
           "assigned_to": "engine",
           "github_issue": 1371,
           "branch": "exec/2026-08-12__release-v8.7/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "eb66c289115ff25b9d71e68175fbe52e6e8c860e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -49,7 +49,7 @@
           "assigned_to": "engine",
           "github_issue": 1372,
           "branch": "exec/2026-08-12__release-v8.7/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "eb66c289115ff25b9d71e68175fbe52e6e8c860e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -246,7 +246,9 @@
     "ST-03",
     "ST-04",
     "ST-05",
-    "ST-06"
+    "ST-06",
+    "ST-08",
+    "ST-09"
   ],
   "open_escalations": [],
   "merge_gate": {
