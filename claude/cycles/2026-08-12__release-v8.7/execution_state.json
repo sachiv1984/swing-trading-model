@@ -97,111 +97,6 @@
         }
       }
     },
-    "EPIC-03": {
-      "status": "merged",
-      "branch": "exec/2026-08-12__release-v8.7/EPIC-03",
-      "pr_number": 1387,
-      "pr_status": "merged",
-      "qa_signed_off": true,
-      "qa_evidence_log": "claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-03.md",
-      "test_scenarios": [
-        "tests/e2e/shadcn-token-remaining-families.spec.js",
-        "tests/test_tax_year_boundary_completeness.py"
-      ],
-      "stories": {
-        "ST-08": {
-          "title": "Playwright coverage for the remaining shadcn token call-site families left untested by v8.6/ST-04",
-          "classification": "autonomous",
-          "status": "done",
-          "assigned_to": "engine",
-          "github_issue": 1371,
-          "branch": "exec/2026-08-12__release-v8.7/EPIC-03",
-          "commit_sha": "eb66c289115ff25b9d71e68175fbe52e6e8c860e",
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": "2026-08-13T09:10:00Z",
-          "acceptance_verified": true,
-          "spec_references": [
-            "tests/e2e/shadcn-token-remaining-families.spec.js"
-          ],
-          "spec_reference_not_applicable": false,
-          "spec_reference_not_applicable_reason": null,
-          "deviations_filed": true,
-          "last_completed_substep": "3.1.A.commit",
-          "sign_off_record": null,
-          "notes": "5 of 7 token families covered (ring/accent/destructive/border new; popover cross-referenced from ST-06/EPIC-01's existing SC-MTC-05/06 coverage). card/secondary have zero reachable live call sites in the app (verified via exhaustive grep + empirical tailwindcss cascade-override build) -- code-reviewed only, BLG-FE-160 filed. Playwright unsupported on this sandbox's OS (ubuntu26.04-x64) -- tests authored and statically verified (parses, lints consistent with precedent, every selector manually traced) but not executed locally; real-CI confirmation pending at PR open, per qa_evidence_EPIC-03.md Sandbox Execution Limitation note."
-        },
-        "ST-09": {
-          "title": "End-to-end integration assertion for tax-year boundary trade rows",
-          "classification": "autonomous",
-          "status": "done",
-          "assigned_to": "engine",
-          "github_issue": 1372,
-          "branch": "exec/2026-08-12__release-v8.7/EPIC-03",
-          "commit_sha": "0d1357153c6e0e2a49e6382927beb115c5e38f95",
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": "2026-08-13T09:10:00Z",
-          "acceptance_verified": true,
-          "spec_references": [
-            "tests/test_tax_year_boundary_completeness.py"
-          ],
-          "spec_reference_not_applicable": false,
-          "spec_reference_not_applicable_reason": null,
-          "deviations_filed": true,
-          "last_completed_substep": "3.1.A.commit",
-          "sign_off_record": null,
-          "notes": "New test mocks get_trade_history_by_tax_year()'s DB cursor (not the function itself) with a fabricated boundary-day row, exercising the real get_tax_year_report() chain end-to-end. Run locally via backend/.venv/bin/python3 -m pytest -- 4/4 passing in the file, no regressions to the 3 pre-existing v8.6 tests."
-        }
-      }
-    },
-    "EPIC-02": {
-      "status": "merged",
-      "branch": "exec/2026-08-12__release-v8.7/EPIC-02",
-      "pr_number": 1386,
-      "pr_status": "merged",
-      "qa_signed_off": true,
-      "qa_evidence_log": "claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-02.md",
-      "test_scenarios": [
-        "tests/test_position_trade_plan_link.py"
-      ],
-      "stories": {
-        "ST-07": {
-          "title": "Staging verification of ST-03's (v8.6) trade-plan-linkage enforcement, and legacy orphaned-row audit",
-          "classification": "delegated_backend",
-          "status": "done",
-          "assigned_to": "Head of Engineering; Data Model, Domain & Schema Owner",
-          "github_issue": 1370,
-          "branch": "exec/2026-08-12__release-v8.7/EPIC-02",
-          "commit_sha": "36d9550593eb424eb1803a1f623b4f9193d8f0d6",
-          "delegation_record_id": "DEL-20260813-01",
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": "2026-08-13T08:20:00Z",
-          "acceptance_verified": true,
-          "spec_references": [
-            "docs/specs/data_model.md#DS-12"
-          ],
-          "spec_reference_not_applicable": false,
-          "spec_reference_not_applicable_reason": null,
-          "deviations_filed": true,
-          "last_completed_substep": "3.1.B.unblocked_in_session",
-          "sign_off_record": {
-            "required_by": "Head of Engineering; Data Model, Domain & Schema Owner",
-            "method": "agent_mediated",
-            "status": "cleared",
-            "findings_applied": [
-              "AC-01/AC-03 accepted via best-available-proxy code-path and startup-invocation evidence",
-              "AC-02 correctly left unproxied and disclosed as residual gap rather than asserted met"
-            ],
-            "cleared_utc": "2026-08-13T08:18:00Z"
-          },
-          "notes": "delegated_backend, unblocked in-session per Product Owner (agent-mediated) best-available-proxy authority recorded at sprint planning (sprint_planning_notes.md). AC-01 and AC-03 verified via code review/startup-invocation proxy; AC-02 (legacy-row live query) not proxyable -- BLG-BE-96 remains open, P0-escalation condition on the 11 known legacy rows carries forward unchanged. No source code changed; spec-only verification story."
-        }
-      }
-    },
     "EPIC-01": {
       "status": "merged",
       "branch": "exec/2026-08-12__release-v8.7/EPIC-01",
@@ -371,6 +266,194 @@
           "notes": "3 of 4 files (WatchlistModal.js, ExportModal.js, WidgetLibrary.js) converted + Playwright-covered. 4th (PositionEntryModal.js) converted via code review only -- component has no reachable mount point in the app (dead code); BLG-FE-159 filed per CLAUDE.md hard gate."
         }
       }
+    },
+    "EPIC-02": {
+      "status": "merged",
+      "branch": "exec/2026-08-12__release-v8.7/EPIC-02",
+      "pr_number": 1386,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-02.md",
+      "test_scenarios": [
+        "tests/test_position_trade_plan_link.py"
+      ],
+      "stories": {
+        "ST-07": {
+          "title": "Staging verification of ST-03's (v8.6) trade-plan-linkage enforcement, and legacy orphaned-row audit",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Head of Engineering; Data Model, Domain & Schema Owner",
+          "github_issue": 1370,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-02",
+          "commit_sha": "36d9550593eb424eb1803a1f623b4f9193d8f0d6",
+          "delegation_record_id": "DEL-20260813-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T08:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-12"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked_in_session",
+          "sign_off_record": {
+            "required_by": "Head of Engineering; Data Model, Domain & Schema Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "AC-01/AC-03 accepted via best-available-proxy code-path and startup-invocation evidence",
+              "AC-02 correctly left unproxied and disclosed as residual gap rather than asserted met"
+            ],
+            "cleared_utc": "2026-08-13T08:18:00Z"
+          },
+          "notes": "delegated_backend, unblocked in-session per Product Owner (agent-mediated) best-available-proxy authority recorded at sprint planning (sprint_planning_notes.md). AC-01 and AC-03 verified via code review/startup-invocation proxy; AC-02 (legacy-row live query) not proxyable -- BLG-BE-96 remains open, P0-escalation condition on the 11 known legacy rows carries forward unchanged. No source code changed; spec-only verification story."
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "merged",
+      "branch": "exec/2026-08-12__release-v8.7/EPIC-03",
+      "pr_number": 1387,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-03.md",
+      "test_scenarios": [
+        "tests/e2e/shadcn-token-remaining-families.spec.js",
+        "tests/test_tax_year_boundary_completeness.py"
+      ],
+      "stories": {
+        "ST-08": {
+          "title": "Playwright coverage for the remaining shadcn token call-site families left untested by v8.6/ST-04",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1371,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-03",
+          "commit_sha": "eb66c289115ff25b9d71e68175fbe52e6e8c860e",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T09:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/shadcn-token-remaining-families.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "5 of 7 token families covered (ring/accent/destructive/border new; popover cross-referenced from ST-06/EPIC-01's existing SC-MTC-05/06 coverage). card/secondary have zero reachable live call sites in the app (verified via exhaustive grep + empirical tailwindcss cascade-override build) -- code-reviewed only, BLG-FE-160 filed. Playwright unsupported on this sandbox's OS (ubuntu26.04-x64) -- tests authored and statically verified (parses, lints consistent with precedent, every selector manually traced) but not executed locally; real-CI confirmation pending at PR open, per qa_evidence_EPIC-03.md Sandbox Execution Limitation note."
+        },
+        "ST-09": {
+          "title": "End-to-end integration assertion for tax-year boundary trade rows",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1372,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-03",
+          "commit_sha": "0d1357153c6e0e2a49e6382927beb115c5e38f95",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T09:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_tax_year_boundary_completeness.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "New test mocks get_trade_history_by_tax_year()'s DB cursor (not the function itself) with a fabricated boundary-day row, exercising the real get_tax_year_report() chain end-to-end. Run locally via backend/.venv/bin/python3 -m pytest -- 4/4 passing in the file, no regressions to the 3 pre-existing v8.6 tests."
+        }
+      }
+    },
+    "EPIC-04": {
+      "status": "merged",
+      "branch": "exec/2026-08-12__release-v8.7/EPIC-04",
+      "pr_number": 1388,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-04.md",
+      "test_scenarios": [
+        "tests/test_gemini_claude_retry_backoff.py",
+        "tests/test_position_lifecycle_n_plus_1_fix.py"
+      ],
+      "stories": {
+        "ST-10": {
+          "title": "Extend the BLG-BE-57 retry/backoff audit pattern to Gemini API call sites",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1373,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-04",
+          "commit_sha": "ed0b101dd03485867268080382a7eb8a03e7a3fd",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T10:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_gemini_claude_retry_backoff.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "_call_claude() (sole Claude/'Gemini' call site) wrapped in retry_with_backoff. Retries APITimeoutError/APIConnectionError/RateLimitError/InternalServerError; 4xx not retried. 8/8 new tests passing locally."
+        },
+        "ST-11": {
+          "title": "N+1 query audit across trade/position list endpoints",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1374,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-04",
+          "commit_sha": "ed0b101dd03485867268080382a7eb8a03e7a3fd",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T10:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_position_lifecycle_n_plus_1_fix.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "GET /positions N+1 fixed: get_lifecycle_fields_for_position() no longer re-fetches via get_position_by_id() when caller already has the row (prefetched_position param). GET /trades audited, clean. 4/4 new tests passing locally, 91/91 regression tests passing."
+        },
+        "ST-12": {
+          "title": "SI-04 schema requirements pre-design",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1375,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-04",
+          "commit_sha": "ed0b101dd03485867268080382a7eb8a03e7a3fd",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T10:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-21__release-v7.7/si04-strategy-version-comparison/data_model_pre_design.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "STALE STORY: SI-04 already shipped v7.7 (4 releases ago), BLG-BE-30's schema question already answered at implementation time (no new schema). Retroactive confirmation doc produced per AC wording; BLG-BE-30 recommended for resolution by PO/groom backlog -- see qa_evidence_EPIC-04.md Stale Story Finding."
+        }
+      }
     }
   },
   "blocked_items": [],
@@ -385,6 +468,9 @@
     "ST-07",
     "ST-08",
     "ST-09",
+    "ST-10",
+    "ST-11",
+    "ST-12",
     "ST-15",
     "ST-16",
     "ST-17"
@@ -394,10 +480,10 @@
     "epics_merged": [
       "EPIC-01",
       "EPIC-02",
-      "EPIC-03"
+      "EPIC-03",
+      "EPIC-04"
     ],
     "epics_pending": [
-      "EPIC-04",
       "EPIC-05",
       "EPIC-06",
       "EPIC-07"
