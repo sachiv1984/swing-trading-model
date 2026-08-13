@@ -417,10 +417,11 @@ test('SC-CL-08: Checklist items are real checkboxes, reachable via Tab in list o
   await expect(signalItem).toHaveAttribute('tabindex', '0');
 
   // Real keyboard Tab traversal — focus the field immediately preceding the
-  // checklist in the form ("Early Exit Conditions"), then Tab into the first
+  // checklist in the form ("Invalidation Condition", ST-01/EPIC-01/v8.7 —
+  // inserted after "Early Exit Conditions"), then Tab into the first
   // checklist item, Tab again to reach the second item (list order), then
   // Shift+Tab back to confirm reverse order.
-  await page.getByPlaceholder(/Under what conditions would you exit/i).focus();
+  await page.getByPlaceholder(/What would prove this thesis wrong/i).focus();
   await page.keyboard.press('Tab');
   await expect(signalItem).toBeFocused();
 
@@ -441,7 +442,7 @@ test('SC-CL-09: Space key toggles the focused checklist item and aria-checked up
   const counter = page.getByText(/^\d+ \/ \d+ complete$/);
   await expect(counter).toHaveText('0 / 4 complete');
 
-  await page.getByPlaceholder(/Under what conditions would you exit/i).focus();
+  await page.getByPlaceholder(/What would prove this thesis wrong/i).focus();
   await page.keyboard.press('Tab');
   await expect(signalItem).toBeFocused();
 
@@ -467,7 +468,7 @@ test('SC-CL-10: Enter key toggles the focused checklist item and aria-checked up
 
   // Tab through the full list order to reach the 3rd item (stop_defined),
   // proving list-order traversal rather than jumping straight to the target.
-  await page.getByPlaceholder(/Under what conditions would you exit/i).focus();
+  await page.getByPlaceholder(/What would prove this thesis wrong/i).focus();
   await page.keyboard.press('Tab'); // -> signal_confirmed
   await expect(signalItem).toBeFocused();
   await page.keyboard.press('Tab'); // -> heat_limit_checked
