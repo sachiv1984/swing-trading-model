@@ -13,6 +13,12 @@ from pathlib import Path
 from typing import Optional
 
 CHANGELOG_PATH = Path(__file__).resolve().parent.parent.parent / "docs" / "product" / "changelog.md"
+# ST-16 (BLG-OPS-140, EPIC-06, v8.7): if you're changing what file this
+# service reads at runtime (or adding a similar runtime-read of a
+# non-code file elsewhere), check docs/ops/render_build_deploy_path_filter_audit.md
+# first -- Render's deploy path filters (one repo-visible, one
+# dashboard-only) can silently skip a redeploy for a file outside their
+# watch paths, with no signal visible anywhere in this repo.
 
 _VERSION_HEADING_RE = re.compile(r"^## (v\S+) — (.+)$", re.MULTILINE)
 _CHANGES_SHIPPED_RE = re.compile(r"^### Changes shipped\s*\n(.*?)(?=\n##|\Z)", re.MULTILINE | re.DOTALL)

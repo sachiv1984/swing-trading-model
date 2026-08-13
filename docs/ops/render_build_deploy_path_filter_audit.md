@@ -1,13 +1,17 @@
 **Owner:** FinOps & Resource Architect
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-07-31
-**Story:** ST-16 (BLG-OPS-124, EPIC-04, v8.0)
+**Version:** 1.2
+**Last Updated:** 2026-08-13 (ST-16, EPIC-06, v8.7, BLG-OPS-140 — onboarding note added, runtime-read inventory re-verified current); prior — 2026-07-31 (ST-16, EPIC-04, v8.0, BLG-OPS-124 — production filter conclusively confirmed via deploy trigger-source label)
+**Story:** ST-16 (BLG-OPS-140, EPIC-06, v8.7); originated ST-16 (BLG-OPS-124, EPIC-04, v8.0)
 
 ---
 
 # Render Build/Deploy Path Filter Audit
+
+## ⚠️ Read this before assuming a deploy will pick up a non-code file change
+
+**If you are adding or changing a file the running app reads at runtime that is *not* `.py`/`.js` source (a markdown file, CSV, JSON config, etc.) — stop and check this document's Runtime File-Read Inventory below, and confirm the file is covered by *both* deploy-trigger mechanisms, before assuming a normal push will redeploy it.** This has silently bitten this project twice already (`BLG-OPS-82`, then `BLG-OPS-90`/commit `e9c73f58`) — a docs-only change to a file the app reads at request time didn't trigger a redeploy, and the staleness wasn't visible anywhere in the repo. See "Two Distinct Path-Filter Mechanisms" immediately below for why a repo-only search cannot catch this on its own.
 
 ## Purpose
 
@@ -84,6 +88,19 @@ The explicit **"New commit via Auto-Deploy"** label confirms this was a genuine 
 - `docs/product/changelog.md` — confirmed covered by the explicit Included Paths entry (this was never in dispute; only the `backend/**` default-scope side needed the stronger check).
 
 **Result: no gap found, conclusively confirmed.** Production's filter correctly covers every currently-existing runtime-read file: `backend/**` via the Root Directory default (proven by the Auto-Deploy label on a real backend-only commit), and `docs/product/changelog.md` via the explicit Included Paths supplement. The `BLG-OPS-82`/`e9c73f58` fix is correctly configured. No dashboard change needed.
+
+---
+
+## Refresh (2026-08-13, ST-16/EPIC-06/v8.7, `BLG-OPS-140`)
+
+Re-ran the Runtime File-Read Inventory scan against the current codebase (`json.load(`/`.read_text()`/`open(` calls on non-`.py` files across `backend/`) to confirm no new runtime-read file has been added since the 2026-07-31 audit that would need a path-filter check:
+
+- `feature_flags.json` — confirmed still absent from the repo (`ls feature_flags.json` → no such file). The flagged gap remains purely hypothetical, unchanged.
+- `docs/product/changelog.md` readers — same 3 services as before (`changelog_service.py`, `ai_spend_trend_service.py`, `changelog_digest_service.py`), no new reader added.
+- `backend/tickers_full_list.csv` — same reader (`ticker_universe_service.py`), unchanged.
+- `current_portfolio.json` readers (`position_manager.py::load_portfolio()`, `portfolio_setup.py`, `live_trading_assistant.py`) — re-confirmed the specific functions that read the file remain CLI-only (`if __name__ == "__main__":` guarded), not part of the live app's request path. **Precision correction to the prior audit's phrasing:** `position_manager.py` *as a module* is in fact imported live (`routers/portfolio_risk.py` and `routers/pre_entry_validation.py` both do `from position_manager import check_market_regime`) — but `check_market_regime()` is a distinct function from `load_portfolio()`/`save_portfolio()` and never touches `current_portfolio.json`. The file-read itself is still CLI-only; only the "never imported into the live app" framing was too broad at the module level.
+
+**No new gap found.** Both filters (staging's repo-visible `paths:` list, production's dashboard Included Paths + Root Directory default) remain correctly configured for every file the running app actually reads.
 
 ---
 

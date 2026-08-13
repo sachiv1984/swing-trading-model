@@ -553,6 +553,96 @@
           "notes": "Second refresh of the v7.8/v7.10-originated rate-limit audit chain. No gap found; no follow-up backlog item required."
         }
       }
+    },
+    "EPIC-06": {
+      "status": "merged",
+      "branch": "exec/2026-08-12__release-v8.7/EPIC-06",
+      "pr_number": 1390,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-06.md",
+      "test_scenarios": [
+        "tests/test_api_performance_baseline_drift_check.py"
+      ],
+      "stories": {
+        "ST-15": {
+          "title": "Render Starter-tier headroom reassessment",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1378,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-06",
+          "commit_sha": "ce65227019c53d57ca3f7b38465a09a77b1605a7",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T12:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/render_starter_tier_headroom_reassessment_2026-08-13.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "required_by": "FinOps & Resource Architect",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "Best-available-proxy: no live Render dashboard access -- Hold recommendation based on endpoint growth shape, trade volume, latency trend, incident-free history"
+            ],
+            "cleared_utc": "2026-08-13T12:05:00Z"
+          },
+          "notes": "Proxy-derived, disclosed as such. No live CPU/memory/dyno-hour confirmation available in this sandbox."
+        },
+        "ST-16": {
+          "title": "Render dashboard-only build/deploy path filter — canonical documentation + onboarding note",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1379,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-06",
+          "commit_sha": "ce65227019c53d57ca3f7b38465a09a77b1605a7",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T12:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/render_build_deploy_path_filter_audit.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Refreshed existing v1.1 audit doc to v1.2 (runtime-read inventory re-verified current, no new gap). Added onboarding-style opening section + inline code-comment pointers in changelog_service.py and feature_flags.py."
+        },
+        "ST-17": {
+          "title": "Fix substring-match false negatives in check_api_performance_baseline_drift.py's find_missing_endpoints()",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1380,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-06",
+          "commit_sha": "ce65227019c53d57ca3f7b38465a09a77b1605a7",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T12:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_api_performance_baseline_drift_check.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Table-row/heading-only match requirement implemented. 3 genuine gaps surfaced (GET /trade-plans/tags, GET /portfolio/pre-entry-validation, PATCH /notifications/preferences), grandfathered into KNOWN_GAPS with tracking comments. 7/7 new tests passing, verified against real repo files."
+        }
+      }
     }
   },
   "blocked_items": [],
@@ -572,6 +662,9 @@
     "ST-12",
     "ST-13",
     "ST-14",
+    "ST-15",
+    "ST-16",
+    "ST-17",
     "ST-18",
     "ST-19",
     "ST-20",
@@ -584,10 +677,10 @@
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
-      "EPIC-05"
+      "EPIC-05",
+      "EPIC-06"
     ],
     "epics_pending": [
-      "EPIC-06",
       "EPIC-07"
     ],
     "all_merged": false

@@ -26,6 +26,18 @@ New entries must not be added to this list; they must be measured and added
 to api_performance_baseline.md instead (BLG-OPS-61 tracks closing the
 pre-existing gap list itself).
 
+ST-17 (BLG-OPS-142, EPIC-06, v8.7): "documented" requires the endpoint to
+appear in a markdown table row or a heading line -- a bare whole-document
+substring match previously counted a passing prose mention (no adjacent
+measurement row or dedicated heading) as sufficient, producing false
+negatives (the script wrongly concluded an endpoint WAS documented). Real
+case: `GET /trade-plans/tags` appeared only in one explanatory sentence
+about a different endpoint ("...consistent with `GET /trade-plans/tags`
+(existing pattern)") with no table row or heading of its own -- the old
+substring check treated this as "documented"; it never actually had a
+recorded measurement (tracked separately as `BLG-OPS-135`, grandfathered
+into KNOWN_GAPS below pending that item's own resolution).
+
 Usage:
     python3 scripts/check_api_performance_baseline_drift.py
 
@@ -62,7 +74,31 @@ KNOWN_GAPS = {
     "POST /positions/{id}/refresh-state",
     "POST /settings",
     "POST /signals/rebalance-exit",
+    # Newly-surfaced by the ST-17 (BLG-OPS-142, v8.7) stricter table-row/
+    # heading-only check -- previously false-cleared by the old bare
+    # substring match against a passing prose mention with no measurement
+    # row or dedicated heading of its own. Grandfathered per BLG-OPS-142's
+    # own scope; not to be re-added if ever removed by an actual fix.
+    "GET /trade-plans/tags",  # tracked under BLG-OPS-135
+    "GET /portfolio/pre-entry-validation",
+    "PATCH /notifications/preferences",  # sibling GET /notifications/preferences IS properly documented (§6.1); PATCH is not
 }
+
+
+def _is_documented(endpoint: str, baseline_lines: list[str]) -> bool:
+    """An endpoint counts as documented only if it appears in a markdown
+    table row (line starts with `|`) or a heading line (starts with `#`) --
+    not merely mentioned in passing prose (BLG-OPS-142). Word-boundary
+    matched so e.g. "GET /positions" does not match inside a table row or
+    heading for "GET /positions/{id}"."""
+    pattern = re.compile(rf"(?<![\w/{{}}-]){re.escape(endpoint)}(?![\w/{{}}-])")
+    for line in baseline_lines:
+        stripped = line.strip()
+        if not stripped or stripped[0] not in "|#":
+            continue
+        if pattern.search(stripped):
+            return True
+    return False
 
 
 def find_missing_endpoints(openapi_path: Path, baseline_path: Path) -> list[str]:
@@ -76,8 +112,11 @@ def find_missing_endpoints(openapi_path: Path, baseline_path: Path) -> list[str]
             if method.lower() in HTTP_METHODS:
                 endpoints.add(f"{method.upper()} {norm_path}")
 
-    baseline_text = baseline_path.read_text()
-    return sorted(e for e in endpoints if e not in baseline_text and e not in KNOWN_GAPS)
+    baseline_lines = baseline_path.read_text().splitlines()
+    return sorted(
+        e for e in endpoints
+        if e not in KNOWN_GAPS and not _is_documented(e, baseline_lines)
+    )
 
 
 if __name__ == "__main__":
