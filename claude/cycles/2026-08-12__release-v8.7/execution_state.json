@@ -25,7 +25,7 @@
           "assigned_to": "Head of Engineering; Data Model, Domain & Schema Owner",
           "github_issue": 1370,
           "branch": "exec/2026-08-12__release-v8.7/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "36d9550593eb424eb1803a1f623b4f9193d8f0d6",
           "delegation_record_id": "DEL-20260813-01",
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -231,7 +231,8 @@
     "ST-03",
     "ST-04",
     "ST-05",
-    "ST-06"
+    "ST-06",
+    "ST-07"
   ],
   "open_escalations": [],
   "merge_gate": {
