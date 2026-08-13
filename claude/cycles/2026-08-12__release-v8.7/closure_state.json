@@ -1,0 +1,30 @@
+{
+  "cycle_id": "2026-08-12__release-v8.7",
+  "release": "v8.7",
+  "status": "Closed",
+  "mode": "standard",
+  "dry_run": false,
+  "started_utc": "2026-08-13T00:00:00Z",
+  "last_updated_utc": "2026-08-13T03:00:00Z",
+  "steps": {
+    "preflight": "pass",
+    "step_0_context": "pass",
+    "step_1_changelog": "pass",
+    "step_1_5_changelog_digest": "pass",
+    "step_2_roadmap": "pass",
+    "step_3_backlog": "pass",
+    "step_4_scope_decisions": "pass",
+    "step_5_deviation_compliance": "pass",
+    "step_6_operational_docs": "pass",
+    "step_7_specs_index": "pass",
+    "step_8_lessons_learnt": "pass",
+    "step_8_5_lessons_closure": "pass",
+    "step_9_closure_record": "pass",
+    "step_10_global_state": "pass",
+    "step_11_manage_roadmap": "complete",
+    "step_12_groom_backlog": "complete",
+    "step_12_5_ideas_housekeeping": "complete",
+    "step_13_commit": "pass"
+  },
+  "closure_status": "Closed_with_actions"
+}

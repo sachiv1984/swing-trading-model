@@ -2,7 +2,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Version:** 3.1
-**Last Updated:** 2026-08-12 (ideas_housekeeping — post-ship closure 2026-08-11__release-v8.6 — 43 rows archived: 1 Promoted-Added, 42 Promoted-Backlog; 1 row kept — `IDEA-challenger-20260809-02`, Rejected but present in `rejected_but_strong.md`, revival conditions may be met); prior — 2026-08-11 (roadmap rebalance 2026-08-11__scheduled — window `IW-20260809-01` closed: 39 Promoted-Backlog [36 standalone + 3 consolidated pairs], 1 Promoted-Added [resolved directly], 1 Rejected — 0 rows remain open); prior — 2026-08-09 (idea intake window IW-20260809-01 closed — 44 new rows appended, all Status: Submitted, 0 parked rows carried, register held 0 active rows at window open); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-13 (ideas_housekeeping — post-ship closure 2026-08-12__release-v8.7 — 0 rows archived; register held 1 row at run start, `IDEA-challenger-20260809-02`, Rejected but present in `rejected_but_strong.md` — confirmed still Keep per §6.2, not terminal); prior — 2026-08-12 (ideas_housekeeping — post-ship closure 2026-08-11__release-v8.6 — 43 rows archived: 1 Promoted-Added, 42 Promoted-Backlog); prior — 2026-08-11 (roadmap rebalance 2026-08-11__scheduled — window `IW-20260809-01` closed: 39 Promoted-Backlog [36 standalone + 3 consolidated pairs], 1 Promoted-Added [resolved directly], 1 Rejected — 0 rows remain open); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # Ideas Register

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-13 (session — backlog audit for already-shipped items: 10 items archived as ✅ Complete (BLG-BE-30, BLG-GOV-290, BLG-SPEC-62, BLG-GOV-154, BLG-SPEC-68, BLG-OPS-104, BLG-GOV-143, BLG-GOV-137, BLG-SEC-14, BLG-SPEC-111 — see `backlog_archive.md`); 6 items flagged partially-pre-met with narrowing notes for PO review (BLG-OPS-76, BLG-GOV-29, BLG-FEAT-34, BLG-FEAT-35, BLG-OPS-51, BLG-OPS-53)); prior — 2026-08-13 (session — 2 new items added: BLG-FE-160, BLG-SEC-33, from sibling EPIC-03/EPIC-05 branches); prior — 2026-08-12 (session — 2 new items added: BLG-FE-159, BLG-SPEC-129); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-13 (groom backlog post-ship closure 2026-08-12__release-v8.7 — 19 shipped items archived (BLG-FEAT-84, BLG-FE-158, BLG-BE-95, BLG-FE-151, BLG-FE-152, BLG-FE-156, BLG-BE-96, BLG-FE-157, BLG-QA-148, BLG-BE-89, BLG-BE-90, BLG-SEC-30, BLG-SEC-31, BLG-OPS-139, BLG-OPS-140, BLG-OPS-142, BLG-GOV-303, BLG-GOV-305, BLG-SPEC-124 — see `backlog_archive.md`); 1 ephemeral Release Slice section removed (v8.7); Gate Field Normalisation: 0; Effort Day-Range Validation: PASS; Governance Prompt Duplicate Cross-Check: 19 raw candidates, 0 genuine (spot-reviewed — all false positives, same file touched for unrelated reasons); ID uniqueness: 5 genuine legacy duplicates in backlog_archive.md unchanged from prior run, 0 new); prior — 2026-08-13 (session — backlog audit for already-shipped items: 10 items archived as ✅ Complete; 6 items flagged partially-pre-met with narrowing notes for PO review); prior — 2026-08-13 (session — 2 new items added: BLG-FE-160, BLG-SEC-33, from sibling EPIC-03/EPIC-05 branches); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -17,38 +17,6 @@
 > **Ephemeral sections** (Release Slice tables, Test Scenario Gap sections, and "Returned to Backlog" sections appended by governance engines) are temporary. They must be removed during the next `groom backlog` run after the cycle closes. Any still-open items within them must be promoted to the appropriate §1–§8 type section before the ephemeral section is removed.
 
 *Completed and killed items are recorded in `claude/backlog/backlog_archive.md`.*
-
----
-
-## Release Slice — v8.7 (ephemeral — remove at next `groom backlog` after cycle closes)
-
-<!-- release-plan-marker: RP:v8.7:2026-08-12__release-v8.7 -->
-
-21 items committed to `2026-08-12__release-v8.7`. Full acceptance criteria: `claude/cycles/2026-08-12__release-v8.7/stage4_backlog_slice.md`.
-
-| ST | Source | Epic | Priority | Effort |
-|----|--------|------|----------|--------|
-| ST-01 | BLG-FEAT-84 | EPIC-01 | P3 | M |
-| ST-02 | BLG-FE-158 | EPIC-01 | P3 | XS |
-| ST-03 | BLG-BE-95 | EPIC-01 | P3 | S |
-| ST-04 | BLG-FE-151 | EPIC-01 | P3 | S |
-| ST-05 | BLG-FE-152 | EPIC-01 | P3 | S |
-| ST-06 | BLG-FE-156 | EPIC-01 | P2 | S |
-| ST-07 | BLG-BE-96 | EPIC-02 | P1 | S |
-| ST-08 | BLG-FE-157 | EPIC-03 | P2 | S |
-| ST-09 | BLG-QA-148 | EPIC-03 | P3 | XS |
-| ST-10 | BLG-BE-89 | EPIC-04 | P2 | M |
-| ST-11 | BLG-BE-90 | EPIC-04 | P2 | M |
-| ST-12 | BLG-BE-30 | EPIC-04 | P2 | S |
-| ST-13 | BLG-SEC-30 | EPIC-05 | P2 | M |
-| ST-14 | BLG-SEC-31 | EPIC-05 | P2 | M |
-| ST-15 | BLG-OPS-139 | EPIC-06 | P2 | S |
-| ST-16 | BLG-OPS-140 | EPIC-06 | P2 | S |
-| ST-17 | BLG-OPS-142 | EPIC-06 | P2 | S |
-| ST-18 | BLG-GOV-290 | EPIC-07 | P2 | S |
-| ST-19 | BLG-GOV-303 | EPIC-07 | P2 | M |
-| ST-20 | BLG-GOV-305 | EPIC-07 | P2 | S |
-| ST-21 | BLG-SPEC-124 | EPIC-07 | P2 | M |
 
 ---
 
@@ -931,108 +899,6 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 ---
 
 
-### BLG-FE-151 — SI-02 Gate Status section (Reports.js) hardcodes dark-theme-only structural styling
-
-**Priority:** P3 (Low)
-**Type:** Frontend / UX
-**Owner:** Head of UX & Design
-**Source:** ST-18 (EPIC-05, 2026-08-08__release-v8.5) — Reports page information hierarchy review
-
-**Problem**
-`SI02GateStatusSection` (`src/pages/Reports.js` lines 429-556, `BLG-FEAT-71`, v6.8) hardcodes its structural styling dark-only — container (`bg-slate-800/50 border-slate-700/50`), toggle hover (`hover:bg-slate-700/20`), heading (`text-white`), condition-badge row backgrounds (`bg-slate-800/50 border-slate-700/50`, ×3), value text (`text-white`, `text-slate-300`), loading skeleton (`bg-slate-800/50`) — with no `dark:` pairing anywhere, unlike the rest of `Reports.js` (44 `dark:` pairs elsewhere in the same file for secondary-text tokens). In a light-themed session this renders as a dark panel with light text inside an otherwise light-themed page. Same recurring defect class as `BLG-FE-87/88/95/125/129` and `BLG-FE-150`.
-
-**Scope**
-- Convert the listed classes to explicit light+dark Tailwind pairs, matching the token conventions already used elsewhere on the same page (e.g. `text-slate-600 dark:text-slate-400` for secondary text)
-
-**Acceptance Criteria**
-- `SI02GateStatusSection` renders correctly in both light and dark theme with no hardcoded dark-only structural class remaining
-- No visual regression to the section's dark-theme appearance
-
----
-
-### BLG-FE-152 — Unrealised P&L card (Reports.js) hardcodes dark-theme-only structural styling
-
-**Priority:** P3 (Low)
-**Type:** Frontend / UX
-**Owner:** Head of UX & Design
-**Source:** ST-18 (EPIC-05, 2026-08-08__release-v8.5) — out-of-scope observation, same root cause as BLG-FE-151, found while reviewing the adjacent SI-02 section
-
-**Problem**
-The Unrealised P&L card immediately preceding the SI-02 Gate Status section (`src/pages/Reports.js` lines 401-414) has the identical structural defect — hardcoded `border-slate-600/50 bg-slate-800/30` container and `text-slate-300` heading, no `dark:` pairing — while its own body text correctly uses the `dark:` pair. Predates `BLG-FEAT-71`/SI-02 (unrelated feature), so filed separately from `BLG-FE-151` rather than folded into it.
-
-**Scope**
-- Convert the container/heading classes to explicit light+dark Tailwind pairs, consistent with the fix applied for `BLG-FE-151`
-
-**Acceptance Criteria**
-- Unrealised P&L card renders correctly in both light and dark theme with no hardcoded dark-only structural class remaining
-
----
-
-### BLG-FE-156 — Convert 4 hardcoded dark-only modals to theme-aware tokens
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** ST-07 (EPIC-03, `2026-08-11__release-v8.6` design gate) — follow-up implementation item recommended by `BLG-FE-150`'s design decision, filed by PMO Lead — 2026-08-11
-**Effort:** S (~0.5-1d)
-**Provisional-Target:** v8.7 or later (see sequencing note below)
-**Depends on:** `BLG-FE-147` (this same v8.6 cycle) — see sequencing note
-
-**Problem**
-`BLG-FE-150`'s v8.6 design gate decision (`docs/design/2026-08-11__release-v8.6/modal-light-theme-support/decision_record.md`) confirmed that dark-only modal styling is unintentional legacy drift, not an intentional design choice — modals/dialogs should be theme-aware like the rest of the app, matching `CommandDialog`'s already-correct pattern (`src/components/ui/command.js`). 4 components still hardcode `bg-slate-900 ... text-white` unconditionally, regardless of the app's active theme: `WatchlistModal.js`, `ExportModal.js`, `PositionEntryModal.js`, `WidgetLibrary.js` (found at the v8.5 ST-13 dark/light contrast audit). The decision itself does not ship a fix — this item is that fix.
-
-**Scope**
-- Convert the 4 named components' `DialogContent` styling from hardcoded `bg-slate-900`/`text-white` to the shared `bg-background`/`text-foreground` (or `bg-popover`/`text-popover-foreground` where a popover-elevation surface is more appropriate) token set, per `design_system.md`'s "Modal / Dialog Theming" subsection (v1.9)
-
-**Acceptance Criteria**
-- All 4 named components render correctly in both light and dark theme, using the shared token set instead of hardcoded dark-only classes
-- No visual regression to existing dark-theme appearance — Playwright coverage or staging sign-off per `CLAUDE.md`'s frontend-visible-change rule
-
-**Sequencing note:** should not be scheduled before `BLG-FE-147` (this same v8.6 cycle) ships — `bg-popover`/`text-popover-foreground` are among the tokens `BLG-FE-147` registers in `tailwind.config.js`. Building this fix first would silently reproduce the same "empty CSS rule" failure mode `BLG-FE-147` exists to close.
-
----
-
-### BLG-FE-157 — Playwright coverage for the remaining shadcn token call-site families left untested by v8.6/ST-04
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** EPIC-03/ST-04 (`2026-08-11__release-v8.6`) — 2026-08-11
-**Effort:** S (~0.5-1d)
-**Provisional-Target:** v8.7 or later
-
-**Problem**
-`BLG-FE-147`/ST-04 (v8.6) registered 9 previously-unregistered shadcn tokens (`card`, `popover`, `primary`, `secondary`, `accent`, `destructive`, `border`, `input`, `ring`) in `tailwind.config.js`, verified via a real `tailwindcss` build that all in-scope utility classes now compile to non-empty rules. Per CLAUDE.md's frontend-visible-change rule, Playwright coverage or staging sign-off is required per confirmed-affected call site. Only one call-site family (the Auto-refresh Switch's `bg-primary`/`bg-input`, `tests/e2e/system-status.spec.js` SC-SS-08a/b) received Playwright coverage in that story — the remaining families (`card`, `popover`, `secondary`, `accent`, `destructive`, `border`, `ring`) were verified only by the tailwindcss build check, not by a rendering regression test. This mirrors the v8.5/ST-06 → `BLG-FE-148` precedent for the analogous `-muted` token gap.
-
-**Scope**
-- Add Playwright coverage for at least one confirmed-affected live call site per remaining token family: `card`/`card-foreground` (e.g. `SectorRegimeTrend.js` on Risk Dashboard), `popover`/`popover-foreground`, `secondary`/`secondary-foreground` (e.g. `Badge` secondary variant), `accent`/`accent-foreground`, `destructive`/`destructive-foreground`, `border`, `ring`
-
-**Acceptance Criteria**
-- Each of `card`, `popover`, `secondary`, `accent`, `destructive`, `border`, `ring` has at least one Playwright test asserting the real post-fix computed colour/background at a confirmed-affected live call site
-- Tests pass in real CI (not merely sandboxed authoring-time review)
-
----
-
-### BLG-FE-158 — Consume `trade_plan_linked`/`trade_plan_id` in the position-entry flow
-**Priority:** P3 (Low)
-**Type:** Frontend / UX
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** Agent-mediated Product Owner review of PR #1362 (ST-03, EPIC-02, v8.6) — 2026-08-12
-**Effort:** XS (~<0.5d)
-**Provisional-Target:** TBD
-**Renumbering note (2026-08-12):** filed on the EPIC-02 branch as `BLG-FE-157`, before EPIC-03's own independent `BLG-FE-157` (Playwright coverage for the remaining shadcn token families, filed 2026-08-11) merged to `main` first via PR #1359 — exactly the identical-ID-masks-differing-content collision `CLAUDE.md` §8.2a exists to catch, this time on a backlog item ID rather than a document version number. Renumbered to the next free ID at cross-EPIC merge-conflict resolution; the two items are unrelated and neither should be read as superseding the other.
-
-**Problem**
-ST-03 added `trade_plan_linked` (boolean) and `trade_plan_id` (string|null) to `POST /portfolio/position`'s response, intended to surface the auto-link outcome to the user at the point of entry (per the story's own "surface this rather than silently proceeding unlinked" framing, tracing back to `docs/specs/frontend/pages/trade_plan.md` §10's default-path intent). An agent-mediated Product Owner review of the resulting PR checked `src/pages/TradeEntry.js` directly and found these two response fields are not consumed anywhere in the frontend — the existing unlinked-plan banner only fires from pre-submission state (before the API call), not from the actual auto-match outcome the backend now returns. The backend capability shipped; the "surface it to the user" intent it exists to serve did not.
-
-**Scope**
-- In `TradeEntry.js`'s post-submit handling, read `trade_plan_linked`/`trade_plan_id` from the `POST /portfolio/position` response
-- Surface the outcome to the user (e.g. a confirmation toast/banner naming the linked plan when `trade_plan_linked: true`, or an explicit "no matching plan found — logged unlinked" notice when `false`) — exact treatment is a frontend/UX design call, not specified here
-
-**Acceptance Criteria**
-- Position-entry flow visibly confirms (or flags the absence of) trade-plan linkage using the response fields ST-03 already ships
-- Playwright coverage or recorded staging sign-off per `CLAUDE.md`'s frontend-visible-change rule
-
----
-
 ### BLG-FE-159 — PositionEntryModal.js has no reachable mount point — resolve dead-code status or restore Playwright coverage
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
@@ -1527,81 +1393,6 @@ No per-request trace ID propagation exists across routers/services. No incident 
 - A successful or failed `POST /digest/si05/send` invocation's Render log line includes an elapsed-time value
 - Verified against the next real invocation (the following scheduled Sunday 19:00 UTC cron run, or a manual `workflow_dispatch` trigger) — confirm the new field appears in the captured log
 - `docs/ops/api_performance_baseline.md` §36 updated with real log-derived timing once available, superseding the interim single-sample proxy measurement
-
----
-
-### BLG-BE-95 — Persist isAiDraft flag on trade_plans for AI-origin display badges
-**Priority:** P3 (Low) | **Type:** Backend Engineering | **Owner:** Head of Engineering | **Source:** ST-02 (EPIC-01, v8.6, BLG-FEAT-56) — discovered implementing the Setup Thesis Digest panel's "AI draft" badge requirement — 2026-08-11 | **Effort:** S (~0.5-1d) | **Provisional-Target:** TBD
-
-**Problem**
-`TradePlan.js`'s `isAiDraft` flag (tracks whether narrative fields were AI-generated via the "Improve with AI" flow, §5b) is ephemeral client-side form state only (`useState`, cleared on manual edit) — it is never persisted to the `trade_plans` table. This blocks any read-time consumer from showing an "AI draft" badge based on the plan's actual origin, since the flag doesn't survive past the creation-form session. The v8.6 Setup Thesis Digest panel (`trade_plan.md` §10.5, `TradeEntry.js`) had to omit its spec'd "AI draft" badge for exactly this reason — no server-side field exists to read it back from.
-
-**Scope**
-- Add an `is_ai_draft` boolean column to `trade_plans` (default `false`)
-- Set `true` when a narrative field is populated via "Improve with AI" and not yet manually edited, mirroring the existing client-side clearing rule (`isAiDraft` reset on `setNarrativeField`)
-- Wire the Setup Thesis Digest panel (and any other future read surface) to consume it
-
-**Acceptance Criteria**
-- `trade_plans.is_ai_draft` persists across sessions and reflects the same origin/clearing semantics as the current client-only flag
-- Setup Thesis Digest panel shows the "AI draft" badge per `ux_spec.md` §2 when `is_ai_draft` is true
-
----
-
-### BLG-BE-96 — Staging verification of ST-03's trade-plan-linkage enforcement, and legacy orphaned-row audit against the new CHECK constraint
-**Priority:** P1 (High) — elevated from P2, 2026-08-12
-**Type:** Backend Engineering / Data Integrity
-**Owner:** Head of Engineering; Data Model, Domain & Schema Owner
-**Source:** Agent-mediated Data Model, Domain & Schema Owner review of ST-03 (BLG-BE-91, EPIC-02, v8.6) — 2026-08-12
-**Effort:** S (~0.5-1d)
-**Provisional-Target:** Next sprint cycle (v8.7 or the cycle immediately following v8.6) — mandatory per the Product Owner risk-acceptance condition below; do not defer further
-
-**Priority elevation note (2026-08-12):** raised from P2 to P1 following an independent agent-mediated Product Owner review of PR #1362, which judged the original P2 filing understated the risk — this item sits directly on ST-03's own conjunctive unblock criteria ("staging-verified" is not an optional nice-to-have, it's one of three co-equal conditions the delegation required), for a story whose entire premise is a previously-observed production data-integrity problem (0/11 linked trade plans). Mocked-DB unit tests, however thorough, cannot catch a real migration/constraint-application failure against the live schema.
-
-**Problem**
-ST-03 (BLG-BE-91)'s delegation explicitly required "staging-verified" confirmation that trade-plan linkage is enforced as the default entry-flow path — what was actually delivered is unit/router-level test coverage only (mocked DB throughout; no live Postgres reachable in this sandbox). The Data Model, Domain & Schema Owner's sign-off review accepted this as a reasonable substitute for code-correctness verification given the sandbox constraint, but was explicit that it does not satisfy the literal "staging-verified" unblock criterion, and flagged it as an open item rather than silently resolved. Separately, the same review flagged that DS-12's new `trade_plans_active_requires_position_check` CHECK constraint (`NOT VALID`, enforced going-forward only) has an unverified interaction with the 11 known legacy pre-`BLG-BE-46` (v6.8) orphaned rows (`position_id IS NULL`): if any of those 11 rows also happen to carry `status = 'active'` (plausible, since the `POST`/`PUT` gap ST-03 closed existed for their entire pre-fix history), any future `UPDATE` touching that specific row will fail against the new constraint until corrected — no live-DB query confirming or ruling this out was possible in this sandbox.
-
-**Scope**
-- On staging (or production, read-only), create a position via the "Start Trade from Plan" flow and confirm the trade plan is linked (`trade_plan_linked: true` in the `POST /portfolio/position` response) as the default path
-- Run a one-line query against the live `trade_plans` table: `SELECT id, ticker, status, position_id FROM trade_plans WHERE status = 'active' AND position_id IS NULL;` — confirm 0 rows (expected) or identify/fix any that exist before they can block a future legitimate edit
-- Confirm the DS-12 CHECK constraint is actually present and `NOT VALID` on the live table (`SELECT conname, convalidated FROM pg_constraint WHERE conrelid = 'trade_plans'::regclass;`)
-
-**Acceptance Criteria**
-- Staging run confirms trade-plan linkage is the enforced default path at position entry
-- Live query confirms 0 rows (or any found are fixed) matching `status='active' AND position_id IS NULL`
-- DS-12 constraint confirmed present and `NOT VALID` on the live table
-- Head of Engineering + Data Model, Domain & Schema Owner sign-off
-
-**Product Owner risk-acceptance condition (2026-08-12):** PR #1362 was approved to merge with this gap outstanding (see `qa_evidence_EPIC-02.md`'s Product Owner Decision block for full reasoning) — this is a genuine fast-follow, not a someday item. **If the legacy-row query above finds any of the 11 known rows carry `status='active'`, that specific finding escalates to its own P0 immediately** — do not fold it into this ticket's own P1 timeline. **Ratified as the standing Product Owner decision, 2026-08-12** — see `qa_evidence_EPIC-02.md`'s Ratification note.
-
-**PMO Lead orchestration note (2026-08-12, Gate Validation Format per `pmo_lead.md` §5.2):**
-- Gate item: BLG-BE-96 scheduled for prompt resolution, per the Product Owner risk-acceptance condition above (not left to drift).
-- Evidence: `qa_evidence_EPIC-02.md` Product Owner Decision + Ratification blocks (2026-08-12); P1 elevation recorded above; `Provisional-Target` set (was `TBD`).
-- Owner confirmation: **No** — Head of Engineering and Data Model, Domain & Schema Owner (the item's actual owners) have not separately confirmed this scheduling in this session; PMO Lead sets the provisional target as delivery orchestration only, pending their confirmation at next sprint planning. This item requires a live staging/Postgres environment not available in this sandbox — actual resolution (not just scheduling) remains with the named owners.
-- PMO validation: Pass (scheduling/sequencing only) — PMO Lead, 2026-08-12. Not a substitute for owner or Product Owner sign-off on the item's substantive acceptance criteria.
-
----
-
-### BLG-QA-148 — End-to-end integration assertion for tax-year boundary trade rows
-**Priority:** P3 (Low)
-**Type:** QA / Financial Correctness
-**Owner:** Financial Reporting & Records Owner; QA & Testing Owner
-**Source:** ST-13/EPIC-04 agent-mediated Financial Reporting & Records Owner review (v8.6) — 2026-08-11
-**Effort:** XS (<1h)
-**Provisional-Target:** v8.7 or later
-
-**Problem**
-`tests/test_tax_year_boundary_completeness.py` (added ST-13, BLG-BE-93, v8.6) proves tax-year boundary completeness via a sound but indirect composition — the real computed year bounds from `get_tax_year_report()` combined with confirming the real SQL text contains an inclusive `BETWEEN %s AND %s` — rather than by feeding a fabricated boundary-day trade row through a mocked `fetchall()` and asserting it appears exactly once in `get_tax_year_report()`'s actual returned `trades` list / rendered CSV rows. The inferential step (bounds + inclusive SQL ⇒ no omission/double-count) is logically sound but not directly observed against real row data.
-
-**Scope**
-- Add one test that mocks `get_trade_history_by_tax_year`'s underlying DB cursor to return a fabricated row with `exit_date` on a tax-year boundary day
-- Assert the row appears exactly once in `get_tax_year_report()`'s returned `trades` list for the correct year, and zero times when the adjacent year is queried
-
-**Acceptance Criteria**
-- A test mocks `get_trade_history_by_tax_year`'s DB cursor to return a fabricated row with `exit_date` on a tax-year boundary day, and asserts it appears exactly once in `get_tax_year_report()`'s returned `trades` list for the correct year and zero times for the adjacent year
-
----
-
-## 6. Operations & Infrastructure Backlog
 
 ---
 
@@ -4878,14 +4669,6 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 
 ## Roadmap Rebalance 2026-08-11__scheduled — New Items (IW-20260809-01 disposition)
 
-### BLG-SEC-30 — Prompt-injection resistance test for the Gemini thesis-generation endpoint
-**Priority:** P2 (Medium) | **Type:** Security / AI | **Owner:** Cybersecurity & Trust Lead; AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260809-01 | **Effort:** M | **Provisional-Target:** TBD
-**Problem:** `POST /trade-plans/{plan_id}/generate-thesis` (Gemini-backed) has never had an active adversarial test confirming it resists prompt-injection attempts embedded in user-controlled trade-plan fields.
-**Scope:** Design and run a prompt-injection test suite against the endpoint; document findings and any hardening applied.
-**Acceptance Criteria:** Test suite run; findings documented; Cybersecurity & Trust Lead sign-off.
-
----
-
 ### BLG-GOV-299 — AI feature cost-vs-value retrospective (6-month actuals vs original estimates)
 **Priority:** P3 (Low) | **Type:** Governance / FinOps | **Owner:** FinOps & Resource Architect; AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** AI features (thesis generation, journal summarisation) were costed at build time but no retrospective has compared 6 months of actual Gemini/Anthropic spend against those original estimates.
@@ -4910,22 +4693,6 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 
 ---
 
-### BLG-BE-89 — Extend the BLG-BE-57 retry/backoff audit pattern to Gemini API call sites
-**Priority:** P2 (Medium) | **Type:** Backend Engineering / Reliability | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260809-01 | **Effort:** M | **Provisional-Target:** TBD
-**Problem:** `BLG-BE-57` audited Alpaca API rate-limit backoff handling; the same audit has not been extended to Gemini API call sites (thesis generation, cost tracking).
-**Scope:** Audit Gemini call sites for retry/backoff handling; apply the same pattern used for Alpaca where gaps are found.
-**Acceptance Criteria:** Audit complete; gaps fixed or filed; Backend Engineering Patterns Owner sign-off.
-
----
-
-### BLG-BE-90 — N+1 query audit across trade/position list endpoints
-**Priority:** P2 (Medium) | **Type:** Backend Engineering / Performance | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260809-02 | **Effort:** M | **Provisional-Target:** TBD
-**Problem:** No systematic audit has confirmed the trade/position list endpoints are free of N+1 query patterns as the schema and join complexity has grown across Arc 4/5 additions.
-**Scope:** Audit `GET /trades`, `GET /positions`, and related list endpoints for N+1 patterns; fix or file follow-ups.
-**Acceptance Criteria:** Audit complete; findings fixed or filed; Backend Engineering Patterns Owner sign-off.
-
----
-
 ### BLG-SPEC-121 — Base44 prompt-version provenance tag on generated components
 **Priority:** P3 (Low) | **Type:** Spec Debt / Frontend Tooling | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** Components generated via a Base44 prompt template carry no record of which template version produced them, making drift audits (like the v6.7 token-drift audit) harder to scope.
@@ -4939,14 +4706,6 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 **Problem:** When a component is regenerated via Base44, there is no checklist confirming the regenerated output still complies with current design tokens (a recurring source of drift, e.g. `BLG-FE-91`).
 **Scope:** Add a regeneration diff checklist to the Base44 prompt template library.
 **Acceptance Criteria:** Checklist added; Base44 Frontend Prompt Owner sign-off.
-
----
-
-### BLG-SEC-31 — Rate-limit audit on unauthenticated/low-auth endpoints
-**Priority:** P2 (Medium) | **Type:** Security | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260809-01 | **Effort:** M | **Provisional-Target:** TBD
-**Problem:** No audit has confirmed which endpoints lack rate-limiting, and whether the unauthenticated/low-auth ones (e.g. health checks) are appropriately protected against abuse.
-**Scope:** Audit endpoint rate-limiting coverage; file fixes for any unprotected unauthenticated endpoint.
-**Acceptance Criteria:** Audit complete; gaps fixed or filed; Cybersecurity & Trust Lead sign-off.
 
 ---
 
@@ -5021,14 +4780,6 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 
 ---
 
-### BLG-OPS-139 — Render Starter-tier headroom reassessment
-**Priority:** P2 (Medium) | **Type:** Operations / Infrastructure | **Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner | **Source:** IDEA-finops-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** The last Render tier/headroom assessment predates the Arc 5 analytics endpoints and current trade volume; capacity margin has not been reconfirmed since.
-**Scope:** Reassess current Render Starter-tier headroom against current load (trade volume, Arc 5 endpoint traffic).
-**Acceptance Criteria:** Reassessment filed; tier confirmed adequate or upgrade recommended; FinOps & Resource Architect sign-off.
-
----
-
 ### BLG-GOV-302 — Idea-intake / roadmap-session compute cost attribution
 **Priority:** P3 (Low) | **Type:** Governance / FinOps | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** Governance overhead (idea intake, roadmap rebalance sessions) consumes compute/session cost that is not separately attributed from delivery spend, making it hard to assess the true cost-of-governance ratio.
@@ -5042,14 +4793,6 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 **Problem:** No audit has confirmed component prop names follow a consistent convention across the codebase — prior drift audits have focused on design tokens and colour, not prop naming.
 **Scope:** Audit prop-naming consistency across shared components; document the convention and fix drift.
 **Acceptance Criteria:** Audit complete; convention documented in `design_system.md`; Frontend Specifications & UX Documentation Owner sign-off.
-
----
-
-### BLG-SPEC-124 — Canonical "gated" DataState variant and visual/interaction spec for not-yet-unlocked feature surfaces
-**Priority:** P2 (Medium) | **Type:** Spec Debt / Frontend Design | **Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design | **Source:** IDEA-frontend-specs-20260809-02 + IDEA-head-of-ux-20260809-02 (consolidated, explicit companion-piece overlap per v9.0 convention) | **Effort:** M | **Provisional-Target:** TBD
-**Problem:** The `design_system.md` DataState pattern (`BLG-SPEC-98` consolidation) does not yet include a canonical "gated"/"not-yet-unlocked" variant, despite the backlog containing a large and growing cluster of gate-blocked features (Arc 5 UX-prep, Arc 6) that will eventually need a consistent way to say "locked" — visually and interactively, not just in copy.
-**Scope:** Define the canonical gated DataState variant (visual treatment) and its interaction spec (what happens on hover/click of a locked surface).
-**Acceptance Criteria:** Variant and interaction spec added to `design_system.md`; Head of UX & Design sign-off.
 
 ---
 
@@ -5085,45 +4828,11 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 
 ---
 
-### BLG-FEAT-84 — Thesis pre-mortem / invalidation-condition capture at trade-plan entry
-**Priority:** P3 (Low) | **Type:** Product Feature | **Owner:** Head of UX & Design; Product Owner | **Source:** IDEA-head-of-ux-20260809-01 | **Effort:** M | **Provisional-Target:** TBD
-**Problem:** The trade plan captures entry thesis but not an explicit "what would prove this thesis wrong" (invalidation condition) at the point of entry — a pre-mortem is a well-established discipline technique this system's own structured checklists do not yet capture.
-**Scope:** Add an optional invalidation-condition field to the trade plan entry flow.
-**Acceptance Criteria:** Field added; captured on new trade plans; Product Owner sign-off.
-
----
-
-### BLG-OPS-140 — Render dashboard-only build/deploy path filter — canonical documentation + onboarding note
-**Priority:** P2 (Medium) | **Type:** Operations / Infrastructure | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** Render's dashboard-only build/deploy path filter setting is invisible to a repo-only search (it lives in the Render dashboard, not version control), and has already caused two silent-drift incidents (`BLG-OPS-82`, `BLG-OPS-90`) where a runtime-read file change was outside the configured filter path.
-**Scope:** Document the current filter configuration canonically (e.g. in `docs/ops/`) and add an onboarding note flagging this as a dashboard-only setting to check whenever a new runtime-read file is added outside the existing filtered paths.
-**Acceptance Criteria:** Documentation added; Infrastructure & Operations Owner sign-off.
-
----
-
 ### BLG-OPS-141 — Staging environment data-reset cadence review
 **Priority:** P3 (Low) | **Type:** Operations / Infrastructure | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** No defined cadence exists for resetting staging environment data; stale or accumulated staging data can make staging verification runs less representative over time.
 **Scope:** Review current staging data state and define an appropriate reset cadence.
 **Acceptance Criteria:** Cadence defined and documented; Infrastructure & Operations Owner sign-off.
-
----
-
-### BLG-OPS-142 — Fix substring-match false negatives in check_api_performance_baseline_drift.py's find_missing_endpoints()
-**Priority:** P2 (Medium) | **Type:** Operations / Infrastructure | **Owner:** Infrastructure & Operations Owner | **Source:** Post-ship closure `2026-08-11__release-v8.6` §5/§6 Outstanding Action #1 (`lessons_learnt_closure.md` Friction Item 2) — carried 3 consecutive closures (v8.4, v8.5, v8.6) with no closure able to apply it directly (`scripts/` is outside `post_ship_closure.md §5`'s write scope); filed by lifecycle audit AUD-2026-08-12 (Improvement AUD-2026-08-12-001) after the closure's own "before next groom backlog or run roadmap session" deadline passed unfiled within its own session — 2026-08-12 | **Effort:** S (1-2 days) | **Provisional-Target:** TBD
-
-**Problem**
-`scripts/check_api_performance_baseline_drift.py`'s `find_missing_endpoints()` uses a bare whole-document substring match to decide whether an endpoint is "documented" in `api_performance_baseline.md`, which produces false negatives for endpoints mentioned only in prose (no adjacent measurement row or dedicated heading) — e.g. originally missed `GET /trade-plans/tags` (tracked separately as `BLG-OPS-135`).
-
-**Scope**
-- Require table-row OR dedicated-heading context (not bare substring match) for an endpoint to count as "documented" in `api_performance_baseline.md`
-- Grandfather any newly-surfaced genuine gaps into the script's `KNOWN_GAPS` list (with a tracking comment, mirroring the `BLG-OPS-61` precedent) so the stricter check does not immediately fail the next PR's CI run
-
-**Acceptance Criteria**
-- `find_missing_endpoints()` requires table-row or heading context before counting an endpoint as documented
-- 0 false positives against endpoints documented via dedicated `### METHOD /path` headings (e.g. `POST /ai/check-daily-cost`, `POST /test/endpoints`)
-- Genuine gaps correctly surfaced and either fixed or grandfathered into `KNOWN_GAPS`
-- Infrastructure & Operations Owner sign-off
 
 ---
 
@@ -5140,14 +4849,6 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 **Problem:** The same gate metrics (e.g. SI-02 linked-trade-plan count) are referenced with slightly different naming/phrasing across `current_roadmap.md`, the SI-05 digest content, and the Reports page's SI-02 Gate Status section.
 **Scope:** Standardise gate-metric naming across the three surfaces.
 **Acceptance Criteria:** Naming standardised; Metrics Definitions & Analytics Canonical Owner sign-off.
-
----
-
-### BLG-GOV-303 — Roadmap Unlock Tracker — consolidated view of all gated features and their conditions
-**Priority:** P2 (Medium) | **Type:** Governance / Roadmap Documentation | **Owner:** PMO Lead; Product Owner | **Source:** IDEA-pmo-lead-20260809-01 + IDEA-product-owner-20260809-02 (consolidated, both propose making the same structural reality visible in one place, per v9.0 convention) | **Effort:** M | **Provisional-Target:** TBD
-**Problem:** The roadmap's remaining gated features (SI-02, SI-04, SI-05 Phase 2, PO-02/04/05, PS-01–05, plus the Arc 5 UX-prep cluster) each state their own gate condition individually, but there is no single place showing all gates and their current clearance status together — this cycle's own findings (STEP 2.3, STEP 7.1) had to be manually cross-referenced across `current_roadmap.md` and `backlog.md` to establish that most of the roadmap is currently blocked on a small number of shared root causes.
-**Scope:** Build a consolidated "Roadmap Unlock Tracker" section (in `current_roadmap.md` or a companion document) listing every gated feature, its condition, current status, and — where applicable — which other gates share the same underlying blocker. This formally recognises what this cycle informally found: the back half of the roadmap is substantially data-density-blocked on a small number of shared conditions.
-**Acceptance Criteria:** Tracker created; cross-referenced from `current_roadmap.md` §6; PMO Lead + Product Owner sign-off.
 
 ---
 
@@ -5188,14 +4889,6 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 **Problem:** `BLG-QA-134` (v7.9 window) defined a runtime budget but no trend report has been produced yet showing whether the suite is tracking within or drifting beyond it over the last 90 days.
 **Scope:** Produce the first 90-day trend report against the `BLG-QA-134` budget.
 **Acceptance Criteria:** Trend report produced; QA & Testing Owner sign-off.
-
----
-
-### BLG-GOV-305 — §13 policy question: are confidence-interval-qualified "preview" analytics compatible with the deterministic/non-predictive boundary?
-**Priority:** P2 (Medium) | **Type:** Governance / Strategy Policy | **Owner:** Strategy Rules & System Intent Owner | **Source:** IDEA-strategy-owner-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** Arc 6 items (PS-01/PS-02-style) are gated on trade-count thresholds (50+) before shipping; no policy has considered whether a confidence-interval-qualified "preview" version below the gate (explicitly labelled as statistically provisional) would remain §13-compliant, potentially offering earlier partial value without violating the deterministic/non-predictive boundary.
-**Scope:** Strategy Rules & System Intent Owner to formally assess this policy question and record a determination (permitted / not permitted / permitted with conditions).
-**Acceptance Criteria:** Determination recorded, citing the relevant `strategy_rules.md §13` clause; Strategy Rules & System Intent Owner sign-off.
 
 ---
 
