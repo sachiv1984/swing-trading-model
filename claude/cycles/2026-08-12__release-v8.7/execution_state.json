@@ -7,6 +7,89 @@
   "status": "Running",
   "last_updated_utc": "2026-08-13T08:05:00Z",
   "epics": {
+    "EPIC-04": {
+      "status": "done",
+      "branch": "exec/2026-08-12__release-v8.7/EPIC-04",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-04.md",
+      "test_scenarios": [
+        "tests/test_gemini_claude_retry_backoff.py",
+        "tests/test_position_lifecycle_n_plus_1_fix.py"
+      ],
+      "stories": {
+        "ST-10": {
+          "title": "Extend the BLG-BE-57 retry/backoff audit pattern to Gemini API call sites",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1373,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T10:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_gemini_claude_retry_backoff.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "_call_claude() (sole Claude/'Gemini' call site) wrapped in retry_with_backoff. Retries APITimeoutError/APIConnectionError/RateLimitError/InternalServerError; 4xx not retried. 8/8 new tests passing locally."
+        },
+        "ST-11": {
+          "title": "N+1 query audit across trade/position list endpoints",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1374,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T10:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_position_lifecycle_n_plus_1_fix.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "GET /positions N+1 fixed: get_lifecycle_fields_for_position() no longer re-fetches via get_position_by_id() when caller already has the row (prefetched_position param). GET /trades audited, clean. 4/4 new tests passing locally, 91/91 regression tests passing."
+        },
+        "ST-12": {
+          "title": "SI-04 schema requirements pre-design",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1375,
+          "branch": "exec/2026-08-12__release-v8.7/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-13T10:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-21__release-v7.7/si04-strategy-version-comparison/data_model_pre_design.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "STALE STORY: SI-04 already shipped v7.7 (4 releases ago), BLG-BE-30's schema question already answered at implementation time (no new schema). Retroactive confirmation doc produced per AC wording; BLG-BE-30 recommended for resolution by PO/groom backlog -- see qa_evidence_EPIC-04.md Stale Story Finding."
+        }
+      }
+    },
     "EPIC-01": {
       "status": "merged",
       "branch": "exec/2026-08-12__release-v8.7/EPIC-01",
@@ -186,7 +269,10 @@
     "ST-03",
     "ST-04",
     "ST-05",
-    "ST-06"
+    "ST-06",
+    "ST-10",
+    "ST-11",
+    "ST-12"
   ],
   "open_escalations": [],
   "merge_gate": {

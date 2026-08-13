@@ -7,6 +7,16 @@ Returns gracefully when ANTHROPIC_API_KEY is absent or the call fails.
 ST-07: Audit trail — each call writes a row to gemini_audit_log (fire-and-forget).
 ST-08: Cost tracking — token usage logged; estimated_cost_usd computed at
        $1.00/1M input tokens and $5.00/1M output tokens (Claude Haiku 4.5 rates).
+ST-10 (BLG-BE-89, EPIC-04, v8.7): _call_claude() -- the single call site both
+       generate_full_plan() and generate_setup_thesis() route through --
+       extends the BLG-BE-57 retry/backoff pattern (utils/retry.py) to this
+       service. Naming note: this module and its callers still say "Gemini"
+       throughout (file name, docstrings, gemini_audit_log table, story
+       titles) from before an earlier migration off Google's Gemini API onto
+       Anthropic's Claude API -- the retry target is the real, current
+       Claude call site; the "Gemini" naming itself is unchanged, out of
+       scope for this story (a rename would touch the DB table name and is
+       a larger, separate piece of work).
 """
 import os
 import hashlib
@@ -14,10 +24,30 @@ import json
 import re
 from typing import Optional
 
+from utils.retry import retry_with_backoff
+
 CLAUDE_COST_PER_INPUT_TOKEN = 1.00 / 1_000_000
 CLAUDE_COST_PER_OUTPUT_TOKEN = 5.00 / 1_000_000
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+
+# `anthropic` is a pinned hard dependency (backend/requirements.txt), but the
+# rest of this module deliberately imports it lazily inside each function so
+# the module still loads if it's ever absent (defensive, matches the
+# existing "anthropic package not installed" graceful-degradation checks
+# below). Mirror that here for the exception classes retry_with_backoff
+# needs at decoration time -- fall back to an empty tuple (retries nothing,
+# same as today's no-retry behaviour) rather than a hard import error.
+try:
+    import anthropic as _anthropic_for_retry
+    _RETRYABLE_CLAUDE_EXCEPTIONS = (
+        _anthropic_for_retry.APITimeoutError,
+        _anthropic_for_retry.APIConnectionError,
+        _anthropic_for_retry.RateLimitError,
+        _anthropic_for_retry.InternalServerError,
+    )
+except ImportError:
+    _RETRYABLE_CLAUDE_EXCEPTIONS = ()
 MODEL_VERSION = "claude-haiku-4-5"
 PROMPT_VERSION = "v3.0"
 
@@ -84,8 +114,22 @@ def _build_signal_summary(signal_data: Optional[dict]) -> str:
     return ", ".join(parts) if parts else "provided"
 
 
+@retry_with_backoff(
+    max_attempts=3,
+    base_delay=1.0,
+    retryable_exceptions=_RETRYABLE_CLAUDE_EXCEPTIONS,
+)
 def _call_claude(prompt: str, max_tokens: int = 256) -> tuple:
-    """Returns (text, usage) or raises."""
+    """Returns (text, usage) or raises.
+
+    ST-10 (BLG-BE-89, EPIC-04, v8.7): retried on timeout, connection error,
+    rate-limit, and transient 5xx (InternalServerError) -- the same failure
+    modes utils/retry.py's other call sites cover. NOT retried: BadRequestError,
+    AuthenticationError, PermissionDeniedError, NotFoundError and other 4xx
+    client errors -- retrying a malformed request or bad credentials just
+    repeats the same failure 3x with added latency, it never produces a
+    different outcome.
+    """
     import anthropic
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     response = client.messages.create(
