@@ -36,7 +36,14 @@ if "database" not in sys.modules:
 if "utils.formatting" not in sys.modules:
     _fmt_stub = types.ModuleType("utils.formatting")
     _fmt_stub.decimal_to_float = lambda x: x
-    sys.modules["utils"] = types.ModuleType("utils")
+    # Guard against clobbering an already-loaded real "utils" package (same
+    # pattern as test_trade_service.py) — unconditionally overwriting
+    # sys.modules["utils"] here silently split module state (e.g.
+    # utils.pricing._market_regime_cache, BLG-BE-97 v8.8 ST-07) across two
+    # live module instances whenever this file was collected after other
+    # test files had already triggered a real `import utils.pricing`.
+    if "utils" not in sys.modules:
+        sys.modules["utils"] = types.ModuleType("utils")
     sys.modules["utils.formatting"] = _fmt_stub
 
 import os
