@@ -18,7 +18,7 @@ Last Updated: 2026-08-14
 - **Spec reference:** No governing canonical spec — this is a live-environment root-cause investigation (RISK-01 per `sprint_backlog.md`); acceptance criteria per `stage4_backlog_slice.md#ST-03`.
 - **Unblock criteria:** A commit tagged `[EPIC-01][ST-03]` pushed to `exec/2026-08-14__release-v8.8/EPIC-01` containing the fix, with the next scheduled `backtest.yml` run confirmed producing a current `imported_at` timestamp and the Strategy Benchmark page showing a recent "data as of" date.
 - **Commit format required:** `[EPIC-01][ST-03] <description>` pushed to `exec/2026-08-14__release-v8.8/EPIC-01`
-- **Status:** Pending
+- **Status:** Cancelled — reclassified to `autonomous` (LL-v2.3-EX-02) 2026-08-14. The live investigation this delegation assumed required Render dashboard access turned out to be completable via `gh` CLI (real GitHub Actions run-log retrieval via the Actions REST API, plus a temporary on-demand `workflow_dispatch` diagnostic run against production using the `API_URL`/`API_KEY` repo secrets already available to CI). Root cause found and fixed by the engine directly — see ST-03's `execution_state.json` entry and commit `[EPIC-01][ST-03]`.
 
 ---
 
