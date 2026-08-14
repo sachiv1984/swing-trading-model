@@ -72,3 +72,21 @@ Last Updated: 2026-08-14
 - **Status:** Cancelled — reclassified to `autonomous` (LL-v2.3-EX-02) 2026-08-14, same basis as DEL-20260814-02. Completed directly by the engine, with a caveat: both attempted version-pair windows hit the endpoint's own `insufficient_data` 422 gate (only 21 real trades exist) rather than a clean 200 — see `docs/ops/api_performance_baseline.md` §39.3 for the full explanation and commit `[EPIC-01][ST-04][ST-05][ST-06]`.
 
 ---
+
+## DEL-20260814-05
+
+- **ST Item:** ST-11 — Add duration logging around POST /digest/si05/send's Telegram send call
+- **EPIC:** EPIC-02
+- **Classification:** delegated_backend
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1403
+- **Branch:** exec/2026-08-14__release-v8.8/EPIC-02
+- **Delegated at:** 2026-08-14T20:40:00Z
+- **What is needed:** Code portion complete (commit `[EPIC-02][ST-11]` — duration logging added to both success and failure log lines in `send_si05_digest()`). Remaining: verify against the next real invocation — either the next scheduled `si05-weekly-digest.yml` cron run (Sunday 19:00 UTC) or an explicit manual `workflow_dispatch` of that workflow — then query Render logs (`render-si05-log-query.yml`, ST-21/BLG-OPS-54 precedent) for the elapsed-time value and add the registration entry to `docs/ops/api_performance_baseline.md` §36.
+- **Spec reference:** `docs/ops/api_performance_baseline.md` §36 (living operational document).
+- **Not proxyable via the LL-v2.3-EX-02 pattern used for EPIC-01 ST-04/05/06:** those reclassifications used a read-only latency-measurement dispatch (`api-performance-baseline-measurement.yml`) with no external side effect. `si05-weekly-digest.yml` sends a real Telegram message to the configured production channel on every dispatch — an outward-facing action requiring explicit user confirmation before firing, not something the engine may trigger autonomously.
+- **Unblock criteria:** A commit tagged `[EPIC-02][ST-11]` pushed to `exec/2026-08-14__release-v8.8/EPIC-02` adding the real log-derived timing to `docs/ops/api_performance_baseline.md` §36.
+- **Commit format required:** `[EPIC-02][ST-11] <description>` pushed to `exec/2026-08-14__release-v8.8/EPIC-02`
+- **Status:** Pending — awaiting user go-ahead to manually dispatch `si05-weekly-digest.yml`, or the next scheduled Sunday 19:00 UTC cron run.
+
+---
