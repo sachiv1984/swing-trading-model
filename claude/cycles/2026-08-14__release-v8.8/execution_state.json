@@ -10,8 +10,8 @@
     "EPIC-01": {
       "status": "done",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1422,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/test_strategy_benchmark_summary.py"],
