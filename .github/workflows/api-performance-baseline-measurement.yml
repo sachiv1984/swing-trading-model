@@ -50,6 +50,8 @@ jobs:
             ["GET /positions/grace-period-alerts"]="/positions/grace-period-alerts"
             ["GET /positions/tags"]="/positions/tags"
             ["GET /positions/{id}/stop-trail"]="/positions/00000000-0000-0000-0000-000000000000/stop-trail"
+            ["GET /trade-plans/tags"]="/trade-plans/tags"
+            ["GET /analytics/strategy-version-comparison"]="/analytics/strategy-version-comparison?version_from=1.0&version_to=1.4"
           )
 
           echo "RESULTS_JSON_START"
