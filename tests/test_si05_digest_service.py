@@ -491,6 +491,60 @@ class TestTelegramMessageIdPopulation:
 
 
 # ---------------------------------------------------------------------------
+# BLG-BE-87 (ST-11, EPIC-02, v8.8): duration logging around the Telegram send
+# ---------------------------------------------------------------------------
+
+class TestTelegramSendDurationLogging:
+    def test_success_log_line_includes_elapsed_time(self):
+        (
+            format_si05_section, _1, _2, _3, _4, _5,
+            send_si05_digest, _7
+        ) = get_service()
+        mock_data = {
+            "validation_pass_rate": 0.85,
+            "events_per_week": 0.5,
+            "override_rate": 0.10,
+            "top_rule_breach": None,
+        }
+        with patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "tok", "TELEGRAM_CHAT_ID": "123"}):
+            with patch("services.si05_digest_service.fetch_arc5_data_for_digest", return_value=mock_data):
+                with patch("urllib.request.urlopen") as mock_urlopen:
+                    mock_urlopen.return_value = MagicMock()
+                    with patch("services.si05_digest_service.logger") as mock_logger:
+                        result = send_si05_digest()
+
+        assert result["sent"] is True
+        info_calls = [c for c in mock_logger.info.call_args_list if "SI-05 digest sent" in c.args[0]]
+        assert len(info_calls) == 1
+        # Format string: "SI-05 digest sent (%d chars) in %.2fs" -> args[2] is elapsed seconds
+        assert info_calls[0].args[2] >= 0
+
+    def test_failure_log_line_includes_elapsed_time(self):
+        (
+            format_si05_section, _1, _2, _3, _4, _5,
+            send_si05_digest, _7
+        ) = get_service()
+        mock_data = {
+            "validation_pass_rate": 0.85,
+            "events_per_week": 0.5,
+            "override_rate": 0.10,
+            "top_rule_breach": None,
+        }
+        no_sleep = lambda _: None
+        with patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "tok", "TELEGRAM_CHAT_ID": "123"}):
+            with patch("services.si05_digest_service.fetch_arc5_data_for_digest", return_value=mock_data):
+                with patch("urllib.request.urlopen", side_effect=OSError("connection refused")):
+                    with patch("services.si05_digest_service.logger") as mock_logger:
+                        result = send_si05_digest(_sleep_fn=no_sleep)
+
+        assert result["sent"] is False
+        error_calls = [c for c in mock_logger.error.call_args_list if c.args[0] == "SI-05 Telegram send failed after %.2fs: %s"]
+        assert len(error_calls) == 1
+        # Format string: "SI-05 Telegram send failed after %.2fs: %s" -> args[1] is elapsed seconds
+        assert error_calls[0].args[1] >= 0
+
+
+# ---------------------------------------------------------------------------
 # BLG-FE-74 (ST-02): N/A reason clarification
 # ---------------------------------------------------------------------------
 

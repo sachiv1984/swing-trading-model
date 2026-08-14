@@ -468,12 +468,19 @@ def send_si05_digest(*, _sleep_fn=None) -> dict:
         "parse_mode": "MarkdownV2",
     }
 
+    # ST-11 (BLG-BE-87, EPIC-02, v8.8): time the Telegram send call itself
+    # (including any retry/backoff delay) so the Render log line surfaces an
+    # elapsed-time value for both outcomes — used to populate
+    # docs/ops/api_performance_baseline.md §36 from a real invocation.
+    send_started = time.monotonic()
     try:
         telegram_message_id = _send_telegram_request(url, payload, sleep_fn=_sleep_fn)
-        logger.info("SI-05 digest sent (%d chars)", message_length)
+        elapsed_s = time.monotonic() - send_started
+        logger.info("SI-05 digest sent (%d chars) in %.2fs", message_length, elapsed_s)
         _write_delivery_log("sent", event_count, telegram_message_id, None)
         return {"sent": True, "message_length": message_length, "error": None}
     except Exception as e:
-        logger.error("SI-05 Telegram send failed: %s", e)
+        elapsed_s = time.monotonic() - send_started
+        logger.error("SI-05 Telegram send failed after %.2fs: %s", elapsed_s, e)
         _write_delivery_log("failed", event_count, None, str(e))
         return {"sent": False, "message_length": message_length, "error": str(e)}
