@@ -1,9 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-05-23
+**Version:** 1.2
+**Last Updated:** 2026-08-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Design Source (v1.2):** docs/design/2026-08-14__release-v8.8/ticker-universe-search-sector-industry-filters/decision_record.md
 **Design Source (v1.0):** docs/design/2026-05-21__release-v3.9/ticker-universe-enhancements/ux_spec.md
 **API contract:** docs/specs/api_contracts/screener_api_contract.md
 
@@ -111,9 +112,30 @@ When no tickers in universe: "No tickers in universe. Add a ticker to begin scre
 
 ---
 
+## 10. Filtering — Search, Sector, Industry (v1.2 — ST-15, BLG-FE-163)
+
+Extends the existing Market/Active pill-button filter bar (`data-testid="filter-bar"`) — one continuous row, not a separate section.
+
+| Control | Type | Behaviour |
+|---------|------|-----------|
+| Search | Text input, placeholder "Search ticker or company…" | Case-insensitive substring match against ticker symbol and company name. 200ms debounce. |
+| Sector | `<select>`, default "All Sectors" | Options derived dynamically from distinct `sector` values in the loaded ticker list — no new endpoint. |
+| Industry | `<select>`, default "All Industries" | Same derivation pattern, from `industry`. |
+
+**Combination:** all 5 filters (Market, Active, Search, Sector, Industry) AND-combine — narrowing the same client-side `filtered = tickers.filter(...)` chain used by the existing Market/Active filters.
+
+**Clear filters:** shown only when at least one filter is non-default, rendered as `<Badge variant="secondary">Clear filters ×</Badge>`. Clicking resets all 5 filters to default and hides itself.
+
+**Row count:** the existing "Showing {filtered.length} of {tickers.length} tickers" footer requires no change — already reflects any active filter combination.
+
+Design source: `docs/design/2026-08-14__release-v8.8/ticker-universe-search-sector-industry-filters/decision_record.md`.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-08-14 | v8.8 design gate — §10 Filtering added (ST-15, EPIC-03, BLG-FE-163): search/sector/industry filter controls extend the existing Market/Active pill filter bar, AND-combined; "Clear filters" reset control implemented as `Badge variant="secondary"` — first live call site for that shadcn variant (see also `BLG-FE-160`/ST-17). Design source: `docs/design/2026-08-14__release-v8.8/ticker-universe-search-sector-industry-filters/decision_record.md`. Head of UX & Design + Product Owner confirmed 2026-08-14. |
 | 1.1 | 2026-05-23 | v4.0 design gate (ST-05, EPIC-02): §8 Add Ticker — validation error message specified: ticker-not-found 400/422 displays backend error message verbatim; other errors show generic fallback. Design Pre-Approved (extends existing inline-error pattern). Head of UX & Design + Product Owner 2026-05-23. |
 | 1.0 | 2026-05-21 | Initial spec. v3.9 design gate — documents v3.8 shipped page + ST-05 (.L suffix strip from display labels, §5) + ST-06 (company_name column, §4). Design source: docs/design/2026-05-21__release-v3.9/ticker-universe-enhancements/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |

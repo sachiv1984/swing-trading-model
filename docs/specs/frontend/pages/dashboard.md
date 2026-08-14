@@ -3,11 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 3.2
-**Last Updated:** 2026-07-24
+**Version:** 3.3
+**Last Updated:** 2026-08-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Release:** v7.8
-**EPIC:** EPIC-01
+**Release:** v8.8
+**EPIC:** EPIC-03
+**Design Source (v3.3):** docs/design/2026-08-14__release-v8.8/whats-new-user-benefit-copy/decision_record.md (BLG-FE-161)
 **Design Source (v3.2):** docs/design/2026-07-24__release-v7.8/whats-new-panel/ux_spec.md (BLG-FE-128)
 **Design Source (v3.1):** docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarchy/ux_spec.md (BLG-FE-111)
 **Design Source (v3.0):** docs/design/2026-07-15__release-v7.2/dashboard-empty-states/ux_spec.md (BLG-FE-110)
@@ -372,7 +373,7 @@ A full-width secondary-tier card placed below the §6 Gate Progress Indicator st
 
 **Header:** `Sparkles` icon (muted) + **"What's New — v{X.Y}"** (version from the changelog's most recent heading).
 
-**Body:** bullet list of the `Description` column from the most recent `### Changes shipped` table, max 8 bullets shown with a non-interactive "+N more" trailer if the table has more rows.
+**Body (v3.3 — ST-13, BLG-FE-161):** bullet list of the `User Impact` column (not `Description`) from the most recent `### Changes shipped` table, max 8 bullets shown with a non-interactive "+N more" trailer if the table has more rows. `Description` is the engineering record and is never shown here. Rows with an empty/`—` `User Impact` cell are excluded from the parsed feed entirely — an EPIC with no user-facing change does not produce a bullet. `User Impact` copy is curated, present-tense, second-person, one to two sentences, written for what a user can see/click/notice — never raw implementation nouns (endpoint, table, or component names) or ticket IDs. Authoring convention applies at `changelog.md` authoring time (post-ship closure), not at render time — component rendering itself (bullet list, cap, trailer) is unchanged from v3.2. Design source: `docs/design/2026-08-14__release-v8.8/whats-new-user-benefit-copy/decision_record.md`.
 
 **States:** follows `DataState` default (non-`compact`) sizing per `design_system.md` §Shared UI Components → Cards → Data States:
 
@@ -420,6 +421,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.3 | 2026-08-14 | v8.8 design gate — §6A What's New Panel body source changed (ST-13, EPIC-03, BLG-FE-161): now reads a new `User Impact` column from `changelog.md`'s `### Changes shipped` table instead of `Description`; rows with an empty `User Impact` cell are excluded from the feed. `Description` unchanged, retained as the engineering record. No component/layout/rendering change to `WhatsNewCard.js` itself. Design source: `docs/design/2026-08-14__release-v8.8/whats-new-user-benefit-copy/decision_record.md`. Head of UX & Design sign-off: 2026-08-14. Product Owner approved: 2026-08-14. Head of Specs Team confirmed. |
 | 3.2 | 2026-07-24 | v7.8 design gate — §6A What's New Panel added (ST-01, EPIC-01, BLG-FE-128): new full-width secondary-tier card below the Gate Progress Indicator strip, showing the most recent release's `### Changes shipped` entries parsed server-side from `docs/product/changelog.md` (no hardcoded copy, no manual re-wiring per release). `DataState` default sizing (loading/error/empty per `design_system.md`). Display-only, no dismiss/collapse, no navigation. Backend endpoint to parse the changelog does not exist yet — flagged as a sprint-execution implementation dependency requiring an API contract entry in the same commit. Design source: `docs/design/2026-07-24__release-v7.8/whats-new-panel/ux_spec.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |
 | 3.1 | 2026-07-15 | v7.2 design gate — §1A Morning Briefing Section (ST-06, BLG-FE-111): enclosing panel added around the section (`bg-slate-100/60 dark:bg-slate-900/40`, explicit light/dark pair) to visually separate it from the session-summary grid; section label upgraded to `Sunrise` icon + `text-sm font-semibold` (from plain caption weight). §5 AI Daily Briefing Card: `Sparkles` icon added to the header, matching the "AI draft" badge convention, to share the same "intelligence section" visual language as the Morning Briefing panel. No change to any card's data, queries, or the `dashboard-retry-root` retry behaviour. Design source: dashboard-briefing-hierarchy/ux_spec.md. Approved: Product Owner 2026-07-15. Head of Specs Team confirmed. |
 | 3.0 | 2026-07-15 | v7.2 design gate — §4A Card Empty States added (ST-05, BLG-FE-110): `DataState` gains a `compact` prop (non-breaking); applied to Open Positions, In Grace Today, and Recent Activity cards' zero-count states (icon + heading + body, no CTA), replacing bare muted text/raw-zero rendering. Portfolio Heat and Signal Status explicitly out of scope (0 is a meaningful value for both, not missing data). Morning Briefing sub-cards and AI Daily Briefing's existing empty state unchanged. Loading/error states unaffected. Design source: dashboard-empty-states/ux_spec.md. Approved: Product Owner 2026-07-15. Head of Specs Team confirmed. |
