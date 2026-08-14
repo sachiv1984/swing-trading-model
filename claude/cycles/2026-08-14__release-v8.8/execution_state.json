@@ -12,9 +12,9 @@
       "branch": "exec/2026-08-14__release-v8.8/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/test_strategy_benchmark_summary.py"],
       "stories": {
         "ST-01": {"title": "Add scheduled overnight screener refresh workflow", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 1393, "branch": "exec/2026-08-14__release-v8.8/EPIC-01", "commit_sha": "3e0c34ba", "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-08-14T18:45:00Z", "acceptance_verified": true, "spec_references": [".github/workflows/screener-refresh.yml", "docs/specs/api_contracts/health_endpoints.md#GET /health/scheduler"], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": true, "last_completed_substep": "3.1.A.push", "sign_off_record": null, "notes": "1128 backend tests pass (0 regressions). Filed BLG-SPEC-130 for health_endpoints.md doc-currency gap (not a behavioural deviation — additive, intent-consistent; canonical spec edit out of write scope per §7)."},
         "ST-02": {"title": "Add scheduled nightly risk-off-alerts workflow (regime badge permanently stuck)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 1394, "branch": "exec/2026-08-14__release-v8.8/EPIC-01", "commit_sha": "3e0c34ba", "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-08-14T18:45:00Z", "acceptance_verified": true, "spec_references": [".github/workflows/risk-off-alerts.yml", "docs/specs/api_contracts/health_endpoints.md#GET /health/scheduler"], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": true, "last_completed_substep": "3.1.A.push", "sign_off_record": null, "notes": "1128 backend tests pass (0 regressions). Shares BLG-SPEC-130 doc-currency backlog item with ST-01 (same root cause)."},
