@@ -20,6 +20,7 @@ from database import (
     get_settings,
     create_signal,
     get_signals as db_get_signals,
+    get_signals_for_ticker as db_get_signals_for_ticker,
     update_signal as db_update_signal,
     delete_signal as db_delete_signal,
     download_ticker_data,
@@ -537,8 +538,30 @@ def get_signals(status: Optional[str] = None) -> List[Dict]:
     if status:
         print(f"   Filtered by status: {status}")
     print()
-    
+
     return formatted
+
+
+def get_signals_for_ticker(ticker: str) -> List[Dict]:
+    """Get signals for one ticker, most recent first (ST-12, BLG-BE-94,
+    EPIC-02, v8.8 — Pre-Trade Research View query-latency review).
+
+    Targeted variant of get_signals() for callers (routers/research.py)
+    that only need one ticker's signals — avoids fetching and formatting
+    every signal ever generated for the portfolio just to filter to one
+    ticker afterward. Same shape/formatting as get_signals().
+
+    Raises:
+        ValueError: If portfolio not found
+    """
+    portfolio = get_portfolio()
+    if not portfolio:
+        raise ValueError("Portfolio not found")
+
+    portfolio_id = str(portfolio['id'])
+    signals = db_get_signals_for_ticker(portfolio_id, ticker)
+
+    return [decimal_to_float(s) for s in signals]
 
 
 def update_signal_status(signal_id: str, updates: Dict) -> Dict:

@@ -267,6 +267,28 @@ class TestEvaluatePriceAlerts(unittest.TestCase):
         _health_stub.record_nightly_job.assert_called_once()
         self.assertEqual(_health_stub.record_nightly_job.call_args[0][0], "custom_price_alerts")
 
+    def test_triggered_notification_context_includes_price_alert_id(self):
+        """ST-09 (BLG-BE-84, EPIC-02, v8.8): the fired notification's context
+        must carry the triggering price_alerts row's id, so the frontend can
+        pass it through when creating a trade plan from the alert."""
+        import json
+        cur = MagicMock()
+        cur.fetchall.return_value = [_pa_row(id_="pa-42", ticker="TSLA", condition="above", threshold=150.0)]
+        cur.fetchone.return_value = {"id": "notif-1"}
+
+        with patch.object(alerts_service, "get_current_price", return_value=160.0):
+            _evaluate_price_alerts(cur, "portfolio-1", lambda nid: None)
+
+        insert_calls = [
+            c for c in cur.execute.call_args_list
+            if "INSERT INTO notifications" in c.args[0]
+        ]
+        self.assertEqual(len(insert_calls), 1)
+        params = insert_calls[0].args[1]
+        context = json.loads(params[4])  # (portfolio_id, alert_type, title, message, context)
+        self.assertEqual(context["price_alert_id"], "pa-42")
+        self.assertEqual(context["ticker"], "TSLA")
+
 
 # ---------------------------------------------------------------------------
 # 4. _price_alert_row serialisation
@@ -292,6 +314,37 @@ class TestPriceAlertRowSerialisation(unittest.TestCase):
         }
         result = _price_alert_row(row)
         self.assertEqual(result["id"], "pa-1")
+
+
+# ---------------------------------------------------------------------------
+# 5. _notif_row context exposure (ST-09, BLG-BE-84, EPIC-02, v8.8)
+# ---------------------------------------------------------------------------
+
+class TestNotifRowContextExposure(unittest.TestCase):
+    """context (JSONB) was already stored but never returned to callers
+    before this story — GET /notifications now exposes it so the frontend
+    can read context.price_alert_id / context.ticker."""
+
+    def test_context_included_in_output(self):
+        row = {
+            "id": "notif-1", "alert_type": "custom_price_alert",
+            "title": "Price Alert — TSLA above 250.00", "message": "...",
+            "read": False, "created_at": "2026-08-14T14:00:00Z",
+            "context": {"ticker": "TSLA", "price_alert_id": "pa-42"},
+        }
+        result = alerts_service._notif_row(row)
+        self.assertEqual(result["context"], {"ticker": "TSLA", "price_alert_id": "pa-42"})
+
+    def test_null_context_passed_through(self):
+        """Alert types other than custom_price_alert write no context."""
+        row = {
+            "id": "notif-2", "alert_type": "stop_loss_approach",
+            "title": "...", "message": "...",
+            "read": False, "created_at": "2026-08-14T14:00:00Z",
+            "context": None,
+        }
+        result = alerts_service._notif_row(row)
+        self.assertIsNone(result["context"])
 
 
 if __name__ == "__main__":

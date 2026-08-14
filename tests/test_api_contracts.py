@@ -597,6 +597,7 @@ class TestTradePlanEndpoints(unittest.TestCase):
     @patch("routers.trade_plans.ensure_trade_plans_table", return_value=None)
     @patch("routers.trade_plans.ensure_si02_trade_plans_columns", return_value=None)
     @patch("routers.trade_plans.ensure_strategy_version_at_entry_columns", return_value=None)
+    @patch("routers.trade_plans.ensure_triggered_by_price_alert_id_column", return_value=None)  # ST-09, BLG-BE-84, EPIC-02, v8.8
     @patch("routers.trade_plans.get_latest_snapshot", return_value={"total_value": 10000.00})
     @patch("routers.trade_plans.get_settings", return_value=[{"default_risk_percent": 1.5, "atr_multiplier_initial": 5.0, "atr_multiplier_trailing": 2.0, "min_hold_days": 10}])
     def test_create_trade_plan_returns_201(self, *_):

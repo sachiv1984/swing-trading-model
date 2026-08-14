@@ -85,6 +85,36 @@ const TD_NOTIF_C = {
 };
 
 // ---------------------------------------------------------------------------
+// custom_price_alert notification with context (ST-09, BLG-BE-84, EPIC-02,
+// v8.8) — carries context.ticker / context.price_alert_id, used by
+// NotificationRow's "Create Trade Plan" CTA.
+// ---------------------------------------------------------------------------
+const NOTIF_PRICE_ALERT_WITH_CONTEXT = {
+  id: 'notif-4',
+  alert_type: 'custom_price_alert',
+  title: 'Price Alert — TSLA above 250.00',
+  message: 'TSLA crossed above your threshold of 250.00 (current: 251.30).',
+  read: false,
+  created_at: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+  portfolio_id: 'portfolio-test-001',
+  context: {
+    ticker: 'TSLA',
+    condition: 'above',
+    threshold_price: 250.0,
+    current_price: 251.3,
+    price_alert_id: 'pa-42',
+  },
+};
+
+const TD_NOTIF_PRICE_ALERT = {
+  status: 'ok',
+  data: {
+    notifications: [NOTIF_PRICE_ALERT_WITH_CONTEXT],
+    has_more: false,
+  },
+};
+
+// ---------------------------------------------------------------------------
 // TD-NOTIF-EMPTY: No notifications  (SC-NOTIF-05)
 // ---------------------------------------------------------------------------
 const TD_NOTIF_EMPTY = {
@@ -136,10 +166,12 @@ module.exports = {
   TD_NOTIF_B,
   TD_NOTIF_C,
   TD_NOTIF_EMPTY,
+  TD_NOTIF_PRICE_ALERT,
   TD_PREFS_ALL_ON,
   MARK_READ_OK,
   MARK_ALL_OK,
   PREF_UPDATE_OK,
   TD_ALERT_RULES,
   NOTIF_STOP_LOSS_UNREAD,
+  NOTIF_PRICE_ALERT_WITH_CONTEXT,
 };

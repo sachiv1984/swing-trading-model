@@ -1,9 +1,9 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.11
-**Last Updated:** 2026-08-12 (ST-01/ST-03, EPIC-01, v8.7 — add invalidation_condition, is_ai_draft to POST/PUT /trade-plans request schema); prior — 2026-08-12 (ST-03, EPIC-02, v8.6, BLG-BE-91 — PUT /trade-plans/{id} status='active' now requires a position_id; new Errors section); prior — 2026-08-07 (ST-12, EPIC-03, v8.4, BLG-BE-70 — added thesis_model_version/thesis_prompt_version)
-**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07); 2026-08-12__release-v8.7 (ST-01/ST-03)
+**Version:** 0.12
+**Last Updated:** 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — add triggered_by_price_alert_id to POST /trade-plans request schema); prior — 2026-08-12 (ST-01/ST-03, EPIC-01, v8.7 — add invalidation_condition, is_ai_draft to POST/PUT /trade-plans request schema); prior — 2026-08-12 (ST-03, EPIC-02, v8.6, BLG-BE-91 — PUT /trade-plans/{id} status='active' now requires a position_id; new Errors section)
+**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07); 2026-08-12__release-v8.7 (ST-01/ST-03); 2026-08-14__release-v8.8 (ST-09)
 
 ---
 
@@ -69,6 +69,7 @@ Create a new trade plan.
 | thesis_prompt_version | string | No | *(v0.9 — ST-12, BLG-BE-70)* Companion to `thesis_model_version` — the generate-plan/generate-thesis response's `prompt_version` field, saved the same way. Nullable. |
 | invalidation_condition | string | No | *(v0.11 — ST-01, EPIC-01, v8.7, BLG-FEAT-84)* Optional, manually authored "what would prove this thesis wrong?" field. `trade_plan.md` §5.1. Nullable. |
 | is_ai_draft | boolean | No | *(v0.11 — ST-03, EPIC-01, v8.7, BLG-BE-95)* AI-origin flag — true when a narrative field was populated via "Improve with AI" and not yet manually edited since. Default: `false`. `trade_plan.md` §10.5. |
+| triggered_by_price_alert_id | string (UUID) | No | *(v0.12 — ST-09, EPIC-02, v8.8, BLG-BE-84)* Set only when this plan was created via the alert-notification-to-trade-plan UI path; null for plans created any other way. Frontend-passed and persisted without validation (same convention as `signal_id`) — sourced from the triggered `price_alerts` row's id, threaded through the fired notification's `context.price_alert_id` (see `alerts_endpoints.md` `GET /notifications`). No FK constraint. `data_model.md` DS-15. |
 
 ### Response (201 Created)
 

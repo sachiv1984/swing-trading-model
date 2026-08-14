@@ -22,6 +22,7 @@ from database import (
     ensure_trade_plans_table,
     ensure_si02_trade_plans_columns,
     ensure_strategy_version_at_entry_columns,
+    ensure_triggered_by_price_alert_id_column,
     create_red_flag_event,
     ensure_red_flag_events_table,
     get_latest_snapshot,
@@ -105,6 +106,11 @@ class TradePlanCreate(BaseModel):
     invalidation_condition: Optional[str] = None
     # ST-03 (EPIC-01, v8.7, BLG-BE-95): AI-origin flag, trade_plan.md §10.5
     is_ai_draft: Optional[bool] = None
+    # ST-09 (EPIC-02, v8.8, BLG-BE-84): set only when this plan was created
+    # via the alert-notification-to-trade-plan UI path; null for plans
+    # created any other way. See data_model.md DS-15 for the reporting-
+    # treatment decision (separate field, not a third trade_origin value).
+    triggered_by_price_alert_id: Optional[str] = None
 
 
 class TradePlanUpdate(BaseModel):
@@ -190,6 +196,7 @@ def create_plan(body: TradePlanCreate):
         ensure_trade_plans_table()
         ensure_si02_trade_plans_columns()
         ensure_strategy_version_at_entry_columns()
+        ensure_triggered_by_price_alert_id_column()
         portfolio_id = _get_portfolio_id()
 
         # ST-03 (BLG-BE-91, EPIC-02, v8.6): same active-status-requires-position

@@ -295,6 +295,12 @@ const EMPTY_FORM = {
   // ever reflect content that was directly AI-generated, never edited.
   thesis_model_version: null,
   thesis_prompt_version: null,
+  // ST-09 (BLG-BE-84, EPIC-02, v8.8): set only via the alert-notification-
+  // to-trade-plan UI path (NotificationRow.js "Create Trade Plan" CTA);
+  // null for plans created any other way. Ignored server-side on PUT
+  // (TradePlanUpdate has no such field) so it's harmless to leave in the
+  // update payload too.
+  triggered_by_price_alert_id: null,
 };
 
 // ST-05 (BLG-FEAT-52): Tag Rules per journal_components.md §3/§4, reused for trade_tags
@@ -344,12 +350,14 @@ export default function TradePlan() {
   const ticker = searchParams.get("ticker") || "";
   const market = searchParams.get("market") || "US";
   const editId = searchParams.get("edit");
+  const priceAlertId = searchParams.get("price_alert_id"); // ST-09, BLG-BE-84, EPIC-02, v8.8
 
   const [form, setForm] = useState({
     ...EMPTY_FORM,
     ticker,
     market,
     position_id: positionId || null,
+    triggered_by_price_alert_id: priceAlertId || null,
   });
   const [saved, setSaved] = useState(false);
   const [isAiDraft, setIsAiDraft] = useState(false);
