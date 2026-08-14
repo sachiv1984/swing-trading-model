@@ -4656,6 +4656,14 @@ The backend has two independent implementations of `check_market_regime()`: `bac
 
 ---
 
+### BLG-BE-98 — Investigate GET /trade-plans/tags ~10s p50 latency
+**Priority:** P2 (Medium) | **Type:** Backend Engineering | **Owner:** Backend Engineering Patterns Owner | **Source:** ST-05/EPIC-01 (`2026-08-14__release-v8.8`) | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Live staging measurement (`docs/ops/api_performance_baseline.md` §39.2) found `GET /trade-plans/tags` at p50=9,845ms / p95=10,041ms — roughly 4x slower than the structurally near-identical `GET /positions/tags` (p50=2,409ms, measured in the same run, same conditions). The router's own docstring states `GET /trade-plans/tags` "Mirrors GET /positions/tags", so a 4x gap for what should be a comparable single-table distinct-tag scan (`trade_plans.trade_tags` vs `positions.tags`) is unexpected — likely a missing index, a per-row Python-side dedup instead of a `SELECT DISTINCT`, or an N+1 pattern in `get_all_trade_plan_tags`.
+**Scope:** Profile `get_all_trade_plan_tags`'s query plan against `get_all_position_tags`'s (or equivalent); identify and fix the structural cause of the latency gap.
+**Acceptance Criteria:** Root cause identified; fix applied or filed as a follow-up with root cause documented; re-measured p50 within the same order of magnitude as `GET /positions/tags`; Backend Engineering Patterns Owner sign-off.
+
+---
+
 ## Roadmap Rebalance 2026-07-24__scheduled — New Items (IW-20260724-01 disposition)
 
 *34 items added via idea intake IW-20260724-01 STEP 4 disposition (Backlog). Source ideas and full rationale: `claude/ideas/ideas_register.md` (2026-07-24 rows), `claude/ideas/window_summary_IW-20260724-01.md`. DL-075.*

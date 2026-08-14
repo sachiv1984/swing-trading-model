@@ -35,7 +35,7 @@ Last Updated: 2026-08-14
 - **Spec reference:** `docs/ops/api_performance_baseline.md` (living operational document — canonical measurement methodology per §32/§37 precedent).
 - **Unblock criteria:** A commit tagged `[EPIC-01][ST-04]` pushed to `exec/2026-08-14__release-v8.8/EPIC-01` adding the endpoint's p50/p95 row with real staging-measured values.
 - **Commit format required:** `[EPIC-01][ST-04] <description>` pushed to `exec/2026-08-14__release-v8.8/EPIC-01`
-- **Status:** Pending
+- **Status:** Cancelled — reclassified to `autonomous` (LL-v2.3-EX-02) 2026-08-14. The live staging measurement this delegation assumed required Render/staging dashboard access turned out to be completable via `gh workflow run` dispatching the existing on-demand `api-performance-baseline-measurement.yml` tool (uses the `STAGING_API_KEY` repo secret already configured for CI, per the BLG-OPS-133/v8.4 precedent). Completed directly by the engine — see `docs/ops/api_performance_baseline.md` §39.1 and commit `[EPIC-01][ST-04][ST-05][ST-06]`.
 
 ---
 
@@ -52,7 +52,7 @@ Last Updated: 2026-08-14
 - **Spec reference:** `docs/ops/api_performance_baseline.md` (living operational document).
 - **Unblock criteria:** A commit tagged `[EPIC-01][ST-05]` pushed to `exec/2026-08-14__release-v8.8/EPIC-01` adding the endpoint's p50/p95/max row with real staging-measured values.
 - **Commit format required:** `[EPIC-01][ST-05] <description>` pushed to `exec/2026-08-14__release-v8.8/EPIC-01`
-- **Status:** Pending
+- **Status:** Cancelled — reclassified to `autonomous` (LL-v2.3-EX-02) 2026-08-14, same basis as DEL-20260814-02. Completed directly by the engine — see `docs/ops/api_performance_baseline.md` §39.2 (real measurement; ~10s p50 outlier flagged as `BLG-BE-98`, not silently accepted) and commit `[EPIC-01][ST-04][ST-05][ST-06]`.
 
 ---
 
@@ -69,6 +69,6 @@ Last Updated: 2026-08-14
 - **Spec reference:** `docs/ops/api_performance_baseline.md` §34 (existing row to be updated, not created).
 - **Unblock criteria:** A commit tagged `[EPIC-01][ST-06]` pushed to `exec/2026-08-14__release-v8.8/EPIC-01` replacing §34's estimated values with real staging-measured p50/p95.
 - **Commit format required:** `[EPIC-01][ST-06] <description>` pushed to `exec/2026-08-14__release-v8.8/EPIC-01`
-- **Status:** Pending
+- **Status:** Cancelled — reclassified to `autonomous` (LL-v2.3-EX-02) 2026-08-14, same basis as DEL-20260814-02. Completed directly by the engine, with a caveat: both attempted version-pair windows hit the endpoint's own `insufficient_data` 422 gate (only 21 real trades exist) rather than a clean 200 — see `docs/ops/api_performance_baseline.md` §39.3 for the full explanation and commit `[EPIC-01][ST-04][ST-05][ST-06]`.
 
 ---

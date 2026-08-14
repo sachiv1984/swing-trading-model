@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.26
-**Date:** 2026-08-11
+**Version:** 2.27
+**Date:** 2026-08-14
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -1503,7 +1503,7 @@ Nine of the eleven endpoints below already existed in the live backend but were 
 | Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
 |----------|----------|--------|----------|----------|------|
 | DELETE /ticker-universe/{id} | pre-existing (newly visible) | Write | — | — | Pending live timing run |
-| GET /analytics/strategy-version-comparison | pre-existing (newly visible) | Read — aggregation | 300–500ms (est.) | 600–900ms (est.) | Pending live timing run |
+| GET /analytics/strategy-version-comparison | pre-existing (newly visible) | Read — aggregation | 1,143ms (measured, see §39.3) | 1,270ms (measured, see §39.3) | ⚠ measured against the `insufficient_data` 422 path, not a 200 — see §39.3 |
 | GET /earnings/{id} | pre-existing (newly visible) | Read — external (Alpaca/yfinance-backed) | — | — | External-latency-dominated, not eligible for standard timing run |
 | GET /research/{id} | pre-existing (newly visible) | Read — external (AI-backed) | — | — | External-latency-dominated, not eligible for standard timing run |
 | GET /test/quick-health | new in v8.4 (ST-02) | Read — internal HTTP fan-out (3 calls) | 150–300ms (est.) | 300–600ms (est.) | Pending live timing run |
@@ -1738,10 +1738,54 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 39. v8.8 Live Measurements — GET /v1beta1/news, GET /trade-plans/tags, GET /analytics/strategy-version-comparison (ST-04/ST-05/ST-06, EPIC-01, BLG-OPS-13/BLG-OPS-135/BLG-OPS-51)
+
+**Date:** 2026-08-14
+**Story:** ST-04/ST-05 (EPIC-01, v8.8) — remaining §13-pattern registrations; ST-06 (EPIC-01, v8.8) — §34's `GET /analytics/strategy-version-comparison` row live re-measurement.
+**Environment:** Staging (`trading-assistant-api-staging.onrender.com`).
+**Method:** `api-performance-baseline-measurement.yml` (extended with 2 new endpoint entries this cycle), 7 samples each, dispatched via `gh workflow run`.
+
+### 39.1 GET /v1beta1/news (ST-04, BLG-OPS-13)
+
+`GET /v1beta1/news` is Alpaca's own external News API (`https://data.alpaca.markets/v1beta1/news`, confirmed in `openapi.yaml` — tagged `External - Alpaca`), not a route on this backend. Consistent with this document's established convention for external-API-backed endpoints (§18.2, §22.2), measured via this system's own `GET /news/{ticker}` wrapper, which makes exactly this Alpaca call per request.
+
+| Endpoint | Method | p50 (ms) | p95 (ms) | max (ms) | HTTP | Samples |
+|----------|--------|----------|----------|----------|------|---------|
+| GET /v1beta1/news (via GET /news/AAPL proxy) | Read — external (Alpaca News API) | 483 | 505 | 505 | 200 | 7 |
+
+Regression threshold: p95 > 1,010ms (dynamic-2x pattern, §22.2/§22.3/§23.2 precedent).
+
+### 39.2 GET /trade-plans/tags (ST-05, BLG-OPS-135)
+
+| Endpoint | Method | p50 (ms) | p95 (ms) | max (ms) | HTTP | Samples |
+|----------|--------|----------|----------|----------|------|---------|
+| GET /trade-plans/tags | Read — single-table distinct-tag scan | 9,845 | 10,041 | 10,041 | 200 | 7 |
+
+**⚠ Flag:** ~10s p50 is a genuine outlier, not staging cold-start noise — measured immediately after a warm-service call in the same run, and the router's own docstring states this endpoint "Mirrors GET /positions/tags", which measured 2,409ms p50 (§39 run, same conditions) — roughly 4x faster for a structurally near-identical query shape (`trade_plans.trade_tags` vs `positions.tags`, both simple per-row array/text scans per the docstring). Filed `BLG-BE-98` (P2, investigate `get_all_trade_plan_tags` query plan / missing index) — not fixed in this story, as the AC only requires the measurement itself; see `claude/backlog/backlog.md`.
+
+### 39.3 GET /analytics/strategy-version-comparison (ST-06, BLG-OPS-51 — §34 row update)
+
+**Not a clean 200 measurement.** Both attempted version-pair windows (`version_from=1.0&version_to=1.4`, then `version_from=1.3&version_to=1.4` — the two widest windows in `strategy_version_registry.py`) returned HTTP 422 `insufficient_data`: with only 21 real trades in `trade_history` today, no window currently clears the endpoint's own ≥10-trades-per-version minimum. The measured latency (1,143ms p50 / 1,270ms p95, both attempts consistent) reflects the query path up to and including `_compute_version_trade_metrics` for `version_from` before the gate short-circuits the request — a **lower bound**, not the full success-path cost (a 200 response would also run `metrics_to` and the comparison/delta logic). §34's row updated to reflect this measured-but-capped value rather than the original estimate, with the caveat carried in the Flag column. Re-measurement against a genuine 200 response should be re-attempted once `trade_history` has ≥10 trades in two comparable windows — no action item filed, since this will self-resolve as more trades accumulate; not a defect.
+
+### 39.4 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-04/ST-05/ST-06 (v8.8 EPIC-01, BLG-OPS-13/BLG-OPS-135/BLG-OPS-51) — Live Measurement Sign-Off
+
+AC-01 (ST-04): GET /v1beta1/news has p50/p95 entries, consistent methodology. ✅ PASS (via GET /news/AAPL proxy, established convention)
+AC-02 (ST-05): GET /trade-plans/tags has p50/p95/max entries, consistent methodology. ✅ PASS (real measurement; ~10s outlier flagged as BLG-BE-98, not silently accepted)
+AC-03 (ST-06): §34 row updated with measured (not estimated) values from ≥5 staging samples. ✅ PASS with caveat — measured against the insufficient_data error path, not a 200; documented explicitly in §39.3, not hidden.
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-08-14
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.27 | 2026-08-14 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-04/ST-05/ST-06 (v8.8 EPIC-01, BLG-OPS-13/BLG-OPS-135/BLG-OPS-51): §39 added — `GET /v1beta1/news` (via `GET /news/AAPL` proxy) and `GET /trade-plans/tags` registered with real staging measurements; §34's `GET /analytics/strategy-version-comparison` row updated from estimate to measured-but-capped value (`insufficient_data` gate hit on both attempted version windows — only 21 real trades exist today). `GET /trade-plans/tags`'s ~10s p50 (vs. the structurally similar `GET /positions/tags`'s 2.4s) flagged as `BLG-BE-98`, not silently accepted. Measurement tool (`api-performance-baseline-measurement.yml`) extended with 2 new endpoints and made resilient to individual sample timeouts (previously aborted the whole run under `set -e`). |
 | 2.26 | 2026-08-11 | Sprint Execution Engine (autonomous) | ST-01 (v8.6 EPIC-01, BLG-FEAT-32): §38 added — `GET /analytics/trade-plan-completion-rate` registered with estimated p50/p95 pending live measurement. |
 | 2.25 | 2026-08-10 | Sprint Execution Engine (autonomous) | ST-01 (v8.5 EPIC-01, BLG-BE-86): §35.2 finding row updated — `GET /analytics/tag-performance` 500 resolved by adding the missing `ensure_trade_plans_table()` call to `get_tag_performance_endpoint()`. Live re-measurement to record a real p50/p95 baseline is a follow-up, not yet done. |
 | 2.24 | 2026-08-08 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-21 (v8.4 EPIC-05, BLG-OPS-54): §36 added — `POST /digest/si05/send` registered. Found, via direct Render Platform API query against production, that Render's captured `uvicorn` access logs carry no duration field at all (genuine data-availability gap, not a query error) — literal Render-log-based measurement is not achievable today. Documented the gap, filed `BLG-BE-87` (add duration logging) for real future data, and recorded a single-sample external-timing-proxy measurement (GitHub Actions step timing from ST-19's trigger) as an explicitly-caveated interim value, per Product Owner direction. `BLG-OPS-54` closed. |
