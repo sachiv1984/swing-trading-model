@@ -11,12 +11,12 @@
   "issues_mode": "none",
   "auto_escalate": true,
   "prompt_schema_version": "v2",
-  "status": "Validated",
+  "status": "Published",
   "publish_eligible": true,
-  "last_transition_utc": "2026-08-14T15:40:00Z",
+  "last_transition_utc": "2026-08-14T16:30:00Z",
 
   "sealed": {
-    "sealed_utc": "",
+    "sealed_utc": "2026-08-14T16:30:00Z",
     "sealed_assumptions": {
       "timebox": "",
       "capacity": "Widen scope toward full ~24-28 day/sprint capacity band (Product Owner decision, 2026-08-14)"
