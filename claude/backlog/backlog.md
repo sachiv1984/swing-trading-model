@@ -5118,6 +5118,14 @@ The backend has two independent implementations of `check_market_regime()`: `bac
 
 ---
 
+### BLG-QA-149 — Add test coverage for screener_refresh/risk_off_alerts job-registration wiring
+**Priority:** P3 (Low) | **Type:** QA / Testing | **Owner:** QA & Testing Owner | **Source:** PR #1422 agent-mediated Director of Quality review (ST-01/ST-02/EPIC-01, `2026-08-14__release-v8.8`) | **Effort:** XS | **Provisional-Target:** TBD
+**Problem:** ST-01/ST-02 (v8.8) added `record_nightly_job("screener_refresh", ...)` (in `backend/routers/screener.py`'s background run task) and `record_nightly_job("risk_off_alerts", ...)` (in `backend/main.py`'s `risk_off_alerts_endpoint`), each on both the success and error paths — but no test asserts these calls actually fire with the correct job name and status. The full suite passing confirms no regression today, but nothing would catch a future accidental removal, renaming, or status-value typo in either call site.
+**Scope:** Add unit tests patching `record_nightly_job` and asserting call args for both the success and error paths of each of the two endpoints (mirrors the existing pattern already used for `trailing_stop`/`rebalance_exit` if one exists, or `tests/test_strategy_benchmark_summary.py`'s mocking approach otherwise).
+**Acceptance Criteria:** Tests added covering success + error paths for both `screener_refresh` and `risk_off_alerts`; QA & Testing Owner sign-off.
+
+---
+
 ### BLG-GOV-306 — Strategy rules change-justification template
 **Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Strategy Rules & System Intent Owner | **Source:** IDEA-strategy-owner-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** When `strategy_rules.md` is version-bumped, there is no required template ensuring the change cites the trade-history evidence (if any) motivating it — SI-04 (Strategy Version Comparison) will eventually need this history to be traceable.
