@@ -2401,6 +2401,66 @@ def create_position_audit_log_entry(
 
 
 # ---------------------------------------------------------------------------
+# position_state_history — append-only log of lifecycle state transitions
+# (ST-08, EPIC-02, v8.8, BLG-BE-58). Extends the position_audit_log pattern
+# (above) to lifecycle state changes specifically. Complements — does not
+# replace — the existing state_history JSONB column on positions
+# (ensure_lifecycle_columns, v2.6 DS-05): the JSONB column is untouched (no
+# behavioural change to compute_position_state()/refresh_position_lifecycle()'s
+# existing logic) and this table is written alongside it on every genuine
+# transition, giving a normalized, independently-queryable history separate
+# from the per-row JSONB blob. Same no-"who"-column rationale (single-user
+# product), same fail-open non-blocking write convention.
+# ---------------------------------------------------------------------------
+
+def ensure_position_state_history_table() -> None:
+    """Create position_state_history table if it does not exist."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS position_state_history (
+                    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    position_id  UUID NOT NULL,
+                    from_state   VARCHAR(20),
+                    to_state     VARCHAR(20) NOT NULL,
+                    entered_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_position_state_history_position_id
+                ON position_state_history(position_id)
+            """)
+        conn.commit()
+
+
+def create_position_state_history_entry(
+    position_id: str,
+    from_state,
+    to_state: str,
+    entered_at,
+) -> None:
+    """Insert one row into position_state_history. Non-blocking on failure —
+    an audit-log write failure must never break the underlying lifecycle
+    state update it is recording (same fail-open convention as
+    create_position_audit_log_entry above)."""
+    try:
+        ensure_position_state_history_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO position_state_history
+                        (position_id, from_state, to_state, entered_at)
+                    VALUES (%s, %s, %s, %s)
+                    """,
+                    (position_id, from_state, to_state, entered_at),
+                )
+            conn.commit()
+    except Exception:
+        pass
+
+
+# ---------------------------------------------------------------------------
 # trade_plan_audit_log — audit trail for trade plan edits post-entry (ST-13,
 # EPIC-03, v8.4, BLG-BE-77). Extends the position_audit_log pattern
 # (BLG-BE-73, above) to trade_plans: "post-entry" means the plan is linked

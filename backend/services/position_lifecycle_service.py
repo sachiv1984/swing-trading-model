@@ -22,6 +22,7 @@ from database import (
     get_positions,
     get_position_by_id,
     update_position_lifecycle_state,
+    create_position_state_history_entry,
 )
 from utils.formatting import decimal_to_float
 from utils.position_lifecycle_states import EXIT_ZONE, PROFITABLE, LOSING, GRACE, UNKNOWN
@@ -173,6 +174,11 @@ def refresh_position_lifecycle(position_id: str, prefetched_position: Optional[d
             existing_history = json.loads(existing_history)
         new_entry = {"state": new_state, "entered_at": now.isoformat()}
         updated_history = existing_history + [new_entry]
+        # ST-08 (BLG-BE-58, EPIC-02, v8.8): also log the transition to the
+        # normalized position_state_history table, alongside (not instead
+        # of) the JSONB column above — additive, fail-open, no change to
+        # the state machine or the existing persistence path.
+        create_position_state_history_entry(position_id, stored_state, new_state, now)
         return update_position_lifecycle_state(position_id, new_state, now, updated_history)
     else:
         # State unchanged — ensure state_entered_at is set if missing

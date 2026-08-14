@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.26
-**Last Updated:** 2026-08-13 (ST-07, EPIC-02, v8.7, BLG-BE-96 — DS-12 verification note, best-available-proxy execution, AC-02 residual gap disclosed); prior — 2026-08-11 (ST-03, EPIC-02, v8.6, BLG-BE-91 — DS-12 trade_plans active-status-requires-position CHECK constraint)
+**Version:** 2.27
+**Last Updated:** 2026-08-14 (ST-08, EPIC-02, v8.8, BLG-BE-58 — DS-13 position_state_history append-only table added); prior — 2026-08-13 (ST-07, EPIC-02, v8.7, BLG-BE-96 — DS-12 verification note, best-available-proxy execution, AC-02 residual gap disclosed); prior — 2026-08-11 (ST-03, EPIC-02, v8.6, BLG-BE-91 — DS-12 trade_plans active-status-requires-position CHECK constraint)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1970,6 +1970,45 @@ No new migration. `BLG-BE-96` (ST-07) required staging/production verification o
 
 ---
 
-**Document Version:** 2.26
+## DS-13 — position_state_history table (v2.27, 2026-08-14)
+
+**Story:** ST-08 (EPIC-02, v8.8) — BLG-BE-58
+
+Append-only normalized log of position lifecycle state transitions, extending the `position_audit_log` pattern (§Migration v2.16→v2.17 above) to lifecycle state changes specifically. Complements — does not replace — the existing `state_history` JSONB column on `positions` (DS-05, v2.6): that column is untouched, `compute_position_state()` and the rest of the lifecycle state machine are unchanged (no behavioural change), and this table is written alongside the JSONB column on every genuine transition (`refresh_position_lifecycle()`, `services/position_lifecycle_service.py`). Rationale for a separate table rather than only the JSONB column: independently queryable/indexable history (e.g. `SELECT * FROM position_state_history WHERE position_id = ...`) without deserializing the JSONB blob, and a durable audit trail that survives even if the parent `positions` row's `state_history` column were ever reset. Same no-"who"-column rationale as `position_audit_log` (single-user product), same fail-open non-blocking write convention (a write failure never blocks the underlying lifecycle state update).
+
+```sql
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS position_state_history (
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    position_id  UUID NOT NULL,
+    from_state   VARCHAR(20),
+    to_state     VARCHAR(20) NOT NULL,
+    entered_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_position_state_history_position_id ON position_state_history(position_id);
+
+COMMIT;
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| `id` | UUID | NO | Primary key |
+| `position_id` | UUID | NO | The position that transitioned. No FK constraint (audit rows must survive the position's own lifecycle; matches `position_audit_log.position_id`'s pattern of not cascading) |
+| `from_state` | VARCHAR(20) | YES | The prior `position_state` value. NULL for a position's first-ever computed state (no prior state to record) |
+| `to_state` | VARCHAR(20) | NO | The new `position_state` value (`EXIT ZONE` / `PROFITABLE` / `LOSING` / `GRACE` / `UNKNOWN`) |
+| `entered_at` | TIMESTAMPTZ | NO | When the transition was recorded — same value written to `positions.state_entered_at` for this transition |
+
+Reversible: `DROP TABLE IF EXISTS position_state_history;`
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-08-14 (agent-mediated; single new append-only table, no existing schema touched, `state_history` JSONB column and state machine logic unchanged, no backfill applicable — table did not previously exist; mirrors the already-accepted `position_audit_log`/`trade_plan_audit_log` shape)
+
+---
+
+**Document Version:** 2.27
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-08-13
+**Last Review:** 2026-08-14
