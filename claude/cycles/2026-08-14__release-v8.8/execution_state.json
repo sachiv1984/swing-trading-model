@@ -8,10 +8,10 @@
   "last_updated_utc": "2026-08-14T18:00:00Z",
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-01",
       "pr_number": 1422,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/test_strategy_benchmark_summary.py"],
@@ -119,8 +119,8 @@
   "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06"],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05", "EPIC-06", "EPIC-07"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05", "EPIC-06", "EPIC-07"],
     "all_merged": false
   },
   "sealed": false,
