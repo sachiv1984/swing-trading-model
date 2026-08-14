@@ -56,7 +56,7 @@ _last_db_size_alert_utc: Optional[datetime] = None
 # Nightly job last-run status (ST-13, BLG-OPS-79).
 # Updated by each nightly computation endpoint on completion.
 # Resets on process restart (Render spins up a fresh process on each deploy).
-_NIGHTLY_JOB_NAMES = ("trailing_stop", "rebalance_exit", "inv_vol_sizing", "custom_price_alerts")
+_NIGHTLY_JOB_NAMES = ("trailing_stop", "rebalance_exit", "inv_vol_sizing", "custom_price_alerts", "screener_refresh", "risk_off_alerts")
 _nightly_job_status: Dict = {
     job: {
         "last_run_utc": None,
@@ -460,7 +460,9 @@ def get_scheduler_health() -> Dict:
     Jobs: trailing_stop (POST /positions/nightly-stop-update),
           rebalance_exit (POST /signals/rebalance-exit),
           inv_vol_sizing (co-invoked by rebalance-exit or manual trigger),
-          custom_price_alerts (co-invoked by POST /alerts/evaluate, ST-02/BLG-FE-116).
+          custom_price_alerts (co-invoked by POST /alerts/evaluate, ST-02/BLG-FE-116),
+          screener_refresh (POST /screener/run, ST-01/BLG-OPS-144, v8.8),
+          risk_off_alerts (POST /positions/risk-off-alerts, ST-02/BLG-OPS-145, v8.8).
     Status resets on process restart — Render spins up a fresh process on each deploy.
     """
     jobs = {}
@@ -479,6 +481,8 @@ def get_scheduler_health() -> Dict:
             "rebalance_exit": "POST /signals/rebalance-exit",
             "inv_vol_sizing": "co-invoked by rebalance-exit",
             "custom_price_alerts": "co-invoked by POST /alerts/evaluate",
+            "screener_refresh": "POST /screener/run",
+            "risk_off_alerts": "POST /positions/risk-off-alerts",
         },
         "overall_status": "ok" if all_ok else "degraded",
         "jobs": jobs,

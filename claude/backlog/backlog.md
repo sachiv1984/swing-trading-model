@@ -5126,4 +5126,10 @@ The backend has two independent implementations of `check_market_regime()`: `bac
 
 ---
 
+### BLG-SPEC-130 — Document screener_refresh and risk_off_alerts jobs in health_endpoints.md
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** ST-01/ST-02/EPIC-01 (`2026-08-14__release-v8.8`) | **Effort:** XS | **Provisional-Target:** TBD
+**Problem:** `docs/specs/api_contracts/health_endpoints.md`'s `GET /health/scheduler` section states "The three tracked jobs are..." and lists only `trailing_stop`, `rebalance_exit`, `inv_vol_sizing`. ST-01/ST-02 (v8.8) added two more jobs to the live registry — `screener_refresh` (`POST /screener/run`) and `risk_off_alerts` (`POST /positions/risk-off-alerts`) — plus `custom_price_alerts` was already live but likewise undocumented in this section. The canonical spec text is now stale relative to `backend/services/health_service.py`'s `_NIGHTLY_JOB_NAMES`. Not filed as a behavioural deviation — the additions are consistent with the endpoint's documented intent (surface nightly job health), not a divergence from a requirement; this is a documentation-currency gap only. Left uncorrected in the sprint execution engine's own commit because canonical spec edits are restricted to deviation documentation (`execution_prompt.md` §7) and this is not a deviation.
+**Scope:** Update the "Architecture note" job list and the `GET /health/scheduler` response example/field notes to include `custom_price_alerts`, `screener_refresh`, and `risk_off_alerts`.
+**Acceptance Criteria:** All six live job names present in the spec's architecture note and response example; API Contracts & Documentation Owner sign-off.
+
 ---
