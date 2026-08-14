@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-13 (session — 1 new item added: BLG-GOV-307); prior — 2026-08-13 (groom backlog post-ship closure 2026-08-12__release-v8.7 — 19 shipped items archived, 1 ephemeral Release Slice section removed (v8.7), health=PASS — see `backlog_archive.md`); prior — 2026-08-13 (session — backlog audit for already-shipped items: 10 items archived as ✅ Complete; 6 items flagged partially-pre-met with narrowing notes for PO review); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-14 (Release Planning v8.8 — Release Slice section added, 29 items across 7 EPICs, marker RP:v8.8:2026-08-14__release-v8.8); prior — 2026-08-14 (session — 7 new items added: BLG-FE-161, BLG-FE-162, BLG-FE-163, BLG-OPS-143, BLG-OPS-144, BLG-OPS-145, BLG-BE-97); prior — 2026-08-13 (session — 1 new item added: BLG-GOV-307); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -17,6 +17,46 @@
 > **Ephemeral sections** (Release Slice tables, Test Scenario Gap sections, and "Returned to Backlog" sections appended by governance engines) are temporary. They must be removed during the next `groom backlog` run after the cycle closes. Any still-open items within them must be promoted to the appropriate §1–§8 type section before the ephemeral section is removed.
 
 *Completed and killed items are recorded in `claude/backlog/backlog_archive.md`.*
+
+---
+
+## Release Slice — v8.8 (ephemeral — remove at next `groom backlog` after cycle closes)
+
+<!-- release-plan-marker: RP:v8.8:2026-08-14__release-v8.8 -->
+
+29 items committed to `2026-08-14__release-v8.8`. Full acceptance criteria: `claude/cycles/2026-08-14__release-v8.8/stage4_backlog_slice.md`.
+
+| ST | Source | Epic | Priority | Effort |
+|----|--------|------|----------|--------|
+| ST-01 | BLG-OPS-144 | EPIC-01 | P1 | S |
+| ST-02 | BLG-OPS-145 | EPIC-01 | P1 | S |
+| ST-03 | BLG-OPS-143 | EPIC-01 | P2 | S |
+| ST-04 | BLG-OPS-13 | EPIC-01 | P3 | XS |
+| ST-05 | BLG-OPS-135 | EPIC-01 | P3 | XS |
+| ST-06 | BLG-OPS-51 | EPIC-01 | P3 | S |
+| ST-07 | BLG-BE-97 | EPIC-02 | P2 | M |
+| ST-08 | BLG-BE-58 | EPIC-02 | P3 | M |
+| ST-09 | BLG-BE-84 | EPIC-02 | P3 | M |
+| ST-10 | BLG-BE-85 | EPIC-02 | P3 | XS |
+| ST-11 | BLG-BE-87 | EPIC-02 | P3 | XS |
+| ST-12 | BLG-BE-94 | EPIC-02 | P3 | S |
+| ST-13 | BLG-FE-161 | EPIC-03 | P2 | M |
+| ST-14 | BLG-FE-162 | EPIC-03 | P2 | XS |
+| ST-15 | BLG-FE-163 | EPIC-03 | P3 | S |
+| ST-16 | BLG-FE-159 | EPIC-03 | P3 | XS |
+| ST-17 | BLG-FE-160 | EPIC-03 | P3 | XS |
+| ST-18 | BLG-QA-140 | EPIC-04 | P3 | S |
+| ST-19 | BLG-QA-143 | EPIC-04 | P3 | S |
+| ST-20 | BLG-QA-145 | EPIC-04 | P3 | S |
+| ST-21 | BLG-QA-146 | EPIC-04 | P3 | S |
+| ST-22 | BLG-SEC-33 | EPIC-05 | P3 | S |
+| ST-23 | BLG-SEC-32 | EPIC-05 | P3 | S |
+| ST-24 | BLG-SEC-18 | EPIC-05 | P3 | S |
+| ST-25 | BLG-SEC-28 | EPIC-05 | P3 | XS |
+| ST-26 | BLG-SPEC-118 | EPIC-06 | P3 | S |
+| ST-27 | BLG-SPEC-129 | EPIC-06 | P3 | XS |
+| ST-28 | BLG-GOV-291 | EPIC-07 | P3 | XS |
+| ST-29 | BLG-GOV-293 | EPIC-07 | P3 | XS |
 
 ---
 
@@ -963,6 +1003,71 @@ While converting `src/components/signals/PositionEntryModal.js` from hardcoded `
 **Acceptance Criteria**
 - Playwright test added covering `card`/`card-foreground` computed colour/background at the first live call site introduced for the Card component
 - Playwright test added covering `secondary`/`secondary-foreground` computed colour/background at the first live call site introduced (Badge secondary variant, Button secondary variant, or a toast with an action)
+
+---
+
+### BLG-FE-161 — "What's New" panel surfaces raw engineering copy instead of user-facing benefit statements
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Product Owner
+**Source:** User review session — 2026-08-14
+**Effort:** M (~1–2d)
+**Provisional-Target:** v8.8
+
+**Problem**
+`src/components/dashboard/home/WhatsNewCard.js` renders the "Description" column of `docs/product/changelog.md`'s `### Changes shipped` table verbatim (parsed server-side by `backend/services/changelog_service.py`). Those descriptions are written for engineers and governance readers (e.g. "N+1 query audit across trade/position list endpoints", "CLAUDE.md §8 shared-JSON-field schema-drift check across sibling EPIC branches") — they don't explain what benefit the user gets, and some EPICs (e.g. a purely governance/process-hardening EPIC) have zero end-user-visible change at all but still appear in the feed. Confirmed by inspecting the current v8.7 changelog entry: EPIC-07's description ("Governance & cross-domain hardening — CLAUDE.md §8 ... Roadmap Unlock Tracker ... §13 policy determination ...") is exactly this failure mode.
+
+**Scope**
+- Add a curated, user-facing description field per EPIC in the `### Changes shipped` table (separate from the existing internal/governance description column) that `changelog_service.py` sources instead
+- Add a way to flag an EPIC as having no user-facing benefit (e.g. a governance-only EPIC) so it's excluded from the `GET /changelog/latest` payload entirely, rather than surfaced with unrelated internal copy
+- Document the "write a user-facing benefit statement, not an implementation summary" convention wherever changelog.md authoring is specified (post-ship closure / release planning prompt)
+
+**Acceptance Criteria**
+- `WhatsNewCard` renders curated user-benefit copy, not raw EPIC implementation descriptions
+- An EPIC with no user-facing change does not appear in the What's New feed
+- Changelog authoring convention documented so future releases populate the new field correctly
+
+---
+
+### BLG-FE-162 — Research page trade plan status badge shows raw snake_case for 3 of 6 statuses
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** User review session — 2026-08-14
+**Effort:** XS (~<0.5d)
+**Provisional-Target:** v8.8
+
+**Problem**
+`src/pages/Research.js`'s local `PlanStatusBadge` component only maps 3 of the 6 valid trade plan statuses (`active`, `draft`, `closed`) to a human label; any plan in `research_pending`, `research_complete`, or `entry_conditions_set` falls through to the raw status string, rendering literal snake_case (e.g. "entry_conditions_set") instead of a label like "Entry Ready". The canonical, complete mapping already exists as `STATUS_LABELS` in `src/pages/TradePlan.js` — Research.js just never adopted it and maintains its own incomplete copy.
+
+**Scope**
+- Extract `STATUS_LABELS` (and `STATUSES`) from `src/pages/TradePlan.js` into a shared constants module, or import directly from `TradePlan.js`
+- Update `Research.js`'s `PlanStatusBadge` to use the shared/complete map instead of its own local 3-entry map
+
+**Acceptance Criteria**
+- All 6 trade plan statuses render a human-readable label on the Research page, none fall back to raw snake_case
+- Single source of truth for status labels (no duplicate/divergent maps between TradePlan.js and Research.js)
+
+---
+
+### BLG-FE-163 — Ticker Universe page has no filtering by search, sector, or industry
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** User review session — 2026-08-14
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** v8.8
+
+**Problem**
+`src/pages/TickerUniverse.js`'s filter state supports only market (US/UK/all) and active/inactive. Sector and industry are already captured per-ticker fields (collected in `AddTickerForm`) but there is no filter UI for either, and no ticker-name/alphabetical search filter. As the universe grows, finding a specific ticker or reviewing sector/industry concentration requires scanning the full unfiltered table.
+
+**Scope**
+- Add a text search input (ticker prefix/contains match) to the filter bar
+- Add sector and industry dropdown filters, populated from distinct values present in the loaded ticker set, following the existing `marketFilter` button-group pattern
+
+**Acceptance Criteria**
+- User can filter the ticker table by typed search text, by sector, and by industry, independently or combined with the existing market/active filters
+- Filters visibly narrow the table row count and clear/reset correctly
 
 ---
 
@@ -4460,6 +4565,94 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 - `docs/specs/Specs_Index.md` has a `## Changelog` table or companion changelog file
 - `**Last Updated:**` header field is a single line, no `prior —` chaining
 - Head of Specs Team sign-off
+
+---
+
+### BLG-OPS-143 — Investigate nightly backtest import failure (Strategy Benchmark "data as of" line never populates)
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** User review session — 2026-08-14
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** v8.8
+
+**Problem**
+`src/pages/StrategyBenchmark.js` only renders the "Benchmark data as of ..." line when `summary.last_imported_at` is non-null, and `backend/database.py`'s `get_backtest_summary()` correctly derives that value from `MAX(imported_at) FROM backtest_trades` — the frontend/backend contract here is not the bug. `.github/workflows/backtest.yml` runs nightly (`cron: '0 1 * * *'`) and is supposed to write fresh rows into `backtest_trades` via `import_backtest.py`, but the line has not shown a date in production. This means either the scheduled run is failing, or its import step is failing silently, and needs investigation against actual GitHub Actions run history / Render logs (not visible from a static code read).
+
+**Scope**
+- Review recent `backtest.yml` run history for failures or silent no-ops
+- Confirm `import_backtest.py`'s write path against `backtest_trades` is actually being hit and committing successfully
+- Fix whatever is broken (secret/credential issue, API endpoint failure, timeout, etc.)
+
+**Acceptance Criteria**
+- `backtest.yml` completes successfully on its next scheduled run and `backtest_trades.imported_at` reflects a current timestamp
+- "Benchmark data as of ..." line renders on the Strategy Benchmark page with a recent date
+
+---
+
+### BLG-OPS-144 — Add scheduled overnight screener refresh workflow
+**Priority:** P1 (High)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** User review session — 2026-08-14
+**Effort:** S (~0.5d)
+**Provisional-Target:** v8.8
+
+**Problem**
+Confirmed via a full audit of every file in `.github/workflows/`: no workflow triggers a screener refresh on any cadence. Unlike `daily-snapshot.yml`, `alert-evaluation.yml`, and `backtest.yml` — which each have their own scheduled cron calling their respective endpoint — the screener batch job (`backend/services/screener_batch_service.py`) is effectively manual/on-demand only. This is why screener results were found to be 24 days stale.
+
+**Scope**
+- Add a new scheduled GitHub Actions workflow, following the existing `alert-evaluation.yml` pattern, that calls the screener refresh endpoint overnight after US/UK market close
+- Wire success/failure into the existing nightly-job health reporting (`record_nightly_job` / `GET /health/scheduler`) so future staleness is visible rather than silently discovered
+
+**Acceptance Criteria**
+- Screener results refresh automatically on a nightly schedule with no manual trigger required
+- A missed/failed run is visible via `GET /health/scheduler`
+
+---
+
+### BLG-OPS-145 — Add scheduled nightly risk-off-alerts workflow (regime badge permanently stuck)
+**Priority:** P1 (High)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** User review session — 2026-08-14
+**Effort:** S (~0.5d)
+**Provisional-Target:** v8.8
+
+**Problem**
+The `RISK OFF` badge on the Positions page (`position.risk_off_exit`) is driven entirely by a DB column that is only ever written by `POST /positions/risk-off-alerts` (`backend/services/position_service.py`'s nightly risk-off job). Confirmed via the same full workflow audit as `BLG-OPS-144`: no scheduled GitHub Actions workflow calls this endpoint either. The column defaults to `FALSE` (`ensure_risk_off_exit_column` in `backend/database.py`) and is never updated, so the badge is structurally incapable of ever reflecting real market regime — it always reads as "not risk-off" regardless of actual conditions. This is a live data-integrity issue: the UI is displaying an incorrect, unchanging value to users making trading decisions.
+
+**Scope**
+- Add a new scheduled GitHub Actions workflow, following the existing `alert-evaluation.yml` pattern, that calls `POST /positions/risk-off-alerts` nightly after market close
+- Confirm the endpoint's success/failure is recorded via `record_nightly_job` (currently it is not — unlike the sibling `nightly-stop-update` and `rebalance-exit` endpoints in `backend/main.py`, `risk_off_alerts_endpoint` never calls `record_nightly_job`)
+
+**Acceptance Criteria**
+- `risk_off_exit` is refreshed nightly against live market regime data
+- The `RISK OFF` badge on Positions correctly reflects current regime state
+- The job's run status is visible via `GET /health/scheduler`
+
+---
+
+### BLG-BE-97 — Consolidate two divergent check_market_regime() implementations
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner
+**Source:** User review session — 2026-08-14 (found while investigating `BLG-OPS-145`)
+**Effort:** M (~1d)
+**Provisional-Target:** v8.8
+
+**Problem**
+The backend has two independent implementations of `check_market_regime()`: `backend/position_manager.py` (uses the `yfinance` library with a 5-minute shared cache) and `backend/utils/pricing.py` (hits Yahoo Finance's undocumented chart API directly via raw `requests`, with no cookie/crumb handling — a materially more failure-prone pattern on cloud-hosted IPs). The live `/market/status` endpoint that backs the Trade Plan page's "Regime at Entry" field uses the `utils/pricing.py` version. Having two implementations with different fetch mechanisms and different failure/fallback behaviour (one defaults both indices to risk-on on failure, both use different retry logic) risks silently divergent regime readings depending on which call path is hit.
+
+**Scope**
+- Audit every call site of both `check_market_regime()` implementations
+- Consolidate on one implementation (recommend the `yfinance`-based `position_manager.py` version, given its shared cache and more robust library-based fetch)
+- Update all call sites, including `/market/status`, to use the single consolidated implementation
+
+**Acceptance Criteria**
+- Only one `check_market_regime()` implementation remains in the backend
+- All call sites (position analysis, `/market/status`, pre-entry validation, signal generation) use it
+- No behavioural regression in existing regime-dependent tests
 
 ---
 
