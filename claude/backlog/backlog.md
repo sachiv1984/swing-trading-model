@@ -4656,6 +4656,14 @@ The backend has two independent implementations of `check_market_regime()`: `bac
 
 ---
 
+### BLG-BE-98 — Investigate GET /trade-plans/tags ~10s p50 latency
+**Priority:** P2 (Medium) | **Type:** Backend Engineering | **Owner:** Backend Engineering Patterns Owner | **Source:** ST-05/EPIC-01 (`2026-08-14__release-v8.8`) | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Live staging measurement (`docs/ops/api_performance_baseline.md` §39.2) found `GET /trade-plans/tags` at p50=9,845ms / p95=10,041ms — roughly 4x slower than the structurally near-identical `GET /positions/tags` (p50=2,409ms, measured in the same run, same conditions). The router's own docstring states `GET /trade-plans/tags` "Mirrors GET /positions/tags", so a 4x gap for what should be a comparable single-table distinct-tag scan (`trade_plans.trade_tags` vs `positions.tags`) is unexpected — likely a missing index, a per-row Python-side dedup instead of a `SELECT DISTINCT`, or an N+1 pattern in `get_all_trade_plan_tags`.
+**Scope:** Profile `get_all_trade_plan_tags`'s query plan against `get_all_position_tags`'s (or equivalent); identify and fix the structural cause of the latency gap.
+**Acceptance Criteria:** Root cause identified; fix applied or filed as a follow-up with root cause documented; re-measured p50 within the same order of magnitude as `GET /positions/tags`; Backend Engineering Patterns Owner sign-off.
+
+---
+
 ## Roadmap Rebalance 2026-07-24__scheduled — New Items (IW-20260724-01 disposition)
 
 *34 items added via idea intake IW-20260724-01 STEP 4 disposition (Backlog). Source ideas and full rationale: `claude/ideas/ideas_register.md` (2026-07-24 rows), `claude/ideas/window_summary_IW-20260724-01.md`. DL-075.*
@@ -5110,6 +5118,14 @@ The backend has two independent implementations of `check_market_regime()`: `bac
 
 ---
 
+### BLG-QA-149 — Add test coverage for screener_refresh/risk_off_alerts job-registration wiring
+**Priority:** P3 (Low) | **Type:** QA / Testing | **Owner:** QA & Testing Owner | **Source:** PR #1422 agent-mediated Director of Quality review (ST-01/ST-02/EPIC-01, `2026-08-14__release-v8.8`) | **Effort:** XS | **Provisional-Target:** TBD
+**Problem:** ST-01/ST-02 (v8.8) added `record_nightly_job("screener_refresh", ...)` (in `backend/routers/screener.py`'s background run task) and `record_nightly_job("risk_off_alerts", ...)` (in `backend/main.py`'s `risk_off_alerts_endpoint`), each on both the success and error paths — but no test asserts these calls actually fire with the correct job name and status. The full suite passing confirms no regression today, but nothing would catch a future accidental removal, renaming, or status-value typo in either call site.
+**Scope:** Add unit tests patching `record_nightly_job` and asserting call args for both the success and error paths of each of the two endpoints (mirrors the existing pattern already used for `trailing_stop`/`rebalance_exit` if one exists, or `tests/test_strategy_benchmark_summary.py`'s mocking approach otherwise).
+**Acceptance Criteria:** Tests added covering success + error paths for both `screener_refresh` and `risk_off_alerts`; QA & Testing Owner sign-off.
+
+---
+
 ### BLG-GOV-306 — Strategy rules change-justification template
 **Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Strategy Rules & System Intent Owner | **Source:** IDEA-strategy-owner-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** When `strategy_rules.md` is version-bumped, there is no required template ensuring the change cites the trade-history evidence (if any) motivating it — SI-04 (Strategy Version Comparison) will eventually need this history to be traceable.
@@ -5125,5 +5141,11 @@ The backend has two independent implementations of `check_market_regime()`: `bac
 **Acceptance Criteria:** §5.1 anchor corrected; Head of Specs Team sign-off.
 
 ---
+
+### BLG-SPEC-130 — Document screener_refresh and risk_off_alerts jobs in health_endpoints.md
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** ST-01/ST-02/EPIC-01 (`2026-08-14__release-v8.8`) | **Effort:** XS | **Provisional-Target:** TBD
+**Problem:** `docs/specs/api_contracts/health_endpoints.md`'s `GET /health/scheduler` section states "The three tracked jobs are..." and lists only `trailing_stop`, `rebalance_exit`, `inv_vol_sizing`. ST-01/ST-02 (v8.8) added two more jobs to the live registry — `screener_refresh` (`POST /screener/run`) and `risk_off_alerts` (`POST /positions/risk-off-alerts`) — plus `custom_price_alerts` was already live but likewise undocumented in this section. The canonical spec text is now stale relative to `backend/services/health_service.py`'s `_NIGHTLY_JOB_NAMES`. Not filed as a behavioural deviation — the additions are consistent with the endpoint's documented intent (surface nightly job health), not a divergence from a requirement; this is a documentation-currency gap only. Left uncorrected in the sprint execution engine's own commit because canonical spec edits are restricted to deviation documentation (`execution_prompt.md` §7) and this is not a deviation.
+**Scope:** Update the "Architecture note" job list and the `GET /health/scheduler` response example/field notes to include `custom_price_alerts`, `screener_refresh`, and `risk_off_alerts`.
+**Acceptance Criteria:** All six live job names present in the spec's architecture note and response example; API Contracts & Documentation Owner sign-off.
 
 ---

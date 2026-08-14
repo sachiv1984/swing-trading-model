@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional, List
 from services.screener_batch_service import run_screener, get_screener_results, is_run_in_progress, get_regime_distribution
+from services.health_service import record_nightly_job
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/screener", tags=["Screener"])
@@ -77,6 +78,11 @@ def trigger_screener_run(
     The frontend polls GET /screener/results?run_id=<id> until results appear.
     Returns 409 if a run is already in progress.
     Contract: screener_api_contract.md
+
+    ST-01 (BLG-OPS-144, EPIC-01, v8.8): background run outcome is now recorded in the
+    GET /health/scheduler job registry (job name "screener_refresh") so a missed or
+    failed nightly refresh is visible — this endpoint previously had no scheduled
+    trigger at all (root cause of screener results going 24 days stale).
     """
     if request.ticker_universe is not None:
         for t in request.ticker_universe:
@@ -90,13 +96,16 @@ def trigger_screener_run(
 
     def _run_in_background():
         try:
-            run_screener(request.ticker_universe, run_id=pending_run_id)
+            result = run_screener(request.ticker_universe, run_id=pending_run_id)
             from routers.research import invalidate_research_cache
             invalidate_research_cache()
+            record_nightly_job("screener_refresh", "ok", detail={"run_id": pending_run_id, "result": result})
         except RuntimeError as exc:
             logger.warning("Background screener run failed: %s", exc)
+            record_nightly_job("screener_refresh", "error", error=str(exc))
         except Exception as exc:
             logger.error("Background screener run error: %s", exc, exc_info=True)
+            record_nightly_job("screener_refresh", "error", error=str(exc))
 
     background_tasks.add_task(_run_in_background)
 

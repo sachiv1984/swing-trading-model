@@ -1,0 +1,28 @@
+# .github/workflows/risk-off-alerts.yml
+# Nightly risk-off-alerts refresh — ST-02 (BLG-OPS-145, EPIC-01, v8.8).
+# Live P1 data-integrity fix: risk_off_exit had no scheduled trigger at all, leaving
+# the RISK OFF badge on Positions permanently stuck on stale regime data. Runs after
+# US market close so the day's regime data is final. Uses GitHub Actions schedule
+# (free tier) instead of Render cron (paid), consistent with alert-evaluation.yml.
+# Required secrets: API_URL, API_KEY (same as daily-snapshot.yml).
+name: Nightly Risk-Off Alerts Refresh
+
+on:
+  schedule:
+    - cron: '15 22 * * 1-5'  # 22:15 UTC weekdays (after screener-refresh.yml)
+  workflow_dispatch:            # Allow manual trigger for testing
+
+jobs:
+  refresh-risk-off-alerts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger risk-off alerts refresh
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          echo "Triggering risk-off alerts refresh at $(date -u)..."
+          curl -f --max-time 120 -X POST "${API_URL}/positions/risk-off-alerts" \
+            -H "X-API-Key: ${API_KEY}" \
+            -H "Content-Type: application/json"
+          echo "Risk-off alerts refresh complete."

@@ -4,7 +4,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
 from typing import Optional, List, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 import pandas as pd
 import time
 import requests
@@ -3486,13 +3486,24 @@ def get_backtest_summary(
             yearly_breakdown = [dict(r) for r in cur.fetchall()]
 
             # Last imported_at
+            #
+            # ST-03 (BLG-OPS-143, EPIC-01, v8.8): imported_at is TIMESTAMPTZ, so
+            # psycopg2 returns a timezone-aware datetime whose .isoformat() already
+            # ends in "+00:00" — naively appending "Z" (as elsewhere in this file,
+            # where the source datetime is naive) produced a malformed double-suffixed
+            # string ("...+00:00Z"), which is not valid ISO-8601 and made
+            # `new Date(...)` return Invalid Date on the frontend. Strip any tzinfo
+            # after normalising to UTC before appending "Z", so this always matches
+            # the single-suffix format the frontend (and every other timestamp in
+            # this API) expects.
             cur.execute("SELECT MAX(imported_at) AS last_imported FROM backtest_trades")
             ts_row = cur.fetchone()
-            last_imported_at = (
-                ts_row["last_imported"].isoformat() + "Z"
-                if ts_row and ts_row["last_imported"]
-                else None
-            )
+            last_imported_at = None
+            if ts_row and ts_row["last_imported"]:
+                ts = ts_row["last_imported"]
+                if ts.tzinfo is not None:
+                    ts = ts.astimezone(timezone.utc).replace(tzinfo=None)
+                last_imported_at = ts.isoformat() + "Z"
 
             # Available years for filter dropdown
             cur.execute(

@@ -618,13 +618,21 @@ def risk_off_alerts_endpoint():
     """ST-05 (BLG-FEAT-49): Flag open positions with risk_off_exit alert per market regime.
 
     Spec: docs/specs/api_contracts/position_endpoints.md#POST /positions/risk-off-alerts
+
+    ST-02 (BLG-OPS-145, EPIC-01, v8.8): now recorded in the GET /health/scheduler job
+    registry (job name "risk_off_alerts") so a missed or failed nightly run is visible —
+    previously this endpoint's outcome was never recorded, leaving no way to detect the
+    scheduled workflow's absence (root cause of the RISK OFF badge staying permanently stuck).
     """
     try:
         result = run_nightly_risk_off_alerts()
+        record_nightly_job("risk_off_alerts", "ok", detail=result)
         return {"status": "ok", "data": result}
     except ValueError as e:
+        record_nightly_job("risk_off_alerts", "error", error=str(e))
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
+        record_nightly_job("risk_off_alerts", "error", error=str(e))
         import traceback
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})

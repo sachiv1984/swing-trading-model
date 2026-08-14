@@ -1,0 +1,28 @@
+# .github/workflows/screener-refresh.yml
+# Nightly overnight screener refresh — ST-01 (BLG-OPS-144, EPIC-01, v8.8).
+# Live P1 data-integrity fix: screener results had no scheduled trigger at all and
+# went 24 days stale. Runs after US market close so the day's price/volume data is
+# final. Uses GitHub Actions schedule (free tier) instead of Render cron (paid),
+# consistent with alert-evaluation.yml and daily-snapshot.yml.
+# Required secrets: API_URL, API_KEY (same as daily-snapshot.yml).
+name: Nightly Screener Refresh
+
+on:
+  schedule:
+    - cron: '0 22 * * 1-5'  # 22:00 UTC weekdays (after US market close, after alert-evaluation.yml)
+  workflow_dispatch:           # Allow manual trigger for testing
+
+jobs:
+  refresh-screener:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger screener refresh
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          echo "Triggering screener refresh at $(date -u)..."
+          curl -f --max-time 120 -X POST "${API_URL}/screener/run" \
+            -H "X-API-Key: ${API_KEY}" \
+            -H "Content-Type: application/json"
+          echo "Screener refresh accepted (runs asynchronously — check GET /health/scheduler for completion)."

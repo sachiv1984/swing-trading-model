@@ -1,0 +1,129 @@
+{
+  "cycle_id": "2026-08-14__release-v8.8",
+  "sprint_goal": "Close the two live P1 data-integrity gaps (stale screener refresh, stuck RISK OFF badge) and ship the full v8.8 debt-closure slice — 29 stories across 7 EPICs (backend hardening, frontend UX/dead-code cleanup, QA, security, spec, and governance debt) — within the confirmed ~24–28 day capacity band.",
+  "backlog_slice_source": "claude/cycles/2026-08-14__release-v8.8/stage4_backlog_slice.md",
+  "invoked_utc": "2026-08-14T18:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-08-14T18:00:00Z",
+  "epics": {
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-08-14__release-v8.8/EPIC-01",
+      "pr_number": 1422,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-01.md",
+      "test_scenarios": ["tests/test_strategy_benchmark_summary.py"],
+      "stories": {
+        "ST-01": {"title": "Add scheduled overnight screener refresh workflow", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 1393, "branch": "exec/2026-08-14__release-v8.8/EPIC-01", "commit_sha": "3e0c34ba", "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-08-14T18:45:00Z", "acceptance_verified": true, "spec_references": [".github/workflows/screener-refresh.yml", "docs/specs/api_contracts/health_endpoints.md#GET /health/scheduler"], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": true, "last_completed_substep": "3.1.A.push", "sign_off_record": null, "notes": "1128 backend tests pass (0 regressions). Filed BLG-SPEC-130 for health_endpoints.md doc-currency gap (not a behavioural deviation — additive, intent-consistent; canonical spec edit out of write scope per §7)."},
+        "ST-02": {"title": "Add scheduled nightly risk-off-alerts workflow (regime badge permanently stuck)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 1394, "branch": "exec/2026-08-14__release-v8.8/EPIC-01", "commit_sha": "3e0c34ba", "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-08-14T18:45:00Z", "acceptance_verified": true, "spec_references": [".github/workflows/risk-off-alerts.yml", "docs/specs/api_contracts/health_endpoints.md#GET /health/scheduler"], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": true, "last_completed_substep": "3.1.A.push", "sign_off_record": null, "notes": "1128 backend tests pass (0 regressions). Shares BLG-SPEC-130 doc-currency backlog item with ST-01 (same root cause)."},
+        "ST-03": {"title": "Investigate nightly backtest import failure (Strategy Benchmark data-as-of line never populates)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 1395, "branch": "exec/2026-08-14__release-v8.8/EPIC-01", "commit_sha": "ed06e996", "delegation_record_id": "DEL-20260814-01", "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-08-14T19:30:00Z", "acceptance_verified": true, "spec_references": ["tests/test_strategy_benchmark_summary.py"], "spec_reference_not_applicable": true, "spec_reference_not_applicable_reason": "bug fix, no prior canonical spec governs get_backtest_summary()'s timestamp formatting — verified via tests/test_strategy_benchmark_summary.py and live production API confirmation.", "deviations_filed": true, "last_completed_substep": "3.1.A.push", "sign_off_record": null, "notes": "Reclassified delegated_backend -> autonomous (LL-v2.3-EX-02) — DEL-20260814-01 cancelled. Root cause: TIMESTAMPTZ value formatted with a naive-datetime-only 'append Z' pattern produced a malformed double-suffixed ISO string, parsed as Invalid Date by the frontend. AC-1 (backtest.yml run + imported_at) was already true pre-fix (confirmed via live GH Actions log for run 31766766669: 583 trades, correct imported_at). AC-2 (frontend line renders a recent date) fixed at the data layer; no frontend code changed, so the CLAUDE.md frontend-testing gate (Playwright/staging sign-off) does not apply to this story — recommend a quick post-deploy visual spot-check of the Strategy Benchmark page as a non-blocking confirmation, not a merge gate."},
+        "ST-04": {"title": "Add remaining pre-v4.6 endpoint (GET /v1beta1/news) to api_performance_baseline.md", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 1396, "branch": "exec/2026-08-14__release-v8.8/EPIC-01", "commit_sha": "f4998d18", "delegation_record_id": "DEL-20260814-02", "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-08-14T19:35:00Z", "acceptance_verified": true, "spec_references": ["docs/ops/api_performance_baseline.md#39.1"], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": true, "last_completed_substep": "3.1.A.push", "sign_off_record": null, "notes": "Reclassified delegated_backend -> autonomous (LL-v2.3-EX-02) — DEL-20260814-02 cancelled. Measured via GET /news/AAPL proxy (GET /v1beta1/news is Alpaca's own external API, not a route on this backend). p50=483ms p95=505ms, HTTP 200, 7 samples."},
+        "ST-05": {"title": "Add GET /trade-plans/tags to api_performance_baseline.md", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 1397, "branch": "exec/2026-08-14__release-v8.8/EPIC-01", "commit_sha": "f4998d18", "delegation_record_id": "DEL-20260814-03", "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-08-14T19:35:00Z", "acceptance_verified": true, "spec_references": ["docs/ops/api_performance_baseline.md#39.2"], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": true, "last_completed_substep": "3.1.A.push", "sign_off_record": null, "notes": "Reclassified delegated_backend -> autonomous (LL-v2.3-EX-02) — DEL-20260814-03 cancelled. p50=9,845ms p95=10,041ms HTTP 200, 7 samples — real outlier (~4x GET /positions/tags), filed BLG-BE-98."},
+        "ST-06": {"title": "Live timing measurement for GET /analytics/strategy-version-comparison in api_performance_baseline.md", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 1398, "branch": "exec/2026-08-14__release-v8.8/EPIC-01", "commit_sha": "f4998d18", "delegation_record_id": "DEL-20260814-04", "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-08-14T19:35:00Z", "acceptance_verified": true, "spec_references": ["docs/ops/api_performance_baseline.md#39.3"], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": true, "last_completed_substep": "3.1.A.push", "sign_off_record": null, "notes": "Reclassified delegated_backend -> autonomous (LL-v2.3-EX-02) — DEL-20260814-04 cancelled. Both attempted version windows hit the endpoint's own insufficient_data 422 gate (only 21 real trades exist) — measured latency documented as a lower bound, not a clean 200 (p50=1,143ms p95=1,270ms)."}
+      }
+    },
+    "EPIC-02": {
+      "status": "not_started",
+      "branch": "exec/2026-08-14__release-v8.8/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-07": {"title": "Consolidate two divergent check_market_regime() implementations", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1399, "branch": "exec/2026-08-14__release-v8.8/EPIC-02", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": "Shares backend market-regime code path with EPIC-01 ST-02; rebases after."},
+        "ST-08": {"title": "Position lifecycle state-transition history table", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1400, "branch": "exec/2026-08-14__release-v8.8/EPIC-02", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-09": {"title": "Link price_alerts to the trade they trigger (real alert-to-trade provenance)", "classification": "delegated_backend", "status": "not_started", "assigned_to": "Head of Engineering", "github_issue": 1401, "branch": "exec/2026-08-14__release-v8.8/EPIC-02", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": "Not fully scoped — RISK-02; reporting treatment decision needed before implementation."},
+        "ST-10": {"title": "Populate si05_digest_log.telegram_message_id on successful send", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1402, "branch": "exec/2026-08-14__release-v8.8/EPIC-02", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-11": {"title": "Add duration logging around POST /digest/si05/send's Telegram send call", "classification": "delegated_backend", "status": "not_started", "assigned_to": "Infrastructure & Operations Owner", "github_issue": 1403, "branch": "exec/2026-08-14__release-v8.8/EPIC-02", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": "Verified against next real cron/workflow_dispatch invocation — not CI-reproducible."},
+        "ST-12": {"title": "Pre-Trade Research View query-latency budget review", "classification": "delegated_backend", "status": "not_started", "assigned_to": "Head of Engineering", "github_issue": 1404, "branch": "exec/2026-08-14__release-v8.8/EPIC-02", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": "Requires Head of Engineering sign-off per AC."}
+      }
+    },
+    "EPIC-03": {
+      "status": "not_started",
+      "branch": "exec/2026-08-14__release-v8.8/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-13": {"title": "\"What's New\" panel surfaces user-facing benefit statements, not raw engineering copy", "classification": "delegated_frontend", "status": "not_started", "assigned_to": "Frontend Specifications & UX Owner", "github_issue": 1405, "branch": "exec/2026-08-14__release-v8.8/EPIC-03", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-14": {"title": "Research page trade plan status badge: fix raw snake_case for 3 of 6 statuses", "classification": "delegated_frontend", "status": "not_started", "assigned_to": "Frontend Specifications & UX Owner", "github_issue": 1406, "branch": "exec/2026-08-14__release-v8.8/EPIC-03", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-15": {"title": "Ticker Universe page filtering by search, sector, and industry", "classification": "delegated_frontend", "status": "not_started", "assigned_to": "Frontend Specifications & UX Owner", "github_issue": 1407, "branch": "exec/2026-08-14__release-v8.8/EPIC-03", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-16": {"title": "Resolve PositionEntryModal.js dead-code/unreachable-mount-point status", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1408, "branch": "exec/2026-08-14__release-v8.8/EPIC-03", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-17": {"title": "Add Playwright coverage for Card and secondary-variant components when a live call site exists", "classification": "delegated_qa", "status": "not_started", "assigned_to": "Director of Quality", "github_issue": 1409, "branch": "exec/2026-08-14__release-v8.8/EPIC-03", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""}
+      }
+    },
+    "EPIC-04": {
+      "status": "not_started",
+      "branch": "exec/2026-08-14__release-v8.8/EPIC-04",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-18": {"title": "Field-population completeness audit for Arc 6 prerequisite fields", "classification": "delegated_qa", "status": "not_started", "assigned_to": "Director of Quality", "github_issue": 1410, "branch": "exec/2026-08-14__release-v8.8/EPIC-04", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-19": {"title": "Consolidated backend service-layer test-coverage report", "classification": "delegated_qa", "status": "not_started", "assigned_to": "Director of Quality", "github_issue": 1411, "branch": "exec/2026-08-14__release-v8.8/EPIC-04", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-20": {"title": "Test-environment parity check — local vs CI vs staging config drift", "classification": "delegated_qa", "status": "not_started", "assigned_to": "Director of Quality", "github_issue": 1412, "branch": "exec/2026-08-14__release-v8.8/EPIC-04", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-21": {"title": "backend/routers/test.py completeness re-audit", "classification": "delegated_qa", "status": "not_started", "assigned_to": "Director of Quality", "github_issue": 1413, "branch": "exec/2026-08-14__release-v8.8/EPIC-04", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""}
+      }
+    },
+    "EPIC-05": {
+      "status": "not_started",
+      "branch": "exec/2026-08-14__release-v8.8/EPIC-05",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-05.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-22": {"title": "Add system/user role separation to Claude thesis-generation prompts", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1414, "branch": "exec/2026-08-14__release-v8.8/EPIC-05", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-23": {"title": "Dependency license compliance scan", "classification": "delegated_decision", "status": "not_started", "assigned_to": "Product Owner", "github_issue": 1415, "branch": "exec/2026-08-14__release-v8.8/EPIC-05", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-24": {"title": "Review baseline npm audit HIGH/CRITICAL findings (react-scripts toolchain)", "classification": "delegated_decision", "status": "not_started", "assigned_to": "Cybersecurity & Trust Lead", "github_issue": 1416, "branch": "exec/2026-08-14__release-v8.8/EPIC-05", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-25": {"title": "Add Telegram Bot Token to api_key_rotation_policy.md scope", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1417, "branch": "exec/2026-08-14__release-v8.8/EPIC-05", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""}
+      }
+    },
+    "EPIC-06": {
+      "status": "not_started",
+      "branch": "exec/2026-08-14__release-v8.8/EPIC-06",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-06.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-26": {"title": "Backfill api_changelog.md entries for v7.9–v8.4 endpoint additions", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1418, "branch": "exec/2026-08-14__release-v8.8/EPIC-06", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-27": {"title": "Correct trade_plan.md §5.1's stale \"Risk/Reward Notes\" field anchor", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1419, "branch": "exec/2026-08-14__release-v8.8/EPIC-06", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""}
+      }
+    },
+    "EPIC-07": {
+      "status": "not_started",
+      "branch": "exec/2026-08-14__release-v8.8/EPIC-07",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-07.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-28": {"title": "Correct CLAUDE.md §8's commit message template to match the enforced commit-format hook", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1420, "branch": "exec/2026-08-14__release-v8.8/EPIC-07", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-29": {"title": "Assign an owning engine for .claude_current_state.json's prior_cycle field", "classification": "delegated_decision", "status": "not_started", "assigned_to": "PMO Lead", "github_issue": 1421, "branch": "exec/2026-08-14__release-v8.8/EPIC-07", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""}
+      }
+    }
+  },
+  "blocked_items": [],
+  "delegated_items": ["ST-04", "ST-05", "ST-06"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06"],
+  "open_escalations": [],
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05", "EPIC-06", "EPIC-07"],
+    "all_merged": false
+  },
+  "sealed": false,
+  "sealed_utc": null,
+  "process_notes": []
+}
