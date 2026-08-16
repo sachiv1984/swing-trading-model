@@ -119,8 +119,8 @@
   "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12"],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": ["EPIC-01"],
-    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05", "EPIC-06", "EPIC-07"],
+    "epics_merged": ["EPIC-01", "EPIC-02"],
+    "epics_pending": ["EPIC-03", "EPIC-04", "EPIC-05", "EPIC-06", "EPIC-07"],
     "all_merged": false
   },
   "sealed": false,
