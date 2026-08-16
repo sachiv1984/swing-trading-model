@@ -347,8 +347,13 @@ class TestAggregateStatus:
 # ---------------------------------------------------------------------------
 
 class TestMarketRegimeCache:
-    def test_second_call_uses_cache_not_yf_download(self):
-        """check_market_regime must not call yf.download on cache hit."""
+    """Cache lives in utils.pricing (BLG-BE-97, v8.8 ST-07 consolidation);
+    position_manager.check_market_regime / _market_regime_cache are re-exports
+    of the same function object / dict, so exercising either module name
+    observes the one shared implementation and cache."""
+
+    def test_second_call_uses_cache_not_network_fetch(self):
+        """check_market_regime must not hit the network on cache hit."""
         import position_manager
         import datetime as dt
 
@@ -357,14 +362,14 @@ class TestMarketRegimeCache:
         position_manager._market_regime_cache["result"] = cached_result
         position_manager._market_regime_cache["cached_at"] = dt.datetime.now()
 
-        with patch("yfinance.download") as mock_yf:
+        with patch("utils.pricing.requests.get") as mock_get:
             result = position_manager.check_market_regime()
-            mock_yf.assert_not_called()
+            mock_get.assert_not_called()
 
         assert result["spy_risk_on"] is True
 
-    def test_cache_miss_calls_yf_download(self):
-        """check_market_regime must call yf.download when cache is stale."""
+    def test_cache_miss_calls_network_fetch(self):
+        """check_market_regime must hit the network when cache is stale."""
         import position_manager
         import datetime as dt
 
@@ -374,12 +379,9 @@ class TestMarketRegimeCache:
             dt.datetime.now() - dt.timedelta(seconds=400)
         )
 
-        with patch("yfinance.download") as mock_yf:
-            try:
-                position_manager.check_market_regime()
-            except Exception:
-                pass  # mock return triggers exception; cache miss is what we test
-            mock_yf.assert_called()
+        with patch("utils.pricing.requests.get") as mock_get:
+            position_manager.check_market_regime()
+            mock_get.assert_called()
 
     def test_pre_entry_validation_uses_shared_cache(self):
         """_check_regime in pre_entry_validation reads check_market_regime (cache path)."""

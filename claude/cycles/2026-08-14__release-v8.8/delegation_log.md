@@ -72,3 +72,21 @@ Last Updated: 2026-08-14
 - **Status:** Cancelled — reclassified to `autonomous` (LL-v2.3-EX-02) 2026-08-14, same basis as DEL-20260814-02. Completed directly by the engine, with a caveat: both attempted version-pair windows hit the endpoint's own `insufficient_data` 422 gate (only 21 real trades exist) rather than a clean 200 — see `docs/ops/api_performance_baseline.md` §39.3 for the full explanation and commit `[EPIC-01][ST-04][ST-05][ST-06]`.
 
 ---
+
+## DEL-20260814-05
+
+- **ST Item:** ST-11 — Add duration logging around POST /digest/si05/send's Telegram send call
+- **EPIC:** EPIC-02
+- **Classification:** delegated_backend
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1403
+- **Branch:** exec/2026-08-14__release-v8.8/EPIC-02
+- **Delegated at:** 2026-08-14T20:40:00Z
+- **What is needed:** Code portion complete (commit `[EPIC-02][ST-11]` — duration logging added to both success and failure log lines in `send_si05_digest()`). Remaining: verify against the next real invocation — either the next scheduled `si05-weekly-digest.yml` cron run (Sunday 19:00 UTC) or an explicit manual `workflow_dispatch` of that workflow — then query Render logs (`render-si05-log-query.yml`, ST-21/BLG-OPS-54 precedent) for the elapsed-time value and add the registration entry to `docs/ops/api_performance_baseline.md` §36.
+- **Spec reference:** `docs/ops/api_performance_baseline.md` §36 (living operational document).
+- **Not proxyable via the LL-v2.3-EX-02 pattern used for EPIC-01 ST-04/05/06:** those reclassifications used a read-only latency-measurement dispatch (`api-performance-baseline-measurement.yml`) with no external side effect. `si05-weekly-digest.yml` sends a real Telegram message to the configured production channel on every dispatch — an outward-facing action requiring explicit user confirmation before firing, not something the engine may trigger autonomously.
+- **Unblock criteria:** A commit tagged `[EPIC-02][ST-11]` pushed to `exec/2026-08-14__release-v8.8/EPIC-02` adding the real log-derived timing to `docs/ops/api_performance_baseline.md` §36.
+- **Commit format required:** `[EPIC-02][ST-11] <description>` pushed to `exec/2026-08-14__release-v8.8/EPIC-02`
+- **Status:** Unblocked (AC split) — 2026-08-14T21:50:00Z. User approved a manual dispatch (2026-08-14T21:40:00Z); `si05-weekly-digest.yml` run 31815613959 fired and succeeded (200 OK, real Telegram message sent), confirmed via `render-si05-log-query.yml` run 31815639079 — but this did not verify the story's own change: production deploys from `main` (confirmed `main` HEAD `e015f9b6` at trigger time), and this story's duration-logging commit exists only on the unmerged `exec/2026-08-14__release-v8.8/EPIC-02` branch, so the Render log shows only the pre-existing uvicorn access-log line, not the new `"SI-05 digest sent... in %.2fs"` line. User authorized splitting the live-invocation verification + `api_performance_baseline.md` §36 update to `BLG-BE-99` (backlog.md), to be completed post-merge/redeploy — code portion (commit `36185587`, tested) stands as this story's completion. ST-11 marked `done` in `execution_state.json`.
+
+---

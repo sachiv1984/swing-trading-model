@@ -27,7 +27,6 @@ _config_stub = types.ModuleType("config")
 _config_stub.DEFAULT_MIN_HOLD_DAYS = 10
 _config_stub.TELEGRAM_BOT_TOKEN = ""
 _config_stub.TELEGRAM_CHAT_ID = ""
-sys.modules["config"] = _config_stub
 
 _pricing_stub = types.ModuleType("utils.pricing")
 _pricing_stub.check_market_regime = MagicMock()
@@ -35,8 +34,6 @@ _pricing_stub.get_current_price = MagicMock()
 
 _utils_stub = types.ModuleType("utils")
 _utils_stub.pricing = _pricing_stub
-sys.modules.setdefault("utils", _utils_stub)
-sys.modules["utils.pricing"] = _pricing_stub
 
 _health_stub = types.ModuleType("services.health_service")
 _health_stub.record_nightly_job = MagicMock()
@@ -45,13 +42,25 @@ _health_stub.record_nightly_job = MagicMock()
 # leak into other test files sharing this pytest process (e.g.
 # test_health_extensions.py, which imports the real module by the same name).
 
+# "config"/"utils"/"utils.pricing" are likewise scoped to just this exec_module
+# call via patch.dict, not assigned globally (BLG-BE-97, v8.8 ST-07 fallout,
+# DoQ agent-mediated review finding on EPIC-02 PR #1423). alerts_service.py's
+# own module namespace binds get_current_price/check_market_regime etc. at
+# exec time (test bodies below patch.object(alerts_service, ...) directly, never
+# via sys.modules), so the stub only needs to be visible for the duration of
+# this one import — a bare global assignment previously clobbered whatever
+# real "utils.pricing"/"config" modules another test file had already loaded
+# (or vice versa), causing collection-order-dependent ImportErrors elsewhere
+# (e.g. tests/test_pre_entry_validation.py's `from utils.pricing import
+# _market_regime_cache`, which the real module provides but this stub does not).
 import importlib.util as _ilu
 _spec = _ilu.spec_from_file_location(
     "alerts_service",
     Path(__file__).parent.parent / "backend" / "services" / "alerts_service.py"
 )
 alerts_service = _ilu.module_from_spec(_spec)
-_spec.loader.exec_module(alerts_service)
+with patch.dict(sys.modules, {"config": _config_stub, "utils": _utils_stub, "utils.pricing": _pricing_stub}):
+    _spec.loader.exec_module(alerts_service)
 
 create_price_alert = alerts_service.create_price_alert
 delete_price_alert = alerts_service.delete_price_alert
@@ -267,6 +276,28 @@ class TestEvaluatePriceAlerts(unittest.TestCase):
         _health_stub.record_nightly_job.assert_called_once()
         self.assertEqual(_health_stub.record_nightly_job.call_args[0][0], "custom_price_alerts")
 
+    def test_triggered_notification_context_includes_price_alert_id(self):
+        """ST-09 (BLG-BE-84, EPIC-02, v8.8): the fired notification's context
+        must carry the triggering price_alerts row's id, so the frontend can
+        pass it through when creating a trade plan from the alert."""
+        import json
+        cur = MagicMock()
+        cur.fetchall.return_value = [_pa_row(id_="pa-42", ticker="TSLA", condition="above", threshold=150.0)]
+        cur.fetchone.return_value = {"id": "notif-1"}
+
+        with patch.object(alerts_service, "get_current_price", return_value=160.0):
+            _evaluate_price_alerts(cur, "portfolio-1", lambda nid: None)
+
+        insert_calls = [
+            c for c in cur.execute.call_args_list
+            if "INSERT INTO notifications" in c.args[0]
+        ]
+        self.assertEqual(len(insert_calls), 1)
+        params = insert_calls[0].args[1]
+        context = json.loads(params[4])  # (portfolio_id, alert_type, title, message, context)
+        self.assertEqual(context["price_alert_id"], "pa-42")
+        self.assertEqual(context["ticker"], "TSLA")
+
 
 # ---------------------------------------------------------------------------
 # 4. _price_alert_row serialisation
@@ -292,6 +323,37 @@ class TestPriceAlertRowSerialisation(unittest.TestCase):
         }
         result = _price_alert_row(row)
         self.assertEqual(result["id"], "pa-1")
+
+
+# ---------------------------------------------------------------------------
+# 5. _notif_row context exposure (ST-09, BLG-BE-84, EPIC-02, v8.8)
+# ---------------------------------------------------------------------------
+
+class TestNotifRowContextExposure(unittest.TestCase):
+    """context (JSONB) was already stored but never returned to callers
+    before this story — GET /notifications now exposes it so the frontend
+    can read context.price_alert_id / context.ticker."""
+
+    def test_context_included_in_output(self):
+        row = {
+            "id": "notif-1", "alert_type": "custom_price_alert",
+            "title": "Price Alert — TSLA above 250.00", "message": "...",
+            "read": False, "created_at": "2026-08-14T14:00:00Z",
+            "context": {"ticker": "TSLA", "price_alert_id": "pa-42"},
+        }
+        result = alerts_service._notif_row(row)
+        self.assertEqual(result["context"], {"ticker": "TSLA", "price_alert_id": "pa-42"})
+
+    def test_null_context_passed_through(self):
+        """Alert types other than custom_price_alert write no context."""
+        row = {
+            "id": "notif-2", "alert_type": "stop_loss_approach",
+            "title": "...", "message": "...",
+            "read": False, "created_at": "2026-08-14T14:00:00Z",
+            "context": None,
+        }
+        result = alerts_service._notif_row(row)
+        self.assertIsNone(result["context"])
 
 
 if __name__ == "__main__":

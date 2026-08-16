@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.6
-**Last Updated:** 2026-07-23
+**Version:** 0.7
+**Last Updated:** 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — GET /notifications now exposes `context`; `alert_type` field description corrected to include `custom_price_alert`, missed since v0.5); prior — 2026-07-23
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **ADR Reference:** `docs/adr/ADR-003-notification-delivery-architecture.md` — FastAPI BackgroundTasks delivery architecture
 **Design Gate:** `claude/cycles/2026-03-18__release-v2.1/` — EPIC-02
@@ -586,7 +586,23 @@ Return the notification feed for the portfolio, newest first. Supports page-base
         "title": "Stop Loss Approach — AAPL",
         "message": "AAPL stop (210.00) is within 4.2% of current price (219.05). Consider reviewing your stop.",
         "read": false,
-        "created_at": "2026-03-20T09:15:00Z"
+        "created_at": "2026-03-20T09:15:00Z",
+        "context": null
+      },
+      {
+        "id": "880e8400-e29b-41d4-a716-446655440001",
+        "alert_type": "custom_price_alert",
+        "title": "Price Alert — TSLA above 250.00",
+        "message": "TSLA crossed above your threshold of 250.00 (current: 251.30).",
+        "read": false,
+        "created_at": "2026-08-14T14:00:00Z",
+        "context": {
+          "ticker": "TSLA",
+          "condition": "above",
+          "threshold_price": 250.0,
+          "current_price": 251.3,
+          "price_alert_id": "990e8400-e29b-41d4-a716-446655440002"
+        }
       }
     ],
     "total": 3,
@@ -612,11 +628,12 @@ Return the notification feed for the portfolio, newest first. Supports page-base
 | Field | Type | Nullable | Description |
 |-------|------|----------|-------------|
 | `id` | UUID | No | Notification identifier |
-| `alert_type` | string | No | One of the four alert type keys |
+| `alert_type` | string | No | `stop_loss_approach` \| `grace_period_warning` \| `market_regime_change` \| `daily_portfolio_summary` \| `custom_price_alert` (doc-currency correction, ST-09 EPIC-02 v8.8 — `custom_price_alert` has existed since v0.5/ST-02/v7.5/BLG-FE-116 but was missed here) |
 | `title` | string | No | Human-readable alert title (e.g. `"Stop Loss Approach — AAPL"`) |
 | `message` | string | No | One-line description of the event |
 | `read` | boolean | No | `false` for unread; `true` after mark-read |
 | `created_at` | string (ISO 8601) | No | Timestamp the notification was created |
+| `context` | object | Yes | *(v0.7 — ST-09, EPIC-02, v8.8, BLG-BE-84)* Alert-type-specific metadata, stored at creation time. Was already persisted but never exposed by this endpoint before this story. For `custom_price_alert`: `{ticker, condition, threshold_price, current_price, price_alert_id}` — `price_alert_id` is the triggering `price_alerts` row's id, used by the frontend's "create trade plan from this alert" path (`trade_plan_endpoints.md`'s `triggered_by_price_alert_id`). Null/absent for other alert types (no context is written for them today). |
 
 #### Error Responses
 

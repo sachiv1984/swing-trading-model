@@ -802,6 +802,35 @@ def get_signals(portfolio_id: str, status: str = None) -> List[Dict]:
             return cur.fetchall()
 
 
+def get_signals_for_ticker(portfolio_id: str, ticker: str) -> List[Dict]:
+    """Get signals for one portfolio+ticker, most recent first (ST-12,
+    BLG-BE-94, EPIC-02, v8.8 — Pre-Trade Research View query-latency review).
+
+    Targeted variant of get_signals() — avoids fetching every signal ever
+    generated for the portfolio just to filter to one ticker in Python
+    (routers/research.py's per-page-load lookup does exactly this today, an
+    unbounded-growth query cost as the signals table accumulates history
+    across screener runs). Uses idx_signals_portfolio for the portfolio_id
+    predicate; the UPPER(ticker) predicate requires the functional index
+    idx_signals_ticker_upper (added alongside this function, correcting
+    this docstring's original — incorrect — claim that the existing plain
+    idx_signals_ticker would serve: a plain index cannot satisfy a
+    predicate that wraps the column in a function, per this codebase's own
+    ST-10/BLG-BE-82 precedent for trade_plans/red_flag_events).
+    Same ordering as get_signals() so callers that re-sort the result the
+    same way select the identical row — this only reduces I/O, it does not
+    change selection semantics.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT * FROM signals WHERE portfolio_id = %s AND UPPER(ticker) = UPPER(%s) "
+                "ORDER BY signal_date DESC, rank ASC",
+                (portfolio_id, ticker)
+            )
+            return cur.fetchall()
+
+
 # BLG-SEC-08: dict keys passed to update_signal() are spliced directly into the
 # SQL UPDATE statement as column names (parameterization only covers values,
 # not identifiers) — an unvalidated key is a SQL-injection-adjacent arbitrary
@@ -1167,8 +1196,8 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     signal_id, risk_percent_used, portfolio_value_at_entry,
                     pre_entry_validation_snapshot, effective_settings_snapshot, trade_tags,
                     strategy_version_at_entry, thesis_model_version, thesis_prompt_version,
-                    invalidation_condition, is_ai_draft)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s)
+                    invalidation_condition, is_ai_draft, triggered_by_price_alert_id)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s,%s)
                    RETURNING *""",
                 (
                     portfolio_id,
@@ -1204,6 +1233,7 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     data.get("thesis_prompt_version"),
                     data.get("invalidation_condition"),
                     bool(data.get("is_ai_draft")),
+                    data.get("triggered_by_price_alert_id"),
                 ),
             )
             row = cur.fetchone()
@@ -1592,6 +1622,27 @@ def ensure_setup_type_column():
         conn.commit()
 
 
+def ensure_triggered_by_price_alert_id_column():
+    """Add triggered_by_price_alert_id UUID to trade_plans table (idempotent).
+
+    ST-09 (BLG-BE-84, EPIC-02, v8.8) — real alert-to-trade provenance.
+    Nullable; set only when a trade plan is created via the
+    alert-notification-to-trade-plan UI path (routers/trade_plans.py
+    create_plan()). No FK constraint — matches this codebase's existing
+    convention for optional linkage columns (e.g. signal_id) of not
+    cascading, so a plan's provenance record survives independently of the
+    price_alerts row's own lifecycle. Reporting treatment: a separate field
+    rather than a third trade_origin value — see data_model.md DS-14 for
+    the reasoning.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS triggered_by_price_alert_id UUID"
+            )
+        conn.commit()
+
+
 def ensure_override_acknowledged_column():
     """Add pre_entry_override_acknowledged BOOLEAN to trade_plans table (idempotent).
 
@@ -1682,6 +1733,28 @@ def ensure_thesis_feedback_column():
         with conn.cursor() as cur:
             cur.execute(
                 "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS thesis_feedback VARCHAR(20)"
+            )
+        conn.commit()
+
+
+def ensure_signals_ticker_upper_index():
+    """Add a functional index on UPPER(ticker) to signals (idempotent).
+
+    ST-12 (BLG-BE-94, EPIC-02, v8.8) — Head-of-Engineering-review correction
+    (agent-mediated §5.3): get_signals_for_ticker()'s query predicate is
+    `WHERE ... AND UPPER(ticker) = UPPER(%s)`. The existing idx_signals_ticker
+    is a plain (non-functional) index on the bare ticker column and is not
+    usable by a predicate that wraps the column in UPPER() — same class of
+    gap already documented and fixed for trade_plans/red_flag_events
+    (ST-10, BLG-BE-82, EPIC-03, v8.4 — see idx_trade_plans_ticker_upper
+    above and idx_rfe_ticker below). Without this, get_signals_for_ticker()
+    still requires a scan filtered row-by-row on UPPER(ticker) rather than
+    an index scan, undermining the point of the targeted query.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_signals_ticker_upper ON signals (UPPER(ticker))"
             )
         conn.commit()
 
@@ -2394,6 +2467,66 @@ def create_position_audit_log_entry(
                     VALUES (%s, %s, %s, %s, %s)
                     """,
                     (position_id, source, field, str(before_value), str(after_value)),
+                )
+            conn.commit()
+    except Exception:
+        pass
+
+
+# ---------------------------------------------------------------------------
+# position_state_history — append-only log of lifecycle state transitions
+# (ST-08, EPIC-02, v8.8, BLG-BE-58). Extends the position_audit_log pattern
+# (above) to lifecycle state changes specifically. Complements — does not
+# replace — the existing state_history JSONB column on positions
+# (ensure_lifecycle_columns, v2.6 DS-05): the JSONB column is untouched (no
+# behavioural change to compute_position_state()/refresh_position_lifecycle()'s
+# existing logic) and this table is written alongside it on every genuine
+# transition, giving a normalized, independently-queryable history separate
+# from the per-row JSONB blob. Same no-"who"-column rationale (single-user
+# product), same fail-open non-blocking write convention.
+# ---------------------------------------------------------------------------
+
+def ensure_position_state_history_table() -> None:
+    """Create position_state_history table if it does not exist."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS position_state_history (
+                    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    position_id  UUID NOT NULL,
+                    from_state   VARCHAR(20),
+                    to_state     VARCHAR(20) NOT NULL,
+                    entered_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_position_state_history_position_id
+                ON position_state_history(position_id)
+            """)
+        conn.commit()
+
+
+def create_position_state_history_entry(
+    position_id: str,
+    from_state,
+    to_state: str,
+    entered_at,
+) -> None:
+    """Insert one row into position_state_history. Non-blocking on failure —
+    an audit-log write failure must never break the underlying lifecycle
+    state update it is recording (same fail-open convention as
+    create_position_audit_log_entry above)."""
+    try:
+        ensure_position_state_history_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO position_state_history
+                        (position_id, from_state, to_state, entered_at)
+                    VALUES (%s, %s, %s, %s)
+                    """,
+                    (position_id, from_state, to_state, entered_at),
                 )
             conn.commit()
     except Exception:

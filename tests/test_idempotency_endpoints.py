@@ -62,6 +62,7 @@ class TestTradePlanCreationIdempotency:
             patch.object(trade_plans_router, "ensure_trade_plans_table"),
             patch.object(trade_plans_router, "ensure_si02_trade_plans_columns"),
             patch.object(trade_plans_router, "ensure_strategy_version_at_entry_columns"),
+            patch.object(trade_plans_router, "ensure_triggered_by_price_alert_id_column"),  # ST-09, BLG-BE-84, EPIC-02, v8.8
             patch.object(trade_plans_router, "get_latest_snapshot", return_value=None),
             patch.object(trade_plans_router, "get_settings", return_value=[]),
         ]

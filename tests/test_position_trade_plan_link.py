@@ -377,6 +377,8 @@ class TestCreatePlanActiveStatusRequiresPosition:
         self._patch("routers.trade_plans.ensure_trade_plans_table", return_value=None)
         self._patch("routers.trade_plans.ensure_si02_trade_plans_columns", return_value=None)
         self._patch("routers.trade_plans.ensure_strategy_version_at_entry_columns", return_value=None)
+        # ST-09 (BLG-BE-84, EPIC-02, v8.8)
+        self._patch("routers.trade_plans.ensure_triggered_by_price_alert_id_column", return_value=None)
         self._patch("routers.trade_plans.get_portfolio", return_value={"id": "portfolio-1"})
 
     def test_create_with_active_status_and_no_position_id_returns_400(self):

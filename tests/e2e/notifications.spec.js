@@ -27,6 +27,7 @@ const {
   TD_NOTIF_B,
   TD_NOTIF_C,
   TD_NOTIF_EMPTY,
+  TD_NOTIF_PRICE_ALERT,
   TD_PREFS_ALL_ON,
   MARK_READ_OK,
   MARK_ALL_OK,
@@ -334,4 +335,40 @@ test('SC-NOTIF-06b (v2.2): History tab present in notifications sub-nav', async 
 
   // "History" tab present in sub-nav (added in ST-05 v2.2)
   await expect(page.getByText('History').first()).toBeVisible({ timeout: 5000 });
+});
+
+// ---------------------------------------------------------------------------
+// SC-NOTIF-09 — "Create Trade Plan" CTA on custom_price_alert notifications
+// (ST-09, BLG-BE-84, EPIC-02, v8.8)
+// ---------------------------------------------------------------------------
+
+test('SC-NOTIF-09a: "Create Trade Plan" CTA visible on a custom_price_alert notification with context', async ({ page }) => {
+  await mockNotificationsFeed(page, TD_NOTIF_PRICE_ALERT);
+
+  await page.goto('/#/notifications');
+
+  await expect(page.getByRole('link', { name: 'Create Trade Plan' })).toBeVisible({ timeout: 5000 });
+});
+
+test('SC-NOTIF-09b: CTA navigates to TradePlan with ticker, market, and price_alert_id', async ({ page }) => {
+  await mockNotificationsFeed(page, TD_NOTIF_PRICE_ALERT);
+
+  await page.goto('/#/notifications');
+
+  const cta = page.getByRole('link', { name: 'Create Trade Plan' });
+  await expect(cta).toBeVisible({ timeout: 5000 });
+  const href = await cta.getAttribute('href');
+  expect(href).toContain('/TradePlan?');
+  expect(href).toContain('ticker=TSLA');
+  expect(href).toContain('market=US');
+  expect(href).toContain('price_alert_id=pa-42');
+});
+
+test('SC-NOTIF-09c: CTA absent on a non-price-alert notification', async ({ page }) => {
+  await mockNotificationsFeed(page, TD_NOTIF_A); // stop_loss_approach, no context
+
+  await page.goto('/#/notifications');
+
+  await expect(page.getByText('Mark as read').first()).toBeVisible({ timeout: 5000 });
+  await expect(page.getByRole('link', { name: 'Create Trade Plan' })).not.toBeVisible();
 });

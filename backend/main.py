@@ -276,6 +276,12 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_setup_type_column FAILED at startup: %s", _e)
     try:
+        from database import ensure_triggered_by_price_alert_id_column
+        ensure_triggered_by_price_alert_id_column()
+        _log.info("ensure_triggered_by_price_alert_id_column: OK")
+    except Exception as _e:
+        _log.error("ensure_triggered_by_price_alert_id_column FAILED at startup: %s", _e)
+    try:
         from database import ensure_override_acknowledged_column
         ensure_override_acknowledged_column()
         _log.info("ensure_override_acknowledged_column: OK")
@@ -293,6 +299,12 @@ def on_startup():
         _log.info("ensure_signals_watchlisted_status: OK")
     except Exception as _e:
         _log.error("ensure_signals_watchlisted_status FAILED at startup: %s", _e)
+    try:
+        from database import ensure_signals_ticker_upper_index
+        ensure_signals_ticker_upper_index()
+        _log.info("ensure_signals_ticker_upper_index: OK")
+    except Exception as _e:
+        _log.error("ensure_signals_ticker_upper_index FAILED at startup: %s", _e)
     try:
         from database import ensure_last_reviewed_at_column
         ensure_last_reviewed_at_column()

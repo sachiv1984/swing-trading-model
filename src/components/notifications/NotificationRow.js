@@ -1,5 +1,7 @@
-import { ShieldAlert, Clock, TrendingDown, BarChart2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ShieldAlert, Clock, TrendingDown, BarChart2, Bell } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { createPageUrl } from "../../utils";
 import { formatDistanceToNow } from "date-fns";
 
 const ICON_MAP = {
@@ -7,6 +9,7 @@ const ICON_MAP = {
   grace_period_warning: { Icon: Clock, color: "text-amber-400", bg: "bg-amber-500/10" },
   market_regime_change: { Icon: TrendingDown, color: "text-violet-400", bg: "bg-violet-500/10" },
   daily_portfolio_summary: { Icon: BarChart2, color: "text-cyan-400", bg: "bg-cyan-500/10" },
+  custom_price_alert: { Icon: Bell, color: "text-amber-400", bg: "bg-amber-500/10" },
 };
 
 function relativeTime(iso) {
@@ -60,6 +63,28 @@ export default function NotificationRow({ notification, onMarkRead }) {
               Mark as read
             </button>
           )}
+          {/* ST-09 (BLG-BE-84, EPIC-02, v8.8): alert-notification-to-trade-plan
+              UI path — passes the triggering price_alerts row's id through so
+              the created plan records real alert-to-trade provenance
+              (data_model.md DS-15). Only shown when the notification carries
+              both a ticker and the alert's id (custom_price_alert context). */}
+          {notification.alert_type === "custom_price_alert" &&
+            notification.context?.ticker &&
+            notification.context?.price_alert_id && (
+              <Link
+                to={
+                  `${createPageUrl("TradePlan")}?ticker=${encodeURIComponent(notification.context.ticker)}` +
+                  // price_alerts has no market column (ticker-only) — infer
+                  // from the same .L-suffix convention used elsewhere
+                  // (e.g. routers/research.py::get_research).
+                  `&market=${notification.context.ticker.toUpperCase().endsWith(".L") ? "UK" : "US"}` +
+                  `&price_alert_id=${encodeURIComponent(notification.context.price_alert_id)}`
+                }
+                className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+              >
+                Create Trade Plan
+              </Link>
+            )}
           {notification._error && (
             <span className="text-xs text-rose-400">Failed to mark as read.</span>
           )}

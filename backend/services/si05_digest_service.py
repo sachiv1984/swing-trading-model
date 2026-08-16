@@ -27,7 +27,7 @@ MAX_MESSAGE_LENGTH = 4096
 _RETRY_DELAYS = (30, 60)  # seconds: wait after attempt 1, then attempt 2
 
 
-def _send_telegram_request(url: str, payload: dict, sleep_fn=None) -> None:
+def _send_telegram_request(url: str, payload: dict, sleep_fn=None) -> Optional[str]:
     """
     Send a Telegram API request via POST+JSON with exponential backoff retry.
 
@@ -40,6 +40,15 @@ def _send_telegram_request(url: str, payload: dict, sleep_fn=None) -> None:
     If all three attempts fail, the last exception is re-raised.
 
     sleep_fn is injectable for testing to avoid real sleep delays.
+
+    Returns:
+        The Telegram-assigned message_id (as a str) parsed from the
+        successful response's `{"ok": true, "result": {"message_id": N, ...}}`
+        body (ST-10, BLG-BE-85), or None if the response could not be parsed
+        as expected (e.g. a test double that doesn't simulate the real
+        Telegram API shape) — parsing failure here is non-fatal and does not
+        affect send success; it only means telegram_message_id is logged as
+        NULL for that attempt, same as before this story.
     """
     import json
     import urllib.request
@@ -54,8 +63,14 @@ def _send_telegram_request(url: str, payload: dict, sleep_fn=None) -> None:
                 headers={"Content-Type": "application/json"},
                 method="POST",
             )
-            urllib.request.urlopen(req, timeout=10)  # noqa: S310
-            return
+            with urllib.request.urlopen(req, timeout=10) as resp:  # noqa: S310
+                message_id = None
+                try:
+                    resp_data = json.loads(resp.read())
+                    message_id = resp_data.get("result", {}).get("message_id")
+                except Exception:
+                    pass
+            return str(message_id) if message_id is not None else None
         except Exception as exc:
             last_exc = exc
             if delay is not None:
@@ -453,12 +468,19 @@ def send_si05_digest(*, _sleep_fn=None) -> dict:
         "parse_mode": "MarkdownV2",
     }
 
+    # ST-11 (BLG-BE-87, EPIC-02, v8.8): time the Telegram send call itself
+    # (including any retry/backoff delay) so the Render log line surfaces an
+    # elapsed-time value for both outcomes — used to populate
+    # docs/ops/api_performance_baseline.md §36 from a real invocation.
+    send_started = time.monotonic()
     try:
-        _send_telegram_request(url, payload, sleep_fn=_sleep_fn)
-        logger.info("SI-05 digest sent (%d chars)", message_length)
-        _write_delivery_log("sent", event_count, None, None)
+        telegram_message_id = _send_telegram_request(url, payload, sleep_fn=_sleep_fn)
+        elapsed_s = time.monotonic() - send_started
+        logger.info("SI-05 digest sent (%d chars) in %.2fs", message_length, elapsed_s)
+        _write_delivery_log("sent", event_count, telegram_message_id, None)
         return {"sent": True, "message_length": message_length, "error": None}
     except Exception as e:
-        logger.error("SI-05 Telegram send failed: %s", e)
+        elapsed_s = time.monotonic() - send_started
+        logger.error("SI-05 Telegram send failed after %.2fs: %s", elapsed_s, e)
         _write_delivery_log("failed", event_count, None, str(e))
         return {"sent": False, "message_length": message_length, "error": str(e)}

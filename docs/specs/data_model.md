@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.26
-**Last Updated:** 2026-08-13 (ST-07, EPIC-02, v8.7, BLG-BE-96 — DS-12 verification note, best-available-proxy execution, AC-02 residual gap disclosed); prior — 2026-08-11 (ST-03, EPIC-02, v8.6, BLG-BE-91 — DS-12 trade_plans active-status-requires-position CHECK constraint)
+**Version:** 2.29
+**Last Updated:** 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — DS-15 trade_plans.triggered_by_price_alert_id, reporting-treatment decision documented); prior — 2026-08-14 (ST-12, EPIC-02, v8.8, BLG-BE-94 — DS-14 signals functional index for UPPER(ticker), Head-of-Engineering-review correction); prior — 2026-08-14 (ST-08, EPIC-02, v8.8, BLG-BE-58 — DS-13 position_state_history append-only table added); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1970,6 +1970,111 @@ No new migration. `BLG-BE-96` (ST-07) required staging/production verification o
 
 ---
 
-**Document Version:** 2.26
+## DS-13 — position_state_history table (v2.27, 2026-08-14)
+
+**Story:** ST-08 (EPIC-02, v8.8) — BLG-BE-58
+
+Append-only normalized log of position lifecycle state transitions, extending the `position_audit_log` pattern (§Migration v2.16→v2.17 above) to lifecycle state changes specifically. Complements — does not replace — the existing `state_history` JSONB column on `positions` (DS-05, v2.6): that column is untouched, `compute_position_state()` and the rest of the lifecycle state machine are unchanged (no behavioural change), and this table is written alongside the JSONB column on every genuine transition (`refresh_position_lifecycle()`, `services/position_lifecycle_service.py`). Rationale for a separate table rather than only the JSONB column: independently queryable/indexable history (e.g. `SELECT * FROM position_state_history WHERE position_id = ...`) without deserializing the JSONB blob, and a durable audit trail that survives even if the parent `positions` row's `state_history` column were ever reset. Same no-"who"-column rationale as `position_audit_log` (single-user product), same fail-open non-blocking write convention (a write failure never blocks the underlying lifecycle state update).
+
+```sql
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS position_state_history (
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    position_id  UUID NOT NULL,
+    from_state   VARCHAR(20),
+    to_state     VARCHAR(20) NOT NULL,
+    entered_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_position_state_history_position_id ON position_state_history(position_id);
+
+COMMIT;
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| `id` | UUID | NO | Primary key |
+| `position_id` | UUID | NO | The position that transitioned. No FK constraint (audit rows must survive the position's own lifecycle; matches `position_audit_log.position_id`'s pattern of not cascading) |
+| `from_state` | VARCHAR(20) | YES | The prior `position_state` value. NULL for a position's first-ever computed state (no prior state to record) |
+| `to_state` | VARCHAR(20) | NO | The new `position_state` value (`EXIT ZONE` / `PROFITABLE` / `LOSING` / `GRACE` / `UNKNOWN`) |
+| `entered_at` | TIMESTAMPTZ | NO | When the transition was recorded — same value written to `positions.state_entered_at` for this transition |
+
+Reversible: `DROP TABLE IF EXISTS position_state_history;`
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-08-14 (agent-mediated; single new append-only table, no existing schema touched, `state_history` JSONB column and state machine logic unchanged, no backfill applicable — table did not previously exist; mirrors the already-accepted `position_audit_log`/`trade_plan_audit_log` shape)
+
+---
+
+## DS-14 — signals functional index for UPPER(ticker) (v2.28, 2026-08-14)
+
+**Story:** ST-12 (EPIC-02, v8.8) — BLG-BE-94 (Head-of-Engineering-review correction, agent-mediated §5.3)
+
+`database.get_signals_for_ticker()` (this story's own query-latency fix, `docs/ops/pre_trade_research_query_latency_review_2026-08-14.md`) queries `WHERE portfolio_id = %s AND UPPER(ticker) = UPPER(%s)`. The existing `idx_signals_ticker` (plain btree on the bare `ticker` column) cannot serve a predicate that wraps the column in `UPPER()` — a plain index is not usable by a functional predicate. Same class of gap already identified and fixed for `trade_plans`/`red_flag_events` (ST-10, BLG-BE-82, EPIC-03, v8.4 — `idx_trade_plans_ticker_upper` above). Missed on this story's first pass; caught by agent-mediated Head of Engineering review before merge, not after.
+
+```sql
+BEGIN;
+CREATE INDEX IF NOT EXISTS idx_signals_ticker_upper ON signals (UPPER(ticker));
+COMMIT;
+```
+
+### Verification
+
+```sql
+EXPLAIN SELECT * FROM signals WHERE portfolio_id = '...' AND UPPER(ticker) = UPPER('AAPL') ORDER BY signal_date DESC, rank ASC;
+-- Expected: index scan referencing idx_signals_ticker_upper (or a bitmap plan combining it with idx_signals_portfolio), not a sequential/filter scan on UPPER(ticker)
+```
+
+### Down Migration (v2.28 → v2.27)
+
+```sql
+BEGIN;
+DROP INDEX IF EXISTS idx_signals_ticker_upper;
+COMMIT;
+```
+
+Reversible: drops the index only; no column/table changes to reverse. `get_signals_for_ticker()`'s query remains correct without it, just slower (row-filtered scan instead of index scan).
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-08-14 (agent-mediated; single new index, no existing schema touched, matches the accepted `idx_trade_plans_ticker_upper`/`idx_rfe_ticker` precedent exactly)
+
+---
+
+## DS-15 — trade_plans.triggered_by_price_alert_id (v2.29, 2026-08-14)
+
+**Story:** ST-09 (EPIC-02, v8.8) — BLG-BE-84
+
+Real alert-to-trade provenance, tracked since `BLG-FEAT-78`/ST-31 (v8.4) found no such linkage existed and shipped a different distinction instead (`trade_origin: "Signal"/"Manual"`, derived from `signal_id` — see `reports_endpoints.md`'s Known Deviations, `ESC-EXEC-20260807-01`, which explicitly notes `trade_origin` is "**Not** a price-alert indicator"). This story closes the original gap: `POST /trade-plans` now accepts an optional `triggered_by_price_alert_id`, set by the frontend when a plan is created via the alert-notification-to-trade-plan UI path (`NotificationRow.js` → `TradePlan.js`, see `docs/specs/api_contracts/trade_plan_endpoints.md` and `alerts_endpoints.md`'s `GET /notifications` `context.price_alert_id`). Null for plans created any other way (default UI flow, generate-plan, etc.) — no other code path sets it.
+
+**Reporting treatment (decided per this story's own AC, before implementation):** a separate field, not a third `trade_origin` value. Reasoning:
+1. `trade_origin` was deliberately scoped to `signal_id` only at v8.4, with an explicit note that it is *not* a price-alert indicator — overloading it now would silently change what an already-shipped, tax-relevant export field (`GET /reports/tax-year`) means, for existing consumers who read `trade_origin` today expecting exactly "Signal" or "Manual".
+2. The two provenance signals are not mutually exclusive in principle (a plan could theoretically carry both a `signal_id` and a `triggered_by_price_alert_id` if the product ever allowed converting a fired alert into a signal-sourced plan) — a single enum can't represent that; two independent nullable columns can.
+3. `signal_id` (system-generated momentum signal) and a price alert (a user-configured threshold the user chose to act on) are genuinely different provenance dimensions — one records what generated the *idea*, the other what triggered the *user's action* — not different values of the same taxonomy.
+
+Extending `GET /reports/tax-year`'s CSV export to surface `triggered_by_price_alert_id` (or a derived label) is out of this story's scope — not requested by its AC, and would be its own follow-on story if wanted (`reports_endpoints.md`'s `trade_origin` field note would need its own update at that point).
+
+```sql
+BEGIN;
+ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS triggered_by_price_alert_id UUID;
+COMMIT;
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|--------------|
+| `triggered_by_price_alert_id` | UUID | YES | The `price_alerts` row that triggered creation of this plan, via the alert-notification-to-trade-plan UI path. NULL for plans created any other way. No FK constraint — matches `signal_id`'s existing pattern of not cascading, so a plan's provenance record survives independently of the `price_alerts` row's own lifecycle (a `price_alerts` row is never deleted, only deactivated on trigger, but the same non-cascading convention is kept for consistency). |
+
+Reversible: `ALTER TABLE trade_plans DROP COLUMN IF EXISTS triggered_by_price_alert_id;`
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-08-14 (agent-mediated; single new nullable column, no existing schema touched, matches the accepted `signal_id` shape and non-cascading convention exactly, no backfill applicable — column did not previously exist)
+
+---
+
+**Document Version:** 2.29
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-08-13
+**Last Review:** 2026-08-14

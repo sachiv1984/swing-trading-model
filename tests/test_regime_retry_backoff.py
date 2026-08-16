@@ -77,6 +77,11 @@ def test_ma200_retries_on_connection_error_then_succeeds(monkeypatch):
 def test_check_market_regime_defaults_to_risk_on_after_persistent_failures(monkeypatch):
     """End-to-end: check_market_regime() falls back exactly as before once retries
     (ST-09's decorator, 3 attempts per index) are exhausted."""
+    # check_market_regime() now caches its result for 5 minutes (BLG-BE-25,
+    # consolidated here BLG-BE-97 v8.8 ST-07) — clear any leftover cache
+    # entry from an earlier test in this session before asserting a fresh
+    # fetch happens.
+    pricing._market_regime_cache.clear()
     monkeypatch.setattr(pricing.time, "sleep", lambda *_: None)
     calls = {"n": 0}
 
@@ -93,6 +98,8 @@ def test_check_market_regime_defaults_to_risk_on_after_persistent_failures(monke
 
 
 def test_ma200_no_chart_data_not_retried(monkeypatch):
+    # See cache-clear note in test_check_market_regime_defaults_to_risk_on_after_persistent_failures.
+    pricing._market_regime_cache.clear()
     monkeypatch.setattr(pricing.time, "sleep", lambda *_: None)
     calls = {"n": 0}
 

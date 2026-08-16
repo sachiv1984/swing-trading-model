@@ -423,6 +423,7 @@ def _evaluate_price_alerts(cur, portfolio_id: str, enqueue_delivery) -> Dict:
             "threshold_price": threshold,
             "current_price": current_price,
         }
+        context["price_alert_id"] = str(pa["id"])  # ST-09 (BLG-BE-84, EPIC-02, v8.8) — alert-to-trade provenance
         notif_id = _insert_notification(cur, portfolio_id, "custom_price_alert", title, message, context)
         notifications_created += 1
         enqueue_delivery(str(notif_id))
@@ -982,7 +983,7 @@ def get_notifications(
             total = cur.fetchone()["cnt"]
 
             cur.execute(f"""
-                SELECT id, alert_type, title, message, read, created_at
+                SELECT id, alert_type, title, message, read, created_at, context
                 FROM notifications
                 WHERE {where_sql}
                 ORDER BY created_at DESC
@@ -1008,7 +1009,7 @@ def mark_notification_read(portfolio_id: str, notification_id: str) -> Dict:
                 UPDATE notifications
                 SET read = TRUE
                 WHERE id = %s AND portfolio_id = %s
-                RETURNING id, alert_type, title, message, read, created_at
+                RETURNING id, alert_type, title, message, read, created_at, context
             """, (notification_id, portfolio_id))
             row = cur.fetchone()
             if not row:
@@ -1120,6 +1121,11 @@ def _notif_row(r) -> Dict:
         "message": r["message"],
         "read": r["read"],
         "created_at": r["created_at"].isoformat() if hasattr(r["created_at"], "isoformat") else str(r["created_at"]),
+        # ST-09 (BLG-BE-84, EPIC-02, v8.8): exposed so the frontend can read
+        # e.g. context.price_alert_id / context.ticker for the "create trade
+        # plan from this alert" path. Was already stored (context JSONB) but
+        # never selected/returned before this story.
+        "context": r.get("context"),
     }
 
 

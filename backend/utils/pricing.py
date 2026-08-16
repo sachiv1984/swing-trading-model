@@ -14,6 +14,7 @@ Functions:
 import time
 import logging
 import requests
+from datetime import datetime
 from typing import Optional, Dict
 
 from utils.retry import retry_with_backoff
@@ -222,9 +223,20 @@ def _yahoo_fetch_ma200_pair(ticker: str):
     return current, ma200
 
 
+_market_regime_cache: dict = {}
+_MARKET_REGIME_TTL_SECONDS = 300  # 5-minute shared cache (BLG-BE-25, v5.0 ST-07; consolidated here BLG-BE-97, v8.8 ST-07)
+
+
 def check_market_regime() -> Dict[str, any]:
     """
     Check SPY and FTSE for risk on/off using 200-day moving average
+
+    Single canonical implementation (BLG-BE-97, v8.8 ST-07 — consolidates the
+    former duplicate in `position_manager.py`, which used a separate
+    `yfinance` data path with no retry logic). All call sites (dashboard,
+    pre-entry validation, signal generation, position analysis, `/market/status`)
+    now share this one implementation and its 5-minute result cache, so they
+    also share one Yahoo Finance round-trip per cache window.
 
     Returns:
         Dictionary with:
@@ -234,13 +246,24 @@ def check_market_regime() -> Dict[str, any]:
             - spy_ma200: float
             - ftse_price: float
             - ftse_ma200: float
+            - date: datetime (as-of time this result was computed)
 
     Notes:
+        - Results are cached for 5 minutes (BLG-BE-25) — a cache hit returns
+          immediately with no network call.
         - Defaults to risk-on if data unavailable
         - Includes 300ms delay to avoid rate limiting
         - Retries transient network failures before falling back (ST-09, ~3 attempts)
         - Used to determine if positions should be exited
     """
+    now = datetime.now()
+    cached = _market_regime_cache.get("result")
+    cached_at = _market_regime_cache.get("cached_at")
+    if cached is not None and cached_at is not None:
+        age = (now - cached_at).total_seconds()
+        if age < _MARKET_REGIME_TTL_SECONDS:
+            return cached
+
     try:
         time.sleep(0.3)
 
@@ -275,23 +298,32 @@ def check_market_regime() -> Dict[str, any]:
         else:
             ftse_risk_on = ftse_price > ftse_ma200
         
-        return {
+        result = {
             'spy_risk_on': spy_risk_on,
             'ftse_risk_on': ftse_risk_on,
             'spy_price': spy_price or 0,
             'spy_ma200': spy_ma200 or 0,
             'ftse_price': ftse_price or 0,
-            'ftse_ma200': ftse_ma200 or 0
+            'ftse_ma200': ftse_ma200 or 0,
+            'date': now
         }
+        _market_regime_cache["result"] = result
+        _market_regime_cache["cached_at"] = now
+        return result
     except Exception as e:
         print(f"❌ Market regime check failed: {e}")
+        # Not cached — an unexpected outer-level failure (as opposed to the
+        # per-index fetch fallback above, which is a normal, cached result)
+        # should retry fresh on the next call rather than pin a synthetic
+        # result for the full TTL window.
         return {
             'spy_risk_on': True,
             'ftse_risk_on': True,
             'spy_price': 0,
             'spy_ma200': 0,
             'ftse_price': 0,
-            'ftse_ma200': 0
+            'ftse_ma200': 0,
+            'date': now
         }
 
 

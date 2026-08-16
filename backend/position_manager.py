@@ -10,7 +10,6 @@ Run this DAILY to get:
 """
 
 import pandas as pd
-import numpy as np
 import yfinance as yf
 from datetime import datetime, timedelta
 import json
@@ -90,78 +89,16 @@ def get_current_prices_and_atr(tickers):
     
     return latest_prices, latest_atr, latest_date
 
-_market_regime_cache: dict = {}
-_MARKET_REGIME_TTL_SECONDS = 300  # 5-minute shared cache (BLG-BE-25, v5.0 ST-07)
+# check_market_regime() consolidated to utils.pricing (BLG-BE-97, v8.8 ST-07).
+# Re-exported here (rather than removed) so existing call sites that do
+# `from position_manager import check_market_regime` (routers/pre_entry_validation.py,
+# routers/portfolio_risk.py) and existing test patches targeting
+# "position_manager.check_market_regime" continue to resolve to the single
+# canonical implementation without a call-site rewrite. `_market_regime_cache`
+# is re-exported too — it is the same dict object as utils.pricing's, so
+# reads/writes through either module name observe the one shared cache.
+from utils.pricing import check_market_regime, _market_regime_cache  # noqa: F401
 
-
-def check_market_regime():
-    """Check if market is risk-on or risk-off.
-
-    Results are cached for 5 minutes so all callers (dashboard, pre-entry
-    validation, signal generation) share one yf.download call per window.
-    """
-    now = datetime.now()
-    cached = _market_regime_cache.get("result")
-    cached_at = _market_regime_cache.get("cached_at")
-    if cached is not None and cached_at is not None:
-        age = (now - cached_at).total_seconds()
-        if age < _MARKET_REGIME_TTL_SECONDS:
-            return cached
-
-    def _close_series(download_df):
-        """Extract Close prices as a clean Series"""
-        close = download_df["Close"]
-
-        if isinstance(close, pd.DataFrame):
-            close = close.squeeze("columns")
-
-        close = pd.to_numeric(close, errors="coerce").dropna()
-
-        if not isinstance(close, pd.Series):
-            close = pd.Series(close).dropna()
-
-        return close
-
-    def _last_float(x):
-        """Convert to Python float"""
-        if isinstance(x, pd.Series):
-            x = x.iloc[-1]
-        return float(x)
-
-    start = (datetime.now() - timedelta(days=250)).strftime('%Y-%m-%d')
-
-    spy_df = yf.download("SPY", start=start, auto_adjust=True, progress=False)
-    ftse_df = yf.download("^FTSE", start=start, auto_adjust=True, progress=False)
-
-    spy = _close_series(spy_df)
-    ftse = _close_series(ftse_df)
-
-    spy_ma200_series = spy.rolling(200, min_periods=200).mean()
-    ftse_ma200_series = ftse.rolling(200, min_periods=200).mean()
-
-    spy_current = _last_float(spy.iloc[-1]) if len(spy) else np.nan
-    ftse_current = _last_float(ftse.iloc[-1]) if len(ftse) else np.nan
-
-    spy_ma200 = _last_float(spy_ma200_series.iloc[-1]) if len(spy_ma200_series.dropna()) else np.nan
-    ftse_ma200 = _last_float(ftse_ma200_series.iloc[-1]) if len(ftse_ma200_series.dropna()) else np.nan
-
-    spy_risk_on = bool(np.isfinite(spy_current) and np.isfinite(spy_ma200) and (spy_current > spy_ma200))
-    ftse_risk_on = bool(np.isfinite(ftse_current) and np.isfinite(ftse_ma200) and (ftse_current > ftse_ma200))
-
-    asof_date = spy.index[-1] if len(spy) else datetime.now()
-
-    result = {
-        'spy_risk_on': spy_risk_on,
-        'ftse_risk_on': ftse_risk_on,
-        'spy_price': spy_current,
-        'spy_ma200': spy_ma200,
-        'ftse_price': ftse_current,
-        'ftse_ma200': ftse_ma200,
-        'date': asof_date
-    }
-    _market_regime_cache["result"] = result
-    _market_regime_cache["cached_at"] = datetime.now()
-    return result
 
 def is_risk_on(ticker, market_status):
     """Check if specific ticker's market is risk-on"""

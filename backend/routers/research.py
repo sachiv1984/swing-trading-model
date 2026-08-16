@@ -17,7 +17,7 @@ import time
 
 logger = logging.getLogger(__name__)
 from database import get_portfolio
-from services.signal_service import get_signals
+from services.signal_service import get_signals_for_ticker
 from services.sector_service import get_sector_and_industry
 from services.screener_batch_service import get_screener_results
 
@@ -133,7 +133,12 @@ def _get_regime() -> Optional[dict]:
 
 def _get_signal(ticker: str, portfolio_id: str) -> Optional[dict]:
     try:
-        signals = get_signals()
+        # ST-12 (BLG-BE-94, EPIC-02, v8.8): query the ticker directly rather
+        # than fetching every signal ever generated for the portfolio and
+        # filtering in Python — that scan's cost grows unbounded with the
+        # signals table's history, unlike the rest of this endpoint's
+        # sources. Same selection semantics below, just less I/O.
+        signals = get_signals_for_ticker(ticker)
         ticker_upper = ticker.upper()
         matches = [s for s in signals if (s.get("ticker") or "").upper() == ticker_upper]
         if not matches:
