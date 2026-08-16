@@ -1,11 +1,17 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
 import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
 import { cn } from "../lib/utils";
 import { Plus, Trash2, ToggleLeft, ToggleRight, Loader2, X } from "lucide-react";
+
+// ST-15 (EPIC-03, BLG-FE-163, v8.8): search-input debounce, matching the
+// project-wide search-input debounce convention (not a new timing parameter
+// per design_gate_prompt.md §6 — see decision record).
+const SEARCH_DEBOUNCE_MS = 200;
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -169,6 +175,18 @@ export default function TickerUniverse() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [pendingAction, setPendingAction] = useState({}); // { [ticker]: true }
 
+  // ST-15 (EPIC-03, BLG-FE-163, v8.8): search/sector/industry filters —
+  // docs/specs/frontend/pages/ticker_universe.md §10.
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [sectorFilter, setSectorFilter] = useState("all");
+  const [industryFilter, setIndustryFilter] = useState("all");
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(searchInput.trim().toLowerCase()), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
   // Fetch all tickers (active and inactive)
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["ticker-universe"],
@@ -182,13 +200,46 @@ export default function TickerUniverse() {
 
   const tickers = data || [];
 
-  // Filter
+  // ST-15: Sector/Industry <select> options — derived dynamically from the
+  // loaded ticker list, no new endpoint (ticker_universe.md §10).
+  const sectorOptions = useMemo(
+    () => Array.from(new Set(tickers.map((t) => t.sector).filter(Boolean))).sort(),
+    [tickers]
+  );
+  const industryOptions = useMemo(
+    () => Array.from(new Set(tickers.map((t) => t.industry).filter(Boolean))).sort(),
+    [tickers]
+  );
+
+  // Filter — all 5 controls AND-combine (Market, Active, Search, Sector, Industry).
   const filtered = tickers.filter((t) => {
     if (marketFilter !== "all" && t.market !== marketFilter) return false;
     if (activeFilter === "active" && !t.active) return false;
     if (activeFilter === "inactive" && t.active) return false;
+    if (sectorFilter !== "all" && t.sector !== sectorFilter) return false;
+    if (industryFilter !== "all" && t.industry !== industryFilter) return false;
+    if (debouncedSearch) {
+      const haystack = `${t.ticker} ${t.company_name || ""}`.toLowerCase();
+      if (!haystack.includes(debouncedSearch)) return false;
+    }
     return true;
   });
+
+  const hasActiveFilters =
+    marketFilter !== "all" ||
+    activeFilter !== "all" ||
+    sectorFilter !== "all" ||
+    industryFilter !== "all" ||
+    searchInput.trim() !== "";
+
+  function handleClearFilters() {
+    setMarketFilter("all");
+    setActiveFilter("all");
+    setSectorFilter("all");
+    setIndustryFilter("all");
+    setSearchInput("");
+    setDebouncedSearch("");
+  }
 
   // Deactivate (soft delete) mutation
   const deactivateMutation = useMutation({
@@ -260,7 +311,40 @@ export default function TickerUniverse() {
       )}
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-2 mb-4" data-testid="filter-bar">
+      <div className="flex flex-wrap gap-2 mb-4 items-center" data-testid="filter-bar">
+        <input
+          type="text"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          placeholder="Search ticker or company…"
+          aria-label="Search ticker or company"
+          data-testid="ticker-search-input"
+          className="flex-1 min-w-[220px] px-3 py-1.5 text-xs bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-600 dark:placeholder:text-slate-400 focus:outline-none focus:border-cyan-500"
+        />
+        <select
+          value={sectorFilter}
+          onChange={(e) => setSectorFilter(e.target.value)}
+          aria-label="Filter by sector"
+          data-testid="sector-filter"
+          className="px-3 py-1.5 text-xs bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-cyan-500"
+        >
+          <option value="all">All Sectors</option>
+          {sectorOptions.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+        <select
+          value={industryFilter}
+          onChange={(e) => setIndustryFilter(e.target.value)}
+          aria-label="Filter by industry"
+          data-testid="industry-filter"
+          className="px-3 py-1.5 text-xs bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-cyan-500"
+        >
+          <option value="all">All Industries</option>
+          {industryOptions.map((i) => (
+            <option key={i} value={i}>{i}</option>
+          ))}
+        </select>
         <div className="flex items-center gap-1">
           <span className="text-xs text-slate-600 dark:text-slate-400 mr-1">Market:</span>
           {["all", "US", "UK"].map((m) => (
@@ -277,6 +361,19 @@ export default function TickerUniverse() {
             </button>
           ))}
         </div>
+        {hasActiveFilters && (
+          <Badge
+            variant="secondary"
+            role="button"
+            tabIndex={0}
+            onClick={handleClearFilters}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleClearFilters(); } }}
+            data-testid="clear-filters-badge"
+            className="cursor-pointer"
+          >
+            Clear filters ×
+          </Badge>
+        )}
       </div>
 
       {/* Table */}

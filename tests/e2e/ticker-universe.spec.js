@@ -1,6 +1,6 @@
 /**
  * Ticker Universe Management Page — Playwright Tests
- * ST-09 (v3.8 EPIC-04)
+ * ST-09 (v3.8 EPIC-04); Search/Sector/Industry filters added ST-15 (EPIC-03, v8.8, BLG-FE-163)
  *
  * Covers:
  *   SC-TU-01: Page renders with table of tickers and "Add Ticker" button
@@ -9,7 +9,11 @@
  *   SC-TU-04: Delete button calls DELETE /ticker-universe/{ticker}
  *   SC-TU-05: Market filter (All/US/UK) shows only matching rows
  *   SC-TU-06: Active status filter shows only matching rows
+ *   SC-TU-07: Search filter narrows by ticker/company substring, debounced
+ *   SC-TU-08: Sector and Industry filters narrow rows; options derived from loaded list
+ *   SC-TU-09: "Clear filters" control shown when any filter active; resets all 5, then hides
  *
+ * Spec ref: docs/specs/frontend/pages/ticker_universe.md §10
  * Infrastructure:
  * - Playwright page.route() network interception — no live backend required.
  * - ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/TickerUniverse').
@@ -301,6 +305,112 @@ test.describe('SC-TU-DISP-01 — LSE .L suffix stripped in display', () => {
 
     expect(requests.length).toBeGreaterThan(0);
     expect(requests[0]).toContain('/ticker-universe/BATS.L');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-TU-07 — Search filter (ST-15)
+// ---------------------------------------------------------------------------
+
+test.describe('SC-TU-07 — Search filter', () => {
+  test.beforeEach(async ({ page }) => { await setup(page); });
+
+  test('SC-TU-07a: Typing a ticker substring narrows to matching rows (debounced)', async ({ page }) => {
+    await page.getByTestId('ticker-table').waitFor({ timeout: 8000 });
+    await page.getByTestId('ticker-search-input').fill('AAPL');
+
+    await expect(page.getByTestId('ticker-row-AAPL')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('ticker-row-MSFT')).not.toBeVisible({ timeout: 3000 });
+  });
+
+  test('SC-TU-07b: Search matches company name, case-insensitively', async ({ page }) => {
+    await page.getByTestId('ticker-table').waitFor({ timeout: 8000 });
+    await page.getByTestId('ticker-search-input').fill('tesla');
+
+    await expect(page.getByTestId('ticker-row-TSLA')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('ticker-row-AAPL')).not.toBeVisible({ timeout: 3000 });
+  });
+
+  test('SC-TU-07c: Clearing the search input restores all rows', async ({ page }) => {
+    await page.getByTestId('ticker-table').waitFor({ timeout: 8000 });
+    await page.getByTestId('ticker-search-input').fill('AAPL');
+    await expect(page.getByTestId('ticker-row-MSFT')).not.toBeVisible({ timeout: 3000 });
+
+    await page.getByTestId('ticker-search-input').fill('');
+    await expect(page.getByTestId('ticker-row-MSFT')).toBeVisible({ timeout: 5000 });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-TU-08 — Sector and Industry filters (ST-15)
+// ---------------------------------------------------------------------------
+
+test.describe('SC-TU-08 — Sector and Industry filters', () => {
+  test.beforeEach(async ({ page }) => { await setup(page); });
+
+  test('SC-TU-08a: Sector select options are derived from the loaded ticker list', async ({ page }) => {
+    await page.getByTestId('ticker-table').waitFor({ timeout: 8000 });
+    const options = await page.getByTestId('sector-filter').locator('option').allTextContents();
+    expect(options).toEqual(expect.arrayContaining(['All Sectors', 'Technology', 'Consumer', 'Auto']));
+  });
+
+  test('SC-TU-08b: Selecting a sector narrows to matching rows', async ({ page }) => {
+    await page.getByTestId('ticker-table').waitFor({ timeout: 8000 });
+    await page.getByTestId('sector-filter').selectOption('Auto');
+
+    await expect(page.getByTestId('ticker-row-TSLA')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('ticker-row-AAPL')).not.toBeVisible({ timeout: 3000 });
+  });
+
+  test('SC-TU-08c: Selecting an industry narrows to matching rows', async ({ page }) => {
+    await page.getByTestId('ticker-table').waitFor({ timeout: 8000 });
+    await page.getByTestId('industry-filter').selectOption('Tobacco');
+
+    await expect(page.getByTestId('ticker-row-BATS.L')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('ticker-row-AAPL')).not.toBeVisible({ timeout: 3000 });
+  });
+
+  test('SC-TU-08d: Sector and Market filters AND-combine', async ({ page }) => {
+    await page.getByTestId('ticker-table').waitFor({ timeout: 8000 });
+    await page.getByTestId('sector-filter').selectOption('Technology');
+    await page.getByLabel('Filter market UK').click();
+
+    await expect(page.getByTestId('ticker-row-AAPL')).not.toBeVisible({ timeout: 3000 });
+    await expect(page.getByTestId('ticker-row-BATS.L')).not.toBeVisible({ timeout: 3000 });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-TU-09 — Clear filters control (ST-15)
+// ---------------------------------------------------------------------------
+
+test.describe('SC-TU-09 — Clear filters control', () => {
+  test.beforeEach(async ({ page }) => { await setup(page); });
+
+  test('SC-TU-09a: Clear filters is hidden when all filters are at default', async ({ page }) => {
+    await page.getByTestId('ticker-table').waitFor({ timeout: 8000 });
+    await expect(page.getByTestId('clear-filters-badge')).not.toBeVisible();
+  });
+
+  test('SC-TU-09b: Clear filters appears once a filter is active', async ({ page }) => {
+    await page.getByTestId('ticker-table').waitFor({ timeout: 8000 });
+    await page.getByTestId('sector-filter').selectOption('Auto');
+    await expect(page.getByTestId('clear-filters-badge')).toBeVisible({ timeout: 5000 });
+  });
+
+  test('SC-TU-09c: Clicking Clear filters resets Market/Status/Search/Sector/Industry and hides itself', async ({ page }) => {
+    await page.getByTestId('ticker-table').waitFor({ timeout: 8000 });
+    await page.getByLabel('Filter market UK').click();
+    await page.getByTestId('sector-filter').selectOption('Auto');
+    await page.getByTestId('ticker-search-input').fill('AAPL');
+    await expect(page.getByTestId('clear-filters-badge')).toBeVisible({ timeout: 5000 });
+
+    await page.getByTestId('clear-filters-badge').click();
+
+    await expect(page.getByTestId('clear-filters-badge')).not.toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('ticker-row-AAPL')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('ticker-row-TSLA')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('ticker-search-input')).toHaveValue('');
   });
 });
 
