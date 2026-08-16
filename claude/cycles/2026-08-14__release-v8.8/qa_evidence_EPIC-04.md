@@ -36,15 +36,15 @@ Last Updated: 2026-08-16
 > **Delegated-QA sign-off pattern (BLG-GOV-69/74) — Format (i), individual sign-off:**
 
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
-- Date: PENDING
-- Comments: PENDING — story-level sign-offs from QA & Testing Owner (ST-18, ST-19, ST-21) and QA Lead (ST-20) pending below; EPIC-level DoQ acknowledgement to follow once both are recorded.
+- Date: 2026-08-16
+- Comments: Story-level sign-offs provided by QA & Testing Owner (ST-18, ST-19, ST-21) and QA Lead (ST-20), both agent-mediated per §5.3 — see below. Both authorities' first-pass reviews found the underlying audit work genuinely sound and each independently caught real documentation-accuracy defects (wrong backlog ID cross-references, undercounted figures, a materially wrong root-cause claim in ST-20's original draft) that were corrected and confirmed on retry 1. Reviewed and acknowledged in aggregate — all 4 stories' acceptance criteria met, all findings either fixed directly or filed as backlog items with no unresolved P0/P1 gaps.
 
 ### Story-level authority sign-offs (BLG-GOV-14 — required in addition to, not instead of, the EPIC-level block above)
 
 **QA & Testing Owner** (ST-18, ST-19, ST-21):
-- Signed off by: PENDING — retry 1 in progress
-- Date: PENDING
-- Comments: First pass Blocked — (1) `docs/ops/arc6_prerequisite_field_population_audit_2026-08-16.md` cited the wrong backlog ID (`BLG-QA-149` instead of `BLG-QA-150`) in 2 places, corrected; (2) `docs/ops/backend_service_layer_test_coverage_report_2026-08-16.md` understated the `tests/*.py` file count swept (105 claimed, 107 actual), corrected. Both fixed; retry pending. Substantive findings (code-path analysis, coverage inventory, dead-code claim, script regex fixes) were all independently re-verified as accurate on the first pass.
+- Signed off by: Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3)
+- Date: 2026-08-16
+- Comments: First pass Blocked — (1) `docs/ops/arc6_prerequisite_field_population_audit_2026-08-16.md` cited the wrong backlog ID (`BLG-QA-149` instead of `BLG-QA-150`) in 2 places, corrected; (2) `docs/ops/backend_service_layer_test_coverage_report_2026-08-16.md` understated the `tests/*.py` file count swept (105 claimed, 107 actual), corrected. Retry 1 Approved: independently re-verified both corrections landed cleanly with no other content altered, confirmed `BLG-QA-150` is the genuine matching backlog item, and re-ran `ls tests/*.py | wc -l` to confirm 107. Substantive findings (code-path analysis, coverage inventory, dead-code claim, script regex fixes) were all independently re-verified as accurate on the first pass.
 
 **QA Lead** (ST-20):
 - Signed off by: Sprint Execution Engine (agent-mediated, QA Lead role — §5.3)
