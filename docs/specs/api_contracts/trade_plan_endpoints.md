@@ -2,7 +2,7 @@
 **Class:** Specification (Class 2)
 **Status:** Active
 **Version:** 0.12
-**Last Updated:** 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — add triggered_by_price_alert_id to POST /trade-plans request schema); prior — 2026-08-12 (ST-01/ST-03, EPIC-01, v8.7 — add invalidation_condition, is_ai_draft to POST/PUT /trade-plans request schema); prior — 2026-08-12 (ST-03, EPIC-02, v8.6, BLG-BE-91 — PUT /trade-plans/{id} status='active' now requires a position_id; new Errors section)
+**Last Updated:** 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — add triggered_by_price_alert_id to POST /trade-plans request schema); prior — 2026-08-12 (ST-01/ST-03, EPIC-01, v8.7 — add invalidation_condition, is_ai_draft to POST/PUT /trade-plans request schema); prior — 2026-08-12 (ST-03, EPIC-02, v8.6, BLG-BE-91 — PUT /trade-plans/{id} status='active' now requires a position_id; new Errors section); prior history retained — see prior entries in version control.
 **Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07); 2026-08-12__release-v8.7 (ST-01/ST-03); 2026-08-14__release-v8.8 (ST-09)
 
 ---
