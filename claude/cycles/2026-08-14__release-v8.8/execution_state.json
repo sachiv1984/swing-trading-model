@@ -60,8 +60,8 @@
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1425,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-04.md",
       "test_scenarios": ["tests/test_router_test_registration_check.py"],
