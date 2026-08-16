@@ -42,11 +42,11 @@ Last Updated: 2026-08-16
 ### Story-level authority sign-offs (BLG-GOV-14 — required in addition to, not instead of, the EPIC-level block above)
 
 **QA & Testing Owner** (ST-18, ST-19, ST-21):
-- Signed off by: PENDING
+- Signed off by: PENDING — retry 1 in progress
 - Date: PENDING
-- Comments: PENDING
+- Comments: First pass Blocked — (1) `docs/ops/arc6_prerequisite_field_population_audit_2026-08-16.md` cited the wrong backlog ID (`BLG-QA-149` instead of `BLG-QA-150`) in 2 places, corrected; (2) `docs/ops/backend_service_layer_test_coverage_report_2026-08-16.md` understated the `tests/*.py` file count swept (105 claimed, 107 actual), corrected. Both fixed; retry pending. Substantive findings (code-path analysis, coverage inventory, dead-code claim, script regex fixes) were all independently re-verified as accurate on the first pass.
 
 **QA Lead** (ST-20):
-- Signed off by: PENDING
-- Date: PENDING
-- Comments: PENDING
+- Signed off by: Sprint Execution Engine (agent-mediated, QA Lead role — §5.3)
+- Date: 2026-08-16
+- Comments: First pass Blocked — report wrongly claimed no `backend/.python-version` pin file existed anywhere (search never covered `backend/`) and undercounted CI grep hits ~4x (7/4 claimed vs 21/16 actual). Retry 1 Approved: independently re-verified `backend/.python-version` contains `3.11.0`, the corrected 21/16 grep counts, and the "pin exists but not locally enforced (no pyenv on PATH)" root cause via `backend/.venv/pyvenv.cfg` — all confirmed accurate. `BLG-OPS-146` correctly rescoped to "honour the existing pin," not "create one." PUBLIC_URL finding unaffected by the correction.

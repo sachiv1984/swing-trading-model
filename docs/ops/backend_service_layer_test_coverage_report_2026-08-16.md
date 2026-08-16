@@ -12,7 +12,7 @@ No consolidated report previously identified which `backend/services/*.py` files
 
 ## 2. Method
 
-`backend/services/` contains **40** service modules (excluding `__init__.py`). For each, searched `tests/*.py` (105 files) for any reference to the bare module name (`grep -rl "\b<module>\b" tests/*.py`) — this catches both `import services.<module>` and `from <module> import ...` styles, both used interchangeably across this test suite. A module with zero matches has no direct unit test anywhere in the suite (it may still be exercised indirectly through a router-level integration test, noted per-item below where applicable).
+`backend/services/` contains **40** service modules (excluding `__init__.py`). For each, searched `tests/*.py` (107 files) for any reference to the bare module name (`grep -rl "\b<module>\b" tests/*.py`) — this catches both `import services.<module>` and `from <module> import ...` styles, both used interchangeably across this test suite. A module with zero matches has no direct unit test anywhere in the suite (it may still be exercised indirectly through a router-level integration test, noted per-item below where applicable).
 
 ## 3. Result
 
