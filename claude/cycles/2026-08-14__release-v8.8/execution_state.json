@@ -44,8 +44,8 @@
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1424,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-03.md",
       "test_scenarios": ["tests/test_changelog_service.py", "tests/e2e/research-trade-plan-status-badge.spec.js", "tests/e2e/ticker-universe.spec.js", "tests/e2e/shadcn-token-remaining-families.spec.js"],
