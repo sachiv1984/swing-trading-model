@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-14T18:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-14T18:00:00Z",
+  "last_updated_utc": "2026-08-16T19:29:58Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -25,10 +25,10 @@
       }
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "merged",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-02",
       "pr_number": 1423,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-02.md",
       "test_scenarios": ["tests/test_regime_retry_backoff.py", "tests/test_pre_entry_validation.py", "tests/test_position_state_history.py", "tests/test_si05_digest_service.py", "tests/test_research_signal_lookup.py", "tests/test_price_alerts_service.py", "tests/test_price_alert_trade_plan_linkage.py", "tests/e2e/notifications.spec.js", "tests/e2e/price-alert-trade-plan-linkage.spec.js"],
@@ -116,7 +116,7 @@
   },
   "blocked_items": [],
   "delegated_items": ["ST-04", "ST-05", "ST-06", "ST-11"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12"],
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": ["EPIC-01"],
