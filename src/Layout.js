@@ -148,7 +148,8 @@ export default function Layout({ children, currentPageName }) {
   // differs between :root and .dark (src/index.css) has always resolved to
   // its LIGHT value inside every Dialog-based component app-wide (14+
   // consumers: CommandPalette, ExportModal, WatchlistModal, WidgetLibrary,
-  // PositionEntryModal, etc.), regardless of the user's actual theme
+  // etc. — ST-16, EPIC-03, v8.8: PositionEntryModal removed as dead code,
+  // dropped from this example list), regardless of the user's actual theme
   // setting. Syncing the class onto documentElement (an ancestor of every
   // portal, since portals still mount under <body>/<html>) fixes this for
   // all of them at the root cause, not just this story's own call sites.
