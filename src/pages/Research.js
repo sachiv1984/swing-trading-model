@@ -7,6 +7,7 @@ import EntryChecklist from "../components/trades/EntryChecklist";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
 import { ArrowLeft, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "../lib/utils";
+import { TradePlanStatusBadge } from "./TradePlans";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -58,20 +59,6 @@ function HeatValue({ value, isError }) {
   const pct = Number(value).toFixed(1);
   const cls = value > 25 ? "text-red-400" : value >= 15 ? "text-amber-400" : "text-emerald-400";
   return <span className={cn("text-xl font-semibold", cls)}>{pct}%</span>;
-}
-
-function PlanStatusBadge({ status }) {
-  const cfg =
-    {
-      active: { label: "Active", cls: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
-      draft: { label: "Draft", cls: "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30" },
-      closed: { label: "Closed", cls: "bg-rose-500/20 text-rose-400 border-rose-500/30" },
-    }[status] || { label: status ?? "—", cls: "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30" };
-  return (
-    <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border", cfg.cls)}>
-      {cfg.label}
-    </span>
-  );
 }
 
 function Skeleton({ className }) {
@@ -173,10 +160,19 @@ export default function Research() {
   const priceChangePos = priceChangePct != null && priceChangePct >= 0;
 
   const plans = Array.isArray(tradePlansData) ? tradePlansData : [];
+  // ST-14 (EPIC-03, BLG-FE-162, v8.8): extended from 3 to all 6 statuses —
+  // previously research_pending/research_complete/closed plans matched none
+  // of the .find() calls, so activePlan stayed null and the panel silently
+  // fell back to the "No trade plan" CTA for those statuses (found via the
+  // Playwright coverage this story added, not a design-time AC). Precedence
+  // follows the plan lifecycle from most to least currently relevant.
   const activePlan =
     plans.find((p) => p.status === "active") ||
     plans.find((p) => p.status === "entry_conditions_set") ||
+    plans.find((p) => p.status === "research_complete") ||
+    plans.find((p) => p.status === "research_pending") ||
     plans.find((p) => p.status === "draft") ||
+    plans.find((p) => p.status === "closed") ||
     null;
 
   const newsHeadlines = r?.news_headlines || [];
@@ -340,7 +336,7 @@ export default function Research() {
         ) : (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <PlanStatusBadge status={activePlan.status} />
+              <TradePlanStatusBadge status={activePlan.status} />
               <button
                 onClick={() => navigate(`/TradePlan?edit=${activePlan.id}&ticker=${ticker}`)}
                 className="text-xs text-cyan-400 hover:text-cyan-300 underline"
