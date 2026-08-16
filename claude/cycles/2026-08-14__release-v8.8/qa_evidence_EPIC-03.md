@@ -1,0 +1,40 @@
+Owner: Director of Quality
+Class: Planning Document (Class 4)
+Status: Active
+Last Updated: 2026-08-16
+
+# QA Evidence Log — EPIC-03 (Frontend UX & Dead-Code Cleanup)
+
+**EPIC:** EPIC-03 — Frontend UX & Dead-Code Cleanup
+**Cycle:** 2026-08-14__release-v8.8
+**Sprint goal:** Close the two live P1 data-integrity gaps (stale screener refresh, stuck RISK OFF badge) and ship the full v8.8 debt-closure slice — 29 stories across 7 EPICs — within the confirmed ~24–28 day capacity band.
+**Test scenarios used:** tests/test_changelog_service.py; tests/e2e/research-trade-plan-status-badge.spec.js; tests/e2e/ticker-universe.spec.js; tests/e2e/shadcn-token-remaining-families.spec.js
+
+| ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
+|---------|----------------|----------------|---------------------|--------|------------|
+| ST-13 | `docs/specs/frontend/pages/dashboard.md#6A`; `docs/specs/api_contracts/changelog_endpoints.md#GET /changelog/latest`; `claude/system/post_ship_closure.md#STEP 1` | `GET /changelog/latest` sources a new `User Impact` column (curated user-benefit copy) instead of `Description`; rows with a blank/`—` cell excluded. `changelog.md`'s v8.7 table retrofitted with real `User Impact` copy + new authoring-convention note. `post_ship_closure.md` template updated so future entries populate the column at authoring time. `WhatsNewCard.js` itself unchanged (data-source change only, per design gate decision). | `WhatsNewCard` renders curated user-benefit copy, not raw EPIC descriptions; an EPIC with no user-facing change does not appear in the feed; changelog authoring convention documented | Pass | None |
+| ST-14 | `docs/specs/frontend/pages/research_view.md#4.7 Trade Plan Panel` | `Research.js` deleted its local `PlanStatusBadge` (3-of-6-status map) and now renders `TradePlans.js`'s exported `TradePlanStatusBadge`/`STATUS_CONFIG` — single canonical source for all 6 statuses app-wide. Also fixed a real pre-existing bug found by this story's own new Playwright coverage: `activePlan` selection previously matched only 3 of 6 statuses, silently hiding the badge (no-plan CTA shown instead) for `research_pending`/`research_complete`/`closed` plans — extended to all 6, precedence documented in `research_view.md` v1.4. | All 6 trade plan statuses render a human-readable label on the Research page, none fall back to raw snake_case; single source of truth for status labels (no duplicate/divergent maps) | Pass | None |
+| ST-15 | `docs/specs/frontend/pages/ticker_universe.md#10. Filtering — Search, Sector, Industry` | `TickerUniverse.js` extended with Search (200ms debounce, matches ticker + company name), Sector `<select>`, and Industry `<select>` — all 5 filters (Market, Active, Search, Sector, Industry) AND-combine. "Clear filters" control (`Badge variant="secondary"`) shown when any filter is non-default; resets all 5 and hides itself. First live call site for the `secondary` Badge variant (feeds ST-17). | User can filter the ticker table by search text, sector, and industry, independently or combined with existing filters; filters visibly narrow the row count and clear/reset correctly | Pass | None |
+| ST-16 | `docs/specs/frontend/design_system.md#Modal / Dialog Theming` | Deleted `src/components/signals/PositionEntryModal.js` (confirmed dead/unreachable, no live import or mount point anywhere in `src/`). Removed the stale example reference in `src/Layout.js`'s dark-mode-portal comment. `design_system.md`'s known-non-compliant list already updated by the design gate (v1.11). | `PositionEntryModal.js` is either reachable with Playwright coverage, or removed — removed (Option B, design-gate decision); no orphaned modal remains without an explicit decision recorded | Pass | None |
+| ST-17 | `tests/e2e/shadcn-token-remaining-families.spec.js` | Added SC-TOK-05 covering the `secondary`/`secondary-foreground` computed colour/background at TickerUniverse.js's "Clear filters" badge (ST-15's new live call site) — asserts non-transparent background and text colour that differ from each other. Header comment updated to reflect `secondary` now LIVE; `card` re-confirmed NOT LIVE this sprint (design-gate decision, no story introduces a Card call site). | Playwright test added covering `card`/`card-foreground` at first live call site (not actionable — no live call site exists this sprint, design-gate decision, `BLG-FE-160` stays open for that half); Playwright test added covering `secondary`/`secondary-foreground` at first live call site — done (SC-TOK-05) | Pass with notes | None |
+
+**QA test coverage:**
+- Scenarios run: `tests/test_changelog_service.py` (6 tests, incl. `test_real_changelog_is_parseable` integration sanity check); `tests/e2e/research-trade-plan-status-badge.spec.js` (7 scenarios); `tests/e2e/ticker-universe.spec.js` (31 scenarios, incl. 10 new for ST-15); `tests/e2e/shadcn-token-remaining-families.spec.js` (5 scenarios, incl. new SC-TOK-05); regression sweep — `tests/e2e/pre-trade-research.spec.js`, `trade-plan.spec.js`, `trade-plan-tag-filter.spec.js`, `trade-plan-signal-context.spec.js`, `research-view-signal-type.spec.js` (70 scenarios, all pass) — all run against a live local dev server (`npx playwright test`, not sandboxed-only). Full backend suite (`backend/.venv/bin/python3 -m pytest`): 1159 passed / 5 skipped, 0 regressions.
+- Regression areas checked: Research page (trade plan panel, signal panel, heat panel), Trade Plans page (status badge, tag filter), Ticker Universe (existing Market/Active filters, add/toggle/delete), What's New panel data path, dark-mode portal theming comment in `Layout.js`.
+- Known deviations: None found — all 5 stories' deviation checks completed with nothing to file.
+
+**Playwright Test Authoring Standard compliance (`shared_standards.md` §18):** confirmed — no `waitForLoadState('networkidle')` used in any new test; all navigations followed by element-specific `toBeVisible`/`waitFor` waits; mock payloads match documented `openapi.yaml`/canonical response shapes.
+
+**Frontend testing gate (`execution_prompt.md` §3.2.A, CLAUDE.md §2):** every observable AC across ST-13/14/15/16/17 has Playwright coverage confirmed passing against a real local dev server (not code-review-only) — no "code review only" ACs, no backlog item required.
+
+---
+
+## Standard Sign-Off Block
+
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no story in this EPIC constructs URLs directly (all use `apiFetch`/`api.*` wrappers with `API_BASE`/`REACT_APP_API_URL`)
+- Signed off by: PENDING — see agent-mediated review below
+- Date: PENDING
+- Comments: PENDING
