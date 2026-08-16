@@ -14,17 +14,20 @@ No check previously confirmed local dev, CI, and staging environments remain con
 
 ## 2. Findings
 
-### 2.1 Python version — real drift found
+### 2.1 Python version — pin exists but is not honoured by this session's local venv
 
 | Environment | Version | Source |
 |---|---|---|
 | Local (this session's `backend/.venv`) | **3.14.4** | `backend/.venv/bin/python3 --version` |
-| CI (all workflows) | **3.11** | `python-version: '3.11'` in `ci-tests.yml`, `integration-tests.yml`, `quality_gate.yml` (7 occurrences across 4 workflows, all consistent with each other) |
+| Local pin (declared, not enforced) | **3.11.0** | `backend/.python-version` (git-tracked, committed 2026-01-25, `244ffe40` — predates this audit) |
+| CI (all workflows) | **3.11** | `python-version: '3.11'` — **21 occurrences across 16 distinct workflow files** (`grep -rn python-version .github/workflows/*.yml`, re-counted after an initial undercounted pass), all consistent with each other |
 | Staging | **3.11.0** | `render.yaml` (`PYTHON_VERSION: "3.11.0"`, staging API service) |
 
-Local dev is running 3 minor versions ahead of both CI and staging, which agree with each other. The full backend suite (1159 passed / 5 skipped) currently passes identically on 3.14 locally and 3.11 in CI, so this is not an active bug — but it is an undocumented, previously-unaudited gap: a 3.11-vs-3.14 stdlib/syntax difference could pass locally and fail in CI (or vice versa) with no warning, and nothing in the repo told a developer setting up locally which version to target. No `.python-version` file, `pyproject.toml` version pin, or local-setup doc specifies an intended version anywhere in the repo (checked `docs/team_skills/`, `docs/ops/`).
+**Correction (QA Lead review, first pass Blocked):** this section originally claimed "no `.python-version` file... specifies an intended version anywhere in the repo," checking only `docs/team_skills/` and `docs/ops/` — it never looked in `backend/`, where the venv it tested actually lives. `backend/.python-version` exists and correctly declares `3.11.0`, matching CI/staging exactly. The real finding is not "no pin exists" — it's that **a correct pin exists but this session's local venv doesn't honour it**: `backend/.venv/pyvenv.cfg` shows it was created via plain `python3 -m venv` against whatever `python3` resolved to on `PATH` (`/usr/bin/python3.14`, confirmed via `readlink -f backend/.venv/bin/python3`); no `pyenv` (or equivalent version-manager shim that would read `.python-version`) is present on `PATH` in this environment, and no `python3.11` binary is installed here to switch to even if one were. The original "7 occurrences across 4 workflows" CI citation was also undercounted (~4x) — corrected above.
 
-**Disposition:** Documented here (this is itself the "documented as intentional" — or rather, "documented as a gap" — outcome named in the AC). Filed `BLG-OPS-146` to add a `.python-version` (or equivalent) pin so future local `venv` setups target 3.11 to match CI/staging, rather than defaulting to whatever `python3` happens to be on the machine setting it up.
+The full backend suite (1160 passed / 5 skipped) currently passes identically on 3.14 locally and 3.11 in CI, so this is not an active bug — but a 3.11-vs-3.14 stdlib/syntax difference could still pass locally and fail in CI (or vice versa) with no warning, since the declared pin is silently unenforceable in at least this environment.
+
+**Disposition:** Documented here. `BLG-OPS-146` filed and re-scoped (see below) — the fix is not "add a pin" (one already exists correctly) but "ensure local venv setup actually honours the existing `backend/.python-version` pin" (e.g. document a `pyenv install $(cat backend/.python-version) && pyenv local` step, or an equivalent enforcement mechanism, in a local-setup doc).
 
 ### 2.2 Node version — no drift
 
@@ -51,12 +54,12 @@ Comparing `.env`, `.env.staging`, `.env.production` (repo templates) and `render
 
 | Ref | Item | Disposition |
 |-----|------|-------------|
-| BLG-OPS-146 | (a) Pin local dev Python version (`.python-version` or equivalent) to 3.11 to match CI/staging; (b) add missing `PUBLIC_URL=/` to `.env.production`'s repo template, or confirm/document it's set in the Render dashboard | Filed — Infrastructure & Operations Owner |
+| BLG-OPS-146 | (a) Document/enforce a mechanism for local venv setup to actually honour the existing `backend/.python-version` pin (3.11.0) — e.g. a `pyenv install $(cat backend/.python-version)` step in a local-setup doc — rather than defaulting to whatever `python3` happens to be on `PATH`; (b) add missing `PUBLIC_URL=/` to `.env.production`'s repo template, or confirm/document it's set in the Render dashboard | Filed — Infrastructure & Operations Owner |
 
 ## 4. Sign-Off
 
 - [x] All three repo-visible environments (local, CI, staging) compared across Python, Node, DB engine, and frontend env vars
 - [x] Production scope limitation disclosed (dashboard-only, not repo-comparable) rather than silently skipped
-- [x] Real drift (Python version) documented; one advisory-only gap (PUBLIC_URL) filed, not asserted as a confirmed defect without dashboard evidence
+- [x] Real drift (declared Python pin not locally enforced) documented and correctly root-caused after a QA Lead review correction (first pass Blocked — the report initially and incorrectly claimed no pin file existed at all, having searched only `docs/team_skills/` and `docs/ops/`, not `backend/`); one advisory-only gap (PUBLIC_URL) filed, not asserted as a confirmed defect without dashboard evidence
 - Signed off by: PENDING — see agent-mediated review
 - Date: PENDING
