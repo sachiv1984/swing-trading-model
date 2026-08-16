@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.161
-**Last Updated:** 2026-08-13
+**Version:** 4.162
+**Last Updated:** 2026-08-16
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.26)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.27)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1472,7 +1472,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.11 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.8 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.26 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.27 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.28 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.162 | 2026-08-16 | **Sprint execution `2026-08-14__release-v8.8` EPIC-03/ST-13 (BLG-FE-161) — post_ship_closure.md v2.26→v2.27: `Changes shipped` template gains a `User Impact` column.** §10 source prompt header v2.26→v2.27 (line 1062). §14 Post-Ship Closure Engine v2.26→v2.27. §14 Version 4.161→4.162/2026-08-16. Change: STEP 1.1 entry template and STEP 1.2 entry rules updated so each `Changes shipped` row carries a curated `User Impact` cell (user-benefit copy, or `—` if no user-facing effect), populated at authoring time rather than deferred — backs `GET /changelog/latest`'s (`changelog_endpoints.md` v1.1) new sourcing rule for the in-app "What's New" panel (`dashboard.md` §6A v3.3), which now reads this column exclusively and excludes blank/`—` rows. Design source: `docs/design/2026-08-14__release-v8.8/whats-new-user-benefit-copy/decision_record.md`. Authority: Sprint Execution Engine (ST-13, `2026-08-14__release-v8.8` EPIC-03, 2026-08-16). |
 | 4.161 | 2026-08-13 | **Post-ship closure `2026-08-12__release-v8.7` STEP 8 immediate action (LL-v8.7-P4-01) — qa_evidence_template.md v1.10→v1.11: post-open CI-fix restatement requirement clarified as per-fix, not per-EPIC.** §14 QA Evidence Template v1.10→v1.11. §14 Version 4.160→4.161/2026-08-13. Change: the existing `LL-v8.5-P4-01` restatement requirement (Standard Sign-Off Block) is now explicit that it applies once per CI-triggered fix — when an EPIC has multiple stories each independently requiring a post-open CI fix, each story's own `Comments:` field must carry its own restatement, not just the first. Found this cycle (`2026-08-12__release-v8.7`, Phase 4 friction item 1, `lessons_learnt_cycle.md`): `qa_evidence_EPIC-03.md` restated the confirming CI run for ST-08's fix but not ST-09's separate post-open fix, on the requirement's first cycle of use. Authority: Head of Specs Team (post-ship closure `2026-08-12__release-v8.7`, STEP 8 — immediate lessons-learnt action rule). |
 | 4.160 | 2026-08-13 | **Sprint execution `2026-08-12__release-v8.7` EPIC-07/ST-18 (BLG-GOV-290) — `CLAUDE.md` §8 (no version field, logged here per the established convention) gains new step 2b.** Change: a new mandatory pre-resolution check for shared-JSON-field schema-shape drift between sibling EPIC branches — `git merge` sees no conflict when two branches independently add/modify the same field name with a different shape or meaning and their edits land on non-overlapping lines, unlike 2a's version-number-collision case which at least has visible identical text to compare. Requires diffing the set of field names each branch touched (not just trusting a clean auto-merge) before accepting a shared JSON file's merge result. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-18, 2026-08-13). |
 | 4.159 | 2026-08-12 | **Lifecycle audit AUD-2026-08-12-003, action-all-audit-points session — backlog_management_prompt.md v1.13→v1.14: STEP 1.5 Ephemeral Section Cleanup gains a 4th ephemeral type.** §6M source prompts updated (backlog_management_prompt.md v1.13→v1.14). §14 Backlog Management Engine v1.13→v1.14. §14 Version 4.158→4.159/2026-08-12. Change: Roadmap Rebalance/Delivery Verification idea-intake "New Items" sections are now a recognised ephemeral type — unlike types 1–3, items in them carry no completion marker, so all items must be relocated to their §1–§8 type section unconditionally at the next groom run. Root cause: 4 such sections (`2026-07-24__scheduled` through `2026-08-11__scheduled`) accumulated unpromoted across 4+ groom runs since the type was never named in STEP 1.5's original 3-type list; `backlog.md` was found missing its `## 5.`/`## 7.`/`## 8.` type-section headers entirely as a direct symptom. Authority: Head of Specs Team (lifecycle audit AUD-2026-08-12). |
