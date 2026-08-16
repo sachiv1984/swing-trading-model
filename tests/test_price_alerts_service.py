@@ -27,7 +27,6 @@ _config_stub = types.ModuleType("config")
 _config_stub.DEFAULT_MIN_HOLD_DAYS = 10
 _config_stub.TELEGRAM_BOT_TOKEN = ""
 _config_stub.TELEGRAM_CHAT_ID = ""
-sys.modules["config"] = _config_stub
 
 _pricing_stub = types.ModuleType("utils.pricing")
 _pricing_stub.check_market_regime = MagicMock()
@@ -35,8 +34,6 @@ _pricing_stub.get_current_price = MagicMock()
 
 _utils_stub = types.ModuleType("utils")
 _utils_stub.pricing = _pricing_stub
-sys.modules.setdefault("utils", _utils_stub)
-sys.modules["utils.pricing"] = _pricing_stub
 
 _health_stub = types.ModuleType("services.health_service")
 _health_stub.record_nightly_job = MagicMock()
@@ -45,13 +42,25 @@ _health_stub.record_nightly_job = MagicMock()
 # leak into other test files sharing this pytest process (e.g.
 # test_health_extensions.py, which imports the real module by the same name).
 
+# "config"/"utils"/"utils.pricing" are likewise scoped to just this exec_module
+# call via patch.dict, not assigned globally (BLG-BE-97, v8.8 ST-07 fallout,
+# DoQ agent-mediated review finding on EPIC-02 PR #1423). alerts_service.py's
+# own module namespace binds get_current_price/check_market_regime etc. at
+# exec time (test bodies below patch.object(alerts_service, ...) directly, never
+# via sys.modules), so the stub only needs to be visible for the duration of
+# this one import — a bare global assignment previously clobbered whatever
+# real "utils.pricing"/"config" modules another test file had already loaded
+# (or vice versa), causing collection-order-dependent ImportErrors elsewhere
+# (e.g. tests/test_pre_entry_validation.py's `from utils.pricing import
+# _market_regime_cache`, which the real module provides but this stub does not).
 import importlib.util as _ilu
 _spec = _ilu.spec_from_file_location(
     "alerts_service",
     Path(__file__).parent.parent / "backend" / "services" / "alerts_service.py"
 )
 alerts_service = _ilu.module_from_spec(_spec)
-_spec.loader.exec_module(alerts_service)
+with patch.dict(sys.modules, {"config": _config_stub, "utils": _utils_stub, "utils.pricing": _pricing_stub}):
+    _spec.loader.exec_module(alerts_service)
 
 create_price_alert = alerts_service.create_price_alert
 delete_price_alert = alerts_service.delete_price_alert
