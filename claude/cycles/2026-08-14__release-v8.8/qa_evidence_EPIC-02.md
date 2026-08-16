@@ -1,0 +1,44 @@
+Owner: Director of Quality
+Class: Planning Document (Class 4)
+Status: Active
+Last Updated: 2026-08-14
+
+---
+
+## Consolidation Block
+
+**EPIC:** EPIC-02 — Backend Engineering Hardening
+**Cycle:** 2026-08-14__release-v8.8
+**Sprint goal:** Close the two live P1 data-integrity gaps (stale screener refresh, stuck RISK OFF badge) and ship the full v8.8 debt-closure slice — 29 stories across 7 EPICs (backend hardening, frontend UX/dead-code cleanup, QA, security, spec, and governance debt) — within the confirmed ~24–28 day capacity band.
+**Test scenarios used:** `tests/test_regime_retry_backoff.py`, `tests/test_pre_entry_validation.py`, `tests/test_position_state_history.py`, `tests/test_si05_digest_service.py`, `tests/test_research_signal_lookup.py`, `tests/test_price_alerts_service.py`, `tests/test_price_alert_trade_plan_linkage.py`, `tests/e2e/notifications.spec.js`, `tests/e2e/price-alert-trade-plan-linkage.spec.js`
+
+| ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
+|---------|----------------|-----------------|----------------------|--------|------------|
+| ST-07 | `backend/utils/pricing.py` | Consolidated the two divergent `check_market_regime()` implementations (`position_manager.py` yfinance path, `utils/pricing.py` retry-hardened path) into one, combining the retry hardening with the shared 5-min TTL cache. `position_manager.py` re-exports for backward compatibility. | Only one implementation remains; all call sites use it; no behavioural regression in regime tests | Pass | None — deviation check completed, nothing to file |
+| ST-08 | `docs/specs/data_model.md#DS-13` | New append-only `position_state_history` table, written alongside (not instead of) the existing `state_history` JSONB column on every genuine lifecycle transition. State machine logic unchanged. | `position_state_history` table added with migration; transitions logged on each state change; no behavioural change to lifecycle logic | Pass | None — deviation check completed, nothing to file |
+| ST-09 | `docs/specs/data_model.md#DS-15`, `docs/specs/api_contracts/trade_plan_endpoints.md#POST /trade-plans`, `docs/specs/api_contracts/alerts_endpoints.md#GET /notifications` | New nullable `trade_plans.triggered_by_price_alert_id` column; `POST /trade-plans` accepts it; `GET /notifications` exposes `context` (previously stored, never returned); new "Create Trade Plan" CTA on `custom_price_alert` notifications (`NotificationRow.js`) wired through to `TradePlan.js`. | Trade plan created via the alert-notification-to-trade-plan path records the triggering `price_alerts` row; any other creation path leaves the field null; reporting treatment (separate field, not a third `trade_origin` value) decided and documented before implementation | Pass | None — deviation check completed, nothing to file |
+| ST-10 | N/A — bug fix, no prior canonical spec (`spec_reference_not_applicable: true`) | `_send_telegram_request()` now captures and parses Telegram's `sendMessage` response, returning `result.message_id`; `send_si05_digest()` passes it through to `_write_delivery_log`. Failure path unchanged (still logs NULL). | Successful send populates a real, non-null `telegram_message_id`; failure-path logging unchanged; retry/backoff behaviour unaffected | Pass | None — deviation check completed, nothing to file |
+| ST-11 | `docs/ops/api_performance_baseline.md#36` | Both success and failure log lines in `send_si05_digest()` now include an elapsed-time value (`time.monotonic()` around the Telegram send, including retry delay). | A successful or failed invocation's Render log line includes an elapsed-time value; verified against the next real invocation; `api_performance_baseline.md` §36 updated with real timing | Pass with notes | Live-invocation verification AC split to `BLG-BE-99` (backlog.md), Product-Owner-authorized — see Comments |
+| ST-12 | `docs/ops/pre_trade_research_query_latency_review_2026-08-14.md`, `docs/specs/data_model.md#DS-14` | Query-latency review of all 9 Research View data sources; found and fixed one genuine growth-driven regression (`_get_signal()`'s unbounded per-ticker scan, replaced with a targeted, properly-indexed query); one bounded-cost observation (screener lookup) reviewed and not filed. | Review complete; any regression fixed or filed; Head of Engineering sign-off | Pass | None — deviation check completed, nothing to file |
+
+**QA test coverage:**
+- Scenarios run: `backend/.venv/bin/python3 -m pytest tests/` — 1158 passed, 5 skipped (full backend suite, run repeatedly across this EPIC's commits, all green); `npx playwright test tests/e2e/notifications.spec.js tests/e2e/price-alert-trade-plan-linkage.spec.js tests/e2e/entry-checklist.spec.js` — 25 passed against a live dev server
+- Regression areas checked: market-regime callers (main.py, position_manager.py, alerts_service.py, position_service.py, portfolio_service.py, pre_entry_validation.py, portfolio_risk.py, ai_service.py, research.py — all confirmed resolving to the single consolidated implementation); position lifecycle refresh path (N+1 fix from v8.7 unaffected); trade plan creation/update (active-status-requires-position guard from v8.6 unaffected); notifications feed (existing SC-NOTIF-02 through SC-NOTIF-08 all still passing); SI-05 digest delivery (retry/backoff, truncation, credentials-missing paths all still passing)
+- Known deviations: None found — all stories' deviation checks completed with nothing to file, except ST-11's disclosed, Product-Owner-authorized live-verification split (see table above and Comments)
+
+**Frontend testing gate (LL-v3.1-EX-01):** ST-09 introduces the only frontend-visible change in this EPIC (NotificationRow.js "Create Trade Plan" CTA; TradePlan.js query-param wiring). Playwright coverage: `SC-NOTIF-09a` (CTA visible on a `custom_price_alert` notification with context), `SC-NOTIF-09b` (href carries `ticker`/`market`/`price_alert_id`), `SC-NOTIF-09c` (CTA absent on other alert types), `SC-PA-TP-01` (full round trip — `price_alert_id` query param reaches the `POST /trade-plans` body), `SC-PA-TP-02` (field correctly null when the query param is absent). All 5 pass. The autonomous DoQ sign-off class (BLG-GOV-19) is therefore unavailable for this EPIC (criterion 3 unmet) — Standard Sign-Off Block used below, with the Mixed-Class EPIC Signer Format (ST-11/LL-v5.2-P4-01, since ST-12 remains `delegated_backend`).
+
+**EPIC-level consolidation note (BLG-GOV-14):** ST-12's own agent-mediated Head of Engineering sign-off (§5.3) is recorded in `execution_state.json`'s `sign_off_record` for that story — first pass Blocked (a factually incorrect index-usage claim), corrected in-session, retry 1 Approved. That story-level authority sign-off is confirmed cleared and does not substitute for this EPIC-level DoQ consolidation block; both are recorded.
+
+---
+
+## Standard Sign-Off Block
+
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirmed — `NotificationRow.js`'s CTA constructs its `href` via `createPageUrl("TradePlan")` (the project's standard page-URL helper, `src/utils/index.js`), not a raw string; the URL-base variable is exposed on the imported object
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Signed off by: Sprint Execution Engine (agent-mediated, Head of Engineering role — §5.3) [ST-12 only — see EPIC-level consolidation note above; already independently confirmed, retry 1 Approved]
+- Date: 2026-08-14
+- Comments: ST-11's live-invocation AC (Render log confirmation + `api_performance_baseline.md` §36 real-timing update) could not be completed pre-merge — production deploys from `main`, and this EPIC's commits are unmerged, confirmed via a user-approved manual `si05-weekly-digest.yml` dispatch (run 31815613959) that exercised the pre-ST-11 code path. Split to `BLG-BE-99` with explicit user authorization (not a silent AC gap) — see `delegation_log.md` DEL-20260814-05 final status and `execution_state.json` ST-11 notes for full detail.

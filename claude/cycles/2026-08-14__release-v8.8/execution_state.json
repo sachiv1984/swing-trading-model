@@ -25,11 +25,11 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-02.md",
       "test_scenarios": ["tests/test_regime_retry_backoff.py", "tests/test_pre_entry_validation.py", "tests/test_position_state_history.py", "tests/test_si05_digest_service.py", "tests/test_research_signal_lookup.py", "tests/test_price_alerts_service.py", "tests/test_price_alert_trade_plan_linkage.py", "tests/e2e/notifications.spec.js", "tests/e2e/price-alert-trade-plan-linkage.spec.js"],
       "stories": {
