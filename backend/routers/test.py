@@ -273,15 +273,18 @@ async def test_all_endpoints(request: Request):
 
     # ST-11 (BLG-QA-133) coverage-audit disposition — endpoints deliberately
     # NOT added above, with rationale (see docs/ops/endpoint_test_coverage_audit_2026-07-29.md
+    # and its ST-21 (BLG-QA-146, v8.8) re-audit, docs/ops/endpoint_test_coverage_audit_2026-08-16.md,
     # for the full audit):
     #   - Real-data-mutating endpoints (POST /cash/transaction, POST /portfolio/position,
     #     POST /portfolio/snapshot, POST/PATCH/DELETE /alerts/rules, POST /alerts/evaluate,
     #     POST/PATCH /settings, POST /signals/generate, POST /notifications/mark-all-read,
-    #     PATCH /notifications/{id}, POST /positions/{id}/exit, PATCH /positions/{id}/mark-reviewed,
-    #     PATCH /positions/{id}/note, PATCH /positions/{id}/tags, PATCH /watchlist/{id},
-    #     DELETE /signals/{id}): would mutate the live single-portfolio production system's
-    #     real financial/trading state every time this smoke test is run — correctly excluded,
-    #     not an oversight.
+    #     PATCH /notifications/{id}, PATCH /notifications/preferences, POST /positions/{id}/exit,
+    #     PATCH /positions/{id}/mark-reviewed, PATCH /positions/{id}/note, PATCH /positions/{id}/tags,
+    #     PATCH /watchlist/{id}, DELETE /signals/{id}): would mutate the live single-portfolio
+    #     production system's real financial/trading state every time this smoke test is run —
+    #     correctly excluded, not an oversight. (PATCH /notifications/preferences added to this
+    #     list by the ST-21/v8.8 re-audit — present since v2.2/March 2026 but missed by the
+    #     original ST-11/v7.10 audit that introduced this comment block.)
     #   - GET /positions/analyze: despite the GET verb, updates trailing stops and position
     #     data in the database (see services/position_service.py::analyze_positions docstring)
     #     — same mutation-risk exclusion as above.
