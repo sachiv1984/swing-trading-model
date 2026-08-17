@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.14
-**Last Updated:** 2026-08-10
+**Version:** 9.15
+**Last Updated:** 2026-08-17 (post-ship closure 2026-08-14__release-v8.8, STEP 12 ID Uniqueness Scan finding: STEP 8.5.C.5's BLG-ID collision advisory now scans `backlog_archive.md` in addition to `backlog.md`, closing the gap that let `BLG-FEAT-84`/`BLG-SEC-18` each get reissued to a second, unrelated item)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -692,7 +692,7 @@ If a change is not implied by a STEP 8 decision or required for lifecycle compli
 3. Construct the write plan using `claude/system/templates/write_plan_template.md`.
 4. **Register row status verification:** Every `Status: Advancing` row from §4.2 must have a terminal status in the write plan (`Promoted-Added` or `Promoted-Rejected`). Missing → add explicitly.
 
-5. **BLG-ID collision advisory (non-blocking):** Before assigning new BLG-IDs in STEP 5 debate summaries or STEP 8 decision records, grep `backlog.md` for the highest existing ID in each series (e.g. `grep -o 'BLG-GOV-[0-9]*' backlog.md | sort -t'-' -k3,3n | tail -1`). Assign IDs starting from highest+1. Prevents collision when an ID was added to backlog.md between the rebalance date and the write pass. Advisory only — does not halt.
+5. **BLG-ID collision advisory (non-blocking):** Before assigning new BLG-IDs in STEP 5 debate summaries or STEP 8 decision records, grep **both** `backlog.md` **and** `backlog_archive.md` for the highest existing ID in each series (e.g. `grep -o 'BLG-GOV-[0-9]*' claude/backlog/backlog.md claude/backlog/backlog_archive.md | sort -t'-' -k3,3n | tail -1`). Assign IDs starting from highest+1 across both files. Prevents collision when an ID was added to backlog.md between the rebalance date and the write pass, **and** prevents reissuing an ID that was already used and later archived (an archived-only ID is invisible to a `backlog.md`-only grep). Advisory only — does not halt. **Archive-scan requirement added post-ship closure `2026-08-14__release-v8.8` STEP 12 (`groom backlog`'s ID Uniqueness Scan):** this check previously scanned only `backlog.md`, matching the `backlog-add` skill's original gap — 2 genuine ID collisions (`BLG-FEAT-84`, `BLG-SEC-18`) were found in `backlog_archive.md`, each ID independently reused for two unrelated items after the first holder had already been archived and dropped out of a `backlog.md`-only grep's visibility. The `backlog-add` skill (`.claude/skills/backlog-add/SKILL.md` Step 1) already scanned both files correctly — this advisory was the one remaining ID-assignment path that did not.
 
 #### 8.5.C Verification Rules (Hard)
 
