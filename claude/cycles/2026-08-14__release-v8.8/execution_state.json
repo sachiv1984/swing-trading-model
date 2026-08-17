@@ -42,7 +42,7 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-03",
       "pr_number": 1424,
       "pr_status": "merged",
@@ -58,7 +58,7 @@
       }
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-04",
       "pr_number": 1425,
       "pr_status": "merged",
@@ -73,7 +73,7 @@
       }
     },
     "EPIC-05": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-05",
       "pr_number": 1426,
       "pr_status": "merged",
@@ -88,7 +88,7 @@
       }
     },
     "EPIC-06": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-06",
       "pr_number": 1427,
       "pr_status": "merged",
@@ -101,10 +101,10 @@
       }
     },
     "EPIC-07": {
-      "status": "in_review",
+      "status": "merged",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-07",
       "pr_number": 1428,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-07.md",
       "test_scenarios": ["Manual acceptance review — governance prompt text + .claude_current_state.json schema/ownership-registry changes only; no application test suite affected"],
@@ -119,9 +119,9 @@
   "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15", "ST-16", "ST-17", "ST-18", "ST-19", "ST-20", "ST-21", "ST-22", "ST-23", "ST-24", "ST-25", "ST-26", "ST-27", "ST-28", "ST-29"],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-04", "EPIC-03", "EPIC-06", "EPIC-05"],
-    "epics_pending": ["EPIC-07"],
-    "all_merged": false
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-04", "EPIC-03", "EPIC-06", "EPIC-05", "EPIC-07"],
+    "epics_pending": [],
+    "all_merged": true
   },
   "sealed": false,
   "sealed_utc": null,
