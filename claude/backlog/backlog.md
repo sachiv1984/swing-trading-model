@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-17 (session — 1 new item added: BLG-SPEC-131); prior — 2026-08-16 (session — 1 new item added: BLG-TECH-11); prior — 2026-08-16 (session — 1 new item added: BLG-OPS-146); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-17 (session — 4 new items added: BLG-QA-152, BLG-GOV-309, BLG-GOV-310, BLG-TECH-12); prior — 2026-08-17 (session — 1 new item added: BLG-GOV-308); prior — 2026-08-17 (session — 1 new item added: BLG-SPEC-131); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -5216,5 +5216,45 @@ The backend has two independent implementations of `check_market_regime()`: `bac
 **Problem:** `docs/specs/api_contracts/health_endpoints.md`'s `GET /health/scheduler` section states "The three tracked jobs are..." and lists only `trailing_stop`, `rebalance_exit`, `inv_vol_sizing`. ST-01/ST-02 (v8.8) added two more jobs to the live registry — `screener_refresh` (`POST /screener/run`) and `risk_off_alerts` (`POST /positions/risk-off-alerts`) — plus `custom_price_alerts` was already live but likewise undocumented in this section. The canonical spec text is now stale relative to `backend/services/health_service.py`'s `_NIGHTLY_JOB_NAMES`. Not filed as a behavioural deviation — the additions are consistent with the endpoint's documented intent (surface nightly job health), not a divergence from a requirement; this is a documentation-currency gap only. Left uncorrected in the sprint execution engine's own commit because canonical spec edits are restricted to deviation documentation (`execution_prompt.md` §7) and this is not a deviation.
 **Scope:** Update the "Architecture note" job list and the `GET /health/scheduler` response example/field notes to include `custom_price_alerts`, `screener_refresh`, and `risk_off_alerts`.
 **Acceptance Criteria:** All six live job names present in the spec's architecture note and response example; API Contracts & Documentation Owner sign-off.
+
+---
+
+### BLG-GOV-308 — state_field_owners.json claims post_ship_closure.md owns last_post_ship_cycle/last_post_ship_utc, but no STEP in that file writes either field
+**Priority:** P3 (Low) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** ST-29 (EPIC-07, `2026-08-14__release-v8.8`), discovered mid-review while investigating `claude/schemas/state_field_owners.json` for the `prior_cycle` fix | **Effort:** XS | **Provisional-Target:** TBD
+**Problem:** `claude/schemas/state_field_owners.json` asserts both `last_post_ship_utc` and `last_post_ship_cycle` are owned by `post_ship_closure.md`, but a grep of the actual file's STEP 10 (and every other STEP) finds no write of either field anywhere — the registry's ownership claim does not match reality. This is the exact class of drift the registry itself exists to prevent (its own `_meta.purpose` cites `prior_cycle` and `last_audit_*` as prior examples of ownerless-field staleness). `.claude_current_state.json` currently carries stale values for both (`last_post_ship_cycle: "2026-08-11__release-v8.6"`, `last_post_ship_utc: "2026-08-12T14:15:00Z"` — from the last real post-ship closure run) that will silently continue not-updating on every future closure.
+**Scope:** Add explicit unconditional writes of `last_post_ship_cycle` (= this run's own `<cycle_id>`) and `last_post_ship_utc` (= now) to `post_ship_closure.md` STEP 10, alongside the `prior_cycle` write added at ST-29/BLG-GOV-293 — apply the standard CLAUDE.md §6 governance file edit checklist (version bump, OPERATIONAL_GUIDE §14, `prompt_change_log.md` entry).
+**Acceptance Criteria:** `post_ship_closure.md` STEP 10 unconditionally writes both fields every run; `state_field_owners.json`'s existing ownership claim is now actually true (no doc change needed there, since it already names the correct engine — only the prompt file was missing the actual write); Head of Specs Team sign-off.
+
+---
+
+### BLG-QA-152 — Add Playwright coverage for WhatsNewCard's changelog User Impact rendering
+**Priority:** P3 (Low) | **Type:** QA / Test Automation | **Owner:** QA & Testing Owner | **Source:** PR #1424 dual-role Director of Quality review (EPIC-03, `2026-08-14__release-v8.8`) | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** ST-13's `changelog_service.py` rewrite (curated `User Impact` column sourcing) has unit test coverage in `tests/test_changelog_service.py`, but no end-to-end Playwright test confirms the curated copy actually renders correctly in `WhatsNewCard` in the browser — only that the service layer produces the right string.
+**Scope:** Add a Playwright test asserting the rendered User Impact text for at least one changelog entry in `WhatsNewCard`.
+**Acceptance Criteria:** Playwright test added and passing in CI; QA & Testing Owner sign-off.
+
+---
+
+### BLG-GOV-309 — execution_state.json's recorded timestamps don't match actual git commit dates
+**Priority:** P3 (Low) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** PR #1427 dual-role Director of Quality review (EPIC-06, `2026-08-14__release-v8.8`) | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `execution_state.json`'s per-story `blocked_since_utc`/`completed_utc` fields, as recorded by the Sprint Execution Engine, are consistently offset from the corresponding commits' actual `authoredDate` (observed ~5-6 hour drift on EPIC-06's stories, via `gh pr view`'s commit data) — not a functional bug, but an audit-trail integrity gap that undermines trust in the state file's timestamps for anyone reconciling actual work timing against the record.
+**Scope:** Identify the root cause (e.g. engine using session-start/wall-clock time rather than the actual commit's authored time) and either correct the write to use the true commit timestamp, or document the discrepancy as intentional with rationale if there's a reason the two shouldn't match.
+**Acceptance Criteria:** Root cause identified; fixed, or documented as intentional; Head of Specs Team sign-off.
+
+---
+
+### BLG-GOV-310 — "Signed off by: PENDING" placeholder reads as unresolved in at-rest Class 3 docs
+**Priority:** P3 (Low) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** PR #1426 dual-role Director of Quality review (EPIC-05, `2026-08-14__release-v8.8`) | **Effort:** XS | **Provisional-Target:** TBD
+**Problem:** Some Class 3 docs carry a static `Signed off by: PENDING` field even after the actual sign-off has genuinely happened — the sign-off is recorded only in the separate `qa_evidence_EPIC-xx.md` consolidation log, not propagated back to the doc itself. A reader opening the doc directly (not the qa_evidence log) sees an apparently-unresolved sign-off gate.
+**Scope:** Document a convention for these fields — either point back to the qa_evidence log explicitly (e.g. "See qa_evidence_EPIC-xx.md"), or remove the field entirely from docs that don't themselves own a sign-off gate.
+**Acceptance Criteria:** Convention documented (in `shared_standards.md` or equivalent canonical location); Head of Specs Team sign-off.
+
+---
+
+### BLG-TECH-12 — Unexplained package-lock.json "dev": true churn from the react-router-dom bump
+**Priority:** P3 (Low) | **Type:** Platform / Technical Debt | **Owner:** Head of Engineering | **Source:** PR #1426 dual-role Director of Quality review (ST-24, EPIC-05, `2026-08-14__release-v8.8`) | **Effort:** XS | **Provisional-Target:** TBD
+**Problem:** ST-24's `react-router-dom` `^7.13.0`→`^7.18.2` bump produced incidental `"dev": true` flag churn on unrelated `package-lock.json` entries — likely benign npm-version lockfile noise, but not verified or explained at the time.
+**Scope:** Confirm whether the churn is genuine npm-version behaviour (no dependency-graph change) or reflects a real, unintended shift in which packages are dev-only.
+**Acceptance Criteria:** Root cause confirmed and documented as benign, or a real issue found and fixed.
 
 ---

@@ -76,7 +76,7 @@
       "status": "done",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-05",
       "pr_number": 1426,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-05.md",
       "test_scenarios": ["tests/test_gemini_prompt_injection_resistance.py"],
@@ -101,26 +101,26 @@
       }
     },
     "EPIC-07": {
-      "status": "not_started",
+      "status": "in_review",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-07",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1428,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-07.md",
-      "test_scenarios": [],
+      "test_scenarios": ["Manual acceptance review — governance prompt text + .claude_current_state.json schema/ownership-registry changes only; no application test suite affected"],
       "stories": {
-        "ST-28": {"title": "Correct CLAUDE.md §8's commit message template to match the enforced commit-format hook", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1420, "branch": "exec/2026-08-14__release-v8.8/EPIC-07", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
-        "ST-29": {"title": "Assign an owning engine for .claude_current_state.json's prior_cycle field", "classification": "delegated_decision", "status": "not_started", "assigned_to": "PMO Lead", "github_issue": 1421, "branch": "exec/2026-08-14__release-v8.8/EPIC-07", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""}
+        "ST-28": {"title": "Correct CLAUDE.md §8's commit message template to match the enforced commit-format hook", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 1420, "branch": "exec/2026-08-14__release-v8.8/EPIC-07", "commit_sha": "623accfb7eef70f7b45cd9dd3d8a669da7e9a9ff", "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-08-17T00:00:00Z", "acceptance_verified": true, "spec_references": [], "spec_reference_not_applicable": true, "spec_reference_not_applicable_reason": "Governance prompt file (CLAUDE.md), not a product canonical spec under docs/specs/ — no spec reference applicable.", "deviations_filed": true, "last_completed_substep": "STEP 3.1.C", "sign_off_record": {"method": "agent-mediated", "role": "Head of Specs Team", "status": "Approved", "first_pass_verdict": "Approved", "first_pass_finding": null, "retry_1_verdict": null, "retry_1_date": null, "corrective_action": null}, "notes": "BLG-GOV-291. §8 step 4's commit template corrected from `[EPIC-xx] Merge main...` (rejected by .githooks/commit-msg — no [ST-xx] tag) to `[GOVERNANCE] Merge main...`. Reviewer independently confirmed the hook regex rejects the old template and accepts the new one, and confirmed no other live (non-sealed, non-archival) file still references the old template."},
+        "ST-29": {"title": "Assign an owning engine for .claude_current_state.json's prior_cycle field", "classification": "delegated_decision", "status": "done", "assigned_to": "Head of Specs Team", "github_issue": 1421, "branch": "exec/2026-08-14__release-v8.8/EPIC-07", "commit_sha": "70c54dd5e930e7ad5a7989e933ce47cd940fcea1", "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-08-17T00:00:00Z", "acceptance_verified": true, "spec_references": [], "spec_reference_not_applicable": true, "spec_reference_not_applicable_reason": "Governance prompt file (claude/system/post_ship_closure.md), not a product canonical spec under docs/specs/ — no spec reference applicable.", "deviations_filed": true, "last_completed_substep": "STEP 3.1.C", "sign_off_record": {"method": "agent-mediated", "role": "Head of Specs Team", "status": "Approved", "first_pass_verdict": "Blocked", "first_pass_finding": "claude/schemas/state_field_owners.json was not updated and still asserted prior_cycle/_prior_cycle_note as UNOWNED, contradicting the new ownership decision (4 lines: _meta.purpose, _meta.known_gaps, fields.prior_cycle.owner, fields._prior_cycle_note.owner).", "retry_1_verdict": "Approved", "retry_1_date": "2026-08-17", "corrective_action": "Corrected all 4 locations in state_field_owners.json to name post_ship_closure.md as owner; filed BLG-GOV-308 for a related but out-of-scope gap found in the same file (last_post_ship_cycle/last_post_ship_utc claimed-but-unwritten)."}, "notes": "BLG-GOV-293. Assigned post_ship_closure.md STEP 10 (not release_planning_prompt.md STEP 9, the sprint_backlog.md note's suggested candidate) as prior_cycle's sole authoritative writer — STEP 9 can't cheaply access the pre-advance active_cycle value since its own STEP 7 already overwrote it, whereas Post-Ship Closure's own <cycle_id> run parameter is exactly the value needed. execution_state.json assigned_to corrected from a stale 'PMO Lead' to 'Head of Specs Team' to match sprint_backlog.md/stage4_backlog_slice.md's actual Owner line. Cross-branch version-collision risk with EPIC-03's independent OPERATIONAL_GUIDE.md v4.162 bump flagged in prompt_change_log.md/OPERATIONAL_GUIDE.md Change Log per CLAUDE.md §8 step 2a, for the eventual merge resolver."}
       }
     }
   },
   "blocked_items": [],
   "delegated_items": ["ST-04", "ST-05", "ST-06", "ST-11"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15", "ST-16", "ST-17", "ST-18", "ST-19", "ST-20", "ST-21", "ST-22", "ST-23", "ST-24", "ST-25", "ST-26", "ST-27"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15", "ST-16", "ST-17", "ST-18", "ST-19", "ST-20", "ST-21", "ST-22", "ST-23", "ST-24", "ST-25", "ST-26", "ST-27", "ST-28", "ST-29"],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-04", "EPIC-03", "EPIC-06"],
-    "epics_pending": ["EPIC-05", "EPIC-07"],
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-04", "EPIC-03", "EPIC-06", "EPIC-05"],
+    "epics_pending": ["EPIC-07"],
     "all_merged": false
   },
   "sealed": false,
