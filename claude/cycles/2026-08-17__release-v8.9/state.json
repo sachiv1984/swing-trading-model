@@ -16,7 +16,7 @@
       "timebox": "",
       "capacity": "~24-28 working-day-equivalent units, widen-to-full-capacity per PO decision 2026-08-17"
     },
-    "state_snapshot_hash": "<set to git commit SHA at push, STEP 10>"
+    "state_snapshot_hash": "1587269adc8f0739b7c9fe712d7fa1bb04451044"
   },
 
   "mutation_seq": 0,
