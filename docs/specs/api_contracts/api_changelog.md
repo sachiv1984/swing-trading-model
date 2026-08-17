@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.7.0
-**Last Updated:** 2026-07-27
+**Version:** 1.8.0
+**Last Updated:** 2026-08-17 (ST-26, BLG-SPEC-118, EPIC-06, v8.8 — backfilled the v7.9–v8.4 gap: 2 new-endpoint entries added (v8.2.0, v7.9.0), confirmed the other 5 releases in that window shipped none); prior — 2026-07-27 (v7.8.0 entry)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -18,7 +18,31 @@
 |--------|---------|
 | New endpoint: GET /screener/regime-distribution | Returns the aggregate risk-on/risk-off market regime distribution over screener run history for a rolling 30d/60d/all window (BLG-FEAT-29). Sourced from `screener_runs.regime_us`/`regime_uk` (one row per run), not `screener_results` (one row per ticker). |
 
-**Note (this entry):** This changelog had not been updated since `v7.8.0` (several releases' worth of endpoint additions in `v7.9`–`v8.4` are not reflected here) — that pre-existing gap is out of this story's scope to backfill; this entry only documents `v8.5`'s own change, added going forward correctly.
+**Note (this entry, corrected by ST-26/EPIC-06/v8.8, BLG-SPEC-118):** this changelog had not been updated between `v7.8.0` and this entry — the `v7.9`–`v8.4` gap flagged here has since been backfilled below (`v8.2.0`, `v7.9.0`), based on a full re-derivation of every `docs/specs/api_contracts/*.md` Changelog table entry dated within that window, not just the products changelog's higher-level "Spec sections updated" column (which cites section references, not necessarily new-endpoint additions — cross-checking against the actual contract file text caught one false positive, `PATCH /watchlist/{entry_id}`, cited in `v7.9`'s product changelog row but confirmed pre-existing since `v5.3`).
+
+## v8.2.0 (2026-08-05 — Release v8.2)
+
+### reports_endpoints.md — v0.11 (NEW)
+
+**EPIC:** EPIC-01
+**ST:** ST-01
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /reports/reconciliation | P&L / tax record reconciliation report (BLG-FEAT-88) — compares the Tax Year report's system-computed realised P&L total against an independently re-derived export-side sum for the same tax year, and surfaces a pass/fail match indicator to the user. |
+
+## v7.9.0 (2026-07-28 — Release v7.9)
+
+### portfolio_endpoints.md — v2.5.0 (NEW)
+
+**EPIC:** EPIC-02
+**ST:** ST-02
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /portfolio/sector-regime-trend | Weekly-bucketed sector concentration + regime status trend (BLG-FEAT-67), backed by a new `sector_regime_history` table (going-forward capture only — no prior historical sector/regime data existed to aggregate). |
+
+**Note (this entry):** the remaining 5 releases in the backfilled `v7.9`–`v8.4` window — `v7.10`, `v8.0`, `v8.1`, `v8.3`, `v8.4` — shipped no new endpoints (confirmed via a full scan of every contract file's own Changelog table for entries dated within each release's ship window; all changes in that period were field additions to existing endpoints, response-example corrections, or documentation backfill of already-shipped-but-undocumented routes — e.g. `v8.4`'s `GET /test/quick-health`/`POST /test/rate-limit-scenarios`, which `health_endpoints.md`'s own changelog states "both routes existed in `backend/routers/test.py` but were undocumented," not newly shipped). No entries added for those 5 releases — an empty release is not silently missing, it is confirmed empty.
 
 ## v7.8.0 (2026-07-27 — Release v7.8)
 
