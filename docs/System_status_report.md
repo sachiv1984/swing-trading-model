@@ -1,15 +1,15 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.31
-**Last Updated:** 2026-08-17 (sprint close 2026-08-14__release-v8.8); prior — 2026-08-13 (delivery verification 2026-08-12__release-v8.7 — status line updated Sprint_Complete → Verified); prior — 2026-08-13 (sprint close 2026-08-12__release-v8.7); prior history retained — see prior entries in version control.
+**Version:** 4.32
+**Last Updated:** 2026-08-17 (delivery verification 2026-08-14__release-v8.8 — status line updated Sprint_Complete → Verified); prior — 2026-08-17 (sprint close 2026-08-14__release-v8.8); prior — 2026-08-13 (delivery verification 2026-08-12__release-v8.7 — status line updated Sprint_Complete → Verified); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
 
 ## Sprint: 2026-08-14__release-v8.8
 **Date:** 2026-08-17
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified — 2026-08-17
 
 ### Capabilities now live (merged this sprint)
 
