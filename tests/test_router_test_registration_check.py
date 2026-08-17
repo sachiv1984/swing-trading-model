@@ -88,3 +88,30 @@ def test_parenthetical_annotation_does_not_break_matching():
     entries = mod.parse_test_py_entries(content)
     assert ("GET", "/analytics/metrics") in entries
     assert mod.is_registered("GET", "/analytics/metrics", entries) is True
+
+
+def test_empty_string_path_decorator_is_matched():
+    """Regression: ST-21 (BLG-QA-146, v8.8) re-audit found ROUTE_DECORATOR_RE's path
+    capture group was `+` (one-or-more), which silently failed to match a bare
+    `@router.get("")`/`@router.post("")` decorator (empty-string path, resolving to
+    the router's own prefix root — e.g. ticker_universe.py's GET/POST "/ticker-universe").
+    A newly added route registered this way would go undetected by this gate with no
+    error or warning. Fixed to `*` (zero-or-more)."""
+    line = '@router.get("")'
+    m = mod.ROUTE_DECORATOR_RE.search(line)
+    assert m is not None
+    assert m.group(1) == "get"
+    assert m.group(2) == ""
+
+
+def test_empty_string_path_route_extraction_resolves_to_prefix_root(monkeypatch):
+    """End-to-end: a staged `@router.post("")` addition to a prefixed router must be
+    extracted as the prefix root path, not silently dropped."""
+    monkeypatch.setattr(mod, "get_staged_added_lines", lambda path: ['+@router.post("", status_code=201)'])
+    monkeypatch.setattr(
+        mod,
+        "get_staged_file_content",
+        lambda path: 'router = APIRouter(prefix="/ticker-universe")\n@router.post("", status_code=201)\ndef create():\n    pass\n',
+    )
+    routes = mod.extract_new_routes("backend/routers/ticker_universe.py")
+    assert ("POST", "/ticker-universe") in routes

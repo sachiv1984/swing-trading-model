@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-08-14
+**Version:** 1.4
+**Last Updated:** 2026-08-16
 **Story:** ST-09 (EPIC-03, v3.3) — BLG-SPEC-24
 **§13 Compliance:** Confirmed — display-only. No automated recommendation generated. See §8.
 **API contract:** docs/specs/api_contracts/research_endpoint.md
@@ -131,6 +131,7 @@ When `data.earnings` is null: display "No upcoming earnings data".
 - When active plan exists: shows plan status, stop level, R/R notes, and read-only pre-entry checklist
 - When no plan: CTA button "Create Trade Plan" → navigates to `/trade-plans/new?ticker={ticker}`
 - **Status badge source (v1.3 — ST-14, BLG-FE-162):** the plan status badge renders via the shared `TradePlanStatusBadge`/`STATUS_CONFIG` exported from `TradePlans.js` — the single canonical source for all 6 statuses (plus `abandoned`) app-wide. This page must not maintain its own local status→label/colour map. Design source: `docs/design/2026-08-14__release-v8.8/research-status-badge-single-source/decision_record.md`.
+- **Plan selection precedence (v1.3 — ST-14, BLG-FE-162):** when `GET /trade-plans?ticker={ticker}` returns more than one plan for the ticker, exactly one is shown. Precedence (first match wins): `active` → `entry_conditions_set` → `research_complete` → `research_pending` → `draft` → `closed`, i.e. most-currently-relevant-in-the-plan-lifecycle first. Prior to this story the selection only checked `active`/`entry_conditions_set`/`draft`, so a ticker whose only plan was `research_pending`, `research_complete`, or `closed` silently fell through to the no-plan CTA — found and fixed via this story's own Playwright coverage (`tests/e2e/research-trade-plan-status-badge.spec.js`), not a pre-existing design-time AC.
 
 ---
 
@@ -192,6 +193,7 @@ None.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-08-16 | Sprint execution `2026-08-14__release-v8.8` EPIC-03/ST-14: §4.7 gains a documented plan-selection precedence rule (`active → entry_conditions_set → research_complete → research_pending → draft → closed`). Root cause found via this story's own new Playwright coverage: `Research.js`'s `activePlan` derivation only matched 3 of 6 statuses (`active`/`entry_conditions_set`/`draft`), so a ticker whose only plan was `research_pending`/`research_complete`/`closed` silently fell through to the no-plan CTA instead of showing the (now-correct) badge — fixed in the same commit as the badge-source change. Authority: Sprint Execution Engine (ST-14, 2026-08-16). |
 | 1.3 | 2026-08-14 | v8.8 design gate (ST-14, BLG-FE-162): §4.7 Trade Plan Panel — documented that the status badge must render via the shared `TradePlanStatusBadge`/`STATUS_CONFIG` (`TradePlans.js`), not a page-local map; closes the 3-of-6-statuses-fall-back-to-raw-snake_case defect. No new colours or component. Design source: `docs/design/2026-08-14__release-v8.8/research-status-badge-single-source/decision_record.md`. Head of UX & Design confirmed 2026-08-14. |
 | 1.2 | 2026-05-27 | v4.1 ST-10 (BLG-FE-44): §4.2 Signal Panel — added `signal_type` field (`data.signal.signal_type`, plain text, null → `—`). Playwright test coverage note added. Playwright coverage in tests/e2e/research-view-signal-type.spec.js. |
 | 1.1 | 2026-05-16 | v3.6 design gate: (ST-07) §6 Error States — added 404 (ticker not found) and 503 (source unavailable) display rules; (ST-08) §4.3 regime label badge — single-line constraint added (`max-w-[120px] truncate`), typography conformance note referencing design_system.md chip/badge scale. Head of UX & Design confirmed 2026-05-16. |
