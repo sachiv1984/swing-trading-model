@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.26
-**Last Updated:** 2026-08-10
+**Version:** 2.27
+**Last Updated:** 2026-08-17 (ST-29/BLG-GOV-293: STEP 10 now the sole authoritative writer of `prior_cycle`, mirroring OA-1's `next_release` fix); prior — 2026-08-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -659,9 +659,12 @@ Update `.claude_current_state.json`:
   "post_ship_complete": true,
   "completed_cycle_count": "<prior value + 1>",
   "last_audit_cycle_count": "<see rule below — set if audit ran this cycle, else omit>",
+  "prior_cycle": "<cycle_id>",
   "last_sync_utc": "<now>"
 }
 ```
+
+**`prior_cycle` ownership (BLG-GOV-293, ST-29, v8.8):** This step is the sole authoritative writer of `.claude_current_state.json.prior_cycle`, mirroring the `next_release` fix (OA-1, above in `release_planning_prompt.md` STEP 9). The field was previously written by nothing at all — found stale at `2026-08-08__release-v8.5` release planning (read `2026-08-05__release-v8.3` when it should have read `2026-08-07__release-v8.4`, the cycle that closed immediately prior). Fixed here rather than in `release_planning_prompt.md` STEP 9: by the time Release Planning STEP 9 runs, STEP 7 has already advanced `active_cycle` to the *new* cycle, so the old value is no longer available without extra plumbing; Post-Ship Closure's own `<cycle_id>` parameter, by contrast, unambiguously identifies "the cycle that just closed" at the exact moment it closes — the correct value for the next cycle to read as `prior_cycle`. Write this field unconditionally every time STEP 10 runs, from this invocation's own `<cycle_id>`, regardless of `closure_status`.
 
 **`completed_cycle_count` rule:** Read the current value from `.claude_current_state.json`. If absent, treat as `0`. Write the value incremented by 1. This counter tracks the total number of fully closed cycles for meta-review cadence tracking (Phase 1 STEP 11 triggers meta-review every third completed cycle).
 

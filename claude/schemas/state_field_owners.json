@@ -1,11 +1,9 @@
 {
   "_meta": {
-    "purpose": "Maps every top-level field in .claude_current_state.json to the engine (governance prompt file, or script) that owns writing it. Exists because ownerless fields have gone stale silently before: `prior_cycle` (self-caught, filed as a follow-up alongside BLG-GOV-292, still unowned below) and `last_audit_*` (drifted 3 audits behind before AUD-2026-08-08-004 caught it — see claude/audit.py's PRIOR_AUDIT_OPEN_ITEMS note).",
+    "purpose": "Maps every top-level field in .claude_current_state.json to the engine (governance prompt file, or script) that owns writing it. Exists because ownerless fields have gone stale silently before: `prior_cycle` (self-caught, fixed at ST-29/BLG-GOV-293 — post_ship_closure.md STEP 10 is now the sole authoritative writer, see its entry below) and `last_audit_*` (drifted 3 audits behind before AUD-2026-08-08-004 caught it — see claude/audit.py's PRIOR_AUDIT_OPEN_ITEMS note).",
     "used_by": ".claude/hooks/check_state_field_ownership.py (PostToolUse warn-only check on edits to .claude_current_state.json)",
     "maintenance": "Whenever a new top-level field is added to .claude_current_state.json by any governance prompt's STEPs, add a matching entry here in the same change. This file is tooling metadata (lives under claude/schemas/, not claude/system/), so — unlike the governance prompts themselves — it may be updated directly as part of ordinary engineering work without going through a prompt-sanctioned STEP.",
-    "known_gaps": [
-      "prior_cycle — see its own entry below; never owned by any engine's documented write list."
-    ]
+    "known_gaps": []
   },
   "fields": {
     "active_cycle": { "owner": "release_planning_prompt.md", "phase": "Phase 1B", "notes": "Set when a new cycle opens." },
@@ -57,8 +55,8 @@
     "last_audit_open_items": { "owner": "claude/audit.py", "phase": "Governance audit" },
     "last_audit_cycle_count": { "owner": "claude/audit.py", "phase": "Governance audit", "notes": "Compared against completed_cycle_count by .github/workflows/audit-cadence-reminder.yml to detect an overdue audit." },
     "next_release": { "owner": "release_planning_prompt.md", "phase": "Phase 1B" },
-    "prior_cycle": { "owner": "UNOWNED — known gap", "phase": "n/a", "notes": "Self-acknowledged stale in .claude_current_state.json's own _prior_cycle_note; not written by any engine's documented write list. Filed as a follow-up alongside BLG-GOV-292. Left here deliberately unowned rather than guessed, so this checker's staleness signal stays honest until a real owner is assigned by the roadmap/release engines." },
-    "_prior_cycle_note": { "owner": "UNOWNED — known gap", "phase": "n/a", "notes": "Annotation field explaining the prior_cycle gap above; same non-owner." },
+    "prior_cycle": { "owner": "post_ship_closure.md", "phase": "Post-Ship, STEP 10", "notes": "Fixed at ST-29/BLG-GOV-293 (v8.8) — previously unowned by any engine's documented write list, found stale at 2026-08-08__release-v8.5 release planning. STEP 10 now writes this run's own <cycle_id> unconditionally, every time it runs, regardless of closure_status." },
+    "_prior_cycle_note": { "owner": "post_ship_closure.md", "phase": "Post-Ship, STEP 10", "notes": "Annotation field explaining the (now-resolved) prior_cycle gap above; same owner. May be cleared by a future write once the note is no longer needed." },
     "lifecycle_schema": { "owner": "claude/system/lifecycle_schema.json (self-reference)", "phase": "n/a — schema meta, changed only via sanctioned schema-change process" },
     "schema_version": { "owner": "claude/system/lifecycle_schema.json (self-reference)", "phase": "n/a" },
     "open_escalations": { "owner": "whichever engine raises/resolves the escalation", "phase": "all — format defined in shared_standards.md" },
