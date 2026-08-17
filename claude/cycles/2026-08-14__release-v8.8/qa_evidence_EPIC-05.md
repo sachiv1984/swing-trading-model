@@ -35,13 +35,13 @@ Last Updated: 2026-08-16
 
 > **Delegated-QA sign-off pattern (BLG-GOV-69/74) — Format (i), individual sign-off:**
 
-- Signed off by: PENDING — see agent-mediated review below
-- Date: PENDING
-- Comments: PENDING — story-level sign-off from Cybersecurity & Trust Lead (ST-23, ST-24) pending below.
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-08-17
+- Comments: Story-level sign-off provided by Cybersecurity & Trust Lead (ST-23, ST-24), agent-mediated per §5.3 — see below. ST-24 was confirmed clean on the first pass. ST-23's first pass found real, material inaccuracies in the scan's own summary package-scan-scope counts (96/~1,919/~2,015 claimed vs actual 86/1,463/1,549) — corrected and confirmed on retry 1. Reviewed and acknowledged in aggregate — all 4 stories' acceptance criteria met, no unresolved P0/P1 gaps.
 
 ### Story-level authority sign-off (BLG-GOV-14 — required in addition to, not instead of, the EPIC-level block above)
 
 **Cybersecurity & Trust Lead** (ST-23, ST-24):
-- Signed off by: PENDING
-- Date: PENDING
-- Comments: PENDING
+- Signed off by: Sprint Execution Engine (agent-mediated, Cybersecurity & Trust Lead role — §5.3)
+- Date: 2026-08-17
+- Comments: ST-24 approved clean on the first pass — independently re-verified `npm audit` shows react-router/react-router-dom fully resolved, the remaining 14 accept-risk packages confirmed absent from any `src/` import, `dependency_vuln_baseline.json` correctly updated (16→14, 41→29), and `BLG-TECH-11` correctly filed. ST-23 first pass Blocked — the scan's summary totals (96 backend / ~1,919 frontend / ~2,015 combined) did not match an independent re-scan (86 / 1,463 / 1,549); the per-license breakdown tables were already accurate, only the top-line totals were wrong. Retry 1 Approved: independently re-ran both scans, confirmed 86 and 1,463 are the genuinely correct counts, and confirmed the correction commit (311b0027) touched only the count references with no other content altered.
