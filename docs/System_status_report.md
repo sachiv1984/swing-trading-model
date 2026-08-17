@@ -1,9 +1,36 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.30
-**Last Updated:** 2026-08-13 (delivery verification 2026-08-12__release-v8.7 — status line updated Sprint_Complete → Verified); prior — 2026-08-13 (sprint close 2026-08-12__release-v8.7); prior — 2026-08-12 (delivery verification 2026-08-11__release-v8.6 — status line updated Sprint_Complete → Verified_with_deviations); prior history retained — see prior entries in version control.
+**Version:** 4.31
+**Last Updated:** 2026-08-17 (sprint close 2026-08-14__release-v8.8); prior — 2026-08-13 (delivery verification 2026-08-12__release-v8.7 — status line updated Sprint_Complete → Verified); prior — 2026-08-13 (sprint close 2026-08-12__release-v8.7); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-08-14__release-v8.8
+**Date:** 2026-08-17
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Scheduled overnight screener refresh + nightly risk-off-alerts workflows (closes both live P1 data-integrity gaps: stale screener, stuck RISK OFF badge); nightly backtest import failure root-caused and fixed (malformed double-suffixed ISO timestamp); 3 API performance baseline measurements added | `.github/workflows/screener-refresh.yml`; `.github/workflows/risk-off-alerts.yml`; `health_endpoints.md#GET /health/scheduler`; `api_performance_baseline.md#39.1-39.3` | None |
+| EPIC-02 | `check_market_regime()` duplicate implementations consolidated; position lifecycle state-transition history table; `price_alerts`→trade linkage (real alert-to-trade provenance); `si05_digest_log.telegram_message_id` populated on send; duration logging on SI-05 Telegram send; Pre-Trade Research View query-latency budget review | `data_model.md#DS-13`/`#DS-14`/`#DS-15`; `trade_plan_endpoints.md#POST /trade-plans`; `alerts_endpoints.md#GET /notifications`; `api_performance_baseline.md#36` | None new — `BLG-BE-99` (post-merge live-invocation verification split, DEL-20260814-05) |
+| EPIC-03 | "What's New" panel sources curated User Impact copy (not raw engineering copy); Research page trade plan status badge fixed for all 6 statuses (was 3 of 6); Ticker Universe search/sector/industry filtering; `PositionEntryModal.js` dead code removed; Playwright coverage for Card/secondary-variant components where a live call site exists | `dashboard.md#6A`; `changelog_endpoints.md#GET /changelog/latest`; `research_view.md#4.7`; `ticker_universe.md#10`; `design_system.md#Modal / Dialog Theming` | None new — `BLG-FE-160` (Card component, no live call site this sprint) carried unchanged |
+| EPIC-04 | Arc 6 prerequisite field-population audit; consolidated backend service-layer test-coverage report (40 modules); test-environment parity check (local/CI/staging); `backend/routers/test.py` completeness re-audit (2 compounding regex bugs fixed in the enforcement script itself, with regression tests) | `docs/ops/arc6_prerequisite_field_population_audit_2026-08-16.md`; `docs/ops/backend_service_layer_test_coverage_report_2026-08-16.md`; `docs/ops/test_environment_parity_check_2026-08-16.md`; `docs/ops/endpoint_test_coverage_audit_2026-08-16.md` | None new — `BLG-QA-150`, `BLG-QA-151`, `BLG-BE-101`, `BLG-OPS-146` filed |
+| EPIC-05 | System/user role separation added to Claude thesis-generation prompts (resolves `BLG-SEC-33`); dependency license compliance scan (86 backend + 1,463 frontend packages, zero incompatible licenses); npm audit baseline review (`react-router`/`react-router-dom` fixed, 14 CRA-toolchain-only findings accept-risked); Telegram Bot Token added to key-rotation policy scope | `tests/test_gemini_prompt_injection_resistance.py`; `docs/security/dependency_license_compliance_scan_2026-08-16.md`; `docs/security/npm_audit_baseline_review_2026-08-16.md`; `docs/ops/api_key_rotation_policy.md` | None new — `BLG-TECH-11`/`BLG-TECH-12` filed |
+| EPIC-06 | `api_changelog.md` backfilled for 2 genuine v7.9–v8.4 endpoint additions (1 false positive correctly excluded); `trade_plan.md` §5.1 stale field anchor corrected | `api_changelog.md#v8.2.0`/`#v7.9.0`; `trade_plan.md#Changelog` | None new — `BLG-SPEC-131` filed |
+| EPIC-07 | `CLAUDE.md` §8 commit-message template corrected to match the enforced commit-format hook; `.claude_current_state.json`'s `prior_cycle` field assigned an authoritative owner (`post_ship_closure.md` STEP 10) | `CLAUDE.md` §8; `claude/system/post_ship_closure.md` STEP 10 | None new — `BLG-GOV-308`/`BLG-GOV-309`/`BLG-GOV-310` filed |
+
+### Capabilities deferred or returned
+
+None — all 29 ST items reached `done`/`merged` status this sprint.
+
+### Verification inputs ready
+- QA evidence logs: `qa_evidence_EPIC-01.md` through `qa_evidence_EPIC-07.md`
+- Deviations filed: None
+- Test scenarios referenced: `tests/test_strategy_benchmark_summary.py`; `tests/test_si05_digest_service.py`; `tests/test_changelog_service.py`; `tests/e2e/research-trade-plan-status-badge.spec.js`; `tests/e2e/ticker-universe.spec.js`; `tests/e2e/shadcn-token-remaining-families.spec.js`; `tests/test_router_test_registration_check.py`; `tests/test_gemini_prompt_injection_resistance.py`
 
 ---
 
