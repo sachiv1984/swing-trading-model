@@ -3,7 +3,9 @@
     "purpose": "Maps every top-level field in .claude_current_state.json to the engine (governance prompt file, or script) that owns writing it. Exists because ownerless fields have gone stale silently before: `prior_cycle` (self-caught, fixed at ST-29/BLG-GOV-293 — post_ship_closure.md STEP 10 is now the sole authoritative writer, see its entry below) and `last_audit_*` (drifted 3 audits behind before AUD-2026-08-08-004 caught it — see claude/audit.py's PRIOR_AUDIT_OPEN_ITEMS note).",
     "used_by": ".claude/hooks/check_state_field_ownership.py (PostToolUse warn-only check on edits to .claude_current_state.json)",
     "maintenance": "Whenever a new top-level field is added to .claude_current_state.json by any governance prompt's STEPs, add a matching entry here in the same change. This file is tooling metadata (lives under claude/schemas/, not claude/system/), so — unlike the governance prompts themselves — it may be updated directly as part of ordinary engineering work without going through a prompt-sanctioned STEP.",
-    "known_gaps": []
+    "known_gaps": [
+      "last_post_ship_cycle / last_post_ship_utc — owner below (post_ship_closure.md) is the correct engine but its STEP 10 does not actually write either field; filed as BLG-GOV-308 (2026-08-17), left here deliberately so this checker's staleness signal stays honest until the write is added."
+    ]
   },
   "fields": {
     "active_cycle": { "owner": "release_planning_prompt.md", "phase": "Phase 1B", "notes": "Set when a new cycle opens." },

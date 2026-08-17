@@ -26,6 +26,8 @@ Last Updated: 2026-08-17
 
 **Cross-branch collision disclosure (informational, not a deviation):** `OPERATIONAL_GUIDE.md`'s v4.161→v4.162 bump on this branch (EPIC-07) collides in version number with an independent, unrelated v4.162 bump already carried on the sibling `EPIC-03` branch (ST-13's changelog-service fix). Flagged per CLAUDE.md §8 step 2a in `prompt_change_log.md` and `OPERATIONAL_GUIDE.md`'s own Change Log entry, for the eventual cross-EPIC merge-conflict resolver to renumber the later-merging branch's bump.
 
+**Second collision, found post-commit by PR #1428's Director of Quality dual-role review (2026-08-17):** `post_ship_closure.md`'s own `**Version:** 2.27` header is *also* independently claimed by sibling branch `EPIC-03` (same ST-13 fix). Unlike the `OPERATIONAL_GUIDE.md` collision above, this one was not disclosed at commit time — the reviewer ran a real test merge in a scratch worktree and found the identical version-line text auto-merges silently with no conflict marker (only the adjacent `Last Updated` line conflicts), meaning it would otherwise have gone unnoticed by the merge-conflict resolver. Now disclosed retroactively in `post_ship_closure_changelog.md`'s v2.27 row and the corresponding `prompt_change_log.md` row, both updated 2026-08-17.
+
 ---
 
 ## Story-Level Authority Sign-Off (BLG-GOV-14)
