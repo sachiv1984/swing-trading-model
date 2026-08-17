@@ -1,5 +1,6 @@
 """
-Unit tests for the changelog service (ST-01, EPIC-01, v7.8, BLG-FE-128).
+Unit tests for the changelog service (ST-01, EPIC-01, v7.8, BLG-FE-128;
+User Impact sourcing added ST-13, EPIC-03, v8.8, BLG-FE-161).
 """
 import sys
 from pathlib import Path
@@ -12,14 +13,14 @@ import services.changelog_service as changelog_service  # noqa: E402
 
 SAMPLE_CHANGELOG = """# Product Changelog
 
-## v7.8 — Release Visibility & Engineering Hardening — 2026-08-01
-Cycle: 2026-07-24__release-v7.8
+## v8.8 — Live Data-Integrity, Backend Hardening & Debt Closure — 2026-08-20
+Cycle: 2026-08-14__release-v8.8
 
 ### Changes shipped
-| EPIC | Description | Spec sections updated |
-|------|-------------|----------------------|
-| EPIC-01 | In-app what's new panel | docs/specs/frontend/pages/dashboard.md |
-| EPIC-02 | Telegram changelog digest | claude/system/post_ship_closure.md |
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | In-app what's new panel | Release notes now show what's new for you, not raw engineering copy. | docs/specs/frontend/pages/dashboard.md |
+| EPIC-02 | Telegram changelog digest | — | claude/system/post_ship_closure.md |
 
 ### Deviations accepted
 None.
@@ -41,8 +42,27 @@ def test_get_latest_returns_most_recent_version(monkeypatch, tmp_path):
 
     result = changelog_service.get_latest_changelog_entry()
     assert result is not None
-    assert result["version"] == "v7.8"
-    assert result["changes"] == ["In-app what's new panel", "Telegram changelog digest"]
+    assert result["version"] == "v8.8"
+    assert result["changes"] == ["Release notes now show what's new for you, not raw engineering copy."]
+
+
+def test_get_latest_returns_none_for_pre_v8_8_table_with_no_user_impact_column(monkeypatch, tmp_path):
+    # A 3-column table (Description only, no User Impact) predates ST-13
+    # (v8.8) and does not match the 4-cell row pattern -- degrades to
+    # "no changes" rather than falling back to Description.
+    changelog_file = tmp_path / "changelog.md"
+    changelog_file.write_text("""# Product Changelog
+
+## v7.8 — Release Visibility & Engineering Hardening — 2026-08-01
+Cycle: 2026-07-24__release-v7.8
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | In-app what's new panel | docs/specs/frontend/pages/dashboard.md |
+""")
+    monkeypatch.setattr(changelog_service, "CHANGELOG_PATH", changelog_file)
+    assert changelog_service.get_latest_changelog_entry() is None
 
 
 def test_get_latest_returns_none_for_missing_file(monkeypatch, tmp_path):
