@@ -144,7 +144,7 @@ When two or more EPIC PRs modify shared files (`execution_state.json`, `openapi.
    - `api_changelog.md`: combine all version entries in descending order (newest first).
    - `data_model.md`: keep all migration blocks in ascending version order; take highest version number in the footer.
    - `qa_evidence_EPIC-*.md` (`add/add` conflict): take the completed DoQ sign-off blocks from the branch over any pending placeholders from main. Retain the full header metadata block (Owner, Class, Status) from whichever side has it. Keep all ST sections — combine rather than choose. Update any consolidation block rows from "Pending" → "Pass" where the branch has sign-off evidence.
-4. **Commit the resolution** on the EPIC branch: `[EPIC-xx] Merge main (<description>) into EPIC-xx — conflict resolution`.
+4. **Commit the resolution** on the EPIC branch: `[GOVERNANCE] Merge main (<description>) into EPIC-xx — conflict resolution`. (Corrected ST-28, BLG-GOV-291, v8.8 — the prior `[EPIC-xx] Merge main...` template has no `[ST-xx]` tag and is rejected by `.githooks/commit-msg`'s enforced pattern, which requires `[EPIC-xx][ST-xx]` or a bare `[GOVERNANCE]` tag. `[GOVERNANCE]` is also the more semantically correct prefix here — a conflict resolution isn't attributable to a single story.)
 5. **Push** and confirm `"mergeable":"MERGEABLE"` via `gh pr view <n> --json mergeable,mergeStateStatus`.
 6. **Merge** via `gh pr merge <n> --merge`.
 
