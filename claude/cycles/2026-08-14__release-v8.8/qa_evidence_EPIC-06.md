@@ -46,11 +46,11 @@ Last Updated: 2026-08-17
 ### Story-level authority sign-offs (BLG-GOV-14 — required in addition to, not instead of, the EPIC-level block above)
 
 **API Contracts & Documentation Owner** (ST-26):
-- Signed off by: PENDING
-- Date: PENDING
-- Comments: PENDING
+- Signed off by: Sprint Execution Engine (agent-mediated, API Contracts & Documentation Owner role — §5.3)
+- Date: 2026-08-17
+- Comments: Independently re-derived the v7.9–v8.4 window against every contract file's own Changelog table (not just the product changelog's section-reference column) and confirmed exactly 2 genuine new endpoints — `GET /reports/reconciliation` (v8.2) and `GET /portfolio/sector-regime-trend` (v7.9) — both correctly attributed. Also verified via `git log -S` that the `GET /test/quick-health`/`POST /test/rate-limit-scenarios` candidate routes existed in `backend/routers/test.py` well before the window (correctly excluded as documentation backfill, not new shipments), and confirmed the `PATCH /watchlist/{entry_id}` false-positive exclusion. Descending order, attribution, and header version bump all correct.
 
 **Head of Specs Team** (ST-27):
-- Signed off by: PENDING
-- Date: PENDING
-- Comments: PENDING
+- Signed off by: Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3)
+- Date: 2026-08-17
+- Comments: Independently confirmed zero `risk_reward_notes` matches in `TradePlan.js`. Both the new v1.6 Changelog row and the original v1.5 row's own text were updated to "placed after Early Exit Conditions," leaving no residual stale anchor. Header version bump (1.5→1.6) and 3-entry `Last Updated` chain both compliant. The §5.1 form-fields table row itself ("Risk/Reward Notes," still listed as a live field) was correctly left untouched — a defensible scope boundary given the AC's precise "anchor" wording, not an oversight. Noted as a distinct, out-of-scope spec-accuracy gap worth a future backlog item (filed separately, not blocking this sign-off).
