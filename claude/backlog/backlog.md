@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-17 (groom backlog post-ship closure 2026-08-14__release-v8.8 — 30 items archived: 29 shipped + BLG-GOV-292; 5 ephemeral sections removed, 4 significantly overdue; 2 new genuine ID collisions found, BLG-FEAT-84/BLG-SEC-18); prior — 2026-08-17 (post-ship closure 2026-08-14__release-v8.8 — 29 shipped items marked ✅ COMPLETE); prior — 2026-08-17 (session — 2 new items added: BLG-BE-102, BLG-BE-103); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-17 (session — 5 new items added: BLG-FEAT-89, BLG-BE-104, BLG-FEAT-90, BLG-FEAT-91, BLG-FEAT-92); prior — 2026-08-17 (groom backlog post-ship closure 2026-08-14__release-v8.8 — 30 items archived: 29 shipped + BLG-GOV-292; 5 ephemeral sections removed, 4 significantly overdue; 2 new genuine ID collisions found, BLG-FEAT-84/BLG-SEC-18); prior — 2026-08-17 (post-ship closure 2026-08-14__release-v8.8 — 29 shipped items marked ✅ COMPLETE); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4711,5 +4711,129 @@ For an open, profitable position (WDC, entry 2026-08-07, native entry price $434
 **Problem:** ST-24's `react-router-dom` `^7.13.0`→`^7.18.2` bump produced incidental `"dev": true` flag churn on unrelated `package-lock.json` entries — likely benign npm-version lockfile noise, but not verified or explained at the time.
 **Scope:** Confirm whether the churn is genuine npm-version behaviour (no dependency-graph change) or reflects a real, unintended shift in which packages are dev-only.
 **Acceptance Criteria:** Root cause confirmed and documented as benign, or a real issue found and fixed.
+
+---
+
+### BLG-FEAT-89 — In-app backtesting engine for strategy rule changes
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Backend + Strategy Tooling
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** Product Owner feature-vision session — 2026-08-17 (codebase gap-check confirmed `POST /strategy/benchmark/import` is import-only; no in-app simulation engine exists)
+**Effort:** L (~3–5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+Strategy rule changes are governed by §13 and require review before shipping, but the only "backtest" capability in the app today is `POST /strategy/benchmark/import`, which ingests CSV output from an external `production_strategy.py` script run outside the app. There is no way to test a candidate rule change (e.g. a proposed ATR multiplier, a new setup-type filter) against historical price/trade data from inside the app itself before it ships live. Rule changes currently go live on judgment alone, and the existing benchmark panels can only ever compare against whatever was last exported externally — never a specific candidate change under live consideration.
+
+**Scope**
+- Historical simulation engine: run a candidate `strategy_rules.md` parameter set against stored historical OHLCV + trade_plans data
+- Output: projected win rate, R-multiple distribution, and max drawdown vs the current live rule set over the same window
+- Surface as a "Backtest candidate change" action, callable before a §13 rule change is committed
+- Persist each backtest run (input rule diff, output summary, timestamp) for audit
+- Reuse `production_strategy.py`'s existing simulation logic where possible rather than reimplementing from scratch (Head of Engineering to scope feasibility)
+
+**Acceptance Criteria**
+- A candidate strategy_rules.md change can be run against historical data from inside the app, with no external script step
+- Output includes win rate, R-multiple distribution, and drawdown compared against the current live rule set
+- Each backtest run is persisted with enough detail to audit later (what was tested, when, by what rule diff)
+- Strategy Rules & System Intent Owner sign-off
+
+---
+
+### BLG-BE-104 — Correlation/sector-concentration-aware position sizing
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Risk Management
+**Owner:** Backend Engineering Patterns Owner; Strategy Rules & System Intent Owner
+**Source:** Product Owner feature-vision session — 2026-08-17 (codebase gap-check confirmed `sizing_service.py` sizes each position in isolation; `portfolio_service.py`'s `portfolio_heat_percent` confirmed post-hoc/display-only)
+**Effort:** M (~2–3d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`sizing_service.py`'s `size_position` and `size_batch_inv_vol` compute position size from a single ticker's own ATR/volatility only — neither checks what's already open in the portfolio. `portfolio_service.py::get_portfolio_summary` already computes `portfolio_heat_percent` and per-position risk, but only for dashboard display after positions exist; nothing feeds current portfolio composition back into a new sizing decision at entry time. Two positions in correlated names (e.g. same sector) can each pass individual sizing cleanly while stacking real, unmeasured portfolio risk that no single trade's sizing math would catch.
+
+**Scope**
+- Define a first-pass concentration signal (e.g. sector bucket from existing ticker metadata) usable without a full covariance/correlation engine
+- At sizing time, check the candidate ticker's sector against currently open positions' sectors and existing sector-level exposure (% of portfolio value)
+- Apply a size reduction, or a flagged warning, when a new position would push sector exposure past a defined threshold
+- Surface the concentration check result to the caller (trade-plan creation flow) so the user sees *why* sizing was adjusted, not just a smaller number
+
+**Acceptance Criteria**
+- A new position's sizing calculation reflects existing open-position sector concentration, not just the candidate ticker's own volatility
+- Sizing output includes a visible reason when reduced or flagged for concentration
+- Regression test confirms two same-sector (correlated) positions produce a smaller second size than two uncorrelated ones would
+- Backend Engineering Patterns Owner sign-off
+
+---
+
+### BLG-FEAT-90 — Automated AI post-trade debrief
+**Priority:** P2 (Medium)
+**Type:** Product Feature / AI Analytics
+**Owner:** Head of Engineering; AI Compliance & Governance Officer
+**Source:** Product Owner feature-vision session — 2026-08-17 (codebase gap-check confirmed `plan_vs_reality_service.py`, the AI thesis-generation pipeline, and the manual red-flag journal exist independently with no synthesis step between them)
+**Effort:** M (~2d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+When a trade closes, `plan_vs_reality_service.py` already computes `r_achieved` vs `r_target`, the AI thesis-generation pipeline (with `claude_audit_log`) already exists for other surfaces, and a manual red-flag journal already captures discipline deviations — but nothing combines these into an automatic, readable debrief. The discipline-learning loop currently depends entirely on the user manually cross-referencing three separate surfaces every time they want to understand what actually happened on a closed trade.
+
+**Scope**
+- On trade close, generate a short AI-written debrief (one paragraph) drawing on: plan-vs-reality delta, any red-flag journal entries linked to the position, and relevant SI-02 drift context where available
+- Log the generation to `claude_audit_log` per existing AI governance policy (model/prompt version, cost, input/output)
+- Surface the debrief on the closed-trade detail view
+- Debrief is descriptive, not prescriptive — a plain account of what happened plus one suggested focus area, not a new automated trading decision
+
+**Acceptance Criteria**
+- Every newly-closed trade has an AI-generated debrief available shortly after close (real-time generation, or on-demand if real-time isn't feasible)
+- Debrief references plan-vs-reality data and any linked journal entries where present
+- Generation is logged to `claude_audit_log` per existing AI governance policy
+- AI Compliance & Governance Officer sign-off (per standing AI-generated-content governance requirement)
+
+---
+
+### BLG-FEAT-91 — Pre-commit "what-if" sizing/risk simulator on the trade-plan form
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Frontend + Backend
+**Owner:** Head of UX & Design; Head of Engineering
+**Source:** Product Owner feature-vision session — 2026-08-17 (codebase gap-check confirmed no "what-if"/simulator surface exists in frontend or backend)
+**Effort:** M (~2–3d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The trade-plan creation form computes position size and risk only once the plan is submitted — the user has no way to see how adjusting stop distance or entry price would change position size, R at risk, or resulting portfolio heat before committing to a plan. Sizing math and portfolio impact are currently a post-save surprise rather than an input to the decision itself.
+
+**Scope**
+- Add a live-updating preview panel to the trade-plan creation form: as stop distance/entry price change, recompute and display position size, R at risk, and projected portfolio heat impact
+- Reuse the existing `sizing_service` calculation via a lightweight, non-committing "preview" endpoint (no DB write)
+- If `BLG-BE-104` (concentration-aware sizing) has shipped by the time this is built, surface its concentration flag in the same preview
+
+**Acceptance Criteria**
+- User can adjust stop distance/entry price on the trade-plan form and see position size, R at risk, and portfolio heat impact update live, before saving
+- Preview value matches what is actually saved when the plan is submitted with the same inputs
+- No DB write occurs from interacting with the preview alone
+- Head of UX & Design sign-off on interaction design
+
+---
+
+### BLG-FEAT-92 — Screener-to-trade conversion funnel view
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Analytics
+**Owner:** Metrics & Analytics Owner; Product Owner
+**Source:** Product Owner feature-vision session — 2026-08-17; related to existing `BLG-FEAT-30` (Screener-to-trade attribution pipeline & retrospective analytics, consolidated) — overlap to be reconciled before scheduling
+**Effort:** M (~2d)
+**Provisional-Target:** Unscheduled
+**Depends on:** BLG-FEAT-30 (shares the same underlying attribution linkage; Product Owner/Head of Specs Team to confirm whether this is a sub-scope of BLG-FEAT-30 or a genuinely separate item before either enters sprint planning)
+
+**Problem**
+The full pipeline (screener hit → watchlist → research → trade plan → position → close) exists end-to-end, but there is no aggregate view of where candidates drop off at each stage, or what fraction of screener hits ever convert into a trade — let alone a profitable one. Without this, it isn't possible to tell whether the screener's complexity and cost are earning their keep, and every other planned analytics feature building on screener attribution (`BLG-FEAT-30` and its consolidated items) is downstream of having this instrumentation in place.
+
+**Scope**
+- Funnel view: screener hit → watchlist add → trade plan created → position opened → position closed, with count and conversion % at each stage
+- Filterable by date range and, where available, setup/signal type
+- Product Owner/Head of Specs Team to reconcile scope against `BLG-FEAT-30` before this enters sprint planning — may be absorbed as a sub-scope rather than shipped separately
+
+**Acceptance Criteria**
+- Funnel view displays counts and conversion % for all 5 pipeline stages over a selectable date range
+- Reconciliation with `BLG-FEAT-30` completed and documented (merged, superseded, or confirmed distinct) before either item is scheduled
+- Product Owner sign-off
 
 ---
