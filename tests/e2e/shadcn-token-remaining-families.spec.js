@@ -1,6 +1,8 @@
 /**
  * Playwright coverage for the remaining shadcn token call-site families left
  * untested by v8.6/ST-04 — ST-08 (BLG-FE-157, EPIC-03, v8.7)
+ * `secondary` family added ST-17 (BLG-FE-160, EPIC-03, v8.8) once ST-15
+ * (same EPIC, same cycle) introduced its first live call site.
  *
  * BLG-FE-147/ST-04 (v8.6) registered 9 previously-unregistered shadcn tokens
  * (card, popover, primary, secondary, accent, destructive, border, input,
@@ -39,18 +41,27 @@
  *                  Code-reviewed only; no reachable mount point to drive
  *                  via e2e navigation. Same precedent as
  *                  PositionEntryModal.js (ST-06, EPIC-01, this cycle).
- *   - secondary:   NOT LIVE. Badge's `secondary` variant and Button's
- *                  `secondary` variant are defined but never used with
- *                  that variant anywhere in the app. `ToastAction` (the one
- *                  primitive with a literal `hover:bg-secondary`) is never
- *                  rendered — no `toast()` call in the app supplies an
- *                  `action`. Code-reviewed only; no reachable trigger.
+ *   - secondary:   LIVE as of v8.8/ST-15 (BLG-FE-163) — TickerUniverse.js's
+ *                  "Clear filters" control (`<Badge variant="secondary">`),
+ *                  shown once any of the page's 5 filters is non-default.
+ *                  Covered below (SC-TOK-05). Button's `secondary` variant
+ *                  and `ToastAction`'s literal `hover:bg-secondary` remain
+ *                  unused elsewhere in the app — not in scope here (the AC
+ *                  only requires coverage at "the first live call site").
+ *   - card:        Still NOT LIVE at v8.8 — `Card` (ui/card.js) remains
+ *                  unimported by any page or component (re-confirmed via
+ *                  exhaustive grep, 2026-08-16). No story this cycle
+ *                  introduces one (design-gate decision, `BLG-FE-160`
+ *                  remains open for this half only). Code-reviewed only;
+ *                  no reachable mount point to drive via e2e navigation.
+ *                  Same precedent as PositionEntryModal.js (ST-06, EPIC-01,
+ *                  v8.7 — subsequently deleted as dead code at v8.8/ST-16).
  *
- * Two families (card, secondary) have no live call site to assert against
- * — see qa_evidence_EPIC-03.md for the code-review-only disposition and
- * backlog reference (BLG-FE-160).
+ * One family (card) still has no live call site to assert against — see
+ * qa_evidence_EPIC-03.md for the code-review-only disposition and backlog
+ * reference (BLG-FE-160, kept open for the `card` half).
  *
- * Covers observable AC (BLG-FE-157):
+ * Covers observable AC (BLG-FE-157; SC-TOK-05 added BLG-FE-160/ST-17, v8.8):
  *   SC-TOK-01  ring    — TradePlan.js Setup Thesis field: focus-visible ring
  *              colour resolves to the --ring token (non-transparent,
  *              non-black box-shadow/outline)
@@ -61,6 +72,9 @@
  *              background/border resolve to the --destructive token
  *   SC-TOK-04  border  — WidgetLibrary popover dialog: border colour
  *              resolves to the --border token (non-transparent)
+ *   SC-TOK-05  secondary — TickerUniverse.js "Clear filters" badge:
+ *              background/text colour resolve to the --secondary /
+ *              --secondary-foreground tokens (non-transparent)
  *
  * Infrastructure: Playwright page.route() network interception. No live
  * backend.
@@ -214,5 +228,38 @@ test.describe('SC-TOK-04 — border token (WidgetLibrary popover dialog)', () =>
     const borderColor = await dialog.evaluate((el) => window.getComputedStyle(el).borderColor);
     expect(borderColor).toBeTruthy();
     expect(TRANSPARENT_VALUES).not.toContain(borderColor);
+  });
+});
+
+test.describe('SC-TOK-05 — secondary token (TickerUniverse.js "Clear filters" badge)', () => {
+  const TICKERS = [
+    { ticker: 'AAPL', market: 'US', active: true, sector: 'Technology', industry: 'Software', company_name: 'Apple Inc.' },
+  ];
+
+  test('SC-TOK-05: Clear filters badge background/text colour resolve to the secondary token', async ({ page }) => {
+    await mockFallback(page);
+    await page.route(`${API}/ticker-universe?active_only=false`, (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: TICKERS }) })
+    );
+    await page.goto('/#/TickerUniverse');
+    await expect(page.getByTestId('ticker-table')).toBeVisible({ timeout: 10000 });
+
+    // No filter is active by default — the badge (Badge variant="secondary")
+    // only renders once a filter is non-default.
+    await expect(page.getByTestId('clear-filters-badge')).not.toBeVisible();
+    await page.getByTestId('sector-filter').selectOption('Technology');
+
+    const badge = page.getByTestId('clear-filters-badge');
+    await expect(badge).toBeVisible({ timeout: 5000 });
+    const { bg, fg } = await badge.evaluate((el) => {
+      const s = window.getComputedStyle(el);
+      return { bg: s.backgroundColor, fg: s.color };
+    });
+    expect(TRANSPARENT_VALUES).not.toContain(bg);
+    expect(fg).toBeTruthy();
+    expect(TRANSPARENT_VALUES).not.toContain(fg);
+    // bg-secondary and text-secondary-foreground are deliberately distinct
+    // tokens (design_system.md) — background and text colour must differ.
+    expect(bg).not.toBe(fg);
   });
 });

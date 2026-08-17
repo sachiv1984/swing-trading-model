@@ -3537,9 +3537,10 @@ paths:
       tags: [Changelog]
       summary: Most recent release's changelog summary (ST-01, EPIC-01, v7.8)
       description: |
-        Returns the most recent release's version label and changes-shipped
-        descriptions, parsed server-side from docs/product/changelog.md.
-        `data` is null if no parseable version section exists.
+        Returns the most recent release's version label and curated
+        User Impact copy, parsed server-side from docs/product/changelog.md.
+        `data` is null if no parseable version section (or no populated
+        User Impact cell in it) exists.
       responses:
         "200":
           description: OK
