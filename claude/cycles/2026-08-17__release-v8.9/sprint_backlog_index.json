@@ -1,0 +1,59 @@
+{
+  "cycle_id": "2026-08-17__release-v8.9",
+  "generated_utc": "2026-08-17T16:30:00Z",
+  "epics": {
+    "EPIC-01": {
+      "st_items": ["ST-01", "ST-02", "ST-03"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-01",
+        "stage4_backlog_slice.md#ST-02",
+        "stage4_backlog_slice.md#ST-03"
+      ]
+    },
+    "EPIC-02": {
+      "st_items": ["ST-04", "ST-05", "ST-06", "ST-07", "ST-23"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-04",
+        "stage4_backlog_slice.md#ST-05",
+        "stage4_backlog_slice.md#ST-06",
+        "stage4_backlog_slice.md#ST-07",
+        "docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-gate-story-scoping.md#2-decision (ST-23 — not in stage4_backlog_slice.md; full AC reproduced in sprint_backlog.md)"
+      ]
+    },
+    "EPIC-03": {
+      "st_items": ["ST-08", "ST-09", "ST-10", "ST-11"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-08",
+        "stage4_backlog_slice.md#ST-09",
+        "stage4_backlog_slice.md#ST-10",
+        "stage4_backlog_slice.md#ST-11"
+      ]
+    },
+    "EPIC-04": {
+      "st_items": ["ST-12", "ST-13", "ST-14", "ST-15"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-12",
+        "stage4_backlog_slice.md#ST-13",
+        "stage4_backlog_slice.md#ST-14",
+        "stage4_backlog_slice.md#ST-15"
+      ]
+    },
+    "EPIC-05": {
+      "st_items": ["ST-16", "ST-17", "ST-18"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-16",
+        "stage4_backlog_slice.md#ST-17",
+        "stage4_backlog_slice.md#ST-18"
+      ]
+    },
+    "EPIC-06": {
+      "st_items": ["ST-19", "ST-20", "ST-21", "ST-22"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-19",
+        "stage4_backlog_slice.md#ST-20",
+        "stage4_backlog_slice.md#ST-21",
+        "stage4_backlog_slice.md#ST-22"
+      ]
+    }
+  }
+}
