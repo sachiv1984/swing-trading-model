@@ -103,8 +103,8 @@
     "EPIC-07": {
       "status": "in_review",
       "branch": "exec/2026-08-14__release-v8.8/EPIC-07",
-      "pr_number": null,
-      "pr_status": "pending_creation",
+      "pr_number": 1428,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-14__release-v8.8/qa_evidence_EPIC-07.md",
       "test_scenarios": ["Manual acceptance review — governance prompt text + .claude_current_state.json schema/ownership-registry changes only; no application test suite affected"],
