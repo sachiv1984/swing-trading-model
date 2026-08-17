@@ -1,8 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.6
-**Last Updated:** 2026-08-17 (ST-27, BLG-SPEC-129, EPIC-06, v8.8 — corrected §Changelog's stale "placed after Risk/Reward Notes" anchor to "placed after Early Exit Conditions"; no such field as Risk/Reward Notes exists in the live form); prior — 2026-08-12 (v8.7 design gate — added §5.1 Invalidation Condition field (ST-01, BLG-FEAT-84) and §10.6 Post-Submission Link Confirmation (ST-02, BLG-FE-158)); prior — 2026-08-12 (Product Owner disposition on DEV-v8.6-ST02-01 ratified as the standing decision — see `qa_evidence_EPIC-01.md`'s Ratification note); prior history retained — see prior entries in version control.
+**Version:** 1.7
+**Last Updated:** 2026-08-17 (v8.9 design gate — added §5d What-If Sizing Preview (ST-05, BLG-FEAT-91) and §10.7 Position Sizing Widget concentration-reason display (ST-04, BLG-BE-104)); prior — 2026-08-17 (ST-27, BLG-SPEC-129, EPIC-06, v8.8 — corrected §Changelog's stale "placed after Risk/Reward Notes" anchor to "placed after Early Exit Conditions"); prior — 2026-08-12 (v8.7 design gate — added §5.1 Invalidation Condition field (ST-01, BLG-FEAT-84) and §10.6 Post-Submission Link Confirmation (ST-02, BLG-FE-158)); prior history retained — see prior entries in version control.
+**Design Source (v1.7 what-if sizing preview):** docs/design/2026-08-17__release-v8.9/what-if-sizing-risk-simulator/ux_spec.md
+**Design Source (v1.7 concentration-aware sizing display):** docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md
 **Design Source (v1.5 invalidation condition):** docs/design/2026-08-12__release-v8.7/thesis-invalidation-condition/decision_record.md
 **Design Source (v1.5 link confirmation toast):** docs/design/2026-08-12__release-v8.7/trade-plan-link-confirmation-toast/decision_record.md
 **Design Source (v1.4 setup thesis digest):** docs/design/2026-08-11__release-v8.6/ai-thesis-digest-order-placement/ux_spec.md
@@ -220,6 +222,45 @@ Feedback is persisted per generation (recommended: `thesis_feedback` field on th
 | Feedback given | Selected option highlighted, both disabled, transient confirmation text |
 | Thesis edited after feedback | Control hidden (existing `isAiDraft → false` on edit) |
 | Draft regenerated | Feedback control resets to unrated |
+
+---
+
+## 5d. What-If Sizing Preview (v1.7 — ST-05 BLG-FEAT-91)
+
+**Design source:** docs/design/2026-08-17__release-v8.9/what-if-sizing-risk-simulator/ux_spec.md
+
+> **§13 Compliance:** Display-only, advisory preview of a deterministic sizing calculation. No automated action, no write. The trader may use or ignore the preview; nothing here gates or modifies plan submission.
+
+Collapsible **"What-If Sizing Preview"** panel shown in the Trade Plan creation and edit forms, positioned below the Signal Context panel (§5a, when present) and Claude Thesis Generation section (§5b), above the Pre-Trade Entry Checklist (§6).
+
+### 5d.1 Presence Condition
+
+Hidden entirely (no placeholder) until both **Planned Entry Price** (new, panel-local field — see §5d.2) and **Stop Level** (§5.1) have valid positive values.
+
+### 5d.2 Inputs
+
+| Field | Source | Persisted to `trade_plans`? |
+|-------|--------|------------------------------|
+| Stop Level | Existing §5.1 field | Yes (unchanged) |
+| Planned Entry Price | New, panel-local numeric input | **No** — never included in the `POST /trade-plans` / `PUT /trade-plans/{id}` payload |
+| Risk % | Defaults from settings (same `defaultRiskPercent` source as `PositionSizingWidget`, §10.7); user-adjustable within the panel, session-local | No |
+
+### 5d.3 Calculation and Output
+
+Debounced 300ms after any input change. Calls `POST /portfolio/size` — the same endpoint used by `PositionSizingWidget` (§10.7), not a separate calculation path, so a plan later started via §10 "Start Trade from Plan" (which pre-fills `stop_price` from `plan.stop_level`) reproduces an identical suggested size when the same entry price is entered at order time.
+
+| Element | Source | Format |
+|---------|--------|--------|
+| Suggested Position Size | `suggested_shares` | "{N} shares" |
+| R at Risk | Derived: `(plannedEntryPrice − stopLevel) × suggested_shares`, FX-converted for US market same as §10.7 | Native currency, 2dp |
+| Portfolio Heat Impact | `POST /portfolio/size` response heat field (backend dependency shared with §10.7 — confirm at implementation) | "+X.X% heat" |
+| Concentration reason | `concentration_reason` (§10.7) | Amber inline note, same treatment as §10.7 |
+
+**Loading:** inline skeleton on the three result rows only; inputs remain interactive. **Error / invalid inputs:** same `AMBER_MESSAGES` / `SYSTEM_MESSAGES` conventions as §10.7 (e.g. "Stop price must be below entry price").
+
+### 5d.4 No Persistence Guarantee
+
+Nothing in this panel triggers `POST /trade-plans` or `PUT /trade-plans/{id}`. Planned Entry Price and the panel's Risk % override are never part of the Save Trade Plan payload (§5.2) — `trade_plans` has no `entry_price` column (`docs/specs/data_model.md`), so this holds by construction.
 
 ---
 
@@ -463,6 +504,20 @@ Fires alongside (not instead of) any existing position-created confirmation; def
 
 > **§13 Compliance:** Display-only surfacing of an already-computed, already-persisted linkage outcome. No new decision logic; does not gate or affect position creation either way.
 
+### 10.7 Position Sizing Widget — Concentration-Aware Sizing (v1.7 — ST-04 BLG-BE-104)
+
+**Design source:** docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md
+
+> **§13 Compliance:** Deterministic, rule-based reduction to an advisory suggested value the trader may still override (shares field remains manually editable). No automated action.
+
+**Scope note:** this subsection documents only the new concentration-reason addition to the existing `PositionSizingWidget` (`src/components/trades/PositionSizingWidget.js`, embedded in `TradeEntry.js`, called via §10's "Start Trade from Plan" hand-off). The widget's baseline fields, debounce behaviour, and `POST /portfolio/size` contract predate this spec and are not otherwise documented here — filed as spec debt (see `trade_plan.md` Known Deviations / follow-up backlog item).
+
+`POST /portfolio/size` response gains two fields: `concentration_adjusted` (boolean) and `concentration_reason` (string | null) — reflecting existing open-position sector concentration in the suggested size, not just the candidate ticker's own volatility.
+
+When `concentration_reason` is non-null, an inline note renders directly beneath the widget's "Suggested: {N} shares" result line: `AlertTriangle` icon (amber), reason text verbatim (amber, `text-xs`). No dismiss affordance — re-evaluates on every debounced recalculation, disappears automatically when concentration no longer applies. When null: no layout change, nothing rendered (same "hidden entirely when absent" convention used elsewhere on this page, e.g. §5a, §10.3).
+
+This same field pair and display treatment applies identically in the §5d What-If Sizing Preview panel, since both call sites consume the same `POST /portfolio/size` endpoint.
+
 ---
 
 ## 11. Bulk Actions (v7.5 — ST-03 BLG-FE-117)
@@ -512,6 +567,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7 | 2026-08-17 | v8.9 design gate — added §5d What-If Sizing Preview (ST-05, BLG-FEAT-91): collapsible panel on the creation/edit form, ephemeral Planned Entry Price input (never persisted — `trade_plans` has no `entry_price` column), reuses `POST /portfolio/size` (same endpoint as §10.7) so preview values match order-time results; shows suggested size, R at risk, heat impact, concentration reason. Added §10.7 Position Sizing Widget concentration-aware sizing (ST-04, BLG-BE-104): `POST /portfolio/size` response gains `concentration_adjusted`/`concentration_reason`; amber inline note when non-null, hidden entirely when null; documents the concentration addition only — baseline widget documentation flagged as separate spec debt. Design sources: what-if-sizing-risk-simulator/ux_spec.md, correlation-sector-concentration-sizing/decision_record.md. Approved: Product Owner 2026-08-17. Design gate: 2026-08-17__release-v8.9. Head of Specs Team confirmed. |
 | 1.6 | 2026-08-17 | ST-27 (BLG-SPEC-129, EPIC-06, v8.8): corrected the `1.5` entry below's stale anchor — "placed after Risk/Reward Notes" → "placed after Early Exit Conditions". No such field as "Risk/Reward Notes" exists in `src/pages/TradePlan.js` (confirmed via grep — zero `risk_reward_notes` binding); the anchor was wrong at the time it was written. Product Owner agent-mediated sign-off (v8.7) had already confirmed Invalidation Condition's actual implemented placement is grouped with Confirmation Criteria / Early Exit Conditions, not the non-existent field — this entry corrects the changelog's own description to match. No functional/UI change; documentation correction only. Authority: Head of Specs Team. |
 | 1.5 | 2026-08-12 | v8.7 design gate — added §5.1 Invalidation Condition field (ST-01, BLG-FEAT-84): optional manually-authored textarea, placed after Early Exit Conditions (corrected — see `1.6` above), deliberately excluded from §5b's "Improve with AI" population list, hidden entirely in detail view when blank. Added §10.6 Post-Submission Link Confirmation (ST-02, BLG-FE-158): `sonner` toast reporting `trade_plan_linked`/`trade_plan_id` from the `POST /portfolio/position` response — success toast naming the linked ticker when `true`, neutral "no matching plan found — logged unlinked" toast when `false`; covers the auto-link path (`BLG-BE-46`) not previously visible pre-submit. Design sources: thesis-invalidation-condition/decision_record.md, trade-plan-link-confirmation-toast/decision_record.md. Approved: Product Owner 2026-08-12. Design gate: 2026-08-12__release-v8.7. Head of Specs Team confirmed. |
 | 1.4 | 2026-08-11 | v8.6 design gate — added §10.5 Setup Thesis Digest at Order Placement (ST-02, BLG-FEAT-56): collapsible "Setup Thesis Digest" panel in `TradeEntry.js`, below the "Linked to trade plan" indicator (§10.2); reuses the linked plan's already-generated `setup_thesis` (no new AI call at order placement); "Key Risk Factors" synthesised from `early_exit_conditions`/`confirmation_criteria`; read-only, link to full plan; hidden entirely when no plan linked or no thesis content. §13 compliant (reuses `ai_thesis_generation.md`'s already-cleared generation surface). Design source: ai-thesis-digest-order-placement/ux_spec.md. Approved: Product Owner 2026-08-11. Design gate: 2026-08-11__release-v8.6. Head of Specs Team confirmed. |

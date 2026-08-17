@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.5
-**Last Updated:** 2026-07-29
+**Version:** 0.6
+**Last Updated:** 2026-08-17 (v8.9 design gate — added §7.6 Backtest Rule Change tab, ST-07 BLG-FEAT-89, EPIC-02); prior — 2026-07-29 (ST-19, EPIC-05, v7.10, BLG-FE-106 — Page Header consolidation); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v7.7
 **EPIC:** EPIC-01
@@ -10,6 +10,7 @@
 **Design Source (v0.2 additions):** docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md
 **Design Source (v0.3 additions):** docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md (BLG-FE-95 remediation)
 **Design Source (v0.4 additions):** docs/design/2026-07-21__release-v7.7/si04-strategy-version-comparison/ux_spec.md
+**Design Source (v0.6 additions):** docs/design/2026-08-17__release-v8.9/in-app-backtesting-engine/ux_spec.md
 **Confirmed by:** Head of Specs Team — 2026-07-21
 
 ---
@@ -45,7 +46,7 @@ Users should be able to:
 
 **Consolidation (v0.5 — ST-19, EPIC-05, v7.10, BLG-FE-106):** the deviation noted above is resolved — `StrategyBenchmark.js` now renders its title/description via the shared `PageHeader` component, matching this section exactly. The `BarChart2` icon and the "Benchmark data as of" last-updated line (sourced from `summary.last_imported_at`) are preserved as elements adjacent to `PageHeader` (`PageHeader` itself has no icon or subtitle-line prop). This changes the title's visual style to `PageHeader`'s standard gradient-clipped text (`text-2xl font-bold`, `bg-clip-text`) rather than the previous solid-colour `text-lg font-semibold` — an intended consequence of the consolidation, not a regression. `tests/e2e/heading-light-theme-contrast.spec.js`'s SC-HTC-03/04 were updated accordingly (gradient `background-image` stops checked instead of solid `color`, matching the technique already established in `page-header-dark-gradient-contrast.spec.js` for other `PageHeader`-consuming pages).
 
-**Sub-navigation (v0.4 — ST-01, EPIC-01, v7.7):** a two-tab bar sits immediately below the page header: **"Benchmark"** (default active — existing §3–§7 content, unchanged) and **"Version Comparison"** (new, §7.5). Client-side tab state via `?tab=version-comparison` query param, no new top-level route.
+**Sub-navigation (v0.4 — ST-01, EPIC-01, v7.7; extended v0.6 — ST-07, EPIC-02, v8.9):** a three-tab bar sits immediately below the page header: **"Benchmark"** (default active — existing §3–§7 content, unchanged), **"Version Comparison"** (§7.5), and **"Backtest Rule Change"** (new, §7.6). Client-side tab state via `?tab=version-comparison` / `?tab=backtest-rule-change` query params, no new top-level route.
 
 ---
 
@@ -289,6 +290,46 @@ Read-only — no strategy-modification or live-position-modification action avai
 
 ---
 
+## 7.6 Backtest Rule Change Tab (v0.6 — ST-07, EPIC-02, BLG-FEAT-89, v8.9)
+
+**Design source:** docs/design/2026-08-17__release-v8.9/in-app-backtesting-engine/ux_spec.md
+
+> **§13 Compliance:** Deterministic simulation (same backtest logic class already used by §3–§7's Benchmark tab, applied to a candidate rule set) over historical data — no ML model, no adaptive inference. Output is comparative statistical context for a human decision; nothing here writes to `strategy_rules.md` or any live rule configuration.
+
+Runs a candidate `strategy_rules.md` change against historical data from inside the app — no external script step — and compares the result against the current live rule set.
+
+### Left Panel — Candidate Rule Input
+
+Text input for the candidate rule change (raw diff vs. structured parameter form deferred to implementation — see design source §2.1). **"Run Backtest"** button (primary), disabled while a run is in progress; inline spinner + `"Running backtest…"` label during execution.
+
+### Right Panel — Results (shown after a run completes)
+
+| Element | Content |
+|---------|---------|
+| Win rate | Candidate vs. live rule set, side-by-side percentages |
+| R-multiple distribution | Histogram, candidate overlaid against live (reuse existing distribution chart styling used elsewhere on this page) |
+| Max drawdown | Candidate vs. live, side-by-side |
+| Run metadata | Timestamp, rule diff summary, run initiator |
+
+### Run History
+
+Collapsible list below the results panel, most-recent-first, each entry expandable to re-view its stored output without re-running. Satisfies the audit requirement (what was tested, when, by what rule diff) without a separate page.
+
+### States
+
+| State | Trigger | Behaviour |
+|-------|---------|-----------|
+| Empty | Initial load, no run yet | `"Paste a candidate rule change and run a backtest to compare it against your live strategy."` — no chart/table shown |
+| Running | Run Backtest clicked | Button disabled, spinner + `"Running backtest…"` |
+| Loaded | Run complete | Results panel populated; run appended to Run History |
+| Error | Backend failure | `"Backtest failed to complete. Please try again."` + Retry |
+
+### Constraints
+
+Read-only comparative output — adopting a rule change remains a separate, manual, human-authored edit to `strategy_rules.md` outside this feature's scope. No new metric definitions introduced (win rate / R-multiple / drawdown are existing canonical metrics already computed by the Benchmark tab).
+
+---
+
 ## 8. States
 
 | State | Behaviour |
@@ -328,6 +369,7 @@ All endpoints must be documented in `docs/reference/openapi.yaml` and `docs/spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6 | 2026-08-17 | v8.9 design gate — ST-07 (EPIC-02, BLG-FEAT-89): added §7.6 Backtest Rule Change tab — third sub-nav tab alongside Benchmark/Version Comparison; candidate rule input, results panel (win rate/R-multiple distribution/drawdown vs. live rule set), persisted Run History for audit. §2 Sub-navigation updated to three-tab bar. Design source: in-app-backtesting-engine/ux_spec.md. Approved: Product Owner 2026-08-17. Design gate: 2026-08-17__release-v8.9. Head of Specs Team confirmed. |
 | 0.5 | 2026-07-29 | ST-19 (EPIC-05, v7.10, BLG-FE-106): §2 Page Header consolidation resolved — `StrategyBenchmark.js` now renders via the shared `PageHeader` component (was a hand-rolled header, noted as a deviation since v0.3). `BarChart2` icon and last-updated line preserved as adjacent elements. `tests/e2e/heading-light-theme-contrast.spec.js` SC-HTC-03/04 rewritten for the new gradient-clipped title (technique already established for other `PageHeader` pages). New Playwright coverage: `tests/e2e/strategy-benchmark.spec.js` SC-SB-08a–e. |
 | 0.4 | 2026-07-21 | v7.7 design gate — ST-01 (EPIC-01, BLG-FEAT-75): added §7.5 Version Comparison tab (SI-04) — two-tab sub-nav ("Benchmark" / "Version Comparison"), version-select controls, comparison table + summary strip against `GET /analytics/strategy-version-comparison`, all states. §9 API Endpoints updated. Placement chosen over `Arc5ComplianceSection` embed to avoid an unscheduled dependency on `BLG-FE-59` (see design source §2). Flagged (not blocking): pre-authored contract v0.1.0 lacks a `compliance_rate` field required by the AC — Sprint Execution follow-up. Design source: si04-strategy-version-comparison/ux_spec.md. Approved: Product Owner 2026-07-21. Design gate: 2026-07-21__release-v7.7. Head of Specs Team confirmed. |
 | 0.3 | 2026-07-12 | v7.0 design gate — Page-title light-theme contrast fix (ST-08, BLG-FE-95): `text-white` → `text-slate-900 dark:text-white` on the "Strategy Benchmark" `<h1>` (light-mode value was missing entirely; ~1.1:1 fail). Same defect class as BLG-FE-87/88, extended to primary heading text. Noted (not resolved, out of scope): shipped header is a hand-rolled `<h1>`, not the `PageHeader` component named in §2 — pre-existing spec/implementation deviation, candidate follow-up. No layout change. Design source: `docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md`. Head of UX & Design sign-off: 2026-07-12. Head of Specs Team confirmed. |
