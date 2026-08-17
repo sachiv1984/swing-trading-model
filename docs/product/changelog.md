@@ -3,11 +3,66 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-16 (sprint execution 2026-08-14__release-v8.8, ST-13 — `User Impact` column added to `Changes shipped` tables); prior — 2026-08-13 (post-ship closure 2026-08-12__release-v8.7); prior — 2026-08-12 (post-ship closure 2026-08-11__release-v8.6); prior history retained — see prior entries in version control
+**Last Updated:** 2026-08-17 (post-ship closure 2026-08-14__release-v8.8 — v8.8 entry added); prior — 2026-08-16 (sprint execution 2026-08-14__release-v8.8, ST-13 — `User Impact` column added to `Changes shipped` tables); prior — 2026-08-13 (post-ship closure 2026-08-12__release-v8.7); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v8.8 — Live Data-Integrity, Backend Hardening & Debt Closure — 2026-08-17
+Cycle: 2026-08-14__release-v8.8
+Verified: Verified
+Verification report: claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Live data-integrity & scheduled job coverage — nightly overnight screener-refresh workflow; nightly risk-off-alerts workflow (closes permanently-stuck RISK OFF badge); nightly backtest import failure investigated and fixed; 3 remaining endpoints added to `api_performance_baseline.md` | Screener results and the RISK OFF regime badge on Positions now refresh automatically overnight instead of going stale — what you see reflects current market conditions, not a stale snapshot from days earlier. The Strategy Benchmark page's "data as of" freshness line also populates correctly again. | `.github/workflows/screener-refresh.yml`; `.github/workflows/risk-off-alerts.yml`; `docs/specs/api_contracts/health_endpoints.md#GET /health/scheduler`; `docs/ops/api_performance_baseline.md#39.1`, `#39.2`, `#39.3` |
+| EPIC-02 | Backend hardening & data model gaps — consolidated two divergent `check_market_regime()` implementations; position lifecycle state-transition history table; `price_alerts`-to-trade provenance linkage; `si05_digest_log.telegram_message_id` now populated on send; duration logging around the SI-05 Telegram send call; Pre-Trade Research View query-latency budget review | — | `backend/utils/pricing.py`; `docs/specs/data_model.md#DS-13`, `#DS-14`, `#DS-15`; `docs/specs/api_contracts/trade_plan_endpoints.md#POST /trade-plans`; `docs/specs/api_contracts/alerts_endpoints.md#GET /notifications`; `docs/ops/api_performance_baseline.md#36` |
+| EPIC-03 | Frontend UX & dead-code cleanup — "What's New" panel now writes user-facing benefit copy instead of raw engineering notes; Research page trade plan status badge readable labels for 3 of 6 statuses; Ticker Universe page search/sector/industry filtering; `PositionEntryModal.js` dead-code status resolved; Playwright coverage added for remaining Card/secondary-variant component call sites | The in-app "What's New" panel now describes releases in plain, benefit-focused language. Trade plan status badges on the Research page show readable labels instead of raw snake_case text. The Ticker Universe page can now be filtered by search term, sector, and industry. | `docs/specs/frontend/pages/dashboard.md#6A`; `docs/specs/api_contracts/changelog_endpoints.md#GET /changelog/latest`; `docs/specs/frontend/pages/research_view.md#4.7`; `docs/specs/frontend/pages/ticker_universe.md#10`; `docs/specs/frontend/design_system.md#Modal / Dialog Theming` |
+| EPIC-04 | Quality & test-coverage debt — Arc 6 prerequisite field-population completeness audit; consolidated backend service-layer test-coverage report; test-environment parity check (local/CI/staging config drift); `backend/routers/test.py` completeness re-audit | — | `docs/ops/arc6_prerequisite_field_population_audit_2026-08-16.md`; `docs/ops/backend_service_layer_test_coverage_report_2026-08-16.md`; `docs/ops/test_environment_parity_check_2026-08-16.md`; `docs/ops/endpoint_test_coverage_audit_2026-08-16.md` |
+| EPIC-05 | Security hardening — system/user role separation added to Claude thesis-generation prompts; dependency license compliance scan; baseline npm audit HIGH/CRITICAL findings review (react-scripts toolchain); Telegram Bot Token added to `api_key_rotation_policy.md` scope | — | `tests/test_gemini_prompt_injection_resistance.py`; `docs/security/dependency_license_compliance_scan_2026-08-16.md`; `docs/security/npm_audit_baseline_review_2026-08-16.md`; `docs/ops/api_key_rotation_policy.md` |
+| EPIC-06 | API & spec debt closure — backfilled `api_changelog.md` entries for v7.9–v8.4 endpoint additions; corrected `trade_plan.md` §5.1's stale "Risk/Reward Notes" field anchor | — | `docs/product/api_changelog.md#v8.2.0`, `#v7.9.0`; `docs/specs/frontend/pages/trade_plan.md#Changelog` |
+| EPIC-07 | Governance correctness fixes — corrected `CLAUDE.md` §8's commit message template to match the enforced commit-format hook; assigned `.claude_current_state.json`'s `prior_cycle` field a sole owning engine (Post-Ship Closure STEP 10) | — | N/A — governance prompt files, not canonical specs |
+
+### Deviations accepted
+None — no deviations filed this sprint (0 P0–P3 spec deviations; see `verification_report.md §4`).
+
+### Tech backlog items shipped
+- [ST-01] [U] Scheduled overnight screener refresh workflow
+- [ST-02] [U] Scheduled nightly risk-off-alerts workflow (fixes permanently-stuck RISK OFF badge)
+- [ST-03] [U] Investigate nightly backtest import failure (Strategy Benchmark "data as of" line)
+- [ST-04] [D] Add `GET /v1beta1/news` to `api_performance_baseline.md`
+- [ST-05] [D] Add `GET /trade-plans/tags` to `api_performance_baseline.md`
+- [ST-06] [D] Live timing measurement for `GET /analytics/strategy-version-comparison`
+- [ST-07] [D] Consolidate two divergent `check_market_regime()` implementations
+- [ST-08] [D] Position lifecycle state-transition history table
+- [ST-09] [D] Link `price_alerts` to the trade they trigger
+- [ST-10] [D] Populate `si05_digest_log.telegram_message_id` on successful send
+- [ST-11] [D] Duration logging around `POST /digest/si05/send`'s Telegram send call
+- [ST-12] [D] Pre-Trade Research View query-latency budget review
+- [ST-13] [U] "What's New" panel surfaces user-facing benefit statements, not raw engineering copy
+- [ST-14] [U] Research page trade plan status badge: fix raw snake_case for 3 of 6 statuses
+- [ST-15] [U] Ticker Universe page filtering by search, sector, and industry
+- [ST-16] [D] Resolve `PositionEntryModal.js` dead-code/unreachable-mount-point status
+- [ST-17] [D] Playwright coverage for Card/secondary-variant components with a live call site
+- [ST-18] [D] Field-population completeness audit for Arc 6 prerequisite fields
+- [ST-19] [D] Consolidated backend service-layer test-coverage report
+- [ST-20] [D] Test-environment parity check — local vs CI vs staging config drift
+- [ST-21] [D] `backend/routers/test.py` completeness re-audit
+- [ST-22] [D] System/user role separation for Claude thesis-generation prompts
+- [ST-23] [D] Dependency license compliance scan
+- [ST-24] [D] Review baseline npm audit HIGH/CRITICAL findings (react-scripts toolchain)
+- [ST-25] [D] Add Telegram Bot Token to `api_key_rotation_policy.md` scope
+- [ST-26] [D] Backfill `api_changelog.md` entries for v7.9–v8.4 endpoint additions
+- [ST-27] [D] Correct `trade_plan.md` §5.1's stale "Risk/Reward Notes" field anchor
+- [ST-28] [G] Correct `CLAUDE.md` §8's commit message template to match the enforced commit-format hook
+- [ST-29] [G] Assign an owning engine for `.claude_current_state.json`'s `prior_cycle` field
+
+Sign-off: Product Owner — 2026-08-17
+QA sign-off: Director of Quality — 2026-08-17
 
 ---
 

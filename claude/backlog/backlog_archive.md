@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-13 (groom backlog post-ship closure 2026-08-12__release-v8.7 — 19 shipped items archived: BLG-FEAT-84, BLG-FE-158, BLG-BE-95, BLG-FE-151, BLG-FE-152, BLG-FE-156, BLG-BE-96, BLG-FE-157, BLG-QA-148, BLG-BE-89, BLG-BE-90, BLG-SEC-30, BLG-SEC-31, BLG-OPS-139, BLG-OPS-140, BLG-OPS-142, BLG-GOV-303, BLG-GOV-305, BLG-SPEC-124; 1 ephemeral Release Slice section removed — v8.7; 2 further v8.7 items — BLG-BE-30, BLG-GOV-290 — already archived earlier this session via ad hoc backlog audit); prior — 2026-08-13 (ad hoc backlog audit, session-initiated, not a full `groom backlog` run — 10 items archived as already-shipped/already-fixed but never marked done); prior — 2026-08-12 (groom backlog post-ship closure 2026-08-11__release-v8.6 — 26 items archived; 1 ephemeral Release Slice section removed — v8.6); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
+**Last Updated:** 2026-08-17 (groom backlog post-ship closure 2026-08-14__release-v8.8 — 30 items archived: BLG-GOV-291, BLG-GOV-292, BLG-GOV-293, BLG-FE-159/160/161/162/163, BLG-BE-84/85/87/58/94/97, BLG-OPS-13/51/135/143/144/145, BLG-SEC-18/28/32/33, BLG-QA-140/143/145/146, BLG-SPEC-118/129; 1 ephemeral Release Slice section removed — v8.8); prior — 2026-08-13 (groom backlog post-ship closure 2026-08-12__release-v8.7 — 19 shipped items archived; 1 ephemeral Release Slice section removed — v8.7; 2 further v8.7 items already archived earlier that session via ad hoc backlog audit); prior — 2026-08-13 (ad hoc backlog audit, session-initiated, not a full `groom backlog` run — 10 items archived as already-shipped/already-fixed but never marked done); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -17922,3 +17922,845 @@ Swing positions are held overnight and over weekends, exposed to gap risk from e
 
 *Open escalation carried forward at sprint close with no prior backlog.md tracking entry — filed per `delivery_verification_prompt.md` STEP 4.1.*
 
+---
+
+### BLG-GOV-291 — CLAUDE.md §8's own commit message template violates the enforced commit-format hook
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-GOV-291 — CLAUDE.md §8's own commit message template violates the enforced commit-format hook
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Sprint execution 2026-08-07__release-v8.4, EPIC-06/EPIC-07 real cross-EPIC merge conflict resolution — 2026-08-08
+**Effort:** XS (<1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`CLAUDE.md` §8 step 4 instructs: `git commit -m "[EPIC-xx] Merge main (<description>) into EPIC-xx — conflict resolution"`. This format was rejected live by the repo's own pre-commit hook when followed exactly during EPIC-06/EPIC-07's real conflict resolution this cycle — the hook requires `[EPIC-xx][ST-xx]` or `[GOVERNANCE]`, and a bare `[EPIC-xx]` with no `ST-xx` fails. Worked around by using `[GOVERNANCE]` instead, which the hook does accept and is arguably the more semantically correct prefix for a conflict-resolution commit anyway (it's not attributable to a single story). `CLAUDE.md` §8's own worked example (`sprint_planning_prompt.md v3.13/v3.14`) predates this discovery, so the mismatch has been silently present in the documented runbook.
+
+**Scope**
+- Correct `CLAUDE.md` §8 step 4's commit message template to `[GOVERNANCE] Merge main (<description>) into EPIC-xx — conflict resolution` (or add `[ST-xx]` guidance for cases where the conflict resolution is attributable to a specific story)
+- Apply the standard governance file edit checklist per `CLAUDE.md` §6 (n/a for `CLAUDE.md` itself, which has no version field — log in `prompt_change_log.md` per the established no-version-field convention)
+
+**Acceptance Criteria**
+- `CLAUDE.md` §8's commit message template matches what the enforced pre-commit hook actually accepts
+- Head of Specs Team sign-off
+
+---
+
+---
+
+### BLG-GOV-293 — .claude_current_state.json prior_cycle field has no owning engine, found stale
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-GOV-293 — .claude_current_state.json prior_cycle field has no owning engine, found stale
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Release planning `2026-08-08__release-v8.5`, self-caught while syncing root state pointer — 2026-08-08
+**Effort:** XS (<1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`.claude_current_state.json`'s `prior_cycle` field was found stale at the start of `v8.5` release planning: it read `2026-08-05__release-v8.3` when it should have read `2026-08-07__release-v8.4` (the cycle that closed immediately before `v8.5` opened; `last_post_ship_cycle` correctly showed `2026-08-07__release-v8.4`). No engine's documented write list explicitly owns updating `prior_cycle` after a cycle closes — this mirrors the OA-1 `next_release` ownership gap that `release_planning_prompt.md` STEP 9 was created to close (post-ship closure `2026-07-24__release-v7.8`). Left uncorrected in-place during `v8.5` planning (outside Release Planning's documented write scope for this field) — see `run_manifest.md §STEP -1.5`/`.claude_current_state.json`'s own inline note for this cycle.
+
+**Scope**
+- Identify the correct owning engine for `prior_cycle` (candidates: Post-Ship Closure STEP 8/9, or Release Planning STEP 9 alongside its existing `next_release`/`active_cycle` writes)
+- Add an explicit, unconditional write of `prior_cycle` at that engine's terminal step, following the `next_release` (OA-1) precedent
+- Apply the standard governance file edit checklist per `CLAUDE.md` §6
+
+**Acceptance Criteria**
+- `prior_cycle` is written unconditionally by exactly one engine's terminal step, documented as that field's authoritative owner
+- Confirmed correct at the next cycle transition (reads the cycle that closed immediately prior, not an older one)
+- Head of Specs Team sign-off
+
+---
+
+---
+
+### BLG-GOV-292 — Extend scan_backlog_gate_conditions.py to catch bracket-delimited embedded gate language
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** N/A — resolved directly, not shipped scope
+**Evidence:** Resolved 2026-08-11 (Head of Specs Team direct action) — see item's own Provisional-Target field for full context; not part of v8.8 shipped scope
+
+### BLG-GOV-292 — Extend scan_backlog_gate_conditions.py to catch bracket-delimited embedded gate language
+**Priority:** P3 (Low)
+**Type:** Governance / Process Integrity
+**Owner:** Head of Specs Team
+**Source:** Release planning `2026-08-08__release-v8.5`, STEP 1.3a self-caught finding — 2026-08-08
+**Effort:** XS (<1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-11 — Head of Specs Team direct action, resolving the 72-hour escalation from post-ship closure `2026-08-08__release-v8.5` §5/§6 (closure_record.md item 1)
+
+**Problem**
+`scripts/scan_backlog_gate_conditions.py`'s `EMBEDDED_GATE_SIGNAL_RE` data-quality-warning check (added `BLG-GOV-286`, shipped `v8.4` ST-29) only matches gate-like language inside **parentheses** within a `Provisional-Target` field. `BLG-FEAT-73`'s `Provisional-Target` carries unmet-gate language (`` `[gate status unverified/unmet]` ``) inside **square brackets** — neither a formal `Gate criteria`/`Gate`/`Gate date` field nor the parenthesis-only warning regex catches it, so the script's output alone treats it as ready/ungated. Caught only by a manual full-text read during `v8.5` release planning. This is a 5th distinct failure mode in the same gate-detection problem class `BLG-GOV-286` was filed against (which covered 4 other named modes).
+
+**Scope**
+- Extend `EMBEDDED_GATE_SIGNAL_RE` (or add a sibling pattern) to also match bracket-delimited gate language, e.g. `\[.*(gate|gated|no earlier than|conditional|pending|unmet|unverified).*\]`
+- Re-run the script against the live `backlog.md` to confirm `BLG-FEAT-73` (and any other bracket-delimited instances) now surface as a data-quality warning
+- Apply the standard governance file edit checklist (version bump, `OPERATIONAL_GUIDE.md` §14 sync, `prompt_change_log.md` entry) per `CLAUDE.md` §6 if the change touches `release_planning_prompt.md`'s own documented script behaviour description
+
+**Acceptance Criteria**
+- `scan_backlog_gate_conditions.py` flags `BLG-FEAT-73` (or its then-current equivalent) as a data-quality warning
+- Existing parenthesis-delimited detection unaffected (no regression against the 5 previously-known warning instances)
+- Head of Specs Team sign-off
+
+---
+
+---
+
+### BLG-FE-159 — PositionEntryModal.js has no reachable mount point — resolve dead-code status or restore Playwright coverage
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-FE-159 — PositionEntryModal.js has no reachable mount point — resolve dead-code status or restore Playwright coverage
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-06/EPIC-01 (`2026-08-12__release-v8.7`) — 2026-08-12
+**Effort:** XS (~<0.5d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+While converting `src/components/signals/PositionEntryModal.js` from hardcoded `bg-slate-900`/`text-white` to theme-aware `bg-background`/`text-foreground` tokens (ST-06, `BLG-FE-156`), a repo-wide search found no other file under `src/` imports or renders `<PositionEntryModal>` — it is dead/orphaned code, apparently left over from an earlier signals-to-position-entry flow iteration. The token conversion itself was applied via code review (same mechanical fix as the other 3 modals in `BLG-FE-156`'s scope), but the AC's "no visual regression" requirement could not get Playwright coverage or a staging sign-off, because there is no way to reach or mount the component through real app navigation.
+
+**Scope**
+- Decide whether `PositionEntryModal.js` should be wired into an actual trigger point (if the signals-to-position-entry flow it was built for is still intended) or removed as dead code
+- If restored: add Playwright coverage for its light/dark theming, matching the pattern used for the other 3 modals in `BLG-FE-156`
+- If removed: confirm no other in-flight work depends on it before deletion
+
+**Acceptance Criteria**
+- `PositionEntryModal.js` is either reachable via a real user-navigable trigger with Playwright coverage of its light/dark theming, or removed from the codebase
+- No orphaned/unreachable modal component remains without an explicit decision recorded
+
+---
+
+---
+
+### BLG-FE-160 — Card and Badge/Button `secondary` variant shadcn components have no reachable live call site — Playwright coverage deferred
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-FE-160 — Card and Badge/Button `secondary` variant shadcn components have no reachable live call site — Playwright coverage deferred
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-08 (`BLG-FE-157`, EPIC-03, `2026-08-12__release-v8.7`) — 2026-08-13
+**Effort:** XS (~<0.5d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`BLG-FE-157`/ST-08 required Playwright coverage per remaining shadcn token family (`card`, `popover`, `secondary`, `accent`, `destructive`, `border`, `ring`), each against a "confirmed-affected live call site". Exhaustive grep across `src/` (`Card` identifier, `ui/card` import paths, `Badge variant="secondary"`, `Button variant="secondary"`, `ToastAction` usage) found zero reachable live call sites for two of the seven families: the shadcn `Card` component (`src/components/ui/card.js`) is never imported or rendered by any page or component in the app; and Badge's `secondary` variant and Button's `secondary` variant are never used anywhere with that variant — the one primitive with a literal `hover:bg-secondary` (`ui/toast.js`'s `ToastAction`) is never rendered, since no `toast()` call in the app supplies an `action`. Both were code-reviewed only (the token registration itself compiles correctly per the v8.6/ST-04 tailwindcss build check) — no live mount point exists to drive via e2e navigation. Same precedent as `PositionEntryModal.js` (`BLG-FE-159`, ST-06, EPIC-01, this same v8.7 cycle).
+
+**Scope**
+- When either component gains a real consumer (a page renders `<Card>`, or a `Badge`/`Button` is given `variant="secondary"`, or a toast gains an `action`), add Playwright coverage asserting the real post-fix computed colour/background at that new live call site
+
+**Acceptance Criteria**
+- Playwright test added covering `card`/`card-foreground` computed colour/background at the first live call site introduced for the Card component
+- Playwright test added covering `secondary`/`secondary-foreground` computed colour/background at the first live call site introduced (Badge secondary variant, Button secondary variant, or a toast with an action)
+
+---
+
+---
+
+### BLG-FE-161 — "What's New" panel surfaces raw engineering copy instead of user-facing benefit statements
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-FE-161 — "What's New" panel surfaces raw engineering copy instead of user-facing benefit statements
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner; Product Owner
+**Source:** User review session — 2026-08-14
+**Effort:** M (~1–2d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`src/components/dashboard/home/WhatsNewCard.js` renders the "Description" column of `docs/product/changelog.md`'s `### Changes shipped` table verbatim (parsed server-side by `backend/services/changelog_service.py`). Those descriptions are written for engineers and governance readers (e.g. "N+1 query audit across trade/position list endpoints", "CLAUDE.md §8 shared-JSON-field schema-drift check across sibling EPIC branches") — they don't explain what benefit the user gets, and some EPICs (e.g. a purely governance/process-hardening EPIC) have zero end-user-visible change at all but still appear in the feed. Confirmed by inspecting the current v8.7 changelog entry: EPIC-07's description ("Governance & cross-domain hardening — CLAUDE.md §8 ... Roadmap Unlock Tracker ... §13 policy determination ...") is exactly this failure mode.
+
+**Scope**
+- Add a curated, user-facing description field per EPIC in the `### Changes shipped` table (separate from the existing internal/governance description column) that `changelog_service.py` sources instead
+- Add a way to flag an EPIC as having no user-facing benefit (e.g. a governance-only EPIC) so it's excluded from the `GET /changelog/latest` payload entirely, rather than surfaced with unrelated internal copy
+- Document the "write a user-facing benefit statement, not an implementation summary" convention wherever changelog.md authoring is specified (post-ship closure / release planning prompt)
+
+**Acceptance Criteria**
+- `WhatsNewCard` renders curated user-benefit copy, not raw EPIC implementation descriptions
+- An EPIC with no user-facing change does not appear in the What's New feed
+- Changelog authoring convention documented so future releases populate the new field correctly
+
+---
+
+---
+
+### BLG-FE-162 — Research page trade plan status badge shows raw snake_case for 3 of 6 statuses
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-FE-162 — Research page trade plan status badge shows raw snake_case for 3 of 6 statuses
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** User review session — 2026-08-14
+**Effort:** XS (~<0.5d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`src/pages/Research.js`'s local `PlanStatusBadge` component only maps 3 of the 6 valid trade plan statuses (`active`, `draft`, `closed`) to a human label; any plan in `research_pending`, `research_complete`, or `entry_conditions_set` falls through to the raw status string, rendering literal snake_case (e.g. "entry_conditions_set") instead of a label like "Entry Ready". The canonical, complete mapping already exists as `STATUS_LABELS` in `src/pages/TradePlan.js` — Research.js just never adopted it and maintains its own incomplete copy.
+
+**Scope**
+- Extract `STATUS_LABELS` (and `STATUSES`) from `src/pages/TradePlan.js` into a shared constants module, or import directly from `TradePlan.js`
+- Update `Research.js`'s `PlanStatusBadge` to use the shared/complete map instead of its own local 3-entry map
+
+**Acceptance Criteria**
+- All 6 trade plan statuses render a human-readable label on the Research page, none fall back to raw snake_case
+- Single source of truth for status labels (no duplicate/divergent maps between TradePlan.js and Research.js)
+
+---
+
+---
+
+### BLG-FE-163 — Ticker Universe page has no filtering by search, sector, or industry
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-FE-163 — Ticker Universe page has no filtering by search, sector, or industry
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** User review session — 2026-08-14
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`src/pages/TickerUniverse.js`'s filter state supports only market (US/UK/all) and active/inactive. Sector and industry are already captured per-ticker fields (collected in `AddTickerForm`) but there is no filter UI for either, and no ticker-name/alphabetical search filter. As the universe grows, finding a specific ticker or reviewing sector/industry concentration requires scanning the full unfiltered table.
+
+**Scope**
+- Add a text search input (ticker prefix/contains match) to the filter bar
+- Add sector and industry dropdown filters, populated from distinct values present in the loaded ticker set, following the existing `marketFilter` button-group pattern
+
+**Acceptance Criteria**
+- User can filter the ticker table by typed search text, by sector, and by industry, independently or combined with the existing market/active filters
+- Filters visibly narrow the table row count and clear/reset correctly
+
+---
+
+## 4. Backend & Data Backlog
+
+---
+
+---
+
+### BLG-BE-84 — Link price_alerts to the trade they trigger (real alert-to-trade provenance)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-BE-84 — Link price_alerts to the trade they trigger (real alert-to-trade provenance)
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Backend Engineering
+**Source:** ST-31 (EPIC-01, 2026-08-07__release-v8.4), self-caught scope gap during `ESC-EXEC-20260807-01`
+**Effort:** M (~2–3 days, schema + backend + frontend trade-creation wiring — not yet fully scoped, estimate advisory only)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`BLG-FEAT-78` originally asked for a tax-year CSV export column distinguishing alert-triggered trades from manually-initiated ones, gated on `price_alerts` (`BLG-FE-116`, shipped v7.5) existing. On implementation (ST-31, v8.4) it was found that `price_alerts` has no schema linkage to any trade/position/trade_plan row at all — `POST /alerts/evaluate` firing an alert only writes a `notifications` row and sets `active=false`/`triggered_at`; it never creates or tags a trade. There is currently no way, anywhere in the data model, to determine "this trade was opened because a price alert fired." ST-31 shipped a *different*, real distinction instead (`trade_plans.signal_id` — the momentum-signals system, relabeled `trade_origin: "Signal"/"Manual"`) — see `docs/specs/api_contracts/reports_endpoints.md`'s Known Deviations section. This item tracks the *original* ask, which remains unbuilt.
+
+**Scope**
+- Design and add a linkage from a fired `price_alerts` row to the trade plan/position a user subsequently opens as a result (e.g. a nullable `triggered_by_price_alert_id` on `trade_plans`, populated when the user creates a plan directly from a triggered-alert notification)
+- Frontend wiring: some UI path from "alert notification" → "create trade plan" that can pass the alert's id through
+- Decide reporting treatment once the linkage exists: could extend `trade_origin` to a third value (e.g. `"Alert"`) or become a separate field — needs its own scoping pass, not assumed here
+
+**Acceptance Criteria**
+- A trade plan created via the alert-notification-to-trade-plan path (once that path exists) records which `price_alerts` row triggered it
+- A trade plan created any other way leaves the field null
+- Reporting treatment (new `trade_origin` value vs. separate field) decided and documented before implementation
+
+---
+
+---
+
+### BLG-BE-85 — si05_digest_log.telegram_message_id is never populated
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-BE-85 — si05_digest_log.telegram_message_id is never populated
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Backend Engineering
+**Source:** ST-19 (EPIC-05, 2026-08-07__release-v8.4), staging verification of the SI-05 digest delivery fix — 2026-08-08
+**Effort:** XS (<1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`si05_digest_log`'s `telegram_message_id` column exists specifically to record Telegram's own returned message ID for each delivery attempt (`BLG-BE-33`), but is hardcoded to `None` at both call sites in `si05_digest_service.py::send_si05_digest()`. Root cause: `_send_telegram_request()` calls `urllib.request.urlopen(req, timeout=10)` and returns immediately without reading the response body — Telegram's success response (which contains `result.message_id`) is discarded. Confirmed live at ST-19's staging verification: a genuinely successful send (`status: 'sent'`, message received in Telegram) still logged `telegram_message_id: null`.
+
+**Scope**
+- `_send_telegram_request()` reads and returns the response body on success (`json.loads(resp.read())`)
+- `send_si05_digest()` extracts `result["message_id"]` from that response and passes it to `_write_delivery_log()` instead of the hardcoded `None`
+- No change to failure-path logging (a failed send has no message ID to record)
+
+**Acceptance Criteria**
+- A successful SI-05 digest send populates a real, non-null `telegram_message_id` in `si05_digest_log`
+- Failure-path logging unchanged (still logs `error_message`, `telegram_message_id` remains null on failure)
+- Existing retry/backoff behaviour unaffected
+
+---
+
+---
+
+### BLG-BE-87 — Add duration logging around POST /digest/si05/send's Telegram send call
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-BE-87 — Add duration logging around POST /digest/si05/send's Telegram send call
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Backend Engineering
+**Source:** ST-21 (EPIC-05, 2026-08-07__release-v8.4), Render-internal-log-based measurement attempt found no duration data exists — 2026-08-08
+**Effort:** XS (<1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`POST /digest/si05/send`'s only captured Render log line is the default `uvicorn` access-log format (`"POST /digest/si05/send HTTP/1.1" 200 OK`) — client IP, method+path, status, no duration. Confirmed via direct Render Platform API query against production (30-day window, only one matching log line exists at all). This blocks any future Render-internal-log-based latency measurement for this endpoint (the methodology `ST-21`'s own AC calls for, since firing live test calls would spam the real Telegram channel) — there is currently no way to derive timing from logs for any invocation, past or future, without this fix.
+
+**Scope**
+- In `si05_digest_service.py::send_si05_digest()`, record a timestamp immediately before the Telegram send call and log elapsed time (e.g. `logger.info("SI-05 digest sent (%d chars, %.0fms)", message_length, elapsed_ms)`) on both the success and failure paths
+- No change to retry/backoff behaviour or the `si05_digest_log` table schema — this is additive log output only
+
+**Acceptance Criteria**
+- A successful or failed `POST /digest/si05/send` invocation's Render log line includes an elapsed-time value
+- Verified against the next real invocation (the following scheduled Sunday 19:00 UTC cron run, or a manual `workflow_dispatch` trigger) — confirm the new field appears in the captured log
+- `docs/ops/api_performance_baseline.md` §36 updated with real log-derived timing once available, superseding the interim single-sample proxy measurement
+
+---
+
+---
+
+### BLG-OPS-13 — Add remaining pre-v4.6 endpoints to api_performance_baseline.md re-run
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-OPS-13 — Add remaining pre-v4.6 endpoints to api_performance_baseline.md re-run
+**Priority:** P3 (Low)
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner
+**Source:** v2.9 post-ship closure 2026-04-24 (3 endpoints); v3.0 post-ship closure 2026-04-28 OA-v30-01 (5 additional endpoints); v3.1 post-ship closure 2026-05-05 (10 additional endpoints); v3.4 post-ship closure 2026-05-14 (2 additional endpoints); v3.5 post-ship closure 2026-05-15 (2 additional endpoints); v3.9 post-ship closure 2026-05-22 (1 additional endpoint: GET /portfolio/red-flag-journal); v4.6 post-ship closure 2026-05-31 (1 additional endpoint: GET /analytics/behavioural-drift). **Reconciled 2026-08-07** (Infrastructure & Operations Owner, lessons-learnt deferred patch from `2026-08-05__release-v8.3` closure, Friction Item 1) — 21 of the 23 originally-named endpoints are now confirmed present in `docs/ops/api_performance_baseline.md`; retained as an open item for the 1 genuine residual gap plus 1 correction, not retired/merged into `BLG-OPS-133` since a real gap remains.
+**Effort:** XS (<0.5d — 1 endpoint remaining)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+Of the 23 originally-listed endpoints, 21 are now present in `docs/ops/api_performance_baseline.md` (resolved across intervening cycles without this item being updated to reflect it — the stale 24-endpoint scope was still being carried forward unedited as of `v8.2` closure). One (`GET /v1beta1/news`) remains genuinely absent from the baseline. One (`GET /trade-plans/by-ticker/{ticker}`) was never shipped under that path — `docs/reference/openapi.yaml` only ever defines `GET /trade-plans/by-position/{position_id}`, no `by-ticker` sibling route exists — so it is dropped from scope as a stale entry, not a residual gap. **Note:** `GET /v1beta1/news` currently sits inside the misplaced block documented in `BLG-SPEC-116` (nested under `components:` instead of `paths:`) — re-confirm this endpoint's existence and exact path after that structural fix lands, since relocation could in principle change how it's named/grouped.
+
+**Scope**
+- Run `GET /v1beta1/news` against staging to obtain p50/p95 latencies and add to `docs/ops/api_performance_baseline.md`
+- Re-check after `BLG-SPEC-116` lands that the endpoint's canonical path/shape is unchanged
+
+**Acceptance Criteria**
+- `GET /v1beta1/news` has p50 and p95 latency entries in the baseline document, consistent with existing measurement methodology
+
+---
+
+---
+
+### BLG-OPS-51 — Add GET /analytics/strategy-version-comparison to api_performance_baseline.md (when implemented)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-OPS-51 — Add GET /analytics/strategy-version-comparison to api_performance_baseline.md (when implemented)
+**Priority:** P3 (Low)
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner; API Contracts & Documentation Owner
+**Source:** Post-ship closure 2026-06-01__release-v4.8 — endpoint coverage drift advisory (STEP 6)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+> ⚠️ **Partially pre-met (backlog audit 2026-08-13):** The trigger condition (endpoint implemented) has been true since v7.7, and `docs/ops/api_performance_baseline.md` §34 already carries a row for `GET /analytics/strategy-version-comparison` (added v8.4, ST-02/BLG-SPEC-116) — but the row is explicitly marked "Pending live timing run" with estimated, not measured, p50/p95 values. The AC's "≥5 staging samples" requirement is still unmet. Recommend Product Owner confirm this item's remaining scope is narrowed to "run the live timing measurement," not building the row from scratch.
+
+**Problem**
+v4.8 ST-07 added a placeholder entry for GET /analytics/strategy-version-comparison to openapi.yaml (pre-authored contract; not yet implemented). Once implemented, this endpoint will need p50/p95 latency measurement and an entry in docs/ops/api_performance_baseline.md.
+
+**Scope**
+- After SI-04 sprint implements the endpoint: run performance baseline measurement (p50/p95)
+- Add measurement to docs/ops/api_performance_baseline.md
+
+**Acceptance Criteria**
+- GET /analytics/strategy-version-comparison present in api_performance_baseline.md with p50/p95 values
+- Measurement conducted with ≥5 staging samples
+
+---
+
+---
+
+### BLG-SEC-18 — Review baseline npm audit HIGH/CRITICAL findings (react-scripts toolchain)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-SEC-18 — Review baseline npm audit HIGH/CRITICAL findings (react-scripts toolchain)
+
+**Priority:** P3 (Low)
+**Type:** Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** ST-04 (BLG-SEC-15, EPIC-02, v8.5) — initial baseline capture for `dependency-vuln-rescan.yml`, 2026-08-10
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`dependency-vuln-rescan.yml`'s baseline capture run (`docs/security/dependency_vuln_baseline.json`) found 16 npm packages with HIGH/CRITICAL advisories (13 high, 3 critical — `shell-quote`, `tar`, `websocket-driver` critical; `brace-expansion`, `fast-uri`, `form-data`, `js-yaml`, `nanoid`, `postcss`, `react-router`, `svgo`, `ws`, plus 4 no-own-advisory wrapper packages high). All are transitive dependencies pulled in via `react-scripts` (CRA v5's webpack-dev-server/build-toolchain dependency tree) rather than direct runtime dependencies of the shipped app — but none were individually risk-assessed before being added to the baseline; they were captured as a "known, not yet reviewed" snapshot so the new scheduled scan doesn't re-alert on them every month.
+
+**Scope**
+- Review each finding: is it build-time-only (dev/CI, never in the shipped production bundle) or does it reach the runtime bundle?
+- For any exploitable-in-production finding: fix (upgrade/patch) or file a targeted remediation item.
+- For build-time-only findings: record an explicit accept-risk decision (per the `CVE-2026-4539`/pygments precedent in `vulnerability-scan.yml`) rather than leaving them as an unreviewed baseline entry indefinitely.
+
+**Acceptance Criteria**
+- Each of the 16 baseline advisory IDs in `docs/security/dependency_vuln_baseline.json` has either been fixed (removed from baseline) or has a recorded accept-risk decision (owner, rationale, review-by date)
+
+---
+
+---
+
+### BLG-SEC-28 — Telegram Bot Token missing from api_key_rotation_policy.md scope
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-SEC-28 — Telegram Bot Token missing from api_key_rotation_policy.md scope
+
+**Priority:** P3 (Low)
+**Type:** Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** ST-05 (BLG-SEC-16, EPIC-02, v8.5) — out-of-scope finding surfaced while adding the Application X-API-Key runbook, 2026-08-10
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`docs/security/api_key_security_register.md` §7 (Telegram Bot Token / Chat ID) has a rotation procedure, but — same gap this story just fixed for the Application X-API-Key — `docs/ops/api_key_rotation_policy.md`'s own Scope table and Rotation Schedule never reference it, so the canonical rotation policy document is silently incomplete for this credential. Lower priority than the X-API-Key gap this story fixed: the Telegram token's `Last rotation date` is already recorded as "Unknown (pre-register baseline)", so there is no annual-cadence tracking depending on this today.
+
+**Scope**
+- Add Telegram Bot Token to `api_key_rotation_policy.md`'s Scope table and Rotation Schedule
+- Add a Credential-Specific Notes subsection cross-referencing the register's existing procedure (same pattern as the Application X-API-Key entry added by ST-05)
+
+**Acceptance Criteria**
+- `api_key_rotation_policy.md` Scope table and Rotation Schedule include the Telegram Bot Token
+- Credential-Specific Notes subsection added, cross-referencing `docs/security/api_key_security_register.md` §7
+
+---
+
+---
+
+### BLG-SPEC-118 — api_changelog.md not updated since v7.8.0 (v7.9-v8.4 endpoint additions missing)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-SPEC-118 — api_changelog.md not updated since v7.8.0 (v7.9-v8.4 endpoint additions missing)
+
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-21 (EPIC-06, 2026-08-08__release-v8.5) — out-of-scope finding while adding a new endpoint entry
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`docs/specs/api_contracts/api_changelog.md`'s most recent entry before this cycle's own addition was `v7.8.0` (2026-07-27) — several releases' worth of endpoint additions in `v7.9` through `v8.4` (e.g. `GET /reports/reconciliation` per `v8.2`, per `SystemStatus.js`'s own endpoint-count comment history) were never logged here, unlike `openapi.yaml` and the individual `docs/specs/api_contracts/*.md` files, which were kept current for each of those additions.
+
+**Scope**
+- Backfill `api_changelog.md` entries for each new `## METHOD /path` heading added across `v7.9`–`v8.4` (cross-reference each release's `docs/product/changelog.md` section and/or `git log` on `docs/specs/api_contracts/*.md` for the actual additions)
+
+**Acceptance Criteria**
+- `api_changelog.md` contains an entry for every new endpoint shipped in `v7.9` through `v8.4`, in descending version order
+
+---
+
+---
+
+### BLG-BE-58 — Position lifecycle state-transition history table
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-BE-58 — Position lifecycle state-transition history table
+**Priority:** P3 (Low) | **Type:** Data Model / Pre-work | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260712-02 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+**Problem:** `position_lifecycle_service` tracks current state only; no historical transition log exists for post-hoc analysis.
+**Scope:** Add an append-only `position_state_history` table, written on each lifecycle transition, to support future PS-04 (Strategy Decay Detection) state-conditional analysis.
+**Acceptance Criteria:** Table + migration added; transitions logged; no behavioural change to current lifecycle logic.
+
+---
+
+### BLG-OPS-135 — Add GET /trade-plans/tags to api_performance_baseline.md
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-OPS-135 — Add GET /trade-plans/tags to api_performance_baseline.md
+**Priority:** P3 (Low)
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner
+**Source:** Post-ship closure 2026-08-07__release-v8.4 — endpoint coverage drift advisory (STEP 6), re-run after `BLG-OPS-133`/`BLG-SPEC-116` closed this same cycle
+**Effort:** XS (<0.5d — 1 endpoint)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+Re-running the endpoint coverage drift check against the now-corrected `openapi.yaml` (post `BLG-SPEC-116`) and the now-updated `api_performance_baseline.md` (post `BLG-OPS-133`'s §35 registrations) finds 1 remaining genuine gap: `GET /trade-plans/tags` is defined in `openapi.yaml` but has no measurement row in `api_performance_baseline.md`. §27's endpoint-characteristics note references it only in passing ("consistent with `GET /trade-plans/tags` (§ existing pattern)") when documenting its sibling `GET /watchlist/tags` — it was never actually registered with its own row. All 8 other candidate gaps flagged by a naive path-normalised diff were confirmed false positives (already documented under query-string variants, sub-path rows, or explicitly reconciled in `api_performance_baseline.md` §35's own re-derivation note).
+
+**Scope**
+- Run `GET /trade-plans/tags` against staging to obtain p50/p95 latencies (single `SELECT DISTINCT unnest(tags)` on `trade_plans`, no path parameters, mirrors `GET /watchlist/tags`'s existing measurement)
+- Add a row to `docs/ops/api_performance_baseline.md` §27's endpoint profile table
+
+**Acceptance Criteria**
+- `GET /trade-plans/tags` has p50/p95/max latency entries in the baseline document, consistent with existing measurement methodology
+
+---
+
+---
+
+### BLG-OPS-143 — Investigate nightly backtest import failure (Strategy Benchmark "data as of" line never populates)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-OPS-143 — Investigate nightly backtest import failure (Strategy Benchmark "data as of" line never populates)
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** User review session — 2026-08-14
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`src/pages/StrategyBenchmark.js` only renders the "Benchmark data as of ..." line when `summary.last_imported_at` is non-null, and `backend/database.py`'s `get_backtest_summary()` correctly derives that value from `MAX(imported_at) FROM backtest_trades` — the frontend/backend contract here is not the bug. `.github/workflows/backtest.yml` runs nightly (`cron: '0 1 * * *'`) and is supposed to write fresh rows into `backtest_trades` via `import_backtest.py`, but the line has not shown a date in production. This means either the scheduled run is failing, or its import step is failing silently, and needs investigation against actual GitHub Actions run history / Render logs (not visible from a static code read).
+
+**Scope**
+- Review recent `backtest.yml` run history for failures or silent no-ops
+- Confirm `import_backtest.py`'s write path against `backtest_trades` is actually being hit and committing successfully
+- Fix whatever is broken (secret/credential issue, API endpoint failure, timeout, etc.)
+
+**Acceptance Criteria**
+- `backtest.yml` completes successfully on its next scheduled run and `backtest_trades.imported_at` reflects a current timestamp
+- "Benchmark data as of ..." line renders on the Strategy Benchmark page with a recent date
+
+---
+
+---
+
+### BLG-OPS-144 — Add scheduled overnight screener refresh workflow
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-OPS-144 — Add scheduled overnight screener refresh workflow
+**Priority:** P1 (High)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** User review session — 2026-08-14
+**Effort:** S (~0.5d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+Confirmed via a full audit of every file in `.github/workflows/`: no workflow triggers a screener refresh on any cadence. Unlike `daily-snapshot.yml`, `alert-evaluation.yml`, and `backtest.yml` — which each have their own scheduled cron calling their respective endpoint — the screener batch job (`backend/services/screener_batch_service.py`) is effectively manual/on-demand only. This is why screener results were found to be 24 days stale.
+
+**Scope**
+- Add a new scheduled GitHub Actions workflow, following the existing `alert-evaluation.yml` pattern, that calls the screener refresh endpoint overnight after US/UK market close
+- Wire success/failure into the existing nightly-job health reporting (`record_nightly_job` / `GET /health/scheduler`) so future staleness is visible rather than silently discovered
+
+**Acceptance Criteria**
+- Screener results refresh automatically on a nightly schedule with no manual trigger required
+- A missed/failed run is visible via `GET /health/scheduler`
+
+---
+
+---
+
+### BLG-OPS-145 — Add scheduled nightly risk-off-alerts workflow (regime badge permanently stuck)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-OPS-145 — Add scheduled nightly risk-off-alerts workflow (regime badge permanently stuck)
+**Priority:** P1 (High)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** User review session — 2026-08-14
+**Effort:** S (~0.5d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+The `RISK OFF` badge on the Positions page (`position.risk_off_exit`) is driven entirely by a DB column that is only ever written by `POST /positions/risk-off-alerts` (`backend/services/position_service.py`'s nightly risk-off job). Confirmed via the same full workflow audit as `BLG-OPS-144`: no scheduled GitHub Actions workflow calls this endpoint either. The column defaults to `FALSE` (`ensure_risk_off_exit_column` in `backend/database.py`) and is never updated, so the badge is structurally incapable of ever reflecting real market regime — it always reads as "not risk-off" regardless of actual conditions. This is a live data-integrity issue: the UI is displaying an incorrect, unchanging value to users making trading decisions.
+
+**Scope**
+- Add a new scheduled GitHub Actions workflow, following the existing `alert-evaluation.yml` pattern, that calls `POST /positions/risk-off-alerts` nightly after market close
+- Confirm the endpoint's success/failure is recorded via `record_nightly_job` (currently it is not — unlike the sibling `nightly-stop-update` and `rebalance-exit` endpoints in `backend/main.py`, `risk_off_alerts_endpoint` never calls `record_nightly_job`)
+
+**Acceptance Criteria**
+- `risk_off_exit` is refreshed nightly against live market regime data
+- The `RISK OFF` badge on Positions correctly reflects current regime state
+- The job's run status is visible via `GET /health/scheduler`
+
+---
+
+---
+
+### BLG-BE-97 — Consolidate two divergent check_market_regime() implementations
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-BE-97 — Consolidate two divergent check_market_regime() implementations
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner
+**Source:** User review session — 2026-08-14 (found while investigating `BLG-OPS-145`)
+**Effort:** M (~1d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+The backend has two independent implementations of `check_market_regime()`: `backend/position_manager.py` (uses the `yfinance` library with a 5-minute shared cache) and `backend/utils/pricing.py` (hits Yahoo Finance's undocumented chart API directly via raw `requests`, with no cookie/crumb handling — a materially more failure-prone pattern on cloud-hosted IPs). The live `/market/status` endpoint that backs the Trade Plan page's "Regime at Entry" field uses the `utils/pricing.py` version. Having two implementations with different fetch mechanisms and different failure/fallback behaviour (one defaults both indices to risk-on on failure, both use different retry logic) risks silently divergent regime readings depending on which call path is hit.
+
+**Scope**
+- Audit every call site of both `check_market_regime()` implementations
+- Consolidate on one implementation (recommend the `yfinance`-based `position_manager.py` version, given its shared cache and more robust library-based fetch)
+- Update all call sites, including `/market/status`, to use the single consolidated implementation
+
+**Acceptance Criteria**
+- Only one `check_market_regime()` implementation remains in the backend
+- All call sites (position analysis, `/market/status`, pre-entry validation, signal generation) use it
+- No behavioural regression in existing regime-dependent tests
+
+---
+
+---
+
+### BLG-SEC-32 — Dependency license compliance scan
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-SEC-32 — Dependency license compliance scan
+**Priority:** P3 (Low) | **Type:** Security / Compliance | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260809-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+**Problem:** The recurring dependency-vulnerability re-scan cadence (`BLG-SEC-15`) checks for vulnerabilities but not license compliance; no scan has confirmed all dependencies carry compatible licenses.
+**Scope:** Run a license compliance scan across `backend/requirements.txt` and `package.json`; document findings.
+**Acceptance Criteria:** Scan run; any incompatible license flagged and resolved; Cybersecurity & Trust Lead sign-off.
+
+---
+
+---
+
+### BLG-SEC-33 — Add system/user role separation to Claude thesis-generation prompts
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-SEC-33 — Add system/user role separation to Claude thesis-generation prompts
+**Priority:** P3 (Low)
+**Type:** Security
+**Owner:** Cybersecurity & Trust Lead; Backend Engineering Patterns Owner
+**Source:** ST-13 (`BLG-SEC-30`, EPIC-05, `2026-08-12__release-v8.7` — prompt-injection resistance test suite) — 2026-08-13
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+
+**Problem**
+`gemini_service.py`'s `generate_full_plan()`/`generate_setup_thesis()` send the entire prompt (trusted "Rules" instructions plus untrusted user-supplied fields — `ticker`, `setup_type`, `signal_data`) as a single undifferentiated `role: "user"` message to Claude, with no `system` parameter. Best practice for LLM API calls handling untrusted input is to place trusted instructions in a `system` parameter, which model providers weight more heavily against user-message override attempts. Compounding factor: the `_FULL_PLAN_PROMPT` template places the untrusted field block (Ticker/Market/Setup type/etc.) *before* the trusted Rules section, not after. Confirmed via `tests/test_gemini_prompt_injection_resistance.py` (ST-13). No confirmed exploit found — impact is bounded, since the only "action" a successful injection could take is influencing the text of the requesting user's own trade-plan draft fields (which that user could type directly anyway); no cross-user data exposure, no privileged action, no secret ever present in the prompt to leak. This is a hardening recommendation, not a confirmed vulnerability, hence P3 rather than P1/P0.
+
+**Scope**
+- Move the "Rules" instruction block into a `system` parameter on the `anthropic.Anthropic().messages.create()` call
+- Reorder or otherwise clearly delimit the untrusted user-field block so it cannot be mistaken for part of the instruction set
+- Re-run `tests/test_gemini_prompt_injection_resistance.py` after the change, updating its architecture-finding assertions to reflect the new, hardened structure
+
+**Acceptance Criteria**
+- `generate_full_plan()` and `generate_setup_thesis()` pass their trusted instructions via the `system` parameter, not interleaved with untrusted user data in a single user message
+- `tests/test_gemini_prompt_injection_resistance.py`'s `test_no_system_role_separation_used` is updated to assert the new (hardened) behaviour
+- No regression to existing `generate_full_plan()`/`generate_setup_thesis()` test coverage
+
+---
+
+---
+
+### BLG-QA-140 — Field-population completeness audit for Arc 6 prerequisite fields
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-QA-140 — Field-population completeness audit for Arc 6 prerequisite fields
+**Priority:** P3 (Low) | **Type:** QA / Data Quality | **Owner:** Data Model, Domain & Schema Owner; QA & Testing Owner | **Source:** IDEA-data-model-20260809-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+**Problem:** Arc 6 features (PS-01–05) require `regime_at_entry`, `setup_type`, and similar fields to be populated on every new trade; no audit has confirmed population completeness ahead of the 50/100-trade gates being reached.
+**Scope:** Audit population completeness of Arc 6 prerequisite fields across recent trades; fix any gap found.
+**Acceptance Criteria:** Audit complete; gaps fixed or filed; QA & Testing Owner sign-off.
+
+---
+
+---
+
+### BLG-QA-143 — Consolidated backend service-layer test-coverage report
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-QA-143 — Consolidated backend service-layer test-coverage report
+**Priority:** P3 (Low) | **Type:** QA / Testing | **Owner:** Head of Engineering; QA & Testing Owner | **Source:** IDEA-head-of-engineering-20260809-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+**Problem:** No consolidated report identifies which `backend/services/*.py` files lack a direct unit test, making coverage gaps hard to spot without an ad hoc grep each time.
+**Scope:** Generate a consolidated report of service files without direct unit test coverage.
+**Acceptance Criteria:** Report generated; gaps triaged; QA & Testing Owner sign-off.
+
+---
+
+---
+
+### BLG-BE-94 — Pre-Trade Research View query-latency budget review
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-BE-94 — Pre-Trade Research View query-latency budget review
+**Priority:** P3 (Low) | **Type:** Backend Engineering / Performance | **Owner:** Head of Engineering | **Source:** IDEA-head-of-engineering-20260809-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+**Problem:** The Pre-Trade Research View (PT-02, shipped v3.2) has not had a latency review since — over a year of data growth and added panels (Alpaca news, drift streak metric) may have shifted its query budget.
+**Scope:** Review current query latency for the Research View's data sources; confirm still within an acceptable budget.
+**Acceptance Criteria:** Review complete; any regression fixed or filed; Head of Engineering sign-off.
+
+---
+
+---
+
+### BLG-QA-145 — Test-environment parity check — local vs CI vs staging config drift
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-QA-145 — Test-environment parity check — local vs CI vs staging config drift
+**Priority:** P3 (Low) | **Type:** QA / Infrastructure | **Owner:** QA Lead; Infrastructure & Operations Owner | **Source:** IDEA-qa-lead-20260809-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+**Problem:** No check confirms local dev, CI, and staging environments remain configuration-consistent (env vars, dependency versions) — drift here can cause "works locally, fails in CI/staging" defects.
+**Scope:** Audit configuration parity across the three environments; document and fix drift found.
+**Acceptance Criteria:** Audit complete; drift fixed or documented as intentional; QA Lead sign-off.
+
+---
+
+---
+
+### BLG-QA-146 — backend/routers/test.py completeness re-audit
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-QA-146 — backend/routers/test.py completeness re-audit
+**Priority:** P3 (Low) | **Type:** QA / Testing | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260809-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+**Problem:** The endpoint-registration test-completeness gate has been in place for several cycles; no recent re-audit confirms zero drift has crept in since introduction.
+**Scope:** Re-audit `backend/routers/test.py` against all `@router.*` decorators for completeness.
+**Acceptance Criteria:** Re-audit complete; any gap fixed; QA & Testing Owner sign-off.
+
+---
+
+---
+
+### BLG-SPEC-129 — Correct trade_plan.md §5.1's stale "Risk/Reward Notes" field anchor
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-17
+**Shipped in:** v8.8
+**Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+
+### BLG-SPEC-129 — Correct trade_plan.md §5.1's stale "Risk/Reward Notes" field anchor
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Head of Specs Team | **Source:** ST-01/EPIC-01 (`2026-08-12__release-v8.7`) | **Effort:** XS | **Provisional-Target:** ✅ COMPLETE — 2026-08-17 — cycle 2026-08-14__release-v8.8
+**Problem:** `docs/specs/frontend/pages/trade_plan.md` §5.1's form-fields table lists "Risk/Reward Notes" as a live field and anchors the v1.5 Invalidation Condition field's placement to it ("after Risk/Reward Notes") — but no such field exists anywhere in `src/pages/TradePlan.js` (confirmed via grep: zero `risk_reward_notes` binding). The nearest same-role successor, "R Target", is structurally unrelated (top grid, alongside Market/Status/Regime). Found during ST-01 implementation; Product Owner agent-mediated sign-off confirmed the field's actual placement (grouped with Confirmation Criteria / Early Exit Conditions) as the correct reading of spec intent, but the stale anchor itself was left uncorrected as out of this story's scope.
+**Scope:** Correct §5.1's anchor reference from "Risk/Reward Notes" to "Early Exit Conditions".
+**Acceptance Criteria:** §5.1 anchor corrected; Head of Specs Team sign-off.
+
+---
