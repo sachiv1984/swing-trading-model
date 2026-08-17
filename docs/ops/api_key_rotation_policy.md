@@ -1,9 +1,9 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-08-10 (ST-05, BLG-SEC-16, v8.5 — Application X-API-Key added to Scope/Rotation Schedule/Credential-Specific Notes; it was formally registered in v6.8 (BLG-OPS-99) and gained a detailed rotation procedure in its own register entry at v8.2 (ST-06, BLG-SEC-27), but this policy document's own scope table and schedule never referenced it); prior — 2026-05-29 (ST-15, BLG-GOV-36 — initial policy)
-**Cycle:** 2026-08-08__release-v8.5 (ST-05 — BLG-SEC-16)
+**Version:** 1.3
+**Last Updated:** 2026-08-16 (ST-25, BLG-SEC-28, v8.8 — Telegram Bot Token/Chat ID added to Scope/Rotation Schedule/Credential-Specific Notes, cross-referencing the api_key_security_register.md §7 entry that has held this credential since v6.8); prior — 2026-08-10 (ST-05, BLG-SEC-16, v8.5 — Application X-API-Key added); prior — 2026-05-29 (ST-15, BLG-GOV-36 — initial policy)
+**Cycle:** 2026-08-14__release-v8.8 (ST-25 — BLG-SEC-28)
 
 ---
 
@@ -31,6 +31,7 @@ This policy covers all external API credentials listed in `docs/security/api_key
 | News API Key | `NEWS_API_KEY` | Annual minimum (12 months) |
 | Supabase DB Connection | `DATABASE_URL` | On suspected compromise only |
 | Application X-API-Key | `API_KEY` (backend/Render), `REACT_APP_API_KEY` (frontend build-time) | Annual minimum (12 months) |
+| Telegram Bot Token | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Annual minimum (12 months) |
 
 ---
 
@@ -45,6 +46,7 @@ This policy covers all external API credentials listed in `docs/security/api_key
 | News API Key | Annual (12 months) | Calendar schedule |
 | Supabase DB Connection | Not scheduled — see emergency trigger table | Rotate only on suspected breach |
 | Application X-API-Key | Annual (12 months) | Calendar schedule; last rotated 2026-08-04 (ST-06, BLG-SEC-27, v8.2), next due 2026-08-04 + 12 months |
+| Telegram Bot Token | Annual (12 months) | Calendar schedule; last rotation unknown (pre-register baseline) — see register entry §7 |
 
 ### Emergency Rotation Triggers (All Credentials)
 
@@ -112,6 +114,18 @@ This credential does not follow the General Procedure above unchanged — stagin
   - [ ] `api-key-cross-environment-check.yml`'s next scheduled run (daily, 06:00 UTC) completes without a `[CROSS-WIRED]` finding.
   - [ ] Production GH Pages frontend rebuilt and redeployed with the new key (confirm via a manual authenticated request through the live frontend, not just the API directly).
 - **Update the register:** `last_rotated` in `docs/security/api_key_security_register.md` §6, same as the General Procedure step 7.
+
+**Telegram Bot Token / Chat ID (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`):** (ST-25, BLG-SEC-28, v8.8)
+
+Follows the General Procedure above with one substitution — regeneration happens via @BotFather, not a provider console:
+
+1. Revoke and regenerate the bot token via Telegram's @BotFather (`/revoke` then `/token`, or `/newtoken` per BotFather's current flow).
+2. Update `TELEGRAM_BOT_TOKEN` in Render staging env; verify via a manual `POST /digest/si05/send` test send on staging.
+3. Update `TELEGRAM_BOT_TOKEN` in Render production env; verify via a manual `POST /digest/si05/send` test send on production.
+4. `TELEGRAM_CHAT_ID` does not itself need rotation (it identifies the destination chat, not a secret) — only update it if the target chat changes.
+5. Update the register: `last_rotated` in `docs/security/api_key_security_register.md` §7.
+
+Full credential details (scope, storage location, gap-discovery history): `docs/security/api_key_security_register.md` §7 Telegram Bot Token and Chat ID.
 
 ---
 
