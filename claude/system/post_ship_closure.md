@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.27
-**Last Updated:** 2026-08-17 (ST-29/BLG-GOV-293: STEP 10 now the sole authoritative writer of `prior_cycle`, mirroring OA-1's `next_release` fix); prior — 2026-08-10
+**Version:** 2.28
+**Last Updated:** 2026-08-17 (ST-29/BLG-GOV-293: STEP 10 now the sole authoritative writer of `prior_cycle`, mirroring OA-1's `next_release` fix — renumbered v2.27→v2.28 at merge, CLAUDE.md §8 step 2a, after EPIC-03/ST-13 independently claimed v2.27 for a different change and merged first); prior — 2026-08-16 (EPIC-03/ST-13: `Changes shipped` template gains a `User Impact` column); prior — 2026-08-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -259,9 +259,9 @@ Verified: <Verified | Verified_with_deviations>
 Verification report: claude/cycles/<cycle_id>/verification_report.md
 
 ### Changes shipped
-| EPIC | Description | Spec sections updated |
-|------|-------------|----------------------|
-| EPIC-xx | <description> | <spec file#section(s)> |
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-xx | <description> | <user-benefit copy, or `—` if no user-facing change> | <spec file#section(s)> |
 
 ### Deviations accepted
 | Ref | Priority | Description | Accepted by |
@@ -287,6 +287,7 @@ QA sign-off: Director of Quality — <date>
 - P3 deviations need not appear individually — they may be summarised as "N minor deviations — see verification_report.md".
 - Tech backlog items that shipped alongside the primary feature must appear as a distinct sub-section.
 - **Each `Tech backlog items shipped` line must carry a `[U|G|D|P]` classification tag** immediately after the story ID, per `roadmap_prompt.md` STEP 2.4's schema: `U` = user-facing feature or visible UX improvement; `G` = governance/prompt/process work; `D` = debt clearance (spec, QA, ops baseline, audit, security hardening, backend correctness fix with no direct visible surface); `P` = pre-work for a future feature (pre-design/pre-planning/pre-spec). Assign the tag using the story's own backlog item content — do not defer this to a later reconstruction. This removes the reconstruction-variance risk documented in `2026-07-02__scheduled` lessons learnt Friction Item 3, where `roadmap_prompt.md` STEP 2.4 had to re-derive U/G/D/P per story from changelog prose each time it ran, producing different splits for the same cycle across sessions.
+- **Each `Changes shipped` row's `User Impact` cell must be populated at authoring time, not deferred (ST-13, BLG-FE-161, v8.8):** write one to two sentences of curated, present-tense, user-benefit copy for any EPIC that changed something a user can see, click, or notice the effect of — no ticket IDs, no implementation nouns (endpoint/table/component names). Leave the cell `—` for EPICs with no user-facing effect (backend/infra/governance/test-coverage-only work). `Description` is unaffected and remains the full engineering record — `User Impact` is additive, not a replacement. `GET /changelog/latest` sources the in-app "What's New" panel from this column only, excluding blank/`—` rows entirely (`docs/specs/api_contracts/changelog_endpoints.md`) — an entry written without this column populated leaves the panel showing "Nothing to show" for the whole release. See `docs/product/changelog.md`'s own authoring convention note for the full rule.
 - Update `Last Updated` on `docs/product/changelog.md` to today's date.
 
 **Failure condition:** If `docs/product/changelog.md` does not exist: create it with a standard header (Owner: PMO Lead, Class: Operational Record, Status: Active) and then add the entry. A ship without a changelog entry is not recorded — this is a hard gate.

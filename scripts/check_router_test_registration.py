@@ -21,8 +21,14 @@ import sys
 from pathlib import Path
 
 ROUTE_DECORATOR_RE = re.compile(
-    r'@router\.(get|post|put|delete|patch)\(\s*["\']([^"\']+)["\']'
+    r'@router\.(get|post|put|delete|patch)\(\s*["\']([^"\']*)["\']'
 )
+# ST-21 (BLG-QA-146, v8.8): the path group was previously `+` (one-or-more),
+# which silently failed to match a bare `@router.get("")`/`@router.post("")`
+# decorator (an empty-string path, resolving to the router's own prefix
+# root — e.g. ticker_universe.py's GET/POST "/ticker-universe"). A newly
+# added route registered this way would go undetected by this gate with
+# no error, no warning — `*` (zero-or-more) closes that gap.
 PREFIX_RE = re.compile(r'APIRouter\(\s*prefix\s*=\s*["\']([^"\']*)["\']')
 TEST_ENTRY_RE = re.compile(
     r'"name":\s*"(GET|POST|PUT|DELETE|PATCH)\s+([^"]+)"'
@@ -81,6 +87,14 @@ def extract_new_routes(router_file_path):
         full_path = (prefix.rstrip("/") + "/" + path.lstrip("/")).replace("//", "/")
         if not full_path.startswith("/"):
             full_path = "/" + full_path
+        # ST-21 (BLG-QA-146, v8.8): an empty-string path (`@router.get("")`) joins
+        # to a bare trailing slash (e.g. "/ticker-universe/") which path_pattern()'s
+        # exact `^...$` anchor match would never match against a test.py entry
+        # written without the trailing slash (e.g. "/ticker-universe") — a false
+        # "unregistered" flag even when a correct entry exists. Strip it, except
+        # for the bare root path itself.
+        if full_path != "/":
+            full_path = full_path.rstrip("/")
         routes.append((method, full_path))
     return routes
 

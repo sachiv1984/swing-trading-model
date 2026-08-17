@@ -1,5 +1,5 @@
 {
-  "_comment": "BLG-SEC-15 / ST-04 (EPIC-02, v8.5): known-as-of-baseline snapshot for the monthly dependency-vuln-rescan.yml scheduled job. Advisory IDs listed here are treated as 'already tracked' by the workflow's dedup logic and will NOT re-trigger a new GitHub issue on every run -- only advisory IDs absent from this file are reported as 'new'. This is NOT an accepted-risk register (unlike vulnerability-scan.yml's inline CVE-2026-4539 ignore, which has explicit Cybersecurity & Trust Lead + Head of Engineering sign-off) -- these are unreviewed at baseline time and were filed as BLG-SEC-18 for Cybersecurity & Trust Lead triage. Update this file (add the advisory ID) once a finding has been reviewed and is either fixed, or a considered accept-risk decision is recorded elsewhere (e.g. inline in vulnerability-scan.yml per the CVE-2026-4539 pattern) -- do not silently let the baseline grow uncurated.",
+  "_comment": "BLG-SEC-15 / ST-04 (EPIC-02, v8.5): known-as-of-baseline snapshot for the monthly dependency-vuln-rescan.yml scheduled job. Advisory IDs listed here are treated as 'already tracked' by the workflow's dedup logic and will NOT re-trigger a new GitHub issue on every run -- only advisory IDs absent from this file are reported as 'new'. This is NOT an accepted-risk register (unlike vulnerability-scan.yml's inline CVE-2026-4539 ignore, which has explicit Cybersecurity & Trust Lead + Head of Engineering sign-off) -- these are unreviewed at baseline time and were filed as BLG-SEC-18 for Cybersecurity & Trust Lead triage. Update this file (add the advisory ID) once a finding has been reviewed and is either fixed, or a considered accept-risk decision is recorded elsewhere (e.g. inline in vulnerability-scan.yml per the CVE-2026-4539 pattern) -- do not silently let the baseline grow uncurated. ST-24 (BLG-SEC-18, EPIC-05, v8.8) update, 2026-08-16: react-router/react-router-dom's 12 advisory IDs removed below (genuinely fixed -- react-router-dom upgraded ^7.13.0 -> ^7.18.2, confirmed absent from a fresh npm audit); the remaining 29 IDs (14 packages) are recorded accept-risk per docs/security/npm_audit_baseline_review_2026-08-16.md, review-by 2027-02-16 -- no longer 'unreviewed'.",
   "generated_utc": "2026-08-10T14:00:00Z",
   "generated_by": "ST-04 (EPIC-02, v8.5) initial baseline capture",
   "pip_audit": {
@@ -9,8 +9,8 @@
   },
   "npm_audit": {
     "scope": "package-lock.json (root)",
-    "high_critical_count": 16,
-    "note": "All 16 are transitive dependencies of react-scripts (CRA v5 build toolchain -- webpack-dev-server/svgo/postcss/ws chain) except react-router/react-router-dom, which is also pulled in transitively via react-scripts's own react-router-dom peer range, not the app's direct react-router-dom entry. None were individually risk-assessed before this baseline was captured -- see BLG-SEC-18.",
+    "high_critical_count": 14,
+    "note": "All 14 remaining are transitive dependencies of react-scripts (CRA v5 build toolchain -- webpack-dev-server/svgo/postcss/ws chain), confirmed never imported by application source (build-tooling only, never shipped to the browser). Individually risk-assessed and accept-risk-dispositioned by ST-24 (BLG-SEC-18, EPIC-05, v8.8) -- see docs/security/npm_audit_baseline_review_2026-08-16.md for owner, rationale, and 2027-02-16 review-by date. react-router/react-router-dom (previously 12 of the original 41 advisory IDs) were fixed directly by the same story (react-router-dom ^7.13.0 -> ^7.18.2) and removed from this list.",
     "advisory_ids": [
       "GHSA-395f-4hp3-45gv",
       "GHSA-w7jw-789q-3m8p",
@@ -39,18 +39,6 @@
       "GHSA-fxqj-rqcc-2cmp",
       "GHSA-qx2v-qp2m-jg93",
       "GHSA-r28c-9q8g-f849",
-      "GHSA-2j2x-hqr9-3h42",
-      "GHSA-337j-9hxr-rhxg",
-      "GHSA-49rj-9fvp-4h2h",
-      "GHSA-84g9-w2xq-vcv6",
-      "GHSA-8646-j5j9-6r62",
-      "GHSA-8x6r-g9mw-2r78",
-      "GHSA-chx6-hx7r-mcp5",
-      "GHSA-f22v-gfqf-p8f3",
-      "GHSA-h8fp-f39c-q6mh",
-      "GHSA-qwww-vcr4-c8h2",
-      "GHSA-rxv8-25v2-qmq8",
-      "GHSA-wrjc-x8rr-h8h6",
       "GHSA-2p49-hgcm-8545",
       "GHSA-96hv-2xvq-fx4p"
     ]

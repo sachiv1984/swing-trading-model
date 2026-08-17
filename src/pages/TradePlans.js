@@ -13,7 +13,12 @@ import { formatDistanceToNow } from "date-fns";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
-const STATUS_CONFIG = {
+// ST-14 (EPIC-03, BLG-FE-162, v8.8): exported as the single canonical
+// source for trade-plan status badge colours/labels — Research.js
+// consumes TradePlanStatusBadge below instead of keeping its own
+// divergent, incomplete (3-of-6-status) local map. Design source:
+// docs/design/2026-08-14__release-v8.8/research-status-badge-single-source/decision_record.md
+export const STATUS_CONFIG = {
   draft:                 { label: "Draft",              bg: "bg-gray-500",    text: "text-white" },
   research_pending:      { label: "Research Pending",   bg: "bg-amber-600",   text: "text-white" },
   research_complete:     { label: "Research Complete",  bg: "bg-blue-600",    text: "text-white" },
