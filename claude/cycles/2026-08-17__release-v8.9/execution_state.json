@@ -15,8 +15,8 @@
     "EPIC-01": {
       "status": "pr_open",
       "branch": "exec/2026-08-17__release-v8.9/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1452,
+      "pr_status": "open_awaiting_human_review",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-17__release-v8.9/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -131,7 +131,8 @@
   "merge_gate": {
     "epics_merged": [],
     "epics_pending": ["EPIC-01"],
-    "all_merged": false
+    "all_merged": false,
+    "notes": "EPIC-01 PR #1452 open, head_sha e15874c5288d5ab3ff4a95de12a32e1035608fe4. Awaiting human Director of Quality PR sign-off and Product Owner acceptance — always-human gates (execution_prompt.md §4/§5.3), engine may not self-merge."
   },
 
   "sealed": false,
