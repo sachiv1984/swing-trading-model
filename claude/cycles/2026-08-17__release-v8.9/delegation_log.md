@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-08-17
+Last Updated: 2026-08-18
 
 # Delegation Log — 2026-08-17__release-v8.9
 
@@ -40,3 +40,37 @@ Append-only. Do not edit previous entries.
 - **Unblock criteria:** Backend field added; frontend consumers updated on both Card and Table views; regression tests (pytest + Playwright) added and passing; pre-existing e2e fixtures re-verified against the corrected field; Backend Engineering Patterns Owner and Frontend Specifications & UX Documentation Owner sign-off.
 - **Commit format required:** `[EPIC-01][ST-02] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-01`
 - **Status:** Unblocked — same in-session completion pattern as DEL-20260817-01. Agent-mediated Backend Engineering Patterns Owner and Frontend Specifications & UX Documentation Owner sign-offs (§5.3) both cleared Approved 2026-08-17; regression suite (pytest 2/2, Playwright 2/2) passing, pre-existing e2e fixtures re-verified.
+
+---
+
+## DEL-20260818-01
+
+- **ST Item:** ST-23 — §13 System Boundary Review: Automated AI Post-Trade Debrief
+- **EPIC:** EPIC-02
+- **Classification:** delegated_decision
+- **Assigned to:** Strategy Rules & System Intent Owner
+- **GitHub Issue:** #1451
+- **Branch:** exec/2026-08-17__release-v8.9/EPIC-02
+- **Delegated at:** 2026-08-18T00:00:00Z
+- **What is needed:** Produce a §13 pre-assessment document per `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-gate-story-scoping.md` §2's 5 acceptance criteria, addressing determinism/own-data-only/non-predictive/decision-support-only against ST-06's "one suggested focus area" output specifically, with binding conditions and an explicit Determination.
+- **Spec reference:** `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-gate-story-scoping.md` (scoping); deliverable is `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md` itself
+- **Unblock criteria:** Determination reaches PASS or CONDITIONAL; Strategy Rules & System Intent Owner sign-off.
+- **Commit format required:** `[EPIC-02][ST-23] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-02`
+- **Status:** Unblocked — in-session completion, no external credential needed. Agent-mediated Strategy Rules & System Intent Owner sign-off (§5.3) required 2 retries (3 review passes total, within the 2-retry cap): Pass 1 Blocked (Conditions 1/2 prompt-instruction-only, no output-side verification — fixed by adding Condition 9); Pass 2 Blocked (Condition 9 sound but Determination section not updated to match — fixed, count and sequencing corrected); Pass 3 Approved 2026-08-18. Determination: CONDITIONAL, 9 binding conditions. Commit: `cdc27936aa2f06151ab9ed4a50f859dd9795e69b`.
+
+---
+
+## DEL-20260818-02
+
+- **ST Item:** ST-04 — Correlation/sector-concentration-aware position sizing
+- **EPIC:** EPIC-02
+- **Classification:** delegated_backend
+- **Assigned to:** Backend Engineering Patterns Owner
+- **GitHub Issue:** #1432
+- **Branch:** exec/2026-08-17__release-v8.9/EPIC-02
+- **Delegated at:** 2026-08-18T01:00:00Z
+- **What is needed:** Extend `POST /portfolio/size` (sizing_service.py) to reduce or flag suggested size when it would push sector exposure past the existing §4.2.2 canonical 30% concentration threshold, reusing (not redefining) that threshold; expose `concentration_adjusted`/`concentration_reason` per `docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md`; add a regression test confirming two same-sector positions produce a smaller second size than two uncorrelated ones would.
+- **Spec reference:** `docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md`
+- **Unblock criteria:** Backend adjustment implemented and reusing the canonical threshold; `portfolio_endpoints.md` + `openapi.yaml` updated same-commit; regression test added and passing; frontend display wired per the design record; Backend Engineering Patterns Owner sign-off.
+- **Commit format required:** `[EPIC-02][ST-04] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-02`
+- **Status:** In Progress — engine implementing directly this session (backend + frontend), not yet committed. Backend Engineering Patterns Owner agent-mediated sign-off (§5.3) not yet run.

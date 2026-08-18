@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-17T17:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-18T00:00:00Z",
+  "last_updated_utc": "2026-08-18T01:00:00Z",
 
   "preflight_notes": [
     "sprint_backlog.md's EPIC-01 section is missing full story blocks for ST-02 and ST-03 (present in sprint_backlog_index.json's EPIC-01 st_items and in the Capacity Summary's 23-item count, and referenced by other stories' Dependencies/Staging-only-ACs notes, but with no Owner/Estimated effort/Delegation class/Acceptance Criteria wrapper of their own in sprint_backlog.md). Per execution_prompt.md STEP -1.5, standard mode: acceptance criteria for both IS defined -- in stage4_backlog_slice.md (explicitly the source of truth per its own header and per sprint_backlog.md's 'Backlog Slice Source' field), so this does not block execution. Delegation class was not stated for either in sprint_backlog.md; classified here per execution_prompt.md §5.1 rules: ST-02 -> delegated_backend (backend fix, same position data path as ST-01, sign-off pattern mirrors ST-01), ST-03 -> autonomous (doc-only entry addition, unambiguous AC). sprint_backlog.md is sealed and cannot be corrected by this engine; flagging here for PMO Lead / Head of Specs Team awareness rather than halting the sprint over a documentation completeness gap in a sealed artefact whose AC is otherwise available and unambiguous."
@@ -120,19 +120,92 @@
           "notes": "The 'Trailing Stop Action Rate' section in metrics_definitions.md already existed (added v1.13.0 BLG-SPEC-61, extended v1.15.0 ST-07/BLG-BE-50) with Definition, Data Capture Requirement, and Tooling Assessment subsections -- BLG-SPEC-85's premise ('shipped without a formal entry') was stale by the time this story executed. The genuine gap against this story's AC ('tolerances stated numerically, not qualitatively') was the absence of an explicit numeric tolerance-band subsection. Added ## Validation Tolerances subsection: insufficient-sample threshold (denominator < 5), expected range (0.05-0.95 with denominator >= 5), anomalously low/high bands (< 0.05 / > 0.95 with denominator >= 10), stale-capture window (> 30 days with no new log row while eligible open positions exist), and the pre-existing 24h capture window restated for completeness. Doc version bumped 1.16.1 -> 1.17.0, Document History row to be appended at commit."
         }
       }
+    },
+    "EPIC-02": {
+      "status": "in_progress",
+      "branch": "exec/2026-08-17__release-v8.9/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-08-17__release-v8.9/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-23": {
+          "title": "§13 System Boundary Review: Automated AI Post-Trade Debrief",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1451,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-02",
+          "commit_sha": "cdc27936aa2f06151ab9ed4a50f859dd9795e69b",
+          "delegation_record_id": "DEL-20260818-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-18T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Strategy Rules & System Intent Owner",
+            "date": "2026-08-18",
+            "result": "Approved",
+            "findings": "3-pass review. Pass 1: Blocked -- Conditions 1/2 (pattern-surfacing focus area, verbatim quantitative sourcing) relied on prompt-design instruction alone with no output-side verification mechanism, a material gap for a non-deterministic free-text per-trade generative surface. Fix: added Condition 9 (output-side enforcement -- automated prescriptive-language scan + numeric cross-check against source data, both pre-display/persistence, both audit-logged, hard pre-DoQ requirement for Sprint 2). Pass 2: Blocked -- Condition 9's content accepted as sound, but Determination section still said 'eight conditions' after Condition 9 was added (internal inconsistency); also asked for explicit regenerate-then-recheck sequencing. Fixed: 'eight'->'nine' corrected throughout, Condition 9 sequencing made explicit (second check failure on regenerated text is terminal, mandatory fallback, no second regeneration; one regeneration covers both failure types if both fail on the same attempt). Pass 3: Approved -- all three verification points confirmed (count consistency, sequencing unambiguous, no other stray references)."
+          },
+          "notes": "Determination: CONDITIONAL (not PASS -- the 'one suggested focus area' output is the genuine boundary risk the scoping decision record flagged in advance; nine binding conditions carry forward, binding on ST-06's Sprint 2 implementation, confirmed in place before ST-06's own DoQ sign-off). Gates ST-06 (Sprint 2) per sprint_backlog.md's Multi-Sprint Gate Note -- ST-06 may now open for Sprint 2 execution once ST-23 (this story) reached done with a PASS/CONDITIONAL determination, which it has. Case B (SC-03, documentation-creation): spec_references set to the created review document itself -- the artefact IS the governing spec for this delegated_decision item, per the scoping decision record's own AC-01. Filed BLG-GOV-311 (backlog.md) for the strategy_rules.md §13.5 roster-table row this review's Maintenance rule calls for -- claude/strategy/ is outside execution_prompt.md's write scope (CLAUDE.md §2), so that edit is deferred to a session with Strategy Rules & System Intent Owner governance-file write authority rather than performed here."
+        },
+        "ST-04": {
+          "title": "Correlation/sector-concentration-aware position sizing",
+          "classification": "delegated_backend",
+          "status": "in_progress",
+          "assigned_to": "engine",
+          "github_issue": 1432,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260818-02",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md",
+            "backend/services/concentration_service.py",
+            "backend/services/sizing_service.py#_apply_concentration_adjustment"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": "3.1.B.implementation_in_progress",
+          "sign_off_record": {
+            "status": "pending",
+            "method": null,
+            "role": "Backend Engineering Patterns Owner",
+            "date": null,
+            "result": null,
+            "findings": null
+          },
+          "notes": "Implementation in progress this session: backend/services/concentration_service.py (new -- shared sector-exposure calc, reuses strategy_rules.md §4.2.2's canonical 30% threshold, does not redefine it); sizing_service.py extended with _apply_concentration_adjustment (reduce-or-flag per design_record.md §2); POST /portfolio/size request model + router updated to accept optional ticker; PositionSizingWidget.js + TradeEntry.js updated to pass ticker and render concentration_reason per design_record.md's display contract. Still outstanding: regression test (AC-03), portfolio_endpoints.md + openapi.yaml contract update (CLAUDE.md §2 same-commit requirement), Backend Engineering Patterns Owner sign-off, BLG-TECH backlog item for the now-4-way duplicated sector-lookup implementation noted in concentration_service.py's own docstring."
+        }
+      }
     }
   },
 
   "blocked_items": [],
-  "delegated_items": ["ST-01", "ST-02"],
-  "completed_items": ["ST-01", "ST-02", "ST-03"],
+  "delegated_items": ["ST-01", "ST-02", "ST-23", "ST-04"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-23"],
   "open_escalations": [],
 
   "merge_gate": {
     "epics_merged": ["EPIC-01"],
-    "epics_pending": [],
+    "epics_pending": ["EPIC-02"],
     "all_merged": false,
-    "notes": "EPIC-01 PR #1452 merged 2026-08-18T08:12:41Z (confirmed via `gh pr view 1452`, mergedAt non-null; synced on run sprint resume 2026-08-18 per execution_prompt.md STEP 4 resume-sync, LL-v3.9-P3-1). `all_merged` remains false: sprint_backlog.md Sprint 1 scope includes 5 further EPICs (EPIC-02..EPIC-06) not yet initialised in this execution_state.json — epics_pending is empty only because no other EPIC branch has started, not because the sprint is complete. Orphaned post-merge commit check (LL-v6.8-P3-01) run: `git log origin/main..origin/exec/2026-08-17__release-v8.9/EPIC-01` returned empty — no reconciliation needed."
+    "notes": "EPIC-01 PR #1452 merged 2026-08-18T08:12:41Z (confirmed via `gh pr view 1452`, mergedAt non-null; synced on run sprint resume 2026-08-18 per execution_prompt.md STEP 4 resume-sync, LL-v3.9-P3-1). Orphaned post-merge commit check (LL-v6.8-P3-01) run: `git log origin/main..origin/exec/2026-08-17__release-v8.9/EPIC-01` returned empty -- no reconciliation needed. EPIC-02 branch created 2026-08-18 from post-merge main, ST-23 done, ST-04/05/07 in progress or not yet started; PR not yet open. `all_merged` remains false: sprint_backlog.md Sprint 1 scope includes EPIC-03 through EPIC-06 not yet initialised in this execution_state.json."
   },
 
   "sealed": false,
