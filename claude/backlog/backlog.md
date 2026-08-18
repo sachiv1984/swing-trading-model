@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-18 (session — 1 new item added from ST-23/EPIC-02 execution: BLG-GOV-311); prior — 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior — 2026-08-17 (session — 1 new item added: BLG-SPEC-132); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-18 (session — 2 new items added from EPIC-02 execution: BLG-GOV-311, BLG-TECH-13); prior — 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior — 2026-08-17 (session — 1 new item added: BLG-SPEC-132); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4969,5 +4969,29 @@ Purely an illustrative-example inconsistency (not test-enforced, no functional i
 - `strategy_rules.md` §13.5's roster table includes a ST-06/BLG-FEAT-90 row pointing at the CONDITIONAL review document
 - Edit committed under Strategy Rules & System Intent Owner authority, in a session/prompt whose write scope explicitly covers `claude/strategy/`
 - If `strategy_rules.md`'s version is bumped: CLAUDE.md §6 governance file edit checklist steps 1–4 completed in the same commit
+
+---
+
+### BLG-TECH-13 — Consolidate 4 independent sector-lookup implementations
+
+**Priority:** P3 (Low)
+**Type:** Platform / Technical Debt
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-04/EPIC-02, 2026-08-17__release-v8.9 — 2026-08-18
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The codebase now carries four independent implementations of "look up a ticker's sector, DB-first, falling back to open positions": `routers/pre_entry_validation.py::_get_ticker_sector`, `services/compliance_recheck_service.py::_get_ticker_sector`, `routers/portfolio_risk.py::_lookup_sector`/`_get_ticker_sector_map`, and the new `services/concentration_service.py::get_ticker_sector` added by ST-04 (BLG-BE-104). ST-04 deliberately did not refactor the first three — they are working, independently tested code (`test_pre_entry_validation.py`, `test_compliance_recheck.py`, `test_portfolio_risk_sector.py`) outside ST-04's scope, and touching them risked regressions unrelated to this story's own acceptance criteria. This mirrors the precedent of `check_market_regime()`'s two divergent implementations (BLG-BE-? consolidated as its own story rather than folded into the story that found it).
+
+**Scope**
+- Consolidate all sector-lookup logic into one shared function (candidate home: `services/concentration_service.py::get_ticker_sector`, already DB-first/no-live-call)
+- Update `pre_entry_validation.py`, `compliance_recheck_service.py`, and `portfolio_risk.py` to import and use the shared function
+- Preserve existing test-patch targets where possible (e.g. `patch("routers.pre_entry_validation._get_ticker_sector", ...)` continues to work if the name is imported into that module's namespace rather than removed outright), or update the affected tests in the same commit if patch targets must change
+
+**Acceptance Criteria**
+- Exactly one sector-lookup implementation exists in the codebase; the other three call sites delegate to it
+- All 4 existing test suites (`test_pre_entry_validation.py`, `test_compliance_recheck.py`, `test_portfolio_risk_sector.py`, `test_sizing_concentration.py`) pass unchanged in behaviour (same assertions, potentially updated patch targets)
+- Backend Engineering Patterns Owner sign-off
 
 ---

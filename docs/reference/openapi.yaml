@@ -5688,6 +5688,13 @@ components:
           type: number
           nullable: true
           description: Override FX rate (USD/GBP). If omitted, live rate is fetched.
+        ticker:
+          type: string
+          nullable: true
+          description: >-
+            Candidate ticker (ST-04, BLG-BE-104). When provided, enables
+            sector-concentration-aware size adjustment. Omitting it preserves
+            pre-ST-04 sizing behaviour exactly.
 
     PositionSizeResponse:
       type: object

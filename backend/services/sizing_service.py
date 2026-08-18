@@ -25,6 +25,11 @@ from typing import Dict, Optional
 from database import get_portfolio, get_latest_snapshot, get_settings
 from utils.pricing import get_live_fx_rate
 from utils.calculations import calculate_uk_entry_fees, calculate_us_entry_fees
+from services.concentration_service import (
+    SECTOR_CONCENTRATION_PCT,
+    get_ticker_sector,
+    get_sector_exposure,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -60,12 +65,120 @@ def _floor_4dp(value: float) -> float:
     return math.floor(value * 10000) / 10000
 
 
+# ---------------------------------------------------------------------------
+# ST-04 (BLG-BE-104) — Sector-concentration-aware size adjustment
+# ---------------------------------------------------------------------------
+# Flag-only zone (below the canonical §4.2.2 reduce threshold): elevated but
+# not yet reduced. Backend-Engineering-Owner-confirmed implementation
+# constant per the design record's explicit delegation (design_record.md
+# Notes: "Backend Engineering Patterns Owner must confirm the concentration-
+# reduction threshold ... at implementation time") — distinct from
+# SECTOR_CONCENTRATION_PCT (30%, strategy_rules.md §4.2.2 canonical, reused
+# unchanged as the reduce threshold below).
+_CONCENTRATION_WARN_PCT = 20.0
+
+
+def _apply_concentration_adjustment(
+    ticker: Optional[str],
+    market: str,
+    suggested_shares: float,
+    entry_price: float,
+    fx_rate_used: float,
+) -> Dict:
+    """
+    ST-04: reduce or flag suggested_shares when this candidate position would
+    push sector exposure toward/past the canonical §4.2.2 concentration
+    threshold, reflecting the user's *existing open-position* sector
+    concentration rather than just the candidate ticker's own volatility.
+
+    - No existing exposure in the candidate's sector: no adjustment.
+    - Projected sector allocation in [_CONCENTRATION_WARN_PCT, SECTOR_CONCENTRATION_PCT):
+      flagged only — concentration_adjusted stays False, concentration_reason is set.
+    - Projected sector allocation >= SECTOR_CONCENTRATION_PCT: shares are capped
+      so the new position's value keeps projected sector allocation at the
+      canonical threshold (never increased beyond the baseline suggestion).
+
+    §13: deterministic, rule-based over the user's own data; advisory only —
+    the caller (sizing_service.size_position) returns this as a suggestion,
+    the shares field remains user-editable per design_record.md §3.
+
+    Returns:
+        {"final_shares": float, "concentration_adjusted": bool, "concentration_reason": Optional[str]}
+    """
+    default = {
+        "final_shares": suggested_shares,
+        "concentration_adjusted": False,
+        "concentration_reason": None,
+    }
+    if not ticker or suggested_shares <= 0:
+        return default
+
+    try:
+        sector = get_ticker_sector(ticker)
+        if not sector:
+            return default
+
+        exposure = get_sector_exposure(sector)
+        if not exposure:
+            return default
+
+        total_value = exposure["total_portfolio_value_gbp"]
+        count = exposure["position_count"]
+        if total_value <= 0 or count == 0:
+            return default
+
+        sector_value = exposure["sector_value_gbp"]
+        current_pct = round(sector_value / total_value * 100, 2)
+
+        price_gbp = entry_price / fx_rate_used if market == "US" else entry_price
+        if price_gbp <= 0:
+            return default
+
+        new_value_gbp = suggested_shares * price_gbp
+        projected_pct = round((sector_value + new_value_gbp) / total_value * 100, 2)
+        plural = "s" if count != 1 else ""
+
+        if projected_pct >= SECTOR_CONCENTRATION_PCT:
+            max_new_value_gbp = max(0.0, (SECTOR_CONCENTRATION_PCT / 100 * total_value) - sector_value)
+            capped_shares = _floor_4dp(max_new_value_gbp / price_gbp)
+            final_shares = min(suggested_shares, capped_shares)
+            if final_shares < suggested_shares:
+                reduction_pct = round((1 - (final_shares / suggested_shares)) * 100)
+                reason = (
+                    f"Reduced {reduction_pct}% — {count} open position{plural} already in "
+                    f"{sector} ({current_pct}% of portfolio heat)."
+                )
+                return {
+                    "final_shares": final_shares,
+                    "concentration_adjusted": True,
+                    "concentration_reason": reason,
+                }
+            return default
+
+        if projected_pct >= _CONCENTRATION_WARN_PCT:
+            reason = (
+                f"{count} open position{plural} already in {sector} "
+                f"({current_pct}% of portfolio heat) — approaching "
+                f"{SECTOR_CONCENTRATION_PCT:.0f}% concentration limit."
+            )
+            return {
+                "final_shares": suggested_shares,
+                "concentration_adjusted": False,
+                "concentration_reason": reason,
+            }
+
+        return default
+    except Exception:
+        return default
+
+
 def size_position(
     entry_price: float,
     stop_price: float,
     risk_percent: float,
     market: str = "UK",
     fx_rate: Optional[float] = None,
+    ticker: Optional[str] = None,
 ) -> Dict:
     """
     Calculate suggested position size per strategy_rules.md §4.1.
@@ -76,6 +189,9 @@ def size_position(
         risk_percent: Percentage of portfolio value to risk, e.g. 1.00 for 1%
         market:       "US" or "UK" (default "UK")
         fx_rate:      User-provided FX override for US positions. If None, uses live rate.
+        ticker:       Optional candidate ticker. When provided, enables the ST-04
+                      concentration-aware size adjustment (BLG-BE-104). When omitted,
+                      sizing behaves exactly as before ST-04 (no adjustment).
 
     Returns:
         Dict conforming to the PositionSizeResponse schema in portfolio_endpoints.md.
@@ -145,6 +261,21 @@ def size_position(
     suggested_shares = _floor_4dp(raw_shares)
 
     # ------------------------------------------------------------------
+    # ST-04 (BLG-BE-104) — sector-concentration-aware adjustment
+    # Applied to the baseline risk/volatility-based share count above,
+    # before fee/cost estimation, so estimated_cost/estimated_fees below
+    # reflect the (possibly reduced) final suggested_shares.
+    # ------------------------------------------------------------------
+    concentration = _apply_concentration_adjustment(
+        ticker=ticker,
+        market=market,
+        suggested_shares=suggested_shares,
+        entry_price=entry_price,
+        fx_rate_used=fx_rate_used,
+    )
+    suggested_shares = concentration["final_shares"]
+
+    # ------------------------------------------------------------------
     # Fee estimation — uses settings for commission/rate values
     # ------------------------------------------------------------------
     settings_list = get_settings()
@@ -187,6 +318,8 @@ def size_position(
         "fx_rate_used": round(fx_rate_used, 4),
         "cash_sufficient": cash_sufficient,
         "available_cash": round(available_cash, 2),
+        "concentration_adjusted": concentration["concentration_adjusted"],
+        "concentration_reason": concentration["concentration_reason"],
     }
 
     if not cash_sufficient:

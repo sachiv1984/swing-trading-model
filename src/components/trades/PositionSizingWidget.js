@@ -3,7 +3,7 @@ import { api } from "../../api/base44Client";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Loader2, Ruler } from "lucide-react";
+import { Loader2, Ruler, AlertTriangle } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 const SYSTEM_MESSAGES = {
@@ -32,6 +32,7 @@ export default function PositionSizingWidget({
   shares,
   onSharesChange,
   defaultRiskPercent,
+  ticker,
 }) {
   const [riskPercent, setRiskPercent] = useState(() => {
     const stored = sessionStorage.getItem(SESSION_KEY);
@@ -82,6 +83,10 @@ export default function PositionSizingWidget({
         if (market === "US" && fxRate) {
           body.fx_rate = fxRate;
         }
+        // ST-04 (BLG-BE-104): pass ticker to enable concentration-aware sizing
+        if (ticker) {
+          body.ticker = ticker;
+        }
 
         // doFetch unwraps the {status, data} envelope — response IS the data object directly
         const response = await api.portfolio.size(body);
@@ -107,7 +112,7 @@ export default function PositionSizingWidget({
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [entryPrice, stopPrice, market, fxRate, riskPercent]);
+  }, [entryPrice, stopPrice, market, fxRate, riskPercent, ticker]);
 
   const handleUseSuggested = () => {
     if (sizingResult?.suggested_shares != null) {
@@ -200,6 +205,15 @@ export default function PositionSizingWidget({
           </div>
         </div>
       </div>
+
+      {/* ST-04 (BLG-BE-104): concentration reason — re-evaluates on every debounced
+          recalculation, no dismiss affordance (design_record.md §2) */}
+      {isValid && sizingResult?.concentration_reason && (
+        <p className="flex items-start gap-1.5 text-amber-600 dark:text-amber-400 text-xs">
+          <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+          <span>{sizingResult.concentration_reason}</span>
+        </p>
+      )}
 
       {status?.type === "amber" && (
         <p className="text-amber-400 text-xs">{status.text}</p>
