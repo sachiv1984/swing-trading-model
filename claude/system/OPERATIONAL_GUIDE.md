@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.164
-**Last Updated:** 2026-08-17
+**Version:** 4.165
+**Last Updated:** 2026-08-18
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.28)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.29)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1455,8 +1455,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.164 |
-| Last Updated | 2026-08-17 |
+| Version | 4.165 |
+| Last Updated | 2026-08-18 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1472,7 +1472,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.11 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.8 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.28 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.29 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.28 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.165 | 2026-08-18 | **Sprint execution `2026-08-17__release-v8.9` EPIC-06/ST-19 (BLG-GOV-308) — post_ship_closure.md v2.28→v2.29: STEP 10 now unconditionally writes `last_post_ship_cycle`/`last_post_ship_utc`.** §10 source prompt header v2.28→v2.29 (line 1062). §14 Post-Ship Closure Engine v2.28→v2.29. §14 Version 4.164→4.165/2026-08-18. Change: `claude/schemas/state_field_owners.json` has always asserted both fields are owned by `post_ship_closure.md`, but no STEP in that file actually wrote either one — the registry's ownership claim did not match reality, the exact class of drift the registry exists to prevent (found during ST-29/EPIC-07's `prior_cycle` investigation, `2026-08-14__release-v8.8`). STEP 10 now writes both fields unconditionally every run, alongside the existing `prior_cycle` write: `last_post_ship_cycle` from this invocation's own `<cycle_id>` (same value as `prior_cycle`, recorded under a second field name for a different downstream reader), `last_post_ship_utc` from the current timestamp. No `state_field_owners.json` change needed — it already named the correct engine; only the write itself was missing. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-19, 2026-08-18). |
 | 4.164 | 2026-08-17 | **Post-ship closure `2026-08-14__release-v8.8` STEP 12 (`groom backlog` ID Uniqueness Scan finding), applied at user request — roadmap_prompt.md v9.14→v9.15: §8.5.C.5 BLG-ID collision advisory now scans `backlog_archive.md` in addition to `backlog.md`.** §6 source prompt header v9.14→v9.15 (line 399). §14 Roadmap Engine Source v9.14→v9.15. §14 Version 4.163→4.164/2026-08-17. Change: the advisory previously greped only `backlog.md` for the highest existing ID in each series — an ID already used and later archived was invisible to that grep, so it could be reissued to a new, unrelated item. 2 genuine collisions (`BLG-FEAT-84`, `BLG-SEC-18`) were found this way in `backlog_archive.md` during this closure's own STEP 12 ID Uniqueness Scan; both are now flagged for Product Owner / Head of Specs Team review (non-blocking, joins 5 pre-existing legacy collisions). The `backlog-add` skill already scanned both files correctly — this was the one remaining ID-assignment path that did not. `roadmap_prompt_changelog.md` also backfilled a missing v9.14 row found during this edit's own pre-check (per §9.1). Authority: Head of Specs Team (post-ship closure `2026-08-14__release-v8.8`, STEP 12 finding, agent-mediated fix, user-directed). |
 | 4.163 | 2026-08-17 | **Sprint execution `2026-08-14__release-v8.8` EPIC-07/ST-29 (BLG-GOV-293) — post_ship_closure.md v2.27→v2.28: STEP 10 named the sole authoritative writer of `.claude_current_state.json.prior_cycle`.** §10 source prompt header v2.27→v2.28 (line 1062). §14 Post-Ship Closure Engine v2.27→v2.28. §14 Version 4.162→4.163/2026-08-17. Change: `prior_cycle` had no owning engine at all (found stale at `2026-08-08__release-v8.5` release planning, mirroring the OA-1 `next_release` gap) — STEP 10 now writes this run's own `<cycle_id>` unconditionally, chosen over `release_planning_prompt.md` STEP 9 because by STEP 9 `active_cycle` has already advanced to the new cycle, losing the old value. **Cross-branch version-collision resolved at merge (CLAUDE.md §8 step 2a):** originally cut as v4.162/post_ship_closure.md v2.27 on the `EPIC-07` branch, independently and in parallel with `EPIC-03`'s ST-13 changelog-service fix, which was also cut as v4.162/v2.27 and merged to `main` first (PR #1424). Renumbered here at EPIC-07's merge-conflict resolution to the next free slot (v4.163/v2.28) rather than let two different changes share one version number — see this file's own §8-collision note on the (now-superseded) v4.162 row below for the pre-renumbering disclosure. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-29, 2026-08-17). |
 | 4.162 | 2026-08-16 | **Sprint execution `2026-08-14__release-v8.8` EPIC-03/ST-13 (BLG-FE-161) — post_ship_closure.md v2.26→v2.27: `Changes shipped` template gains a `User Impact` column.** §10 source prompt header v2.26→v2.27 (line 1062). §14 Post-Ship Closure Engine v2.26→v2.27. §14 Version 4.161→4.162/2026-08-16. Change: STEP 1.1 entry template and STEP 1.2 entry rules updated so each `Changes shipped` row carries a curated `User Impact` cell (user-benefit copy, or `—` if no user-facing effect), populated at authoring time rather than deferred — backs `GET /changelog/latest`'s (`changelog_endpoints.md` v1.1) new sourcing rule for the in-app "What's New" panel (`dashboard.md` §6A v3.3), which now reads this column exclusively and excludes blank/`—` rows. Design source: `docs/design/2026-08-14__release-v8.8/whats-new-user-benefit-copy/decision_record.md`. Authority: Sprint Execution Engine (ST-13, `2026-08-14__release-v8.8` EPIC-03, 2026-08-16). |
