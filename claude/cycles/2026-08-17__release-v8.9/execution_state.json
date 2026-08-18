@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-17T17:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-18T09:25:00Z",
+  "last_updated_utc": "2026-08-18T09:35:00Z",
 
   "preflight_notes": [
     "sprint_backlog.md's EPIC-01 section is missing full story blocks for ST-02 and ST-03 (present in sprint_backlog_index.json's EPIC-01 st_items and in the Capacity Summary's 23-item count, and referenced by other stories' Dependencies/Staging-only-ACs notes, but with no Owner/Estimated effort/Delegation class/Acceptance Criteria wrapper of their own in sprint_backlog.md). Per execution_prompt.md STEP -1.5, standard mode: acceptance criteria for both IS defined -- in stage4_backlog_slice.md (explicitly the source of truth per its own header and per sprint_backlog.md's 'Backlog Slice Source' field), so this does not block execution. Delegation class was not stated for either in sprint_backlog.md; classified here per execution_prompt.md §5.1 rules: ST-02 -> delegated_backend (backend fix, same position data path as ST-01, sign-off pattern mirrors ST-01), ST-03 -> autonomous (doc-only entry addition, unambiguous AC). sprint_backlog.md is sealed and cannot be corrected by this engine; flagging here for PMO Lead / Head of Specs Team awareness rather than halting the sprint over a documentation completeness gap in a sealed artefact whose AC is otherwise available and unambiguous."
@@ -122,13 +122,13 @@
       }
     },
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-08-17__release-v8.9/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-17__release-v8.9/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/test_job_registration_screener_risk_off.py", "tests/test_trade_plan_setup_type_default.py", "tests/test_service_layer_direct_coverage.py", "tests/e2e/whats-new-panel.spec.js"],
       "stories": {
         "ST-12": {
           "title": "Add test coverage for screener_refresh/risk_off_alerts job-registration wiring",
