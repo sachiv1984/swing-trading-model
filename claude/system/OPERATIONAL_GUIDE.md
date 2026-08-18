@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.165
+**Version:** 4.167
 **Last Updated:** 2026-08-18
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.15)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.16)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.68)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.69)
 
 ### 8.1 Invocation
 
@@ -1455,7 +1455,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.165 |
+| Version | 4.167 |
 | Last Updated | 2026-08-18 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
@@ -1464,11 +1464,11 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.14 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.9 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.15 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.16 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.49 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.16 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.68 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.69 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.11 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.8 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
@@ -1496,6 +1496,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.167 | 2026-08-18 | **Sprint execution `2026-08-17__release-v8.9` EPIC-06/ST-21 (BLG-GOV-264) — roadmap_prompt.md v9.15→v9.16: STEP 8's Displacement candidate flag now also creates/updates `claude/roadmap/displacement_debt_register.md`.** §6 source prompt header v9.15→v9.16 (line 399). §14 Roadmap Engine Source v9.15→v9.16. §14 Version 4.166→4.167/2026-08-18. Change: STEP 8's displacement-flag instruction now writes a paired update to `claude/roadmap/displacement_debt_register.md` — create-if-absent (using the format/seed content designed in full at ST-14, `2026-07-27__release-v7.9`), new-candidate row creation, re-flag counter increment, and Disposition resolution to "Displaced" when a Kill/Replace decision resolves a prior flagged candidate. **Write-scope self-correction (found and fixed same-session):** this engine initially created the register file directly, which `execution_prompt.md` §7's write-scope hard gate does not permit (`claude/roadmap/*` has no sprint-story exception, unlike `claude/system/*` governance prompts) — reverted before commit; the prompt-wiring half (this bump) is a legitimate Class 6 governance-prompt edit and stands, but physical file creation is deferred to the next live `run roadmap`/`manage roadmap` invocation, which does hold that write scope. `ESC-EXEC-20260727-02` (sealed, `2026-07-27__release-v7.9`) is left untouched per "never modify sealed artefacts"; a live cross-reference, `ESC-EXEC-20260818-02`, tracks the remaining file-creation step in this cycle's own `execution_escalations.md` instead. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-21, 2026-08-18). |
+| 4.166 | 2026-08-18 | **Sprint execution `2026-08-17__release-v8.9` EPIC-06/ST-20 (BLG-GOV-309) — execution_prompt.md v3.68→v3.69: explicit derivation rules added for the previously-undocumented `completed_utc`/`blocked_since_utc` fields.** §8 source prompt header v3.68→v3.69 (line 887). §14 Execution Engine Source v3.68→v3.69. §14 Version 4.165→4.166/2026-08-18. Change: root-caused a ~5-6 hour timestamp drift found on PR #1427's dual-role DoQ review (`2026-08-14__release-v8.8` EPIC-06) between `execution_state.json`'s recorded `completed_utc` and commits' actual `authoredDate` — neither field was ever specified anywhere in `execution_prompt.md` (no schema, no derivation rule), so sessions approximated plausible timestamps rather than deriving real ones. Fix: §3.1 step 4b (new) derives `completed_utc` from the pushed commit's own authored timestamp (`git log -1 --format=%aI <sha>`); §3.1.B step 3 / §3.1.D step 2 derive `blocked_since_utc` from the real wall-clock time at the moment of the blocking write (`date -u`). Empirically dogfooded in the same session: ST-19's own `completed_utc` was derived via the new rule and cross-checked against an independent `date -u` reading within a minute. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-20, 2026-08-18). |
 | 4.165 | 2026-08-18 | **Sprint execution `2026-08-17__release-v8.9` EPIC-06/ST-19 (BLG-GOV-308) — post_ship_closure.md v2.28→v2.29: STEP 10 now unconditionally writes `last_post_ship_cycle`/`last_post_ship_utc`.** §10 source prompt header v2.28→v2.29 (line 1062). §14 Post-Ship Closure Engine v2.28→v2.29. §14 Version 4.164→4.165/2026-08-18. Change: `claude/schemas/state_field_owners.json` has always asserted both fields are owned by `post_ship_closure.md`, but no STEP in that file actually wrote either one — the registry's ownership claim did not match reality, the exact class of drift the registry exists to prevent (found during ST-29/EPIC-07's `prior_cycle` investigation, `2026-08-14__release-v8.8`). STEP 10 now writes both fields unconditionally every run, alongside the existing `prior_cycle` write: `last_post_ship_cycle` from this invocation's own `<cycle_id>` (same value as `prior_cycle`, recorded under a second field name for a different downstream reader), `last_post_ship_utc` from the current timestamp. No `state_field_owners.json` change needed — it already named the correct engine; only the write itself was missing. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-19, 2026-08-18). |
 | 4.164 | 2026-08-17 | **Post-ship closure `2026-08-14__release-v8.8` STEP 12 (`groom backlog` ID Uniqueness Scan finding), applied at user request — roadmap_prompt.md v9.14→v9.15: §8.5.C.5 BLG-ID collision advisory now scans `backlog_archive.md` in addition to `backlog.md`.** §6 source prompt header v9.14→v9.15 (line 399). §14 Roadmap Engine Source v9.14→v9.15. §14 Version 4.163→4.164/2026-08-17. Change: the advisory previously greped only `backlog.md` for the highest existing ID in each series — an ID already used and later archived was invisible to that grep, so it could be reissued to a new, unrelated item. 2 genuine collisions (`BLG-FEAT-84`, `BLG-SEC-18`) were found this way in `backlog_archive.md` during this closure's own STEP 12 ID Uniqueness Scan; both are now flagged for Product Owner / Head of Specs Team review (non-blocking, joins 5 pre-existing legacy collisions). The `backlog-add` skill already scanned both files correctly — this was the one remaining ID-assignment path that did not. `roadmap_prompt_changelog.md` also backfilled a missing v9.14 row found during this edit's own pre-check (per §9.1). Authority: Head of Specs Team (post-ship closure `2026-08-14__release-v8.8`, STEP 12 finding, agent-mediated fix, user-directed). |
 | 4.163 | 2026-08-17 | **Sprint execution `2026-08-14__release-v8.8` EPIC-07/ST-29 (BLG-GOV-293) — post_ship_closure.md v2.27→v2.28: STEP 10 named the sole authoritative writer of `.claude_current_state.json.prior_cycle`.** §10 source prompt header v2.27→v2.28 (line 1062). §14 Post-Ship Closure Engine v2.27→v2.28. §14 Version 4.162→4.163/2026-08-17. Change: `prior_cycle` had no owning engine at all (found stale at `2026-08-08__release-v8.5` release planning, mirroring the OA-1 `next_release` gap) — STEP 10 now writes this run's own `<cycle_id>` unconditionally, chosen over `release_planning_prompt.md` STEP 9 because by STEP 9 `active_cycle` has already advanced to the new cycle, losing the old value. **Cross-branch version-collision resolved at merge (CLAUDE.md §8 step 2a):** originally cut as v4.162/post_ship_closure.md v2.27 on the `EPIC-07` branch, independently and in parallel with `EPIC-03`'s ST-13 changelog-service fix, which was also cut as v4.162/v2.27 and merged to `main` first (PR #1424). Renumbered here at EPIC-07's merge-conflict resolution to the next free slot (v4.163/v2.28) rather than let two different changes share one version number — see this file's own §8-collision note on the (now-superseded) v4.162 row below for the pre-renumbering disclosure. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-29, 2026-08-17). |

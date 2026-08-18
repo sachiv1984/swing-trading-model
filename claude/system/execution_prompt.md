@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.68
-**Last Updated:** 2026-08-12 (action-all-audit-points session — §3.2.A roll-up backstop re-trigger on post-seal edits, LL-v8.4-P4-01a; §5.3 quantitative-claim second-review-pass requirement, LL-v8.6-P3-01)
+**Version:** 3.69
+**Last Updated:** 2026-08-18 (ST-20/BLG-GOV-309, EPIC-06, v8.9: §3.1 step 4b + §3.1.B step 3 + §3.1.D step 2 gain explicit derivation rules for completed_utc/blocked_since_utc — the root cause of a ~5-6 hour timestamp drift); prior — 2026-08-12 (action-all-audit-points session — §3.2.A roll-up backstop re-trigger on post-seal edits, LL-v8.4-P4-01a; §5.3 quantitative-claim second-review-pass requirement, LL-v8.6-P3-01); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -557,6 +557,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 4. Push to `exec/<cycle_id>/EPIC-xx`.
 4a. **Commit SHA record (LL-v4.8-EX-01):** Immediately after push, run `git rev-parse HEAD` to obtain the pushed commit SHA. Write it to `execution_state.json` for this ST item: `epics.<EPIC-xx>.stories.<ST-xx>.commit_sha`. For batch commits covering multiple stories, write the same SHA to all covered story entries. Do not defer this write to sprint close — an unrecorded SHA cannot be recovered if the branch advances before seal.
+4b. **`completed_utc` derivation (BLG-GOV-309, ST-20, v8.9):** In the same step as 4a, derive `completed_utc` from the pushed commit's own authored timestamp — run `git log -1 --format=%aI <sha>` (the SHA from 4a) and write that value, not an approximated or narrated wall-clock estimate. This field was previously undocumented anywhere in this prompt (no schema definition, no derivation rule existed for it or for `blocked_since_utc`), which is the root cause of the ~5-6 hour drift found between recorded `completed_utc` values and commits' actual `authoredDate` (BLG-GOV-309, found via `gh pr view`'s commit data on EPIC-06's stories, `2026-08-14__release-v8.8`). For batch commits covering multiple stories, the same authored timestamp applies to all covered story entries, same as the SHA.
 5. `governance_sync.yml` closes the GitHub issue automatically on push.
 6. Verify issue is closed (re-check after push).
 
@@ -565,6 +566,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 epics.<EPIC-xx>.stories.<ST-xx>:
   status: done
   commit_sha: <pushed sha>
+  completed_utc: <commit's own %aI authored timestamp — see 4b, not an estimate>
   acceptance_verified: true   # set once AC confirmed met
 ```
 10. Deviation check: compare implementation against canonical spec.
@@ -600,7 +602,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 2. Create a delegation record in `delegation_log.md` (Section 11).
    - For `delegated_backend`: include spec reference and required layer(s) (router / service / database).
    - For `delegated_frontend`: include the complete Base44 prompt draft (all six sections). **New page route (AUD-2026-05-21-005):** If the story creates a new frontend page (new route), the delegation spec must additionally require: (a) `createPageUrl` map update in `pages.config.js` with the new route entry; (b) nav/sidebar registration if applicable. Explicitly state the target map key and value in the spec.
-3. Set item status to `blocked_backend` or `blocked_frontend` in `execution_state.json`.
+3. Set item status to `blocked_backend` or `blocked_frontend` in `execution_state.json`. **`blocked_since_utc` derivation (BLG-GOV-309, ST-20, v8.9):** In the same write, record `blocked_since_utc` as the real current wall-clock time at the moment of this write — obtain it via a shell timestamp command (e.g. `date -u +%Y-%m-%dT%H:%M:%SZ`), not an approximated or narrated value. Unlike `completed_utc` (step 4b below, derived from a commit's own authored timestamp), there is no commit to anchor to at blocking time — this field's correctness depends on reading the actual current time at the moment of the write, not estimating it.
 4. Record `delegation_record_id` and `unblock_criteria` in the item.
 5. Surface the delegation to the assigned role with:
    - Exactly what is needed (with spec reference or Base44 prompt draft)
@@ -651,7 +653,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 #### 3.1.D If `delegated_decision`:
 
 1. Create an escalation record in `execution_escalations.md`.
-2. Set item status to `blocked_decision`.
+2. Set item status to `blocked_decision`. Record `blocked_since_utc` per the same real-wall-clock-time rule as §3.1.B step 3 above (BLG-GOV-309, ST-20, v8.9).
 3. Surface to the owning authority:
    - The decision required
    - The unblock criteria

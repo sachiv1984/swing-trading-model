@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.15
-**Last Updated:** 2026-08-17 (post-ship closure 2026-08-14__release-v8.8, STEP 12 ID Uniqueness Scan finding: STEP 8.5.C.5's BLG-ID collision advisory now scans `backlog_archive.md` in addition to `backlog.md`, closing the gap that let `BLG-FEAT-84`/`BLG-SEC-18` each get reissued to a second, unrelated item)
+**Version:** 9.16
+**Last Updated:** 2026-08-18 (ST-21, EPIC-06, v8.9, BLG-GOV-264: STEP 8's "Displacement candidate flag" instruction now also updates the newly-placed `claude/roadmap/displacement_debt_register.md`); prior — 2026-08-17 (post-ship closure 2026-08-14__release-v8.8, STEP 12 ID Uniqueness Scan finding: STEP 8.5.C.5's BLG-ID collision advisory now scans `backlog_archive.md` in addition to `backlog.md`, closing the gap that let `BLG-FEAT-84`/`BLG-SEC-18` each get reissued to a second, unrelated item); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -602,6 +602,8 @@ For every initiative decide: ➕ Add · 🔁 Replace · ⏸ Defer · ❌ Kill
 Hard rules: Adds require stops; stops ≥ adds; scarce skills protected. Quality / Security / Financial Records may block within their domains per Team Charter.
 
 **Displacement candidate flag:** If any initiative is the natural next-stop candidate, record in `claude/roadmap/initiative_register.md`: `Displacement candidate: Yes — <rationale> — <date>`. Not in `cycle_record.md` or `current_roadmap.md`.
+
+**Displacement Debt Register update (ST-21, BLG-GOV-264, v8.9):** In the same step, also update `claude/roadmap/displacement_debt_register.md`. **If the file does not yet exist, create it first** using the format, purpose statement, and seed content documented at `claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-14.md#Displacement Debt Register — Design` (this instruction was added by `execution_prompt.md`'s Sprint Execution Engine at ST-21, which — per its own §7 write-scope hard gate — can edit this prompt but cannot itself create files under `claude/roadmap/`; the file's actual physical creation is deferred to this routine's own next live invocation, which does hold that write scope). Once the file exists, check whether the named candidate already has a row there. If not: add a new row (`Candidate`, `Rationale as flagged`, `First flagged` = this cycle's Decision Log ID and date, `Times re-flagged` = 0, `Disposition` = "Named, not yet displaced", `Disposition date/cycle` = "—"). If it already has a row: increment `Times re-flagged` by 1 (unless this is the same cycle the row was first added). Separately — whenever THIS step's own Kill/Replace decision names a candidate that already carries an open "Named, not yet displaced" row in the register (i.e. this cycle's displacement decision resolves a prior cycle's flagged candidate), resolve that row's `Disposition` to "Displaced" with this cycle's Decision Log ID and date. The register's own file header documents the remaining two disposition outcomes ("Completed without displacement", "Retired without use") and when to apply them — those are typically resolved at Backlog/Roadmap Management time (when an initiative's actual fate becomes known), not necessarily at this STEP 8 write.
 
 Valid outcome: no changes made. Still requires roadmap Last Updated refresh and a "no change" decision log entry.
 
