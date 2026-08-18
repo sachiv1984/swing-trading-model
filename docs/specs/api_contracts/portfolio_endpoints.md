@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.7.0
-**Last Updated:** 2026-08-18 (ST-04, EPIC-02, v8.9, BLG-BE-104 — POST /portfolio/size gains ticker request field and concentration_adjusted/concentration_reason response fields); prior — 2026-08-12 (ST-03, EPIC-02, v8.6, BLG-BE-91 — POST /portfolio/position gains trade_plan_linked/trade_plan_id response fields); prior — 2026-07-30 (ST-03, EPIC-01, v8.0, BLG-SPEC-107 — FX audit trail completeness fix, 3 endpoints gained fx_rate_used)
+**Version:** 2.8.0
+**Last Updated:** 2026-08-18 (ST-05, EPIC-02, v8.9, BLG-FEAT-91 — POST /portfolio/size gains heat_impact_percent response field); prior — 2026-08-18 (ST-04, EPIC-02, v8.9, BLG-BE-104 — POST /portfolio/size gains ticker request field and concentration_adjusted/concentration_reason response fields); prior — 2026-08-12 (ST-03, EPIC-02, v8.6, BLG-BE-91 — POST /portfolio/position gains trade_plan_linked/trade_plan_id response fields)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -301,7 +301,8 @@ Response uses the standard success envelope from **conventions.md**.
     "cash_sufficient": true,
     "available_cash": 20000.00,
     "concentration_adjusted": false,
-    "concentration_reason": null
+    "concentration_reason": null,
+    "heat_impact_percent": 0.80
   }
 }
 ```
@@ -322,7 +323,8 @@ Response uses the standard success envelope from **conventions.md**.
     "cash_sufficient": true,
     "available_cash": 20000.00,
     "concentration_adjusted": true,
-    "concentration_reason": "Reduced 50% — 2 open positions already in Technology (25.0% of portfolio heat)."
+    "concentration_reason": "Reduced 50% — 2 open positions already in Technology (25.0% of portfolio heat).",
+    "heat_impact_percent": 0.40
   }
 }
 ```
@@ -344,7 +346,8 @@ Response uses the standard success envelope from **conventions.md**.
     "available_cash": 8000.00,
     "max_affordable_shares": 9.3750,
     "concentration_adjusted": false,
-    "concentration_reason": null
+    "concentration_reason": null,
+    "heat_impact_percent": 0.80
   }
 }
 ```
@@ -378,6 +381,7 @@ Response uses the standard success envelope from **conventions.md**.
 | `max_affordable_shares` | Present and always populated when `cash_sufficient: false`. Floored to 4 decimal places. Maximum share quantity the user can afford given `available_cash` |
 | `concentration_adjusted` | (ST-04, BLG-BE-104) `true` when `suggested_shares` was reduced from the volatility-only baseline due to sector concentration against the user's existing open positions. Present when `valid: true`; always `false` when `ticker` was omitted from the request |
 | `concentration_reason` | (ST-04, BLG-BE-104) Human-readable reason string, e.g. `"Reduced 50% — 2 open positions already in Technology (25.0% of portfolio heat)."`, or a non-reducing flag message when exposure is elevated but below the reduce threshold. `null` when no concentration condition applies (including whenever `ticker` was omitted). This is the string the frontend renders verbatim — see `trade_plan.md §10.7` |
+| `heat_impact_percent` | (ST-05, BLG-FEAT-91) Incremental portfolio heat impact of adding `suggested_shares` at these terms — same calculation as `GET /portfolio/prospective-heat`'s `incremental_heat_percent` (reused, not duplicated; see `services/portfolio_service.py::calculate_prospective_heat`). Present when `valid: true`. `null` when `suggested_shares <= 0` or the underlying portfolio-value/position data is unavailable — this is not an error condition, callers render it as "—". Included so `PositionSizingWidget` (§10.7) and the What-If Sizing Preview (§5d) can source heat impact from this single call rather than a second endpoint call |
 | `reason` | Machine-readable reason code. Present only when `valid: false`. See reason codes table below |
 | `reason_detail` | Human-readable description of the invalid condition. Present only when `valid: false`. **For development and logging use only — must not be used as user-facing display text.** The frontend derives its own plain-language messages from the `reason` code |
 
@@ -631,6 +635,7 @@ Errors use the standard error envelope from **conventions.md**.
 | 2.6.0 | 2026-07-30 | ST-03 (EPIC-01, v8.0, BLG-SPEC-107): FX conversion audit trail completeness check against `strategy_rules.md §4.1.5`'s "FX rate used must be returned ... for auditability" requirement. Found and fixed 3 gaps where an FX-derived GBP amount was computed but the rate used was never returned: `POST /portfolio/position` (`fx_rate_used` added — was already persisted to `positions.fx_rate` but never surfaced in this response), `GET /portfolio/prospective-heat` (`fx_rate_used` added), and `GET /portfolio/pre-entry-validation`'s `cash_constraint` check (`fx_rate_used` added). `POST /portfolio/size` was already compliant (`fx_rate_used` already returned). |
 | 2.6.1 | 2026-08-12 | ST-03 (EPIC-02, v8.6, BLG-BE-91): `POST /portfolio/position` response gains `trade_plan_linked` (boolean) and `trade_plan_id` (UUID or null) — surfaces whether a trade plan was linked at position creation (explicit `trade_plan_id` request field, or the ticker/market best-effort auto-match) instead of only a server-side log line. Part of the "trade-plan linkage is the enforced default path, not silently optional" story; see `docs/specs/data_model.md` DS-12 for the paired DB-level safeguard. |
 | 2.7.0 | 2026-08-18 | ST-04 (EPIC-02, v8.9, BLG-BE-104): `POST /portfolio/size` gains optional request field `ticker` and response fields `concentration_adjusted` (boolean) and `concentration_reason` (string or null) — reflects the user's existing open-position sector concentration in the suggested size, reusing (not redefining) `strategy_rules.md §4.2.2`'s canonical 30% threshold. See `trade_plan.md §10.7` for the frontend display contract. |
+| 2.8.0 | 2026-08-18 | ST-05 (EPIC-02, v8.9, BLG-FEAT-91): `POST /portfolio/size` gains response field `heat_impact_percent` (number or null) — incremental portfolio heat impact of the suggested position, reusing `GET /portfolio/prospective-heat`'s calculation (`services/portfolio_service.py::calculate_prospective_heat`, extracted this story) rather than a second endpoint call. Feeds the new What-If Sizing Preview panel (`trade_plan.md §5d`) and `PositionSizingWidget` (§10.7). |
 
 ---
 

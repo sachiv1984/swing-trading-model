@@ -6,13 +6,16 @@ import { Label } from "../ui/label";
 import { Loader2, Ruler, AlertTriangle } from "lucide-react";
 import { cn } from "../../lib/utils";
 
-const SYSTEM_MESSAGES = {
+// ST-05 (BLG-FEAT-91): exported for reuse verbatim by WhatIfSizingPreview.js
+// (trade_plan.md §5d.3 — "same AMBER_MESSAGES / SYSTEM_MESSAGES conventions
+// as §10.7"), rather than a second, potentially-drifting copy.
+export const SYSTEM_MESSAGES = {
   INVALID_STOP_DISTANCE: "Stop price must be below entry price",
   NO_PORTFOLIO_VALUE_SNAPSHOT: "Portfolio snapshot unavailable",
 };
 
 // DEF-002 / DEF-003 fix: user input invalid conditions render amber, not grey
-const AMBER_MESSAGES = {
+export const AMBER_MESSAGES = {
   INVALID_RISK_PERCENT: "Risk % must be greater than 0",
   INVALID_ENTRY_PRICE: "Enter a valid entry price above zero",
   INVALID_STOP_PRICE: "Enter a valid stop price above zero",

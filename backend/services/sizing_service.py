@@ -30,6 +30,7 @@ from services.concentration_service import (
     get_ticker_sector,
     get_sector_exposure,
 )
+from services.portfolio_service import calculate_prospective_heat
 
 
 # ---------------------------------------------------------------------------
@@ -172,6 +173,58 @@ def _apply_concentration_adjustment(
         return default
 
 
+# ---------------------------------------------------------------------------
+# ST-05 (BLG-FEAT-91) — Portfolio heat impact
+# ---------------------------------------------------------------------------
+
+def _calculate_heat_impact(
+    entry_price: float,
+    stop_price: float,
+    suggested_shares: float,
+    market: str,
+    fx_rate_used: float,
+) -> Optional[float]:
+    """
+    ST-05: incremental portfolio heat impact of adding suggested_shares at
+    these terms, for the What-If Sizing Preview panel (trade_plan.md §5d) and
+    PositionSizingWidget (trade_plan.md §10.7) to reuse via a single
+    POST /portfolio/size call rather than a second endpoint call
+    (design_record.md §2.3 / ux_spec.md §2.3 — "reuse, do not introduce a
+    second endpoint call").
+
+    Reuses services.portfolio_service.calculate_prospective_heat — the same
+    calculation GET /portfolio/prospective-heat exposes — rather than
+    duplicating the risk-basis math a second time.
+
+    Note: calculate_prospective_heat sources PortfolioValue from
+    get_portfolio_summary()'s live-priced total_value, whereas this
+    function's own caller (size_position) sources PortfolioValue from the
+    last daily snapshot (§4.1.1) for the risk-basis calculation. These can
+    differ intraday by design — §4.1.1 and §Portfolio Heat are two distinct
+    canonical definitions of "portfolio value" for two distinct purposes
+    (stable daily risk budget vs. live heat exposure) — this is not a bug.
+
+    Returns None (not an error) when shares <= 0 (nothing to price) or the
+    heat calculation is otherwise unavailable — the caller renders this as
+    "—", not as a failure of the sizing result itself.
+    """
+    if suggested_shares <= 0:
+        return None
+    try:
+        heat_result = calculate_prospective_heat(
+            entry_price=entry_price,
+            stop_price=stop_price,
+            shares=suggested_shares,
+            market=market,
+            fx_rate=fx_rate_used,
+        )
+        if heat_result.get("valid"):
+            return heat_result.get("incremental_heat_percent")
+        return None
+    except Exception:
+        return None
+
+
 def size_position(
     entry_price: float,
     stop_price: float,
@@ -276,6 +329,18 @@ def size_position(
     suggested_shares = concentration["final_shares"]
 
     # ------------------------------------------------------------------
+    # ST-05 (BLG-FEAT-91) — portfolio heat impact, for the What-If Sizing
+    # Preview panel and PositionSizingWidget to reuse without a second call.
+    # ------------------------------------------------------------------
+    heat_impact_percent = _calculate_heat_impact(
+        entry_price=entry_price,
+        stop_price=stop_price,
+        suggested_shares=suggested_shares,
+        market=market,
+        fx_rate_used=fx_rate_used,
+    )
+
+    # ------------------------------------------------------------------
     # Fee estimation — uses settings for commission/rate values
     # ------------------------------------------------------------------
     settings_list = get_settings()
@@ -320,6 +385,7 @@ def size_position(
         "available_cash": round(available_cash, 2),
         "concentration_adjusted": concentration["concentration_adjusted"],
         "concentration_reason": concentration["concentration_reason"],
+        "heat_impact_percent": heat_impact_percent,
     }
 
     if not cash_sufficient:

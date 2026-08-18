@@ -212,9 +212,12 @@ class TestPortfolioEndpoints(unittest.TestCase):
         r = CLIENT.get("/portfolio/history?days=30")
         assert r.status_code == 200
 
-    @patch("routers.prospective_heat.get_portfolio_summary",
+    # ST-05 (EPIC-02, v8.9, BLG-FEAT-91): calculation logic extracted to
+    # services.portfolio_service.calculate_prospective_heat — patch targets
+    # updated to the new location (see that file's own module docstring).
+    @patch("services.portfolio_service.get_portfolio_summary",
            return_value={"total_value": 52000.0, "position_risks": []})
-    @patch("routers.prospective_heat.get_live_fx_rate", return_value=1.27)
+    @patch("services.portfolio_service.get_live_fx_rate", return_value=1.27)
     def test_prospective_heat_valid_inputs(self, *_):
         body = _ok(CLIENT.get(
             "/portfolio/prospective-heat"
@@ -222,7 +225,7 @@ class TestPortfolioEndpoints(unittest.TestCase):
         ))
         assert body["data"]["valid"] is True
 
-    @patch("routers.prospective_heat.get_portfolio_summary",
+    @patch("services.portfolio_service.get_portfolio_summary",
            return_value={"total_value": 52000.0, "position_risks": []})
     def test_prospective_heat_stop_above_entry_invalid(self, _):
         body = _ok(CLIENT.get(
