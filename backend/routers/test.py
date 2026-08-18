@@ -235,6 +235,11 @@ async def test_all_endpoints(request: Request):
         # Strategy Benchmark Open Positions (v6.4 / EPIC-03 ST-08)
         {"name": "GET /strategy/benchmark/open-positions", "method": "GET", "url": f"{base_url}/strategy/benchmark/open-positions", "critical": False},
 
+        # Backtest Rule Change (v8.9 / EPIC-02 ST-07, BLG-FEAT-89)
+        {"name": "POST /strategy/backtest-rule-change/run", "method": "POST", "url": f"{base_url}/strategy/backtest-rule-change/run", "body": {}, "critical": False},
+        {"name": "GET /strategy/backtest-rule-change/runs", "method": "GET", "url": f"{base_url}/strategy/backtest-rule-change/runs", "critical": False},
+        {"name": "GET /strategy/backtest-rule-change/runs/00000000-0000-0000-0000-000000000000", "method": "GET", "url": f"{base_url}/strategy/backtest-rule-change/runs/00000000-0000-0000-0000-000000000000", "critical": False},
+
         # AI rate limit 429 scenario verification (v6.3 / EPIC-01 ST-03)
         {"name": "POST /test/rate-limit-scenarios", "method": "POST", "url": f"{base_url}/test/rate-limit-scenarios", "critical": False},
 

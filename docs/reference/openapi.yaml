@@ -5169,6 +5169,70 @@ paths:
                       count: { type: integer }
                       total_unrealized_pnl_gbp: { type: number, nullable: true }
 
+  /strategy/backtest-rule-change/run:
+    post:
+      summary: Run a candidate strategy_rules.md parameter change against a bounded historical window
+      description: |
+        ST-07 (BLG-FEAT-89, EPIC-02, v8.9). Runs a candidate rule change
+        in-app (no external script step) over a bounded universe/window
+        (first 20 active ticker_universe tickers, trailing 4 years) and
+        compares it against the live rule set over the identical
+        universe/window. Persists the run for later audit.
+        Canonical contract: docs/specs/api_contracts/strategy_benchmark_endpoints.md
+      tags: [Strategy Benchmark]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BacktestRuleChangeRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkBacktestRuleChangeRun"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /strategy/backtest-rule-change/runs:
+    get:
+      summary: Backtest Rule Change run history (most recent first)
+      description: |
+        ST-07 (BLG-FEAT-89, EPIC-02, v8.9). AC-03 run-history audit list —
+        summary fields only (no full R-multiple distribution payload).
+      tags: [Strategy Benchmark]
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, default: 20 }
+          description: Max runs to return
+      responses:
+        "200":
+          $ref: "#/components/responses/OkBacktestRuleChangeRunList"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /strategy/backtest-rule-change/runs/{run_id}:
+    get:
+      summary: Re-view a prior Backtest Rule Change run's stored output
+      description: |
+        ST-07 (BLG-FEAT-89, EPIC-02, v8.9). AC-03 — full run detail without
+        re-running.
+      tags: [Strategy Benchmark]
+      parameters:
+        - name: run_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          $ref: "#/components/responses/OkBacktestRuleChangeRun"
+        "404":
+          description: Run not found
+        "500":
+          $ref: "#/components/responses/InternalError"
+
 components:
   schemas:
     ApiOk:
@@ -5703,6 +5767,39 @@ components:
         docs/specs/api_contracts/portfolio_endpoints.md
       additionalProperties: true
 
+    BacktestRuleChangeRequest:
+      type: object
+      description: >-
+        All fields optional — any omitted field falls back to the live
+        strategy_rules.md value (services/backtest_rule_service.py::LIVE_PARAMS).
+      properties:
+        lookback: { type: integer, nullable: true }
+        top_n: { type: integer, nullable: true }
+        atr_mult: { type: number, nullable: true }
+        rebalance_freq: { type: string, nullable: true }
+        min_position_pct: { type: number, nullable: true }
+        max_position_pct: { type: number, nullable: true }
+        min_hold_days: { type: integer, nullable: true }
+        risk_off_mode: { type: string, nullable: true }
+        stop_loss_mode: { type: string, nullable: true }
+        initial_atr_mult: { type: number, nullable: true }
+        profit_atr_mult: { type: number, nullable: true }
+        initiated_by: { type: string, nullable: true }
+
+    BacktestRuleChangeRunResult:
+      type: object
+      description: |
+        Intentionally broad to avoid drift. Canonical nested field definitions live in:
+        docs/specs/api_contracts/strategy_benchmark_endpoints.md
+      additionalProperties: true
+
+    BacktestRuleChangeRunSummary:
+      type: object
+      description: |
+        Intentionally broad to avoid drift. Canonical nested field definitions live in:
+        docs/specs/api_contracts/strategy_benchmark_endpoints.md
+      additionalProperties: true
+
     ExitPositionRequest:
       type: object
       required: [shares, exit_price, exit_date]
@@ -6099,6 +6196,32 @@ components:
                 properties:
                   data:
                     $ref: "#/components/schemas/PositionSizeResponse"
+
+    OkBacktestRuleChangeRun:
+      description: Backtest rule-change run result (candidate vs. live, over an identical bounded universe/window)
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ApiOk"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/BacktestRuleChangeRunResult"
+
+    OkBacktestRuleChangeRunList:
+      description: Backtest rule-change run history (summary rows)
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ApiOk"
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BacktestRuleChangeRunSummary"
 
     OkPortfolioSnapshot:
       description: Snapshot created/updated

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-18 (session — 2 new items added from EPIC-02 execution: BLG-GOV-311, BLG-TECH-13); prior — 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior — 2026-08-17 (session — 1 new item added: BLG-SPEC-132); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-18 (session — 5 new items added from EPIC-02 execution: BLG-GOV-311, BLG-TECH-13, BLG-TECH-14, BLG-FE-164, BLG-TECH-15); prior — 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior — 2026-08-17 (session — 1 new item added: BLG-SPEC-132); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -5037,5 +5037,29 @@ The codebase now carries four independent implementations of "look up a ticker's
 **Acceptance Criteria**
 - `trade_plan.md` §5d.3's reproducibility claim is either made accurate (FX override added) or explicitly scoped to note the US-market live-rate caveat
 - Frontend Specifications & UX Documentation Owner sign-off
+
+---
+
+### BLG-TECH-15 — backtest_rule_service.py's ported algorithm functions can silently drift from production_strategy.py
+
+**Priority:** P2 (Medium)
+**Type:** Platform / Technical Debt
+**Owner:** Backend Engineering Patterns Owner; Strategy Rules & System Intent Owner
+**Source:** ST-07/EPIC-02, 2026-08-17__release-v8.9 — 2026-08-18
+**Effort:** M (~1-2d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-07 (BLG-FEAT-89, In-app backtesting engine) added `backend/services/backtest_rule_service.py`, which ports (copies, does not import) `production_strategy.py`'s `compute_signals`/`compute_atr`/`compute_risk_on`/`transaction_fee`/`backtest` functions. This was a deliberate choice, not an oversight: `production_strategy.py` is a standalone script (never used as a library, has import-time side effects) whose `backtest()` reads regime state from module-level globals (`spy_risk_on`/`ftse_risk_on`) — unsafe to import and mutate from a concurrent web-server process, where two simultaneous requests would race on the same globals. The port is behaviourally identical except regime state is threaded through as an explicit parameter instead of module globals. However, this means the two copies of the core momentum-strategy algorithm can now silently drift apart if `production_strategy.py`'s logic changes (e.g. a future tuning of the stop-loss/rebalance/sizing logic) without the port being updated to match — financially significant, since both feed comparative decision-support output.
+
+**Scope**
+- Extract the pure, parameter-only algorithm logic (`compute_signals`, `compute_atr`, `compute_risk_on`, `transaction_fee`, and a globals-free `backtest`) into a genuinely shared module both `production_strategy.py` and `backend/services/backtest_rule_service.py` import — e.g. a new root-level `strategy_engine/` package, or `backend/services/` if `production_strategy.py` can safely import from `backend/`
+- `production_strategy.py`'s own `is_risk_on`/module-global usage would need updating to call the shared `backtest()` with explicit regime parameters, matching the port's existing signature
+- Add a CI check (or a simple hash/diff comparison) that fails if the two implementations diverge, until the consolidation above ships
+
+**Acceptance Criteria**
+- Exactly one implementation of `compute_signals`/`compute_atr`/`compute_risk_on`/`transaction_fee`/`backtest` exists; both `production_strategy.py` and `backend/services/backtest_rule_service.py` use it
+- Nightly backtest (`.github/workflows/backtest.yml`) and the in-app Backtest Rule Change endpoint both continue to produce the same historical results as before the consolidation (regression-verified against a fixed historical run)
+- Backend Engineering Patterns Owner and Strategy Rules & System Intent Owner sign-off
 
 ---

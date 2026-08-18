@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.27
-**Date:** 2026-08-14
+**Version:** 2.28
+**Date:** 2026-08-18
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -1781,10 +1781,51 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 40. v8.9 Endpoint Registration — Backtest Rule Change (ST-07, EPIC-02, BLG-FEAT-89)
+
+**Date:** 2026-08-18
+**Story:** ST-07 (EPIC-02, v8.9) — BLG-FEAT-89, In-app backtesting engine for strategy rule changes
+**Environment:** N/A — see endpoint notes below.
+**Method:** Registered pending live measurement per §13 pattern.
+
+### 40.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| POST /strategy/backtest-rule-change/run | v8.9 | Write (persists a run row) — pending live timing run | 5,000–15,000ms (est.) | 10,000–25,000ms (est.) | ⚠ High-latency by design — see endpoint characteristics |
+| GET /strategy/backtest-rule-change/runs | v8.9 | Read — pending live timing run | 100–250ms (est.) | 200–450ms (est.) | Pending next baseline re-run |
+| GET /strategy/backtest-rule-change/runs/{id} | v8.9 | Read — pending live timing run | 80–200ms (est.) | 150–350ms (est.) | Pending next baseline re-run |
+
+**Endpoint characteristics:**
+- `POST /strategy/backtest-rule-change/run`: genuinely high-latency by design, not a candidate for the usual ≤500ms fast-cluster expectation. Per run: 2 live `yf.download()` calls (SPY + FTSE regime series) + 1 bulk `yf.download()` for a bounded 20-ticker universe over a trailing 4-year window, followed by two full in-process backtest simulations (live params + candidate params) over ~1,000 trading days each. `services/backtest_rule_service.py`'s own module docstring documents the scope reduction from the full nightly `production_strategy.py` run (100+ tickers, ~8 years, 90-minute CI budget) to this bounded, synchronous-request-safe scope. Estimated range reflects yfinance network I/O as the dominant cost, not the (fast, pure-pandas) simulation logic itself. **A real staging/production timing run is required before this estimate can be trusted for alerting thresholds** — flagged for the next Infrastructure & Operations Owner baseline re-run, same as every other "pending live timing run" entry in this document.
+- `GET /strategy/backtest-rule-change/runs` / `GET /strategy/backtest-rule-change/runs/{id}`: simple indexed `SELECT` against `backtest_rule_runs` (no join, no per-row computation) — estimated in the same range as other single-table read endpoints in this document (e.g. §38's comparable single-query reads).
+
+**Read-only exclusion note:** `POST /strategy/backtest-rule-change/run` is a write (persists a new `backtest_rule_runs` row) but is registered with a live-timing-pending estimate rather than the standard write-op estimate pattern (§18.2/§20), because its cost is dominated by external network I/O and computation, not the write itself — the write-op exclusion pattern assumes a fast single-row `INSERT`/`UPDATE`, which does not apply here.
+
+### 40.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-07 (v8.9 EPIC-02, BLG-FEAT-89) — Backtest Rule Change Endpoint Registration Sign-Off
+
+AC-01: All 3 endpoints added with estimated p50/p95 and measurement date
+       (2026-08-18 — estimated; POST /run's estimate derived from its
+       documented network-I/O-dominated cost profile, GET endpoints
+       estimated from comparable single-table-read baselines). ✅ PASS
+AC-02: Estimation methodology documented, including the explicit flag that
+       POST /run's estimate needs live re-measurement before use in
+       alerting thresholds. ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§38 pattern). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-08-18
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.28 | 2026-08-18 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-07 (v8.9 EPIC-02, BLG-FEAT-89): §40 added — `POST /strategy/backtest-rule-change/run`, `GET /strategy/backtest-rule-change/runs`, `GET /strategy/backtest-rule-change/runs/{id}` registered pending live timing run. `POST /run`'s estimate flagged high-latency-by-design (network-I/O-dominated: 3 live yfinance calls + two full backtest simulations over a bounded 20-ticker/4-year window) rather than the standard write-op fast-INSERT pattern. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the 3 new paths in the same PR. |
 | 2.27 | 2026-08-14 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-04/ST-05/ST-06 (v8.8 EPIC-01, BLG-OPS-13/BLG-OPS-135/BLG-OPS-51): §39 added — `GET /v1beta1/news` (via `GET /news/AAPL` proxy) and `GET /trade-plans/tags` registered with real staging measurements; §34's `GET /analytics/strategy-version-comparison` row updated from estimate to measured-but-capped value (`insufficient_data` gate hit on both attempted version windows — only 21 real trades exist today). `GET /trade-plans/tags`'s ~10s p50 (vs. the structurally similar `GET /positions/tags`'s 2.4s) flagged as `BLG-BE-98`, not silently accepted. Measurement tool (`api-performance-baseline-measurement.yml`) extended with 2 new endpoints and made resilient to individual sample timeouts (previously aborted the whole run under `set -e`). |
 | 2.26 | 2026-08-11 | Sprint Execution Engine (autonomous) | ST-01 (v8.6 EPIC-01, BLG-FEAT-32): §38 added — `GET /analytics/trade-plan-completion-rate` registered with estimated p50/p95 pending live measurement. |
 | 2.25 | 2026-08-10 | Sprint Execution Engine (autonomous) | ST-01 (v8.5 EPIC-01, BLG-BE-86): §35.2 finding row updated — `GET /analytics/tag-performance` 500 resolved by adding the missing `ensure_trade_plans_table()` call to `get_tag_performance_endpoint()`. Live re-measurement to record a real p50/p95 baseline is a follow-up, not yet done. |
