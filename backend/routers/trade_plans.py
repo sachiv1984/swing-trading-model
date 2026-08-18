@@ -211,6 +211,16 @@ def create_plan(body: TradePlanCreate):
 
         def _create():
             plan_data = body.dict()
+            # ST-13 (BLG-QA-150, EPIC-04, v8.9): setup_type had no server-side
+            # default -- any creation path other than the linked-watchlisted-
+            # signal pre-population (TradePlan.js) saved null, undercounting
+            # Arc 6/SI-02's future win_rate_by_setup_type analysis. "Other" is
+            # already a canonical, live SETUP_TYPE_OPTIONS value (both here and
+            # in the frontend dropdown) -- normalizing null/absent to it here
+            # covers every creation path (frontend and direct API) at the
+            # single choke point, with no new UI or enum value. Product Owner
+            # decision (agent-mediated, §5.3): option (b).
+            plan_data["setup_type"] = plan_data.get("setup_type") or "Other"
             plan_data["trade_tags"] = _validate_trade_tags(plan_data.get("trade_tags"))
             # ST-01 (EPIC-01, v8.0): stamp the active strategy version at creation time,
             # forward-only — no backfill of existing rows.
