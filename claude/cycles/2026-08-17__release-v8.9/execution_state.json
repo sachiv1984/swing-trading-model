@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-17T17:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-18T00:00:00Z",
+  "last_updated_utc": "2026-08-18T09:45:00Z",
 
   "preflight_notes": [
     "sprint_backlog.md's EPIC-01 section is missing full story blocks for ST-02 and ST-03 (present in sprint_backlog_index.json's EPIC-01 st_items and in the Capacity Summary's 23-item count, and referenced by other stories' Dependencies/Staging-only-ACs notes, but with no Owner/Estimated effort/Delegation class/Acceptance Criteria wrapper of their own in sprint_backlog.md). Per execution_prompt.md STEP -1.5, standard mode: acceptance criteria for both IS defined -- in stage4_backlog_slice.md (explicitly the source of truth per its own header and per sprint_backlog.md's 'Backlog Slice Source' field), so this does not block execution. Delegation class was not stated for either in sprint_backlog.md; classified here per execution_prompt.md §5.1 rules: ST-02 -> delegated_backend (backend fix, same position data path as ST-01, sign-off pattern mirrors ST-01), ST-03 -> autonomous (doc-only entry addition, unambiguous AC). sprint_backlog.md is sealed and cannot be corrected by this engine; flagging here for PMO Lead / Head of Specs Team awareness rather than halting the sprint over a documentation completeness gap in a sealed artefact whose AC is otherwise available and unambiguous."
@@ -118,6 +118,80 @@
             "findings": "Validation Tolerances subsection reviewed against the pre-existing Trailing Stop Action Rate definition — numeric bounds are internally consistent and satisfy the 'numerically, not qualitatively' AC."
           },
           "notes": "The 'Trailing Stop Action Rate' section in metrics_definitions.md already existed (added v1.13.0 BLG-SPEC-61, extended v1.15.0 ST-07/BLG-BE-50) with Definition, Data Capture Requirement, and Tooling Assessment subsections -- BLG-SPEC-85's premise ('shipped without a formal entry') was stale by the time this story executed. The genuine gap against this story's AC ('tolerances stated numerically, not qualitatively') was the absence of an explicit numeric tolerance-band subsection. Added ## Validation Tolerances subsection: insufficient-sample threshold (denominator < 5), expected range (0.05-0.95 with denominator >= 5), anomalously low/high bands (< 0.05 / > 0.95 with denominator >= 10), stale-capture window (> 30 days with no new log row while eligible open positions exist), and the pre-existing 24h capture window restated for completeness. Doc version bumped 1.16.1 -> 1.17.0, Document History row to be appended at commit."
+        }
+      }
+    },
+    "EPIC-05": {
+      "status": "in_progress",
+      "branch": "exec/2026-08-17__release-v8.9/EPIC-05",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-08-17__release-v8.9/qa_evidence_EPIC-05.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-16": {
+          "title": "Local dev venv version-pin enforcement; confirm PUBLIC_URL parity on production",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1444,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": {"status": "pending", "method": null, "role": "Infrastructure & Operations Owner", "date": null, "result": null, "findings": null},
+          "notes": "Staging-only AC per sprint_backlog.md: 'Production PUBLIC_URL status confirmed and documented' requires a live production check, not CI-reproducible."
+        },
+        "ST-17": {
+          "title": "Archive window_summary_IW-*.md files older than 90 days",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1445,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": {"status": "pending", "method": null, "role": "Infrastructure & Operations Owner", "date": null, "result": null, "findings": null},
+          "notes": null
+        },
+        "ST-18": {
+          "title": "Document screener_refresh and risk_off_alerts jobs in health_endpoints.md",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1446,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": {"status": "pending", "method": null, "role": "API Contracts & Documentation Owner", "date": null, "result": null, "findings": null},
+          "notes": null
         }
       }
     }
