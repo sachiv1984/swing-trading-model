@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-17T17:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-18T03:00:00Z",
+  "last_updated_utc": "2026-08-18T05:00:00Z",
 
   "preflight_notes": [
     "sprint_backlog.md's EPIC-01 section is missing full story blocks for ST-02 and ST-03 (present in sprint_backlog_index.json's EPIC-01 st_items and in the Capacity Summary's 23-item count, and referenced by other stories' Dependencies/Staging-only-ACs notes, but with no Owner/Estimated effort/Delegation class/Acceptance Criteria wrapper of their own in sprint_backlog.md). Per execution_prompt.md STEP -1.5, standard mode: acceptance criteria for both IS defined -- in stage4_backlog_slice.md (explicitly the source of truth per its own header and per sprint_backlog.md's 'Backlog Slice Source' field), so this does not block execution. Delegation class was not stated for either in sprint_backlog.md; classified here per execution_prompt.md §5.1 rules: ST-02 -> delegated_backend (backend fix, same position data path as ST-01, sign-off pattern mirrors ST-01), ST-03 -> autonomous (doc-only entry addition, unambiguous AC). sprint_backlog.md is sealed and cannot be corrected by this engine; flagging here for PMO Lead / Head of Specs Team awareness rather than halting the sprint over a documentation completeness gap in a sealed artefact whose AC is otherwise available and unambiguous."
@@ -132,7 +132,9 @@
         "tests/test_sizing_concentration.py",
         "tests/e2e/position-sizing-concentration.spec.js",
         "tests/test_sizing_heat_impact.py",
-        "tests/e2e/what-if-sizing-preview.spec.js"
+        "tests/e2e/what-if-sizing-preview.spec.js",
+        "tests/test_backtest_rule_service.py",
+        "tests/e2e/backtest-rule-change.spec.js"
       ],
       "stories": {
         "ST-23": {
@@ -233,14 +235,49 @@
             "findings": "Head of Engineering: confirmed prospective_heat.py extraction is genuinely behaviour-preserving (line-by-line diff against HEAD~1 -- validation order, error text, FX resolution, response shape all reproduced exactly); _calculate_heat_impact's fail-open except was sound but silent -- fixed to log per portfolio_service.py's own sibling convention; DEV-v8.9-ST05-01 presence-gate correction judged proportionate (mechanical spec-bug fix, not a design trade-off). 2 non-blocking findings filed as BLG-TECH-14/BLG-FE-164. Frontend Specifications & UX Documentation Owner: first pass Blocked -- R at Risk had no FX conversion for US-market plans, contradicting §5d.3's own wording and the new Playwright test locked in the bug (same class of currency-basis bug as ST-02/BLG-BE-103 this cycle). Fixed same-day: reads fx_rate_used, divides for US market matching TradeEntry.js's costs.totalRisk exactly, £ symbol added, DEV-v8.9-ST05-02 filed, spec Format column corrected. Second pass (retry 1 of 2): Approved -- FX math verified structurally identical to the real precedent, UK no-conversion path confirmed correct, no stray old-wording references remain."
           },
           "notes": "Reclassification note (LL-v2.3-EX-02 pattern): sprint_backlog.md lists delegated_frontend, but per LL-v2.3-CL-01's autonomous-default rule the engine completed this directly (frontend + the shared backend heat-calc extraction) rather than delegating externally -- DEL-20260818-03 records this as engine-completed in-session, not a cross-session delegation. 2 deviations filed and resolved same-story: DEV-v8.9-ST05-01 (§5d.1 presence-gate self-contradiction, Frontend Specifications & UX Documentation Owner authority) and DEV-v8.9-ST05-02 (R at Risk FX-conversion bug, caught by that same role's sign-off review before merge -- exactly the gate this process step exists to catch). Test scenarios: tests/test_sizing_heat_impact.py (5 pytest) + tests/e2e/what-if-sizing-preview.spec.js (4 Playwright, run live against `npm start`, all passing). Full backend suite 1184 passed/5 skipped/0 failed. Pre-existing trade-plan.spec.js (52 tests) and entry-checklist.spec.js (11 tests) re-verified passing -- no regression from the new settings query or panel."
+        },
+        "ST-07": {
+          "title": "In-app backtesting engine for strategy rule changes",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1435,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-02",
+          "commit_sha": "0b0a8caf2ff76eab568c1f01acf21d7799994df1",
+          "delegation_record_id": "DEL-20260818-04",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-18T05:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-08-17__release-v8.9/in-app-backtesting-engine/ux_spec.md",
+            "docs/specs/frontend/pages/strategy_benchmark.md#7.6",
+            "docs/specs/api_contracts/strategy_benchmark_endpoints.md",
+            "backend/services/backtest_rule_service.py",
+            "tests/test_backtest_rule_service.py",
+            "tests/e2e/backtest-rule-change.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.2.A.qa_evidence_pending",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Strategy Rules & System Intent Owner; Head of Engineering",
+            "date": "2026-08-18",
+            "result": "Approved",
+            "findings": "Strategy Rules & System Intent Owner (AC-04): LIVE_PARAMS independently verified field-for-field against production_strategy.py's OPTIMAL_PARAMS and cross-checked against strategy_rules.md §11's canonical prose -- no drift, the candidate-vs-live comparison is genuine, not comparing against a fiction. §13 boundary confirmed in code, not just comments. Scope-reduction disclosure confirmed adequate including in the rendered UI (universe/window shown beside every run's results). R-multiple formula matches metrics_definitions.md's canonical server-side formula exactly. BLG-TECH-15 (ported-not-imported algorithm debt) judged an acceptable interim state after a line-by-line diff against production_strategy.py found no unintentional drift. Head of Engineering: confirmed port fidelity (compute_risk_on/compute_atr/transaction_fee byte-for-byte identical; run_backtest's stop-loss/risk-off/rebalance/fill-in logic matches exactly); confirmed concurrency safety (is_risk_on nested per-call, no shared mutable state); confirmed initial_stop_price tracking correct and consistent across all 4 exit paths; confirmed RISK-02's scope-reduction and synchronous-request judgment calls reasonable. Found 2 minor fast-follow items (applied same-day, commit 0b0a8caf): API contract's error-code documentation corrected from 500 to 400 for the two BacktestRuleChangeError business-rule cases; removed dead _floor_4dp function and its unused math import."
+          },
+          "notes": "Scope reduction (RISK-02, sprint_backlog.md's own explicit contingency): bounded to 20 active ticker_universe tickers / trailing 4 years (vs. the full ~100+ tickers/8yr nightly production_strategy.py run, 90-minute CI budget) -- both candidate and live params computed over the identical bounded universe/window in the same run for an apples-to-apples comparison. Algorithm ported (not imported) from production_strategy.py -- that script has import-time side effects and its backtest() reads regime state from module globals, unsafe to mutate from a concurrent web-server process; the port threads regime state through as an explicit parameter instead. Filed BLG-TECH-15 for the resulting algorithm-sync maintenance burden. Frontend candidate-input mechanism resolved to a structured parameter form (design record left raw-diff vs. structured open) -- documented in strategy_benchmark.md v0.7 (DEV-adjacent implementation-time resolution, no formal DEV row needed since the design record itself explicitly deferred this choice). New endpoints (POST /run, GET /runs, GET /runs/{run_id}) registered in backend/routers/test.py, SystemStatus.js fallback count 112->115 + SC-SS-01b updated, openapi.yaml, api_changelog.md v8.9.0, api_performance_baseline.md §40 -- drift-check script confirmed passing. Test scenarios: tests/test_backtest_rule_service.py (11 pytest, including a full end-to-end run against synthetic price data confirming the ported engine executes correctly) + tests/e2e/backtest-rule-change.spec.js (5 Playwright, run live against `npm start`, all passing). Full backend suite 1195 passed/5 skipped/0 failed throughout. Pre-existing strategy-benchmark.spec.js (23 tests) and si04-version-comparison.spec.js (5 tests) re-verified passing -- no regression."
         }
       }
     }
   },
 
   "blocked_items": [],
-  "delegated_items": ["ST-01", "ST-02", "ST-23", "ST-04", "ST-05"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-23", "ST-04", "ST-05"],
+  "delegated_items": ["ST-01", "ST-02", "ST-23", "ST-04", "ST-05", "ST-07"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-23", "ST-04", "ST-05", "ST-07"],
   "open_escalations": [],
 
   "merge_gate": {

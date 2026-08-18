@@ -91,3 +91,20 @@ Append-only. Do not edit previous entries.
 - **Unblock criteria:** Panel implemented per design contract; backend heat field shared, not duplicated; regression tests (pytest + Playwright) added and passing; Head of Engineering and Frontend Specifications & UX Documentation Owner sign-off.
 - **Commit format required:** `[EPIC-02][ST-05] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-02`
 - **Status:** Unblocked — engine implemented directly this session, no external credential needed. Commits `cb328805` (implementation) and `86cfc078` (FX-conversion fix from sign-off review). Agent-mediated Head of Engineering sign-off (§5.3) cleared Approved 2026-08-18 first pass. Agent-mediated Frontend Specifications & UX Documentation Owner sign-off required 1 retry (within the 2-retry cap): first pass Blocked (R at Risk missing FX conversion for US-market plans, DEV-v8.9-ST05-02 filed and fixed same-day); second pass Approved 2026-08-18.
+
+---
+
+## DEL-20260818-04
+
+- **ST Item:** ST-07 — In-app backtesting engine for strategy rule changes
+- **EPIC:** EPIC-02
+- **Classification:** delegated_backend
+- **Assigned to:** Strategy Rules & System Intent Owner; Head of Engineering
+- **GitHub Issue:** #1435
+- **Branch:** exec/2026-08-17__release-v8.9/EPIC-02
+- **Delegated at:** 2026-08-18T04:00:00Z
+- **What is needed:** Run a candidate `strategy_rules.md` parameter change against historical data entirely in-app (no external script step), compare it against the live rule set, and persist each run for audit. RISK-02: largest single item this cycle — confirm `production_strategy.py` simulation-logic reuse feasibility early; scope may narrow to a smaller candidate-comparison surface if infeasible.
+- **Spec reference:** `docs/design/2026-08-17__release-v8.9/in-app-backtesting-engine/ux_spec.md`; `docs/specs/frontend/pages/strategy_benchmark.md#7.6`; `docs/specs/api_contracts/strategy_benchmark_endpoints.md`
+- **Unblock criteria:** Backend engine implemented (full production_strategy.py reuse found infeasible for a synchronous web request — RISK-02's contingency exercised, bounded-universe/window scope applied instead, both sides of the comparison run identically); 3 new endpoints registered with all CLAUDE.md same-commit requirements; regression tests (pytest + Playwright) added and passing; Strategy Rules & System Intent Owner (AC-04) and Head of Engineering sign-off.
+- **Commit format required:** `[EPIC-02][ST-07] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-02`
+- **Status:** Unblocked — engine implemented directly this session, no external credential needed. Commits `967e77f4` (implementation) and `0b0a8caf` (sign-off review fixes). Agent-mediated Strategy Rules & System Intent Owner sign-off (§5.3, AC-04) cleared Approved 2026-08-18 first pass — LIVE_PARAMS fidelity independently re-verified against `strategy_rules.md`/`production_strategy.py`, no drift. Agent-mediated Head of Engineering sign-off cleared Approved 2026-08-18 first pass — port fidelity confirmed line-by-line, 2 minor fast-follow items applied same-day (error-code doc correction, dead-code removal).
