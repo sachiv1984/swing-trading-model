@@ -74,3 +74,20 @@ Append-only. Do not edit previous entries.
 - **Unblock criteria:** Backend adjustment implemented and reusing the canonical threshold; `portfolio_endpoints.md` + `openapi.yaml` updated same-commit; regression test added and passing; frontend display wired per the design record; Backend Engineering Patterns Owner sign-off.
 - **Commit format required:** `[EPIC-02][ST-04] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-02`
 - **Status:** Unblocked — engine implemented directly this session (backend + frontend), no external credential needed. Commit `97e6c407e4a20437451f6a11cbfec0b81c0b0b7b`. Agent-mediated Backend Engineering Patterns Owner sign-off (§5.3) cleared Approved 2026-08-18; regression suite (9 pytest, full backend suite 1179/1179) and Playwright suite (3 tests, run live) passing.
+
+---
+
+## DEL-20260818-03
+
+- **ST Item:** ST-05 — Pre-commit "what-if" sizing/risk simulator on the trade-plan form
+- **EPIC:** EPIC-02
+- **Classification:** delegated_frontend (sprint_backlog.md) — reclassified to engine-completed per LL-v2.3-CL-01 autonomous default
+- **Assigned to:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+- **GitHub Issue:** #1433
+- **Branch:** exec/2026-08-17__release-v8.9/EPIC-02
+- **Delegated at:** 2026-08-18T02:00:00Z
+- **What is needed:** New "What-If Sizing Preview" panel on the Trade Plan form (`WhatIfSizingPreview.js`), reusing `POST /portfolio/size`; extract `calculate_prospective_heat` from `prospective_heat.py` into `portfolio_service.py` and wire `heat_impact_percent` into `sizing_service.py` so both call sites share one calculation.
+- **Spec reference:** `docs/design/2026-08-17__release-v8.9/what-if-sizing-risk-simulator/ux_spec.md`; `docs/specs/frontend/pages/trade_plan.md#5d`
+- **Unblock criteria:** Panel implemented per design contract; backend heat field shared, not duplicated; regression tests (pytest + Playwright) added and passing; Head of Engineering and Frontend Specifications & UX Documentation Owner sign-off.
+- **Commit format required:** `[EPIC-02][ST-05] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-02`
+- **Status:** Unblocked — engine implemented directly this session, no external credential needed. Commits `cb328805` (implementation) and `86cfc078` (FX-conversion fix from sign-off review). Agent-mediated Head of Engineering sign-off (§5.3) cleared Approved 2026-08-18 first pass. Agent-mediated Frontend Specifications & UX Documentation Owner sign-off required 1 retry (within the 2-retry cap): first pass Blocked (R at Risk missing FX conversion for US-market plans, DEV-v8.9-ST05-02 filed and fixed same-day); second pass Approved 2026-08-18.
