@@ -176,8 +176,10 @@ function GracePeriodAlertZone() {
 function TrailStopModal({ position, onClose }) {
   const queryClient = useQueryClient();
   const isEligible = position?.lifecycle_state === "PROFITABLE" || position?.lifecycle_state === "EXIT ZONE";
-  const hasStop = position?.current_stop != null || position?.stop_price != null;
-  const stopValue = position?.current_stop ?? position?.stop_price;
+  const hasStop = position?.current_stop != null || position?.stop_price_native != null || position?.stop_price != null;
+  // ST-02 (BLG-BE-103, v8.9): fallback before trailData loads — stop_price_native matches
+  // currencySymbol (native); stop_price is GBP-converted and was the wrong basis here too.
+  const stopValue = position?.current_stop ?? position?.stop_price_native ?? position?.stop_price;
 
   const currencySymbol = position?.market === "UK" ? "£" : "$";
 
@@ -897,7 +899,11 @@ export default function Positions() {
                 position.stop_price_native || position.stop_price;
 
               // ST-01 (BLG-FEAT-46): trailing stop breach detection
+              // ST-02 (BLG-BE-103, v8.9): trailBreached stays on GBP-basis values (both
+              // sides GBP) — only the rendered value below needs the native counterpart,
+              // since it is displayed next to the native currencySymbol.
               const trailStop = position.current_trailing_stop;
+              const trailStopNative = position.current_trailing_stop_native;
               const currentPriceGbp = position.current_price;
               const trailBreached =
                 trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
@@ -933,7 +939,7 @@ export default function Positions() {
                       </span>
                       <div className="flex items-center gap-1.5">
                         <span>
-                          {trailStop > 0 ? `${currencySymbol}${trailStop.toFixed(2)}` : (displayStopPrice != null ? `${currencySymbol}${Number(displayStopPrice).toFixed(2)}` : "—")}
+                          {trailStopNative > 0 ? `${currencySymbol}${trailStopNative.toFixed(2)}` : (displayStopPrice != null ? `${currencySymbol}${Number(displayStopPrice).toFixed(2)}` : "—")}
                         </span>
                         {/* ST-09 (v7.0, BLG-FE-96): breach badge — visible when price <= trailing stop, spec colour/label */}
                         {trailBreached && (

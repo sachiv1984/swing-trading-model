@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.5.2
-**Last Updated:** 2026-08-07
+**Version:** 2.6.0
+**Last Updated:** 2026-08-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -26,6 +26,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.6.0 | 2026-08-17 | ST-02 (BLG-BE-103, EPIC-01, v8.9): Added `current_trailing_stop_native` field to `GET /positions` response — the native-currency counterpart of `current_trailing_stop` (which is GBP-converted for US-market positions). Fixes a currency-basis defect where the frontend rendered the GBP-converted value next to the native currency symbol. `initial_stop` and `stop_price_native` were already native; this closes the gap for the third stop field. |
 | 2.5.2 | 2026-08-07 | ST-04 (BLG-SPEC-113, EPIC-02, v8.4): `GET /positions` example was missing 5 live fields returned by `position_service.py`'s `positions_list.append({...})` — `total_cost`, `sector`, `industry`, `exit_reason`, `stop_reason`. Added to example and field notes, cross-checked against the live dict. No functional change. |
 | 2.5.1 | 2026-07-29 | v7.10 ST-13 (BLG-SPEC-102) + ST-14 (BLG-SPEC-103): Corrected `GET /positions` response documentation to match live behaviour — the endpoint returns the raw `data` array directly, not the standard `{ status, data }` envelope. Added undocumented lifecycle fields `position_state`, `state_entered_at`, `days_in_state` to the response schema and field notes. No functional change. |
 | 2.5.0 | 2026-07-13 | v7.0 ST-15 (BLG-FEAT-68): Added `last_reviewed_at` field to `GET /positions` response (ISO timestamp \| null — position review cadence nudge). Added `PATCH /positions/{position_id}/mark-reviewed` — sets `last_reviewed_at = NOW()`. Display-only; no automated action beyond the explicit user-triggered timestamp update. |
@@ -102,6 +103,7 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
     "fx_rate": 1.3642,
     "live_fx_rate": 1.3650,
     "current_trailing_stop": 560.50,
+    "current_trailing_stop_native": 764.00,
     "risk_off_exit": false,
     "entry_note": "Breakout above $800 resistance",
     "exit_note": null,
@@ -139,6 +141,7 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
 | `industry` | string \| `null`. Finer-grained classification than `sector` |
 | `tags` | Array of tag strings. Empty array if no tags set |
 | `current_trailing_stop` | The computed trailing stop in GBP (profit-lock logic: profit → `price − 2×ATR`, else `entry − 5×ATR`, ratcheted). Always present and non-zero after the first nightly update. `0` if no stop has been computed yet. Unlike `stop_price`, this field is always non-zero — it is informational even during the grace period. (v6.2 ST-01 BLG-FEAT-46) |
+| `current_trailing_stop_native` | Native-currency counterpart of `current_trailing_stop` above — same value, unconverted for US-market positions (identical to `current_trailing_stop` for UK positions, where native == GBP). Frontend consumers pairing a stop value with the native currency symbol (derived from `market`) must use this field, not `current_trailing_stop` — using the GBP-converted field with the native symbol was BLG-BE-103, a currency-basis defect fixed in v8.9 ST-02. (v8.9 ST-02 BLG-BE-103) |
 | `risk_off_exit` | `boolean`. `true` when the position's market index (SPY for US, FTSE for UK) is below its 200-day MA. Cleared to `false` when the index recovers. Set nightly by `POST /positions/risk-off-alerts`. (v6.2 ST-05 BLG-FEAT-49) |
 | `pnl_percent` | Percentage P&L relative to entry cost. Same value as would be seen in `pnl_pct` in trade records. Both field names exist in the system for compatibility; `pnl_percent` is the canonical name in position responses |
 | `grace_days_remaining` | `integer` when `grace_period = true`; `null` when `grace_period = false`. Derived server-side as `max(0, 10 - holding_days)` during the grace period. Represents the number of days remaining in the grace window. On day 10, `grace_period` becomes `false` and this field returns `null` — not `0`. Intended display format: `"Day {holding_days + 1} of 10"`. Always present in the response object. |

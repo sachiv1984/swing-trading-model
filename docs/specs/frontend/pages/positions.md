@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.7
-**Last Updated:** 2026-08-04
+**Version:** 2.8
+**Last Updated:** 2026-08-17
 **Design Source (v8.2 additions):** docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md
 **Design Source (v7.9 additions):** docs/design/2026-07-27__release-v7.9/trailing-stop-explainer-tooltip/ux_spec.md
 **Design Source (v7.0 additions):** docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md, docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md
@@ -24,6 +24,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.8 | 2026-08-17 | v8.9 ST-02 (BLG-BE-103, EPIC-01): §Trailing Stop Column — corrected currency-basis defect. `current_trailing_stop` (GBP-converted for US positions) was being rendered next to the native currency symbol alongside `initial_stop` (native), producing two numerically different values that were really the same stop. Table View and Grid View now render the new `current_trailing_stop_native` field, matching this section's pre-existing "Display format: Native currency" rule (which the implementation had not satisfied since v6.2). No column layout or design change — value-source correction only. |
 | 2.7 | 2026-08-04 | v8.2 design gate — ST-02 (EPIC-01, BLG-FE-105): §Compliance Recheck Panel (Modal) — all-rules-pass state specified explicitly. Adds an affirmation line ("All 5 checks passed — no action needed.", `text-emerald-400`, existing pass colour token) in the same layout slot as the warn/fail acknowledgement block, shown only when `overall_status === "pass"`. Closes the previously-undesigned asymmetry between the warn/fail path (explicit acknowledgement block) and the pass path (nothing). No new colour or interactive element introduced. Design source: `docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md`. Head of UX & Design sign-off: 2026-08-04. Product Owner approved: 2026-08-04. Head of Specs Team confirmed. |
 | 2.6 | 2026-07-27 | ST-05 (BLG-FEAT-87, EPIC-05, v7.9) implementation: corrected §Trailing Stop Column's tooltip placement description — the v6.2-described separate "Trail Stop" column/stat label does not exist in the shipped UI (Table View has one combined "Stop" header; Grid View has no standalone label). Placed the explainer icon on the actual anchors instead (combined "Stop" header; inline with the "Init:" subtext line in the Grid tile) — closest faithful placement given the real UI, pre-existing gap noted but not fixed (out of this story's scope). |
 | 2.5 | 2026-07-27 | v7.9 design gate: (ST-03, BLG-FEAT-87) §Trailing Stop Column — added "Why is my stop moving?" explainer tooltip (info icon after the "Trail Stop" column header / Grid View stat label; hover/focus reveals plain-language explanation of §7.2 profit-aware stop logic and §7.3 stop-movement constraint, reviewed against `strategy_rules.md` §7 for accuracy). Static text, no API dependency, no change to the underlying calculation or Trail Stop Modal. Design source: trailing-stop-explainer-tooltip/ux_spec.md. Approved: Product Owner 2026-07-27. Head of Specs Team confirmed. |
@@ -405,11 +406,11 @@ When `GET /portfolio/paper-positions` returns 5xx or timeout: display **"Paper t
 
 **Design source:** docs/design/2026-06-24__release-v6.2/trailing-stop-display/ux_spec.md
 
-**Data source:** `current_trailing_stop` from `GET /positions` (new field; nightly update by ST-01).
+**Data source:** `current_trailing_stop` from `GET /positions` (new field; nightly update by ST-01). **Correction (v8.9 — ST-02, BLG-BE-103):** `current_trailing_stop` is GBP-converted for US-market positions — it does not satisfy the "Display format: Native currency" rule below on its own. The frontend renders `current_trailing_stop_native` (added v8.9) instead; `current_trailing_stop` remains in the response for GBP-basis consumers (e.g. portfolio-level aggregation) but must not be paired with the native currency symbol.
 
 **Column label:** "Trail Stop" (added after "Initial Stop" — existing "Stop" column renamed).
 
-**Display format:** Native currency, 2dp (matches Initial Stop format). Null: dash ("—").
+**Display format:** Native currency, 2dp (matches Initial Stop format). Null: dash ("—"). Prior to v8.9 this was violated for US-market positions — see Data source correction above.
 
 **Breach Badge:**
 
@@ -698,6 +699,16 @@ Backend must provide compliance flags per position (new endpoint or extension to
 - **Owner:** Frontend Specifications & UX Documentation Owner
 - **Backlog reference:** BLG-FE-107 (filed sprint execution 2026-07-13, cycle 2026-07-12__release-v7.0, ST-05)
 - **Resolution:** Resolved by ST-03, cycle 2026-07-14__release-v7.1. Design gate confirmed the spec was and always had been correct (option (a) — bring Table View into compliance; accepting amber as canonical was rejected as it would invalidate the combined-badge decision record's hue-separation rationale). `AlertsCell` (`src/pages/Positions.js`) now renders `#1E40AF` (blue-800), label "RISK OFF", no icon — matching the v7.0 Grid View badge (`PositionCard.js`). `SC-RO-02` updated in the same commit to assert the spec-correct values. Changelog: `docs/product/changelog.md#v71` (recorded at v7.1 post-ship closure)
+
+### DEV-EPIC01-ST02-01 — Trail Stop tile rendered GBP-converted value with native currency symbol for US-market positions
+
+- **Description:** §Trailing Stop Column specifies "Display format: Native currency, 2dp." The shipped implementation (`PositionCard.js`, `Positions.js`) rendered `current_trailing_stop` — GBP-converted for US-market positions — next to the native currency symbol derived from `position.market`, while the adjacent "Init:" subtext correctly used the native `initial_stop`. For a US position this produced two numerically different "$"-labelled values on the same tile that were really the same underlying stop expressed in two currencies. Pre-existing since v6.2; discovered 2026-08-17 during a live WDC position review (BLG-BE-103).
+- **Canonical requirement:** §Trailing Stop Column — Display format: Native currency, 2dp (matches Initial Stop format).
+- **Priority:** P0
+- **Target resolution release:** v8.9
+- **Owner:** Backend Engineering Patterns Owner; Frontend Specifications & UX Documentation Owner
+- **Backlog reference:** BLG-BE-103 (filed 2026-08-17, cycle 2026-08-17__release-v8.9)
+- **Resolution:** Resolved by ST-02, cycle 2026-08-17__release-v8.9. Backend now returns `current_trailing_stop_native` (`get_positions_with_prices()`, `backend/services/position_service.py`); `PositionCard.js` and the Table View row (`Positions.js`) render it instead of the GBP-converted `current_trailing_stop`. Existing e2e fixtures (`epic01-v62-stops-alerts.spec.js`, `epic01-v70-grid-badge-parity.spec.js`) updated to populate the new field; new coverage added (`tests/e2e/position-stop-currency-basis.spec.js`, `tests/test_position_currency_basis.py`).
 
 ### DEV-EPIC02-ST05-03 — Positions Table View: P&L (GBP) column absent
 
