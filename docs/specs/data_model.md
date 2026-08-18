@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.29
-**Last Updated:** 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — DS-15 trade_plans.triggered_by_price_alert_id, reporting-treatment decision documented); prior — 2026-08-14 (ST-12, EPIC-02, v8.8, BLG-BE-94 — DS-14 signals functional index for UPPER(ticker), Head-of-Engineering-review correction); prior — 2026-08-14 (ST-08, EPIC-02, v8.8, BLG-BE-58 — DS-13 position_state_history append-only table added); prior history retained — see prior entries in version control
+**Version:** 2.30
+**Last Updated:** 2026-08-18 (ST-10, EPIC-03, v8.9, BLG-BE-100 — transaction-isolation fix-or-accept decision documented for position_audit_log/position_state_history: audit-log write ordering); prior — 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — DS-15 trade_plans.triggered_by_price_alert_id, reporting-treatment decision documented); prior — 2026-08-14 (ST-12, EPIC-02, v8.8, BLG-BE-94 — DS-14 signals functional index for UPPER(ticker), Head-of-Engineering-review correction); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1527,6 +1527,11 @@ Reversible: `DROP TABLE IF EXISTS position_audit_log;`
 - Data Model & Domain Schema Owner: Accepted — 2026-07-27 (agent-mediated; single new append-only table, no existing schema touched, no backfill applicable — table did not previously exist)
 - Financial Reporting & Records Owner: Accepted — 2026-07-27 (agent-mediated; scope decision recorded above)
 
+**Transaction isolation decision (ST-10, BLG-BE-100, EPIC-03, v8.9):** `position_audit_log` and `position_state_history` (DS-13 below) writes are never in the same DB transaction as the primary state update they record — each uses its own independent `get_db()` connection. Reviewed both call sites for the resulting risk ("does the audit row get written when the primary write fails, or omitted when it shouldn't be"):
+- **`position_audit_log` — accept, no change.** All 3 call sites (`services/position_service.py::update_note`/`mark_position_reviewed`/`update_tags`) already call the primary write first and the audit write only after it returns successfully; if the primary write raises, execution never reaches the audit call. Safe by construction (call ordering), without needing literal transactional atomicity across the two connections. No fix required.
+- **`position_state_history` — fixed, not accepted.** Unlike `position_audit_log`, `refresh_position_lifecycle()` (`services/position_lifecycle_service.py`) called the audit write (`create_position_state_history_entry`) *before* the primary write (`update_position_lifecycle_state`) — a primary-write failure immediately after a successful audit insert would leave a `position_state_history` row recording a transition that never actually landed on `positions.position_state`. Reordered to primary-then-audit, matching `position_audit_log`'s already-safe pattern. Regression coverage: `tests/test_position_state_history.py::test_primary_write_runs_before_audit_write`, `test_audit_write_not_reached_when_primary_write_raises`.
+- Data Model & Domain Schema Owner: Accepted (position_audit_log ordering) / Confirmed fix (position_state_history reorder) — 2026-08-18 (agent-mediated; no schema change, ordering-only code fix, both audit tables' own fail-open non-blocking convention is unchanged)
+
 ---
 
 ### Migration from v2.17 to v2.18
@@ -1975,6 +1980,8 @@ No new migration. `BLG-BE-96` (ST-07) required staging/production verification o
 **Story:** ST-08 (EPIC-02, v8.8) — BLG-BE-58
 
 Append-only normalized log of position lifecycle state transitions, extending the `position_audit_log` pattern (§Migration v2.16→v2.17 above) to lifecycle state changes specifically. Complements — does not replace — the existing `state_history` JSONB column on `positions` (DS-05, v2.6): that column is untouched, `compute_position_state()` and the rest of the lifecycle state machine are unchanged (no behavioural change), and this table is written alongside the JSONB column on every genuine transition (`refresh_position_lifecycle()`, `services/position_lifecycle_service.py`). Rationale for a separate table rather than only the JSONB column: independently queryable/indexable history (e.g. `SELECT * FROM position_state_history WHERE position_id = ...`) without deserializing the JSONB blob, and a durable audit trail that survives even if the parent `positions` row's `state_history` column were ever reset. Same no-"who"-column rationale as `position_audit_log` (single-user product), same fail-open non-blocking write convention (a write failure never blocks the underlying lifecycle state update).
+
+**Write-ordering fix (ST-10, BLG-BE-100, EPIC-03, v8.9):** `refresh_position_lifecycle()` now calls the primary write (`update_position_lifecycle_state()`) *before* this table's audit write (`create_position_state_history_entry()`), not after — see the "Transaction isolation decision" note under §Migration v2.16→v2.17 above for the full rationale (a primary-write failure right after a successful audit insert previously left a phantom transition record here).
 
 ```sql
 BEGIN;
