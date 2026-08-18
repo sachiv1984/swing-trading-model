@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-17 (session — 1 new item added: BLG-SPEC-132); prior — 2026-08-17 (Release Planning v8.9 — Release Slice section added, 22 items across 6 EPICs, marker RP:v8.9:2026-08-17__release-v8.9); prior — 2026-08-17 (session — 5 new items added: BLG-FEAT-89, BLG-BE-104, BLG-FEAT-90, BLG-FEAT-91, BLG-FEAT-92); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior — 2026-08-17 (session — 1 new item added: BLG-SPEC-132); prior — 2026-08-17 (Release Planning v8.9 — Release Slice section added, 22 items across 6 EPICs, marker RP:v8.9:2026-08-17__release-v8.9); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4876,5 +4876,74 @@ The full pipeline (screener hit → watchlist → research → trade plan → po
 - Funnel view displays counts and conversion % for all 5 pipeline stages over a selectable date range
 - Reconciliation with `BLG-FEAT-30` completed and documented (merged, superseded, or confirmed distinct) before either item is scheduled
 - Product Owner sign-off
+
+---
+
+### BLG-BE-105 — Audit and backfill open positions against the breakeven-floor stop invariant
+
+**Priority:** P1 (High)
+**Type:** Backend Engineering / Risk Management / Data Integrity
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1452 review (Director of Quality / Product Owner agent-mediated review, 2026-08-18) — ST-01 (`BLG-BE-102`, EPIC-01, v8.9) acceptance criterion "No open profitable position has `current_stop` below its own `entry_price`" was confirmed *not* verified by that story's delivery. ST-01 confirmed the live calculation path is correct going forward (`calculate_trailing_stop()` applies the breakeven floor), but did not query or backfill the existing open-position dataset, since that AC requires a live-DB check that isn't CI-reproducible.
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`BLG-BE-102`'s root cause (stops not floored at `entry_price` for profitable positions) predates the ST-01 fix confirmation — commit `b410cfa3c` (2026-02-12) already made the *live calculation path* correct, but any position that ratcheted its stop before that commit, or via some other now-closed gap, could still be sitting in the database today with `current_stop < entry_price` while profitable. Nothing in the v8.9 EPIC-01 delivery checked or corrected the existing dataset — the AC was explicitly deferred as a post-merge ops action, not closed.
+
+**Scope**
+- Query all open positions where `position_state = 'PROFITABLE'` and `current_stop < entry_price`
+- For each match found, apply `calculate_trailing_stop()`'s floor logic (`max(current_stop, new_stop, entry_price)`) via the existing nightly recompute path (`run_nightly_trailing_stop_update()` or `analyze_positions()`), not a bespoke one-off script, so the correction goes through the same code path already regression-tested by `tests/test_trailing_stop_breakeven_floor.py`
+- Record the count of positions found/corrected for traceability (deviation log or ops note)
+
+**Acceptance Criteria**
+- Live-DB query confirms the count of open profitable positions with `current_stop < entry_price`, before and after correction
+- Any positions found are corrected via the existing floored calculation path (no new inline stop-adjustment logic)
+- Result recorded (count found, count corrected, date) — closes the deferred ST-01 AC from `BLG-BE-102`
+- Backend Engineering Patterns Owner sign-off
+
+---
+
+### BLG-QA-153 — Add Playwright coverage for UK-market position on current_trailing_stop_native
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** Director of Quality
+**Source:** PR #1452 review (Director of Quality agent-mediated review, 2026-08-18) — ST-02 (`BLG-BE-103`, EPIC-01, v8.9) added `current_trailing_stop_native` and verified UK-position parity (`current_trailing_stop == current_trailing_stop_native`) at the backend unit level only (`tests/test_position_currency_basis.py::test_native_and_gbp_fields_equal_for_uk_position`). No e2e/Playwright test exercises a UK-market position through the actual rendered Card/Table UI against the new field.
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`tests/e2e/position-stop-currency-basis.spec.js` (`V-CURR-01`, `V-CURR-02`) only fixtures a US-market position. The "no UK regression" claim for the new native-currency field is verified structurally (backend dict equality) but not through the UI a UK user would actually see. Risk is low — UK native and GBP values are identical by construction — but the gap means a future UI-layer regression specific to UK rendering (e.g. a stray currency-symbol bug) would not be caught by this EPIC's own test suite.
+
+**Scope**
+- Add a UK-market position fixture (native == GBP for all stop fields) to `tests/e2e/position-stop-currency-basis.spec.js` or a sibling spec
+- Assert Card and Table views render the same, single stop value with the `£` symbol, consistent with `initial_stop`
+
+**Acceptance Criteria**
+- New Playwright test(s) cover a UK-market position's Trail Stop tile/cell rendering
+- Test passes against current implementation
+- Director of Quality sign-off
+
+---
+
+### BLG-SPEC-133 — position_endpoints.md example JSON: current_trailing_stop_native doesn't reconcile with current_trailing_stop × live_fx_rate
+
+**Priority:** P4 (Trivial)
+**Type:** Specification / Documentation Accuracy
+**Owner:** API Contracts & Documentation Owner
+**Source:** PR #1452 review (Director of Quality agent-mediated review, 2026-08-18) — `docs/specs/api_contracts/position_endpoints.md`'s `GET /positions` example response block shows `current_trailing_stop: 560.50`, `live_fx_rate: 1.3650`, and `current_trailing_stop_native: 764.00` in the same object; `560.50 × 1.3650 = 765.08`, not `764.00` (off by ~£1.08 / 0.14%), so the example doesn't reconcile with the documented conversion formula for the two fields.
+**Effort:** XS (~15min)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+Purely an illustrative-example inconsistency (not test-enforced, no functional impact — the live conversion in `backend/services/position_service.py` is correct and covered by `tests/test_position_currency_basis.py`), but a reader manually verifying the field notes against the example would hit an arithmetic mismatch.
+
+**Scope**
+- Correct the example JSON's `current_trailing_stop_native` value (or its `current_trailing_stop`/`live_fx_rate` counterparts) so all three reconcile exactly
+
+**Acceptance Criteria**
+- Example JSON block in `docs/specs/api_contracts/position_endpoints.md` is internally consistent (`current_trailing_stop × live_fx_rate == current_trailing_stop_native`, within rounding)
+- API Contracts & Documentation Owner sign-off (or Head of Specs Team, per standard doc-fix delegation)
 
 ---
