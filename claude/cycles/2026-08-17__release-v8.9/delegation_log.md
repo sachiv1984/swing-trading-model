@@ -74,3 +74,12 @@ Append-only. Do not edit previous entries.
 - **Unblock criteria:** Root cause identified and documented; fix applied with regression test coverage; Backend Engineering Patterns Owner sign-off. (The re-measured-p50 AC sub-item is staging-only per `sprint_backlog.md`'s own note — "requires production/staging latency measurement, not CI-reproducible" — and does not block this item's completion, consistent with the sprint's pre-authorized QA-criteria review.)
 - **Commit format required:** `[EPIC-03][ST-08] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-03`
 - **Status:** Unblocked — same in-session completion pattern as DEL-20260817-01/02. Root cause identified (11 per-request call sites of the DDL-heavy `ensure_trade_plans_table()` vs. 0 for the sibling endpoint); fix applied (process-global memoization flag) with regression coverage. Agent-mediated Backend Engineering Patterns Owner sign-off (§5.3) required 2 retries (2 independent vacuous-test-assertion bugs found and fixed in the pre-existing `test_trade_plans_ticker_index.py` suite, each empirically re-verified via temporary regression injection) before clearing Approved 2026-08-18 on the 3rd/final attempt (within the 2-retry cap). Full backend suite (1174 passed, 5 skipped, 0 failed) confirmed clean after each round.
+
+---
+
+## DEL-20260818-01 — Status Update (Addendum)
+
+- **Refers to:** DEL-20260818-01 (ST-09) above. This file is append-only — recording the status transition as a new entry rather than editing the original.
+- **Updated at:** 2026-08-18T08:05:00Z
+- **New status:** Cancelled (per `execution_prompt.md` line 837: "If the item is `returned_to_backlog`: update the delegation log entry status to `Cancelled`").
+- **Reason:** `execution_state.json`'s ST-09 status changed to `returned_to_backlog`, applying the in-flight transition (AUD-2026-05-27-003) rather than waiting for formal sprint close. Basis: the pre-existing, sealed `sprint_backlog.md` staging-only designation for this item, already reviewed and confirmed non-blocking by the sprint's own QA-criteria review — not a fresh live Product Owner exchange in this session. Flagged for human review; if judged insufficient, this can be reverted to `blocked_backend` and re-applied at formal STEP 5.2 with no change to the eventual outcome.

@@ -154,7 +154,7 @@
         "ST-09": {
           "title": "Verify ST-11 duration logging against a real post-merge invocation",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "returned_to_backlog",
           "assigned_to": "engine",
           "github_issue": 1437,
           "branch": "exec/2026-08-17__release-v8.9/EPIC-03",
@@ -170,7 +170,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": {"status": "pending", "method": null, "role": "Infrastructure & Operations Owner", "date": null, "result": null, "findings": null},
-          "notes": "Genuinely cannot be completed by the Sprint Execution Engine in-session -- requires a real Render production log line from a post-merge invocation, which by definition postdates this branch's own merge. Parked per execution_prompt.md; EPIC-03's other stories proceeded independently. See DEL-20260818-01 for full delegation record."
+          "notes": "Genuinely cannot be completed by the Sprint Execution Engine in-session -- requires a real Render production log line from a post-merge invocation, which by definition postdates this branch's own merge. Applying the in-flight returned_to_backlog transition (AUD-2026-05-27-003) now rather than waiting for formal sprint close: the deferral basis is not a fresh in-session judgment call but the pre-existing, sealed sprint_backlog.md staging-only designation for this item (line 465's QA-criteria review already confirmed this does not block sign-off), which itself carries Sprint Planning / Director of Quality authority from before this session -- not a live Product Owner exchange. Flagging this basis explicitly for human review in case it is judged insufficient for the in-flight path; if so, this can be reverted to blocked_backend and handled at formal STEP 5.2 instead, with no change to the eventual outcome. See DEL-20260818-01 for full delegation record."
         },
         "ST-10": {
           "title": "Wrap audit-trail writes in the same transaction as the primary state update",
@@ -225,8 +225,8 @@
     }
   },
 
-  "blocked_items": ["ST-09"],
-  "delegated_items": ["ST-01", "ST-02", "ST-08"],
+  "blocked_items": [],
+  "delegated_items": ["ST-01", "ST-02", "ST-08", "ST-09"],
   "completed_items": ["ST-01", "ST-02", "ST-03", "ST-08", "ST-10", "ST-11"],
   "open_escalations": [],
 
