@@ -24,3 +24,12 @@ Append-only. Never edit a previous entry.
 - **Blocks execution:** No — EPIC-04's other stories (ST-12, ST-14, ST-15) proceed independently per execution_prompt.md §3.1.D step 4 ("Continue to next item").
 - **Disposition:** Open
 - **Resolution summary:** (to be completed on resolution)
+
+---
+
+## ESC-EXEC-20260818-01 — Resolution (Addendum)
+
+- **Refers to:** ESC-EXEC-20260818-01 above. This file is append-only — recording the resolution as a new entry rather than editing the original.
+- **Resolved at:** 2026-08-18T08:55:00Z (well within the 24h SLA due 2026-08-19T08:35:00Z)
+- **Disposition:** Resolved
+- **Resolution summary:** Agent-mediated Product Owner decision (§5.3): option (b) — normalize null/absent/empty `setup_type` to the existing canonical value `"Other"` server-side, in `backend/routers/trade_plans.py::create_plan()`'s `_create()` closure (commit `bdf8fee2`). Rationale: `"Other"` already exists as a canonical, live `SETUP_TYPE_OPTIONS`/`SETUP_TYPES` value in both backend and frontend, so this covers every creation path (frontend and direct API) at the single choke point with no new UI or enum value, and does not trigger a design-gate return per RISK-04. Evidence: `tests/test_trade_plan_setup_type_default.py` (4 new tests, all passing); `docs/specs/api_contracts/trade_plan_endpoints.md` v0.12→v0.13 documents the new default. Full backend suite: 1178 passed, 5 skipped, no regressions. See `execution_state.json` ST-13 for the full sign-off record.
