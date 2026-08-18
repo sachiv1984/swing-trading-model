@@ -33,7 +33,7 @@
 const { test, expect } = require('@playwright/test');
 
 function makePosition(overrides = {}) {
-  return {
+  const merged = {
     id: 'pos-gvp-01',
     ticker: 'AAPL',
     market: 'US',
@@ -55,6 +55,16 @@ function makePosition(overrides = {}) {
     tags: null,
     ...overrides,
   };
+  // ST-02 (BLG-BE-103, v8.9): these fixtures predate current_trailing_stop_native
+  // and don't model currency conversion — mirror current_trailing_stop unless a
+  // test explicitly overrides it, so existing scenarios asserting on a single
+  // trailing-stop number keep exercising the same value under the corrected
+  // native-display field (PositionCard.js/Positions.js now render
+  // current_trailing_stop_native, not the GBP-basis current_trailing_stop).
+  if (merged.current_trailing_stop_native === undefined) {
+    merged.current_trailing_stop_native = merged.current_trailing_stop;
+  }
+  return merged;
 }
 
 const NO_FLAG = { flagged: false, reasons: [], avg_gap_pct: null, event_count: 0, insufficient_history: false };

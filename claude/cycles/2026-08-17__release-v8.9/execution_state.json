@@ -1,0 +1,140 @@
+{
+  "cycle_id": "2026-08-17__release-v8.9",
+  "sprint_goal": "Ship v8.9: eliminate the two live risk-management stop-price defects on open positions (breakeven-floor ratchet, currency-basis mismatch) and deliver the sector-aware position sizing, pre-commit risk simulator, AI post-trade debrief, and in-app backtesting foundations of the Trade Intelligence Expansion — while clearing this cycle's reliability, QA, ops, and governance debt.",
+  "backlog_slice_source": "claude/cycles/2026-08-17__release-v8.9/stage4_backlog_slice.md",
+  "invoked_utc": "2026-08-17T17:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-08-17T19:05:00Z",
+
+  "preflight_notes": [
+    "sprint_backlog.md's EPIC-01 section is missing full story blocks for ST-02 and ST-03 (present in sprint_backlog_index.json's EPIC-01 st_items and in the Capacity Summary's 23-item count, and referenced by other stories' Dependencies/Staging-only-ACs notes, but with no Owner/Estimated effort/Delegation class/Acceptance Criteria wrapper of their own in sprint_backlog.md). Per execution_prompt.md STEP -1.5, standard mode: acceptance criteria for both IS defined -- in stage4_backlog_slice.md (explicitly the source of truth per its own header and per sprint_backlog.md's 'Backlog Slice Source' field), so this does not block execution. Delegation class was not stated for either in sprint_backlog.md; classified here per execution_prompt.md §5.1 rules: ST-02 -> delegated_backend (backend fix, same position data path as ST-01, sign-off pattern mirrors ST-01), ST-03 -> autonomous (doc-only entry addition, unambiguous AC). sprint_backlog.md is sealed and cannot be corrected by this engine; flagging here for PMO Lead / Head of Specs Team awareness rather than halting the sprint over a documentation completeness gap in a sealed artefact whose AC is otherwise available and unambiguous."
+  ],
+
+  "epics": {
+    "EPIC-01": {
+      "status": "pr_open",
+      "branch": "exec/2026-08-17__release-v8.9/EPIC-01",
+      "pr_number": 1452,
+      "pr_status": "open_awaiting_human_review",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-08-17__release-v8.9/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/test_trailing_stop_breakeven_floor.py",
+        "tests/test_position_currency_basis.py",
+        "tests/e2e/position-stop-currency-basis.spec.js"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "Fix nightly trailing-stop ratchet to apply breakeven floor for profitable positions",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1429,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-01",
+          "commit_sha": "616dab28",
+          "delegation_record_id": "DEL-20260817-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-17T19:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/utils/calculations.py#calculate_trailing_stop",
+            "tests/test_trailing_stop_breakeven_floor.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.2.A.qa_evidence_signed_off",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Backend Engineering Patterns Owner",
+            "date": "2026-08-17",
+            "result": "Approved",
+            "findings": "Confirmed via git blame that both live stop-writing entry points have called the floored calculate_trailing_stop() since commit b410cfa3c (2026-02-12), predating this cycle. position_manager.py confirmed off the live path. WDC worked example reproduced exactly. Non-blocking: fixed a misleading comment in test_trailing_stop_breakeven_floor.py's test_live_endpoints_call_calculate_trailing_stop (incorrectly implied a 3rd substring match came from the import statement)."
+          },
+          "notes": "Investigation (BLG-BE-102 scope item 1) confirmed both live production stop-writing paths (services/position_service.py::get_positions_with_prices() -> analyze_positions(), invoked nightly via GET /positions/analyze per .github/workflows/daily-snapshot.yml; and run_nightly_trailing_stop_update() via POST /positions/nightly-stop-update) already call the shared, floored calculate_trailing_stop() (backend/utils/calculations.py) -- trailing_stop = max(current_stop, new_stop, entry_price) when profitable. position_manager.py's own inline calc (max(current_stop, new_stop), no floor) is confirmed via code-path audit to be a backtest-tool-only path (only cross-module export used in production is check_market_regime, unrelated to stop calc) -- never imported by services/position_service.py or any live-serving endpoint. AC1 (single calc path in production) is therefore already satisfied by current code; documented via 2 new regression tests (TestPositionManagerNotOnLiveStopPath) confirming this structurally, not just narratively. AC3 (regression test, breakeven-floor case) added: tests/test_trailing_stop_breakeven_floor.py, 7 tests, using the exact BLG-BE-102 WDC worked example (508.80/54.1986/163.31/434.30 -> 434.30). AC2 (no open profitable position has current_stop below entry_price) is the sprint_backlog.md-flagged staging-only AC for this story -- requires a live-position DB query, not CI-reproducible; the item's own Notes field defers backfill/recompute of existing open positions to after this fix is verified, i.e. a post-merge ops action, not a code-commit deliverable. No production code change was needed for the floor logic itself (already correct); this story's real deliverable is the confirmation + regression test + explicit position_manager.py/live-path documentation closing the ambiguity BLG-BE-102 raised."
+        },
+        "ST-02": {
+          "title": "Fix currency basis of current_trailing_stop/stop_price for US-market positions",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1430,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-01",
+          "commit_sha": "275b6e4f",
+          "delegation_record_id": "DEL-20260817-02",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-17T19:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/position_endpoints.md#Field notes",
+            "docs/specs/frontend/pages/positions.md#Trailing Stop Column",
+            "tests/test_position_currency_basis.py",
+            "tests/e2e/position-stop-currency-basis.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.2.A.qa_evidence_signed_off",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Backend Engineering Patterns Owner; Frontend Specifications & UX Documentation Owner",
+            "date": "2026-08-17",
+            "result": "Approved",
+            "findings": "current_trailing_stop_native verified correctly computed and consumed across PositionCard.js, Positions.js table row, and TrailStopModal; trailBreached GBP-vs-GBP comparison confirmed unaffected. Pre-existing e2e fixture updates (epic01-v62-stops-alerts.spec.js, epic01-v70-grid-badge-parity.spec.js) confirmed to preserve original test intent (badge/label assertions only, no numeric stop assertion). DEV-EPIC01-ST02-01 filing and doc version bumps confirmed correctly formatted."
+          },
+          "notes": "Root cause confirmed exactly as described in BLG-BE-103: get_positions_with_prices() (backend/services/position_service.py) returns initial_stop unconverted (native) but current_trailing_stop and stop_price GBP-converted for US-market positions, while PositionCard.js/Positions.js derive currencySymbol solely from position.market (native) and rendered current_trailing_stop next to it. Fix: added current_trailing_stop_native field to the backend response (native basis, mirrors the pre-existing stop_price_native pattern); frontend now renders current_trailing_stop_native on both Card and Table views, keeping the GBP-basis current_trailing_stop only for the (already GBP-consistent) breach comparison against current_price. Also corrected a related native-fallback bug in the TrailStopModal (Positions.js) that defaulted to the GBP stop_price instead of stop_price_native before its own live query resolves. Filed as DEV-EPIC01-ST02-01 in docs/specs/frontend/pages/positions.md#Known Deviations (spec already required 'native currency' display -- implementation diverged from v6.2 -- resolved same-story, so deviations_filed=true with the deviation documented as resolved, per the spec's DEV-EPIC01-ST05-01 precedent format). 2 pre-existing e2e fixtures (epic01-v62-stops-alerts.spec.js, epic01-v70-grid-badge-parity.spec.js) needed a 1-line makePosition() update each (default current_trailing_stop_native to mirror current_trailing_stop unless overridden) to keep testing their original scenarios under the corrected field -- both re-verified passing, confirmed via full re-run of both files (25/25 pass) plus a full 6-file trailing-stop-adjacent e2e sweep (57/57 pass) and the full backend suite (1170 passed, 5 skipped, 0 failed). New coverage: tests/test_position_currency_basis.py (pytest, 2 tests) + tests/e2e/position-stop-currency-basis.spec.js (Playwright, 2 tests, V-CURR-01/V-CURR-02) -- both verified failing-then-passing against the actual fix (ran against pre-fix code first via the two pre-existing-fixture failures, confirming the tests are not trivially-passing)."
+        },
+        "ST-03": {
+          "title": "Add trailing_stop_action_rate spec entry with validation tolerances",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1431,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-01",
+          "commit_sha": "92080113",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-17T19:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Trailing Stop Action Rate"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.2.A.qa_evidence_signed_off",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Metrics Definitions & Analytics Owner",
+            "date": "2026-08-17",
+            "result": "Approved",
+            "findings": "Validation Tolerances subsection reviewed against the pre-existing Trailing Stop Action Rate definition — numeric bounds are internally consistent and satisfy the 'numerically, not qualitatively' AC."
+          },
+          "notes": "The 'Trailing Stop Action Rate' section in metrics_definitions.md already existed (added v1.13.0 BLG-SPEC-61, extended v1.15.0 ST-07/BLG-BE-50) with Definition, Data Capture Requirement, and Tooling Assessment subsections -- BLG-SPEC-85's premise ('shipped without a formal entry') was stale by the time this story executed. The genuine gap against this story's AC ('tolerances stated numerically, not qualitatively') was the absence of an explicit numeric tolerance-band subsection. Added ## Validation Tolerances subsection: insufficient-sample threshold (denominator < 5), expected range (0.05-0.95 with denominator >= 5), anomalously low/high bands (< 0.05 / > 0.95 with denominator >= 10), stale-capture window (> 30 days with no new log row while eligible open positions exist), and the pre-existing 24h capture window restated for completeness. Doc version bumped 1.16.1 -> 1.17.0, Document History row to be appended at commit."
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": ["ST-01", "ST-02"],
+  "completed_items": ["ST-01", "ST-02", "ST-03"],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-01"],
+    "all_merged": false,
+    "notes": "EPIC-01 PR #1452 open, head_sha e15874c5288d5ab3ff4a95de12a32e1035608fe4. Awaiting human Director of Quality PR sign-off and Product Owner acceptance — always-human gates (execution_prompt.md §4/§5.3), engine may not self-merge."
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}

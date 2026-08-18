@@ -224,6 +224,12 @@ def get_positions_with_prices() -> List[Dict]:
             "market": pos['market'],
             "initial_stop": round(initial_stop, 2) if initial_stop is not None else None,
             "current_trailing_stop": round(current_trailing_stop_gbp, 2),
+            # ST-02 (BLG-BE-103, v8.9): native-currency counterpart of current_trailing_stop
+            # above (which is GBP-converted for US-market positions). initial_stop and
+            # stop_price_native are already native — this field closes the gap so every
+            # stop-price field on the position has an unambiguous native-currency sibling
+            # the frontend can pair with the native currency symbol it derives from `market`.
+            "current_trailing_stop_native": round(current_trailing_stop_native, 2),
             "risk_off_exit": risk_off_exit,
             "entry_date": str(pos['entry_date']),
             "entry_price": round(entry_price_display, 2),

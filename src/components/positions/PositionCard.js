@@ -156,10 +156,16 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
   const displayCurrentPrice = position.current_price_native || position.current_price;
 
   // ST-03 (BLG-FE-97): trailing stop value + breach indicator — same condition logic as Table View
+  // ST-02 (BLG-BE-103, v8.9): trailBreached compares two GBP-basis values (trailStop vs
+  // currentPriceGbp) — that comparison is currency-consistent and unaffected by this fix.
+  // displayTrailStop is what actually renders next to currencySymbol (native, e.g. "$" for
+  // US) — it must use the native-currency trailing stop, not the GBP-converted one, or a
+  // US-market stop renders as a $-labelled GBP number (BLG-BE-103).
   const trailStop = position.current_trailing_stop;
+  const trailStopNative = position.current_trailing_stop_native;
   const currentPriceGbp = position.current_price;
   const trailBreached = trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
-  const displayTrailStop = trailStop > 0 ? trailStop : (position.stop_price_native || position.stop_price);
+  const displayTrailStop = trailStopNative > 0 ? trailStopNative : (position.stop_price_native || position.stop_price);
 
   return (
     <motion.div
