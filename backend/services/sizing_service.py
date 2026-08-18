@@ -221,7 +221,11 @@ def _calculate_heat_impact(
         if heat_result.get("valid"):
             return heat_result.get("incremental_heat_percent")
         return None
-    except Exception:
+    except Exception as exc:
+        # Fail-open, matching portfolio_service._snapshot_sector_regime's
+        # convention: log so a real bug here (e.g. a future signature
+        # mismatch) leaves a trace instead of silently rendering "—" forever.
+        print(f"  Warning: heat impact calculation failed ({exc}) — sizing result unaffected")
         return None
 
 

@@ -4995,3 +4995,47 @@ The codebase now carries four independent implementations of "look up a ticker's
 - Backend Engineering Patterns Owner sign-off
 
 ---
+
+### BLG-TECH-14 — Consolidate PositionSizingWidget.js / WhatIfSizingPreview.js debounced-fetch boilerplate
+
+**Priority:** P3 (Low)
+**Type:** Platform / Technical Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-05/EPIC-02 Head of Engineering sign-off review, 2026-08-17__release-v8.9 — 2026-08-18
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`PositionSizingWidget.js` (§10.7) and `WhatIfSizingPreview.js` (§5d, added ST-05/BLG-FEAT-91) share only the two `AMBER_MESSAGES`/`SYSTEM_MESSAGES` constant objects (exported from `PositionSizingWidget.js` for reuse). The debounce/sessionStorage/fetch-effect boilerplate — ~30-40 lines each — is duplicated near-verbatim between the two components. Consistent with this codebase's already-acknowledged pattern of deferring widget-consolidation debt (§10.7's own baseline-documentation gap, BLG-SPEC-132), but worth tracking rather than left silently duplicated a second time.
+
+**Scope**
+- Extract a shared `useDebouncedSizing` hook (or equivalent) covering: debounced 300ms fetch to `POST /portfolio/size`, loading state, sessionStorage-backed risk-percent state (parameterised by storage key, since the two components deliberately use distinct keys)
+- Both components consume the shared hook, each keeping their own presentation/layout
+
+**Acceptance Criteria**
+- `PositionSizingWidget.js` and `WhatIfSizingPreview.js` share the debounce/fetch/session-storage logic via one hook
+- Existing Playwright coverage for both components (`position-sizing-concentration.spec.js`, `what-if-sizing-preview.spec.js`, `smoke-critical-paths.spec.js`) passes unchanged
+- Frontend Specifications & UX Documentation Owner sign-off
+
+---
+
+### BLG-FE-164 — What-If Sizing Preview never sends an fx_rate override — AC-02 reproducibility claim doesn't fully hold for US-market plans
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-05/EPIC-02 Head of Engineering sign-off review, 2026-08-17__release-v8.9 — 2026-08-18
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`trade_plan.md` §5d.3 claims the What-If Sizing Preview panel "reproduces an identical suggested size" to what `TradeEntry.js` computes at order time, because both call `POST /portfolio/size`. This holds for UK-market plans, but not reliably for US-market plans: the Trade Plan form has no `fx_rate` field (confirmed against §5.1 and the ux_spec's own payload, which omits `fx_rate`), so the What-If panel always prices against the *live* FX rate, while `TradeEntry.js`'s `PositionSizingWidget` uses a manually-entered field defaulting to a static `1.27`. If the live rate has moved since the plan was drafted, the two suggested sizes can diverge. This does not violate the formally-stated AC-02 ("no DB write occurs from interacting with the preview alone" holds regardless), and is rooted in the design spec's own payload/reasoning rather than an implementation deviation — but the §5d.3 "reproduces an identical suggested size" claim is stronger than the implementation actually guarantees for US-market plans.
+
+**Scope**
+- Either (a) add an optional FX-rate override field to the What-If panel (or the Trade Plan form generally) mirroring `TradeEntry.js`'s field, or (b) soften §5d.3's wording to note the live-rate caveat for US-market plans explicitly
+
+**Acceptance Criteria**
+- `trade_plan.md` §5d.3's reproducibility claim is either made accurate (FX override added) or explicitly scoped to note the US-market live-rate caveat
+- Frontend Specifications & UX Documentation Owner sign-off
+
+---

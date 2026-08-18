@@ -87,10 +87,19 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
 
   // §5d.3: "R at Risk" is derived client-side from the response's
   // suggested_shares and the known inputs — not a new backend field.
-  const rAtRisk =
+  // FX-converted to GBP for US-market plans, same convention as
+  // TradeEntry.js's own "Total Risk" row (costs.totalRisk, §10.7's sibling
+  // precedent): totalRiskGBP = totalRiskNative / fx_rate. Reads
+  // sizingResult.fx_rate_used (always returned by POST /portfolio/size)
+  // rather than depending on a separate fxRate prop the Trade Plan form has
+  // no natural source for — this form has no fx_rate field (§5.1).
+  const rAtRiskNative =
     isValid && suggestedShares != null && parsedEntry != null && parsedStop != null
       ? (parsedEntry - parsedStop) * suggestedShares
       : null;
+  const fxRateUsed = sizingResult?.fx_rate_used || 1;
+  const rAtRisk =
+    rAtRiskNative != null && market === "US" ? rAtRiskNative / fxRateUsed : rAtRiskNative;
 
   const heatImpact = isValid ? sizingResult?.heat_impact_percent : null;
 
@@ -197,7 +206,7 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
                     {sizingLoading ? (
                       <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
                     ) : rAtRisk != null ? (
-                      rAtRisk.toFixed(2)
+                      `£${rAtRisk.toFixed(2)}`
                     ) : (
                       "—"
                     )}

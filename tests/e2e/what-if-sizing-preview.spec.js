@@ -119,8 +119,40 @@ test.describe('What-If Sizing Preview (V-WHATIF-01..03)', () => {
     await page.waitForResponse(/\/portfolio\/size/, { timeout: 5000 });
 
     await expect(page.getByTestId('what-if-suggested-shares')).toHaveText('17.8571 shares', { timeout: 5000 });
-    await expect(page.getByTestId('what-if-r-at-risk')).toHaveText('1250.00'); // (850-780)*17.8571
+    // (850-780)*17.8571 = 1250.00 native (USD); market=US -> GBP-converted via
+    // fx_rate_used=1.3642, same convention as TradeEntry.js's Total Risk row.
+    await expect(page.getByTestId('what-if-r-at-risk')).toHaveText('£916.29');
     await expect(page.getByTestId('what-if-heat-impact')).toHaveText('+0.8% heat');
+  });
+
+  test('V-WHATIF-02b — UK-market plan: R at Risk is already GBP, no conversion applied', { tag: ['@smoke'] }, async ({ page }) => {
+    await mockFallback(page);
+    await mockMarketStatus(page);
+    await mockSettings(page);
+    await mockPortfolioSize(page, {
+      valid: true,
+      suggested_shares: 20.0,
+      risk_amount: 200.0,
+      stop_distance: 10.0,
+      estimated_cost: 2000.0,
+      estimated_fees: 0.0,
+      fx_rate_used: 1.0,
+      cash_sufficient: true,
+      available_cash: 20000.0,
+      concentration_adjusted: false,
+      concentration_reason: null,
+      heat_impact_percent: 0.3,
+    });
+
+    await gotoTradePlan(page, { ticker: 'VOD.L', market: 'UK' });
+
+    await page.getByTestId('planned-stop-price-input').fill('90.00');
+    await expect(page.getByTestId('what-if-sizing-preview-panel')).toBeVisible({ timeout: 5000 });
+    await page.getByTestId('what-if-entry-price-input').fill('100.00');
+    await page.waitForResponse(/\/portfolio\/size/, { timeout: 5000 });
+
+    // (100-90)*20 = 200.00 GBP (UK — fx_rate_used=1.0, no division applied).
+    await expect(page.getByTestId('what-if-r-at-risk')).toHaveText('£200.00');
   });
 
   test('V-WHATIF-03 — interacting with the preview never fires a trade-plan write', { tag: ['@smoke'] }, async ({ page }) => {
