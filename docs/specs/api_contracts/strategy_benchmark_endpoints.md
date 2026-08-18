@@ -327,8 +327,8 @@ ST-07 (BLG-FEAT-89, EPIC-02, v8.9). Runs a candidate `strategy_rules.md` paramet
 | `max_drawdown_pct` | Computed from the run's own equity curve over the bounded window — not comparable in magnitude to the full nightly backtest's Max DD % |
 
 **Errors:**
-- `400` Unknown candidate parameter field name
-- `500` Backtest run failed (e.g. no active tickers in `ticker_universe`, price data unavailable)
+- `400` Business-rule failure (`BacktestRuleChangeError`): unknown candidate parameter field name, no active tickers in `ticker_universe`, or no usable price data for the bounded universe
+- `500` Unexpected server error
 
 ---
 

@@ -49,7 +49,6 @@ concurrent request handling. Filed BLG-TECH-15 for the maintenance burden of
 keeping this in sync if production_strategy.py's core algorithm changes.
 """
 
-import math
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 
@@ -156,10 +155,6 @@ def transaction_fee(ticker: str, side: str) -> float:
     if ticker.endswith(".L"):
         return 0.005 if side == "buy" else 0.0
     return 0.0015
-
-
-def _floor_4dp(value: float) -> float:
-    return math.floor(value * 10000) / 10000
 
 
 def run_backtest(
