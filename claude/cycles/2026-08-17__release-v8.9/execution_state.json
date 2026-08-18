@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-17T17:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-18T01:00:00Z",
+  "last_updated_utc": "2026-08-18T01:30:00Z",
 
   "preflight_notes": [
     "sprint_backlog.md's EPIC-01 section is missing full story blocks for ST-02 and ST-03 (present in sprint_backlog_index.json's EPIC-01 st_items and in the Capacity Summary's 23-item count, and referenced by other stories' Dependencies/Staging-only-ACs notes, but with no Owner/Estimated effort/Delegation class/Acceptance Criteria wrapper of their own in sprint_backlog.md). Per execution_prompt.md STEP -1.5, standard mode: acceptance criteria for both IS defined -- in stage4_backlog_slice.md (explicitly the source of truth per its own header and per sprint_backlog.md's 'Backlog Slice Source' field), so this does not block execution. Delegation class was not stated for either in sprint_backlog.md; classified here per execution_prompt.md §5.1 rules: ST-02 -> delegated_backend (backend fix, same position data path as ST-01, sign-off pattern mirrors ST-01), ST-03 -> autonomous (doc-only entry addition, unambiguous AC). sprint_backlog.md is sealed and cannot be corrected by this engine; flagging here for PMO Lead / Head of Specs Team awareness rather than halting the sprint over a documentation completeness gap in a sealed artefact whose AC is otherwise available and unambiguous."
@@ -128,7 +128,10 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-08-17__release-v8.9/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_sizing_concentration.py",
+        "tests/e2e/position-sizing-concentration.spec.js"
+      ],
       "stories": {
         "ST-23": {
           "title": "§13 System Boundary Review: Automated AI Post-Trade Debrief",
@@ -163,34 +166,36 @@
         "ST-04": {
           "title": "Correlation/sector-concentration-aware position sizing",
           "classification": "delegated_backend",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1432,
           "branch": "exec/2026-08-17__release-v8.9/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "97e6c407e4a20437451f6a11cbfec0b81c0b0b7b",
           "delegation_record_id": "DEL-20260818-02",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-08-18T01:30:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md",
             "backend/services/concentration_service.py",
-            "backend/services/sizing_service.py#_apply_concentration_adjustment"
+            "backend/services/sizing_service.py#_apply_concentration_adjustment",
+            "tests/test_sizing_concentration.py",
+            "tests/e2e/position-sizing-concentration.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.implementation_in_progress",
+          "deviations_filed": true,
+          "last_completed_substep": "3.2.A.qa_evidence_pending",
           "sign_off_record": {
-            "status": "pending",
-            "method": null,
+            "status": "cleared",
+            "method": "agent_mediated",
             "role": "Backend Engineering Patterns Owner",
-            "date": null,
-            "result": null,
-            "findings": null
+            "date": "2026-08-18",
+            "result": "Approved",
+            "findings": "Threshold reuse verified (30% correctly imported from concentration_service.py, matching strategy_rules.md §4.2.2, not redefined; separate 20% flag-zone constant correctly labelled as an implementation constant, not a canonical redefinition). Reduction math hand-traced against 2 test cases (partial reduction, full saturation) -- cap formula correctly lands allocation at/under 30%, floors conservatively, final_shares never increases. Backward-compatibility short-circuit confirmed by reading the code path directly (ticket/shares<=0 check precedes any DB call). AC-03 test confirmed not question-begging -- corroborated by independent threshold-math tests. Non-blocking observation: the AC-03 'uncorrelated' case uses position_count=0 rather than a nonzero different-sector count -- noted, does not block. §13 framing, contract/openapi/spec updates, and BLG-TECH-13 disclosure all confirmed consistent."
           },
-          "notes": "Implementation in progress this session: backend/services/concentration_service.py (new -- shared sector-exposure calc, reuses strategy_rules.md §4.2.2's canonical 30% threshold, does not redefine it); sizing_service.py extended with _apply_concentration_adjustment (reduce-or-flag per design_record.md §2); POST /portfolio/size request model + router updated to accept optional ticker; PositionSizingWidget.js + TradeEntry.js updated to pass ticker and render concentration_reason per design_record.md's display contract. Still outstanding: regression test (AC-03), portfolio_endpoints.md + openapi.yaml contract update (CLAUDE.md §2 same-commit requirement), Backend Engineering Patterns Owner sign-off, BLG-TECH backlog item for the now-4-way duplicated sector-lookup implementation noted in concentration_service.py's own docstring."
+          "notes": "No deviation from design_record.md -- implementation matches its display contract (field names, placement, styling, §13 framing) exactly, confirmed both by direct comparison and by the sign-off review. deviations_filed=true (deviation check completed, none found). Test scenarios: tests/test_sizing_concentration.py (9 pytest, all passing; full backend suite 1179 passed/5 skipped/0 failed) + tests/e2e/position-sizing-concentration.spec.js (3 Playwright, run live against `npm start`, all passing -- satisfies CLAUDE.md's frontend-visible-change hard gate for AC-02). Pre-existing smoke-critical-paths.spec.js re-verified passing (no regression to PositionSizingWidget's existing auto-fill behaviour). CI (commit 97e6c407) green on CI Pytest Suite, Golden Output Regression Gate, Portfolio Integration Tests, Service Layer Coverage Gate, Endpoint Coverage Report, Governance Sync Loop; Playwright E2E + Critical-Path Smoke Tests still running at time of this write, will be confirmed before EPIC-02 PR opens."
         }
       }
     }
@@ -198,7 +203,7 @@
 
   "blocked_items": [],
   "delegated_items": ["ST-01", "ST-02", "ST-23", "ST-04"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-23"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-23", "ST-04"],
   "open_escalations": [],
 
   "merge_gate": {

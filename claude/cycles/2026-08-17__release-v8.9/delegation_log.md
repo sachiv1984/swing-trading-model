@@ -73,4 +73,4 @@ Append-only. Do not edit previous entries.
 - **Spec reference:** `docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md`
 - **Unblock criteria:** Backend adjustment implemented and reusing the canonical threshold; `portfolio_endpoints.md` + `openapi.yaml` updated same-commit; regression test added and passing; frontend display wired per the design record; Backend Engineering Patterns Owner sign-off.
 - **Commit format required:** `[EPIC-02][ST-04] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-02`
-- **Status:** In Progress — engine implementing directly this session (backend + frontend), not yet committed. Backend Engineering Patterns Owner agent-mediated sign-off (§5.3) not yet run.
+- **Status:** Unblocked — engine implemented directly this session (backend + frontend), no external credential needed. Commit `97e6c407e4a20437451f6a11cbfec0b81c0b0b7b`. Agent-mediated Backend Engineering Patterns Owner sign-off (§5.3) cleared Approved 2026-08-18; regression suite (9 pytest, full backend suite 1179/1179) and Playwright suite (3 tests, run live) passing.
