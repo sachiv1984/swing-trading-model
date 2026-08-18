@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-17T17:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-18T00:00:00Z",
+  "last_updated_utc": "2026-08-18T06:30:00Z",
 
   "preflight_notes": [
     "sprint_backlog.md's EPIC-01 section is missing full story blocks for ST-02 and ST-03 (present in sprint_backlog_index.json's EPIC-01 st_items and in the Capacity Summary's 23-item count, and referenced by other stories' Dependencies/Staging-only-ACs notes, but with no Owner/Estimated effort/Delegation class/Acceptance Criteria wrapper of their own in sprint_backlog.md). Per execution_prompt.md STEP -1.5, standard mode: acceptance criteria for both IS defined -- in stage4_backlog_slice.md (explicitly the source of truth per its own header and per sprint_backlog.md's 'Backlog Slice Source' field), so this does not block execution. Delegation class was not stated for either in sprint_backlog.md; classified here per execution_prompt.md §5.1 rules: ST-02 -> delegated_backend (backend fix, same position data path as ST-01, sign-off pattern mirrors ST-01), ST-03 -> autonomous (doc-only entry addition, unambiguous AC). sprint_backlog.md is sealed and cannot be corrected by this engine; flagging here for PMO Lead / Head of Specs Team awareness rather than halting the sprint over a documentation completeness gap in a sealed artefact whose AC is otherwise available and unambiguous."
@@ -120,6 +120,101 @@
           "notes": "The 'Trailing Stop Action Rate' section in metrics_definitions.md already existed (added v1.13.0 BLG-SPEC-61, extended v1.15.0 ST-07/BLG-BE-50) with Definition, Data Capture Requirement, and Tooling Assessment subsections -- BLG-SPEC-85's premise ('shipped without a formal entry') was stale by the time this story executed. The genuine gap against this story's AC ('tolerances stated numerically, not qualitatively') was the absence of an explicit numeric tolerance-band subsection. Added ## Validation Tolerances subsection: insufficient-sample threshold (denominator < 5), expected range (0.05-0.95 with denominator >= 5), anomalously low/high bands (< 0.05 / > 0.95 with denominator >= 10), stale-capture window (> 30 days with no new log row while eligible open positions exist), and the pre-existing 24h capture window restated for completeness. Doc version bumped 1.16.1 -> 1.17.0, Document History row to be appended at commit."
         }
       }
+    },
+    "EPIC-03": {
+      "status": "in_progress",
+      "branch": "exec/2026-08-17__release-v8.9/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-08-17__release-v8.9/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-08": {
+          "title": "Investigate GET /trade-plans/tags ~10s p50 latency",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1436,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": {"status": "pending", "method": null, "role": "Backend Engineering Patterns Owner", "date": null, "result": null, "findings": null},
+          "notes": null
+        },
+        "ST-09": {
+          "title": "Verify ST-11 duration logging against a real post-merge invocation",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1437,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": true,
+          "spec_reference_not_applicable_reason": "Entire item is staging-only per sprint_backlog.md: requires a real Render production log invocation, not CI-reproducible.",
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": {"status": "pending", "method": null, "role": "Infrastructure & Operations Owner", "date": null, "result": null, "findings": null},
+          "notes": null
+        },
+        "ST-10": {
+          "title": "Wrap audit-trail writes in the same transaction as the primary state update",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1438,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": {"status": "pending", "method": null, "role": null, "date": null, "result": null, "findings": null},
+          "notes": null
+        },
+        "ST-11": {
+          "title": "Confirm trade_csv_service.py::build_trade_history_csv is dead code and remove, or document coexistence",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1439,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": {"status": "pending", "method": null, "role": "Head of Engineering", "date": null, "result": null, "findings": null},
+          "notes": null
+        }
+      }
     }
   },
 
@@ -130,9 +225,9 @@
 
   "merge_gate": {
     "epics_merged": ["EPIC-01"],
-    "epics_pending": [],
+    "epics_pending": ["EPIC-02", "EPIC-03"],
     "all_merged": false,
-    "notes": "EPIC-01 PR #1452 merged 2026-08-18T08:12:41Z (confirmed via `gh pr view 1452`, mergedAt non-null; synced on run sprint resume 2026-08-18 per execution_prompt.md STEP 4 resume-sync, LL-v3.9-P3-1). `all_merged` remains false: sprint_backlog.md Sprint 1 scope includes 5 further EPICs (EPIC-02..EPIC-06) not yet initialised in this execution_state.json — epics_pending is empty only because no other EPIC branch has started, not because the sprint is complete. Orphaned post-merge commit check (LL-v6.8-P3-01) run: `git log origin/main..origin/exec/2026-08-17__release-v8.9/EPIC-01` returned empty — no reconciliation needed."
+    "notes": "EPIC-01 PR #1452 merged 2026-08-18T08:12:41Z. EPIC-02 PR #1453 opened 2026-08-18, all 4 in-scope stories done and QA-signed-off, awaiting human Director of Quality/Product Owner review -- engine may not self-merge. EPIC-03 branch created 2026-08-18 from post-EPIC-01-merge main (per the multi-EPIC sibling-PR pattern -- EPIC-03 does not wait for EPIC-02 to merge before starting, consistent with the Async-merge sibling notification note and sprint_close_reminder.yml's rebase-recommended-on-merge tooling). This branch's own copy of execution_state.json necessarily lacks EPIC-02's story data (only present on the EPIC-02 branch until it merges) -- CLAUDE.md §8's union-merge rule for completed_items/blocked_items/delegated_items applies whichever EPIC branch merges second. `all_merged` remains false: sprint_backlog.md Sprint 1 scope includes EPIC-04 through EPIC-06 not yet initialised."
   },
 
   "sealed": false,
