@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-17T17:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-17T19:05:00Z",
+  "last_updated_utc": "2026-08-18T00:00:00Z",
 
   "preflight_notes": [
     "sprint_backlog.md's EPIC-01 section is missing full story blocks for ST-02 and ST-03 (present in sprint_backlog_index.json's EPIC-01 st_items and in the Capacity Summary's 23-item count, and referenced by other stories' Dependencies/Staging-only-ACs notes, but with no Owner/Estimated effort/Delegation class/Acceptance Criteria wrapper of their own in sprint_backlog.md). Per execution_prompt.md STEP -1.5, standard mode: acceptance criteria for both IS defined -- in stage4_backlog_slice.md (explicitly the source of truth per its own header and per sprint_backlog.md's 'Backlog Slice Source' field), so this does not block execution. Delegation class was not stated for either in sprint_backlog.md; classified here per execution_prompt.md §5.1 rules: ST-02 -> delegated_backend (backend fix, same position data path as ST-01, sign-off pattern mirrors ST-01), ST-03 -> autonomous (doc-only entry addition, unambiguous AC). sprint_backlog.md is sealed and cannot be corrected by this engine; flagging here for PMO Lead / Head of Specs Team awareness rather than halting the sprint over a documentation completeness gap in a sealed artefact whose AC is otherwise available and unambiguous."
@@ -13,10 +13,10 @@
 
   "epics": {
     "EPIC-01": {
-      "status": "pr_open",
+      "status": "merged",
       "branch": "exec/2026-08-17__release-v8.9/EPIC-01",
       "pr_number": 1452,
-      "pr_status": "open_awaiting_human_review",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-17__release-v8.9/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -129,10 +129,10 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": [],
     "all_merged": false,
-    "notes": "EPIC-01 PR #1452 open, head_sha e15874c5288d5ab3ff4a95de12a32e1035608fe4. Awaiting human Director of Quality PR sign-off and Product Owner acceptance — always-human gates (execution_prompt.md §4/§5.3), engine may not self-merge."
+    "notes": "EPIC-01 PR #1452 merged 2026-08-18T08:12:41Z (confirmed via `gh pr view 1452`, mergedAt non-null; synced on run sprint resume 2026-08-18 per execution_prompt.md STEP 4 resume-sync, LL-v3.9-P3-1). `all_merged` remains false: sprint_backlog.md Sprint 1 scope includes 5 further EPICs (EPIC-02..EPIC-06) not yet initialised in this execution_state.json — epics_pending is empty only because no other EPIC branch has started, not because the sprint is complete. Orphaned post-merge commit check (LL-v6.8-P3-01) run: `git log origin/main..origin/exec/2026-08-17__release-v8.9/EPIC-01` returned empty — no reconciliation needed."
   },
 
   "sealed": false,
