@@ -1139,8 +1139,29 @@ def upsert_trade_reflection(trade_id: str, data: Dict) -> Dict:
 # Trade Plans (DS-04 / ST-02, v3.1)
 # ---------------------------------------------------------------------------
 
+_trade_plans_table_ensured = False
+
+
 def ensure_trade_plans_table():
-    """Create trade_plans table if it does not exist (idempotent)."""
+    """Create trade_plans table if it does not exist (idempotent).
+
+    ST-08 (BLG-BE-98, EPIC-03, v8.9): this function is called at the top of
+    every trade_plans router endpoint (11 call sites) -- correct for
+    idempotent-schema safety, but each call previously re-ran a CREATE TABLE
+    + 4 CREATE INDEX statements *and* 5 further ensure_*_column() sub-calls
+    (each opening its own get_db() connection) on every single request, not
+    just the first. Root cause of GET /trade-plans/tags's ~10s p50 (vs.
+    GET /positions/tags's ~2.4s -- that endpoint has no equivalent ensure_*
+    call at all). Memoized here with a process-level flag: the real DDL work
+    still runs exactly once per process (fresh deploy/restart), and every
+    subsequent call across all 11 trade_plans endpoints becomes a cheap
+    no-op instead of 6 DDL round-trips. Live p50 re-measurement against
+    GET /positions/tags is a staging/production-only follow-up (not
+    CI-reproducible) per this story's own staging-only AC note.
+    """
+    global _trade_plans_table_ensured
+    if _trade_plans_table_ensured:
+        return
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute("""
@@ -1180,6 +1201,7 @@ def ensure_trade_plans_table():
     ensure_thesis_provenance_columns()
     ensure_invalidation_condition_column()
     ensure_is_ai_draft_column()
+    _trade_plans_table_ensured = True
 
 
 def create_trade_plan(portfolio_id: str, data: dict) -> dict:
