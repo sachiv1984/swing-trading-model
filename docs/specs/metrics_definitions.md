@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.16.1
-**Last Updated:** 2026-08-04
+**Version:** 1.17.0
+**Last Updated:** 2026-08-17
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1100,9 +1100,22 @@ The action-rate query joins each log row to the earliest `PATCH /positions/{id}`
 
 Applying the question as literally asked to this metric's documentation: `metrics_definitions.md` already uses manual version tagging (the `**Version:**` header plus the `## Document History` table). Assessed whether this adds drift-detection value beyond `quality_gate.yml`'s OpenAPI validation (which checks that `docs/reference/openapi.yaml` reflects `backend/routers/` endpoints — a mechanically detectable code-vs-contract signal): **not directly comparable, and no new automated tooling is recommended at this time.** Metric *formula* drift (backend calculation logic silently diverging from this document) has no code-side symbol as clean as a `@router.get` decorator to key an automated check off; the existing safeguard is the agent-mediated sign-off gate at write time (§5.3), which is a prevention control rather than a detection control like the OpenAPI gate. If metric-implementation drift incidents occur in production (analogous to the Capital Efficiency currency-basis defect resolved as Appendix E, Backlog Item 2), an automated drift check would become justified — noted as a future candidate, not actioned now.
 
+### Validation Tolerances (ST-03, BLG-SPEC-85, v8.9)
+
+The rate itself is bounded by construction (`0.0`–`1.0`, or `null` per the Returns rule above) — the tolerances below define when a reading should be trusted as statistically meaningful versus flagged for review, mirroring the explicit numeric bands used elsewhere in this document (e.g. Portfolio Heat's Low/Moderate/High/Extreme thresholds).
+
+| Condition | Numeric bound | Interpretation |
+|-----------|---------------|-----------------|
+| Insufficient sample | Denominator (recommendations generated) `< 5` in the reporting window | Reading is not statistically meaningful — display as "insufficient data", do not treat as a genuine low/high rate |
+| Expected range (sufficient sample) | `0.05 ≤ rate ≤ 0.95` with denominator `≥ 5` | Normal operating range — no action needed |
+| Anomalously low | `rate < 0.05` with denominator `≥ 10` | Recommendations are being generated but essentially never applied — investigate UI friction on the confirm action or a possible mismatch between `recommended_stop` and what users are actually setting |
+| Anomalously high | `rate > 0.95` with denominator `≥ 10` | Near-universal application — plausible if the confirm flow is low-friction, but also consistent with the join over-matching (e.g. capture window too wide, or unrelated PATCHes coincidentally clearing the `stop_price >= recommended_stop` condition); spot-check a sample of joined rows before trusting the reading |
+| Stale capture | No new `trailing_stop_recommendation_log` row for `> 30 days` while ≥1 open position is `PROFITABLE`/`EXIT ZONE`-eligible | Capture pipeline likely broken (endpoint not being hit, or `log_trailing_stop_recommendation()` failing silently) — treat any rate computed after this point as unreliable until confirmed |
+| Capture window | Fixed at `24 hours` from `recommended_at` (Product Owner-confirmed, v7.0 planning) | Not itself a tolerance band, restated here for completeness — a PATCH landing after 24h is correctly excluded from the numerator, not a data quality issue |
+
 ### Sign-off
 
-- **Metrics Definitions & Analytics Owner:** agent-mediated sign-off cleared 2026-07-09 (ST-10, EPIC-03, v6.8)
+- **Metrics Definitions & Analytics Owner:** agent-mediated sign-off cleared 2026-07-09 (ST-10, EPIC-03, v6.8); Validation Tolerances subsection agent-mediated sign-off cleared 2026-08-17 (ST-03, EPIC-01, v8.9)
 
 ---
 
@@ -1199,6 +1212,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-08-17 | 1.17.0 | ST-03 (EPIC-01, v8.9, BLG-SPEC-85): Add Validation Tolerances subsection to Trailing Stop Action Rate — numeric bounds for insufficient-sample, expected range, anomalously low/high, and stale-capture conditions, replacing the previously qualitative-only description. Metrics Definitions & Analytics Owner agent-mediated sign-off cleared 2026-08-17. | Metrics Definitions & Analytics Owner |
 | 2026-07-14 | 1.16.0 | ST-06 (EPIC-03, v7.1, BLG-SPEC-83): Add Realized/Unrealized P&L Split section — formalises the v7.0 feature (no prior entry existed). Documents stored-vs-computed-on-read ownership decision (realized: stored at exit, immutable; unrealized: live on Positions page vs nightly-snapshot on Reports page — a genuine ambiguity surfaced this cycle, tracked as `BLG-SPEC-87`), currency/rounding rules (GBP, 2dp server-side, no client re-rounding), reconciliation rule (approximate tie-back to portfolio `total_pnl`, verified against production data), and visual treatment (aligned with Open Positions Panel convention). Metrics Definitions & Analytics Owner sign-off cleared 2026-07-14. | Metrics Definitions & Analytics Owner |
 | 2026-02-16 | 1.5.0 | Initial comprehensive spec | Analytics Team |
 | 2026-02-17 | 1.5.1 | FIX-MD-01: Add missing system metrics | Analytics Team |
