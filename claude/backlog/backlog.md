@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior — 2026-08-17 (session — 1 new item added: BLG-SPEC-132); prior — 2026-08-17 (Release Planning v8.9 — Release Slice section added, 22 items across 6 EPICs, marker RP:v8.9:2026-08-17__release-v8.9); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-18 (session — 1 new item added from ST-23/EPIC-02 execution: BLG-GOV-311); prior — 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior — 2026-08-17 (session — 1 new item added: BLG-SPEC-132); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4945,5 +4945,29 @@ Purely an illustrative-example inconsistency (not test-enforced, no functional i
 **Acceptance Criteria**
 - Example JSON block in `docs/specs/api_contracts/position_endpoints.md` is internally consistent (`current_trailing_stop × live_fx_rate == current_trailing_stop_native`, within rounding)
 - API Contracts & Documentation Owner sign-off (or Head of Specs Team, per standard doc-fix delegation)
+
+---
+
+### BLG-GOV-311 — Add ST-06 §13 CONDITIONAL clearance to strategy_rules.md §13.5 semi-annual re-attestation roster
+
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** ST-23/EPIC-02, 2026-08-17__release-v8.9 — 2026-08-18
+**Effort:** XS (~15min)
+**Provisional-Target:** v8.9 (or next cycle touching `strategy_rules.md` under Strategy Rules & System Intent Owner authority)
+
+**Problem**
+`strategy_rules.md` §13.5's Maintenance rule requires: "New features entering the roster do so by adding a row to the table above in the same commit that records their own initial §13 clearance." ST-23 (this cycle) produced `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md` (Determination: CONDITIONAL) for ST-06 (Automated AI Post-Trade Debrief, BLG-FEAT-90), but `execution_prompt.md`'s write scope does not permit the Sprint Execution Engine to edit `claude/strategy/strategy_rules.md` — CLAUDE.md §2 restricts governance-file edits to cases "explicitly instructed by the relevant prompt," and `execution_prompt.md` §7 does not list `claude/strategy/` in its write scope. The roster update is therefore deferred to this backlog item rather than performed out-of-scope by this routine.
+
+**Scope**
+- Add a row for ST-06 / BLG-FEAT-90 to the §13.5 roster table (`Feature` | `§13 Review Record` | `Cleared` columns), citing `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md` and `v8.9` as the Cleared version
+- Perform under Strategy Rules & System Intent Owner authority — the same role that signed off the review this row documents
+- Follow `strategy_rules.md`'s own governance-file edit checklist (CLAUDE.md §6) if the edit bumps the document's version
+
+**Acceptance Criteria**
+- `strategy_rules.md` §13.5's roster table includes a ST-06/BLG-FEAT-90 row pointing at the CONDITIONAL review document
+- Edit committed under Strategy Rules & System Intent Owner authority, in a session/prompt whose write scope explicitly covers `claude/strategy/`
+- If `strategy_rules.md`'s version is bumped: CLAUDE.md §6 governance file edit checklist steps 1–4 completed in the same commit
 
 ---
