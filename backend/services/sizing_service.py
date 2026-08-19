@@ -147,7 +147,7 @@ def _apply_concentration_adjustment(
                 reduction_pct = round((1 - (final_shares / suggested_shares)) * 100)
                 reason = (
                     f"Reduced {reduction_pct}% — {count} open position{plural} already in "
-                    f"{sector} ({current_pct}% of portfolio heat)."
+                    f"{sector} ({current_pct}% of portfolio value)."
                 )
                 return {
                     "final_shares": final_shares,
@@ -159,7 +159,7 @@ def _apply_concentration_adjustment(
         if projected_pct >= _CONCENTRATION_WARN_PCT:
             reason = (
                 f"{count} open position{plural} already in {sector} "
-                f"({current_pct}% of portfolio heat) — approaching "
+                f"({current_pct}% of portfolio value) — approaching "
                 f"{SECTOR_CONCENTRATION_PCT:.0f}% concentration limit."
             )
             return {

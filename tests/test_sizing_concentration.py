@@ -115,7 +115,7 @@ class TestConcentrationVsUncorrelated:
         assert result["suggested_shares"] == 10.0
         assert result["concentration_adjusted"] is True
         assert result["concentration_reason"] == (
-            "Reduced 50% — 2 open positions already in Technology (25.0% of portfolio heat)."
+            "Reduced 50% — 2 open positions already in Technology (25.0% of portfolio value)."
         )
 
     def test_estimated_cost_reflects_reduced_shares(self):
@@ -153,7 +153,7 @@ class TestConcentrationFlaggedNotReduced:
         assert result["suggested_shares"] == 20.0  # unchanged
         assert result["concentration_adjusted"] is False
         assert result["concentration_reason"] == (
-            "2 open positions already in Technology (10.0% of portfolio heat) — "
+            "2 open positions already in Technology (10.0% of portfolio value) — "
             "approaching 30% concentration limit."
         )
 

@@ -92,7 +92,7 @@ test.describe('Position Sizing — Concentration Display (V-SIZE-01, V-SIZE-02)'
       cash_sufficient: true,
       available_cash: 20000.0,
       concentration_adjusted: true,
-      concentration_reason: 'Reduced 50% — 2 open positions already in Technology (25.0% of portfolio heat).',
+      concentration_reason: 'Reduced 50% — 2 open positions already in Technology (25.0% of portfolio value).',
     });
 
     await page.goto('/#/TradeEntry');
@@ -100,7 +100,7 @@ test.describe('Position Sizing — Concentration Display (V-SIZE-01, V-SIZE-02)'
 
     await page.waitForResponse(/\/portfolio\/size/, { timeout: 5000 });
 
-    const reasonText = 'Reduced 50% — 2 open positions already in Technology (25.0% of portfolio heat).';
+    const reasonText = 'Reduced 50% — 2 open positions already in Technology (25.0% of portfolio value).';
     await expect(page.getByText(reasonText)).toBeVisible({ timeout: 5000 });
 
     // Amber styling per decision_record.md §2 — not a StandingAlert, no dismiss affordance.
@@ -151,7 +151,7 @@ test.describe('Position Sizing — Concentration Display (V-SIZE-01, V-SIZE-02)'
       cash_sufficient: true,
       available_cash: 20000.0,
       concentration_adjusted: false,
-      concentration_reason: '2 open positions already in Technology (10.0% of portfolio heat) — approaching 30% concentration limit.',
+      concentration_reason: '2 open positions already in Technology (10.0% of portfolio value) — approaching 30% concentration limit.',
     });
 
     await page.goto('/#/TradeEntry');
@@ -159,7 +159,7 @@ test.describe('Position Sizing — Concentration Display (V-SIZE-01, V-SIZE-02)'
 
     await page.waitForResponse(/\/portfolio\/size/, { timeout: 5000 });
 
-    const reason = page.getByText('2 open positions already in Technology (10.0% of portfolio heat) — approaching 30% concentration limit.');
+    const reason = page.getByText('2 open positions already in Technology (10.0% of portfolio value) — approaching 30% concentration limit.');
     await expect(reason).toBeVisible({ timeout: 5000 });
 
     // Suggested Shares value itself is unchanged (20.0000) — this is a flag, not a reduction.
