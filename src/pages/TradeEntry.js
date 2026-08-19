@@ -436,6 +436,7 @@ export default function TradeEntry() {
             shares={formData.shares}
             onSharesChange={(val) => handleChange("shares", val)}
             defaultRiskPercent={defaultRiskPercent}
+            ticker={formData.ticker || null}
           />
 
           {/* Shares */}

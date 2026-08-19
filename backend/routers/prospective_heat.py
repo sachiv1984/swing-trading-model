@@ -8,12 +8,15 @@ Contract: docs/specs/api_contracts/portfolio_endpoints.md §GET /portfolio/prosp
 Calculation rules: docs/specs/metrics_definitions.md §Portfolio Heat
 
 Read-only. Does not mutate any state.
+
+Calculation logic extracted to services/portfolio_service.py::calculate_prospective_heat
+(ST-05, BLG-FEAT-91) — shared with POST /portfolio/size's heat_impact_percent
+field (services/sizing_service.py). This router is now a thin wrapper.
 """
 
 from fastapi import APIRouter
 from typing import Optional
-from services.portfolio_service import get_portfolio_summary
-from utils.pricing import get_live_fx_rate
+from services.portfolio_service import calculate_prospective_heat
 
 router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
 
@@ -36,52 +39,21 @@ def prospective_heat_endpoint(
     Returns HTTP 200 for all outcomes (valid or invalid inputs).
     Returns HTTP 500 for unexpected server errors.
     """
-    # --- Input validation ---
-    if stop_price >= entry_price:
-        return {"status": "ok", "data": {"valid": False, "error": "stop_price must be less than entry_price"}}
-    if shares <= 0:
-        return {"status": "ok", "data": {"valid": False, "error": "shares must be greater than 0"}}
-    if entry_price <= 0 or stop_price <= 0:
-        return {"status": "ok", "data": {"valid": False, "error": "entry_price and stop_price must be greater than 0"}}
+    result = calculate_prospective_heat(
+        entry_price=entry_price,
+        stop_price=stop_price,
+        shares=shares,
+        market=market,
+        fx_rate=fx_rate,
+    )
 
-    # --- FX rate ---
-    market = (market or "UK").upper()
-    if market == "US":
-        fx_rate_used = float(fx_rate) if fx_rate else get_live_fx_rate()
-    else:
-        fx_rate_used = 1.0
-
-    # --- Current portfolio state ---
-    portfolio = get_portfolio_summary()
-    portfolio_value_gbp = portfolio.get("total_value", 0.0)
-
-    if portfolio_value_gbp <= 0:
-        return {"status": "ok", "data": {"valid": False, "error": "portfolio value is zero; cannot calculate heat"}}
-
-    position_risks = portfolio.get("position_risks", [])
-    current_risk_gbp = sum(r.get("position_risk_gbp", 0.0) for r in position_risks)
-
-    # --- Prospective position risk (metrics_definitions.md §Portfolio Heat) ---
-    prospective_risk_gbp = round((entry_price - stop_price) * shares / fx_rate_used, 2)
-
-    # --- Heat calculations ---
-    current_heat_percent = round(current_risk_gbp / portfolio_value_gbp * 100, 2)
-    total_risk_gbp = current_risk_gbp + prospective_risk_gbp
-    prospective_heat_percent = round(total_risk_gbp / portfolio_value_gbp * 100, 2)
-    incremental_heat_percent = round(prospective_heat_percent - current_heat_percent, 2)
+    if not result.get("valid"):
+        return {"status": "ok", "data": result}
 
     return {
         "status": "ok",
         "data": {
-            "valid": True,
-            "current_heat_percent": current_heat_percent,
-            "prospective_heat_percent": prospective_heat_percent,
-            "incremental_heat_percent": incremental_heat_percent,
-            "prospective_risk_gbp": prospective_risk_gbp,
-            "portfolio_value_gbp": round(portfolio_value_gbp, 2),
+            **result,
             "ticker": ticker,
-            # ST-03 (EPIC-01, v8.0): §4.1.5 requires the FX rate used be
-            # returned for auditability — was computed but never surfaced.
-            "fx_rate_used": round(fx_rate_used, 4),
         },
     }

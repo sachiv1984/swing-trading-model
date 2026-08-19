@@ -576,6 +576,22 @@ export const api = {
   changelog: {
     latest: async () => doFetch('/changelog/latest'),
   },
+
+  // ST-07 (v8.9 EPIC-02, BLG-FEAT-89): in-app Backtest Rule Change tab
+  backtestRuleChange: {
+    run: async (candidateOverrides = {}) =>
+      doFetch('/strategy/backtest-rule-change/run', {
+        method: 'POST',
+        body: JSON.stringify(candidateOverrides),
+      }),
+    getRuns: async ({ limit } = {}) => {
+      const params = new URLSearchParams();
+      if (limit != null) params.set('limit', limit);
+      const qs = params.toString();
+      return doFetch(`/strategy/backtest-rule-change/runs${qs ? '?' + qs : ''}`);
+    },
+    getRun: async (runId) => doFetch(`/strategy/backtest-rule-change/runs/${runId}`),
+  },
 };
 
 export const Signal = base44.entities.Signal;

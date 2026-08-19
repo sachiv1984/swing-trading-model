@@ -3756,3 +3756,109 @@ def create_idempotency_record(portfolio_id: str, endpoint: str, idempotency_key:
                 (portfolio_id, endpoint, idempotency_key, json.dumps(response_body, default=str)),
             )
         conn.commit()
+
+
+# ---------------------------------------------------------------------------
+# ST-07 (BLG-FEAT-89, EPIC-02, v8.9) — Backtest Rule Change runs
+#
+# Persists each in-app candidate-rule backtest run (Strategy Benchmark page,
+# "Backtest Rule Change" tab) for later audit per AC-03. Independent of the
+# backtest_trades/backtest_yearly_performance tables above, which store the
+# imported *live-rule* production_strategy.py CSV snapshot — these runs are
+# generated in-app, on demand, per candidate parameter set.
+# ---------------------------------------------------------------------------
+
+def ensure_backtest_rule_run_tables():
+    """Create backtest_rule_runs table (idempotent)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS backtest_rule_runs (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    initiated_by VARCHAR(100),
+                    rule_diff_summary TEXT NOT NULL,
+                    candidate_params JSONB NOT NULL,
+                    live_params JSONB NOT NULL,
+                    universe_tickers JSONB NOT NULL,
+                    universe_start_date DATE NOT NULL,
+                    universe_end_date DATE NOT NULL,
+                    candidate_result JSONB NOT NULL,
+                    live_result JSONB NOT NULL,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+        conn.commit()
+
+
+def create_backtest_rule_run(
+    initiated_by: Optional[str],
+    rule_diff_summary: str,
+    candidate_params: Dict,
+    live_params: Dict,
+    universe_tickers: List[str],
+    universe_start_date: str,
+    universe_end_date: str,
+    candidate_result: Dict,
+    live_result: Dict,
+) -> Dict:
+    """Persist a completed backtest rule-change run. Returns the created row
+    (id, created_at) for the caller to include in its API response."""
+    import json as _json
+    ensure_backtest_rule_run_tables()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO backtest_rule_runs (
+                    initiated_by, rule_diff_summary, candidate_params, live_params,
+                    universe_tickers, universe_start_date, universe_end_date,
+                    candidate_result, live_result
+                ) VALUES (%s, %s, %s::jsonb, %s::jsonb, %s::jsonb, %s, %s, %s::jsonb, %s::jsonb)
+                RETURNING id, created_at
+                """,
+                (
+                    initiated_by,
+                    rule_diff_summary,
+                    _json.dumps(candidate_params, default=str),
+                    _json.dumps(live_params, default=str),
+                    _json.dumps(universe_tickers, default=str),
+                    universe_start_date,
+                    universe_end_date,
+                    _json.dumps(candidate_result, default=str),
+                    _json.dumps(live_result, default=str),
+                ),
+            )
+            row = cur.fetchone()
+        conn.commit()
+    return dict(row)
+
+
+def get_backtest_rule_runs(limit: int = 20) -> List[Dict]:
+    """Run History list — most recent first, summary fields only (no full
+    result payload, to keep the list endpoint light). AC-03."""
+    ensure_backtest_rule_run_tables()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT id, initiated_by, rule_diff_summary, universe_start_date,
+                       universe_end_date, jsonb_array_length(universe_tickers) AS universe_size,
+                       candidate_result, live_result, created_at
+                FROM backtest_rule_runs
+                ORDER BY created_at DESC
+                LIMIT %s
+                """,
+                (limit,),
+            )
+            return [dict(r) for r in cur.fetchall()]
+
+
+def get_backtest_rule_run_by_id(run_id: str) -> Optional[Dict]:
+    """Full run detail — re-view a prior run's stored output without
+    re-running (AC-03: "expandable to re-view its stored output")."""
+    ensure_backtest_rule_run_tables()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM backtest_rule_runs WHERE id = %s", (run_id,))
+            row = cur.fetchone()
+    return dict(row) if row else None

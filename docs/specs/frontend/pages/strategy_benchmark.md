@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.6
-**Last Updated:** 2026-08-17 (v8.9 design gate — added §7.6 Backtest Rule Change tab, ST-07 BLG-FEAT-89, EPIC-02); prior — 2026-07-29 (ST-19, EPIC-05, v7.10, BLG-FE-106 — Page Header consolidation); prior history retained — see prior entries in version control.
+**Version:** 0.7
+**Last Updated:** 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — implementation-time resolution: §7.6's deferred candidate-input mechanism resolved to a structured parameter form; Empty/Error state text updated to match); prior — 2026-08-17 (v8.9 design gate — added §7.6 Backtest Rule Change tab); prior — 2026-07-29 (ST-19, EPIC-05, v7.10, BLG-FE-106 — Page Header consolidation); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v7.7
 **EPIC:** EPIC-01
@@ -300,7 +300,7 @@ Runs a candidate `strategy_rules.md` change against historical data from inside 
 
 ### Left Panel — Candidate Rule Input
 
-Text input for the candidate rule change (raw diff vs. structured parameter form deferred to implementation — see design source §2.1). **"Run Backtest"** button (primary), disabled while a run is in progress; inline spinner + `"Running backtest…"` label during execution.
+**Resolved at implementation (ST-07):** structured parameter form — a grid of numeric inputs mirroring `strategy_rules.md`'s actual tunable parameters (lookback, top N, ATR multiplier, min hold days, initial/profit-lock ATR multipliers, min/max position %). A field left blank falls back to the live value. Raw free-text diff input (the design source §2.1's other option) was not chosen: `strategy_rules.md` prose has no safe, deterministic parse path into backtest parameters, whereas a structured form has a direct, unambiguous mapping to `POST /strategy/backtest-rule-change/run`'s request body. **"Run Backtest"** button (primary), disabled while a run is in progress; inline spinner + `"Running backtest…"` label during execution.
 
 ### Right Panel — Results (shown after a run completes)
 
@@ -319,10 +319,10 @@ Collapsible list below the results panel, most-recent-first, each entry expandab
 
 | State | Trigger | Behaviour |
 |-------|---------|-----------|
-| Empty | Initial load, no run yet | `"Paste a candidate rule change and run a backtest to compare it against your live strategy."` — no chart/table shown |
+| Empty | Initial load, no run yet | `"Set parameter overrides and run a backtest to compare it against your live strategy."` (adapted for the structured-parameter-form resolution above — the design source's "Paste a candidate rule change..." wording assumed the raw-diff input option) — no chart/table shown |
 | Running | Run Backtest clicked | Button disabled, spinner + `"Running backtest…"` |
 | Loaded | Run complete | Results panel populated; run appended to Run History |
-| Error | Backend failure | `"Backtest failed to complete. Please try again."` + Retry |
+| Error | Backend failure | `"Backtest failed to complete. Please try again."` — generic message regardless of the underlying error (e.g. an unknown-parameter 400 or a server error render the same text); "Retry" is re-clicking the same **Run Backtest** button, which re-enables immediately on error — not a separate affordance |
 
 ### Constraints
 
@@ -352,8 +352,11 @@ Read-only comparative output — adopting a rule change remains a separate, manu
 | `GET /strategy/benchmark/trades` | Fetch trade log records |
 | `GET /strategy/benchmark/open-positions` | Fetch open positions with unrealized P&L (Panel 0 — v0.2/ST-08) |
 | `GET /analytics/strategy-version-comparison` | Fetch version comparison data (§7.5 — v0.4/ST-01); pre-authored contract, see `strategy_version_comparison_contract.md` |
+| `POST /strategy/backtest-rule-change/run` | Run a candidate rule change and return the candidate-vs-live comparison (§7.6 — v0.6/ST-07); contract in `strategy_benchmark_endpoints.md` |
+| `GET /strategy/backtest-rule-change/runs` | Fetch Run History (§7.6 — v0.6/ST-07) |
+| `GET /strategy/backtest-rule-change/runs/{run_id}` | Re-view a prior run's stored output (§7.6 — v0.6/ST-07) |
 
-All endpoints must be documented in `docs/reference/openapi.yaml` and `docs/specs/api_contracts/` in the same commit as implementation (per CLAUDE.md §2), with `backend/routers/test.py` registration for `GET /strategy/benchmark/open-positions` and `GET /analytics/strategy-version-comparison`.
+All endpoints must be documented in `docs/reference/openapi.yaml` and `docs/specs/api_contracts/` in the same commit as implementation (per CLAUDE.md §2), with `backend/routers/test.py` registration for `GET /strategy/benchmark/open-positions`, `GET /analytics/strategy-version-comparison`, and the 3 Backtest Rule Change endpoints.
 
 ---
 
@@ -369,6 +372,7 @@ All endpoints must be documented in `docs/reference/openapi.yaml` and `docs/spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.7 | 2026-08-18 | ST-07 (EPIC-02, v8.9, BLG-FEAT-89) implementation-time resolution: §7.6's candidate-input mechanism resolved to a structured parameter form (not raw diff text — no safe deterministic parse path from `strategy_rules.md` prose). Empty-state text adapted (`"Set parameter overrides..."` vs. the design source's `"Paste a candidate rule change..."`, which assumed the other input option). Error state's "Retry" clarified as re-clicking the same Run Backtest button, not a separate affordance. §9 API Endpoints gained the 3 new endpoints. Authority: Frontend Specifications & UX Documentation Owner. |
 | 0.6 | 2026-08-17 | v8.9 design gate — ST-07 (EPIC-02, BLG-FEAT-89): added §7.6 Backtest Rule Change tab — third sub-nav tab alongside Benchmark/Version Comparison; candidate rule input, results panel (win rate/R-multiple distribution/drawdown vs. live rule set), persisted Run History for audit. §2 Sub-navigation updated to three-tab bar. Design source: in-app-backtesting-engine/ux_spec.md. Approved: Product Owner 2026-08-17. Design gate: 2026-08-17__release-v8.9. Head of Specs Team confirmed. |
 | 0.5 | 2026-07-29 | ST-19 (EPIC-05, v7.10, BLG-FE-106): §2 Page Header consolidation resolved — `StrategyBenchmark.js` now renders via the shared `PageHeader` component (was a hand-rolled header, noted as a deviation since v0.3). `BarChart2` icon and last-updated line preserved as adjacent elements. `tests/e2e/heading-light-theme-contrast.spec.js` SC-HTC-03/04 rewritten for the new gradient-clipped title (technique already established for other `PageHeader` pages). New Playwright coverage: `tests/e2e/strategy-benchmark.spec.js` SC-SB-08a–e. |
 | 0.4 | 2026-07-21 | v7.7 design gate — ST-01 (EPIC-01, BLG-FEAT-75): added §7.5 Version Comparison tab (SI-04) — two-tab sub-nav ("Benchmark" / "Version Comparison"), version-select controls, comparison table + summary strip against `GET /analytics/strategy-version-comparison`, all states. §9 API Endpoints updated. Placement chosen over `Arc5ComplianceSection` embed to avoid an unscheduled dependency on `BLG-FE-59` (see design source §2). Flagged (not blocking): pre-authored contract v0.1.0 lacks a `compliance_rate` field required by the AC — Sprint Execution follow-up. Design source: si04-strategy-version-comparison/ux_spec.md. Approved: Product Owner 2026-07-21. Design gate: 2026-07-21__release-v7.7. Head of Specs Team confirmed. |
