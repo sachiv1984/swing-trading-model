@@ -429,10 +429,13 @@ class TestGetPortfolioFieldContract(unittest.TestCase):
 # 7. GET /portfolio/prospective-heat
 #    ST-13 (EPIC-04): Spec authored in portfolio_endpoints.md v2.0.0.
 #    Endpoint implemented in routers/prospective_heat.py.
+#    ST-05 (EPIC-02, v8.9, BLG-FEAT-91): calculation logic extracted to
+#    services.portfolio_service.calculate_prospective_heat — patch targets
+#    updated to the new location.
 # ---------------------------------------------------------------------------
 
-PATCH_PROSPECTIVE_SUMMARY  = "routers.prospective_heat.get_portfolio_summary"
-PATCH_PROSPECTIVE_FX_RATE  = "routers.prospective_heat.get_live_fx_rate"
+PATCH_PROSPECTIVE_SUMMARY  = "services.portfolio_service.get_portfolio_summary"
+PATCH_PROSPECTIVE_FX_RATE  = "services.portfolio_service.get_live_fx_rate"
 
 # Summary with one UK position risking £20 out of £10,000 portfolio (0.20% heat)
 MOCK_SUMMARY_WITH_RISK = {

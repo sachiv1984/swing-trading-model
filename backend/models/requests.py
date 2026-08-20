@@ -60,6 +60,10 @@ class SizePositionRequest(BaseModel):
     risk_percent: float
     market: Optional[str] = "UK"
     fx_rate: Optional[float] = None
+    # ST-04 (BLG-BE-104): optional candidate ticker. When provided, enables
+    # sector-concentration-aware size adjustment. Omitting it preserves
+    # pre-ST-04 sizing behaviour exactly (no adjustment attempted).
+    ticker: Optional[str] = None
 
     @validator('entry_price')
     def validate_entry_price(cls, v):

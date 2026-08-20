@@ -1,9 +1,9 @@
 **Owner:** Backend Engineering Patterns Owner; Product Owner
 **Class:** API Contract (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-07-02
-**Story:** ST-11 (BLG-FEAT-53, EPIC-03, v6.3); ST-08 (BLG-FEAT-54, EPIC-03, v6.4)
+**Version:** 1.2
+**Last Updated:** 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — added POST /strategy/backtest-rule-change/run, GET /strategy/backtest-rule-change/runs, GET /strategy/backtest-rule-change/runs/{run_id}); prior — 2026-07-02 (ST-08, EPIC-03, v6.4, BLG-FEAT-54 — open positions panel)
+**Story:** ST-07 (BLG-FEAT-89, EPIC-02, v8.9); ST-11 (BLG-FEAT-53, EPIC-03, v6.3); ST-08 (BLG-FEAT-54, EPIC-03, v6.4)
 
 ---
 
@@ -249,6 +249,128 @@ Returns Panel 0 open (unrealized) positions. Sourced from `backtest_open_positio
 **Null behaviour:** `summary.total_unrealized_pnl_gbp` is `null` when `count` is `0`. Individual position fields (`entry_price`, `current_price`, `unrealized_pnl_gbp`, `unrealized_pnl_pct`) are `null` only if the source CSV row was missing that value at import time.
 
 **Sort order:** Results are ordered by `unrealized_pnl_pct` descending (largest movers first) — not user-sortable in v1.0.
+
+---
+
+## POST /strategy/backtest-rule-change/run
+
+ST-07 (BLG-FEAT-89, EPIC-02, v8.9). Runs a candidate `strategy_rules.md` parameter change against a bounded historical window, entirely in-app (no external script step), and compares it against the live rule set over the identical universe/window. Persists the run for later audit (AC-03).
+
+**Design source:** `docs/design/2026-08-17__release-v8.9/in-app-backtesting-engine/ux_spec.md`
+
+**Scope note (RISK-02):** the full nightly `production_strategy.py` run covers the entire `ticker_universe` over ~8 years and is budgeted 90 minutes of CI compute (`.github/workflows/backtest.yml`) — infeasible to run synchronously in a web request. This endpoint runs a bounded backtest instead: the first 20 active tickers from `ticker_universe` (alphabetical) over the trailing 4 years. Both the candidate and live-parameter baseline are computed over the identical bounded universe/window in the same run, so the comparison is apples-to-apples; absolute figures will not match the full nightly Benchmark tab (different universe/window by design) — `universe_tickers`/`universe_start_date`/`universe_end_date` in the response make this explicit.
+
+**§13 compliance:** deterministic simulation over historical market data (no ML model, no adaptive inference), applied to a candidate rule set instead of the live one — same category as the existing Benchmark/Version Comparison tabs. Output is comparative statistical context for a human decision; this endpoint never writes to `strategy_rules.md` or any live rule configuration.
+
+**Request body (application/json):** all fields optional — any omitted field falls back to the live `strategy_rules.md` value.
+
+```json
+{
+  "lookback": 252,
+  "top_n": 5,
+  "atr_mult": 2,
+  "rebalance_freq": "ME",
+  "min_position_pct": 0.05,
+  "max_position_pct": 0.20,
+  "min_hold_days": 15,
+  "risk_off_mode": "single",
+  "stop_loss_mode": "profit_lock",
+  "initial_atr_mult": 5,
+  "profit_atr_mult": 2,
+  "initiated_by": "Product Owner"
+}
+```
+
+**Response (200):**
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "id": "3f1b2c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+    "created_at": "2026-08-18T10:00:00Z",
+    "initiated_by": "Product Owner",
+    "rule_diff_summary": "min_hold_days: 10 -> 15",
+    "candidate_params": { "lookback": 252, "top_n": 5, "min_hold_days": 15, "...": "..." },
+    "live_params": { "lookback": 252, "top_n": 5, "min_hold_days": 10, "...": "..." },
+    "universe_tickers": ["AAPL", "ABBV", "..."],
+    "universe_start_date": "2022-08-18",
+    "universe_end_date": "2026-08-18",
+    "candidate_result": {
+      "trade_count": 34,
+      "win_rate_pct": 58.82,
+      "max_drawdown_pct": -14.21,
+      "r_multiple_buckets": [
+        { "label": "< -3R", "count": 0 },
+        { "label": "-3R to -2R", "count": 1 },
+        { "label": "-2R to -1R", "count": 3 },
+        { "label": "-1R to 0R", "count": 8 },
+        { "label": "0R to 1R", "count": 10 },
+        { "label": "1R to 2R", "count": 7 },
+        { "label": "2R to 3R", "count": 3 },
+        { "label": "> 3R", "count": 2 }
+      ],
+      "median_r": 0.42
+    },
+    "live_result": { "trade_count": 31, "win_rate_pct": 54.84, "max_drawdown_pct": -15.03, "r_multiple_buckets": ["..."], "median_r": 0.35 }
+  }
+}
+```
+
+**Field notes:**
+
+| Field | Notes |
+|-------|-------|
+| `rule_diff_summary` | Auto-generated: `"{param}: {live_value} -> {candidate_value}; ..."` for every overridden field, or `"No parameter changes from live rule set"` if none |
+| `r_multiple_buckets` | 8 fixed buckets, identical scheme to `GET /analytics/r-multiple-distribution` (`metrics_definitions.md` "R-Multiple Distribution (Backend)") |
+| `median_r` / bucket R values | Canonical formula (`metrics_definitions.md` "R-Multiple (Canonical Server-Side)"): `R = (exit_price - entry_price) / (entry_price - initial_stop_price)`. Trades without a qualifying initial stop are excluded, same qualifying conditions as the canonical formula |
+| `max_drawdown_pct` | Computed from the run's own equity curve over the bounded window — not comparable in magnitude to the full nightly backtest's Max DD % |
+
+**Errors:**
+- `400` Business-rule failure (`BacktestRuleChangeError`): unknown candidate parameter field name, no active tickers in `ticker_universe`, or no usable price data for the bounded universe
+- `500` Unexpected server error
+
+---
+
+## GET /strategy/backtest-rule-change/runs
+
+ST-07. Run History — most recent first (AC-03). Summary fields only (no full `r_multiple_buckets` payload, to keep the list response light).
+
+**Query parameters:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `limit` | integer | No | Max runs to return. Default 20. |
+
+**Response (200):**
+
+```json
+{
+  "status": "ok",
+  "data": [
+    {
+      "id": "3f1b2c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "initiated_by": "Product Owner",
+      "rule_diff_summary": "min_hold_days: 10 -> 15",
+      "universe_start_date": "2022-08-18",
+      "universe_end_date": "2026-08-18",
+      "universe_size": 20,
+      "candidate_result": { "trade_count": 34, "win_rate_pct": 58.82, "max_drawdown_pct": -14.21, "median_r": 0.42 },
+      "live_result": { "trade_count": 31, "win_rate_pct": 54.84, "max_drawdown_pct": -15.03, "median_r": 0.35 },
+      "created_at": "2026-08-18T10:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+## GET /strategy/backtest-rule-change/runs/{run_id}
+
+ST-07. Full run detail — re-view a prior run's stored output without re-running (AC-03: "expandable to re-view its stored output"). Same response shape as `POST /strategy/backtest-rule-change/run`'s `data` object.
+
+**Errors:**
+- `404` Run not found
 
 ---
 

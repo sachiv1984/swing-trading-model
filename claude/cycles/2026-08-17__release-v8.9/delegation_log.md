@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-08-17
+Last Updated: 2026-08-20 (EPIC-05 merge reconciliation — DEL-20260818-03 renumbered to DEL-20260818-07, collided with EPIC-02's own DEL-20260818-03)
 
 # Delegation Log — 2026-08-17__release-v8.9
 
@@ -43,7 +43,135 @@ Append-only. Do not edit previous entries.
 
 ---
 
+## DEL-20260818-01
+
+- **ST Item:** ST-23 — §13 System Boundary Review: Automated AI Post-Trade Debrief
+- **EPIC:** EPIC-02
+- **Classification:** delegated_decision
+- **Assigned to:** Strategy Rules & System Intent Owner
+- **GitHub Issue:** #1451
+- **Branch:** exec/2026-08-17__release-v8.9/EPIC-02
+- **Delegated at:** 2026-08-18T00:00:00Z
+- **What is needed:** Produce a §13 pre-assessment document per `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-gate-story-scoping.md` §2's 5 acceptance criteria, addressing determinism/own-data-only/non-predictive/decision-support-only against ST-06's "one suggested focus area" output specifically, with binding conditions and an explicit Determination.
+- **Spec reference:** `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-gate-story-scoping.md` (scoping); deliverable is `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md` itself
+- **Unblock criteria:** Determination reaches PASS or CONDITIONAL; Strategy Rules & System Intent Owner sign-off.
+- **Commit format required:** `[EPIC-02][ST-23] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-02`
+- **Status:** Unblocked — in-session completion, no external credential needed. Agent-mediated Strategy Rules & System Intent Owner sign-off (§5.3) required 2 retries (3 review passes total, within the 2-retry cap): Pass 1 Blocked (Conditions 1/2 prompt-instruction-only, no output-side verification — fixed by adding Condition 9); Pass 2 Blocked (Condition 9 sound but Determination section not updated to match — fixed, count and sequencing corrected); Pass 3 Approved 2026-08-18. Determination: CONDITIONAL, 9 binding conditions. Commit: `cdc27936aa2f06151ab9ed4a50f859dd9795e69b`.
+
+---
+
+## DEL-20260818-02
+
+- **ST Item:** ST-04 — Correlation/sector-concentration-aware position sizing
+- **EPIC:** EPIC-02
+- **Classification:** delegated_backend
+- **Assigned to:** Backend Engineering Patterns Owner
+- **GitHub Issue:** #1432
+- **Branch:** exec/2026-08-17__release-v8.9/EPIC-02
+- **Delegated at:** 2026-08-18T01:00:00Z
+- **What is needed:** Extend `POST /portfolio/size` (sizing_service.py) to reduce or flag suggested size when it would push sector exposure past the existing §4.2.2 canonical 30% concentration threshold, reusing (not redefining) that threshold; expose `concentration_adjusted`/`concentration_reason` per `docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md`; add a regression test confirming two same-sector positions produce a smaller second size than two uncorrelated ones would.
+- **Spec reference:** `docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md`
+- **Unblock criteria:** Backend adjustment implemented and reusing the canonical threshold; `portfolio_endpoints.md` + `openapi.yaml` updated same-commit; regression test added and passing; frontend display wired per the design record; Backend Engineering Patterns Owner sign-off.
+- **Commit format required:** `[EPIC-02][ST-04] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-02`
+- **Status:** Unblocked — engine implemented directly this session (backend + frontend), no external credential needed. Commit `97e6c407e4a20437451f6a11cbfec0b81c0b0b7b`. Agent-mediated Backend Engineering Patterns Owner sign-off (§5.3) cleared Approved 2026-08-18; regression suite (9 pytest, full backend suite 1179/1179) and Playwright suite (3 tests, run live) passing.
+
+---
+
 ## DEL-20260818-03
+
+- **ST Item:** ST-05 — Pre-commit "what-if" sizing/risk simulator on the trade-plan form
+- **EPIC:** EPIC-02
+- **Classification:** delegated_frontend (sprint_backlog.md) — reclassified to engine-completed per LL-v2.3-CL-01 autonomous default
+- **Assigned to:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+- **GitHub Issue:** #1433
+- **Branch:** exec/2026-08-17__release-v8.9/EPIC-02
+- **Delegated at:** 2026-08-18T02:00:00Z
+- **What is needed:** New "What-If Sizing Preview" panel on the Trade Plan form (`WhatIfSizingPreview.js`), reusing `POST /portfolio/size`; extract `calculate_prospective_heat` from `prospective_heat.py` into `portfolio_service.py` and wire `heat_impact_percent` into `sizing_service.py` so both call sites share one calculation.
+- **Spec reference:** `docs/design/2026-08-17__release-v8.9/what-if-sizing-risk-simulator/ux_spec.md`; `docs/specs/frontend/pages/trade_plan.md#5d`
+- **Unblock criteria:** Panel implemented per design contract; backend heat field shared, not duplicated; regression tests (pytest + Playwright) added and passing; Head of Engineering and Frontend Specifications & UX Documentation Owner sign-off.
+- **Commit format required:** `[EPIC-02][ST-05] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-02`
+- **Status:** Unblocked — engine implemented directly this session, no external credential needed. Commits `cb328805` (implementation) and `86cfc078` (FX-conversion fix from sign-off review). Agent-mediated Head of Engineering sign-off (§5.3) cleared Approved 2026-08-18 first pass. Agent-mediated Frontend Specifications & UX Documentation Owner sign-off required 1 retry (within the 2-retry cap): first pass Blocked (R at Risk missing FX conversion for US-market plans, DEV-v8.9-ST05-02 filed and fixed same-day); second pass Approved 2026-08-18.
+
+---
+
+## DEL-20260818-04
+
+- **ST Item:** ST-07 — In-app backtesting engine for strategy rule changes
+- **EPIC:** EPIC-02
+- **Classification:** delegated_backend
+- **Assigned to:** Strategy Rules & System Intent Owner; Head of Engineering
+- **GitHub Issue:** #1435
+- **Branch:** exec/2026-08-17__release-v8.9/EPIC-02
+- **Delegated at:** 2026-08-18T04:00:00Z
+- **What is needed:** Run a candidate `strategy_rules.md` parameter change against historical data entirely in-app (no external script step), compare it against the live rule set, and persist each run for audit. RISK-02: largest single item this cycle — confirm `production_strategy.py` simulation-logic reuse feasibility early; scope may narrow to a smaller candidate-comparison surface if infeasible.
+- **Spec reference:** `docs/design/2026-08-17__release-v8.9/in-app-backtesting-engine/ux_spec.md`; `docs/specs/frontend/pages/strategy_benchmark.md#7.6`; `docs/specs/api_contracts/strategy_benchmark_endpoints.md`
+- **Unblock criteria:** Backend engine implemented (full production_strategy.py reuse found infeasible for a synchronous web request — RISK-02's contingency exercised, bounded-universe/window scope applied instead, both sides of the comparison run identically); 3 new endpoints registered with all CLAUDE.md same-commit requirements; regression tests (pytest + Playwright) added and passing; Strategy Rules & System Intent Owner (AC-04) and Head of Engineering sign-off.
+- **Commit format required:** `[EPIC-02][ST-07] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-02`
+- **Status:** Unblocked — engine implemented directly this session, no external credential needed. Commits `967e77f4` (implementation) and `0b0a8caf` (sign-off review fixes). Agent-mediated Strategy Rules & System Intent Owner sign-off (§5.3, AC-04) cleared Approved 2026-08-18 first pass — LIVE_PARAMS fidelity independently re-verified against `strategy_rules.md`/`production_strategy.py`, no drift. Agent-mediated Head of Engineering sign-off cleared Approved 2026-08-18 first pass — port fidelity confirmed line-by-line, 2 minor fast-follow items applied same-day (error-code doc correction, dead-code removal).
+
+---
+
+## DEL-20260818-05
+
+*(Renumbered at CLAUDE.md §8 cross-EPIC merge reconciliation, 2026-08-19 — originally filed as `DEL-20260818-01` on the EPIC-03 branch, independently of and colliding with EPIC-02's own `DEL-20260818-01` above, which merged into `main` first via PR #1453. Content unchanged from the original EPIC-03 filing; only the ID changed. `execution_state.json`'s EPIC-03/ST-09 `delegation_record_id` updated to match in the same commit.)*
+
+- **ST Item:** ST-09 — Verify ST-11 duration logging against a real post-merge invocation
+- **EPIC:** EPIC-03
+- **Classification:** delegated_backend
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1437
+- **Branch:** exec/2026-08-17__release-v8.9/EPIC-03
+- **Delegated at:** 2026-08-18T07:35:00Z
+- **What is needed:** A real, post-merge production invocation's Render log line confirming the `"SI-05 digest sent... in %.2fs"` (or failure-path equivalent) log statement fires with a genuine elapsed-time value, then `docs/ops/api_performance_baseline.md` §36 updated with that real timing. (Note: the story's title references "ST-11 duration logging" — this is an inherited label from its source item BLG-BE-99, predating this cycle's own ST-11; the AC's actual subject is the `"SI-05 digest sent"` log line, unrelated to this cycle's ST-11 dead-code-removal story.)
+- **Spec reference:** `docs/ops/api_performance_baseline.md#§36` (target update location; no other canonical spec exists for this staging-only verification)
+- **Unblock criteria:** A live Render production log excerpt showing the digest-timing line with a real `%.2fs` value; `api_performance_baseline.md` §36 updated to match; Infrastructure & Operations Owner sign-off.
+- **Commit format required:** `[EPIC-03][ST-09] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-03`
+- **Status:** Blocked — genuinely cannot be completed by the Sprint Execution Engine in-session: the AC requires a real Render production log line from a *post-merge* invocation, which by definition postdates this branch's own merge and is not reproducible in CI or locally (per the story's own note in `stage4_backlog_slice.md`: "not CI-reproducible"). Parked per execution_prompt.md §5.2/§6 "continue to the next ST item, do not stall" — `blocked_since_utc` set in `execution_state.json`; EPIC-03's other stories proceed independently. Requires human/ops action post-merge to unblock.
+
+---
+
+## DEL-20260818-06
+
+*(Renumbered at CLAUDE.md §8 cross-EPIC merge reconciliation, 2026-08-19 — originally filed as `DEL-20260818-02` on the EPIC-03 branch, independently of and colliding with EPIC-02's own `DEL-20260818-02` above, which merged into `main` first via PR #1453. Content unchanged from the original EPIC-03 filing; only the ID changed. `execution_state.json`'s EPIC-03/ST-08 `delegation_record_id` updated to match in the same commit.)*
+
+- **ST Item:** ST-08 — Investigate GET /trade-plans/tags ~10s p50 latency
+- **EPIC:** EPIC-03
+- **Classification:** delegated_backend
+- **Assigned to:** Backend Engineering Patterns Owner
+- **GitHub Issue:** #1436
+- **Branch:** exec/2026-08-17__release-v8.9/EPIC-03
+- **Delegated at:** 2026-08-18T07:40:00Z
+- **What is needed:** Identify why `GET /trade-plans/tags` runs ~10s p50 vs. the ~4x-faster sibling `GET /positions/tags`; apply a fix (or file a documented follow-up); re-measure p50 within the same order of magnitude as the sibling endpoint (staging-only, see note below); Backend Engineering Patterns Owner sign-off.
+- **Spec reference:** `docs/ops/db_index_audit_arc4_2026-08-06.md` (prior related index-audit finding for this same table); no dedicated canonical spec exists for endpoint latency budgets beyond `docs/ops/api_performance_baseline.md`
+- **Unblock criteria:** Root cause identified and documented; fix applied with regression test coverage; Backend Engineering Patterns Owner sign-off. (The re-measured-p50 AC sub-item is staging-only per `sprint_backlog.md`'s own note — "requires production/staging latency measurement, not CI-reproducible" — and does not block this item's completion, consistent with the sprint's pre-authorized QA-criteria review.)
+- **Commit format required:** `[EPIC-03][ST-08] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-03`
+- **Status:** Unblocked — same in-session completion pattern as DEL-20260817-01/02. Root cause identified (11 per-request call sites of the DDL-heavy `ensure_trade_plans_table()` vs. 0 for the sibling endpoint); fix applied (process-global memoization flag) with regression coverage. Agent-mediated Backend Engineering Patterns Owner sign-off (§5.3) required 2 retries (2 independent vacuous-test-assertion bugs found and fixed in the pre-existing `test_trade_plans_ticker_index.py` suite, each empirically re-verified via temporary regression injection) before clearing Approved 2026-08-18 on the 3rd/final attempt (within the 2-retry cap). Full backend suite (1174 passed, 5 skipped, 0 failed) confirmed clean after each round.
+
+---
+
+## DEL-20260818-05 — Status Update (Addendum)
+
+*(Renumbered reference — originally titled "DEL-20260818-01 — Status Update (Addendum)" on the EPIC-03 branch; refers to the entry now filed as DEL-20260818-05 above, per the renumbering note there.)*
+
+- **Refers to:** DEL-20260818-05 (ST-09) above. This file is append-only — recording the status transition as a new entry rather than editing the original.
+- **Updated at:** 2026-08-18T08:05:00Z
+- **New status:** Cancelled (per `execution_prompt.md` line 837: "If the item is `returned_to_backlog`: update the delegation log entry status to `Cancelled`").
+- **Reason:** `execution_state.json`'s ST-09 status changed to `returned_to_backlog`, applying the in-flight transition (AUD-2026-05-27-003) rather than waiting for formal sprint close. Basis: the pre-existing, sealed `sprint_backlog.md` staging-only designation for this item, already reviewed and confirmed non-blocking by the sprint's own QA-criteria review — not a fresh live Product Owner exchange in this session. Flagged for human review; if judged insufficient, this can be reverted to `blocked_backend` and re-applied at formal STEP 5.2 with no change to the eventual outcome.
+
+---
+
+## DEL-20260818-05 — Status Update (Second Addendum)
+
+- **Refers to:** DEL-20260818-05 (ST-09) above. This file is append-only — recording this status transition as a new entry rather than editing the original or the prior addendum.
+- **Updated at:** 2026-08-20T07:20:00Z
+- **New status:** Complete.
+- **Reason:** EPIC-03 merged to `main` (PR #1454, 2026-08-20), clearing the original pre-merge structural blocker. A real post-merge invocation was triggered (`si05-weekly-digest.yml` `workflow_dispatch`, run 32342881081) and its Render log genuinely reviewed. The digest-timing line was found genuinely absent — root-caused to a separate, pre-existing platform gap (no root logging configuration in production's `uvicorn` process; filed as `BLG-BE-107`), not a re-occurrence of the original pre-merge blocker. Product Owner (human, real-time in-session, 2026-08-20) directed an interim GitHub Actions step-timing proxy resolution over blocking further or fixing the logging gap inline — see `docs/ops/api_performance_baseline.md` §36.5 and `DEV-EPIC03-ST09-01`.
+
+---
+
+## DEL-20260818-07
+
+*(Renumbered from DEL-20260818-03 during EPIC-02/EPIC-05 merge reconciliation, CLAUDE.md §8 — collided with EPIC-02's own DEL-20260818-03 (ST-05), which merged to main first.)*
 
 - **ST Item:** ST-16 — Local dev venv version-pin enforcement; confirm PUBLIC_URL parity on production
 - **EPIC:** EPIC-05
