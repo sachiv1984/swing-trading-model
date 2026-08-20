@@ -138,9 +138,9 @@
       ],
       "sprint2": {
         "note": "PR #1453/status/pr_number/pr_status above cover the Sprint 1 subset only (ST-23/ST-04/ST-05/ST-07, merged 2026-08-19). ST-06 is a separate Sprint 2 subset per sprint_backlog.md's Multi-Sprint Gate Note, unblocked 2026-08-18 (ST-23 done/CONDITIONAL) but implemented in a distinct session/PR after EPIC-02's original PR had already merged -- tracked here rather than overwriting the Sprint 1 PR's accurate historical record.",
-        "pr_number": null,
-        "pr_status": "not_yet_opened",
-        "status": "in_progress"
+        "pr_number": 1460,
+        "pr_status": "open",
+        "status": "done"
       },
       "stories": {
         "ST-23": {
