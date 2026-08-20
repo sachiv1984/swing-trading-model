@@ -157,3 +157,12 @@ Append-only. Do not edit previous entries.
 - **Updated at:** 2026-08-18T08:05:00Z
 - **New status:** Cancelled (per `execution_prompt.md` line 837: "If the item is `returned_to_backlog`: update the delegation log entry status to `Cancelled`").
 - **Reason:** `execution_state.json`'s ST-09 status changed to `returned_to_backlog`, applying the in-flight transition (AUD-2026-05-27-003) rather than waiting for formal sprint close. Basis: the pre-existing, sealed `sprint_backlog.md` staging-only designation for this item, already reviewed and confirmed non-blocking by the sprint's own QA-criteria review — not a fresh live Product Owner exchange in this session. Flagged for human review; if judged insufficient, this can be reverted to `blocked_backend` and re-applied at formal STEP 5.2 with no change to the eventual outcome.
+
+---
+
+## DEL-20260818-05 — Status Update (Second Addendum)
+
+- **Refers to:** DEL-20260818-05 (ST-09) above. This file is append-only — recording this status transition as a new entry rather than editing the original or the prior addendum.
+- **Updated at:** 2026-08-20T07:20:00Z
+- **New status:** Complete.
+- **Reason:** EPIC-03 merged to `main` (PR #1454, 2026-08-20), clearing the original pre-merge structural blocker. A real post-merge invocation was triggered (`si05-weekly-digest.yml` `workflow_dispatch`, run 32342881081) and its Render log genuinely reviewed. The digest-timing line was found genuinely absent — root-caused to a separate, pre-existing platform gap (no root logging configuration in production's `uvicorn` process; filed as `BLG-BE-107`), not a re-occurrence of the original pre-merge blocker. Product Owner (human, real-time in-session, 2026-08-20) directed an interim GitHub Actions step-timing proxy resolution over blocking further or fixing the logging gap inline — see `docs/ops/api_performance_baseline.md` §36.5 and `DEV-EPIC03-ST09-01`.

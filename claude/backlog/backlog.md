@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-19 (CLAUDE.md §8 cross-EPIC merge reconciliation — EPIC-02 merged via PR #1453, EPIC-03 branch rebased onto main: combines EPIC-02's 5-item addition (BLG-GOV-311, BLG-TECH-13/14/15, BLG-FE-164) and EPIC-03's one-line returned-to-backlog note under BLG-BE-99 per execution_prompt.md §5.2, both filed 2026-08-18 on their respective branches before either merged); prior — 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior — 2026-08-17 (session — 1 new item added: BLG-SPEC-132); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-20 (session — 1 new item added while completing ST-09/EPIC-03: BLG-BE-107); prior — 2026-08-19 (CLAUDE.md §8 cross-EPIC merge reconciliation — EPIC-02 merged via PR #1453, EPIC-03 branch rebased onto main: combines EPIC-02's 5-item addition (BLG-GOV-311, BLG-TECH-13/14/15, BLG-FE-164) and EPIC-03's one-line returned-to-backlog note under BLG-BE-99 per execution_prompt.md §5.2, both filed 2026-08-18 on their respective branches before either merged); prior — 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4204,7 +4204,9 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Scope:** After v8.8/EPIC-02 merges to `main` and redeploys, trigger `si05-weekly-digest.yml` (scheduled Sunday 19:00 UTC run, or another user-approved manual dispatch) and query Render logs (`render-si05-log-query.yml`) for the new duration-logged line; add the real elapsed-time value to `docs/ops/api_performance_baseline.md` §36.
 **Acceptance Criteria:** A real invocation's Render log confirms the `"SI-05 digest sent... in %.2fs"` (or failure-path equivalent) line is present with a real elapsed-time value; `docs/ops/api_performance_baseline.md` §36 updated with that value.
 
-**Returned to backlog (2026-08-18, cycle `2026-08-17__release-v8.9`, ST-09/EPIC-03):** Same structural blocker recurred — requires a real post-merge Render log invocation, not obtainable pre-merge; see `execution_state.json` ST-09 and delegation record DEL-20260818-01 for this cycle's disposition.
+**Returned to backlog (2026-08-18, cycle `2026-08-17__release-v8.9`, ST-09/EPIC-03):** Same structural blocker recurred — requires a real post-merge Render log invocation, not obtainable pre-merge; see `execution_state.json` ST-09 and delegation record DEL-20260818-05 (renumbered from the original DEL-20260818-01 during EPIC-02/EPIC-03 merge reconciliation — see `delegation_log.md`) for this cycle's disposition.
+
+**Resolved (2026-08-20, post-merge, ST-09/EPIC-03):** EPIC-03 merged to `main` (PR #1454) and a real post-merge invocation was triggered. The digest line still did not appear in Render's captured logs — root-caused to a genuine, separate platform gap (production's `uvicorn` process has no root logging configuration, so `logger.info()` calls from application code never reach a handler; see `BLG-BE-107`). Product Owner accepted an interim GitHub Actions step-timing proxy for this invocation instead (same methodology as the original `BLG-OPS-54`/§36.3 precedent) — see `docs/ops/api_performance_baseline.md` §36.5 and `DEV-20260820-01`.
 
 ---
 
@@ -5063,5 +5065,29 @@ ST-07 (BLG-FEAT-89, In-app backtesting engine) added `backend/services/backtest_
 - Exactly one implementation of `compute_signals`/`compute_atr`/`compute_risk_on`/`transaction_fee`/`backtest` exists; both `production_strategy.py` and `backend/services/backtest_rule_service.py` use it
 - Nightly backtest (`.github/workflows/backtest.yml`) and the in-app Backtest Rule Change endpoint both continue to produce the same historical results as before the consolidation (regression-verified against a fixed historical run)
 - Backend Engineering Patterns Owner and Strategy Rules & System Intent Owner sign-off
+
+---
+
+### BLG-BE-107 — Configure root/app logging so logger.info() calls in application code actually reach Render's captured logs
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-09 (EPIC-03, v8.9, BLG-BE-99) evidence-gathering session — 2026-08-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.0
+
+**Problem**
+Production runs `uvicorn main:app --host 0.0.0.0 --port $PORT` (per `render.yaml`'s `startCommand`) with no `--log-config`/`--log-level` flag, and `backend/main.py` never calls `logging.basicConfig()` or otherwise configures the root logger (confirmed via repo-wide grep — no `basicConfig`/`addHandler`/`dictConfig` anywhere in `backend/`). Uvicorn's own default logging setup only wires up its own named loggers (`uvicorn`, `uvicorn.error`, `uvicorn.access`) — it never touches the root logger or any `logging.getLogger(__name__)` logger used throughout the app's service modules. With the root logger left at its default level (WARNING) and no handler attached, every `logger.info(...)` call anywhere in application code is filtered out before it ever reaches a handler, and is silently dropped rather than erroring or warning anyone. This was empirically confirmed: a real, successful `POST /digest/si05/send` invocation on 2026-08-20 (Render deploy log, `07:11:51Z`, 200 OK) produced no corresponding `"SI-05 digest sent (%d chars) in %.2fs"` line anywhere in the surrounding log window, even though that `logger.info()` call sits directly in the code path that ran.
+
+**Scope**
+- Add a root logging configuration (e.g. `logging.basicConfig(level=logging.INFO)` early in `backend/main.py`, or an explicit `--log-config` passed to uvicorn) so that INFO-level (and above) records from application-module loggers propagate to a handler that writes to stdout/stderr, where Render's log pipeline captures them
+- Confirm the fix doesn't create duplicate/conflicting handlers with uvicorn's own access/error logging
+- Verify via one real invocation post-deploy that `services/si05_digest_service.py`'s `"SI-05 digest sent..."` line (and ideally at least one other existing `logger.info()` call elsewhere in the app) now actually appears in Render's captured logs
+
+**Acceptance Criteria**
+- Root logging is configured such that `logger.info()` calls from any `backend/` module reach stdout/stderr in the running process
+- A real post-deploy production invocation confirms at least the `si05_digest_service.py` duration line is now captured in Render logs (this also closes the outstanding evidence gap referenced by `ST-09`/`BLG-BE-99`'s original AC)
+- No regression to uvicorn's own existing access/error log formatting or duplicate log lines
+- `docs/ops/api_performance_baseline.md` §36 updated with the real log-derived timing once available, superseding the interim GitHub-Actions-proxy measurements recorded there (§36.3 and §36.5)
 
 ---
