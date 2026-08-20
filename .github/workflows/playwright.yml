@@ -103,10 +103,22 @@ jobs:
       - name: Install Playwright browsers (cache miss — full install)
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+        env:
+          # Prevents apt/needrestart interactive prompts (e.g. "which services
+          # to restart") from silently hanging the runner even under apt -y --
+          # observed hang on 2026-08-19, install-deps step never returning.
+          DEBIAN_FRONTEND: noninteractive
+          NEEDRESTART_MODE: a
 
       - name: Install Playwright OS dependencies only (cache hit — browsers already present)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
+        env:
+          # Prevents apt/needrestart interactive prompts (e.g. "which services
+          # to restart") from silently hanging the runner even under apt -y --
+          # observed hang on 2026-08-19, this exact step never returning.
+          DEBIAN_FRONTEND: noninteractive
+          NEEDRESTART_MODE: a
 
       - name: Run E2E acceptance tests (shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
         run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
@@ -174,10 +186,22 @@ jobs:
       - name: Install Playwright browsers (cache miss — full install)
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+        env:
+          # Prevents apt/needrestart interactive prompts (e.g. "which services
+          # to restart") from silently hanging the runner even under apt -y --
+          # observed hang on 2026-08-19, install-deps step never returning.
+          DEBIAN_FRONTEND: noninteractive
+          NEEDRESTART_MODE: a
 
       - name: Install Playwright OS dependencies only (cache hit — browsers already present)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
+        env:
+          # Prevents apt/needrestart interactive prompts (e.g. "which services
+          # to restart") from silently hanging the runner even under apt -y --
+          # observed hang on 2026-08-19, this exact step never returning.
+          DEBIAN_FRONTEND: noninteractive
+          NEEDRESTART_MODE: a
 
       - name: Run visual snapshot tests
         run: npx playwright test tests/e2e/visual-snapshots.spec.js
