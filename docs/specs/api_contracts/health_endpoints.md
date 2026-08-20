@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.5
-**Last Updated:** 2026-08-07
+**Version:** 1.6
+**Last Updated:** 2026-08-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -448,10 +448,13 @@ No request body.
 
 Returns last-run status, timestamps, and any error details for each nightly computation job.
 
-**Architecture note:** The scheduler is GitHub Actions (external cron) calling HTTP endpoints — not an in-process background scheduler. The three tracked jobs are triggered by:
+**Architecture note:** The scheduler is GitHub Actions (external cron) calling HTTP endpoints — not an in-process background scheduler. The six tracked jobs are triggered by:
 - `trailing_stop` — `POST /positions/nightly-stop-update`
 - `rebalance_exit` — `POST /signals/rebalance-exit`
 - `inv_vol_sizing` — co-invoked by `POST /signals/rebalance-exit`
+- `custom_price_alerts` — co-invoked by `POST /alerts/evaluate` (ST-02/BLG-FE-116)
+- `screener_refresh` — `POST /screener/run` (ST-01/BLG-OPS-144, EPIC-01, v8.8)
+- `risk_off_alerts` — `POST /positions/risk-off-alerts` (ST-02/BLG-OPS-145, EPIC-01, v8.8)
 
 ### Request
 
@@ -465,7 +468,10 @@ No request body.
   "trigger_endpoints": {
     "trailing_stop": "POST /positions/nightly-stop-update",
     "rebalance_exit": "POST /signals/rebalance-exit",
-    "inv_vol_sizing": "co-invoked by rebalance-exit"
+    "inv_vol_sizing": "co-invoked by rebalance-exit",
+    "custom_price_alerts": "co-invoked by POST /alerts/evaluate",
+    "screener_refresh": "POST /screener/run",
+    "risk_off_alerts": "POST /positions/risk-off-alerts"
   },
   "overall_status": "ok",
   "jobs": {
@@ -486,6 +492,24 @@ No request body.
       "last_status": "ok",
       "last_error": null,
       "detail": { "note": "co-invoked by rebalance-exit" }
+    },
+    "custom_price_alerts": {
+      "last_run_utc": "2026-08-18T07:00:00+00:00",
+      "last_status": "ok",
+      "last_error": null,
+      "detail": { "alerts_evaluated": 12, "triggered": 1 }
+    },
+    "screener_refresh": {
+      "last_run_utc": "2026-08-18T07:05:00+00:00",
+      "last_status": "ok",
+      "last_error": null,
+      "detail": { "run_id": "a1b2c3d4-...", "result": { "tickers_scanned": 20 } }
+    },
+    "risk_off_alerts": {
+      "last_run_utc": "2026-08-18T07:10:00+00:00",
+      "last_status": "ok",
+      "last_error": null,
+      "detail": { "flagged": 0 }
     }
   },
   "note": "Status resets on process restart. A never_run status after a recent deploy is normal."
@@ -522,6 +546,7 @@ None — all known deviations resolved as of v1.1 (BLG-SPEC-D14, 2026-03-25).
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6 | 2026-08-18 | ST-18 (BLG-SPEC-130, EPIC-05, v8.9): `GET /health/scheduler`'s architecture note and response example only documented 3 of the 6 live jobs `_NIGHTLY_JOB_NAMES`/`get_scheduler_health()` actually track — added `custom_price_alerts`, `screener_refresh`, and `risk_off_alerts` to both, matching `backend/services/health_service.py` exactly. Authority: API Contracts & Documentation Owner. |
 | 1.5 | 2026-08-07 | ST-05 (BLG-SPEC-114, EPIC-02, v8.4): `GET /health` example was missing the `external_apis` and `ai_journal` nested objects that `health_service.get_operational_health()` has returned since ST-08/ST-09. Added both to the example and field notes. Authority: API Contracts & Documentation Owner. |
 | 1.4 | 2026-08-07 | ST-02 (BLG-SPEC-116, EPIC-02, v8.4): Added `GET /test/quick-health` and `POST /test/rate-limit-scenarios` — both routes existed in `backend/routers/test.py` but were undocumented, causing OpenAPI Drift Detection CI gate failures once `openapi.yaml`'s structural defect was fixed. Also added `GET /health/scheduler` to the Endpoints TOC (pre-existing section, TOC omission only). Authority: API Contracts & Documentation Owner. |
 | 1.3 | 2026-06-29 | ST-13 (BLG-OPS-79): Added `GET /health/scheduler` — nightly computation job health monitoring endpoint. Returns last-run status for trailing_stop, rebalance_exit, inv_vol_sizing jobs. Authority: Infrastructure & Operations Owner. |

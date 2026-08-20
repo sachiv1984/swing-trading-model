@@ -40,6 +40,7 @@ def size_position_endpoint(request: SizePositionRequest):
             risk_percent=request.risk_percent,
             market=request.market or "UK",
             fx_rate=request.fx_rate,
+            ticker=request.ticker,
         )
         return {"status": "ok", "data": result}
 

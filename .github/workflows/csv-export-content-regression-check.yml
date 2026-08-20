@@ -63,12 +63,15 @@ jobs:
           path: backend/.venv
           key: ${{ runner.os }}-py3.11-backend-venv-${{ hashFiles('backend/requirements.txt') }}
 
-      - name: Create venv and install backend dependencies (cache miss)
-        if: steps.venv-cache.outputs.cache-hit != 'true'
+      - name: Create or verify venv (self-heals a missing OR broken/stale cache)
         working-directory: backend
         run: |
-          python -m venv .venv
-          .venv/bin/pip install -r requirements.txt
+          if [ ! -x .venv/bin/python ] || ! .venv/bin/python -m pytest --version > /dev/null 2>&1; then
+            echo "::warning::backend/.venv is missing or its cached restore is broken (pytest not importable) -- (re)installing fresh. See BLG-OPS gotcha: a restored venv cache can silently lose its interpreter symlink target."
+            rm -rf .venv
+            python -m venv .venv
+            .venv/bin/pip install -r requirements.txt
+          fi
 
       - name: Add backend/.venv to PATH
         run: echo "$GITHUB_WORKSPACE/backend/.venv/bin" >> "$GITHUB_PATH"

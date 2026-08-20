@@ -266,6 +266,77 @@ def get_portfolio_summary() -> Dict:
         }
 
 
+def calculate_prospective_heat(
+    entry_price: float,
+    stop_price: float,
+    shares: float,
+    market: str = "UK",
+    fx_rate: float = None,
+) -> Dict:
+    """
+    Calculate portfolio heat percentage if a prospective position were added.
+
+    Shared calculation used by GET /portfolio/prospective-heat
+    (routers/prospective_heat.py) and POST /portfolio/size's
+    heat_impact_percent field (ST-05, BLG-FEAT-91, services/sizing_service.py)
+    — extracted here (ST-05) so both call sites use one implementation
+    rather than duplicating the risk-basis math.
+
+    Calculation rules: docs/specs/metrics_definitions.md §Portfolio Heat
+
+    Returns:
+        {"valid": False, "error": <str>} for invalid inputs or unusable
+        portfolio state, or:
+        {
+            "valid": True,
+            "current_heat_percent": float,
+            "prospective_heat_percent": float,
+            "incremental_heat_percent": float,
+            "prospective_risk_gbp": float,
+            "portfolio_value_gbp": float,
+            "fx_rate_used": float,
+        }
+    """
+    if stop_price >= entry_price:
+        return {"valid": False, "error": "stop_price must be less than entry_price"}
+    if shares <= 0:
+        return {"valid": False, "error": "shares must be greater than 0"}
+    if entry_price <= 0 or stop_price <= 0:
+        return {"valid": False, "error": "entry_price and stop_price must be greater than 0"}
+
+    market = (market or "UK").upper()
+    if market == "US":
+        fx_rate_used = float(fx_rate) if fx_rate else get_live_fx_rate()
+    else:
+        fx_rate_used = 1.0
+
+    portfolio = get_portfolio_summary()
+    portfolio_value_gbp = portfolio.get("total_value", 0.0)
+
+    if portfolio_value_gbp <= 0:
+        return {"valid": False, "error": "portfolio value is zero; cannot calculate heat"}
+
+    position_risks = portfolio.get("position_risks", [])
+    current_risk_gbp = sum(r.get("position_risk_gbp", 0.0) for r in position_risks)
+
+    prospective_risk_gbp = round((entry_price - stop_price) * shares / fx_rate_used, 2)
+
+    current_heat_percent = round(current_risk_gbp / portfolio_value_gbp * 100, 2)
+    total_risk_gbp = current_risk_gbp + prospective_risk_gbp
+    prospective_heat_percent = round(total_risk_gbp / portfolio_value_gbp * 100, 2)
+    incremental_heat_percent = round(prospective_heat_percent - current_heat_percent, 2)
+
+    return {
+        "valid": True,
+        "current_heat_percent": current_heat_percent,
+        "prospective_heat_percent": prospective_heat_percent,
+        "incremental_heat_percent": incremental_heat_percent,
+        "prospective_risk_gbp": prospective_risk_gbp,
+        "portfolio_value_gbp": round(portfolio_value_gbp, 2),
+        "fx_rate_used": round(fx_rate_used, 4),
+    }
+
+
 def create_daily_snapshot() -> Dict:
     """
     Create a daily snapshot of portfolio performance

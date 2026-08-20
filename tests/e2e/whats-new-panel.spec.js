@@ -10,6 +10,13 @@
  *   SC-WN-03  Empty state: data null renders "Nothing to show"
  *   SC-WN-04  Error state: request failure renders "Unable to load release notes"
  *   SC-WN-05  Loading state: spinner visible before response resolves
+ *   SC-WN-06  Curated User Impact copy (ST-15, BLG-QA-152, EPIC-04, v8.9):
+ *             end-to-end proof that changelog_service.py's curated `User
+ *             Impact` column text (not the raw `Description` column, and
+ *             not a generic placeholder) renders correctly in the browser.
+ *             tests/test_changelog_service.py already covers the service
+ *             layer producing the right string; this closes the gap that
+ *             no Playwright test previously confirmed it reaches the DOM.
  *
  * Design source: docs/design/2026-07-24__release-v7.8/whats-new-panel/ux_spec.md
  * Spec ref: docs/specs/frontend/pages/dashboard.md §6A (v3.2)
@@ -128,4 +135,26 @@ test('SC-WN-05: loading state shows a spinner before the response resolves', asy
   await expect(card).toBeVisible({ timeout: 10000 });
   await expect(card.locator('.animate-spin')).toBeVisible({ timeout: 2000 });
   await expect(card.getByText('A change')).toBeVisible({ timeout: 8000 });
+});
+
+test('SC-WN-06: renders changelog_service.py-curated User Impact copy, not raw engineering copy', async ({ page }) => {
+  await mockFallback(page);
+  // Realistic curated `User Impact` cell text, of the same style
+  // changelog_service.py's get_latest_changelog_entry() actually extracts
+  // from the `User Impact` column (per tests/test_changelog_service.py's
+  // own SAMPLE_CHANGELOG fixture) -- deliberately user-facing prose, not a
+  // raw `Description`-column engineering summary (e.g. "In-app what's new
+  // panel"), to prove the curated (not raw) column is what reaches the DOM.
+  const userImpactText =
+    "Release notes now show what's new for you, not raw engineering copy.";
+  await mockChangelogLatest(page, {
+    status: 'ok',
+    data: { version: 'v8.9', changes: [userImpactText] },
+  });
+
+  await gotoDashboard(page);
+
+  const card = page.locator('[data-testid="whats-new-card"]');
+  await expect(card.getByText("What's New — v8.9")).toBeVisible({ timeout: 8000 });
+  await expect(card.getByText(userImpactText)).toBeVisible({ timeout: 8000 });
 });

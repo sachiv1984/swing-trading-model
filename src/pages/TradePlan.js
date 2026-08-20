@@ -9,6 +9,7 @@ import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
 import SignalContextPanel, { buildSignalPrePopulation } from "../components/trades/SignalContextPanel";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
+import WhatIfSizingPreview from "../components/trades/WhatIfSizingPreview";
 import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ShieldCheck, ThumbsUp, ThumbsDown, Tag as TagIcon, Rocket, Printer } from "lucide-react";
 import { TradePlanStatusBadge, isStartTradeEligible } from "./TradePlans";
 
@@ -396,6 +397,15 @@ export default function TradePlan() {
       apiFetch(`${API_BASE}/trade-plans/${editId}`).then((r) => r.json()).then((res) => res.data),
     enabled: !!editId,
   });
+
+  // ST-05 (BLG-FEAT-91): defaultRiskPercent for WhatIfSizingPreview — same
+  // settings source as PositionSizingWidget (TradeEntry.js).
+  const { data: settingsData } = useQuery({
+    queryKey: ["settings"],
+    queryFn: () =>
+      apiFetch(`${API_BASE}/settings`).then((r) => r.json()).then((res) => res.data),
+  });
+  const defaultRiskPercent = settingsData?.[0]?.default_risk_percent ?? 1.0;
 
   useEffect(() => {
     if (existingPlan && !hasUnsavedAiChanges.current) {
@@ -1091,6 +1101,14 @@ export default function TradePlan() {
             placeholder="What would prove this thesis wrong? (optional)"
           />
         </Field>
+
+        {/* What-If Sizing Preview — ST-05 (v8.9, BLG-FEAT-91), trade_plan.md §5d */}
+        <WhatIfSizingPreview
+          ticker={form.ticker}
+          market={form.market}
+          stopLevel={form.planned_stop_price}
+          defaultRiskPercent={defaultRiskPercent}
+        />
 
         <Field label="Pre-Entry Checklist">
           <EntryChecklist
