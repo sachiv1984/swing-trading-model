@@ -1,11 +1,24 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.8.0
-**Last Updated:** 2026-08-17 (ST-26, BLG-SPEC-118, EPIC-06, v8.8 — backfilled the v7.9–v8.4 gap: 2 new-endpoint entries added (v8.2.0, v7.9.0), confirmed the other 5 releases in that window shipped none); prior — 2026-07-27 (v7.8.0 entry)
+**Version:** 1.9.0
+**Last Updated:** 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — v8.9.0 entry: 3 new Backtest Rule Change endpoints); prior — 2026-08-17 (ST-26, BLG-SPEC-118, EPIC-06, v8.8 — backfilled the v7.9–v8.4 gap: 2 new-endpoint entries added); prior — 2026-07-27 (v7.8.0 entry)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
+
+## v8.9.0 (2026-08-18 — Release v8.9)
+
+### strategy_benchmark_endpoints.md — v1.2 (NEW)
+
+**EPIC:** EPIC-02
+**ST:** ST-07
+
+| Change | Details |
+|--------|---------|
+| New endpoint: POST /strategy/backtest-rule-change/run | Runs a candidate `strategy_rules.md` parameter change against a bounded historical window (first 20 active `ticker_universe` tickers, trailing 4 years), entirely in-app, and compares it against the live rule set over the identical universe/window (BLG-FEAT-89). Persists the run for audit. |
+| New endpoint: GET /strategy/backtest-rule-change/runs | Run history, most recent first (AC-03). |
+| New endpoint: GET /strategy/backtest-rule-change/runs/{run_id} | Re-view a prior run's stored output without re-running (AC-03). |
 
 ## v8.5.0 (2026-08-10 — Release v8.5)
 

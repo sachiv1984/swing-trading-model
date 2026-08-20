@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../api/base44Client';
-import { BarChart2, RefreshCw, Upload, ChevronDown } from 'lucide-react';
+import { BarChart2, RefreshCw, Upload, ChevronDown, ChevronUp, Play, Loader2 } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import PageHeader from '../components/ui/PageHeader';
 
 // ---------------------------------------------------------------------------
@@ -643,15 +644,267 @@ function VersionComparisonTab() {
 }
 
 // ---------------------------------------------------------------------------
+// Backtest Rule Change tab (ST-07, v8.9 EPIC-02, BLG-FEAT-89)
+// Design source: docs/design/2026-08-17__release-v8.9/in-app-backtesting-engine/ux_spec.md
+// ---------------------------------------------------------------------------
+
+// Structured candidate parameter form (design_record.md §2.1 leaves raw-diff
+// vs. structured-form open; resolved to structured here — a safe, bounded
+// set of fields mirroring strategy_rules.md's actual tunable parameters,
+// rather than free-form text with no deterministic parse path).
+const CANDIDATE_FIELDS = [
+  { key: 'lookback', label: 'Lookback (days)', type: 'number', step: '1' },
+  { key: 'top_n', label: 'Top N', type: 'number', step: '1' },
+  { key: 'atr_mult', label: 'ATR Multiplier', type: 'number', step: '0.1' },
+  { key: 'min_hold_days', label: 'Min Hold Days', type: 'number', step: '1' },
+  { key: 'initial_atr_mult', label: 'Initial ATR Multiplier', type: 'number', step: '0.1' },
+  { key: 'profit_atr_mult', label: 'Profit-Lock ATR Multiplier', type: 'number', step: '0.1' },
+  { key: 'min_position_pct', label: 'Min Position %', type: 'number', step: '0.01' },
+  { key: 'max_position_pct', label: 'Max Position %', type: 'number', step: '0.01' },
+];
+
+function BacktestComparisonRow({ label, candidate, live, format }) {
+  return (
+    <tr className="border-b border-slate-800">
+      <td className="py-2 pr-3 text-slate-300">{label}</td>
+      <td className="py-2 pr-3 text-right text-white">{format(candidate)}</td>
+      <td className="py-2 text-right text-white">{format(live)}</td>
+    </tr>
+  );
+}
+
+function RMultipleComparisonChart({ candidateBuckets, liveBuckets }) {
+  const merged = (candidateBuckets || []).map((b, i) => ({
+    range: b.label,
+    Candidate: b.count,
+    Live: liveBuckets?.[i]?.count ?? 0,
+  }));
+  return (
+    <ResponsiveContainer width="100%" height={260}>
+      <BarChart data={merged} margin={{ top: 8, right: 8, left: 0, bottom: 40 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
+        <XAxis dataKey="range" stroke="#64748b" tick={{ fill: '#94a3b8', fontSize: 11 }} angle={-40} textAnchor="end" height={60} />
+        <YAxis stroke="#64748b" tick={{ fill: '#94a3b8', fontSize: 12 }} allowDecimals={false}
+          label={{ value: 'Trades', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }} />
+        <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
+          labelStyle={{ color: '#e2e8f0' }} itemStyle={{ fontSize: 12 }} />
+        <Legend wrapperStyle={{ fontSize: 12 }} />
+        <Bar dataKey="Candidate" fill="#22d3ee" radius={[4, 4, 0, 0]} data-testid="backtest-rmultiple-candidate-bar" />
+        <Bar dataKey="Live" fill="#64748b" radius={[4, 4, 0, 0]} data-testid="backtest-rmultiple-live-bar" />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+function BacktestRunHistoryItem({ run }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div className="rounded-lg border border-slate-700/50 bg-slate-800/30" data-testid="backtest-run-history-item">
+      <button
+        type="button"
+        onClick={() => setExpanded((e) => !e)}
+        className="w-full flex items-center justify-between px-3 py-2 text-left"
+        data-testid="backtest-run-history-toggle"
+      >
+        <div className="text-xs text-slate-300">
+          <span className="text-slate-600 dark:text-slate-400">{new Date(run.created_at).toLocaleString()}</span>
+          {' — '}
+          <span>{run.rule_diff_summary}</span>
+        </div>
+        {expanded ? <ChevronUp className="w-3.5 h-3.5 text-slate-500" /> : <ChevronDown className="w-3.5 h-3.5 text-slate-500" />}
+      </button>
+      {expanded && (
+        <div className="px-3 pb-3 text-xs text-slate-400 space-y-1">
+          <div>By: {run.initiated_by || '—'}</div>
+          <div>Universe: {run.universe_size} tickers, {run.universe_start_date} to {run.universe_end_date}</div>
+          <div>Win Rate — Candidate {fmtPct(run.candidate_result?.win_rate_pct)} vs Live {fmtPct(run.live_result?.win_rate_pct)}</div>
+          <div>Max DD — Candidate {fmtPct(run.candidate_result?.max_drawdown_pct)} vs Live {fmtPct(run.live_result?.max_drawdown_pct)}</div>
+          <div>Median R — Candidate {fmtR(run.candidate_result?.median_r)} vs Live {fmtR(run.live_result?.median_r)}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function BacktestRuleChangeTab() {
+  const [inputs, setInputs] = useState({});
+  const [runState, setRunState] = useState('idle'); // idle | loading | loaded | error
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
+  const [history, setHistory] = useState(null);
+  const [historyExpanded, setHistoryExpanded] = useState(false);
+
+  const loadHistory = useCallback(async () => {
+    try {
+      const data = await api.backtestRuleChange.getRuns({ limit: 20 });
+      setHistory(data);
+    } catch {
+      setHistory([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (historyExpanded && history === null) {
+      loadHistory();
+    }
+  }, [historyExpanded, history, loadHistory]);
+
+  const handleFieldChange = (key, value) => {
+    setInputs((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleRun = useCallback(async () => {
+    setRunState('loading');
+    setError(null);
+    try {
+      const overrides = {};
+      for (const { key } of CANDIDATE_FIELDS) {
+        const raw = inputs[key];
+        if (raw !== undefined && raw !== '') overrides[key] = parseFloat(raw);
+      }
+      const data = await api.backtestRuleChange.run(overrides);
+      setResult(data);
+      setRunState('loaded');
+      // Refresh history so the just-completed run appears without a manual reload.
+      if (historyExpanded) loadHistory();
+    } catch (err) {
+      setError('Backtest failed to complete. Please try again.');
+      setRunState('error');
+    }
+  }, [inputs, historyExpanded, loadHistory]);
+
+  return (
+    <section data-testid="backtest-rule-change-tab">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Left panel — Candidate Rule Input */}
+        <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
+          <h3 className="text-sm font-medium text-slate-300 mb-3">Candidate Rule Change</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
+            Leave a field blank to use the live strategy_rules.md value.
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            {CANDIDATE_FIELDS.map(({ key, label, type, step }) => (
+              <div key={key} className="space-y-1">
+                <label className="text-xs text-slate-600 dark:text-slate-400">{label}</label>
+                <input
+                  type={type}
+                  step={step}
+                  value={inputs[key] ?? ''}
+                  onChange={(e) => handleFieldChange(key, e.target.value)}
+                  data-testid={`backtest-input-${key}`}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-slate-400"
+                />
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={handleRun}
+            disabled={runState === 'loading'}
+            data-testid="backtest-run-btn"
+            className="mt-4 flex items-center gap-2 text-xs px-3 py-2 rounded-md border border-slate-400 bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
+          >
+            {runState === 'loading' ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                Running backtest…
+              </>
+            ) : (
+              <>
+                <Play className="w-3.5 h-3.5" />
+                Run Backtest
+              </>
+            )}
+          </button>
+          {runState === 'error' && (
+            <p className="mt-2 text-xs text-rose-400" data-testid="backtest-run-error">{error}</p>
+          )}
+        </div>
+
+        {/* Right panel — Results */}
+        <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
+          <h3 className="text-sm font-medium text-slate-300 mb-3">Results</h3>
+          {runState === 'idle' && (
+            <p className="text-sm text-slate-600 dark:text-slate-400 italic" data-testid="backtest-results-empty">
+              Set parameter overrides and run a backtest to compare it against your live strategy.
+            </p>
+          )}
+          {runState === 'loading' && (
+            <div className="space-y-2 animate-pulse" data-testid="backtest-results-loading">
+              {[1, 2, 3].map((i) => <div key={i} className="h-8 bg-slate-800 rounded-md" />)}
+            </div>
+          )}
+          {runState === 'loaded' && result && (
+            <div data-testid="backtest-results-loaded">
+              <div className="overflow-x-auto mb-4">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-xs text-slate-600 dark:text-slate-400 border-b border-slate-700">
+                      <th scope="col" className="text-left py-2 pr-3">Metric</th>
+                      <th scope="col" className="text-right py-2 pr-3">Candidate</th>
+                      <th scope="col" className="text-right py-2">Live</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <BacktestComparisonRow label="Trades" candidate={result.candidate_result.trade_count} live={result.live_result.trade_count} format={fmtNum} />
+                    <BacktestComparisonRow label="Win Rate" candidate={result.candidate_result.win_rate_pct} live={result.live_result.win_rate_pct} format={fmtPct} />
+                    <BacktestComparisonRow label="Median R" candidate={result.candidate_result.median_r} live={result.live_result.median_r} format={fmtR} />
+                    <BacktestComparisonRow label="Max Drawdown" candidate={result.candidate_result.max_drawdown_pct} live={result.live_result.max_drawdown_pct} format={fmtPct} />
+                  </tbody>
+                </table>
+              </div>
+
+              <RMultipleComparisonChart
+                candidateBuckets={result.candidate_result.r_multiple_buckets}
+                liveBuckets={result.live_result.r_multiple_buckets}
+              />
+
+              <div className="mt-4 text-xs text-slate-600 dark:text-slate-400 space-y-1" data-testid="backtest-run-metadata">
+                <div>{new Date(result.created_at).toLocaleString()} — by {result.initiated_by || '—'}</div>
+                <div>{result.rule_diff_summary}</div>
+                <div>Universe: {result.universe_tickers.length} tickers, {result.universe_start_date} to {result.universe_end_date}</div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Run History (AC-03) */}
+      <div className="mt-4 rounded-xl border border-slate-700 bg-slate-900 p-4">
+        <button
+          type="button"
+          onClick={() => setHistoryExpanded((e) => !e)}
+          className="w-full flex items-center justify-between"
+          data-testid="backtest-run-history-toggle-panel"
+        >
+          <h3 className="text-sm font-medium text-slate-300">Run History</h3>
+          {historyExpanded ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+        </button>
+        {historyExpanded && (
+          <div className="mt-3 space-y-2" data-testid="backtest-run-history-list">
+            {history === null && <p className="text-xs text-slate-600 dark:text-slate-400">Loading…</p>}
+            {history?.length === 0 && <p className="text-xs text-slate-600 dark:text-slate-400">No runs yet.</p>}
+            {history?.map((run) => <BacktestRunHistoryItem key={run.id} run={run} />)}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main page
 // ---------------------------------------------------------------------------
 
 export default function StrategyBenchmark() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get('tab') === 'version-comparison' ? 'version-comparison' : 'benchmark';
+  const tabParam = searchParams.get('tab');
+  const activeTab =
+    tabParam === 'version-comparison' ? 'version-comparison' :
+    tabParam === 'backtest-rule-change' ? 'backtest-rule-change' :
+    'benchmark';
   const setActiveTab = (tab) => {
     const next = new URLSearchParams(searchParams);
-    if (tab === 'version-comparison') next.set('tab', 'version-comparison');
+    if (tab === 'version-comparison' || tab === 'backtest-rule-change') next.set('tab', tab);
     else next.delete('tab');
     setSearchParams(next, { replace: true });
   };
@@ -770,12 +1023,27 @@ export default function StrategyBenchmark() {
         >
           Version Comparison
         </button>
+        <button
+          role="tab"
+          aria-selected={activeTab === 'backtest-rule-change'}
+          onClick={() => setActiveTab('backtest-rule-change')}
+          className={`text-sm px-3 py-2 border-b-2 transition-colors ${
+            activeTab === 'backtest-rule-change'
+              ? 'border-slate-400 text-slate-900 dark:text-white font-medium'
+              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300'
+          }`}
+          data-testid="benchmark-tab-backtest-rule-change"
+        >
+          Backtest Rule Change
+        </button>
       </div>
 
       {activeTab === 'version-comparison' ? (
         <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
           <VersionComparisonTab />
         </div>
+      ) : activeTab === 'backtest-rule-change' ? (
+        <BacktestRuleChangeTab />
       ) : (
       <>
       {/* Sticky filters */}

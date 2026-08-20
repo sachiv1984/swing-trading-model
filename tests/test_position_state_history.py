@@ -14,6 +14,8 @@ from datetime import date, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
 import services.position_lifecycle_service as lifecycle_service  # noqa: E402
@@ -83,6 +85,37 @@ class TestRefreshPositionLifecycleWritesStateHistory:
         args = mock_history.call_args.args
         assert args[1] is None  # from_state
         assert args[2] == "PROFITABLE"  # to_state
+
+    def test_primary_write_runs_before_audit_write(self):
+        """ST-10 (BLG-BE-100, EPIC-03, v8.9): the primary write
+        (update_position_lifecycle_state) must be called before the audit
+        write (create_position_state_history_entry), not after -- the two
+        writes use separate DB connections/transactions, so call order is
+        what prevents a phantom state_history row for a transition that
+        never actually landed on `positions`."""
+        row = _raw_position_row(position_state="LOSING")
+        call_order = []
+        with patch.object(lifecycle_service, "update_position_lifecycle_state",
+                           side_effect=lambda *a, **kw: call_order.append("primary") or {"position_state": "PROFITABLE"}), \
+             patch.object(lifecycle_service, "create_position_state_history_entry",
+                           side_effect=lambda *a, **kw: call_order.append("audit")):
+            lifecycle_service.refresh_position_lifecycle("pos-1", prefetched_position=row)
+
+        assert call_order == ["primary", "audit"]
+
+    def test_audit_write_not_reached_when_primary_write_raises(self):
+        """AC-2: 'the audit row is not written when the primary write
+        fails' -- if update_position_lifecycle_state raises, the function
+        must propagate the exception and never reach the audit-write call
+        (not swallow it and continue to log a phantom transition)."""
+        row = _raw_position_row(position_state="LOSING")
+        with patch.object(lifecycle_service, "update_position_lifecycle_state",
+                           side_effect=RuntimeError("db unavailable")), \
+             patch.object(lifecycle_service, "create_position_state_history_entry") as mock_history:
+            with pytest.raises(RuntimeError):
+                lifecycle_service.refresh_position_lifecycle("pos-1", prefetched_position=row)
+
+        mock_history.assert_not_called()
 
 
 def _make_conn_cur():

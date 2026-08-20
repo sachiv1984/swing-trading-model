@@ -3,16 +3,19 @@ import { api } from "../../api/base44Client";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Loader2, Ruler } from "lucide-react";
+import { Loader2, Ruler, AlertTriangle } from "lucide-react";
 import { cn } from "../../lib/utils";
 
-const SYSTEM_MESSAGES = {
+// ST-05 (BLG-FEAT-91): exported for reuse verbatim by WhatIfSizingPreview.js
+// (trade_plan.md §5d.3 — "same AMBER_MESSAGES / SYSTEM_MESSAGES conventions
+// as §10.7"), rather than a second, potentially-drifting copy.
+export const SYSTEM_MESSAGES = {
   INVALID_STOP_DISTANCE: "Stop price must be below entry price",
   NO_PORTFOLIO_VALUE_SNAPSHOT: "Portfolio snapshot unavailable",
 };
 
 // DEF-002 / DEF-003 fix: user input invalid conditions render amber, not grey
-const AMBER_MESSAGES = {
+export const AMBER_MESSAGES = {
   INVALID_RISK_PERCENT: "Risk % must be greater than 0",
   INVALID_ENTRY_PRICE: "Enter a valid entry price above zero",
   INVALID_STOP_PRICE: "Enter a valid stop price above zero",
@@ -32,6 +35,7 @@ export default function PositionSizingWidget({
   shares,
   onSharesChange,
   defaultRiskPercent,
+  ticker,
 }) {
   const [riskPercent, setRiskPercent] = useState(() => {
     const stored = sessionStorage.getItem(SESSION_KEY);
@@ -82,6 +86,10 @@ export default function PositionSizingWidget({
         if (market === "US" && fxRate) {
           body.fx_rate = fxRate;
         }
+        // ST-04 (BLG-BE-104): pass ticker to enable concentration-aware sizing
+        if (ticker) {
+          body.ticker = ticker;
+        }
 
         // doFetch unwraps the {status, data} envelope — response IS the data object directly
         const response = await api.portfolio.size(body);
@@ -107,7 +115,7 @@ export default function PositionSizingWidget({
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [entryPrice, stopPrice, market, fxRate, riskPercent]);
+  }, [entryPrice, stopPrice, market, fxRate, riskPercent, ticker]);
 
   const handleUseSuggested = () => {
     if (sizingResult?.suggested_shares != null) {
@@ -200,6 +208,15 @@ export default function PositionSizingWidget({
           </div>
         </div>
       </div>
+
+      {/* ST-04 (BLG-BE-104): concentration reason — re-evaluates on every debounced
+          recalculation, no dismiss affordance (design_record.md §2) */}
+      {isValid && sizingResult?.concentration_reason && (
+        <p className="flex items-start gap-1.5 text-amber-600 dark:text-amber-400 text-xs">
+          <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+          <span>{sizingResult.concentration_reason}</span>
+        </p>
+      )}
 
       {status?.type === "amber" && (
         <p className="text-amber-400 text-xs">{status.text}</p>
