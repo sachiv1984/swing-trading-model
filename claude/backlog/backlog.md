@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-20 (session — 1 new item added while completing ST-09/EPIC-03: BLG-BE-107); prior — 2026-08-19 (CLAUDE.md §8 cross-EPIC merge reconciliation — EPIC-02 merged via PR #1453, EPIC-03 branch rebased onto main: combines EPIC-02's 5-item addition (BLG-GOV-311, BLG-TECH-13/14/15, BLG-FE-164) and EPIC-03's one-line returned-to-backlog note under BLG-BE-99 per execution_prompt.md §5.2, both filed 2026-08-18 on their respective branches before either merged); prior — 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-20 (CLAUDE.md §8 backlog-additions branch reconciliation — combines this branch's 4-item Sprint 1 PR-review addition (BLG-BE-106, BLG-FEAT-93, BLG-OPS-147, BLG-TECH-16, filed 2026-08-19) with main's already-merged BLG-BE-107, filed 2026-08-20 while completing ST-09/EPIC-03); prior — 2026-08-19 (CLAUDE.md §8 cross-EPIC merge reconciliation — EPIC-02 merged via PR #1453, EPIC-03 branch rebased onto main: combines EPIC-02's 5-item addition (BLG-GOV-311, BLG-TECH-13/14/15, BLG-FE-164) and EPIC-03's one-line returned-to-backlog note under BLG-BE-99 per execution_prompt.md §5.2, both filed 2026-08-18 on their respective branches before either merged); prior — 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4949,6 +4949,94 @@ Purely an illustrative-example inconsistency (not test-enforced, no functional i
 **Acceptance Criteria**
 - Example JSON block in `docs/specs/api_contracts/position_endpoints.md` is internally consistent (`current_trailing_stop × live_fx_rate == current_trailing_stop_native`, within rounding)
 - API Contracts & Documentation Owner sign-off (or Head of Specs Team, per standard doc-fix delegation)
+
+---
+
+### BLG-BE-106 — ensure_trade_plans_table() memoization flag has no lock — thread-safety by idempotent-SQL luck, not by construction
+
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1454 (EPIC-03) agent-mediated Director of Quality review — 2026-08-19
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-08's `_trade_plans_table_ensured` module-global flag in `backend/database.py` is checked-then-set with no lock. All routes calling `ensure_trade_plans_table()` (`backend/routers/trade_plans.py`, `backend/routers/analytics.py`) are sync `def` handlers, which FastAPI dispatches via a thread pool — so two concurrent requests hitting a cold-start process could both pass the flag check before either sets it, both running the DDL block concurrently. Currently harmless only because every statement in the guarded block is idempotent (`CREATE TABLE IF NOT EXISTS`/`CREATE INDEX IF NOT EXISTS`), so correctness holds today by luck, not by construction — a future edit to that block that isn't naturally idempotent would silently reintroduce a real race.
+
+**Scope**
+- Add a `threading.Lock` (or equivalent) around the check-then-set in `ensure_trade_plans_table()`, matching whatever pattern is idiomatic for this codebase's other memoized lazy-init functions if one exists
+
+**Acceptance Criteria**
+- The flag check-and-set is guarded by a lock
+- A regression test demonstrates two concurrent calls only execute the DDL block once (or confirms serialization)
+- No behaviour change to callers
+
+---
+
+### BLG-FEAT-93 — trade_plans.setup_type="Other" default conflates user-chosen-Other with never-classified
+
+**Priority:** P3 (Low)
+**Type:** Product Feature
+**Owner:** Product Owner
+**Source:** PR #1455 (EPIC-04) agent-mediated Product Owner review — 2026-08-19 (reviewer explicitly recommended filing this as a follow-up rather than blocking the PR)
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-13 (BLG-QA-150) fixed `trade_plans.setup_type` having no server-side default by normalizing null/absent/empty to the existing canonical value `"Other"` in `create_plan()`. This closed the immediate data-quality gap but means a trade plan where the user explicitly selected "Other" from the dropdown is now indistinguishable, in the stored data, from one where `setup_type` was never classified at all — permanently degrading the precision of the future `win_rate_by_setup_type` analytics (SI-02) this fix was meant to protect, since both cases collapse into the same bucket. Also noted: the default is applied only on `POST /trade-plans` (create), not on `PUT /trade-plans/{id}` (update) — a plan created before this fix, with `setup_type` still null, is never backfilled or corrected on a later edit.
+
+**Scope**
+- Decide and implement a way to distinguish "explicitly Other" from "never classified" (e.g. a `setup_type_source` field, a distinct enum value, or a `null`-preserving default used only in reporting) OR make an explicit, documented decision to accept the conflation with rationale (matching the "accept-as-is with documented rationale" option ST-13's own original AC offered)
+- If a fix is chosen, also decide whether to extend the default to `PUT`
+
+**Acceptance Criteria**
+- Decision recorded
+- If implemented, `win_rate_by_setup_type`'s future query logic (or its predesign doc) is updated to reflect the distinction
+- Product Owner sign-off
+
+---
+
+### BLG-OPS-147 — Confirm production PUBLIC_URL is actually set in the Render dashboard (BLG-OPS-146 remainder)
+
+**Priority:** P3 (Low)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** PR #1456 (EPIC-05) agent-mediated Product Owner review — 2026-08-19; remainder of BLG-OPS-146 (ST-16)
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-16 fixed the local-venv Python-pin documentation and added `PUBLIC_URL=/` to `.env.production`'s repo template for parity with `.env.staging`, but could not confirm whether production's real Render dashboard env vars actually already have `PUBLIC_URL` set — no dashboard access was available in that session. The production site is known to serve correctly today, which is consistent with (but doesn't prove) this already being set. Once BLG-OPS-146 is archived as shipped (since ST-16's achievable scope did ship), this specific unconfirmed sub-item has no other tracking mechanism.
+
+**Scope**
+- Someone with Render dashboard access checks the production Static Site's environment variables for `PUBLIC_URL`
+- If absent, add it (value `/`, matching staging); if present, just confirm and close
+
+**Acceptance Criteria**
+- Production `PUBLIC_URL` dashboard value confirmed one way or the other, documented in this item's resolution
+
+---
+
+### BLG-TECH-16 — Sector-concentration adjustment's fail-open exception handler logs nothing on failure
+
+**Priority:** P3 (Low)
+**Type:** Platform / Technical Debt
+**Owner:** Head of Engineering
+**Source:** PR #1453 (EPIC-02) agent-mediated Director of Quality review — 2026-08-19
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/services/sizing_service.py`'s `_apply_concentration_adjustment()` wraps its body in `try/except Exception: return default` (fail-open, so a concentration-service error never blocks position sizing) — but the except block has no logging, so if `get_sector_exposure()` or any other call inside starts silently failing in production (e.g. a schema drift, a bad ticker-to-sector mapping), there's no signal anywhere that the concentration feature has gone dark; it just always returns the unadjusted default with no visible symptom.
+
+**Scope**
+- Add a log line (matching this codebase's existing fail-open logging convention, e.g. the pattern already used by `_calculate_heat_impact`'s sibling fail-open handler, which does log a warning) inside the except block before returning default
+
+**Acceptance Criteria**
+- Exception is logged (level appropriate to a fail-open path, e.g. warning) with enough context to diagnose (ticker/sector where available)
+- No change to the fail-open return behaviour itself
+- Existing tests still pass
 
 ---
 
