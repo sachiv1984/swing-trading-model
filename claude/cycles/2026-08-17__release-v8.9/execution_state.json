@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-17T17:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-20T08:30:00Z",
+  "last_updated_utc": "2026-08-20T09:10:59Z",
   "preflight_notes": [
     "sprint_backlog.md's EPIC-01 section is missing full story blocks for ST-02 and ST-03 (present in sprint_backlog_index.json's EPIC-01 st_items and in the Capacity Summary's 23-item count, and referenced by other stories' Dependencies/Staging-only-ACs notes, but with no Owner/Estimated effort/Delegation class/Acceptance Criteria wrapper of their own in sprint_backlog.md). Per execution_prompt.md STEP -1.5, standard mode: acceptance criteria for both IS defined -- in stage4_backlog_slice.md (explicitly the source of truth per its own header and per sprint_backlog.md's 'Backlog Slice Source' field), so this does not block execution. Delegation class was not stated for either in sprint_backlog.md; classified here per execution_prompt.md \u00a75.1 rules: ST-02 -> delegated_backend (backend fix, same position data path as ST-01, sign-off pattern mirrors ST-01), ST-03 -> autonomous (doc-only entry addition, unambiguous AC). sprint_backlog.md is sealed and cannot be corrected by this engine; flagging here for PMO Lead / Head of Specs Team awareness rather than halting the sprint over a documentation completeness gap in a sealed artefact whose AC is otherwise available and unambiguous."
   ],
@@ -132,8 +132,16 @@
         "tests/test_sizing_heat_impact.py",
         "tests/e2e/what-if-sizing-preview.spec.js",
         "tests/test_backtest_rule_service.py",
-        "tests/e2e/backtest-rule-change.spec.js"
+        "tests/e2e/backtest-rule-change.spec.js",
+        "tests/test_debrief_service.py",
+        "tests/e2e/trade-debrief.spec.js"
       ],
+      "sprint2": {
+        "note": "PR #1453/status/pr_number/pr_status above cover the Sprint 1 subset only (ST-23/ST-04/ST-05/ST-07, merged 2026-08-19). ST-06 is a separate Sprint 2 subset per sprint_backlog.md's Multi-Sprint Gate Note, unblocked 2026-08-18 (ST-23 done/CONDITIONAL) but implemented in a distinct session/PR after EPIC-02's original PR had already merged -- tracked here rather than overwriting the Sprint 1 PR's accurate historical record.",
+        "pr_number": null,
+        "pr_status": "not_yet_opened",
+        "status": "in_progress"
+      },
       "stories": {
         "ST-23": {
           "title": "\u00a713 System Boundary Review: Automated AI Post-Trade Debrief",
@@ -268,6 +276,42 @@
             "findings": "Strategy Rules & System Intent Owner (AC-04): LIVE_PARAMS independently verified field-for-field against production_strategy.py's OPTIMAL_PARAMS and cross-checked against strategy_rules.md \u00a711's canonical prose -- no drift, the candidate-vs-live comparison is genuine, not comparing against a fiction. \u00a713 boundary confirmed in code, not just comments. Scope-reduction disclosure confirmed adequate including in the rendered UI (universe/window shown beside every run's results). R-multiple formula matches metrics_definitions.md's canonical server-side formula exactly. BLG-TECH-15 (ported-not-imported algorithm debt) judged an acceptable interim state after a line-by-line diff against production_strategy.py found no unintentional drift. Head of Engineering: confirmed port fidelity (compute_risk_on/compute_atr/transaction_fee byte-for-byte identical; run_backtest's stop-loss/risk-off/rebalance/fill-in logic matches exactly); confirmed concurrency safety (is_risk_on nested per-call, no shared mutable state); confirmed initial_stop_price tracking correct and consistent across all 4 exit paths; confirmed RISK-02's scope-reduction and synchronous-request judgment calls reasonable. Found 2 minor fast-follow items (applied same-day, commit 0b0a8caf): API contract's error-code documentation corrected from 500 to 400 for the two BacktestRuleChangeError business-rule cases; removed dead _floor_4dp function and its unused math import."
           },
           "notes": "Scope reduction (RISK-02, sprint_backlog.md's own explicit contingency): bounded to 20 active ticker_universe tickers / trailing 4 years (vs. the full ~100+ tickers/8yr nightly production_strategy.py run, 90-minute CI budget) -- both candidate and live params computed over the identical bounded universe/window in the same run for an apples-to-apples comparison. Algorithm ported (not imported) from production_strategy.py -- that script has import-time side effects and its backtest() reads regime state from module globals, unsafe to mutate from a concurrent web-server process; the port threads regime state through as an explicit parameter instead. Filed BLG-TECH-15 for the resulting algorithm-sync maintenance burden. Frontend candidate-input mechanism resolved to a structured parameter form (design record left raw-diff vs. structured open) -- documented in strategy_benchmark.md v0.7 (DEV-adjacent implementation-time resolution, no formal DEV row needed since the design record itself explicitly deferred this choice). New endpoints (POST /run, GET /runs, GET /runs/{run_id}) registered in backend/routers/test.py, SystemStatus.js fallback count 112->115 + SC-SS-01b updated, openapi.yaml, api_changelog.md v8.9.0, api_performance_baseline.md \u00a740 -- drift-check script confirmed passing. Test scenarios: tests/test_backtest_rule_service.py (11 pytest, including a full end-to-end run against synthetic price data confirming the ported engine executes correctly) + tests/e2e/backtest-rule-change.spec.js (5 Playwright, run live against `npm start`, all passing). Full backend suite 1195 passed/5 skipped/0 failed throughout. Pre-existing strategy-benchmark.spec.js (23 tests) and si04-version-comparison.spec.js (5 tests) re-verified passing -- no regression."
+        },
+        "ST-06": {
+          "title": "Automated AI post-trade debrief",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1434,
+          "branch": "exec/2026-08-17__release-v8.9/EPIC-02",
+          "commit_sha": "53286f6c6e95ddb671938388f8192d443896297d",
+          "delegation_record_id": "DEL-20260820-01",
+          "blocked_since_utc": "2026-08-18T00:00:00Z",
+          "unblock_criteria": "ST-23 reaches status: done with PASS or CONDITIONAL determination (met 2026-08-18); AI Compliance & Governance Officer sign-off (per this story's own AC5, in addition to the \u00a713 review).",
+          "completed_utc": "2026-08-20T09:10:59Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md",
+            "docs/specs/data_model.md#DS-16",
+            "docs/specs/api_contracts/trade_endpoints.md#GET /trades/{trade_id}/debrief",
+            "docs/specs/frontend/pages/trade_history.md#Post-Trade Debrief",
+            "backend/services/debrief_service.py",
+            "tests/test_debrief_service.py",
+            "tests/e2e/trade-debrief.spec.js"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "AI Compliance & Governance Officer",
+            "date": "2026-08-20",
+            "result": "Approved",
+            "findings": "Reviewed the implementation directly against the role's charter and the \u00a713 review's nine binding conditions (this review does not re-litigate the \u00a713 system-boundary determination itself -- Strategy Rules & System Intent Owner's authority -- but validates AI usage governance specifically, per this story's own AC5 requiring both sign-offs). Condition 5 (audit logging): confirmed every generation call writes to claude_audit_log via create_claude_audit_entry, including the new compliance_check_result field recording pass/pass_on_regenerate/fail_fallback outcomes -- verified this is not merely 'generation succeeded' logging but the actual compliance-check outcome, per Condition 9's third bullet. Condition 6 (compliance comment): confirmed debrief_service.py's module docstring reproduces the required sentence verbatim. Condition 9 (output-side enforcement): confirmed scan_prescriptive()/numeric_cross_check() are real code run before persistence, not documentation-only; confirmed the regenerate-once-then-fallback sequencing matches the binding condition exactly (single regeneration covers both failure types, second failure is terminal, never a second regeneration); confirmed via test_debrief_service.py's mocked sequencing tests that non-compliant text is never returned or persisted on either attempt. Condition 2 (verbatim quantitative sourcing): confirmed the design choice to make summary_text fully deterministic (never model-generated) and confine the model to one sentence is a stronger control than the condition strictly requires, and correctly documented as a design decision in the service's own docstring. Condition 4 (no action affordances): confirmed TradeDebrief.js's only buttons are Generate/Regenerate, verified via SC-DBF-02b's Playwright assertion (exactly 1 button before generation). Condition 7 (no follow-up-trade suggestions): confirmed neither the system nor user prompt templates reference tickers, entry points, or future trades. Confirmed AI usage aligns with documented intent (this role's \u00a74.1) and no silent expansion of AI authority occurred -- the on-demand-only implementation choice is narrower than a real-time hook would have been, not broader."
+          },
+          "notes": "Genuinely blocked from 2026-08-18T00:00:00Z (ST-23 gate) to 2026-08-18T00:00:00Z (unblocked same instant ST-23 reached done/CONDITIONAL) -- ST-06 itself was not picked up for implementation until this later session (2026-08-20), after EPIC-02's Sprint 1 PR #1453 had already merged (2026-08-19). Implemented directly by the engine in-session (delegated_backend per sprint_backlog.md, completed per execution_prompt.md \u00a75.2's 'engine may write and commit code where the spec is unambiguous' -- the \u00a713 review's nine binding conditions constitute an unambiguous, locked spec). On-demand generation only (no hook into the live trade-close event path) -- explicitly named as an accepted fallback by the story's own AC1 ('real-time generation, or on-demand if real-time isn't feasible'), not a deviation. New table trade_debriefs (data_model.md#DS-16); new claude_audit_log.compliance_check_result column (nullable, non-breaking for all other existing callers). Test scenarios: tests/test_debrief_service.py (21 pytest, covering both Condition 9 checks and the regenerate/fallback sequencing) + tests/e2e/trade-debrief.spec.js (6 Playwright, run live against `npm start`, all passing; sibling plan-vs-reality.spec.js (24 tests) and 2 other trade-history-adjacent spec files re-verified passing, no regression). Full backend suite 1260 passed/5 skipped/0 failed. CLAUDE.md same-commit requirements (openapi.yaml, backend/routers/test.py + SystemStatus.js fallback 115->117 + SC-SS-01b, api_performance_baseline.md \u00a741) all confirmed via the 3 drift-check scripts. Deviation check: none found -- implementation matches the \u00a713 review's binding conditions and the story's own AC exactly (on-demand-vs-real-time is an AC-offered choice, not a divergence). This EPIC's Sprint 1 PR (#1453) had already merged before this story was picked up -- see EPIC-02.sprint2 for this story's own separate PR tracking, opened fresh from post-merge main rather than reusing the closed Sprint 1 PR."
         }
       }
     },
@@ -682,7 +726,8 @@
     "ST-13",
     "ST-16",
     "ST-21",
-    "ST-23"
+    "ST-23",
+    "ST-06"
   ],
   "completed_items": [
     "ST-01",
@@ -706,7 +751,8 @@
     "ST-20",
     "ST-21",
     "ST-22",
-    "ST-23"
+    "ST-23",
+    "ST-06"
   ],
   "open_escalations": [],
   "merge_gate": {
