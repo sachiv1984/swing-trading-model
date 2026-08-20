@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-05-09
+**Version:** 1.5
+**Last Updated:** 2026-08-18 (ST-22, EPIC-06, v8.9, BLG-GOV-260: STEP 5.2 gains a stale RA: marker pruning rule)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -256,6 +256,7 @@ Append each archive entry prepared in STEP 3.
 - Update the Release Summary table (§8 or equivalent): mark retired items as shipped (✅) or killed (❌) with the shipped version
 - Update the `**Last Updated:**` header field
 - Do not change any other content — no rewording, no scope changes, no priority reordering
+- **Stale `RA:` marker pruning (ST-22, BLG-GOV-260, v8.9):** `<!-- roadmap-annotation-marker: RA:vX.Y:cycle_id -->` blocks (which may appear in §1, §3, §4, §8, or any other section of `current_roadmap.md` — scan the **whole document**, not any one section) retire to a one-line pointer (`*RA:vX.Y retired — see roadmap_archive.md <date> (post-ship closure <cycle_id>).*`) once their release ships or is superseded. These one-line pointers themselves accumulate indefinitely across the document with no forcing function to remove them, even though `roadmap_archive.md` remains the permanent record for anything they'd otherwise re-surface. In this same STEP, scan the entire document and prune (delete outright — the line, not just its content) any already-retired `*RA:vX.Y retired...*` pointer line whose version `vX.Y` is more than 3 releases older than the current highest-numbered release referenced anywhere in `current_roadmap.md` (§1's "Next planned release" or the most recent §8 Release Summary row, whichever is higher). "More than 3 releases older" means: count the number of *shipped* release versions strictly between `vX.Y` and the current highest version (inclusive of the current highest, exclusive of `vX.Y` itself) — if that count exceeds 3, prune. **Scope restriction — numeric identifiers only:** this rule applies only to pointers whose identifier is a numeric release version matching the `vX.Y` pattern (e.g. `RA:v4.4`, `RA:v6.2`). Some retired `RA:` pointers carry a non-version identifier instead (e.g. `RA:Gated-carry-forward-2026-07-27`, recording a gated-item removal rather than a release retirement) — the "how many releases older" computation has no defined answer for these, so leave any `RA:` pointer without a numeric `vX.Y` identifier untouched by this rule regardless of age. Do not prune an active (non-retired) `<!-- roadmap-annotation-marker -->` block under any circumstance — this rule applies only to already-retired one-line pointers. Record the count pruned in the STEP 5.3 run log (new `RA: markers pruned` field, default 0).
 
 ### 5.4 Update `claude/roadmap/initiative_register.md`
 
@@ -295,6 +296,7 @@ Items retired: <n>
 Items flagged stale: <n>
 Items kept active: <n>
 Ambiguous items resolved: <n>
+RA: markers pruned: <n>   # ST-22, BLG-GOV-260, v8.9 — default 0 if none met the >3-releases-older threshold
 
 ## Retired Items
 

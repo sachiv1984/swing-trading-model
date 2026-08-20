@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.28
-**Last Updated:** 2026-08-17 (ST-29/BLG-GOV-293: STEP 10 now the sole authoritative writer of `prior_cycle`, mirroring OA-1's `next_release` fix — renumbered v2.27→v2.28 at merge, CLAUDE.md §8 step 2a, after EPIC-03/ST-13 independently claimed v2.27 for a different change and merged first); prior — 2026-08-16 (EPIC-03/ST-13: `Changes shipped` template gains a `User Impact` column); prior — 2026-08-10
+**Version:** 2.29
+**Last Updated:** 2026-08-18 (ST-19/BLG-GOV-308, EPIC-06, v8.9: STEP 10 now unconditionally writes `last_post_ship_cycle`/`last_post_ship_utc`, closing the gap between `state_field_owners.json`'s pre-existing ownership claim and the actual write); prior — 2026-08-17 (ST-29/BLG-GOV-293: STEP 10 now the sole authoritative writer of `prior_cycle`, mirroring OA-1's `next_release` fix — renumbered v2.27→v2.28 at merge, CLAUDE.md §8 step 2a, after EPIC-03/ST-13 independently claimed v2.27 for a different change and merged first); prior — 2026-08-16 (EPIC-03/ST-13: `Changes shipped` template gains a `User Impact` column); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -661,11 +661,15 @@ Update `.claude_current_state.json`:
   "completed_cycle_count": "<prior value + 1>",
   "last_audit_cycle_count": "<see rule below — set if audit ran this cycle, else omit>",
   "prior_cycle": "<cycle_id>",
+  "last_post_ship_cycle": "<cycle_id>",
+  "last_post_ship_utc": "<now>",
   "last_sync_utc": "<now>"
 }
 ```
 
 **`prior_cycle` ownership (BLG-GOV-293, ST-29, v8.8):** This step is the sole authoritative writer of `.claude_current_state.json.prior_cycle`, mirroring the `next_release` fix (OA-1, above in `release_planning_prompt.md` STEP 9). The field was previously written by nothing at all — found stale at `2026-08-08__release-v8.5` release planning (read `2026-08-05__release-v8.3` when it should have read `2026-08-07__release-v8.4`, the cycle that closed immediately prior). Fixed here rather than in `release_planning_prompt.md` STEP 9: by the time Release Planning STEP 9 runs, STEP 7 has already advanced `active_cycle` to the *new* cycle, so the old value is no longer available without extra plumbing; Post-Ship Closure's own `<cycle_id>` parameter, by contrast, unambiguously identifies "the cycle that just closed" at the exact moment it closes — the correct value for the next cycle to read as `prior_cycle`. Write this field unconditionally every time STEP 10 runs, from this invocation's own `<cycle_id>`, regardless of `closure_status`.
+
+**`last_post_ship_cycle`/`last_post_ship_utc` ownership (BLG-GOV-308, ST-19, v8.9):** `claude/schemas/state_field_owners.json` has always asserted both fields are owned by this file, but no STEP here actually wrote either one — the registry's ownership claim did not match reality (the exact class of drift the registry exists to prevent). Write both fields unconditionally every time STEP 10 runs: `last_post_ship_cycle` from this invocation's own `<cycle_id>` (same value as `prior_cycle` above — both identify "the cycle that just closed," recorded under two different field names for two different downstream readers), `last_post_ship_utc` from the current timestamp. No `state_field_owners.json` change was needed — it already named the correct engine; only the write itself was missing.
 
 **`completed_cycle_count` rule:** Read the current value from `.claude_current_state.json`. If absent, treat as `0`. Write the value incremented by 1. This counter tracks the total number of fully closed cycles for meta-review cadence tracking (Phase 1 STEP 11 triggers meta-review every third completed cycle).
 
