@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-08-19
+Last Updated: 2026-08-20 (EPIC-05 merge reconciliation — DEL-20260818-03 renumbered to DEL-20260818-07, collided with EPIC-02's own DEL-20260818-03)
 
 # Delegation Log — 2026-08-17__release-v8.9
 
@@ -166,3 +166,22 @@ Append-only. Do not edit previous entries.
 - **Updated at:** 2026-08-20T07:20:00Z
 - **New status:** Complete.
 - **Reason:** EPIC-03 merged to `main` (PR #1454, 2026-08-20), clearing the original pre-merge structural blocker. A real post-merge invocation was triggered (`si05-weekly-digest.yml` `workflow_dispatch`, run 32342881081) and its Render log genuinely reviewed. The digest-timing line was found genuinely absent — root-caused to a separate, pre-existing platform gap (no root logging configuration in production's `uvicorn` process; filed as `BLG-BE-107`), not a re-occurrence of the original pre-merge blocker. Product Owner (human, real-time in-session, 2026-08-20) directed an interim GitHub Actions step-timing proxy resolution over blocking further or fixing the logging gap inline — see `docs/ops/api_performance_baseline.md` §36.5 and `DEV-EPIC03-ST09-01`.
+
+---
+
+## DEL-20260818-07
+
+*(Renumbered from DEL-20260818-03 during EPIC-02/EPIC-05 merge reconciliation, CLAUDE.md §8 — collided with EPIC-02's own DEL-20260818-03 (ST-05), which merged to main first.)*
+
+- **ST Item:** ST-16 — Local dev venv version-pin enforcement; confirm PUBLIC_URL parity on production
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1444
+- **Branch:** exec/2026-08-17__release-v8.9/EPIC-05
+- **Delegated at:** 2026-08-18T10:10:00Z
+- **What is needed:** (a) Document a mechanism for local backend dev environments to actually honour the existing `backend/.python-version` pin (3.11.0) — a `pyenv install/local` step in a local-setup doc, since plain `python3 -m venv` silently ignores it; (b) confirm production `PUBLIC_URL` status and document it.
+- **Spec reference:** `docs/ops/test_environment_parity_check_2026-08-16.md#§2.1, §2.4` (source audit)
+- **Unblock criteria:** README.md local-setup instructions added, correctly using pyenv to honour the pin; `.env.production` template parity fix (or documented reason it's unneeded) for `PUBLIC_URL`; Infrastructure & Operations Owner sign-off. (Full production dashboard confirmation of AC-2 is staging-only per sprint_backlog.md — not required for this item's completion, matching the audit's own advisory, not-a-confirmed-defect disposition.)
+- **Commit format required:** `[EPIC-05][ST-16] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-05`
+- **Status:** Unblocked — same in-session completion pattern as DEL-20260817-01/02. Agent-mediated Infrastructure & Operations Owner sign-off (§5.3) cleared Approved 2026-08-18; confirmed pyenv command correctness, confirmed the `.env.production` disclosure does not overclaim dashboard confirmation it doesn't have. No multi-session parking occurred.
