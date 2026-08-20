@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-20 (CLAUDE.md §8 backlog-additions branch reconciliation — combines this branch's 4-item Sprint 1 PR-review addition (BLG-BE-106, BLG-FEAT-93, BLG-OPS-147, BLG-TECH-16, filed 2026-08-19) with main's already-merged BLG-BE-107, filed 2026-08-20 while completing ST-09/EPIC-03); prior — 2026-08-19 (CLAUDE.md §8 cross-EPIC merge reconciliation — EPIC-02 merged via PR #1453, EPIC-03 branch rebased onto main: combines EPIC-02's 5-item addition (BLG-GOV-311, BLG-TECH-13/14/15, BLG-FE-164) and EPIC-03's one-line returned-to-backlog note under BLG-BE-99 per execution_prompt.md §5.2, both filed 2026-08-18 on their respective branches before either merged); prior — 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-20 (session — 2 new items added from PR #1460 two-agent review: BLG-TECH-17, BLG-BE-108); prior — 2026-08-20 (CLAUDE.md §8 backlog-additions branch reconciliation — combines this branch's 4-item Sprint 1 PR-review addition (BLG-BE-106, BLG-FEAT-93, BLG-OPS-147, BLG-TECH-16, filed 2026-08-19) with main's already-merged BLG-BE-107, filed 2026-08-20 while completing ST-09/EPIC-03); prior — 2026-08-19 (CLAUDE.md §8 cross-EPIC merge reconciliation — EPIC-02 merged via PR #1453, EPIC-03 branch rebased onto main: combines EPIC-02's 5-item addition (BLG-GOV-311, BLG-TECH-13/14/15, BLG-FE-164) and EPIC-03's one-line returned-to-backlog note under BLG-BE-99 per execution_prompt.md §5.2, both filed 2026-08-18 on their respective branches before either merged); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -5177,5 +5177,51 @@ Production runs `uvicorn main:app --host 0.0.0.0 --port $PORT` (per `render.yaml
 - A real post-deploy production invocation confirms at least the `si05_digest_service.py` duration line is now captured in Render logs (this also closes the outstanding evidence gap referenced by `ST-09`/`BLG-BE-99`'s original AC)
 - No regression to uvicorn's own existing access/error log formatting or duplicate log lines
 - `docs/ops/api_performance_baseline.md` §36 updated with the real log-derived timing once available, superseding the interim GitHub-Actions-proxy measurements recorded there (§36.3 and §36.5)
+
+---
+
+### BLG-TECH-17 — Debrief-generation prompt encourages cross-trade pattern language with no data to back it
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / AI Governance
+**Owner:** Backend Engineering Patterns Owner; AI Compliance & Governance Officer
+**Source:** Agent-mediated Director of Quality review, PR #1460 (ST-06, EPIC-02, v8.9) — 2026-08-20
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** v9.0
+
+**Problem**
+`backend/services/debrief_service.py`'s `_FOCUS_AREA_SYSTEM` prompt instructs the model toward pattern-surfacing phrasing like "this is the Nth trade where X occurred," but no cross-trade frequency/count data is ever computed or passed into `source_values` for `numeric_cross_check()` to verify such a number against. Any count the model states will either fail the §13 review's Condition 9 numeric cross-check and trigger the no-focus-area fallback (a frequent, silent loss of the feature's main value), or — worse — coincidentally match one of the trade's own unrelated numeric fields (entry price, P&L, etc.) by chance and pass despite being an ungrounded guess. Found during PR #1460's agent-mediated Director of Quality review.
+
+**Scope**
+- Decide one of two directions: (a) remove the cross-trade pattern-language framing from `_FOCUS_AREA_SYSTEM` until real aggregates exist, or (b) compute a small set of genuine historical counts (e.g. `trades_this_setup_type_count`, `consecutive_early_exit_count`) in `debrief_service.py` and add them to `source_values` so such claims become genuinely verifiable
+- If (b): add the new counts to the prompt's user template and to `numeric_cross_check`'s allowed-number set
+- Add a test case covering a model-generated cross-trade count claim against the chosen fix
+
+**Acceptance Criteria**
+- The prompt's encouraged phrasing style matches what the numeric cross-check can actually verify — no encouraged claim type is systematically un-verifiable
+- `tests/test_debrief_service.py` covers the chosen fix (either an added-source-value verification case, or a removed-phrasing regression test)
+- Backend Engineering Patterns Owner sign-off
+
+---
+
+### BLG-BE-108 — Decide "linked journal entries" data source for the AI Post-Trade Debrief (red_flag_events vs. trade_history entry/exit notes)
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Product Owner; Backend Engineering Patterns Owner
+**Source:** Agent-mediated Product Owner review, PR #1460 (ST-06, EPIC-02, v8.9) — 2026-08-20
+**Effort:** S (~0.5d, once decided)
+**Provisional-Target:** v9.0
+
+**Problem**
+ST-06's acceptance criterion "Debrief references plan-vs-reality data and any linked journal entries where present" was implemented (`backend/services/debrief_service.py::_journal_context_for_trade`) by sourcing "journal entries" from `red_flag_events` — the separate, system-generated Red Flag Journal feature — rather than `trade_history.entry_note`/`exit_note`, the fields this same codebase already labels "Trade Journal" one section above the new Debrief panel in the identical Trade History expandable row (`TradeHistoryTable.js`). This is a plausible but debatable reading of the AC, flagged by an agent-mediated Product Owner review as needing an explicit decision rather than an implicit one.
+
+**Scope**
+- Product Owner decides: should the debrief prompt draw on `entry_note`/`exit_note` instead of (or in addition to) `red_flag_events`?
+- If entry/exit notes are added: extend `_journal_context_for_trade` (or a renamed equivalent) to include them in the prompt context, subject to the same §13 Condition 2 sourcing discipline already applied to numeric values (free-text notes aren't numbers, so this only affects prompt context, not `numeric_cross_check`)
+- Update `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md` or `trade_endpoints.md` with the confirmed interpretation, if it changes behaviour
+
+**Acceptance Criteria**
+- Product Owner decision recorded (keep `red_flag_events`-only, add entry/exit notes, or both)
+- If implementation changes: `tests/test_debrief_service.py` covers the new data source; full backend suite re-verified passing
+- Spec updated to reflect the confirmed interpretation of "linked journal entries"
 
 ---
