@@ -1,9 +1,36 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.32
-**Last Updated:** 2026-08-17 (delivery verification 2026-08-14__release-v8.8 — status line updated Sprint_Complete → Verified); prior — 2026-08-17 (sprint close 2026-08-14__release-v8.8); prior — 2026-08-13 (delivery verification 2026-08-12__release-v8.7 — status line updated Sprint_Complete → Verified); prior history retained — see prior entries in version control.
+**Version:** 4.33
+**Last Updated:** 2026-08-20 (sprint close 2026-08-17__release-v8.9); prior — 2026-08-17 (delivery verification 2026-08-14__release-v8.8 — status line updated Sprint_Complete → Verified); prior — 2026-08-17 (sprint close 2026-08-14__release-v8.8); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-08-17__release-v8.9
+**Date:** 2026-08-20
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Live risk-management stop-price correctness: confirmed the nightly trailing-stop breakeven-floor calc is already on the sole live path, `position_manager.py` confirmed off-path (ST-01, regression coverage added); fixed currency-basis mismatch between `current_trailing_stop`/`stop_price` and `initial_stop` for US-market positions via new `current_trailing_stop_native` field (ST-02); `trailing_stop_action_rate` spec gained an explicit numeric Validation Tolerances subsection (ST-03) | `backend/utils/calculations.py#calculate_trailing_stop`; `position_endpoints.md#Field notes`; `positions.md#Trailing Stop Column`; `metrics_definitions.md#Trailing Stop Action Rate` | `DEV-EPIC01-ST02-01` (resolved same-story) |
+| EPIC-02 | §13-gated Automated AI Post-Trade Debrief — CONDITIONAL scoping review (ST-23, Sprint 1) and full implementation (ST-06, Sprint 2, PR #1460): deterministic plan-vs-reality summary plus one AI-generated pattern-surfacing "focus area" sentence, output-side compliance enforcement (prescriptive-language scan + numeric cross-check with regenerate-once-then-fallback), on-demand generation; correlation/sector-concentration-aware position sizing reusing the existing 30% concentration threshold (ST-04); pre-commit "what-if" sizing/risk simulator on the trade-plan form, sharing one heat-impact calculation with the live endpoint (ST-05); in-app backtesting engine for candidate strategy-rule changes vs. live params, bounded-universe/window scope (ST-07) | `decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`; `data_model.md#DS-16`; `trade_endpoints.md#GET /trades/{trade_id}/debrief`; `concentration_service.py`; `sizing_service.py#_apply_concentration_adjustment`; `trade_plan.md#5d`; `portfolio_service.py#calculate_prospective_heat`; `strategy_benchmark.md#7.6`; `strategy_benchmark_endpoints.md` | `DEV-v8.9-ST05-01`, `DEV-v8.9-ST05-02` (both resolved same-story); `BLG-TECH-13`/`BLG-TECH-14`/`BLG-FE-164`/`BLG-TECH-15` filed (non-blocking observations/debt, not spec deviations) |
+| EPIC-03 | Root-caused and fixed `GET /trade-plans/tags` ~10s p50 latency via process-global DDL-ensure memoization (ST-08); confirmed the SI-05 digest-timing log line is absent in production due to a separate, pre-existing logging-config gap — interim GitHub Actions timing-proxy adopted (ST-09); audit-trail writes now ordered consistently with the primary state update (ST-10); confirmed `trade_csv_service.py::build_trade_history_csv` is dead code and removed it (ST-11) | `db_index_audit_arc4_2026-08-06.md`; `api_performance_baseline.md#36.5`; `data_model.md#DS-13`; `trade_endpoints.md` | `DEV-EPIC03-ST09-01` (P3, interim proxy; `BLG-BE-107` filed for the root logging-config gap) |
+| EPIC-04 | Test coverage added for `screener_refresh`/`risk_off_alerts` job-registration wiring (ST-12); `trade_plans.setup_type` now server-side normalized to `"Other"` when null/absent/empty (ST-13, resolved same-session via `ESC-EXEC-20260818-01`); direct unit tests added for `cash_service`/`compliance_service`/`news_service`/`validation_service` — empirically confirmed the new `validation_service` test would have caught the historical `BLG-TECH-02`/`03` production `KeyError` (ST-14); Playwright coverage for `WhatsNewCard`'s changelog User Impact rendering (ST-15) | `backend/routers/screener.py`; `trade_plan_endpoints.md#Request Body Fields`; `backend_service_layer_test_coverage_report_2026-08-16.md`; `dashboard.md#§6A` | None |
+| EPIC-05 | Local dev venv version-pin enforcement documented (pyenv); production `PUBLIC_URL` template-parity fix with honest dashboard-unconfirmed disclosure (ST-16); `window_summary_IW-*.md` files older than 90 days archived (ST-17); `screener_refresh`/`risk_off_alerts` jobs documented in `health_endpoints.md` (ST-18) | `test_environment_parity_check_2026-08-16.md#§2.1`; `backlog.md#BLG-OPS-113`; `health_endpoints.md#GET /health/scheduler` | None |
+| EPIC-06 | Governance process-debt closure: `post_ship_closure.md` now actually writes `last_post_ship_cycle`/`last_post_ship_utc` (ST-19); root-caused and corrected the ~5–6h `execution_state.json` timestamp drift by adding explicit `completed_utc`/`blocked_since_utc` derivation rules (ST-20); Displacement Debt Register wired into `roadmap_prompt.md` STEP 8 — physical file creation handed to the Roadmap Rebalance Engine per `ESC-EXEC-20260818-02` (ST-21); pruning rule defined for stale `RA:` roadmap-annotation markers older than 3 releases (ST-22) | `post_ship_closure.md#STEP 10`; `execution_prompt.md#3.1`; `roadmap_prompt.md#STEP 8`; `roadmap_management_prompt.md#STEP 5.2` | None |
+
+### Capabilities deferred or returned
+
+None — all 23 ST items reached `done` status this sprint (all 6 EPICs merged: PRs #1452–#1457, plus #1460 for EPIC-02's Sprint 2 subset).
+
+### Verification inputs ready
+
+- QA evidence logs: `qa_evidence_EPIC-01.md` through `qa_evidence_EPIC-06.md`
+- Deviations filed: `DEV-EPIC01-ST02-01`, `DEV-v8.9-ST05-01`, `DEV-v8.9-ST05-02` (all three resolved same-story); `DEV-EPIC03-ST09-01` (P3, open interim proxy — see `BLG-BE-107`)
+- Test scenarios referenced: `tests/test_trailing_stop_breakeven_floor.py`; `tests/test_position_currency_basis.py`; `tests/e2e/position-stop-currency-basis.spec.js`; `tests/test_sizing_concentration.py`; `tests/e2e/position-sizing-concentration.spec.js`; `tests/test_sizing_heat_impact.py`; `tests/e2e/what-if-sizing-preview.spec.js`; `tests/test_backtest_rule_service.py`; `tests/e2e/backtest-rule-change.spec.js`; `tests/test_debrief_service.py`; `tests/e2e/trade-debrief.spec.js`; `tests/test_trade_plans_ticker_index.py`; `tests/test_ensure_trade_plans_table_memoization.py`; `tests/test_position_state_history.py`; `tests/test_job_registration_screener_risk_off.py`; `tests/test_trade_plan_setup_type_default.py`; `tests/test_service_layer_direct_coverage.py`; `tests/e2e/whats-new-panel.spec.js`
 
 ---
 
