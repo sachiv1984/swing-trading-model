@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.4.1
-**Last Updated:** 2026-07-29
+**Version:** 2.5.0
+**Last Updated:** 2026-08-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -24,6 +24,8 @@ Global response envelopes, error shape, and conventions are defined in **convent
 - [GET /trades/export/csv](#get-tradesexportcsv)
 - [GET /trades/{trade_id}/reflection](#get-tradestrade_idreflection)
 - [POST /trades/{trade_id}/reflection](#post-tradestrade_idreflection)
+- [GET /trades/{trade_id}/debrief](#get-tradestrade_iddebrief)
+- [POST /trades/{trade_id}/debrief](#post-tradestrade_iddebrief)
 
 ---
 
@@ -389,10 +391,94 @@ Record or update commission and spread costs (in GBP) for a closed trade. Both f
 
 ---
 
+## GET /trades/{trade_id}/debrief
+
+**Auth:** Required (X-API-Key)
+
+**Story:** ST-06 (EPIC-02, v8.9) — BLG-FEAT-90
+
+Returns the existing AI-generated post-trade debrief for a closed trade, if one has already been generated. Does not trigger generation — see `POST /trades/{trade_id}/debrief` below for on-demand generation. §13 review: `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md` (CONDITIONAL, 9 binding conditions).
+
+### Path parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| trade_id | UUID string | Yes | `id` from `trade_history` |
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "available": true,
+    "summary_text": "Entered at 100.0, exited at 108.5. P&L: +8.50 (+8.50%). Exit reason: Target Reached. Held 12 day(s). Plan called for entry at 100.0, planned stop 95.0, R target 2.0",
+    "focus_area_text": "Your exit was 3 days earlier than the 15-day median holding period across your last 5 closed trades in this setup type.",
+    "generation_status": "ok",
+    "model_version": "claude-haiku-4-5",
+    "prompt_version": "v1.0",
+    "generated_at": "2026-08-20T09:00:00Z"
+  }
+}
+```
+
+### Response fields
+
+| Field | Type | Description |
+|-------|------|--------------|
+| available | boolean | Always true when a debrief exists (404 otherwise) |
+| summary_text | string | Deterministic, non-AI factual plan-vs-reality summary — computed from `trade_history`/`trade_plans`, never model-generated (§13 Condition 2) |
+| focus_area_text | string \| null | The one AI-generated pattern-surfacing sentence, or null if omitted — see `generation_status` |
+| generation_status | string | `"ok"` (focus area present), `"fallback_no_focus_area"` (§13 Condition 9 compliance check failed twice — summary still shown), or `"ai_unavailable"` (no `ANTHROPIC_API_KEY`, or the `anthropic` package is absent, or a generation error occurred) |
+| model_version | string | Model used to generate `focus_area_text` |
+| prompt_version | string | Prompt template version |
+| generated_at | ISO 8601 datetime | When this debrief was last (re)generated |
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 404 | No debrief generated yet for this trade — call `POST /trades/{trade_id}/debrief` to generate one |
+| 500 | Database error |
+
+---
+
+## POST /trades/{trade_id}/debrief
+
+**Auth:** Required (X-API-Key)
+
+**Story:** ST-06 (EPIC-02, v8.9) — BLG-FEAT-90
+
+Generate (or regenerate) the AI post-trade debrief for a closed trade, on demand. Regeneration overwrites the prior debrief for this trade. **Implementation note:** generation is on-demand only — there is no hook into the live position-close event path; the story's own acceptance criteria explicitly names on-demand as an accepted fallback ("real-time generation, or on-demand if real-time isn't feasible").
+
+Always returns 200 with a debrief — the deterministic `summary_text` is never unavailable, even when the AI-generated `focus_area_text` is omitted. See `generation_status` in the response.
+
+**§13 Condition 9 (output-side enforcement):** before `focus_area_text` is returned or persisted, the generated text is scanned for prescriptive phrasing (Condition 1) and every numeric token in it is cross-checked against the deterministic source values passed into the prompt (Condition 2). On a failure, generation is retried once; a second failure on the regenerated text is terminal for this call — the debrief is returned with `focus_area_text: null` and `generation_status: "fallback_no_focus_area"`, never with non-compliant text. Every generation call's compliance-check outcome is logged to `claude_audit_log` (Condition 5/9), independent of the debrief response itself.
+
+### Path parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| trade_id | UUID string | Yes | `id` from `trade_history` |
+
+### Response (200)
+
+Same shape as `GET /trades/{trade_id}/debrief` above.
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 404 | trade_id not found in trade_history |
+| 500 | Database error |
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.5.0 | 2026-08-20 | ST-06 (EPIC-02, v8.9, BLG-FEAT-90): Add GET /trades/{trade_id}/debrief and POST /trades/{trade_id}/debrief — Automated AI Post-Trade Debrief. New table `trade_debriefs` (data_model.md#DS-16). §13 review CONDITIONAL (9 binding conditions): `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`. AI Compliance & Governance Officer sign-off recorded in `qa_evidence_EPIC-02.md`. |
 | 1.8.4 | 2026-02-17 | Initial spec — GET /trades, GET /trades/export/csv. Both `pnl_pct` and `pnl_percent` fields documented for backward compatibility |
 | 1.9.0 | 2026-03-02 | S2-08 (EPIC-06/BLG-TECH-09): Backend fix — `holding_days` added to `formatted_trades` dict in `trade_service.py` (was present in DB and spec but absent from API response). `GET /trades` now returns `holding_days` per spec. OBS-QWB-R3-01 resolved. TASK-28/29/30 complete. API Contracts owner sign-off granted 2026-03-02 (Delegated Authority). |
 | 2.0.0 | 2026-03-11 | ST-02 (EPIC-01, v1.9): Add GET /trades/{trade_id}/reflection and POST /trades/{trade_id}/reflection. Schema: trade_reflections table (data_model.md v1.8). Spec: trade_reflection.md §7. |

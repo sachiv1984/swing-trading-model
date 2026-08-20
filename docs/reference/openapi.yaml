@@ -2255,6 +2255,48 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /trades/{trade_id}/debrief:
+    get:
+      tags: [Trades]
+      summary: Get AI post-trade debrief
+      description: "Returns the existing AI-generated post-trade debrief for a closed trade, if one has already been generated. Does not trigger generation. ST-06 (EPIC-02, v8.9) — BLG-FEAT-90. §13 review CONDITIONAL: docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md. Spec: docs/specs/api_contracts/trade_endpoints.md"
+      parameters:
+        - name: trade_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Debrief retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OkTradeDebrief"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Trades]
+      summary: Generate or regenerate AI post-trade debrief
+      description: "Generate (or regenerate, overwriting the prior debrief) the AI post-trade debrief for a closed trade, on demand. Always returns 200 — the deterministic summary_text is never unavailable; generation_status indicates whether the AI-generated focus_area_text is present, omitted per §13 Condition 9's compliance-check fallback, or unavailable. ST-06 (EPIC-02, v8.9) — BLG-FEAT-90. Spec: docs/specs/api_contracts/trade_endpoints.md"
+      parameters:
+        - name: trade_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Debrief generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OkTradeDebrief"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /trades/export/csv:
     get:
       tags: [Trades]
@@ -5590,6 +5632,23 @@ components:
           enum: [ok]
         data:
           $ref: "#/components/schemas/ReflectionData"
+
+    OkTradeDebrief:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        data:
+          type: object
+          properties:
+            available: { type: boolean }
+            summary_text: { type: string, description: "Deterministic, non-AI factual plan-vs-reality summary." }
+            focus_area_text: { type: string, nullable: true, description: "The one AI-generated pattern-surfacing sentence, or null." }
+            generation_status: { type: string, enum: [ok, fallback_no_focus_area, ai_unavailable] }
+            model_version: { type: string }
+            prompt_version: { type: string }
+            generated_at: { type: string, format: date-time }
 
     ApiError:
       type: object

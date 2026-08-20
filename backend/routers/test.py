@@ -240,6 +240,10 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /strategy/backtest-rule-change/runs", "method": "GET", "url": f"{base_url}/strategy/backtest-rule-change/runs", "critical": False},
         {"name": "GET /strategy/backtest-rule-change/runs/00000000-0000-0000-0000-000000000000", "method": "GET", "url": f"{base_url}/strategy/backtest-rule-change/runs/00000000-0000-0000-0000-000000000000", "critical": False},
 
+        # Automated AI Post-Trade Debrief (v8.9 / EPIC-02 ST-06, BLG-FEAT-90)
+        {"name": "GET /trades/{trade_id}/debrief", "method": "GET", "url": f"{base_url}/trades/00000000-0000-0000-0000-000000000000/debrief", "critical": False},
+        {"name": "POST /trades/{trade_id}/debrief", "method": "POST", "url": f"{base_url}/trades/00000000-0000-0000-0000-000000000000/debrief", "critical": False},
+
         # AI rate limit 429 scenario verification (v6.3 / EPIC-01 ST-03)
         {"name": "POST /test/rate-limit-scenarios", "method": "POST", "url": f"{base_url}/test/rate-limit-scenarios", "critical": False},
 

@@ -4,6 +4,7 @@ import { TrendingUp, TrendingDown, ChevronDown, ChevronRight, ArrowUpDown, Arrow
 import { DataTable, TableHeader, TableHead, TableBody, TableRow, TableCell } from "../ui/DataTable";
 import { cn } from "../../lib/utils";
 import PlanVsReality from "./PlanVsReality";
+import TradeDebrief from "./TradeDebrief";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // R-multiple helpers
@@ -560,6 +561,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                       )}
 
                       {tradeId && <PlanVsReality tradeId={tradeId} />}
+                      {tradeId && <TradeDebrief tradeId={tradeId} />}
                     </div>
                   </TableCell>
                 </TableRow>

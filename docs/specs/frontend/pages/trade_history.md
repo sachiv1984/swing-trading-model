@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.11
-**Last Updated:** 2026-07-17
+**Version:** 1.12
+**Last Updated:** 2026-08-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.8 AI Journal Summary):** docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md
 **Design Source (v2.6 UX polish):** docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md
@@ -322,6 +322,8 @@ Contains up to four color‑accented sections (five for closed trades with a tra
 
 4. **Plan vs Reality** *(v3.5 — ST-06 PO-01; conditionally rendered — see §Plan vs Reality below)*
 
+5. **Post-Trade Debrief** *(v8.9 — ST-06 BLG-FEAT-90; always rendered for closed trades — see §Post-Trade Debrief below)*
+
 The expandable card uses a clean, visually distinct layout to support long‑form reading.
 
 ---
@@ -361,6 +363,41 @@ The expandable card uses a clean, visually distinct layout to support long‑for
 | Endpoint | Purpose |
 |----------|---------|
 | `GET /trades/{id}/plan-vs-reality` | Returns plan vs reality comparison record. 404 when no trade plan. Called lazily on row expand. |
+
+---
+
+### Post-Trade Debrief (v8.9 — ST-06 BLG-FEAT-90)
+
+**§13 review (CONDITIONAL, 9 binding conditions):** `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`
+
+**Visibility:** Rendered as a section of the Expandable Journal Row for **every closed trade** (unlike Plan vs Reality, this section is not conditional on a linked trade plan existing). `GET /trades/{id}/debrief` is called lazily on row expand.
+
+**Section label:** “Post-Trade Debrief”, with an “AI-generated” badge.
+
+**Left accent border:** Violet, 4px — visually distinct from Plan vs Reality's blue accent.
+
+#### Empty State (no debrief generated yet — 404)
+
+Shows “No debrief generated yet for this trade.” and a **Generate Debrief** button (`data-testid="generate-debrief-btn"`). Clicking it calls `POST /trades/{id}/debrief` and renders the result on success. **§13 Condition 4:** no other button, link, or affordance may appear in this section — nothing here may auto-adjust strategy parameters, create a trade plan, or modify any other record.
+
+#### Populated State (debrief exists)
+
+- **Summary text:** the deterministic, non-AI factual plan-vs-reality summary — always present.
+- **Focus area** (labelled “Focus area”, italic): the one AI-generated pattern-surfacing sentence, shown only when `focus_area_text` is non-null.
+- When `focus_area_text` is null: a muted italic message explains why (`generation_status`-dependent — either AI generation was unavailable, or the §13 Condition 9 output-side compliance check failed twice and fell back). The summary still renders.
+- A **Regenerate** button (`data-testid="regenerate-debrief-btn"`) re-runs `POST /trades/{id}/debrief`, overwriting the prior debrief.
+
+#### Loading / Error
+
+- On row expand (API in flight): single-line skeleton placeholder for the section.
+- On generation failure: an inline error message; the empty-state Generate button remains available to retry.
+
+#### API Dependency
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /trades/{id}/debrief` | Returns the existing debrief, or 404 if none generated yet. Called lazily on row expand. |
+| `POST /trades/{id}/debrief` | Generates (or regenerates, overwriting) the debrief on demand. |
 
 ---
 
@@ -504,6 +541,7 @@ Displays:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.12 | 2026-08-20 | v8.9 (ST-06, EPIC-02, BLG-FEAT-90): Post-Trade Debrief section added to Expandable Journal Row — 5th section, rendered for every closed trade (not conditional on a linked plan, unlike Plan vs Reality); deterministic summary text always shown, one AI-generated pattern-surfacing "focus area" sentence shown when present; on-demand Generate/Regenerate action (`POST /trades/{id}/debrief`) since generation is not hooked into the live trade-close event path; §13 review CONDITIONAL (9 binding conditions) — Condition 4 requires no other action affordance in this section. Design decision documented directly in this spec (no separate ux_spec.md — component mirrors the existing Plan vs Reality precedent closely enough that a dedicated design artefact was not required). Approved: Product Owner 2026-08-20 (agent-mediated). |
 | 1.11 | 2026-07-17 | v7.5 design gate — added §Saved Filter Presets & Calendar View (ST-04, BLG-FE-118): named saved filter presets (new `saved_filters` table, server-side, distinct from the existing ephemeral localStorage active-filter state), Table/Calendar view toggle, month-grid with day-level realised-P&L indicators sourced from `exit_date`, day-click navigates to Table view filtered to that date, unrealised P&L shown once as a summary banner (never per-day). Design source: saved-filters-calendar-view/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 1.10 | 2026-06-19 | v6.0 design gate — Brokerage Cost Capture section added: two new optional trade edit form fields (commission_gbp, spread_cost_gbp) in "Brokerage Costs" subsection. Net-of-Costs R-Multiple Display section added: Net R shown below Gross R in table and expanded row when cost data present; absent when no cost data (backward-compatible). Design source: net-of-costs-tracking/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |
 | 1.9 | 2026-05-16 | v3.6 design gate (ST-02, EPIC-01): Entry Delta row added to Plan vs Reality comparison table — displays `entry_delta_pct` as signed percentage (+X.XX%/−X.XX%) with green/red colouring; null state shows "Entry delta: data not available for historical trades" in muted style. API source: `GET /trades/{id}/plan-vs-reality` `entry_delta_pct` field (added in ST-01). Head of UX & Design confirmed 2026-05-16. |

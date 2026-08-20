@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.30
-**Last Updated:** 2026-08-18 (ST-10, EPIC-03, v8.9, BLG-BE-100 — transaction-isolation fix-or-accept decision documented for position_audit_log/position_state_history: audit-log write ordering); prior — 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — DS-15 trade_plans.triggered_by_price_alert_id, reporting-treatment decision documented); prior — 2026-08-14 (ST-12, EPIC-02, v8.8, BLG-BE-94 — DS-14 signals functional index for UPPER(ticker), Head-of-Engineering-review correction); prior history retained — see prior entries in version control
+**Version:** 2.31
+**Last Updated:** 2026-08-20 (ST-06, EPIC-02, v8.9, BLG-FEAT-90 — DS-16 trade_debriefs table added); prior — 2026-08-18 (ST-10, EPIC-03, v8.9, BLG-BE-100 — transaction-isolation fix-or-accept decision documented for position_audit_log/position_state_history: audit-log write ordering); prior — 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — DS-15 trade_plans.triggered_by_price_alert_id, reporting-treatment decision documented); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -2082,6 +2082,50 @@ Reversible: `ALTER TABLE trade_plans DROP COLUMN IF EXISTS triggered_by_price_al
 
 ---
 
-**Document Version:** 2.29
+## DS-16 — trade_debriefs (v2.31, 2026-08-20)
+
+**Story:** ST-06 (EPIC-02, v8.9) — BLG-FEAT-90, Automated AI Post-Trade Debrief
+
+New table, one row per `trade_history` row (unique on `trade_history_id`; on-demand regeneration overwrites the prior row rather than appending — a debrief is a current-best-effort artefact, not an append-only log). `summary_text` is deterministically computed from `trade_history`/`trade_plans` data server-side, never model-generated; `focus_area_text` is the one AI-generated, pattern-surfacing sentence, subject to the §13 review's Condition 9 output-side compliance checks (prescriptive-language scan, numeric cross-check) before persistence — see `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`. `focus_area_text` is nullable: null when AI generation is unavailable (`generation_status = "ai_unavailable"`) or when both compliance checks failed on both the original and the one permitted regeneration (`generation_status = "fallback_no_focus_area"`) — the row still persists with `summary_text` populated in either case, since that field is never model-generated and therefore never subject to the compliance-check fallback.
+
+```sql
+BEGIN;
+CREATE TABLE IF NOT EXISTS trade_debriefs (
+    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    trade_history_id        UUID NOT NULL UNIQUE REFERENCES trade_history(id) ON DELETE CASCADE,
+    portfolio_id            UUID NOT NULL,
+    summary_text            TEXT NOT NULL,
+    focus_area_text         TEXT,
+    focus_area_omitted_reason TEXT,
+    model_version           TEXT NOT NULL,
+    prompt_version          TEXT NOT NULL,
+    generation_status       TEXT NOT NULL DEFAULT 'ok',
+    generated_at            TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_trade_debriefs_portfolio ON trade_debriefs(portfolio_id);
+COMMIT;
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|--------------|
+| `trade_history_id` | UUID | NO | The closed trade this debrief covers. `ON DELETE CASCADE` — a debrief has no meaning independent of its trade. |
+| `portfolio_id` | UUID | NO | Denormalised from `trade_history` for direct filtering; no FK (matches `trade_plans.portfolio_id`'s existing convention). |
+| `summary_text` | TEXT | NO | Deterministic, non-AI factual plan-vs-reality summary. |
+| `focus_area_text` | TEXT | YES | The one AI-generated pattern-surfacing sentence, or NULL — see `generation_status`. |
+| `focus_area_omitted_reason` | TEXT | YES | Why `focus_area_text` is NULL (e.g. `"ai_unavailable"`, `"prescriptive_language_detected+numeric_cross_check_failed"`). NULL when `focus_area_text` is populated. |
+| `model_version` / `prompt_version` | TEXT | NO | Recorded even when generation fell back, for audit traceability. |
+| `generation_status` | TEXT | NO | `"ok"` / `"fallback_no_focus_area"` / `"ai_unavailable"`. |
+| `generated_at` | TIMESTAMPTZ | NO | Last (re)generation time — overwritten on regenerate, not appended. |
+
+Reversible: `DROP TABLE IF EXISTS trade_debriefs;`
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-08-20 (agent-mediated; new table, no existing schema touched, `ON DELETE CASCADE` matches the intent that a debrief cannot outlive its trade, upsert-on-regenerate shape confirmed intentional per the §13 review's own "regeneration overwrites" design)
+
+---
+
+**Document Version:** 2.31
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-08-14
+**Last Review:** 2026-08-20
