@@ -2343,6 +2343,24 @@ def ensure_claude_audit_log_table() -> None:
         conn.commit()
 
 
+def ensure_claude_audit_log_compliance_check_column() -> None:
+    """Add compliance_check_result to claude_audit_log (idempotent).
+
+    ST-06 (EPIC-02, v8.9), §13 review Condition 9 (`decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`):
+    the post-trade debrief's output-side prescriptive-language and numeric
+    cross-check outcome must be part of what is logged to claude_audit_log,
+    not just "generation succeeded" -- so a compliance failure remains
+    auditable even when the fallback path silently protects the display.
+    Nullable; all other existing callers pass None (no behaviour change).
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE claude_audit_log ADD COLUMN IF NOT EXISTS compliance_check_result TEXT"
+            )
+        conn.commit()
+
+
 def create_claude_audit_entry(
     endpoint: str,
     model_id: str,
@@ -2350,19 +2368,21 @@ def create_claude_audit_entry(
     input_tokens: int | None = None,
     output_tokens: int | None = None,
     cost_usd: float | None = None,
+    compliance_check_result: str | None = None,
 ) -> None:
     """Insert one row into claude_audit_log. Non-blocking on failure."""
     try:
         ensure_claude_audit_log_table()
+        ensure_claude_audit_log_compliance_check_column()
         with get_db() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
                     INSERT INTO claude_audit_log
-                        (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd)
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                        (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, compliance_check_result)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
                     """,
-                    (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd),
+                    (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, compliance_check_result),
                 )
             conn.commit()
     except Exception:
@@ -2427,6 +2447,91 @@ def query_claude_audit_log(
                 ]
     except Exception:
         return []
+
+
+# ---------------------------------------------------------------------------
+# trade_debriefs — AI-generated post-trade debrief per closed trade (ST-06,
+# EPIC-02, v8.9, BLG-FEAT-90). One row per trade_history_id (regeneration
+# overwrites the prior row -- a debrief is a current-best-effort artefact,
+# not an append-only log; the generation call itself is separately and
+# immutably logged to claude_audit_log per §13 review Condition 5/9).
+# ---------------------------------------------------------------------------
+
+def ensure_trade_debriefs_table() -> None:
+    """Create trade_debriefs table if it does not exist (idempotent).
+
+    Spec: docs/specs/data_model.md#DS-16
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS trade_debriefs (
+                    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    trade_history_id        UUID NOT NULL UNIQUE REFERENCES trade_history(id) ON DELETE CASCADE,
+                    portfolio_id            UUID NOT NULL,
+                    summary_text            TEXT NOT NULL,
+                    focus_area_text         TEXT,
+                    focus_area_omitted_reason TEXT,
+                    model_version           TEXT NOT NULL,
+                    prompt_version          TEXT NOT NULL,
+                    generation_status       TEXT NOT NULL DEFAULT 'ok',
+                    generated_at            TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_trade_debriefs_portfolio ON trade_debriefs(portfolio_id)"
+            )
+        conn.commit()
+
+
+def create_trade_debrief(trade_history_id: str, portfolio_id: str, data: dict) -> dict:
+    """Insert or overwrite the debrief for a trade (on-demand regeneration overwrites)."""
+    ensure_trade_debriefs_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO trade_debriefs
+                    (trade_history_id, portfolio_id, summary_text, focus_area_text,
+                     focus_area_omitted_reason, model_version, prompt_version, generation_status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (trade_history_id) DO UPDATE SET
+                    summary_text = EXCLUDED.summary_text,
+                    focus_area_text = EXCLUDED.focus_area_text,
+                    focus_area_omitted_reason = EXCLUDED.focus_area_omitted_reason,
+                    model_version = EXCLUDED.model_version,
+                    prompt_version = EXCLUDED.prompt_version,
+                    generation_status = EXCLUDED.generation_status,
+                    generated_at = NOW()
+                RETURNING *
+                """,
+                (
+                    trade_history_id,
+                    portfolio_id,
+                    data["summary_text"],
+                    data.get("focus_area_text"),
+                    data.get("focus_area_omitted_reason"),
+                    data["model_version"],
+                    data["prompt_version"],
+                    data.get("generation_status", "ok"),
+                ),
+            )
+            row = cur.fetchone()
+        conn.commit()
+    return dict(row)
+
+
+def get_trade_debrief_by_trade_id(trade_history_id: str) -> Optional[Dict]:
+    """Fetch the existing debrief for a trade, or None if not yet generated."""
+    ensure_trade_debriefs_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT * FROM trade_debriefs WHERE trade_history_id = %s",
+                (trade_history_id,),
+            )
+            row = cur.fetchone()
+            return dict(row) if row else None
 
 
 # ---------------------------------------------------------------------------

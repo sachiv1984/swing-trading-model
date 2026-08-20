@@ -33,6 +33,7 @@ from routers import strategy_benchmark as strategy_benchmark_router
 from routers import saved_filters as saved_filters_router
 from routers import changelog as changelog_router
 from routers import backtest_rule_change as backtest_rule_change_router
+from routers import trade_debrief as trade_debrief_router
 from services.watchlist_service import ensure_watchlist_table
 from services.saved_filters_service import ensure_saved_filters_table
 from services.ai_audit_service import ensure_ai_audit_table
@@ -213,6 +214,7 @@ app.include_router(strategy_benchmark_router.router)
 app.include_router(saved_filters_router.router)
 app.include_router(changelog_router.router)
 app.include_router(backtest_rule_change_router.router)
+app.include_router(trade_debrief_router.router)
 
 
 @app.on_event("startup")

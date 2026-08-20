@@ -2,7 +2,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.29
+**Version:** 2.30
 **Date:** 2026-08-20
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
@@ -1858,10 +1858,52 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 41. v8.9 Endpoint Registration — Automated AI Post-Trade Debrief (ST-06, EPIC-02, BLG-FEAT-90)
+
+**Date:** 2026-08-20
+**Story:** ST-06 (EPIC-02, v8.9) — BLG-FEAT-90, Automated AI post-trade debrief
+**Environment:** N/A — see endpoint notes below.
+**Method:** Registered pending live measurement per §13 pattern.
+
+### 41.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /trades/{id}/debrief | v8.9 | Read — pending live timing run | 60–150ms (est.) | 120–280ms (est.) | Pending next baseline re-run |
+| POST /trades/{id}/debrief | v8.9 | Write (generates + persists a debrief; on-demand only, not on the live trade-close path) — pending live timing run | 800–2,500ms (est.) | 1,500–4,000ms (est.) | ⚠ Higher-latency by design — see endpoint characteristics |
+
+**Endpoint characteristics:**
+- `GET /trades/{id}/debrief`: simple indexed `SELECT` against `trade_debriefs` (one row per trade, unique index on `trade_history_id`) — estimated in the same range as other single-table read endpoints in this document (e.g. §40's comparable single-query reads).
+- `POST /trades/{id}/debrief`: dominated by one Claude Haiku 4.5 call generating the one-sentence "focus area" (the plan-vs-reality summary itself is computed deterministically, no model call) — plus, in the worst case, one regeneration if the §13 review's Condition 9 output-side compliance checks (prescriptive-language scan, numeric cross-check) fail on the first attempt. Estimated range assumes 1–2 Claude calls; `gemini_thesis_generation.md`'s comparable single-call latency is the nearest precedent. **A real staging/production timing run is required before this estimate can be trusted for alerting thresholds**, same as every other "pending live timing run" entry in this document.
+
+**Read-only exclusion note:** `POST /trades/{id}/debrief` is a write (upserts one `trade_debriefs` row) but is registered with a live-timing-pending estimate rather than the standard write-op estimate pattern (§18.2/§20), for the same reason as §40's `POST /run`: cost is dominated by an external model call, not the write itself.
+
+### 41.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-06 (v8.9 EPIC-02, BLG-FEAT-90) — Automated AI Post-Trade Debrief Endpoint Registration Sign-Off
+
+AC-01: Both endpoints added with estimated p50/p95 and measurement date
+       (2026-08-20 — estimated; POST's estimate derived from its
+       single-Claude-call-dominated cost profile with a worst-case
+       regeneration, GET estimated from comparable single-table-read
+       baselines). ✅ PASS
+AC-02: Estimation methodology documented, including the explicit flag that
+       POST's estimate needs live re-measurement before use in alerting
+       thresholds. ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§40 pattern). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-08-20
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.29 | 2026-08-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-09 (v8.9 EPIC-03, BLG-BE-99): §36.5/§36.6 added — post-`BLG-BE-87` real invocation attempted (`si05-weekly-digest.yml` run 32342881081), digest-timing log line still absent; root-caused to production's `uvicorn` having no root logging configuration (`BLG-BE-107` filed, P2). Interim GitHub Actions step-timing proxy recorded (second sample, same methodology as §36.3), per Product Owner direction. **Self-corrected same-day (this row was missing from Document History despite the header already reading 2.29 — added per shared_standards.md §9.1's self-consistency check, run before this document's own next bump to 2.30 below.)** |
+| 2.30 | 2026-08-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-06 (v8.9 EPIC-02, BLG-FEAT-90): §41 added — `GET /trades/{trade_id}/debrief`, `POST /trades/{trade_id}/debrief` registered pending live timing run. `POST`'s estimate flagged higher-latency-by-design (one Claude Haiku 4.5 call, worst case one regeneration per §13 review Condition 9) rather than the standard write-op fast-INSERT pattern. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the 2 new paths in the same PR. |
 | 2.28 | 2026-08-18 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-07 (v8.9 EPIC-02, BLG-FEAT-89): §40 added — `POST /strategy/backtest-rule-change/run`, `GET /strategy/backtest-rule-change/runs`, `GET /strategy/backtest-rule-change/runs/{id}` registered pending live timing run. `POST /run`'s estimate flagged high-latency-by-design (network-I/O-dominated: 3 live yfinance calls + two full backtest simulations over a bounded 20-ticker/4-year window) rather than the standard write-op fast-INSERT pattern. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the 3 new paths in the same PR. |
 | 2.27 | 2026-08-14 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-04/ST-05/ST-06 (v8.8 EPIC-01, BLG-OPS-13/BLG-OPS-135/BLG-OPS-51): §39 added — `GET /v1beta1/news` (via `GET /news/AAPL` proxy) and `GET /trade-plans/tags` registered with real staging measurements; §34's `GET /analytics/strategy-version-comparison` row updated from estimate to measured-but-capped value (`insufficient_data` gate hit on both attempted version windows — only 21 real trades exist today). `GET /trade-plans/tags`'s ~10s p50 (vs. the structurally similar `GET /positions/tags`'s 2.4s) flagged as `BLG-BE-98`, not silently accepted. Measurement tool (`api-performance-baseline-measurement.yml`) extended with 2 new endpoints and made resilient to individual sample timeouts (previously aborted the whole run under `set -e`). |
 | 2.26 | 2026-08-11 | Sprint Execution Engine (autonomous) | ST-01 (v8.6 EPIC-01, BLG-FEAT-32): §38 added — `GET /analytics/trade-plan-completion-rate` registered with estimated p50/p95 pending live measurement. |

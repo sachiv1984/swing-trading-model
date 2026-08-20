@@ -185,3 +185,20 @@ Append-only. Do not edit previous entries.
 - **Unblock criteria:** README.md local-setup instructions added, correctly using pyenv to honour the pin; `.env.production` template parity fix (or documented reason it's unneeded) for `PUBLIC_URL`; Infrastructure & Operations Owner sign-off. (Full production dashboard confirmation of AC-2 is staging-only per sprint_backlog.md — not required for this item's completion, matching the audit's own advisory, not-a-confirmed-defect disposition.)
 - **Commit format required:** `[EPIC-05][ST-16] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-05`
 - **Status:** Unblocked — same in-session completion pattern as DEL-20260817-01/02. Agent-mediated Infrastructure & Operations Owner sign-off (§5.3) cleared Approved 2026-08-18; confirmed pyenv command correctness, confirmed the `.env.production` disclosure does not overclaim dashboard confirmation it doesn't have. No multi-session parking occurred.
+
+---
+
+## DEL-20260820-01
+
+- **ST Item:** ST-06 — Automated AI post-trade debrief
+- **EPIC:** EPIC-02 (Sprint 2 subset)
+- **Classification:** delegated_backend
+- **Assigned to:** engine (per execution_prompt.md §5.2 — spec unambiguous, the §13 review's nine binding conditions constitute a locked spec); AI Compliance & Governance Officer required for sign-off (story AC5)
+- **GitHub Issue:** #1434
+- **Branch:** exec/2026-08-17__release-v8.9/EPIC-02 (Sprint 2 continuation — EPIC-02's Sprint 1 PR #1453 had already merged 2026-08-19 before this story was picked up; branch recreated from post-merge `main` for this story's own commit, not reusing the closed PR)
+- **Delegated at:** 2026-08-18T00:00:00Z (blocked_since_utc — gated on ST-23; unblocked the same instant ST-23 reached `done`/CONDITIONAL; actual implementation picked up in a later session, 2026-08-20)
+- **What is needed:** Every newly-closed trade has an AI-generated debrief available shortly after close (on-demand, per the story's own accepted real-time-or-on-demand AC); references plan-vs-reality data and any linked journal entries where present; generation logged to `claude_audit_log`; AI Compliance & Governance Officer sign-off. Bound by the §13 review's nine conditions — most materially Condition 9 (output-side prescriptive-language scan + numeric cross-check before display/persistence, not prompt-instruction alone).
+- **Spec reference:** `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`; `docs/specs/data_model.md#DS-16`; `docs/specs/api_contracts/trade_endpoints.md#GET /trades/{trade_id}/debrief`
+- **Unblock criteria:** ST-23 reaches `status: done` with PASS/CONDITIONAL (met 2026-08-18); implementation matches all nine §13 binding conditions with test coverage for Condition 9's compliance checks; AI Compliance & Governance Officer sign-off.
+- **Commit format required:** `[EPIC-02][ST-06] <description>` pushed to `exec/2026-08-17__release-v8.9/EPIC-02`
+- **Status:** Unblocked — engine-completed in-session (no external credential needed). Commit `53286f6c6e95ddb671938388f8192d443896297d`. Agent-mediated AI Compliance & Governance Officer sign-off (§5.3) cleared Approved 2026-08-20 on first pass — Condition 9's output-side checks confirmed as real, tested code (not documentation-only); Condition 6's required verbatim comment confirmed present in `debrief_service.py`; Condition 4's no-action-affordance requirement confirmed via a dedicated Playwright assertion (SC-DBF-02b). 21 new pytest cases + 6 new Playwright scenarios, all passing; full backend suite 1260 passed/5 skipped/0 regressions.

@@ -175,8 +175,8 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     await expect(page.getByRole('button', { name: /run tests/i })).toBeVisible({ timeout: 8000 });
   });
 
-  test('SC-SS-01b: Pre-run state shows "115 endpoints" placeholder', async ({ page }) => {
-    // Before running tests, the page shows: "Tests 115 endpoints"
+  test('SC-SS-01b: Pre-run state shows "117 endpoints" placeholder', async ({ page }) => {
+    // Before running tests, the page shows: "Tests 117 endpoints"
     // (totalTests || '115' → '115' before any test run). Baseline corrected v7.7
     // EPIC-11 ST-11 (BLG-QA-102): an AST-verified count of backend/routers/test.py's
     // test_cases list was 98, not the previously-recorded 103 — 5 entries had
@@ -209,7 +209,9 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     // +3 (112 -> 115) from v8.9 EPIC-02 ST-07 (BLG-FEAT-89), which added
     // POST /strategy/backtest-rule-change/run, GET /strategy/backtest-rule-change/runs,
     // GET /strategy/backtest-rule-change/runs/{run_id}.
-    await expect(page.getByText(/tests 115 endpoints/i)).toBeVisible({ timeout: 8000 });
+    // +2 (115 -> 117) from v8.9 EPIC-02 ST-06 (BLG-FEAT-90), which added
+    // GET /trades/{trade_id}/debrief, POST /trades/{trade_id}/debrief.
+    await expect(page.getByText(/tests 117 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {
