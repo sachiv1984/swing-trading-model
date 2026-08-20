@@ -178,8 +178,24 @@ def refresh_position_lifecycle(position_id: str, prefetched_position: Optional[d
         # normalized position_state_history table, alongside (not instead
         # of) the JSONB column above — additive, fail-open, no change to
         # the state machine or the existing persistence path.
+        #
+        # ST-10 (BLG-BE-100, EPIC-03, v8.9): primary write runs *first*, the
+        # audit-log write only after it succeeds — the two writes use
+        # separate get_db() connections/transactions (no cross-connection
+        # atomicity available without a broader refactor), so ordering is
+        # what prevents a phantom position_state_history row for a
+        # transition that never actually landed on `positions` (the
+        # previous audit-before-primary order meant a primary-write failure
+        # right after a successful audit insert would leave exactly that:
+        # a state_history row of record for a transition that didn't
+        # happen). Matches the already-safe primary-then-audit ordering
+        # used by every position_audit_log call site
+        # (services/position_service.py — update_note/mark_reviewed/
+        # update_tags all call create_position_audit_log_entry() after
+        # their own primary write, not before).
+        result = update_position_lifecycle_state(position_id, new_state, now, updated_history)
         create_position_state_history_entry(position_id, stored_state, new_state, now)
-        return update_position_lifecycle_state(position_id, new_state, now, updated_history)
+        return result
     else:
         # State unchanged — ensure state_entered_at is set if missing
         if not pos.get("state_entered_at"):

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-19 (session — 4 new items added from Sprint 1 PR reviews: BLG-BE-106, BLG-FEAT-93, BLG-OPS-147, BLG-TECH-16); prior — 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior — 2026-08-17 (session — 1 new item added: BLG-SPEC-132); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-20 (CLAUDE.md §8 backlog-additions branch reconciliation — combines this branch's 4-item Sprint 1 PR-review addition (BLG-BE-106, BLG-FEAT-93, BLG-OPS-147, BLG-TECH-16, filed 2026-08-19) with main's already-merged BLG-BE-107, filed 2026-08-20 while completing ST-09/EPIC-03); prior — 2026-08-19 (CLAUDE.md §8 cross-EPIC merge reconciliation — EPIC-02 merged via PR #1453, EPIC-03 branch rebased onto main: combines EPIC-02's 5-item addition (BLG-GOV-311, BLG-TECH-13/14/15, BLG-FE-164) and EPIC-03's one-line returned-to-backlog note under BLG-BE-99 per execution_prompt.md §5.2, both filed 2026-08-18 on their respective branches before either merged); prior — 2026-08-18 (session — 3 new items added from PR #1452 review: BLG-BE-105, BLG-QA-153, BLG-SPEC-133); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4204,6 +4204,10 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Scope:** After v8.8/EPIC-02 merges to `main` and redeploys, trigger `si05-weekly-digest.yml` (scheduled Sunday 19:00 UTC run, or another user-approved manual dispatch) and query Render logs (`render-si05-log-query.yml`) for the new duration-logged line; add the real elapsed-time value to `docs/ops/api_performance_baseline.md` §36.
 **Acceptance Criteria:** A real invocation's Render log confirms the `"SI-05 digest sent... in %.2fs"` (or failure-path equivalent) line is present with a real elapsed-time value; `docs/ops/api_performance_baseline.md` §36 updated with that value.
 
+**Returned to backlog (2026-08-18, cycle `2026-08-17__release-v8.9`, ST-09/EPIC-03):** Same structural blocker recurred — requires a real post-merge Render log invocation, not obtainable pre-merge; see `execution_state.json` ST-09 and delegation record DEL-20260818-05 (renumbered from the original DEL-20260818-01 during EPIC-02/EPIC-03 merge reconciliation — see `delegation_log.md`) for this cycle's disposition.
+
+**Resolved (2026-08-20, post-merge, ST-09/EPIC-03):** EPIC-03 merged to `main` (PR #1454) and a real post-merge invocation was triggered. The digest line still did not appear in Render's captured logs — root-caused to a genuine, separate platform gap (production's `uvicorn` process has no root logging configuration, so `logger.info()` calls from application code never reach a handler; see `BLG-BE-107`). Product Owner accepted an interim GitHub Actions step-timing proxy for this invocation instead (same methodology as the original `BLG-OPS-54`/§36.3 precedent) — see `docs/ops/api_performance_baseline.md` §36.5 and `DEV-20260820-01`.
+
 ---
 
 ### BLG-BE-100 — Wrap audit-trail writes (position_state_history, position_audit_log) in the same transaction as the primary state update
@@ -5033,5 +5037,145 @@ ST-16 fixed the local-venv Python-pin documentation and added `PUBLIC_URL=/` to 
 - Exception is logged (level appropriate to a fail-open path, e.g. warning) with enough context to diagnose (ticker/sector where available)
 - No change to the fail-open return behaviour itself
 - Existing tests still pass
+
+---
+
+### BLG-GOV-311 — Add ST-06 §13 CONDITIONAL clearance to strategy_rules.md §13.5 semi-annual re-attestation roster
+
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** ST-23/EPIC-02, 2026-08-17__release-v8.9 — 2026-08-18
+**Effort:** XS (~15min)
+**Provisional-Target:** v8.9 (or next cycle touching `strategy_rules.md` under Strategy Rules & System Intent Owner authority)
+
+**Problem**
+`strategy_rules.md` §13.5's Maintenance rule requires: "New features entering the roster do so by adding a row to the table above in the same commit that records their own initial §13 clearance." ST-23 (this cycle) produced `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md` (Determination: CONDITIONAL) for ST-06 (Automated AI Post-Trade Debrief, BLG-FEAT-90), but `execution_prompt.md`'s write scope does not permit the Sprint Execution Engine to edit `claude/strategy/strategy_rules.md` — CLAUDE.md §2 restricts governance-file edits to cases "explicitly instructed by the relevant prompt," and `execution_prompt.md` §7 does not list `claude/strategy/` in its write scope. The roster update is therefore deferred to this backlog item rather than performed out-of-scope by this routine.
+
+**Scope**
+- Add a row for ST-06 / BLG-FEAT-90 to the §13.5 roster table (`Feature` | `§13 Review Record` | `Cleared` columns), citing `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md` and `v8.9` as the Cleared version
+- Perform under Strategy Rules & System Intent Owner authority — the same role that signed off the review this row documents
+- Follow `strategy_rules.md`'s own governance-file edit checklist (CLAUDE.md §6) if the edit bumps the document's version
+
+**Acceptance Criteria**
+- `strategy_rules.md` §13.5's roster table includes a ST-06/BLG-FEAT-90 row pointing at the CONDITIONAL review document
+- Edit committed under Strategy Rules & System Intent Owner authority, in a session/prompt whose write scope explicitly covers `claude/strategy/`
+- If `strategy_rules.md`'s version is bumped: CLAUDE.md §6 governance file edit checklist steps 1–4 completed in the same commit
+
+---
+
+### BLG-TECH-13 — Consolidate 4 independent sector-lookup implementations
+
+**Priority:** P3 (Low)
+**Type:** Platform / Technical Debt
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-04/EPIC-02, 2026-08-17__release-v8.9 — 2026-08-18
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The codebase now carries four independent implementations of "look up a ticker's sector, DB-first, falling back to open positions": `routers/pre_entry_validation.py::_get_ticker_sector`, `services/compliance_recheck_service.py::_get_ticker_sector`, `routers/portfolio_risk.py::_lookup_sector`/`_get_ticker_sector_map`, and the new `services/concentration_service.py::get_ticker_sector` added by ST-04 (BLG-BE-104). ST-04 deliberately did not refactor the first three — they are working, independently tested code (`test_pre_entry_validation.py`, `test_compliance_recheck.py`, `test_portfolio_risk_sector.py`) outside ST-04's scope, and touching them risked regressions unrelated to this story's own acceptance criteria. This mirrors the precedent of `check_market_regime()`'s two divergent implementations (BLG-BE-? consolidated as its own story rather than folded into the story that found it).
+
+**Scope**
+- Consolidate all sector-lookup logic into one shared function (candidate home: `services/concentration_service.py::get_ticker_sector`, already DB-first/no-live-call)
+- Update `pre_entry_validation.py`, `compliance_recheck_service.py`, and `portfolio_risk.py` to import and use the shared function
+- Preserve existing test-patch targets where possible (e.g. `patch("routers.pre_entry_validation._get_ticker_sector", ...)` continues to work if the name is imported into that module's namespace rather than removed outright), or update the affected tests in the same commit if patch targets must change
+
+**Acceptance Criteria**
+- Exactly one sector-lookup implementation exists in the codebase; the other three call sites delegate to it
+- All 4 existing test suites (`test_pre_entry_validation.py`, `test_compliance_recheck.py`, `test_portfolio_risk_sector.py`, `test_sizing_concentration.py`) pass unchanged in behaviour (same assertions, potentially updated patch targets)
+- Backend Engineering Patterns Owner sign-off
+
+---
+
+### BLG-TECH-14 — Consolidate PositionSizingWidget.js / WhatIfSizingPreview.js debounced-fetch boilerplate
+
+**Priority:** P3 (Low)
+**Type:** Platform / Technical Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-05/EPIC-02 Head of Engineering sign-off review, 2026-08-17__release-v8.9 — 2026-08-18
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`PositionSizingWidget.js` (§10.7) and `WhatIfSizingPreview.js` (§5d, added ST-05/BLG-FEAT-91) share only the two `AMBER_MESSAGES`/`SYSTEM_MESSAGES` constant objects (exported from `PositionSizingWidget.js` for reuse). The debounce/sessionStorage/fetch-effect boilerplate — ~30-40 lines each — is duplicated near-verbatim between the two components. Consistent with this codebase's already-acknowledged pattern of deferring widget-consolidation debt (§10.7's own baseline-documentation gap, BLG-SPEC-132), but worth tracking rather than left silently duplicated a second time.
+
+**Scope**
+- Extract a shared `useDebouncedSizing` hook (or equivalent) covering: debounced 300ms fetch to `POST /portfolio/size`, loading state, sessionStorage-backed risk-percent state (parameterised by storage key, since the two components deliberately use distinct keys)
+- Both components consume the shared hook, each keeping their own presentation/layout
+
+**Acceptance Criteria**
+- `PositionSizingWidget.js` and `WhatIfSizingPreview.js` share the debounce/fetch/session-storage logic via one hook
+- Existing Playwright coverage for both components (`position-sizing-concentration.spec.js`, `what-if-sizing-preview.spec.js`, `smoke-critical-paths.spec.js`) passes unchanged
+- Frontend Specifications & UX Documentation Owner sign-off
+
+---
+
+### BLG-FE-164 — What-If Sizing Preview never sends an fx_rate override — AC-02 reproducibility claim doesn't fully hold for US-market plans
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-05/EPIC-02 Head of Engineering sign-off review, 2026-08-17__release-v8.9 — 2026-08-18
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`trade_plan.md` §5d.3 claims the What-If Sizing Preview panel "reproduces an identical suggested size" to what `TradeEntry.js` computes at order time, because both call `POST /portfolio/size`. This holds for UK-market plans, but not reliably for US-market plans: the Trade Plan form has no `fx_rate` field (confirmed against §5.1 and the ux_spec's own payload, which omits `fx_rate`), so the What-If panel always prices against the *live* FX rate, while `TradeEntry.js`'s `PositionSizingWidget` uses a manually-entered field defaulting to a static `1.27`. If the live rate has moved since the plan was drafted, the two suggested sizes can diverge. This does not violate the formally-stated AC-02 ("no DB write occurs from interacting with the preview alone" holds regardless), and is rooted in the design spec's own payload/reasoning rather than an implementation deviation — but the §5d.3 "reproduces an identical suggested size" claim is stronger than the implementation actually guarantees for US-market plans.
+
+**Scope**
+- Either (a) add an optional FX-rate override field to the What-If panel (or the Trade Plan form generally) mirroring `TradeEntry.js`'s field, or (b) soften §5d.3's wording to note the live-rate caveat for US-market plans explicitly
+
+**Acceptance Criteria**
+- `trade_plan.md` §5d.3's reproducibility claim is either made accurate (FX override added) or explicitly scoped to note the US-market live-rate caveat
+- Frontend Specifications & UX Documentation Owner sign-off
+
+---
+
+### BLG-TECH-15 — backtest_rule_service.py's ported algorithm functions can silently drift from production_strategy.py
+
+**Priority:** P2 (Medium)
+**Type:** Platform / Technical Debt
+**Owner:** Backend Engineering Patterns Owner; Strategy Rules & System Intent Owner
+**Source:** ST-07/EPIC-02, 2026-08-17__release-v8.9 — 2026-08-18
+**Effort:** M (~1-2d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-07 (BLG-FEAT-89, In-app backtesting engine) added `backend/services/backtest_rule_service.py`, which ports (copies, does not import) `production_strategy.py`'s `compute_signals`/`compute_atr`/`compute_risk_on`/`transaction_fee`/`backtest` functions. This was a deliberate choice, not an oversight: `production_strategy.py` is a standalone script (never used as a library, has import-time side effects) whose `backtest()` reads regime state from module-level globals (`spy_risk_on`/`ftse_risk_on`) — unsafe to import and mutate from a concurrent web-server process, where two simultaneous requests would race on the same globals. The port is behaviourally identical except regime state is threaded through as an explicit parameter instead of module globals. However, this means the two copies of the core momentum-strategy algorithm can now silently drift apart if `production_strategy.py`'s logic changes (e.g. a future tuning of the stop-loss/rebalance/sizing logic) without the port being updated to match — financially significant, since both feed comparative decision-support output.
+
+**Scope**
+- Extract the pure, parameter-only algorithm logic (`compute_signals`, `compute_atr`, `compute_risk_on`, `transaction_fee`, and a globals-free `backtest`) into a genuinely shared module both `production_strategy.py` and `backend/services/backtest_rule_service.py` import — e.g. a new root-level `strategy_engine/` package, or `backend/services/` if `production_strategy.py` can safely import from `backend/`
+- `production_strategy.py`'s own `is_risk_on`/module-global usage would need updating to call the shared `backtest()` with explicit regime parameters, matching the port's existing signature
+- Add a CI check (or a simple hash/diff comparison) that fails if the two implementations diverge, until the consolidation above ships
+
+**Acceptance Criteria**
+- Exactly one implementation of `compute_signals`/`compute_atr`/`compute_risk_on`/`transaction_fee`/`backtest` exists; both `production_strategy.py` and `backend/services/backtest_rule_service.py` use it
+- Nightly backtest (`.github/workflows/backtest.yml`) and the in-app Backtest Rule Change endpoint both continue to produce the same historical results as before the consolidation (regression-verified against a fixed historical run)
+- Backend Engineering Patterns Owner and Strategy Rules & System Intent Owner sign-off
+
+---
+
+### BLG-BE-107 — Configure root/app logging so logger.info() calls in application code actually reach Render's captured logs
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-09 (EPIC-03, v8.9, BLG-BE-99) evidence-gathering session — 2026-08-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.0
+
+**Problem**
+Production runs `uvicorn main:app --host 0.0.0.0 --port $PORT` (per `render.yaml`'s `startCommand`) with no `--log-config`/`--log-level` flag, and `backend/main.py` never calls `logging.basicConfig()` or otherwise configures the root logger (confirmed via repo-wide grep — no `basicConfig`/`addHandler`/`dictConfig` anywhere in `backend/`). Uvicorn's own default logging setup only wires up its own named loggers (`uvicorn`, `uvicorn.error`, `uvicorn.access`) — it never touches the root logger or any `logging.getLogger(__name__)` logger used throughout the app's service modules. With the root logger left at its default level (WARNING) and no handler attached, every `logger.info(...)` call anywhere in application code is filtered out before it ever reaches a handler, and is silently dropped rather than erroring or warning anyone. This was empirically confirmed: a real, successful `POST /digest/si05/send` invocation on 2026-08-20 (Render deploy log, `07:11:51Z`, 200 OK) produced no corresponding `"SI-05 digest sent (%d chars) in %.2fs"` line anywhere in the surrounding log window, even though that `logger.info()` call sits directly in the code path that ran.
+
+**Scope**
+- Add a root logging configuration (e.g. `logging.basicConfig(level=logging.INFO)` early in `backend/main.py`, or an explicit `--log-config` passed to uvicorn) so that INFO-level (and above) records from application-module loggers propagate to a handler that writes to stdout/stderr, where Render's log pipeline captures them
+- Confirm the fix doesn't create duplicate/conflicting handlers with uvicorn's own access/error logging
+- Verify via one real invocation post-deploy that `services/si05_digest_service.py`'s `"SI-05 digest sent..."` line (and ideally at least one other existing `logger.info()` call elsewhere in the app) now actually appears in Render's captured logs
+
+**Acceptance Criteria**
+- Root logging is configured such that `logger.info()` calls from any `backend/` module reach stdout/stderr in the running process
+- A real post-deploy production invocation confirms at least the `si05_digest_service.py` duration line is now captured in Render logs (this also closes the outstanding evidence gap referenced by `ST-09`/`BLG-BE-99`'s original AC)
+- No regression to uvicorn's own existing access/error log formatting or duplicate log lines
+- `docs/ops/api_performance_baseline.md` §36 updated with the real log-derived timing once available, superseding the interim GitHub-Actions-proxy measurements recorded there (§36.3 and §36.5)
 
 ---

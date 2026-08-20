@@ -20,6 +20,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
 import services.position_service as position_service  # noqa: E402
 import routers.prospective_heat as prospective_heat  # noqa: E402
+import services.portfolio_service as portfolio_service  # noqa: E402
 from routers.pre_entry_validation import _check_cash_constraint  # noqa: E402
 
 
@@ -93,11 +94,17 @@ class TestAddPositionReturnsFxRateUsed:
 
 # ---------------------------------------------------------------------------
 # GET /portfolio/prospective-heat — now returns fx_rate_used
+#
+# ST-05 (EPIC-02, v8.9, BLG-FEAT-91): calculation logic extracted to
+# services.portfolio_service.calculate_prospective_heat (shared with
+# POST /portfolio/size's heat_impact_percent). Patch targets updated to the
+# new location — prospective_heat.py no longer imports get_portfolio_summary/
+# get_live_fx_rate directly, it delegates to the shared function.
 # ---------------------------------------------------------------------------
 
 def test_prospective_heat_returns_fx_rate_used_for_us():
-    with patch.object(prospective_heat, "get_live_fx_rate", return_value=1.35), \
-         patch.object(prospective_heat, "get_portfolio_summary", return_value={
+    with patch.object(portfolio_service, "get_live_fx_rate", return_value=1.35), \
+         patch.object(portfolio_service, "get_portfolio_summary", return_value={
              "total_value": 10000.0,
              "position_risks": [],
          }):
@@ -110,7 +117,7 @@ def test_prospective_heat_returns_fx_rate_used_for_us():
 
 
 def test_prospective_heat_returns_1_0_for_uk():
-    with patch.object(prospective_heat, "get_portfolio_summary", return_value={
+    with patch.object(portfolio_service, "get_portfolio_summary", return_value={
         "total_value": 10000.0,
         "position_risks": [],
     }):
@@ -123,7 +130,7 @@ def test_prospective_heat_returns_1_0_for_uk():
 
 
 def test_prospective_heat_respects_explicit_fx_rate_override():
-    with patch.object(prospective_heat, "get_portfolio_summary", return_value={
+    with patch.object(portfolio_service, "get_portfolio_summary", return_value={
         "total_value": 10000.0,
         "position_risks": [],
     }):

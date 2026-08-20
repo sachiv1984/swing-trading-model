@@ -42,6 +42,12 @@ def _executed_sql(mock_cursor) -> list:
 
 
 def test_ensure_trade_plans_table_creates_functional_ticker_index():
+    # ST-08 (BLG-BE-98, EPIC-03, v8.9): ensure_trade_plans_table() is now
+    # memoized process-wide (a prior test in this file, or in another file
+    # sharing this process, may have already set the flag) -- reset it so
+    # this test actually exercises the real DDL path it's asserting on,
+    # rather than silently no-op'ing and passing vacuously.
+    database._trade_plans_table_ensured = False
     mock_conn, mock_cursor = _mock_conn()
     with patch.object(database, "get_db", return_value=mock_conn), \
          patch.object(database, "ensure_regime_context_text_column"), \
@@ -58,6 +64,7 @@ def test_ensure_trade_plans_table_creates_functional_ticker_index():
 
 
 def test_ensure_trade_plans_table_does_not_create_plain_ticker_index():
+    database._trade_plans_table_ensured = False  # see comment in the test above
     mock_conn, mock_cursor = _mock_conn()
     with patch.object(database, "get_db", return_value=mock_conn), \
          patch.object(database, "ensure_regime_context_text_column"), \
@@ -67,8 +74,15 @@ def test_ensure_trade_plans_table_does_not_create_plain_ticker_index():
     sql_statements = _executed_sql(mock_cursor)
     # The old plain (non-functional) index name must not be (re-)created --
     # it was never used by the live UPPER(ticker) predicate.
+    #
+    # ST-08 re-review (retry 1, EPIC-03, v8.9): the search literal itself
+    # contains spaces, so comparing it against a space-stripped haystack
+    # (s.lower().replace(" ", "")) could never match -- the assertion was
+    # vacuously true regardless of what SQL actually ran. Strip spaces from
+    # the search literal too so the comparison is apples-to-apples.
+    target = "idx_trade_plans_ticker on trade_plans(ticker)".replace(" ", "")
     assert not any(
-        "idx_trade_plans_ticker on trade_plans(ticker)" in s.lower().replace(" ", "")
+        target in s.lower().replace(" ", "")
         for s in sql_statements
     ), "must not create the plain, non-functional idx_trade_plans_ticker index"
 
