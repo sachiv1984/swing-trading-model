@@ -272,7 +272,7 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-17__release-v8.9/EPIC-03",
       "pr_number": 1454,
       "pr_status": "merged",
@@ -406,10 +406,10 @@
       }
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-17__release-v8.9/EPIC-04",
       "pr_number": 1455,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-17__release-v8.9/qa_evidence_EPIC-04.md",
       "test_scenarios": ["tests/test_job_registration_screener_risk_off.py", "tests/test_trade_plan_setup_type_default.py", "tests/test_service_layer_direct_coverage.py", "tests/e2e/whats-new-panel.spec.js"],
@@ -501,10 +501,10 @@
       }
     },
     "EPIC-05": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-17__release-v8.9/EPIC-05",
       "pr_number": 1456,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-17__release-v8.9/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
@@ -575,10 +575,10 @@
       }
     },
     "EPIC-06": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-17__release-v8.9/EPIC-06",
       "pr_number": 1457,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-17__release-v8.9/qa_evidence_EPIC-06.md",
       "test_scenarios": [],
@@ -715,11 +715,12 @@
     "EPIC-02",
     "EPIC-03",
     "EPIC-04",
-    "EPIC-05"
+    "EPIC-05",
+    "EPIC-06"
   ],
     "epics_pending": [],
-    "all_merged": false,
-    "notes": "EPIC-01 PR #1452 merged 2026-08-18T08:12:41Z. EPIC-02 PR #1453 merged 2026-08-19T15:45:41Z. EPIC-03 PR #1454 merged 2026-08-20T07:07:22Z; ST-09 completed post-merge -- see DEV-EPIC03-ST09-01. EPIC-04 PR #1455 merged 2026-08-20T08:00:00Z. EPIC-05 PR #1456 merged 2026-08-20T08:20:00Z (merge conflict resolved per CLAUDE.md \u00a78, commit 981e5fd1 -- delegation_log.md DEL-20260818-03 collision, renumbered to DEL-20260818-07). EPIC-06 (this branch, PR #1457) reconciled against main in this same commit: add/add conflict on execution_escalations.md (EPIC-04's ESC-EXEC-20260818-01 + resolution addendum, and EPIC-06's ESC-EXEC-20260818-02, both filed independently before either merged) combined, no ID collision. `all_merged` remains false until EPIC-06 (this PR) also merges."
+    "all_merged": true,
+    "notes": "EPIC-01 PR #1452 merged 2026-08-18T08:12:41Z. EPIC-02 PR #1453 merged 2026-08-19T15:45:41Z. EPIC-03 PR #1454 merged 2026-08-20T07:07:22Z; ST-09 completed post-merge -- see DEV-EPIC03-ST09-01. EPIC-04 PR #1455 merged 2026-08-20T07:49:08Z. EPIC-05 PR #1456 merged 2026-08-20T07:59:55Z (merge conflict resolved per CLAUDE.md \u00a78, commit 981e5fd1 -- delegation_log.md DEL-20260818-03 collision, renumbered to DEL-20260818-07). EPIC-06 PR #1457 merged 2026-08-20T08:06:04Z (merge commit c5497a4c). Session-resume sync (STEP 4 LL-v3.9-P3-1 / LL-v6.4-P3-01, this session, 2026-08-20): prior state write had gone stale -- EPIC-06 was omitted from both epics_merged and epics_pending, and EPIC-03/04/05/06 `status` fields and EPIC-04/05/06 `pr_status` fields still read done/open despite all 6 PRs already being MERGED per `gh pr view`. Corrected via git fetch + gh pr view re-check on all 6 PR numbers; git branch --show-current was `governance/backlog-additions-20260819` at session start (not main, not an exec branch) -- switched to main and pulled (fast-forward, 69 commits) before this write, per the branch-check-before-sync rule. Orphaned post-merge commit check (LL-v6.8-P3-01): `git log origin/main..origin/exec/.../EPIC-xx` empty for all 6 EPIC branches -- nothing orphaned. `all_merged` now true -- all 6 EPICs merged, epics_pending empty. Proceeding to STEP 5 (Sprint Close) in this same invocation per STEP 4's re-invocation instruction (epics_pending empty after sync)."
   },
   "sealed": false,
   "sealed_utc": null
