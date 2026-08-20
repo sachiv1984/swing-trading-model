@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-17T17:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-19T15:48:25Z",
+  "last_updated_utc": "2026-08-20T07:20:00Z",
   "preflight_notes": [
     "sprint_backlog.md's EPIC-01 section is missing full story blocks for ST-02 and ST-03 (present in sprint_backlog_index.json's EPIC-01 st_items and in the Capacity Summary's 23-item count, and referenced by other stories' Dependencies/Staging-only-ACs notes, but with no Owner/Estimated effort/Delegation class/Acceptance Criteria wrapper of their own in sprint_backlog.md). Per execution_prompt.md STEP -1.5, standard mode: acceptance criteria for both IS defined -- in stage4_backlog_slice.md (explicitly the source of truth per its own header and per sprint_backlog.md's 'Backlog Slice Source' field), so this does not block execution. Delegation class was not stated for either in sprint_backlog.md; classified here per execution_prompt.md \u00a75.1 rules: ST-02 -> delegated_backend (backend fix, same position data path as ST-01, sign-off pattern mirrors ST-01), ST-03 -> autonomous (doc-only entry addition, unambiguous AC). sprint_backlog.md is sealed and cannot be corrected by this engine; flagging here for PMO Lead / Head of Specs Team awareness rather than halting the sprint over a documentation completeness gap in a sealed artefact whose AC is otherwise available and unambiguous."
   ],
@@ -275,7 +275,7 @@
       "status": "done",
       "branch": "exec/2026-08-17__release-v8.9/EPIC-03",
       "pr_number": 1454,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-17__release-v8.9/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -317,7 +317,7 @@
         "ST-09": {
           "title": "Verify ST-11 duration logging against a real post-merge invocation",
           "classification": "delegated_backend",
-          "status": "returned_to_backlog",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1437,
           "branch": "exec/2026-08-17__release-v8.9/EPIC-03",
@@ -325,22 +325,22 @@
           "delegation_record_id": "DEL-20260818-05",
           "blocked_since_utc": "2026-08-18T07:35:00Z",
           "unblock_criteria": "A live Render production log excerpt (post-merge) showing the digest-timing line with a real %.2fs value; docs/ops/api_performance_baseline.md \u00a736 updated to match; Infrastructure & Operations Owner sign-off.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-08-20T07:20:00Z",
+          "acceptance_verified": true,
           "spec_references": [],
           "spec_reference_not_applicable": true,
           "spec_reference_not_applicable_reason": "Entire item is staging-only per sprint_backlog.md: requires a real Render production log invocation, not CI-reproducible.",
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.qa_evidence_signed_off",
           "sign_off_record": {
-            "status": "pending",
-            "method": null,
+            "status": "cleared",
+            "method": "agent_mediated",
             "role": "Infrastructure & Operations Owner",
-            "date": null,
-            "result": null,
-            "findings": null
+            "date": "2026-08-20",
+            "result": "Approved with deviation",
+            "findings": "EPIC-03 merged to main (PR #1454); a real post-merge invocation was triggered (si05-weekly-digest.yml workflow_dispatch, run 32342881081, 2026-08-20T07:11:45-51Z, succeeded). Render's captured logs confirmed the request succeeded (200 OK) but the digest-timing line was genuinely absent -- root-caused to production's uvicorn process having no root logging configuration (confirmed via repo-wide grep of backend/ for basicConfig/addHandler/dictConfig -- none found), so logger.info() calls anywhere in the app never reach a handler. Filed as BLG-BE-107 (P2) rather than worked around silently. Product Owner (human, real-time in-session, 2026-08-20) accepted an interim GitHub Actions step-timing proxy in its place, matching the identical precedent already used for this endpoint (\u00a736.3, BLG-OPS-54/ST-21). See DEV-EPIC03-ST09-01."
           },
-          "notes": "Genuinely cannot be completed by the Sprint Execution Engine in-session -- requires a real Render production log line from a post-merge invocation, which by definition postdates this branch's own merge. Applying the in-flight returned_to_backlog transition (AUD-2026-05-27-003) now rather than waiting for formal sprint close: the deferral basis is not a fresh in-session judgment call but the pre-existing, sealed sprint_backlog.md staging-only designation for this item (line 465's QA-criteria review already confirmed this does not block sign-off), which itself carries Sprint Planning / Director of Quality authority from before this session -- not a live Product Owner exchange. Flagging this basis explicitly for human review in case it is judged insufficient for the in-flight path; if so, this can be reverted to blocked_backend and handled at formal STEP 5.2 instead, with no change to the eventual outcome. See DEL-20260818-05 for full delegation record."
+          "notes": "Completed 2026-08-20, post-merge. Original blocker (structurally required a post-merge invocation) resolved once EPIC-03 merged to main; the literal AC (Render log shows the timing line) remains genuinely unmet due to a separate, pre-existing platform logging gap discovered during evidence-gathering -- not a regression introduced by this cycle's work. Resolved via DEV-EPIC03-ST09-01 (P3) with an interim GitHub Actions timing-proxy measurement recorded in docs/ops/api_performance_baseline.md \u00a736.5, and BLG-BE-107 filed to track the real logging-config fix. See DEL-20260818-05 for full delegation record."
         },
         "ST-10": {
           "title": "Wrap audit-trail writes in the same transaction as the primary state update",
@@ -425,6 +425,7 @@
     "ST-05",
     "ST-07",
     "ST-08",
+    "ST-09",
     "ST-10",
     "ST-11",
     "ST-23"
@@ -433,13 +434,12 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
-      "EPIC-02"
-    ],
-    "epics_pending": [
+      "EPIC-02",
       "EPIC-03"
     ],
+    "epics_pending": [],
     "all_merged": false,
-    "notes": "EPIC-01 PR #1452 merged 2026-08-18T08:12:41Z. EPIC-02 PR #1453 merged 2026-08-19T15:45:41Z (confirmed via `gh pr view 1453`, mergedAt non-null) -- status/pr_status synced to merged/merged in this same reconciliation commit (CLAUDE.md \u00a78 cross-EPIC merge). EPIC-03 PR #1454 opened 2026-08-18, state=OPEN, mergeStateStatus was MERGEABLE pre-reconciliation -- this commit merges origin/main (with EPIC-02's changes) into the EPIC-03 branch per CLAUDE.md \u00a78, resolving conflicts in execution_state.json, delegation_log.md, backlog.md (sibling-key/union resolutions, no semantic collision found). Awaiting human Director of Quality PR sign-off and Product Owner acceptance on PR #1454 -- engine may not self-merge. `all_merged` remains false: sprint_backlog.md Sprint 1 scope includes EPIC-04 through EPIC-06, each on its own unmerged branch with its own execution_state.json copy not visible from this branch until they merge."
+    "notes": "EPIC-01 PR #1452 merged 2026-08-18T08:12:41Z. EPIC-02 PR #1453 merged 2026-08-19T15:45:41Z. EPIC-03 PR #1454 merged 2026-08-20T07:07:22Z (confirmed via `gh pr view 1454`, mergedAt non-null; human Director of Quality/Product Owner sign-off obtained before merge) -- status/pr_status synced to merged/merged in this same commit. ST-09 (EPIC-03's only remaining open item, staging-only, structurally required a post-merge invocation) completed post-merge 2026-08-20 -- see execution_state.json ST-09 entry, DEV-EPIC03-ST09-01, and docs/ops/api_performance_baseline.md \u00a736.5. `all_merged` remains false: sprint_backlog.md Sprint 1 scope includes EPIC-04 through EPIC-06, each still on its own unmerged branch with its own execution_state.json copy not visible from this branch until they merge."
   },
   "sealed": false,
   "sealed_utc": null

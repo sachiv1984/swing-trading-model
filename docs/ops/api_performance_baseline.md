@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.28
-**Date:** 2026-08-18
+**Version:** 2.29
+**Date:** 2026-08-20
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -1660,6 +1660,43 @@ AC-03: Methodology note added explaining why standard external HTTP
 Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-08-08
 Signed: [x] Product Owner (human, confirmed in-session — accepted interim
         single-sample measurement over blocking on BLG-BE-87) — 2026-08-08
+```
+
+### 36.5 Post-BLG-BE-87 attempt (ST-09, EPIC-03, v8.9) — still no Render-log-based duration field, new root cause found
+
+**Date:** 2026-08-20
+**Story:** ST-09 (EPIC-03, v8.9) — BLG-BE-99
+
+`BLG-BE-87` (referenced in §36.3) landed in the prior cycle (`2026-08-14__release-v8.8/EPIC-02`, tracked there as its own "ST-11"): `services/si05_digest_service.py::send_si05_digest()` now calls `logger.info("SI-05 digest sent (%d chars) in %.2fs", message_length, elapsed_s)` around the Telegram send. This story's job was to verify that line against a real post-merge invocation. EPIC-03 (which pulls in the merged v8.8 code, now on `main`) merged via PR #1454 on 2026-08-20.
+
+A real invocation was triggered: `si05-weekly-digest.yml`'s `workflow_dispatch`, GitHub Actions run [32342881081](https://github.com/sachiv1984/swing-trading-model/actions/runs/32342881081), `2026-08-20T07:11:45Z`–`07:11:51Z`, concluded `success`. The corresponding Render deploy log for that window shows the request completed (`"POST /digest/si05/send HTTP/1.1" 200 OK` at `07:11:51.376776548Z`) — but, once again, **no `"SI-05 digest sent..."` line appears anywhere in the log**, this time despite the application code that should emit it now genuinely being deployed and having genuinely run.
+
+**Root cause (verified):** production runs `uvicorn main:app --host 0.0.0.0 --port $PORT` (`render.yaml`'s `startCommand`) with no `--log-config`/`--log-level` flag, and `backend/main.py` never calls `logging.basicConfig()` or otherwise configures the root logger (confirmed via repo-wide grep of `backend/` — no `basicConfig`/`addHandler`/`dictConfig` anywhere). Uvicorn's default logging setup wires up only its own named loggers (`uvicorn`, `uvicorn.error`, `uvicorn.access`); it never touches the root logger or any `logging.getLogger(__name__)` logger used by application service modules. With the root logger at its default level (`WARNING`) and no handler attached, every `logger.info(...)` call anywhere in application code — not just this one — is filtered out before it ever reaches a handler. This is a genuine, pre-existing platform gap distinct from (and discovered only because of) `BLG-BE-87`'s otherwise-correct code change. Filed as `BLG-BE-107` (P2).
+
+**Interim measurement (second sample, same external-timing-proxy methodology as §36.3):** per Product Owner direction (2026-08-20, real-time in-session), the GitHub Actions step wall-clock duration for this `workflow_dispatch` run is recorded here in place of the still-unavailable Render-log duration:
+
+| Endpoint | Samples | Duration | Source | Flag |
+|----------|---------|----------|--------|------|
+| POST /digest/si05/send | 1 | ~0–2s (`started_at` `07:11:49Z`, `completed_at` `07:11:51Z` — second-level granularity) | GitHub Actions step timing (external proxy, not a Render log) | ⚠️ Single sample; not literally Render-internal-log-based (see root cause above); superseded once `BLG-BE-107` lands and a real log-derived value becomes obtainable |
+
+### 36.6 Sign-Off
+
+```
+ST-09 (v8.9 EPIC-03, BLG-BE-99) — Sign-Off
+
+AC-01: A real invocation's Render log confirms the digest-timing line
+       with a real elapsed-time value. ⚠️ NOT MET — genuinely unavailable
+       (root cause verified, §36.5; not assumed). Interim GitHub Actions
+       step-timing proxy recorded instead, per Product Owner direction.
+       See DEV-EPIC03-ST09-01.
+AC-02: docs/ops/api_performance_baseline.md §36 updated with the real
+       timing. ✅ PASS (interim proxy recorded, §36.5, same accepted
+       methodology as §36.3).
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-08-20
+Signed: [x] Product Owner (human, confirmed in-session — accepted interim
+        proxy measurement and BLG-BE-107 follow-up over blocking ST-09 or
+        fixing the logging gap inline) — 2026-08-20
 ```
 
 ---
