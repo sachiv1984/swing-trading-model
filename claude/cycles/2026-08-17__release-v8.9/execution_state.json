@@ -137,10 +137,10 @@
         "tests/e2e/trade-debrief.spec.js"
       ],
       "sprint2": {
-        "note": "PR #1453/status/pr_number/pr_status above cover the Sprint 1 subset only (ST-23/ST-04/ST-05/ST-07, merged 2026-08-19). ST-06 is a separate Sprint 2 subset per sprint_backlog.md's Multi-Sprint Gate Note, unblocked 2026-08-18 (ST-23 done/CONDITIONAL) but implemented in a distinct session/PR after EPIC-02's original PR had already merged -- tracked here rather than overwriting the Sprint 1 PR's accurate historical record.",
+        "note": "PR #1453/status/pr_number/pr_status above cover the Sprint 1 subset only (ST-23/ST-04/ST-05/ST-07, merged 2026-08-19). ST-06 is a separate Sprint 2 subset per sprint_backlog.md's Multi-Sprint Gate Note, unblocked 2026-08-18 (ST-23 done/CONDITIONAL) but implemented in a distinct session/PR after EPIC-02's original PR had already merged -- tracked here rather than overwriting the Sprint 1 PR's accurate historical record. PR #1460 merged 2026-08-20T11:58:57Z (merge commit 16e78013). All EPIC-02 work (Sprint 1 + Sprint 2) now fully merged to main.",
         "pr_number": 1460,
-        "pr_status": "open",
-        "status": "done"
+        "pr_status": "merged",
+        "status": "merged"
       },
       "stories": {
         "ST-23": {
