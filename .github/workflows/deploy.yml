@@ -31,6 +31,18 @@ jobs:
       env:
         REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
         REACT_APP_ANTHROPIC_API_KEY: ${{ secrets.REACT_APP_ANTHROPIC_API_KEY }}
+        # GitHub Pages serves this app from a /swing-trading-model subpath, not
+        # domain root. .env.production sets PUBLIC_URL=/ for the Render static
+        # site (which serves at root) and CRA loads .env.production
+        # automatically for any production build, including this one. Without
+        # this override, asset paths resolve to /static/... instead of
+        # /swing-trading-model/static/..., 404ing on GitHub Pages and leaving
+        # the app blank (root cause of the 2026-08-21 white-page incident,
+        # introduced by .env.production's PUBLIC_URL=/ in commit 5f80e301,
+        # [EPIC-05][ST-16]). An explicit env var here wins over .env.production
+        # in CRA's precedence, so this is a build-step-only fix — it does not
+        # touch .env.production or affect the Render deploys.
+        PUBLIC_URL: /swing-trading-model
       run: CI=false npm run build
       
     - name: Deploy to GitHub Pages
