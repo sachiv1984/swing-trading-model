@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-08-17__release-v8.9",
   "cycle_name": "v8.9 — Live Risk-Management Correctness & Trade Intelligence Expansion",
-  "status": "Verified_with_deviations",
-  "prior_status": "Executing",
+  "status": "Closed",
+  "prior_status": "Verified_with_deviations",
   "engine": "Sprint Execution",
   "execution_state_path": "claude/cycles/2026-08-17__release-v8.9/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-08-17__release-v8.9/stage4_backlog_slice.md",
