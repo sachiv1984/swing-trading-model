@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-20 (session — 2 new items added from PR #1460 two-agent review: BLG-TECH-17, BLG-BE-108); prior — 2026-08-20 (CLAUDE.md §8 backlog-additions branch reconciliation — combines this branch's 4-item Sprint 1 PR-review addition (BLG-BE-106, BLG-FEAT-93, BLG-OPS-147, BLG-TECH-16, filed 2026-08-19) with main's already-merged BLG-BE-107, filed 2026-08-20 while completing ST-09/EPIC-03); prior — 2026-08-19 (CLAUDE.md §8 cross-EPIC merge reconciliation — EPIC-02 merged via PR #1453, EPIC-03 branch rebased onto main: combines EPIC-02's 5-item addition (BLG-GOV-311, BLG-TECH-13/14/15, BLG-FE-164) and EPIC-03's one-line returned-to-backlog note under BLG-BE-99 per execution_prompt.md §5.2, both filed 2026-08-18 on their respective branches before either merged); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-21 (session — 1 new item added: BLG-OPS-148, CI safeguard for the GitHub Pages white-page incident); prior — 2026-08-20 (session — 2 new items added from PR #1460 two-agent review: BLG-TECH-17, BLG-BE-108); prior — 2026-08-20 (CLAUDE.md §8 backlog-additions branch reconciliation — combines this branch's 4-item Sprint 1 PR-review addition (BLG-BE-106, BLG-FEAT-93, BLG-OPS-147, BLG-TECH-16, filed 2026-08-19) with main's already-merged BLG-BE-107, filed 2026-08-20 while completing ST-09/EPIC-03); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -5016,6 +5016,29 @@ ST-16 fixed the local-venv Python-pin documentation and added `PUBLIC_URL=/` to 
 
 **Acceptance Criteria**
 - Production `PUBLIC_URL` dashboard value confirmed one way or the other, documented in this item's resolution
+
+---
+
+### BLG-OPS-148 — Add CI safeguard to catch future PUBLIC_URL/asset-path regressions on GitHub Pages deploy
+
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** 2026-08-21 GitHub Pages white-page incident, fixed via PR #1461; related: BLG-OPS-146, BLG-OPS-147
+**Effort:** S (~0.5d)
+**Provisional-Target:** v8.10
+
+**Problem**
+On 2026-08-21 the GitHub Pages site went blank because `.env.production`'s `PUBLIC_URL=/` (added in `5f80e301`, `[EPIC-05][ST-16]`, merged to `main` 2026-08-20) was picked up automatically by `deploy.yml`'s `npm run build`, overriding `package.json`'s `homepage`-derived subpath and producing root-relative asset paths that 404 on GitHub Pages (served from `/swing-trading-model`). PR #1461 fixed it by pinning `PUBLIC_URL: /swing-trading-model` as an explicit build-step env var, but that's a point fix — nothing stops a future edit to `.env.production` (or any new CRA-auto-loaded env file) from silently reintroducing root-relative paths, since Render (root-served) and GitHub Pages (subpath-served) share that file with no automated check that the GitHub Pages build output is actually subpath-correct. BLG-OPS-146/147 track confirming `PUBLIC_URL` values are correct per-environment but neither adds a check that would have caught this regression.
+
+**Scope**
+- Add a CI step (in `deploy.yml`, after `npm run build`) that fails the job if `build/index.html`'s script/link asset paths don't start with `/swing-trading-model/`
+- Document the check's rationale inline (why GitHub Pages needs a subpath and Render doesn't) so a future edit understands the constraint instead of just seeing a red CI check
+
+**Acceptance Criteria**
+- `deploy.yml` fails fast if a future build produces root-relative (or otherwise wrong-subpath) asset paths in `build/index.html`
+- A deliberate local test (temporarily unsetting the `PUBLIC_URL` override) confirms the new step actually catches the regression
+- Infrastructure & Operations Owner sign-off
 
 ---
 
