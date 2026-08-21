@@ -73,10 +73,13 @@ class TestPureFunctions:
         assert counts["-3R to -2R"] == 0
 
     def test_r_multiples_excludes_trades_without_qualifying_stop(self):
+        # ST-05 (BLG-TECH-15, v9.0): column names are strategy_engine.
+        # backtest()'s canonical capitalized schema, not the pre-
+        # consolidation lower_snake_case names.
         trades_df = pd.DataFrame([
-            {"entry_price": 100.0, "exit_price": 110.0, "initial_stop_price": 90.0},   # R = 1.0
-            {"entry_price": 100.0, "exit_price": 90.0, "initial_stop_price": None},     # excluded: no stop
-            {"entry_price": 100.0, "exit_price": 95.0, "initial_stop_price": 100.0},    # excluded: entry <= stop
+            {"Entry": 100.0, "Exit": 110.0, "Initial Stop": 90.0},   # R = 1.0
+            {"Entry": 100.0, "Exit": 90.0, "Initial Stop": None},     # excluded: no stop
+            {"Entry": 100.0, "Exit": 95.0, "Initial Stop": 100.0},    # excluded: entry <= stop
         ])
         r_values = svc._r_multiples(trades_df)
         assert r_values == [1.0]

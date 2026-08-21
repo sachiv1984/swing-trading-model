@@ -151,7 +151,7 @@ class TestComputeRiskOnNanHandling:
 # ---------------------------------------------------------------------------
 
 class TestBacktestDeterminism:
-    def test_ac02_identical_inputs_produce_byte_identical_output(self, monkeypatch):
+    def test_ac02_identical_inputs_produce_byte_identical_output(self):
         """Controlled re-run comparison: backtest() called twice with byte-
         identical inputs must produce byte-identical pv/returns/trades_df.
         This guards against incidental nondeterminism in the engine itself,
@@ -163,9 +163,9 @@ class TestBacktestDeterminism:
         signals = ps.compute_signals(prices, lookback=10, top_n=1, ma_period=5)
         volatility = prices.pct_change().rolling(10).std()
 
+        # ST-05 (BLG-TECH-15, v9.0): regime state is an explicit parameter
+        # on the consolidated backtest(), not a module global to monkeypatch.
         always_on = pd.Series(True, index=prices.index)
-        monkeypatch.setattr(ps, "spy_risk_on", always_on, raising=False)
-        monkeypatch.setattr(ps, "ftse_risk_on", always_on, raising=False)
 
         kwargs = dict(
             rebalance_freq="ME", atr_mult=2, min_position_pct=0.05,
@@ -173,8 +173,8 @@ class TestBacktestDeterminism:
             stop_loss_mode="profit_lock", initial_atr_mult=5, profit_atr_mult=2,
         )
 
-        pv1, returns1, trades1 = ps.backtest(signals, prices, volatility, atr, **kwargs)
-        pv2, returns2, trades2 = ps.backtest(signals, prices, volatility, atr, **kwargs)
+        pv1, returns1, trades1 = ps.backtest(signals, prices, volatility, atr, always_on, always_on, **kwargs)
+        pv2, returns2, trades2 = ps.backtest(signals, prices, volatility, atr, always_on, always_on, **kwargs)
 
         pd.testing.assert_series_equal(pv1, pv2)
         pd.testing.assert_series_equal(returns1, returns2)
@@ -229,7 +229,7 @@ class TestComputeRebalanceDatesExcludesInProgressMonth:
         rebalance_dates_historical = ps.compute_rebalance_dates(historical_idx, "ME")
         assert historical_idx[-1] in rebalance_dates_historical
 
-    def test_end_to_end_backtest_does_not_rebalance_on_in_progress_month(self, monkeypatch):
+    def test_end_to_end_backtest_does_not_rebalance_on_in_progress_month(self):
         """Full backtest() integration: with as_of pinned mid-month, no trade
         entry/rebalance activity should key off the in-progress month's last
         available row."""
@@ -242,15 +242,15 @@ class TestComputeRebalanceDatesExcludesInProgressMonth:
         signals = ps.compute_signals(prices, lookback=20, top_n=1, ma_period=10)
         volatility = prices.pct_change().rolling(20).std()
 
+        # ST-05 (BLG-TECH-15, v9.0): regime state is an explicit parameter
+        # on the consolidated backtest(), not a module global to monkeypatch.
         always_on = pd.Series(True, index=prices.index)
-        monkeypatch.setattr(ps, "spy_risk_on", always_on, raising=False)
-        monkeypatch.setattr(ps, "ftse_risk_on", always_on, raising=False)
 
         as_of = pd.Timestamp("2026-08-14")
         # backtest() must run end-to-end without error using the same
         # as_of-pinned rebalance_dates computation exercised directly below.
         ps.backtest(
-            signals, prices, volatility, atr,
+            signals, prices, volatility, atr, always_on, always_on,
             rebalance_freq="ME", atr_mult=2, min_position_pct=0.05,
             max_position_pct=0.20, min_hold_days=5, risk_off_mode="single",
             stop_loss_mode="profit_lock", initial_atr_mult=5, profit_atr_mult=2,
