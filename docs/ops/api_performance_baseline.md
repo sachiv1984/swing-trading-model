@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.30
-**Date:** 2026-08-20
+**Version:** 2.31
+**Date:** 2026-08-21
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -1679,6 +1679,14 @@ A real invocation was triggered: `si05-weekly-digest.yml`'s `workflow_dispatch`,
 |----------|---------|----------|--------|------|
 | POST /digest/si05/send | 1 | ~0–2s (`started_at` `07:11:49Z`, `completed_at` `07:11:51Z` — second-level granularity) | GitHub Actions step timing (external proxy, not a Render log) | ⚠️ Single sample; not literally Render-internal-log-based (see root cause above); superseded once `BLG-BE-107` lands and a real log-derived value becomes obtainable |
 
+**Known Deviation fields (DEV-EPIC03-ST09-01, per §3 Known Deviation Standard — added at post-ship closure, 2026-08-21, to make the fields below explicit rather than only inferable from the narrative above):**
+- **Description:** Render production log's SI-05 digest-timing line (`"SI-05 digest sent (%d chars) in %.2fs"`) genuinely absent from a real post-merge invocation, despite the emitting code now being deployed and having run.
+- **Canonical requirement:** ST-09 AC-01 (`stage4_backlog_slice.md`) — "A real invocation's Render log confirms the `\"SI-05 digest sent... in %.2fs\"` ... line is present with a real elapsed-time value."
+- **Priority:** P3
+- **Target resolution release:** Superseded once `BLG-BE-107` (root logging configuration) lands and a real Render-log-derived value becomes obtainable — no fixed release targeted yet (`BLG-BE-107` Provisional-Target: v9.0).
+- **Owner:** Infrastructure & Operations Owner
+- **Backlog reference:** BLG-BE-107
+
 ### 36.6 Sign-Off
 
 ```
@@ -1902,6 +1910,7 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.31 | 2026-08-21 | Post-Ship Closure Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | STEP 5 canonical spec deviation compliance check (post-ship closure, `2026-08-17__release-v8.9`): `DEV-EPIC03-ST09-01`'s §36.5 narrative covered all required §3 Known Deviation Standard content but not under explicit labeled fields — added a compact labeled-fields block (Description, Canonical requirement, Priority, Target resolution release, Owner, Backlog reference) immediately after §36.5's interim-measurement table so the entry is unambiguously compliant, without altering the existing narrative/sign-off content. |
 | 2.29 | 2026-08-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-09 (v8.9 EPIC-03, BLG-BE-99): §36.5/§36.6 added — post-`BLG-BE-87` real invocation attempted (`si05-weekly-digest.yml` run 32342881081), digest-timing log line still absent; root-caused to production's `uvicorn` having no root logging configuration (`BLG-BE-107` filed, P2). Interim GitHub Actions step-timing proxy recorded (second sample, same methodology as §36.3), per Product Owner direction. **Self-corrected same-day (this row was missing from Document History despite the header already reading 2.29 — added per shared_standards.md §9.1's self-consistency check, run before this document's own next bump to 2.30 below.)** |
 | 2.30 | 2026-08-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-06 (v8.9 EPIC-02, BLG-FEAT-90): §41 added — `GET /trades/{trade_id}/debrief`, `POST /trades/{trade_id}/debrief` registered pending live timing run. `POST`'s estimate flagged higher-latency-by-design (one Claude Haiku 4.5 call, worst case one regeneration per §13 review Condition 9) rather than the standard write-op fast-INSERT pattern. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the 2 new paths in the same PR. |
 | 2.28 | 2026-08-18 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-07 (v8.9 EPIC-02, BLG-FEAT-89): §40 added — `POST /strategy/backtest-rule-change/run`, `GET /strategy/backtest-rule-change/runs`, `GET /strategy/backtest-rule-change/runs/{id}` registered pending live timing run. `POST /run`'s estimate flagged high-latency-by-design (network-I/O-dominated: 3 live yfinance calls + two full backtest simulations over a bounded 20-ticker/4-year window) rather than the standard write-op fast-INSERT pattern. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the 3 new paths in the same PR. |

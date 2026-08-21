@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-21 (session — 1 new item added: BLG-OPS-148, CI safeguard for the GitHub Pages white-page incident); prior — 2026-08-20 (session — 2 new items added from PR #1460 two-agent review: BLG-TECH-17, BLG-BE-108); prior — 2026-08-20 (CLAUDE.md §8 backlog-additions branch reconciliation — combines this branch's 4-item Sprint 1 PR-review addition (BLG-BE-106, BLG-FEAT-93, BLG-OPS-147, BLG-TECH-16, filed 2026-08-19) with main's already-merged BLG-BE-107, filed 2026-08-20 while completing ST-09/EPIC-03); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-21 (groom backlog post-ship closure 2026-08-17__release-v8.9 — 21 shipped items marked ✅ COMPLETE then archived to backlog_archive.md; `BLG-GOV-264` left open, split-achievability; 1 ephemeral Release Slice section removed; 2 known genuine duplicate IDs carried forward unchanged (BLG-FEAT-84, BLG-SEC-18 — pending PO/Head of Specs Team disposition); Gate Field Normalisation 0 in active backlog; Effort Day-Range Validation PASS; Governance Prompt Duplicate Cross-Check 15 raw candidates, 0 genuine; 3 items flagged for 3-cycle-deferral PO disposition (BLG-FEAT-74, BLG-GOV-140, BLG-GOV-141); health=PASS with 5 flagged items; report: claude/backlog/backlog_health_20260821.md); prior — 2026-08-21 (session — 1 new item added: BLG-BE-109, nightly backtest rebalance-date computation treats in-progress month's latest bar as month-end); prior — 2026-08-21 (session — 1 new item added: BLG-OPS-148, CI safeguard for the GitHub Pages white-page incident); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -17,39 +17,6 @@
 > **Ephemeral sections** (Release Slice tables, Test Scenario Gap sections, and "Returned to Backlog" sections appended by governance engines) are temporary. They must be removed during the next `groom backlog` run after the cycle closes. Any still-open items within them must be promoted to the appropriate §1–§8 type section before the ephemeral section is removed.
 
 *Completed and killed items are recorded in `claude/backlog/backlog_archive.md`.*
-
----
-
-## Release Slice — v8.9 (ephemeral — remove at next `groom backlog` after cycle closes)
-
-<!-- release-plan-marker: RP:v8.9:2026-08-17__release-v8.9 -->
-
-22 items committed to `2026-08-17__release-v8.9`. Full acceptance criteria: `claude/cycles/2026-08-17__release-v8.9/stage4_backlog_slice.md`.
-
-| ST | Source | Epic | Priority | Effort |
-|----|--------|------|----------|--------|
-| ST-01 | BLG-BE-102 | EPIC-01 | P0 | M |
-| ST-02 | BLG-BE-103 | EPIC-01 | P0 | S |
-| ST-03 | BLG-SPEC-85 | EPIC-01 | P3 | S |
-| ST-04 | BLG-BE-104 | EPIC-02 | P2 | M |
-| ST-05 | BLG-FEAT-91 | EPIC-02 | P2 | M |
-| ST-06 | BLG-FEAT-90 | EPIC-02 | P2 | M |
-| ST-07 | BLG-FEAT-89 | EPIC-02 | P2 | L |
-| ST-08 | BLG-BE-98 | EPIC-03 | P2 | S |
-| ST-09 | BLG-BE-99 | EPIC-03 | P3 | XS |
-| ST-10 | BLG-BE-100 | EPIC-03 | P3 | S |
-| ST-11 | BLG-BE-101 | EPIC-03 | P3 | S |
-| ST-12 | BLG-QA-149 | EPIC-04 | P3 | XS |
-| ST-13 | BLG-QA-150 | EPIC-04 | P3 | S |
-| ST-14 | BLG-QA-151 | EPIC-04 | P3 | S |
-| ST-15 | BLG-QA-152 | EPIC-04 | P3 | S |
-| ST-16 | BLG-OPS-146 | EPIC-05 | P3 | S |
-| ST-17 | BLG-OPS-113 | EPIC-05 | P3 | S |
-| ST-18 | BLG-SPEC-130 | EPIC-05 | P3 | XS |
-| ST-19 | BLG-GOV-308 | EPIC-06 | P3 | XS |
-| ST-20 | BLG-GOV-309 | EPIC-06 | P3 | S |
-| ST-21 | BLG-GOV-264 | EPIC-06 | P3 | XS |
-| ST-22 | BLG-GOV-260 | EPIC-06 | P3 | S |
 
 ---
 
@@ -4052,14 +4019,6 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 
 ---
 
-### BLG-OPS-113 — Consolidate window_summary_IW-*.md files older than 90 days into a dated archive folder
-**Priority:** P3 (Low) | **Type:** Operations / Housekeeping | **Owner:** Head of Specs Team | **Source:** IDEA-head-of-specs-20260717-02 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** `claude/ideas/` now holds 20+ `window_summary_IW-*.md` files accumulated since 2026-03-21 with no archival pass — a directory-hygiene gap analogous to the pattern `ideas_housekeeping_prompt.md` already solves for register rows.
-**Scope:** Move `window_summary_IW-*.md` files older than 90 days into a dated archive subfolder (e.g. `claude/ideas/window_summaries_archive/`), leaving the most recent 90 days in place for easy reference.
-**Acceptance Criteria:** Archive folder created; files older than 90 days moved; no content lost (move, not delete).
-
----
-
 ### BLG-GOV-203 — Gemini AI usage audit-trail retention policy
 **Priority:** P3 (Low) | **Type:** Governance / AI Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** `gemini_audit_log` (v4.0) has no retention/archival policy; unbounded growth complicates compliance review.
@@ -4136,13 +4095,6 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Scope:** Sample the last 5 `verification_report.md` files; confirm comparable findings received comparable tier labels; document any drift found.
 **Acceptance Criteria:** Spot-check completed and documented; any labelling drift found is either corrected going forward or explicitly justified.
 
-### BLG-SPEC-85 — `trailing_stop_action_rate` spec entry with validation tolerances
-**Priority:** P3 (Low) | **Type:** Spec Debt / Metrics | **Owner:** Metrics Definitions & Analytics Canonical Owner | **Source:** IDEA-metrics-20260713-02 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** v7.0's `trailing_stop_action_rate` metric instrumentation (EPIC-02 ST-07, `BLG-BE-50`) shipped without a formal `metrics_definitions.md` entry defining acceptable validation tolerances (e.g. expected range, what a stale/anomalous reading looks like).
-**Scope:** Add a formal spec entry mirroring the format of other Arc 3/5 metrics already documented, including explicit validation tolerance bounds.
-**Acceptance Criteria:** Entry added to `metrics_definitions.md`; tolerances stated numerically, not qualitatively.
-
-
 ---
 
 ### BLG-GOV-235 — Idea-intake minimum-submission flex condition
@@ -4187,85 +4139,6 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 - `docs/specs/Specs_Index.md` has a `## Changelog` table or companion changelog file
 - `**Last Updated:**` header field is a single line, no `prior —` chaining
 - Head of Specs Team sign-off
-
----
-
-### BLG-BE-98 — Investigate GET /trade-plans/tags ~10s p50 latency
-**Priority:** P2 (Medium) | **Type:** Backend Engineering | **Owner:** Backend Engineering Patterns Owner | **Source:** ST-05/EPIC-01 (`2026-08-14__release-v8.8`) | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** Live staging measurement (`docs/ops/api_performance_baseline.md` §39.2) found `GET /trade-plans/tags` at p50=9,845ms / p95=10,041ms — roughly 4x slower than the structurally near-identical `GET /positions/tags` (p50=2,409ms, measured in the same run, same conditions). The router's own docstring states `GET /trade-plans/tags` "Mirrors GET /positions/tags", so a 4x gap for what should be a comparable single-table distinct-tag scan (`trade_plans.trade_tags` vs `positions.tags`) is unexpected — likely a missing index, a per-row Python-side dedup instead of a `SELECT DISTINCT`, or an N+1 pattern in `get_all_trade_plan_tags`.
-**Scope:** Profile `get_all_trade_plan_tags`'s query plan against `get_all_position_tags`'s (or equivalent); identify and fix the structural cause of the latency gap.
-**Acceptance Criteria:** Root cause identified; fix applied or filed as a follow-up with root cause documented; re-measured p50 within the same order of magnitude as `GET /positions/tags`; Backend Engineering Patterns Owner sign-off.
-
----
-
-### BLG-BE-99 — Verify ST-11 duration logging against a real post-merge invocation
-**Priority:** P3 (Low) | **Type:** Backend Engineering / Operations | **Owner:** Infrastructure & Operations Owner | **Source:** ST-11/EPIC-02 (`2026-08-14__release-v8.8`) — split off during sprint execution | **Effort:** XS | **Provisional-Target:** TBD
-**Problem:** ST-11 (`BLG-BE-87`) added elapsed-time logging around `send_si05_digest()`'s Telegram send call, but its AC also requires verifying the new log line against a real invocation and recording the real timing in `docs/ops/api_performance_baseline.md` §36. Production deploys from `main`, and this code exists only on the unmerged `exec/2026-08-14__release-v8.8/EPIC-02` branch at filing time — a user-approved manual `workflow_dispatch` of `si05-weekly-digest.yml` during sprint execution confirmed the endpoint still works but ran the pre-ST-11 code path (Render log showed only the pre-existing access-log line, no `"SI-05 digest sent... in %.2fs"` line). Verification cannot succeed until this EPIC merges and Render redeploys.
-**Scope:** After v8.8/EPIC-02 merges to `main` and redeploys, trigger `si05-weekly-digest.yml` (scheduled Sunday 19:00 UTC run, or another user-approved manual dispatch) and query Render logs (`render-si05-log-query.yml`) for the new duration-logged line; add the real elapsed-time value to `docs/ops/api_performance_baseline.md` §36.
-**Acceptance Criteria:** A real invocation's Render log confirms the `"SI-05 digest sent... in %.2fs"` (or failure-path equivalent) line is present with a real elapsed-time value; `docs/ops/api_performance_baseline.md` §36 updated with that value.
-
-**Returned to backlog (2026-08-18, cycle `2026-08-17__release-v8.9`, ST-09/EPIC-03):** Same structural blocker recurred — requires a real post-merge Render log invocation, not obtainable pre-merge; see `execution_state.json` ST-09 and delegation record DEL-20260818-05 (renumbered from the original DEL-20260818-01 during EPIC-02/EPIC-03 merge reconciliation — see `delegation_log.md`) for this cycle's disposition.
-
-**Resolved (2026-08-20, post-merge, ST-09/EPIC-03):** EPIC-03 merged to `main` (PR #1454) and a real post-merge invocation was triggered. The digest line still did not appear in Render's captured logs — root-caused to a genuine, separate platform gap (production's `uvicorn` process has no root logging configuration, so `logger.info()` calls from application code never reach a handler; see `BLG-BE-107`). Product Owner accepted an interim GitHub Actions step-timing proxy for this invocation instead (same methodology as the original `BLG-OPS-54`/§36.3 precedent) — see `docs/ops/api_performance_baseline.md` §36.5 and `DEV-20260820-01`.
-
----
-
-### BLG-BE-100 — Wrap audit-trail writes (position_state_history, position_audit_log) in the same transaction as the primary state update
-**Priority:** P3 (Low) | **Type:** Backend Engineering / Data Integrity | **Owner:** Head of Engineering | **Source:** DoQ agent-mediated second-pass review of EPIC-02 PR #1423 (`2026-08-14__release-v8.8`) — 2026-08-16 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** `position_state_history` (ST-08/DS-13, v8.8) and the pre-existing `position_audit_log` both write their audit row before the primary lifecycle-state-persisting call commits. If the primary write fails after the audit write succeeds, the audit trail records a transition that never actually took effect — a low-probability but genuine, unexamined data-integrity risk repeated across two audit tables, not a one-off.
-**Scope:** Review both write sites (`refresh_position_lifecycle()` for `position_state_history`; the equivalent `position_audit_log` call site) and either (a) wrap the audit write and the primary persisting write in a single DB transaction, or (b) add an explicit compensating check/reconciliation job, whichever fits the existing fail-open convention with least disruption. Document the decision and reasoning in `data_model.md`.
-**Acceptance Criteria:** A documented, deliberate fix-or-accept decision exists for both audit-write call sites; if fixed, a test demonstrates the audit row is not written when the primary write fails; if accepted, the risk and rationale are recorded in `data_model.md`'s relevant DS entries.
-
----
-
-### BLG-BE-102 — Nightly trailing-stop ratchet does not apply breakeven floor for profitable positions
-**Priority:** P0 (Critical)
-**Type:** Backend Engineering / Risk Management
-**Owner:** Backend Engineering Patterns Owner
-**Source:** User review session — 2026-08-17 (found while investigating a live WDC position stop-loss discrepancy)
-**Effort:** M (~1–2d)
-**Provisional-Target:** TBD (next release)
-
-**Problem**
-For an open, profitable position (WDC, entry 2026-08-07, native entry price $434.30, holding_days=10, +17.15% pnl), the stored `current_stop` in the DB is still exactly equal to `initial_stop` ($163.31 — the wide 5×ATR entry-time stop) with zero ratcheting despite the position being profitable across its entire hold and grace period having just ended. Two divergent trailing-stop implementations exist: `backend/position_manager.py`'s inline calc (`trailing_stop = max(current_stop, new_stop)`, no breakeven floor) and `backend/utils/calculations.py::calculate_trailing_stop` (`trailing_stop = max(current_stop, new_stop, entry_price)` when profitable — per its own docstring, "never go below entry"). If the path that actually runs nightly matches the `position_manager.py` behaviour rather than calling `calculate_trailing_stop`, the breakeven floor is never applied and a profitable position's enforced stop can silently freeze at its stale wide entry-time value indefinitely. Verified expected value for this position as of the investigation date: `max(163.31, current_price(508.80) − 2×ATR(54.1986), entry_price(434.30))` = **$434.30** (breakeven floor governs), vs. the actual stored value of $163.31 — a $271.00/share (62%) discrepancy on a stop that is now actively enforced (grace_period=false).
-**Impact:** Core risk-management correctness bug. An actively-enforced stop-loss can silently sit at a wide entry-time value instead of ratcheting to protect gains, exposing a profitable position to a much larger loss than the strategy design intends. Affects any profitable position whose nightly recompute takes the unfloored path.
-
-**Scope**
-- Confirm which trailing-stop implementation `run_nightly_trailing_stop_update` (and/or its production scheduled job) actually invokes for live positions
-- Consolidate on `utils/calculations.py::calculate_trailing_stop` (has the breakeven floor); remove or bring `position_manager.py`'s divergent inline calc into parity
-- Backfill/recompute `current_stop` for any currently-open profitable position whose stored value is below its own entry price
-- Add a regression test asserting stored `current_stop` for a profitable position is never below `max(prior current_stop, entry_price)`
-
-**Acceptance Criteria**
-- Only one trailing-stop calculation path is used in production (nightly job and any on-demand recompute)
-- No open profitable position has `current_stop` below its own `entry_price`
-- Regression test added and passing, covering the breakeven-floor case
-- Backend Engineering Patterns Owner sign-off
-
----
-
-### BLG-BE-103 — `current_trailing_stop` / `stop_price` returned in GBP for US-market positions but rendered with the native currency symbol
-**Priority:** P0 (Critical)
-**Type:** Backend Engineering / Frontend
-**Owner:** Backend Engineering Patterns Owner; Frontend Specifications & UX Documentation Owner
-**Source:** User review session — 2026-08-17 (same investigation as `BLG-BE-102`)
-**Effort:** S (~0.5–1d)
-**Provisional-Target:** TBD (next release)
-**Depends on:** BLG-BE-102 (same position data path — fixing the display bug alone would still surface a correctly-labeled but stale number until the ratchet bug is also fixed)
-
-**Problem**
-`position_service.py`'s position-list builder (`get_positions`) returns `initial_stop` unconverted (native currency) but converts `current_trailing_stop` and `stop_price` to GBP for US-market positions (`current_trailing_stop_native / live_fx_rate`). `PositionCard.js` picks its currency symbol solely from `position.market` ("US" → "$", "UK" → "£"), with no awareness that `current_trailing_stop`/`stop_price` are GBP while `initial_stop` is native — so both fields render with the same `$` symbol despite holding values in different currencies. Verified example (WDC position): native `current_stop` = $163.31, `live_fx_rate` = 1.3558 → `current_trailing_stop` = 163.31 / 1.3558 = 120.45, displayed as `$120.45` — a second, apparently-lower USD stop that is actually the identical $163.31 stop re-expressed in GBP. This produced two different-looking numbers on the same card for what is really one stop value, and was misleading enough that the user nearly treated the GBP figure as a genuine, much lower USD stop when deciding what to set their stop to.
-**Impact:** Directly misleading value on an actively-traded position's risk display. Not display-only in effect — it demonstrably drove user confusion during an actual stop-loss decision.
-
-**Scope**
-- Return `current_trailing_stop` and `stop_price` in native currency, consistent with `initial_stop` (the existing `stop_price_native` field is already correct and can be the single source of truth), or clearly suffix both native and GBP variants (`_native` / `_gbp`) on every stop-related field
-- Update `PositionCard.js` (and any other consumer, e.g. Table View's equivalent cell) to read the native field for its currency-symbol'd display
-- Audit other position fields for the same native-vs-GBP-without-suffix pattern to confirm this isn't systemic beyond stop fields
-
-**Acceptance Criteria**
-- `initial_stop`, `current_trailing_stop`, and `stop_price` are all in the same currency basis (native) for a given position, or are unambiguously suffixed and the frontend consumes the correct one
-- WDC (or an equivalent US-market profitable position) test case shows a single consistent stop value across Init and live-stop tiles
-- Backend Engineering Patterns Owner and Frontend Specifications & UX Documentation Owner sign-off
 
 ---
 
@@ -4348,14 +4221,6 @@ For an open, profitable position (WDC, entry 2026-08-07, native entry price $434
 **Problem:** `scored_initiatives.md` Effort Band (§16.7) and `backlog.md` Effort day-ranges (§16.12) are assigned at promotion time but never checked back against actual delivery time — no feedback loop exists to calibrate future estimates.
 **Scope:** Add a quarterly (or every-N-cycle) retrospective comparing estimated effort bands to actual sprint-close data.
 **Acceptance Criteria:** Retrospective cadence documented; FinOps & Resource Architect sign-off.
-
----
-
-### BLG-GOV-260 — Retire stale `RA:` roadmap-annotation markers older than 3 releases
-**Priority:** P3 (Low) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** IDEA-head-of-specs-20260727-02 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** `current_roadmap.md` §3 accumulates `RA:` retirement markers indefinitely (18+ visible as of this cycle, back to v5.0) with no defined pruning rule — each is a one-line pointer to `roadmap_archive.md`, so retaining very old ones adds document length without adding information not already in the archive.
-**Scope:** Define a rule (e.g. `manage roadmap` STEP N) to prune `RA:` markers older than 3 releases, since the archive itself remains the permanent record.
-**Acceptance Criteria:** Rule documented in `roadmap_management_prompt.md`; Head of Specs Team sign-off.
 
 ---
 
@@ -4477,9 +4342,6 @@ For an open, profitable position (WDC, entry 2026-08-07, native entry price $434
 **Problem:** Several documents cite a specific `strategy_rules.md` version (e.g. §13 review records, compliance score formulas); when `strategy_rules.md` is incremented, nothing checks whether those cross-references have gone stale.
 **Scope:** Add a check comparing cited `strategy_rules.md` versions in dependent docs against the current version.
 **Acceptance Criteria:** Check added; first run's findings triaged; Strategy Rules & System Intent Owner sign-off.
-
----
-
 
 ---
 
@@ -4635,50 +4497,6 @@ For an open, profitable position (WDC, entry 2026-08-07, native entry price $434
 
 ---
 
-### BLG-QA-149 — Add test coverage for screener_refresh/risk_off_alerts job-registration wiring
-**Priority:** P3 (Low) | **Type:** QA / Testing | **Owner:** QA & Testing Owner | **Source:** PR #1422 agent-mediated Director of Quality review (ST-01/ST-02/EPIC-01, `2026-08-14__release-v8.8`) | **Effort:** XS | **Provisional-Target:** TBD
-**Problem:** ST-01/ST-02 (v8.8) added `record_nightly_job("screener_refresh", ...)` (in `backend/routers/screener.py`'s background run task) and `record_nightly_job("risk_off_alerts", ...)` (in `backend/main.py`'s `risk_off_alerts_endpoint`), each on both the success and error paths — but no test asserts these calls actually fire with the correct job name and status. The full suite passing confirms no regression today, but nothing would catch a future accidental removal, renaming, or status-value typo in either call site.
-**Scope:** Add unit tests patching `record_nightly_job` and asserting call args for both the success and error paths of each of the two endpoints (mirrors the existing pattern already used for `trailing_stop`/`rebalance_exit` if one exists, or `tests/test_strategy_benchmark_summary.py`'s mocking approach otherwise).
-**Acceptance Criteria:** Tests added covering success + error paths for both `screener_refresh` and `risk_off_alerts`; QA & Testing Owner sign-off.
-
----
-
-### BLG-QA-150 — trade_plans.setup_type has no default/required guarantee outside the linked-signal pre-population path
-**Priority:** P3 (Low) | **Type:** QA / Data Quality | **Owner:** Product Owner; Frontend Specifications & UX Documentation Owner | **Source:** ST-18 (BLG-QA-140, EPIC-04, `2026-08-14__release-v8.8`), discovered mid-sprint during BLG-QA-140's own field-population audit | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** `POST /trade-plans` accepts `setup_type` as an optional, client-supplied field with no server-side default. `TradePlan.js` only pre-populates it (`"Momentum Continuation"`) when the plan is created from a ticker with a matching watchlisted signal (`src/pages/TradePlan.js:495-508`) — any other creation path (manual entry, Ticker Universe, Research CTA with no matching signal, direct API use) saves `setup_type: null` unless the user manually picks a value. This undercounts Arc 6/SI-02's future `win_rate_by_setup_type` analysis (`si02_query_predesign.md`), since a null value doesn't group into any of the 6 canonical `setup_type` enum values.
-**Scope:** Product Owner / Frontend Specifications & UX Documentation Owner to decide treatment — e.g. make `setup_type` a required form field, or add an explicit "Unclassified"/"Other" default so null rows still group predictably rather than silently dropping out of future setup-type-grouped queries.
-**Acceptance Criteria:** Decision recorded (required field vs. default value vs. accept as-is with documented rationale); if a fix is chosen, implemented; Product Owner sign-off.
-**Reference:** full audit at `docs/ops/arc6_prerequisite_field_population_audit_2026-08-16.md` §4.2
-
----
-
-### BLG-QA-151 — Add direct unit tests for cash_service, compliance_service, news_service, validation_service
-**Priority:** P3 (Low) | **Type:** QA / Testing | **Owner:** QA & Testing Owner | **Source:** ST-19 (BLG-QA-143, EPIC-04, `2026-08-14__release-v8.8`) | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** The ST-19 consolidated backend service-layer test-coverage report (`docs/ops/backend_service_layer_test_coverage_report_2026-08-16.md`) found 4 live, called-in-production service modules with zero direct unit test coverage — only HTTP-level contract tests (status code/envelope shape, not calculation correctness) exist for any of them: `cash_service.py` (`create_transaction`, `get_transaction_history`, `get_summary`), `compliance_service.py` (`get_position_compliance` and its 3 private helpers), `news_service.py` (`get_news_headlines`, Alpaca-header construction, credential branching), `validation_service.py` (`ValidationService.validate_all()` and its tolerance/severity helpers).
-**Scope:** Add a direct unit test file per module (or one consolidated file) covering each module's core calculation/branching logic, mocking DB/external HTTP calls per this suite's existing convention.
-**Acceptance Criteria:** All 4 modules have at least one direct unit test exercising non-trivial logic (not just an HTTP-level smoke test); QA & Testing Owner sign-off.
-**Reference:** full report at `docs/ops/backend_service_layer_test_coverage_report_2026-08-16.md` §3
-
----
-
-### BLG-BE-101 — Confirm trade_csv_service.py::build_trade_history_csv is dead code and remove, or document coexistence
-**Priority:** P3 (Low) | **Type:** Backend Engineering / Tech Debt | **Owner:** Head of Engineering | **Source:** ST-19 (BLG-QA-143, EPIC-04, `2026-08-14__release-v8.8`), discovered mid-sprint during BLG-QA-143's own service-layer coverage report | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** `backend/services/trade_csv_service.py::build_trade_history_csv(trades: List[Dict])` is re-exported by `services/__init__.py` but has no live call site anywhere in `backend/routers/` — a second, differently-signatured function of the exact same name, `trade_service.py::build_trade_history_csv(portfolio_id: str)`, is the one actually wired to `routers/trades_export.py`. This is the same class of divergent-duplicate-implementation finding as `BLG-BE-25`/ST-07 (EPIC-02, this same cycle, `check_market_regime()`), just not yet consolidated.
-**Scope:** Confirm `trade_csv_service.py`'s `build_trade_history_csv` is genuinely unreachable (repeat the grep across the full repo, not just `backend/`); if confirmed, remove it and its `__init__.py` re-export; if a reason for the duplicate is found, document it.
-**Acceptance Criteria:** Dead-code status confirmed or refuted; if dead, removed; if kept, reason documented in a code comment; Head of Engineering sign-off.
-**Reference:** full report at `docs/ops/backend_service_layer_test_coverage_report_2026-08-16.md` §3 (`trade_csv_service.py` row) and §4
-
----
-
-### BLG-OPS-146 — Local dev venv setup does not honour the existing backend/.python-version pin; confirm PUBLIC_URL parity on production
-**Priority:** P3 (Low) | **Type:** Operations / Infrastructure | **Owner:** Infrastructure & Operations Owner | **Source:** ST-20 (BLG-QA-145, EPIC-04, `2026-08-14__release-v8.8`) | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** The ST-20 test-environment parity check (`docs/ops/test_environment_parity_check_2026-08-16.md` §2.1, corrected after a QA Lead review found the initial pass had missed `backend/` entirely) found: `backend/.python-version` already exists and correctly declares `3.11.0`, matching CI (21 occurrences across 16 workflow files, all `'3.11'`) and staging (`render.yaml`'s `PYTHON_VERSION: "3.11.0"`) — but this session's local `backend/.venv` runs 3.14.4 anyway, because it was created via plain `python3 -m venv` against whatever `python3` resolved to on `PATH`, with no `pyenv` (or equivalent version-manager shim that reads `.python-version`) present. The pin is declared but silently unenforceable in at least this environment. Separately, `.env.staging` and `render.yaml`'s staging block both set `PUBLIC_URL=/` (overrides `package.json`'s `homepage` so asset paths resolve at root); `.env.production`'s repo template omits it — likely already set correctly in the Render dashboard (production env vars are dashboard-only, not repo-visible) but unconfirmed.
-**Scope:** (a) Document (and where feasible, enforce — e.g. a setup-script check) a mechanism for local backend dev environments to actually pick up the existing `backend/.python-version` pin, such as a `pyenv install $(cat backend/.python-version) && pyenv local` step in a local-setup doc; (b) confirm via Render dashboard whether production has `PUBLIC_URL` set, and either add it to `.env.production`'s template for documentation parity or note why it's not needed there.
-**Acceptance Criteria:** Local venv setup instructions updated so a fresh setup following them resolves to Python 3.11 (matching the existing pin); production `PUBLIC_URL` status confirmed and documented; Infrastructure & Operations Owner sign-off.
-**Reference:** full audit at `docs/ops/test_environment_parity_check_2026-08-16.md` §2.1, §2.4
-
----
-
 ### BLG-SPEC-131 — trade_plan.md §5.1 form-fields table still lists non-existent "Risk/Reward Notes" field
 **Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Head of Specs Team | **Source:** ST-27 (BLG-SPEC-129, EPIC-06, `2026-08-14__release-v8.8`), discovered mid-sprint during agent-mediated Head of Specs Team review | **Effort:** XS | **Provisional-Target:** TBD
 **Problem:** `docs/specs/frontend/pages/trade_plan.md` §5.1's form-fields table (line ~123) still lists "Risk/Reward Notes | Textarea | No | Free text; used for pre-population of CHK-04" as a live field — but `src/pages/TradePlan.js` has zero `risk_reward_notes` binding (confirmed via grep). ST-27 (this same cycle) fixed the stale Changelog anchor that pointed to this field but deliberately left the table row itself untouched, since the AC's scope was narrowly "correct the anchor," not restructure the table.
@@ -4704,43 +4522,11 @@ For an open, profitable position (WDC, entry 2026-08-07, native entry price $434
 
 ---
 
-### BLG-SPEC-130 — Document screener_refresh and risk_off_alerts jobs in health_endpoints.md
-**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** ST-01/ST-02/EPIC-01 (`2026-08-14__release-v8.8`) | **Effort:** XS | **Provisional-Target:** TBD
-**Problem:** `docs/specs/api_contracts/health_endpoints.md`'s `GET /health/scheduler` section states "The three tracked jobs are..." and lists only `trailing_stop`, `rebalance_exit`, `inv_vol_sizing`. ST-01/ST-02 (v8.8) added two more jobs to the live registry — `screener_refresh` (`POST /screener/run`) and `risk_off_alerts` (`POST /positions/risk-off-alerts`) — plus `custom_price_alerts` was already live but likewise undocumented in this section. The canonical spec text is now stale relative to `backend/services/health_service.py`'s `_NIGHTLY_JOB_NAMES`. Not filed as a behavioural deviation — the additions are consistent with the endpoint's documented intent (surface nightly job health), not a divergence from a requirement; this is a documentation-currency gap only. Left uncorrected in the sprint execution engine's own commit because canonical spec edits are restricted to deviation documentation (`execution_prompt.md` §7) and this is not a deviation.
-**Scope:** Update the "Architecture note" job list and the `GET /health/scheduler` response example/field notes to include `custom_price_alerts`, `screener_refresh`, and `risk_off_alerts`.
-**Acceptance Criteria:** All six live job names present in the spec's architecture note and response example; API Contracts & Documentation Owner sign-off.
-
----
-
 ### BLG-SPEC-132 — Document PositionSizingWidget baseline in trade_plan.md
 **Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** Design gate `2026-08-17__release-v8.9` (ST-04/EPIC-02 review) — filed by PMO Lead per the gate's own follow-up instruction | **Effort:** S (~0.5-1d) | **Provisional-Target:** v8.10
 **Problem:** While documenting ST-04's (BLG-BE-104, correlation/sector-concentration-aware sizing) concentration-reason addition to `PositionSizingWidget` (`trade_plan.md` §10.7) during the `2026-08-17__release-v8.9` design gate, it became clear the widget's baseline — fields, debounce behaviour, `POST /portfolio/size` contract — has never had a dedicated frontend spec section of its own, only a passing reference at §10. The design gate's write scope excludes `claude/backlog/backlog.md`, so filing this item was deferred to PMO Lead/Head of Specs Team after `plan sprint` completed (per `design_gate.md`'s own Notes section, `2026-08-17__release-v8.9`).
 **Scope:** Add a dedicated `PositionSizingWidget` baseline subsection to `trade_plan.md` covering its fields, debounce parameter, and the `POST /portfolio/size` contract it consumes — as the parent section §10.7's concentration-reason addition now assumes exists.
 **Acceptance Criteria:** `trade_plan.md` has a dedicated `PositionSizingWidget` baseline subsection documenting fields, debounce behaviour, and the `POST /portfolio/size` contract; Frontend Specifications & UX Documentation Owner sign-off.
-
----
-
-### BLG-GOV-308 — state_field_owners.json claims post_ship_closure.md owns last_post_ship_cycle/last_post_ship_utc, but no STEP in that file writes either field
-**Priority:** P3 (Low) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** ST-29 (EPIC-07, `2026-08-14__release-v8.8`), discovered mid-review while investigating `claude/schemas/state_field_owners.json` for the `prior_cycle` fix | **Effort:** XS | **Provisional-Target:** TBD
-**Problem:** `claude/schemas/state_field_owners.json` asserts both `last_post_ship_utc` and `last_post_ship_cycle` are owned by `post_ship_closure.md`, but a grep of the actual file's STEP 10 (and every other STEP) finds no write of either field anywhere — the registry's ownership claim does not match reality. This is the exact class of drift the registry itself exists to prevent (its own `_meta.purpose` cites `prior_cycle` and `last_audit_*` as prior examples of ownerless-field staleness). `.claude_current_state.json` currently carries stale values for both (`last_post_ship_cycle: "2026-08-11__release-v8.6"`, `last_post_ship_utc: "2026-08-12T14:15:00Z"` — from the last real post-ship closure run) that will silently continue not-updating on every future closure.
-**Scope:** Add explicit unconditional writes of `last_post_ship_cycle` (= this run's own `<cycle_id>`) and `last_post_ship_utc` (= now) to `post_ship_closure.md` STEP 10, alongside the `prior_cycle` write added at ST-29/BLG-GOV-293 — apply the standard CLAUDE.md §6 governance file edit checklist (version bump, OPERATIONAL_GUIDE §14, `prompt_change_log.md` entry).
-**Acceptance Criteria:** `post_ship_closure.md` STEP 10 unconditionally writes both fields every run; `state_field_owners.json`'s existing ownership claim is now actually true (no doc change needed there, since it already names the correct engine — only the prompt file was missing the actual write); Head of Specs Team sign-off.
-
----
-
-### BLG-QA-152 — Add Playwright coverage for WhatsNewCard's changelog User Impact rendering
-**Priority:** P3 (Low) | **Type:** QA / Test Automation | **Owner:** QA & Testing Owner | **Source:** PR #1424 dual-role Director of Quality review (EPIC-03, `2026-08-14__release-v8.8`) | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** ST-13's `changelog_service.py` rewrite (curated `User Impact` column sourcing) has unit test coverage in `tests/test_changelog_service.py`, but no end-to-end Playwright test confirms the curated copy actually renders correctly in `WhatsNewCard` in the browser — only that the service layer produces the right string.
-**Scope:** Add a Playwright test asserting the rendered User Impact text for at least one changelog entry in `WhatsNewCard`.
-**Acceptance Criteria:** Playwright test added and passing in CI; QA & Testing Owner sign-off.
-
----
-
-### BLG-GOV-309 — execution_state.json's recorded timestamps don't match actual git commit dates
-**Priority:** P3 (Low) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** PR #1427 dual-role Director of Quality review (EPIC-06, `2026-08-14__release-v8.8`) | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** `execution_state.json`'s per-story `blocked_since_utc`/`completed_utc` fields, as recorded by the Sprint Execution Engine, are consistently offset from the corresponding commits' actual `authoredDate` (observed ~5-6 hour drift on EPIC-06's stories, via `gh pr view`'s commit data) — not a functional bug, but an audit-trail integrity gap that undermines trust in the state file's timestamps for anyone reconciling actual work timing against the record.
-**Scope:** Identify the root cause (e.g. engine using session-start/wall-clock time rather than the actual commit's authored time) and either correct the write to use the true commit timestamp, or document the discrepancy as intentional with rationale if there's a reason the two shouldn't match.
-**Acceptance Criteria:** Root cause identified; fixed, or documented as intentional; Head of Specs Team sign-off.
 
 ---
 
@@ -4757,106 +4543,6 @@ For an open, profitable position (WDC, entry 2026-08-07, native entry price $434
 **Problem:** ST-24's `react-router-dom` `^7.13.0`→`^7.18.2` bump produced incidental `"dev": true` flag churn on unrelated `package-lock.json` entries — likely benign npm-version lockfile noise, but not verified or explained at the time.
 **Scope:** Confirm whether the churn is genuine npm-version behaviour (no dependency-graph change) or reflects a real, unintended shift in which packages are dev-only.
 **Acceptance Criteria:** Root cause confirmed and documented as benign, or a real issue found and fixed.
-
----
-
-### BLG-FEAT-89 — In-app backtesting engine for strategy rule changes
-**Priority:** P2 (Medium)
-**Type:** Product Feature / Backend + Strategy Tooling
-**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
-**Source:** Product Owner feature-vision session — 2026-08-17 (codebase gap-check confirmed `POST /strategy/benchmark/import` is import-only; no in-app simulation engine exists)
-**Effort:** L (~3–5d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-Strategy rule changes are governed by §13 and require review before shipping, but the only "backtest" capability in the app today is `POST /strategy/benchmark/import`, which ingests CSV output from an external `production_strategy.py` script run outside the app. There is no way to test a candidate rule change (e.g. a proposed ATR multiplier, a new setup-type filter) against historical price/trade data from inside the app itself before it ships live. Rule changes currently go live on judgment alone, and the existing benchmark panels can only ever compare against whatever was last exported externally — never a specific candidate change under live consideration.
-
-**Scope**
-- Historical simulation engine: run a candidate `strategy_rules.md` parameter set against stored historical OHLCV + trade_plans data
-- Output: projected win rate, R-multiple distribution, and max drawdown vs the current live rule set over the same window
-- Surface as a "Backtest candidate change" action, callable before a §13 rule change is committed
-- Persist each backtest run (input rule diff, output summary, timestamp) for audit
-- Reuse `production_strategy.py`'s existing simulation logic where possible rather than reimplementing from scratch (Head of Engineering to scope feasibility)
-
-**Acceptance Criteria**
-- A candidate strategy_rules.md change can be run against historical data from inside the app, with no external script step
-- Output includes win rate, R-multiple distribution, and drawdown compared against the current live rule set
-- Each backtest run is persisted with enough detail to audit later (what was tested, when, by what rule diff)
-- Strategy Rules & System Intent Owner sign-off
-
----
-
-### BLG-BE-104 — Correlation/sector-concentration-aware position sizing
-**Priority:** P2 (Medium)
-**Type:** Backend Engineering / Risk Management
-**Owner:** Backend Engineering Patterns Owner; Strategy Rules & System Intent Owner
-**Source:** Product Owner feature-vision session — 2026-08-17 (codebase gap-check confirmed `sizing_service.py` sizes each position in isolation; `portfolio_service.py`'s `portfolio_heat_percent` confirmed post-hoc/display-only)
-**Effort:** M (~2–3d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-`sizing_service.py`'s `size_position` and `size_batch_inv_vol` compute position size from a single ticker's own ATR/volatility only — neither checks what's already open in the portfolio. `portfolio_service.py::get_portfolio_summary` already computes `portfolio_heat_percent` and per-position risk, but only for dashboard display after positions exist; nothing feeds current portfolio composition back into a new sizing decision at entry time. Two positions in correlated names (e.g. same sector) can each pass individual sizing cleanly while stacking real, unmeasured portfolio risk that no single trade's sizing math would catch.
-
-**Scope**
-- Define a first-pass concentration signal (e.g. sector bucket from existing ticker metadata) usable without a full covariance/correlation engine
-- At sizing time, check the candidate ticker's sector against currently open positions' sectors and existing sector-level exposure (% of portfolio value)
-- Apply a size reduction, or a flagged warning, when a new position would push sector exposure past a defined threshold
-- Surface the concentration check result to the caller (trade-plan creation flow) so the user sees *why* sizing was adjusted, not just a smaller number
-
-**Acceptance Criteria**
-- A new position's sizing calculation reflects existing open-position sector concentration, not just the candidate ticker's own volatility
-- Sizing output includes a visible reason when reduced or flagged for concentration
-- Regression test confirms two same-sector (correlated) positions produce a smaller second size than two uncorrelated ones would
-- Backend Engineering Patterns Owner sign-off
-
----
-
-### BLG-FEAT-90 — Automated AI post-trade debrief
-**Priority:** P2 (Medium)
-**Type:** Product Feature / AI Analytics
-**Owner:** Head of Engineering; AI Compliance & Governance Officer
-**Source:** Product Owner feature-vision session — 2026-08-17 (codebase gap-check confirmed `plan_vs_reality_service.py`, the AI thesis-generation pipeline, and the manual red-flag journal exist independently with no synthesis step between them)
-**Effort:** M (~2d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-When a trade closes, `plan_vs_reality_service.py` already computes `r_achieved` vs `r_target`, the AI thesis-generation pipeline (with `claude_audit_log`) already exists for other surfaces, and a manual red-flag journal already captures discipline deviations — but nothing combines these into an automatic, readable debrief. The discipline-learning loop currently depends entirely on the user manually cross-referencing three separate surfaces every time they want to understand what actually happened on a closed trade.
-
-**Scope**
-- On trade close, generate a short AI-written debrief (one paragraph) drawing on: plan-vs-reality delta, any red-flag journal entries linked to the position, and relevant SI-02 drift context where available
-- Log the generation to `claude_audit_log` per existing AI governance policy (model/prompt version, cost, input/output)
-- Surface the debrief on the closed-trade detail view
-- Debrief is descriptive, not prescriptive — a plain account of what happened plus one suggested focus area, not a new automated trading decision
-
-**Acceptance Criteria**
-- Every newly-closed trade has an AI-generated debrief available shortly after close (real-time generation, or on-demand if real-time isn't feasible)
-- Debrief references plan-vs-reality data and any linked journal entries where present
-- Generation is logged to `claude_audit_log` per existing AI governance policy
-- AI Compliance & Governance Officer sign-off (per standing AI-generated-content governance requirement)
-
----
-
-### BLG-FEAT-91 — Pre-commit "what-if" sizing/risk simulator on the trade-plan form
-**Priority:** P2 (Medium)
-**Type:** Product Feature / Frontend + Backend
-**Owner:** Head of UX & Design; Head of Engineering
-**Source:** Product Owner feature-vision session — 2026-08-17 (codebase gap-check confirmed no "what-if"/simulator surface exists in frontend or backend)
-**Effort:** M (~2–3d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-The trade-plan creation form computes position size and risk only once the plan is submitted — the user has no way to see how adjusting stop distance or entry price would change position size, R at risk, or resulting portfolio heat before committing to a plan. Sizing math and portfolio impact are currently a post-save surprise rather than an input to the decision itself.
-
-**Scope**
-- Add a live-updating preview panel to the trade-plan creation form: as stop distance/entry price change, recompute and display position size, R at risk, and projected portfolio heat impact
-- Reuse the existing `sizing_service` calculation via a lightweight, non-committing "preview" endpoint (no DB write)
-- If `BLG-BE-104` (concentration-aware sizing) has shipped by the time this is built, surface its concentration flag in the same preview
-
-**Acceptance Criteria**
-- User can adjust stop distance/entry price on the trade-plan form and see position size, R at risk, and portfolio heat impact update live, before saving
-- Preview value matches what is actually saved when the plan is submitted with the same inputs
-- No DB write occurs from interacting with the preview alone
-- Head of UX & Design sign-off on interaction design
 
 ---
 
@@ -5247,5 +4933,30 @@ ST-06's acceptance criterion "Debrief references plan-vs-reality data and any li
 - Product Owner decision recorded (keep `red_flag_events`-only, add entry/exit notes, or both)
 - If implementation changes: `tests/test_debrief_service.py` covers the new data source; full backend suite re-verified passing
 - Spec updated to reflect the confirmed interpretation of "linked journal entries"
+
+---
+
+### BLG-BE-109 — Nightly backtest rebalance-date computation treats the current in-progress month's latest bar as month-end
+**Priority:** P1 (High)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner
+**Source:** User review session — 2026-08-21 (found while investigating unexpected INTC/WDC trade behaviour in the nightly backtest output)
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** v9.0
+
+**Problem**
+`production_strategy.py` and its in-app port `backend/services/backtest_rule_service.py` both compute monthly rotation checkpoints as `prices.groupby(prices.index.to_period(period_freq)).tail(1).index`. This is correct for every completed past month, but for the current, still-in-progress month it silently resolves to "whichever trading day happens to be the most recent row currently in the data" — not the genuine last trading day of the month. Verified with a direct pandas repro: a business-day index for 2026-08-01 → 2026-08-20 (August not yet complete) returns `2026-08-20` as the sole rebalance date. Because `.github/workflows/backtest.yml` reruns `production_strategy.py` from scratch every night (`0 1 * * *`) and `import_backtest.py` does a full DELETE+INSERT of results, this means the monthly "No longer qualifies" rotation-exit logic fires on the latest bar **every single night** throughout the current month, not once at true month-end — generating spurious rotation-exit trades (wrong `exit_reason`, wrong `holding_days`) and same-day rebuys via the unconditional daily slot-fill-in for any ticker still in the qualifying set. Observed live: INTC exited "No longer qualifies" and WDC exited-then-rebought in the same nightly run on 2026-08-20, three weeks before August's real last trading day (2026-08-31).
+**Impact:** Corrupts the nightly backtest trade history every night mid-month until the real month-end arrives and the group tail catches up. Not caught by `import_backtest.py`'s existing `BACKTEST_DRIFT_ALERT` check, which only detects P&L drift with zero new closed trades — a different anomaly class from this (which produces genuine, but wrongly-dated, new trades).
+
+**Scope**
+- Fix `rebalance_dates` in both `production_strategy.py` and `backend/services/backtest_rule_service.py` to exclude the in-progress month — e.g. drop the final group if its period equals the current calendar period, or only take `tail(1)` of month-groups whose max date is before today
+- Add a regression test with a mid-month date index confirming no rebalance date is returned for the current, incomplete month
+- Note in the story whether nightly-imported trade history already corrupted by this bug (any `exit_reason = "No longer qualifies"` trade dated before a true month-end) needs a one-off cleanup on next import, given the full DELETE+INSERT self-heals it automatically at the next true month-end
+
+**Acceptance Criteria**
+- `rebalance_dates` never includes a date from the current, incomplete calendar month in either file
+- Regression test added and passing for the mid-month case
+- `tests/backtest_data_integrity_smoke_test.py`-class checks re-verified passing (no new invariant broken)
+- Backend Engineering Patterns Owner sign-off
 
 ---

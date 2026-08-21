@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v8.9
 Cycle: 2026-08-17__release-v8.9
-Last Updated: 2026-08-17
+Last Updated: 2026-08-21
+
+Superseded by: v8.9 ship — 2026-08-21
+Changelog: docs/product/changelog.md#v8.9
+Verification report: claude/cycles/2026-08-17__release-v8.9/verification_report.md
+Cycle: 2026-08-17__release-v8.9
 
 ## Release Scope — v8.9 Live Risk-Management Correctness & Trade Intelligence Expansion
 

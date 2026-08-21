@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-17 (Release Planning v8.9 — §1 "Next planned release" annotated with v8.9 execution notes, marker RA:v8.9:2026-08-17__release-v8.9; no formal `## v8.9` section created, scope/priority unchanged); prior — 2026-08-17 (post-ship closure 2026-08-14__release-v8.8 — v8.8 marked ✅ Complete; §1 headers updated (Next planned release reset to [TBD]); §8 table row added); prior — 2026-08-14 (Release Planning v8.8 — §1 "Next planned release" annotated with v8.8 execution notes, marker RA:v8.8:2026-08-14__release-v8.8; no formal `## v8.8` section created, scope/priority unchanged); prior history retained — see prior entries in version control (§16.14 header-history retention rule, BLG-GOV-283 — current entry plus at most 2 prior entries retained).
+**Last Updated:** 2026-08-21 (post-ship closure 2026-08-17__release-v8.9 — v8.9 marked ✅ Complete; §1 headers updated (Current Version → v8.9, Next planned release reset to [TBD]); §8 table row added; `manage roadmap` STEP 11 sub-run — 0 items retired/flagged/kept (Now horizon empty since 2026-07-27, no formal per-item roadmap sections this lineage); ST-22/BLG-GOV-260 stale `RA:` marker pruning rule applied for the first time — 53 already-retired numeric `RA:vX.Y` pointer lines more than 3 releases behind v8.9 pruned document-wide, see `manage_roadmap_log_20260821.md`); prior — 2026-08-17 (Release Planning v8.9 — §1 "Next planned release" annotated with v8.9 execution notes, marker RA:v8.9:2026-08-17__release-v8.9; no formal `## v8.9` section created, scope/priority unchanged); prior — 2026-08-17 (post-ship closure 2026-08-14__release-v8.8 — v8.8 marked ✅ Complete; §1 headers updated (Next planned release reset to [TBD]); §8 table row added); prior history retained — see prior entries in version control (§16.14 header-history retention rule, BLG-GOV-283 — current entry plus at most 2 prior entries retained).
 **Last rebalance:** 2026-07-28 (cycle 2026-07-28__scheduled — Standard tier, CPS=N/A (0 active initiatives); STEP 8.0 Production Correctness Fast-Track found 0 qualifying P0/P1 items; STEP 8.1 fired (condition 1a — Now horizon fully empty) — Option (b): defer again, no newly-ready anchor content this cycle (181-item A-category backlog pool available); SI-02 gate structured field (§5) updated to cite the genuine 2026-07-28 live re-check performed during `2026-07-27__release-v7.9` sprint execution EPIC-08/ST-08 — credentials confirmed absent in this session's own checkout, but a fresher governed-routine check existed and had simply had no write path to this file until now — values unchanged, NOT MET (0/11 linked trade plans, drift insufficient_data last confirmed 2026-07-17, 9 trades in 90-day window); 🟡 Product Value Ratio 0.38 (U=19/G=4/D=26/P=1 of 50, v7.5–v7.9 window) — Advisory, down from 0.42; Skill-Silo Alert worsened again (rolling-3-cycle avg=65.8%, v7.7/v7.8/v7.9, up from 64.5%) — 2nd consecutive worsening reading, not yet mandatory; no ungated P1/P2 U-item exists in the backlog (BLG-FEAT-73/74 both gate-blocked) — advisory pull-forward candidate BLG-FEAT-88 (P3, new) named for next `plan release`; **sprint capacity re-evaluated at explicit user request ahead of this rebalance — held unchanged at ~24-28 days/sprint** (v7.9's ~95-110% utilisation is only the 1st cycle at top-of-band; the 2026-07-17 raise was backed by 5 such cycles; revisit after v7.10 confirms the pattern — see `workforce_capacity.md` Rebalance 2026-07-28__scheduled for full reasoning); DL-077; idea intake window IW-20260728-01 (0 open ideas carried, 44 new submissions from 22 agents): 42 Promoted-Backlog (41 standalone + 1 pair consolidated into BLG-GOV-269), 1 Promoted-Added (resolved directly — BLG-OPS-90 gate-status update, confirmed cleared via commit e9c73f58, a 2nd occurrence of the same Render build-path-filter drift class), 0 Rejected, 0 Parked; Backlog Accessibility Warning not triggered (A≈41.4% of 336 items pre-addition, structural heuristic: 139 A / 40 T / 16 D / 141 L); prior — 2026-07-27 (cycle 2026-07-27__scheduled — Standard tier, CPS=N/A (0 active initiatives); STEP 8.0 Production Correctness Fast-Track found 0 qualifying P0/P1 items; STEP 8.1 fired (condition 1a — Now horizon fully empty) — Option (b): defer, no newly-ready anchor content this cycle; SI-02 gate not live-re-checked this session (credentials confirmed absent in this checkout before attempting a call, per new v9.6 fallback guidance) — citing existing 2026-07-17 structured field unchanged, NOT MET (0/11 linked trade plans, drift insufficient_data, 9 trades in 90-day window); 🟡 Product Value Ratio 0.42 (U=15/G=1/D=18/P=2 of 36, v7.4–v7.8 window) — Advisory, unchanged tier; Skill-Silo Alert worsened (rolling-3-cycle avg=64.5%, v7.6/v7.7/v7.8, up from 56.5%) — 1st worsening reading in a new streak, not yet mandatory; pull-forward candidates BLG-FEAT-87/BLG-FE-128 named for next `plan release` [CORRECTION filed 2026-07-27 at plan release v7.9: BLG-FE-128 reference is erroneous — that item shipped as v7.8 EPIC-01 and was archived by this same day's earlier groom-backlog run, before this rebalance recorded it as a forward candidate; not a valid scope input for v7.9 or any future release; BLG-FEAT-87 was valid and was included in v7.9 scope]; DL-076; idea intake window IW-20260727-01 (0 open ideas carried, 44 new submissions from 22 agents): 21 Promoted-Backlog, 23 Rejected (22 as duplicates of existing backlog items — saturation effect, see lessons_learnt.md), 0 Advance, 0 Parked; STEP -1.5: 1 deferred patch from 2026-07-24__scheduled resolved (roadmap_prompt.md v9.5→v9.6 STEP 2.3 SI-02 credential-fallback guidance); STEP -1.7: 1 previously-missed outstanding action found and filed (BLG-GOV-263, cross-EPIC execution_state.json structural fix); Backlog Accessibility Warning not triggered (A≈40.8% of 341 items pre-addition, structural heuristic); prior — 2026-07-24 (cycle 2026-07-24__scheduled — Standard tier, CPS=N/A (0 active initiatives); STEP 8.0 Production Correctness Fast-Track found 0 qualifying P0/P1 items; STEP 8.1 fired (condition 1b — Now horizon non-empty but un-versioned) — Option (b): defer, no newly-ready anchor content this cycle; SI-02 gate not live-re-checked this session (no production API credentials in this checkout; 401 Unauthorized confirmed live but uncredentialed) — citing existing 2026-07-17 structured field unchanged, NOT MET (0/11 linked trade plans, drift insufficient_data, 9 trades in 90-day window); 🟡 Product Value Ratio 0.42 (U=13/G=0/D=12/P=6 of 31, v7.3–v7.7 window) — Advisory, improved from 0.39; Skill-Silo Alert persists (rolling-3-cycle avg=56.5%, v7.5/v7.6/v7.7, down from 80.9%) — net improvement, breaks 2-consecutive-worsening streak before mandatory clause could trigger; advisory pull-forward candidate BLG-FE-128 named for next `plan release`; DL-075; STEP -1.5: 2 deferred patches from 2026-07-17__scheduled resolved (roadmap_prompt.md v9.2→v9.3 STEP -1.7 due-date scan, shared_standards_changelog.md 3.12–3.16 backfill); STEP 0: 3 recurrence escalations from 2026-07-21__release-v7.7 closure resolved (delivery_verification_changelog.md backfill, shared_standards.md §19 Array Guard Standard, BLG-FE-123 filed); idea intake window IW-20260724-01 (0 open ideas carried, 44 new submissions from 22 agents): 0 Promoted-Added, 35 Promoted-Backlog (34 standalone + 1 gate-conditional), 9 Rejected, 0 Parked; Backlog Accessibility Warning not triggered (A≈36.2% of 326 items, structural heuristic); roadmap_prompt.md v9.2→v9.3 (STEP -1.7 due-date-aware cross-routine scan added, action-now); shared_standards.md v3.18→v3.19 (§19 Array Guard Standard added, action-now); STEP 11.4 meta-review DUE this cycle (3rd cycle since 2026-07-15__scheduled reset — 2026-07-16__scheduled, 2026-07-17__scheduled, 2026-07-24__scheduled); prior history retained — see prior entries in version control (last full entry retained here: 2026-07-24 rebalance, DL-075; chain truncated 2026-07-28 per BLG-GOV-283, header-history retention convention).
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,8 +10,8 @@
 
 ## 1. Current Version
 
-**v8.8** — Live Data-Integrity, Backend Hardening & Debt Closure — ✅ Complete — Shipped 2026-08-17 — cycle: 2026-08-14__release-v8.8
-**Next planned release:** v8.9 — Live Risk-Management Correctness & Trade Intelligence Expansion — cycle: 2026-08-17__release-v8.9
+**v8.9** — Live Risk-Management Correctness & Trade Intelligence Expansion — ✅ Complete — Shipped 2026-08-21 — cycle: 2026-08-17__release-v8.9
+**Next planned release:** [TBD]
 
 <!-- roadmap-annotation-marker: RA:v8.9:2026-08-17__release-v8.9 -->
 
@@ -143,58 +143,6 @@
 - Status at annotation: Committed
 - No formal `## v7.8` roadmap section created (Release Planning may not alter roadmap scope) — scoped via STEP 8.1 Option (b) decision from `2026-07-24__scheduled` (backlog-driven, 12 ungated items from `IW-20260724-01`); `BLG-FEAT-73`/`BLG-FEAT-74` explicitly removed from the un-versioned Now-horizon carry-forward per PO disposition (perennial-return, see `decisions--2026-07-24__release-v7.8.md`) — `manage roadmap` to action the §3 removal next run.
 
-*RA:v7.0 retired — see roadmap_archive.md 2026-07-13 (post-ship closure 2026-07-12__release-v7.0).*
-
-*RA:v6.9 retired — see roadmap_archive.md 2026-07-10 (post-ship closure 2026-07-10__release-v6.9).*
-
-*RA:v6.8 retired — see roadmap_archive.md 2026-07-09 (post-ship closure 2026-07-08__release-v6.8).*
-
-*RA:v6.7 retired — see roadmap_archive.md 2026-07-08 (post-ship closure 2026-07-06__release-v6.7).*
-
-*RA:v6.6 retired — see roadmap_archive.md 2026-07-06 (post-ship closure 2026-07-04__release-v6.6).*
-
-*RA:v6.5 retired — see roadmap_archive.md 2026-07-03 (post-ship closure 2026-07-02__release-v6.5).*
-
-*RA:v6.3 retired — see roadmap_archive.md 2026-06-30 (post-ship closure 2026-06-26__release-v6.3).*
-
-*RA:v5.9 retired — see roadmap_archive.md 2026-06-18 (post-ship closure 2026-06-17__release-v5.9).*
-
-*RA:v5.8 retired — see roadmap_archive.md 2026-06-17 (post-ship closure 2026-06-17__release-v5.8).*
-
-*RA:v5.7 retired — see roadmap_archive.md 2026-06-17 (post-ship closure 2026-06-16__release-v5.7).*
-
-*RA:v5.2 retired — see roadmap_archive.md 2026-06-08 (post-ship closure 2026-06-08__release-v5.2).*
-*RA:v5.1 retired — see roadmap_archive.md 2026-06-04 (post-ship closure 2026-06-21__release-v5.1).*
-
-*RA:v5.0 retired — see roadmap_archive.md 2026-06-03 (post-ship closure 2026-06-03__release-v5.0).*
-
-*RA:v4.9 retired — see roadmap_archive.md 2026-06-02 (post-ship closure 2026-06-02__release-v4.9).*
-
-*RA:v4.8 retired — see roadmap_archive.md 2026-06-02 (post-ship closure 2026-06-01__release-v4.8).*
-
-*RA:v4.7 retired — see roadmap_archive.md 2026-06-01 (post-ship closure 2026-05-31__release-v4.7).*
-
-*RA:v4.6 retired — see roadmap_archive.md 2026-05-31 (post-ship closure 2026-05-30__release-v4.6).*
-
-*RA:v4.5 retired — see roadmap_archive.md 2026-05-30 (post-ship closure 2026-05-30__release-v4.5).*
-
-*RA:v4.3 retired — see roadmap_archive.md 2026-05-31 (post-ship closure 2026-05-29__release-v4.3; execution notes block cleaned 2026-05-31).*
-
-*RA:v4.2 retired — see roadmap_archive.md 2026-05-29 (post-ship closure 2026-05-27__release-v4.2).*
-
-*RA:v4.1 retired — see roadmap_archive.md 2026-05-27 (post-ship closure 2026-05-26__release-v4.1).*
-
-*RA:v4.0 retired — see roadmap_archive.md 2026-05-25 (post-ship closure 2026-05-22__release-v4.0).*
-
-*RA:v3.9 retired — see roadmap_archive.md 2026-05-22 (post-ship closure 2026-05-21__release-v3.9).*
-*RA:v3.8 retired — see roadmap_archive.md 2026-05-20 (post-ship closure 2026-05-19__release-v3.8).*
-*RA:v3.7 retired — see roadmap_archive.md 2026-05-19 (post-ship closure 2026-05-18__release-v3.7).*
-*RA:v3.6 retired — see roadmap_archive.md 2026-05-17 (post-ship closure 2026-05-16__release-v3.6).*
-*RA:v3.5 retired — see roadmap_archive.md 2026-05-15 (post-ship closure 2026-05-15__release-v3.5).*
-*RA:v3.4 retired — see roadmap_archive.md 2026-05-14 (post-ship closure 2026-05-14__release-v3.4).*
-
-*RA:v3.3 retired — see roadmap_archive.md 2026-05-13.*
-
 -----
 
 ## 2. Strategic Scope
@@ -246,7 +194,6 @@ The roadmap beyond v2.8 is organised around **six named arcs**. Each arc has a p
 |**Arc 4**|Post-Trade Intelligence      |v3.5–v3.8|Journal, plan vs reality analysis, AI pattern recognition across your trade history |
 |**Arc 5**|Strategy Integrity           |v3.8–v4.0|Enforce your own rules at entry, detect behavioural drift, validate strategy changes|
 |**Arc 6**|Performance Science          |v4.0+    |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection|
-
 
 > **Arc 5 runs partially in parallel with Arc 3.** Some Strategy Integrity features (pre-entry rule validation, compliance gate) are high-value earlier than the full sequence implies and will be reviewed for pull-forward at Arc 3 planning.
 
@@ -409,47 +356,7 @@ Today you find stocks through external research and add them to the watchlist ma
 
 *RA:Gated-carry-forward-2026-07-27 retired — see roadmap_archive.md 2026-07-27 (post-ship closure 2026-07-24__release-v7.8; BLG-FEAT-73/BLG-FEAT-74 removed, not shipped/killed — PO disposition).*
 
-*RA:v7.7 retired — see roadmap_archive.md 2026-07-24 (post-ship closure 2026-07-21__release-v7.7; partial retirement, 5/7 items — 2 gated items re-added above).*
-
-*RA:v7.6 retired — see roadmap_archive.md 2026-07-20 (post-ship closure 2026-07-20__release-v7.6; full retirement, 8/8 items).*
-
-*RA:v7.5 retired — see roadmap_archive.md 2026-07-20 (post-ship closure 2026-07-17__release-v7.5; full retirement, 4/4 items — first full retirement of this Now-horizon lineage since RA:v7.1).*
-
-*RA:v7.4 retired — see roadmap_archive.md 2026-07-17 (post-ship closure 2026-07-17__release-v7.4; partial retirement, 1/1 amended-scope item — 4 unblocked items re-added above).*
-
 <!-- roadmap-annotation-marker: RA:v7.4:2026-07-17__release-v7.4 -->
-
-*RA:v7.3 retired — see roadmap_archive.md 2026-07-16 (post-ship closure 2026-07-16__release-v7.3; partial retirement, 3/7 items — 4 unblocked items re-added above, now formally v7.4).*
-
-*RA:v7.2 retired — see roadmap_archive.md 2026-07-15 (post-ship closure 2026-07-15__release-v7.2; partial retirement, 5/8 items — 3 unblocked items re-added above).*
-
-*RA:v7.1 retired — see roadmap_archive.md 2026-07-14 (post-ship closure 2026-07-14__release-v7.1).*
-
------
-
-*RA:v5.2 retired — see roadmap_archive.md 2026-06-08 (post-ship closure 2026-06-08__release-v5.2).*
-*RA:v5.1 retired — see roadmap_archive.md 2026-06-04 (post-ship closure 2026-06-21__release-v5.1).*
-*RA:v5.0 retired — see roadmap_archive.md 2026-06-03 (post-ship closure 2026-06-03__release-v5.0).*
-
-*RA:v5.3 retired — see roadmap_archive.md 2026-06-09 (post-ship closure 2026-06-08__release-v5.3).*
-
-*RA:v5.4 retired — see roadmap_archive.md 2026-06-10 (post-ship closure 2026-06-09__release-v5.4).*
-
-*RA:v5.5 retired — see roadmap_archive.md 2026-06-16 (post-ship closure 2026-06-10__release-v5.5).*
-
-*RA:v5.6 retired — see roadmap_archive.md 2026-06-16 (post-ship closure 2026-06-16__release-v5.6).*
-
-*RA:v5.9 retired — see roadmap_archive.md 2026-06-18 (post-ship closure 2026-06-17__release-v5.9).*
-
-*RA:v6.0 retired — see roadmap_archive.md 2026-06-22 (post-ship closure 2026-06-19__release-v6.0).*
-
-*RA:v6.1 retired — see roadmap_archive.md 2026-06-23 (post-ship closure 2026-06-22__release-v6.1).*
-
-*RA:v6.2 retired — see roadmap_archive.md 2026-06-25 (post-ship closure 2026-06-24__release-v6.2).*
-
-*RA:v6.3 retired — see roadmap_archive.md 2026-06-30 (post-ship closure 2026-06-26__release-v6.3).*
-
-*RA:v6.4 retired — see roadmap_archive.md 2026-07-02 (post-ship closure 2026-07-02__release-v6.4).*
 
 -----
 
@@ -472,8 +379,6 @@ Items in this section are sequenced and ready for planning when the current vers
 |Earnings Calendar Integration    |DS-04|M     |✅ Shipped v3.1                                                                                                       |
 
 **Arc 1 end-state target achieved (2026-04-27):** Each morning the screener surfaces a ranked list of momentum candidates that pass your strategy’s regime gate, ATR filter, and signal conditions. You review, promote to watchlist, and move to Arc 2 research. The top of the funnel is systematic, not ad hoc. DS-04 (earnings calendar) remains as v3.1 enhancement.
-
-*RA:v2.9 retired — see roadmap_archive.md 2026-04-28.*
 
 ### Arc 2 — Pre-Trade Research & Planning (v3.1–v3.3)
 
@@ -507,7 +412,6 @@ Items in this section are sequenced and ready for planning when the current vers
 |Drawdown-Triggered Review Prompt|IT-04|M     |✅ Shipped v3.4 (backend + frontend)                                                        |
 |Position Concentration Limits   |IT-05|S     |✅ Shipped v3.4 (backend + frontend)                                                        |
 |Alpaca Paper Trading Integration|IT-06|H     |✅ Shipped v3.5 (2026-05-15) — §13 PASS; US positions mirrored to Alpaca paper account; GET /portfolio/paper-positions; PaperAccountPanel frontend; foundational for PO-05 replay mode|
-
 
 > **§13 note:** IT-01 through IT-05 are structured prompts requiring human confirmation — fully §13 COMPLIANT. IT-06 §13 review complete — PASS (2026-05-15); four binding conditions recorded in decisions document.
 
@@ -610,11 +514,7 @@ When evaluating new features:
 |**v2.9**     |Arc 1 Foundation: Stock Discovery & Screening Spec & Infrastructure   |Arc 1 specs (BLG-SPEC-21/22/23, BLG-FE-17), DS-03 sector enrichment, DS-05 Alpaca US data, DS-06 news panel (watchlist), CI mock harness, governance debt — ✅ Shipped 2026-04-24|
 |**v3.0**     |Arc 1 Screener Engine & Results Page                                  |DS-01 screener engine, DS-02 screener results page, DS-06 news panel (BLG-FE-18 resolved), DS-07 watchlist promotion, keyboard shortcuts, health extension, AI metrics, streak metric — ✅ Shipped 2026-04-27 — cycle: 2026-04-25__release-v3.0|
 
-*RA:v3.0 retired — see roadmap_archive.md 2026-04-28.*
-
 |**v3.1**     |Arc 2 Trade Plan Foundation                                           |PT-01 Trade Plan Object (full), PT-02 Pre-Trade Research View (backend), DS-04 Earnings Calendar, BLG-FE-20 UK screener fix, BLG-QA-10/11 screener QA docs, BLG-FEAT-19 Monthly P&L report, security docs, CF-01/CF-02 governance patches — ✅ Shipped 2026-05-05 — cycle: 2026-04-29__release-v3.1|
-
-*RA:v3.1 retired — see roadmap_archive.md 2026-05-05.*
 
 |**v7.7** ✅  |Strategy Intelligence Surfacing & Notification UX|EPIC-01: SI-04 strategy-version performance comparison view (BLG-FEAT-75) — date-range attribution via strategy_rules.md Change Log, Arc 5 composite compliance_rate. EPIC-02: notification/digest surface consolidation (BLG-FE-114) — nav dedup, Weekly Digest grouping, alert-count deep-links. EPIC-03: AiDailyBriefing light-theme contrast fix (BLG-FE-113) — staging fail-then-pass, light-mode class pairs added. EPIC-04: shared standing-alert component (BLG-FE-120) — distinct from transient toast, design_system.md documented. EPIC-05: SI-02 nudge feasibility investigation (BLG-FEAT-80) — recommendation only, no shipped UI. EPIC-06: daily-snapshot.yml curl response validation (BLG-OPS-108). EPIC-07: retroactive §13 compliance review of shipped PT-04 (BLG-GOV-28) — PASS, deterministic/read-only confirmed. EPIC-08: numpy-scalar regression test for rebalance exit signal (BLG-QA-104) — cross-file pytest test-isolation bug found and fixed during implementation. EPIC-09: nightly-backtest idempotency audit (BLG-BE-63) — no correctness gap found, concurrency guard added as defense-in-depth. EPIC-10: nightly-backtest monitoring/alerting via Telegram (BLG-OPS-110) — BLG-OPS-115 filed for repo-secrets configuration follow-up. EPIC-11: CI lint gate for router-decorator vs. SystemStatus.js endpoint-count fallback (BLG-QA-102) — pre-existing drift (103→98) discovered and corrected to 99 post-merge. 11/11 stories shipped. Verified, no deviations filed. — ✅ Complete — Shipped 2026-07-24 — cycle: 2026-07-21__release-v7.7|
 |**v7.8** ✅  |Release Visibility & Engineering Hardening|EPIC-01: in-app "what's new" panel sourced server-side from changelog.md (BLG-FE-128). EPIC-02: automated Telegram digest of shipped changelog entries on post-ship closure (BLG-FEAT-84). EPIC-03: notification UX accessibility pass — nav alert-count badge contrast fix (BLG-FE-127). EPIC-04: consolidated dark-mode contrast audit across all 23 shipped pages — PageHeader gradient via-stop fix (BLG-FE-125). EPIC-05: monthly realized P&L CSV export (BLG-FEAT-81). EPIC-06: per-cycle AI spend trend chart on AI Usage & Costs view (BLG-FEAT-82). EPIC-07: rotation-and-audit schedule for all 5 external API key types (BLG-SEC-20). EPIC-08: endpoint rate-limit audit across all 128 live endpoints, 4 endpoints remediated (BLG-SEC-21). EPIC-09: shared retry/backoff decorator extracted, migrated to highest-traffic external call site (BLG-BE-71). EPIC-10: flaky-test quarantine mechanism defined and CI-enforced (BLG-QA-117). EPIC-11: pilot contract tests for 3 highest-traffic endpoints (BLG-QA-119) — 3 spec-debt gaps filed (BLG-SPEC-102/103/104). EPIC-12: CI lint step for API contract `##` heading-level compliance (BLG-OPS-117). 12/12 stories shipped. Verified, no deviations filed. — ✅ Complete — Shipped 2026-07-27 — cycle: 2026-07-24__release-v7.8|
@@ -629,6 +529,7 @@ When evaluating new features:
 |**v8.6** ✅ |User Features, Data-Integrity Foundation & Correctness Carryover|EPIC-01: trade-plan completion-rate tracking (BLG-FEAT-32) + AI-assisted setup thesis digest at order placement (BLG-FEAT-56, P3 deviation `DEV-v8.6-ST02-01` — AI-draft badge omitted, `BLG-BE-95` filed). EPIC-02: trade-plan-to-position linkage enforced at entry + DB-level CHECK-constraint safeguard against orphaned `trade_plans` rows (BLG-BE-91) — staging-verification gap disclosed and Product-Owner risk-accepted (`BLG-BE-96`, P1, escalation condition attached). EPIC-03: remaining shadcn design-token registration (BLG-FE-147), Playwright coverage for remaining muted/muted-foreground call sites (BLG-FE-148), 6 secondary-text token drift fixes (BLG-FE-149), modal/dialog light-theme design decision (BLG-FE-150), `Layout.js` dark-class sync moved to `useLayoutEffect` (BLG-FE-153), navigation nav-count corrections (BLG-FE-154), `CohortAnalysis.js` backend-endpoint migration closure (BLG-FE-155). EPIC-04: `get_regime_distribution` NULL-exclusion dead-code fix (BLG-BE-88), multi-currency cost-basis rounding consistency audit — a real partial-exit rounding-drift bug found and fixed via a second independent review pass (BLG-BE-92), tax-year-boundary export completeness check (BLG-BE-93), `dependency-vuln-rescan` failed-audit-tool handling fix (BLG-SEC-29). EPIC-05: tag-performance ensure-table regression test (BLG-QA-136), AI-draft-badge-clearing Playwright coverage (BLG-QA-137), unit tests for `check_dependency_vuln_rescan.py` (BLG-QA-138), `sys.modules` restore fixture documentation (BLG-QA-139). EPIC-06: `api-key-cross-environment-check.yml` grep alignment (BLG-OPS-136), CVE-2026-4539 ignore rationale documented (BLG-OPS-137), `dependency-vuln-rescan.yml` post-merge run confirmed green (BLG-OPS-138), retroactive DEV record for dark-mode/Radix-portal fix (BLG-GOV-294), `shared_standards_changelog.md` v3.27 backfill (BLG-GOV-295), `execution_state.json` `deviations_filed` semantics documented (BLG-GOV-296), stale-annotation escalations resolved as moot (BLG-GOV-297, BLG-GOV-298). 26/26 stories shipped. Verified_with_deviations — 1 P3 deviation accepted (`DEV-v8.6-ST02-01`); 1 retroactive P1 deviation recorded resolved (`DEV-NAV-ST06-01`); 1 pre-existing P2 deviation closed out (`DEV-EPIC02-ST03-01`). — ✅ Complete — Shipped 2026-08-12 — cycle: 2026-08-11__release-v8.6|
 |**v8.7** ✅ |User Features, Data-Integrity Closure & Cross-Domain Hardening|EPIC-01: thesis pre-mortem/invalidation-condition capture at trade-plan entry, trade-plan-link outcome consumption at position entry, `isAiDraft` badge persistence, SI-02 Gate Status + Unrealised P&L card theme fixes, 4 hardcoded dark-only modals converted to theme-aware tokens. EPIC-02: staging verification of v8.6's trade-plan-linkage enforcement (`BLG-BE-91`) + legacy orphaned-row audit against the new CHECK constraint (`BLG-BE-96` closure). EPIC-03: Playwright coverage for remaining shadcn token call-site families (`BLG-FE-160` filed for 2 dead-code-only families), end-to-end integration assertion for tax-year boundary trade rows. EPIC-04: `BLG-BE-57` retry/backoff pattern extended to Gemini API call sites, N+1 query audit across trade/position list endpoints, SI-04 schema requirements pre-design. EPIC-05: Gemini prompt-injection resistance test (`BLG-SEC-33` filed for role-separation hardening), rate-limit audit on unauthenticated/low-auth endpoints. EPIC-06: Render Starter-tier headroom reassessment, Render dashboard-only build/deploy path filter canonical documentation, `check_api_performance_baseline_drift.py` substring-match false-negative fix. EPIC-07: CLAUDE.md §8 shared-JSON-field schema-drift check, Roadmap Unlock Tracker, §13 preview-analytics policy determination, canonical gated `DataState` variant spec. 21/21 stories shipped. Verified — no deviations filed (`BLG-SPEC-129` filed for a stale spec-anchor correction). — ✅ Complete — Shipped 2026-08-13 — cycle: 2026-08-12__release-v8.7|
 |**v8.8** ✅ |Live Data-Integrity, Backend Hardening & Debt Closure|EPIC-01: nightly overnight screener-refresh workflow (`BLG-OPS-144`) and nightly risk-off-alerts workflow (`BLG-OPS-145`) close 2 live P1 data-integrity gaps (stale screener, permanently-stuck RISK OFF badge); nightly backtest import failure investigated and fixed (Strategy Benchmark "data as of" line); 3 remaining endpoints added to `api_performance_baseline.md`. EPIC-02: two divergent `check_market_regime()` implementations consolidated; position lifecycle state-transition history table; `price_alerts`-to-trade provenance linkage; `si05_digest_log.telegram_message_id` populated on send; SI-05 Telegram-send duration logging; Pre-Trade Research View query-latency budget review. EPIC-03: "What's New" panel rewritten to surface user-facing benefit copy; Research page trade plan status badge readable-label fix; Ticker Universe search/sector/industry filtering; `PositionEntryModal.js` dead-code status resolved; Playwright coverage for remaining Card/secondary-variant call sites. EPIC-04: Arc 6 prerequisite field-population audit, backend service-layer test-coverage report, test-environment parity check, `backend/routers/test.py` completeness re-audit. EPIC-05: Claude thesis-generation prompt role separation, dependency license compliance scan, npm audit HIGH/CRITICAL review, Telegram Bot Token added to key-rotation scope. EPIC-06: `api_changelog.md` backfill for v7.9–v8.4, `trade_plan.md` stale field-anchor correction. EPIC-07: `CLAUDE.md` §8 commit-message template correction, `.claude_current_state.json` `prior_cycle` ownership assigned to Post-Ship Closure STEP 10. 29/29 stories shipped. Verified — no deviations filed. — ✅ Complete — Shipped 2026-08-17 — cycle: 2026-08-14__release-v8.8|
+|**v8.9** ✅ |Live Risk-Management Correctness & Trade Intelligence Expansion|EPIC-01: nightly trailing-stop breakeven-floor ratchet confirmed already-correct on both live stop-writing paths and regression-tested (`BLG-BE-102`); currency-basis mismatch fixed for `current_trailing_stop`/`stop_price` on US-market positions (`BLG-BE-103`); `trailing_stop_action_rate` validation-tolerances spec entry added (`BLG-SPEC-85`). EPIC-02: §13 system boundary review + 9 binding conditions cleared for AI-generated content (`BLG-FEAT-90` gate); correlation/sector-concentration-aware position sizing (`BLG-BE-104`); pre-commit "what-if" sizing/risk simulator on the trade-plan form (`BLG-FEAT-91`); automated AI post-trade debrief (`BLG-FEAT-90`); in-app backtesting engine for strategy rule changes (`BLG-FEAT-89`). EPIC-03: `GET /trade-plans/tags` ~10s p50 latency root-caused and fixed via memoization (`BLG-BE-98`); SI-05 digest-timing log line verified via real post-merge invocation, surfacing a separate production logging-config gap (`BLG-BE-99`, follow-up `BLG-BE-107`); audit-trail writes wrapped in the primary state-update transaction (`BLG-BE-100`); confirmed dead code removed in `trade_csv_service.py` (`BLG-BE-101`). EPIC-04: job-registration test coverage for `screener_refresh`/`risk_off_alerts` (`BLG-QA-149`); `trade_plans.setup_type` default-value decision applied (`BLG-QA-150`); direct unit tests for `cash_service`/`compliance_service`/`news_service`/`validation_service` (`BLG-QA-151`); Playwright coverage for `WhatsNewCard`'s User Impact rendering (`BLG-QA-152`). EPIC-05: local dev venv version-pin enforcement + production `PUBLIC_URL` parity confirmation (`BLG-OPS-146`); `window_summary_IW-*.md` 90-day archival (`BLG-OPS-113`); `screener_refresh`/`risk_off_alerts` jobs documented in `health_endpoints.md` (`BLG-SPEC-130`). EPIC-06: `post_ship_closure.md` STEP 10 fixed to write `last_post_ship_cycle`/`last_post_ship_utc` (`BLG-GOV-308`); `execution_state.json` timestamp-drift root-caused and corrected (`BLG-GOV-309`); Displacement Debt Register prompt-wiring done, file-creation half carried forward (`BLG-GOV-264`, `ESC-EXEC-20260818-02`); stale `RA:` marker pruning rule defined (`BLG-GOV-260`). 23/23 stories shipped (22-item slice + 1 Sprint-Planning-added §13 gate story). Verified_with_deviations — 1 open P3 deviation accepted (`DEV-EPIC03-ST09-01`, `BLG-BE-107` filed); 3 other deviations filed and resolved same-story. — ✅ Complete — Shipped 2026-08-21 — cycle: 2026-08-17__release-v8.9|
 |**v3.1–v3.2** ✅|Arc 2: Pre-Trade Research & Planning (partial)                       |PT-01 (v3.1), PT-02 + PT-03 + PT-05 (v3.2) — ✅ Complete. PT-04 (Setup Quality Score) deferred to v3.3+                                 |
 |**v6.1** ✅  |Arc 2: Pre-Trade Research & Planning (remainder) complete             |PT-04 Setup Quality Score — ✅ Shipped v6.1 (gate cleared at sprint planning — 15 closed trades; EPIC-04 ST-08/ST-09 — SetupQualityScorePanel in Research + TradePlan; zero deviations)|
 |**v3.3** ✅  |Arc 3: In-Trade Risk Management (partial)                              |IT-01/02/03 backend (lifecycle state machine, grace period alerts, stop trail); research view spec closure (BLG-SPEC-24/25/26, BLG-FE-28); entry checklist E2E; governance patches (OA-01–05); feature flag infra (BLG-FEAT-13); trade plan abandonment backend (BLG-FEAT-21 partial) — ✅ Shipped 2026-05-13 — cycle: 2026-05-09__release-v3.3|
@@ -643,8 +544,6 @@ When evaluating new features:
 |**v4.2** ✅  |Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt            |Claude API compliance: BLG-GOV-64 model pinning policy, BLG-GOV-65/66 key security + accountability. Ops baselines: BLG-OPS-35/36/38/39 performance baselines, monthly cost review, log hygiene. Spec debt: BLG-GOV-63 audit trail, BLG-SPEC-42 AI thesis contract, BLG-QA-37 Playwright mock strategy, BLG-BE-22 caching assessment (defer). SI pre-planning: BLG-GOV-60 SI-02 checklist, BLG-GOV-57 SI-04 scope. Zero spec deviations — ✅ Shipped 2026-05-29 — cycle: 2026-05-27__release-v4.2|
 |**v4.3** ✅  |Governance Consolidation, QA Debt Clearance & Ops Hardening           |v4.2 OA resolution: execution_prompt.md v3.32 (STEP 3.2.A + STEP 5.3/8 hard gate), qa_evidence_template.md v1.3, OPERATIONAL_GUIDE.md v4.13 (§7.8 staging-only AC ref table); AI feature inventory v1.0. QA debt: Playwright for Arc5ComplianceSection, Arc 5 E2E test spec, CI pipeline baseline (BLG-QA-27 cleared), coverage matrix + coverage audit. Ops/Security: API key rotation policy, security register, staging parity audit v4.3 (ANTHROPIC_API_KEY permanent on staging), claude-audit-log performance baseline §16. Frontend: pre-entry price bug fix, HAS_GEMINI→HAS_AI rename, Arc 5 compliance in monthly P&L. Staging verifications: Claude thesis (pass), ticker validation (pass), cost alert (pass). Zero spec deviations — ✅ Shipped 2026-05-29 — cycle: 2026-05-29__release-v4.3|
 |**v4.4** ✅  |Governance Patches, SI-02 Pre-Planning Sprint & Ops Hardening         |v4.3 OA resolution: BLG-GOV-71/72/73/74 governance prompt patches; BLG-OPS-43 ops hardening; release_planning_prompt.md STEP 7 RESUME PRECHECK patch. SI-02 pre-planning: BLG-BE-17/23 query pre-design; BLG-BE-18/20 architecture; BLG-FE-52/53 component pre-design; BLG-QA-31 Playwright pre-design. 13 stories / 4 EPICs / 2 sprints. Zero spec deviations — ✅ Shipped 2026-05-30 — cycle: 2026-05-29__release-v4.4|
-
-*RA:v4.4 retired — see roadmap_archive.md 2026-05-30 (post-ship closure 2026-05-29__release-v4.4).*
 
 |**v4.5** ✅  |Governance Prompt Hardening, Audit Debt & SI-02 Spec Pre-Planning       |execution_prompt.md v3.34: four OA patches (BLG-GOV-70/75/76/77); agent role header standardization 5 files (AUD-2026-05-30-005); SI-02 spec pre-sprint: §13 PASS (9 binding conditions), drift score metric definition (4 metrics), data schema pre-definition (5 trade_plans columns + DS-07 migration). 8/8 stories. Zero spec deviations — ✅ Shipped 2026-05-30 — cycle: 2026-05-30__release-v4.5|
 |**v4.6** ✅  |Arc 5 SI-02 Behavioural Drift Detection & Arc 5 Completion              |SI-02 backend (DS-07 migration, drift service 4 metrics, GET /analytics/behavioural-drift, 35 unit tests); Arc 5 enablers (severity field, hosting cost, nav cohesion, RFJ design scope); governance debt (OA-01/02, BLG-GOV-32/33/34/41/43/45/52, BLG-SPEC-32); EPIC-02 SI-02 frontend gate-deferred (6th deferral; ~Nov 2026). 18/21 firm stories delivered. Verified_with_deviations (2 P3 staging). — ✅ Shipped 2026-05-31 — cycle: 2026-05-30__release-v4.6|

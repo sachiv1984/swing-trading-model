@@ -3,11 +3,64 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-17 (post-ship closure 2026-08-14__release-v8.8 — v8.8 entry added); prior — 2026-08-16 (sprint execution 2026-08-14__release-v8.8, ST-13 — `User Impact` column added to `Changes shipped` tables); prior — 2026-08-13 (post-ship closure 2026-08-12__release-v8.7); prior history retained — see prior entries in version control
+**Last Updated:** 2026-08-21 (post-ship closure 2026-08-17__release-v8.9 — v8.9 entry added); prior — 2026-08-17 (post-ship closure 2026-08-14__release-v8.8 — v8.8 entry added); prior — 2026-08-16 (sprint execution 2026-08-14__release-v8.8, ST-13 — `User Impact` column added to `Changes shipped` tables); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v8.9 — Live Risk-Management Correctness & Trade Intelligence Expansion — 2026-08-21
+Cycle: 2026-08-17__release-v8.9
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-08-17__release-v8.9/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Live risk-management correctness — confirmed and regression-tested that the breakeven-floor trailing-stop calculation already governs both live production stop-writing paths (the divergent, unfloored `position_manager.py` inline calc confirmed off the live path); fixed a currency-basis mismatch where `current_trailing_stop`/`stop_price` rendered GBP-converted values with the native currency symbol for US-market positions; added a `trailing_stop_action_rate` validation-tolerances spec entry | Your trailing stop on a profitable position now reliably locks in gains instead of risking a freeze at a stale, wide entry-time value. For US-market positions, the stop price shown next to your position now matches the currency you're actually trading in, instead of silently mixing a GBP-converted number with a dollar sign. | `backend/utils/calculations.py#calculate_trailing_stop`; `docs/specs/api_contracts/position_endpoints.md#Field notes`; `docs/specs/frontend/pages/positions.md#Trailing Stop Column`; `docs/specs/metrics_definitions.md#Trailing Stop Action Rate` |
+| EPIC-02 | Trade sizing & post-trade intelligence — §13 system boundary review and nine binding conditions cleared for AI-generated content; sector/correlation-aware position sizing that reduces or flags new position sizes against existing open-position concentration; pre-commit "what-if" sizing/risk simulator on the trade-plan form; automated AI post-trade debrief generated on demand for closed trades; in-app backtesting engine for candidate strategy rule changes | New trade-plan sizing now accounts for how concentrated your open positions already are in the same sector, and tells you when a size was reduced or flagged for that reason. The trade-plan form shows a live preview of position size, risk, and portfolio heat impact before you save. Closed trades can now get an AI-generated debrief on demand, and you can backtest a candidate strategy-rule change against historical data right from the Strategy Benchmark page. | `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`; `docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md`; `backend/services/concentration_service.py`; `docs/design/2026-08-17__release-v8.9/what-if-sizing-risk-simulator/ux_spec.md`; `docs/specs/frontend/pages/trade_plan.md#5d`; `docs/design/2026-08-17__release-v8.9/in-app-backtesting-engine/ux_spec.md`; `docs/specs/frontend/pages/strategy_benchmark.md#7.6`; `docs/specs/data_model.md#DS-16`; `docs/specs/api_contracts/trade_endpoints.md#GET /trades/{trade_id}/debrief`; `docs/specs/frontend/pages/trade_history.md#Post-Trade Debrief` |
+| EPIC-03 | Backend reliability & performance — root-caused and fixed `GET /trade-plans/tags` ~10s p50 latency (per-request DDL call site, fixed via process-global memoization); verified the SI-05 digest-timing log line via a real post-merge invocation (surfaced a pre-existing production logging-configuration gap, tracked separately, adopted an interim GitHub Actions timing-proxy in the meantime); wrapped audit-trail writes in the same transaction as their primary state update; confirmed and removed dead code in `trade_csv_service.py` | — | `docs/ops/db_index_audit_arc4_2026-08-06.md`; `docs/specs/data_model.md#DS-13`; `docs/specs/api_contracts/trade_endpoints.md`; `docs/ops/api_performance_baseline.md#36.5` |
+| EPIC-04 | Test coverage & QA hardening — test coverage for `screener_refresh`/`risk_off_alerts` job-registration wiring; decided and applied a server-side default for `trade_plans.setup_type`; direct unit tests for `cash_service`, `compliance_service`, `news_service`, `validation_service`; Playwright coverage for `WhatsNewCard`'s changelog `User Impact` rendering | — | `backend/routers/screener.py`; `backend/main.py#risk_off_alerts_endpoint`; `docs/specs/api_contracts/trade_plan_endpoints.md#Request Body Fields`; `docs/ops/backend_service_layer_test_coverage_report_2026-08-16.md`; `tests/e2e/whats-new-panel.spec.js`; `docs/specs/frontend/pages/dashboard.md#§6A` |
+| EPIC-05 | Operations & spec currency — local dev venv version-pin enforcement documentation and production `PUBLIC_URL` parity confirmation; archived `window_summary_IW-*.md` files older than 90 days; documented `screener_refresh` and `risk_off_alerts` jobs in `health_endpoints.md` | — | `docs/ops/test_environment_parity_check_2026-08-16.md#§2.1`; `claude/backlog/backlog.md#BLG-OPS-113`; `docs/specs/api_contracts/health_endpoints.md#GET /health/scheduler` |
+| EPIC-06 | Governance process debt closure — fixed `post_ship_closure.md` to actually write `last_post_ship_cycle`/`last_post_ship_utc`; root-caused and corrected `execution_state.json` timestamp drift from actual git commit dates; wired the Displacement Debt Register into `roadmap_prompt.md` STEP 8 (file-creation half still outstanding, carried forward via `ESC-EXEC-20260818-02`); defined a pruning rule for stale `RA:` roadmap-annotation markers older than 3 releases | — | `claude/system/post_ship_closure.md#STEP 10`; `claude/schemas/state_field_owners.json`; `claude/system/execution_prompt.md#3.1`; `claude/system/roadmap_prompt.md#STEP 8`; `claude/system/roadmap_management_prompt.md#STEP 5.2` |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-EPIC01-ST02-01 | P0 (as filed) | Trail Stop tile rendered GBP-converted `current_trailing_stop`/`stop_price` with the native currency symbol for US-market positions (pre-existing since v6.2) | Recorded — Resolved same-story |
+| DEV-v8.9-ST05-02 | P2 (as filed) | §5d.3 "R at Risk" shipped with no FX conversion for any market, contradicting its own wording | Recorded — Resolved same-story |
+| DEV-v8.9-ST05-01 | P3 | §5d.1 presence-gate wording self-contradictory as literally written | Recorded — Resolved same-story |
+| DEV-EPIC03-ST09-01 | P3 | Render production log's SI-05 digest-timing line genuinely absent — root cause: no root logging configuration on the production uvicorn process (pre-existing platform gap, not a regression from this cycle) | Open — Accepted per P3 policy; `BLG-BE-107` filed |
+
+### Tech backlog items shipped
+- [ST-01] [U] Fix nightly trailing-stop ratchet to apply breakeven floor for profitable positions
+- [ST-02] [U] Fix currency basis of `current_trailing_stop`/`stop_price` for US-market positions
+- [ST-03] [D] Add `trailing_stop_action_rate` spec entry with validation tolerances
+- [ST-04] [U] Correlation/sector-concentration-aware position sizing
+- [ST-05] [U] Pre-commit "what-if" sizing/risk simulator on the trade-plan form
+- [ST-06] [U] Automated AI post-trade debrief
+- [ST-07] [U] In-app backtesting engine for strategy rule changes
+- [ST-08] [D] Investigate `GET /trade-plans/tags` ~10s p50 latency
+- [ST-09] [D] Verify ST-11 duration logging against a real post-merge invocation
+- [ST-10] [D] Wrap audit-trail writes in the same transaction as the primary state update
+- [ST-11] [D] Confirm `trade_csv_service.py::build_trade_history_csv` is dead code and remove
+- [ST-12] [D] Add test coverage for `screener_refresh`/`risk_off_alerts` job-registration wiring
+- [ST-13] [D] Decide and apply treatment for `trade_plans.setup_type` with no default/required guarantee
+- [ST-14] [D] Add direct unit tests for `cash_service`, `compliance_service`, `news_service`, `validation_service`
+- [ST-15] [D] Add Playwright coverage for `WhatsNewCard`'s changelog User Impact rendering
+- [ST-16] [D] Local dev venv version-pin enforcement; confirm `PUBLIC_URL` parity on production
+- [ST-17] [D] Archive `window_summary_IW-*.md` files older than 90 days
+- [ST-18] [D] Document `screener_refresh` and `risk_off_alerts` jobs in `health_endpoints.md`
+- [ST-19] [G] Fix `post_ship_closure.md` to actually write `last_post_ship_cycle`/`last_post_ship_utc`
+- [ST-20] [G] Root-cause and correct `execution_state.json` timestamp drift from actual git commit dates
+- [ST-21] [G] Physically place the Displacement Debt Register and wire it into `roadmap_prompt.md` STEP 8
+- [ST-22] [G] Define a pruning rule for stale `RA:` roadmap-annotation markers older than 3 releases
+- [ST-23] [G] §13 System Boundary Review: Automated AI Post-Trade Debrief (Sprint-Planning-added gate story)
+
+Sign-off: Product Owner — 2026-08-21
+QA sign-off: Director of Quality — 2026-08-21
 
 ---
 
