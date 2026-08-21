@@ -1,0 +1,10 @@
+{
+  "_comment": "Structured, script-readable snapshot of Render's production API service build/deploy path filter (Settings -> Build & Deploy). This is dashboard-only configuration -- not visible in render.yaml or any other repo file -- so this snapshot is the checked-in source of truth scripts/check_deploy_path_filter_drift.py compares the Runtime File-Read Inventory against, per ST-14 (BLG-OPS-90, EPIC-03, v9.0). It is NOT live-queried; it must be updated by a human with Render dashboard access whenever the actual dashboard filter changes, and re-confirmed periodically (see confirmed_utc). Full narrative/history: docs/ops/render_build_deploy_path_filter_audit.md.",
+  "confirmed_utc": "2026-07-31T00:00:00Z",
+  "confirmed_via": "Render dashboard, Settings -> Build & Deploy, production API service -- read live and independently re-verified via the deploy trigger-source label (\"New commit via Auto-Deploy\") on commit 95b2e6bf; see docs/ops/render_build_deploy_path_filter_audit.md \"Production Filter Configuration\" section for the full verification.",
+  "root_directory": "backend",
+  "root_directory_is_implicit_default_scope": true,
+  "included_paths": [
+    "docs/product/changelog.md"
+  ]
+}
