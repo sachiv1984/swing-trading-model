@@ -58,3 +58,20 @@ Append-only. Do not edit previous entries.
 - **Unblock criteria:** Step 1 query result recorded; if non-zero, Step 2 correction applied via the existing code path (no bespoke logic) and Step 3 re-verification recorded; Step 4 traceability record written.
 - **Commit format required:** `[EPIC-02][ST-06] <description>` pushed to `exec/2026-08-21__release-v9.0/EPIC-02` for the Step 4 traceability record (and any doc file it lives in).
 - **Status:** Pending
+
+---
+
+## DEL-20260821-03
+
+- **ST Item:** ST-15 — Confirm production PUBLIC_URL is actually set in the Render dashboard
+- **EPIC:** EPIC-03
+- **Classification:** delegated_backend
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1476
+- **Branch:** exec/2026-08-21__release-v9.0/EPIC-03
+- **Delegated at:** 2026-08-21T15:10:00Z
+- **What is needed:** A binary live fact only visible in the Render dashboard's Static Site environment variables — no proxy or code-derivable substitute exists (unlike this cycle's other ops/infra review stories, which admit a best-available-proxy treatment; see `docs/ops/render_starter_tier_headroom_reassessment_2026-08-13.md` §2 for that established pattern and why it doesn't apply here). Check the production Static Site's environment variables for `PUBLIC_URL`. If absent, add it (value `/`, matching `.env.staging`/`render.yaml`'s staging block). If present, just confirm.
+- **Spec reference:** `docs/ops/test_environment_parity_check_2026-08-16.md` (BLG-OPS-146, the original finding this remainder item tracks)
+- **Unblock criteria:** Production `PUBLIC_URL` dashboard value confirmed one way or the other, documented in this item's resolution (a short note appended to `docs/ops/test_environment_parity_check_2026-08-16.md` or a new dated ops note is sufficient — no code change expected unless the value was actually absent).
+- **Commit format required:** `[EPIC-03][ST-15] <description>` pushed to `exec/2026-08-21__release-v9.0/EPIC-03`, if any doc update results.
+- **Status:** Pending
