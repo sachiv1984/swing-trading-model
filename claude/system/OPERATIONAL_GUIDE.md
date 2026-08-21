@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.168
-**Last Updated:** 2026-08-18
+**Version:** 4.169
+**Last Updated:** 2026-08-21
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1455,8 +1455,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.168 |
-| Last Updated | 2026-08-18 |
+| Version | 4.169 |
+| Last Updated | 2026-08-21 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1474,7 +1474,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.29 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.28 |
+| Shared Standards | `claude/system/shared_standards.md` v3.29 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.11 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.169 | 2026-08-21 | **Post-ship closure `2026-08-17__release-v8.9`, acting as Head of Specs Team to resolve `ESC-CLOSE-20260821-02` (BLG-GOV-313) — shared_standards.md v3.28→v3.29: new §16.16 Sandbox Access Constraint Disclosure Block.** §14 Shared Standards v3.28→v3.29. §14 Version 4.168→4.169/2026-08-21. Change: canonical constraint statement + 3 stable disclosure IDs (`SBX-NO-LIVE-DB`, `SBX-NO-LIVE-STAGING`, `SBX-NO-LIVE-EXTERNAL-API`) for `qa_evidence_EPIC-xx.md` entries to cite instead of re-deriving "no live staging/production access in this sandbox" prose — first flagged at `2026-08-12__release-v8.7` Phase 4 (3 independent re-derivations: ST-07, ST-13, ST-15), carried 2 further cycles without a `prompt_change_log.md` entry, crossing the `shared_standards.md §6.4` 2-cycle automatic-escalation threshold this run. A companion escalation (`ESC-CLOSE-20260821-01`, CI-green per-fix restatement clarification) was investigated in the same session and found to be a false positive — already applied at `2026-08-12__release-v8.7` (`qa_evidence_template.md` v1.11) — no prompt edit needed there; `BLG-GOV-312` filed to strengthen `lessons_learnt_prompt.md §3.7`'s recurrence check so it reads a deferred patch's own named target file directly rather than relying on keyword search across sibling files. Authority: Head of Specs Team (post-ship closure `2026-08-17__release-v8.9`, escalation resolution, 2026-08-21). |
 | 4.168 | 2026-08-18 | **Sprint execution `2026-08-17__release-v8.9` EPIC-06/ST-22 (BLG-GOV-260) — roadmap_management_prompt.md v1.4→v1.5: STEP 5.2 gains a stale `RA:` marker pruning rule.** §6M source prompt line v1.4→v1.5 (line 478). §14 Roadmap Management Engine v1.4→v1.5. §14 Version 4.167→4.168/2026-08-18. Change: `current_roadmap.md` §3 accumulates already-retired `*RA:vX.Y retired...*` one-line pointers indefinitely (18+ visible as of this cycle, back to v5.0) with no forcing function to remove them, even though `roadmap_archive.md` remains the permanent record. STEP 5.2 now prunes (deletes outright) any already-retired pointer more than 3 shipped releases older than the document's current highest referenced release; active (non-retired) marker blocks are never pruned. STEP 5.3's run log template gains a new `RA: markers pruned` count field. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-22, 2026-08-18). |
 | 4.167 | 2026-08-18 | **Sprint execution `2026-08-17__release-v8.9` EPIC-06/ST-21 (BLG-GOV-264) — roadmap_prompt.md v9.15→v9.16: STEP 8's Displacement candidate flag now also creates/updates `claude/roadmap/displacement_debt_register.md`.** §6 source prompt header v9.15→v9.16 (line 399). §14 Roadmap Engine Source v9.15→v9.16. §14 Version 4.166→4.167/2026-08-18. Change: STEP 8's displacement-flag instruction now writes a paired update to `claude/roadmap/displacement_debt_register.md` — create-if-absent (using the format/seed content designed in full at ST-14, `2026-07-27__release-v7.9`), new-candidate row creation, re-flag counter increment, and Disposition resolution to "Displaced" when a Kill/Replace decision resolves a prior flagged candidate. **Write-scope self-correction (found and fixed same-session):** this engine initially created the register file directly, which `execution_prompt.md` §7's write-scope hard gate does not permit (`claude/roadmap/*` has no sprint-story exception, unlike `claude/system/*` governance prompts) — reverted before commit; the prompt-wiring half (this bump) is a legitimate Class 6 governance-prompt edit and stands, but physical file creation is deferred to the next live `run roadmap`/`manage roadmap` invocation, which does hold that write scope. `ESC-EXEC-20260727-02` (sealed, `2026-07-27__release-v7.9`) is left untouched per "never modify sealed artefacts"; a live cross-reference, `ESC-EXEC-20260818-02`, tracks the remaining file-creation step in this cycle's own `execution_escalations.md` instead. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-21, 2026-08-18). |
 | 4.166 | 2026-08-18 | **Sprint execution `2026-08-17__release-v8.9` EPIC-06/ST-20 (BLG-GOV-309) — execution_prompt.md v3.68→v3.69: explicit derivation rules added for the previously-undocumented `completed_utc`/`blocked_since_utc` fields.** §8 source prompt header v3.68→v3.69 (line 887). §14 Execution Engine Source v3.68→v3.69. §14 Version 4.165→4.166/2026-08-18. Change: root-caused a ~5-6 hour timestamp drift found on PR #1427's dual-role DoQ review (`2026-08-14__release-v8.8` EPIC-06) between `execution_state.json`'s recorded `completed_utc` and commits' actual `authoredDate` — neither field was ever specified anywhere in `execution_prompt.md` (no schema, no derivation rule), so sessions approximated plausible timestamps rather than deriving real ones. Fix: §3.1 step 4b (new) derives `completed_utc` from the pushed commit's own authored timestamp (`git log -1 --format=%aI <sha>`); §3.1.B step 3 / §3.1.D step 2 derive `blocked_since_utc` from the real wall-clock time at the moment of the blocking write (`date -u`). Empirically dogfooded in the same session: ST-19's own `completed_utc` was derived via the new rule and cross-checked against an independent `date -u` reading within a minute. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-20, 2026-08-18). |

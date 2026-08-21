@@ -82,5 +82,7 @@ ID uniqueness: 2 known genuine collisions unchanged (`BLG-FEAT-84`, `BLG-SEC-18`
 
 ## Outstanding items for Product Owner / Head of Specs Team
 
-1. `BLG-FEAT-74`, `BLG-GOV-140`, `BLG-GOV-141` — 3-cycle deferral disposition needed (re-defer with named note, reassign target, or kill; `BLG-GOV-140`/`-141` surfaced as kill candidates).
-2. `BLG-FEAT-84`, `BLG-SEC-18` — genuine duplicate-ID collisions in `backlog_archive.md`, carried unresolved from the prior groom run; need renumbering disposition.
+**Update (2026-08-21, same session, Product Owner disposition):** Both items below were reviewed and resolved directly after this report was first produced — see `claude/backlog/backlog.md` and `closure_record.md §6` rows 5–6 for the full disposition. Recorded here for the report's own audit trail; not re-opened.
+
+1. ~~`BLG-FEAT-74`, `BLG-GOV-140`, `BLG-GOV-141` — 3-cycle deferral disposition needed~~ — Resolved: `BLG-GOV-140`/`-141` were a false positive (valid, not-yet-due `Gate criteria` of 2026-09-24; the flag only checked the stale `Provisional-Target` field), corrected, not killed. `BLG-FEAT-74`'s stale target corrected to `Unscheduled (gated)` with a PO re-deferral note; priority/scope unchanged.
+2. ~~`BLG-FEAT-84`, `BLG-SEC-18` — genuine duplicate-ID collisions~~ — Resolved: later-archived item under each ID renumbered (`BLG-FEAT-84`→`BLG-FEAT-94`, `BLG-SEC-18`→`BLG-SEC-34`) with traceability notes; earlier-shipped item under each original ID keeps it.

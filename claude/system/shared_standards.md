@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.28
-**Last Updated:** 2026-08-11 (ST-24, EPIC-06, v8.6, BLG-GOV-296 — new §16.15 documenting `execution_state.json`'s `deviations_filed` field's actual meaning)
+**Version:** 3.29
+**Last Updated:** 2026-08-21 (post-ship closure `2026-08-17__release-v8.9`, `ESC-CLOSE-20260821-02` resolution, BLG-GOV-313 — new §16.16 Sandbox Access Constraint Disclosure Block); prior — 2026-08-11 (ST-24, EPIC-06, v8.6, BLG-GOV-296 — new §16.15 documenting `execution_state.json`'s `deviations_filed` field's actual meaning)
 
 # Shared Standards — All Governed Routines
 
@@ -1003,6 +1003,26 @@ Original / Amended — <file path used>
 **Why this shape, not a rename:** Renaming the field (e.g. to `deviation_check_performed`) would be the semantically cleaner fix, but is out of scope for this documentation-alignment story — it would require a coordinated schema migration across every prior cycle's sealed `execution_state.json` records, every prompt file referencing the field name, and `execution_state_schema.json` itself, which is a larger structural change than a doc clarification. This section documents the field's real, current, intentional behaviour so no qa_evidence log or schema reader is misled by the name alone going forward — a rename remains a legitimate future backlog item if the naming friction recurs.
 
 **Applies to:** `execution_state.json`'s `epics.<EPIC-xx>.stories.<ST-xx>.deviations_filed` field, written by `execution_prompt.md` STEP 3.1.A step 10/10a and read by Delivery Verification and Post-Ship Closure. `execution_state_schema.json` carries a matching `_deviations_filed_note` alongside this section (kept in sync — this file is the canonical explanation per §16's own stated purpose; the schema note is a pointer back here, not a duplicate).
+
+---
+
+## §16.16 Sandbox Access Constraint Disclosure Block (BLG-GOV-313, v8.9, Head of Specs Team direct action resolving `ESC-CLOSE-20260821-02`)
+
+**Problem:** This agent's execution environment ("this sandbox") has no live network path to the system's staging or production infrastructure. When a story's acceptance criterion can only be fully verified against one of those live systems, the engine executes the best available substitute instead — but with no canonical statement to point to, each `qa_evidence_EPIC-xx.md` entry hitting this recurring constraint independently re-derives its own disclosure prose. First flagged at `2026-08-12__release-v8.7` Phase 4 (`lessons_learnt_cycle.md` friction item 2): three unrelated stories in the same cycle (ST-07/`BLG-BE-96`, ST-13/`BLG-SEC-30`, ST-15/`BLG-OPS-139`) each disclosed the identical underlying constraint with slightly different wording ("best-available-proxy", "same constraint class as ST-07", "no live Render dashboard access in this sandbox"). Carried unresolved across two further cycles (`2026-08-14__release-v8.8`, `2026-08-17__release-v8.9`) before being applied here at `ESC-CLOSE-20260821-02`.
+
+**Canonical constraint statement:** This agent session runs in a sandboxed environment with no live network access to this system's staging or production infrastructure — no live database connection, no live hosting-platform dashboard/deploy-log access (Render or equivalent), and no live external API credentials (Claude/Gemini, Alpaca, Telegram, Yahoo Finance, or equivalent) beyond what a story's own committed code can exercise through mocked or fixture-driven test paths. An acceptance criterion that can only be verified against a genuinely live instance of one of these systems cannot be brought to a fully-verified result within this sandbox. The best available evidence in that case is a **best-available-proxy execution**: real code, real logic, validated against the nearest available substitute (a mocked call site, a synthetic dataset, a prior staging/production log excerpt, or a structural code-path audit) rather than a live round-trip. A best-available-proxy execution is not full closure of a live-access-requiring AC — it is the disclosed, honest ceiling of what this sandbox can verify, distinct from (and weaker than) a genuine live-verified reading.
+
+**Stable disclosure IDs** — cite the relevant one(s) in a `qa_evidence_EPIC-xx.md` entry's Comments/Notes column instead of re-deriving prose each time:
+
+| ID | Constraint |
+|----|-----------|
+| `SBX-NO-LIVE-DB` | No live staging/production database connection |
+| `SBX-NO-LIVE-STAGING` | No live staging/production hosting-platform dashboard, deploy log, or console access (Render or equivalent) |
+| `SBX-NO-LIVE-EXTERNAL-API` | No live external API credentials beyond what committed test/mock fixtures exercise (Claude/Gemini, Alpaca, Telegram, Yahoo Finance, or equivalent) |
+
+**Usage:** When an AC can only be closed with genuine live access to one of the systems above, cite the relevant ID (e.g. *"SBX-NO-LIVE-DB — see `shared_standards.md` §16.16"*) in the `qa_evidence_EPIC-xx.md` entry's Comments/Notes field, alongside the story-specific detail of what was actually done as the best-available-proxy. This does not change what counts as verified — a best-available-proxy execution is still not full closure of a live-access-requiring AC — it only standardises how that gap is *described*, so different stories hitting the same recurring constraint read consistently instead of each inventing new wording.
+
+**Applies to:** Any `qa_evidence_EPIC-xx.md` entry, `DEV-*` deviation note, or backlog item citing a live-access limitation as the reason an AC could not be fully closed within a Sprint Execution session.
 
 ---
 

@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-21 (groom backlog post-ship closure 2026-08-17__release-v8.9 — 21 items archived: BLG-BE-98/99/100/101/102/103/104, BLG-SPEC-85/130, BLG-FEAT-89/90/91, BLG-QA-149/150/151/152, BLG-OPS-113/146, BLG-GOV-260/308/309; 1 ephemeral Release Slice section removed — v8.9; `BLG-GOV-264` intentionally not archived — split-achievability, see backlog.md); prior — 2026-08-17 (groom backlog post-ship closure 2026-08-14__release-v8.8 — 30 items archived: BLG-GOV-291, BLG-GOV-292, BLG-GOV-293, BLG-FE-159/160/161/162/163, BLG-BE-84/85/87/58/94/97, BLG-OPS-13/51/135/143/144/145, BLG-SEC-18/28/32/33, BLG-QA-140/143/145/146, BLG-SPEC-118/129; 1 ephemeral Release Slice section removed — v8.8); prior — 2026-08-13 (groom backlog post-ship closure 2026-08-12__release-v8.7 — 19 shipped items archived; 1 ephemeral Release Slice section removed — v8.7; 2 further v8.7 items already archived earlier that session via ad hoc backlog audit); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
+**Last Updated:** 2026-08-21 (groom backlog post-ship closure 2026-08-17__release-v8.9 — 21 items archived: BLG-BE-98/99/100/101/102/103/104, BLG-SPEC-85/130, BLG-FEAT-89/90/91, BLG-QA-149/150/151/152, BLG-OPS-113/146, BLG-GOV-260/308/309; 1 ephemeral Release Slice section removed — v8.9; `BLG-GOV-264` intentionally not archived — split-achievability, see backlog.md; same-session follow-up acting as Product Owner renumbered 2 genuine duplicate IDs found by this run's ID Uniqueness Scan — `BLG-FEAT-84`→`BLG-FEAT-94` (later-archived "Thesis pre-mortem" entry, v8.7) and `BLG-SEC-18`→`BLG-SEC-34` (later-archived "npm audit review" entry, v8.8), each with a traceability note; earlier claimant of each ID keeps it); prior — 2026-08-17 (groom backlog post-ship closure 2026-08-14__release-v8.8 — 30 items archived: BLG-GOV-291, BLG-GOV-292, BLG-GOV-293, BLG-FE-159/160/161/162/163, BLG-BE-84/85/87/58/94/97, BLG-OPS-13/51/135/143/144/145, BLG-SEC-18/28/32/33, BLG-QA-140/143/145/146, BLG-SPEC-118/129; 1 ephemeral Release Slice section removed — v8.8); prior — 2026-08-13 (groom backlog post-ship closure 2026-08-12__release-v8.7 — 19 shipped items archived; 1 ephemeral Release Slice section removed — v8.7; 2 further v8.7 items already archived earlier that session via ad hoc backlog audit); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -457,15 +457,16 @@ Strategy rule changes are governed by §13 and require review before shipping, b
 
 ---
 
-### BLG-FEAT-84 — Thesis pre-mortem / invalidation-condition capture at trade-plan entry
+### BLG-FEAT-94 — Thesis pre-mortem / invalidation-condition capture at trade-plan entry
 
 **Status at retirement:** ✅ Complete
 **Priority at retirement:** P3
 **Retired:** 2026-08-13
 **Shipped in:** v8.7 (ST-01, EPIC-01)
 **Evidence:** docs/product/changelog.md#v8.7; claude/cycles/2026-08-12__release-v8.7/verification_report.md; claude/cycles/2026-08-12__release-v8.7/qa_evidence_EPIC-01.md
+**Renumbering note (Product Owner direct action, 2026-08-21):** Renumbered from `BLG-FEAT-84` to `BLG-FEAT-94` at post-ship closure `2026-08-17__release-v8.9` STEP 12's ID Uniqueness Scan duplicate-ID resolution. `BLG-FEAT-84` was already claimed by an earlier-shipped item of the same series ("Automated Telegram changelog digest after each release", retired 2026-07-27, v7.8) — that earlier claim retains the original ID; this later-archived item takes the new one. Both items independently reached `## backlog-add` filing with the same auto-assigned ID before `roadmap_prompt.md` v9.14→v9.15 (2026-08-17) fixed the ID-assignment scan to check `backlog_archive.md` as well as `backlog.md`.
 
-### BLG-FEAT-84 — Thesis pre-mortem / invalidation-condition capture at trade-plan entry
+### BLG-FEAT-94 — Thesis pre-mortem / invalidation-condition capture at trade-plan entry
 **Priority:** P3 (Low) | **Type:** Product Feature | **Owner:** Head of UX & Design; Product Owner | **Source:** IDEA-head-of-ux-20260809-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-08-13 — cycle 2026-08-12__release-v8.7
 **Problem:** The trade plan captures entry thesis but not an explicit "what would prove this thesis wrong" (invalidation condition) at the point of entry — a pre-mortem is a well-established discipline technique this system's own structured checklists do not yet capture.
 **Scope:** Add an optional invalidation-condition field to the trade plan entry flow.
@@ -18791,15 +18792,16 @@ v4.8 ST-07 added a placeholder entry for GET /analytics/strategy-version-compari
 
 ---
 
-### BLG-SEC-18 — Review baseline npm audit HIGH/CRITICAL findings (react-scripts toolchain)
+### BLG-SEC-34 — Review baseline npm audit HIGH/CRITICAL findings (react-scripts toolchain)
 
 **Status at retirement:** ✅ Complete
 **Priority at retirement:** P3 (Low)
 **Retired:** 2026-08-17
 **Shipped in:** v8.8
 **Evidence:** docs/product/changelog.md#v8.8; claude/cycles/2026-08-14__release-v8.8/verification_report.md
+**Renumbering note (Product Owner direct action, 2026-08-21):** Renumbered from `BLG-SEC-18` to `BLG-SEC-34` at post-ship closure `2026-08-17__release-v8.9` STEP 12's ID Uniqueness Scan duplicate-ID resolution. `BLG-SEC-18` was already claimed by an earlier-shipped item of the same series ("Rate-limit audit on public-facing endpoints ahead of any future auth changes", retired 2026-07-30, v7.10) — that earlier claim retains the original ID; this later-archived item takes the new one.
 
-### BLG-SEC-18 — Review baseline npm audit HIGH/CRITICAL findings (react-scripts toolchain)
+### BLG-SEC-34 — Review baseline npm audit HIGH/CRITICAL findings (react-scripts toolchain)
 
 **Priority:** P3 (Low)
 **Type:** Security

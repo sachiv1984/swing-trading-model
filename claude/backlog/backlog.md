@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-21 (groom backlog post-ship closure 2026-08-17__release-v8.9 — 21 shipped items marked ✅ COMPLETE then archived to backlog_archive.md; `BLG-GOV-264` left open, split-achievability; 1 ephemeral Release Slice section removed; 2 known genuine duplicate IDs carried forward unchanged (BLG-FEAT-84, BLG-SEC-18 — pending PO/Head of Specs Team disposition); Gate Field Normalisation 0 in active backlog; Effort Day-Range Validation PASS; Governance Prompt Duplicate Cross-Check 15 raw candidates, 0 genuine; 3 items flagged for 3-cycle-deferral PO disposition (BLG-FEAT-74, BLG-GOV-140, BLG-GOV-141); health=PASS with 5 flagged items; report: claude/backlog/backlog_health_20260821.md); prior — 2026-08-21 (session — 1 new item added: BLG-BE-109, nightly backtest rebalance-date computation treats in-progress month's latest bar as month-end); prior — 2026-08-21 (session — 1 new item added: BLG-OPS-148, CI safeguard for the GitHub Pages white-page incident); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-21 (groom backlog post-ship closure 2026-08-17__release-v8.9 — 21 shipped items marked ✅ COMPLETE then archived to backlog_archive.md; `BLG-GOV-264` left open, split-achievability; 1 ephemeral Release Slice section removed; Gate Field Normalisation 0 in active backlog; Effort Day-Range Validation PASS; Governance Prompt Duplicate Cross-Check 15 raw candidates, 0 genuine; health=PASS with 5 flagged items, report: claude/backlog/backlog_health_20260821.md; same-session follow-up acting as Product Owner/Head of Specs Team resolved all 5 flags — BLG-GOV-140/141 false-positive deferral flags corrected (valid not-yet-due gate date), BLG-FEAT-74 re-deferred with corrected target, BLG-FEAT-84/BLG-SEC-18 duplicate IDs renumbered to BLG-FEAT-94/BLG-SEC-34 with traceability notes, 2 new items filed BLG-GOV-312/313); prior — 2026-08-21 (session — 1 new item added: BLG-BE-109, nightly backtest rebalance-date computation treats in-progress month's latest bar as month-end); prior — 2026-08-21 (session — 1 new item added: BLG-OPS-148, CI safeguard for the GitHub Pages white-page incident); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -439,8 +439,10 @@ The behavioural drift detection backend service shipped in v4.6 and computes dri
 **Owner:** Head of Engineering; Product Owner
 **Source:** Feature-gap review (current_roadmap.md §5 Arc 4, PO-05 — flagged as unbacklogged) — 2026-07-10
 **Effort:** VH (>2 weeks)
-**Provisional-Target:** v7.7 — named as v7.7 anchor scope 2026-07-21 (DL-074); `[gate status unverified/unmet]` — §13 determinism pre-clearance not yet run; effort (VH) exceeds typical single-cycle sizing, Release Planning to confirm phasing
+**Provisional-Target:** Unscheduled (gated — §13 determinism pre-clearance not yet run)
 **Depends on:** IT-06 Alpaca Paper Trading Integration (shipped v3.5) — foundational infrastructure this feature reuses
+
+> PO re-deferral 2026-08-21: `Provisional-Target` corrected from the stale `v7.7` anchor (DL-074, named 2026-07-21, shipped 2026-07-24 without this item ever entering a sprint) to `Unscheduled (gated)`, matching the item's actual state — the real blocker is that nobody has run the §13 determinism pre-clearance review yet, not a scheduling gap per se. Priority remains P1 and the roadmap's "highest-value long-term validation feature" framing stands; this item should be re-targeted to a specific release once the §13 pre-clearance review (Strategy Rules & System Intent Owner) is scheduled and completed, not before.
 
 **Problem**
 The roadmap names this "the highest-value long-term validation feature" in Arc 4, but no backlog item exists for it at all. There is currently no way for the user to test how a candidate strategy-rule change would have performed historically, or to replay a specific past setup/period against the paper-trading infrastructure that already exists and is otherwise unused for this purpose.
@@ -2245,9 +2247,11 @@ When sprint planning seals scope, there is no step to cross-reference the change
 **Owner:** Strategy Rules & System Intent Owner; AI Compliance & Governance Officer
 **Source:** IDEA-strategy-owner-20260626-02 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v6.3
+**Provisional-Target:** Gate-conditional — first review due 2026-09-24, not yet due
 
 **Gate criteria:** First review due 2026-09-24 (90 days post-v6.2 ship 2026-06-25). Quarterly cadence thereafter.
+
+> **Product Owner note (2026-08-21, post-ship closure `2026-08-17__release-v8.9` STEP 12 review):** This item was flagged by `groom backlog`'s Deferral Age Validation as a stale-target/kill candidate because its `Provisional-Target` field still read the leftover placeholder `v6.3` (long since shipped). That flag was a false positive — the item's own `Gate criteria` field is the actual operative schedule, and 2026-09-24 has not yet arrived. Not neglected, not a kill candidate. `Provisional-Target` corrected above to avoid re-triggering the same false-positive check at the next groom run.
 
 **Problem**
 v6.2 AI chat advisor and daily briefing are now live. §13 requires AI advisory outputs to remain advisory-only and not cross into automated decision-making. Periodic self-audit confirms this boundary is maintained as prompts and response handling evolve. Without a scheduled review, §13 compliance depends on individual vigilance rather than a governed cadence.
@@ -2270,9 +2274,11 @@ v6.2 AI chat advisor and daily briefing are now live. §13 requires AI advisory 
 **Owner:** AI Compliance & Governance Officer; Infrastructure & Operations Owner
 **Source:** IDEA-ai-compliance-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v6.3
+**Provisional-Target:** Gate-conditional — schedule within 90 days of v6.2 ship, due 2026-09-24, not yet due
 
 **Gate criteria:** Schedule within 90 days of v6.2 ship (by 2026-09-24).
+
+> **Product Owner note (2026-08-21, post-ship closure `2026-08-17__release-v8.9` STEP 12 review):** This item was flagged by `groom backlog`'s Deferral Age Validation as a stale-target/kill candidate because its `Provisional-Target` field still read the leftover placeholder `v6.3` (long since shipped). That flag was a false positive — the item's own `Gate criteria` field is the actual operative schedule, and 2026-09-24 has not yet arrived. Not neglected, not a kill candidate. `Provisional-Target` corrected above to avoid re-triggering the same false-positive check at the next groom run.
 
 **Problem**
 v6.2 AI features (briefing, chat) should be logging all AI responses with model ID, prompt hash, and response length per AI governance policy. A completeness audit verifies the logging is in place and complete. Without this audit, log completeness is assumed rather than verified.
@@ -4771,6 +4777,36 @@ On 2026-08-21 the GitHub Pages site went blank because `.env.production`'s `PUBL
 - `strategy_rules.md` §13.5's roster table includes a ST-06/BLG-FEAT-90 row pointing at the CONDITIONAL review document
 - Edit committed under Strategy Rules & System Intent Owner authority, in a session/prompt whose write scope explicitly covers `claude/strategy/`
 - If `strategy_rules.md`'s version is bumped: CLAUDE.md §6 governance file edit checklist steps 1–4 completed in the same commit
+
+---
+
+### BLG-GOV-312 — Recurrence-check false positive: named target file not read directly before concluding "not applied"
+
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Post-ship closure `2026-08-17__release-v8.9`, `ESC-CLOSE-20260821-01` resolution — 2026-08-21
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`ESC-CLOSE-20260821-01` (a §6.4 2-cycle recurrence escalation for the "CI-green per-fix restatement clarification") turned out to be a false positive: the fix had actually been applied at `2026-08-12__release-v8.7` post-ship closure STEP 8 (`LL-v8.7-P4-01`, `qa_evidence_template.md` v1.10→v1.11), but both `2026-08-14__release-v8.8` and `2026-08-17__release-v8.9`'s Phase 4 recurrence checks (`lessons_learnt_prompt.md §3.7`) reported "no ... language change found in either target file" — searching `execution_prompt.md §5.3` and `prompt_change_log.md` — without ever actually reading `qa_evidence_template.md` itself, the file the original friction item's own Process Patch entry named as the fix target. This is a distinct failure mode from the one `lessons_learnt_prompt.md` v1.10→v1.11's "Patch-ID matching requirement" (`LL-v8.6-P4-01b`) already closed (that one was about searching `prompt_change_log.md` by date/filename instead of patch-ID; this one is about not reading the named target file at all) — the existing fix did not cover this case.
+
+**Scope**
+- `lessons_learnt_prompt.md §3.7`: when checking whether a deferred patch was subsequently applied, and the patch's own Process Patch entry names a specific target file (as most `→ Deferred patch` entries do, per §5's record structure), that file must be opened and read directly — not just grepped by an assumed keyword, and not silently substituted for a same-topic sibling file (e.g. `execution_prompt.md` when the named target was `qa_evidence_template.md`) — before concluding "not applied" and letting the recurrence/escalation clock advance.
+
+**Acceptance Criteria**
+- `lessons_learnt_prompt.md §3.7` gains an explicit "read the named target file directly" step
+- Standard CLAUDE.md §6 governance file edit checklist applied (version bump, `OPERATIONAL_GUIDE.md` §14, `prompt_change_log.md` entry)
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-313 — Canonical "Sandbox Access Constraint" disclosure block for shared_standards.md
+**Priority:** P3 (Low) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** `2026-08-12__release-v8.7` Phase 4 lessons learnt (friction item 2), carried 2 cycles, escalated as `ESC-CLOSE-20260821-02` — resolved directly 2026-08-21 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-21 — direct Head of Specs Team action, post-ship closure `2026-08-17__release-v8.9`
+**Problem:** Three independent stories at v8.7 (ST-07, ST-13, ST-15) each disclosed the same "no live staging/production access in this sandbox" constraint with slightly different re-derived prose, with no canonical statement to point to instead.
+**Scope:** New `shared_standards.md` §16.16 — canonical constraint statement, stable disclosure IDs (`SBX-NO-LIVE-DB`/`SBX-NO-LIVE-STAGING`/`SBX-NO-LIVE-EXTERNAL-API`), usage note.
+**Acceptance Criteria:** Section added; `shared_standards.md` version bumped; `OPERATIONAL_GUIDE.md` §14 and `prompt_change_log.md` updated in the same commit.
 
 ---
 

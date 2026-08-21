@@ -51,18 +51,7 @@
   "prior_cycle": "2026-08-17__release-v8.9",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
-  "open_escalations": {
-    "ESC-CLOSE-20260821-01": {
-      "summary": "CI-green per-fix restatement clarification (qa_evidence_template.md/execution_prompt.md §5.3) — 2-cycle §6.4 recurrence escalation, needs Head of Specs Team disposition",
-      "owner": "Head of Specs Team",
-      "sla_due_utc": "2026-08-24T00:00:00Z"
-    },
-    "ESC-CLOSE-20260821-02": {
-      "summary": "Canonical \"Sandbox Access Constraint\" disclosure block for shared_standards.md — 2-cycle §6.4 recurrence escalation, needs Head of Specs Team disposition",
-      "owner": "Head of Specs Team",
-      "sla_due_utc": "2026-08-24T00:00:00Z"
-    }
-  },
+  "open_escalations": {},
   "last_rebalance_cycle": "2026-08-11__scheduled",
   "last_rebalance_utc": "2026-08-11T15:00:00Z",
   "last_scheduled_rebalance_utc": "2026-08-11T15:00:00Z",
@@ -75,7 +64,7 @@
   "last_manage_roadmap_utc": "2026-08-21T00:00:00Z",
   "last_manage_roadmap_outcome": "0 items retired, 0 flagged stale, 0 kept active (Now horizon empty since 2026-07-27; v8.9 shipped fully backlog-driven, no formal roadmap section to retire); 53 RA: markers pruned (ST-22/BLG-GOV-260 first live run — see manage_roadmap_log_20260821.md)",
   "last_groom_backlog_utc": "2026-08-21T00:00:00Z",
-  "last_groom_backlog_outcome": "21 archived (all shipped v8.9; BLG-GOV-264 intentionally left open — split-achievability); 0 orphans; 0 stale blockers; 0 promotion candidates; 1 ephemeral Release Slice section removed; Gate Field Normalisation: 0 in active backlog; Effort Day-Range Validation: PASS; Governance Prompt Duplicate Cross-Check: 15 raw candidates, 0 genuine; Deferral Age Validation: 3 items flagged (BLG-FEAT-74, BLG-GOV-140, BLG-GOV-141) for PO disposition; ID uniqueness: 2 known genuine collisions unchanged (BLG-FEAT-84, BLG-SEC-18), still pending PO/Head of Specs Team disposition; health=PASS with 5 flagged items; report: claude/backlog/backlog_health_20260821.md",
+  "last_groom_backlog_outcome": "21 archived (all shipped v8.9; BLG-GOV-264 intentionally left open — split-achievability); 0 orphans; 0 stale blockers; 0 promotion candidates; 1 ephemeral Release Slice section removed; Gate Field Normalisation: 0 in active backlog; Effort Day-Range Validation: PASS; Governance Prompt Duplicate Cross-Check: 15 raw candidates, 0 genuine; health=PASS with 5 flagged items (report: claude/backlog/backlog_health_20260821.md) — all 5 resolved same-session by Product Owner: BLG-GOV-140/141 deferral flags were false positives (valid not-yet-due gate date), corrected not killed; BLG-FEAT-74 re-deferred with corrected Unscheduled(gated) target; BLG-FEAT-84/BLG-SEC-18 duplicate IDs renumbered to BLG-FEAT-94/BLG-SEC-34",
   "active_pog": {},
   "resolved_pre_sprint": {
     "ESC-20260304-01": {
