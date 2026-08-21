@@ -1,7 +1,7 @@
 {
   "cycle_id": "2026-08-17__release-v8.9",
   "release": "v8.9",
-  "status": "In_Progress",
+  "status": "Closed",
   "mode": "standard",
   "dry_run": false,
   "started_utc": "2026-08-21T00:00:00Z",
@@ -24,7 +24,7 @@
     "step_11_manage_roadmap": "complete",
     "step_12_groom_backlog": "complete",
     "step_12_5_ideas_housekeeping": "complete",
-    "step_13_commit": "not_started"
+    "step_13_commit": "pass"
   },
   "closure_status": "Closed_with_actions"
 }
