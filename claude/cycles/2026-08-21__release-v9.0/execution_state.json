@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-21T13:47:12Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-21T16:25:00Z",
+  "last_updated_utc": "2026-08-21T19:53:00Z",
   "epics": {
     "EPIC-01": {
       "status": "in_progress",
@@ -511,23 +511,25 @@
         "ST-19": {
           "title": "R-multiple calculation regression test",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1480,
           "branch": "exec/2026-08-21__release-v9.0/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "98c64e3895f34ed642b101c02a1877523807224d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-21T19:52:05Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#R-Multiple (Canonical Server-Side)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "No explicit sign-off role named in this story's AC. Test shape follows the spec's own prescribed 'Validation' note verbatim (mixed USD/GBP fixture, different fx_rate values)."
         },
         "ST-20": {
           "title": "Playwright coverage gap audit for Arc5ComplianceSection",
@@ -736,7 +738,8 @@
     "ST-12",
     "ST-13",
     "ST-14",
-    "ST-16"
+    "ST-16",
+    "ST-19"
   ],
   "open_escalations": [
     "ESC-EXEC-20260821-01",
