@@ -8,7 +8,7 @@ Last Updated: 2026-08-21
 **EPIC:** EPIC-03 — Operational Resilience & Deploy-Path Safeguards
 **Cycle:** 2026-08-21__release-v9.0
 **Sprint goal:** Close out the correctness and data-integrity follow-through surfaced directly by v8.9's own PR-review process, while hardening operational resilience (deploy-path and staging safeguards) and expanding QA and cost/capacity hygiene coverage.
-**Test scenarios used:** tests/test_deploy_path_filter_drift_check.py, tests/test_staging_smoke_test.py, a real local dry run (npm build + Playwright-adjacent manual verification for ST-16; a real locally-running backend instance against a local PostgreSQL server for ST-13), `.github/workflows/production-db-backup.yml`'s own live run history (ST-12, pre-met verification)
+**Test scenarios used:** tests/test_deploy_path_filter_drift_check.py, tests/test_staging_smoke_test.py, tests/test_wait_for_staging_deploy_live.py, a real local dry run (npm build for ST-16; a real locally-running backend instance against a local PostgreSQL server for ST-13), `.github/workflows/production-db-backup.yml`'s own live run history (ST-12, pre-met verification)
 
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|----------------|-----------------|---------------------|--------|------------|
@@ -19,7 +19,7 @@ Last Updated: 2026-08-21
 | ST-16 | `.github/workflows/deploy.yml` | CI safeguard step verifying `build/index.html`'s asset paths are correctly scoped to the GitHub Pages subpath, catching the exact regression class behind the 2026-08-21 white-page incident. | `deploy.yml` fails fast on wrong-subpath asset paths; deliberate local test confirms the check catches the regression | Pass | None |
 
 **QA test coverage:**
-- Scenarios run: `tests/test_deploy_path_filter_drift_check.py` (10 tests), `tests/test_staging_smoke_test.py` (12 tests); real dry runs performed in-session for ST-13 (genuinely broken local instance, real Postgres) and ST-16 (real `npm run build` twice, with/without the PUBLIC_URL override); ST-12 pre-met verification via `.github/workflows/production-db-backup.yml`'s own live run history (`gh run list` — daily successful runs including the morning of this cycle's own start date, 2026-08-21T03:48:09Z)
+- Scenarios run: `tests/test_deploy_path_filter_drift_check.py` (10 tests), `tests/test_staging_smoke_test.py` (12 tests), `tests/test_wait_for_staging_deploy_live.py` (7 tests); real dry runs performed in-session for ST-13 (genuinely broken local instance, real Postgres) and ST-16 (real `npm run build` twice, with/without the PUBLIC_URL override); ST-12 pre-met verification via `.github/workflows/production-db-backup.yml`'s own live run history (`gh run list` — daily successful runs including the morning of this cycle's own start date, 2026-08-21T03:48:09Z). ST-13 went through 2 Infrastructure & Operations Owner review rounds (initial Blocked on a real gap — fixed 120s sleep instead of confirming deploy status; re-review Approved after the fix reused the existing Render platform API integration).
 - Regression areas checked: full backend test suite (1282 passed, 5 skipped, no regressions from ST-08/09/10/11's carried-forward changes plus this EPIC's own additions); YAML syntax validated for all 4 modified/added workflow files
 - Known deviations: None found — all stories' deviation checks completed with nothing to file
 

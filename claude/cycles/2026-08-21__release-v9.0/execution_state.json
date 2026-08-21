@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-21T13:47:12Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-21T15:20:00Z",
+  "last_updated_utc": "2026-08-21T16:25:00Z",
   "epics": {
     "EPIC-01": {
       "status": "in_progress",
@@ -345,23 +345,33 @@
         "ST-13": {
           "title": "Automated staging smoke test on deploy/merge",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1474,
           "branch": "exec/2026-08-21__release-v9.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "11e4ebe897386ab5b6e6a341c41c38973a060c0f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-21T16:23:09Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/staging_smoke_test.py",
+            "scripts/wait_for_staging_deploy_live.py",
+            ".github/workflows/staging-deploy.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Fail-correctly AC will be proven via a local deliberately-broken-server dry run (best-available proxy for a live Render staging trigger, consistent with this repo's established proxy pattern - see docs/ops/render_starter_tier_headroom_reassessment_2026-08-13.md)."
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-08-21",
+            "comments": "Initial pass Blocked (fixed-sleep gap correctly caught -- RENDER_PLATFORM_API_KEY/check_staging_deploy_drift.py already provide real deploy-status confirmation). Re-review after fix: Approved -- confirmed genuine reuse of the key and helper function, timeout path genuinely hard-fails, timing reasonable, no meaningful residual risk."
+          },
+          "notes": "Real (not mocked) dry-run performed: genuine local backend instance against real local Postgres with deliberately incomplete schema, smoke test correctly caught real failures at every stage as schema was built out. 2 review rounds (1 Blocked, 1 Approved) -- see commit message for full detail."
         },
         "ST-14": {
           "title": "Staging environment drift detector",
@@ -724,6 +734,7 @@
     "ST-10",
     "ST-11",
     "ST-12",
+    "ST-13",
     "ST-14",
     "ST-16"
   ],
