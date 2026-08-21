@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-21T13:47:12Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-21T20:10:00Z",
+  "last_updated_utc": "2026-08-21T20:11:00Z",
   "epics": {
     "EPIC-01": {
       "status": "in_progress",
@@ -559,11 +559,11 @@
           "assigned_to": "engine",
           "github_issue": 1482,
           "branch": "exec/2026-08-21__release-v9.0/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "17504059e82cd9338ccbda98364d0e793c52b90a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-08-21T20:04:45Z",
           "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/accessibility-axe-scan.spec.js"
