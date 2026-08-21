@@ -1,20 +1,20 @@
 {
-  "active_cycle": "2026-08-17__release-v8.9",
-  "cycle_name": "v8.9 — Live Risk-Management Correctness & Trade Intelligence Expansion",
-  "status": "Closed",
-  "prior_status": "Verified_with_deviations",
-  "engine": "Sprint Execution",
+  "active_cycle": "2026-08-21__release-v9.0",
+  "cycle_name": "v9.0 — AI Debrief/Backtest Follow-Through, Risk-Data Integrity & Operational Resilience",
+  "status": "Release_Planning_Complete",
+  "prior_status": "Closed",
+  "engine": "Release Planning",
   "execution_state_path": "claude/cycles/2026-08-17__release-v8.9/execution_state.json",
-  "backlog_slice_path": "claude/cycles/2026-08-17__release-v8.9/stage4_backlog_slice.md",
+  "backlog_slice_path": "claude/cycles/2026-08-21__release-v9.0/stage4_backlog_slice.md",
   "design_gate_required": true,
-  "sprint_sealed": true,
+  "sprint_sealed": false,
   "_sprint_sealed_note": "Set true at Sprint Planning STEP 7, 2026-08-17, after sign-off gate (STEP 6.2) passed. Sprint 2 (EPIC-02 subset, ST-06 only) is a within-cycle gate on ST-23 reaching done — not a calendar/post-ship boundary; see sprint_backlog.md Multi-Sprint Gate Note.",
   "sprint_goal_path": "claude/cycles/2026-08-17__release-v8.9/sprint_goal.md",
   "sprint_backlog_path": "claude/cycles/2026-08-17__release-v8.9/sprint_backlog.md",
   "sprint_capacity_path": "claude/cycles/2026-08-17__release-v8.9/sprint_capacity.md",
   "sprint_goal_status": "confirmed",
   "capacity_warn_acknowledged": false,
-  "design_gate_status": "Passed",
+  "design_gate_status": "not_started",
   "design_gate_record": "claude/cycles/2026-08-17__release-v8.9/design_gate.md",
   "design_gate_bypass_authority": "",
   "design_gate_bypass_reason": "",
@@ -47,7 +47,7 @@
   "last_audit_overall_score": 71,
   "last_audit_open_items": 0,
   "last_audit_cycle_count": 76,
-  "next_release": "[TBD]",
+  "next_release": "v9.0",
   "prior_cycle": "2026-08-17__release-v8.9",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
@@ -77,29 +77,28 @@
     }
   },
   "release_plan": {
-    "release_plan_path": "claude/cycles/2026-08-17__release-v8.9/release_plan.md",
-    "cycle_id": "2026-08-17__release-v8.9",
-    "published_utc": "2026-08-17T14:25:00Z",
+    "release_plan_path": "claude/cycles/2026-08-21__release-v9.0/release_plan.md",
+    "cycle_id": "2026-08-21__release-v9.0",
+    "published_utc": "2026-08-21T00:00:00Z",
     "epics": [
       "EPIC-01",
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
-      "EPIC-05",
-      "EPIC-06"
+      "EPIC-05"
     ],
-    "story_items": 22,
-    "story_items_firm": 22,
+    "story_items": 27,
+    "story_items_firm": 27,
     "story_items_conditional": 0,
-    "scope_items": 22,
+    "scope_items": 27,
     "capacity_check": "pass",
     "design_gate_required": true,
-    "state_json": "claude/cycles/2026-08-17__release-v8.9/state.json",
-    "scope_doc": "docs/product/scope/scope--2026-08-17__release-v8.9.md"
+    "state_json": "claude/cycles/2026-08-21__release-v9.0/state.json",
+    "scope_doc": "docs/product/scope/scope--2026-08-21__release-v9.0.md"
   },
   "prior_release_plan": {
-    "release_plan_path": "claude/cycles/2026-08-14__release-v8.8/release_plan.md",
-    "cycle_id": "2026-08-14__release-v8.8",
-    "published_utc": "2026-08-14T15:45:00Z"
+    "release_plan_path": "claude/cycles/2026-08-17__release-v8.9/release_plan.md",
+    "cycle_id": "2026-08-17__release-v8.9",
+    "published_utc": "2026-08-17T14:25:00Z"
   }
 }
