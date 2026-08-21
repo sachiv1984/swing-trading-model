@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.9
-**Last Updated:** 2026-08-18 (ST-05, EPIC-02, v8.9, BLG-FEAT-91 — sign-off review fix: DEV-v8.9-ST05-02, §5d.3 R at Risk now FX-converted to GBP for US-market plans, matching TradeEntry.js's Total Risk precedent; Format column corrected); prior — 2026-08-18 (same story — DEV-v8.9-ST05-01, §5d.1 presence-gate corrected to Stop-Level-only; heat_impact_percent field name confirmed); prior — 2026-08-17 (v8.9 design gate — added §5d What-If Sizing Preview (ST-05) and §10.7 concentration-reason display (ST-04, BLG-BE-104)); prior history retained — see prior entries in version control.
+**Version:** 1.10
+**Last Updated:** 2026-08-21 (ST-10, EPIC-02, v9.0, BLG-FE-164 — §5d.2 adds a panel-local FX Rate override input (US-market only); §5d.3's reproducibility claim corrected to depend on setting it); prior — 2026-08-18 (ST-05, EPIC-02, v8.9, BLG-FEAT-91 — sign-off review fix: DEV-v8.9-ST05-02, §5d.3 R at Risk now FX-converted to GBP for US-market plans, matching TradeEntry.js's Total Risk precedent; Format column corrected); prior — 2026-08-18 (same story — DEV-v8.9-ST05-01, §5d.1 presence-gate corrected to Stop-Level-only; heat_impact_percent field name confirmed); prior history retained — see prior entries in version control.
 **Design Source (v1.7 what-if sizing preview):** docs/design/2026-08-17__release-v8.9/what-if-sizing-risk-simulator/ux_spec.md
 **Design Source (v1.7 concentration-aware sizing display):** docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md
 **Design Source (v1.5 invalidation condition):** docs/design/2026-08-12__release-v8.7/thesis-invalidation-condition/decision_record.md
@@ -244,10 +244,13 @@ Panel is hidden entirely (no placeholder) until **Stop Level** (§5.1, `planned_
 | Stop Level | Existing §5.1 field | Yes (unchanged) |
 | Planned Entry Price | New, panel-local numeric input | **No** — never included in the `POST /trade-plans` / `PUT /trade-plans/{id}` payload |
 | Risk % | Defaults from settings (same `defaultRiskPercent` source as `PositionSizingWidget`, §10.7); user-adjustable within the panel, session-local | No |
+| FX Rate (USD/GBP) | New, panel-local numeric input, **US-market plans only** (hidden for UK) — same label/step convention as `TradeEntry.js`'s own "FX Rate (USD/GBP)" field (ST-10, BLG-FE-164, v9.0). Empty by default (placeholder "Live rate") — when empty, `POST /portfolio/size` uses the live rate; when set, overrides it. See §5d.3 reproducibility note. | No |
 
 ### 5d.3 Calculation and Output
 
-Debounced 300ms after any input change. Calls `POST /portfolio/size` — the same endpoint used by `PositionSizingWidget` (§10.7), not a separate calculation path, so a plan later started via §10 "Start Trade from Plan" (which pre-fills `stop_price` from `plan.stop_level`) reproduces an identical suggested size when the same entry price is entered at order time.
+Debounced 300ms after any input change. Calls `POST /portfolio/size` — the same endpoint used by `PositionSizingWidget` (§10.7), not a separate calculation path, so a plan later started via §10 "Start Trade from Plan" (which pre-fills `stop_price` from `plan.stop_level`) reproduces an identical suggested size when the same entry price is entered at order time — **for UK-market plans unconditionally, and for US-market plans provided the FX Rate override (§5d.2) is set to the same value used at order entry.**
+
+**Reproducibility gap, corrected (ST-10, BLG-FE-164, v9.0):** for a US-market plan, `suggested_shares` and R at Risk both depend on the FX rate used server-side (`raw_shares = risk_amount / (stop_distance × fx_rate_used)`). Without the §5d.2 FX Rate override set, `POST /portfolio/size` uses whatever the *live* market FX rate is at the moment of the call — this can differ between the What-If preview (creation/edit time) and the actual order entry (`TradeEntry.js`, potentially minutes, hours, or days later), even with an identical entry price, so the preview's suggested size is not guaranteed to reproduce exactly at order time. Setting the FX Rate override pins the same rate both panels compute against, restoring exact reproducibility — this is the override's purpose, not merely a convenience. Left unset, the preview remains a best-effort estimate using the rate available at preview time (same accepted limitation `TradeEntry.js` itself has always had for its own FX Rate field).
 
 | Element | Source | Format |
 |---------|--------|--------|
@@ -260,7 +263,7 @@ Debounced 300ms after any input change. Calls `POST /portfolio/size` — the sam
 
 ### 5d.4 No Persistence Guarantee
 
-Nothing in this panel triggers `POST /trade-plans` or `PUT /trade-plans/{id}`. Planned Entry Price and the panel's Risk % override are never part of the Save Trade Plan payload (§5.2) — `trade_plans` has no `entry_price` column (`docs/specs/data_model.md`), so this holds by construction.
+Nothing in this panel triggers `POST /trade-plans` or `PUT /trade-plans/{id}`. Planned Entry Price, the panel's Risk % override, and the FX Rate override (§5d.2) are never part of the Save Trade Plan payload (§5.2) — `trade_plans` has no `entry_price` or `fx_rate` column (`docs/specs/data_model.md`), so this holds by construction.
 
 ---
 

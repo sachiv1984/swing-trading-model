@@ -26,6 +26,18 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
     const stored = sessionStorage.getItem(SESSION_KEY);
     return stored !== null ? parseFloat(stored) : (defaultRiskPercent ?? 1.0);
   });
+  // ST-10 (BLG-FE-164, EPIC-02, v9.0): panel-local FX rate override,
+  // US-market only. Pre-fills from the fxRate prop if the caller ever has
+  // one (currently none do — trade_plan.md §5.1 has no fx_rate field), but
+  // is otherwise empty, matching Planned Entry Price's own empty-string
+  // convention. When empty, POST /portfolio/size uses the live rate
+  // (backend default). Closes trade_plan.md §5d.3's reproducibility gap:
+  // without an override, the suggested size/R at Risk shown here reflect
+  // whatever the live FX rate happens to be at preview time, which can
+  // differ from the rate in effect later at actual order entry
+  // (TradeEntry.js) even for the identical entry price — same UI
+  // convention (label, step) as TradeEntry.js's own "FX Rate (USD/GBP)" field.
+  const [fxRateOverride, setFxRateOverride] = useState(fxRate ? String(fxRate) : "");
   const [sizingResult, setSizingResult] = useState(null);
   const [sizingLoading, setSizingLoading] = useState(false);
 
@@ -62,8 +74,9 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
           risk_percent: parseFloat(riskPercent) || 0,
           market,
         };
-        if (market === "US" && fxRate) {
-          body.fx_rate = fxRate;
+        const parsedFxOverride = parseFloat(fxRateOverride);
+        if (market === "US" && fxRateOverride !== "" && !Number.isNaN(parsedFxOverride) && parsedFxOverride > 0) {
+          body.fx_rate = parsedFxOverride;
         }
         if (ticker) {
           body.ticker = ticker;
@@ -80,7 +93,7 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
 
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parsedEntry, parsedStop, market, fxRate, riskPercent, ticker, hasValidInputs]);
+  }, [parsedEntry, parsedStop, market, fxRateOverride, riskPercent, ticker, hasValidInputs]);
 
   const isValid = sizingResult?.valid;
   const suggestedShares = sizingResult?.suggested_shares;
@@ -90,9 +103,9 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
   // FX-converted to GBP for US-market plans, same convention as
   // TradeEntry.js's own "Total Risk" row (costs.totalRisk, §10.7's sibling
   // precedent): totalRiskGBP = totalRiskNative / fx_rate. Reads
-  // sizingResult.fx_rate_used (always returned by POST /portfolio/size)
-  // rather than depending on a separate fxRate prop the Trade Plan form has
-  // no natural source for — this form has no fx_rate field (§5.1).
+  // sizingResult.fx_rate_used (always returned by POST /portfolio/size) —
+  // reflects whichever rate was actually used server-side, whether that's
+  // the panel-local override above or the live rate when no override is set.
   const rAtRiskNative =
     isValid && suggestedShares != null && parsedEntry != null && parsedStop != null
       ? (parsedEntry - parsedStop) * suggestedShares
@@ -151,7 +164,7 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
 
       {!collapsed && (
         <div className="px-4 pb-4 space-y-3 border-t border-slate-700/50 pt-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className={`grid gap-3 ${market === "US" ? "grid-cols-3" : "grid-cols-2"}`}>
             <div className="space-y-1.5">
               <Label className="text-slate-600 dark:text-slate-400 text-xs">Planned Entry Price</Label>
               <Input
@@ -177,6 +190,20 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
                 className="bg-slate-900/60 border-slate-700 text-white h-9 text-sm"
               />
             </div>
+            {market === "US" && (
+              <div className="space-y-1.5">
+                <Label className="text-slate-600 dark:text-slate-400 text-xs">FX Rate (USD/GBP)</Label>
+                <Input
+                  type="number"
+                  step="0.0001"
+                  data-testid="what-if-fx-rate-input"
+                  value={fxRateOverride}
+                  onChange={(e) => setFxRateOverride(e.target.value)}
+                  placeholder="Live rate"
+                  className="bg-slate-900/60 border-slate-700 text-white h-9 text-sm"
+                />
+              </div>
+            )}
           </div>
 
           {!hasValidInputs ? (
