@@ -24,28 +24,31 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-08-12"
-PRIOR_AUDIT_OPEN_ITEMS = []
-  # 001 (BLG-OPS-142 filed) and 002 (Friction_Load normalised-rate note) applied within the original
-  # session. 003/004/005 (backlog_management_prompt.md STEP 1.5 4th ephemeral type; execution_prompt.md
-  # roll-up re-trigger + 2nd-review-pass; qa_evidence_template.md CI-green restatement; lessons_learnt_prompt.md
-  # §3.7 patch-ID matching) applied post-publication, same day, per explicit user direction ("action all
-  # audit points"). Note: 003's engine fix is applied; the mechanical promotion of the 4 pre-existing
-  # stale ephemeral sections' items is not — the next actual `groom backlog` run will apply the new rule
-  # to them structurally. 0 items open at session end.
+PRIOR_AUDIT_ID = "AUD-2026-08-21"
+PRIOR_AUDIT_OPEN_ITEMS = [
+    "AUD-2026-08-21-004", "AUD-2026-08-21-010", "AUD-2026-08-21-011",
+    "AUD-2026-08-21-002", "AUD-2026-08-21-005", "AUD-2026-08-21-006",
+    "AUD-2026-08-21-007", "AUD-2026-08-21-008", "AUD-2026-08-21-009",
+    "AUD-2026-08-21-001", "AUD-2026-08-21-003",
+]
+  # All 11 improvements filed at AUD-2026-08-21 remain open at session end — this was a report-only
+  # run (no "action all audit points" direction given). Highest-weight items: AUD-2026-08-21-004
+  # (Sprint Close item-count reconciliation, weight 9) and AUD-2026-08-21-010 (merge_gate mid-session
+  # re-sync, weight 9). AUD-2026-08-21-011 (pre-seal stale-feature scoping check) is D1-tracked STALE
+  # (2 cycles carried, first flagged v8.7 Phase 3) — priority candidate for the next audit's B7/D1 check.
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
-    "token_efficiency":      100,
-    "governance_integrity":  80,
+    "token_efficiency":      84,
+    "governance_integrity":  74,
     "execution_reliability": 53,
-    "friction_load":         37,
+    "friction_load":         44,
     "document_hygiene":      100,
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 73  # current completed_cycle_count at AUD-2026-08-12
+COMPLETED_CYCLES = 76  # current completed_cycle_count at AUD-2026-08-21
 
 # -------------------------
 # MISSING FILE RULE
