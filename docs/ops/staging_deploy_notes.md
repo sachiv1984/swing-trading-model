@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-24
+**Version:** 1.1
+**Last Updated:** 2026-08-21 (ST-13, EPIC-03, v9.0, BLG-OPS-25 — added post-deploy smoke test suite to `deploy-staging`, plus a new independent scheduled smoke test workflow; §3 build minute assessment updated)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -35,16 +35,22 @@ This ensures governance-only commits (sprint artefacts, changelogs, audit record
 
 ## 3. Build Minute Impact Assessment
 
+**Updated (ST-13, BLG-OPS-25, EPIC-03, v9.0):** the `deploy-staging` job now polls for the new deploy to actually go live (`scripts/wait_for_staging_deploy_live.py`, via the Render platform API — same mechanism `staging-deploy-drift-check.yml` already uses, not a fixed sleep) and then runs a post-deploy smoke test suite (`scripts/staging_smoke_test.py`). A second, independent workflow (`staging-smoke-test.yml`) runs the same smoke suite on a schedule. All additions are still well within free-tier budget.
+
 | Factor | Value |
 |--------|-------|
 | GitHub-hosted runner | ubuntu-latest |
-| Job runtime per trigger | ~1 minute (curl call only; no build step) |
+| `deploy-staging` job runtime per trigger | ~1–3 minutes typically (curl call + deploy-status poll, usually well under its 8-minute timeout for a free-tier build + smoke test suite, ST-13) |
 | Expected code-change merges per sprint | 5–15 |
-| Expected monthly minutes consumed | ~15–45 minutes |
+| Expected monthly minutes from `deploy-staging` | ~30–135 minutes (wider range than a fixed-sleep design, since actual build time varies) |
+| `staging-smoke-test.yml` schedule | every 6 hours (4×/day) |
+| `staging-smoke-test.yml` job runtime per run | well under 1 minute typically (4 GET requests + wake-up ping) |
+| Expected monthly minutes from `staging-smoke-test.yml` | ~120 runs/month × <1 min ≈ well under 120 minutes |
+| Combined expected monthly minutes | ~150–255 minutes |
 | GitHub free tier (private repos) | 2,000 minutes/month |
-| Projected monthly utilisation | < 3% of free-tier quota |
+| Projected monthly utilisation | ~8–13% of free-tier quota |
 
-**Conclusion:** Impact is negligible. The workflow job (`deploy-staging`) performs only a `curl` POST to the Render deploy hook — no Node.js build, no Python install. The GitHub Actions runner shuts down as soon as the HTTP response is received.
+**Conclusion:** Impact remains well within free-tier budget even with both additions. `deploy-staging`'s smoke test only runs on real deploy-triggering pushes (same path-filter as before, §2); `staging-smoke-test.yml`'s cadence (every 6 hours) was chosen to catch a between-deploys regression within a reasonable window without approaching a meaningful fraction of the quota — if usage patterns ever warrant tightening it, the cron expression is the only thing that needs to change. The deploy-status poll's 8-minute timeout is a worst-case ceiling, not a typical runtime — it only consumes that much if the build genuinely takes that long or gets stuck, in which case the job correctly fails fast rather than running the smoke test against an unconfirmed deploy (see `staging-deploy.yml`'s own comments).
 
 ---
 
