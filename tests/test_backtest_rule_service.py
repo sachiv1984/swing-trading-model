@@ -91,6 +91,27 @@ class TestPureFunctions:
         assert "atr_mult: 2 -> 3" in summary
 
 
+class TestComputeRebalanceDatesExcludesInProgressMonth:
+    """ST-01 (BLG-BE-109, v9.0) — mirrors production_strategy.py's fix
+    (same duplicated-algorithm surface flagged by BLG-TECH-15 / ST-05)."""
+
+    def test_last_row_in_current_real_month_is_excluded(self):
+        idx = pd.bdate_range("2026-06-01", "2026-08-14")
+        as_of = pd.Timestamp("2026-08-14")
+
+        rebalance_dates = svc.compute_rebalance_dates(idx, "ME", as_of=as_of)
+
+        assert pd.Timestamp("2026-08-14") not in rebalance_dates
+
+    def test_completed_month_last_row_is_included(self):
+        idx = pd.bdate_range("2026-06-01", "2026-07-31")
+        as_of = pd.Timestamp("2026-08-03")
+
+        rebalance_dates = svc.compute_rebalance_dates(idx, "ME", as_of=as_of)
+
+        assert idx[-1] in rebalance_dates
+
+
 class TestRunCandidateBacktest:
     def _mock_yf_download(self, prices, spy, ftse):
         """Returns a function mimicking yf.download's dict-like column access."""

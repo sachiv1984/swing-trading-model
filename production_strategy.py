@@ -211,25 +211,46 @@ def compute_signals(prices, lookback, top_n, ma_period=200, created_at=None):
 # BACKTEST ENGINE
 # =====================================================================
 
-def backtest(signals, prices, volatility, atr, rebalance_freq, atr_mult, 
-             min_position_pct=0.05, max_position_pct=0.15, min_hold_days=7, 
+def compute_rebalance_dates(price_index, rebalance_freq, as_of=None):
+    """Return the subset of price_index at which a rebalance occurs.
+
+    price_index.resample(rebalance_freq).last().index would return calendar
+    period-end labels (e.g. 2026-01-31) even when that exact date is a
+    weekend and never appears in price_index — silently skipping monthly
+    rotation for any month whose last calendar day falls on a Sat/Sun.
+    Group the actual (business-day) index by period and take each period's
+    real last row instead, so the result only ever contains dates that
+    genuinely exist in price_index.
+
+    BLG-BE-109: a nightly run always fetches prices through "today", so the
+    naive tail(1)-per-period grab above treats today's row as if it were
+    that period's true close even when the period (e.g. the current
+    calendar month) has not actually finished yet — a premature/incorrect
+    rebalance signal. Exclude any rebalance date whose period is still the
+    real current period as of wall-clock "now" (or the injected `as_of`,
+    for deterministic testing). Purely historical windows (e.g. the
+    in-sample TRAIN_END slice used below) are unaffected, since their last
+    row's period will already be strictly before the real current period.
+    """
+    period_freq = rebalance_freq[:-1] if rebalance_freq.endswith("E") else rebalance_freq
+    rebalance_dates = price_index.to_series().groupby(price_index.to_period(period_freq)).tail(1).index
+
+    now = as_of if as_of is not None else pd.Timestamp.now(tz=price_index.tz)
+    current_real_period = now.to_period(period_freq)
+    return rebalance_dates[rebalance_dates.to_period(period_freq) != current_real_period]
+
+
+def backtest(signals, prices, volatility, atr, rebalance_freq, atr_mult,
+             min_position_pct=0.05, max_position_pct=0.15, min_hold_days=7,
              risk_off_mode="single", stop_loss_mode="simple", initial_atr_mult=None,
-             profit_atr_mult=None):
-    
+             profit_atr_mult=None, as_of=None):
+
     if initial_atr_mult is None:
         initial_atr_mult = atr_mult * 1.5
     if profit_atr_mult is None:
         profit_atr_mult = atr_mult
-    
-    # prices.resample(rebalance_freq).last().index would return calendar
-    # period-end labels (e.g. 2026-01-31) even when that exact date is a
-    # weekend and never appears in prices.index — silently skipping monthly
-    # rotation for any month whose last calendar day falls on a Sat/Sun.
-    # Group the actual (business-day) index by period and take each period's
-    # real last row instead, so rebalance_dates only ever contains dates that
-    # genuinely exist in prices.index.
-    period_freq = rebalance_freq[:-1] if rebalance_freq.endswith("E") else rebalance_freq
-    rebalance_dates = prices.groupby(prices.index.to_period(period_freq)).tail(1).index
+
+    rebalance_dates = compute_rebalance_dates(prices.index, rebalance_freq, as_of=as_of)
     holdings = pd.Series(0.0, index=prices.columns)
     entry_prices = {}
     entry_dates = {}

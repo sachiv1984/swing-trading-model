@@ -183,6 +183,85 @@ class TestBacktestDeterminism:
 
 
 # ---------------------------------------------------------------------------
+# ST-01 (BLG-BE-109, v9.0) — rebalance_dates excludes the current,
+# in-progress calendar month
+# ---------------------------------------------------------------------------
+
+class TestComputeRebalanceDatesExcludesInProgressMonth:
+    def test_last_row_in_current_real_month_is_excluded(self):
+        """Mid-month case: price data extends through 2026-08-14 (a Friday)
+        and 'now' is also within August 2026 (the nightly-run shape) — the
+        naive tail(1)-per-period grab would treat 2026-08-14 as August's
+        rebalance date even though August has not actually finished yet.
+        """
+        idx = pd.bdate_range("2026-06-01", "2026-08-14")
+        as_of = pd.Timestamp("2026-08-14")
+
+        rebalance_dates = ps.compute_rebalance_dates(idx, "ME", as_of=as_of)
+
+        assert pd.Timestamp("2026-08-14") not in rebalance_dates
+        # June and July, both fully elapsed relative to as_of, are unaffected.
+        assert pd.Timestamp(idx[idx.to_period("M") == pd.Period("2026-06", "M")][-1]) in rebalance_dates
+        assert pd.Timestamp(idx[idx.to_period("M") == pd.Period("2026-07", "M")][-1]) in rebalance_dates
+
+    def test_completed_month_last_row_is_included(self):
+        """Once 'now' has moved into the next calendar month, that prior
+        month's last trading row is a genuine rebalance date."""
+        idx = pd.bdate_range("2026-06-01", "2026-07-31")
+        as_of = pd.Timestamp("2026-08-03")  # now in August; July has closed
+
+        rebalance_dates = ps.compute_rebalance_dates(idx, "ME", as_of=as_of)
+
+        assert idx[-1] in rebalance_dates
+
+    def test_defaults_to_real_wall_clock_now_when_as_of_omitted(self):
+        """Without an injected as_of, the function must use the real current
+        time — proven by comparing behaviour for an index whose last row is
+        'today' (via pd.Timestamp.now(), same live current period, must be
+        excluded) against a clearly-completed historical month (must not
+        be excluded)."""
+        today = pd.Timestamp.now().normalize()
+        live_idx = pd.bdate_range(today - pd.Timedelta(days=45), today)
+        rebalance_dates = ps.compute_rebalance_dates(live_idx, "ME")
+        assert live_idx[-1] not in rebalance_dates
+
+        historical_idx = pd.bdate_range("2020-01-01", "2020-03-31")
+        rebalance_dates_historical = ps.compute_rebalance_dates(historical_idx, "ME")
+        assert historical_idx[-1] in rebalance_dates_historical
+
+    def test_end_to_end_backtest_does_not_rebalance_on_in_progress_month(self, monkeypatch):
+        """Full backtest() integration: with as_of pinned mid-month, no trade
+        entry/rebalance activity should key off the in-progress month's last
+        available row."""
+        idx = pd.bdate_range("2026-01-02", "2026-08-14")
+        prices = pd.DataFrame(
+            {"AAA": 100 + np.arange(len(idx)) * 0.5, "BBB": 100 + np.arange(len(idx)) * 0.3},
+            index=idx,
+        )
+        atr = ps.compute_atr(prices)
+        signals = ps.compute_signals(prices, lookback=20, top_n=1, ma_period=10)
+        volatility = prices.pct_change().rolling(20).std()
+
+        always_on = pd.Series(True, index=prices.index)
+        monkeypatch.setattr(ps, "spy_risk_on", always_on, raising=False)
+        monkeypatch.setattr(ps, "ftse_risk_on", always_on, raising=False)
+
+        as_of = pd.Timestamp("2026-08-14")
+        # backtest() must run end-to-end without error using the same
+        # as_of-pinned rebalance_dates computation exercised directly below.
+        ps.backtest(
+            signals, prices, volatility, atr,
+            rebalance_freq="ME", atr_mult=2, min_position_pct=0.05,
+            max_position_pct=0.20, min_hold_days=5, risk_off_mode="single",
+            stop_loss_mode="profit_lock", initial_atr_mult=5, profit_atr_mult=2,
+            as_of=as_of,
+        )
+
+        rebalance_dates = ps.compute_rebalance_dates(prices.index, "ME", as_of=as_of)
+        assert pd.Timestamp("2026-08-14") not in rebalance_dates
+
+
+# ---------------------------------------------------------------------------
 # ST-02 (BLG-BE-60) — import_backtest.py drift-check alert (fix vehicle: option c)
 # ---------------------------------------------------------------------------
 

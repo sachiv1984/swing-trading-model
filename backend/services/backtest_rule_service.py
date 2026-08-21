@@ -157,6 +157,23 @@ def transaction_fee(ticker: str, side: str) -> float:
     return 0.0015
 
 
+def compute_rebalance_dates(
+    price_index: pd.DatetimeIndex, rebalance_freq: str, as_of: Optional[pd.Timestamp] = None
+) -> pd.DatetimeIndex:
+    """Ported from production_strategy.py::compute_rebalance_dates (same
+    BLG-BE-109 fix, mirrored here per this module's ported-not-imported
+    provenance note above). Excludes any rebalance date whose period is
+    still the real current period as of wall-clock "now" (or the injected
+    `as_of`, for deterministic testing), so an in-progress current calendar
+    month is never mistaken for a completed rebalance point."""
+    period_freq = rebalance_freq[:-1] if rebalance_freq.endswith("E") else rebalance_freq
+    rebalance_dates = price_index.to_series().groupby(price_index.to_period(period_freq)).tail(1).index
+
+    now = as_of if as_of is not None else pd.Timestamp.now(tz=price_index.tz)
+    current_real_period = now.to_period(period_freq)
+    return rebalance_dates[rebalance_dates.to_period(period_freq) != current_real_period]
+
+
 def run_backtest(
     signals: pd.DataFrame,
     prices: pd.DataFrame,
@@ -173,6 +190,7 @@ def run_backtest(
     stop_loss_mode: str = "simple",
     initial_atr_mult: Optional[float] = None,
     profit_atr_mult: Optional[float] = None,
+    as_of: Optional[pd.Timestamp] = None,
 ):
     """Ported from production_strategy.py::backtest. Behaviourally identical
     except regime state is an explicit parameter (regime_us/regime_uk) rather
@@ -195,8 +213,7 @@ def run_backtest(
             return us_on and uk_on
         return us_on
 
-    period_freq = rebalance_freq[:-1] if rebalance_freq.endswith("E") else rebalance_freq
-    rebalance_dates = prices.groupby(prices.index.to_period(period_freq)).tail(1).index
+    rebalance_dates = compute_rebalance_dates(prices.index, rebalance_freq, as_of=as_of)
     holdings = pd.Series(0.0, index=prices.columns)
     entry_prices: Dict[str, float] = {}
     entry_dates: Dict[str, pd.Timestamp] = {}
