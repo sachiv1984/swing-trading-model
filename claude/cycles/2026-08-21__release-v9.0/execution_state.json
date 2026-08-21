@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-21T13:47:12Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-21T20:11:00Z",
+  "last_updated_utc": "2026-08-21T20:35:00Z",
   "epics": {
     "EPIC-01": {
       "status": "in_progress",
@@ -578,7 +578,7 @@
         "ST-22": {
           "title": "Publish backend test coverage report to PR comments",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1483,
           "branch": "exec/2026-08-21__release-v9.0/EPIC-04",
@@ -587,14 +587,17 @@
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/generate_backend_coverage_report.py",
+            ".github/workflows/backend-coverage-report.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "No explicit sign-off role named in this story's AC. Real end-to-end dry run performed: git worktree checkout of origin/main, coverage run against it, delta computed against PR-head coverage (+0.2pp, reflecting this sprint's own test additions) -- not just unit-tested in isolation."
         }
       }
     },
@@ -742,7 +745,8 @@
     "ST-14",
     "ST-16",
     "ST-19",
-    "ST-21"
+    "ST-21",
+    "ST-22"
   ],
   "open_escalations": [
     "ESC-EXEC-20260821-01",
