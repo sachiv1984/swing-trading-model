@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.169
-**Last Updated:** 2026-08-21
+**Version:** 4.170
+**Last Updated:** 2026-08-21 (action-all-audit-points session, AUD-2026-08-21 — 5 source prompts bumped: execution_prompt.md, sprint_planning_prompt.md, shared_standards.md, post_ship_closure.md, backlog_management_prompt.md; §13 Artefact Register gained a Displacement Debt Register row; §14/§15/§16 physically reordered into ascending sequence); prior — 2026-08-21 (post-ship closure 2026-08-17__release-v8.9, ESC-CLOSE-20260821-02: shared_standards.md v3.28→v3.29, new §16.16 Sandbox Access Constraint Disclosure Block); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -475,7 +475,7 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.5), `claude/system/backlog_management_prompt.md` (v1.14), `claude/system/ideas_housekeeping_prompt.md` (v1.2)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.5), `claude/system/backlog_management_prompt.md` (v1.15), `claude/system/ideas_housekeeping_prompt.md` (v1.2)  
 **Owner:** PMO Lead / Product Owner  
 **Trigger:** Optional — strongly recommended at either of the following windows:
 
@@ -763,7 +763,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.16)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.17)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.69)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.70)
 
 ### 8.1 Invocation
 
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.29)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.30)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1353,24 +1353,49 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Amendment Ratification | `claude/cycles/<id>/amendments/<AMD-id>/amendment_ratification.md` | 4 | PMO Lead | Amendment |
 | Amended Backlog Slice | `claude/cycles/<id>/amendments/<AMD-id>/amended_backlog_slice.md` | 4 | PMO Lead | Amendment |
 | Amendment Lessons | `claude/cycles/<id>/amendments/<AMD-id>/amendment_lessons.md` | 3 | PMO Lead | Amendment |
+| Displacement Debt Register | `claude/roadmap/displacement_debt_register.md` | 4 | Head of Specs Team | 1 |
 
 ---
 
-## 16. Artefact Lifecycle Model
+## 14. Playbook Governance
 
-**Added:** v3.67 (ST-17, BLG-GOV-11, v3.2)
+| Field | Value |
+|-------|-------|
+| Owner | Head of Specs Team |
+| Status | Active |
+| Version | 4.170 |
+| Last Updated | 2026-08-21 |
+| Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
+| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
+| Idea Template | `claude/system/idea_template.md` |
+| Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.5 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.15 |
+| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.9 |
+| Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.16 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.49 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.17 |
+| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.70 |
+| QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.11 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.8 |
+| Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.30 |
+| Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
+| Shared Standards | `claude/system/shared_standards.md` v3.30 |
+| Governance Invariants | `claude/system/invariants.md` v1.0 |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.11 |
+| Prompt Change Log | `claude/system/prompt_change_log.md` |
+| GitHub Issue Template | `claude/system/gh_issue_template.md` v1.0 |
+| PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.2 |
+| Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.7 |
+| Team Charter | `claude/charter/team_charter.md` v1.7 |
 
-All artefacts in this system have one of three lifecycle types. The authoritative inventory is maintained at `docs/operations/cycle_artefact_inventory.md`.
+This playbook is subordinate to and must remain consistent with all governing documents above. In any conflict, governance documents prevail. Update this playbook to reflect the change — do not operate with a known divergence.
 
-| Lifecycle Type | Definition | Examples |
-|----------------|-----------|---------|
-| **Point-in-time (PIT)** | Created for a specific cycle event; never modified after sealing. Closed cycles retain PIT artefacts as a historical record. | sprint_backlog.md, closure_record.md, verification_report.md, run_manifest.md |
-| **Living Reference** | Must be updated when the domain they describe changes. Update obligation stated in the document's own header. Failure to update is a process deviation. | backlog.md, component_inventory.md, credential_policy.md, external_api_risk_register.md |
-| **Operational State** | Machine-readable; updated programmatically by governance engines. Do not edit manually. | execution_state.json, .claude_current_state.json, closure_state.json |
+**Version control:** All changes require approval by the Head of Specs Team and must be version-bumped per lifecycle rules. Patch = typo/formatting. Minor = structural change. Major = scope change or authority boundary change.
 
-**Update trigger rule for Living References:** Any PR touching a domain covered by a living reference must update that reference in the same PR, or explicitly document why the update is deferred (with a backlog item filed).
-
-Living references introduced in v3.2: `component_inventory.md`, `design_system.md`, `credential_policy.md`, `external_api_risk_register.md`, `cycle_artefact_inventory.md`.
+**Standing rule:** whenever a prompt version is updated in the §14 governance table, the corresponding phase section source prompt header (§5–§10, §6B, §6B.8, §6M) must be updated in the same edit. A mismatch between a phase section header and §14 is a non-compliant state.
 
 ---
 
@@ -1449,45 +1474,21 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 
 ---
 
-## 14. Playbook Governance
+## 16. Artefact Lifecycle Model
 
-| Field | Value |
-|-------|-------|
-| Owner | Head of Specs Team |
-| Status | Active |
-| Version | 4.169 |
-| Last Updated | 2026-08-21 |
-| Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
-| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
-| Idea Template | `claude/system/idea_template.md` |
-| Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.5 |
-| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.14 |
-| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.9 |
-| Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.16 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.49 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.16 |
-| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.69 |
-| QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.11 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.8 |
-| Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.29 |
-| Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.29 |
-| Governance Invariants | `claude/system/invariants.md` v1.0 |
-| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.11 |
-| Prompt Change Log | `claude/system/prompt_change_log.md` |
-| GitHub Issue Template | `claude/system/gh_issue_template.md` v1.0 |
-| PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.2 |
-| Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.7 |
-| Team Charter | `claude/charter/team_charter.md` v1.7 |
+**Added:** v3.67 (ST-17, BLG-GOV-11, v3.2)
 
-This playbook is subordinate to and must remain consistent with all governing documents above. In any conflict, governance documents prevail. Update this playbook to reflect the change — do not operate with a known divergence.
+All artefacts in this system have one of three lifecycle types. The authoritative inventory is maintained at `docs/operations/cycle_artefact_inventory.md`.
 
-**Version control:** All changes require approval by the Head of Specs Team and must be version-bumped per lifecycle rules. Patch = typo/formatting. Minor = structural change. Major = scope change or authority boundary change.
+| Lifecycle Type | Definition | Examples |
+|----------------|-----------|---------|
+| **Point-in-time (PIT)** | Created for a specific cycle event; never modified after sealing. Closed cycles retain PIT artefacts as a historical record. | sprint_backlog.md, closure_record.md, verification_report.md, run_manifest.md |
+| **Living Reference** | Must be updated when the domain they describe changes. Update obligation stated in the document's own header. Failure to update is a process deviation. | backlog.md, component_inventory.md, credential_policy.md, external_api_risk_register.md |
+| **Operational State** | Machine-readable; updated programmatically by governance engines. Do not edit manually. | execution_state.json, .claude_current_state.json, closure_state.json |
 
-**Standing rule:** whenever a prompt version is updated in the §14 governance table, the corresponding phase section source prompt header (§5–§10, §6B, §6B.8, §6M) must be updated in the same edit. A mismatch between a phase section header and §14 is a non-compliant state.
+**Update trigger rule for Living References:** Any PR touching a domain covered by a living reference must update that reference in the same PR, or explicitly document why the update is deferred (with a backlog item filed).
+
+Living references introduced in v3.2: `component_inventory.md`, `design_system.md`, `credential_policy.md`, `external_api_risk_register.md`, `cycle_artefact_inventory.md`.
 
 ---
 
@@ -1496,6 +1497,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.170 | 2026-08-21 | **Lifecycle audit `AUD-2026-08-21`, action-all-audit-points session — 5 source prompts bumped, 1 register row added, 1 physical reorder.** §14 table updated: `execution_prompt.md` v3.69→v3.70 (STEP 5.1 item-count reconciliation, STEP 5.3 escalation cross-reference, §3.2.B multi-sprint 2nd-PR convention, STEP 0 test_scenarios array-only, merge_gate mid-session re-sync); `sprint_planning_prompt.md` v3.16→v3.17 (STEP 3.1 pre-seal stale-feature-target check, D1-tracked STALE since v8.7 Phase 3); `shared_standards.md` v3.29→v3.30 (§14 Preflight Field Scope table gains 4 missing engine rows: `run ideas`, `run ideas housekeeping`, `manage roadmap`, `groom backlog`); `post_ship_closure.md` v2.29→v2.30 (STEP 6 velocity_metrics.md header self-consistency check); `backlog_management_prompt.md` v1.14→v1.15 (§1.2 Field-Completeness Scan for mid-sprint-filed items). §13 Artefact Register gains a Displacement Debt Register row (`claude/roadmap/displacement_debt_register.md`, pending creation, tracked at `ESC-EXEC-20260818-02`). §14/§15/§16 physically reordered into ascending sequence (previously §16→§15→§14) — numbers unchanged, content unchanged, position only. Authority: Head of Specs Team (lifecycle audit `AUD-2026-08-21`, action-all-audit-points session, user-directed, 2026-08-21). |
 | 4.169 | 2026-08-21 | **Post-ship closure `2026-08-17__release-v8.9`, acting as Head of Specs Team to resolve `ESC-CLOSE-20260821-02` (BLG-GOV-313) — shared_standards.md v3.28→v3.29: new §16.16 Sandbox Access Constraint Disclosure Block.** §14 Shared Standards v3.28→v3.29. §14 Version 4.168→4.169/2026-08-21. Change: canonical constraint statement + 3 stable disclosure IDs (`SBX-NO-LIVE-DB`, `SBX-NO-LIVE-STAGING`, `SBX-NO-LIVE-EXTERNAL-API`) for `qa_evidence_EPIC-xx.md` entries to cite instead of re-deriving "no live staging/production access in this sandbox" prose — first flagged at `2026-08-12__release-v8.7` Phase 4 (3 independent re-derivations: ST-07, ST-13, ST-15), carried 2 further cycles without a `prompt_change_log.md` entry, crossing the `shared_standards.md §6.4` 2-cycle automatic-escalation threshold this run. A companion escalation (`ESC-CLOSE-20260821-01`, CI-green per-fix restatement clarification) was investigated in the same session and found to be a false positive — already applied at `2026-08-12__release-v8.7` (`qa_evidence_template.md` v1.11) — no prompt edit needed there; `BLG-GOV-312` filed to strengthen `lessons_learnt_prompt.md §3.7`'s recurrence check so it reads a deferred patch's own named target file directly rather than relying on keyword search across sibling files. Authority: Head of Specs Team (post-ship closure `2026-08-17__release-v8.9`, escalation resolution, 2026-08-21). |
 | 4.168 | 2026-08-18 | **Sprint execution `2026-08-17__release-v8.9` EPIC-06/ST-22 (BLG-GOV-260) — roadmap_management_prompt.md v1.4→v1.5: STEP 5.2 gains a stale `RA:` marker pruning rule.** §6M source prompt line v1.4→v1.5 (line 478). §14 Roadmap Management Engine v1.4→v1.5. §14 Version 4.167→4.168/2026-08-18. Change: `current_roadmap.md` §3 accumulates already-retired `*RA:vX.Y retired...*` one-line pointers indefinitely (18+ visible as of this cycle, back to v5.0) with no forcing function to remove them, even though `roadmap_archive.md` remains the permanent record. STEP 5.2 now prunes (deletes outright) any already-retired pointer more than 3 shipped releases older than the document's current highest referenced release; active (non-retired) marker blocks are never pruned. STEP 5.3's run log template gains a new `RA: markers pruned` count field. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-22, 2026-08-18). |
 | 4.167 | 2026-08-18 | **Sprint execution `2026-08-17__release-v8.9` EPIC-06/ST-21 (BLG-GOV-264) — roadmap_prompt.md v9.15→v9.16: STEP 8's Displacement candidate flag now also creates/updates `claude/roadmap/displacement_debt_register.md`.** §6 source prompt header v9.15→v9.16 (line 399). §14 Roadmap Engine Source v9.15→v9.16. §14 Version 4.166→4.167/2026-08-18. Change: STEP 8's displacement-flag instruction now writes a paired update to `claude/roadmap/displacement_debt_register.md` — create-if-absent (using the format/seed content designed in full at ST-14, `2026-07-27__release-v7.9`), new-candidate row creation, re-flag counter increment, and Disposition resolution to "Displaced" when a Kill/Replace decision resolves a prior flagged candidate. **Write-scope self-correction (found and fixed same-session):** this engine initially created the register file directly, which `execution_prompt.md` §7's write-scope hard gate does not permit (`claude/roadmap/*` has no sprint-story exception, unlike `claude/system/*` governance prompts) — reverted before commit; the prompt-wiring half (this bump) is a legitimate Class 6 governance-prompt edit and stands, but physical file creation is deferred to the next live `run roadmap`/`manage roadmap` invocation, which does hold that write scope. `ESC-EXEC-20260727-02` (sealed, `2026-07-27__release-v7.9`) is left untouched per "never modify sealed artefacts"; a live cross-reference, `ESC-EXEC-20260818-02`, tracks the remaining file-creation step in this cycle's own `execution_escalations.md` instead. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-21, 2026-08-18). |

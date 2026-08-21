@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.29
-**Last Updated:** 2026-08-21 (post-ship closure `2026-08-17__release-v8.9`, `ESC-CLOSE-20260821-02` resolution, BLG-GOV-313 — new §16.16 Sandbox Access Constraint Disclosure Block); prior — 2026-08-11 (ST-24, EPIC-06, v8.6, BLG-GOV-296 — new §16.15 documenting `execution_state.json`'s `deviations_filed` field's actual meaning)
+**Version:** 3.30
+**Last Updated:** 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — §14 Preflight Field Scope table gains 4 missing engine rows: run ideas, run ideas housekeeping, manage roadmap, groom backlog); prior — 2026-08-21 (post-ship closure `2026-08-17__release-v8.9`, `ESC-CLOSE-20260821-02` resolution, BLG-GOV-313 — new §16.16 Sandbox Access Constraint Disclosure Block); prior — 2026-08-11 (ST-24, EPIC-06, v8.6, BLG-GOV-296 — new §16.15); prior history retained — see prior entries in version control.
 
 # Shared Standards — All Governed Routines
 
@@ -467,6 +467,10 @@ To reduce repeated full-file reads of `.claude_current_state.json` across consec
 | Post-Ship Closure (`run post-ship`) | `status`, `active_cycle`, `verification_status`, `next_cycle_unblocked` |
 | Amendment Cycle (`amend cycle`) | `status`, `active_cycle`, `sprint_sealed` |
 | Roadmap Rebalance (`run roadmap`) | `status`, `active_cycle` |
+| Idea Intake (`run ideas`) | `status`, `active_cycle` |
+| Ideas Housekeeping (`run ideas housekeeping`) | `status`, `active_cycle`, `last_ideas_housekeeping_utc` |
+| Roadmap Management (`manage roadmap`) | `status`, `active_cycle`, `last_manage_roadmap_utc` |
+| Backlog Management (`groom backlog`) | `status`, `active_cycle`, `last_groom_backlog_utc` |
 
 Fields not in this list may be read when a specific named step requires them. Full-file reads remain acceptable for engines with fewer than three tool calls budgeted for state loading.
 

@@ -839,3 +839,5 @@ PRIOR_SCORES = {
 COMPLETED_CYCLES = 76  # current completed_cycle_count at AUD-2026-08-21
 # === END PASTE ===
 ```
+
+*(Post-publication update: all 11 improvements above — AUD-2026-08-21-001 through -011 — were applied post-publication, same day, per explicit user direction ("action the 11 improvements"). `claude/audit.py`'s `PRIOR_AUDIT_OPEN_ITEMS` has been updated to `[]` to reflect this; `.claude_current_state.json.last_audit_open_items` corrected to 0. Files touched: `execution_prompt.md` v3.69→v3.70 (5 patches: -004, -005, -006, -009, -010), `sprint_planning_prompt.md` v3.16→v3.17 (-011), `shared_standards.md` v3.29→v3.30 (-002), `post_ship_closure.md` v2.29→v2.30 (-007), `backlog_management_prompt.md` v1.14→v1.15 (-008), `OPERATIONAL_GUIDE.md` v4.169→v4.170 (-001 manual reorder, -003 register row, plus the §14 table updates for the 5 files above). All 6 changed governance prompts' Change Log companions and `claude/system/prompt_change_log.md` updated in the same pass. Shown here per the mandatory §11 output format.)*

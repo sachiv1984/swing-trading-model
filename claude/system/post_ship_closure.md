@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.29
-**Last Updated:** 2026-08-18 (ST-19/BLG-GOV-308, EPIC-06, v8.9: STEP 10 now unconditionally writes `last_post_ship_cycle`/`last_post_ship_utc`, closing the gap between `state_field_owners.json`'s pre-existing ownership claim and the actual write); prior — 2026-08-17 (ST-29/BLG-GOV-293: STEP 10 now the sole authoritative writer of `prior_cycle`, mirroring OA-1's `next_release` fix — renumbered v2.27→v2.28 at merge, CLAUDE.md §8 step 2a, after EPIC-03/ST-13 independently claimed v2.27 for a different change and merged first); prior — 2026-08-16 (EPIC-03/ST-13: `Changes shipped` template gains a `User Impact` column); prior history retained — see prior entries in version control.
+**Version:** 2.30
+**Last Updated:** 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — STEP 6 velocity_metrics.md header self-consistency check, AUD-2026-08-21-007); prior — 2026-08-18 (ST-19/BLG-GOV-308, EPIC-06, v8.9: STEP 10 now unconditionally writes `last_post_ship_cycle`/`last_post_ship_utc`); prior — 2026-08-17 (ST-29/BLG-GOV-293: STEP 10 now the sole authoritative writer of `prior_cycle`); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -469,7 +469,7 @@ For each of the following documents, check for stale references to this release'
 
 - `docs/System_status_report.md` — confirmed current by Phase 4, but verify the section for this `cycle_id` reflects the final verified status (not "pending verification"). Correct if needed.
 - `docs/operations/validation_system.md` — check metric counts, expected values, and example outputs. Update any entries that reference "planned" or "backlog" behaviour that has now shipped.
-- `claude/cycles/velocity_metrics.md` — append a row for this cycle. Values from `execution_state.json`: Planned = count of ST items at sprint-plan seal; Completed = count of items with `status: done` at post-ship (delegated items that were delivered count as Completed). Update the rolling 6-cycle average. Do not re-derive from cycle artefacts — always write the row here.
+- `claude/cycles/velocity_metrics.md` — **before appending (AUD-2026-08-21-007):** confirm the document's own `**Last Updated:**` header was actually advanced at the most recent prior append (compare against the table's own most recent row); if it was not, correct the header honestly first (do not fabricate missing intermediate entries). Then append a row for this cycle. Values from `execution_state.json`: Planned = count of ST items at sprint-plan seal; Completed = count of items with `status: done` at post-ship (delegated items that were delivered count as Completed). Update the rolling 6-cycle average. Do not re-derive from cycle artefacts — always write the row here.
 
 If other operational documents are referenced in `execution_state.json` spec references: check those too for stale notes.
 

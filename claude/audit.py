@@ -25,17 +25,14 @@ AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
 PRIOR_AUDIT_ID = "AUD-2026-08-21"
-PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-08-21-004", "AUD-2026-08-21-010", "AUD-2026-08-21-011",
-    "AUD-2026-08-21-002", "AUD-2026-08-21-005", "AUD-2026-08-21-006",
-    "AUD-2026-08-21-007", "AUD-2026-08-21-008", "AUD-2026-08-21-009",
-    "AUD-2026-08-21-001", "AUD-2026-08-21-003",
-]
-  # All 11 improvements filed at AUD-2026-08-21 remain open at session end — this was a report-only
-  # run (no "action all audit points" direction given). Highest-weight items: AUD-2026-08-21-004
-  # (Sprint Close item-count reconciliation, weight 9) and AUD-2026-08-21-010 (merge_gate mid-session
-  # re-sync, weight 9). AUD-2026-08-21-011 (pre-seal stale-feature scoping check) is D1-tracked STALE
-  # (2 cycles carried, first flagged v8.7 Phase 3) — priority candidate for the next audit's B7/D1 check.
+PRIOR_AUDIT_OPEN_ITEMS = []
+  # All 11 improvements filed at AUD-2026-08-21 (001-011) were applied post-publication, same day,
+  # per explicit user direction ("action the 11 improvements"). Files touched: execution_prompt.md
+  # v3.69->v3.70 (5 patches: 004/005/006/009/010), sprint_planning_prompt.md v3.16->v3.17 (011),
+  # shared_standards.md v3.29->v3.30 (002), post_ship_closure.md v2.29->v2.30 (007),
+  # backlog_management_prompt.md v1.14->v1.15 (008), OPERATIONAL_GUIDE.md v4.169->v4.170
+  # (001 manual reorder + 003 register row + the 5 files' §14 table updates). All 6 changed prompts'
+  # companion changelogs and prompt_change_log.md updated in the same pass. 0 items open at session end.
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.14
-**Last Updated:** 2026-08-12 (STEP 1.5 gains a 4th ephemeral-section type — Roadmap Rebalance/Delivery Verification idea-intake "New Items" sections, AUD-2026-08-12-003)
+**Version:** 1.15
+**Last Updated:** 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — §1.2 gains a companion Field-Completeness Scan for mid-sprint-filed items, AUD-2026-08-21-008); prior — 2026-08-12 (STEP 1.5 gains a 4th ephemeral-section type, AUD-2026-08-12-003); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -170,6 +170,8 @@ Before classifying, scan `backlog.md` for items whose `**Provisional-Target:**` 
 - Note: this is a validation/flagging check only, distinct from §1.1's Gate Field Label Normalization, which does auto-correct (a pure label synonym, not a judgment call).
 
 If no items found: note "Effort Day-Range Validation: PASS — 0 items missing a required day range" in the health summary. (Added v1.12 — closes the escalated decision from `2026-07-14__release-v7.1` post-ship closure, Release Planning Friction Item 1: bare-letter effort bands on items with a specific `Provisional-Target` forced Release Planning STEP 4.5 to infer day ranges by analogy, right when that cycle's capacity check landed at a WARN threshold with zero buffer.)
+
+**Field-Completeness Scan (AUD-2026-08-21-008):** Separately, scan `backlog.md` for any `### BLG-xx` entry missing either `**Effort:**` or `**Provisional-Target:**` entirely (not just a bare-letter effort band, the check above) — this occurs most often for items filed directly during sprint execution as mid-sprint out-of-scope findings rather than through the standard `backlog-add` flow. Flag each such item in the health summary as "Field-Completeness Gap" and populate the missing field(s) using the item's `**Source:**` context before the groom run completes.
 
 ### 1.3 Governance Prompt Duplicate Cross-Check (LL-v7.10-P3-01)
 

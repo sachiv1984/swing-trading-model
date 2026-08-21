@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.16
-**Last Updated:** 2026-08-06
+**Version:** 3.17
+**Last Updated:** 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — STEP 3.1 pre-seal stale-feature-target check, D1-tracked STALE since v8.7 Phase 3); prior — 2026-08-06; prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -364,6 +364,8 @@ Classify each item:
 - `include` — within capacity, owned, can be AC-confirmed
 - `defer` — over-capacity or blocked; return to backlog slice for next sprint
 - `flag` — has an issue that must be resolved before it can be included (missing owner, missing estimate, deferred execution blocker)
+
+**Pre-seal stale-feature-target check (AUD-2026-08-21-011, D1-tracked since v8.7 Phase 3):** For each candidate item, if its acceptance criteria or backlog reference names a specific roadmap item/feature as the target of new work, confirm that feature has not already shipped on `main` (grep `claude/backlog/backlog_archive.md` and recent `prompt_change_log.md`/changelog entries for the referenced ID). If already shipped with no remaining gap: classify as `flag` and surface for Product Owner review before scope is sealed, rather than including it as planned work.
 
 **Delegation class assignment (set at planning time — §12 invariant):** For every `include` item, determine the delegation class for the sprint backlog:
 - `autonomous` — fully implementable by the execution engine; no UX change; no human decision or mid-task sign-off required
