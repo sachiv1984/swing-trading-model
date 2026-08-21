@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-21 (Release Planning v9.0 — Release Slice section added, 27 items across 5 EPICs, marker RP:v9.0:2026-08-21__release-v9.0); prior — 2026-08-21 (groom backlog post-ship closure 2026-08-17__release-v8.9 — 21 shipped items marked ✅ COMPLETE then archived to backlog_archive.md; `BLG-GOV-264` left open, split-achievability; 1 ephemeral Release Slice section removed; health=PASS with 5 flagged items resolved same-session); prior — 2026-08-21 (session — 1 new item added: BLG-BE-109, nightly backtest rebalance-date computation treats in-progress month's latest bar as month-end); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-21 (session — 1 new item added: BLG-BE-110, move raw SQL execution out of analytics.py/digest.py routers into service/database layers); prior — 2026-08-21 (Release Planning v9.0 — Release Slice section added, 27 items across 5 EPICs, marker RP:v9.0:2026-08-21__release-v9.0); prior — 2026-08-21 (groom backlog post-ship closure 2026-08-17__release-v8.9 — 21 shipped items marked ✅ COMPLETE then archived to backlog_archive.md; `BLG-GOV-264` left open, split-achievability; 1 ephemeral Release Slice section removed; health=PASS with 5 flagged items resolved same-session); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -5032,5 +5032,29 @@ ST-06's acceptance criterion "Debrief references plan-vs-reality data and any li
 - Regression test added and passing for the mid-month case
 - `tests/backtest_data_integrity_smoke_test.py`-class checks re-verified passing (no new invariant broken)
 - Backend Engineering Patterns Owner sign-off
+
+---
+
+### BLG-BE-110 — Move raw SQL execution out of backend/routers/analytics.py and digest.py into the service/database layers
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-23 (BLG-BE-56, EPIC-05, v9.0) backend service-layer boundary review — 2026-08-21
+**Effort:** L (~3-5 days)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-23's layering-boundary review (per `claude/agents/backend_engineering_patterns_owner.md`'s router→service→database pattern, "Routers must be thin. No business logic, no SQL, no calculations in a router") found that `backend/routers/analytics.py` contains ~25 direct `cursor.execute()` calls (including several f-string-interpolated queries) and `backend/routers/digest.py` contains 7, both bypassing the service/database layers entirely — SQL is built and executed directly inside router handler functions. `backend/routers/ai.py` had the same pattern (2 call sites) and was fixed directly within ST-23's own scope (moved to `database.fetch_journal_notes()`) since it was small and bounded; `analytics.py` and `digest.py` are too large (32 combined call sites across ~1200+ lines) to safely refactor within a single S-effort review story without disproportionate regression risk to production analytics/digest code paths.
+
+**Scope**
+- Extract each `cursor.execute()` call in `analytics.py` and `digest.py` into an appropriately-named function in `backend/database.py` (SQL only, no business logic, matching the existing `get_trade_history()`-style convention)
+- Update each router handler to call the new database-layer function instead of building/executing SQL directly
+- Preserve exact query behaviour (parameterization, filters, joins) — this is a structural move, not a query rewrite
+- Full backend test suite must pass with zero behavioural change
+
+**Acceptance Criteria**
+- Zero `cursor.execute()`/`conn.execute()` calls remain in `backend/routers/analytics.py` and `backend/routers/digest.py`
+- All existing tests for these routers' endpoints continue to pass unchanged
+- No new raw SQL introduced in the service layer either — `database.py` remains the sole SQL layer per the established pattern
 
 ---
