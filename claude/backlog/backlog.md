@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-21 (session — 5 new items added: BLG-FE-165, BLG-FE-166, BLG-FE-167, BLG-FE-168, BLG-FE-169, accessibility findings from ST-21's new axe-core CI scan); prior — 2026-08-21 (Release Planning v9.0 — Release Slice section added, 27 items across 5 EPICs, marker RP:v9.0:2026-08-21__release-v9.0); prior — 2026-08-21 (groom backlog post-ship closure 2026-08-17__release-v8.9 — 21 shipped items marked ✅ COMPLETE then archived to backlog_archive.md; `BLG-GOV-264` left open, split-achievability; 1 ephemeral Release Slice section removed; health=PASS with 5 flagged items resolved same-session); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-21 (session — 3 new items added: BLG-QA-154, BLG-QA-155, BLG-QA-156, Arc5ComplianceSection Playwright coverage gaps from ST-20's audit refresh); prior — 2026-08-21 (session — 5 new items added: BLG-FE-165, BLG-FE-166, BLG-FE-167, BLG-FE-168, BLG-FE-169, accessibility findings from ST-21's new axe-core CI scan); prior — 2026-08-21 (Release Planning v9.0 — Release Slice section added, 27 items across 5 EPICs, marker RP:v9.0:2026-08-21__release-v9.0); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4659,6 +4659,69 @@ The full pipeline (screener hit → watchlist → research → trade plan → po
 - New Playwright test(s) cover a UK-market position's Trail Stop tile/cell rendering
 - Test passes against current implementation
 - Director of Quality sign-off
+
+---
+
+### BLG-QA-154 — Add Playwright coverage for Arc5ComplianceSection's events_per_week value formatting
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead
+**Source:** ST-20 (BLG-QA-144, EPIC-04) Playwright coverage audit refresh, `docs/qa/arc5_coverage_audit.md` §3.3.1 (GAP-ARC5-06), cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`src/components/analytics/Arc5ComplianceSection.js`'s `fmtCount` function (1-decimal-place formatting for `events_per_week`, e.g. `3.0`) has no scenario asserting its rendered value in `tests/e2e/arc5-compliance-section.spec.js` — SC-ARC5-05 (BLG-QA-58, v5.7) only covers the two `fmtRate` fields (`override_rate`, `trade_plan_adherence_rate`), leaving this third, distinct formatter function untested.
+
+**Scope**
+- Add a scenario to `tests/e2e/arc5-compliance-section.spec.js` asserting the formatted `events_per_week` value renders correctly from mocked data (e.g. `2.3` → `"2.3"`)
+
+**Acceptance Criteria**
+- New Playwright scenario asserts the rendered `events_per_week` text matches the expected `fmtCount` output for a known mock value
+- Test passes against current implementation
+
+---
+
+### BLG-QA-155 — Add Playwright coverage for Arc5ComplianceSection's top_rule_breach text formatting
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead
+**Source:** ST-20 (BLG-QA-144, EPIC-04) Playwright coverage audit refresh, `docs/qa/arc5_coverage_audit.md` §3.3.1 (GAP-ARC5-07), cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`src/components/analytics/Arc5ComplianceSection.js`'s `fmtText` function (underscore-to-space replacement for `top_rule_breach`, e.g. `cash_constraint` → `cash constraint`) has no scenario coverage at all — a regression to this formatting (or to the raw value passed through unformatted) would not be caught.
+
+**Scope**
+- Add a scenario to `tests/e2e/arc5-compliance-section.spec.js` asserting the formatted `top_rule_breach` value renders with spaces, not underscores, for a known mock value
+
+**Acceptance Criteria**
+- New Playwright scenario asserts the rendered `top_rule_breach` text matches the expected `fmtText` output (underscores replaced with spaces) for a known mock value
+- Test passes against current implementation
+
+---
+
+### BLG-QA-156 — Add Playwright coverage for Arc5ComplianceSection's null-value handling
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead
+**Source:** ST-20 (BLG-QA-144, EPIC-04) Playwright coverage audit refresh, `docs/qa/arc5_coverage_audit.md` §3.3.1 (GAP-ARC5-08), cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+None of `src/components/analytics/Arc5ComplianceSection.js`'s three formatter functions (`fmtRate`/`fmtCount`/`fmtText`) have a scenario covering the case where an individual metric field is `null` (each renders `"—"` for `null`) — e.g. `top_rule_breach: null` while the other three fields are populated. This is a real, distinct code path (the `val != null` guard in each formatter) that has never been exercised.
+
+**Scope**
+- Add a scenario to `tests/e2e/arc5-compliance-section.spec.js` with at least one metric field set to `null` per formatter type, asserting the corresponding card renders `"—"`
+
+**Acceptance Criteria**
+- New Playwright scenario asserts `"—"` renders for at least one `null` field covering each of `fmtRate`/`fmtCount`/`fmtText`
+- Test passes against current implementation
 
 ---
 
