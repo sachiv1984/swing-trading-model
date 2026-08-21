@@ -91,3 +91,61 @@ def test_subsequent_calls_are_a_no_op():
         m.assert_not_called()
 
     database._trade_plans_table_ensured = False  # don't leak state to other tests
+
+
+# ─── ST-08 (BLG-BE-106, EPIC-02, v9.0) — lock around the check-and-set ────
+
+def test_concurrent_first_calls_run_the_ddl_block_exactly_once():
+    """Two threads racing on the very first call (both reading
+    _trade_plans_table_ensured == False before either sets it True) must
+    result in exactly one DDL execution, not two. Uses a real
+    threading.Barrier to force both threads to attempt entry at the same
+    instant — without the lock in database.ensure_trade_plans_table(), both
+    would pass the pre-lock check and both would call
+    _ensure_trade_plans_table_locked()."""
+    import threading
+
+    database = _real_database_module()
+    database._trade_plans_table_ensured = False
+    mock_get_db, mock_conn = _mock_conn()
+
+    ddl_call_count = {"n": 0}
+    real_locked_impl = database._ensure_trade_plans_table_locked
+
+    def _counting_locked_impl():
+        ddl_call_count["n"] += 1
+        real_locked_impl()
+
+    barrier = threading.Barrier(2)
+    errors = []
+
+    def _worker():
+        try:
+            barrier.wait(timeout=5)  # both threads call ensure_trade_plans_table() together
+            database.ensure_trade_plans_table()
+        except Exception as exc:  # pragma: no cover - surfaced via errors list below
+            errors.append(exc)
+
+    with (
+        patch.object(database, "get_db", mock_get_db),
+        patch.object(database, "_ensure_trade_plans_table_locked", side_effect=_counting_locked_impl),
+        patch.object(database, "ensure_regime_context_text_column"),
+        patch.object(database, "ensure_trade_plan_tags_column"),
+        patch.object(database, "ensure_thesis_provenance_columns"),
+        patch.object(database, "ensure_invalidation_condition_column"),
+        patch.object(database, "ensure_is_ai_draft_column"),
+    ):
+        threads = [threading.Thread(target=_worker) for _ in range(2)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join(timeout=5)
+
+    assert not errors, f"worker thread(s) raised: {errors}"
+    assert ddl_call_count["n"] == 1, (
+        f"expected exactly 1 DDL execution across 2 racing threads, got {ddl_call_count['n']} "
+        "-- the lock did not serialize the check-and-set"
+    )
+    assert database._trade_plans_table_ensured is True
+
+    database._trade_plans_table_ensured = False  # don't leak state to other tests

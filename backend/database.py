@@ -1,5 +1,6 @@
 import os
 import re
+import threading
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
@@ -1140,6 +1141,18 @@ def upsert_trade_reflection(trade_id: str, data: Dict) -> Dict:
 # ---------------------------------------------------------------------------
 
 _trade_plans_table_ensured = False
+# ST-08 (BLG-BE-106, EPIC-02, v9.0): guards the check-and-set below. FastAPI
+# runs sync endpoint functions (all 11 trade_plans call sites) in a worker
+# thread pool, so two concurrent first-requests could otherwise both read
+# _trade_plans_table_ensured as False before either sets it True, and both
+# proceed to run the DDL block concurrently -- redundant at best, and at
+# worst a real PostgreSQL race (two concurrent `CREATE TABLE IF NOT EXISTS`
+# on a table that doesn't exist yet can raise a duplicate-table error, since
+# the existence check and the create are not atomic against each other
+# across sessions). The lock makes the whole check-and-set section atomic:
+# only one thread ever runs the DDL, every other concurrent caller blocks
+# briefly then sees the flag already True and returns immediately.
+_trade_plans_table_lock = threading.Lock()
 
 
 def ensure_trade_plans_table():
@@ -1162,6 +1175,20 @@ def ensure_trade_plans_table():
     global _trade_plans_table_ensured
     if _trade_plans_table_ensured:
         return
+    with _trade_plans_table_lock:
+        # Re-check inside the lock (double-checked locking): if another
+        # thread already ran the DDL block while this one was waiting for
+        # the lock, the flag is now True and there's nothing left to do.
+        if _trade_plans_table_ensured:
+            return
+        _ensure_trade_plans_table_locked()
+
+
+def _ensure_trade_plans_table_locked():
+    """The actual DDL work, only ever called with _trade_plans_table_lock
+    held. Split out from ensure_trade_plans_table() so the lock only wraps
+    the check-and-set, not exposed as a second public no-lock entry point."""
+    global _trade_plans_table_ensured
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute("""
