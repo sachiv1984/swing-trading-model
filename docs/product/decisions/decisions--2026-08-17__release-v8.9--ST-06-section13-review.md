@@ -1,7 +1,7 @@
 Owner: Strategy Rules & System Intent Owner
 Class: Operational Record (Class 3)
 Status: Active — CONDITIONAL
-Last Updated: 2026-08-18
+Last Updated: 2026-08-21 (Known Deviations section added — DEV recorded for Condition 1's literal "Nth trade" example, superseded by BLG-TECH-17/ST-04, v9.0)
 Cycle: 2026-08-17__release-v8.9
 Story: ST-23 (EPIC-02)
 Scoping ref: docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-gate-story-scoping.md
@@ -213,3 +213,21 @@ Had this been a FAIL:
 - AC-03: ✅ Binding conditions documented — nine conditions above (Condition 9 added on internal re-review: output-side enforcement, not prompt-instruction-only, for Conditions 1 and 2)
 - AC-04: ✅ Explicit Determination recorded: **CONDITIONAL**
 - AC-05: ✅ Strategy Rules & System Intent Owner sign-off recorded above
+
+---
+
+## Known Deviations
+
+### DEV — Condition 1's literal "Nth trade" example superseded by BLG-TECH-17/ST-04 (v9.0)
+
+**Filed:** 2026-08-21, during ST-04 (BLG-TECH-17, EPIC-01, cycle 2026-08-21__release-v9.0)
+**Priority:** P3 (Low)
+**Target resolution release:** v9.0 (implementation already applied; this record confirms the spec text)
+**Owner:** AI Compliance & Governance Officer (co-owner of BLG-TECH-17); Strategy Rules & System Intent Owner (this document's owner)
+**Backlog reference:** BLG-TECH-17
+
+**Description:** Condition 1 (line 158 above) states observational phrasing including `"this is the Nth consecutive trade where Y"` **is required**. `backend/services/debrief_service.py`'s `_FOCUS_AREA_SYSTEM` prompt, prior to v9.0, echoed this "pattern in this trade's own data" framing but never computed or passed any cross-trade frequency/count into `source_values` for `numeric_cross_check()` (Condition 9) to verify such a claim against — a gap found via agent-mediated Director of Quality review on ST-06's own PR (#1460) and filed as BLG-TECH-17. Any such count the model stated would either fail Condition 9's numeric cross-check (losing the feature's value on a frequent, silent fallback) or coincidentally match an unrelated approved number (e.g. `holding_days`, `r_target`) and pass despite being an ungrounded guess — undermining Condition 2's verbatim-sourcing guarantee in a way Condition 1's own literal example invites.
+
+**Resolution applied (ST-04, v9.0):** `_FOCUS_AREA_SYSTEM` now explicitly prohibits count/frequency/cross-trade-comparison claims (including literally the "Nth time"/"Nth consecutive trade" phrasing Condition 1 names as a required example), scoping the encouraged observational phrasing to single-trade, verifiable facts only. This satisfies Condition 1's *substantive* intent (pattern-surfacing, non-prescriptive, decision-support-only) and Condition 9's numeric-verifiability requirement, but diverges from Condition 1's literal example text.
+
+**Disposition:** Not treated as a compliance failure — Condition 9 (output-side numeric verifiability, added on this document's own internal re-review) already establishes verifiability as the controlling requirement, and Criterion 1 (determinism) analysis above already flags free-text generation as "a known-imperfect control." Condition 1's literal "Nth trade" example is the part that needs updating, not ST-04's fix. Recorded here rather than silently reconciled, per AI Compliance & Governance Officer co-ownership — a future revision of this document should replace Condition 1's example phrasing with a single-trade-scoped example consistent with the current prompt (e.g. `"your exit deviated from plan by X"`, already given alongside the now-superseded example on the same line).

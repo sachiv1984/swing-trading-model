@@ -14,7 +14,9 @@ from services.debrief_service import (
     scan_prescriptive,
     numeric_cross_check,
     _build_summary_text,
+    _journal_context_for_trade,
     generate_trade_debrief,
+    _FOCUS_AREA_SYSTEM,
 )
 
 
@@ -93,6 +95,95 @@ class TestBuildSummaryText:
         assert "99.0" in summary
         assert "95.0" in summary
         assert "2.0" in summary
+
+
+# ─── ST-04 (BLG-TECH-17, v9.0) — prompt no longer encourages unverifiable
+#     cross-trade pattern language ────────────────────────────────────────
+
+class TestFocusAreaPromptExcludesCrossTradeLanguage:
+    """BLG-TECH-17: the prompt previously framed the focus area as "a
+    pattern in this trade's own plan-vs-reality data", which -- combined
+    with the multi-trade journal_context passed as prompt context -- could
+    invite the model toward frequency/count claims across trades ("this is
+    the Nth time...") that numeric_cross_check() cannot reliably catch (a
+    fabricated count either fails the check outright, losing the feature's
+    value, or coincidentally matches an unrelated approved number and passes
+    despite being an ungrounded guess). Fixed by removing the "pattern"
+    framing and explicitly prohibiting cross-trade count/frequency/
+    comparison claims in the prompt itself (option (a) from the backlog
+    item's two proposed directions)."""
+
+    def test_prompt_does_not_use_pattern_framing(self):
+        assert "a pattern in this trade" not in _FOCUS_AREA_SYSTEM
+
+    def test_prompt_explicitly_prohibits_cross_trade_claims(self):
+        lowered = _FOCUS_AREA_SYSTEM.lower()
+        assert "nth time" in lowered
+        assert "across multiple trades" in lowered or "aggregate data" in lowered
+
+    def test_prompt_still_scopes_to_single_trade(self):
+        assert "THIS trade only" in _FOCUS_AREA_SYSTEM
+
+
+class TestNumericCrossCheckCatchesUngroundedFrequencyClaim:
+    """Defense in depth (BLG-TECH-17): even if a cross-trade count claim
+    slipped past the prompt-level prohibition, numeric_cross_check() must
+    still reject a count number that isn't one of the trade's own source
+    values."""
+
+    def test_ungrounded_count_not_matching_any_source_value_fails(self):
+        source = {"entry_price": 100.0, "exit_price": 108.5, "holding_days": 12}
+        text = "This is the 7th time this setup has stopped out early."
+        assert numeric_cross_check(text, source) is False
+
+
+# ─── ST-03 (BLG-BE-108, v9.0) — journal context sources both entry/exit
+#     notes and Red Flag Journal events, per Product Owner decision
+#     (ESC-EXEC-20260821-01) ───────────────────────────────────────────────
+
+class TestJournalContextForTrade:
+    """BLG-BE-108: 'linked journal entries' in ST-06's own AC draws on BOTH
+    the trade's entry_note/exit_note (the fields the UI itself labels
+    "Trade Journal") and Red Flag Journal events -- not one or the other."""
+
+    def test_includes_entry_and_exit_notes_when_present(self):
+        trade = {"ticker": "AAPL", "entry_note": "Broke out on volume.", "exit_note": "Hit target."}
+        with patch("services.debrief_service.get_red_flag_events", return_value={"items": []}):
+            ctx = _journal_context_for_trade(trade)
+        assert "Broke out on volume." in ctx
+        assert "Hit target." in ctx
+
+    def test_includes_red_flag_events_when_present(self):
+        trade = {"ticker": "AAPL", "entry_note": None, "exit_note": None}
+        events = {"items": [{"event_type": "pre_entry_override"}]}
+        with patch("services.debrief_service.get_red_flag_events", return_value=events):
+            ctx = _journal_context_for_trade(trade)
+        assert "pre_entry_override" in ctx
+        assert "1 recent flag" in ctx
+
+    def test_includes_both_sources_together_when_both_present(self):
+        trade = {"ticker": "AAPL", "entry_note": "Broke out on volume.", "exit_note": None}
+        events = {"items": [{"event_type": "pre_entry_override"}]}
+        with patch("services.debrief_service.get_red_flag_events", return_value=events):
+            ctx = _journal_context_for_trade(trade)
+        assert "Broke out on volume." in ctx
+        assert "pre_entry_override" in ctx
+
+    def test_blank_or_whitespace_only_notes_are_treated_as_absent(self):
+        trade = {"ticker": "AAPL", "entry_note": "   ", "exit_note": ""}
+        with patch("services.debrief_service.get_red_flag_events", return_value={"items": []}):
+            ctx = _journal_context_for_trade(trade)
+        assert ctx == "None"
+
+    def test_no_ticker_and_no_notes_returns_none(self):
+        trade = {"ticker": None, "entry_note": None, "exit_note": None}
+        assert _journal_context_for_trade(trade) == "None"
+
+    def test_red_flag_lookup_failure_does_not_drop_notes(self):
+        trade = {"ticker": "AAPL", "entry_note": "Broke out on volume.", "exit_note": None}
+        with patch("services.debrief_service.get_red_flag_events", side_effect=Exception("db down")):
+            ctx = _journal_context_for_trade(trade)
+        assert "Broke out on volume." in ctx
 
 
 # ─── Regenerate-then-fallback sequencing (Condition 9) ────────────────────

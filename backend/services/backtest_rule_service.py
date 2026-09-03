@@ -34,19 +34,20 @@ nightly Benchmark tab's numbers (different universe/window by design), and
 the run metadata records exactly what was used so this is never ambiguous
 to a reader of a persisted run.
 
---- Algorithm provenance ---
+--- Algorithm provenance (ST-05, BLG-TECH-15, v9.0) ---
 
-compute_signals/compute_atr/compute_risk_on/transaction_fee/backtest below
-are ported from production_strategy.py (repo root), not imported directly,
-for two reasons: (1) production_strategy.py is a standalone script with
-import-time side effects (os.makedirs) and has never been used as a library;
-(2) its backtest() reads regime state (spy_risk_on/ftse_risk_on) from
-MODULE-LEVEL GLOBALS, which is unsafe to mutate from a concurrent web-server
-process (two simultaneous requests would race on the same globals). The port
-below is behaviourally identical except regime state is threaded through as
-an explicit parameter instead of module globals, making it safe for
-concurrent request handling. Filed BLG-TECH-15 for the maintenance burden of
-keeping this in sync if production_strategy.py's core algorithm changes.
+compute_signals/compute_atr/compute_risk_on/transaction_fee/backtest are no
+longer ported/duplicated here — they are imported from
+backend/services/strategy_engine.py, the single shared implementation also
+used by production_strategy.py (repo root). Previously each caller carried
+its own independently-maintained copy (the maintenance burden BLG-TECH-15
+tracked, most concretely realised as BLG-BE-109/ST-01 needing the same fix
+applied twice). See strategy_engine.py's own module docstring for the design
+notes on reconciling the two callers' prior behavioural differences (regime
+state as an explicit parameter — already this module's own convention,
+adopted because production_strategy.py's globals-based version is unsafe to
+mutate from this module's concurrent web-server process; and the trade
+record field-naming schema).
 """
 
 from datetime import datetime, timedelta
@@ -57,6 +58,14 @@ import pandas as pd
 import yfinance as yf
 
 from database import get_db, create_backtest_rule_run
+from services.strategy_engine import (
+    compute_risk_on,
+    compute_atr,
+    compute_signals,
+    transaction_fee,
+    compute_rebalance_dates,
+    backtest,
+)
 
 # strategy_rules.md's live parameters — mirrors production_strategy.py's
 # OPTIMAL_PARAMS exactly. This is the "live rule set" baseline every
@@ -81,7 +90,6 @@ LIVE_PARAMS = {
 # strategy_rules.md prose has no safe, deterministic parse path).
 CANDIDATE_OVERRIDABLE_FIELDS = set(LIVE_PARAMS.keys())
 
-INITIAL_CAPITAL = 20000
 UNIVERSE_SIZE = 20
 LOOKBACK_YEARS = 4
 
@@ -117,255 +125,6 @@ def _load_bounded_universe(limit: int = UNIVERSE_SIZE) -> List[str]:
     return tickers
 
 
-def compute_risk_on(price: pd.Series, ma_period: int = 200) -> pd.Series:
-    """Ported from production_strategy.py::compute_risk_on (unchanged)."""
-    price_filled = price.ffill()
-    ma = price_filled.rolling(ma_period).mean()
-    return price_filled > ma
-
-
-def compute_atr(prices: pd.DataFrame) -> pd.DataFrame:
-    """Ported from production_strategy.py::compute_atr (unchanged)."""
-    high = prices.copy()
-    low = prices.copy()
-    close = prices.copy()
-    tr1 = high - low
-    tr2 = (high - close.shift(1)).abs()
-    tr3 = (low - close.shift(1)).abs()
-    tr = pd.concat([tr1, tr2, tr3], axis=1)
-    tr.columns = pd.MultiIndex.from_tuples([(c, "tr") for c in tr.columns])
-    tr = tr.T.groupby(level=0).max().T
-    return tr.rolling(14).mean()
-
-
-def compute_signals(prices: pd.DataFrame, lookback: int, top_n: int, ma_period: int = 200) -> pd.DataFrame:
-    """Ported from production_strategy.py::compute_signals (unchanged; the
-    ticker_created_at eligibility mask is omitted — this bounded run's
-    universe is small/fixed per run, not the full growing ticker_universe
-    the mask protects against retroactive rank distortion for)."""
-    momentum = prices.pct_change(lookback)
-    ranks = momentum.rank(axis=1, ascending=False, na_option="bottom", method="first")
-    trend = prices > prices.rolling(ma_period).mean()
-    signals = (trend) & (ranks <= top_n)
-    return signals.fillna(False).astype(bool)
-
-
-def transaction_fee(ticker: str, side: str) -> float:
-    """Ported from production_strategy.py::transaction_fee (unchanged)."""
-    if ticker.endswith(".L"):
-        return 0.005 if side == "buy" else 0.0
-    return 0.0015
-
-
-def run_backtest(
-    signals: pd.DataFrame,
-    prices: pd.DataFrame,
-    volatility: pd.DataFrame,
-    atr: pd.DataFrame,
-    regime_us: pd.Series,
-    regime_uk: pd.Series,
-    rebalance_freq: str,
-    atr_mult: float,
-    min_position_pct: float = 0.05,
-    max_position_pct: float = 0.15,
-    min_hold_days: int = 7,
-    risk_off_mode: str = "single",
-    stop_loss_mode: str = "simple",
-    initial_atr_mult: Optional[float] = None,
-    profit_atr_mult: Optional[float] = None,
-):
-    """Ported from production_strategy.py::backtest. Behaviourally identical
-    except regime state is an explicit parameter (regime_us/regime_uk) rather
-    than module-level globals — safe for concurrent request handling. See
-    module docstring for full provenance/rationale."""
-
-    if initial_atr_mult is None:
-        initial_atr_mult = atr_mult * 1.5
-    if profit_atr_mult is None:
-        profit_atr_mult = atr_mult
-
-    def is_risk_on(ticker: str, date) -> bool:
-        us_on = bool(regime_us.at[date]) if date in regime_us.index else False
-        uk_on = bool(regime_uk.at[date]) if date in regime_uk.index else False
-        if risk_off_mode == "single":
-            return uk_on if ticker.endswith(".L") else us_on
-        elif risk_off_mode == "dual":
-            return us_on or uk_on
-        elif risk_off_mode == "dual_strict":
-            return us_on and uk_on
-        return us_on
-
-    period_freq = rebalance_freq[:-1] if rebalance_freq.endswith("E") else rebalance_freq
-    rebalance_dates = prices.groupby(prices.index.to_period(period_freq)).tail(1).index
-    holdings = pd.Series(0.0, index=prices.columns)
-    entry_prices: Dict[str, float] = {}
-    entry_dates: Dict[str, pd.Timestamp] = {}
-    stop_prices: Dict[str, float] = {}
-    initial_stop_prices: Dict[str, float] = {}
-    trades: List[Dict] = []
-    cash = INITIAL_CAPITAL
-    portfolio_values = []
-
-    for date in prices.index:
-        current_positions = list(holdings[holdings > 0].index)
-
-        # Stop loss with profit-lock logic
-        for t in current_positions:
-            if holdings[t] == 0:
-                continue
-            shares = holdings[t]
-            if date not in atr.index or t not in atr.columns:
-                continue
-            atr_val = atr.loc[date, t]
-            if np.isnan(atr_val):
-                continue
-            holding_days = (date - entry_dates[t]).days
-            if holding_days < min_hold_days:
-                continue
-            current_price = prices.loc[date, t]
-            entry_price = entry_prices[t]
-            current_profit_pct = (current_price - entry_price) / entry_price
-
-            if stop_loss_mode == "simple":
-                active_atr_mult = atr_mult
-            elif stop_loss_mode == "tiered":
-                active_atr_mult = initial_atr_mult if holding_days < min_hold_days * 2 else atr_mult
-            elif stop_loss_mode == "profit_lock":
-                active_atr_mult = profit_atr_mult if current_profit_pct > 0 else initial_atr_mult
-            else:
-                active_atr_mult = atr_mult
-
-            current_stop = stop_prices.get(t, -np.inf)
-            new_stop = current_price - active_atr_mult * atr_val
-            stop_prices[t] = max(current_stop, new_stop)
-
-            if current_price <= stop_prices[t]:
-                exit_price = current_price
-                fee = transaction_fee(t, "sell")
-                exit_adj = exit_price * (1 - fee)
-                pnl = (exit_adj - entry_price) * shares
-                trades.append({
-                    "ticker": t, "entry_date": entry_dates[t], "exit_date": date,
-                    "holding_days": holding_days, "entry_price": entry_price, "exit_price": exit_adj,
-                    "initial_stop_price": initial_stop_prices.get(t),
-                    "pnl_gbp": pnl, "pnl_pct": round(current_profit_pct * 100, 2),
-                    "market": "UK" if t.endswith(".L") else "US", "exit_reason": "Stop",
-                    "was_profitable": current_profit_pct > 0,
-                })
-                cash += shares * exit_adj
-                holdings[t] = 0
-                entry_prices.pop(t, None); entry_dates.pop(t, None)
-                stop_prices.pop(t, None); initial_stop_prices.pop(t, None)
-
-        # Risk-off exits
-        for t in current_positions:
-            if holdings[t] == 0:
-                continue
-            shares = holdings[t]
-            if not is_risk_on(t, date):
-                holding_days = (date - entry_dates[t]).days
-                exit_price = prices.loc[date, t]
-                entry_price = entry_prices[t]
-                current_profit_pct = (exit_price - entry_price) / entry_price
-                fee = transaction_fee(t, "sell")
-                exit_adj = exit_price * (1 - fee)
-                pnl = (exit_adj - entry_price) * shares
-                trades.append({
-                    "ticker": t, "entry_date": entry_dates[t], "exit_date": date,
-                    "holding_days": holding_days, "entry_price": entry_price, "exit_price": exit_adj,
-                    "initial_stop_price": initial_stop_prices.get(t),
-                    "pnl_gbp": pnl, "pnl_pct": round(current_profit_pct * 100, 2),
-                    "market": "UK" if t.endswith(".L") else "US", "exit_reason": "Risk-Off",
-                    "was_profitable": current_profit_pct > 0,
-                })
-                cash += shares * exit_adj
-                holdings[t] = 0
-                entry_prices.pop(t, None); entry_dates.pop(t, None)
-                stop_prices.pop(t, None); initial_stop_prices.pop(t, None)
-
-        selected = signals.loc[date][signals.loc[date]].index.tolist()
-        selected = [t for t in selected if is_risk_on(t, date)]
-
-        if date in rebalance_dates:
-            exits = [t for t in list(holdings[holdings > 0].index) if t not in selected]
-            for t in exits:
-                shares = holdings[t]
-                holding_days = (date - entry_dates[t]).days
-                exit_price = prices.loc[date, t]
-                entry_price = entry_prices[t]
-                current_profit_pct = (exit_price - entry_price) / entry_price
-                fee = transaction_fee(t, "sell")
-                exit_adj = exit_price * (1 - fee)
-                pnl = (exit_adj - entry_price) * shares
-                trades.append({
-                    "ticker": t, "entry_date": entry_dates[t], "exit_date": date,
-                    "holding_days": holding_days, "entry_price": entry_price, "exit_price": exit_adj,
-                    "initial_stop_price": initial_stop_prices.get(t),
-                    "pnl_gbp": pnl, "pnl_pct": round(current_profit_pct * 100, 2),
-                    "market": "UK" if t.endswith(".L") else "US", "exit_reason": "No longer qualifies",
-                    "was_profitable": current_profit_pct > 0,
-                })
-                cash += shares * exit_adj
-                holdings[t] = 0
-                entry_prices.pop(t, None); entry_dates.pop(t, None)
-                stop_prices.pop(t, None); initial_stop_prices.pop(t, None)
-
-        num_existing = (holdings > 0).sum()
-        num_new_slots = len(selected) - num_existing
-        if num_new_slots > 0:
-            existing_tickers = holdings[holdings > 0].index.tolist()
-            new_candidates = [t for t in selected if t not in existing_tickers][:num_new_slots]
-            if len(new_candidates) > 0:
-                available_cash = cash
-                vols = volatility.loc[date, new_candidates].replace(0, np.nan).dropna()
-                if len(vols) > 0:
-                    inv_vol = 1 / vols
-                    weights = inv_vol / inv_vol.sum()
-                    weights_constrained = {t: max(min_position_pct, min(w, max_position_pct)) for t, w in weights.items()}
-                    total_weight = sum(weights_constrained.values())
-                    weights_final = {t: w / total_weight for t, w in weights_constrained.items()}
-                    for t, w in weights_final.items():
-                        buy_fee = transaction_fee(t, "buy")
-                        price = prices.loc[date, t] * (1 + buy_fee)
-                        alloc = available_cash * w
-                        shares = alloc / price
-                        holdings[t] = shares
-                        entry_prices[t] = price
-                        entry_dates[t] = date
-                        atr_val = atr.loc[date, t]
-                        if stop_loss_mode == "simple":
-                            initial_stop = price - atr_mult * atr_val
-                        else:
-                            initial_stop = price - initial_atr_mult * atr_val
-                        stop_prices[t] = initial_stop
-                        initial_stop_prices[t] = initial_stop
-                        cash -= shares * price
-
-        daily_value = cash + (holdings * prices.loc[date]).sum()
-        portfolio_values.append(daily_value)
-
-    last_date = prices.index[-1]
-    for t in list(holdings[holdings > 0].index):
-        shares = holdings[t]
-        entry_price = entry_prices[t]
-        current_price = prices.loc[last_date, t]
-        current_profit_pct = (current_price - entry_price) / entry_price
-        holding_days = (last_date - entry_dates[t]).days
-        trades.append({
-            "ticker": t, "entry_date": entry_dates[t], "exit_date": last_date,
-            "holding_days": holding_days, "entry_price": entry_price, "exit_price": current_price,
-            "initial_stop_price": initial_stop_prices.get(t),
-            "pnl_gbp": (current_price - entry_price) * shares, "pnl_pct": round(current_profit_pct * 100, 2),
-            "market": "UK" if t.endswith(".L") else "US", "exit_reason": "Open (Unrealized)",
-            "was_profitable": current_profit_pct > 0,
-        })
-
-    pv = pd.Series(portfolio_values, index=prices.index)
-    returns = pv.pct_change().fillna(0)
-    trades_df = pd.DataFrame(trades)
-    return pv, returns, trades_df
-
-
 def _max_drawdown_pct(returns: pd.Series) -> float:
     equity = (1 + returns).cumprod()
     dd = equity / equity.cummax() - 1
@@ -375,15 +134,19 @@ def _max_drawdown_pct(returns: pd.Series) -> float:
 def _r_multiples(trades_df: pd.DataFrame) -> List[float]:
     """Canonical R formula (metrics_definitions.md 'R-Multiple (Canonical
     Server-Side)'): R = (exit - entry) / (entry - initial_stop). Trades
-    without a qualifying initial_stop_price (entry <= stop) are excluded,
-    same qualifying conditions as the canonical server-side formula."""
+    without a qualifying initial stop (entry <= stop) are excluded, same
+    qualifying conditions as the canonical server-side formula.
+
+    Column names are strategy_engine.backtest()'s canonical schema (ST-05,
+    BLG-TECH-15) — "Initial Stop"/"Entry"/"Exit", not the lower_snake_case
+    names this function used before the consolidation."""
     if trades_df.empty:
         return []
     r_values = []
     for _, row in trades_df.iterrows():
-        stop = row.get("initial_stop_price")
-        entry = row["entry_price"]
-        exitp = row["exit_price"]
+        stop = row.get("Initial Stop")
+        entry = row["Entry"]
+        exitp = row["Exit"]
         if stop is None or pd.isna(stop) or entry <= stop:
             continue
         r_values.append((exitp - entry) / (entry - stop))
@@ -406,7 +169,7 @@ def _bucket_r_multiples(r_values: List[float]) -> List[Dict]:
 def _summarise_run(trades_df: pd.DataFrame, returns: pd.Series) -> Dict:
     trade_count = len(trades_df)
     win_rate = (
-        round(float(trades_df["was_profitable"].mean()) * 100, 2)
+        round(float(trades_df["Was Profitable"].mean()) * 100, 2)
         if trade_count > 0 else None
     )
     r_values = _r_multiples(trades_df)
@@ -473,7 +236,7 @@ def run_candidate_backtest(candidate_overrides: Dict, initiated_by: Optional[str
 
     def _run(params: Dict) -> Dict:
         signals = compute_signals(prices, params["lookback"], params["top_n"])
-        pv, returns, trades_df = run_backtest(
+        pv, returns, trades_df = backtest(
             signals, prices, volatility, atr, regime_us, regime_uk,
             rebalance_freq=params["rebalance_freq"],
             atr_mult=params["atr_mult"],
