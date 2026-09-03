@@ -8,13 +8,19 @@
   "last_updated_utc": "2026-08-21T15:06:00Z",
   "epics": {
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-08-21__release-v9.0/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_production_strategy.py",
+        "tests/test_backtest_rule_service.py",
+        "tests/test_root_logging_config.py",
+        "tests/test_debrief_service.py",
+        "tests/test_strategy_engine_consolidation.py"
+      ],
       "stories": {
         "ST-01": {
           "title": "Fix nightly backtest rebalance-date computation to exclude the current in-progress month",
