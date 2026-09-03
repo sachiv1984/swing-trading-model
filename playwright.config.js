@@ -16,6 +16,19 @@ module.exports = defineConfig({
 
   // All spec files under tests/e2e/ are CI-registered — none excluded.
   // (BLG-QA-64, ST-11 EPIC-03 v6.8: last 12 dark/ignored specs resolved — 11 fixed, 1 deleted.)
+  //
+  // Exception (ST-18, BLG-QA-81, EPIC-04, v9.0): visual-regression-baselines.spec.js
+  // uses pixel-level toHaveScreenshot(), which this repo has already found unreliable
+  // as a hard-blocking gate — visual-snapshots.spec.js itself was originally
+  // pixel-snapshot based and was deliberately converted to CSS class/attribute
+  // assertions for exactly this reason (see that file's header comment: "Chromium
+  // version differences cause pixel mismatches" across local/CI environments).
+  // Baselines here are generated locally, not on the actual CI runner, so a first
+  // CI run is likely to diff on font-rendering/anti-aliasing even with the 2%
+  // tolerance below. Excluded from the default/blocking glob; run explicitly via
+  // playwright.visual-regression.config.js in a dedicated advisory-only CI job
+  // (.github/workflows/playwright.yml's playwright-visual-regression job) instead.
+  testIgnore: ['**/visual-regression-baselines.spec.js'],
 
   // Visual snapshot configuration
   // Baseline PNGs live in tests/e2e/__snapshots__/ (committed to repo).

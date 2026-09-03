@@ -7,3 +7,9 @@ __pycache__/
 
 playwright-report/
 test-results/
+
+# pytest-cov local run artifacts (ST-22, BLG-QA-84, EPIC-04, v9.0)
+.coverage
+coverage_head.json
+coverage_base.json
+coverage_report.md
