@@ -1,9 +1,9 @@
 **Owner:** FinOps & Resource Architect
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-08-13 (ST-16, EPIC-06, v8.7, BLG-OPS-140 — onboarding note added, runtime-read inventory re-verified current); prior — 2026-07-31 (ST-16, EPIC-04, v8.0, BLG-OPS-124 — production filter conclusively confirmed via deploy trigger-source label)
-**Story:** ST-16 (BLG-OPS-140, EPIC-06, v8.7); originated ST-16 (BLG-OPS-124, EPIC-04, v8.0)
+**Version:** 1.3
+**Last Updated:** 2026-08-21 (ST-14, EPIC-03, v9.0, BLG-OPS-90 — automated drift detection built: `scripts/check_deploy_path_filter_drift.py`, wired into `quality_gate.yml`, checks this doc's Runtime File-Read Inventory against staging's filter (parsed live from `staging-deploy.yml`) and a new checked-in production filter snapshot, `docs/ops/render_production_build_filter_snapshot.json`); prior — 2026-08-13 (ST-16, EPIC-06, v8.7, BLG-OPS-140 — onboarding note added, runtime-read inventory re-verified current); prior — 2026-07-31 (ST-16, EPIC-04, v8.0, BLG-OPS-124 — production filter conclusively confirmed via deploy trigger-source label)
+**Story:** ST-14 (BLG-OPS-90, EPIC-03, v9.0); prior — ST-16 (BLG-OPS-140, EPIC-06, v8.7); originated ST-16 (BLG-OPS-124, EPIC-04, v8.0)
 
 ---
 
@@ -18,6 +18,8 @@
 Render's dashboard-configured build/deploy path filters (Settings → Build & Deploy → Build Filters, for the production service) are invisible to a repo-only search — a change to a file outside the configured watch paths can silently fail to trigger a redeploy with no signal visible in-repo. This is a confirmed **recurring drift class** (first occurrence: `BLG-OPS-82`; second occurrence: commit `e9c73f58`, "Fix stale What's New panel — trigger staging redeploy on changelog.md changes" — see `claude/backlog/backlog.md` BLG-OPS-90 gate-status update).
 
 This document is the in-repo side of the audit: a complete inventory of every non-code file the running application actually reads at runtime, so it can be diffed against the two live path-filter configurations (staging's, which is repo-visible; production's, which is dashboard-only) by anyone with the relevant access. The dashboard remains the source of truth for production's filter — this document does not replace it, it makes the comparison possible.
+
+**Automated drift detection (ST-14, BLG-OPS-90, EPIC-03, v9.0):** `scripts/check_deploy_path_filter_drift.py`, run on every PR via `quality_gate.yml`'s `deploy_path_filter_drift` job, checks the Runtime File-Read Inventory below against both filters programmatically — staging's parsed live from `staging-deploy.yml`, production's read from the checked-in snapshot at `docs/ops/render_production_build_filter_snapshot.json` (the last human-confirmed value, maintained by whoever performs the next dashboard re-check). Any known runtime-read file covered by neither filter fails CI. This does not eliminate the need for the periodic manual re-checks below (a live dashboard change nobody records in the snapshot is still invisible to the script) — it catches the "missing-deploy" half of the drift class (a new/changed *known* file not covered) automatically, while the "did the dashboard itself silently change" half still needs a human with dashboard access, same as before.
 
 ---
 

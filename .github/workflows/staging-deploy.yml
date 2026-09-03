@@ -10,8 +10,16 @@ name: Deploy to Staging (Render)
 #   - RENDER_STAGING_DEPLOY_HOOK must be set as a GitHub Actions repository secret
 #     (repo Settings → Secrets and variables → Actions → New repository secret)
 #   - Obtain the deploy hook URL from: Render dashboard → staging service → Settings → Deploy Hook
+#   - STAGING_API_URL / STAGING_API_KEY must also be set (ST-13, BLG-OPS-25, EPIC-03, v9.0)
+#     for the post-deploy smoke test suite (scripts/staging_smoke_test.py) below.
+#   - RENDER_PLATFORM_API_KEY must also be set (already provisioned — same secret
+#     .github/workflows/staging-deploy-drift-check.yml uses) for the deploy-status
+#     poll (scripts/wait_for_staging_deploy_live.py) below.
 #
-# Build minute impact: ~1 min/trigger. See docs/ops/staging_deploy_notes.md.
+# Build minute impact: ~1 min/trigger for the deploy-hook call itself, plus up to
+# ~8 min worst-case for the deploy-status poll (typically much less — polls every
+# 15s until the new commit is confirmed live) and the smoke test suite — see
+# docs/ops/staging_deploy_notes.md for the updated assessment.
 
 on:
   push:
@@ -34,9 +42,17 @@ jobs:
   deploy-staging:
     name: Trigger Render staging re-deploy
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Trigger Render deploy hook
         run: |
           if [[ -z "${RENDER_STAGING_DEPLOY_HOOK:-}" ]]; then
@@ -57,3 +73,31 @@ jobs:
           echo "✅ Staging deploy triggered successfully"
         env:
           RENDER_STAGING_DEPLOY_HOOK: ${{ secrets.RENDER_STAGING_DEPLOY_HOOK }}
+
+      # ST-13 (BLG-OPS-25, EPIC-03, v9.0). The deploy hook above only
+      # confirms Render *accepted* the trigger — not that the build
+      # succeeded or the new commit is actually live. This step (plus the
+      # smoke test after it) is the "staging ready" signal: both must
+      # pass for this job to go green, and nothing downstream should
+      # treat staging as ready if this job is red.
+      #
+      # Polls the same Render platform API endpoint
+      # scripts/check_staging_deploy_drift.py already uses, via
+      # scripts/wait_for_staging_deploy_live.py, until the staging
+      # backend's live deploy matches this push's own commit SHA — not a
+      # fixed sleep. A timeout here is a hard failure (job stops, smoke
+      # test does not run) rather than a soft proceed-anyway, since
+      # running the smoke test against an unconfirmed deploy risks it
+      # silently passing against the still-running *previous* deploy (a
+      # false "staging ready" signal) — exactly the failure class this
+      # story exists to prevent.
+      - name: Wait for staging backend deploy to go live
+        env:
+          RENDER_PLATFORM_API_KEY: ${{ secrets.RENDER_PLATFORM_API_KEY }}
+        run: python3 scripts/wait_for_staging_deploy_live.py "$GITHUB_SHA"
+
+      - name: Run staging smoke test suite
+        env:
+          STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
+          STAGING_API_KEY: ${{ secrets.STAGING_API_KEY }}
+        run: python3 scripts/staging_smoke_test.py

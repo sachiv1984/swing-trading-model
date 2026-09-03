@@ -1,0 +1,61 @@
+name: Staging Smoke Test (Scheduled)
+
+# ST-13 (BLG-OPS-25, EPIC-03, v9.0). Runs the same smoke test suite as
+# staging-deploy.yml's post-deploy check (scripts/staging_smoke_test.py),
+# but on an independent schedule — so a staging regression that happens
+# *between* deploys (e.g. an external dependency outage, a database
+# issue, a Render platform incident) is still caught, not just deploy-time
+# breakage. Alerts via Telegram on failure, same mechanism as
+# backtest.yml's nightly-job alerting.
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # every 6 hours
+  workflow_dispatch: {}
+
+jobs:
+  smoke-test:
+    name: Run staging smoke test suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run staging smoke test suite
+        id: smoke_test
+        env:
+          STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
+          STAGING_API_KEY: ${{ secrets.STAGING_API_KEY }}
+        run: |
+          set +e
+          python3 scripts/staging_smoke_test.py
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Send failure alert
+        if: steps.smoke_test.outputs.exit_code != '0'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          MESSAGE="Staging smoke test FAILED (independent scheduled run, not tied to a deploy). ${RUN_URL}"
+          echo "$MESSAGE"
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -sS --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+              --data-urlencode "text=${MESSAGE}"
+          else
+            echo "::warning::TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not configured as repo secrets — alert not sent. Message would have been: ${MESSAGE}"
+          fi
+
+      - name: Fail job if smoke test did not pass
+        if: steps.smoke_test.outputs.exit_code != '0'
+        run: exit 1

@@ -18,7 +18,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional, List, Any
 from datetime import date
-from database import get_db
+from database import fetch_journal_notes
 from services.ai_service import summarise_journal_notes
 from services.ai_audit_service import log_ai_summary_run, query_audit_log
 from services.rate_limiter import _ai_limiter
@@ -73,34 +73,9 @@ def journal_summary(body: JournalSummaryRequest, request: Request):
             content={"status": "error", "message": "Provide trade_ids or at least one of date_from / date_to."},
         )
 
-    with get_db() as conn:
-        cursor = conn.cursor()
-
-        if body.trade_ids:
-            cursor.execute(
-                """
-                SELECT entry_note, exit_note
-                FROM trade_history
-                WHERE id = ANY(%s) AND exit_date IS NOT NULL
-                """,
-                (body.trade_ids,),
-            )
-        else:
-            params: list = []
-            filters = ["exit_date IS NOT NULL"]
-            if body.date_from:
-                filters.append("exit_date >= %s")
-                params.append(body.date_from)
-            if body.date_to:
-                filters.append("exit_date <= %s")
-                params.append(body.date_to)
-            where = " AND ".join(filters)
-            cursor.execute(
-                f"SELECT entry_note, exit_note FROM trade_history WHERE {where}",
-                params,
-            )
-
-        rows = cursor.fetchall()
+    rows = fetch_journal_notes(
+        trade_ids=body.trade_ids, date_from=body.date_from, date_to=body.date_to
+    )
 
     notes = []
     for row in rows:

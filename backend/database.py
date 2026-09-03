@@ -203,6 +203,48 @@ def get_trade_history(portfolio_id: str) -> List[Dict]:
             return cur.fetchall()
 
 
+def fetch_journal_notes(trade_ids: Optional[List[int]] = None, date_from=None, date_to=None) -> List[Dict]:
+    """Fetch entry_note/exit_note for closed trades, filtered by trade_ids OR a
+    date_from/date_to range (mutually exclusive at the call site — trade_ids
+    takes precedence when both would otherwise be considered).
+
+    ST-23 (BLG-BE-56, EPIC-05, v9.0): moved out of
+    backend/routers/ai.py's journal_summary() handler, where this query
+    (including dynamic WHERE-clause construction for the date-range case)
+    was previously built and executed directly in the router — a
+    router→service→database layering-boundary violation per
+    claude/agents/backend_engineering_patterns_owner.md §"Routers must be
+    thin. No business logic, no SQL, no calculations in a router."
+    Used by POST /ai/journal-summary.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            if trade_ids:
+                cur.execute(
+                    """
+                    SELECT entry_note, exit_note
+                    FROM trade_history
+                    WHERE id = ANY(%s) AND exit_date IS NOT NULL
+                    """,
+                    (trade_ids,),
+                )
+            else:
+                params: list = []
+                filters = ["exit_date IS NOT NULL"]
+                if date_from:
+                    filters.append("exit_date >= %s")
+                    params.append(date_from)
+                if date_to:
+                    filters.append("exit_date <= %s")
+                    params.append(date_to)
+                where = " AND ".join(filters)
+                cur.execute(
+                    f"SELECT entry_note, exit_note FROM trade_history WHERE {where}",
+                    params,
+                )
+            return cur.fetchall()
+
+
 def get_trade_history_by_tax_year(portfolio_id: str, year_start, year_end) -> List[Dict]:
     """Get trade history filtered to trades whose exit_date falls within [year_start, year_end] inclusive.
 
