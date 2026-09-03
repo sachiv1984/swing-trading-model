@@ -24,7 +24,7 @@
   "verification_status": "Verified",
   "next_cycle_unblocked": true,
   "closure_record": "claude/cycles/2026-08-21__release-v9.0/closure_record.md",
-  "closure_status": "Closed_with_actions",
+  "closure_status": "Closed",
   "post_ship_complete": true,
   "completed_cycle_count": 77,
   "last_post_ship_utc": "2026-09-03T17:30:00Z",

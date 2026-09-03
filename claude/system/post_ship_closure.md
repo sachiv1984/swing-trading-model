@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.30
-**Last Updated:** 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — STEP 6 velocity_metrics.md header self-consistency check, AUD-2026-08-21-007); prior — 2026-08-18 (ST-19/BLG-GOV-308, EPIC-06, v8.9: STEP 10 now unconditionally writes `last_post_ship_cycle`/`last_post_ship_utc`); prior — 2026-08-17 (ST-29/BLG-GOV-293: STEP 10 now the sole authoritative writer of `prior_cycle`); prior history retained — see prior entries in version control.
+**Version:** 2.31
+**Last Updated:** 2026-09-03 (post-ship closure 2026-08-21__release-v9.0 outstanding actions, Head of Specs Team direct action — STEP 3.1 gains a split-achievability carve-out before marking a backlog item COMPLETE (LL-v8.9-P-Closure-01); STEP 7.3 gains a mandatory explicit-reporting requirement for the full-document TSG sweep, closing a 3-consecutive-cycle gap where no new dated TSG section was added (LL-v9.0-Closure-01)); prior — 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — STEP 6 velocity_metrics.md header self-consistency check, AUD-2026-08-21-007); prior — 2026-08-18 (ST-19/BLG-GOV-308, EPIC-06, v8.9: STEP 10 now unconditionally writes `last_post_ship_cycle`/`last_post_ship_utc`); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -346,6 +346,7 @@ For every ST item in `execution_state.json` with status `done` or `merged`:
 - Locate the corresponding entry in `backlog.md`.
 - Mark it **✅ COMPLETE** with closure date and `cycle_id` reference.
 - If the item is not in `backlog.md`: record the gap in the closure record (permitted to add a note; do not silently skip).
+- **Split-achievability carve-out (LL-v8.9-P-Closure-01):** Before marking a backlog item ✅ COMPLETE, check whether the corresponding ST item's own `execution_state.json` notes record a partial/split-achievability outcome (only part of the item's scope actually landed), or whether `sprint_close.md`/`verification_report.md` carries an open, carried-forward escalation referencing that backlog item's ID. If so: leave the backlog item's status as-is (do not mark COMPLETE) — instead record the split-achievability disposition under the closure record's §6 Outstanding Actions, naming the specific outstanding scope and its tracking escalation/reference. Applying this literally without the carve-out would mark a genuinely-partial item COMPLETE and — since STEP 12 (`groom backlog`) runs later in this same routine — risk it being archived the same session, silently dropping its escalation cross-reference from active tracking (confirmed real risk at `2026-08-17__release-v8.9`, `BLG-GOV-264`/`ESC-EXEC-20260818-02`).
 
 ### 3.2 Confirm Phase 4 additions are present
 
@@ -526,6 +527,8 @@ For each such entry found with status "Open":
 3. If the BLG item remains open: leave the entry unchanged.
 
 Record any corrections made in `lessons_learnt_closure.md` "What worked well" or "Friction Log" as applicable. This prevents stale "Open" TSG entries from accumulating across cycles and misleading roadmap engine STEP 0 gap-checks.
+
+**Mandatory explicit reporting (LL-v9.0-Closure-01):** This full-document sweep is not optional or discretionary — every Post-Ship Closure run must perform it and record the result. `closure_record.md §2` (Documents Updated, Step 7/Specs Index row) must explicitly state the sweep outcome in the form "STEP 7.3 full-document sweep: N Open TSG entries checked, M resolved" — never omit this line or fold it silently into a general "N resolved; N gaps added" summary. An omitted or silently-skipped sweep is otherwise indistinguishable from a sweep that found nothing to fix, which let 3 consecutive cycles (`2026-08-12__release-v8.7` through `2026-08-17__release-v8.9`) pass with no new numbered `## N. Test Coverage Gaps — vX.Y` section added at all — breaking the one-section-per-cycle pattern in place through `2026-08-11__release-v8.6` — before this gap was caught and disclosed at `2026-08-21__release-v9.0` closure. Add a new dated `## N. Test Coverage Gaps — vX.Y` section every cycle per §7.2, even when it records "0 new gaps this cycle" (per the `2026-08-11__release-v8.6` §39 precedent) — never omit the section simply because there is nothing new to add.
 
 Update `Last Updated` on `docs/specs/Specs_Index.md` to today's date if any changes were made.
 

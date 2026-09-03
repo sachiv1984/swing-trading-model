@@ -70,8 +70,8 @@ None.
 
 ## Items Requiring Product Owner Decision
 
-1. The 5 duplicate-ID entries above (§4.5) — confirm same-item collision vs. genuine ID reuse, and whether consolidation is warranted.
-2. The 3 passed-target items under "Priority Alignment Notes" above — assign a new target, formally re-defer with a named note, or kill.
+1. ✅ **Resolved 2026-09-03 (Product Owner direct action).** The 5 duplicate-ID entries above (§4.5) confirmed as same-item double-archival (not ID collisions) from a one-time 2026-06-16 bulk-sweep gap. No renumbering required. See `backlog_archive.md`'s "Product Owner Disposition — Duplicate ID Review (2026-09-03)" note.
+2. The 3 passed-target items under "Priority Alignment Notes" above — assign a new target, formally re-defer with a named note, or kill. *(Still open.)*
 
 ## Write Scope Verification
 

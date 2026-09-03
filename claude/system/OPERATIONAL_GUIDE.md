@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.170
-**Last Updated:** 2026-08-21 (action-all-audit-points session, AUD-2026-08-21 — 5 source prompts bumped: execution_prompt.md, sprint_planning_prompt.md, shared_standards.md, post_ship_closure.md, backlog_management_prompt.md; §13 Artefact Register gained a Displacement Debt Register row; §14/§15/§16 physically reordered into ascending sequence); prior — 2026-08-21 (post-ship closure 2026-08-17__release-v8.9, ESC-CLOSE-20260821-02: shared_standards.md v3.28→v3.29, new §16.16 Sandbox Access Constraint Disclosure Block); prior history retained — see prior entries in version control.
+**Version:** 4.171
+**Last Updated:** 2026-09-03 (post-ship closure 2026-08-21__release-v9.0 outstanding actions, Head of Specs Team direct action — execution_prompt.md v3.70→v3.71 (STEP 3.1.A gains a self-verification read-back and a resolving-commit deviation-closure discipline requirement; roll-up backstop gains a qa_evidence cross-check extension) and post_ship_closure.md v2.30→v2.31 (STEP 3.1 gains a split-achievability carve-out; STEP 7.3 gains a mandatory explicit-reporting requirement)); prior — 2026-08-21 (action-all-audit-points session, AUD-2026-08-21 — 5 source prompts bumped: execution_prompt.md, sprint_planning_prompt.md, shared_standards.md, post_ship_closure.md, backlog_management_prompt.md; §13 Artefact Register gained a Displacement Debt Register row; §14/§15/§16 physically reordered into ascending sequence); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.70)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.71)
 
 ### 8.1 Invocation
 
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.30)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.31)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1363,8 +1363,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.170 |
-| Last Updated | 2026-08-21 |
+| Version | 4.171 |
+| Last Updated | 2026-09-03 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1376,11 +1376,11 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.49 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.17 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.70 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.71 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.11 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.8 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.30 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.31 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.30 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1497,6 +1497,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.171 | 2026-09-03 | **Post-ship closure `2026-08-21__release-v9.0` outstanding actions, Head of Specs Team direct action — 2 source prompts bumped, resolving 4 of the cycle's 8 outstanding actions.** §14 table updated: `execution_prompt.md` v3.70→v3.71 (STEP 3.1.A step 10a gains a same-step self-verification read-back after the `deviations_filed` write, LL-v9.0-P3-01 — closes this cycle's Phase 3 lessons-learnt friction item; step 10a also gains a resolving-commit deviation-closure discipline requirement, LL-v9.0-P4-01/`BLG-GOV-315`; step 12's roll-up backstop gains a `qa_evidence_EPIC-xx.md` cross-check extension, LL-v9.0-P4-02 — closes this cycle's Phase 4 lessons-learnt friction item); `post_ship_closure.md` v2.30→v2.31 (STEP 3.1 gains a split-achievability carve-out before marking a backlog item COMPLETE, LL-v8.9-P-Closure-01, carried 1 cycle unapplied from `2026-08-17__release-v8.9`'s own closure Friction Item 3; STEP 7.3 gains a mandatory explicit-reporting requirement for the full-document TSG sweep, LL-v9.0-Closure-01, closing a 3-consecutive-cycle gap — `2026-08-12__release-v8.7` through `2026-08-17__release-v8.9` — where no new dated TSG section was added at all). §8 source prompt header v3.70→v3.71 (line 887). §10 source prompt header v2.30→v2.31 (line 1062). Authority: Head of Specs Team (post-ship closure `2026-08-21__release-v9.0` outstanding-actions resolution, user-directed, 2026-09-03). |
 | 4.170 | 2026-08-21 | **Lifecycle audit `AUD-2026-08-21`, action-all-audit-points session — 5 source prompts bumped, 1 register row added, 1 physical reorder.** §14 table updated: `execution_prompt.md` v3.69→v3.70 (STEP 5.1 item-count reconciliation, STEP 5.3 escalation cross-reference, §3.2.B multi-sprint 2nd-PR convention, STEP 0 test_scenarios array-only, merge_gate mid-session re-sync); `sprint_planning_prompt.md` v3.16→v3.17 (STEP 3.1 pre-seal stale-feature-target check, D1-tracked STALE since v8.7 Phase 3); `shared_standards.md` v3.29→v3.30 (§14 Preflight Field Scope table gains 4 missing engine rows: `run ideas`, `run ideas housekeeping`, `manage roadmap`, `groom backlog`); `post_ship_closure.md` v2.29→v2.30 (STEP 6 velocity_metrics.md header self-consistency check); `backlog_management_prompt.md` v1.14→v1.15 (§1.2 Field-Completeness Scan for mid-sprint-filed items). §13 Artefact Register gains a Displacement Debt Register row (`claude/roadmap/displacement_debt_register.md`, pending creation, tracked at `ESC-EXEC-20260818-02`). §14/§15/§16 physically reordered into ascending sequence (previously §16→§15→§14) — numbers unchanged, content unchanged, position only. Authority: Head of Specs Team (lifecycle audit `AUD-2026-08-21`, action-all-audit-points session, user-directed, 2026-08-21). |
 | 4.169 | 2026-08-21 | **Post-ship closure `2026-08-17__release-v8.9`, acting as Head of Specs Team to resolve `ESC-CLOSE-20260821-02` (BLG-GOV-313) — shared_standards.md v3.28→v3.29: new §16.16 Sandbox Access Constraint Disclosure Block.** §14 Shared Standards v3.28→v3.29. §14 Version 4.168→4.169/2026-08-21. Change: canonical constraint statement + 3 stable disclosure IDs (`SBX-NO-LIVE-DB`, `SBX-NO-LIVE-STAGING`, `SBX-NO-LIVE-EXTERNAL-API`) for `qa_evidence_EPIC-xx.md` entries to cite instead of re-deriving "no live staging/production access in this sandbox" prose — first flagged at `2026-08-12__release-v8.7` Phase 4 (3 independent re-derivations: ST-07, ST-13, ST-15), carried 2 further cycles without a `prompt_change_log.md` entry, crossing the `shared_standards.md §6.4` 2-cycle automatic-escalation threshold this run. A companion escalation (`ESC-CLOSE-20260821-01`, CI-green per-fix restatement clarification) was investigated in the same session and found to be a false positive — already applied at `2026-08-12__release-v8.7` (`qa_evidence_template.md` v1.11) — no prompt edit needed there; `BLG-GOV-312` filed to strengthen `lessons_learnt_prompt.md §3.7`'s recurrence check so it reads a deferred patch's own named target file directly rather than relying on keyword search across sibling files. Authority: Head of Specs Team (post-ship closure `2026-08-17__release-v8.9`, escalation resolution, 2026-08-21). |
 | 4.168 | 2026-08-18 | **Sprint execution `2026-08-17__release-v8.9` EPIC-06/ST-22 (BLG-GOV-260) — roadmap_management_prompt.md v1.4→v1.5: STEP 5.2 gains a stale `RA:` marker pruning rule.** §6M source prompt line v1.4→v1.5 (line 478). §14 Roadmap Management Engine v1.4→v1.5. §14 Version 4.167→4.168/2026-08-18. Change: `current_roadmap.md` §3 accumulates already-retired `*RA:vX.Y retired...*` one-line pointers indefinitely (18+ visible as of this cycle, back to v5.0) with no forcing function to remove them, even though `roadmap_archive.md` remains the permanent record. STEP 5.2 now prunes (deletes outright) any already-retired pointer more than 3 shipped releases older than the document's current highest referenced release; active (non-retired) marker blocks are never pruned. STEP 5.3's run log template gains a new `RA: markers pruned` count field. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-22, 2026-08-18). |

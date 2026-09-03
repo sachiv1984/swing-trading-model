@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-09-03
+Last Updated: 2026-09-03 (all 6 outstanding deferred patches resolved same-day, acting in role per explicit user direction); prior: 2026-09-03 (initial filing)
 Cycle: 2026-08-21__release-v9.0
 
 # Lessons Learnt — Post-Ship Closure
@@ -112,14 +112,16 @@ Friction Item 1 above (deviation labelled-field drift) is escalated as an **Outs
 
 ## Outstanding deferred patches
 
-| File | Section | Change required | Owner | Target | Carried since |
-|------|---------|----------------|-------|--------|---------------|
-| `claude/system/execution_prompt.md` | STEP 3.1.A step 10a | Same-step self-verification read-back after the `deviations_filed` write, converting the "do not defer" instruction into a mechanically-checkable gate (this cycle's Phase 3 friction item, `lessons_learnt_cycle.md`) | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 3.1.A | v9.0 (new) |
-| `claude/system/execution_prompt.md` | STEP 3 (`test_scenarios` write step) | Completeness check requiring new test files under `tests/` to be reflected in the owning EPIC's `test_scenarios` array in the same write (this cycle's Phase 4 friction item, `lessons_learnt_cycle.md`) | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 3 | v9.0 (new) |
-| `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-01.md` | ST-02 row | Update `Result` from "Returned to backlog" to `Pass` — ST-02 reached final `done` resolution after the evidence log was last touched (this cycle's Phase 4 friction item, `lessons_learnt_cycle.md`); outside post-ship closure's write scope (qa evidence logs are not a STEP 5 permitted path) | Director of Quality | Next touch of `qa_evidence_EPIC-01.md` | v9.0 (new) |
-| `claude/system/execution_prompt.md` | Deviation-closure discipline (STEP 3.1.A) | Require a story/engine action that closes a *pre-existing* deviation's root cause to also update that deviation's own labelled fields in the same commit (this run's Friction Item 1 — 3rd confirmed instance across 4 consolidation review runs) | Head of Specs Team | **Escalated** — file as `BLG-GOV-*` before next Post-Ship Closure review | v8.1 (run 1), recurred v8.7 (run 3), recurred v9.0 (run 4) |
-| `claude/system/post_ship_closure.md` | STEP 7 / STEP 7.3 | Make the full-document TSG sweep a mandatory, explicitly-reported sub-step rather than a discretionary convention (this run's Friction Item 2 — 3-cycle gap in TSG section numbering, v8.7–v8.9) | Head of Specs Team | Next `post_ship_closure.md` revision touching STEP 7 | v9.0 (new) |
-| `claude/system/post_ship_closure.md` | STEP 3.1 (Mark shipped items complete) | Carve-out for split-achievability stories before marking a backlog item ✅ COMPLETE (v8.9's Friction Item 3 — did not recur this cycle, no split-achievability stories in the v9.0 slice, but the prompt gap itself remains unpatched) | Head of Specs Team | Next `post_ship_closure.md` revision touching STEP 3.1 | v8.9 (1 cycle carried, no recurrence this cycle) |
+**All 6 items below resolved same-day (2026-09-03), acting in role per explicit user direction — see `closure_record.md §6` for full detail.**
+
+| File | Section | Change required | Owner | Target | Carried since | Resolution |
+|------|---------|----------------|-------|--------|---------------|------------|
+| `claude/system/execution_prompt.md` | STEP 3.1.A step 10a | Same-step self-verification read-back after the `deviations_filed` write, converting the "do not defer" instruction into a mechanically-checkable gate (this cycle's Phase 3 friction item, `lessons_learnt_cycle.md`) | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 3.1.A | v9.0 (new) | ✅ Resolved — v3.70→v3.71 |
+| `claude/system/execution_prompt.md` | STEP 3 (`test_scenarios` write step) | Completeness check requiring new test files under `tests/` to be reflected in the owning EPIC's `test_scenarios` array in the same write (this cycle's Phase 4 friction item, `lessons_learnt_cycle.md`) | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 3 | v9.0 (new) | ✅ Resolved — v3.70→v3.71 |
+| `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-01.md` | ST-02 row | Update `Result` from "Returned to backlog" to `Pass` — ST-02 reached final `done` resolution after the evidence log was last touched (this cycle's Phase 4 friction item, `lessons_learnt_cycle.md`); outside post-ship closure's write scope (qa evidence logs are not a STEP 5 permitted path) | Director of Quality | Next touch of `qa_evidence_EPIC-01.md` | v9.0 (new) | ✅ Resolved |
+| `claude/system/execution_prompt.md` | Deviation-closure discipline (STEP 3.1.A) | Require a story/engine action that closes a *pre-existing* deviation's root cause to also update that deviation's own labelled fields in the same commit (this run's Friction Item 1 — 3rd confirmed instance across 4 consolidation review runs) | Head of Specs Team | **Escalated** — file as `BLG-GOV-*` before next Post-Ship Closure review | v8.1 (run 1), recurred v8.7 (run 3), recurred v9.0 (run 4) | ✅ Resolved — `BLG-GOV-315` filed + `execution_prompt.md` v3.70→v3.71 |
+| `claude/system/post_ship_closure.md` | STEP 7 / STEP 7.3 | Make the full-document TSG sweep a mandatory, explicitly-reported sub-step rather than a discretionary convention (this run's Friction Item 2 — 3-cycle gap in TSG section numbering, v8.7–v8.9) | Head of Specs Team | Next `post_ship_closure.md` revision touching STEP 7 | v9.0 (new) | ✅ Resolved — v2.30→v2.31 |
+| `claude/system/post_ship_closure.md` | STEP 3.1 (Mark shipped items complete) | Carve-out for split-achievability stories before marking a backlog item ✅ COMPLETE (v8.9's Friction Item 3 — did not recur this cycle, no split-achievability stories in the v9.0 slice, but the prompt gap itself remains unpatched) | Head of Specs Team | Next `post_ship_closure.md` revision touching STEP 3.1 | v8.9 (1 cycle carried, no recurrence this cycle) | ✅ Resolved — v2.30→v2.31 |
 
 ---
 
@@ -148,7 +150,8 @@ Items: 3
   "filed_utc": "2026-09-03T00:00:00Z",
   "friction_item_count": 2,
   "action_now_count": 3,
-  "deferred_count": 6,
+  "deferred_count": 0,
+  "resolved_same_day_count": 6,
   "escalation_count": 0,
   "overdue_patches": 0,
   "status": "Active"

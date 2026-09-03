@@ -1,11 +1,25 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-03 (groom backlog post-ship closure 2026-08-21__release-v9.0 — 28 items archived: BLG-QA-26/81/83/84/89/144/153, BLG-OPS-25/90/95/98/101/103/147/148, BLG-BE-49/54/56/105/106/107/108/109, BLG-FEAT-93, BLG-FE-164, BLG-TECH-15/17, BLG-GOV-313 (leftover already-complete item missed by the 2026-08-21 sweep); 1 ephemeral Release Slice section removed — v9.0; 5 pre-existing genuine duplicate IDs found by this run's ID Uniqueness Scan (BLG-OPS-37/31/28, BLG-FE-49, BLG-FEAT-38 — each appears 3× from two separate historical archival passes) flagged for Product Owner review, not auto-resolved); prior — 2026-08-21 (groom backlog post-ship closure 2026-08-17__release-v8.9 — 21 items archived: BLG-BE-98/99/100/101/102/103/104, BLG-SPEC-85/130, BLG-FEAT-89/90/91, BLG-QA-149/150/151/152, BLG-OPS-113/146, BLG-GOV-260/308/309; 1 ephemeral Release Slice section removed — v8.9; `BLG-GOV-264` intentionally not archived — split-achievability, see backlog.md; same-session follow-up acting as Product Owner renumbered 2 genuine duplicate IDs found by this run's ID Uniqueness Scan — `BLG-FEAT-84`→`BLG-FEAT-94` (later-archived "Thesis pre-mortem" entry, v8.7) and `BLG-SEC-18`→`BLG-SEC-34` (later-archived "npm audit review" entry, v8.8), each with a traceability note; earlier claimant of each ID keeps it); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
+**Last Updated:** 2026-09-03 (Product Owner direct action — Duplicate ID Review: confirmed BLG-OPS-37/31/28, BLG-FE-49, BLG-FEAT-38 are same-item double-archival from a one-time 2026-06-16 bulk-sweep gap, not ID collisions; no renumbering required, see disposition note); prior — 2026-09-03 (groom backlog post-ship closure 2026-08-21__release-v9.0 — 28 items archived: BLG-QA-26/81/83/84/89/144/153, BLG-OPS-25/90/95/98/101/103/147/148, BLG-BE-49/54/56/105/106/107/108/109, BLG-FEAT-93, BLG-FE-164, BLG-TECH-15/17, BLG-GOV-313 (leftover already-complete item missed by the 2026-08-21 sweep); 1 ephemeral Release Slice section removed — v9.0; 5 pre-existing genuine duplicate IDs found by this run's ID Uniqueness Scan flagged for Product Owner review, not auto-resolved); prior — 2026-08-21 (groom backlog post-ship closure 2026-08-17__release-v8.9 — 21 items archived: BLG-BE-98/99/100/101/102/103/104, BLG-SPEC-85/130, BLG-FEAT-89/90/91, BLG-QA-149/150/151/152, BLG-OPS-113/146, BLG-GOV-260/308/309; 1 ephemeral Release Slice section removed — v8.9; `BLG-GOV-264` intentionally not archived — split-achievability, see backlog.md; same-session follow-up acting as Product Owner renumbered 2 genuine duplicate IDs found by this run's ID Uniqueness Scan — `BLG-FEAT-84`→`BLG-FEAT-94` (later-archived "Thesis pre-mortem" entry, v8.7) and `BLG-SEC-18`→`BLG-SEC-34` (later-archived "npm audit review" entry, v8.8), each with a traceability note; earlier claimant of each ID keeps it); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+## Product Owner Disposition — Duplicate ID Review (2026-09-03)
+
+**Reviewed by:** Product Owner
+**Trigger:** `backlog_health_20260903.md` §4.5 ID Uniqueness Scan flagged 5 IDs each appearing 3× in this archive: `BLG-OPS-37`, `BLG-OPS-31`, `BLG-OPS-28`, `BLG-FE-49`, `BLG-FEAT-38`.
+
+**Finding:** All 5 are confirmed **same-item double-archival**, not ID collisions between two different items. Each ID's three occurrences trace to a single underlying backlog item, shipped once (`v4.7`, cycle `2026-05-31__release-v4.7`), carrying identical `**Completed:**`/resolution detail (story, EPIC, artefact produced, sign-off) across all three copies:
+
+1. A compliant §6.1 stub+verbatim pair, retired `2026-06-01` (the two adjacent occurrences).
+2. A second, separate copy embedded in the `## Groomed 2026-06-16 — Cycle v5.6 post-ship (103 items archived)` bulk-archival section — an older heading-embedded-`✅ COMPLETE` convention that predates the current stub+verbatim format. That bulk sweep evidently re-archived items already retired five days earlier on `2026-06-01`, rather than checking for a pre-existing archive entry first — a one-time process gap in that historical bulk run, not a live/recurring defect (no comparable duplication is found in any groom run since).
+
+**Disposition:** No ID renumbering required — unlike the `BLG-FEAT-84`/`BLG-SEC-18` precedent (`2026-08-21` groom, two genuinely different items that had collided on reused IDs), these 5 are one item each, described consistently across both copies, with no conflicting information. Per this document's append-only invariant, no existing entry is edited or removed — this note stands as the permanent record that the duplication is understood, benign, and requires no further action. `backlog_health_20260903.md`'s outstanding item #1 is resolved by this note.
 
 ---
 
