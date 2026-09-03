@@ -42,3 +42,21 @@ Append-only. Do not edit previous entries.
 - **Blocks execution:** No — other EPIC-02+ items continue; only ST-07 itself is parked.
 - **Disposition:** Open
 - **Resolution summary:** (complete when closing)
+
+---
+
+## ESC-EXEC-20260821-01 — Resolution (Addendum)
+
+- **Refers to:** ESC-EXEC-20260821-01 above. This file is append-only — recording the resolution as a new entry rather than editing the original.
+- **Resolved at:** 2026-08-21T22:00:00Z (well within the 72h SLA due 2026-08-24T14:26:00Z)
+- **Disposition:** Resolved
+- **Resolution summary:** Product Owner decision: "linked journal entries" (BLG-BE-108) draws on **both** sources, not one or the other — `backend/services/debrief_service.py::_journal_context_for_trade()` now includes the trade's own `entry_note`/`exit_note` (the fields the UI itself labels "Trade Journal", directly adjacent to the Debrief panel in `TradeHistoryTable.js` — the more literal reading of "journal entries") FIRST, followed by Red Flag Journal events for the ticker (the pre-existing implementation, retained rather than dropped). Both are free text/labels, not numbers — no impact on `numeric_cross_check` (§13 Condition 2 sourcing discipline applies only to quantitative claims). Evidence: `tests/test_debrief_service.py` (6 new tests, `TestJournalContextForTrade`, all passing); `docs/specs/api_contracts/trade_endpoints.md` v2.5.0→v2.5.1 documents the sourcing clarification. Full backend suite: 1282 passed, 5 skipped, zero regressions. Commit `94b759cb` (EPIC-01). See `execution_state.json` ST-03 for the full record.
+
+---
+
+## ESC-EXEC-20260821-02 — Resolution (Addendum)
+
+- **Refers to:** ESC-EXEC-20260821-02 above. This file is append-only — recording the resolution as a new entry rather than editing the original.
+- **Resolved at:** 2026-08-21T22:00:00Z (well within the 72h SLA due 2026-08-24T15:04:00Z)
+- **Disposition:** Resolved
+- **Resolution summary:** Product Owner decision: accept the `setup_type="Other"` conflation between user-chosen-Other and never-classified (`BLG-FEAT-93`) — no new distinguishing field, enum value, or schema change. `win_rate_by_setup_type` is a future, unbuilt SI-02 predesign query, itself still far from its own ≥20-linked-trades trigger gate — a distinguishing mechanism now would be speculative complexity ahead of the feature that would consume it; re-open when that feature is actually scheduled. `PUT /trade-plans/{id}` is explicitly NOT extended with `POST`'s null→"Other" default (a client that wants to reset it sends `"Other"` directly — matches every other field's null-means-don't-touch semantics rather than special-casing this one field). Evidence: `docs/product/decisions/setup-type-other-conflation-decision--2026-08-21.md` (full rationale); `docs/specs/api_contracts/trade_plan_endpoints.md` v0.13→v0.14; 2 new regression tests (`TestSetupTypePutDoesNotDefault`) lock in the accepted behaviour. Full backend suite: 1263 passed, 10 skipped, zero regressions. Commit `6bc1add4` (EPIC-02). See `execution_state.json` ST-07 for the full record.
