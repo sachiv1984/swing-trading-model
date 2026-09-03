@@ -4911,6 +4911,32 @@ On 2026-08-21 the GitHub Pages site went blank because `.env.production`'s `PUBL
 
 ---
 
+### BLG-GOV-314 — governance_sync.yml's auto-close never fires when a story's completion-state commit is split from its work commit
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Engineering
+**Source:** `2026-08-21__release-v9.0` Sprint Execution session — 2026-08-21
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`execution_prompt.md`'s own guidance (adopted mid-session this cycle as a self-identified process improvement, after an earlier mistake of setting `commit_sha: null`/omitted before the real SHA was known) is: commit the actual work → push → `git rev-parse HEAD` → *then* update `execution_state.json`'s status/commit_sha in a separate follow-up commit. This is procedurally sound for capturing the real commit SHA, but it silently defeats `governance_sync.yml`'s auto-close mechanism for every story handled this way — in **both** directions, confirmed at `2026-08-21__release-v9.0`:
+
+- **Under-closing (16 confirmed cases, ST-08 through ST-27 across EPIC-02–05):** the work commit (tagged `[EPIC-xx][ST-xx]`) triggers the workflow, which correctly finds the `[ST-xx]` tag but checks `execution_state.json`'s status *as of that commit* — still not `done` (the follow-up commit hasn't landed yet) — so it correctly skips closing per its anti-premature-closure guard (`BLG-GOV-285`). The follow-up commit that actually sets `status: done` is conventionally tagged `[GOVERNANCE] Record ST-xx completion...` — a bare `[GOVERNANCE]` tag with no `[ST-xx]` in it — so the workflow's `grep -oE '\[(ST-[0-9]+)\]'` parse finds nothing and the close-issue step never even runs. Net effect: the story is genuinely `done`, correctly verified — but its issue never auto-closes (issues #1469-1488 range; manually closed same-session with an audit-trail comment once discovered).
+- **Over-closing (1 confirmed case, ST-02/#1463, more serious — misrepresents an *incomplete* story as done):** when the work commit is pushed on its own *before* any `execution_state.json` entry exists for that story yet (e.g. the very first story of a fresh EPIC branch, pushed before the tracking-commit that follows it), the workflow's `is_story_done()` jq lookup finds no status at all and falls back to its documented `"unknown" = close unconditionally` behaviour (preserved for pre-per-EPIC-mechanism cycles). If that story's real eventual disposition is `blocked_backend`/`blocked_decision` rather than `done` — set 2 minutes later in the follow-up commit — the issue is now wrongly closed for a story that isn't actually finished, and nothing subsequently reopens it. Manually reopened same-session (`#1463`, ST-02) once discovered, with the real outstanding ACs and delegation record noted in the reopen comment.
+
+**Scope**
+- Either (a) change the follow-up commit-message convention to include the `[ST-xx]` tag alongside `[GOVERNANCE]` (e.g. `[GOVERNANCE][ST-xx] Record ST-xx completion...`) so the existing parser catches it on the completion commit too, or (b) change `governance_sync.yml`'s status-check logic to look at the *current* `execution_state.json` on the branch tip at workflow-run time rather than only the commit range's own diff, so a later completion-commit still triggers correctly for an earlier work-commit's `[ST-xx]` tag
+- Separately, reconsider the `"unknown" = close unconditionally` fallback: it was added to preserve pre-per-EPIC-mechanism behaviour, but on the mechanism this cycle actually uses, "unknown" more often means "the tracking commit for this story hasn't landed yet" than "this is a non-sprint-execution reference" — closing in that case is a false positive with real-world consequence (an actually-blocked story reads as done). Consider flipping the default to "skip" (matching the `"no"` branch) unless a story is unambiguously not part of any tracked cycle at all.
+- Whichever fix(es) are chosen, add a regression test/dry-run confirming both failure modes are closed: a split work-commit + governance-commit pair correctly auto-closes an eventually-`done` story, and does *not* auto-close a story that ends up `blocked_*`
+
+**Acceptance Criteria**
+- A story completed via the commit→push→get-SHA→separate-governance-commit pattern has its GitHub issue auto-closed by `governance_sync.yml` without manual intervention
+- A story that ends up `blocked_backend`/`blocked_decision` (rather than `done`) after its work commit is pushed does NOT have its issue auto-closed, even if no `execution_state.json` entry exists yet at the moment the work commit's own push triggers the workflow
+- Existing anti-premature-closure protection (`BLG-GOV-285` — a delegation-record-only commit must not close the issue) remains intact
+
+---
+
 ### BLG-TECH-13 — Consolidate 4 independent sector-lookup implementations
 
 **Priority:** P3 (Low)
@@ -5203,30 +5229,3 @@ ST-06's acceptance criterion "Debrief references plan-vs-reality data and any li
 - `tests/backtest_data_integrity_smoke_test.py`-class checks re-verified passing (no new invariant broken)
 - Backend Engineering Patterns Owner sign-off
 
----
-
-### BLG-GOV-314 — governance_sync.yml's auto-close never fires when a story's completion-state commit is split from its work commit
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Engineering
-**Source:** `2026-08-21__release-v9.0` Sprint Execution session — 2026-08-21
-**Effort:** S (~0.5-1d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-`execution_prompt.md`'s own guidance (adopted mid-session this cycle as a self-identified process improvement, after an earlier mistake of setting `commit_sha: null`/omitted before the real SHA was known) is: commit the actual work → push → `git rev-parse HEAD` → *then* update `execution_state.json`'s status/commit_sha in a separate follow-up commit. This is procedurally sound for capturing the real commit SHA, but it silently defeats `governance_sync.yml`'s auto-close mechanism for every story handled this way — in **both** directions, confirmed at `2026-08-21__release-v9.0`:
-
-- **Under-closing (16 confirmed cases, ST-08 through ST-27 across EPIC-02–05):** the work commit (tagged `[EPIC-xx][ST-xx]`) triggers the workflow, which correctly finds the `[ST-xx]` tag but checks `execution_state.json`'s status *as of that commit* — still not `done` (the follow-up commit hasn't landed yet) — so it correctly skips closing per its anti-premature-closure guard (`BLG-GOV-285`). The follow-up commit that actually sets `status: done` is conventionally tagged `[GOVERNANCE] Record ST-xx completion...` — a bare `[GOVERNANCE]` tag with no `[ST-xx]` in it — so the workflow's `grep -oE '\[(ST-[0-9]+)\]'` parse finds nothing and the close-issue step never even runs. Net effect: the story is genuinely `done`, correctly verified — but its issue never auto-closes (issues #1469-1488 range; manually closed same-session with an audit-trail comment once discovered).
-- **Over-closing (1 confirmed case, ST-02/#1463, more serious — misrepresents an *incomplete* story as done):** when the work commit is pushed on its own *before* any `execution_state.json` entry exists for that story yet (e.g. the very first story of a fresh EPIC branch, pushed before the tracking-commit that follows it), the workflow's `is_story_done()` jq lookup finds no status at all and falls back to its documented `"unknown" = close unconditionally` behaviour (preserved for pre-per-EPIC-mechanism cycles). If that story's real eventual disposition is `blocked_backend`/`blocked_decision` rather than `done` — set 2 minutes later in the follow-up commit — the issue is now wrongly closed for a story that isn't actually finished, and nothing subsequently reopens it. Manually reopened same-session (`#1463`, ST-02) once discovered, with the real outstanding ACs and delegation record noted in the reopen comment.
-
-**Scope**
-- Either (a) change the follow-up commit-message convention to include the `[ST-xx]` tag alongside `[GOVERNANCE]` (e.g. `[GOVERNANCE][ST-xx] Record ST-xx completion...`) so the existing parser catches it on the completion commit too, or (b) change `governance_sync.yml`'s status-check logic to look at the *current* `execution_state.json` on the branch tip at workflow-run time rather than only the commit range's own diff, so a later completion-commit still triggers correctly for an earlier work-commit's `[ST-xx]` tag
-- Separately, reconsider the `"unknown" = close unconditionally` fallback: it was added to preserve pre-per-EPIC-mechanism behaviour, but on the mechanism this cycle actually uses, "unknown" more often means "the tracking commit for this story hasn't landed yet" than "this is a non-sprint-execution reference" — closing in that case is a false positive with real-world consequence (an actually-blocked story reads as done). Consider flipping the default to "skip" (matching the `"no"` branch) unless a story is unambiguously not part of any tracked cycle at all.
-- Whichever fix(es) are chosen, add a regression test/dry-run confirming both failure modes are closed: a split work-commit + governance-commit pair correctly auto-closes an eventually-`done` story, and does *not* auto-close a story that ends up `blocked_*`
-
-**Acceptance Criteria**
-- A story completed via the commit→push→get-SHA→separate-governance-commit pattern has its GitHub issue auto-closed by `governance_sync.yml` without manual intervention
-- A story that ends up `blocked_backend`/`blocked_decision` (rather than `done`) after its work commit is pushed does NOT have its issue auto-closed, even if no `execution_state.json` entry exists yet at the moment the work commit's own push triggers the workflow
-- Existing anti-premature-closure protection (`BLG-GOV-285` — a delegation-record-only commit must not close the issue) remains intact
-
----
