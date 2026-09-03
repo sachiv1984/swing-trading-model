@@ -4,11 +4,11 @@
   "backlog_slice_source": "claude/cycles/2026-08-21__release-v9.0/stage4_backlog_slice.md",
   "invoked_utc": "2026-08-21T13:47:12Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-08-21T20:36:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-09-03T16:18:32Z",
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-21__release-v9.0/EPIC-01",
       "pr_number": 1492,
       "pr_status": "merged",
@@ -59,7 +59,7 @@
           "commit_sha": "186959a4e15fbd39aa5b527c8053f6ccd2caa495",
           "delegation_record_id": "DEL-20260821-01",
           "blocked_since_utc": "2026-08-21T14:22:43Z",
-          "unblock_criteria": "Render dashboard log viewer confirms the digest-timing line present with a real elapsed-time value after a real post-deploy invocation; docs/ops/api_performance_baseline.md \u00a736 updated with that value.",
+          "unblock_criteria": "Render dashboard log viewer confirms the digest-timing line present with a real elapsed-time value after a real post-deploy invocation; docs/ops/api_performance_baseline.md §36 updated with that value.",
           "completed_utc": "2026-09-03T12:22:00Z",
           "acceptance_verified": true,
           "spec_references": [
@@ -67,16 +67,16 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.B.unblock_detection",
           "sign_off_record": {
             "role": "Infrastructure & Operations Owner",
             "method": "human",
             "status": "cleared",
             "date": "2026-09-03",
-            "comments": "Human confirmed via Render dashboard production log viewer, following PR #1492's merge and deploy: \"2026-09-03 12:21:51,534 INFO services.si05_digest_service: SI-05 digest sent (498 chars) in 0.37s\" -- real post-deploy invocation (si05-weekly-digest.yml workflow_dispatch, run 33754758406) confirms the digest-timing line now reaches Render's captured logs with a real elapsed-time value. docs/ops/api_performance_baseline.md \u00a736.7 updated with the value; DEV-EPIC03-ST09-01 resolved."
+            "comments": "Human confirmed via Render dashboard production log viewer, following PR #1492's merge and deploy: \"2026-09-03 12:21:51,534 INFO services.si05_digest_service: SI-05 digest sent (498 chars) in 0.37s\" -- real post-deploy invocation (si05-weekly-digest.yml workflow_dispatch, run 33754758406) confirms the digest-timing line now reaches Render's captured logs with a real elapsed-time value. docs/ops/api_performance_baseline.md §36.7 updated with the value; DEV-EPIC03-ST09-01 resolved."
           },
-          "notes": "Code portion (logging.basicConfig fix) complete, tested, pushed (commit 186959a4). Remaining two ACs (real post-deploy production log confirmation + baseline doc update) require the fix to already be live in production -- structurally impossible pre-merge, matching the identical precedent at 2026-08-17__release-v8.9 ST-09 (DEL-20260818-01, commit cc120bef). Applying the in-flight returned_to_backlog transition (AUD-2026-05-27-003) now: dual basis -- (1) sprint_backlog.md's own pre-existing 'Staging-only ACs: AC2' designation for this item (Sprint Planning-authored, predates this session), and (2) explicit live Product Owner direction this session ('open the PR and then verify') authorizing the deferral so EPIC-01 can merge and the fix can actually reach production. DEL-20260821-01 updated to Cancelled via append-only addendum. Post-merge: trigger si05-weekly-digest.yml workflow_dispatch, confirm the digest-timing line in Render's log viewer, update docs/ops/api_performance_baseline.md \u00a736, re-file as done. RESOLVED 2026-09-03: real post-deploy Render log confirmation obtained (see sign_off_record). DEL-20260821-01 given final resolution addendum."
+          "notes": "Code portion (logging.basicConfig fix) complete, tested, pushed (commit 186959a4). Remaining two ACs (real post-deploy production log confirmation + baseline doc update) require the fix to already be live in production -- structurally impossible pre-merge, matching the identical precedent at 2026-08-17__release-v8.9 ST-09 (DEL-20260818-01, commit cc120bef). Applying the in-flight returned_to_backlog transition (AUD-2026-05-27-003) now: dual basis -- (1) sprint_backlog.md's own pre-existing 'Staging-only ACs: AC2' designation for this item (Sprint Planning-authored, predates this session), and (2) explicit live Product Owner direction this session ('open the PR and then verify') authorizing the deferral so EPIC-01 can merge and the fix can actually reach production. DEL-20260821-01 updated to Cancelled via append-only addendum. Post-merge: trigger si05-weekly-digest.yml workflow_dispatch, confirm the digest-timing line in Render's log viewer, update docs/ops/api_performance_baseline.md §36, re-file as done. RESOLVED 2026-09-03: real post-deploy Render log confirmation obtained (see sign_off_record). DEL-20260821-01 given final resolution addendum. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-03": {
           "title": "Decide 'linked journal entries' data source for the AI Post-Trade Debrief",
@@ -96,7 +96,7 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.D.unblock_detection",
           "sign_off_record": {
             "role": "Product Owner",
@@ -105,7 +105,7 @@
             "date": "2026-08-21",
             "comments": "Approved. 'Linked journal entries' draws on both entry_note/exit_note (the fields the UI itself labels 'Trade Journal', directly adjacent to the Debrief panel -- the more literal reading) and Red Flag Journal events (retained, not dropped). 6 new tests added; full backend suite 1282 passed, 5 skipped, zero regressions."
           },
-          "notes": "Resolved ESC-EXEC-20260821-01 (execution_escalations.md)."
+          "notes": "Resolved ESC-EXEC-20260821-01 (execution_escalations.md). No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-04": {
           "title": "Fix debrief-generation prompt's unverifiable cross-trade pattern language",
@@ -132,7 +132,7 @@
             "method": "agent_mediated",
             "status": "cleared",
             "date": "2026-08-21",
-            "comments": "Approved. New prompt text closes the BLG-TECH-17 gap (no encouraged claim type left systematically unverifiable); option (a) reasonable for P3/S sizing; test coverage pins the fix (prompt-text regression + defense-in-depth numeric_cross_check case); 25/25 tests pass. Two non-blocking findings actioned in-session: cosmetic user-template leftover fixed, and a real tension with the \u00a713 review's Condition 1 literal example flagged -- filed as a Known Deviations entry in the decision record for AI Compliance & Governance Officer awareness."
+            "comments": "Approved. New prompt text closes the BLG-TECH-17 gap (no encouraged claim type left systematically unverifiable); option (a) reasonable for P3/S sizing; test coverage pins the fix (prompt-text regression + defense-in-depth numeric_cross_check case); 25/25 tests pass. Two non-blocking findings actioned in-session: cosmetic user-template leftover fixed, and a real tension with the §13 review's Condition 1 literal example flagged -- filed as a Known Deviations entry in the decision record for AI Compliance & Governance Officer awareness."
           },
           "notes": "Filed Known Deviations entry in docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md: Condition 1's literal 'Nth trade' example phrasing is superseded by this fix (P3, owner AI Compliance & Governance Officer + Strategy Rules & System Intent Owner, BLG-TECH-17 ref)."
         },
@@ -169,10 +169,10 @@
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-21__release-v9.0/EPIC-02",
       "pr_number": 1493,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-02.md",
       "test_scenarios": [
@@ -201,7 +201,7 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.B.unblock_detection",
           "sign_off_record": {
             "role": "Backend Engineering Patterns Owner",
@@ -210,7 +210,7 @@
             "date": "2026-09-03",
             "comments": "Product Owner ran Step 1's audit query directly against production (live DB access): 0 rows -- no open, currently-profitable position with current_stop < entry_price. Correction (Step 2) not required; re-verification (Step 3) not applicable. Full traceability record: docs/ops/breakeven_floor_stop_audit_2026-09-03.md. Closes deferred BLG-BE-102/ST-01 (v8.9) AC; resolves BLG-BE-105."
           },
-          "notes": "Narrowed to a verification-first runbook via code inspection: analyze_positions() already runs nightly (daily-snapshot.yml) and applies the fixed floor logic (commit b410cfa3c) -- the audit is very likely to find 0 rows, but this must be confirmed via a live query, not assumed. Full runbook in DEL-20260821-02. RESOLVED 2026-09-03: 0 rows found, see docs/ops/breakeven_floor_stop_audit_2026-09-03.md. DEL-20260821-02 given final resolution addendum."
+          "notes": "Narrowed to a verification-first runbook via code inspection: analyze_positions() already runs nightly (daily-snapshot.yml) and applies the fixed floor logic (commit b410cfa3c) -- the audit is very likely to find 0 rows, but this must be confirmed via a live query, not assumed. Full runbook in DEL-20260821-02. RESOLVED 2026-09-03: 0 rows found, see docs/ops/breakeven_floor_stop_audit_2026-09-03.md. DEL-20260821-02 given final resolution addendum. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-07": {
           "title": "Decide and apply treatment for trade_plans.setup_type='Other' conflating user-chosen-Other with never-classified",
@@ -231,7 +231,7 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.D.unblock_detection",
           "sign_off_record": {
             "role": "Product Owner",
@@ -240,7 +240,7 @@
             "date": "2026-08-21",
             "comments": "Approved. Accept-as-is decision: win_rate_by_setup_type is a future, unbuilt SI-02 predesign query still far from its own trigger gate -- a distinguishing mechanism now would be speculative complexity ahead of the feature that would consume it. PUT deliberately not extended with POST's null-to-Other default (uniform null-means-don't-touch semantics preserved across all fields). 2 new regression tests lock in the decision; full backend suite 1263 passed, 10 skipped, zero regressions."
           },
-          "notes": "Resolved ESC-EXEC-20260821-02 (execution_escalations.md). New decision record: docs/product/decisions/setup-type-other-conflation-decision--2026-08-21.md."
+          "notes": "Resolved ESC-EXEC-20260821-02 (execution_escalations.md). New decision record: docs/product/decisions/setup-type-other-conflation-decision--2026-08-21.md. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-08": {
           "title": "Add a lock around ensure_trade_plans_table()'s memoization flag",
@@ -315,7 +315,7 @@
             "method": "agent_mediated",
             "status": "cleared",
             "date": "2026-08-21",
-            "comments": "Approved. Corrected \u00a75d.3 claim verified technically sound against sizing_service.py; field placement/labeling/gating consistent with TradeEntry.js precedent; header Version/Last-Updated chain correctly maintained; ephemeral (non-persisted) override choice confirmed correct, not a gap."
+            "comments": "Approved. Corrected §5d.3 claim verified technically sound against sizing_service.py; field placement/labeling/gating consistent with TradeEntry.js precedent; header Version/Last-Updated chain correctly maintained; ephemeral (non-persisted) override choice confirmed correct, not a gap."
           },
           "notes": "New Playwright tests (V-WHATIF-04a/04b/05/06) run against a real browser in this session -- all pass, plus full what-if-sizing-preview.spec.js (8/8) and trade-plan.spec.js (41/41) regression checks."
         },
@@ -351,10 +351,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-21__release-v9.0/EPIC-03",
       "pr_number": 1491,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
@@ -462,7 +462,7 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.B.unblock_detection",
           "sign_off_record": {
             "role": "Infrastructure & Operations Owner",
@@ -471,7 +471,7 @@
             "date": "2026-08-21",
             "comments": "Human confirmed via Render dashboard: PUBLIC_URL absent from production backend API service (trading-assistant-api) -- correct, since it's a frontend-build-only variable with no meaning to a FastAPI backend. Underlying frontend concern independently already resolved: production frontend is GitHub Pages (deploy.yml), not a Render static site; deploy.yml sets PUBLIC_URL=/swing-trading-model as an explicit build-time override, verified by ST-16's own CI safeguard. No dashboard change needed anywhere."
           },
-          "notes": "Binary live dashboard fact, no proxy possible -- established precedent for this class confirmed via docs/ops/test_environment_parity_check_2026-08-16.md (BLG-OPS-146). Resolved via DEL-20260821-03's addendum."
+          "notes": "Binary live dashboard fact, no proxy possible -- established precedent for this class confirmed via docs/ops/test_environment_parity_check_2026-08-16.md (BLG-OPS-146). Resolved via DEL-20260821-03's addendum. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-16": {
           "title": "Add CI safeguard to catch future PUBLIC_URL/asset-path regressions on GitHub Pages deploy",
@@ -505,7 +505,7 @@
       }
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-21__release-v9.0/EPIC-04",
       "pr_number": 1489,
       "pr_status": "merged",
@@ -536,10 +536,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "STEP 4 \u2014 merged into EPIC branch, sign-off recorded",
-          "sign_off_record": "Director of Quality agent-mediated sign-off \u2014 Approved 2026-08-21 after 3 review passes (at the max-2-retries budget): pass 1 Blocked on Stage 4 factual overstatement (SI02GateStatusSection/BLG-FEAT-86 partial drift-endpoint consumption omitted), pass 2 Blocked on a spec-file count off-by-one, pass 3 Blocked on a stale '\u00a74.5' cross-reference. All corrected; 3rd fix applied and self-verified directly (mechanical, unambiguous) rather than via a 4th agent review, consistent with the retry budget.",
-          "notes": "New docs/qa/arc5_qa_protocol.md: canonical arc-level Arc 5 QA protocol covering the full flow (validation gate -> override event -> red flag journal -> drift detection review -> strategy version comparison -> weekly digest). Consolidates/extends arc5_e2e_integration_test_spec.md and arc5_coverage_audit.md rather than duplicating; adds SI-04 (v7.7) and SI-05 (v5.0-5.5) stages those documents predate. Corrected a stale SI-04 status in arc5_qa_completion_criteria.md's assessment without editing that document. 30/34 shipped-scope scenarios (88.2%) Playwright-automated across 7 spec files."
+          "deviations_filed": true,
+          "last_completed_substep": "STEP 4 — merged into EPIC branch, sign-off recorded",
+          "sign_off_record": "Director of Quality agent-mediated sign-off — Approved 2026-08-21 after 3 review passes (at the max-2-retries budget): pass 1 Blocked on Stage 4 factual overstatement (SI02GateStatusSection/BLG-FEAT-86 partial drift-endpoint consumption omitted), pass 2 Blocked on a spec-file count off-by-one, pass 3 Blocked on a stale '§4.5' cross-reference. All corrected; 3rd fix applied and self-verified directly (mechanical, unambiguous) rather than via a 4th agent review, consistent with the retry budget.",
+          "notes": "New docs/qa/arc5_qa_protocol.md: canonical arc-level Arc 5 QA protocol covering the full flow (validation gate -> override event -> red flag journal -> drift detection review -> strategy version comparison -> weekly digest). Consolidates/extends arc5_e2e_integration_test_spec.md and arc5_coverage_audit.md rather than duplicating; adds SI-04 (v7.7) and SI-05 (v5.0-5.5) stages those documents predate. Corrected a stale SI-04 status in arc5_qa_completion_criteria.md's assessment without editing that document. 30/34 shipped-scope scenarios (88.2%) Playwright-automated across 7 spec files. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-18": {
           "title": "Visual regression baseline snapshots (contrast-sensitive + chart-heavy components)",
@@ -556,11 +556,11 @@
           "acceptance_verified": true,
           "spec_references": [],
           "spec_reference_not_applicable": true,
-          "spec_reference_not_applicable_reason": "QA/test-infrastructure story with no governing frontend/backend spec document \u2014 CLAUDE.md's playwright-coverage requirement is satisfied by this story's own deliverable, not by an existing spec.",
-          "deviations_filed": false,
-          "last_completed_substep": "STEP 4 \u2014 merged into EPIC branch, sign-off recorded",
-          "sign_off_record": "Director of Quality agent-mediated sign-off \u2014 Approved 2026-08-21 (1 pass, no findings blocking; 1 minor non-blocking observation on CI path-filter completeness, fixed same-commit)",
-          "notes": "New tests/e2e/visual-regression-baselines.spec.js: 10 dual-theme toHaveScreenshot() baselines (DashboardHome/Positions/TradePlan/Settings contrast-sensitive pages + PerformanceAnalytics chart-heavy proof of pattern). First pixel-level baselines in the repo; wired as an advisory-only CI job (playwright.visual-regression.config.js, continue-on-error: true) rather than blocking, per this repo's own precedent that pixel diffs are unreliable across local/CI Chromium rendering until baselines are regenerated on-runner."
+          "spec_reference_not_applicable_reason": "QA/test-infrastructure story with no governing frontend/backend spec document — CLAUDE.md's playwright-coverage requirement is satisfied by this story's own deliverable, not by an existing spec.",
+          "deviations_filed": true,
+          "last_completed_substep": "STEP 4 — merged into EPIC branch, sign-off recorded",
+          "sign_off_record": "Director of Quality agent-mediated sign-off — Approved 2026-08-21 (1 pass, no findings blocking; 1 minor non-blocking observation on CI path-filter completeness, fixed same-commit)",
+          "notes": "New tests/e2e/visual-regression-baselines.spec.js: 10 dual-theme toHaveScreenshot() baselines (DashboardHome/Positions/TradePlan/Settings contrast-sensitive pages + PerformanceAnalytics chart-heavy proof of pattern). First pixel-level baselines in the repo; wired as an advisory-only CI job (playwright.visual-regression.config.js, continue-on-error: true) rather than blocking, per this repo's own precedent that pixel diffs are unreliable across local/CI Chromium rendering until baselines are regenerated on-runner. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-19": {
           "title": "R-multiple calculation regression test",
@@ -603,10 +603,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "STEP 4 \u2014 merged into EPIC branch, sign-off recorded",
-          "sign_off_record": "QA Lead agent-mediated sign-off \u2014 Approved 2026-08-21 (1 retry: first pass Blocked on GAP-ARC5-02 mischaracterization in \u00a75 table + \u00a76 sign-off paragraph, both corrected, re-review Approved)",
-          "notes": "Refreshed docs/qa/arc5_coverage_audit.md \u00a73.3 to value-formatting granularity (fmtRate/fmtCount/fmtText + null-handling). Added SC-ARC5-05 row (BLG-QA-58, v5.7, previously missing from doc). Found 3 new gaps (GAP-ARC5-06/07/08), filed BLG-QA-154/155/156 via /backlog-add. Corrected GAP-ARC5-02 disposition to 'resolved by SC-ARC5-05' after QA Lead review caught a mischaracterization."
+          "deviations_filed": true,
+          "last_completed_substep": "STEP 4 — merged into EPIC branch, sign-off recorded",
+          "sign_off_record": "QA Lead agent-mediated sign-off — Approved 2026-08-21 (1 retry: first pass Blocked on GAP-ARC5-02 mischaracterization in §5 table + §6 sign-off paragraph, both corrected, re-review Approved)",
+          "notes": "Refreshed docs/qa/arc5_coverage_audit.md §3.3 to value-formatting granularity (fmtRate/fmtCount/fmtText + null-handling). Added SC-ARC5-05 row (BLG-QA-58, v5.7, previously missing from doc). Found 3 new gaps (GAP-ARC5-06/07/08), filed BLG-QA-154/155/156 via /backlog-add. Corrected GAP-ARC5-02 disposition to 'resolved by SC-ARC5-05' after QA Lead review caught a mischaracterization. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-21": {
           "title": "Standalone axe-core accessibility CI scan",
@@ -658,10 +658,10 @@
       }
     },
     "EPIC-05": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-21__release-v9.0/EPIC-05",
       "pr_number": 1490,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
@@ -684,10 +684,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "STEP 4 \u2014 merged into EPIC branch, sign-off recorded",
-          "sign_off_record": "Backend Engineering Patterns Owner agent-mediated sign-off \u2014 Approved 2026-08-21 (1 pass, no findings blocking)",
-          "notes": "Found 3 routers with direct SQL bypassing service/database layers (analytics.py ~25 sites, digest.py 7, ai.py 2). Fixed ai.py directly (bounded, small); filed BLG-BE-110 for the larger deferred fix. Full backend suite 1260 passed/5 skipped, zero regressions."
+          "deviations_filed": true,
+          "last_completed_substep": "STEP 4 — merged into EPIC branch, sign-off recorded",
+          "sign_off_record": "Backend Engineering Patterns Owner agent-mediated sign-off — Approved 2026-08-21 (1 pass, no findings blocking)",
+          "notes": "Found 3 routers with direct SQL bypassing service/database layers (analytics.py ~25 sites, digest.py 7, ai.py 2). Fixed ai.py directly (bounded, small); filed BLG-BE-110 for the larger deferred fix. Full backend suite 1260 passed/5 skipped, zero regressions. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-24": {
           "title": "Database connection pool tuning review",
@@ -707,10 +707,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "STEP 4 \u2014 merged into EPIC branch, sign-off recorded",
-          "sign_off_record": "Backend Engineering Patterns Owner agent-mediated sign-off \u2014 Approved 2026-08-21 (1 pass, no findings blocking)",
-          "notes": "Found no application-level connection pool exists (raw psycopg2.connect() per request); pooling delegated entirely to Supabase's Supavisor (~20 connection ceiling). Hold recommendation, proxy-derived per established precedent (docs/ops/render_starter_tier_headroom_reassessment_2026-08-13.md)."
+          "deviations_filed": true,
+          "last_completed_substep": "STEP 4 — merged into EPIC branch, sign-off recorded",
+          "sign_off_record": "Backend Engineering Patterns Owner agent-mediated sign-off — Approved 2026-08-21 (1 pass, no findings blocking)",
+          "notes": "Found no application-level connection pool exists (raw psycopg2.connect() per request); pooling delegated entirely to Supabase's Supavisor (~20 connection ceiling). Hold recommendation, proxy-derived per established precedent (docs/ops/render_starter_tier_headroom_reassessment_2026-08-13.md). No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-25": {
           "title": "Render hosting tier review",
@@ -731,10 +731,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "STEP 4 \u2014 merged into EPIC branch, sign-off recorded",
-          "sign_off_record": "FinOps & Resource Architect agent-mediated sign-off \u2014 Approved 2026-08-21 (1 pass, no findings blocking)",
-          "notes": "8-day re-check against the 2026-08-13 assessment (BLG-OPS-139/v8.7): endpoint count 133->138, no render.yaml plan-tier change, no capacity incident in v8.9 changelog. Hold reconfirmed."
+          "deviations_filed": true,
+          "last_completed_substep": "STEP 4 — merged into EPIC branch, sign-off recorded",
+          "sign_off_record": "FinOps & Resource Architect agent-mediated sign-off — Approved 2026-08-21 (1 pass, no findings blocking)",
+          "notes": "8-day re-check against the 2026-08-13 assessment (BLG-OPS-139/v8.7): endpoint count 133->138, no render.yaml plan-tier change, no capacity incident in v8.9 changelog. Hold reconfirmed. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-26": {
           "title": "Render hosting cost trend dashboard",
@@ -754,10 +754,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "STEP 4 \u2014 merged into EPIC branch, sign-off recorded",
-          "sign_off_record": "FinOps & Resource Architect agent-mediated sign-off \u2014 Approved 2026-08-21 (1 pass, no findings blocking)",
-          "notes": "No repo-derivable Render $-cost data exists (same finding as cloud_infra_spend_by_epic.md's AC-01 reframe). Substituted a genuine git-derived endpoint-count trend (87/95/127/138, 4 real commits over ~90 days) as load-side proxy, cross-referenced against the confirmed-flat cost side (no render.yaml plan-tier change)."
+          "deviations_filed": true,
+          "last_completed_substep": "STEP 4 — merged into EPIC branch, sign-off recorded",
+          "sign_off_record": "FinOps & Resource Architect agent-mediated sign-off — Approved 2026-08-21 (1 pass, no findings blocking)",
+          "notes": "No repo-derivable Render $-cost data exists (same finding as cloud_infra_spend_by_epic.md's AC-01 reframe). Substituted a genuine git-derived endpoint-count trend (87/95/127/138, 4 real commits over ~90 days) as load-side proxy, cross-referenced against the confirmed-flat cost side (no render.yaml plan-tier change). No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-27": {
           "title": "Quarterly dependency minor-version upgrade cadence policy",
@@ -778,8 +778,8 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "STEP 4 \u2014 merged into EPIC branch, sign-off recorded",
-          "sign_off_record": "Head of Engineering agent-mediated sign-off \u2014 Approved 2026-08-21 (1 pass, no findings blocking)",
+          "last_completed_substep": "STEP 4 — merged into EPIC branch, sign-off recorded",
+          "sign_off_record": "Head of Engineering agent-mediated sign-off — Approved 2026-08-21 (1 pass, no findings blocking)",
           "notes": "Policy documented; 7 backend packages safely bumped (pandas/numpy/requests/python-dateutil/sqlalchemy/pytest/pytest-cov), full suite 1260 passed/5 skipped. Frontend npm update (~20 packages) attempted, discovered a reproducible production-build regression (eslint-config-react-app resolution failure), reverted cleanly, filed BLG-TECH-18 for dedicated follow-up."
         }
       }
@@ -817,18 +817,20 @@
     "ST-27"
   ],
   "open_escalations": [],
-  "process_notes": [],
+  "process_notes": [
+    "2026-09-03: Session-resume merge-gate sync (LL-v3.9-P3-1) — all 5 EPIC PRs (#1489-#1493) confirmed MERGED via `gh pr view --json mergedAt`. Prior execution_state.json (both the stale copy on exec/EPIC-02 and the pre-pull main copy) still showed epics_merged=[] / epics_pending=[all 5] — corrected in this write: pr_status/status set to \"merged\" for all 5 EPICs, merge_gate.epics_merged=[all 5], epics_pending=[], all_merged=true. Orphaned post-merge commit check (LL-v6.8-P3-01) run for all 5 EPIC branches via `git log origin/main..origin/exec/<cycle_id>/<epic>` — no orphaned commits found on any branch; local main fast-forwarded cleanly to origin/main (cc3719df) which already contains all 5 merge commits. Proceeding directly to STEP 5 (Sprint Close) per the resume rule."
+  ],
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": [
+    "epics_merged": [
       "EPIC-01",
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
       "EPIC-05"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-09-03T16:18:32Z"
 }

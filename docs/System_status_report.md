@@ -1,11 +1,35 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.34
-**Last Updated:** 2026-08-21 (delivery verification 2026-08-17__release-v8.9 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-08-20 (sprint close 2026-08-17__release-v8.9); prior — 2026-08-17 (delivery verification 2026-08-14__release-v8.8 — status line updated Sprint_Complete → Verified); prior history retained — see prior entries in version control.
+**Version:** 4.35
+**Last Updated:** 2026-09-03 (sprint close 2026-08-21__release-v9.0); prior — 2026-08-21 (delivery verification 2026-08-17__release-v8.9 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-08-20 (sprint close 2026-08-17__release-v8.9); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
+
+## Sprint: 2026-08-21__release-v9.0
+**Date:** 2026-09-03
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Fixed nightly backtest rebalance-date computation to exclude the current in-progress month (ST-01); root/app logging now reaches Render's captured logs, confirmed live post-deploy (ST-02); AI Post-Trade Debrief "linked journal entries" now draws on both entry/exit notes and Red Flag Journal events (ST-03); debrief-generation prompt's unverifiable cross-trade pattern language removed (ST-04); `backtest_rule_service.py`'s ported algorithm functions consolidated with `production_strategy.py` into `strategy_engine.py` (ST-05) | `docs/ops/api_performance_baseline.md#36.7`; `docs/specs/api_contracts/trade_endpoints.md`; `backend/services/strategy_engine.py` | None |
+| EPIC-02 | Live production audit of open positions against the breakeven-floor stop invariant — 0 rows found, invariant already holding via nightly recompute (ST-06); Product Owner decision recorded to accept `trade_plans.setup_type='Other'` conflation as-is (ST-07); lock added around `ensure_trade_plans_table()`'s memoization flag (ST-08); down-migration rollback verification tests added for the 5 most recent schema migrations (ST-09); What-If Sizing Preview FX-rate reproducibility gap closed for US-market plans (ST-10); Playwright coverage added for UK-market `current_trailing_stop_native` (ST-11) | `backend/services/position_service.py`; `docs/product/decisions/setup-type-other-conflation-decision--2026-08-21.md`; `docs/specs/frontend/pages/trade_plan.md#5d.2`/`#5d.3` | None |
+| EPIC-03 | Production database backup/restore drill confirmed current (ST-12, pre-met on main); automated staging smoke test wired into deploy/merge (ST-13); staging environment drift detector added (ST-14); production `PUBLIC_URL` dashboard setting confirmed correct — no gap (ST-15); CI safeguard added against future PUBLIC_URL/asset-path regressions on the GitHub Pages deploy (ST-16) | `docs/ops/database_backup_disaster_recovery_runbook.md`; `scripts/staging_smoke_test.py`; `scripts/check_deploy_path_filter_drift.py`; `.github/workflows/deploy.yml` | None |
+| EPIC-04 | Canonical Arc 5 QA protocol authored (ST-17); first pixel-level visual regression baselines added for contrast-sensitive/chart-heavy components (ST-18); R-multiple calculation regression test added (ST-19); Playwright coverage gap audit for Arc5ComplianceSection, 3 new gaps filed (ST-20); first-ever standalone axe-core accessibility CI scan, 5 pre-existing violations found and filed (ST-21); backend test coverage report now published to PR comments (ST-22) | `docs/qa/arc5_qa_protocol.md`; `docs/specs/metrics_definitions.md#R-Multiple (Canonical Server-Side)`; `docs/qa/arc5_coverage_audit.md`; `tests/e2e/accessibility-axe-scan.spec.js` | None |
+| EPIC-05 | Backend service-layer boundary review — 3 routers found bypassing service/database layers with direct SQL, `ai.py` fixed in-story, larger fix deferred (ST-23); database connection pool tuning review — no application-level pool exists, hold recommendation via Supavisor (ST-24); Render hosting tier review — hold reconfirmed (ST-25); Render hosting cost trend dashboard added, using endpoint-count as a load-side proxy (ST-26); quarterly dependency minor-version upgrade cadence policy documented, 7 backend packages safely bumped (ST-27) | `docs/ops/backend_service_layer_boundary_review_2026-08-21.md`; `docs/ops/database_connection_pool_tuning_review_2026-08-21.md`; `docs/ops/render_hosting_tier_review_2026-08-21.md`; `docs/ops/render_hosting_cost_trend_dashboard_2026-08-21.md`; `docs/ops/quarterly_dependency_upgrade_cadence_policy.md` | None |
+
+### Capabilities deferred or returned
+
+None — all 27 sprint-scope stories reached `done`/`merged`. Two follow-up-only backend items were filed as backlog debt rather than deferred scope: `BLG-BE-110` (remaining raw-SQL layering fix, ST-23) and `BLG-TECH-18` (npm dependency-upgrade production-build regression, ST-27).
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md, qa_evidence_EPIC-05.md
+- Deviations filed: None
+- Test scenarios referenced: tests/test_ensure_trade_plans_table_memoization.py, tests/test_schema_rollback_verification.py, tests/e2e/what-if-sizing-preview.spec.js, tests/e2e/trade-plan.spec.js, tests/e2e/position-stop-currency-basis.spec.js, tests/test_production_strategy.py, tests/test_backtest_rule_service.py, tests/test_root_logging_config.py, tests/test_debrief_service.py, tests/test_strategy_engine_consolidation.py, tests/test_r_multiple_calculation.py, tests/e2e/accessibility-axe-scan.spec.js, tests/e2e/visual-regression-baselines.spec.js, tests/test_generate_backend_coverage_report.py
 
 ## Sprint: 2026-08-17__release-v8.9
 **Date:** 2026-08-20
