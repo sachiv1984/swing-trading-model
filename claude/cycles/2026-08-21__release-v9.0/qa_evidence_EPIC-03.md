@@ -40,5 +40,6 @@ delegation's premise (the gap was framed as a backend config check, but
 PUBLIC_URL is frontend-only -- the real frontend concern was already
 independently verified via ST-16's CI safeguard). EPIC-03 ready for PR.
 
-Signed: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3) — 2026-08-21
+Signed: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+Date: 2026-08-21
 ```
