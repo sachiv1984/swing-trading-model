@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-21T13:47:12Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-21T15:06:00Z",
+  "last_updated_utc": "2026-08-21T16:25:00Z",
   "epics": {
     "EPIC-01": {
       "status": "in_progress",
@@ -337,80 +337,100 @@
       "stories": {
         "ST-12": {
           "title": "Production database backup/restore drill",
-          "classification": "delegated_backend",
-          "status": "not_started",
-          "assigned_to": "Infrastructure & Operations Owner",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 1473,
           "branch": "exec/2026-08-21__release-v9.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "5165e828",
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "Full restore drill against a non-production target requires real Supabase/Render infrastructure access unavailable in this sandbox.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-21T15:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/database_backup_disaster_recovery_runbook.md",
+            ".github/workflows/production-db-backup.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.pre_met_verified",
           "sign_off_record": null,
-          "notes": "Engine will document the current backup mechanism (repo-derivable) as prep; the restore drill itself needs a human with infra access."
+          "notes": "AC pre-met on main. Full scope (backup mechanism documented + restore drill against a non-production target) already delivered by BLG-OPS-126/BLG-OPS-127 (2026-07-31__release-v8.0 ST-17, 2026-08-03__release-v8.1 ST-02) before this backlog item (idea-intake 2026-07-10) was formally scoped into a sprint. Verified live: gh run list shows production-db-backup.yml (including its restore_dry_run job) succeeding daily, most recently 2026-08-21T03:48:09Z (this cycle's own start date). qa_evidence_EPIC-03.md entry created recording this pre-met verification per the pre-met path's own requirement."
         },
         "ST-13": {
           "title": "Automated staging smoke test on deploy/merge",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1474,
           "branch": "exec/2026-08-21__release-v9.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "11e4ebe897386ab5b6e6a341c41c38973a060c0f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-21T16:23:09Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/staging_smoke_test.py",
+            "scripts/wait_for_staging_deploy_live.py",
+            ".github/workflows/staging-deploy.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Fail-correctly AC will be proven via a local deliberately-broken-server dry run (best-available proxy for a live Render staging trigger, consistent with this repo's established proxy pattern - see docs/ops/render_starter_tier_headroom_reassessment_2026-08-13.md)."
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-08-21",
+            "comments": "Initial pass Blocked (fixed-sleep gap correctly caught -- RENDER_PLATFORM_API_KEY/check_staging_deploy_drift.py already provide real deploy-status confirmation). Re-review after fix: Approved -- confirmed genuine reuse of the key and helper function, timeout path genuinely hard-fails, timing reasonable, no meaningful residual risk."
+          },
+          "notes": "Real (not mocked) dry-run performed: genuine local backend instance against real local Postgres with deliberately incomplete schema, smoke test correctly caught real failures at every stage as schema was built out. 2 review rounds (1 Blocked, 1 Approved) -- see commit message for full detail."
         },
         "ST-14": {
           "title": "Staging environment drift detector",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1475,
           "branch": "exec/2026-08-21__release-v9.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "548ea1f99893beea8bc24eef61ebb4676606d4cc",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-08-21T15:08:28Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/ops/render_build_deploy_path_filter_audit.md"
+            "docs/ops/render_build_deploy_path_filter_audit.md",
+            "scripts/check_deploy_path_filter_drift.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-08-21",
+            "comments": "Approved. Confirmed covers both incident shapes; snapshot transcription provenance acceptable (explicitly disclosed as last-known-confirmed, not live); human-curated inventory design well-justified (false-positive case independently confirmed); hard PR gate appropriate given low false-positive risk on known-file coverage."
+          },
           "notes": "Repo-derivable drift detection (build filter config, deploy path config) - matches established proxy pattern for infra items without live dashboard access."
         },
         "ST-15": {
           "title": "Confirm production PUBLIC_URL is actually set in the Render dashboard",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1476,
           "branch": "exec/2026-08-21__release-v9.0/EPIC-03",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": "Binary live fact only visible in Render dashboard env var settings - no proxy possible. Prior art (docs/ops/test_environment_parity_check_2026-08-16.md, BLG-OPS-146) already established this cannot be confirmed without dashboard access.",
+          "delegation_record_id": "DEL-20260821-03",
+          "blocked_since_utc": "2026-08-21T15:10:00Z",
+          "unblock_criteria": "Production PUBLIC_URL dashboard value confirmed one way or the other, documented.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -421,28 +441,36 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Binary live dashboard fact, no proxy possible -- established precedent for this class confirmed via docs/ops/test_environment_parity_check_2026-08-16.md (BLG-OPS-146)."
         },
         "ST-16": {
           "title": "Add CI safeguard to catch future PUBLIC_URL/asset-path regressions on GitHub Pages deploy",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1477,
           "branch": "exec/2026-08-21__release-v9.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "e4d5a9a8fd4a7f7c2ce538283b6561a89c6ff850",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-21T15:02:57Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/deploy.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "The 'deliberate local test' confirmation is fully engine-executable (no live access needed)."
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-08-21",
+            "comments": "Approved. Regex correctness verified against real build outputs; correct placement between Build and Deploy; no false-positive risk found; deliberate local test performed with real npm build twice (with/without override) and both grep outcomes confirmed."
+          },
+          "notes": "Deliberate local test (AC-02) performed in-session with real npm build output, not simulated. Build artifacts cleaned up, not committed."
         }
       }
     },
@@ -704,22 +732,28 @@
   },
   "blocked_items": [
     "ST-02",
-    "ST-06"
+    "ST-06",
+    "ST-15"
   ],
   "delegated_items": [
     "ST-02",
-    "ST-06"
+    "ST-06",
+    "ST-15"
   ],
   "completed_items": [
     "ST-01",
-    "ST-03",
     "ST-04",
     "ST-05",
-    "ST-07",
     "ST-08",
     "ST-09",
     "ST-10",
-    "ST-11"
+    "ST-11",
+    "ST-12",
+    "ST-13",
+    "ST-14",
+    "ST-16",
+    "ST-03",
+    "ST-07"
   ],
   "open_escalations": [],
   "process_notes": [],
