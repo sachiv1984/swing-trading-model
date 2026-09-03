@@ -75,3 +75,12 @@ Append-only. Do not edit previous entries.
 - **Unblock criteria:** Production `PUBLIC_URL` dashboard value confirmed one way or the other, documented in this item's resolution (a short note appended to `docs/ops/test_environment_parity_check_2026-08-16.md` or a new dated ops note is sufficient — no code change expected unless the value was actually absent).
 - **Commit format required:** `[EPIC-03][ST-15] <description>` pushed to `exec/2026-08-21__release-v9.0/EPIC-03`, if any doc update results.
 - **Status:** Pending
+
+---
+
+## DEL-20260821-03 — Resolution (Addendum)
+
+- **Refers to:** DEL-20260821-03 (ST-15) above. This file is append-only — recording the resolution as a new entry rather than editing the original.
+- **Resolved at:** 2026-08-21T22:00:00Z
+- **New status:** Unblocked — sign_off_cleared.
+- **Reason:** Human (Product Owner, real-time in-session) checked the Render dashboard directly and reported `PUBLIC_URL` is absent from the production **backend API** service's (`trading-assistant-api`) environment variables — clarified on follow-up to be the backend, not a frontend Static Site. This resolves the item's own AC ("Production `PUBLIC_URL` dashboard value confirmed one way or the other, documented") but the original delegation's premise needed correcting: `PUBLIC_URL` is a Create React App frontend-build-only variable with no meaning to a FastAPI backend process, so its absence there is expected and correct, not the gap this item's `Spec reference` (`test_environment_parity_check_2026-08-16.md` §2.4) was actually worried about. That underlying concern — does the live production **frontend** resolve asset paths correctly — is independently and separately confirmed already: production's frontend is GitHub Pages (`.github/workflows/deploy.yml`), not a Render-hosted static site (`render.yaml` defines only staging); `deploy.yml` sets `PUBLIC_URL: /swing-trading-model` as an explicit build-time override (wins over `.env.production` in CRA's precedence), and `ST-16`/`BLG-OPS-148` (this same cycle) added a CI safeguard that fails the deploy fast if that override ever stops taking effect. No dashboard change needed anywhere. Documented in full in `docs/ops/test_environment_parity_check_2026-08-16.md` §2.4's resolved finding, commit `[EPIC-03][ST-15]` (SHA recorded in `execution_state.json`).
