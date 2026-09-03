@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-21 (session — 1 new item added: BLG-GOV-314, governance_sync.yml auto-close gap on split work/state commits); prior — 2026-08-21 (Release Planning v9.0 — Release Slice section added, 27 items across 5 EPICs, marker RP:v9.0:2026-08-21__release-v9.0); prior — 2026-08-21 (groom backlog post-ship closure 2026-08-17__release-v8.9 — 21 shipped items marked ✅ COMPLETE then archived to backlog_archive.md; `BLG-GOV-264` left open, split-achievability; 1 ephemeral Release Slice section removed; health=PASS with 5 flagged items resolved same-session); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-21 (session — 1 new item added: BLG-GOV-314, governance_sync.yml auto-close gap on split work/state commits — synced onto this branch from main); prior — 2026-08-21 (session — 3 new items added: BLG-QA-154, BLG-QA-155, BLG-QA-156, Arc5ComplianceSection Playwright coverage gaps from ST-20's audit refresh); prior — 2026-08-21 (session — 5 new items added: BLG-FE-165, BLG-FE-166, BLG-FE-167, BLG-FE-168, BLG-FE-169, accessibility findings from ST-21's new axe-core CI scan); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4662,6 +4662,69 @@ The full pipeline (screener hit → watchlist → research → trade plan → po
 
 ---
 
+### BLG-QA-154 — Add Playwright coverage for Arc5ComplianceSection's events_per_week value formatting
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead
+**Source:** ST-20 (BLG-QA-144, EPIC-04) Playwright coverage audit refresh, `docs/qa/arc5_coverage_audit.md` §3.3.1 (GAP-ARC5-06), cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`src/components/analytics/Arc5ComplianceSection.js`'s `fmtCount` function (1-decimal-place formatting for `events_per_week`, e.g. `3.0`) has no scenario asserting its rendered value in `tests/e2e/arc5-compliance-section.spec.js` — SC-ARC5-05 (BLG-QA-58, v5.7) only covers the two `fmtRate` fields (`override_rate`, `trade_plan_adherence_rate`), leaving this third, distinct formatter function untested.
+
+**Scope**
+- Add a scenario to `tests/e2e/arc5-compliance-section.spec.js` asserting the formatted `events_per_week` value renders correctly from mocked data (e.g. `2.3` → `"2.3"`)
+
+**Acceptance Criteria**
+- New Playwright scenario asserts the rendered `events_per_week` text matches the expected `fmtCount` output for a known mock value
+- Test passes against current implementation
+
+---
+
+### BLG-QA-155 — Add Playwright coverage for Arc5ComplianceSection's top_rule_breach text formatting
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead
+**Source:** ST-20 (BLG-QA-144, EPIC-04) Playwright coverage audit refresh, `docs/qa/arc5_coverage_audit.md` §3.3.1 (GAP-ARC5-07), cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`src/components/analytics/Arc5ComplianceSection.js`'s `fmtText` function (underscore-to-space replacement for `top_rule_breach`, e.g. `cash_constraint` → `cash constraint`) has no scenario coverage at all — a regression to this formatting (or to the raw value passed through unformatted) would not be caught.
+
+**Scope**
+- Add a scenario to `tests/e2e/arc5-compliance-section.spec.js` asserting the formatted `top_rule_breach` value renders with spaces, not underscores, for a known mock value
+
+**Acceptance Criteria**
+- New Playwright scenario asserts the rendered `top_rule_breach` text matches the expected `fmtText` output (underscores replaced with spaces) for a known mock value
+- Test passes against current implementation
+
+---
+
+### BLG-QA-156 — Add Playwright coverage for Arc5ComplianceSection's null-value handling
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead
+**Source:** ST-20 (BLG-QA-144, EPIC-04) Playwright coverage audit refresh, `docs/qa/arc5_coverage_audit.md` §3.3.1 (GAP-ARC5-08), cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+None of `src/components/analytics/Arc5ComplianceSection.js`'s three formatter functions (`fmtRate`/`fmtCount`/`fmtText`) have a scenario covering the case where an individual metric field is `null` (each renders `"—"` for `null`) — e.g. `top_rule_breach: null` while the other three fields are populated. This is a real, distinct code path (the `val != null` guard in each formatter) that has never been exercised.
+
+**Scope**
+- Add a scenario to `tests/e2e/arc5-compliance-section.spec.js` with at least one metric field set to `null` per formatter type, asserting the corresponding card renders `"—"`
+
+**Acceptance Criteria**
+- New Playwright scenario asserts `"—"` renders for at least one `null` field covering each of `fmtRate`/`fmtCount`/`fmtText`
+- Test passes against current implementation
+
+---
+
 ### BLG-SPEC-133 — position_endpoints.md example JSON: current_trailing_stop_native doesn't reconcile with current_trailing_stop × live_fx_rate
 
 **Priority:** P4 (Trivial)
@@ -4848,32 +4911,6 @@ On 2026-08-21 the GitHub Pages site went blank because `.env.production`'s `PUBL
 
 ---
 
-### BLG-GOV-314 — governance_sync.yml's auto-close never fires when a story's completion-state commit is split from its work commit
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Engineering
-**Source:** `2026-08-21__release-v9.0` Sprint Execution session — 2026-08-21
-**Effort:** S (~0.5-1d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-`execution_prompt.md`'s own guidance (adopted mid-session this cycle as a self-identified process improvement, after an earlier mistake of setting `commit_sha: null`/omitted before the real SHA was known) is: commit the actual work → push → `git rev-parse HEAD` → *then* update `execution_state.json`'s status/commit_sha in a separate follow-up commit. This is procedurally sound for capturing the real commit SHA, but it silently defeats `governance_sync.yml`'s auto-close mechanism for every story handled this way — in **both** directions, confirmed at `2026-08-21__release-v9.0`:
-
-- **Under-closing (16 confirmed cases, ST-08 through ST-27 across EPIC-02–05):** the work commit (tagged `[EPIC-xx][ST-xx]`) triggers the workflow, which correctly finds the `[ST-xx]` tag but checks `execution_state.json`'s status *as of that commit* — still not `done` (the follow-up commit hasn't landed yet) — so it correctly skips closing per its anti-premature-closure guard (`BLG-GOV-285`). The follow-up commit that actually sets `status: done` is conventionally tagged `[GOVERNANCE] Record ST-xx completion...` — a bare `[GOVERNANCE]` tag with no `[ST-xx]` in it — so the workflow's `grep -oE '\[(ST-[0-9]+)\]'` parse finds nothing and the close-issue step never even runs. Net effect: the story is genuinely `done`, correctly verified — but its issue never auto-closes (issues #1469-1488 range; manually closed same-session with an audit-trail comment once discovered).
-- **Over-closing (1 confirmed case, ST-02/#1463, more serious — misrepresents an *incomplete* story as done):** when the work commit is pushed on its own *before* any `execution_state.json` entry exists for that story yet (e.g. the very first story of a fresh EPIC branch, pushed before the tracking-commit that follows it), the workflow's `is_story_done()` jq lookup finds no status at all and falls back to its documented `"unknown" = close unconditionally` behaviour (preserved for pre-per-EPIC-mechanism cycles). If that story's real eventual disposition is `blocked_backend`/`blocked_decision` rather than `done` — set 2 minutes later in the follow-up commit — the issue is now wrongly closed for a story that isn't actually finished, and nothing subsequently reopens it. Manually reopened same-session (`#1463`, ST-02) once discovered, with the real outstanding ACs and delegation record noted in the reopen comment.
-
-**Scope**
-- Either (a) change the follow-up commit-message convention to include the `[ST-xx]` tag alongside `[GOVERNANCE]` (e.g. `[GOVERNANCE][ST-xx] Record ST-xx completion...`) so the existing parser catches it on the completion commit too, or (b) change `governance_sync.yml`'s status-check logic to look at the *current* `execution_state.json` on the branch tip at workflow-run time rather than only the commit range's own diff, so a later completion-commit still triggers correctly for an earlier work-commit's `[ST-xx]` tag
-- Separately, reconsider the `"unknown" = close unconditionally` fallback: it was added to preserve pre-per-EPIC-mechanism behaviour, but on the mechanism this cycle actually uses, "unknown" more often means "the tracking commit for this story hasn't landed yet" than "this is a non-sprint-execution reference" — closing in that case is a false positive with real-world consequence (an actually-blocked story reads as done). Consider flipping the default to "skip" (matching the `"no"` branch) unless a story is unambiguously not part of any tracked cycle at all.
-- Whichever fix(es) are chosen, add a regression test/dry-run confirming both failure modes are closed: a split work-commit + governance-commit pair correctly auto-closes an eventually-`done` story, and does *not* auto-close a story that ends up `blocked_*`
-
-**Acceptance Criteria**
-- A story completed via the commit→push→get-SHA→separate-governance-commit pattern has its GitHub issue auto-closed by `governance_sync.yml` without manual intervention
-- A story that ends up `blocked_backend`/`blocked_decision` (rather than `done`) after its work commit is pushed does NOT have its issue auto-closed, even if no `execution_state.json` entry exists yet at the moment the work commit's own push triggers the workflow
-- Existing anti-premature-closure protection (`BLG-GOV-285` — a delegation-record-only commit must not close the issue) remains intact
-
----
-
 ### BLG-TECH-13 — Consolidate 4 independent sector-lookup implementations
 
 **Priority:** P3 (Low)
@@ -4939,6 +4976,111 @@ The codebase now carries four independent implementations of "look up a ticker's
 **Acceptance Criteria**
 - `trade_plan.md` §5d.3's reproducibility claim is either made accurate (FX override added) or explicitly scoped to note the US-market live-rate caveat
 - Frontend Specifications & UX Documentation Owner sign-off
+
+---
+
+### BLG-FE-165 — DashboardHome "AI Advisory" badge fails colour-contrast
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The new standalone axe-core CI scan (`tests/e2e/accessibility-axe-scan.spec.js`, ST-21) found a `serious`-impact `color-contrast` violation on DashboardHome: the amber "AI Advisory" badge (`.bg-amber-600` background, white text) does not meet the minimum WCAG contrast ratio. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline (pre-existing, not a regression introduced by ST-21) so the new CI gate does not fail on introduction — should be removed from that baseline once fixed.
+
+**Scope**
+- Darken the amber background, lighten the badge text, or otherwise adjust the colour pairing to meet WCAG AA contrast (4.5:1 for normal text)
+
+**Acceptance Criteria**
+- axe-core no longer reports a `color-contrast` violation for this badge
+- `KNOWN_VIOLATIONS["DashboardHome"]`'s `color-contrast` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
+
+---
+
+### BLG-FE-166 — TradePlan select elements lack accessible names
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The new standalone axe-core CI scan found a `critical`-impact `select-name` violation on the TradePlan form: 3 `<select>` elements have no accessible name (no associated `<label>`, `aria-label`, or `aria-labelledby`) — a real barrier for screen-reader users completing the form. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline.
+
+**Scope**
+- Add a proper `<label>` (or `aria-label`) association to each of the 3 affected `<select>` elements
+
+**Acceptance Criteria**
+- axe-core no longer reports a `select-name` violation on TradePlan
+- `KNOWN_VIOLATIONS["TradePlan"]`'s `select-name` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
+
+---
+
+### BLG-FE-167 — Settings page combobox buttons lack discernible text
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The new standalone axe-core CI scan found a `critical`-impact `button-name` violation on the Settings page: 2 buttons with `role="combobox"` (Radix UI Select trigger) have no discernible text for assistive technology. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline.
+
+**Scope**
+- Add `aria-label` (or visible, associated text) to the affected Radix Select trigger buttons
+
+**Acceptance Criteria**
+- axe-core no longer reports a `button-name` violation on Settings
+- `KNOWN_VIOLATIONS["Settings"]`'s `button-name` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
+
+---
+
+### BLG-FE-168 — Settings page form inputs lack labels
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The new standalone axe-core CI scan found a `critical`-impact `label` violation on the Settings page: 12 numeric strategy-parameter input fields have no associated `<label>` element — a real barrier for screen-reader users. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline. This is also the largest single node count of any finding from the initial scan, worth prioritising above the other three accessibility items filed alongside it despite the shared P3 rating.
+
+**Scope**
+- Add a proper `<label>` (or `aria-label`) association to each of the 12 affected inputs
+
+**Acceptance Criteria**
+- axe-core no longer reports a `label` violation on Settings
+- `KNOWN_VIOLATIONS["Settings"]`'s `label` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
+
+---
+
+### BLG-FE-169 — Settings page subtitle text fails colour-contrast
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The new standalone axe-core CI scan found a `serious`-impact `color-contrast` violation on the Settings page: the page subtitle ("Configure your strategy parameters and preferences", `.mt-1` / `text-slate-600 dark:text-slate-400`) does not meet the minimum WCAG contrast ratio against its background. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline. **Note:** this finding was observed once during initial exploration but did not reproduce across repeated re-runs of the same spec afterward — possibly a near-threshold or rendering-timing-dependent result. Worth a manual contrast-checker verification before spending implementation effort, since it may already be borderline-passing.
+
+**Scope**
+- Adjust the subtitle's text colour (or background) to meet WCAG AA contrast (4.5:1 for normal text) — likely affects other pages sharing the same `text-slate-600 dark:text-slate-400` subtitle convention; worth a quick grep-and-check across pages while fixing this one, though only Settings was in this scan's scope
+
+**Acceptance Criteria**
+- axe-core no longer reports a `color-contrast` violation for the Settings subtitle
+- `KNOWN_VIOLATIONS["Settings"]`'s `color-contrast` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
 
 ---
 
@@ -5058,5 +5200,31 @@ ST-06's acceptance criterion "Debrief references plan-vs-reality data and any li
 - Regression test added and passing for the mid-month case
 - `tests/backtest_data_integrity_smoke_test.py`-class checks re-verified passing (no new invariant broken)
 - Backend Engineering Patterns Owner sign-off
+
+---
+
+### BLG-GOV-314 — governance_sync.yml's auto-close never fires when a story's completion-state commit is split from its work commit
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Engineering
+**Source:** `2026-08-21__release-v9.0` Sprint Execution session — 2026-08-21
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`execution_prompt.md`'s own guidance (adopted mid-session this cycle as a self-identified process improvement, after an earlier mistake of setting `commit_sha: null`/omitted before the real SHA was known) is: commit the actual work → push → `git rev-parse HEAD` → *then* update `execution_state.json`'s status/commit_sha in a separate follow-up commit. This is procedurally sound for capturing the real commit SHA, but it silently defeats `governance_sync.yml`'s auto-close mechanism for every story handled this way — in **both** directions, confirmed at `2026-08-21__release-v9.0`:
+
+- **Under-closing (16 confirmed cases, ST-08 through ST-27 across EPIC-02–05):** the work commit (tagged `[EPIC-xx][ST-xx]`) triggers the workflow, which correctly finds the `[ST-xx]` tag but checks `execution_state.json`'s status *as of that commit* — still not `done` (the follow-up commit hasn't landed yet) — so it correctly skips closing per its anti-premature-closure guard (`BLG-GOV-285`). The follow-up commit that actually sets `status: done` is conventionally tagged `[GOVERNANCE] Record ST-xx completion...` — a bare `[GOVERNANCE]` tag with no `[ST-xx]` in it — so the workflow's `grep -oE '\[(ST-[0-9]+)\]'` parse finds nothing and the close-issue step never even runs. Net effect: the story is genuinely `done`, correctly verified — but its issue never auto-closes (issues #1469-1488 range; manually closed same-session with an audit-trail comment once discovered).
+- **Over-closing (1 confirmed case, ST-02/#1463, more serious — misrepresents an *incomplete* story as done):** when the work commit is pushed on its own *before* any `execution_state.json` entry exists for that story yet (e.g. the very first story of a fresh EPIC branch, pushed before the tracking-commit that follows it), the workflow's `is_story_done()` jq lookup finds no status at all and falls back to its documented `"unknown" = close unconditionally` behaviour (preserved for pre-per-EPIC-mechanism cycles). If that story's real eventual disposition is `blocked_backend`/`blocked_decision` rather than `done` — set 2 minutes later in the follow-up commit — the issue is now wrongly closed for a story that isn't actually finished, and nothing subsequently reopens it. Manually reopened same-session (`#1463`, ST-02) once discovered, with the real outstanding ACs and delegation record noted in the reopen comment.
+
+**Scope**
+- Either (a) change the follow-up commit-message convention to include the `[ST-xx]` tag alongside `[GOVERNANCE]` (e.g. `[GOVERNANCE][ST-xx] Record ST-xx completion...`) so the existing parser catches it on the completion commit too, or (b) change `governance_sync.yml`'s status-check logic to look at the *current* `execution_state.json` on the branch tip at workflow-run time rather than only the commit range's own diff, so a later completion-commit still triggers correctly for an earlier work-commit's `[ST-xx]` tag
+- Separately, reconsider the `"unknown" = close unconditionally` fallback: it was added to preserve pre-per-EPIC-mechanism behaviour, but on the mechanism this cycle actually uses, "unknown" more often means "the tracking commit for this story hasn't landed yet" than "this is a non-sprint-execution reference" — closing in that case is a false positive with real-world consequence (an actually-blocked story reads as done). Consider flipping the default to "skip" (matching the `"no"` branch) unless a story is unambiguously not part of any tracked cycle at all.
+- Whichever fix(es) are chosen, add a regression test/dry-run confirming both failure modes are closed: a split work-commit + governance-commit pair correctly auto-closes an eventually-`done` story, and does *not* auto-close a story that ends up `blocked_*`
+
+**Acceptance Criteria**
+- A story completed via the commit→push→get-SHA→separate-governance-commit pattern has its GitHub issue auto-closed by `governance_sync.yml` without manual intervention
+- A story that ends up `blocked_backend`/`blocked_decision` (rather than `done`) after its work commit is pushed does NOT have its issue auto-closed, even if no `execution_state.json` entry exists yet at the moment the work commit's own push triggers the workflow
+- Existing anti-premature-closure protection (`BLG-GOV-285` — a delegation-record-only commit must not close the issue) remains intact
 
 ---
