@@ -11,8 +11,20 @@ name: Playwright E2E Acceptance Tests
 #    visual-snapshots.spec.js — 14 element-level tests verifying colours and structure
 #    via CSS class assertions (no pixel comparison — reliable across Chromium versions).
 #
-# Spec registration: automatic via glob (BLG-QA-62, v6.2 ST-13).
-# No manual spec inventory maintained here — add spec files to tests/e2e/ and they run.
+# 3. playwright-visual-regression — pixel-level toHaveScreenshot() baselines
+#    (ST-18, BLG-QA-81, EPIC-04, v9.0), advisory only (continue-on-error: true).
+#    visual-regression-baselines.spec.js — dual-theme baselines for 4 representative
+#    contrast-sensitive pages plus a chart-heavy component (PerformanceAnalytics).
+#    Uses playwright.visual-regression.config.js — the main config testIgnores this
+#    spec (see that config's comment) because baselines committed with the story were
+#    generated locally, not on this runner, and are likely to diff on font-rendering
+#    on their first CI run. Advisory until baselines are regenerated on-runner via the
+#    "Update Visual Snapshot Baselines" workflow and someone deliberately promotes
+#    this job to blocking (drop continue-on-error), matching how visual-snapshots.spec.js
+#    itself was handled before it became a blocking gate.
+#
+# Spec registration: automatic via glob (BLG-QA-62, v6.2 ST-13), except the one
+# explicit testIgnore exception above.
 
 on:
   push:
@@ -30,6 +42,7 @@ on:
       - 'src/components/**'
       - 'tests/e2e/**'
       - 'playwright.config.js'
+      - 'playwright.visual-regression.config.js'
       - '.github/workflows/playwright.yml'
   pull_request:
     branches:
@@ -45,6 +58,7 @@ on:
       - 'src/components/**'
       - 'tests/e2e/**'
       - 'playwright.config.js'
+      - 'playwright.visual-regression.config.js'
       - '.github/workflows/playwright.yml'
 
 jobs:
@@ -216,6 +230,72 @@ jobs:
         if: always()
         with:
           name: visual-snapshot-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
+
+  playwright-visual-regression:
+    name: Playwright Visual Regression Baselines (pixel-level, advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').packages['node_modules/@playwright/test'].version)")" >> $GITHUB_ENV
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+
+      - name: Install Playwright browsers (cache miss — full install)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+        env:
+          DEBIAN_FRONTEND: noninteractive
+          NEEDRESTART_MODE: a
+
+      - name: Install Playwright OS dependencies only (cache hit — browsers already present)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+        env:
+          DEBIAN_FRONTEND: noninteractive
+          NEEDRESTART_MODE: a
+
+      # Advisory only (ST-18, BLG-QA-81, EPIC-04, v9.0) — baselines committed with
+      # this story were generated locally, not on this runner; see playwright.yml's
+      # header comment and playwright.config.js's testIgnore comment for why a
+      # first-run diff here is expected, not a real regression.
+      - name: Run visual regression baseline tests
+        continue-on-error: true
+        run: npx playwright test --config=playwright.visual-regression.config.js
+        env:
+          CI: true
+          REACT_APP_API_URL: http://localhost:8000
+          REACT_APP_DEV_FAKE_AUTH: 'true'
+          BROWSER: none
+
+      - name: Upload visual regression diff artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-regression-report
           path: |
             playwright-report/
             test-results/
