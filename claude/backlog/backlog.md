@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-21 (Sprint Execution EPIC-01/ST-02, cycle `2026-08-21__release-v9.0` — one-line returned-to-backlog note appended under BLG-BE-107 per execution_prompt.md §5.2); prior — 2026-08-21 (session — 1 new item added: BLG-GOV-314, governance_sync.yml auto-close gap on split work/state commits); prior — 2026-08-21 (Release Planning v9.0 — Release Slice section added, 27 items across 5 EPICs, marker RP:v9.0:2026-08-21__release-v9.0); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-03 (Sprint Execution EPIC-02/ST-06 + synced EPIC-01/ST-02 resolution, cycle `2026-08-21__release-v9.0` — BLG-BE-105 and BLG-BE-107 marked ✅ COMPLETE with resolution notes); prior — 2026-08-21 (Sprint Execution EPIC-01/ST-02, cycle `2026-08-21__release-v9.0` — one-line returned-to-backlog note appended under BLG-BE-107 per execution_prompt.md §5.2); prior — 2026-08-21 (session — 1 new item added: BLG-GOV-314, governance_sync.yml auto-close gap on split work/state commits); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4621,7 +4621,7 @@ The full pipeline (screener hit → watchlist → research → trade plan → po
 **Owner:** Backend Engineering Patterns Owner
 **Source:** PR #1452 review (Director of Quality / Product Owner agent-mediated review, 2026-08-18) — ST-01 (`BLG-BE-102`, EPIC-01, v8.9) acceptance criterion "No open profitable position has `current_stop` below its own `entry_price`" was confirmed *not* verified by that story's delivery. ST-01 confirmed the live calculation path is correct going forward (`calculate_trailing_stop()` applies the breakeven floor), but did not query or backfill the existing open-position dataset, since that AC requires a live-DB check that isn't CI-reproducible.
 **Effort:** S (~0.5–1d)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-06/EPIC-02, cycle `2026-08-21__release-v9.0`
 
 **Problem**
 `BLG-BE-102`'s root cause (stops not floored at `entry_price` for profitable positions) predates the ST-01 fix confirmation — commit `b410cfa3c` (2026-02-12) already made the *live calculation path* correct, but any position that ratcheted its stop before that commit, or via some other now-closed gap, could still be sitting in the database today with `current_stop < entry_price` while profitable. Nothing in the v8.9 EPIC-01 delivery checked or corrected the existing dataset — the AC was explicitly deferred as a post-merge ops action, not closed.
@@ -4636,6 +4636,8 @@ The full pipeline (screener hit → watchlist → research → trade plan → po
 - Any positions found are corrected via the existing floored calculation path (no new inline stop-adjustment logic)
 - Result recorded (count found, count corrected, date) — closes the deferred ST-01 AC from `BLG-BE-102`
 - Backend Engineering Patterns Owner sign-off
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-06/EPIC-02):** Product Owner ran Step 1's live audit query directly against production — 0 rows returned (no open, currently-profitable position with `current_stop < entry_price`). Correction not required; nightly `analyze_positions()` recompute has kept every position correctly floored since `calculate_trailing_stop()`'s fix (`b410cfa3c`, 2026-02-12). Full record: `docs/ops/breakeven_floor_stop_audit_2026-09-03.md`; delegation record `DEL-20260821-02`'s final resolution addendum.
 
 ---
 
@@ -4972,7 +4974,7 @@ ST-07 (BLG-FEAT-89, In-app backtesting engine) added `backend/services/backtest_
 **Owner:** Backend Engineering Patterns Owner
 **Source:** ST-09 (EPIC-03, v8.9, BLG-BE-99) evidence-gathering session — 2026-08-20
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.0
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-02/EPIC-01, cycle `2026-08-21__release-v9.0`
 
 **Problem**
 Production runs `uvicorn main:app --host 0.0.0.0 --port $PORT` (per `render.yaml`'s `startCommand`) with no `--log-config`/`--log-level` flag, and `backend/main.py` never calls `logging.basicConfig()` or otherwise configures the root logger (confirmed via repo-wide grep — no `basicConfig`/`addHandler`/`dictConfig` anywhere in `backend/`). Uvicorn's own default logging setup only wires up its own named loggers (`uvicorn`, `uvicorn.error`, `uvicorn.access`) — it never touches the root logger or any `logging.getLogger(__name__)` logger used throughout the app's service modules. With the root logger left at its default level (WARNING) and no handler attached, every `logger.info(...)` call anywhere in application code is filtered out before it ever reaches a handler, and is silently dropped rather than erroring or warning anyone. This was empirically confirmed: a real, successful `POST /digest/si05/send` invocation on 2026-08-20 (Render deploy log, `07:11:51Z`, 200 OK) produced no corresponding `"SI-05 digest sent (%d chars) in %.2fs"` line anywhere in the surrounding log window, even though that `logger.info()` call sits directly in the code path that ran.
@@ -4989,6 +4991,8 @@ Production runs `uvicorn main:app --host 0.0.0.0 --port $PORT` (per `render.yaml
 - `docs/ops/api_performance_baseline.md` §36 updated with the real log-derived timing once available, superseding the interim GitHub-Actions-proxy measurements recorded there (§36.3 and §36.5)
 
 **Returned to backlog (2026-08-21, cycle `2026-08-21__release-v9.0`, ST-02/EPIC-01):** Same structural blocker recurred — the code fix (`backend/main.py`'s `logging.basicConfig()`) is complete and merge-ready, but the remaining ACs (real post-deploy log confirmation, baseline doc update) require the fix to already be live in production, not obtainable pre-merge; see `execution_state.json` ST-02 and delegation record `DEL-20260821-01` for this cycle's disposition.
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-02/EPIC-01):** PR #1492 merged and deployed to production; a real post-deploy invocation confirmed the digest-timing line now reaches Render's captured logs (`"SI-05 digest sent (498 chars) in 0.37s"`, confirmed directly in the Render dashboard log viewer). All ACs met — see `docs/ops/api_performance_baseline.md` §36.7, `execution_state.json` ST-02 (`done`), and delegation record `DEL-20260821-01`'s final resolution addendum.
 
 ---
 
