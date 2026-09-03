@@ -50,5 +50,6 @@ was caught by the story's own verification step and stopped before
 commit, rather than shipped under a "safe minor bump" assumption that
 turned out not to hold. EPIC-05 ready for PR.
 
-Signed: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3) — 2026-08-21
+Signed: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+Date: 2026-08-21
 ```
