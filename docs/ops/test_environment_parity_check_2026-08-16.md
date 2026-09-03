@@ -1,8 +1,8 @@
 **Owner:** QA Lead; Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-08-16
-**Story:** ST-20 (BLG-QA-145, EPIC-04, v8.8)
+**Last Updated:** 2026-08-21 (ST-15, EPIC-03, v9.0, BLG-OPS-146 remainder — §2.4 PUBLIC_URL finding resolved: confirmed no production gap exists, on any service); prior — 2026-08-16 (ST-20, EPIC-04, v8.8, BLG-QA-145 — initial parity check)
+**Story:** ST-20 (BLG-QA-145, EPIC-04, v8.8); ST-15 (BLG-OPS-146 remainder, EPIC-03, v9.0)
 
 # Test-Environment Parity Check — Local vs CI vs Staging
 
@@ -49,6 +49,8 @@ Comparing `.env`, `.env.staging`, `.env.production` (repo templates) and `render
 - `REACT_APP_API_URL`, `REACT_APP_APP_ID`: correctly differ per environment (expected — each points at its own backend/app ID).
 - `REACT_APP_DEV_FAKE_AUTH=true`: set identically in all three. Traced to `src/api/base44Client.js:6` — the constant is **computed but never referenced anywhere else in the codebase** (confirmed via full-`src/` grep). It is dead/vestigial, so its identical "true" value everywhere has no behavioural effect in any environment. Not filed as a drift risk (nothing to drift); could be filed as a separate dead-code cleanup item if desired, but that's a different story's scope (BLG-TECH, not this parity check).
 - `PUBLIC_URL`: present in `.env.staging` and `render.yaml`'s staging block (`"/"`, with a comment explaining it overrides `package.json`'s `homepage` field so asset paths resolve at root), **absent from `.env.production`**. Given production's real env vars live in the Render dashboard (not this repo — §1 scope note) and the production site is known to serve correctly today, this is very likely already set in the dashboard and the repo's `.env.production` template is simply incomplete/stale relative to it — but this cannot be confirmed without dashboard access. Filed as an advisory item (`BLG-OPS-146`, same item as §2.1 — both are "local repo template drifted from the source of truth" findings) rather than a hard gap, since there's no evidence of an actual production defect.
+
+**Resolved (ST-15, `BLG-OPS-146` remainder, 2026-08-21):** the hedge above ("very likely already set in the dashboard") was checked against the wrong service and needed correcting. A human confirmed `PUBLIC_URL` is genuinely absent from the production **backend API** service's (`trading-assistant-api`) environment variables — but that is not the gap this finding was actually worried about. `PUBLIC_URL` is a Create React App **frontend build-time** variable; it has no meaning to a FastAPI backend process and its absence there is correct, not a defect. The real question — does the actual live production **frontend** resolve its static asset paths correctly? — was already answered independently of any Render dashboard config: this repo's production frontend is **GitHub Pages** (`.github/workflows/deploy.yml`), not a Render-hosted static site (`render.yaml` defines only a *staging* frontend; there is no production Render Static Site at all). `deploy.yml`'s build step sets `PUBLIC_URL: /swing-trading-model` as an explicit GitHub Actions env var (CRA env-var precedence: an explicit build-step var wins over any `.env.production` value), and a dedicated CI safeguard (`ST-16`, `BLG-OPS-148`, this same cycle) fails the deploy fast if that override ever stops taking effect — the exact regression class behind the 2026-08-21 white-page incident. **Net finding: no production PUBLIC_URL gap exists anywhere** — `.env.production`'s missing key is genuinely inconsequential (as originally hedged, now confirmed rather than assumed), the backend correctly has no such variable, and the frontend's actual asset-path correctness is independently verified in-repo on every deploy.
 
 ## 3. Gaps Filed
 

@@ -44,7 +44,29 @@ jobs:
         # touch .env.production or affect the Render deploys.
         PUBLIC_URL: /swing-trading-model
       run: CI=false npm run build
-      
+
+    # ST-16 (BLG-OPS-148, EPIC-03, v9.0): fails the deploy fast if a future
+    # build regresses to root-relative (or otherwise wrong-subpath) asset
+    # paths — the exact class of bug behind the 2026-08-21 white-page
+    # incident above. Reproduced and verified locally before adding this
+    # step: building without the PUBLIC_URL override (letting
+    # .env.production's own PUBLIC_URL=/ apply, the pre-fix regression
+    # shape) produces src="/static/..." / href="/static/..." in
+    # build/index.html; building with the override above produces
+    # src="/swing-trading-model/static/..." — this step checks for exactly
+    # that distinction.
+    - name: Verify asset paths are scoped to the GitHub Pages subpath
+      run: |
+        if grep -qE '(src|href)="/static/' build/index.html; then
+          echo "::error::build/index.html has root-relative asset paths (/static/...) instead of /swing-trading-model/static/... — the PUBLIC_URL override above is not taking effect. This is the exact regression shape behind the 2026-08-21 GitHub Pages white-page incident (BLG-OPS-148)."
+          exit 1
+        fi
+        if ! grep -qE '(src|href)="/swing-trading-model/static/' build/index.html; then
+          echo "::error::build/index.html does not contain the expected /swing-trading-model/static/... asset paths — cannot confirm the build is correctly scoped."
+          exit 1
+        fi
+        echo "Asset paths correctly scoped to /swing-trading-model."
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       with:

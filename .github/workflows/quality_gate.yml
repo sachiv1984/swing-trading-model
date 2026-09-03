@@ -108,6 +108,31 @@ jobs:
         # other.
         run: python3 scripts/check_api_performance_baseline_drift.py
 
+  deploy_path_filter_drift:
+    name: Staging/Production Deploy Path-Filter Drift Detection (ST-14)
+    runs-on: ubuntu-latest
+
+    # [EPIC-03][ST-14] (BLG-OPS-90) — Flags any known runtime-read file
+    # (docs/ops/render_build_deploy_path_filter_audit.md's Runtime
+    # File-Read Inventory) not covered by EITHER the staging deploy path
+    # filter (.github/workflows/staging-deploy.yml, repo-visible) or the
+    # production deploy path filter (Render dashboard-only — checked
+    # against docs/ops/render_production_build_filter_snapshot.json, the
+    # last human-confirmed value). Catches the exact drift class behind
+    # BLG-OPS-82 and this item's own gate-clearing incident (commit
+    # e9c73f58) before it recurs a third time.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Detect deploy path-filter drift
+        run: python3 scripts/check_deploy_path_filter_drift.py
+
   doq_signoff_staleness:
     name: DoQ Sign-off Staleness Lint (ST-18)
     runs-on: ubuntu-latest
