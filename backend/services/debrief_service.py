@@ -214,24 +214,46 @@ def _build_summary_text(trade: dict, plan: Optional[dict]) -> str:
 
 
 def _journal_context_for_trade(trade: dict) -> str:
-    """Condition-2-safe: a short, plain description of linked journal flags
-    (Red Flag Journal events for this ticker) -- included as prompt context
-    only, never as a source of numbers the model is allowed to invent from."""
+    """Condition-2-safe: a short, plain description of linked journal
+    context -- included as prompt context only, never as a source of
+    numbers the model is allowed to invent from.
+
+    Product Owner decision, BLG-BE-108 (ESC-EXEC-20260821-01, resolved
+    2026-08-21): "linked journal entries" in this story's own AC draws on
+    BOTH sources, not one or the other --
+      1. the trade's own `entry_note`/`exit_note` (the fields the UI labels
+         "Trade Journal", directly adjacent to the Debrief panel in
+         TradeHistoryTable.js -- the more literal reading of "journal
+         entries") -- included first since it reflects the user's own
+         contemporaneous reflection, the highest-signal context available;
+      2. Red Flag Journal events for this ticker (the pre-existing
+         implementation) -- system-detected compliance flags remain
+         valuable context for the focus-area recommendation and are not
+         dropped.
+    Both are free text / labels, not numbers -- adding entry/exit notes
+    does not touch `numeric_cross_check` (Condition 2 sourcing discipline
+    applies only to quantitative claims, per the §13 review)."""
+    parts = []
+
+    entry_note = (trade.get("entry_note") or "").strip()
+    exit_note = (trade.get("exit_note") or "").strip()
+    if entry_note:
+        parts.append(f"Entry note: \"{entry_note}\"")
+    if exit_note:
+        parts.append(f"Exit note: \"{exit_note}\"")
+
     ticker = trade.get("ticker")
-    if not ticker:
-        return "None"
-    try:
-        result = get_red_flag_events(page=1, page_size=5, ticker=ticker)
-        events = result.get("items") or []
-    except Exception:
-        events = []
-    if not events:
-        return "None"
-    labels = []
-    for ev in events[:3]:
-        et = ev.get("event_type", "flag")
-        labels.append(et)
-    return f"{len(events)} recent flag(s) for this ticker: {', '.join(labels)}" if labels else "None"
+    if ticker:
+        try:
+            result = get_red_flag_events(page=1, page_size=5, ticker=ticker)
+            events = result.get("items") or []
+        except Exception:
+            events = []
+        if events:
+            labels = [ev.get("event_type", "flag") for ev in events[:3]]
+            parts.append(f"{len(events)} recent flag(s) for this ticker: {', '.join(labels)}")
+
+    return " ".join(parts) if parts else "None"
 
 
 def generate_trade_debrief(trade_id: str) -> dict:
