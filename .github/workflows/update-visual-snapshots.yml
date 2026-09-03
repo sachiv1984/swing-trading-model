@@ -43,8 +43,16 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Regenerate visual snapshot baselines
+      - name: Regenerate visual snapshot baselines (CSS-assertion spec)
         run: npx playwright test tests/e2e/visual-snapshots.spec.js --update-snapshots
+
+      - name: Regenerate visual regression baselines (pixel-level spec, ST-18)
+        # ST-18 (BLG-QA-81, EPIC-04, v9.0): separate config — see
+        # playwright.visual-regression.config.js and playwright.config.js's
+        # testIgnore comment for why this spec is excluded from the main
+        # config's default glob. Regenerating on the actual CI runner (not
+        # locally) is exactly the point of this workflow for this spec.
+        run: npx playwright test --config=playwright.visual-regression.config.js --update-snapshots
         env:
           CI: true
           REACT_APP_API_URL: http://localhost:8000

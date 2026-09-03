@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.5.0
-**Last Updated:** 2026-08-20
+**Version:** 2.5.1
+**Last Updated:** 2026-08-21 (BLG-BE-108, ST-03, v9.0: clarified "linked journal entries" sourcing for POST/GET /trades/{trade_id}/debrief — resolves ESC-EXEC-20260821-01)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -399,6 +399,10 @@ Record or update commission and spread costs (in GBP) for a closed trade. Both f
 
 Returns the existing AI-generated post-trade debrief for a closed trade, if one has already been generated. Does not trigger generation — see `POST /trades/{trade_id}/debrief` below for on-demand generation. §13 review: `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md` (CONDITIONAL, 9 binding conditions).
 
+**"Linked journal entries" sourcing (BLG-BE-108, ST-03, v9.0 — Product Owner decision, resolves `ESC-EXEC-20260821-01`):** the AC's "linked journal entries where present" draws on **both** of the following, not one or the other — passed to the model as free-text prompt context only, never as a source of numbers (§13 Condition 2 applies solely to quantitative claims):
+1. The trade's own `entry_note`/`exit_note` — the fields the UI itself labels "Trade Journal", directly adjacent to the Debrief panel in `TradeHistoryTable.js`. Included first, as the user's own contemporaneous reflection.
+2. Red Flag Journal events for this ticker (the original implementation) — system-detected compliance flags, retained as additional context for the focus-area recommendation.
+
 ### Path parameters
 
 | Parameter | Type | Required | Description |
@@ -478,6 +482,7 @@ Same shape as `GET /trades/{trade_id}/debrief` above.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.5.1 | 2026-08-21 | ST-03 (EPIC-01, v9.0, BLG-BE-108): Clarified "linked journal entries" sourcing for GET/POST /trades/{trade_id}/debrief — draws on both `entry_note`/`exit_note` and Red Flag Journal events, per Product Owner decision resolving `ESC-EXEC-20260821-01`. No request/response schema change — `backend/services/debrief_service.py::_journal_context_for_trade` internal implementation only. |
 | 2.5.0 | 2026-08-20 | ST-06 (EPIC-02, v8.9, BLG-FEAT-90): Add GET /trades/{trade_id}/debrief and POST /trades/{trade_id}/debrief — Automated AI Post-Trade Debrief. New table `trade_debriefs` (data_model.md#DS-16). §13 review CONDITIONAL (9 binding conditions): `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`. AI Compliance & Governance Officer sign-off recorded in `qa_evidence_EPIC-02.md`. |
 | 1.8.4 | 2026-02-17 | Initial spec — GET /trades, GET /trades/export/csv. Both `pnl_pct` and `pnl_percent` fields documented for backward compatibility |
 | 1.9.0 | 2026-03-02 | S2-08 (EPIC-06/BLG-TECH-09): Backend fix — `holding_days` added to `formatted_trades` dict in `trade_service.py` (was present in DB and spec but absent from API response). `GET /trades` now returns `holding_days` per spec. OBS-QWB-R3-01 resolved. TASK-28/29/30 complete. API Contracts owner sign-off granted 2026-03-02 (Delegated Authority). |

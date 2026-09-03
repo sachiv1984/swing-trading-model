@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-21 (Sprint Execution EPIC-01/ST-02, cycle `2026-08-21__release-v9.0` — one-line returned-to-backlog note appended under BLG-BE-107 per execution_prompt.md §5.2); prior — 2026-08-21 (session — 1 new item added: BLG-GOV-314, governance_sync.yml auto-close gap on split work/state commits — synced onto this branch from main); prior — 2026-08-21 (session — 1 new item added: BLG-TECH-18, npm dependency tree production-build regression found during ST-27's quarterly upgrade pass); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-03 (Sprint Execution EPIC-01/ST-02 post-merge resolution, cycle `2026-08-21__release-v9.0` — BLG-BE-107 marked ✅ COMPLETE with resolution note); prior — 2026-08-21 (session — 2 new items added: BLG-BE-110, BLG-TECH-18, backend layering-boundary and npm dependency-upgrade findings from ST-23/ST-27's reviews — synced onto this branch from EPIC-05); prior — 2026-08-21 (session — 1 new item added: BLG-GOV-314, governance_sync.yml auto-close gap on split work/state commits); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4662,6 +4662,69 @@ The full pipeline (screener hit → watchlist → research → trade plan → po
 
 ---
 
+### BLG-QA-154 — Add Playwright coverage for Arc5ComplianceSection's events_per_week value formatting
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead
+**Source:** ST-20 (BLG-QA-144, EPIC-04) Playwright coverage audit refresh, `docs/qa/arc5_coverage_audit.md` §3.3.1 (GAP-ARC5-06), cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`src/components/analytics/Arc5ComplianceSection.js`'s `fmtCount` function (1-decimal-place formatting for `events_per_week`, e.g. `3.0`) has no scenario asserting its rendered value in `tests/e2e/arc5-compliance-section.spec.js` — SC-ARC5-05 (BLG-QA-58, v5.7) only covers the two `fmtRate` fields (`override_rate`, `trade_plan_adherence_rate`), leaving this third, distinct formatter function untested.
+
+**Scope**
+- Add a scenario to `tests/e2e/arc5-compliance-section.spec.js` asserting the formatted `events_per_week` value renders correctly from mocked data (e.g. `2.3` → `"2.3"`)
+
+**Acceptance Criteria**
+- New Playwright scenario asserts the rendered `events_per_week` text matches the expected `fmtCount` output for a known mock value
+- Test passes against current implementation
+
+---
+
+### BLG-QA-155 — Add Playwright coverage for Arc5ComplianceSection's top_rule_breach text formatting
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead
+**Source:** ST-20 (BLG-QA-144, EPIC-04) Playwright coverage audit refresh, `docs/qa/arc5_coverage_audit.md` §3.3.1 (GAP-ARC5-07), cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`src/components/analytics/Arc5ComplianceSection.js`'s `fmtText` function (underscore-to-space replacement for `top_rule_breach`, e.g. `cash_constraint` → `cash constraint`) has no scenario coverage at all — a regression to this formatting (or to the raw value passed through unformatted) would not be caught.
+
+**Scope**
+- Add a scenario to `tests/e2e/arc5-compliance-section.spec.js` asserting the formatted `top_rule_breach` value renders with spaces, not underscores, for a known mock value
+
+**Acceptance Criteria**
+- New Playwright scenario asserts the rendered `top_rule_breach` text matches the expected `fmtText` output (underscores replaced with spaces) for a known mock value
+- Test passes against current implementation
+
+---
+
+### BLG-QA-156 — Add Playwright coverage for Arc5ComplianceSection's null-value handling
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead
+**Source:** ST-20 (BLG-QA-144, EPIC-04) Playwright coverage audit refresh, `docs/qa/arc5_coverage_audit.md` §3.3.1 (GAP-ARC5-08), cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+None of `src/components/analytics/Arc5ComplianceSection.js`'s three formatter functions (`fmtRate`/`fmtCount`/`fmtText`) have a scenario covering the case where an individual metric field is `null` (each renders `"—"` for `null`) — e.g. `top_rule_breach: null` while the other three fields are populated. This is a real, distinct code path (the `val != null` guard in each formatter) that has never been exercised.
+
+**Scope**
+- Add a scenario to `tests/e2e/arc5-compliance-section.spec.js` with at least one metric field set to `null` per formatter type, asserting the corresponding card renders `"—"`
+
+**Acceptance Criteria**
+- New Playwright scenario asserts `"—"` renders for at least one `null` field covering each of `fmtRate`/`fmtCount`/`fmtText`
+- Test passes against current implementation
+
+---
+
 ### BLG-SPEC-133 — position_endpoints.md example JSON: current_trailing_stop_native doesn't reconcile with current_trailing_stop × live_fx_rate
 
 **Priority:** P4 (Trivial)
@@ -4942,6 +5005,111 @@ The codebase now carries four independent implementations of "look up a ticker's
 
 ---
 
+### BLG-FE-165 — DashboardHome "AI Advisory" badge fails colour-contrast
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The new standalone axe-core CI scan (`tests/e2e/accessibility-axe-scan.spec.js`, ST-21) found a `serious`-impact `color-contrast` violation on DashboardHome: the amber "AI Advisory" badge (`.bg-amber-600` background, white text) does not meet the minimum WCAG contrast ratio. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline (pre-existing, not a regression introduced by ST-21) so the new CI gate does not fail on introduction — should be removed from that baseline once fixed.
+
+**Scope**
+- Darken the amber background, lighten the badge text, or otherwise adjust the colour pairing to meet WCAG AA contrast (4.5:1 for normal text)
+
+**Acceptance Criteria**
+- axe-core no longer reports a `color-contrast` violation for this badge
+- `KNOWN_VIOLATIONS["DashboardHome"]`'s `color-contrast` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
+
+---
+
+### BLG-FE-166 — TradePlan select elements lack accessible names
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The new standalone axe-core CI scan found a `critical`-impact `select-name` violation on the TradePlan form: 3 `<select>` elements have no accessible name (no associated `<label>`, `aria-label`, or `aria-labelledby`) — a real barrier for screen-reader users completing the form. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline.
+
+**Scope**
+- Add a proper `<label>` (or `aria-label`) association to each of the 3 affected `<select>` elements
+
+**Acceptance Criteria**
+- axe-core no longer reports a `select-name` violation on TradePlan
+- `KNOWN_VIOLATIONS["TradePlan"]`'s `select-name` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
+
+---
+
+### BLG-FE-167 — Settings page combobox buttons lack discernible text
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The new standalone axe-core CI scan found a `critical`-impact `button-name` violation on the Settings page: 2 buttons with `role="combobox"` (Radix UI Select trigger) have no discernible text for assistive technology. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline.
+
+**Scope**
+- Add `aria-label` (or visible, associated text) to the affected Radix Select trigger buttons
+
+**Acceptance Criteria**
+- axe-core no longer reports a `button-name` violation on Settings
+- `KNOWN_VIOLATIONS["Settings"]`'s `button-name` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
+
+---
+
+### BLG-FE-168 — Settings page form inputs lack labels
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The new standalone axe-core CI scan found a `critical`-impact `label` violation on the Settings page: 12 numeric strategy-parameter input fields have no associated `<label>` element — a real barrier for screen-reader users. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline. This is also the largest single node count of any finding from the initial scan, worth prioritising above the other three accessibility items filed alongside it despite the shared P3 rating.
+
+**Scope**
+- Add a proper `<label>` (or `aria-label`) association to each of the 12 affected inputs
+
+**Acceptance Criteria**
+- axe-core no longer reports a `label` violation on Settings
+- `KNOWN_VIOLATIONS["Settings"]`'s `label` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
+
+---
+
+### BLG-FE-169 — Settings page subtitle text fails colour-contrast
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The new standalone axe-core CI scan found a `serious`-impact `color-contrast` violation on the Settings page: the page subtitle ("Configure your strategy parameters and preferences", `.mt-1` / `text-slate-600 dark:text-slate-400`) does not meet the minimum WCAG contrast ratio against its background. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline. **Note:** this finding was observed once during initial exploration but did not reproduce across repeated re-runs of the same spec afterward — possibly a near-threshold or rendering-timing-dependent result. Worth a manual contrast-checker verification before spending implementation effort, since it may already be borderline-passing.
+
+**Scope**
+- Adjust the subtitle's text colour (or background) to meet WCAG AA contrast (4.5:1 for normal text) — likely affects other pages sharing the same `text-slate-600 dark:text-slate-400` subtitle convention; worth a quick grep-and-check across pages while fixing this one, though only Settings was in this scan's scope
+
+**Acceptance Criteria**
+- axe-core no longer reports a `color-contrast` violation for the Settings subtitle
+- `KNOWN_VIOLATIONS["Settings"]`'s `color-contrast` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
+
+---
+
 ### BLG-TECH-15 — backtest_rule_service.py's ported algorithm functions can silently drift from production_strategy.py
 
 **Priority:** P2 (Medium)
@@ -4972,7 +5140,7 @@ ST-07 (BLG-FEAT-89, In-app backtesting engine) added `backend/services/backtest_
 **Owner:** Backend Engineering Patterns Owner
 **Source:** ST-09 (EPIC-03, v8.9, BLG-BE-99) evidence-gathering session — 2026-08-20
 **Effort:** S (~0.5d)
-**Provisional-Target:** v9.0
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-02/EPIC-01, cycle `2026-08-21__release-v9.0`
 
 **Problem**
 Production runs `uvicorn main:app --host 0.0.0.0 --port $PORT` (per `render.yaml`'s `startCommand`) with no `--log-config`/`--log-level` flag, and `backend/main.py` never calls `logging.basicConfig()` or otherwise configures the root logger (confirmed via repo-wide grep — no `basicConfig`/`addHandler`/`dictConfig` anywhere in `backend/`). Uvicorn's own default logging setup only wires up its own named loggers (`uvicorn`, `uvicorn.error`, `uvicorn.access`) — it never touches the root logger or any `logging.getLogger(__name__)` logger used throughout the app's service modules. With the root logger left at its default level (WARNING) and no handler attached, every `logger.info(...)` call anywhere in application code is filtered out before it ever reaches a handler, and is silently dropped rather than erroring or warning anyone. This was empirically confirmed: a real, successful `POST /digest/si05/send` invocation on 2026-08-20 (Render deploy log, `07:11:51Z`, 200 OK) produced no corresponding `"SI-05 digest sent (%d chars) in %.2fs"` line anywhere in the surrounding log window, even though that `logger.info()` call sits directly in the code path that ran.
@@ -4989,6 +5157,8 @@ Production runs `uvicorn main:app --host 0.0.0.0 --port $PORT` (per `render.yaml
 - `docs/ops/api_performance_baseline.md` §36 updated with the real log-derived timing once available, superseding the interim GitHub-Actions-proxy measurements recorded there (§36.3 and §36.5)
 
 **Returned to backlog (2026-08-21, cycle `2026-08-21__release-v9.0`, ST-02/EPIC-01):** Same structural blocker recurred — the code fix (`backend/main.py`'s `logging.basicConfig()`) is complete and merge-ready, but the remaining ACs (real post-deploy log confirmation, baseline doc update) require the fix to already be live in production, not obtainable pre-merge; see `execution_state.json` ST-02 and delegation record `DEL-20260821-01` for this cycle's disposition.
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-02/EPIC-01):** PR #1492 merged and deployed to production; a real post-deploy invocation confirmed the digest-timing line now reaches Render's captured logs (`"SI-05 digest sent (498 chars) in 0.37s"`, confirmed directly in the Render dashboard log viewer). All ACs met — see `docs/ops/api_performance_baseline.md` §36.7, `execution_state.json` ST-02 (`done`), and delegation record `DEL-20260821-01`'s final resolution addendum.
 
 ---
 
