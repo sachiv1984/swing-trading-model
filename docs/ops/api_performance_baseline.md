@@ -1707,6 +1707,44 @@ Signed: [x] Product Owner (human, confirmed in-session — accepted interim
         fixing the logging gap inline) — 2026-08-20
 ```
 
+### 36.7 Post-BLG-BE-107 confirmation (ST-02, EPIC-01, v9.0) — real Render-log duration obtained, §36.3/§36.5 proxies superseded
+
+**Date:** 2026-09-03
+**Story:** ST-02 (EPIC-01, v9.0) — BLG-BE-107
+
+`BLG-BE-107`'s root cause (§36.5) — no root logger configuration, so every `logger.info(...)` call across the application was filtered out before reaching a handler — was fixed via `backend/main.py`'s `logging.basicConfig()` call (commit `186959a4`), merged to production via PR #1492 (merged 2026-09-03T12:18:27Z).
+
+A real post-deploy invocation was triggered to verify: `si05-weekly-digest.yml`'s `workflow_dispatch`, GitHub Actions run [33754758406](https://github.com/sachiv1984/swing-trading-model/actions/runs/33754758406), concluded `success` at ~2026-09-03T12:22 UTC. The corresponding production Render log now shows the previously-missing line, confirmed directly in the Render dashboard's log viewer:
+
+```
+2026-09-03 12:21:51,534 INFO services.si05_digest_service: SI-05 digest sent (498 chars) in 0.37s
+```
+
+This is a genuine Render-internal-log-derived duration value — not an external-timing proxy like §36.3/§36.5 — closing the gap those two interim entries were tracking.
+
+| Endpoint | Samples | Duration | Source | Flag |
+|----------|---------|----------|--------|------|
+| POST /digest/si05/send | 1 | 0.37s (498 chars) | Render production log, `services.si05_digest_service` INFO line (real duration field, not external proxy) | ✅ First genuine Render-log-based sample; §36.3/§36.5's GitHub-Actions-step-timing proxies now superseded. Still below this document's usual ≥5-sample standard — the scheduled weekly cron (Sundays 19:00 UTC) will accumulate further real samples over time without any additional live-triggered sends. |
+
+**DEV-EPIC03-ST09-01 resolution:** the deviation recorded at §36.5 (Render log's digest-timing line genuinely absent from a real invocation) is resolved — the line is now present with a real elapsed-time value, confirmed above. Target condition met.
+
+### 36.8 Sign-Off
+
+```
+ST-02 (v9.0 EPIC-01, BLG-BE-107) — Sign-Off
+
+AC (delegated, DEL-20260821-01): Real post-deploy invocation's Render
+log confirms the digest-timing line with a real elapsed-time value.
+✅ MET — "SI-05 digest sent (498 chars) in 0.37s" confirmed in Render
+production log viewer, 2026-09-03T12:21:51Z, following PR #1492's
+merge/deploy. Resolves DEV-EPIC03-ST09-01.
+AC: docs/ops/api_performance_baseline.md §36 updated with the real
+value. ✅ PASS (this entry, §36.7).
+
+Signed: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+Date: 2026-09-03
+```
+
 ---
 
 ## 37. v8.5 Endpoint Registration — GET /screener/regime-distribution (ST-21, EPIC-06, BLG-FEAT-29)
