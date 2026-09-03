@@ -37,3 +37,37 @@ None applied this run (the one friction item above is deferred — the proposed 
 ## Escalations (Phase 3)
 
 None.
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-08-21__release-v9.0
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-09-03
+**Reviewed by:** Director of Quality
+**Prior cycle checked:** 2026-08-17__release-v8.9 (`lessons_learnt_cycle.md` `## Phase 4`) — no open deferred patches carried against this phase.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| `qa_evidence_EPIC-01.md`'s consolidation table retained ST-02's `Result` as "Returned to backlog" after ST-02 reached final `done` resolution (2026-09-03, real post-deploy Render log confirmation obtained) — the evidence file, owned by Director of Quality and outside this engine's write scope, was not updated when the in-flight blocker resolved. `execution_state.json` carried the authoritative final state throughout, so no scope or evidence was actually lost, but a reader of the QA evidence file alone would see a stale "Returned to backlog" result for a story that is in fact fully done. | Phase 4 | B | fix | Director of Quality to update `qa_evidence_EPIC-01.md`'s ST-02 row to `Pass` on next touch of that file, referencing this cycle's `verification_report.md §3` staleness note. | Director of Quality | next touch of `qa_evidence_EPIC-01.md` |
+| `execution_state.json`'s `test_scenarios` field for EPIC-03 was left as `[]` despite real test files (`tests/test_deploy_path_filter_drift_check.py`, `tests/test_staging_smoke_test.py`, `tests/test_wait_for_staging_deploy_live.py`) being authored and run for that EPIC and named in its own `qa_evidence_EPIC-03.md`. No coverage was actually missing — this is a metadata-completeness gap in the execution engine's own record, not a QA gap — but it required cross-referencing two documents to confirm during this verification run rather than being visible from `execution_state.json` alone. | Phase 4 | B | defer | Consider a completeness check at `execution_prompt.md` STEP 3's `test_scenarios` write step: when a story adds new test files under `tests/`, require those paths be reflected in the owning EPIC's `test_scenarios` array in the same write, not left to verification-time cross-referencing. | Head of Specs Team | next `execution_prompt.md` revision touching STEP 3's test_scenarios handling |
+
+**Recurrence Notes:**
+Neither friction item recurs against the immediately-prior cycle (v8.9) — v8.9's Phase 4 record carries no QA-evidence-staleness or test_scenarios-metadata friction items.
+
+## Recurrence Escalations (Phase 4)
+
+None. Both friction items filed this cycle are first occurrences.
+
+## Process improvements actioned this run (Phase 4)
+
+None applied this run — both friction items above are deferred/fix-on-next-touch, not requiring an immediate engine change.
+
+## Outstanding deferred patches (Phase 4)
+
+- `qa_evidence_EPIC-01.md`'s ST-02 row correction (Director of Quality, next touch of that file).
+- `execution_prompt.md` STEP 3 `test_scenarios` completeness check for newly-authored test files (Head of Specs Team, next `execution_prompt.md` revision).
+
+## Escalations (Phase 4)
+
+None.
