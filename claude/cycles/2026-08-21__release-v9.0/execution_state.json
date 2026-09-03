@@ -403,25 +403,31 @@
         "ST-15": {
           "title": "Confirm production PUBLIC_URL is actually set in the Render dashboard",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1476,
           "branch": "exec/2026-08-21__release-v9.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "6bf25c55356d9f69745d96b3c56f417b1d3a40fb",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": "Binary live fact only visible in Render dashboard env var settings - no proxy possible. Prior art (docs/ops/test_environment_parity_check_2026-08-16.md, BLG-OPS-146) already established this cannot be confirmed without dashboard access.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-08-21T22:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/ops/test_environment_parity_check_2026-08-16.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "last_completed_substep": "3.1.B.unblock_detection",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "method": "human",
+            "status": "cleared",
+            "date": "2026-08-21",
+            "comments": "Human confirmed via Render dashboard: PUBLIC_URL absent from production backend API service (trading-assistant-api) -- correct, since it's a frontend-build-only variable with no meaning to a FastAPI backend. Underlying frontend concern independently already resolved: production frontend is GitHub Pages (deploy.yml), not a Render static site; deploy.yml sets PUBLIC_URL=/swing-trading-model as an explicit build-time override, verified by ST-16's own CI safeguard. No dashboard change needed anywhere."
+          },
+          "notes": "Binary live dashboard fact, no proxy possible -- established precedent for this class confirmed via docs/ops/test_environment_parity_check_2026-08-16.md (BLG-OPS-146). Resolved via DEL-20260821-03's addendum."
         },
         "ST-16": {
           "title": "Add CI safeguard to catch future PUBLIC_URL/asset-path regressions on GitHub Pages deploy",
@@ -719,7 +725,8 @@
     "ST-08",
     "ST-09",
     "ST-10",
-    "ST-11"
+    "ST-11",
+    "ST-15"
   ],
   "open_escalations": [],
   "process_notes": [],
