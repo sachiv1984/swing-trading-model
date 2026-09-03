@@ -47,5 +47,6 @@ indefinitely -- identical precedent already established in this repo
 tracked via BLG-BE-107 and this story's own delegation record. No
 unresolved P0/P1 deviations. EPIC-01 ready for PR.
 
-Signed: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3) — 2026-08-21
+Signed: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+Date: 2026-08-21
 ```
