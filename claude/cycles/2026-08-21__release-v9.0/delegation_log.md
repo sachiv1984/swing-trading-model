@@ -102,3 +102,12 @@ Append-only. Do not edit previous entries.
 - **Resolved at:** 2026-09-03T12:22:00Z
 - **New status:** Unblocked — sign_off_cleared.
 - **Reason:** PR #1492 (EPIC-01) merged to `main` 2026-09-03T12:18:27Z, deploying the `logging.basicConfig()` fix (commit `186959a4`) to production. A real post-deploy invocation was then triggered (`si05-weekly-digest.yml` `workflow_dispatch`, run [33754758406](https://github.com/sachiv1984/swing-trading-model/actions/runs/33754758406)) and the resulting production Render log confirmed directly by the Product Owner in the dashboard's log viewer: `"2026-09-03 12:21:51,534 INFO services.si05_digest_service: SI-05 digest sent (498 chars) in 0.37s"`. Both of the delegation's originally-outstanding ACs are now met: the digest-timing line reaches Render's captured logs with a real elapsed-time value, and `docs/ops/api_performance_baseline.md` §36.7 has been updated with that value (superseding §36.3/§36.5's external-timing-proxy interim measurements and resolving `DEV-EPIC03-ST09-01`). `execution_state.json`'s ST-02 status set to `done`.
+
+---
+
+## DEL-20260821-02 — Resolution (Addendum)
+
+- **Refers to:** DEL-20260821-02 (ST-06) above. This file is append-only — recording the resolution as a new entry rather than editing the original.
+- **Resolved at:** 2026-09-03T00:00:00Z
+- **New status:** Unblocked — sign_off_cleared.
+- **Reason:** Product Owner ran Step 1's audit query directly against production (live `DATABASE_URL` access this sandbox lacks): `SELECT id, ticker, market, entry_price, current_stop, position_state, status FROM positions WHERE status = 'open' AND position_state = 'PROFITABLE' AND current_stop < entry_price;` — **0 rows returned**. Per the delegation's own Step 4 guidance, this is recorded as a fully valid, positive outcome ("0 found, correction not required, nightly job already current") rather than a failure to find something: the nightly `analyze_positions()` recompute path (`.github/workflows/daily-snapshot.yml` → `GET /positions/analyze`) has kept every open position's stop correctly floored at `entry_price` since `calculate_trailing_stop()`'s fix (`b410cfa3c`, 2026-02-12) — no pre-fix stale row survived to audit. Step 2 (correction) and Step 3 (re-verification) are not applicable with 0 rows found at Step 1. Full traceability record: `docs/ops/breakeven_floor_stop_audit_2026-09-03.md` (commit `2bbabe8b`). Closes the deferred `BLG-BE-102`/ST-01 (v8.9) acceptance criterion; resolves `BLG-BE-105`. `execution_state.json`'s ST-06 status set to `done`.

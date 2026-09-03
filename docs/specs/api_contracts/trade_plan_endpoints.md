@@ -1,9 +1,9 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.13
-**Last Updated:** 2026-08-18 (ST-13, EPIC-04, v8.9, BLG-QA-150 — document server-side setup_type default to "Other" on POST /trade-plans); prior — 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — add triggered_by_price_alert_id to POST /trade-plans request schema); prior — 2026-08-12 (ST-01/ST-03, EPIC-01, v8.7 — add invalidation_condition, is_ai_draft to POST/PUT /trade-plans request schema); prior history retained — see prior entries in version control.
-**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07); 2026-08-12__release-v8.7 (ST-01/ST-03); 2026-08-14__release-v8.8 (ST-09); 2026-08-18__release-v8.9 (ST-13)
+**Version:** 0.14
+**Last Updated:** 2026-08-21 (ST-07, EPIC-02, v9.0, BLG-FEAT-93 — document that PUT /trade-plans/{id} does NOT apply POST's null→"Other" setup_type default, per Product Owner accept-as-is decision); prior — 2026-08-18 (ST-13, EPIC-04, v8.9, BLG-QA-150 — document server-side setup_type default to "Other" on POST /trade-plans); prior — 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — add triggered_by_price_alert_id to POST /trade-plans request schema); prior history retained — see prior entries in version control.
+**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07); 2026-08-12__release-v8.7 (ST-01/ST-03); 2026-08-14__release-v8.8 (ST-09); 2026-08-18__release-v8.9 (ST-13); 2026-08-21__release-v9.0 (ST-07)
 
 ---
 
@@ -151,11 +151,13 @@ Retrieve a single trade plan by ID.
 
 ## PUT /trade-plans/{id}
 
-Update an existing trade plan. All fields are optional; only provided fields are updated.
+Update an existing trade plan. All fields are optional; only provided fields are updated — a field omitted or sent as `null` leaves the existing stored value unchanged, uniformly across all fields.
 
 ### Request Body
 
 Same fields as POST (all optional for PUT), including `pre_entry_override_acknowledged`.
+
+**`setup_type` note (ST-07, `BLG-FEAT-93`, EPIC-02, v9.0 — Product Owner decision, `docs/product/decisions/setup-type-other-conflation-decision--2026-08-21.md`):** unlike `POST /trade-plans`, this endpoint does **not** normalize a `null`/omitted `setup_type` to `"Other"`. Sending `setup_type: null` (or omitting it) leaves the plan's existing value unchanged, matching every other field's null-means-don't-touch semantics — it is not a way to reset the field to the default. To explicitly set a plan's setup classification to the canonical default, send `setup_type: "Other"` directly.
 
 ### Response (200 OK)
 
@@ -513,6 +515,7 @@ score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.14 | 2026-08-21 | ST-07 (EPIC-02, v9.0, BLG-FEAT-93): Documented that `PUT /trade-plans/{id}` does NOT apply `POST`'s null→`"Other"` `setup_type` default — `null`/omitted leaves the existing value unchanged, per every other field's semantics. Product Owner accept-as-is decision: `docs/product/decisions/setup-type-other-conflation-decision--2026-08-21.md`. No schema/behaviour change to the endpoint itself, documentation only. |
 | 0.11 | 2026-08-12 | ST-01/ST-03 (EPIC-01, v8.7, BLG-FEAT-84/BLG-BE-95): Add `invalidation_condition` (optional manual textarea) and `is_ai_draft` (AI-origin flag, default false) to POST/PUT /trade-plans request schema. `trade_plan.md` §5.1, §10.5. |
 | 0.10 | 2026-08-12 | ST-03 (EPIC-02, v8.6, BLG-BE-91): `PUT /trade-plans/{id}` — `status: 'active'` now requires a `position_id` (either already on the plan, or supplied in this same update); 400 if neither. New Errors section documents this alongside the pre-existing (previously undocumented) abandonment-rule 400s and 404. DB-level backstop: `docs/specs/data_model.md` DS-12. |
 | 0.9 | 2026-08-07 | ST-12 (EPIC-03, v8.4, BLG-BE-70): Add `thesis_model_version`/`thesis_prompt_version` to POST/PUT /trade-plans request schema — AI compliance provenance fields, frontend-passed, persisted only when the narrative fields were saved as-received from a generate-plan/generate-thesis response. Nullable, no backfill. Authority: AI Compliance & Governance Officer. |

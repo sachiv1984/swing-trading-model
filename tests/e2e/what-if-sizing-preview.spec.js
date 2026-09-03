@@ -195,4 +195,112 @@ test.describe('What-If Sizing Preview (V-WHATIF-01..03)', () => {
 
     expect(tradePlanWriteFired).toBe(false);
   });
+
+  test('V-WHATIF-04a — FX Rate override field shown for US-market plans', { tag: ['@smoke'] }, async ({ page }) => {
+    await mockFallback(page);
+    await mockMarketStatus(page);
+    await mockSettings(page);
+
+    await gotoTradePlan(page, { ticker: 'AAPL', market: 'US' });
+    await page.getByTestId('planned-stop-price-input').fill('142.00');
+    await expect(page.getByTestId('what-if-sizing-preview-panel')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('what-if-fx-rate-input')).toBeVisible();
+  });
+
+  test('V-WHATIF-04b — FX Rate override field hidden for UK-market plans', { tag: ['@smoke'] }, async ({ page }) => {
+    await mockFallback(page);
+    await mockMarketStatus(page);
+    await mockSettings(page);
+
+    await gotoTradePlan(page, { ticker: 'VOD.L', market: 'UK' });
+    await page.getByTestId('planned-stop-price-input').fill('90.00');
+    await expect(page.getByTestId('what-if-sizing-preview-panel')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('what-if-fx-rate-input')).toHaveCount(0);
+  });
+
+  test('V-WHATIF-05 — setting the FX Rate override sends it to POST /portfolio/size and the response reflects it', { tag: ['@smoke'] }, async ({ page }) => {
+    await mockFallback(page);
+    await mockMarketStatus(page);
+    await mockSettings(page);
+
+    let capturedBody = null;
+    await page.route(new RegExp(`${API}/portfolio/size`), (route) => {
+      capturedBody = route.request().postDataJSON();
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          status: 'ok',
+          data: {
+            valid: true,
+            suggested_shares: 20.0,
+            risk_amount: 125.0,
+            stop_distance: 70.0,
+            estimated_cost: 17000.0,
+            estimated_fees: 0.0,
+            fx_rate_used: 1.3,
+            cash_sufficient: true,
+            available_cash: 20000.0,
+            concentration_adjusted: false,
+            concentration_reason: null,
+            heat_impact_percent: 0.8,
+          },
+        }),
+      });
+    });
+
+    await gotoTradePlan(page, { ticker: 'AAPL', market: 'US' });
+    await page.getByTestId('planned-stop-price-input').fill('780.00');
+    await expect(page.getByTestId('what-if-sizing-preview-panel')).toBeVisible({ timeout: 5000 });
+    await page.getByTestId('what-if-entry-price-input').fill('850.00');
+    await page.getByTestId('what-if-fx-rate-input').fill('1.3');
+
+    await page.waitForResponse(/\/portfolio\/size/, { timeout: 5000 });
+
+    expect(capturedBody.fx_rate).toBe(1.3);
+    // (850-780)*20 = 1400.00 native (USD) / fx_rate_used=1.3 = £1076.92
+    await expect(page.getByTestId('what-if-r-at-risk')).toHaveText('£1076.92');
+  });
+
+  test('V-WHATIF-06 — leaving the FX Rate override empty omits fx_rate from the request (live rate used)', { tag: ['@smoke'] }, async ({ page }) => {
+    await mockFallback(page);
+    await mockMarketStatus(page);
+    await mockSettings(page);
+
+    let capturedBody = null;
+    await page.route(new RegExp(`${API}/portfolio/size`), (route) => {
+      capturedBody = route.request().postDataJSON();
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          status: 'ok',
+          data: {
+            valid: true,
+            suggested_shares: 15.0,
+            risk_amount: 125.0,
+            stop_distance: 70.0,
+            estimated_cost: 12750.0,
+            estimated_fees: 0.0,
+            fx_rate_used: 1.27,
+            cash_sufficient: true,
+            available_cash: 20000.0,
+            concentration_adjusted: false,
+            concentration_reason: null,
+            heat_impact_percent: 0.6,
+          },
+        }),
+      });
+    });
+
+    await gotoTradePlan(page, { ticker: 'AAPL', market: 'US' });
+    await page.getByTestId('planned-stop-price-input').fill('780.00');
+    await expect(page.getByTestId('what-if-sizing-preview-panel')).toBeVisible({ timeout: 5000 });
+    await page.getByTestId('what-if-entry-price-input').fill('850.00');
+
+    await page.waitForResponse(/\/portfolio\/size/, { timeout: 5000 });
+
+    expect(capturedBody.fx_rate).toBeUndefined();
+    expect(await page.getByTestId('what-if-fx-rate-input').inputValue()).toBe('');
+  });
 });

@@ -110,3 +110,40 @@ class TestSetupTypeServerSideDefault:
         finally:
             for p in patches.values():
                 p.stop()
+
+
+# ─── ST-07 (BLG-FEAT-93, EPIC-02, v9.0) — PUT deliberately does NOT
+#     normalize null setup_type, per Product Owner accept-as-is decision
+#     (docs/product/decisions/setup-type-other-conflation-decision--2026-08-21.md)
+
+class TestSetupTypePutDoesNotDefault:
+    """PUT /trade-plans/{id} treats `setup_type: null`/omitted the same as
+    every other field: 'leave unchanged', not 'reset to Other'. This is a
+    deliberate decision, not an oversight -- this test protects it from a
+    future well-intentioned 'consistency fix' being applied without going
+    back through the same product decision."""
+
+    def test_null_setup_type_in_put_body_does_not_touch_existing_value(self):
+        with patch("routers.trade_plans.ensure_trade_plans_table"), \
+             patch("routers.trade_plans.get_portfolio", return_value={"id": "portfolio-1"}), \
+             patch("routers.trade_plans.update_trade_plan", return_value={"id": "plan-1", "setup_type": "Breakout"}) as mock_update:
+            resp = CLIENT.put("/trade-plans/plan-1", json={"setup_type": None})
+        assert resp.status_code == 200
+        mock_update.assert_called_once()
+        _, _, update_data = mock_update.call_args.args
+        # setup_type=None is filtered out of the update dict entirely (same
+        # as every other None-valued field) -- it must NOT appear as a key
+        # at all, let alone be normalized to "Other".
+        assert "setup_type" not in update_data
+
+    def test_explicit_other_in_put_body_is_applied_normally(self):
+        """Confirms the escape hatch this decision documents: a client that
+        wants to explicitly reset setup_type sends "Other" directly, and
+        that value passes through untouched -- same as any other field."""
+        with patch("routers.trade_plans.ensure_trade_plans_table"), \
+             patch("routers.trade_plans.get_portfolio", return_value={"id": "portfolio-1"}), \
+             patch("routers.trade_plans.update_trade_plan", return_value={"id": "plan-1", "setup_type": "Other"}) as mock_update:
+            resp = CLIENT.put("/trade-plans/plan-1", json={"setup_type": "Other"})
+        assert resp.status_code == 200
+        _, _, update_data = mock_update.call_args.args
+        assert update_data["setup_type"] == "Other"
