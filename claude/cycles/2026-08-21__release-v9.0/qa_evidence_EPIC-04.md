@@ -48,5 +48,6 @@ fixed out-of-scope or hidden. Two stories (ST-17, ST-20) required review-driven
 factual corrections before their individual sign-offs — both resolved
 same-session and documented. EPIC-04 ready for PR.
 
-Signed: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3) — 2026-08-21
+Signed: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+Date: 2026-08-21
 ```
