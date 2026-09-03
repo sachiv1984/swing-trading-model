@@ -46,7 +46,7 @@
         "ST-02": {
           "title": "Configure root/app logging so logger.info() calls actually reach Render's captured logs",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "returned_to_backlog",
           "assigned_to": "Head of Engineering",
           "github_issue": 1463,
           "branch": "exec/2026-08-21__release-v9.0/EPIC-01",
@@ -64,7 +64,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Code portion (logging.basicConfig fix) complete, tested, pushed (commit 186959a4). Remaining two ACs (real post-deploy production log confirmation + baseline doc update) delegated to Infrastructure & Operations Owner via DEL-20260821-01 -- require live Render dashboard access unavailable in this sandbox."
+          "notes": "Code portion (logging.basicConfig fix) complete, tested, pushed (commit 186959a4). Remaining two ACs (real post-deploy production log confirmation + baseline doc update) require the fix to already be live in production -- structurally impossible pre-merge, matching the identical precedent at 2026-08-17__release-v8.9 ST-09 (DEL-20260818-01, commit cc120bef). Applying the in-flight returned_to_backlog transition (AUD-2026-05-27-003) now: dual basis -- (1) sprint_backlog.md's own pre-existing 'Staging-only ACs: AC2' designation for this item (Sprint Planning-authored, predates this session), and (2) explicit live Product Owner direction this session ('open the PR and then verify') authorizing the deferral so EPIC-01 can merge and the fix can actually reach production. DEL-20260821-01 updated to Cancelled via append-only addendum. Post-merge: trigger si05-weekly-digest.yml workflow_dispatch, confirm the digest-timing line in Render's log viewer, update docs/ops/api_performance_baseline.md \u00a736, re-file as done."
         },
         "ST-03": {
           "title": "Decide 'linked journal entries' data source for the AI Post-Trade Debrief",
@@ -737,7 +737,6 @@
     }
   },
   "blocked_items": [
-    "ST-02",
     "ST-06"
   ],
   "delegated_items": [
