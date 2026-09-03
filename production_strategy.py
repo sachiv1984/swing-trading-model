@@ -10,7 +10,24 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 import os
+import sys
 from datetime import datetime
+
+# ST-05 (BLG-TECH-15, v9.0): compute_signals/compute_atr/compute_risk_on/
+# transaction_fee/compute_rebalance_dates/backtest are the single shared
+# implementation in backend/services/strategy_engine.py — also used by
+# backend/services/backtest_rule_service.py. See that module's docstring
+# for the consolidation's design notes (regime state as an explicit
+# parameter; trade record field-naming schema).
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "backend"))
+from services.strategy_engine import (  # noqa: E402
+    compute_risk_on,
+    compute_atr,
+    compute_signals,
+    transaction_fee,
+    compute_rebalance_dates,
+    backtest,
+)
 
 pd.set_option("display.float_format", lambda x: f"{x:,.2f}")
 
@@ -127,341 +144,6 @@ def download_in_chunks(tickers, calendar_index, start="2018-01-01", chunk_size=5
     prices = prices.reindex(calendar_index)
     return prices.ffill().bfill()
 
-def compute_risk_on(price, ma_period=200):
-    """True where price is above its own ma_period-day moving average.
-
-    Forward-fills the raw price series *before* computing the moving average
-    and the comparison — not after. A malformed/incomplete daily bar from the
-    data provider (e.g. SPY's Close coming back NaN while Volume is populated,
-    seen 2026-07-24) would otherwise poison both sides: the rolling mean drops
-    below min_periods and returns NaN, and `NaN > NaN` evaluates to a real
-    `False`, not a NaN — so a downstream `.ffill()` on the comparison result
-    can't recover it, and the day gets silently recorded as risk-off even
-    though the last known close was solidly risk-on. Forward-filling the
-    price itself first means one missing bar just carries the prior day's
-    price forward into both calculations, as intended.
-    """
-    price_filled = price.ffill()
-    ma = price_filled.rolling(ma_period).mean()
-    return price_filled > ma
-
-def is_risk_on(ticker, date, mode="single"):
-    spy_on = bool(spy_risk_on.at[date])
-    ftse_on = bool(ftse_risk_on.at[date])
-    
-    if mode == "single":
-        return ftse_on if ticker.endswith(".L") else spy_on
-    elif mode == "dual":
-        return spy_on or ftse_on
-    elif mode == "dual_strict":
-        return spy_on and ftse_on
-
-def transaction_fee(ticker, side):
-    if ticker.endswith(".L"):
-        return 0.005 if side == "buy" else 0.0
-    return 0.0015
-
-# =====================================================================
-# TECHNICAL INDICATORS
-# =====================================================================
-
-def compute_atr(prices):
-    high = prices.copy()
-    low = prices.copy()
-    close = prices.copy()
-
-    tr1 = high - low
-    tr2 = (high - close.shift(1)).abs()
-    tr3 = (low - close.shift(1)).abs()
-
-    tr = pd.concat([tr1, tr2, tr3], axis=1)
-    tr.columns = pd.MultiIndex.from_tuples([(c, "tr") for c in tr.columns])
-    tr = tr.T.groupby(level=0).max().T
-    atr = tr.rolling(14).mean()
-    return atr
-
-def compute_signals(prices, lookback, top_n, ma_period=200, created_at=None):
-    momentum = prices.pct_change(lookback)
-    if created_at:
-        # Mask each ticker's momentum to NaN before its own created_at date so
-        # it cannot participate in the cross-sectional rank computation for
-        # any other ticker on those historical dates (na_option="bottom" below
-        # excludes NaNs from influencing the relative ranks of real values).
-        # This is what makes a ticker addition today retroactively inert for
-        # the entire pre-existing historical window (AC-01/AC-02/AC-03,
-        # BLG-BE-59) — masking only the final signal (below) is not enough,
-        # since the ticker's raw momentum score would still shift the ranks
-        # of every other ticker on dates before it was ever tracked.
-        for ticker in momentum.columns:
-            cutoff = created_at.get(ticker)
-            if cutoff is not None and not pd.isna(cutoff):
-                momentum.loc[momentum.index < cutoff, ticker] = np.nan
-    ranks = momentum.rank(axis=1, ascending=False, na_option="bottom", method="first")
-    trend = prices > prices.rolling(ma_period).mean()
-    signals = (trend) & (ranks <= top_n)
-    signals = signals.fillna(False).astype(bool)
-    if created_at:
-        for ticker in signals.columns:
-            cutoff = created_at.get(ticker)
-            if cutoff is not None and not pd.isna(cutoff):
-                signals.loc[signals.index < cutoff, ticker] = False
-    return signals
-
-# =====================================================================
-# BACKTEST ENGINE
-# =====================================================================
-
-def backtest(signals, prices, volatility, atr, rebalance_freq, atr_mult, 
-             min_position_pct=0.05, max_position_pct=0.15, min_hold_days=7, 
-             risk_off_mode="single", stop_loss_mode="simple", initial_atr_mult=None,
-             profit_atr_mult=None):
-    
-    if initial_atr_mult is None:
-        initial_atr_mult = atr_mult * 1.5
-    if profit_atr_mult is None:
-        profit_atr_mult = atr_mult
-    
-    # prices.resample(rebalance_freq).last().index would return calendar
-    # period-end labels (e.g. 2026-01-31) even when that exact date is a
-    # weekend and never appears in prices.index — silently skipping monthly
-    # rotation for any month whose last calendar day falls on a Sat/Sun.
-    # Group the actual (business-day) index by period and take each period's
-    # real last row instead, so rebalance_dates only ever contains dates that
-    # genuinely exist in prices.index.
-    period_freq = rebalance_freq[:-1] if rebalance_freq.endswith("E") else rebalance_freq
-    rebalance_dates = prices.groupby(prices.index.to_period(period_freq)).tail(1).index
-    holdings = pd.Series(0.0, index=prices.columns)
-    entry_prices = {}
-    entry_dates = {}
-    stop_prices = {}
-    trades = []
-    cash = INITIAL_CAPITAL
-    portfolio_values = []
-
-    for date in prices.index:
-        current_positions = list(holdings[holdings > 0].index)
-        
-        # Stop loss with profit-lock logic
-        for t in current_positions:
-            if holdings[t] == 0:
-                continue
-                
-            shares = holdings[t]
-            
-            if date not in atr.index or t not in atr.columns:
-                continue
-            atr_val = atr.loc[date, t]
-            if np.isnan(atr_val):
-                continue
-
-            holding_days = (date - entry_dates[t]).days
-            if holding_days < min_hold_days:
-                continue
-
-            current_price = prices.loc[date, t]
-            entry_price = entry_prices[t]
-            current_profit_pct = (current_price - entry_price) / entry_price
-            
-            if stop_loss_mode == "simple":
-                active_atr_mult = atr_mult
-            elif stop_loss_mode == "tiered":
-                active_atr_mult = initial_atr_mult if holding_days < min_hold_days * 2 else atr_mult
-            elif stop_loss_mode == "profit_lock":
-                active_atr_mult = profit_atr_mult if current_profit_pct > 0 else initial_atr_mult
-            else:
-                active_atr_mult = atr_mult
-
-            current_stop = stop_prices.get(t, -np.inf)
-            new_stop = current_price - active_atr_mult * atr_val
-            stop_prices[t] = max(current_stop, new_stop)
-
-            if current_price <= stop_prices[t]:
-                exit_price = current_price
-                fee = transaction_fee(t, "sell")
-                exit_adj = exit_price * (1 - fee)
-                pnl = (exit_adj - entry_price) * shares
-
-                trades.append({
-                    "Ticker": t,
-                    "Entry Date": entry_dates[t],
-                    "Exit Date": date,
-                    "Holding Days": holding_days,
-                    "Entry": entry_price,
-                    "Exit": exit_adj,
-                    "PnL (£)": pnl,
-                    "PnL %": round(current_profit_pct * 100, 2),
-                    "Market": "UK" if t.endswith(".L") else "US",
-                    "Exit Reason": "Stop",
-                    "Was Profitable": current_profit_pct > 0
-                })
-
-                cash += shares * exit_adj
-                holdings[t] = 0
-                entry_prices.pop(t, None)
-                entry_dates.pop(t, None)
-                stop_prices.pop(t, None)
-
-        # Risk-off exits
-        for t in current_positions:
-            if holdings[t] == 0:
-                continue
-                
-            shares = holdings[t]
-            
-            if not is_risk_on(t, date, mode=risk_off_mode):
-                holding_days = (date - entry_dates[t]).days
-                exit_price = prices.loc[date, t]
-                entry_price = entry_prices[t]
-                current_profit_pct = (exit_price - entry_price) / entry_price
-                
-                fee = transaction_fee(t, "sell")
-                exit_adj = exit_price * (1 - fee)
-                pnl = (exit_adj - entry_price) * shares
-
-                trades.append({
-                    "Ticker": t,
-                    "Entry Date": entry_dates[t],
-                    "Exit Date": date,
-                    "Holding Days": holding_days,
-                    "Entry": entry_price,
-                    "Exit": exit_adj,
-                    "PnL (£)": pnl,
-                    "PnL %": round(current_profit_pct * 100, 2),
-                    "Market": "UK" if t.endswith(".L") else "US",
-                    "Exit Reason": "Risk-Off",
-                    "Was Profitable": current_profit_pct > 0
-                })
-
-                cash += shares * exit_adj
-                holdings[t] = 0
-                entry_prices.pop(t, None)
-                entry_dates.pop(t, None)
-                stop_prices.pop(t, None)
-
-        # Today's qualifying, risk-on candidates — used both for the monthly
-        # rotation-out below and the daily slot fill-in that follows it.
-        selected = signals.loc[date][signals.loc[date]].index.tolist()
-        selected = [t for t in selected if is_risk_on(t, date, mode=risk_off_mode)]
-
-        # Monthly rebalance: rotate out any holding that has fallen out of the
-        # current top-n qualifying set. Only evaluated on rebalance dates so a
-        # position isn't force-sold mid-month over a temporary rank dip.
-        if date in rebalance_dates:
-            exits = []
-            for t in list(holdings[holdings > 0].index):
-                if t not in selected:
-                    exits.append(t)
-
-            for t in exits:
-                shares = holdings[t]
-                holding_days = (date - entry_dates[t]).days
-                exit_price = prices.loc[date, t]
-                entry_price = entry_prices[t]
-                current_profit_pct = (exit_price - entry_price) / entry_price
-
-                fee = transaction_fee(t, "sell")
-                exit_adj = exit_price * (1 - fee)
-                pnl = (exit_adj - entry_price) * shares
-
-                trades.append({
-                    "Ticker": t,
-                    "Entry Date": entry_dates[t],
-                    "Exit Date": date,
-                    "Holding Days": holding_days,
-                    "Entry": entry_price,
-                    "Exit": exit_adj,
-                    "PnL (£)": pnl,
-                    "PnL %": round(current_profit_pct * 100, 2),
-                    "Market": "UK" if t.endswith(".L") else "US",
-                    "Exit Reason": "No longer qualifies",
-                    "Was Profitable": current_profit_pct > 0
-                })
-
-                cash += shares * exit_adj
-                holdings[t] = 0
-                entry_prices.pop(t, None)
-                entry_dates.pop(t, None)
-                stop_prices.pop(t, None)
-
-        # Daily slot fill-in: whenever fewer than top-n positions are held
-        # (a stop, risk-off, or rotation exit freed up a slot), buy a
-        # qualifying candidate as soon as one is available rather than
-        # waiting for the next month-end rebalance to deploy the cash.
-        num_existing = (holdings > 0).sum()
-        num_new_slots = len(selected) - num_existing
-
-        if num_new_slots > 0:
-            existing_tickers = holdings[holdings > 0].index.tolist()
-            new_candidates = [t for t in selected if t not in existing_tickers][:num_new_slots]
-
-            if len(new_candidates) > 0:
-                available_cash = cash
-                vols = volatility.loc[date, new_candidates].replace(0, np.nan).dropna()
-
-                if len(vols) > 0:
-                    inv_vol = 1 / vols
-                    weights = inv_vol / inv_vol.sum()
-
-                    weights_constrained = {}
-                    for t, w in weights.items():
-                        weights_constrained[t] = max(min_position_pct, min(w, max_position_pct))
-
-                    total_weight = sum(weights_constrained.values())
-                    weights_final = {t: w / total_weight for t, w in weights_constrained.items()}
-
-                    for t, w in weights_final.items():
-                        buy_fee = transaction_fee(t, "buy")
-                        price = prices.loc[date, t] * (1 + buy_fee)
-                        alloc = available_cash * w
-                        shares = alloc / price
-
-                        holdings[t] = shares
-                        entry_prices[t] = price
-                        entry_dates[t] = date
-
-                        atr_val = atr.loc[date, t]
-                        if stop_loss_mode == "simple":
-                            stop_prices[t] = price - atr_mult * atr_val
-                        else:
-                            stop_prices[t] = price - initial_atr_mult * atr_val
-
-                        cash -= shares * price
-
-        daily_value = cash + (holdings * prices.loc[date]).sum()
-        portfolio_values.append(daily_value)
-
-    # Positions still open when the price data ends never hit a stop, risk-off,
-    # or rebalance exit, so the loop above never appends a trade for them — without
-    # this they vanish from trades_df entirely, making the final weeks of a run
-    # look like no activity took place even though capital is deployed.
-    last_date = prices.index[-1]
-    for t in list(holdings[holdings > 0].index):
-        shares = holdings[t]
-        entry_price = entry_prices[t]
-        current_price = prices.loc[last_date, t]
-        current_profit_pct = (current_price - entry_price) / entry_price
-        holding_days = (last_date - entry_dates[t]).days
-
-        trades.append({
-            "Ticker": t,
-            "Entry Date": entry_dates[t],
-            "Exit Date": last_date,
-            "Holding Days": holding_days,
-            "Entry": entry_price,
-            "Exit": current_price,
-            "PnL (£)": (current_price - entry_price) * shares,
-            "PnL %": round(current_profit_pct * 100, 2),
-            "Market": "UK" if t.endswith(".L") else "US",
-            "Exit Reason": "Open (Unrealized)",
-            "Was Profitable": current_profit_pct > 0
-        })
-
-    pv = pd.Series(portfolio_values, index=prices.index)
-    returns = pv.pct_change().fillna(0)
-    trades_df = pd.DataFrame(trades)
-
-    return pv, returns, trades_df
-
 def perf_stats(returns, name, initial_capital=INITIAL_CAPITAL):
     equity = (1 + returns).cumprod()
     cagr = equity.iloc[-1]**(252 / len(returns)) - 1
@@ -486,15 +168,6 @@ def perf_stats(returns, name, initial_capital=INITIAL_CAPITAL):
     }
 
 def main():
-    # `global` — is_risk_on() (module-level function) reads these as free
-    # variables resolved against module scope; without this declaration they
-    # would be local to main() and invisible to is_risk_on() when it's called
-    # from inside backtest() below (LEGB scoping — is_risk_on is not nested
-    # inside main(), so its non-local names resolve to the module, not to
-    # main()'s locals). This is the only module-global state any function
-    # defined above main() depends on.
-    global spy_risk_on, ftse_risk_on
-
     print("=" * 70)
     print("PRODUCTION MOMENTUM STRATEGY - BACKTEST")
     print("=" * 70)
@@ -526,8 +199,14 @@ def main():
     # Reindex then forward-fill (not fill_value=False): a date missing from
     # spy/ftse's own data (e.g. a market holiday for one side) should carry
     # forward the last known regime state, not be silently treated as risk-off.
-    spy_risk_on = compute_risk_on(spy).reindex(prices.index).ffill().fillna(False).astype(bool)
-    ftse_risk_on = compute_risk_on(ftse).reindex(prices.index).ffill().fillna(False).astype(bool)
+    # ST-05 (BLG-TECH-15, v9.0): local variables passed explicitly into
+    # backtest() below, not module globals — see strategy_engine.py's
+    # module docstring design note 1. The full prices.index is a superset
+    # of the train/test slices used further down, so the same regime_us/
+    # regime_uk series is valid for all three backtest() calls without
+    # re-slicing (is_risk_on only ever looks up dates actually iterated).
+    regime_us = compute_risk_on(spy).reindex(prices.index).ffill().fillna(False).astype(bool)
+    regime_uk = compute_risk_on(ftse).reindex(prices.index).ffill().fillna(False).astype(bool)
 
     print("Computing ATR...")
     atr = compute_atr(prices)
@@ -550,7 +229,7 @@ def main():
     volatility_full = prices.pct_change().rolling(60).std()
     
     pv_full, returns_full, trades_full = backtest(
-        signals_full, prices, volatility_full, atr,
+        signals_full, prices, volatility_full, atr, regime_us, regime_uk,
         rebalance_freq=params['rebalance_freq'],
         atr_mult=params['atr_mult'],
         min_position_pct=params['min_position_pct'],
@@ -569,7 +248,7 @@ def main():
     atr_train = compute_atr(prices_train)
     
     pv_train, returns_train, trades_train = backtest(
-        signals_train, prices_train, volatility_train, atr_train,
+        signals_train, prices_train, volatility_train, atr_train, regime_us, regime_uk,
         rebalance_freq=params['rebalance_freq'],
         atr_mult=params['atr_mult'],
         min_position_pct=params['min_position_pct'],
@@ -588,7 +267,7 @@ def main():
     atr_test = compute_atr(prices_test)
     
     pv_test, returns_test, trades_test = backtest(
-        signals_test, prices_test, volatility_test, atr_test,
+        signals_test, prices_test, volatility_test, atr_test, regime_us, regime_uk,
         rebalance_freq=params['rebalance_freq'],
         atr_mult=params['atr_mult'],
         min_position_pct=params['min_position_pct'],

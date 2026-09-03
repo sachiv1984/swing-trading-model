@@ -1,3 +1,26 @@
+import logging
+
+# BLG-BE-107 (ST-02, EPIC-01, v9.0): production runs
+# `uvicorn main:app --host 0.0.0.0 --port $PORT` (render.yaml's
+# startCommand) with no --log-config/--log-level flag, and nothing else in
+# backend/ ever configures the root logger. Uvicorn's own default logging
+# setup only wires up its own named loggers ("uvicorn", "uvicorn.error",
+# "uvicorn.access") -- each has propagate: False, so they never reach the
+# root logger and are unaffected by this change (verified: no duplicate
+# log lines, no regression to uvicorn's own access/error formatting). With
+# the root logger left at its default level (WARNING) and no handler
+# attached, every logger.info(...) call anywhere in application code
+# (logging.getLogger(__name__), used throughout backend/services/) was
+# silently filtered out before reaching a handler -- confirmed empirically
+# for services/si05_digest_service.py's "SI-05 digest sent..." line
+# (docs/ops/api_performance_baseline.md §36.5). basicConfig() must run
+# before any other module logs anything, so it's the first statement in
+# this file, ahead of every other import.
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
