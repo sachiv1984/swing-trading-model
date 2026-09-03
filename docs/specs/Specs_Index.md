@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-08-12 (post-ship closure 2026-08-11__release-v8.6; §39 Test Coverage Gaps — v8.6 added, 0 new gaps; full-document TSG reconciliation sweep resolved 2 long-stale Open entries, TSG-v33-03 and TSG-v6.8-01); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, ST-09/EPIC-02: added `schema_versioning_trade_plan_position.md` to §3.2 Canonical Documents); prior — 2026-08-03 (sprint execution 2026-08-03__release-v8.1, ST-14/EPIC-05: §6.6 (BLG-SPEC-72) RESOLVED — Product Owner reviewed Gate Condition 2/3 thresholds, codified in reports.md v0.11→v0.12); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-03 (post-ship closure 2026-08-21__release-v9.0; §40 Test Coverage Gaps — v9.0 added, 2 findings both not_applicable; full-document TSG reconciliation sweep resolved 1 long-stale Open entry, TSG-v40-01; 2 other long-stale entries (TSG-v22-02, TSG-v23-01) re-confirmed genuinely still open, not stale-but-resolved); prior — 2026-08-12 (post-ship closure 2026-08-11__release-v8.6; §39 Test Coverage Gaps — v8.6 added, 0 new gaps; full-document TSG reconciliation sweep resolved 2 long-stale Open entries, TSG-v33-03 and TSG-v6.8-01); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, ST-09/EPIC-02: added `schema_versioning_trade_plan_position.md` to §3.2 Canonical Documents); prior history retained — see prior entries in version control.
 
 ---
 
@@ -678,7 +678,7 @@ Identified during delivery verification (verification_report.md §6 — TSG-v40-
 ### 23.1 TSG-v40-01 — EPIC-01: Arc5ComplianceSection rendering not covered by Playwright
 
 **Identified:** 2026-05-25 (delivery verification 2026-05-22__release-v4.0)
-**Status:** Partially resolved — 2026-05-27 (v4.1 ST-11 AC-01). Playwright tests created (arc5-compliance-section.spec.js, 4 scenarios: SC-ARC5-01 heading visible, SC-ARC5-02 4 stat cards, SC-ARC5-03 loading skeleton, SC-ARC5-04 error state; commit 3f5665b8). Staging verification (live environment: BLG-QA-28 ACs 02–04) remains open → carried to v4.2.
+**Status:** ✅ RESOLVED — 2026-09-03 (post-ship closure 2026-08-21__release-v9.0, STEP 7.3 TSG reconciliation full-document sweep). Playwright tests created 2026-05-27 (v4.1 ST-11 AC-01, arc5-compliance-section.spec.js, 4 scenarios). Remaining staging-verification ACs (BLG-QA-28 ACs 02–04) confirmed shipped and retired: `backlog_archive.md` records `BLG-QA-28` as ✅ Complete, retired 2026-05-29, shipped v4.3 (`docs/product/changelog.md#v4.3`) — found still marked "Partially resolved" here despite having shipped over 3 months (16+ cycles) earlier; no closure between v4.3 and this one had re-checked this entry.
 **Owner:** QA & Testing Owner
 **Gap:** ST-02/ST-04 introduced Arc5ComplianceSection.js with observable ACs (stat cards rendering, loading skeleton, error state) on PerformanceAnalytics page (§19). No Playwright E2E scenarios cover these observable ACs. Code review only was performed per CLAUDE.md §2; BLG-QA-28 filed before PR opened.
 **Backlog item:** BLG-QA-28 — Staging verification for Arc5ComplianceSection (v4.2 provisional target; Playwright automation delivered v4.1)
@@ -952,6 +952,25 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 - All other historical TSG entries (§9–§38) already carry `RESOLVED`/`not_applicable`/`OPEN`-with-confirmed-still-open dispositions; no further stale entries found in this sweep.
 
 This closes 2 long-stale Open entries the STEP 7.3 sweep exists to catch (one 15+ cycles stale, one 5+ cycles stale) — recorded as a Friction Log item in `lessons_learnt_closure.md` for this cycle: the per-cycle reconciliation note (§7.3) only checks entries the closure engine already knows to look at, and does not itself guarantee a full-document sweep unless explicitly re-run; this closure's use of the full-scan convention (introduced `post_ship_closure.md` v2.26, LL-v8.4-Closure-01) is what caught them.
+
+---
+
+## 40. Test Coverage Gaps — v9.0 (2026-08-21__release-v9.0)
+
+Identified during delivery verification (`verification_report.md §6`): 2 findings, both `not_applicable` — no new actionable `TSG-*` entries required.
+
+| gap_id | EPIC | Description | Qualifying reason | Disposition |
+|--------|------|-------------|-------------------|-------------|
+| TSG-v9.0-01 | EPIC-03 | `execution_state.json.test_scenarios` field left empty despite real test files being run and confirmed in `qa_evidence_EPIC-03.md` | Metadata-completeness gap, not a coverage gap — no frontend-visible AC in this EPIC | not_applicable |
+| TSG-v9.0-02 | EPIC-05 | No dedicated test scenario files — all 5 stories are review/documentation deliverables verified via full backend suite regression only | Ops/backend-review-only class, no frontend-visible AC, no core user journey affected | not_applicable |
+
+Both are tracked as a lessons-learnt friction item, not backlog debt (`lessons_learnt_cycle.md` Phase 4, this cycle) — no `BLG-*` filing required per the STEP 5.2 short-circuit.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep, per `post_ship_closure.md`'s no-fixed-section-number scan rule):**
+- **TSG-v40-01** (`BLG-QA-28`, Arc5ComplianceSection staging verification, §23.1 above): found still marked "Partially resolved" since 2026-05-27, carried across 16+ cycles. `BLG-QA-28`'s remaining staging-verification ACs (02–04) in fact shipped and were retired 2026-05-29 (v4.3) — confirmed via `backlog_archive.md`. No closure between v4.3 and this one had re-checked this entry. Marked ✅ RESOLVED this cycle.
+- **TSG-v22-02** (`SC-HEALTH-01`, `GET /health` schema validation scenario, §10.2 above): re-confirmed still genuinely Open — no `SC-HEALTH-01` scenario file exists anywhere in `tests/`. Open since 2026-03-24 (~24 cycles). Not a stale-but-actually-resolved case like TSG-v40-01 above; this is a real, still-unactioned gap. Left Open — authoring the scenario is outside post-ship closure's write scope.
+- **TSG-v23-01** (`V-CHART-05a/b/c`, R-Multiple chart tooltip staging visual scenarios, §10.3 above): re-confirmed still genuinely Open — `docs/testing/staging_visual_test_script_ST-06.md` still shows all three scenarios `[ ] STAGING-BLOCKED`, unexecuted since the underlying blocker (`BLG-BE-04`) resolved 2026-04-03. Open since 2026-03-30 (~24 cycles). Left Open — staging execution is outside post-ship closure's write scope; recorded as an Outstanding Action (see closure record §6).
+- All other historical TSG entries (§9–§39) already carry `RESOLVED`/`not_applicable`/confirmed-still-open dispositions; no further stale-but-actually-resolved entries found in this sweep.
 
 ---
 

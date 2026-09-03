@@ -3,11 +3,62 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-21 (post-ship closure 2026-08-17__release-v8.9 — v8.9 entry added); prior — 2026-08-17 (post-ship closure 2026-08-14__release-v8.8 — v8.8 entry added); prior — 2026-08-16 (sprint execution 2026-08-14__release-v8.8, ST-13 — `User Impact` column added to `Changes shipped` tables); prior history retained — see prior entries in version control
+**Last Updated:** 2026-09-03 (post-ship closure 2026-08-21__release-v9.0 — v9.0 entry added); prior — 2026-08-21 (post-ship closure 2026-08-17__release-v8.9 — v8.9 entry added); prior — 2026-08-17 (post-ship closure 2026-08-14__release-v8.8 — v8.8 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.0 — AI Debrief/Backtest Follow-Through, Risk-Data Integrity & Operational Resilience — 2026-09-03
+Cycle: 2026-08-21__release-v9.0
+Verified: Verified
+Verification report: claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | AI Post-Trade Debrief & Backtest Correctness Follow-Through — fixed a nightly backtest rebalance-date computation bug that included the current in-progress month in rebalance-date lists, skewing recent backtest performance figures; configured root/app logging so `logger.info()` calls actually reach Render's captured production logs; decided the data source for the AI Post-Trade Debrief's "linked journal entries" and fixed the debrief-generation prompt's unverifiable cross-trade pattern language flagged by §13 compliance review; consolidated `backtest_rule_service.py`'s ported algorithm functions with `production_strategy.py` into a single canonical `strategy_engine.py`, with byte-identical parity tests against both pre-consolidation implementations. | Nightly backtest results (visible on the Strategy Benchmark page) no longer include the current in-progress month in rebalance-date calculations, so recent performance figures are more accurate. AI-generated post-trade debriefs no longer make cross-trade pattern claims they can't actually verify from your own trade history. | `docs/ops/api_performance_baseline.md#36.7`; `docs/specs/api_contracts/trade_endpoints.md`; `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md#Condition 1`; `backend/services/strategy_engine.py` |
+| EPIC-02 | Live Risk-Management & Trade-Plan Data-Integrity Closure — audited all open positions against the breakeven-floor stop invariant (0 violations found; nightly `analyze_positions()` recompute confirmed to have kept every position correctly floored since the underlying v6.x fix); decided and applied treatment for the `trade_plans.setup_type='Other'` conflation; added a lock around `ensure_trade_plans_table()`'s memoization flag to close a startup race condition; added down-migration rollback verification tests for the 5 most recent schema migrations; closed the What-If Sizing Preview FX-rate reproducibility gap for US-market trade plans; added Playwright coverage for UK-market position `current_trailing_stop_native` display. | The What-If Sizing Preview on the trade-plan form now gives you the same risk numbers every time for a US-market plan, instead of a value that could shift between page loads. A full audit confirmed every open position's stop-loss is correctly locked in once a trade turns profitable — no live positions needed correction. | `backend/services/position_service.py`; `docs/product/decisions/setup-type-other-conflation-decision--2026-08-21.md`; `docs/specs/api_contracts/trade_plan_endpoints.md`; `docs/specs/frontend/pages/trade_plan.md#5d.2`/`#5d.3`; `docs/ops/database_migration_governance.md` |
+| EPIC-03 | Operational Resilience & Deploy-Path Safeguards — production database backup/restore drill executed (confirmed pre-met on `main`); automated staging smoke test wired into deploy/merge CI; staging environment drift detector added to catch build/deploy path filter divergence; confirmed production `PUBLIC_URL` is actually set in the Render dashboard; added a CI safeguard against future `PUBLIC_URL`/asset-path regressions on the GitHub Pages deploy. | — | `docs/ops/database_backup_disaster_recovery_runbook.md`; `.github/workflows/production-db-backup.yml`; `scripts/staging_smoke_test.py`; `scripts/wait_for_staging_deploy_live.py`; `.github/workflows/staging-deploy.yml`; `docs/ops/render_build_deploy_path_filter_audit.md`; `scripts/check_deploy_path_filter_drift.py`; `docs/ops/test_environment_parity_check_2026-08-16.md`; `.github/workflows/deploy.yml` |
+| EPIC-04 | QA Coverage & Process Hardening — defined the Arc 5 QA protocol; added visual regression baseline snapshots for contrast-sensitive and chart-heavy components; added the R-multiple calculation regression test against the canonical server-side formula; audited Playwright coverage gaps for `Arc5ComplianceSection` (3 gaps found, filed as backlog items); added a standalone axe-core accessibility CI scan (5 accessibility gaps found, filed as backlog items); published backend test coverage reports to PR comments. | — | `docs/qa/arc5_qa_protocol.md`; `docs/specs/metrics_definitions.md#R-Multiple (Canonical Server-Side)`; `docs/qa/arc5_coverage_audit.md`; `tests/e2e/accessibility-axe-scan.spec.js`; `scripts/generate_backend_coverage_report.py`; `.github/workflows/backend-coverage-report.yml` |
+| EPIC-05 | Backend Architecture & Cost/Capacity Hygiene — backend service-layer boundary review (raw SQL still present in `analytics.py`/`digest.py`, deferred fix filed); database connection pool tuning review; Render hosting tier review; Render hosting cost trend dashboard produced; quarterly dependency minor-version upgrade cadence policy defined (a reproducible npm production-build regression found during the review, filed as tech debt). | — | `docs/ops/backend_service_layer_boundary_review_2026-08-21.md`; `docs/ops/database_connection_pool_tuning_review_2026-08-21.md`; `docs/ops/render_starter_tier_headroom_reassessment_2026-08-13.md`; `docs/ops/render_hosting_tier_review_2026-08-21.md`; `docs/ops/render_hosting_cost_trend_dashboard_2026-08-21.md`; `docs/ops/quarterly_dependency_upgrade_cadence_policy.md` |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-01] [U] Fix nightly backtest rebalance-date computation to exclude the current in-progress month
+- [ST-02] [D] Configure root/app logging so `logger.info()` calls actually reach Render's captured logs
+- [ST-03] [D] Decide "linked journal entries" data source for the AI Post-Trade Debrief
+- [ST-04] [D] Fix debrief-generation prompt's unverifiable cross-trade pattern language
+- [ST-05] [D] Consolidate `backtest_rule_service.py`'s ported algorithm functions with `production_strategy.py`
+- [ST-06] [D] Audit and backfill open positions against the breakeven-floor stop invariant
+- [ST-07] [D] Decide and apply treatment for `trade_plans.setup_type='Other'` conflation
+- [ST-08] [D] Add a lock around `ensure_trade_plans_table()`'s memoization flag
+- [ST-09] [D] Add down-migration rollback verification tests for the 5 most recent schema migrations
+- [ST-10] [U] Close the What-If Sizing Preview FX-rate reproducibility gap for US-market plans
+- [ST-11] [D] Add Playwright coverage for UK-market position on `current_trailing_stop_native`
+- [ST-12] [D] Production database backup/restore drill
+- [ST-13] [D] Automated staging smoke test on deploy/merge
+- [ST-14] [D] Staging environment drift detector
+- [ST-15] [D] Confirm production `PUBLIC_URL` is actually set in the Render dashboard
+- [ST-16] [D] Add CI safeguard to catch future `PUBLIC_URL`/asset-path regressions on GitHub Pages deploy
+- [ST-17] [D] Arc 5 QA protocol
+- [ST-18] [D] Visual regression baseline snapshots (contrast-sensitive + chart-heavy components)
+- [ST-19] [D] R-multiple calculation regression test
+- [ST-20] [D] Playwright coverage gap audit for `Arc5ComplianceSection`
+- [ST-21] [D] Standalone axe-core accessibility CI scan
+- [ST-22] [D] Publish backend test coverage report to PR comments
+- [ST-23] [D] Backend service-layer boundary review
+- [ST-24] [D] Database connection pool tuning review
+- [ST-25] [D] Render hosting tier review
+- [ST-26] [D] Render hosting cost trend dashboard
+- [ST-27] [D] Quarterly dependency minor-version upgrade cadence policy
+
+Sign-off: Product Owner — 2026-09-03
+QA sign-off: Director of Quality — 2026-09-03
 
 ---
 

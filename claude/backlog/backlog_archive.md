@@ -1,11 +1,892 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-21 (groom backlog post-ship closure 2026-08-17__release-v8.9 — 21 items archived: BLG-BE-98/99/100/101/102/103/104, BLG-SPEC-85/130, BLG-FEAT-89/90/91, BLG-QA-149/150/151/152, BLG-OPS-113/146, BLG-GOV-260/308/309; 1 ephemeral Release Slice section removed — v8.9; `BLG-GOV-264` intentionally not archived — split-achievability, see backlog.md; same-session follow-up acting as Product Owner renumbered 2 genuine duplicate IDs found by this run's ID Uniqueness Scan — `BLG-FEAT-84`→`BLG-FEAT-94` (later-archived "Thesis pre-mortem" entry, v8.7) and `BLG-SEC-18`→`BLG-SEC-34` (later-archived "npm audit review" entry, v8.8), each with a traceability note; earlier claimant of each ID keeps it); prior — 2026-08-17 (groom backlog post-ship closure 2026-08-14__release-v8.8 — 30 items archived: BLG-GOV-291, BLG-GOV-292, BLG-GOV-293, BLG-FE-159/160/161/162/163, BLG-BE-84/85/87/58/94/97, BLG-OPS-13/51/135/143/144/145, BLG-SEC-18/28/32/33, BLG-QA-140/143/145/146, BLG-SPEC-118/129; 1 ephemeral Release Slice section removed — v8.8); prior — 2026-08-13 (groom backlog post-ship closure 2026-08-12__release-v8.7 — 19 shipped items archived; 1 ephemeral Release Slice section removed — v8.7; 2 further v8.7 items already archived earlier that session via ad hoc backlog audit); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
+**Last Updated:** 2026-09-03 (groom backlog post-ship closure 2026-08-21__release-v9.0 — 28 items archived: BLG-QA-26/81/83/84/89/144/153, BLG-OPS-25/90/95/98/101/103/147/148, BLG-BE-49/54/56/105/106/107/108/109, BLG-FEAT-93, BLG-FE-164, BLG-TECH-15/17, BLG-GOV-313 (leftover already-complete item missed by the 2026-08-21 sweep); 1 ephemeral Release Slice section removed — v9.0; 5 pre-existing genuine duplicate IDs found by this run's ID Uniqueness Scan (BLG-OPS-37/31/28, BLG-FE-49, BLG-FEAT-38 — each appears 3× from two separate historical archival passes) flagged for Product Owner review, not auto-resolved); prior — 2026-08-21 (groom backlog post-ship closure 2026-08-17__release-v8.9 — 21 items archived: BLG-BE-98/99/100/101/102/103/104, BLG-SPEC-85/130, BLG-FEAT-89/90/91, BLG-QA-149/150/151/152, BLG-OPS-113/146, BLG-GOV-260/308/309; 1 ephemeral Release Slice section removed — v8.9; `BLG-GOV-264` intentionally not archived — split-achievability, see backlog.md; same-session follow-up acting as Product Owner renumbered 2 genuine duplicate IDs found by this run's ID Uniqueness Scan — `BLG-FEAT-84`→`BLG-FEAT-94` (later-archived "Thesis pre-mortem" entry, v8.7) and `BLG-SEC-18`→`BLG-SEC-34` (later-archived "npm audit review" entry, v8.8), each with a traceability note; earlier claimant of each ID keeps it); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-QA-26 — Arc 5 QA protocol
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-QA-26 — Arc 5 QA protocol
+**Priority:** P2 (Medium)
+**Type:** QA / Test Coverage
+**Owner:** Director of Quality; QA Lead
+**Source:** IDEA-director-of-quality-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-17/EPIC-04, cycle `2026-08-21__release-v9.0`
+
+**Gate criteria:** ~~Arc 5 fully complete per BLG-QA-45 criteria (docs/qa/arc5_qa_completion_criteria.md): SI-01 ✅, SI-02 backend ✅, SI-03 ✅, SI-05 Phase 1 ✅, BLG-QA-49 coverage assessment ✅. SI-02 frontend, SI-04, and SI-05 Phase 2 explicitly excluded from trigger. Updated 2026-06-16 (ST-09 v5.6).~~ **Gate cleared 2026-08-08** — all named trigger sub-conditions (SI-01, SI-02 backend, SI-03, SI-05 Phase 1, BLG-QA-49) already showed ✅ as of the 2026-06-16 update; no remaining condition blocks this item.
+
+**Problem**
+SI-01 through SI-03 shipped across v3.8 and v3.9. Each sprint produced per-story DoQ sign-offs but no arc-level QA protocol exists covering the full Arc 5 feature set end-to-end. Once all five features ship, an arc-level protocol analogous to BLG-QA-21 (Arc 2 E2E QA protocol) will ensure the complete Strategy Integrity workflow is tested holistically.
+
+**Scope**
+- Arc-level E2E test protocol document covering full Arc 5 flow: validation gate → override event → red flag journal → drift detection review → strategy version comparison → weekly digest
+- Playwright automation for the arc-level happy path
+- Manual checklist for Arc 5 edge cases not covered by Playwright
+- Filed in `docs/qa/arc5_qa_protocol.md`
+
+**Acceptance Criteria**
+- Arc 5 E2E protocol document produced and filed
+- Core happy path covered by Playwright
+- Gate condition verified by QA Lead and Product Owner before sprint planning
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-17/EPIC-04):** Shipped — commit `43fd10cc24`. See `execution_state.json` ST-17 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-04.md` for the full delivery record.
+
+---
+
+### BLG-OPS-25 — Automated staging smoke test on deploy/merge (consolidated)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-OPS-25 — Automated staging smoke test on deploy/merge (consolidated)
+**Priority:** P2 (Medium)
+**Type:** Operations / CI/CD
+**Owner:** Director of Quality; Infrastructure & Operations Owner
+**Source:** IDEA-director-of-quality-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033); consolidates BLG-OPS-100, BLG-OPS-102, BLG-OPS-107, BLG-OPS-119 — the same capability was independently re-proposed across four idea-intake cycles (2026-07-08 through 2026-07-24) without cross-reference to this existing item or each other — merged 2026-07-27, session duplicate-consolidation cleanup
+**Effort:** M (~2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-13/EPIC-03, cycle `2026-08-21__release-v9.0`
+
+**Gate criteria:** None — BLG-OPS-27 (automated staging re-deployment on main merge) shipped v4.0 (2026-05-25); the deploy hook mechanism this item depends on already exists.
+
+**Problem**
+Every delivery verification run begins with manual staging health checks, and staging deploys have no automated smoke test — deployment regressions (broken environment, missing env vars, cold-start failures) are caught manually or not until the next deliberate check.
+
+**Scope**
+- Smoke test suite: 3–5 critical endpoint health checks (backend health, screener availability, positions endpoint)
+- Triggered automatically on both staging deploy and merge to main (the BLG-OPS-27 deploy hook fires on merge, so these are the same trigger in practice)
+- Also runs on a scheduled cadence (e.g. weekly), independent of deploy/merge events, to catch environment drift between deploys
+- Failure: deploy pipeline reports failure; delivery verification engine advised; alert on scheduled-run failure
+- Output: smoke test pass/fail result stored in CI artefacts
+
+**Acceptance Criteria**
+- Smoke test suite authored and triggered on staging deploy / merge to main
+- Suite covers minimum 3 critical endpoints
+- Failure prevents "staging ready" signal from being issued
+- Suite also runs on a scheduled cadence and alerts on failure independent of deploy events
+- Confirmed to fail correctly on a deliberately-broken staging deploy (dry run)
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-13/EPIC-03):** Shipped — commit `11e4ebe897`. See `execution_state.json` ST-13 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-03.md` for the full delivery record.
+
+---
+
+### BLG-OPS-90 — Staging environment drift detector
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium) — escalated from P3, 2026-07-28, roadmap rebalance `2026-07-28__scheduled` (gate cleared, see below)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-OPS-90 — Staging environment drift detector
+**Priority:** P2 (Medium) — escalated from P3, 2026-07-28, roadmap rebalance `2026-07-28__scheduled` (gate cleared, see below)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-14/EPIC-03, cycle `2026-08-21__release-v9.0`
+**Gate criteria:** ~~A second occurrence of a staging/production configuration drift incident (first occurrence: BLG-OPS-82, a one-off missing-deploy issue).~~ **Gate cleared 2026-07-28** — commit `e9c73f58` ("[GOVERNANCE] Fix stale What's New panel — trigger staging redeploy on changelog.md changes") is a confirmed second occurrence of the same drift class: a runtime-read file changed in the repo without triggering a staging redeploy (Render dashboard-only build-path filter invisible to repo grep), producing stale served content exactly as BLG-OPS-82 did. Identified via `IDEA-infra-ops-20260728-01` (IW-20260728-01); disposition: idea resolved directly by this gate-status update rather than filed as a separate backlog row (register Status → Promoted-Added).
+
+**Problem**
+BLG-OPS-82 was originally treated as a single one-off incident. A second, independently-caused instance of the same underlying pattern (deploy-path filters that are invisible to a repo-level search, so a runtime-read file's change doesn't trigger the redeploy a reviewer would expect) has now occurred, confirming this is a recurring drift class rather than a one-off.
+
+**Scope**
+- Build automated drift detection between staging and production config/build-path coverage, informed by both incidents (BLG-OPS-82: missing-deploy; this one: dashboard-only path filter)
+
+**Acceptance Criteria**
+- Tooling built and covers both confirmed incident shapes; Infrastructure & Operations Owner sign-off
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-14/EPIC-03):** Shipped — commit `548ea1f998`. See `execution_state.json` ST-14 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-03.md` for the full delivery record.
+
+---
+
+### BLG-BE-49 — Down-migration rollback verification tests
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-BE-49 — Down-migration rollback verification tests
+**Priority:** P3 (Low)
+**Type:** Backend / Data Integrity
+**Owner:** Data Model & Domain Schema Owner
+**Source:** IDEA-data-model-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-09/EPIC-02, cycle `2026-08-21__release-v9.0`
+**Gate criteria:** None
+
+**Problem**
+Schema migrations are tested forward (apply) but not backward (rollback) — a bad migration in production has no verified rollback path.
+
+**Scope**
+- Add rollback tests for the 5 most recent schema migrations, confirming `down()` (or equivalent) restores the prior schema state cleanly
+
+**Acceptance Criteria**
+- 5 migrations have passing rollback tests
+- Pattern documented for future migrations
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-09/EPIC-02):** Shipped — commit `b71eb53ce6`. See `execution_state.json` ST-09 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-02.md` for the full delivery record.
+
+---
+
+### BLG-QA-81 — Visual regression baseline snapshots (consolidated: contrast-sensitive + chart-heavy components)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-QA-81 — Visual regression baseline snapshots (consolidated: contrast-sensitive + chart-heavy components)
+**Priority:** P2 (Medium)
+**Type:** QA / Visual Testing
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled; consolidates BLG-QA-118 — same capability (Playwright visual-regression baseline snapshots), independently re-proposed for a second component class at the 2026-07-24__scheduled rebalance without cross-reference to this existing item — merged 2026-07-28, session duplicate-consolidation cleanup; priority raised P3→P2 to match cluster max
+**Effort:** M (~2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-18/EPIC-04, cycle `2026-08-21__release-v9.0`
+**Gate criteria:** None — Arc 5/contrast remediation work (v6.6/v6.7) now stable; a good time to baseline before further drift accumulates.
+
+**Problem**
+No visual regression baseline exists for the components remediated in v6.6/v6.7's contrast work, nor for chart-heavy components (Performance Analytics, Strategy Benchmark) — a future change could silently reintroduce a contrast regression or a chart layout/rendering regression with no automated catch.
+
+**Scope**
+- Capture baseline screenshots for the highest-risk contrast-sensitive components; wire into CI visual diff (if tooling supports it) or a manual comparison checklist
+- Capture baseline snapshots for the highest-value chart-heavy components (Performance Analytics, Strategy Benchmark) using existing Playwright visual-regression tooling
+
+**Acceptance Criteria**
+- Baselines captured for at least the components touched by `BLG-FE-87/88/89`
+- Baselines captured for at least one chart-heavy component end-to-end as proof of pattern
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-18/EPIC-04):** Shipped — commit `7e67ad6ec2`. See `execution_state.json` ST-18 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-04.md` for the full delivery record.
+
+---
+
+### BLG-OPS-95 — Render hosting cost trend dashboard
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-OPS-95 — Render hosting cost trend dashboard
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps
+**Owner:** FinOps & Resource Architect
+**Source:** IDEA-finops-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-26/EPIC-05, cycle `2026-08-21__release-v9.0`
+**Gate criteria:** None
+
+**Problem**
+Render hosting cost is reviewed monthly ad hoc with no trend visualisation — harder to spot a cost trajectory shift early.
+
+**Scope**
+- Simple monthly cost-vs-request-volume trend chart, sourced from existing monthly review data
+
+**Acceptance Criteria**
+- Trend chart built with at least 3 months of historical data points
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-26/EPIC-05):** Shipped — commit `e328c0ccb5`. See `execution_state.json` ST-26 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-05.md` for the full delivery record.
+
+---
+
+### BLG-OPS-98 — Quarterly dependency minor-version upgrade cadence policy
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-OPS-98 — Quarterly dependency minor-version upgrade cadence policy
+**Priority:** P3 (Low)
+**Type:** Operations / Engineering
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-engineering-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day per quarter)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-27/EPIC-05, cycle `2026-08-21__release-v9.0`
+**Gate criteria:** None
+
+**Problem**
+Dependency minor-version upgrades happen reactively (security patch, feature need) rather than on a cadence — small upgrades accumulate into larger, riskier jumps.
+
+**Scope**
+- Define a quarterly minor-version upgrade window; first pass applies safe minor bumps across `requirements.txt`/`package.json`
+
+**Acceptance Criteria**
+- Policy documented; first quarterly pass completed
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-27/EPIC-05):** Shipped — commit `6fc022d9ce`. See `execution_state.json` ST-27 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-05.md` for the full delivery record.
+
+---
+
+### BLG-QA-83 — Standalone axe-core accessibility CI scan
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-QA-83 — Standalone axe-core accessibility CI scan
+**Priority:** P3 (Low)
+**Type:** QA / Accessibility
+**Owner:** QA Lead
+**Source:** IDEA-qa-lead-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-21/EPIC-04, cycle `2026-08-21__release-v9.0`
+**Gate criteria:** None — independent of `BLG-QA-63`'s "Arc 5 fully complete" gate; an automated axe-core scan doesn't require the full frontend feature set to stabilise first, unlike the fuller accessibility-testing programme `BLG-QA-63` describes.
+
+**Problem**
+No automated accessibility scanning exists in CI at all — `BLG-QA-63` gates a fuller programme behind Arc 5 completion, but a basic axe-core pass could run today at low cost.
+
+**Scope**
+- Add axe-core to the existing Playwright CI run for the highest-traffic pages; fail (or warn, initially) on critical violations
+
+**Acceptance Criteria**
+- axe-core scan running in CI for at least 3 pages; results visible in CI output
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-21/EPIC-04):** Shipped — commit `17504059e8`. See `execution_state.json` ST-21 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-04.md` for the full delivery record.
+
+---
+
+### BLG-QA-84 — Publish backend test coverage report to PR comments
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-QA-84 — Publish backend test coverage report to PR comments
+**Priority:** P3 (Low)
+**Type:** QA / CI
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-22/EPIC-04, cycle `2026-08-21__release-v9.0`
+**Gate criteria:** None
+
+**Problem**
+Backend test coverage is only visible by running pytest locally with coverage flags — no visibility in the PR review flow, so coverage regressions can slip through unnoticed.
+
+**Scope**
+- Add a CI step posting a coverage summary (and delta vs. base branch, if feasible) as a PR comment
+
+**Acceptance Criteria**
+- Coverage summary posted automatically on the next PR after this ships
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-22/EPIC-04):** Shipped — commit `377eb8428c`. See `execution_state.json` ST-22 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-04.md` for the full delivery record.
+
+---
+
+### BLG-OPS-101 — Render hosting tier review
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-OPS-101 — Render hosting tier review
+**Priority:** P3 (Low)
+**Type:** Operations
+**Owner:** FinOps & Resource Architect
+**Source:** Idea intake IW-20260710-01 (IDEA-finops-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-25/EPIC-05, cycle `2026-08-21__release-v9.0`
+**Gate criteria:** None
+
+**Problem**
+The current Render service tier was set early in the project's life and has not been reviewed against actual usage since v6.8's added traffic (SI-02 indicator, trade tagging).
+
+**Proposed solution**
+Compare current Render tier cost/limits against actual measured usage and confirm the tier still fits, or right-size it.
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-25/EPIC-05):** Shipped — commit `1c13852621`. See `execution_state.json` ST-25 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-05.md` for the full delivery record.
+
+---
+
+### BLG-OPS-103 — Production database backup/restore drill
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-OPS-103 — Production database backup/restore drill
+**Priority:** P2 (Medium)
+**Type:** Operations
+**Owner:** Infrastructure & Operations Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-infra-ops-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-12/EPIC-03, cycle `2026-08-21__release-v9.0`
+**Gate criteria:** None
+
+**Problem**
+No governed routine has ever exercised a full backup/restore drill against the production database; the recovery procedure's correctness is currently unverified.
+
+**Proposed solution**
+Document the current backup mechanism (if any) and perform one full restore drill against a non-production target to confirm the procedure actually works.
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-12/EPIC-03):** Shipped — commit `5165e828`. See `execution_state.json` ST-12 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-03.md` for the full delivery record.
+
+---
+
+### BLG-BE-54 — Database connection pool tuning review
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-BE-54 — Database connection pool tuning review
+**Priority:** P3 (Low)
+**Type:** Backend / Operations
+**Owner:** Backend Engineering Patterns Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-backend-engineering-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-24/EPIC-05, cycle `2026-08-21__release-v9.0`
+**Gate criteria:** None
+
+**Problem**
+The database connection pool size has not been reviewed against actual concurrent load since v6.8's added traffic; it may be mis-sized in either direction.
+
+**Proposed solution**
+Measure current concurrent connection usage and compare against the configured pool size; adjust if warranted.
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-24/EPIC-05):** Shipped — commit `acc2029c63`. See `execution_state.json` ST-24 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-05.md` for the full delivery record.
+
+---
+
+### BLG-QA-89 — R-multiple calculation regression test
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-QA-89 — R-multiple calculation regression test
+**Priority:** P2 (Medium)
+**Type:** QA / Backend
+**Owner:** Financial Reporting & Records Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-financial-reporting-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-19/EPIC-04, cycle `2026-08-21__release-v9.0`
+**Gate criteria:** None
+
+**Problem**
+The v6.8 R-multiple FX spec has no automated regression test locking its behaviour against known trade fixtures — a future change could silently alter R-multiple calculations.
+
+**Proposed solution**
+Add an automated test asserting R-multiple output against a small set of known trade fixtures.
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-19/EPIC-04):** Shipped — commit `98c64e3895`. See `execution_state.json` ST-19 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-04.md` for the full delivery record.
+
+---
+
+### BLG-BE-56 — Backend service-layer boundary review
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-BE-56 — Backend service-layer boundary review
+**Priority:** P3 (Low)
+**Type:** Backend
+**Owner:** Head of Engineering
+**Source:** Idea intake IW-20260710-01 (IDEA-head-of-engineering-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-23/EPIC-05, cycle `2026-08-21__release-v9.0`
+**Gate criteria:** None
+
+**Problem**
+Recent `BLG-BE-*` items have touched router/service/database layers; no recent review confirms the layering boundary still holds cleanly after these changes.
+
+**Proposed solution**
+Review recent backend changes for layering-boundary drift (e.g. business logic leaking into routers) and correct any found.
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-23/EPIC-05):** Shipped — commit `57384d9d99`. See `execution_state.json` ST-23 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-05.md` for the full delivery record.
+
+---
+
+### BLG-QA-144 — Playwright coverage gap audit for Arc5ComplianceSection
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-QA-144 — Playwright coverage gap audit for Arc5ComplianceSection
+**Priority:** P3 (Low) | **Type:** QA / Testing | **Owner:** QA Lead | **Source:** IDEA-qa-lead-20260809-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-20/EPIC-04, cycle `2026-08-21__release-v9.0`
+**Problem:** `Arc5ComplianceSection` (shipped v4.0) has grown several sub-features since (drift streak metric, sparkline candidates) without a corresponding audit confirming Playwright coverage has kept pace.
+**Scope:** Audit current Playwright coverage of `Arc5ComplianceSection`; file gaps found.
+**Acceptance Criteria:** Audit complete; gaps filed; QA Lead sign-off.
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-20/EPIC-04):** Shipped — commit `f0e6b2064c`. See `execution_state.json` ST-20 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-04.md` for the full delivery record.
+
+---
+
+### BLG-BE-105 — Audit and backfill open positions against the breakeven-floor stop invariant
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-BE-105 — Audit and backfill open positions against the breakeven-floor stop invariant
+
+**Priority:** P1 (High)
+**Type:** Backend Engineering / Risk Management / Data Integrity
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1452 review (Director of Quality / Product Owner agent-mediated review, 2026-08-18) — ST-01 (`BLG-BE-102`, EPIC-01, v8.9) acceptance criterion "No open profitable position has `current_stop` below its own `entry_price`" was confirmed *not* verified by that story's delivery. ST-01 confirmed the live calculation path is correct going forward (`calculate_trailing_stop()` applies the breakeven floor), but did not query or backfill the existing open-position dataset, since that AC requires a live-DB check that isn't CI-reproducible.
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-06/EPIC-02, cycle `2026-08-21__release-v9.0`
+
+**Problem**
+`BLG-BE-102`'s root cause (stops not floored at `entry_price` for profitable positions) predates the ST-01 fix confirmation — commit `b410cfa3c` (2026-02-12) already made the *live calculation path* correct, but any position that ratcheted its stop before that commit, or via some other now-closed gap, could still be sitting in the database today with `current_stop < entry_price` while profitable. Nothing in the v8.9 EPIC-01 delivery checked or corrected the existing dataset — the AC was explicitly deferred as a post-merge ops action, not closed.
+
+**Scope**
+- Query all open positions where `position_state = 'PROFITABLE'` and `current_stop < entry_price`
+- For each match found, apply `calculate_trailing_stop()`'s floor logic (`max(current_stop, new_stop, entry_price)`) via the existing nightly recompute path (`run_nightly_trailing_stop_update()` or `analyze_positions()`), not a bespoke one-off script, so the correction goes through the same code path already regression-tested by `tests/test_trailing_stop_breakeven_floor.py`
+- Record the count of positions found/corrected for traceability (deviation log or ops note)
+
+**Acceptance Criteria**
+- Live-DB query confirms the count of open profitable positions with `current_stop < entry_price`, before and after correction
+- Any positions found are corrected via the existing floored calculation path (no new inline stop-adjustment logic)
+- Result recorded (count found, count corrected, date) — closes the deferred ST-01 AC from `BLG-BE-102`
+- Backend Engineering Patterns Owner sign-off
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-06/EPIC-02):** Product Owner ran Step 1's live audit query directly against production — 0 rows returned (no open, currently-profitable position with `current_stop < entry_price`). Correction not required; nightly `analyze_positions()` recompute has kept every position correctly floored since `calculate_trailing_stop()`'s fix (`b410cfa3c`, 2026-02-12). Full record: `docs/ops/breakeven_floor_stop_audit_2026-09-03.md`; delegation record `DEL-20260821-02`'s final resolution addendum.
+
+---
+
+### BLG-QA-153 — Add Playwright coverage for UK-market position on current_trailing_stop_native
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-QA-153 — Add Playwright coverage for UK-market position on current_trailing_stop_native
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** Director of Quality
+**Source:** PR #1452 review (Director of Quality agent-mediated review, 2026-08-18) — ST-02 (`BLG-BE-103`, EPIC-01, v8.9) added `current_trailing_stop_native` and verified UK-position parity (`current_trailing_stop == current_trailing_stop_native`) at the backend unit level only (`tests/test_position_currency_basis.py::test_native_and_gbp_fields_equal_for_uk_position`). No e2e/Playwright test exercises a UK-market position through the actual rendered Card/Table UI against the new field.
+**Effort:** S (~0.5d)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-11/EPIC-02, cycle `2026-08-21__release-v9.0`
+
+**Problem**
+`tests/e2e/position-stop-currency-basis.spec.js` (`V-CURR-01`, `V-CURR-02`) only fixtures a US-market position. The "no UK regression" claim for the new native-currency field is verified structurally (backend dict equality) but not through the UI a UK user would actually see. Risk is low — UK native and GBP values are identical by construction — but the gap means a future UI-layer regression specific to UK rendering (e.g. a stray currency-symbol bug) would not be caught by this EPIC's own test suite.
+
+**Scope**
+- Add a UK-market position fixture (native == GBP for all stop fields) to `tests/e2e/position-stop-currency-basis.spec.js` or a sibling spec
+- Assert Card and Table views render the same, single stop value with the `£` symbol, consistent with `initial_stop`
+
+**Acceptance Criteria**
+- New Playwright test(s) cover a UK-market position's Trail Stop tile/cell rendering
+- Test passes against current implementation
+- Director of Quality sign-off
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-11/EPIC-02):** Shipped — commit `c3a52fc968`. See `execution_state.json` ST-11 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-02.md` for the full delivery record.
+
+---
+
+### BLG-BE-106 — ensure_trade_plans_table() memoization flag has no lock — thread-safety by idempotent-SQL luck, not by construction
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-BE-106 — ensure_trade_plans_table() memoization flag has no lock — thread-safety by idempotent-SQL luck, not by construction
+
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1454 (EPIC-03) agent-mediated Director of Quality review — 2026-08-19
+**Effort:** S (~0.5d)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-08/EPIC-02, cycle `2026-08-21__release-v9.0`
+
+**Problem**
+ST-08's `_trade_plans_table_ensured` module-global flag in `backend/database.py` is checked-then-set with no lock. All routes calling `ensure_trade_plans_table()` (`backend/routers/trade_plans.py`, `backend/routers/analytics.py`) are sync `def` handlers, which FastAPI dispatches via a thread pool — so two concurrent requests hitting a cold-start process could both pass the flag check before either sets it, both running the DDL block concurrently. Currently harmless only because every statement in the guarded block is idempotent (`CREATE TABLE IF NOT EXISTS`/`CREATE INDEX IF NOT EXISTS`), so correctness holds today by luck, not by construction — a future edit to that block that isn't naturally idempotent would silently reintroduce a real race.
+
+**Scope**
+- Add a `threading.Lock` (or equivalent) around the check-then-set in `ensure_trade_plans_table()`, matching whatever pattern is idiomatic for this codebase's other memoized lazy-init functions if one exists
+
+**Acceptance Criteria**
+- The flag check-and-set is guarded by a lock
+- A regression test demonstrates two concurrent calls only execute the DDL block once (or confirms serialization)
+- No behaviour change to callers
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-08/EPIC-02):** Shipped — commit `1b67390094`. See `execution_state.json` ST-08 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-02.md` for the full delivery record.
+
+---
+
+### BLG-FEAT-93 — trade_plans.setup_type="Other" default conflates user-chosen-Other with never-classified
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-FEAT-93 — trade_plans.setup_type="Other" default conflates user-chosen-Other with never-classified
+
+**Priority:** P3 (Low)
+**Type:** Product Feature
+**Owner:** Product Owner
+**Source:** PR #1455 (EPIC-04) agent-mediated Product Owner review — 2026-08-19 (reviewer explicitly recommended filing this as a follow-up rather than blocking the PR)
+**Effort:** S (~0.5d)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-07/EPIC-02, cycle `2026-08-21__release-v9.0`
+
+**Problem**
+ST-13 (BLG-QA-150) fixed `trade_plans.setup_type` having no server-side default by normalizing null/absent/empty to the existing canonical value `"Other"` in `create_plan()`. This closed the immediate data-quality gap but means a trade plan where the user explicitly selected "Other" from the dropdown is now indistinguishable, in the stored data, from one where `setup_type` was never classified at all — permanently degrading the precision of the future `win_rate_by_setup_type` analytics (SI-02) this fix was meant to protect, since both cases collapse into the same bucket. Also noted: the default is applied only on `POST /trade-plans` (create), not on `PUT /trade-plans/{id}` (update) — a plan created before this fix, with `setup_type` still null, is never backfilled or corrected on a later edit.
+
+**Scope**
+- Decide and implement a way to distinguish "explicitly Other" from "never classified" (e.g. a `setup_type_source` field, a distinct enum value, or a `null`-preserving default used only in reporting) OR make an explicit, documented decision to accept the conflation with rationale (matching the "accept-as-is with documented rationale" option ST-13's own original AC offered)
+- If a fix is chosen, also decide whether to extend the default to `PUT`
+
+**Acceptance Criteria**
+- Decision recorded
+- If implemented, `win_rate_by_setup_type`'s future query logic (or its predesign doc) is updated to reflect the distinction
+- Product Owner sign-off
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-07/EPIC-02):** Shipped — commit `6bc1add436`. See `execution_state.json` ST-07 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-02.md` for the full delivery record.
+
+---
+
+### BLG-OPS-147 — Confirm production PUBLIC_URL is actually set in the Render dashboard (BLG-OPS-146 remainder)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-OPS-147 — Confirm production PUBLIC_URL is actually set in the Render dashboard (BLG-OPS-146 remainder)
+
+**Priority:** P3 (Low)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** PR #1456 (EPIC-05) agent-mediated Product Owner review — 2026-08-19; remainder of BLG-OPS-146 (ST-16)
+**Effort:** XS (<1h)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-15/EPIC-03, cycle `2026-08-21__release-v9.0`
+
+**Problem**
+ST-16 fixed the local-venv Python-pin documentation and added `PUBLIC_URL=/` to `.env.production`'s repo template for parity with `.env.staging`, but could not confirm whether production's real Render dashboard env vars actually already have `PUBLIC_URL` set — no dashboard access was available in that session. The production site is known to serve correctly today, which is consistent with (but doesn't prove) this already being set. Once BLG-OPS-146 is archived as shipped (since ST-16's achievable scope did ship), this specific unconfirmed sub-item has no other tracking mechanism.
+
+**Scope**
+- Someone with Render dashboard access checks the production Static Site's environment variables for `PUBLIC_URL`
+- If absent, add it (value `/`, matching staging); if present, just confirm and close
+
+**Acceptance Criteria**
+- Production `PUBLIC_URL` dashboard value confirmed one way or the other, documented in this item's resolution
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-15/EPIC-03):** Shipped — commit `6bf25c5535`. See `execution_state.json` ST-15 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-03.md` for the full delivery record.
+
+---
+
+### BLG-OPS-148 — Add CI safeguard to catch future PUBLIC_URL/asset-path regressions on GitHub Pages deploy
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-OPS-148 — Add CI safeguard to catch future PUBLIC_URL/asset-path regressions on GitHub Pages deploy
+
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** 2026-08-21 GitHub Pages white-page incident, fixed via PR #1461; related: BLG-OPS-146, BLG-OPS-147
+**Effort:** S (~0.5d)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-16/EPIC-03, cycle `2026-08-21__release-v9.0`
+
+**Problem**
+On 2026-08-21 the GitHub Pages site went blank because `.env.production`'s `PUBLIC_URL=/` (added in `5f80e301`, `[EPIC-05][ST-16]`, merged to `main` 2026-08-20) was picked up automatically by `deploy.yml`'s `npm run build`, overriding `package.json`'s `homepage`-derived subpath and producing root-relative asset paths that 404 on GitHub Pages (served from `/swing-trading-model`). PR #1461 fixed it by pinning `PUBLIC_URL: /swing-trading-model` as an explicit build-step env var, but that's a point fix — nothing stops a future edit to `.env.production` (or any new CRA-auto-loaded env file) from silently reintroducing root-relative paths, since Render (root-served) and GitHub Pages (subpath-served) share that file with no automated check that the GitHub Pages build output is actually subpath-correct. BLG-OPS-146/147 track confirming `PUBLIC_URL` values are correct per-environment but neither adds a check that would have caught this regression.
+
+**Scope**
+- Add a CI step (in `deploy.yml`, after `npm run build`) that fails the job if `build/index.html`'s script/link asset paths don't start with `/swing-trading-model/`
+- Document the check's rationale inline (why GitHub Pages needs a subpath and Render doesn't) so a future edit understands the constraint instead of just seeing a red CI check
+
+**Acceptance Criteria**
+- `deploy.yml` fails fast if a future build produces root-relative (or otherwise wrong-subpath) asset paths in `build/index.html`
+- A deliberate local test (temporarily unsetting the `PUBLIC_URL` override) confirms the new step actually catches the regression
+- Infrastructure & Operations Owner sign-off
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-16/EPIC-03):** Shipped — commit `e4d5a9a8fd`. See `execution_state.json` ST-16 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-03.md` for the full delivery record.
+
+---
+
+### BLG-GOV-313 — Canonical "Sandbox Access Constraint" disclosure block for shared_standards.md
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** N/A — resolved directly (not a release)
+**Evidence:** docs/product/decisions — resolved via shared_standards.md v3.28→v3.29 §16.16 (post-ship closure 2026-08-17__release-v8.9, ESC-CLOSE-20260821-02); backlog entry itself only now archived (missed the 2026-08-21 groom backlog sweep — resolved same-day, after that sweep had already run)
+
+### BLG-GOV-313 — Canonical "Sandbox Access Constraint" disclosure block for shared_standards.md
+**Priority:** P3 (Low) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** `2026-08-12__release-v8.7` Phase 4 lessons learnt (friction item 2), carried 2 cycles, escalated as `ESC-CLOSE-20260821-02` — resolved directly 2026-08-21 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-21 — direct Head of Specs Team action, post-ship closure `2026-08-17__release-v8.9`
+**Problem:** Three independent stories at v8.7 (ST-07, ST-13, ST-15) each disclosed the same "no live staging/production access in this sandbox" constraint with slightly different re-derived prose, with no canonical statement to point to instead.
+**Scope:** New `shared_standards.md` §16.16 — canonical constraint statement, stable disclosure IDs (`SBX-NO-LIVE-DB`/`SBX-NO-LIVE-STAGING`/`SBX-NO-LIVE-EXTERNAL-API`), usage note.
+**Acceptance Criteria:** Section added; `shared_standards.md` version bumped; `OPERATIONAL_GUIDE.md` §14 and `prompt_change_log.md` updated in the same commit.
+
+---
+
+### BLG-FE-164 — What-If Sizing Preview never sends an fx_rate override — AC-02 reproducibility claim doesn't fully hold for US-market plans
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-FE-164 — What-If Sizing Preview never sends an fx_rate override — AC-02 reproducibility claim doesn't fully hold for US-market plans
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-05/EPIC-02 Head of Engineering sign-off review, 2026-08-17__release-v8.9 — 2026-08-18
+**Effort:** S (~0.5d)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-10/EPIC-02, cycle `2026-08-21__release-v9.0`
+
+**Problem**
+`trade_plan.md` §5d.3 claims the What-If Sizing Preview panel "reproduces an identical suggested size" to what `TradeEntry.js` computes at order time, because both call `POST /portfolio/size`. This holds for UK-market plans, but not reliably for US-market plans: the Trade Plan form has no `fx_rate` field (confirmed against §5.1 and the ux_spec's own payload, which omits `fx_rate`), so the What-If panel always prices against the *live* FX rate, while `TradeEntry.js`'s `PositionSizingWidget` uses a manually-entered field defaulting to a static `1.27`. If the live rate has moved since the plan was drafted, the two suggested sizes can diverge. This does not violate the formally-stated AC-02 ("no DB write occurs from interacting with the preview alone" holds regardless), and is rooted in the design spec's own payload/reasoning rather than an implementation deviation — but the §5d.3 "reproduces an identical suggested size" claim is stronger than the implementation actually guarantees for US-market plans.
+
+**Scope**
+- Either (a) add an optional FX-rate override field to the What-If panel (or the Trade Plan form generally) mirroring `TradeEntry.js`'s field, or (b) soften §5d.3's wording to note the live-rate caveat for US-market plans explicitly
+
+**Acceptance Criteria**
+- `trade_plan.md` §5d.3's reproducibility claim is either made accurate (FX override added) or explicitly scoped to note the US-market live-rate caveat
+- Frontend Specifications & UX Documentation Owner sign-off
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-10/EPIC-02):** Shipped — commit `5f51a0d0c9`. See `execution_state.json` ST-10 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-02.md` for the full delivery record.
+
+---
+
+### BLG-TECH-15 — backtest_rule_service.py's ported algorithm functions can silently drift from production_strategy.py
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-TECH-15 — backtest_rule_service.py's ported algorithm functions can silently drift from production_strategy.py
+
+**Priority:** P2 (Medium)
+**Type:** Platform / Technical Debt
+**Owner:** Backend Engineering Patterns Owner; Strategy Rules & System Intent Owner
+**Source:** ST-07/EPIC-02, 2026-08-17__release-v8.9 — 2026-08-18
+**Effort:** M (~1-2d)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-05/EPIC-01, cycle `2026-08-21__release-v9.0`
+
+**Problem**
+ST-07 (BLG-FEAT-89, In-app backtesting engine) added `backend/services/backtest_rule_service.py`, which ports (copies, does not import) `production_strategy.py`'s `compute_signals`/`compute_atr`/`compute_risk_on`/`transaction_fee`/`backtest` functions. This was a deliberate choice, not an oversight: `production_strategy.py` is a standalone script (never used as a library, has import-time side effects) whose `backtest()` reads regime state from module-level globals (`spy_risk_on`/`ftse_risk_on`) — unsafe to import and mutate from a concurrent web-server process, where two simultaneous requests would race on the same globals. The port is behaviourally identical except regime state is threaded through as an explicit parameter instead of module globals. However, this means the two copies of the core momentum-strategy algorithm can now silently drift apart if `production_strategy.py`'s logic changes (e.g. a future tuning of the stop-loss/rebalance/sizing logic) without the port being updated to match — financially significant, since both feed comparative decision-support output.
+
+**Scope**
+- Extract the pure, parameter-only algorithm logic (`compute_signals`, `compute_atr`, `compute_risk_on`, `transaction_fee`, and a globals-free `backtest`) into a genuinely shared module both `production_strategy.py` and `backend/services/backtest_rule_service.py` import — e.g. a new root-level `strategy_engine/` package, or `backend/services/` if `production_strategy.py` can safely import from `backend/`
+- `production_strategy.py`'s own `is_risk_on`/module-global usage would need updating to call the shared `backtest()` with explicit regime parameters, matching the port's existing signature
+- Add a CI check (or a simple hash/diff comparison) that fails if the two implementations diverge, until the consolidation above ships
+
+**Acceptance Criteria**
+- Exactly one implementation of `compute_signals`/`compute_atr`/`compute_risk_on`/`transaction_fee`/`backtest` exists; both `production_strategy.py` and `backend/services/backtest_rule_service.py` use it
+- Nightly backtest (`.github/workflows/backtest.yml`) and the in-app Backtest Rule Change endpoint both continue to produce the same historical results as before the consolidation (regression-verified against a fixed historical run)
+- Backend Engineering Patterns Owner and Strategy Rules & System Intent Owner sign-off
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-05/EPIC-01):** Shipped — commit `2dd2480078`. See `execution_state.json` ST-05 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-01.md` for the full delivery record.
+
+---
+
+### BLG-BE-107 — Configure root/app logging so logger.info() calls in application code actually reach Render's captured logs
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-BE-107 — Configure root/app logging so logger.info() calls in application code actually reach Render's captured logs
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-09 (EPIC-03, v8.9, BLG-BE-99) evidence-gathering session — 2026-08-20
+**Effort:** S (~0.5d)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-02/EPIC-01, cycle `2026-08-21__release-v9.0`
+
+**Problem**
+Production runs `uvicorn main:app --host 0.0.0.0 --port $PORT` (per `render.yaml`'s `startCommand`) with no `--log-config`/`--log-level` flag, and `backend/main.py` never calls `logging.basicConfig()` or otherwise configures the root logger (confirmed via repo-wide grep — no `basicConfig`/`addHandler`/`dictConfig` anywhere in `backend/`). Uvicorn's own default logging setup only wires up its own named loggers (`uvicorn`, `uvicorn.error`, `uvicorn.access`) — it never touches the root logger or any `logging.getLogger(__name__)` logger used throughout the app's service modules. With the root logger left at its default level (WARNING) and no handler attached, every `logger.info(...)` call anywhere in application code is filtered out before it ever reaches a handler, and is silently dropped rather than erroring or warning anyone. This was empirically confirmed: a real, successful `POST /digest/si05/send` invocation on 2026-08-20 (Render deploy log, `07:11:51Z`, 200 OK) produced no corresponding `"SI-05 digest sent (%d chars) in %.2fs"` line anywhere in the surrounding log window, even though that `logger.info()` call sits directly in the code path that ran.
+
+**Scope**
+- Add a root logging configuration (e.g. `logging.basicConfig(level=logging.INFO)` early in `backend/main.py`, or an explicit `--log-config` passed to uvicorn) so that INFO-level (and above) records from application-module loggers propagate to a handler that writes to stdout/stderr, where Render's log pipeline captures them
+- Confirm the fix doesn't create duplicate/conflicting handlers with uvicorn's own access/error logging
+- Verify via one real invocation post-deploy that `services/si05_digest_service.py`'s `"SI-05 digest sent..."` line (and ideally at least one other existing `logger.info()` call elsewhere in the app) now actually appears in Render's captured logs
+
+**Acceptance Criteria**
+- Root logging is configured such that `logger.info()` calls from any `backend/` module reach stdout/stderr in the running process
+- A real post-deploy production invocation confirms at least the `si05_digest_service.py` duration line is now captured in Render logs (this also closes the outstanding evidence gap referenced by `ST-09`/`BLG-BE-99`'s original AC)
+- No regression to uvicorn's own existing access/error log formatting or duplicate log lines
+- `docs/ops/api_performance_baseline.md` §36 updated with the real log-derived timing once available, superseding the interim GitHub-Actions-proxy measurements recorded there (§36.3 and §36.5)
+
+**Returned to backlog (2026-08-21, cycle `2026-08-21__release-v9.0`, ST-02/EPIC-01):** Same structural blocker recurred — the code fix (`backend/main.py`'s `logging.basicConfig()`) is complete and merge-ready, but the remaining ACs (real post-deploy log confirmation, baseline doc update) require the fix to already be live in production, not obtainable pre-merge; see `execution_state.json` ST-02 and delegation record `DEL-20260821-01` for this cycle's disposition.
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-02/EPIC-01):** PR #1492 merged and deployed to production; a real post-deploy invocation confirmed the digest-timing line now reaches Render's captured logs (`"SI-05 digest sent (498 chars) in 0.37s"`, confirmed directly in the Render dashboard log viewer). All ACs met — see `docs/ops/api_performance_baseline.md` §36.7, `execution_state.json` ST-02 (`done`), and delegation record `DEL-20260821-01`'s final resolution addendum.
+
+---
+
+### BLG-TECH-17 — Debrief-generation prompt encourages cross-trade pattern language with no data to back it
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-TECH-17 — Debrief-generation prompt encourages cross-trade pattern language with no data to back it
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / AI Governance
+**Owner:** Backend Engineering Patterns Owner; AI Compliance & Governance Officer
+**Source:** Agent-mediated Director of Quality review, PR #1460 (ST-06, EPIC-02, v8.9) — 2026-08-20
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-04/EPIC-01, cycle `2026-08-21__release-v9.0`
+
+**Problem**
+`backend/services/debrief_service.py`'s `_FOCUS_AREA_SYSTEM` prompt instructs the model toward pattern-surfacing phrasing like "this is the Nth trade where X occurred," but no cross-trade frequency/count data is ever computed or passed into `source_values` for `numeric_cross_check()` to verify such a number against. Any count the model states will either fail the §13 review's Condition 9 numeric cross-check and trigger the no-focus-area fallback (a frequent, silent loss of the feature's main value), or — worse — coincidentally match one of the trade's own unrelated numeric fields (entry price, P&L, etc.) by chance and pass despite being an ungrounded guess. Found during PR #1460's agent-mediated Director of Quality review.
+
+**Scope**
+- Decide one of two directions: (a) remove the cross-trade pattern-language framing from `_FOCUS_AREA_SYSTEM` until real aggregates exist, or (b) compute a small set of genuine historical counts (e.g. `trades_this_setup_type_count`, `consecutive_early_exit_count`) in `debrief_service.py` and add them to `source_values` so such claims become genuinely verifiable
+- If (b): add the new counts to the prompt's user template and to `numeric_cross_check`'s allowed-number set
+- Add a test case covering a model-generated cross-trade count claim against the chosen fix
+
+**Acceptance Criteria**
+- The prompt's encouraged phrasing style matches what the numeric cross-check can actually verify — no encouraged claim type is systematically un-verifiable
+- `tests/test_debrief_service.py` covers the chosen fix (either an added-source-value verification case, or a removed-phrasing regression test)
+- Backend Engineering Patterns Owner sign-off
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-04/EPIC-01):** Shipped — commit `c6b9c95068`. See `execution_state.json` ST-04 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-01.md` for the full delivery record.
+
+---
+
+### BLG-BE-108 — Decide "linked journal entries" data source for the AI Post-Trade Debrief (red_flag_events vs. trade_history entry/exit notes)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-BE-108 — Decide "linked journal entries" data source for the AI Post-Trade Debrief (red_flag_events vs. trade_history entry/exit notes)
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Product Owner; Backend Engineering Patterns Owner
+**Source:** Agent-mediated Product Owner review, PR #1460 (ST-06, EPIC-02, v8.9) — 2026-08-20
+**Effort:** S (~0.5d, once decided)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-03/EPIC-01, cycle `2026-08-21__release-v9.0`
+
+**Problem**
+ST-06's acceptance criterion "Debrief references plan-vs-reality data and any linked journal entries where present" was implemented (`backend/services/debrief_service.py::_journal_context_for_trade`) by sourcing "journal entries" from `red_flag_events` — the separate, system-generated Red Flag Journal feature — rather than `trade_history.entry_note`/`exit_note`, the fields this same codebase already labels "Trade Journal" one section above the new Debrief panel in the identical Trade History expandable row (`TradeHistoryTable.js`). This is a plausible but debatable reading of the AC, flagged by an agent-mediated Product Owner review as needing an explicit decision rather than an implicit one.
+
+**Scope**
+- Product Owner decides: should the debrief prompt draw on `entry_note`/`exit_note` instead of (or in addition to) `red_flag_events`?
+- If entry/exit notes are added: extend `_journal_context_for_trade` (or a renamed equivalent) to include them in the prompt context, subject to the same §13 Condition 2 sourcing discipline already applied to numeric values (free-text notes aren't numbers, so this only affects prompt context, not `numeric_cross_check`)
+- Update `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md` or `trade_endpoints.md` with the confirmed interpretation, if it changes behaviour
+
+**Acceptance Criteria**
+- Product Owner decision recorded (keep `red_flag_events`-only, add entry/exit notes, or both)
+- If implementation changes: `tests/test_debrief_service.py` covers the new data source; full backend suite re-verified passing
+- Spec updated to reflect the confirmed interpretation of "linked journal entries"
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-03/EPIC-01):** Shipped — commit `94b759cb6e`. See `execution_state.json` ST-03 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-01.md` for the full delivery record.
+
+---
+
+### BLG-BE-109 — Nightly backtest rebalance-date computation treats the current in-progress month's latest bar as month-end
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-09-03
+**Shipped in:** v9.0
+**Evidence:** docs/product/changelog.md#v90; claude/cycles/2026-08-21__release-v9.0/verification_report.md
+
+### BLG-BE-109 — Nightly backtest rebalance-date computation treats the current in-progress month's latest bar as month-end
+**Priority:** P1 (High)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner
+**Source:** User review session — 2026-08-21 (found while investigating unexpected INTC/WDC trade behaviour in the nightly backtest output)
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** ✅ COMPLETE — 2026-09-03 — ST-01/EPIC-01, cycle `2026-08-21__release-v9.0`
+
+**Problem**
+`production_strategy.py` and its in-app port `backend/services/backtest_rule_service.py` both compute monthly rotation checkpoints as `prices.groupby(prices.index.to_period(period_freq)).tail(1).index`. This is correct for every completed past month, but for the current, still-in-progress month it silently resolves to "whichever trading day happens to be the most recent row currently in the data" — not the genuine last trading day of the month. Verified with a direct pandas repro: a business-day index for 2026-08-01 → 2026-08-20 (August not yet complete) returns `2026-08-20` as the sole rebalance date. Because `.github/workflows/backtest.yml` reruns `production_strategy.py` from scratch every night (`0 1 * * *`) and `import_backtest.py` does a full DELETE+INSERT of results, this means the monthly "No longer qualifies" rotation-exit logic fires on the latest bar **every single night** throughout the current month, not once at true month-end — generating spurious rotation-exit trades (wrong `exit_reason`, wrong `holding_days`) and same-day rebuys via the unconditional daily slot-fill-in for any ticker still in the qualifying set. Observed live: INTC exited "No longer qualifies" and WDC exited-then-rebought in the same nightly run on 2026-08-20, three weeks before August's real last trading day (2026-08-31).
+**Impact:** Corrupts the nightly backtest trade history every night mid-month until the real month-end arrives and the group tail catches up. Not caught by `import_backtest.py`'s existing `BACKTEST_DRIFT_ALERT` check, which only detects P&L drift with zero new closed trades — a different anomaly class from this (which produces genuine, but wrongly-dated, new trades).
+
+**Scope**
+- Fix `rebalance_dates` in both `production_strategy.py` and `backend/services/backtest_rule_service.py` to exclude the in-progress month — e.g. drop the final group if its period equals the current calendar period, or only take `tail(1)` of month-groups whose max date is before today
+- Add a regression test with a mid-month date index confirming no rebalance date is returned for the current, incomplete month
+- Note in the story whether nightly-imported trade history already corrupted by this bug (any `exit_reason = "No longer qualifies"` trade dated before a true month-end) needs a one-off cleanup on next import, given the full DELETE+INSERT self-heals it automatically at the next true month-end
+
+**Acceptance Criteria**
+- `rebalance_dates` never includes a date from the current, incomplete calendar month in either file
+- Regression test added and passing for the mid-month case
+- `tests/backtest_data_integrity_smoke_test.py`-class checks re-verified passing (no new invariant broken)
+- Backend Engineering Patterns Owner sign-off
+
+
+**Resolved (2026-09-03, cycle `2026-08-21__release-v9.0`, ST-01/EPIC-01):** Shipped — commit `7a91deaaea`. See `execution_state.json` ST-01 (`done`) and `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-01.md` for the full delivery record.
 
 ---
 

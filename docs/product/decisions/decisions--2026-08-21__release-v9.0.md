@@ -1,9 +1,9 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.0
 Cycle: 2026-08-21__release-v9.0
-Last Updated: 2026-08-21
+Last Updated: 2026-09-03
 
 ## Planning Decisions — v9.0 AI Debrief/Backtest Follow-Through, Risk-Data Integrity & Operational Resilience
 
@@ -29,8 +29,7 @@ Last Updated: 2026-08-21
 | None | — | No escalations raised this cycle | — | — |
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
+Superseded by: v9.0 ship — 2026-09-03
+Changelog: docs/product/changelog.md#v90
 Cycle: 2026-08-21__release-v9.0

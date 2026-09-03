@@ -1,9 +1,9 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.0
 Cycle: 2026-08-21__release-v9.0
-Last Updated: 2026-08-21
+Last Updated: 2026-09-03
 
 ## Release Scope — v9.0 AI Debrief/Backtest Follow-Through, Risk-Data Integrity & Operational Resilience
 
@@ -25,9 +25,8 @@ Last Updated: 2026-08-21
 | `BLG-GOV-105` | Already ✅ CLOSED (confirmed duplicate); pending `groom backlog` archival. | `groom backlog` archival |
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
-Verification report: [TBD]
+Superseded by: v9.0 ship — 2026-09-03
+Changelog: docs/product/changelog.md#v90
+Verification report: claude/cycles/2026-08-21__release-v9.0/verification_report.md
 Cycle: 2026-08-21__release-v9.0

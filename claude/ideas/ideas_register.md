@@ -2,7 +2,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Version:** 3.1
-**Last Updated:** 2026-08-21 (ideas_housekeeping — post-ship closure 2026-08-17__release-v8.9 — 0 rows archived; register held 1 row at run start, `IDEA-challenger-20260809-02`, Rejected but present in `rejected_but_strong.md` — confirmed still Keep per §6.2, not terminal); prior — 2026-08-17 (ideas_housekeeping — post-ship closure 2026-08-14__release-v8.8 — 0 rows archived; register held 1 row at run start, same IDEA, same disposition); prior — 2026-08-13 (ideas_housekeeping — post-ship closure 2026-08-12__release-v8.7 — 0 rows archived; same row, same disposition); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-03 (ideas_housekeeping — post-ship closure 2026-08-21__release-v9.0 — 0 rows archived; register held 1 row at run start, `IDEA-challenger-20260809-02`, Rejected but present in `rejected_but_strong.md` — confirmed still Keep per §6.2, not terminal); prior — 2026-08-21 (ideas_housekeeping — post-ship closure 2026-08-17__release-v8.9 — 0 rows archived; register held 1 row at run start, same IDEA, same disposition); prior — 2026-08-17 (ideas_housekeeping — post-ship closure 2026-08-14__release-v8.8 — 0 rows archived; same row, same disposition); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # Ideas Register
