@@ -3,11 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 3.3
-**Last Updated:** 2026-08-14
+**Version:** 3.4
+**Last Updated:** 2026-09-03 (v9.1 design gate — Advisory Label badge colour-contrast fix, ST-01/BLG-FE-165)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v8.8
 **EPIC:** EPIC-03
+**Design Source (v3.4):** docs/design/2026-09-03__release-v9.1/dashboardhome-ai-advisory-badge-contrast/decision_record.md (BLG-FE-165)
 **Design Source (v3.3):** docs/design/2026-08-14__release-v8.8/whats-new-user-benefit-copy/decision_record.md (BLG-FE-161)
 **Design Source (v3.2):** docs/design/2026-07-24__release-v7.8/whats-new-panel/ux_spec.md (BLG-FE-128)
 **Design Source (v3.1):** docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarchy/ux_spec.md (BLG-FE-111)
@@ -228,7 +229,7 @@ Design source (icon addition): `docs/design/2026-07-15__release-v7.2/dashboard-b
 ### Advisory Label
 
 Below header bar, above body:
-- Amber badge "AI Advisory" (`#D97706` background, white text)
+- Amber badge "AI Advisory" (`#B45309` background — `bg-amber-700`, white text; darkened from `#D97706`/`bg-amber-600` v9.1 design gate, WCAG AA colour-contrast fix — see §9 v3.4)
 - Inline static text: "All actions require your confirmation" (`text-slate-700 dark:text-slate-300` italic, 12px — contrast ≥4.5:1 on both `bg-slate-800` (dark) and `bg-slate-100` (light); dark value unchanged since v2.5/BLG-UX-01, light companion added v2.6/BLG-FE-88; was bare `text-slate-500` prior to v2.5/BLG-UX-01)
 - **Non-dismissible**
 
@@ -421,6 +422,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.4 | 2026-09-03 | v9.1 design gate — Advisory Label badge colour fix (ST-01, EPIC-01, BLG-FE-165): background darkened `bg-amber-600` (`#D97706`) → `bg-amber-700` (`#B45309`), white text unchanged — was 3.18:1 (FAIL vs. WCAG AA 4.5:1 for 12px semibold text), now 5.02:1 (PASS). Same amber hue family, one shade darker; no other property changed. Design source: `docs/design/2026-09-03__release-v9.1/dashboardhome-ai-advisory-badge-contrast/decision_record.md`. Head of UX & Design sign-off: 2026-09-03. Product Owner approved: 2026-09-03. Head of Specs Team confirmed. |
 | 3.3 | 2026-08-14 | v8.8 design gate — §6A What's New Panel body source changed (ST-13, EPIC-03, BLG-FE-161): now reads a new `User Impact` column from `changelog.md`'s `### Changes shipped` table instead of `Description`; rows with an empty `User Impact` cell are excluded from the feed. `Description` unchanged, retained as the engineering record. No component/layout/rendering change to `WhatsNewCard.js` itself. Design source: `docs/design/2026-08-14__release-v8.8/whats-new-user-benefit-copy/decision_record.md`. Head of UX & Design sign-off: 2026-08-14. Product Owner approved: 2026-08-14. Head of Specs Team confirmed. |
 | 3.2 | 2026-07-24 | v7.8 design gate — §6A What's New Panel added (ST-01, EPIC-01, BLG-FE-128): new full-width secondary-tier card below the Gate Progress Indicator strip, showing the most recent release's `### Changes shipped` entries parsed server-side from `docs/product/changelog.md` (no hardcoded copy, no manual re-wiring per release). `DataState` default sizing (loading/error/empty per `design_system.md`). Display-only, no dismiss/collapse, no navigation. Backend endpoint to parse the changelog does not exist yet — flagged as a sprint-execution implementation dependency requiring an API contract entry in the same commit. Design source: `docs/design/2026-07-24__release-v7.8/whats-new-panel/ux_spec.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |
 | 3.1 | 2026-07-15 | v7.2 design gate — §1A Morning Briefing Section (ST-06, BLG-FE-111): enclosing panel added around the section (`bg-slate-100/60 dark:bg-slate-900/40`, explicit light/dark pair) to visually separate it from the session-summary grid; section label upgraded to `Sunrise` icon + `text-sm font-semibold` (from plain caption weight). §5 AI Daily Briefing Card: `Sparkles` icon added to the header, matching the "AI draft" badge convention, to share the same "intelligence section" visual language as the Morning Briefing panel. No change to any card's data, queries, or the `dashboard-retry-root` retry behaviour. Design source: dashboard-briefing-hierarchy/ux_spec.md. Approved: Product Owner 2026-07-15. Head of Specs Team confirmed. |
