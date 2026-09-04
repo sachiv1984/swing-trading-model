@@ -18,12 +18,16 @@ only. The suggested share count remains user-editable (design record §3).
 DB-first sector lookup (no live yfinance call) — safe for the sizing
 endpoint's 300ms-debounced call pattern (strategy_rules.md §4.1.7).
 
-Known duplication (filed as BLG-TECH-13): `routers/pre_entry_validation.py`,
-`services/compliance_recheck_service.py`, and `routers/portfolio_risk.py`
-each already carry their own independent sector-lookup implementation. This
-module intentionally does not refactor those call sites — they are working,
-independently tested code outside ST-04's scope — but adding this as a
-fourth implementation is itself now tracked as consolidation debt.
+Consolidation (ST-10, BLG-TECH-13, v9.1): this module is now the canonical
+home for both sector-lookup shapes used across the codebase — the
+single-ticker `get_ticker_sector()` (DB then open-position fallback) and the
+bulk `get_ticker_sector_map()` (DB-only, all tickers with a recorded sector,
+for callers that need exposure across many positions in one query).
+`routers/pre_entry_validation.py` and `routers/portfolio_risk.py` import and
+delegate to these rather than carrying their own copies;
+`services/compliance_recheck_service.py` delegates transitively via its
+existing import from `pre_entry_validation`. No behaviour change — same SQL,
+same fallback order, same return shapes as the pre-consolidation copies.
 """
 
 from typing import Dict, Optional
@@ -64,6 +68,23 @@ def get_ticker_sector(ticker: str) -> Optional[str]:
     except Exception:
         pass
     return None
+
+
+def get_ticker_sector_map(conn) -> Dict[str, str]:
+    """
+    Bulk ticker -> sector map from ticker_universe (ST-10, BLG-TECH-13).
+
+    Pure DB read via an already-open `conn` — no yfinance call, no
+    open-position fallback (unlike get_ticker_sector() above, this is for
+    callers computing exposure across many positions in one query and
+    reusing a connection across several queries in the same request).
+    Canonical implementation for routers/portfolio_risk.py's sector-weights
+    and concentration-status endpoints.
+    """
+    with conn.cursor() as cur:
+        cur.execute("SELECT ticker, sector FROM ticker_universe WHERE sector IS NOT NULL")
+        rows = cur.fetchall()
+    return {row["ticker"]: row["sector"] for row in rows}
 
 
 def get_sector_exposure(sector: str) -> Optional[Dict]:

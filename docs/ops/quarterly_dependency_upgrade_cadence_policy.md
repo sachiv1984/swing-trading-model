@@ -1,9 +1,9 @@
 **Owner:** Head of Engineering
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-08-21
-**Story:** ST-27 (BLG-OPS-98, EPIC-05, v9.0)
+**Version:** 1.1
+**Last Updated:** 2026-09-04 (ST-08, BLG-TECH-18, EPIC-02, v9.1 — §3.1 amended with the actual root cause of the build regression, found via re-investigation: not the suspected eslint-config-react-app peer conflict); prior — 2026-08-21 (first quarterly pass recorded, ST-27, BLG-OPS-98, EPIC-05, v9.0)
+**Story:** ST-27 (BLG-OPS-98, EPIC-05, v9.0); ST-08 (BLG-TECH-18, EPIC-02, v9.1)
 
 ---
 
@@ -42,6 +42,14 @@ Root cause was not conclusively isolated within this story's own effort budget (
 **This is the policy working as designed, not a failure of it:** §2 exists specifically so a "safe minor bump" that turns out not to be safe gets caught and stopped before merge, rather than assumed safe because the version numbers looked routine. No frontend package was actually bumped in this pass; `package.json`/`package-lock.json` are unchanged from before this story.
 
 **Deferred (major-version bumps, out of scope regardless of the above):** `eslint` → 10.9.0, `framer-motion` → 13.1.1, `lucide-react` → 1.33.0, `tailwindcss` → 4.3.3 — each requires its own review of breaking changes (ESLint 10, Tailwind 4 in particular have significant migration surface).
+
+### 3.1.1 BLG-TECH-18 resolution — actual root cause was not eslint-config-react-app (ST-08, EPIC-02, v9.1, 2026-09-04)
+
+Re-investigation found the `eslint-config-react-app` "Failed to load config" error recorded above in §3.1 was a **symptom, not the root cause**. The actual cause was a fourth, unrelated `package.json` dependency already present before this quarterly pass: `"root": "github:tanstack/react-query"` — a `git+ssh://` GitHub reference. `git+ssh` dependencies require SSH host-key trust and credentials for `github.com` to be configured in the environment running `npm install`/`npm ci`; when they are not (the normal state of a CI runner or a fresh clone with no SSH agent), npm's dependency resolver hard-fails during "git dep preparation" **before `node_modules` finishes populating** — an incremental `npm update` against an already-populated `node_modules` can mask this (the stale git-dependency artifact from a prior successful clone is still on disk), but a clean install (`rm -rf node_modules && npm ci`, exactly what §3.1's revert-and-reinstall verification did) reliably re-triggers the fetch and fails outright. Because the failure aborts mid-install, whichever packages hadn't yet been laid down on disk — `eslint-config-react-app` among them in the run that produced §3.1's error — are absent from `node_modules` while still listed in the lockfile-derived `npm ls` tree, producing exactly the "present in `npm ls` but genuinely fails to install" symptom §3.1 described. Confirmed directly: `git ls-remote git+ssh://git@github.com/tanstack/react-query.git` fails with "Host key verification failed" in this environment, while the equivalent `https://` URL succeeds — the `"root"` entry was traced via `git log -p -- package.json` to a past `npm install tanstack/react-query` typo (GitHub-shorthand form instead of the intended `@tanstack/react-query` registry package, which is already a separate, correct dependency).
+
+**Fix applied:** removed the `"root"` entry from `package.json` (dead weight — nothing in `src/` imports it; `@tanstack/react-query` already covers the real dependency). With it gone, a full clean `rm -rf node_modules && npm ci` succeeds reliably. The §3.1 candidate list was then reapplied on top of this fix: all 20 packages bump cleanly, `recharts`'s `react-is` peer-dependency resolves on its own in the current registry state (no explicit `react-is` pin needed — reproduced fresh, unlike the earlier §3.1 attempt), `CI=false npm run build` succeeds, and the full Playwright E2E suite was re-run against the updated tree (see `sprint_close.md`/`qa_evidence_EPIC-02.md` for the run result). Two more clearly-erroneous, unused entries (`"x"`, `"textarea"`) and one namesquatted decoy package (`"sqlalchemy"`, unrelated to and impersonating the real Python library) were found alongside `"root"` during this investigation but are not implicated in the build failure and were left in place — filed as `BLG-TECH-19` for a dedicated follow-up rather than folded into this fix.
+
+**Environment note:** the bumped `@playwright/test` (1.58.2 → 1.62.1) pins a newer Chromium build than was cached locally, surfacing as `browserType.launch: Executable doesn't exist` on the first E2E run after the bump — expected, not a regression; resolved by `npx playwright install chromium`. Noted here since `.github/workflows/playwright.yml`'s CI runners already run `npx playwright install --with-deps` fresh on every job, so this is a local/dev-environment-only step, not a CI risk.
 
 ### 3.2 Backend — `requirements.txt` (7 packages bumped, same-major-version)
 

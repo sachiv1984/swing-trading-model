@@ -12,6 +12,7 @@ Contracts: docs/specs/api_contracts/portfolio_endpoints.md
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from database import get_db, get_portfolio, get_positions, get_portfolio_snapshots, get_gate_metrics, get_sector_regime_history
+from services.concentration_service import get_ticker_sector_map as _get_ticker_sector_map
 from utils.formatting import decimal_to_float
 from utils.position_lifecycle_states import EXIT_ZONE, PROFITABLE, LOSING, GRACE, UNKNOWN
 
@@ -35,17 +36,6 @@ def _get_settings_value(key: str, default):
     except Exception:
         pass
     return default
-
-
-def _get_ticker_sector_map(conn) -> dict:
-    """Ticker -> sector lookup from ticker_universe. Pure DB read — no yfinance
-    live-call added to the hot path (ST-12/AC-04). Positions never carry their
-    own `sector` column; sector data only lives in `ticker_universe`.
-    """
-    with conn.cursor() as cur:
-        cur.execute("SELECT ticker, sector FROM ticker_universe WHERE sector IS NOT NULL")
-        rows = cur.fetchall()
-    return {row["ticker"]: row["sector"] for row in rows}
 
 
 def _lookup_sector(ticker_sector_map: dict, ticker: str, market: str):
