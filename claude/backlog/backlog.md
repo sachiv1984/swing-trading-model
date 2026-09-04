@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-04 (session — 1 new item added: BLG-FE-170, Settings page heading-order axe-core finding, non-blocking, surfaced during v9.1 EPIC-01 DoQ review); prior — 2026-09-03 (Release Planning v9.1 — Release Slice section added, 41 items across 5 EPICs, marker RP:v9.1:2026-09-03__release-v9.1; `BLG-FEAT-92`/`BLG-FEAT-30` reconciliation decided — see `docs/product/decisions/decisions--2026-09-03__release-v9.1.md`); prior — 2026-09-03 (session — 1 new item added: BLG-GOV-315, structural fix for the deviation-resolution-status-drift pattern escalated at post-ship closure STEP 5.1's 4th consolidation review run); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-04 (session — 4 new items added: BLG-FE-170 (Settings page heading-order axe-core finding, non-blocking, surfaced during v9.1 EPIC-01 DoQ review), BLG-QA-157, BLG-SPEC-134, BLG-FE-171 (all three surfaced during v9.1 EPIC-01's dual agent-mediated PR review on PR #1535)); prior — 2026-09-03 (Release Planning v9.1 — Release Slice section added, 41 items across 5 EPICs, marker RP:v9.1:2026-09-03__release-v9.1; `BLG-FEAT-92`/`BLG-FEAT-30` reconciliation decided — see `docs/product/decisions/decisions--2026-09-03__release-v9.1.md`); prior — 2026-09-03 (session — 1 new item added: BLG-GOV-315, structural fix for the deviation-resolution-status-drift pattern escalated at post-ship closure STEP 5.1's 4th consolidation review run); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4399,6 +4399,28 @@ None of `src/components/analytics/Arc5ComplianceSection.js`'s three formatter fu
 
 ---
 
+### BLG-QA-157 — accessibility-axe-scan.spec.js's runAxeScan() uses a fixed sleep instead of a condition-based wait
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** v9.1 EPIC-01 dual agent-mediated PR review (Director of Quality perspective), PR #1535, cycle 2026-09-03__release-v9.1 — 2026-09-04
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`tests/e2e/accessibility-axe-scan.spec.js`'s `runAxeScan()` helper now has a fixed `await page.waitForTimeout(1000)` before every axe scan (added as part of v9.1 ST-05 to avoid sampling a page mid framer-motion fade-in animation, which was producing a transient false-positive `color-contrast` finding on the Settings page). This works today but is a classic flaky-test anti-pattern — a blanket sleep rather than a condition-based wait. If CI ever runs slower, or a page's animation duration changes, 1000ms could silently stop being enough — and unlike before, there is no `KNOWN_VIOLATIONS` grandfather entry left to catch a resurfacing regression; the test would just intermittently pass/fail with no diagnostic trail pointing back to a timing race.
+
+**Scope**
+- Replace the fixed `waitForTimeout(1000)` with a condition-based wait — e.g. `page.waitForFunction` polling the relevant container's computed opacity reaching 1, or disabling/short-circuiting framer-motion transitions in the Playwright browser context for this spec — so the scan deterministically runs post-animation rather than after a fixed guess
+
+**Acceptance Criteria**
+- `runAxeScan()` no longer relies on a fixed-duration sleep to avoid animation-timing false positives
+- All 4 existing page scans (`DashboardHome`, `Positions`, `TradePlan`, `Settings`) continue to pass with the new wait mechanism
+- QA & Testing Owner sign-off
+
+---
+
 ### BLG-SPEC-133 — position_endpoints.md example JSON: current_trailing_stop_native doesn't reconcile with current_trailing_stop × live_fx_rate
 
 **Priority:** P4 (Trivial)
@@ -4417,6 +4439,28 @@ Purely an illustrative-example inconsistency (not test-enforced, no functional i
 **Acceptance Criteria**
 - Example JSON block in `docs/specs/api_contracts/position_endpoints.md` is internally consistent (`current_trailing_stop × live_fx_rate == current_trailing_stop_native`, within rounding)
 - API Contracts & Documentation Owner sign-off (or Head of Specs Team, per standard doc-fix delegation)
+
+---
+
+### BLG-SPEC-134 — Motion-vs-contrast trade-off (entrance fade-in animations) has no design_system.md guideline
+
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Accessibility Guideline
+**Owner:** Head of UX & Design
+**Source:** v9.1 EPIC-01 dual agent-mediated PR review (Product Owner perspective), PR #1535, cycle 2026-09-03__release-v9.1 — 2026-09-04
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The v9.1 ST-05 fix for the Settings-subtitle `color-contrast` axe finding determined no colour change was needed — the finding was actually a scan-timing race against the page's framer-motion entrance fade-in (opacity 0→1), not a real contrast defect, and was fixed at the test level (see `BLG-QA-157`). This trade-off — a text element can render at transiently-reduced contrast during its own entrance animation, and the accessibility test now deliberately waits past that window rather than asserting on it — was never reviewed by Head of UX & Design against `docs/specs/frontend/design_system.md`'s motion/accessibility principles. The same fade-in-on-page-load pattern (`PageHeader.js` and other page-level `motion.div` containers) likely exists on every page in the app, not just Settings, meaning this same transient-low-contrast window is likely universal and currently untested everywhere else.
+
+**Scope**
+- Head of UX & Design review of whether transient reduced-contrast during entrance animations needs an explicit guideline in `design_system.md` (e.g. a maximum acceptable animation duration for text elements, or a requirement that text-bearing elements skip opacity animation)
+- Confirm whether this same pattern is worth testing on other pages beyond Settings, or whether the Settings-specific fix (`BLG-QA-157`) is sufficient once generalised
+
+**Acceptance Criteria**
+- `design_system.md` either gains an explicit guideline addressing text-element entrance-animation contrast, or records an explicit decision that no guideline is needed and why
+- Head of UX & Design sign-off
 
 ---
 
@@ -4706,6 +4750,27 @@ The new standalone axe-core CI scan found a `serious`-impact `color-contrast` vi
 **Acceptance Criteria**
 - axe-core no longer reports a `heading-order` violation for the Settings page
 - No visual/layout regression (heading level correction should be semantic-only, e.g. `h2`/`h3` tag change with equivalent styling preserved via className, not a visible redesign)
+
+---
+
+### BLG-FE-171 — aria-label duplicates visible label text instead of using aria-labelledby (TradePlan.js, Settings.js)
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** v9.1 EPIC-01 dual agent-mediated PR review (Director of Quality perspective), PR #1535, cycle 2026-09-03__release-v9.1 — 2026-09-04
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+In `TradePlan.js` (Market/Status/Setup Type selects) and `Settings.js` (Default Currency/Theme `SelectTrigger` comboboxes), the v9.1 ST-02/ST-03 accessibility fixes added `aria-label` attributes that duplicate each field's already-rendered visible label text as a separate hardcoded string, rather than associating via `aria-labelledby` pointing at the existing visible label element. This passes axe-core today and is low risk, but the two copies of the label text (visible label + `aria-label` string) can drift silently if one is edited without the other, since no test asserts the `aria-label` string's content — only that the `select-name`/`button-name` rule passes.
+
+**Scope**
+- Replace the hardcoded `aria-label` duplicates in `TradePlan.js` and `Settings.js` with `aria-labelledby` referencing the existing visible label's `id` (may require adding `id`s to those label elements, consistent with the `id`/`htmlFor` pairing already added to Settings' plain `Input` fields in ST-04)
+
+**Acceptance Criteria**
+- All 5 affected controls (TradePlan: Market, Status, Setup Type; Settings: Default Currency, Theme) use `aria-labelledby` instead of a hardcoded `aria-label` string
+- `tests/e2e/accessibility-axe-scan.spec.js` continues to pass with no new violations
 
 ---
 
