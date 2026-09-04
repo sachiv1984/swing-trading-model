@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-04T15:30:23Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-04T16:20:00Z",
+  "last_updated_utc": "2026-09-04T17:00:00Z",
   "epics": {
     "EPIC-01": {
       "status": "done",
@@ -983,7 +983,8 @@
   },
   "process_notes": [
     "EPIC-01 DoQ agent-mediated review (2026-09-04) found 2 non-blocking items, both addressed same-session: (1) cosmetic Settings.js indentation fix; (2) pre-existing Settings heading-order axe finding filed as BLG-FE-170 per execution_prompt.md \u00a77's out-of-scope-finding backlog write exception.",
-    "Correction 2026-09-04: an intermediate 'git commit --amend' erroneously rewrote the already-pushed 8be831f5 commit instead of creating a new one. Caught before push completed (non-fast-forward rejection); fixed via 'git reset --soft 8be831f5' + fresh commit (7677de8b) rather than force-pushing over public history. 8be831f5 remains the authoritative EPIC-01 work commit; 7677de8b is the QA-evidence/DoQ-fixes follow-up."
+    "Correction 2026-09-04: an intermediate 'git commit --amend' erroneously rewrote the already-pushed 8be831f5 commit instead of creating a new one. Caught before push completed (non-fast-forward rejection); fixed via 'git reset --soft 8be831f5' + fresh commit (7677de8b) rather than force-pushing over public history. 8be831f5 remains the authoritative EPIC-01 work commit; 7677de8b is the QA-evidence/DoQ-fixes follow-up.",
+    "2026-09-04: PR #1535 developed a merge conflict in claude/backlog/backlog.md after a direct-to-main [GOVERNANCE] commit (51dc6295, adding BLG-QA-157/BLG-SPEC-134/BLG-FE-171) inserted at the same anchor point as this branch's own earlier BLG-FE-170 addition. Resolved per CLAUDE.md \u00a78's union rule (both sides' items kept, sequentially) via 'git merge origin/main' + manual conflict resolution, commit a9bfe188. No content lost on either side."
   ],
   "sealed": false,
   "sealed_utc": null
