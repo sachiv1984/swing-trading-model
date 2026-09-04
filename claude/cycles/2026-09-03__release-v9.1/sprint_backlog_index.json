@@ -1,0 +1,72 @@
+{
+  "cycle_id": "2026-09-03__release-v9.1",
+  "generated_utc": "2026-09-04T00:00:00Z",
+  "epics": {
+    "EPIC-01": {
+      "st_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-01",
+        "stage4_backlog_slice.md#ST-02",
+        "stage4_backlog_slice.md#ST-03",
+        "stage4_backlog_slice.md#ST-04",
+        "stage4_backlog_slice.md#ST-05",
+        "stage4_backlog_slice.md#ST-06",
+        "stage4_backlog_slice.md#ST-07"
+      ]
+    },
+    "EPIC-02": {
+      "st_items": ["ST-08", "ST-09", "ST-10", "ST-11"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-08",
+        "stage4_backlog_slice.md#ST-09",
+        "stage4_backlog_slice.md#ST-10",
+        "stage4_backlog_slice.md#ST-11"
+      ]
+    },
+    "EPIC-03": {
+      "st_items": ["ST-12", "ST-13", "ST-14", "ST-15", "ST-16", "ST-17", "ST-18"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-12",
+        "stage4_backlog_slice.md#ST-13",
+        "stage4_backlog_slice.md#ST-14",
+        "stage4_backlog_slice.md#ST-15",
+        "stage4_backlog_slice.md#ST-16",
+        "stage4_backlog_slice.md#ST-17",
+        "stage4_backlog_slice.md#ST-18"
+      ]
+    },
+    "EPIC-04": {
+      "st_items": ["ST-19", "ST-20", "ST-21", "ST-22", "ST-23", "ST-24", "ST-25", "ST-26", "ST-27", "ST-28"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-19",
+        "stage4_backlog_slice.md#ST-20",
+        "stage4_backlog_slice.md#ST-21",
+        "stage4_backlog_slice.md#ST-22",
+        "stage4_backlog_slice.md#ST-23",
+        "stage4_backlog_slice.md#ST-24",
+        "stage4_backlog_slice.md#ST-25",
+        "stage4_backlog_slice.md#ST-26",
+        "stage4_backlog_slice.md#ST-27",
+        "stage4_backlog_slice.md#ST-28"
+      ]
+    },
+    "EPIC-05": {
+      "st_items": ["ST-29", "ST-30", "ST-31", "ST-32", "ST-33", "ST-34", "ST-35", "ST-36", "ST-37", "ST-38", "ST-39", "ST-40", "ST-41"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-29",
+        "stage4_backlog_slice.md#ST-30",
+        "stage4_backlog_slice.md#ST-31",
+        "stage4_backlog_slice.md#ST-32",
+        "stage4_backlog_slice.md#ST-33",
+        "stage4_backlog_slice.md#ST-34",
+        "stage4_backlog_slice.md#ST-35",
+        "stage4_backlog_slice.md#ST-36",
+        "stage4_backlog_slice.md#ST-37",
+        "stage4_backlog_slice.md#ST-38",
+        "stage4_backlog_slice.md#ST-39",
+        "stage4_backlog_slice.md#ST-40",
+        "stage4_backlog_slice.md#ST-41"
+      ]
+    }
+  }
+}
