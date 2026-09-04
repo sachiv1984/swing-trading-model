@@ -418,7 +418,7 @@ export default function Settings() {
         <div className="space-y-2">
           <Label htmlFor="settings-min-trades-for-analytics" className="text-slate-600 dark:text-slate-400">Minimum Trades for Analytics</Label>
           <Input
-                id="settings-min-trades-for-analytics"
+            id="settings-min-trades-for-analytics"
             type="number"
             step="1"
             min="1"

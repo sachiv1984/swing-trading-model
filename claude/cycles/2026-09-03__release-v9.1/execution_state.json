@@ -5,16 +5,22 @@
   "invoked_utc": "2026-09-04T15:30:23Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-04T16:10:00Z",
+  "last_updated_utc": "2026-09-04T16:30:00Z",
   "epics": {
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-09-03__release-v9.1/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-03__release-v9.1/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/accessibility-axe-scan.spec.js",
+        "tests/e2e/trade-plan.spec.js",
+        "tests/e2e/position-sizing-concentration.spec.js",
+        "tests/e2e/what-if-sizing-preview.spec.js",
+        "tests/e2e/smoke-critical-paths.spec.js"
+      ],
       "stories": {
         "ST-01": {
           "title": "Fix DashboardHome \"AI Advisory\" badge colour-contrast violation",
@@ -23,11 +29,11 @@
           "assigned_to": "engine",
           "github_issue": 1494,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8be831f516a66c1bb9011da477b4cebbd161f7a0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-09-04T15:50:35Z",
           "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/accessibility-axe-scan.spec.js",
@@ -36,7 +42,7 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pre_commit",
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
           "notes": "axe-core color-contrast violation for DashboardHome AI Advisory badge fixed per approved design decision record (bg-amber-600 -> bg-amber-700, 5.02:1). KNOWN_VIOLATIONS entry removed. Verified: 4/4 axe-scan tests pass."
         },
@@ -47,11 +53,11 @@
           "assigned_to": "engine",
           "github_issue": 1495,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8be831f516a66c1bb9011da477b4cebbd161f7a0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-09-04T15:50:35Z",
           "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/accessibility-axe-scan.spec.js",
@@ -60,7 +66,7 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pre_commit",
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
           "notes": "aria-label added to TradePlan Market/Status/Setup Type <select> elements (Field wrapper label not programmatically associated). KNOWN_VIOLATIONS select-name entry removed. Verified: axe-scan + full trade-plan.spec.js (41/41) pass."
         },
@@ -71,11 +77,11 @@
           "assigned_to": "engine",
           "github_issue": 1496,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8be831f516a66c1bb9011da477b4cebbd161f7a0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-09-04T15:50:35Z",
           "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/accessibility-axe-scan.spec.js",
@@ -84,7 +90,7 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pre_commit",
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
           "notes": "aria-label added to Settings Default Currency / Theme SelectTrigger comboboxes. KNOWN_VIOLATIONS button-name entry removed. Verified via axe-scan."
         },
@@ -95,11 +101,11 @@
           "assigned_to": "engine",
           "github_issue": 1497,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8be831f516a66c1bb9011da477b4cebbd161f7a0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-09-04T15:50:35Z",
           "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/accessibility-axe-scan.spec.js",
@@ -108,7 +114,7 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pre_commit",
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
           "notes": "id/htmlFor pairing added to all 12 Settings form Label+Input pairs (previously visually adjacent but not programmatically associated). KNOWN_VIOLATIONS label entry removed. Verified via axe-scan."
         },
@@ -119,11 +125,11 @@
           "assigned_to": "engine",
           "github_issue": 1498,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8be831f516a66c1bb9011da477b4cebbd161f7a0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-09-04T15:50:35Z",
           "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/accessibility-axe-scan.spec.js",
@@ -132,7 +138,7 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pre_commit",
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
           "notes": "Investigated further than AC required: root cause was NOT a colour defect (PageHeader.js subtitle already used the approved text-slate-600 dark:text-slate-400 token) but a scan-timing race against the page framer-motion fade-in, causing axe-core to occasionally sample transiently-reduced opacity text. Fixed at the test level (runAxeScan waits out the entrance animation) rather than just deleting the KNOWN_VIOLATIONS entry, which would have left the underlying flake live in CI. Confirmed with 5 consecutive clean local runs post-fix (previously reproduced intermittently, ~1-in-3 runs)."
         },
@@ -143,11 +149,11 @@
           "assigned_to": "engine",
           "github_issue": 1499,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8be831f516a66c1bb9011da477b4cebbd161f7a0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-09-04T15:50:35Z",
           "acceptance_verified": true,
           "spec_references": [
             "src/hooks/usePositionSizingFetch.js",
@@ -156,7 +162,7 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pre_commit",
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": {
             "role": "Frontend Specifications & UX Documentation Owner",
             "method": "agent_mediated",
@@ -173,11 +179,11 @@
           "assigned_to": "engine",
           "github_issue": 1500,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8be831f516a66c1bb9011da477b4cebbd161f7a0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-09-04T15:50:35Z",
           "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/positions.md#Keyboard Navigation Requirements",
@@ -187,7 +193,7 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pre_commit",
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
           "notes": "Documentation-only. Added \"Keyboard Navigation Requirements\" section to positions.md (v2.9), trade_history.md (v1.13), and red_flag_journal.md (v1.1) -- exceeds the AC minimum of 3 named specs (Positions, Trades, Red Flag Journal). No code shipped this cycle, per story notes."
         }
@@ -954,7 +960,15 @@
   },
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": [
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05",
+    "ST-06",
+    "ST-07"
+  ],
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [],
@@ -967,7 +981,9 @@
     ],
     "all_merged": false
   },
-  "process_notes": [],
+  "process_notes": [
+    "EPIC-01 DoQ agent-mediated review (2026-09-04) found 2 non-blocking items, both addressed same-session: (1) cosmetic Settings.js indentation fix; (2) pre-existing Settings heading-order axe finding filed as BLG-FE-170 per execution_prompt.md \u00a77's out-of-scope-finding backlog write exception."
+  ],
   "sealed": false,
   "sealed_utc": null
 }
