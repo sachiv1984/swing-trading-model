@@ -27,6 +27,7 @@ name: Playwright E2E Acceptance Tests
 # explicit testIgnore exception above.
 
 on:
+  workflow_dispatch: {}
   push:
     branches:
       - main
