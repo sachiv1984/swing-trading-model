@@ -189,8 +189,9 @@ export default function Settings() {
           {/* Row 1 — ATR Period (solo, matching existing layout) */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">Minimum Hold Days</Label>
+              <Label htmlFor="settings-min-hold-days" className="text-slate-600 dark:text-slate-400">Minimum Hold Days</Label>
               <Input
+                id="settings-min-hold-days"
                 type="number"
                 value={formData.min_hold_days}
                 onChange={(e) => handleChange("min_hold_days", parseInt(e.target.value))}
@@ -199,8 +200,9 @@ export default function Settings() {
               <p className="text-xs text-slate-600 dark:text-slate-400">Days before stop can trail</p>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">ATR Period</Label>
+              <Label htmlFor="settings-atr-period" className="text-slate-600 dark:text-slate-400">ATR Period</Label>
               <Input
+                id="settings-atr-period"
                 type="number"
                 value={formData.atr_period}
                 onChange={(e) => handleChange("atr_period", parseInt(e.target.value))}
@@ -213,8 +215,9 @@ export default function Settings() {
           {/* Row 2 — ATR Multipliers */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">Initial Stop (ATR Multiple)</Label>
+              <Label htmlFor="settings-atr-multiplier-initial" className="text-slate-600 dark:text-slate-400">Initial Stop (ATR Multiple)</Label>
               <Input
+                id="settings-atr-multiplier-initial"
                 type="number"
                 step="0.1"
                 value={formData.atr_multiplier_initial}
@@ -224,8 +227,9 @@ export default function Settings() {
               <p className="text-xs text-slate-600 dark:text-slate-400">e.g., 5 = Entry − 5×ATR (wide stop for losing positions)</p>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">Trailing Stop (ATR Multiple)</Label>
+              <Label htmlFor="settings-atr-multiplier-trailing" className="text-slate-600 dark:text-slate-400">Trailing Stop (ATR Multiple)</Label>
               <Input
+                id="settings-atr-multiplier-trailing"
                 type="number"
                 step="0.1"
                 value={formData.atr_multiplier_trailing}
@@ -239,8 +243,9 @@ export default function Settings() {
           {/* Row 3 — Default Risk % */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">Default Risk % Per Trade</Label>
+              <Label htmlFor="settings-default-risk-percent" className="text-slate-600 dark:text-slate-400">Default Risk % Per Trade</Label>
               <Input
+                id="settings-default-risk-percent"
                 type="number"
                 step="0.1"
                 min="0.01"
@@ -272,8 +277,9 @@ export default function Settings() {
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">UK Commission (£)</Label>
+              <Label htmlFor="settings-uk-commission" className="text-slate-600 dark:text-slate-400">UK Commission (£)</Label>
               <Input
+                id="settings-uk-commission"
                 type="number"
                 step="0.01"
                 value={formData.uk_commission}
@@ -282,8 +288,9 @@ export default function Settings() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">US Commission ($)</Label>
+              <Label htmlFor="settings-us-commission" className="text-slate-600 dark:text-slate-400">US Commission ($)</Label>
               <Input
+                id="settings-us-commission"
                 type="number"
                 step="0.01"
                 value={formData.us_commission}
@@ -295,8 +302,9 @@ export default function Settings() {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">UK Stamp Duty Rate</Label>
+              <Label htmlFor="settings-stamp-duty-rate" className="text-slate-600 dark:text-slate-400">UK Stamp Duty Rate</Label>
               <Input
+                id="settings-stamp-duty-rate"
                 type="number"
                 step="0.001"
                 value={formData.stamp_duty_rate}
@@ -306,8 +314,9 @@ export default function Settings() {
               <p className="text-xs text-slate-600 dark:text-slate-400">Default: 0.005 (0.5%)</p>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">US FX Fee Rate</Label>
+              <Label htmlFor="settings-fx-fee-rate" className="text-slate-600 dark:text-slate-400">US FX Fee Rate</Label>
               <Input
+                id="settings-fx-fee-rate"
                 type="number"
                 step="0.0001"
                 value={formData.fx_fee_rate}
@@ -333,7 +342,7 @@ export default function Settings() {
               value={formData.default_currency}
               onValueChange={(value) => handleChange("default_currency", value)}
             >
-              <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
+              <SelectTrigger aria-label="Default Currency" className="bg-slate-800/50 border-slate-700 text-white">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-slate-800 border-slate-700">
@@ -348,7 +357,7 @@ export default function Settings() {
               value={formData.theme}
               onValueChange={(value) => handleChange("theme", value)}
             >
-              <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
+              <SelectTrigger aria-label="Theme" className="bg-slate-800/50 border-slate-700 text-white">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-slate-800 border-slate-700">
@@ -369,8 +378,9 @@ export default function Settings() {
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">Position Concentration Limit (%)</Label>
+              <Label htmlFor="settings-concentration-position-threshold-pct" className="text-slate-600 dark:text-slate-400">Position Concentration Limit (%)</Label>
               <Input
+                id="settings-concentration-position-threshold-pct"
                 type="number"
                 step="1"
                 min="1"
@@ -382,8 +392,9 @@ export default function Settings() {
               <p className="text-xs text-slate-600 dark:text-slate-400">Alert when 1 position exceeds this % of total portfolio heat (default: 15%)</p>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">Sector Concentration Limit (%)</Label>
+              <Label htmlFor="settings-concentration-sector-threshold-pct" className="text-slate-600 dark:text-slate-400">Sector Concentration Limit (%)</Label>
               <Input
+                id="settings-concentration-sector-threshold-pct"
                 type="number"
                 step="1"
                 min="1"
@@ -405,8 +416,9 @@ export default function Settings() {
         iconColor="bg-emerald-500/20 text-emerald-400"
       >
         <div className="space-y-2">
-          <Label className="text-slate-600 dark:text-slate-400">Minimum Trades for Analytics</Label>
+          <Label htmlFor="settings-min-trades-for-analytics" className="text-slate-600 dark:text-slate-400">Minimum Trades for Analytics</Label>
           <Input
+            id="settings-min-trades-for-analytics"
             type="number"
             step="1"
             min="1"

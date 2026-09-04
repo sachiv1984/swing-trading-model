@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-21
+**Version:** 1.1
+**Last Updated:** 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §9 Keyboard Navigation Requirements)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md
 **API contract:** docs/specs/api_contracts/portfolio_api_contract.md
@@ -103,8 +103,22 @@ Paginated list. 20 events per page. Most recent first.
 
 ---
 
+## 9. Keyboard Navigation Requirements
+
+*(v1.1 — ST-07, BLG-SPEC-99, EPIC-01, v9.1. Documentation-only requirements baseline for this table-based page — no implementation change ships with this addition; conformance is verified per-component as each is next touched.)*
+
+- **Filter Controls:** the Event Type dropdown, Ticker text input, and From/To date inputs are all reachable via Tab in the order shown in §4 and operable via keyboard alone (dropdown opens/selects via Enter/Space + arrow keys, per native `<select>`/combobox behaviour).
+- **Event List:** row order is the DOM/tab order (§5's "most recent first" ordering); rows themselves are not individually focusable unless a row exposes its own interactive control, in which case that control follows tab order top-to-bottom.
+- **Pagination:** Previous / Next buttons are reachable via Tab and activate on Enter or Space; a disabled Previous/Next button (first/last page) is skipped in tab order or exposes `disabled`/`aria-disabled` rather than being silently inert.
+- **"Clear filters" link (empty state):** reachable via Tab, activates on Enter.
+- **Retry button (error state):** reachable via Tab, activates on Enter or Space.
+- **Focus indicator:** every interactive element above renders a focus indicator meeting `docs/specs/frontend/design_system.md`'s "Focus indicator contrast" rule (≥3:1 against adjacent colour, both themes).
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-09-04 | v9.1 ST-07 (BLG-SPEC-99, EPIC-01): added §9 Keyboard Navigation Requirements — documentation-only baseline covering Filter Controls, Event List, Pagination, empty/error-state controls, and focus-indicator contrast. No implementation change. |
 | 1.0 | 2026-05-21 | Initial spec. v3.9 design gate — full page spec for Red Flag Journal (SI-03, EPIC-03, ST-08). Design source: docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |

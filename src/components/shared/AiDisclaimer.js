@@ -17,7 +17,7 @@ export default function AiDisclaimer({ variant = 'footer', testId }) {
   if (variant === 'badge') {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-600 text-white">
+        <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-700 text-white">
           AI Advisory
         </span>
         <span

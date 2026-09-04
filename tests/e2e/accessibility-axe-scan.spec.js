@@ -50,15 +50,20 @@ const API = 'http://localhost:8000';
 // page name -> Set of axe rule IDs grandfathered as pre-existing (see
 // module docstring). Each entry maps to its own filed backlog item.
 const KNOWN_VIOLATIONS = {
-  DashboardHome: new Set(['color-contrast']), // BLG-FE-165
+  DashboardHome: new Set([]), // BLG-FE-165 fixed v9.1/ST-01 — AiDisclaimer.js badge bg-amber-600 -> bg-amber-700
   Positions: new Set([]),
-  TradePlan: new Set(['select-name']), // BLG-FE-166
-  // BLG-FE-169's color-contrast finding (Settings subtitle) was observed
-  // once during initial exploration but did not reproduce across repeated
-  // runs of this exact spec afterward — kept grandfathered defensively in
-  // case it's a near-threshold/rendering-timing-dependent finding that
-  // resurfaces, rather than silently dropped; see BLG-FE-169 for detail.
-  Settings: new Set(['button-name', 'label', 'color-contrast']), // BLG-FE-167, BLG-FE-168, BLG-FE-169
+  TradePlan: new Set([]), // BLG-FE-166 fixed v9.1/ST-02 — aria-label added to Market/Status/Setup Type selects
+  // BLG-FE-167 (button-name) and BLG-FE-168 (label) fixed v9.1/ST-03/ST-04 —
+  // aria-label added to Select triggers, id/htmlFor pairing added to Inputs.
+  // BLG-FE-169 (color-contrast, Settings subtitle) fixed v9.1/ST-05: not a
+  // colour defect — PageHeader.js's description text already uses the
+  // approved text-slate-600 dark:text-slate-400 token. Root cause was a
+  // scan-timing race against the page's framer-motion fade-in (see
+  // runAxeScan's pre-scan wait, below) — axe-core occasionally sampled the
+  // text mid-animation at <1 opacity, producing a transient low-contrast
+  // reading. Fixed at the scan level (runAxeScan waits out the entrance
+  // animation), confirmed with 5 consecutive clean local runs.
+  Settings: new Set([]),
 };
 
 async function mockRoutes(page) {
@@ -100,6 +105,17 @@ async function mockRoutes(page) {
 }
 
 async function runAxeScan(page, pageName) {
+  // BLG-FE-169 root cause (v9.1/ST-05): PageHeader.js (and other page-level
+  // containers) fade in via framer-motion (opacity 0 -> 1, ~0.3-0.8s
+  // default transition). page.waitForLoadState('networkidle') does not
+  // wait for in-progress CSS/JS animations — if axe-core's scan lands
+  // mid-fade, the text's rendered opacity is transiently <1, producing a
+  // real-but-transient low-contrast reading against an otherwise-compliant
+  // token (text-slate-600 dark:text-slate-400, ~4.5:1+ at full opacity).
+  // This is what made the Settings subtitle finding "non-reproduce
+  // across repeated runs" — it's a scan-timing race, not a colour defect.
+  // Waiting out the entrance animation before scanning removes the race.
+  await page.waitForTimeout(1000);
   const results = await new AxeBuilder({ page }).analyze();
   const known = KNOWN_VIOLATIONS[pageName] || new Set();
 

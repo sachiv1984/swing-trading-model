@@ -734,6 +734,7 @@ export default function TradePlan() {
           </Field>
           <Field label="Market">
             <select
+              aria-label="Market"
               className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               value={form.market}
               onChange={set("market")}
@@ -744,6 +745,7 @@ export default function TradePlan() {
           </Field>
           <Field label="Status">
             <select
+              aria-label="Status"
               className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
               value={form.status}
               onChange={set("status")}
@@ -848,6 +850,7 @@ export default function TradePlan() {
         <Field label="Setup Type">
           <select
             data-testid="setup-type-select"
+            aria-label="Setup Type"
             className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             value={form.setup_type || ""}
             onChange={(e) => setForm((prev) => ({ ...prev, setup_type: e.target.value || null }))}

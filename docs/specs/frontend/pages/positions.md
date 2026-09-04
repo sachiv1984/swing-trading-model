@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.8
-**Last Updated:** 2026-08-17
+**Version:** 2.9
+**Last Updated:** 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §Keyboard Navigation Requirements)
 **Design Source (v8.2 additions):** docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md
 **Design Source (v7.9 additions):** docs/design/2026-07-27__release-v7.9/trailing-stop-explainer-tooltip/ux_spec.md
 **Design Source (v7.0 additions):** docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md, docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md
@@ -24,6 +24,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.9 | 2026-09-04 | v9.1 ST-07 (BLG-SPEC-99, EPIC-01): added §Keyboard Navigation Requirements — documentation-only baseline covering View Switcher, Table View row/control tab order, Trail Stop Modal / Compliance Recheck Panel focus trap and restoration, Grid/Journal View tab order, Paper Account Panel, and focus-indicator contrast. No implementation change. |
 | 2.8 | 2026-08-17 | v8.9 ST-02 (BLG-BE-103, EPIC-01): §Trailing Stop Column — corrected currency-basis defect. `current_trailing_stop` (GBP-converted for US positions) was being rendered next to the native currency symbol alongside `initial_stop` (native), producing two numerically different values that were really the same stop. Table View and Grid View now render the new `current_trailing_stop_native` field, matching this section's pre-existing "Display format: Native currency" rule (which the implementation had not satisfied since v6.2). No column layout or design change — value-source correction only. |
 | 2.7 | 2026-08-04 | v8.2 design gate — ST-02 (EPIC-01, BLG-FE-105): §Compliance Recheck Panel (Modal) — all-rules-pass state specified explicitly. Adds an affirmation line ("All 5 checks passed — no action needed.", `text-emerald-400`, existing pass colour token) in the same layout slot as the warn/fail acknowledgement block, shown only when `overall_status === "pass"`. Closes the previously-undesigned asymmetry between the warn/fail path (explicit acknowledgement block) and the pass path (nothing). No new colour or interactive element introduced. Design source: `docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md`. Head of UX & Design sign-off: 2026-08-04. Product Owner approved: 2026-08-04. Head of Specs Team confirmed. |
 | 2.6 | 2026-07-27 | ST-05 (BLG-FEAT-87, EPIC-05, v7.9) implementation: corrected §Trailing Stop Column's tooltip placement description — the v6.2-described separate "Trail Stop" column/stat label does not exist in the shipped UI (Table View has one combined "Stop" header; Grid View has no standalone label). Placed the explainer icon on the actual anchors instead (combined "Stop" header; inline with the "Init:" subtext line in the Grid tile) — closest faithful placement given the real UI, pre-existing gap noted but not fixed (out of this story's scope). |
@@ -685,6 +686,19 @@ Backend must provide compliance flags per position (new endpoint or extension to
 - The user should be able to switch between views without losing filtering or scroll position
 - Data should update smoothly after exits or journal edits
 - The Journal View is a **reading and reflection experience**, not a live monitoring surface. Layout and density decisions should reflect this: more vertical space per entry, no live price indicators, no stop-level warnings
+
+---
+
+## Keyboard Navigation Requirements (v2.9 — ST-07, BLG-SPEC-99, EPIC-01, v9.1)
+
+Documentation-only requirements baseline for this table-based page — no implementation change ships with this addition; conformance is verified per-component as each is next touched.
+
+- **View Switcher:** the three view toggles (Grid / Table / Journal) are reachable via Tab in visual order and activate on Enter or Space; the currently-active view is exposed to assistive tech (`aria-pressed` or equivalent) so its state is announced, not just visually indicated.
+- **Table View:** row order is the DOM/tab order (no visual-only reordering that diverges from tab order). Each row's interactive controls (Trail Stop button, Recheck Compliance button, Exit action, tag editor) are individually reachable via Tab; arrow-key row-to-row navigation is not required, but Tab must never skip an entire row's controls.
+- **Trail Stop Modal / Compliance Recheck Panel (Modal):** on open, focus moves into the modal (first focusable control, or the modal heading if no control precedes it); Escape closes the modal and returns focus to the control that opened it (the Trail Stop / Recheck Compliance button); Tab is trapped within the modal while open (see design_system.md's "Focus trapping and restoration in modals" principle — this section names the two on-page instances it applies to).
+- **Grid View / Journal View:** cards and journal entries follow the same "Tab order = visual order" rule as Table View rows; inline journal editors (notes, tags) are reachable and editable via keyboard alone — see position_detail_modal.md §Accessibility Considerations for the equivalent tag-input keyboard pattern this page's inline editors should match.
+- **Paper Account Panel:** its table follows the same row/control tab-order rule as the main Table View.
+- **Focus indicator:** every interactive element above renders a focus indicator meeting design_system.md's "Focus indicator contrast" rule (≥3:1 against adjacent colour, both themes).
 
 ---
 

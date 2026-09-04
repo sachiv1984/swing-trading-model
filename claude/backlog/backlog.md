@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-04 (session — 3 new items added: BLG-QA-157, BLG-SPEC-134, BLG-FE-171, all surfaced during v9.1 EPIC-01's dual agent-mediated PR review on PR #1535); prior — 2026-09-03 (Release Planning v9.1 — Release Slice section added, 41 items across 5 EPICs, marker RP:v9.1:2026-09-03__release-v9.1; `BLG-FEAT-92`/`BLG-FEAT-30` reconciliation decided — see `docs/product/decisions/decisions--2026-09-03__release-v9.1.md`); prior — 2026-09-03 (session — 1 new item added: BLG-GOV-315, structural fix for the deviation-resolution-status-drift pattern escalated at post-ship closure STEP 5.1's 4th consolidation review run); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-04 (session — 4 new items added: BLG-FE-170 (Settings page heading-order axe-core finding, non-blocking, surfaced during v9.1 EPIC-01 DoQ review), BLG-QA-157, BLG-SPEC-134, BLG-FE-171 (all three surfaced during v9.1 EPIC-01's dual agent-mediated PR review on PR #1535)); prior — 2026-09-03 (Release Planning v9.1 — Release Slice section added, 41 items across 5 EPICs, marker RP:v9.1:2026-09-03__release-v9.1; `BLG-FEAT-92`/`BLG-FEAT-30` reconciliation decided — see `docs/product/decisions/decisions--2026-09-03__release-v9.1.md`); prior — 2026-09-03 (session — 1 new item added: BLG-GOV-315, structural fix for the deviation-resolution-status-drift pattern escalated at post-ship closure STEP 5.1's 4th consolidation review run); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4729,6 +4729,27 @@ The new standalone axe-core CI scan found a `serious`-impact `color-contrast` vi
 **Acceptance Criteria**
 - axe-core no longer reports a `color-contrast` violation for the Settings subtitle
 - `KNOWN_VIOLATIONS["Settings"]`'s `color-contrast` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
+
+---
+
+### BLG-FE-170 — Settings page heading-order axe-core finding (moderate, non-blocking)
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** v9.1 EPIC-01 DoQ agent-mediated review, cycle 2026-09-03__release-v9.1 — discovered while working ST-03/ST-04/ST-05 (Settings page accessibility fixes) — 2026-09-04
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`tests/e2e/accessibility-axe-scan.spec.js` reports 1 `moderate`-impact `heading-order` violation on the Settings page ("Heading levels should only increase by one"). Non-blocking — only `serious`/`critical` violations fail the test — and pre-existing/unrelated to v9.1 EPIC-01's ST-01 through ST-07 scope (colour-contrast, select-name, button-name, label); no heading markup was touched in that EPIC's diff.
+
+**Scope**
+- Identify which heading level skip occurs on the Settings page (likely an `h3`/`SectionCard` title following the page's `h1` with no intervening `h2`, or similar) and correct the skipped level
+
+**Acceptance Criteria**
+- axe-core no longer reports a `heading-order` violation for the Settings page
+- No visual/layout regression (heading level correction should be semantic-only, e.g. `h2`/`h3` tag change with equivalent styling preserved via className, not a visible redesign)
 
 ---
 
