@@ -1,20 +1,20 @@
 {
-  "active_cycle": "2026-08-21__release-v9.0",
-  "cycle_name": "v9.0 — AI Debrief/Backtest Follow-Through, Risk-Data Integrity & Operational Resilience",
-  "status": "Closed",
-  "prior_status": "Verified",
-  "engine": "Sprint Execution",
+  "active_cycle": "2026-09-03__release-v9.1",
+  "cycle_name": "v9.1 — Frontend Accessibility, Backend Reliability & Governance/Spec Debt Consolidation",
+  "status": "Release_Planning_Complete",
+  "prior_status": "Closed",
+  "engine": "Release Planning",
   "execution_state_path": "claude/cycles/2026-08-21__release-v9.0/execution_state.json",
-  "backlog_slice_path": "claude/cycles/2026-08-21__release-v9.0/stage4_backlog_slice.md",
+  "backlog_slice_path": "claude/cycles/2026-09-03__release-v9.1/stage4_backlog_slice.md",
   "design_gate_required": true,
-  "sprint_sealed": true,
-  "_sprint_sealed_note": "Set true at Sprint Planning STEP 7, 2026-08-21, after sign-off gate (STEP 6.2) passed. Single-sprint cycle — no multi-sprint gate story this cycle (contrast with prior cycle's Sprint 2/ST-23 gate).",
+  "sprint_sealed": false,
+  "_sprint_sealed_note": "Reset to false at Release Planning STEP 7 intermediate sync (2026-09-03), atomically with active_cycle switching to 2026-09-03__release-v9.1, per release_planning_prompt.md v2.49 STEP 7. Owned and set true only by sprint_planning_prompt.md's own seal for this cycle.",
   "sprint_goal_path": "claude/cycles/2026-08-21__release-v9.0/sprint_goal.md",
   "sprint_backlog_path": "claude/cycles/2026-08-21__release-v9.0/sprint_backlog.md",
   "sprint_capacity_path": "claude/cycles/2026-08-21__release-v9.0/sprint_capacity.md",
   "sprint_goal_status": "confirmed",
   "capacity_warn_acknowledged": false,
-  "design_gate_status": "Passed",
+  "design_gate_status": "not_started",
   "design_gate_record": "claude/cycles/2026-08-21__release-v9.0/design_gate.md",
   "design_gate_bypass_authority": "",
   "design_gate_bypass_reason": "",
@@ -37,7 +37,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-09-03T17:00:00Z",
-  "last_sync_utc": "2026-09-03T17:30:00Z",
+  "last_sync_utc": "2026-09-03T00:00:00Z",
   "last_deviation_consolidation_review_utc": "2026-09-03T17:30:00Z",
   "deviation_consolidation_review_cycle_count": 0,
   "release_complete": false,
@@ -47,7 +47,7 @@
   "last_audit_overall_score": 71,
   "last_audit_open_items": 0,
   "last_audit_cycle_count": 76,
-  "next_release": "v9.0",
+  "next_release": "v9.1",
   "prior_cycle": "2026-08-21__release-v9.0",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
@@ -77,9 +77,9 @@
     }
   },
   "release_plan": {
-    "release_plan_path": "claude/cycles/2026-08-21__release-v9.0/release_plan.md",
-    "cycle_id": "2026-08-21__release-v9.0",
-    "published_utc": "2026-08-21T00:00:00Z",
+    "release_plan_path": "claude/cycles/2026-09-03__release-v9.1/release_plan.md",
+    "cycle_id": "2026-09-03__release-v9.1",
+    "published_utc": "2026-09-03T00:00:00Z",
     "epics": [
       "EPIC-01",
       "EPIC-02",
@@ -87,18 +87,18 @@
       "EPIC-04",
       "EPIC-05"
     ],
-    "story_items": 27,
-    "story_items_firm": 27,
+    "story_items": 41,
+    "story_items_firm": 41,
     "story_items_conditional": 0,
-    "scope_items": 27,
+    "scope_items": 41,
     "capacity_check": "pass",
     "design_gate_required": true,
-    "state_json": "claude/cycles/2026-08-21__release-v9.0/state.json",
-    "scope_doc": "docs/product/scope/scope--2026-08-21__release-v9.0.md"
+    "state_json": "claude/cycles/2026-09-03__release-v9.1/state.json",
+    "scope_doc": "docs/product/scope/scope--2026-09-03__release-v9.1.md"
   },
   "prior_release_plan": {
-    "release_plan_path": "claude/cycles/2026-08-17__release-v8.9/release_plan.md",
-    "cycle_id": "2026-08-17__release-v8.9",
-    "published_utc": "2026-08-17T14:25:00Z"
+    "release_plan_path": "claude/cycles/2026-08-21__release-v9.0/release_plan.md",
+    "cycle_id": "2026-08-21__release-v9.0",
+    "published_utc": "2026-08-21T00:00:00Z"
   }
 }
