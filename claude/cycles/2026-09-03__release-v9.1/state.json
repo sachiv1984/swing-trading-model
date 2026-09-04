@@ -21,7 +21,7 @@
       "timebox": "",
       "capacity": "full capacity"
     },
-    "state_snapshot_hash": "PENDING-COMMIT-SHA"
+    "state_snapshot_hash": "7ea3b3bb1ae49f5c966c20a0fecff287a11ac4e7"
   },
 
   "mutation_seq": 0,
