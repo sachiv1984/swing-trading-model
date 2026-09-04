@@ -235,7 +235,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Actual root cause was a git+ssh dependency (\"root\": github:tanstack/react-query) failing host-key verification on clean installs, not the suspected eslint-config-react-app peer conflict (a downstream symptom). Removed it; full candidate list applied cleanly. Local Playwright E2E: 847/851 passed; 1 unrelated failure (signals-cash-balance.spec.js, pre-existing page/endpoint untouched by this EPIC) filed as DEV-EPIC02-ST08-01 (P2) pending real CI confirmation on this PR. Filed BLG-TECH-19 for 3 other unused/erroneous npm packages found but not implicated in the build failure."
+          "notes": "Actual root cause was a git+ssh dependency (\"root\": github:tanstack/react-query) failing host-key verification on clean installs, not the suspected eslint-config-react-app peer conflict (a downstream symptom). Removed it; full candidate list applied cleanly. Local Playwright E2E: 847/851 passed; 1 unrelated failure (signals-cash-balance.spec.js, pre-existing page/endpoint untouched by this EPIC) filed as DEV-EPIC02-ST08-01 (P2). PR #1536 CI does NOT run the Playwright E2E job at all for this PR (path filter excludes package.json/package-lock.json) — filed as BLG-OPS-149 (P2); local 847/851 remains the only Playwright evidence for this AC, not CI-confirmed. Filed BLG-TECH-19 for 3 other unused/erroneous npm packages found but not implicated in the build failure."
         },
         "ST-09": {
           "title": "Log sector-concentration adjustment's fail-open exception handler",

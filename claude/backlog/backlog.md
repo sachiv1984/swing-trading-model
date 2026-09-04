@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-04 (session — 1 new item added: BLG-TECH-19 (unused/namesquatted npm dependency cleanup, surfaced during v9.1 EPIC-02 ST-08 while fixing BLG-TECH-18)); prior — 2026-09-04 (session — 4 new items added: BLG-FE-170 (Settings page heading-order axe-core finding, non-blocking, surfaced during v9.1 EPIC-01 DoQ review), BLG-QA-157, BLG-SPEC-134, BLG-FE-171 (all three surfaced during v9.1 EPIC-01's dual agent-mediated PR review on PR #1535)); prior — 2026-09-03 (Release Planning v9.1 — Release Slice section added, 41 items across 5 EPICs, marker RP:v9.1:2026-09-03__release-v9.1; `BLG-FEAT-92`/`BLG-FEAT-30` reconciliation decided — see `docs/product/decisions/decisions--2026-09-03__release-v9.1.md`); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-04 (session — 1 new item added: BLG-OPS-149 (playwright.yml CI path-filter gap — dependency-bump PRs never trigger the E2E suite, discovered checking PR #1536's CI results)); prior — 2026-09-04 (session — 1 new item added: BLG-TECH-19 (unused/namesquatted npm dependency cleanup, surfaced during v9.1 EPIC-02 ST-08 while fixing BLG-TECH-18)); prior — 2026-09-04 (session — 4 new items added: BLG-FE-170, BLG-QA-157, BLG-SPEC-134, BLG-FE-171, all surfaced during v9.1 EPIC-01's dual agent-mediated PR review on PR #1535); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4251,6 +4251,27 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Problem:** No defined cadence exists for resetting staging environment data; stale or accumulated staging data can make staging verification runs less representative over time.
 **Scope:** Review current staging data state and define an appropriate reset cadence.
 **Acceptance Criteria:** Cadence defined and documented; Infrastructure & Operations Owner sign-off.
+
+---
+
+### BLG-OPS-149 — playwright.yml CI trigger path filter excludes package.json/package-lock.json — dependency-bump PRs never run the E2E suite in CI
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-08 (EPIC-02, 2026-09-03__release-v9.1), discovered while checking PR #1536's CI results — 2026-09-04
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.2
+
+**Problem**
+`.github/workflows/playwright.yml`'s `on.push.paths` and `on.pull_request.paths` filters list `src/pages/**`, `src/components/**`, `tests/e2e/**`, `playwright.config.js`, `playwright.visual-regression.config.js`, and a handful of specific files — but not `package.json` or `package-lock.json`. A PR that only bumps npm dependencies does not trigger this workflow at all: no "Playwright E2E Acceptance Tests" job appears in the PR's checks. Confirmed directly on PR #1536 (EPIC-02, ST-08's npm dependency-tree fix) — every other CI check ran and passed, but the Playwright E2E job is simply absent, because the diff touches only `package.json`/`package-lock.json`/`backend/**`/docs, none of the filtered paths. This silently defeats ST-08's own acceptance criterion ("Full Playwright E2E suite re-verified passing against the updated dependency tree") and `quarterly_dependency_upgrade_cadence_policy.md` §2's stated verification requirement for exactly the one class of change both documents govern — a dependency bump can break rendering/behaviour in ways unit tests won't catch, so a dependency-only PR is precisely the case this gate should not skip.
+
+**Scope**
+- Add `package.json` and `package-lock.json` to both `paths:` blocks in `.github/workflows/playwright.yml`
+
+**Acceptance Criteria**
+- A PR that only modifies `package.json`/`package-lock.json` triggers the Playwright E2E Acceptance Tests job
+- No change to which paths trigger the job for existing frontend-file changes (additive only)
+- Infrastructure & Operations Owner sign-off
 
 ---
 
