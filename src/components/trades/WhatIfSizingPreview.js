@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from "react";
-import { api } from "../../api/base44Client";
+import { useState } from "react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Loader2, Sliders, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
 import { AMBER_MESSAGES, SYSTEM_MESSAGES } from "./PositionSizingWidget";
+import { useSessionRiskPercent, useDebouncedSizing } from "../../hooks/usePositionSizingFetch";
 
 // ST-05 (BLG-FEAT-91, EPIC-02, v8.9) — Pre-commit "what-if" sizing/risk
 // simulator on the trade-plan form.
@@ -22,10 +22,7 @@ const SESSION_KEY = "what_if_preview_risk_percent";
 export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate, defaultRiskPercent }) {
   const [collapsed, setCollapsed] = useState(false);
   const [plannedEntryPrice, setPlannedEntryPrice] = useState("");
-  const [riskPercent, setRiskPercent] = useState(() => {
-    const stored = sessionStorage.getItem(SESSION_KEY);
-    return stored !== null ? parseFloat(stored) : (defaultRiskPercent ?? 1.0);
-  });
+  const [riskPercent, setRiskPercent] = useSessionRiskPercent(SESSION_KEY, defaultRiskPercent);
   // ST-10 (BLG-FE-164, EPIC-02, v9.0): panel-local FX rate override,
   // US-market only. Pre-fills from the fxRate prop if the caller ever has
   // one (currently none do — trade_plan.md §5.1 has no fx_rate field), but
@@ -38,62 +35,33 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
   // (TradeEntry.js) even for the identical entry price — same UI
   // convention (label, step) as TradeEntry.js's own "FX Rate (USD/GBP)" field.
   const [fxRateOverride, setFxRateOverride] = useState(fxRate ? String(fxRate) : "");
-  const [sizingResult, setSizingResult] = useState(null);
-  const [sizingLoading, setSizingLoading] = useState(false);
-
-  useEffect(() => {
-    sessionStorage.setItem(SESSION_KEY, String(riskPercent));
-  }, [riskPercent]);
-
-  useEffect(() => {
-    if (defaultRiskPercent != null && sessionStorage.getItem(SESSION_KEY) === null) {
-      setRiskPercent(defaultRiskPercent);
-    }
-  }, [defaultRiskPercent]);
-
   const parsedEntry = plannedEntryPrice === "" ? null : parseFloat(plannedEntryPrice);
   const parsedStop = stopLevel === "" || stopLevel == null ? null : parseFloat(stopLevel);
   // §5d.1: hidden entirely (no placeholder) until both inputs have valid positive values.
   const hasValidInputs = parsedEntry != null && parsedEntry > 0 && parsedStop != null && parsedStop > 0;
 
   // Debounced 300ms, matches PositionSizingWidget's existing debounce (§5d.3).
-  useEffect(() => {
-    if (!hasValidInputs) {
-      setSizingResult(null);
-      setSizingLoading(false);
-      return;
-    }
-
-    setSizingLoading(true);
-
-    const timer = setTimeout(async () => {
-      try {
-        const body = {
-          entry_price: parsedEntry,
-          stop_price: parsedStop,
-          risk_percent: parseFloat(riskPercent) || 0,
-          market,
-        };
-        const parsedFxOverride = parseFloat(fxRateOverride);
-        if (market === "US" && fxRateOverride !== "" && !Number.isNaN(parsedFxOverride) && parsedFxOverride > 0) {
-          body.fx_rate = parsedFxOverride;
-        }
-        if (ticker) {
-          body.ticker = ticker;
-        }
-
-        const response = await api.portfolio.size(body);
-        setSizingResult(response ?? null);
-      } catch {
-        setSizingResult(null);
-      } finally {
-        setSizingLoading(false);
+  const { sizingResult, sizingLoading } = useDebouncedSizing(
+    () => hasValidInputs,
+    () => {
+      const body = {
+        entry_price: parsedEntry,
+        stop_price: parsedStop,
+        risk_percent: parseFloat(riskPercent) || 0,
+        market,
+      };
+      const parsedFxOverride = parseFloat(fxRateOverride);
+      if (market === "US" && fxRateOverride !== "" && !Number.isNaN(parsedFxOverride) && parsedFxOverride > 0) {
+        body.fx_rate = parsedFxOverride;
       }
-    }, 300);
-
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parsedEntry, parsedStop, market, fxRateOverride, riskPercent, ticker, hasValidInputs]);
+      if (ticker) {
+        body.ticker = ticker;
+      }
+      return body;
+    },
+    [parsedEntry, parsedStop, market, fxRateOverride, riskPercent, ticker, hasValidInputs],
+    { checkBeforeDebounce: true }
+  );
 
   const isValid = sizingResult?.valid;
   const suggestedShares = sizingResult?.suggested_shares;

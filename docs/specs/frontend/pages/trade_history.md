@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.12
-**Last Updated:** 2026-08-20
+**Version:** 1.13
+**Last Updated:** 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §Keyboard Navigation Requirements)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.8 AI Journal Summary):** docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md
 **Design Source (v2.6 UX polish):** docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md
@@ -521,6 +521,19 @@ Displays:
 
 ---
 
+## Keyboard Navigation Requirements (v1.13 — ST-07, BLG-SPEC-99, EPIC-01, v9.1)
+
+Documentation-only requirements baseline for this table-based page — no implementation change ships with this addition; conformance is verified per-component as each is next touched.
+
+- **Trade History Table:** row order is the DOM/tab order; each row's expand control (Expandable Journal Row) is reachable via Tab and toggles on Enter or Space, exposing its expanded/collapsed state to assistive tech (`aria-expanded` or equivalent).
+- **Expandable Journal Row / Plan vs Reality / Post-Trade Debrief:** once a row is expanded, its interactive controls (journal tag editor, Generate/Regenerate Debrief action) follow the row in tab order — a user tabbing through an expanded row never has to tab past the entire remaining table to reach that row's own controls.
+- **Filters:** all filter inputs (including Saved Filter Presets) are reachable via Tab and operable via keyboard alone (text entry, select, or button activation — no filter control that requires a mouse-only interaction, e.g. drag).
+- **Calendar View:** day cells are reachable via Tab in calendar (row-major) order; Enter or Space on a focused day cell performs the same day-click navigation to Table view filtered to that date as a mouse click.
+- **AI Journal Summary:** if interactive (e.g. a regenerate action), it follows the same Tab-reachable / Enter-or-Space-activates rule as other row-level actions above.
+- **Focus indicator:** every interactive element above renders a focus indicator meeting design_system.md's "Focus indicator contrast" rule (≥3:1 against adjacent colour, both themes).
+
+---
+
 ## Known Deviations
 
 ### DEV-ST14-01 — Avg Slippage StatsCard renders without gradient (cosmetic) — Resolved
@@ -541,6 +554,7 @@ Displays:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.13 | 2026-09-04 | v9.1 ST-07 (BLG-SPEC-99, EPIC-01): added §Keyboard Navigation Requirements — documentation-only baseline covering Trade History Table row/expand tab order, Expandable Journal Row / Plan vs Reality / Post-Trade Debrief control tab order, Filters (incl. Saved Filter Presets), Calendar View day-cell keyboard activation, and focus-indicator contrast. No implementation change. |
 | 1.12 | 2026-08-20 | v8.9 (ST-06, EPIC-02, BLG-FEAT-90): Post-Trade Debrief section added to Expandable Journal Row — 5th section, rendered for every closed trade (not conditional on a linked plan, unlike Plan vs Reality); deterministic summary text always shown, one AI-generated pattern-surfacing "focus area" sentence shown when present; on-demand Generate/Regenerate action (`POST /trades/{id}/debrief`) since generation is not hooked into the live trade-close event path; §13 review CONDITIONAL (9 binding conditions) — Condition 4 requires no other action affordance in this section. Design decision documented directly in this spec (no separate ux_spec.md — component mirrors the existing Plan vs Reality precedent closely enough that a dedicated design artefact was not required). Approved: Product Owner 2026-08-20 (agent-mediated). |
 | 1.11 | 2026-07-17 | v7.5 design gate — added §Saved Filter Presets & Calendar View (ST-04, BLG-FE-118): named saved filter presets (new `saved_filters` table, server-side, distinct from the existing ephemeral localStorage active-filter state), Table/Calendar view toggle, month-grid with day-level realised-P&L indicators sourced from `exit_date`, day-click navigates to Table view filtered to that date, unrealised P&L shown once as a summary banner (never per-day). Design source: saved-filters-calendar-view/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 1.10 | 2026-06-19 | v6.0 design gate — Brokerage Cost Capture section added: two new optional trade edit form fields (commission_gbp, spread_cost_gbp) in "Brokerage Costs" subsection. Net-of-Costs R-Multiple Display section added: Net R shown below Gross R in table and expanded row when cost data present; absent when no cost data (backward-compatible). Design source: net-of-costs-tracking/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |

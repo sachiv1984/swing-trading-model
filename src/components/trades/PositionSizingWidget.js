@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { api } from "../../api/base44Client";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Loader2, Ruler, AlertTriangle } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { useSessionRiskPercent, useDebouncedSizing } from "../../hooks/usePositionSizingFetch";
 
 // ST-05 (BLG-FEAT-91): exported for reuse verbatim by WhatIfSizingPreview.js
 // (trade_plan.md §5d.3 — "same AMBER_MESSAGES / SYSTEM_MESSAGES conventions
@@ -25,6 +25,8 @@ export const AMBER_MESSAGES = {
 // On mount, reads the last-used session value first. Falls back to
 // defaultRiskPercent (from settings) only when no session value exists.
 // Cleared automatically when the browser tab is closed.
+// ST-06 (v9.1, BLG-TECH-14): session-persistence + debounced-fetch
+// boilerplate shared with WhatIfSizingPreview.js via usePositionSizingFetch.js.
 const SESSION_KEY = "widget_risk_percent";
 
 export default function PositionSizingWidget({
@@ -37,12 +39,7 @@ export default function PositionSizingWidget({
   defaultRiskPercent,
   ticker,
 }) {
-  const [riskPercent, setRiskPercent] = useState(() => {
-    const stored = sessionStorage.getItem(SESSION_KEY);
-    return stored !== null ? parseFloat(stored) : (defaultRiskPercent ?? 1.0);
-  });
-  const [sizingResult, setSizingResult] = useState(null);
-  const [sizingLoading, setSizingLoading] = useState(false);
+  const [riskPercent, setRiskPercent] = useSessionRiskPercent(SESSION_KEY, defaultRiskPercent);
   const [usedSuggestion, setUsedSuggestion] = useState(false);
 
   // Use a ref to read current shares inside async timeout without stale closure
@@ -51,71 +48,38 @@ export default function PositionSizingWidget({
     sharesRef.current = shares;
   }, [shares]);
 
-  // Persist riskPercent to sessionStorage whenever it changes
-  useEffect(() => {
-    sessionStorage.setItem(SESSION_KEY, String(riskPercent));
-  }, [riskPercent]);
-
-  // When settings load for the first time (no session value yet), initialise from settings.
-  // Once the user has overridden Risk % in-session, settings changes do not overwrite it.
-  useEffect(() => {
-    if (defaultRiskPercent != null && sessionStorage.getItem(SESSION_KEY) === null) {
-      setRiskPercent(defaultRiskPercent);
-    }
-  }, [defaultRiskPercent]);
-
   // Debounced API call — fires 300ms after entryPrice, stopPrice, market, fxRate, or riskPercent change
-  useEffect(() => {
-    // Mark loading immediately so the user sees feedback
-    setSizingLoading(true);
-
-    const timer = setTimeout(async () => {
-      if (entryPrice === "" || entryPrice == null || stopPrice === "" || stopPrice == null) {
-        setSizingResult(null);
-        setSizingLoading(false);
-        return;
+  const { sizingResult, sizingLoading } = useDebouncedSizing(
+    () => !(entryPrice === "" || entryPrice == null || stopPrice === "" || stopPrice == null),
+    () => {
+      const body = {
+        entry_price: entryPrice,
+        stop_price: stopPrice,
+        risk_percent: parseFloat(riskPercent) || 0,
+        market,
+      };
+      if (market === "US" && fxRate) {
+        body.fx_rate = fxRate;
       }
-
-      try {
-        const body = {
-          entry_price: entryPrice,
-          stop_price: stopPrice,
-          risk_percent: parseFloat(riskPercent) || 0,
-          market,
-        };
-        if (market === "US" && fxRate) {
-          body.fx_rate = fxRate;
-        }
-        // ST-04 (BLG-BE-104): pass ticker to enable concentration-aware sizing
-        if (ticker) {
-          body.ticker = ticker;
-        }
-
-        // doFetch unwraps the {status, data} envelope — response IS the data object directly
-        const response = await api.portfolio.size(body);
-
-        if (response != null) {
-          setSizingResult(response);
-          setUsedSuggestion(false);
-
-          // Auto-fill shares only when valid + cash sufficient + shares field is empty
-          if (response.valid && response.cash_sufficient) {
-            if (!sharesRef.current || sharesRef.current === "") {
-              onSharesChange(String(response.suggested_shares));
-            }
+      // ST-04 (BLG-BE-104): pass ticker to enable concentration-aware sizing
+      if (ticker) {
+        body.ticker = ticker;
+      }
+      return body;
+    },
+    [entryPrice, stopPrice, market, fxRate, riskPercent, ticker],
+    {
+      onResult: (response) => {
+        setUsedSuggestion(false);
+        // Auto-fill shares only when valid + cash sufficient + shares field is empty
+        if (response.valid && response.cash_sufficient) {
+          if (!sharesRef.current || sharesRef.current === "") {
+            onSharesChange(String(response.suggested_shares));
           }
-        } else {
-          setSizingResult(null);
         }
-      } catch {
-        setSizingResult(null);
-      } finally {
-        setSizingLoading(false);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [entryPrice, stopPrice, market, fxRate, riskPercent, ticker]);
+      },
+    }
+  );
 
   const handleUseSuggested = () => {
     if (sizingResult?.suggested_shares != null) {
