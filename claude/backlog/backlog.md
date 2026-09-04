@@ -4818,6 +4818,31 @@ In `TradePlan.js` (Market/Status/Setup Type selects) and `Settings.js` (Default 
 
 ---
 
+### BLG-FE-172 — Arc5ComplianceSection "Top Rule Breach" card diverges from canonical spec (text format + null display)
+
+**Priority:** P3 (Low)
+**Type:** Frontend / Spec Deviation
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** v9.1 EPIC-03 ST-13 (Playwright coverage for `top_rule_breach` formatting), cycle 2026-09-03__release-v9.1 — 2026-09-04
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.2
+
+**Problem**
+While authoring Playwright coverage for `Arc5ComplianceSection`'s "Top Rule Breach" card (ST-13), the actual implementation was found to diverge from `docs/specs/frontend/components/arc5_compliance_section.md` v1.0.0 §Stat Cards, Card 3:
+- **Canonical requirement:** "Format: Plain text rule type slug (e.g. `"regime_gate"`)" and "Null display: `"None"`"
+- **Actual behaviour:** `Arc5ComplianceSection.js`'s `fmtText` helper replaces underscores with spaces (renders `"regime gate"`, not the raw slug) and renders `"—"` (not `"None"`) when the value is null — both matching the `fmtRate`/`fmtCount` null-display convention used by the component's other three cards, not the spec's card-3-specific text.
+This has been filed as a deviation in the canonical spec's Known Deviations section (see that document) per `document_lifecycle_guide.md` §9. This backlog item is the required companion reference.
+
+**Scope**
+- Decide the correct canonical behaviour for Card 3 (either update the spec to match the implemented, already-shipped-and-user-visible behaviour, or update the component to match the spec's original slug/`"None"` intent) and align whichever side is wrong
+- No functional/data impact either way — display-text-only divergence
+
+**Acceptance Criteria**
+- Spec and implementation agree on Card 3's text format and null display
+- `tests/e2e/arc5-compliance-section.spec.js` (SC-ARC5-07/SC-ARC5-08) updated to match the resolved behaviour if the implementation changes
+
+---
+
 ### BLG-BE-110 — Move raw SQL execution out of backend/routers/analytics.py and digest.py into the service/database layers
 **Priority:** P3 (Low)
 **Type:** Backend Engineering

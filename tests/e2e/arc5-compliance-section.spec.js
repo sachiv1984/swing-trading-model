@@ -236,3 +236,71 @@ test.describe('SC-ARC5-05 — Compliance score metric values formatted as percen
     await expect(page.getByText('20.0%')).toBeVisible({ timeout: 8000 });
   });
 });
+
+// ---------------------------------------------------------------------------
+// SC-ARC5-06 — events_per_week value formatted via fmtCount (ST-12, BLG-QA-154)
+// ---------------------------------------------------------------------------
+
+test.describe('SC-ARC5-06 — Red Flag Events/Week value formatted via fmtCount', () => {
+  test('SC-ARC5-06: events_per_week renders as fmtCount output (3.0) for a known mock value', async ({ page }) => {
+    await mockFallback(page);
+    await mockArc5Compliance(page, ARC5_KNOWN_VALUES);
+    await gotoAnalytics(page);
+
+    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+
+    // events_per_week: 3.0 → fmtCount → val.toFixed(1) → "3.0"
+    await expect(page.getByText('3.0', { exact: true })).toBeVisible({ timeout: 8000 });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-ARC5-07 — top_rule_breach text formatted via fmtText (ST-13, BLG-QA-155)
+// ---------------------------------------------------------------------------
+
+test.describe('SC-ARC5-07 — Top Rule Breach text formatted via fmtText', () => {
+  test('SC-ARC5-07: top_rule_breach renders with underscores replaced with spaces', async ({ page }) => {
+    await mockFallback(page);
+    await mockArc5Compliance(page, ARC5_KNOWN_VALUES);
+    await gotoAnalytics(page);
+
+    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+
+    // top_rule_breach: 'cash_constraint' → fmtText → val.replace(/_/g, ' ') → "cash constraint"
+    await expect(page.getByText('cash constraint', { exact: true })).toBeVisible({ timeout: 8000 });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-ARC5-08 — Null-value handling across fmtRate/fmtCount/fmtText (ST-14, BLG-QA-156)
+// ---------------------------------------------------------------------------
+
+const ARC5_ALL_NULL = {
+  status: 'ok',
+  data: {
+    events_per_week: null,
+    override_rate: null,
+    top_rule_breach: null,
+    trade_plan_adherence_rate: null,
+    validation_pass_rate_by_rule: {},
+  },
+};
+
+test.describe('SC-ARC5-08 — Null values render as em dash across all formatters', () => {
+  test('SC-ARC5-08: "—" renders for null events_per_week (fmtCount), override_rate/trade_plan_adherence_rate (fmtRate), and top_rule_breach (fmtText)', async ({ page }) => {
+    await mockFallback(page);
+    await mockArc5Compliance(page, ARC5_ALL_NULL);
+    await gotoAnalytics(page);
+
+    const heading = page.getByText('Arc 5 Signal Compliance');
+    await expect(heading).toBeVisible({ timeout: 10000 });
+
+    // Scope to the Arc5ComplianceSection container (heading's parent) so the count
+    // isn't inflated by unrelated "—" placeholders elsewhere on the analytics page.
+    const section = heading.locator('..');
+
+    // All four cards render fmtCount(null) / fmtRate(null) / fmtText(null) → "—"
+    const dashValues = section.getByText('—', { exact: true });
+    await expect(dashValues).toHaveCount(4, { timeout: 8000 });
+  });
+});

@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.0.0
-**Last Updated:** 2026-05-27
+**Version:** 1.1.0
+**Last Updated:** 2026-09-04 (v9.1 ST-13 — Known Deviations: Card 3 text-format/null-display divergence documented, BLG-FE-172)
 **Story:** ST-10 (EPIC-03, v4.1) — BLG-FE-48
 **§13 Compliance:** Confirmed — display-only component. No automated recommendation generated.
 **API contract:** docs/specs/api_contracts/arc5_compliance_analytics.md
@@ -149,7 +149,16 @@ This component is **§13 compliant — display-only**:
 
 ## Known Deviations
 
-None.
+| Field | Detail |
+|-------|--------|
+| **Deviation description** | Card 3 ("Top Rule Breach") renders `top_rule_breach` with underscores replaced by spaces (e.g. `"regime gate"`) and renders `"—"` when the value is null. |
+| **Canonical requirement** | This section's Card 3 table states: Format = "Plain text rule type slug (e.g. `"regime_gate"`)"; Null display = `"None"`. |
+| **Priority** | P3 |
+| **Target resolution release** | v9.2 |
+| **Owner** | Frontend Specifications & UX Documentation Owner |
+| **Backlog reference** | BLG-FE-172 |
+
+Found while authoring Playwright coverage for this card (v9.1 ST-13). No functional/data impact — display-text-only divergence between the spec's originally-stated slug/`"None"` intent and the component's actual (and already user-visible, tested) `fmtText` behaviour, which matches the null-display convention used by the component's other three cards.
 
 ---
 
@@ -157,4 +166,5 @@ None.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1.0 | 2026-09-04 | Known Deviations: documented Card 3 text-format/null-display divergence from implementation — v9.1 ST-13, BLG-FE-172. No behavioural change to this document's own requirements. |
 | 1.0.0 | 2026-05-27 | Initial specification — ST-10 (EPIC-03, v4.1), BLG-FE-48. Formalises Arc5ComplianceSection shipped in v4.0 (ST-01). Component props, rendering conditions, stat card layout, data mapping documented. |
