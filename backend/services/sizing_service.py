@@ -19,6 +19,7 @@ PortfolioValue is the latest portfolio_history.total_value snapshot.
 Available cash (portfolios.cash) is the feasibility gate only — not the risk basis.
 """
 
+import logging
 import math
 from typing import Dict, Optional
 
@@ -31,6 +32,8 @@ from services.concentration_service import (
     get_sector_exposure,
 )
 from services.portfolio_service import calculate_prospective_heat
+
+logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -114,6 +117,7 @@ def _apply_concentration_adjustment(
     if not ticker or suggested_shares <= 0:
         return default
 
+    sector = None
     try:
         sector = get_ticker_sector(ticker)
         if not sector:
@@ -169,7 +173,14 @@ def _apply_concentration_adjustment(
             }
 
         return default
-    except Exception:
+    except Exception as exc:
+        # ST-09 (BLG-TECH-16): fail-open by design — an unexpected error here
+        # must not block sizing, so we still return `default` (no adjustment).
+        # Logged so a silent failure of the concentration lookup is diagnosable.
+        logger.warning(
+            "Concentration adjustment failed open for ticker=%s sector=%s — %s",
+            ticker, sector, exc,
+        )
         return default
 
 

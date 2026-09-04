@@ -12,6 +12,7 @@ Spec: docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-v
 from typing import Optional
 from fastapi import APIRouter, Query
 from database import log_pre_entry_validation_results
+from services.concentration_service import get_ticker_sector as _get_ticker_sector
 
 router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
 
@@ -89,30 +90,6 @@ def _check_cash_constraint(ticker: str, market: str, quantity: float) -> dict:
         }
     except Exception as exc:
         return {"rule": "cash_constraint", "status": "skipped", "detail": f"Cash check error: {exc}", "severity": "fail"}
-
-
-def _get_ticker_sector(ticker: str) -> Optional[str]:
-    """Look up sector for ticker from ticker_universe, falling back to open positions."""
-    try:
-        from database import get_db
-        with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute("SELECT sector FROM ticker_universe WHERE ticker = %s LIMIT 1", (ticker,))
-                row = cur.fetchone()
-                if row and row["sector"]:
-                    return row["sector"]
-    except Exception:
-        pass
-    try:
-        from database import get_portfolio, get_positions
-        portfolio = get_portfolio()
-        if portfolio:
-            for pos in get_positions(str(portfolio["id"]), status="open"):
-                if pos.get("ticker") == ticker and pos.get("sector"):
-                    return pos["sector"]
-    except Exception:
-        pass
-    return None
 
 
 def _check_sector_concentration(ticker: str, market: str, quantity: float) -> dict:

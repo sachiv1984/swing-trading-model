@@ -1,15 +1,18 @@
 import os
 import re
+import logging
 import threading
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
 from typing import Optional, List, Dict
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import pandas as pd
 import time
 import requests
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
+
+logger = logging.getLogger(__name__)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -4058,3 +4061,765 @@ def get_backtest_rule_run_by_id(run_id: str) -> Optional[Dict]:
             cur.execute("SELECT * FROM backtest_rule_runs WHERE id = %s", (run_id,))
             row = cur.fetchone()
     return dict(row) if row else None
+
+
+# ---------------------------------------------------------------------------
+# Weekly Digest raw-SQL consolidation (ST-11, BLG-BE-110, EPIC-02, v9.1)
+#
+# Moved verbatim from routers/digest.py — structural move only, no query
+# rewrite, per stage4_backlog_slice.md#ST-11. database.py remains the sole
+# SQL layer; routers/digest.py calls get_weekly_digest_data() instead of
+# opening its own psycopg2 connection.
+# ---------------------------------------------------------------------------
+
+def get_weekly_digest_data(conn=None) -> Dict:
+    """All raw data backing GET /digest/weekly — see routers/digest.py for
+    field semantics. Opens its own connection via get_db() unless `conn` is
+    supplied by the caller."""
+    if conn is not None:
+        return _fetch_weekly_digest_data(conn)
+    with get_db() as conn:
+        return _fetch_weekly_digest_data(conn)
+
+
+def _fetch_weekly_digest_data(conn) -> Dict:
+    cursor = conn.cursor()
+    now_utc = datetime.now(timezone.utc)
+    cutoff_7d = now_utc - timedelta(days=7)
+    cutoff_7d_date = cutoff_7d.date()
+
+    # 1. Realised P&L — trades closed in the last 7 days
+    cursor.execute("""
+        SELECT COALESCE(SUM(pnl), 0) AS realised_pnl_7d
+        FROM trade_history
+        WHERE exit_date >= %s
+    """, (cutoff_7d_date,))
+    row = cursor.fetchone()
+    realised_pnl_7d = round(float(row["realised_pnl_7d"]), 2) if row else 0.0
+
+    # 2. Unrealised P&L delta — portfolio snapshot comparison
+    #    current_unrealised - unrealised_7d_ago
+    unrealised_pnl_delta_7d = None
+    try:
+        cursor.execute("""
+            SELECT unrealised_pnl
+            FROM portfolio_history
+            WHERE unrealised_pnl IS NOT NULL
+            ORDER BY snapshot_date DESC
+            LIMIT 1
+        """)
+        latest = cursor.fetchone()
+
+        cursor.execute("""
+            SELECT unrealised_pnl
+            FROM portfolio_history
+            WHERE snapshot_date <= %s
+              AND unrealised_pnl IS NOT NULL
+            ORDER BY snapshot_date DESC
+            LIMIT 1
+        """, (cutoff_7d_date,))
+        seven_days_ago = cursor.fetchone()
+
+        if latest and seven_days_ago:
+            unrealised_pnl_delta_7d = round(
+                float(latest["unrealised_pnl"]) - float(seven_days_ago["unrealised_pnl"]),
+                2,
+            )
+    except Exception as e:
+        logger.warning("Could not compute unrealised_pnl_delta_7d: %s", e)
+
+    # 3. Alerts fired and dismissed in last 7 days
+    alerts_fired_7d = 0
+    alerts_dismissed_7d = 0
+    try:
+        cursor.execute("""
+            SELECT
+                COUNT(*) AS fired,
+                COUNT(CASE WHEN read = TRUE THEN 1 END) AS dismissed
+            FROM notifications
+            WHERE created_at >= %s
+        """, (cutoff_7d,))
+        alert_row = cursor.fetchone()
+        if alert_row:
+            alerts_fired_7d = int(alert_row["fired"])
+            alerts_dismissed_7d = int(alert_row["dismissed"])
+    except Exception as e:
+        logger.warning("Could not compute alert counts: %s", e)
+
+    # 4. Compliance score — journal_completion_rate
+    #    current: all closed trades; 7d ago: trades closed BEFORE the window
+    compliance_score_current = 0.0
+    compliance_score_7d_ago = 0.0
+    try:
+        cursor.execute("""
+            SELECT
+                COUNT(*) AS total,
+                COUNT(CASE
+                    WHEN (entry_note IS NOT NULL AND entry_note != '')
+                      OR (exit_note  IS NOT NULL AND exit_note  != '')
+                    THEN 1 END) AS with_notes
+            FROM trade_history
+        """)
+        comp_row = cursor.fetchone()
+        if comp_row and int(comp_row["total"]) > 0:
+            compliance_score_current = round(
+                int(comp_row["with_notes"]) / int(comp_row["total"]) * 100, 1
+            )
+
+        cursor.execute("""
+            SELECT
+                COUNT(*) AS total,
+                COUNT(CASE
+                    WHEN (entry_note IS NOT NULL AND entry_note != '')
+                      OR (exit_note  IS NOT NULL AND exit_note  != '')
+                    THEN 1 END) AS with_notes
+            FROM trade_history
+            WHERE exit_date < %s
+        """, (cutoff_7d_date,))
+        comp_base = cursor.fetchone()
+        if comp_base and int(comp_base["total"]) > 0:
+            compliance_score_7d_ago = round(
+                int(comp_base["with_notes"]) / int(comp_base["total"]) * 100, 1
+            )
+    except Exception as e:
+        logger.warning("Could not compute compliance scores: %s", e)
+
+    # 5. Staleness — hours since last portfolio snapshot
+    staleness_hours = None
+    try:
+        cursor.execute("""
+            SELECT snapshot_date
+            FROM portfolio_history
+            ORDER BY snapshot_date DESC
+            LIMIT 1
+        """)
+        snap_row = cursor.fetchone()
+        if snap_row and snap_row["snapshot_date"]:
+            snap_dt = datetime.combine(
+                snap_row["snapshot_date"],
+                datetime.min.time(),
+                tzinfo=timezone.utc,
+            )
+            delta = now_utc - snap_dt
+            staleness_hours = round(delta.total_seconds() / 3600, 1)
+    except Exception as e:
+        logger.warning("Could not compute staleness_hours: %s", e)
+
+    return {
+        "realised_pnl_7d": realised_pnl_7d,
+        "unrealised_pnl_delta_7d": unrealised_pnl_delta_7d,
+        "alerts_fired_7d": alerts_fired_7d,
+        "alerts_dismissed_7d": alerts_dismissed_7d,
+        "compliance_score_current": compliance_score_current,
+        "compliance_score_7d_ago": compliance_score_7d_ago,
+        "staleness_hours": staleness_hours,
+        "as_of_utc": now_utc.isoformat(),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Analytics raw-SQL consolidation (ST-11, BLG-BE-110, EPIC-02, v9.1)
+#
+# Moved verbatim from routers/analytics.py — structural move only, no query
+# rewrite, per stage4_backlog_slice.md#ST-11. database.py remains the sole
+# SQL layer; routers/analytics.py calls these functions instead of opening
+# its own psycopg2 connection. Each function accepts an optional `conn` so
+# callers that need several of these in one request (e.g. GET
+# /analytics/metrics) can share a single connection, matching the original
+# router code's connection-reuse behaviour.
+# ---------------------------------------------------------------------------
+
+def _build_trades_for_charts_with_join(cursor, since_date) -> list:
+    """
+    Attempt to build trades_for_charts with stop_price via positions JOIN.
+
+    Returns list of trade dicts with stop_price populated from
+    positions.initial_stop. If the position_id column does not exist in
+    trade_history (migration pending), falls back to returning all trades
+    with stop_price: null so analytics loads without error.
+    """
+    try:
+        if since_date:
+            cursor.execute("""
+                SELECT
+                    th.id,
+                    th.ticker,
+                    th.market,
+                    th.entry_date,
+                    th.exit_date,
+                    th.entry_price,
+                    th.exit_price,
+                    th.shares,
+                    CASE WHEN p.initial_stop IS NOT NULL
+                              AND p.initial_stop < th.entry_price
+                         THEN p.initial_stop
+                         ELSE NULL
+                    END AS stop_price,
+                    th.pnl,
+                    th.pnl_pct      AS pnl_percent,
+                    th.exit_reason,
+                    th.holding_days,
+                    th.tags
+                FROM trade_history th
+                LEFT JOIN positions p ON th.position_id = p.id
+                WHERE th.exit_date >= %s
+                ORDER BY th.exit_date ASC
+            """, (since_date,))
+        else:
+            cursor.execute("""
+                SELECT
+                    th.id,
+                    th.ticker,
+                    th.market,
+                    th.entry_date,
+                    th.exit_date,
+                    th.entry_price,
+                    th.exit_price,
+                    th.shares,
+                    CASE WHEN p.initial_stop IS NOT NULL
+                              AND p.initial_stop < th.entry_price
+                         THEN p.initial_stop
+                         ELSE NULL
+                    END AS stop_price,
+                    th.pnl,
+                    th.pnl_pct      AS pnl_percent,
+                    th.exit_reason,
+                    th.holding_days,
+                    th.tags
+                FROM trade_history th
+                LEFT JOIN positions p ON th.position_id = p.id
+                ORDER BY th.exit_date ASC
+            """)
+
+        trades_for_charts = []
+        for row in cursor.fetchall():
+            stop = row['stop_price']
+            trades_for_charts.append({
+                'id':           str(row['id']) if row['id'] else '',
+                'ticker':       row['ticker'],
+                'market':       row['market'],
+                'entry_date':   row['entry_date'].isoformat() if row['entry_date'] else None,
+                'exit_date':    row['exit_date'].isoformat() if row['exit_date'] else None,
+                'entry_price':  round(float(row['entry_price']), 4) if row['entry_price'] else 0,
+                'exit_price':   round(float(row['exit_price']), 4) if row['exit_price'] else 0,
+                'shares':       round(float(row['shares']), 4) if row['shares'] else None,
+                'stop_price':   round(float(stop), 4) if stop is not None else None,
+                'pnl':          round(float(row['pnl']), 2) if row['pnl'] else 0,
+                'pnl_percent':  round(float(row['pnl_percent']), 2) if row['pnl_percent'] else 0,
+                'exit_reason':  row['exit_reason'],
+                'holding_days': int(row['holding_days']) if row['holding_days'] else 0,
+                'tags':         row['tags'] or None,
+            })
+        return trades_for_charts
+
+    except psycopg2.errors.UndefinedColumn:
+        # position_id column not yet in live trade_history table.
+        # Migration (migration_add_position_id.sql) has not run yet.
+        # Roll back the failed transaction so the cursor is still usable,
+        # then fall back to trades without stop_price (all null).
+        cursor.connection.rollback()
+        print(
+            "BLG-TECH-07: trade_history.position_id column not found. "
+            "Run migration_add_position_id.sql to enable stop_price JOIN. "
+            "Returning trades_for_charts with stop_price: null."
+        )
+        return _build_trades_for_charts_no_join(cursor, since_date)
+
+
+def _build_trades_for_charts_no_join(cursor, since_date) -> list:
+    """
+    Fallback: trades_for_charts without stop_price (all null).
+    Used when position_id migration has not yet run.
+    """
+    if since_date:
+        cursor.execute("""
+            SELECT
+                id, ticker, market, entry_date, exit_date,
+                entry_price, exit_price, shares, pnl, pnl_pct AS pnl_percent,
+                exit_reason, holding_days, tags
+            FROM trade_history
+            WHERE exit_date >= %s
+            ORDER BY exit_date ASC
+        """, (since_date,))
+    else:
+        cursor.execute("""
+            SELECT
+                id, ticker, market, entry_date, exit_date,
+                entry_price, exit_price, shares, pnl, pnl_pct AS pnl_percent,
+                exit_reason, holding_days, tags
+            FROM trade_history
+            ORDER BY exit_date ASC
+        """)
+
+    trades_for_charts = []
+    for row in cursor.fetchall():
+        trades_for_charts.append({
+            'id':           str(row['id']) if row['id'] else '',
+            'ticker':       row['ticker'],
+            'market':       row['market'],
+            'entry_date':   row['entry_date'].isoformat() if row['entry_date'] else None,
+            'exit_date':    row['exit_date'].isoformat() if row['exit_date'] else None,
+            'entry_price':  round(float(row['entry_price']), 4) if row['entry_price'] else 0,
+            'exit_price':   round(float(row['exit_price']), 4) if row['exit_price'] else 0,
+            'shares':       round(float(row['shares']), 4) if row['shares'] else None,
+            'stop_price':   None,  # not available without position_id migration
+            'pnl':          round(float(row['pnl']), 2) if row['pnl'] else 0,
+            'pnl_percent':  round(float(row['pnl_percent']), 2) if row['pnl_percent'] else 0,
+            'exit_reason':  row['exit_reason'],
+            'holding_days': int(row['holding_days']) if row['holding_days'] else 0,
+            'tags':         row['tags'] or None,
+        })
+    return trades_for_charts
+
+
+def get_trades_for_charts(since_date=None, conn=None) -> list:
+    """Public entry point for _build_trades_for_charts_with_join (with its
+    built-in no-join fallback). Used by GET /analytics/metrics, /cohort, and
+    /r-multiple-distribution."""
+    if conn is not None:
+        with conn.cursor() as cur:
+            return _build_trades_for_charts_with_join(cur, since_date)
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            return _build_trades_for_charts_with_join(cur, since_date)
+
+
+def get_min_trades_for_analytics(conn=None) -> int:
+    """min_trades_for_analytics setting, defaulting to 10 if unset."""
+    def _fetch(c):
+        with c.cursor() as cur:
+            cur.execute("""
+                SELECT min_trades_for_analytics
+                FROM settings
+                ORDER BY created_at DESC
+                LIMIT 1
+            """)
+            row = cur.fetchone()
+            return int(row['min_trades_for_analytics']) if row else 10
+    if conn is not None:
+        return _fetch(conn)
+    with get_db() as conn:
+        return _fetch(conn)
+
+
+def get_trade_history_for_analytics_metrics(conn=None) -> list:
+    """Full trade_history rows (raw, unformatted) for GET /analytics/metrics."""
+    def _fetch(c):
+        with c.cursor() as cur:
+            cur.execute("""
+                SELECT
+                    id, ticker, market, entry_date, exit_date, shares,
+                    entry_price, exit_price, pnl, pnl_pct, exit_reason,
+                    holding_days, entry_note, exit_note, tags
+                FROM trade_history
+                ORDER BY exit_date ASC
+            """)
+            return cur.fetchall()
+    if conn is not None:
+        return _fetch(conn)
+    with get_db() as conn:
+        return _fetch(conn)
+
+
+def get_portfolio_history_for_analytics(conn=None) -> list:
+    """Full portfolio_history rows (raw, unformatted) for GET /analytics/metrics.
+    Returns [] if the table does not exist or on any other fetch error
+    (matches the original router's graceful-degradation behaviour)."""
+    def _fetch(c):
+        try:
+            with c.cursor() as cur:
+                cur.execute("""
+                    SELECT
+                        snapshot_date, total_value, cash_balance,
+                        positions_value, total_pnl, position_count
+                    FROM portfolio_history
+                    ORDER BY snapshot_date ASC
+                """)
+                return cur.fetchall()
+        except psycopg2.errors.UndefinedTable:
+            c.rollback()
+            print("portfolio_history table not found, using empty history")
+            return []
+        except Exception as e:
+            c.rollback()
+            print(f"Error fetching portfolio history: {e}")
+            return []
+    if conn is not None:
+        return _fetch(conn)
+    with get_db() as conn:
+        return _fetch(conn)
+
+
+def get_compliance_core_counts(conn=None) -> dict:
+    """total_trades / trades_with_notes / stop_exits for GET /analytics/compliance-metrics."""
+    def _fetch(c):
+        with c.cursor() as cur:
+            cur.execute("""
+                SELECT
+                    COUNT(*)                                                   AS total_trades,
+                    COUNT(CASE
+                        WHEN (entry_note IS NOT NULL AND entry_note != '')
+                          OR (exit_note  IS NOT NULL AND exit_note  != '')
+                        THEN 1 END)                                            AS trades_with_notes,
+                    COUNT(CASE
+                        WHEN exit_reason IN ('Stop Loss Hit', 'Trailing Stop')
+                        THEN 1 END)                                            AS stop_exits
+                FROM trade_history
+            """)
+            return cur.fetchone()
+    if conn is not None:
+        return _fetch(conn)
+    with get_db() as conn:
+        return _fetch(conn)
+
+
+def get_position_size_entry_ratios(conn=None) -> list:
+    """Raw (total_cost, portfolio_value_at_entry) pairs for
+    GET /analytics/compliance-metrics' avg_position_size_pct calculation.
+    Ratio math stays in the router — this only does the DB round-trip."""
+    def _fetch(c):
+        with c.cursor() as cur:
+            cur.execute("""
+                SELECT
+                    th.total_cost,
+                    (
+                        SELECT ph.total_value
+                        FROM portfolio_history ph
+                        WHERE ph.snapshot_date <= th.entry_date
+                        ORDER BY ph.snapshot_date DESC
+                        LIMIT 1
+                    ) AS portfolio_value_at_entry
+                FROM trade_history th
+            """)
+            return cur.fetchall()
+    if conn is not None:
+        return _fetch(conn)
+    with get_db() as conn:
+        return _fetch(conn)
+
+
+def get_open_positions_for_correlation(conn=None) -> list:
+    """Open positions for GET /analytics/market-correlation."""
+    def _fetch(c):
+        with c.cursor() as cur:
+            cur.execute("""
+                SELECT p.id, p.ticker, p.market, p.shares, p.current_price, p.pnl
+                FROM positions p
+                JOIN portfolios port ON p.portfolio_id = port.id
+                WHERE p.status = 'open'
+                  AND p.shares > 0
+            """)
+            return cur.fetchall()
+    if conn is not None:
+        return _fetch(conn)
+    with get_db() as conn:
+        return _fetch(conn)
+
+
+def get_arc5_validation_pass_rate_by_rule(since_iso, conn=None) -> dict:
+    """validation_pass_rate_by_rule for GET /analytics/arc5-compliance."""
+    def _fetch(c):
+        result = {}
+        try:
+            with c.cursor() as cur:
+                cur.execute("""
+                    SELECT rule_type,
+                           COUNT(*) FILTER (WHERE status = 'pass') AS pass_count,
+                           COUNT(*) FILTER (WHERE status != 'pass') AS fail_count
+                    FROM pre_entry_validation_log
+                    WHERE validated_at >= %s::timestamptz
+                    GROUP BY rule_type
+                """, (since_iso,))
+                for row in cur.fetchall():
+                    total = int(row['pass_count']) + int(row['fail_count'])
+                    pass_rate = round(int(row['pass_count']) / total, 4) if total else None
+                    result[row['rule_type']] = {
+                        "pass_rate": pass_rate,
+                        "pass_count": int(row['pass_count']),
+                        "fail_count": int(row['fail_count']),
+                    }
+        except psycopg2.errors.UndefinedTable:
+            c.rollback()
+            result = {}
+        return result
+    if conn is not None:
+        return _fetch(conn)
+    with get_db() as conn:
+        return _fetch(conn)
+
+
+def get_arc5_top_rule_breach(since_iso, conn=None):
+    """top_rule_breach (most frequently failing rule) for GET /analytics/arc5-compliance."""
+    def _fetch(c):
+        top_rule_breach = None
+        try:
+            with c.cursor() as cur:
+                cur.execute("""
+                    SELECT rule_type, COUNT(*) AS fail_count
+                    FROM pre_entry_validation_log
+                    WHERE validated_at >= %s::timestamptz
+                      AND status = 'fail'
+                    GROUP BY rule_type
+                    ORDER BY fail_count DESC
+                    LIMIT 1
+                """, (since_iso,))
+                row = cur.fetchone()
+                if row:
+                    top_rule_breach = row['rule_type']
+        except psycopg2.errors.UndefinedTable:
+            c.rollback()
+        return top_rule_breach
+    if conn is not None:
+        return _fetch(conn)
+    with get_db() as conn:
+        return _fetch(conn)
+
+
+def get_arc5_events_per_week(week_ago_iso, conn=None) -> float:
+    """events_per_week (red_flag_events in last 7 days) for GET /analytics/arc5-compliance."""
+    def _fetch(c):
+        try:
+            with c.cursor() as cur:
+                cur.execute("""
+                    SELECT COUNT(*) AS cnt
+                    FROM red_flag_events
+                    WHERE created_at >= %s::timestamptz
+                """, (week_ago_iso,))
+                row = cur.fetchone()
+                events_count = int(row['cnt']) if row else 0
+                return round(events_count / 7.0, 2)
+        except psycopg2.errors.UndefinedTable:
+            c.rollback()
+            return 0.0
+    if conn is not None:
+        return _fetch(conn)
+    with get_db() as conn:
+        return _fetch(conn)
+
+
+def get_arc5_override_rate(week_ago_iso, conn=None):
+    """override_rate (overrides / validation attempts, last 7 days) for GET /analytics/arc5-compliance."""
+    def _fetch(c):
+        try:
+            with c.cursor() as cur:
+                cur.execute("""
+                    SELECT COUNT(*) AS overrides
+                    FROM red_flag_events
+                    WHERE created_at >= %s::timestamptz
+                      AND event_type = 'pre_entry_override'
+                """, (week_ago_iso,))
+                row = cur.fetchone()
+                overrides = int(row['overrides']) if row else 0
+
+                cur.execute("""
+                    SELECT COUNT(*) AS attempts
+                    FROM pre_entry_validation_log
+                    WHERE validated_at >= %s::timestamptz
+                """, (week_ago_iso,))
+                row = cur.fetchone()
+                attempts = int(row['attempts']) if row else 0
+                return round(overrides / attempts, 4) if attempts > 0 else None
+        except psycopg2.errors.UndefinedTable:
+            c.rollback()
+            return None
+    if conn is not None:
+        return _fetch(conn)
+    with get_db() as conn:
+        return _fetch(conn)
+
+
+def get_arc5_trade_plan_adherence_rate(conn=None):
+    """trade_plan_adherence_rate (all-time) for GET /analytics/arc5-compliance."""
+    def _fetch(c):
+        try:
+            with c.cursor() as cur:
+                cur.execute("SELECT COUNT(*) AS total FROM trade_history")
+                row = cur.fetchone()
+                total_trades = int(row['total']) if row else 0
+
+                if total_trades > 0:
+                    cur.execute("""
+                        SELECT COUNT(DISTINCT th.id) AS with_plan
+                        FROM trade_history th
+                        JOIN trade_plans tp ON tp.position_id = th.position_id
+                    """)
+                    row = cur.fetchone()
+                    with_plan = int(row['with_plan']) if row else 0
+                    return round(with_plan / total_trades, 4)
+                return None
+        except (psycopg2.errors.UndefinedColumn, psycopg2.errors.UndefinedTable):
+            c.rollback()
+            return None
+    if conn is not None:
+        return _fetch(conn)
+    with get_db() as conn:
+        return _fetch(conn)
+
+
+def get_version_trade_metrics(start_date, end_date, conn=None) -> dict:
+    """trade_count, win_rate, avg_R for closed trades with entry_date in
+    [start_date, end_date). Used by GET /analytics/strategy-version-comparison.
+
+    avg_R uses the canonical per-trade formula (metrics_definitions.md v1.7.0):
+    R = (exit_price - entry_price) / (entry_price - initial_stop_price), via
+    positions.initial_stop LEFT JOIN (same source as GET /analytics/r-multiple-distribution).
+    Trades without a determinable stop are excluded from avg_R but still counted
+    in trade_count and win_rate (win/loss is determinable from pnl alone).
+    """
+    def _fetch(c):
+        end_clause = "AND th.entry_date < %s" if end_date is not None else ""
+        params = [start_date] + ([end_date] if end_date is not None else [])
+
+        query = f"""
+            SELECT
+                th.entry_price, th.exit_price, th.pnl,
+                CASE WHEN p.initial_stop IS NOT NULL AND p.initial_stop < th.entry_price
+                     THEN p.initial_stop ELSE NULL END AS stop_price
+            FROM trade_history th
+            LEFT JOIN positions p ON th.position_id = p.id
+            WHERE th.exit_date IS NOT NULL
+              AND th.entry_date >= %s
+              {end_clause}
+        """
+        with c.cursor() as cur:
+            try:
+                cur.execute(query, params)
+                rows = cur.fetchall()
+            except (psycopg2.errors.UndefinedColumn, psycopg2.errors.UndefinedTable):
+                c.rollback()
+                rows = []
+
+        trade_count = len(rows)
+        if trade_count == 0:
+            return {"trade_count": 0, "win_rate": None, "avg_R": None}
+
+        winners = sum(1 for r in rows if (r["pnl"] or 0) > 0)
+        win_rate = round(winners / trade_count, 4)
+
+        r_values = []
+        for r in rows:
+            ep, sp, xp = r["entry_price"], r["stop_price"], r["exit_price"]
+            if sp is None or ep is None or xp is None or ep <= sp:
+                continue
+            r_values.append((float(xp) - float(ep)) / (float(ep) - float(sp)))
+        avg_R = round(sum(r_values) / len(r_values), 4) if r_values else None
+
+        return {"trade_count": trade_count, "win_rate": win_rate, "avg_R": avg_R}
+
+    if conn is not None:
+        return _fetch(conn)
+    with get_db() as conn:
+        return _fetch(conn)
+
+
+def get_arc5_composite_for_range(start_date, end_date, conn=None) -> float:
+    """Arc 5 compliance composite score (metrics_definitions.md 'Arc 5 Compliance
+    Composite Score') computed over an arbitrary [start_date, end_date) range,
+    generalising GET /analytics/arc5-compliance's rolling-7/30-day window to a
+    strategy-version-scoped historical slice (Strategy Rules & System Intent
+    Owner decision, 2026-07-23, v7.7 ST-01 — compliance_rate sources from this
+    composite, not journal_completion_rate, per role charter §6 "same field
+    must mean the same thing everywhere").
+
+    Returns None if any required input is unavailable (mirrors the composite's
+    documented "Composite Score Unavailability" fallback rule) — treats null
+    override_rate / trade_plan_adherence_rate as 0.0 per metrics_definitions.md.
+    """
+    def _fetch(c):
+        end_clause = "AND created_at < %s::timestamptz" if end_date is not None else ""
+        validated_end_clause = "AND validated_at < %s::timestamptz" if end_date is not None else ""
+        range_params = [start_date] + ([end_date] if end_date is not None else [])
+
+        with c.cursor() as cur:
+            # override_rate: overrides / validation attempts, over the range
+            override_rate = 0.0
+            try:
+                cur.execute(f"""
+                    SELECT COUNT(*) AS overrides FROM red_flag_events
+                    WHERE created_at >= %s::timestamptz {end_clause}
+                      AND event_type = 'pre_entry_override'
+                """, range_params)
+                overrides = int(cur.fetchone()["overrides"] or 0)
+
+                cur.execute(f"""
+                    SELECT COUNT(*) AS attempts FROM pre_entry_validation_log
+                    WHERE validated_at >= %s::timestamptz {validated_end_clause}
+                """, range_params)
+                attempts = int(cur.fetchone()["attempts"] or 0)
+                override_rate = round(overrides / attempts, 4) if attempts > 0 else 0.0
+            except psycopg2.errors.UndefinedTable:
+                c.rollback()
+
+            # events_per_week: red_flag_events over the range, normalised to a weekly rate
+            events_per_week = 0.0
+            try:
+                cur.execute(f"""
+                    SELECT COUNT(*) AS cnt FROM red_flag_events
+                    WHERE created_at >= %s::timestamptz {end_clause}
+                """, range_params)
+                events_count = int(cur.fetchone()["cnt"] or 0)
+                range_days = (end_date - start_date).days if end_date else (datetime.now().date() - start_date).days
+                range_weeks = max(range_days / 7.0, 1 / 7.0)
+                events_per_week = round(events_count / range_weeks, 2)
+            except psycopg2.errors.UndefinedTable:
+                c.rollback()
+
+            # trade_plan_adherence_rate: trades with plan / total closed trades, entry_date in range
+            trade_plan_adherence_rate = 0.0
+            try:
+                end_clause_entry = "AND entry_date < %s" if end_date is not None else ""
+                cur.execute(f"""
+                    SELECT COUNT(*) AS total FROM trade_history
+                    WHERE exit_date IS NOT NULL AND entry_date >= %s {end_clause_entry}
+                """, range_params)
+                total_trades = int(cur.fetchone()["total"] or 0)
+
+                if total_trades > 0:
+                    cur.execute(f"""
+                        SELECT COUNT(DISTINCT th.id) AS with_plan
+                        FROM trade_history th
+                        JOIN trade_plans tp ON tp.position_id = th.position_id
+                        WHERE th.exit_date IS NOT NULL AND th.entry_date >= %s {end_clause_entry}
+                    """, range_params)
+                    with_plan = int(cur.fetchone()["with_plan"] or 0)
+                    trade_plan_adherence_rate = round(with_plan / total_trades, 4)
+            except (psycopg2.errors.UndefinedColumn, psycopg2.errors.UndefinedTable):
+                c.rollback()
+
+            # top_rule_breach severity, over the range
+            severity_map = {
+                "regime_gate": 1.0,
+                "sector_concentration": 0.5,
+                "earnings_proximity": 0.5,
+                "cash_constraint": 0.5,
+                "sizing_validity": 0.0,
+            }
+            top_rule_breach_severity_normalized = 0.0
+            try:
+                cur.execute(f"""
+                    SELECT rule_type, COUNT(*) AS fail_count
+                    FROM pre_entry_validation_log
+                    WHERE validated_at >= %s::timestamptz {validated_end_clause}
+                      AND status = 'fail'
+                    GROUP BY rule_type
+                    ORDER BY fail_count DESC
+                    LIMIT 1
+                """, range_params)
+                row = cur.fetchone()
+                if row:
+                    top_rule_breach_severity_normalized = severity_map.get(row["rule_type"], 0.0)
+            except psycopg2.errors.UndefinedTable:
+                c.rollback()
+
+        composite_score = (
+            (1 - override_rate) * 0.40
+            + (1 - min(events_per_week / 10, 1)) * 0.30
+            + trade_plan_adherence_rate * 0.20
+            + (1 - top_rule_breach_severity_normalized) * 0.10
+        )
+        return round(composite_score, 4)
+
+    if conn is not None:
+        return _fetch(conn)
+    with get_db() as conn:
+        return _fetch(conn)

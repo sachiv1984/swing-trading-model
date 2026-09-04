@@ -207,3 +207,34 @@ class TestConcentrationEdgeCases:
 
         assert result["valid"] is False
         assert "concentration_adjusted" not in result
+
+
+class TestFailOpenLogging:
+    """ST-09 (BLG-TECH-16): the concentration adjustment's fail-open exception
+    handler must log the exception (with ticker/sector context where
+    available) rather than swallowing it silently, without changing the
+    fail-open return behaviour itself."""
+
+    def test_exception_fails_open_and_logs_with_ticker(self, caplog):
+        """An unexpected exception during the sector lookup still returns the
+        unadjusted default (fail-open preserved) and is logged at warning
+        level with the ticker for diagnosis."""
+        with (
+            patch("services.sizing_service.get_portfolio", return_value=MOCK_PORTFOLIO),
+            patch("services.sizing_service.get_latest_snapshot", return_value=MOCK_SNAPSHOT),
+            patch("services.sizing_service.get_settings", return_value=[]),
+            patch("services.sizing_service.get_ticker_sector", side_effect=RuntimeError("boom")),
+            caplog.at_level("WARNING", logger="services.sizing_service"),
+        ):
+            result = _size(ticker="MSFT")
+
+        # Fail-open behaviour unchanged: no adjustment, valid sizing result.
+        assert result["suggested_shares"] == 20.0
+        assert result["concentration_adjusted"] is False
+        assert result["concentration_reason"] is None
+
+        # But the failure is now diagnosable, not silent.
+        assert len(caplog.records) == 1
+        assert caplog.records[0].levelname == "WARNING"
+        assert "MSFT" in caplog.text
+        assert "boom" in caplog.text

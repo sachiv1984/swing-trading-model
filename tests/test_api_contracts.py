@@ -134,20 +134,6 @@ def _ok(r, status_code=200):
     return body
 
 
-def _mock_conn():
-    """Return a mock psycopg2 connection/cursor for raw-SQL endpoints."""
-    cur = MagicMock()
-    cur.fetchall.return_value = []
-    cur.fetchone.return_value = None
-    cur.__enter__ = lambda s: s
-    cur.__exit__ = MagicMock(return_value=False)
-    conn = MagicMock()
-    conn.cursor.return_value = cur
-    conn.__enter__ = lambda s: s
-    conn.__exit__ = MagicMock(return_value=False)
-    return conn
-
-
 # ---------------------------------------------------------------------------
 # 1. Core / Health
 # ---------------------------------------------------------------------------
@@ -326,46 +312,59 @@ class TestSignalAndMarketEndpoints(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# 8. Analytics  (router calls psycopg2 directly — patch at router level)
+# 8. Analytics  (raw SQL moved into database.py as of ST-11/BLG-BE-110, v9.1;
+#    router does `from database import get_db, get_trades_for_charts, ...` —
+#    patch each at the routers.analytics import site per this file's own
+#    "patch at the import site, not the definition site" rule above. Patching
+#    database.psycopg2.connect directly is NOT reliable here: sys.modules
+#    ["database"] is swapped for a stub by conftest.py and re-evicted by many
+#    other test files' own `sys.modules.pop("database", ...)` calls, and
+#    `psycopg2` isn't one of the names conftest.py's AST-derived stub carries
+#    (it's never imported via `from database import psycopg2` anywhere) — so
+#    whether `database.psycopg2` resolves depends on full-suite run order.
+#    routers.analytics.<name> is a stable reference bound at that module's own
+#    import time and isn't affected by later sys.modules["database"] swaps.
 # ---------------------------------------------------------------------------
 
 class TestAnalyticsEndpoints(unittest.TestCase):
 
-    @patch("routers.analytics.psycopg2.connect")
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    def test_analytics_metrics_all_time(self, _, mock_connect):
-        mock_connect.return_value = _mock_conn()
+    @patch("routers.analytics.get_db")
+    @patch("routers.analytics.get_portfolio_history_for_analytics", return_value=[])
+    @patch("routers.analytics.get_trades_for_charts", return_value=[])
+    @patch("routers.analytics.get_trade_history_for_analytics_metrics", return_value=[])
+    @patch("routers.analytics.get_min_trades_for_analytics", return_value=10)
+    def test_analytics_metrics_all_time(self, *_):
         assert CLIENT.get("/analytics/metrics?period=all_time").status_code == 200
 
-    @patch("routers.analytics.psycopg2.connect")
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    def test_analytics_metrics_last_7_days(self, _, mock_connect):
-        mock_connect.return_value = _mock_conn()
+    @patch("routers.analytics.get_db")
+    @patch("routers.analytics.get_portfolio_history_for_analytics", return_value=[])
+    @patch("routers.analytics.get_trades_for_charts", return_value=[])
+    @patch("routers.analytics.get_trade_history_for_analytics_metrics", return_value=[])
+    @patch("routers.analytics.get_min_trades_for_analytics", return_value=10)
+    def test_analytics_metrics_last_7_days(self, *_):
         assert CLIENT.get("/analytics/metrics?period=last_7_days").status_code == 200
 
-    @patch("routers.analytics.psycopg2.connect")
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    def test_analytics_cohort(self, _, mock_connect):
-        mock_connect.return_value = _mock_conn()
+    @patch("routers.analytics.get_db")
+    @patch("routers.analytics.get_trades_for_charts", return_value=[])
+    def test_analytics_cohort(self, *_):
         assert CLIENT.get("/analytics/cohort?period=month").status_code == 200
 
-    @patch("routers.analytics.psycopg2.connect")
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    def test_analytics_r_multiple_distribution(self, _, mock_connect):
-        mock_connect.return_value = _mock_conn()
+    @patch("routers.analytics.get_db")
+    @patch("routers.analytics.get_trades_for_charts", return_value=[])
+    def test_analytics_r_multiple_distribution(self, *_):
         assert CLIENT.get("/analytics/r-multiple-distribution").status_code == 200
 
-    @patch("routers.analytics.psycopg2.connect")
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    def test_analytics_compliance_metrics(self, _, mock_connect):
-        mock_connect.return_value = _mock_conn()
+    @patch("routers.analytics.get_db")
+    @patch("routers.analytics.get_position_size_entry_ratios", return_value=[])
+    @patch("routers.analytics.get_compliance_core_counts",
+           return_value={"total_trades": 0, "trades_with_notes": 0, "stop_exits": 0})
+    def test_analytics_compliance_metrics(self, *_):
         assert CLIENT.get("/analytics/compliance-metrics").status_code == 200
 
-    @patch("routers.analytics.psycopg2.connect")
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.analytics.get_db")
+    @patch("routers.analytics.get_open_positions_for_correlation", return_value=[])
     @patch("utils.pricing.get_current_price", return_value=None)
-    def test_analytics_market_correlation(self, _, __, mock_connect):
-        mock_connect.return_value = _mock_conn()
+    def test_analytics_market_correlation(self, *_):
         assert CLIENT.get("/analytics/market-correlation").status_code == 200
 
 
@@ -415,15 +414,23 @@ class TestAlertsEndpoints(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# 10. Digest  (router calls psycopg2 directly)
+# 10. Digest  (raw SQL moved into database.py as of ST-11/BLG-BE-110, v9.1 —
+#     patch routers.digest.get_weekly_digest_data at the import site)
 # ---------------------------------------------------------------------------
 
 class TestDigestEndpoints(unittest.TestCase):
 
-    @patch("routers.digest.psycopg2.connect")
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    def test_get_digest_weekly_returns_200(self, _, mock_connect):
-        mock_connect.return_value = _mock_conn()
+    @patch("routers.digest.get_weekly_digest_data", return_value={
+        "realised_pnl_7d": 0.0,
+        "unrealised_pnl_delta_7d": None,
+        "alerts_fired_7d": 0,
+        "alerts_dismissed_7d": 0,
+        "compliance_score_current": 0.0,
+        "compliance_score_7d_ago": 0.0,
+        "staleness_hours": None,
+        "as_of_utc": "2026-01-01T00:00:00+00:00",
+    })
+    def test_get_digest_weekly_returns_200(self, _):
         assert CLIENT.get("/digest/weekly").status_code == 200
 
     def test_post_digest_si05_send_returns_401_without_api_key(self):
