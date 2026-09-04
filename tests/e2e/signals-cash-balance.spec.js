@@ -132,7 +132,21 @@ test.describe('SC-SIG-CB-01 — Cash balance from /cash/summary', () => {
     // (beforeEach already navigated to /#/Signals and warmed the cache; changing the
     // hash alone keeps the SPA mounted so React Query serves from cache and skips the fetch).
     await page.goto('about:blank');
-    await page.goto('/#/Signals');
+
+    // DEV-EPIC02-ST08-01 (BLG-TECH-18/ST-08, v9.1): page.goto() only waits for
+    // the 'load' event, not for React to mount and useQuery's queryFn to
+    // actually fire — a quarterly dependency bump shifted bundle init/parse
+    // timing enough that goto() now reliably resolves before the app's first
+    // /cash/summary fetch, where it previously (coincidentally) didn't. Wait
+    // for the actual request alongside the navigation (Playwright's standard
+    // trigger-and-wait-concurrently pattern) instead of asserting immediately
+    // after goto() resolves — confirmed via a local reproduction that this is
+    // a pure test-synchronization gap, not an app behaviour change: the fetch
+    // reliably fires, just not always before this line used to run.
+    await Promise.all([
+      page.waitForRequest((req) => req.url().includes('/cash/summary'), { timeout: 10000 }),
+      page.goto('/#/Signals'),
+    ]);
 
     expect(cashRequests.length).toBeGreaterThan(0);
     expect(cashRequests[0]).toContain('/cash/summary');
