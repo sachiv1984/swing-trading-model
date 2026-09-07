@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.30
-**Last Updated:** 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — §14 Preflight Field Scope table gains 4 missing engine rows: run ideas, run ideas housekeeping, manage roadmap, groom backlog); prior — 2026-08-21 (post-ship closure `2026-08-17__release-v8.9`, `ESC-CLOSE-20260821-02` resolution, BLG-GOV-313 — new §16.16 Sandbox Access Constraint Disclosure Block); prior — 2026-08-11 (ST-24, EPIC-06, v8.6, BLG-GOV-296 — new §16.15); prior history retained — see prior entries in version control.
+**Version:** 3.31
+**Last Updated:** 2026-09-07 (ST-20, EPIC-04, v9.1, BLG-GOV-310 — new §16.17 "Signed off by: PENDING" placeholder convention); prior — 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — §14 Preflight Field Scope table gains 4 missing engine rows: run ideas, run ideas housekeeping, manage roadmap, groom backlog); prior — 2026-08-21 (post-ship closure `2026-08-17__release-v8.9`, `ESC-CLOSE-20260821-02` resolution, BLG-GOV-313 — new §16.16 Sandbox Access Constraint Disclosure Block); prior history retained — see prior entries in version control.
 
 # Shared Standards — All Governed Routines
 
@@ -1027,6 +1027,23 @@ Original / Amended — <file path used>
 **Usage:** When an AC can only be closed with genuine live access to one of the systems above, cite the relevant ID (e.g. *"SBX-NO-LIVE-DB — see `shared_standards.md` §16.16"*) in the `qa_evidence_EPIC-xx.md` entry's Comments/Notes field, alongside the story-specific detail of what was actually done as the best-available-proxy. This does not change what counts as verified — a best-available-proxy execution is still not full closure of a live-access-requiring AC — it only standardises how that gap is *described*, so different stories hitting the same recurring constraint read consistently instead of each inventing new wording.
 
 **Applies to:** Any `qa_evidence_EPIC-xx.md` entry, `DEV-*` deviation note, or backlog item citing a live-access limitation as the reason an AC could not be fully closed within a Sprint Execution session.
+
+---
+
+## §16.17 "Signed off by: PENDING" Placeholder Convention (ST-20, EPIC-04, v9.1, BLG-GOV-310)
+
+**Problem:** Some Class 3 (Operational Record) docs carry a static `Signed off by: PENDING` field even after the actual sign-off has genuinely happened — the sign-off is recorded only in the separate `qa_evidence_EPIC-xx.md` consolidation log that produced the doc, not propagated back into the doc's own sign-off block. A reader opening the doc directly (not the `qa_evidence` log) sees an apparently-unresolved sign-off gate, even though the work was in fact reviewed and accepted.
+
+**Convention:** A standalone document (any Class 3 Operational Record, or equivalent, produced as part of a story's deliverable) that does **not itself own the authoritative sign-off gate** for that story — because the real gate lives in that story's `qa_evidence_EPIC-xx.md` entry — must not leave a bare `Signed off by: PENDING` field with no further context. Use one of:
+
+1. **Point back to the authoritative gate (preferred for most cases):**
+   ```
+   Signed off by: PENDING — see agent-mediated review in qa_evidence_EPIC-xx.md
+   ```
+   This is the pattern already in live use (confirmed at `docs/security/npm_audit_baseline_review_2026-08-16.md`, `docs/ops/test_environment_parity_check_2026-08-16.md`, `docs/ops/endpoint_test_coverage_audit_2026-08-16.md`) — this section formalises it as the canonical convention rather than leaving it an undocumented, independently-reinvented pattern.
+2. **Remove the field entirely** when the document does not itself need a sign-off gate at all (e.g. a pure data/measurement record whose only sign-off requirement lives at the EPIC-consolidation level) — do not carry a field with no meaningful state to hold.
+
+**Applies to:** Any Class 3 (or lower) document produced by Sprint Execution, Delivery Verification, or Post-Ship Closure whose sign-off is authoritative in a separate `qa_evidence_EPIC-xx.md`/`verification_report.md`/`closure_record.md` entry, not in the document itself. Does **not** apply to `qa_evidence_EPIC-xx.md` itself, or any document whose own sign-off block IS the authoritative gate (e.g. the Standard Sign-Off Block per `qa_evidence_template.md`) — those must never carry an unresolved `PENDING` value; that case is a genuine gate failure, not a documentation convention.
 
 ---
 
