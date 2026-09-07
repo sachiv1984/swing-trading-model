@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-09-07
+Last Updated: 2026-09-07 (Addendum — all 3 outstanding deferred patches resolved same-session, user-directed follow-up); prior: 2026-09-07 (initial filing)
 Cycle: 2026-09-03__release-v9.1
 
 # Lessons Learnt — Post-Ship Closure
@@ -86,11 +86,13 @@ None — this closure's document changes were all updates to existing artefacts 
 
 ## Outstanding deferred patches
 
-| File | Section | Change required | Owner | Target | Carried since |
-|------|---------|----------------|-------|--------|---------------|
-| `claude/system/execution_prompt.md` | §3.2 (EPIC Completion / PR flow) | Add an "is this EPIC's PR already merged?" (`gh pr view <pr_number> --json state`) check before any commit to an EPIC branch once its PR is open, distinct placement question from the STEP 3.1.A precondition just added — whether a dedicated STEP 3.2.C is also warranted for the PR-open-but-not-yet-committing-again case | Head of Specs Team | Next `execution_prompt.md` revision touching §3.2 | v9.1 (new — noted as a residual design question even after this cycle's STEP 3.1.A fix) |
-| `claude/system/lessons_learnt_prompt.md` | §3.7 Cross-Cycle Recurrence Check | Re-run the patch-ID/named-file search against the *current* `prompt_change_log.md` state (not only the prior cycle's own record) when carrying forward a deferred patch — this cycle's Friction Item 1 | Head of Specs Team | Next `lessons_learnt_prompt.md` revision touching §3.7 | v9.1 (new) |
-| `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-01.md` | ST-02 row | Update `Result` field if still stale — carried from v9.0, outside this engine's write scope (qa evidence logs are not a Post-Ship Closure permitted path) | Director of Quality | Next touch of that file | v9.0 (2nd carry — not yet due for `shared_standards.md §6.4` escalation) |
+**All 3 below resolved same-session (2026-09-07, later that same day), acting in role per explicit user direction ("fix three outstanding actions") — see Addendum at the end of this file and `closure_record.md`'s own Addendum for full detail.**
+
+| File | Section | Change required | Owner | Target | Carried since | Resolution |
+|------|---------|----------------|-------|--------|---------------|------------|
+| `claude/system/execution_prompt.md` | §3.2 (EPIC Completion / PR flow) | Add an "is this EPIC's PR already merged?" (`gh pr view <pr_number> --json state`) check before any commit to an EPIC branch once its PR is open, distinct placement question from the STEP 3.1.A precondition just added — whether a dedicated STEP 3.2.C is also warranted for the PR-open-but-not-yet-committing-again case | Head of Specs Team | Next `execution_prompt.md` revision touching §3.2 | v9.1 (new — noted as a residual design question even after this cycle's STEP 3.1.A fix) | ✅ Resolved — confirmed no dedicated step needed (§3.1.C inherits by cross-reference; §3.1.B/§3.1.D never commit directly), confirming note added, v3.72→v3.73 |
+| `claude/system/lessons_learnt_prompt.md` | §3.7 Cross-Cycle Recurrence Check | Re-run the patch-ID/named-file search against the *current* `prompt_change_log.md` state (not only the prior cycle's own record) when carrying forward a deferred patch — this cycle's Friction Item 1 | Head of Specs Team | Next `lessons_learnt_prompt.md` revision touching §3.7 | v9.1 (new) | ✅ Resolved — `LL-v9.1-Closure-01` added, v1.12→v1.13 |
+| `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-01.md` | ST-02 row | Update `Result` field if still stale — carried from v9.0, outside this engine's write scope (qa evidence logs are not a Post-Ship Closure permitted path) | Director of Quality | Next touch of that file | v9.0 (2nd carry — not yet due for `shared_standards.md §6.4` escalation) | ✅ Already resolved — re-checked the file directly: `Result: Pass` since 2026-09-03 (v9.0's own post-ship closure). This carry was itself stale — a live 2nd instance of this same file's own Friction Item 1 |
 
 ---
 
@@ -109,6 +111,16 @@ Items: 2
 | 1 | A Phase-level (not deferred-patch-table-level) recurrence-check narrative claimed a fix was "not yet applied, first carry" 4 days after it had, in fact, already shipped — `LL-v8.6-P4-01b`/`BLG-GOV-312`'s named-file-search fixes address deferred-patch-table lookups specifically and did not catch this one-level-removed instance. | The next Sprint Execution or Delivery Verification session's own §3.7 recurrence check should re-verify prior-cycle "carried" claims against the *current* `prompt_change_log.md` state, not trust the prior cycle's own record as still-current without a fresh check. | Sprint Execution \| Delivery Verification |
 | 2 | This is the 2nd consecutive cycle (v9.0, v9.1) where all Phase 3/Phase 4 friction items requiring a prompt edit were successfully applied at the *same cycle's* Post-Ship Closure STEP 8 rather than deferred further — the `LL-v9.0-P3-01` precedent is now confirmed as a repeatable, working pattern rather than a one-off. | Worth formalising this "apply Phase 3/4 friction items at the immediately-following Post-Ship Closure's STEP 8, not a later one" pattern explicitly in `post_ship_closure.md` STEP 8's own text, rather than relying on precedent alone across cycles for future sessions to discover. | Post-Ship Closure |
 
+## Addendum — 2026-09-07 (same-session follow-up, user-directed: "fix three outstanding actions")
+
+All 3 items in the Outstanding Deferred Patches table above were actioned later the same day, acting as Head of Specs Team (items 1–2) and Director of Quality (item 3) per explicit user direction. See `closure_record.md`'s own Addendum for the full narrative — summary here for this file's own tracking:
+
+- Item 1 (`execution_prompt.md` §3.2 design question): resolved by investigation — no dedicated step needed, confirming note added.
+- Item 2 (`lessons_learnt_prompt.md` §3.7): resolved — `LL-v9.1-Closure-01` rule added.
+- Item 3 (`qa_evidence_EPIC-01.md` ST-02 row): found already resolved (2026-09-03) — the carry itself was stale, a live 2nd instance of this very file's Friction Item 1 (the fix in item 2 exists specifically to prevent this class of stale carry going forward).
+
+0 deferred patches remain open from this closure as of this addendum.
+
 // ARTEFACT_STATUS
 ```json
 {
@@ -118,7 +130,8 @@ Items: 2
   "filed_utc": "2026-09-07T13:15:00Z",
   "friction_item_count": 1,
   "action_now_count": 3,
-  "deferred_count": 2,
+  "deferred_count": 0,
+  "resolved_same_day_count": 3,
   "escalation_count": 0,
   "overdue_patches": 0,
   "status": "Active"

@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-09-07
+Last Updated: 2026-09-07 (Addendum — all 3 §6 Outstanding Actions resolved same-session, user-directed follow-up; closure_status Closed_with_actions → Closed); prior: 2026-09-07 (initial filing)
 Cycle: 2026-09-03__release-v9.1
 
 # Post-Ship Closure Record — 2026-09-03__release-v9.1
@@ -68,9 +68,9 @@ All 3 applied per the `LL-v9.0-P3-01` precedent (a friction item deferred at Pha
 
 | # | Description | Owner | Deadline | Escalation path | Resolution |
 |---|-------------|-------|----------|-----------------|------------|
-| 1 | `execution_prompt.md` §3.2 — consider a dedicated STEP 3.2.C for the PR-open-but-not-yet-committing-again case (residual design question after this cycle's STEP 3.1.A fix). | Head of Specs Team | Next `execution_prompt.md` revision touching §3.2 | Standard deferred-patch tracking (`lessons_learnt_closure.md`) | *(complete when resolved)* |
-| 2 | `lessons_learnt_prompt.md` §3.7 — recurrence check should re-verify prior-cycle "carried" claims against the current `prompt_change_log.md` state at the time it runs, not trust the prior cycle's own record as still-current (this run's Friction Item 1). | Head of Specs Team | Next `lessons_learnt_prompt.md` revision touching §3.7 | Standard deferred-patch tracking (`lessons_learnt_closure.md`) | *(complete when resolved)* |
-| 3 | `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-01.md` ST-02 row correction (carried from v9.0) — outside this engine's write scope. | Director of Quality | Next touch of that file | Standard deferred-patch tracking (`lessons_learnt_closure.md`), 2nd carry — not yet due for `shared_standards.md §6.4` escalation | *(complete when resolved)* |
+| 1 | `execution_prompt.md` §3.2 — consider a dedicated STEP 3.2.C for the PR-open-but-not-yet-committing-again case (residual design question after this cycle's STEP 3.1.A fix). | Head of Specs Team | Next `execution_prompt.md` revision touching §3.2 | Standard deferred-patch tracking (`lessons_learnt_closure.md`) | ✅ Resolved 2026-09-07 (same-session follow-up, user-directed) — see Addendum below |
+| 2 | `lessons_learnt_prompt.md` §3.7 — recurrence check should re-verify prior-cycle "carried" claims against the current `prompt_change_log.md` state at the time it runs, not trust the prior cycle's own record as still-current (this run's Friction Item 1). | Head of Specs Team | Next `lessons_learnt_prompt.md` revision touching §3.7 | Standard deferred-patch tracking (`lessons_learnt_closure.md`) | ✅ Resolved 2026-09-07 (same-session follow-up, user-directed) — see Addendum below |
+| 3 | `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-01.md` ST-02 row correction (carried from v9.0) — outside this engine's write scope. | Director of Quality | Next touch of that file | Standard deferred-patch tracking (`lessons_learnt_closure.md`), 2nd carry — not yet due for `shared_standards.md §6.4` escalation | ✅ Resolved (already-complete finding) 2026-09-07 — see Addendum below |
 
 ## §7 — Closure Confirmation
 
@@ -79,6 +79,20 @@ Post-ship closure complete — 2026-09-03__release-v9.1 — 2026-09-07
 Release: v9.1 — Frontend Accessibility, Backend Reliability & Governance/Spec Debt Consolidation
 Verification status: Verified
 Lessons learnt applied: 3 immediate | 2 deferred | 0 escalated
-Outstanding actions carried forward: 3 (see §6)
+Outstanding actions carried forward: 0 (all 3 resolved same-session, 2026-09-07 — see Addendum)
 Next cycle may now open.
 ```
+
+---
+
+## Addendum — 2026-09-07 (same-session follow-up, user-directed: "fix three outstanding actions")
+
+All 3 §6 items actioned in the same session, acting as Head of Specs Team (items 1–2) and Director of Quality (item 3) per explicit user direction. Recorded here transparently rather than silently rewriting §6/§7 above.
+
+**Item 1 — resolved by investigation, no further prompt-text change needed beyond a confirming note.** Checked whether §3.1.B (`delegated_backend`/`delegated_frontend`) and §3.1.D (`delegated_decision`) needed the STEP 3.1.A PR-already-merged precondition (`LL-v9.1-P3-01`) duplicated, or whether a dedicated STEP 3.2.C was warranted. Finding: §3.1.C (`delegated_qa`) already inherits it by cross-reference ("Commit and push per 3.1.A steps 3–9"); §3.1.B delegates the actual commit to a human assignee (the engine never commits there itself); §3.1.D re-classifies and resumes into §3.1.A/§3.1.C on unblock. STEP 3.1.A step 3 is the single choke point for every engine-initiated EPIC-branch commit — confirmed sufficient. Added a confirming note to `execution_prompt.md` (v3.72→v3.73) so a future reader doesn't re-raise the same question without this reasoning being visible.
+
+**Item 2 — resolved, `lessons_learnt_prompt.md` §3.7 amended.** Added the "re-verify carried-forward claims against the current state" rule (`LL-v9.1-Closure-01`), v1.12→v1.13. See item below (its own live regression case, found during this same addendum).
+
+**Item 3 — resolved as an already-complete finding, not a new edit.** Re-checked `claude/cycles/2026-08-21__release-v9.0/qa_evidence_EPIC-01.md` directly: its ST-02 row already reads `Result: Pass` and the file's own header already records "Director of Quality direct action — ST-02 row updated from 'Returned to backlog' to Pass... 2026-09-03" — this was resolved at v9.0's own post-ship closure, the same day v9.1's cycle opened, per that cycle's own `lessons_learnt_closure.md` Outstanding Deferred Patches table (row 3, "✅ Resolved"). **This is a second live instance of item 2's own finding**, one level further: this closure's `closure_record.md` §6 (not just `lessons_learnt_cycle.md`'s Phase 4 carry-forward) restated the item as outstanding without re-checking the target file directly, even though the underlying `lessons_learnt_prompt.md §3.7` gap (now fixed in item 2) was specifically about exactly this class of stale-carried claim. No file edit was needed for item 3 itself — it was already correct — this addendum exists only to correct the record.
+
+`.claude_current_state.json`'s `closure_status` for this cycle updated `Closed_with_actions` → `Closed` in this same addendum, matching the precedent set by `2026-08-21__release-v9.0`'s own closure (6 outstanding items resolved same-day, `closure_status` correspondingly updated to `Closed`) — 0 outstanding actions remain open for `2026-09-03__release-v9.1`.

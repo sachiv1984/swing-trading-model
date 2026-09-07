@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.176
-**Last Updated:** 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding actions — delivery_verification_prompt.md v3.8→v3.9: §9 "Source prompt" line and §14 Verification Engine Source row both updated to v3.9); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding actions — execution_prompt.md v3.71→v3.72: §8 "Source prompt" line and §14 Execution Engine Source row both updated to v3.72); prior — 2026-09-07 (sprint execution 2026-09-03__release-v9.1 EPIC-05/ST-40, BLG-GOV-307 — roadmap_prompt.md v9.16→v9.17: STEP 12.1 gains 2 new structured .claude_current_state.json fields; version proactively set to 4.174, not 4.172, to avoid a cross-branch collision with EPIC-04's own independent 4.172/4.173 bumps — confirmed clear at this merge, EPIC-04 landed at 4.173, see CLAUDE.md §8 step 2a precedent); prior history retained — see prior entries in version control.
+**Version:** 4.178
+**Last Updated:** 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding-actions resolution — execution_prompt.md v3.72→v3.73: §8 "Source prompt" line and §14 Execution Engine Source row both updated to v3.73); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding-actions resolution — lessons_learnt_prompt.md v1.12→v1.13: §14 Lessons Learnt Prompt row updated to v1.13); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding actions — delivery_verification_prompt.md v3.8→v3.9: §9 "Source prompt" line and §14 Verification Engine Source row both updated to v3.9); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.72)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.73)
 
 ### 8.1 Invocation
 
@@ -1363,7 +1363,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.176 |
+| Version | 4.178 |
 | Last Updated | 2026-09-07 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
@@ -1376,7 +1376,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.49 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.17 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.72 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.73 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.11 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.9 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
@@ -1384,7 +1384,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.31 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
-| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.12 |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.13 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | GitHub Issue Template | `claude/system/gh_issue_template.md` v1.0 |
 | PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.2 |
@@ -1497,6 +1497,8 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.178 | 2026-09-07 | **Post-ship closure `2026-09-03__release-v9.1` outstanding-actions resolution (user-directed), Head of Specs Team direct action — execution_prompt.md v3.72→v3.73: STEP 3.1.A step 3 gains a confirming note that no dedicated STEP 3.2.C is needed for the PR-already-merged precondition.** §14 Execution Engine Source v3.72→v3.73. §8 source prompt header v3.72→v3.73 (line 887). §14 self-row Version/Last Updated 4.177/2026-09-07→4.178/2026-09-07. Change: resolves the residual design question left open by `LL-v9.1-P3-01`'s own filing — §3.1.C already inherits the precondition by cross-reference ("Commit and push per 3.1.A steps 3–9"); §3.1.B/§3.1.D never have the engine committing to the EPIC branch directly, so STEP 3.1.A step 3 is confirmed the single sufficient choke point. Authority: Head of Specs Team (post-ship closure `2026-09-03__release-v9.1` outstanding-actions resolution, user-directed, 2026-09-07). |
+| 4.177 | 2026-09-07 | **Post-ship closure `2026-09-03__release-v9.1` outstanding-actions resolution (user-directed), Head of Specs Team direct action — lessons_learnt_prompt.md v1.12→v1.13: §3.7 gains a re-verify-against-current-state rule for carried-forward deferred-patch claims (LL-v9.1-Closure-01).** §14 Lessons Learnt Prompt v1.12→v1.13. §14 Version 4.176→4.177/2026-09-07. Change: closes a gap one level up from `LL-v8.6-P4-01b`/`BLG-GOV-312` (both fix a single deferred-patch-table lookup at the moment it's first evaluated; this fixes that lookup's conclusion being carried forward across a further cycle boundary unchecked). Found live at `2026-09-03__release-v9.1`'s own post-ship closure: its Phase 4 section had carried `execution_prompt.md`'s `test_scenarios` completeness check as "not yet applied, first carry" 4 days after it had, in fact, already shipped (`LL-v9.0-P4-02`, v3.70→v3.71, 2026-09-03) — caught during this same closure's own STEP 8 cross-reading, not by the recurrence check itself. Authority: Head of Specs Team (post-ship closure `2026-09-03__release-v9.1` outstanding-actions resolution, user-directed, 2026-09-07). |
 | 4.176 | 2026-09-07 | **Post-ship closure `2026-09-03__release-v9.1` outstanding actions, Head of Specs Team direct action — delivery_verification_prompt.md v3.8→v3.9: §7 Resolved-deviation carve-out gains an "or equivalent" evidence clarification for deviations with no natural canonical-spec Known Deviations home (LL-v9.1-P4-01), resolving this cycle's own Phase 4 lessons-learnt friction item.** §14 Verification Engine Source v3.8→v3.9. §9 source prompt header v3.8→v3.9 (line 976). §14 self-row Version/Last Updated 4.175/2026-09-07→4.176/2026-09-07. Authority: Head of Specs Team (post-ship closure `2026-09-03__release-v9.1` outstanding-actions resolution, user-directed, 2026-09-07). |
 | 4.175 | 2026-09-07 | **Post-ship closure `2026-09-03__release-v9.1` outstanding actions, Head of Specs Team direct action — execution_prompt.md v3.71→v3.72: STEP 3.1.A step 3 gains a PR-already-merged precondition (LL-v9.1-P3-01) and an explicit never-amend-a-pushed-commit guardrail (LL-v9.1-P3-02), resolving this cycle's own Phase 3 lessons-learnt friction items per the LL-v9.0-P3-01 apply-at-next-post-ship-closure precedent.** §14 Execution Engine Source v3.71→v3.72. §8 source prompt header v3.71→v3.72 (line 887). §14 self-row Version/Last Updated 4.174/2026-09-07→4.175/2026-09-07. Authority: Head of Specs Team (post-ship closure `2026-09-03__release-v9.1` outstanding-actions resolution, user-directed, 2026-09-07). |
 | 4.174 | 2026-09-07 | **Sprint execution `2026-09-03__release-v9.1` EPIC-05/ST-40 (BLG-GOV-307) — roadmap_prompt.md v9.16→v9.17: STEP 12.1 gains 2 new structured `.claude_current_state.json` fields.** §14 Roadmap Engine Source v9.16→v9.17. §14 Version 4.171→4.174/2026-09-07 (deliberately skipped 4.172/4.173 — this EPIC-05 branch was cut before `EPIC-04`'s own independent bumps to those versions, on a separate branch; chosen proactively to avoid the identical-version-different-change collision CLAUDE.md §8 step 2a exists to catch, per the established `4.150`/`4.151` precedent — confirmed clear at this merge, EPIC-04 landed at 4.172/4.173, both retained below). Change: `last_rebalance_pvr` (mirrors STEP 2.4's `user_value_ratio`) and `last_skill_silo_rolling_avg` (mirrors STEP 7.1's rolling 3-cycle Governance story %) added as top-level numeric fields, both `null` when the corresponding STEP did not compute a value — additive only, `last_rebalance_outcome`'s own prose unchanged. Both documented in `claude/schemas/state_field_owners.json` in the same commit. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-40, 2026-09-07). |
