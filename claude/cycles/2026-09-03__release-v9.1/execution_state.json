@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-04T15:30:23Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-04T18:51:47Z",
+  "last_updated_utc": "2026-09-07T07:53:37Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -318,160 +318,203 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-03__release-v9.1/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-03__release-v9.1/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/arc5-compliance-section.spec.js"
+      ],
       "stories": {
         "ST-12": {
           "title": "Add Playwright coverage for Arc5ComplianceSection's events_per_week value formatting",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1505,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "cffda202b2b28e7cae005bf2d1fcfc3ab4dfc13c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-04T19:06:52Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/arc5-compliance-section.spec.js",
+            "docs/specs/frontend/components/arc5_compliance_section.md#Card 1 — Red Flag Events/Week"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "New SC-ARC5-06 scenario asserts events_per_week (3.0) renders via fmtCount (toFixed(1)) for a known mock value. Matches canonical spec Card 1. No deviation found for this card."
         },
         "ST-13": {
           "title": "Add Playwright coverage for Arc5ComplianceSection's top_rule_breach text formatting",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1506,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "cffda202b2b28e7cae005bf2d1fcfc3ab4dfc13c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-04T19:06:52Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/arc5-compliance-section.spec.js",
+            "docs/specs/frontend/components/arc5_compliance_section.md#Card 3 — Top Rule Breach"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "New SC-ARC5-07 scenario asserts top_rule_breach ('cash_constraint') renders as 'cash constraint' via fmtText (underscore->space), matching the AC's stated fmtText behaviour. Deviation found: canonical spec Card 3 states format should be the raw slug (e.g. 'regime_gate') with null display 'None', but implementation applies the same fmtText/null-dash convention as the other cards. Filed in spec Known Deviations (v1.1.0) and BLG-FE-172 (P3, target v9.2) per document_lifecycle_guide.md §9 — test asserts actual (AC-required) behaviour, not the divergent spec text."
         },
         "ST-14": {
           "title": "Add Playwright coverage for Arc5ComplianceSection's null-value handling",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1507,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "cffda202b2b28e7cae005bf2d1fcfc3ab4dfc13c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-04T19:06:52Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/arc5-compliance-section.spec.js",
+            "docs/specs/frontend/components/arc5_compliance_section.md#Stat Cards"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "New SC-ARC5-08 scenario sets all 4 fields null and asserts '—' renders exactly 4 times within the Arc5ComplianceSection container, covering fmtCount (events_per_week), fmtRate (override_rate, trade_plan_adherence_rate) and fmtText (top_rule_breach) null-handling in one scenario, per AC. Locator scoped to the section container to avoid inflation from unrelated '—' placeholders elsewhere on the analytics page (initial run found 7 matches page-wide vs the expected 4)."
         },
         "ST-15": {
           "title": "Build a quality trend index aggregating DEV-* records over time",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1508,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "31bea792e10a53d3f5fefed1e218caf693b58a89",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T07:46:30Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/quality_trend_index.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Director of Quality",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved after adversarial self-review caught and disclosed 2 real methodology defects in the first draft (missed sprint_close_sprint2.md file causing a misattributed first-filing; ID-extraction pattern missing bare-numbered and DEV-HEALTH-001 formats) plus a data-quality finding (3 early cycles reused non-unique local DEV-ID labels, both across and within a cycle) that could not be resolved by better regex alone — resolved by explicitly separating a reliable deduplicatable series from an early informational-only period rather than forcing false precision."
+          },
+          "notes": "Index created at docs/governance/quality_trend_index.md per Case B (documentation-creation) of spec_references policy — the artefact itself is the governing spec. Backfilled from all 75 available sprint-close records (74 sprint_close.md + 1 sprint_close_sprint2.md), spanning v1.7-v9.0. No deviation found against BLG-QA-130's AC (index created and backfilled from available cycle history; DoQ sign-off) — both satisfied."
         },
         "ST-16": {
           "title": "Definition-of-Done compliance spot-check across the last 5 cycles",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1509,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "5cafa941df7d73f4185459aeba3fac81a57912fe",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T07:50:44Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/dod_compliance_spotcheck_2026-09-04.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Director of Quality",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-04",
+            "summary": "Approved. Checklist derived explicitly from qa_evidence_template.md + execution_prompt.md STEP 4/§12 (no standalone DoD document exists in this repo). Spot-checked all 30 qa_evidence files across the last 5 cycles; found one genuine, non-blocking structural drift (v9.0's sign-off blocks used prose format instead of the canonical checkbox template) — substance unaffected, already self-corrected in the current cycle. No corrective backlog item needed per the story's own 'corrected going forward' standard."
+          },
+          "notes": "Created docs/governance/dod_compliance_spotcheck_2026-09-04.md per Case B (documentation-creation). No deviation against BLG-QA-142's AC (spot-check complete, findings documented, DoQ sign-off) — both satisfied."
         },
         "ST-17": {
           "title": "Spot-check Tier 1/Tier 2 DoQ severity-labelling consistency",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1510,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "5cafa941df7d73f4185459aeba3fac81a57912fe",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T07:50:44Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/tier_labelling_consistency_spotcheck_2026-09-04.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Director of Quality",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-04",
+            "summary": "Approved. No drift found in the specified last-5-cycle sample (v8.6-v9.0) — all consistently phrase and apply Tier 1/Tier 2 checks to comparable, non-triggering situations. A broader historical scan (beyond the required sample) surfaced a genuine, already-resolved drift (v3.8/v3.9/v5.1 used 'Tier 1 compliant' as a positive label, diverging from the canonical missing-evidence definition) — stable and corrected since v6.4, well before the sampled window. No action required."
+          },
+          "notes": "Created docs/governance/tier_labelling_consistency_spotcheck_2026-09-04.md per Case B (documentation-creation). No deviation against BLG-QA-108's AC (spot-check completed and documented; drift found is explicitly justified as historical/resolved) — both satisfied."
         },
         "ST-18": {
           "title": "Define regression suite runtime budget & reporting",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1511,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "fa8a20192524c094d81d6c91e2d08096725a782b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T07:53:37Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/ci_pipeline_baseline.md#8. Regression Suite Runtime Budget & Reporting"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "QA & Testing Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Extended the existing ci_pipeline_baseline.md (§8) rather than a new doc, consistent with its established baseline/shard-audit pattern. Budget thresholds derived from real current CI run measurements (gh run view --json jobs), not assumed figures. Reporting is a documented repeatable procedure, appropriately scoped to this story's S effort (no new tooling/dashboard)."
+          },
+          "notes": "No deviation found against BLG-QA-134's AC (budget defined; reporting added; QA & Testing Owner sign-off) — both satisfied. Document version bumped 1.2->1.3 with Document History entry per CLAUDE.md §6 pattern (though this is a Class 3 ops record with its own Document History table, not a governance prompt/OPERATIONAL_GUIDE entry, so §6's OPERATIONAL_GUIDE §14 step does not apply)."
         }
       }
     },
@@ -994,7 +1037,14 @@
     "ST-08",
     "ST-09",
     "ST-10",
-    "ST-11"
+    "ST-11",
+    "ST-12",
+    "ST-13",
+    "ST-14",
+    "ST-15",
+    "ST-16",
+    "ST-17",
+    "ST-18"
   ],
   "open_escalations": [],
   "merge_gate": {
