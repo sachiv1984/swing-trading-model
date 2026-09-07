@@ -480,9 +480,11 @@
       "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-03__release-v9.1/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "scripts/test_governance_sync_diff_logic.sh"
+      ],
       "stories": {
         "ST-19": {
           "title": "Fix governance_sync.yml auto-close gap for split work/completion commits",
