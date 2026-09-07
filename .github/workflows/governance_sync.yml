@@ -28,11 +28,53 @@ jobs:
           # Guard: null SHA (new branch) or non-ancestor BEFORE (force-push/rebase) — range is invalid
           if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || \
              ! git merge-base --is-ancestor "$BEFORE" "$AFTER" 2>/dev/null; then
+            RANGE_BASE="origin/main"
             ALL_MSGS=$(git log origin/main.."$AFTER" --pretty=%B)
           else
+            RANGE_BASE="$BEFORE"
             ALL_MSGS=$(git log "$BEFORE".."$AFTER" --pretty=%B)
           fi
-          ST_IDS=$(echo "$ALL_MSGS" | grep -oE '\[(ST-[0-9]+)\]' | tr -d '[]' | sort -u | tr '\n' ' ')
+          MSG_ST_IDS=$(echo "$ALL_MSGS" | grep -oE '\[(ST-[0-9]+)\]' | tr -d '[]' | sort -u)
+
+          # ST-19 (BLG-GOV-314): the commit-message scan above misses a story whose
+          # completion is recorded in a *separate* follow-up commit tagged only
+          # [GOVERNANCE] (execution_prompt.md's own commit→push→get-SHA→
+          # separate-governance-commit convention) — that commit's message carries
+          # no [ST-xx] tag, so it was never even considered for closing, regardless
+          # of what execution_state now says. Fix: separately diff every changed
+          # execution_state file (per-EPIC and legacy) in this push range and detect
+          # any story whose status newly became done/merged — independent of commit
+          # message content — then union with the message-derived set above.
+          DIFF_ST_IDS=""
+          CHANGED_STATE_FILES=$(git diff --name-only "$RANGE_BASE" "$AFTER" -- 'claude/cycles/*/execution_state/EPIC-*.json' 'claude/cycles/*/execution_state.json' 2>/dev/null || true)
+          for f in $CHANGED_STATE_FILES; do
+            AFTER_JSON=$(git show "$AFTER:$f" 2>/dev/null || echo '{}')
+            BEFORE_JSON=$(git show "$RANGE_BASE:$f" 2>/dev/null || echo '{}')
+            # Normalise both per-EPIC (.stories) and legacy (.epics.*.stories) shapes to a flat {st_id: status} map
+            AFTER_MAP=$(echo "$AFTER_JSON" | jq -c '
+              if has("stories") then .stories
+              elif has("epics") then ([.epics[].stories] | add // {})
+              else {} end
+              | with_entries(.value = .value.status)
+            ' 2>/dev/null || echo '{}')
+            BEFORE_MAP=$(echo "$BEFORE_JSON" | jq -c '
+              if has("stories") then .stories
+              elif has("epics") then ([.epics[].stories] | add // {})
+              else {} end
+              | with_entries(.value = .value.status)
+            ' 2>/dev/null || echo '{}')
+            NEWLY_DONE=$(jq -n --argjson after "$AFTER_MAP" --argjson before "$BEFORE_MAP" '
+              $after
+              | to_entries[]
+              | select(.value == "done" or .value == "merged")
+              | select(($before[.key] // "") != "done" and ($before[.key] // "") != "merged")
+              | .key
+            ' 2>/dev/null | tr -d '"')
+            DIFF_ST_IDS="$DIFF_ST_IDS $NEWLY_DONE"
+          done
+          DIFF_ST_IDS=$(echo "$DIFF_ST_IDS" | tr ' ' '\n' | sed '/^$/d' | sort -u)
+
+          ST_IDS=$(printf '%s\n%s\n' "$MSG_ST_IDS" "$DIFF_ST_IDS" | sed '/^$/d' | sort -u | tr '\n' ' ')
           if [ -n "$ST_IDS" ]; then
             echo "st_ids=$ST_IDS" >> $GITHUB_OUTPUT
             echo "found=true" >> $GITHUB_OUTPUT
@@ -95,10 +137,26 @@ jobs:
               echo "Skipping close for ${ST_ID} — execution_state status is not done/merged (likely a delegation-record-only commit)"
               continue
             fi
-            # DONE = "yes" (confirmed complete) or "unknown" (no execution_state found —
-            # e.g. pre-per-EPIC-mechanism cycles, or a non-sprint-execution ST reference;
-            # preserves the pre-fix behaviour of closing unconditionally in that case).
-            # Use exact title prefix match to prevent fuzzy search returning wrong issues
+            # ST-19 (BLG-GOV-314): "unknown" (no ACTIVE_CYCLE, or no execution_state
+            # entry found for this ST_ID at all) now SKIPS rather than closes
+            # unconditionally. The prior "unknown = close" default was added to
+            # preserve pre-per-EPIC-mechanism-cycle behaviour, but under the
+            # mechanism actually in use, "unknown" much more often means "this
+            # story's tracking entry hasn't landed yet" (e.g. its work commit was
+            # pushed before any execution_state entry exists for it) than "this is
+            # a genuinely untracked reference" — closing in that case is a false
+            # positive with a real consequence: a story that later turns out
+            # blocked_backend/blocked_decision reads as wrongly-closed-done with
+            # nothing to reopen it (confirmed live, ST-02/#1463, v9.0). A story
+            # with a real execution_state entry that already reads done/merged is
+            # still found and closed via the "yes" branch above — this change only
+            # removes the unconditional-close fallback for the genuinely-unknown case.
+            if [ "$DONE" = "unknown" ]; then
+              echo "Skipping close for ${ST_ID} — no execution_state entry found (tracking commit may not have landed yet, or this is a genuinely untracked reference)"
+              continue
+            fi
+            # DONE = "yes" (confirmed complete via execution_state). Use exact
+            # title prefix match to prevent fuzzy search returning wrong issues
             # (e.g. a second [ST-14] commit must not close [ST-10] when [ST-14] is already closed)
             ISSUE_NUMBER=$(gh issue list --search "[${ST_ID}] in:title" --state open --json number,title \
               --jq "[.[] | select(.title | startswith(\"[${ST_ID}]\"))] | .[0].number // empty")

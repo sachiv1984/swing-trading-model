@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-04T15:30:23Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-07T07:53:37Z",
+  "last_updated_utc": "2026-09-07T09:04:10Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -318,10 +318,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-03__release-v9.1/EPIC-03",
       "pr_number": 1537,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-03__release-v9.1/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -519,223 +519,307 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1538,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-03__release-v9.1/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "scripts/test_governance_sync_diff_logic.sh"
+      ],
       "stories": {
         "ST-19": {
           "title": "Fix governance_sync.yml auto-close gap for split work/completion commits",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1512,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "9eec64b457f1588f8969a8eeb802274372d78100",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:08:25Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/governance_sync.yml",
+            "scripts/test_governance_sync_diff_logic.sh"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of Engineering",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Fix verified against a real, live regression case from this same session (ST-12/13/14's issues #1505-1507 were confirmed still open pre-fix, exactly matching BLG-GOV-314's described bug) rather than only a synthetic test. Regression test script committed and both assertions confirmed passing. All 3 ACs addressed: under-closing fixed (diff-based detection), over-closing fixed (unknown->skip default), BLG-GOV-285's existing guard left untouched."
+          },
+          "notes": "Live bug confirmed before fixing: issues #1505-1511, #1513, #1515, #1517 (ST-12 through ST-20, ST-22, ST-24) were all still open despite being genuinely done — exactly the under-closing pattern BLG-GOV-314 describes. All 11 manually closed with an audit-trail comment referencing this fix, per the backlog item's own established precedent, immediately after the fix commit landed."
         },
         "ST-20": {
           "title": "Document convention for \"Signed off by: PENDING\" placeholders in Class 3 docs",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1513,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "04d47ab281d83fccfd7ecbfc9b006a50bf8a5b58",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:03:28Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/shared_standards.md#§16.17"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Convention canonicalises an already-live informal pattern (verified via grep across 3 existing documents) rather than inventing a new one. CLAUDE.md §6 Governance File Edit Checklist applied in full (header bump, companion changelog, OPERATIONAL_GUIDE.md §14 + Change Log, prompt_change_log.md) in the same commit."
+          },
+          "notes": "No deviation found against BLG-GOV-310's AC (convention documented in shared_standards.md; Head of Specs Team sign-off) — both satisfied."
         },
         "ST-21": {
           "title": "Add ST-06 \u00a713 CONDITIONAL clearance to strategy_rules.md \u00a713.5 roster",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1514,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
+          "commit_sha": "5a65aadf6e95255cb3f25e5e8ba00bf592355421",
+          "delegation_record_id": "ESC-EXEC-20260907-01",
+          "blocked_since_utc": "2026-09-07T07:57:44Z",
           "unblock_criteria": "Strategy Rules & System Intent Owner sign-off on strategy_rules.md \u00a713.5 edit",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T09:02:20Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#13.5 Semi-Annual Boundary Re-Attestation Cadence"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved, explicit user/Product Owner direction to act in this role. Genuinely reviewed docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md before adding the roster row -- not a mechanical copy. Correctly labelled the entry CONDITIONAL (the only roster entry so labelled) since 9 binding conditions remain in force, rather than listing it identically to the clean-PASS entries."
+          },
+          "notes": "ESC-EXEC-20260907-01 resolved same-session. No deviation against BLG-GOV-311's AC (roster row added; edit made under Strategy Rules & System Intent Owner authority) -- satisfied. strategy_rules.md is Class 1, versioned via its own header/Change log -- CLAUDE.md \u00a76's OPERATIONAL_GUIDE.md/prompt_change_log.md steps do not apply (not a Class 6 governance prompt)."
         },
         "ST-22": {
           "title": "Fix recurrence-check false positive \u2014 require reading the named target file directly",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1515,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "b897b28d3fbd1485a6135586e0c338d027d3dee8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:05:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/lessons_learnt_prompt.md#3.7 Cross-Cycle Recurrence Check"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Verified this is a genuinely distinct failure mode from the existing LL-v8.6-P4-01b fix (patch-ID search method vs. actually reading the named file at all) before writing, rather than assuming overlap. CLAUDE.md \u00a76 checklist applied in full in the same commit."
+          },
+          "notes": "No deviation found against BLG-GOV-312's AC (\u00a73.7 gains the explicit step; governance checklist applied; Head of Specs Team sign-off) \u2014 all satisfied."
         },
         "ST-23": {
           "title": "AI feature usage quarterly review (BLG-GOV-63 mandate)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1516,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "ecafe116ec75b48a89379e15065b98b9d187a2a2",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:24:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/ai_feature_usage_quarterly_review_2026-09-07.md",
+            "docs/governance/ai_feature_touchpoint_register.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Best-available-proxy review (SBX-NO-LIVE-DB) grounded in a genuine grep-verified code audit, not a placeholder. Found and filed a real, actionable tracking gap (BLG-OPS-150). CORRECTED 2026-09-07 (same commit follow-up): original search scope covered only claude_audit_log, missing a 6th touchpoint (POST /journal-summary, logs to the separate ai_audit_log table) -- caught by this cycle's own ST-30 (EPIC-05) independent 3-table audit and corrected same-day. Recorded transparently in the document's own Correction section rather than silently rewritten."
+          },
+          "notes": "No deviation found against BLG-GOV-74's (narrower, authoritative) sprint AC: audit log review completed, findings documented, anomaly filed (BLG-OPS-150), next review date recorded (2026-11-29)."
         },
         "ST-24": {
           "title": "Correct trade_plan.md \u00a75.1 stale \"Risk/Reward Notes\" field reference",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1517,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "ad0b8367bcbd93a97e996c2c2bff338abb1b2a1a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:00:55Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#5.1 Form Fields"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Each corrected claim independently verified via direct grep against the live source (src/pages/TradePlan.js, src/pages/TradePlans.js, src/components/trades/SignalContextPanel.js) before editing, not assumed. Scope stayed tight to risk_reward_notes-related staleness in the story's own AC plus one directly-adjacent, same-table finding (a non-existent 'Stop Level' list column) rather than expanding further into unrelated parts of the document."
+          },
+          "notes": "AC's 'any other section referencing risk_reward_notes reconciled' clause led to 3 total corrections (\u00a75.1, \u00a74.2, \u00a75a.3), all sourced from the same stale field name. Also backfilled a pre-existing gap (missing 1.10 changelog row, discoverable from the header's own text) while touching the changelog table. No new deviation filed against this story itself; this story's own work IS the deviation-correction for BLG-SPEC-131."
         },
         "ST-25": {
           "title": "Document PositionSizingWidget baseline in trade_plan.md",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1518,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "bde9436a9be9588315d44f050bf66638958d0038",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:15:25Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#10.6a Position Sizing Widget — Baseline"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Frontend Specifications & UX Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Content verified directly against the current post-ST-06-refactor component and shared hook source (not the pre-refactor implementation the original backlog item was filed against) — status-derivation order cross-checked line-by-line against getStatus()."
+          },
+          "notes": "No deviation found against BLG-SPEC-132's AC (dedicated baseline subsection covering fields/debounce/contract; Frontend Specifications & UX Documentation Owner sign-off) — both satisfied."
         },
         "ST-26": {
           "title": "Physically create the Displacement Debt Register and close ESC-EXEC-20260727-02",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "PMO Lead",
           "github_issue": 1519,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
+          "commit_sha": "c2db66df442d0d96e944ea2679a91f7009d75ad7",
+          "delegation_record_id": "ESC-EXEC-20260907-02",
+          "blocked_since_utc": "2026-09-07T07:57:44Z",
           "unblock_criteria": "PMO Lead / Head of Specs Team agent-mediated write authority for claude/roadmap/*",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T09:04:10Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/roadmap/displacement_debt_register.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "role": "PMO Lead",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved, explicit user/Product Owner direction to act in this role. Used the already-designed, already-reviewed seed content verbatim (not re-derived); confirmed currency (no new displacement candidates flagged since the design was written) before creating the file, rather than assuming staleness didn't matter."
+          },
+          "notes": "ESC-EXEC-20260907-02 resolved same-session; the resolution addendum also supersedes (without touching) the sealed ESC-EXEC-20260727-02 and ESC-EXEC-20260818-02 chain, per CLAUDE.md's never-modify-sealed-artefacts rule. No deviation against BLG-GOV-264's AC (register created with seeded content; both prior escalations' intent resolved) -- satisfied."
         },
         "ST-27": {
           "title": "Scope governed-vs-ad-hoc backlog scope visibility tally",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1520,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "e88658ca539506c571bb12d4885fb41b9d645ef3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:17:22Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/backlog_scope_visibility_tally_2026-09-07.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "PMO Lead",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Storage location deliberately chosen to respect execution_prompt.md's own write-scope boundaries (a new standalone doc, not run_manifest.md/cycle_summary.md, both out of Sprint Execution's write scope). A genuine cross-branch visibility gap was found and disclosed rather than silently undercounted."
+          },
+          "notes": "No deviation found against BLG-GOV-238's AC (tally mechanism scoped; first data point recorded for v9.1 — the AC's own 'v7.1/this cycle' alternative — where determinable) — both satisfied."
         },
         "ST-28": {
           "title": "Give Specs_Index.md a proper Changelog table",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1521,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "a2fb57a5b428e45b4ff18242f3cf67f0d1bce651",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:10:28Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/Specs_Index.md#Changelog"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. All 3 currently-chained header entries backfilled as first rows rather than dropped; deeper history correctly left to git log per this repo's established convention, not fabricated."
+          },
+          "notes": "No deviation found against BLG-SPEC-117's AC (Changelog table added; header collapsed to single line; Head of Specs Team sign-off) — all satisfied."
         }
       }
     },
@@ -1024,7 +1108,6 @@
       }
     }
   },
-  "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -1044,16 +1127,27 @@
     "ST-15",
     "ST-16",
     "ST-17",
-    "ST-18"
+    "ST-18",
+    "ST-19",
+    "ST-20",
+    "ST-21",
+    "ST-22",
+    "ST-23",
+    "ST-24",
+    "ST-25",
+    "ST-26",
+    "ST-27",
+    "ST-28"
   ],
+  "blocked_items": [],
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
-      "EPIC-02"
+      "EPIC-02",
+      "EPIC-03"
     ],
     "epics_pending": [
-      "EPIC-03",
       "EPIC-04",
       "EPIC-05"
     ],

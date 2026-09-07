@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-03 (post-ship closure outstanding-actions resolution, Head of Specs Team/QA & Testing Owner direct action — TSG-v22-02 resolved via new `tests/test_health_response_schema.py`; TSG-v23-01 resolved, stale "staging-blocked" premise corrected — see §10.2/§10.3); prior — 2026-09-03 (post-ship closure 2026-08-21__release-v9.0; §40 Test Coverage Gaps — v9.0 added, 2 findings both not_applicable; full-document TSG reconciliation sweep resolved 1 long-stale Open entry, TSG-v40-01); prior — 2026-08-12 (post-ship closure 2026-08-11__release-v8.6; §39 Test Coverage Gaps — v8.6 added, 0 new gaps; full-document TSG reconciliation sweep resolved 2 long-stale Open entries, TSG-v33-03 and TSG-v6.8-01); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-07 (ST-28, EPIC-04, v9.1, BLG-SPEC-117 — gained a dedicated `## Changelog` table; see that section for full history going forward)
 
 ---
 
@@ -975,3 +975,16 @@ Both are tracked as a lessons-learnt friction item, not backlog debt (`lessons_l
 
 > Specs explain decisions.
 > This index ensures those decisions form a coherent system.
+
+---
+
+## Changelog
+
+**Note (ST-28, EPIC-04, v9.1, BLG-SPEC-117):** This table replaces the prior chained `**Last Updated:**` header pattern, which had already been truncated once (2026-08-07, per `shared_standards.md` §16.14) and would have simply re-accumulated without a structural place to put history. The 3 rows immediately below are backfilled from that header's state at the time of this change; older history beyond those 3 entries is retained in version control (`git log -p -- docs/specs/Specs_Index.md`), consistent with how this document's own `**Last Updated:**` field is now expected to work going forward (single line, no chaining — see `shared_standards.md` §16.14).
+
+| Date | Change |
+|------|--------|
+| 2026-09-07 | ST-28 (EPIC-04, v9.1, BLG-SPEC-117): added this `## Changelog` table; collapsed the header `**Last Updated:**` field to a single line going forward. |
+| 2026-09-03 | Post-ship closure outstanding-actions resolution, Head of Specs Team/QA & Testing Owner direct action — TSG-v22-02 resolved via new `tests/test_health_response_schema.py`; TSG-v23-01 resolved, stale "staging-blocked" premise corrected — see §10.2/§10.3. |
+| 2026-09-03 | Post-ship closure `2026-08-21__release-v9.0` — §40 Test Coverage Gaps (v9.0) added, 2 findings both `not_applicable`; full-document TSG reconciliation sweep resolved 1 long-stale Open entry, `TSG-v40-01`. |
+| 2026-08-12 | Post-ship closure `2026-08-11__release-v8.6` — §39 Test Coverage Gaps (v8.6) added, 0 new gaps; full-document TSG reconciliation sweep resolved 2 long-stale Open entries, `TSG-v33-03` and `TSG-v6.8-01`. |
