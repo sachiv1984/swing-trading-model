@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.1.0
-**Last Updated:** 2026-09-04 (v9.1 ST-13 — Known Deviations: Card 3 text-format/null-display divergence documented, BLG-FE-172)
+**Version:** 1.2.0
+**Last Updated:** 2026-09-07 (ST-01, EPIC-01, v9.2 — added Low-Trade-Volume Advisory subsection, BLG-FEAT-44); prior — 2026-09-04 (v9.1 ST-13 — Known Deviations: Card 3 text-format/null-display divergence documented, BLG-FE-172)
 **Story:** ST-10 (EPIC-03, v4.1) — BLG-FE-48
 **§13 Compliance:** Confirmed — display-only component. No automated recommendation generated.
 **API contract:** docs/specs/api_contracts/arc5_compliance_analytics.md
@@ -128,6 +128,31 @@ Grid class example: `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4`
 
 ---
 
+## Low-Trade-Volume Advisory
+
+**Added:** v1.2.0 (ST-01, EPIC-01, v9.2, BLG-FEAT-44)
+
+**Design source:** `docs/design/2026-09-07__release-v9.2/arc5-low-volume-advisory/decision_record.md`
+
+**Assessment outcome:** Advisory warranted. Source data: `docs/design/2026-09-07__release-v9.2/arc5-low-volume-advisory/assessment.md`.
+
+When `data.total_closed_trades` is a non-null number below **20**, render a static advisory banner beneath the four-card stat grid (inside this component's own container, not a page-level `StandingAlertStack` entry). The banner does not render while loading or on error, and does not render when `total_closed_trades` is `null`/absent (a pre-v1.1.0 API response) — absence of the field is treated as "unknown", not "low volume".
+
+| Property | Value |
+|----------|-------|
+| Container | `bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-200` (StandingAlert Info tone, reused verbatim as a bespoke inline banner — not the `<StandingAlert>` component itself) |
+| Icon | `Info` (lucide-react) |
+| Copy | `"Based on {N} closed trade(s) — treat these figures as indicative until more trade history accumulates."` where `{N}` is `data.total_closed_trades` |
+| Dismissal | None — static while the condition holds, re-evaluated on each data fetch (no `onDismiss`, no dismiss button — distinct from `StandingAlert`'s manual-dismiss pattern) |
+| Threshold | `total_closed_trades < 20` |
+| Source field | `data.total_closed_trades` (`docs/specs/api_contracts/arc5_compliance_analytics.md` v1.1.0) |
+
+**Why `total_closed_trades` and not a page-level trade count:** `PerformanceAnalytics.js`'s own period-filtered trade count (`filteredTrades.length`, used for its own separate ≥10-trade page gate) is not a valid proxy — it is scoped to the page's selected date-range filter, while `trade_plan_adherence_rate` (the most volume-sensitive of the four stats) is computed all-time. Reusing the page's filtered count would misrepresent the sample size actually backing the displayed statistics.
+
+**Note:** `events_per_week`, `override_rate`, and the period-scoped `top_rule_breach` use narrower windows (fixed 7 days / `period` param) than `total_closed_trades` (all-time). The advisory is anchored to the all-time count as the most recognisable "trade volume" figure and the direct denominator of the adherence-rate card; it is not a precise confidence statement about the other three cards' own (unexposed) per-window sample sizes.
+
+---
+
 ## Section Header
 
 - Heading text: **"Arc 5 Signal Compliance"**
@@ -166,5 +191,6 @@ Found while authoring Playwright coverage for this card (v9.1 ST-13). No functio
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2.0 | 2026-09-07 | Added Low-Trade-Volume Advisory subsection — ST-01, EPIC-01, v9.2, BLG-FEAT-44. New `total_closed_trades` field (contract v1.1.0) drives a static Info-tone banner below the stat grid when below 20. |
 | 1.1.0 | 2026-09-04 | Known Deviations: documented Card 3 text-format/null-display divergence from implementation — v9.1 ST-13, BLG-FE-172. No behavioural change to this document's own requirements. |
 | 1.0.0 | 2026-05-27 | Initial specification — ST-10 (EPIC-03, v4.1), BLG-FE-48. Formalises Arc5ComplianceSection shipped in v4.0 (ST-01). Component props, rendering conditions, stat card layout, data mapping documented. |

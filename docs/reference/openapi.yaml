@@ -2769,6 +2769,9 @@ paths:
                         type: number
                         format: float
                         nullable: true
+                      total_closed_trades:
+                        type: integer
+                        description: All-time closed trade count — denominator of trade_plan_adherence_rate. Backs the frontend low-trade-volume advisory (v1.1.0, ST-01, v9.2).
         "500":
           $ref: "#/components/responses/InternalError"
 

@@ -545,6 +545,7 @@ async def get_arc5_compliance(
       - override_rate: overrides / validation attempts in last 7 days
       - top_rule_breach: most frequent failing rule in the period
       - trade_plan_adherence_rate: trades with plan / total closed trades (all-time)
+      - total_closed_trades: all-time closed trade count (denominator of trade_plan_adherence_rate)
 
     period: 7d (default) | 30d
 
@@ -561,7 +562,7 @@ async def get_arc5_compliance(
             top_rule_breach = get_arc5_top_rule_breach(since_iso, conn=conn)
             events_per_week = get_arc5_events_per_week(week_ago_iso, conn=conn)
             override_rate = get_arc5_override_rate(week_ago_iso, conn=conn)
-            trade_plan_adherence_rate = get_arc5_trade_plan_adherence_rate(conn=conn)
+            adherence = get_arc5_trade_plan_adherence_rate(conn=conn)
 
         return {
             "status": "ok",
@@ -571,7 +572,13 @@ async def get_arc5_compliance(
                 "events_per_week": events_per_week,
                 "override_rate": override_rate,
                 "top_rule_breach": top_rule_breach,
-                "trade_plan_adherence_rate": trade_plan_adherence_rate,
+                "trade_plan_adherence_rate": adherence["rate"],
+                # total_closed_trades: ST-01, EPIC-01, v9.2, BLG-FEAT-44 — backs the
+                # frontend's low-trade-volume advisory (arc5_compliance_section.md
+                # "Low-Trade-Volume Advisory"). Same all-time denominator as
+                # trade_plan_adherence_rate, not the 7d/period windows used by the
+                # other three cards.
+                "total_closed_trades": adherence["total_trades"],
             },
         }
 

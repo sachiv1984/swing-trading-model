@@ -10,8 +10,10 @@
  *               "Override Rate", "Top Rule Breach", "Trade Plan Adherence"
  *   SC-ARC5-03  Loading skeleton shown when data is pending (isLoading state)
  *   SC-ARC5-04  Error state shows "Unable to load" when API returns error
+ *   SC-ARC5-09  Low-trade-volume advisory shown when total_closed_trades < 20 (ST-01, v9.2)
+ *   SC-ARC5-10  Low-trade-volume advisory hidden when total_closed_trades >= 20 or absent (ST-01, v9.2)
  *
- * Spec ref: docs/specs/frontend/components/arc5_compliance_section.md v1.0.0
+ * Spec ref: docs/specs/frontend/components/arc5_compliance_section.md v1.2.0
  * API contract: docs/specs/api_contracts/arc5_compliance_analytics.md
  *
  * Infrastructure: Playwright page.route() network interception.
@@ -302,5 +304,72 @@ test.describe('SC-ARC5-08 — Null values render as em dash across all formatter
     // All four cards render fmtCount(null) / fmtRate(null) / fmtText(null) → "—"
     const dashValues = section.getByText('—', { exact: true });
     await expect(dashValues).toHaveCount(4, { timeout: 8000 });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-ARC5-09 — Low-trade-volume advisory shown when total_closed_trades < 20
+// (ST-01, EPIC-01, v9.2, BLG-FEAT-44)
+// ---------------------------------------------------------------------------
+
+const ARC5_LOW_VOLUME = {
+  status: 'ok',
+  data: {
+    events_per_week: 0.3,
+    override_rate: 0.5,
+    top_rule_breach: 'regime_gate',
+    trade_plan_adherence_rate: 0.5,
+    total_closed_trades: 12,
+    validation_pass_rate_by_rule: {
+      regime_gate: 0.5,
+    },
+  },
+};
+
+test.describe('SC-ARC5-09 — Low-trade-volume advisory', () => {
+  test('SC-ARC5-09: advisory banner renders with the closed-trade count when total_closed_trades < 20', async ({ page }) => {
+    await mockFallback(page);
+    await mockArc5Compliance(page, ARC5_LOW_VOLUME);
+    await gotoAnalytics(page);
+
+    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+
+    const advisory = page.getByTestId('arc5-low-volume-advisory');
+    await expect(advisory).toBeVisible({ timeout: 8000 });
+    await expect(advisory).toContainText('Based on 12 closed trades');
+    await expect(advisory).toContainText('indicative until more trade history accumulates');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-ARC5-10 — Low-trade-volume advisory hidden at/above threshold or absent field
+// (ST-01, EPIC-01, v9.2, BLG-FEAT-44)
+// ---------------------------------------------------------------------------
+
+test.describe('SC-ARC5-10 — Low-trade-volume advisory not shown', () => {
+  test('SC-ARC5-10a: advisory does not render when total_closed_trades >= 20', async ({ page }) => {
+    await mockFallback(page);
+    // ARC5_COMPLIANCE_OK carries no total_closed_trades field at all — treat as
+    // "at/above threshold, or unknown" for this assertion; the >=20 case is
+    // additionally covered directly below.
+    await mockArc5Compliance(page, {
+      status: 'ok',
+      data: { ...ARC5_COMPLIANCE_OK.data, total_closed_trades: 34 },
+    });
+    await gotoAnalytics(page);
+
+    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Override Rate')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('arc5-low-volume-advisory')).toHaveCount(0);
+  });
+
+  test('SC-ARC5-10b: advisory does not render when total_closed_trades field is absent (pre-v1.1.0 payload shape)', async ({ page }) => {
+    await mockFallback(page);
+    await mockArc5Compliance(page, ARC5_COMPLIANCE_OK);
+    await gotoAnalytics(page);
+
+    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Override Rate')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('arc5-low-volume-advisory')).toHaveCount(0);
   });
 });

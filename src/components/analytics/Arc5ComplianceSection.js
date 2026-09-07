@@ -1,7 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { ShieldCheck, Activity, AlertTriangle, ClipboardList } from "lucide-react";
+import { ShieldCheck, Activity, AlertTriangle, ClipboardList, Info } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { api } from "../../api/base44Client";
+
+// Low-trade-volume advisory threshold (ST-01, EPIC-01, v9.2, BLG-FEAT-44).
+// Below this many all-time closed trades, the compliance stats above are
+// treated as too thin a sample to display with unqualified confidence.
+// Design source: docs/design/2026-09-07__release-v9.2/arc5-low-volume-advisory/decision_record.md
+const LOW_VOLUME_THRESHOLD = 20;
 
 function ComplianceCard({ title, value, subLabel, icon: CardIcon, gradient, isLoading, isError }) {
   const Icon = CardIcon;
@@ -40,6 +46,13 @@ export default function Arc5ComplianceSection() {
   });
 
   const metrics = data;
+
+  // total_closed_trades is non-null once the request resolves successfully
+  // (0 if no closed trades exist — see arc5_compliance_analytics.md v1.1.0).
+  // A null/undefined value (loading, error, or a pre-v1.1.0 mock payload)
+  // suppresses the advisory rather than showing it against unknown data.
+  const showLowVolumeAdvisory =
+    !isLoading && !error && metrics?.total_closed_trades != null && metrics.total_closed_trades < LOW_VOLUME_THRESHOLD;
 
   const fmtRate = (val) => (val != null ? `${(val * 100).toFixed(1)}%` : "—");
   const fmtCount = (val) => (val != null ? val.toFixed(1) : "—");
@@ -93,6 +106,18 @@ export default function Arc5ComplianceSection() {
           />
         ))}
       </div>
+      {showLowVolumeAdvisory && (
+        <div
+          role="status"
+          data-testid="arc5-low-volume-advisory"
+          className="mt-4 flex items-start gap-3 w-full rounded-lg border px-4 py-3 text-sm bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-200"
+        >
+          <Info className="w-4 h-4 shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            Based on {metrics.total_closed_trades} closed trade{metrics.total_closed_trades === 1 ? "" : "s"} — treat these figures as indicative until more trade history accumulates.
+          </div>
+        </div>
+      )}
     </div>
   );
 }
