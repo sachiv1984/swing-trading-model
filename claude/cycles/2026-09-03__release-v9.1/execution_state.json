@@ -708,44 +708,62 @@
         "ST-29": {
           "title": "Consolidate duplicate empty-state pattern specs",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1522,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "7ef4288162be89e1a5787bfe4efd31561f1bba49",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:21:02Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/dashboard.md#4A. Card Empty States",
+            "docs/specs/frontend/pages/navigation.md#No Results",
+            "docs/specs/frontend/design_system.md#Data States"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Frontend Specifications & UX Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Intent-check applied per LL-v3.4-P3-03: BLG-SPEC-98's intent (design_system.md as single source, no restated generic pattern rules elsewhere) is achieved — a systematic search of all 10 page specs mentioning empty states found and fixed the only 2 genuine duplicate/drift cases that actually exist; the literal 'at least 3' AC count assumed more duplication existed than a thorough search confirmed. Recorded as an implementation note, not a deviation, since intent and literal spec agree except for a headcount based on an unverified assumption at filing time."
+          },
+          "notes": "Search method: grepped all 10 page specs referencing 'empty state' for (a) literal restated design_system.md prose, (b) restated numeric sizing values, (c) restated priority-order/variant-selection rules. Found 2 genuine cases (dashboard.md's numeric restatement; navigation.md's actual terminology drift -- called 'Compact' what design_system.md itself documents as the distinct 'inline' variant, first used by exactly this command-palette case) -- both fixed. The other 8 pages' empty-state sections contain only page-specific content (concrete headings/bodies/conditions), which is correct per-page content, not pattern duplication. AC's 'at least 3' not literally met; BLG-SPEC-98's actual intent (single canonical source, no restated generic rules) is met -- see sign-off."
         },
         "ST-30": {
           "title": "Build canonical AI feature touchpoint register with per-feature \u00a713 classification",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1523,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "9821ac23c94e7b55fe238cb72915c7acd2223efa",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:22:39Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/ai_feature_touchpoint_register.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Genuinely more thorough than the same cycle's own ST-23 review -- traced all 3 distinct audit-logging tables (claude_audit_log, gemini_audit_log, ai_audit_log), not just one, and caught a real 6th touchpoint (POST /journal-summary) that ST-23 missed. Correction cross-referenced back to ST-23's own document in the same commit."
+          },
+          "notes": "Found and disclosed a real gap in this cycle's own earlier ST-23 deliverable (missed POST /journal-summary -- a distinct 3rd audit table, ai_audit_log, not searched by ST-23's narrower create_claude_audit_entry-only grep). Flagged for correction on the EPIC-04 branch (ST-23's own branch) in a follow-up commit -- see ST-23's updated entry. No deviation against BLG-GOV-266's own AC (register created, covers all currently-shipped AI touchpoints, AI Compliance & Governance Officer sign-off) -- all satisfied by this story's own work."
         },
         "ST-31": {
           "title": "Spec-to-backlog traceability audit",
