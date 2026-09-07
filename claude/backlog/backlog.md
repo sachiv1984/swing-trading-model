@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-07 (Release Planning v9.2 — Release Slice section added, 56 items across 5 EPICs, marker RP:v9.2:2026-09-07__release-v9.2; `BLG-FEAT-44` gate cleared and promoted to firm scope; `BLG-FEAT-92`/`BLG-FEAT-30` reconciliation reaffirmed unchanged — see `docs/product/decisions/decisions--2026-09-07__release-v9.2.md`); prior — 2026-09-07 (groom backlog post-ship closure 2026-09-03__release-v9.1 — 43 items archived (41 v9.1 shipped items + 2 leftover already-resolved items, BLG-GOV-105/BLG-GOV-315); 1 ephemeral Release Slice section removed — v9.1; BLG-QA-160 Field-Completeness Gap corrected (missing Provisional-Target populated); Governance Prompt Duplicate Cross-Check: 15 raw candidates, 1 genuine (BLG-GOV-315, resolved by this run's own archival)); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 STEP 3.1 — all 41 v9.1 backlog items marked ✅ COMPLETE with closure date and cycle_id reference); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-07 (session — 3 new items added: BLG-QA-162, BLG-BE-111, BLG-QA-163); prior — 2026-09-07 (Release Planning v9.2 — Release Slice section added, 56 items across 5 EPICs, marker RP:v9.2:2026-09-07__release-v9.2; `BLG-FEAT-44` gate cleared and promoted to firm scope; `BLG-FEAT-92`/`BLG-FEAT-30` reconciliation reaffirmed unchanged — see `docs/product/decisions/decisions--2026-09-07__release-v9.2.md`); prior — 2026-09-07 (groom backlog post-ship closure 2026-09-03__release-v9.1 — 43 items archived (41 v9.1 shipped items + 2 leftover already-resolved items, BLG-GOV-105/BLG-GOV-315); 1 ephemeral Release Slice section removed — v9.1; BLG-QA-160 Field-Completeness Gap corrected (missing Provisional-Target populated); Governance Prompt Duplicate Cross-Check: 15 raw candidates, 1 genuine (BLG-GOV-315, resolved by this run's own archival)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4389,6 +4389,71 @@ This has been filed as a deviation in the canonical spec's Known Deviations sect
 **Acceptance Criteria**
 - Spec and implementation agree on Card 3's text format and null display
 - `tests/e2e/arc5-compliance-section.spec.js` (SC-ARC5-07/SC-ARC5-08) updated to match the resolved behaviour if the implementation changes
+
+---
+
+### BLG-QA-162 — Add boundary-condition Playwright coverage for Arc5ComplianceSection low-trade-volume advisory
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA Testing Owner
+**Source:** Agent-mediated QA review of PR #1596 (EPIC-01/ST-01, cycle 2026-09-07__release-v9.2) — 2026-09-07
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.3
+
+**Problem**
+`tests/e2e/arc5-compliance-section.spec.js` covers `total_closed_trades = 12` (advisory shown) and `34` (hidden), but never the exact threshold the AC/design record anchor on ("sub-20 trades"): `total_closed_trades === 20` (must hide) and `=== 19` (must show) are untested, as is the singular/plural copy branch at `=== 1` and the `=== 0` case.
+
+**Scope**
+- Add SC-ARC5 scenarios for `total_closed_trades` = 19, 20, 1, and 0
+
+**Acceptance Criteria**
+- Advisory shown at 19, hidden at 20 (strict `< 20` boundary verified)
+- Copy reads "1 closed trade" (singular) at count 1, "0 closed trades" at count 0
+- All added scenarios pass in CI
+
+---
+
+### BLG-BE-111 — Arc5 compliance total_closed_trades conflates DB schema error with genuine zero-trades state
+
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Backend Engineering Patterns Owner
+**Source:** Agent-mediated QA review of PR #1596 (EPIC-01/ST-01, cycle 2026-09-07__release-v9.2) — 2026-09-07
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`get_arc5_trade_plan_adherence_rate()`'s `UndefinedTable`/`UndefinedColumn` fallback (`backend/database.py`) returns `{"rate": None, "total_trades": 0}` — identical to a genuine zero-closed-trades response. `GET /analytics/arc5-compliance`'s `total_closed_trades` field can't currently distinguish "no `trade_history` table / broken schema" from "a real portfolio with zero closed trades," so the frontend's low-trade-volume advisory (v9.2 ST-01) renders "Based on 0 closed trades" in what may actually be a DB error state.
+
+**Scope**
+- Add a way to signal the schema-error fallback distinctly from a genuine zero count (e.g. `null` `total_trades` on error vs. `0` on genuine empty, with contract/frontend updates to match)
+
+**Acceptance Criteria**
+- A missing/broken `trade_history` table no longer produces a `total_closed_trades` value indistinguishable from a genuine zero-trades portfolio
+- `docs/specs/api_contracts/arc5_compliance_analytics.md` updated to document the distinction
+
+---
+
+### BLG-QA-163 — Add backend pytest coverage for GET /analytics/arc5-compliance total_closed_trades field
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA Testing Owner
+**Source:** Agent-mediated QA review of PR #1596 (EPIC-01/ST-01, cycle 2026-09-07__release-v9.2) — 2026-09-07
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+No backend pytest asserts `total_closed_trades` appears in `GET /analytics/arc5-compliance`'s response, or exercises `get_arc5_trade_plan_adherence_rate`'s dict-shape return directly (success, zero-trades, and `UndefinedTable` paths). Matches this file's pre-existing pattern (no sibling `get_arc5_*` function has dedicated unit tests) rather than a new regression, but worth closing.
+
+**Scope**
+- Add unit test(s) for `get_arc5_trade_plan_adherence_rate` covering its three return paths
+- Add an integration assertion that `total_closed_trades` is present in the endpoint's response
+
+**Acceptance Criteria**
+- New tests pass in CI
+- All three code paths of `get_arc5_trade_plan_adherence_rate` are covered
 
 ---
 
