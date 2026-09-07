@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-04T15:30:23Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-07T08:17:22Z",
+  "last_updated_utc": "2026-09-07T09:04:10Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -476,7 +476,7 @@
       }
     },
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
@@ -546,23 +546,31 @@
         "ST-21": {
           "title": "Add ST-06 \u00a713 CONDITIONAL clearance to strategy_rules.md \u00a713.5 roster",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1514,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "5a65aadf6e95255cb3f25e5e8ba00bf592355421",
           "delegation_record_id": "ESC-EXEC-20260907-01",
           "blocked_since_utc": "2026-09-07T07:57:44Z",
           "unblock_criteria": "Strategy Rules & System Intent Owner sign-off on strategy_rules.md \u00a713.5 edit",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T09:02:20Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#13.5 Semi-Annual Boundary Re-Attestation Cadence"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved, explicit user/Product Owner direction to act in this role. Genuinely reviewed docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md before adding the roster row -- not a mechanical copy. Correctly labelled the entry CONDITIONAL (the only roster entry so labelled) since 9 binding conditions remain in force, rather than listing it identically to the clean-PASS entries."
+          },
+          "notes": "ESC-EXEC-20260907-01 resolved same-session. No deviation against BLG-GOV-311's AC (roster row added; edit made under Strategy Rules & System Intent Owner authority) -- satisfied. strategy_rules.md is Class 1, versioned via its own header/Change log -- CLAUDE.md \u00a76's OPERATIONAL_GUIDE.md/prompt_change_log.md steps do not apply (not a Class 6 governance prompt)."
         },
         "ST-22": {
           "title": "Fix recurrence-check false positive \u2014 require reading the named target file directly",
@@ -684,23 +692,31 @@
         "ST-26": {
           "title": "Physically create the Displacement Debt Register and close ESC-EXEC-20260727-02",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "PMO Lead",
           "github_issue": 1519,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "c2db66df442d0d96e944ea2679a91f7009d75ad7",
           "delegation_record_id": "ESC-EXEC-20260907-02",
           "blocked_since_utc": "2026-09-07T07:57:44Z",
           "unblock_criteria": "PMO Lead / Head of Specs Team agent-mediated write authority for claude/roadmap/*",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T09:04:10Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/roadmap/displacement_debt_register.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "role": "PMO Lead",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved, explicit user/Product Owner direction to act in this role. Used the already-designed, already-reviewed seed content verbatim (not re-derived); confirmed currency (no new displacement candidates flagged since the design was written) before creating the file, rather than assuming staleness didn't matter."
+          },
+          "notes": "ESC-EXEC-20260907-02 resolved same-session; the resolution addendum also supersedes (without touching) the sealed ESC-EXEC-20260727-02 and ESC-EXEC-20260818-02 chain, per CLAUDE.md's never-modify-sealed-artefacts rule. No deviation against BLG-GOV-264's AC (register created with seeded content; both prior escalations' intent resolved) -- satisfied."
         },
         "ST-27": {
           "title": "Scope governed-vs-ad-hoc backlog scope visibility tally",
@@ -1069,21 +1085,17 @@
     "ST-18",
     "ST-19",
     "ST-20",
+    "ST-21",
     "ST-22",
     "ST-23",
     "ST-24",
     "ST-25",
+    "ST-26",
     "ST-27",
     "ST-28"
   ],
-  "blocked_items": [
-    "ST-21",
-    "ST-26"
-  ],
-  "open_escalations": [
-    "ESC-EXEC-20260907-01",
-    "ESC-EXEC-20260907-02"
-  ],
+  "blocked_items": [],
+  "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
