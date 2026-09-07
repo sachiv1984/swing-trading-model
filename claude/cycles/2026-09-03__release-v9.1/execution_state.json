@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-04T15:30:23Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-07T09:25:00Z",
+  "last_updated_utc": "2026-09-07T09:30:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -701,7 +701,7 @@
       "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-03__release-v9.1/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "scripts/check_specs_index_freshness.py"
