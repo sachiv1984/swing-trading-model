@@ -13,7 +13,7 @@
       "branch": "exec/2026-09-07__release-v9.2/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-07__release-v9.2/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/e2e/arc5-compliance-section.spec.js"],
       "stories": {
@@ -24,11 +24,11 @@
           "assigned_to": "engine",
           "github_issue": 1540,
           "branch": "exec/2026-09-07__release-v9.2/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8c12a7df06036ed98309e6dae1d4fe624e3fd15b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-09-07T15:54:42Z",
           "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/components/arc5_compliance_section.md#Low-Trade-Volume Advisory",
@@ -40,8 +40,15 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pre-commit",
-          "sign_off_record": null,
+          "last_completed_substep": "3.2.A.qa_evidence_complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Director of Quality",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)",
+            "date": "2026-09-07",
+            "evidence": "claude/cycles/2026-09-07__release-v9.2/qa_evidence_EPIC-01.md"
+          },
           "notes": "Assessment concluded advisory warranted (docs/design/.../assessment.md). Required a small backend field addition (total_closed_trades on GET /analytics/arc5-compliance) beyond the locked design record's UI-only framing -- assessed in-session as within this story's already-autonomous classification (small, unambiguous, spec-locked addition; no new design decision). No deviation from spec intent -- implementation matches decision_record.md exactly plus the necessary supporting data field. Local Playwright run (11/11 passed, tests/e2e/arc5-compliance-section.spec.js) and backend pytest (tests/test_api_contracts.py, tests/ -k analytics) both green pre-commit."
         }
       }
