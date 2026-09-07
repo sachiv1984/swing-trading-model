@@ -2,8 +2,8 @@
 
 **Owner:** Strategy Rules & System Intent Owner  
 **Status:** Canonical  
-**Version:** 1.6
-**Last Updated:** 2026-08-06
+**Version:** 1.8
+**Last Updated:** 2026-09-07
 **Applies to:** Production backtests, live system, and documentation  
 
 ---
@@ -12,6 +12,7 @@
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.8 | 7 September 2026 | Added §4.1.8 worked numerical example of the low-ATR sizing edge case (ST-34, EPIC-05, v9.1, BLG-SPEC-101) — documents the existing interaction between §4.1's canonical risk-based sizing and §4.1.6's cash-constraint gate for low-volatility instruments. No functional/behavioural change — documentation only. Version chosen as 1.8, not 1.7, to avoid a collision with EPIC-04's independently in-flight (not yet merged) 1.6→1.7 bump (ST-21, §13.5 roster row, commit `5a65aadf`) — same precedent applied earlier this cycle to `OPERATIONAL_GUIDE.md` (v4.174) and `backlog.md` (BLG-QA-159). |
 | 1.6 | 6 August 2026 | Added §13.5 Semi-Annual Boundary Re-Attestation Cadence (ST-23, EPIC-05, v8.3, BLG-GOV-204) — proposes a rolling 6-month lightweight re-confirmation cadence for every shipped AI/automation-adjacent feature with a recorded §13 clearance (IT-06, SI-01, SI-02, SI-04, BLG-FEAT-50/51, PT-04, on-demand compliance recheck, Gemini thesis generation). First review date set: 2027-02-06. No behavioural rules changed. |
 | 1.5 | 3 August 2026 | Added §13.4 continuity note (ST-15, EPIC-05, v8.1, BLG-SPEC-82) — explicit confirmation that the on-demand compliance recheck (BLG-FEAT-64, v6.9) re-applies SI-01's existing deterministic rule set and introduces no new automation/prediction surface beyond it, distinct from and non-duplicative of SI-02's separately-gated drift detection. No behavioural rules changed. |
 | 1.4 | 20 May 2026 | Added §4.2 Pre-Entry Advisory Checks — formalises regime gate, sector concentration, earnings proximity, cash constraint, and sizing validity as advisory pre-entry conditions. No change to stop-loss, trailing logic, exit conditions, or position sizing calculation rules. §13 gate: SI-01 PASS recorded in docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md. |
@@ -216,6 +217,25 @@ In this case:
 **Rationale for change from v1.2**
 
 The toggle model specified in v1.2 was written before the pre-alignment meeting for roadmap item 3.2. During that meeting, the Head of UX & Design and Product Owner agreed that the calculator should be always visible in the entry form — requiring users to discover and activate a toggle would reduce the daily workflow value that justifies the feature. The auto-fill protection rule (do not overwrite a manually entered value) is a financial safety constraint: silently replacing a user-entered share count could cause an unintended position size to be submitted. Full decision rationale: docs/product/decisions/3.2-position-sizing-calculator.md Decision 3.
+
+### 4.1.8 Worked example — low-ATR sizing edge case
+
+This is a worked numerical example only. It documents an existing interaction between §4.1's canonical rules and does not introduce, change, or reinterpret any calculation, validity, or gating rule defined above.
+
+At entry-time sizing, the Stop price used in §4.1.1–§4.1.3 is the prospective position's initial stop (§5): `InitialStop = EntryPrice - (InitialATRMultiplier * ATR)`, so `StopDistance = InitialATRMultiplier * ATR` (§11: `InitialATRMultiplier = 5`). A ticker with an unusually small ATR relative to its price — a low-volatility instrument — therefore produces a small `StopDistance`, which the §4.1.3 division (`RawShares = RiskAmount / StopDistance`) can turn into a large `SuggestedShares`, without ever failing the §4.1.4 validity check (`StopDistance` is still `> 0`). The result is a mathematically valid but capital-heavy suggestion, which then meets the separate §4.1.6 cash-constraint gate rather than any sizing-validity rule.
+
+**Example**
+- `PortfolioValue` = £50,000
+- `RiskPercent` = 1% → `RiskAmount` = £500
+- `EntryPrice` = £20.00
+- `ATR` = £0.10 (low-volatility instrument)
+- `StopDistance` = `InitialATRMultiplier * ATR` = 5 × £0.10 = £0.50
+- `StopPrice` = £20.00 − £0.50 = £19.50
+- `RawShares` = £500 / £0.50 = 1,000 shares → `SuggestedShares` = 1,000.0000 (§4.1.3; passes §4.1.4 — `StopDistance > 0`)
+- `EstimatedCost` = 1,000 × £20.00 = £20,000 (+ fees) (§4.1.6)
+- If `AvailableCash` = £5,000: `EstimatedCost` (£20,000) `> AvailableCash` (£5,000) → `Result = INSUFFICIENT_CASH`; `MaxAffordableShares` ≈ 250 (informational only, per §4.1.7's cash-constrained auto-fill suppression)
+
+**Why this is worth documenting:** the same mechanism that produces a valid, well-behaved `SuggestedShares` for an ordinary-volatility instrument can, for a low-ATR instrument, propose a share count whose cost is disproportionate to the portfolio's cash — not because the risk math is wrong (§4.1.2's `RiskAmount` is still respected per share of stop distance), but because a tight ATR-derived stop concentrates the same risk budget into far more shares. The `INSUFFICIENT_CASH` path (§4.1.6) is the existing, correct handling for this case — it already suppresses auto-fill and surfaces `MaxAffordableShares` as informational context. No new rule is required; this section exists so the interaction is discoverable at the canonical source rather than inferred informally, as it had been referenced across other backlog items prior to this addition.
 
 ---
 
