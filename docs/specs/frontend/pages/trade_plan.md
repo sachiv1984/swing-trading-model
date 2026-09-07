@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.10
-**Last Updated:** 2026-08-21 (ST-10, EPIC-02, v9.0, BLG-FE-164 — §5d.2 adds a panel-local FX Rate override input (US-market only); §5d.3's reproducibility claim corrected to depend on setting it); prior — 2026-08-18 (ST-05, EPIC-02, v8.9, BLG-FEAT-91 — sign-off review fix: DEV-v8.9-ST05-02, §5d.3 R at Risk now FX-converted to GBP for US-market plans, matching TradeEntry.js's Total Risk precedent; Format column corrected); prior — 2026-08-18 (same story — DEV-v8.9-ST05-01, §5d.1 presence-gate corrected to Stop-Level-only; heat_impact_percent field name confirmed); prior history retained — see prior entries in version control.
+**Version:** 1.11
+**Last Updated:** 2026-09-07 (ST-24, EPIC-04, v9.1, BLG-SPEC-131 — §5.1's stale "Risk/Reward Notes" field row corrected to the live `r_target`-bound "R Target" field; §4.2's List Layout table corrected — "Notes" column is `setup_thesis`, not `risk_reward_notes` (confirmed via grep, no such field exists), and a "Stop Level" column that no longer exists in the live list removed; §5a.3's pre-population claim corrected to `setup_thesis`); prior — 2026-08-21 (ST-10, EPIC-02, v9.0, BLG-FE-164 — §5d.2 adds a panel-local FX Rate override input (US-market only); §5d.3's reproducibility claim corrected to depend on setting it); prior — 2026-08-18 (ST-05, EPIC-02, v8.9, BLG-FEAT-91 — sign-off review fix: DEV-v8.9-ST05-02, §5d.3 R at Risk now FX-converted to GBP for US-market plans, matching TradeEntry.js's Total Risk precedent; Format column corrected); prior history retained — see prior entries in version control.
 **Design Source (v1.7 what-if sizing preview):** docs/design/2026-08-17__release-v8.9/what-if-sizing-risk-simulator/ux_spec.md
 **Design Source (v1.7 concentration-aware sizing display):** docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md
 **Design Source (v1.5 invalidation condition):** docs/design/2026-08-12__release-v8.7/thesis-invalidation-condition/decision_record.md
@@ -91,8 +91,8 @@ One card or row per trade plan. Default sort: most recently updated first. Aband
 |--------|--------|-------|
 | Ticker | `ticker` | Uppercase |
 | Status | `status` | Badge per §9 Status Badge Scheme |
-| Stop Level | `stop_level` | Currency-formatted; `—` if null |
-| Notes | `risk_reward_notes` | Truncated to ~60 chars |
+| R Target | `r_target` | `{N}R` or `—` if null |
+| Notes | `setup_thesis` | Truncated to ~60 chars; `—` if empty |
 | Updated | `updated_at` | Relative timestamp |
 | Actions | — | "View" link + "Edit" link (Edit hidden for abandoned plans) |
 
@@ -122,7 +122,7 @@ Per v3.1 design gate decision:
 | Market | Radio: UK / US | Yes | |
 | Status | Select | Yes | Draft / Active / Closed (Abandoned is set via Abandon action — not in this dropdown) |
 | Stop Level | Numeric | No | Positive decimal; native currency |
-| Risk/Reward Notes | Textarea | No | Free text; used for pre-population of CHK-04 |
+| R Target | Numeric | No | R-multiple target (e.g. `2.5`); used for pre-population of CHK-04 (`r_target` non-null) |
 | Invalidation Condition | Textarea | No | v1.5 — ST-01, BLG-FEAT-84. Placeholder: "What would prove this thesis wrong? (optional)". Manually authored — deliberately excluded from §5b's "Improve with AI" population list (see design source). Hidden entirely in the detail view when blank (§7). |
 | Tags | Component (Tag Editor) | No | See §5c |
 | Pre-Trade Checklist | Component | No | See §6 |
@@ -181,7 +181,7 @@ When no linked signal exists: panel is hidden entirely. No placeholder shown. No
 
 On initial form load (new trade plan from signal context):
 
-- **`risk_reward_notes`** pre-filled with: `"Rank {N} momentum signal. Price {above/below} 200-day MA by {x.x}%. {US/UK} regime on."` (user-editable)
+- **`setup_thesis`** pre-filled with: `"Rank {N} {market} momentum candidate. {momentum context.} Price {above/below} 200-day MA by {x.x}%. Regime {on/off}."` (user-editable; corrected from a stale `risk_reward_notes` reference — no such field exists in `src/pages/TradePlan.js`, confirmed via grep)
 - **Stop Level** pre-filled with suggested stop: `entry_price − (5 × atr)` (user-editable; not overwritten if already set)
 
 Pre-population does not apply in edit mode. Existing user-set values are never overwritten.
@@ -572,6 +572,8 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.11 | 2026-09-07 | ST-24 (EPIC-04, v9.1, BLG-SPEC-131): §5.1's stale "Risk/Reward Notes" field row corrected to "R Target" (the live `r_target`-bound field, confirmed via `src/pages/TradePlan.js`) — no such field as `risk_reward_notes` has ever existed in the live form (matching the `1.6` entry's earlier finding for a different reference). §4.2's List Layout table corrected to match `src/pages/TradePlans.js`'s actual columns (`["Ticker", "Status", "R Target", "Notes", "Updated", "Actions"]`): "Notes" sourced from `setup_thesis` (not `risk_reward_notes`), a non-existent "Stop Level" column removed (no such column exists in the live list). §5a.3's pre-population claim corrected: pre-fills `setup_thesis` (via `buildSignalPrePopulation` in `SignalContextPanel.js`), not `risk_reward_notes`. Authority: Head of Specs Team. |
+| 1.10 | 2026-08-21 | ST-10 (EPIC-02, v9.0, BLG-FE-164): §5d.2 adds a panel-local FX Rate override input (US-market only); §5d.3's reproducibility claim corrected to depend on setting it. *(Backfilled into this table at v1.11 — was recorded in the header's own Last Updated field but not added here at the time.)* |
 | 1.9 | 2026-08-18 | ST-05 (EPIC-02, v8.9, BLG-FEAT-91) sign-off review fix: filed `DEV-v8.9-ST05-02` — §5d.3's "R at Risk" was implemented with no FX conversion for any market, contradicting its own "FX-converted for US market" wording (caught by Frontend Specifications & UX Documentation Owner review; same class of bug as ST-02/BLG-BE-103 earlier this cycle). Fixed: reads `fx_rate_used` from the `POST /portfolio/size` response, divides by it for US-market plans (matching `TradeEntry.js`'s `costs.totalRisk` precedent exactly), `£` symbol added. Format column corrected from "Native currency" to "GBP" (the cited precedent was always GBP-basis). Authority: Frontend Specifications & UX Documentation Owner. |
 | 1.8 | 2026-08-18 | ST-05 (EPIC-02, v8.9, BLG-FEAT-91) implementation-time correction: filed `DEV-v8.9-ST05-01` and rewrote §5d.1's presence-gate wording — the design gate's literal "hidden until both Planned Entry Price and Stop Level valid" was self-contradictory (Planned Entry Price lives inside the gated panel). Panel now gates on Stop Level alone; the output section still requires both inputs. §5d.3's output table also gains `heat_impact_percent` as the confirmed backend field name (was "confirm at implementation" placeholder) — extracted to `services/portfolio_service.py::calculate_prospective_heat`, shared with `GET /portfolio/prospective-heat`. No visual/behavioural change beyond the presence-gate fix. Authority: Frontend Specifications & UX Documentation Owner. |
 | 1.7 | 2026-08-17 | v8.9 design gate — added §5d What-If Sizing Preview (ST-05, BLG-FEAT-91): collapsible panel on the creation/edit form, ephemeral Planned Entry Price input (never persisted — `trade_plans` has no `entry_price` column), reuses `POST /portfolio/size` (same endpoint as §10.7) so preview values match order-time results; shows suggested size, R at risk, heat impact, concentration reason. Added §10.7 Position Sizing Widget concentration-aware sizing (ST-04, BLG-BE-104): `POST /portfolio/size` response gains `concentration_adjusted`/`concentration_reason`; amber inline note when non-null, hidden entirely when null; documents the concentration addition only — baseline widget documentation flagged as separate spec debt. Design sources: what-if-sizing-risk-simulator/ux_spec.md, correlation-sector-concentration-sizing/decision_record.md. Approved: Product Owner 2026-08-17. Design gate: 2026-08-17__release-v8.9. Head of Specs Team confirmed. |
