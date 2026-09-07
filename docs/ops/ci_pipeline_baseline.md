@@ -1,8 +1,8 @@
 **Owner:** QA Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-08-03
+**Version:** 1.3
+**Last Updated:** 2026-09-07 (ST-18, v9.1 EPIC-03, BLG-QA-134 — §9 Regression Suite Runtime Budget & Reporting added)
 **Cycle:** 2026-05-29__release-v4.3 (ST-11 — BLG-QA-38)
 
 ---
@@ -173,10 +173,78 @@ Signed: Sprint Execution Engine (agent-mediated, QA Lead role — §5.3) — 202
 
 ---
 
-## 8. Document History
+## 8. Regression Suite Runtime Budget & Reporting (ST-18, EPIC-03, v9.1, BLG-QA-134)
+
+**Objective:** BLG-QA-134: "The regression suite has grown substantially (baseline updates at `BLG-QA-112`, `BLG-QA-114`) with no defined runtime budget or reporting on whether it's trending toward becoming a CI bottleneck." This section defines a concrete budget threshold and a repeatable, lightweight reporting method — extending this document rather than creating a new one, since it already owns the suite's runtime baseline and measurement method (§2–§3, §7).
+
+### 8.1 Current Measurement (2026-09-07)
+
+Suite size has grown further since the last measurement in this document (§7, v8.1: 81 Playwright spec files): **104 Playwright spec files** (`tests/e2e/*.spec.js`) and **126 backend pytest files** (~1,346 test functions, `tests/*.py` + `backend/tests/`).
+
+**Playwright E2E (`playwright.yml`, 4-way shard), 5 most recent successful CI runs:**
+
+| Run | Shard 1/4 | Shard 2/4 | Shard 3/4 | Shard 4/4 | Critical path (slowest shard) |
+|-----|-----------|-----------|-----------|-----------|-------------------------------|
+| 33909458029 | 215 | 193 | 175 | 171 | 215 |
+| 33908088412 | 196 | 192 | 200 | 155 | 200 |
+| 33907618342 | 185 | 169 | 183 | 169 | 185 |
+| 33898010517 | 235 | 213 | 189 | 206 | 235 |
+| 33897456777 | 211 | 211 | 203 | 218 | 218 |
+| **Average** | **208.4** | **195.6** | **190.0** | **183.8** | **210.6** |
+
+All durations in seconds, sourced the same way as §7 (`gh run view <id> --json jobs`, per-shard job `startedAt`/`completedAt`). Critical-path (slowest-shard-per-run) mean: 210.6s (~3.5 min); max observed: 235s (~3.9 min) — well inside the 20-minute `timeout-minutes` ceiling per shard.
+
+**Comparison to §7's last measurement (v8.1, 81 spec files):** per-shard averages were 218.0/203.4/190.4/206.2s then (overall mean 204.5s) vs. 208.4/195.6/190.0/183.8s now (overall mean 194.45s) — despite 23 more spec files (+28%), measured runtime is flat to slightly *lower*. This is a positive signal: the 4-way shard split (§7) is continuing to absorb suite growth without a creeping critical path, at least across this sample.
+
+**Backend pytest (`ci-tests.yml`), 4 most recent successful CI runs:** 82s, 86s, 100s, 79s — mean 86.75s. Well under the Playwright critical path; not currently a bottleneck.
+
+### 8.2 Budget
+
+| Suite | Metric | Budget threshold | Rationale |
+|-------|--------|-------------------|-----------|
+| Playwright E2E | Critical-path duration (slowest shard, single run) | **Alert if > 480s (8 min)** sustained across 3 consecutive CI runs | 2× current critical-path mean (210.6s) plus headroom for measurement noise; well short of the 1200s (20 min) hard `timeout-minutes` ceiling so an alert gives time to act before a hard CI failure |
+| Playwright E2E | Per-shard imbalance (peak-to-peak spread within one run, as % of that run's mean) | **Flag if > 25%** sustained across 3 consecutive runs | Roughly double the ~13% spread confirmed healthy in §7; a persistent, growing imbalance would indicate the shard split needs rebalancing before one shard becomes a bottleneck |
+| Backend pytest | Full suite duration (`ci-tests.yml` wall-clock) | **Alert if > 300s (5 min)** sustained across 3 consecutive runs | ~3.5× current mean (86.75s); pytest has no sharding today, so this is the entire-suite ceiling, not a per-shard one |
+
+"Sustained across 3 consecutive runs" (not a single reading) is deliberate — matches this document's own existing measurement convention (§3, §7 both sample multiple runs rather than acting on one), and avoids reacting to a single noisy CI run (queue contention, GitHub-hosted runner variance) as if it were a genuine regression.
+
+### 8.3 Reporting Method
+
+No dashboard or automated alert is introduced by this story (out of scope for an `S`-effort item) — the reporting mechanism is a **repeatable manual measurement procedure**, to be re-run and appended to this section (as a new dated sub-entry, following the pattern already established by §7) at:
+- The next `groom backlog` or scheduled rebalance cycle where CI runtime is raised as a concern, **or**
+- Whenever `tests/e2e/*.spec.js` count grows by ≥25% since the last measurement (the same growth-triggered cadence that originally prompted §7's shard-balance audit and the v1.1 sharding change), **or**
+- At minimum once per quarter, so a slow drift under any single threshold's radar doesn't go unnoticed indefinitely.
+
+**Procedure (repeatable):**
+1. `gh run list --workflow=playwright.yml --limit 5 --json databaseId,conclusion,createdAt,updatedAt` (or `--workflow=ci-tests.yml` for backend) — filter to `"conclusion":"success"` runs on `main` or a representative `exec/**` branch.
+2. For Playwright: `gh run view <id> --json jobs -q '.jobs[] | select(.name | startswith("Playwright E2E Acceptance Tests")) | {name, startedAt, completedAt}'` for each of the 5 run IDs; compute per-shard duration and the run's critical path (max across shards).
+3. For pytest: use the run's own `createdAt`/`updatedAt` directly (single job, no sharding).
+4. Compare against §8.2's thresholds. If any is breached across 3 consecutive samples: file a backlog item (QA & Testing Owner) recommending the same class of action §7/v1.1 already took (re-shard, rebalance, or reduce serialisation) rather than raising the threshold to make the alert go away.
+
+### 8.4 Sign-Off
+
+```
+QA & Testing Owner
+
+Regression suite runtime budget defined (§8.2) and a repeatable reporting procedure
+established (§8.3), built on this document's existing baseline/shard-audit measurement
+method rather than a new tool. Current measurement (§8.1): Playwright critical path
+210.6s mean / 235s max across 5 sampled runs — comfortably under the new 480s alert
+threshold; backend pytest 86.75s mean — comfortably under the new 300s threshold.
+Suite grew 81→104 Playwright spec files since the last measurement in this document
+with runtime flat to slightly improved, a positive signal the v1.1 sharding change
+is still absorbing growth. No current breach; no immediate action required.
+
+Signed: Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3) — 2026-09-07
+```
+
+---
+
+## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
 | 1.0 | 2026-05-29 | Sprint Execution Engine | Initial CI pipeline baseline (ST-11, v4.3 EPIC-02, BLG-QA-38). p50=444s. BLG-QA-27 gate cleared. |
+| 1.3 | 2026-09-07 | Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3) | ST-18 (EPIC-03, v9.1, BLG-QA-134) — new §8 Regression Suite Runtime Budget & Reporting: budget thresholds defined (Playwright critical path, per-shard imbalance, backend pytest suite), repeatable manual reporting procedure established, current measurement recorded (no breach). |
 | 1.2 | 2026-08-03 | Sprint Execution Engine (agent-mediated, QA Lead role — §5.3) | ST-13 (EPIC-04, v8.1, BLG-QA-131) — REC-CI-01 follow-up: new §7 Post-Parallelization Shard Balance Audit. Measured per-shard wall-clock duration across the 5 most recent `playwright.yml` CI runs; shards balanced within ~13% peak-to-peak spread, no consistent per-shard bottleneck across samples. No rebalancing required. |
 | 1.1 | 2026-07-28 | Sprint Execution Engine (acting as QA & Testing Owner / QA Lead / Director of Quality, user-directed review) | REC-CI-01 actioned following a user-requested review of E2E runtime. Since the v1.0 baseline the suite grew from 39 spec files (~150 tests) to 81 spec files (677 tests) while `workers` remained forced to 1 in CI — full serialisation, confirmed against `execution_state.json` history showing individual runs up to 24m54s (v6.9). Changed `playwright.config.js` `workers` to 4 (CI only) and added a 4-way `--shard` matrix to the `playwright-e2e` job in `playwright.yml`; `timeout-minutes` reduced 45→20 per-shard accordingly. `playwright-visual` (single 14-test file) left unsharded. Production-build webServer swap (would have required adding a `serve`/`http-server` dependency and restructuring `REACT_APP_*` build-time env injection) was scoped but deferred pending explicit confirmation — flagged as higher-risk than originally assumed. No spec content changed; re-baseline (§3) recommended after the next CI run using this config to confirm actual speedup. |
