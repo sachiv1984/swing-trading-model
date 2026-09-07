@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-07 (session — 1 new item added: BLG-QA-158 (Arc5ComplianceSection SC-ARC5-06/SC-ARC5-07 unscoped text selectors, surfaced during agent-mediated Director of Quality review on PR #1537)); prior — 2026-09-04 (session — 1 new item added: BLG-OPS-149 (playwright.yml CI path-filter gap — dependency-bump PRs never trigger the E2E suite, discovered checking PR #1536's CI results)); prior — 2026-09-04 (session — 1 new item added: BLG-TECH-19 (unused/namesquatted npm dependency cleanup, surfaced during v9.1 EPIC-02 ST-08 while fixing BLG-TECH-18)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-07 (session — 2 new items added: BLG-QA-158 (Arc5ComplianceSection SC-ARC5-06/SC-ARC5-07 unscoped text selectors, surfaced during agent-mediated Director of Quality review on PR #1537), BLG-QA-159 (governance_sync.yml over-closing prevention unverified in real CI, surfaced during agent-mediated Director of Quality review on PR #1538)); prior — 2026-09-04 (session — 1 new item added: BLG-OPS-149 (playwright.yml CI path-filter gap — dependency-bump PRs never trigger the E2E suite, discovered checking PR #1536's CI results)); prior — 2026-09-04 (session — 1 new item added: BLG-TECH-19 (unused/namesquatted npm dependency cleanup, surfaced during v9.1 EPIC-02 ST-08 while fixing BLG-TECH-18)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4275,6 +4275,30 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 
 ---
 
+### BLG-OPS-150 — AI feature cost-trend tracking has not kept pace with feature shipping
+
+**Priority:** P3 (Low)
+**Type:** Operations / AI Governance
+**Owner:** FinOps & Resource Architect
+**Source:** v9.1 ST-23 (BLG-GOV-74) AI feature usage quarterly review, cycle 2026-09-03__release-v9.1 — 2026-09-07
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The only cost-focused record for AI feature usage on file, `docs/ops/anthropic_api_cost_trend_2026.md` (v5.6, 2026-06-16), documents 2 features (thesis generation, daily cost alert). A direct code audit (v9.1 ST-23, corrected by ST-30's independent 3-table audit) found 6 endpoints across 3 service modules and 3 distinct audit-logging tables (`claude_audit_log`, `gemini_audit_log`, `ai_audit_log`) — `POST /trade-plans/generate-plan`, `POST /trade-plans/{plan_id}/generate-thesis`, `POST /trades/{trade_id}/debrief`, `POST /ai/daily-briefing`, `POST /ai/chat`, and `POST /journal-summary` — two of them (`daily-briefing`/`chat`) using a materially more expensive model tier (`claude-sonnet-4-6` vs. `claude-haiku-4-5` for the other four) and most post-dating the last cost-trend record entirely. See `docs/governance/ai_feature_touchpoint_register.md` for the full, corrected inventory. No live `claude_audit_log` query was possible from the reviewing sandbox (`SBX-NO-LIVE-DB`), so actual call volumes/costs remain unconfirmed.
+
+**Scope**
+- Update or supersede `anthropic_api_cost_trend_2026.md` with the current 6-endpoint inventory
+- Obtain a real query across all 3 audit tables (live DB access, or a pre-exported result) covering all 6 endpoints, with particular attention to the two `claude-sonnet-4-6` endpoints' cost contribution
+- Re-assess the BLG-OPS-37 cost-threshold gate against the updated, complete inventory
+
+**Acceptance Criteria**
+- Cost-trend document reflects all 6 current AI-invoking endpoints
+- Real query data obtained for at least the current quarter
+- FinOps & Resource Architect sign-off
+
+---
+
 ### BLG-SPEC-127 — Formal definition for the "90-day trade window" cited in SI-02 gate reporting
 **Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Metrics Definitions & Analytics Canonical Owner | **Source:** IDEA-metrics-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** SI-02 gate reporting cites a "90-day trade window" (`_WINDOW_DAYS = 90` in `behavioural_drift_service.py`, cross-referenced at `si02_drift_score.md` §2) informally in `current_roadmap.md` prose; the window itself (rolling vs fixed, timezone handling) is not formally specified.
@@ -4483,6 +4507,27 @@ None of `src/components/analytics/Arc5ComplianceSection.js`'s three formatter fu
 **Acceptance Criteria**
 - `SC-ARC5-06` and `SC-ARC5-07` assertions are scoped to the `Arc5ComplianceSection` container (or an equivalent explicit justification is recorded for why scoping isn't needed there)
 - Full `arc5-compliance-section.spec.js` file continues to pass (8/8)
+
+---
+
+### BLG-QA-159 — governance_sync.yml's over-closing prevention (unknown→skip) unverified in real CI
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated Director of Quality review on PR #1538 (EPIC-04, cycle 2026-09-03__release-v9.1) — 2026-09-07
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`.github/workflows/governance_sync.yml`'s ST-19 fix (`BLG-GOV-314`, PR #1538) added two behaviour changes: (1) diff-based ST-ID detection for split work/completion commits, and (2) the `unknown` status fallback now skips auto-close instead of closing unconditionally, to prevent a `blocked_backend`/`blocked_decision` story from being wrongly auto-closed when no `execution_state.json` entry exists yet for it. Change (1) was independently confirmed against real GitHub Actions CI run logs during the PR review (commit `9290cfd9` correctly auto-closed issues #1514/#1519 via the new diff-based path). Change (2) — the over-closing prevention — was verified by code reading only: no commit in that session's history actually exercised the exact scenario (a story transitioning to `blocked_*` status with zero prior `execution_state` entry at push time), so the negative-case fix is unproven in production even though it reads correctly on paper.
+
+**Scope**
+- Add a regression fixture (either a real, deliberately-constructed test push/commit sequence, or an extension of `scripts/test_governance_sync_diff_logic.sh`'s simulation) that exercises the exact "unknown → skip" code path — a story pushed with a work commit but no `execution_state.json` entry yet, which later resolves to `blocked_backend`/`blocked_decision` rather than `done` — and confirms the corresponding GitHub issue is never auto-closed
+
+**Acceptance Criteria**
+- A regression test (real CI exercise, or an extended local simulation script) specifically covers the `unknown` status fallback's skip behaviour
+- Test confirms no auto-close occurs for a story with no `execution_state.json` entry at push time that later resolves to a `blocked_*` status
 
 ---
 
@@ -4858,6 +4903,31 @@ In `TradePlan.js` (Market/Status/Setup Type selects) and `Settings.js` (Default 
 **Acceptance Criteria**
 - All 5 affected controls (TradePlan: Market, Status, Setup Type; Settings: Default Currency, Theme) use `aria-labelledby` instead of a hardcoded `aria-label` string
 - `tests/e2e/accessibility-axe-scan.spec.js` continues to pass with no new violations
+
+---
+
+### BLG-FE-172 — Arc5ComplianceSection "Top Rule Breach" card diverges from canonical spec (text format + null display)
+
+**Priority:** P3 (Low)
+**Type:** Frontend / Spec Deviation
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** v9.1 EPIC-03 ST-13 (Playwright coverage for `top_rule_breach` formatting), cycle 2026-09-03__release-v9.1 — 2026-09-04
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.2
+
+**Problem**
+While authoring Playwright coverage for `Arc5ComplianceSection`'s "Top Rule Breach" card (ST-13), the actual implementation was found to diverge from `docs/specs/frontend/components/arc5_compliance_section.md` v1.0.0 §Stat Cards, Card 3:
+- **Canonical requirement:** "Format: Plain text rule type slug (e.g. `"regime_gate"`)" and "Null display: `"None"`"
+- **Actual behaviour:** `Arc5ComplianceSection.js`'s `fmtText` helper replaces underscores with spaces (renders `"regime gate"`, not the raw slug) and renders `"—"` (not `"None"`) when the value is null — both matching the `fmtRate`/`fmtCount` null-display convention used by the component's other three cards, not the spec's card-3-specific text.
+This has been filed as a deviation in the canonical spec's Known Deviations section (see that document) per `document_lifecycle_guide.md` §9. This backlog item is the required companion reference.
+
+**Scope**
+- Decide the correct canonical behaviour for Card 3 (either update the spec to match the implemented, already-shipped-and-user-visible behaviour, or update the component to match the spec's original slug/`"None"` intent) and align whichever side is wrong
+- No functional/data impact either way — display-text-only divergence
+
+**Acceptance Criteria**
+- Spec and implementation agree on Card 3's text format and null display
+- `tests/e2e/arc5-compliance-section.spec.js` (SC-ARC5-07/SC-ARC5-08) updated to match the resolved behaviour if the implementation changes
 
 ---
 

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.11
-**Last Updated:** 2026-08-12 (§3.7 gains a patch-ID matching requirement, LL-v8.6-P4-01b — closes a false-positive recurrence-claim gap)
+**Version:** 1.12
+**Last Updated:** 2026-09-07 (ST-22, EPIC-04, v9.1, BLG-GOV-312 — §3.7 gains a "read the named target file directly" step, a distinct failure mode from LL-v8.6-P4-01b); prior — 2026-08-12 (§3.7 gains a patch-ID matching requirement, LL-v8.6-P4-01b — closes a false-positive recurrence-claim gap)
 
 ---
 
@@ -172,6 +172,8 @@ For each friction item identified in this run: check whether the same or substan
 Also load `claude/system/prompt_change_log.md` if it exists. For each deferred patch in the prior cycle's outstanding actions table: confirm whether the corresponding prompt change was subsequently applied and logged. If a deferred patch has been carried forward without a prompt_change_log entry for two or more cycles, treat it as a recurrence escalation regardless of whether it appeared as a friction item this cycle.
 
 **Patch-ID matching requirement (LL-v8.6-P4-01b):** When checking whether a deferred patch was subsequently applied, search `prompt_change_log.md` by the friction item's own patch-ID tag (e.g. `LL-v8.4-P4-01`) if one was assigned at filing — not by date range or filename alone. A date/filename-only search can miss an entry whose prose describes the same fix in different words, producing a false-positive "still unapplied" recurrence claim that then propagates into later cycles' own carry-forward records. Confirmed live at `2026-08-11__release-v8.6`: `2026-08-08__release-v8.5`'s own closure record claimed the `execution_prompt.md` `test_scenarios` roll-up patch (`LL-v8.4-P4-01`) was "still unapplied after 2 consecutive cycles" when it had in fact already shipped the same day that claim's own record was filed — the recurrence check had not searched by the patch's own ID tag.
+
+**Read the named target file directly (BLG-GOV-312, distinct failure mode from LL-v8.6-P4-01b):** A deferred patch's own §4.1/§5 record names a specific target `File:` (per the "→ Deferred patch" record structure above). Before concluding a deferred patch is "not applied," **open and read that exact named file directly** — do not grep an assumed keyword across `prompt_change_log.md` alone, and do not silently substitute a same-topic sibling file for the one actually named (e.g. checking `execution_prompt.md §5.3` when the patch's own record named `qa_evidence_template.md`). Confirmed live at `2026-08-14__release-v8.8` and `2026-08-17__release-v8.9`: both cycles' Phase 4 recurrence checks reported "no ... language change found in either target file" for the CI-green per-fix restatement patch, searching `execution_prompt.md §5.3` and `prompt_change_log.md` — without ever opening `qa_evidence_template.md`, the file the original friction item's own Process Patch entry actually named. The fix had in fact already shipped there at `2026-08-12__release-v8.7` (`qa_evidence_template.md` v1.10→v1.11) — 2 further cycles of false "unapplied" recurrence tracking resulted, surfaced only when `ESC-CLOSE-20260821-01` was investigated directly and found to be a false positive. LL-v8.6-P4-01b (above) fixed the *search method* for `prompt_change_log.md` by patch-ID; this fix addresses a different gap — not reading the *named target file itself* at all.
 
 If some files are missing:
 - Record the absence as a process failure
