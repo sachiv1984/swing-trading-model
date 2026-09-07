@@ -65,6 +65,8 @@
     "last_rebalance_utc": { "owner": "roadmap_prompt.md", "phase": "Phase 1" },
     "last_scheduled_rebalance_utc": { "owner": "roadmap_prompt.md", "phase": "Phase 1" },
     "last_rebalance_outcome": { "owner": "roadmap_prompt.md", "phase": "Phase 1" },
+    "last_rebalance_pvr": { "owner": "roadmap_prompt.md", "phase": "Phase 1, STEP 2.4 / STEP 12.1", "notes": "Added ST-40, BLG-GOV-307, v9.1. Structured mirror of STEP 2.4's computed user_value_ratio (bare number, e.g. 0.42). null if STEP 2.4 did not compute a value this rebalance. Additive -- does not change last_rebalance_outcome's own prose content." },
+    "last_skill_silo_rolling_avg": { "owner": "roadmap_prompt.md", "phase": "Phase 1, STEP 7.1 / STEP 12.1", "notes": "Added ST-40, BLG-GOV-307, v9.1. Structured mirror of STEP 7.1's rolling 3-cycle Skill-Silo Governance story % (bare number, e.g. 0.548 for 54.8%). null if STEP 7.1 did not compute a value this rebalance." },
     "last_rebalance_cps": { "owner": "roadmap_prompt.md", "phase": "Phase 1" },
     "last_meta_review_cycle": { "owner": "roadmap_prompt.md", "phase": "Phase 1, STEP 11.4" },
     "rebalance_cycles_since_meta_review": { "owner": "roadmap_prompt.md", "phase": "Phase 1, STEP 11.4" },
