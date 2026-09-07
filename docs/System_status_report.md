@@ -1,11 +1,35 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.36
-**Last Updated:** 2026-09-03 (delivery verification 2026-08-21__release-v9.0 — status line updated Sprint_Complete → Verified); prior — 2026-09-03 (sprint close 2026-08-21__release-v9.0); prior — 2026-08-21 (delivery verification 2026-08-17__release-v8.9 — status line updated Sprint_Complete → Verified_with_deviations); prior history retained — see prior entries in version control.
+**Version:** 4.37
+**Last Updated:** 2026-09-07 (sprint close 2026-09-03__release-v9.1); prior — 2026-09-03 (delivery verification 2026-08-21__release-v9.0 — status line updated Sprint_Complete → Verified); prior — 2026-09-03 (sprint close 2026-08-21__release-v9.0); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
+
+## Sprint: 2026-09-03__release-v9.1
+**Date:** 2026-09-07
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | All 5 axe-core `KNOWN_VIOLATIONS` entries fixed — DashboardHome "AI Advisory" badge and Settings subtitle colour-contrast (ST-01, ST-05), accessible names on TradePlan selects (ST-02), discernible text on Settings comboboxes (ST-03), labels on Settings form inputs (ST-04); PositionSizingWidget/WhatIfSizingPreview debounced-fetch boilerplate consolidated into `usePositionSizingFetch.js` (ST-06); keyboard-navigation requirements section added to 3 table-based page specs (ST-07) | `docs/specs/frontend/pages/dashboard.md#Advisory Label`; `docs/specs/frontend/pages/trade_plan.md`; `docs/specs/frontend/pages/settings.md`; `docs/specs/frontend/pages/positions.md#Keyboard Navigation Requirements` | None |
+| EPIC-02 | npm dependency tree production-build regression fixed, confirmed via real CI (ST-08); sector-concentration adjustment's fail-open exception handler now logs (ST-09); 4 independent sector-lookup implementations consolidated into `concentration_service.py` (ST-10); raw SQL execution moved out of `analytics.py`/`digest.py` routers into `database.py` (ST-11) | `docs/ops/quarterly_dependency_upgrade_cadence_policy.md#3.1.1`; `backend/services/concentration_service.py`; `backend/database.py` | DEV-EPIC02-ST08-01 (P2, Resolved) |
+| EPIC-03 | Playwright coverage added for Arc5ComplianceSection's `events_per_week`, `top_rule_breach`, and null-value handling (ST-12–ST-14); quality trend index aggregating DEV-* records built (ST-15); DoD compliance spot-check across last 5 cycles and Tier 1/2 severity-labelling consistency spot-check run (ST-16, ST-17); regression suite runtime budget & reporting defined (ST-18) | `tests/e2e/arc5-compliance-section.spec.js`; `docs/governance/quality_trend_index.md`; `docs/ops/ci_pipeline_baseline.md#8. Regression Suite Runtime Budget & Reporting` | BLG-FE-172 (P3, target v9.2) |
+| EPIC-04 | `governance_sync.yml` auto-close gap for split work/completion commits fixed (ST-19); "Signed off by: PENDING" placeholder convention documented (ST-20); ST-06 §13 CONDITIONAL clearance added to `strategy_rules.md` roster (ST-21); recurrence-check false-positive fixed (ST-22); AI feature usage quarterly review run (ST-23); `trade_plan.md` spec corrections (ST-24, ST-25); Displacement Debt Register physically created, closing `ESC-EXEC-20260727-02` (ST-26); backlog scope visibility tally scoped (ST-27); `Specs_Index.md` given a proper Changelog table (ST-28) | `.github/workflows/governance_sync.yml`; `claude/system/shared_standards.md#§16.17`; `claude/strategy/strategy_rules.md#13.5`; `claude/roadmap/displacement_debt_register.md`; `docs/specs/Specs_Index.md#Changelog` | None |
+| EPIC-05 | Duplicate empty-state pattern specs consolidated (ST-29); canonical AI feature touchpoint register built with per-feature §13 classification (ST-30); spec-to-backlog traceability audit and effort-band accuracy retrospective run (ST-31, ST-32/ST-39); `Specs_Index.md` freshness automated against live spec files (ST-33); ATR-based sizing worked example added to `strategy_rules.md` (ST-34); minimum-interval guideline between scheduled rebalances formalised (ST-35); Base44 generation failure-mode log started (ST-36); "win rate"/"hit rate" and "90-day trade window" canonical definitions written (ST-37, ST-38); PVR/Skill-Silo metrics extracted into structured state fields (ST-40); canonical glossary consolidated (ST-41) | `docs/governance/ai_feature_touchpoint_register.md`; `scripts/check_specs_index_freshness.py`; `claude/strategy/strategy_rules.md#4.1.8`; `claude/charter/team_charter.md#3.1`; `docs/specs/metrics_definitions.md#Win Rate`; `docs/reference/glossary.md` | None |
+
+### Capabilities deferred or returned
+
+None — all 41 sprint-scope stories reached `done`/`merged`.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md, qa_evidence_EPIC-05.md
+- Deviations filed: DEV-EPIC02-ST08-01 (P2, Resolved), BLG-FE-172 (P3, target v9.2)
+- Test scenarios referenced: tests/e2e/accessibility-axe-scan.spec.js, tests/e2e/signals-cash-balance.spec.js, tests/test_sizing_concentration.py, tests/e2e/arc5-compliance-section.spec.js, scripts/test_governance_sync_diff_logic.sh, scripts/check_specs_index_freshness.py
 
 ## Sprint: 2026-08-21__release-v9.0
 **Date:** 2026-09-03
