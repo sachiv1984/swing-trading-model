@@ -2,8 +2,8 @@
 
 **Owner:** Strategy Rules & System Intent Owner  
 **Status:** Canonical  
-**Version:** 1.6
-**Last Updated:** 2026-08-06
+**Version:** 1.7
+**Last Updated:** 2026-09-07
 **Applies to:** Production backtests, live system, and documentation  
 
 ---
@@ -12,6 +12,7 @@
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.7 | 7 September 2026 | Added ST-06 — Automated AI Post-Trade Debrief (BLG-FEAT-90) to §13.5's semi-annual re-attestation roster (ST-21, EPIC-04, v9.1, BLG-GOV-311) — `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`, CONDITIONAL determination, v8.9, 9 binding conditions remain in force. Reviewed against the review document's own reasoning before adding, not a mechanical copy: this feature is the highest-condition-count (9) and highest-risk free-text surface reviewed under §13 to date (per-trade, numeric-claim-bearing), making it a genuinely warranted — arguably higher-priority — addition to the re-attestation roster, not just a mechanical registration. No behavioural rules changed. |
 | 1.6 | 6 August 2026 | Added §13.5 Semi-Annual Boundary Re-Attestation Cadence (ST-23, EPIC-05, v8.3, BLG-GOV-204) — proposes a rolling 6-month lightweight re-confirmation cadence for every shipped AI/automation-adjacent feature with a recorded §13 clearance (IT-06, SI-01, SI-02, SI-04, BLG-FEAT-50/51, PT-04, on-demand compliance recheck, Gemini thesis generation). First review date set: 2027-02-06. No behavioural rules changed. |
 | 1.5 | 3 August 2026 | Added §13.4 continuity note (ST-15, EPIC-05, v8.1, BLG-SPEC-82) — explicit confirmation that the on-demand compliance recheck (BLG-FEAT-64, v6.9) re-applies SI-01's existing deterministic rule set and introduces no new automation/prediction surface beyond it, distinct from and non-duplicative of SI-02's separately-gated drift detection. No behavioural rules changed. |
 | 1.4 | 20 May 2026 | Added §4.2 Pre-Entry Advisory Checks — formalises regime gate, sector concentration, earnings proximity, cash constraint, and sizing validity as advisory pre-entry conditions. No change to stop-loss, trailing logic, exit conditions, or position sizing calculation rules. §13 gate: SI-01 PASS recorded in docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md. |
@@ -477,6 +478,7 @@ Every shipped AI/automation-adjacent feature that previously cleared a §13 boun
 | PT-04 (Setup Quality Score) | `docs/product/decisions/decisions--2026-07-21__release-v7.7--PT-04-section13-review.md` | v7.7 |
 | On-demand compliance recheck (BLG-FEAT-64) | §13.4 above | v6.9 |
 | Gemini thesis generation | `docs/specs/api_contracts/gemini_thesis_generation.md` §13 compliance note | (contract-documented, no standalone review record — added to the cadence for its first formal re-attestation) |
+| ST-06 — Automated AI Post-Trade Debrief (BLG-FEAT-90) | `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md` | v8.9 (**CONDITIONAL** — 9 binding conditions remain in force; one Known Deviation already recorded against Condition 1's literal example text, superseded by BLG-TECH-17/ST-04, v9.0) |
 
 This list is the **starting roster**, not a closed set — any future feature that clears its own §13 review (or pre-assessment, e.g. `arc6_ps03_section13_preassessment.md`, `si04_section13_preassessment.md`) is added to it at that time, per the Maintenance rule below.
 
