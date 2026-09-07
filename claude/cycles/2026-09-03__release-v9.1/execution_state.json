@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-04T15:30:23Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-07T08:40:08Z",
+  "last_updated_utc": "2026-09-07T09:25:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -236,7 +236,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Actual root cause was a git+ssh dependency (\"root\": github:tanstack/react-query) failing host-key verification on clean installs, not the suspected eslint-config-react-app peer conflict (a downstream symptom). Removed it; full candidate list applied cleanly. DEV-EPIC02-ST08-01: initial local Playwright run showed 847/851 (1 failure, signals-cash-balance.spec.js); first assessment ('likely sandbox-specific') was corrected after adding workflow_dispatch to playwright.yml and forcing a real CI run, which reproduced the failure deterministically on GitHub-hosted infra and confirmed it absent on the pre-bump main commit at the same shard — a real, dependency-bump-exposed test-synchronization gap (test asserted before page.goto() implied the fetch had fired). Fixed with page.waitForRequest() in the test; verified 32/32 locally, then confirmed by a forced real CI run: all 8 Playwright shards passed, all 40 PR #1536 checks green. No app code changed. DEV-EPIC02-ST08-01 now Resolved with real-CI evidence. Filed BLG-OPS-149 (P2, playwright.yml path-filter gap — remains open, the real structural fix) and BLG-TECH-19 (3 unused/erroneous npm packages, not implicated in the build failure)."
+          "notes": "Actual root cause was a git+ssh dependency (\"root\": github:tanstack/react-query) failing host-key verification on clean installs, not the suspected eslint-config-react-app peer conflict (a downstream symptom). Removed it; full candidate list applied cleanly. DEV-EPIC02-ST08-01: initial local Playwright run showed 847/851 (1 failure, signals-cash-balance.spec.js); first assessment ('likely sandbox-specific') was corrected after adding workflow_dispatch to playwright.yml and forcing a real CI run, which reproduced the failure deterministically on GitHub-hosted infra and confirmed it absent on the pre-bump main commit at the same shard \u2014 a real, dependency-bump-exposed test-synchronization gap (test asserted before page.goto() implied the fetch had fired). Fixed with page.waitForRequest() in the test; verified 32/32 locally, then confirmed by a forced real CI run: all 8 Playwright shards passed, all 40 PR #1536 checks green. No app code changed. DEV-EPIC02-ST08-01 now Resolved with real-CI evidence. Filed BLG-OPS-149 (P2, playwright.yml path-filter gap \u2014 remains open, the real structural fix) and BLG-TECH-19 (3 unused/erroneous npm packages, not implicated in the build failure)."
         },
         "ST-09": {
           "title": "Log sector-concentration adjustment's fail-open exception handler",
@@ -697,7 +697,7 @@
       }
     },
     "EPIC-05": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
@@ -734,7 +734,7 @@
             "method": "agent_mediated",
             "status": "cleared",
             "date": "2026-09-07",
-            "summary": "Approved. Intent-check applied per LL-v3.4-P3-03: BLG-SPEC-98's intent (design_system.md as single source, no restated generic pattern rules elsewhere) is achieved — a systematic search of all 10 page specs mentioning empty states found and fixed the only 2 genuine duplicate/drift cases that actually exist; the literal 'at least 3' AC count assumed more duplication existed than a thorough search confirmed. Recorded as an implementation note, not a deviation, since intent and literal spec agree except for a headcount based on an unverified assumption at filing time."
+            "summary": "Approved. Intent-check applied per LL-v3.4-P3-03: BLG-SPEC-98's intent (design_system.md as single source, no restated generic pattern rules elsewhere) is achieved \u2014 a systematic search of all 10 page specs mentioning empty states found and fixed the only 2 genuine duplicate/drift cases that actually exist; the literal 'at least 3' AC count assumed more duplication existed than a thorough search confirmed. Recorded as an implementation note, not a deviation, since intent and literal spec agree except for a headcount based on an unverified assumption at filing time."
           },
           "notes": "Search method: grepped all 10 page specs referencing 'empty state' for (a) literal restated design_system.md prose, (b) restated numeric sizing values, (c) restated priority-order/variant-selection rules. Found 2 genuine cases (dashboard.md's numeric restatement; navigation.md's actual terminology drift -- called 'Compact' what design_system.md itself documents as the distinct 'inline' variant, first used by exactly this command-palette case) -- both fixed. The other 8 pages' empty-state sections contain only page-specific content (concrete headings/bodies/conditions), which is correct per-page content, not pattern duplication. AC's 'at least 3' not literally met; BLG-SPEC-98's actual intent (single canonical source, no restated generic rules) is met -- see sign-off."
         },
@@ -857,44 +857,61 @@
         "ST-34": {
           "title": "Add worked example of the ATR-based sizing edge case to strategy_rules.md",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1527,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "59385f3c07bbb07b3b25968948e3a59d2807784e",
           "delegation_record_id": "ESC-EXEC-20260907-03",
           "blocked_since_utc": "2026-09-07T08:31:09Z",
           "unblock_criteria": "Strategy Rules & System Intent Owner sign-off on strategy_rules.md worked example edit",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T09:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#4.1.8 Worked example \u2014 low-ATR sizing edge case"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved, explicit user/Product Owner direction to act in this role. Read \u00a74.1/\u00a75/\u00a711 in full before writing the worked example, not derived independently. Example is documentation-only \u2014 no calculation, validity, or gating rule changed; it makes an existing interaction between already-canonical \u00a74.1 sizing and the \u00a74.1.6 cash-constraint gate explicit."
+          },
+          "notes": "ESC-EXEC-20260907-03 resolved same-session. No deviation against BLG-SPEC-101's AC (worked example added; Strategy Rules & System Intent Owner sign-off; no functional/behavioural change) \u2014 satisfied. strategy_rules.md v1.6\u2192v1.8 (not v1.7, to avoid collision with EPIC-04's independently in-flight 1.6\u21921.7 bump, ST-21, commit 5a65aadf, not yet merged). Class 1 canonical document, versioned via its own header/Change log \u2014 CLAUDE.md \u00a76's OPERATIONAL_GUIDE.md/prompt_change_log.md steps do not apply."
         },
         "ST-35": {
           "title": "Formalise minimum-interval guideline between scheduled rebalances",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Head of Specs Team",
           "github_issue": 1528,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "78d69e40c4a253b0307a5f0278b776493906f2a1",
           "delegation_record_id": "ESC-EXEC-20260907-04",
           "blocked_since_utc": "2026-09-07T08:31:09Z",
-          "unblock_criteria": "Head of Specs Team writes the guideline to claude/charter/team_charter.md or CLAUDE.md §5 (both outside this routine's write scope) and obtains Director of HR co-sign",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "unblock_criteria": "Head of Specs Team writes the guideline to claude/charter/team_charter.md or CLAUDE.md \u00a75 (both outside this routine's write scope) and obtains Director of HR co-sign",
+          "completed_utc": "2026-09-07T09:22:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/charter/team_charter.md#3.1 Director of HR",
+            "claude/charter/team_charter.md#6. Hard Constraints"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Reclassified from autonomous to delegated_decision at STEP 3.1 load-time review: original classification did not account for the target files (claude/charter/team_charter.md, CLAUDE.md) both being outside execution_prompt.md's write scope (CLAUDE.md §2's claude/charter/ prohibition; CLAUDE.md itself is Head-of-Specs-Team-only per shared_standards.md §17)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved, explicit user/Product Owner direction to act in both this role and Director of HR's. Confirmed BLG-GOV-207/BLG-GOV-216 (companion technical fixes) already shipped v7.10 with no outstanding policy piece before writing. Guideline added to Director of HR's \u00a73.1 entry and made binding via a new \u00a76 Hard Constraint (item 8), cross-referenced rather than duplicated against BLG-GOV-209's separate Skill-Silo Alert framing."
+          },
+          "notes": "ESC-EXEC-20260907-04 resolved same-session. No deviation against BLG-GOV-208's AC (guideline documented in team_charter.md; Director of HR + Head of Specs Team sign-off) \u2014 satisfied. team_charter.md v1.7\u2192v1.8 (own header + Change Log table; Class 1 canonical charter \u2014 confirmed no other in-flight branch this cycle touches this file, so no collision-avoidance renumbering needed)."
         },
         "ST-36": {
           "title": "Base44 generation failure-mode log",
@@ -981,7 +998,7 @@
             "date": "2026-09-07",
             "summary": "Approved. Both new details (window boundary, timezone) read directly from behavioural_drift_service.py's actual implementation, not inferred or assumed -- exact match confirmed against _trade_count_as_of()'s literal window_start calculation."
           },
-          "notes": "No deviation against BLG-SPEC-127's AC (definition added; Metrics Definitions & Analytics Canonical Owner sign-off) -- both satisfied. Much of §2.1 was already documented (rolling window, rationale, threshold); only the boundary/timezone gap the problem statement specifically named remained."
+          "notes": "No deviation against BLG-SPEC-127's AC (definition added; Metrics Definitions & Analytics Canonical Owner sign-off) -- both satisfied. Much of \u00a72.1 was already documented (rolling window, rationale, threshold); only the boundary/timezone gap the problem statement specifically named remained."
         },
         "ST-39": {
           "title": "Effort-band accuracy retrospective",
@@ -1010,7 +1027,6 @@
             "date": "2026-09-07",
             "summary": "Approved. Jointly satisfies ST-32/BLG-GOV-259 with the same deliverable (documented as a duplicate-item finding, not silently merged). First retrospective genuinely produced with real data; process documented for repeat, correctly segmented by execution mode."
           },
-          "notes": "Same deliverable as ST-32 (BLG-GOV-259) -- see docs/governance/effort_band_accuracy_retrospective_2026-09-07.md's own Duplicate-item finding section. No deviation against BLG-GOV-211's AC (first retrospective produced; process documented for repeat) -- both satisfied.",
           "notes": ""
         },
         "ST-40": {
@@ -1075,10 +1091,7 @@
       }
     }
   },
-  "blocked_items": [
-    "ST-34",
-    "ST-35"
-  ],
+  "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -1102,7 +1115,9 @@
     "ST-38",
     "ST-39",
     "ST-40",
-    "ST-41"
+    "ST-41",
+    "ST-34",
+    "ST-35"
   ],
   "open_escalations": [
     "ESC-EXEC-20260907-03",
@@ -1111,10 +1126,10 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
-      "EPIC-02"
+      "EPIC-02",
+      "EPIC-03"
     ],
     "epics_pending": [
-      "EPIC-03",
       "EPIC-04",
       "EPIC-05"
     ],
@@ -1126,7 +1141,7 @@
     "2026-09-04: PR #1535 developed a merge conflict in claude/backlog/backlog.md after a direct-to-main [GOVERNANCE] commit (51dc6295, adding BLG-QA-157/BLG-SPEC-134/BLG-FE-171) inserted at the same anchor point as this branch's own earlier BLG-FE-170 addition. Resolved per CLAUDE.md \u00a78's union rule (both sides' items kept, sequentially) via 'git merge origin/main' + manual conflict resolution, commit a9bfe188. No content lost on either side.",
     "EPIC-02 (2026-09-04): ST-08's npm build-regression diagnosis required reinstalling/rebuilding node_modules and the Playwright browser cache repeatedly to isolate root cause and validate the fix; this sandbox's OS (ubuntu26.04-x64) cannot install the pre-bump @playwright/test (1.58.2) browser binary at all, which blocked a clean pre/post-bump A/B comparison for the one local Playwright failure (DEV-EPIC02-ST08-01) \u2014 resolved by checking real GitHub Actions CI history instead (all recent main runs green) and deferring final confirmation to this EPIC's own PR CI run. Local package.json/package-lock.json were temporarily reverted to HEAD mid-session for this diagnostic and fully restored before commit (verified via diff against the saved working copy).",
     "Correction 2026-09-04: a 'git commit --amend' erroneously rewrote the already-pushed 15db3691 work commit instead of creating a new one (same class of mistake as EPIC-01's 8be831f5 incident). Caught before push completed (non-fast-forward rejection); fixed via 'git reset --soft 15db3691' + fresh commit (a8adbc19) rather than force-pushing over public history. 15db3691 remains the authoritative EPIC-02 work commit; a8adbc19 is the execution_state.json follow-up.",
-    "EPIC-02 (2026-09-04): DEV-EPIC02-ST08-01's first assessment ('likely sandbox-specific') was wrong — corrected after forcing a real CI run (added workflow_dispatch to playwright.yml) proved the failure was real and dependency-bump-induced (a test-synchronization gap, not an app defect); fixed and reconfirmed green via a second forced CI run (a0c7e81a). PR #1536 was merged by the human Product Owner (sachiv1984) at 2026-09-04T18:51:05Z, 42 seconds before my final governance-only follow-up commit (6c6bf67c, recording the real-CI confirmation) was pushed — that commit landed on the now-inert exec/EPIC-02 branch after its own PR had already merged, stranding it (LL-v6.8-P3-01 pattern). Reconciled by cherry-picking 6c6bf67c directly onto main (new SHA 2f425eb2, clean cherry-pick, content identical) rather than leaving it orphaned."
+    "EPIC-02 (2026-09-04): DEV-EPIC02-ST08-01's first assessment ('likely sandbox-specific') was wrong \u2014 corrected after forcing a real CI run (added workflow_dispatch to playwright.yml) proved the failure was real and dependency-bump-induced (a test-synchronization gap, not an app defect); fixed and reconfirmed green via a second forced CI run (a0c7e81a). PR #1536 was merged by the human Product Owner (sachiv1984) at 2026-09-04T18:51:05Z, 42 seconds before my final governance-only follow-up commit (6c6bf67c, recording the real-CI confirmation) was pushed \u2014 that commit landed on the now-inert exec/EPIC-02 branch after its own PR had already merged, stranding it (LL-v6.8-P3-01 pattern). Reconciled by cherry-picking 6c6bf67c directly onto main (new SHA 2f425eb2, clean cherry-pick, content identical) rather than leaving it orphaned."
   ],
   "sealed": false,
   "sealed_utc": null
