@@ -4285,15 +4285,15 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Provisional-Target:** Unscheduled
 
 **Problem**
-The only cost-focused record for AI feature usage on file, `docs/ops/anthropic_api_cost_trend_2026.md` (v5.6, 2026-06-16), documents 2 features (thesis generation, daily cost alert). A direct code audit (v9.1 ST-23) found 5 endpoints across 3 service modules currently writing to `claude_audit_log` — `POST /trade-plans/generate-plan`, `POST /trade-plans/{plan_id}/generate-thesis`, `POST /trades/{trade_id}/debrief`, `POST /ai/daily-briefing`, and `POST /ai/chat` — the latter two using a materially more expensive model tier (`claude-sonnet-4-6` vs. `claude-haiku-4-5` for the other three) and post-dating the last cost-trend record entirely. No live `claude_audit_log` query was possible from the reviewing sandbox (`SBX-NO-LIVE-DB`), so actual call volumes/costs remain unconfirmed.
+The only cost-focused record for AI feature usage on file, `docs/ops/anthropic_api_cost_trend_2026.md` (v5.6, 2026-06-16), documents 2 features (thesis generation, daily cost alert). A direct code audit (v9.1 ST-23, corrected by ST-30's independent 3-table audit) found 6 endpoints across 3 service modules and 3 distinct audit-logging tables (`claude_audit_log`, `gemini_audit_log`, `ai_audit_log`) — `POST /trade-plans/generate-plan`, `POST /trade-plans/{plan_id}/generate-thesis`, `POST /trades/{trade_id}/debrief`, `POST /ai/daily-briefing`, `POST /ai/chat`, and `POST /journal-summary` — two of them (`daily-briefing`/`chat`) using a materially more expensive model tier (`claude-sonnet-4-6` vs. `claude-haiku-4-5` for the other four) and most post-dating the last cost-trend record entirely. See `docs/governance/ai_feature_touchpoint_register.md` for the full, corrected inventory. No live `claude_audit_log` query was possible from the reviewing sandbox (`SBX-NO-LIVE-DB`), so actual call volumes/costs remain unconfirmed.
 
 **Scope**
-- Update or supersede `anthropic_api_cost_trend_2026.md` with the current 5-endpoint inventory
-- Obtain a real `claude_audit_log` query (live DB access, or a pre-exported result) covering all 5 endpoints, with particular attention to the two `claude-sonnet-4-6` endpoints' cost contribution
+- Update or supersede `anthropic_api_cost_trend_2026.md` with the current 6-endpoint inventory
+- Obtain a real query across all 3 audit tables (live DB access, or a pre-exported result) covering all 6 endpoints, with particular attention to the two `claude-sonnet-4-6` endpoints' cost contribution
 - Re-assess the BLG-OPS-37 cost-threshold gate against the updated, complete inventory
 
 **Acceptance Criteria**
-- Cost-trend document reflects all 5 current AI-invoking endpoints
+- Cost-trend document reflects all 6 current AI-invoking endpoints
 - Real query data obtained for at least the current quarter
 - FinOps & Resource Architect sign-off
 
