@@ -1,8 +1,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner; Head of Specs Team
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-08-04
+**Version:** 1.2
+**Last Updated:** 2026-09-07 (ST-38, EPIC-05, v9.1, BLG-SPEC-127 — §2.1 gains exact window-boundary and timezone semantics)
 **Cycle:** 2026-05-30__release-v4.5 (EPIC-03, ST-07, BLG-SPEC-41)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **§13 gate:** PASS — `docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md`
@@ -30,6 +30,10 @@ All formulas are deterministic. Per §13 PASS (decision record above), no ML inf
 **Minimum trade threshold:** 10 closed trades within the analysis window. Below this threshold, the endpoint returns `status: "insufficient_data"` and no metric values are computed. This prevents false drift signals from a single outlier trade.
 
 **Override:** The analysis window is hard-coded in the backend service at 90 days. It is not user-configurable in Sprint 1. If future configurability is required, a `settings` field addition requires a separate sprint and schema change.
+
+**Exact window boundary (ST-38, EPIC-05, v9.1, BLG-SPEC-127):** the window is `[as_of - 89 days, as_of]`, inclusive at both ends — i.e. exactly 90 calendar days including `as_of` itself, not 90 days *before* `as_of` (which would be 91 days inclusive, or 90 days exclusive of `as_of`). Matches `backend/services/behavioural_drift_service.py`'s `_trade_count_as_of()`: `window_start = as_of - timedelta(days=window_days - 1)`, filtering `entry_date` in `[window_start, as_of]` inclusive.
+
+**Timezone:** `as_of` defaults to `datetime.now(timezone.utc).date()` — UTC calendar date, not the trader's local timezone. A trade's `entry_date` is itself stored as a date (not a timestamp), so no intra-day timezone conversion applies to the boundary trades themselves; the only timezone-sensitive value is "today" as computed server-side (always UTC), which determines which calendar date the 90-day window's right edge falls on.
 
 ### 2.2 Metric Status States
 
@@ -343,3 +347,5 @@ All thresholds are deterministic and documented. No configurable thresholds in S
 **Head of Specs Team sign-off notes:** AC-01–04 from `stage4_backlog_slice.md#ST-07` are met: (AC-01) user-facing format (Option B — percentage deviation display, per `si02_fe_component_predesign.md §5`), rolling window (90 days), threshold bands (green/amber/red per §2.2), and warning state triggers defined; (AC-02) SI-05 integration points documented in §5; (AC-03) both owners signed; (AC-04) document filed at canonical path `docs/specs/metrics/si02_drift_score.md`.
 
 **v1.1 addendum (2026-08-04, ST-05, EPIC-01, v8.2, BLG-FEAT-86):** §3.5 Insufficient-Data Streak added — a data-availability indicator (not a 5th drift metric), computed only when `status == "insufficient_data"`. Metrics Definitions & Analytics Canonical Owner sign-off: formula is deterministic (backward-walk recount against the same §2.1 window/threshold definitions already governing the 4 metrics above), bounded (180-day cap), and §13-compliant (display-only, no inference). Approved — 2026-08-04.
+
+**v1.2 addendum (2026-09-07, ST-38, EPIC-05, v9.1, BLG-SPEC-127):** §2.1 gains two previously-unspecified details, both verified directly against `backend/services/behavioural_drift_service.py`: (1) the exact window boundary — `[as_of - 89 days, as_of]` inclusive at both ends (90 calendar days total including `as_of`, not 90 days *before* `as_of`); (2) timezone handling — `as_of` defaults to UTC calendar date (`datetime.now(timezone.utc).date()`), and since `entry_date` is itself stored as a date (not a timestamp) no intra-day timezone conversion applies to boundary trades. Metrics Definitions & Analytics Canonical Owner sign-off: both details are read directly from the implementing service's own code, not inferred or assumed — no behavioural change, documentation-only. Approved — 2026-09-07.

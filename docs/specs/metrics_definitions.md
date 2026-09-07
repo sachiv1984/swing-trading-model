@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.17.0
-**Last Updated:** 2026-08-17
+**Version:** 1.18.0
+**Last Updated:** 2026-09-07 (ST-37, EPIC-05, v9.1, BLG-SPEC-100 — Win Rate section gains a Terminology Note confirming "hit rate" is not used anywhere in this system)
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -451,6 +451,9 @@ Tolerance: ±0.5 (percentage points).
 
 ### Failure Behaviour
 - If no trades: `0.0`.
+
+### Terminology Note (ST-37, EPIC-05, v9.1, BLG-SPEC-100)
+`"Win Rate"` is this system's sole canonical term for `count(pnl > 0) / total_trades`. `"Hit rate"` is **not** a term used anywhere else in this codebase — confirmed via a full-repo search of `docs/specs/` and `src/` (2026-09-07) — it does not appear in any other spec, page, or component. This system therefore has no live inconsistency between the two terms; "Win Rate" is used exclusively and consistently. This note exists to close the loop explicitly (rather than leave the absence unstated) and to make clear that if "hit rate" phrasing is ever proposed again — e.g. in a new feature idea or design discussion — it should be treated as a synonym for Win Rate as defined above, not a distinct metric, unless a future canonical decision explicitly introduces a differently-scoped metric under that name.
 
 ---
 
@@ -1212,6 +1215,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-09-07 | 1.18.0 | ST-37 (EPIC-05, v9.1, BLG-SPEC-100): Win Rate section gains a Terminology Note — confirmed via a full-repo search that "hit rate" is not used anywhere else in `docs/specs/` or `src/`, so no live inconsistency exists between the two terms; "Win Rate" is this system's sole canonical term. Metrics Definitions & Analytics Owner agent-mediated sign-off cleared 2026-09-07. | Metrics Definitions & Analytics Owner |
 | 2026-08-17 | 1.17.0 | ST-03 (EPIC-01, v8.9, BLG-SPEC-85): Add Validation Tolerances subsection to Trailing Stop Action Rate — numeric bounds for insufficient-sample, expected range, anomalously low/high, and stale-capture conditions, replacing the previously qualitative-only description. Metrics Definitions & Analytics Owner agent-mediated sign-off cleared 2026-08-17. | Metrics Definitions & Analytics Owner |
 | 2026-07-14 | 1.16.0 | ST-06 (EPIC-03, v7.1, BLG-SPEC-83): Add Realized/Unrealized P&L Split section — formalises the v7.0 feature (no prior entry existed). Documents stored-vs-computed-on-read ownership decision (realized: stored at exit, immutable; unrealized: live on Positions page vs nightly-snapshot on Reports page — a genuine ambiguity surfaced this cycle, tracked as `BLG-SPEC-87`), currency/rounding rules (GBP, 2dp server-side, no client re-rounding), reconciliation rule (approximate tie-back to portfolio `total_pnl`, verified against production data), and visual treatment (aligned with Open Positions Panel convention). Metrics Definitions & Analytics Owner sign-off cleared 2026-07-14. | Metrics Definitions & Analytics Owner |
 | 2026-02-16 | 1.5.0 | Initial comprehensive spec | Analytics Team |

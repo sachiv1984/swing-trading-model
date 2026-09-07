@@ -119,7 +119,7 @@ Empty input shows recent/frequent pages only (no "Your Data" group). Typing filt
 
 ### No Results
 
-Compact `DataState` empty-state variant (new — not the existing `py-16` default card variant, which is oversized for the palette's compact list): `"No results for '{query}'."`
+`DataState`'s `inline` variant (canonical definition: `docs/specs/frontend/design_system.md` §Data States — a single centered text line, no icon, for contexts where even the `compact` variant's icon+heading+body stack is too tall): `"No results for '{query}'."`
 
 ### Discoverability
 

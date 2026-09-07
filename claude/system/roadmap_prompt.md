@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.16
-**Last Updated:** 2026-08-18 (ST-21, EPIC-06, v8.9, BLG-GOV-264: STEP 8's "Displacement candidate flag" instruction now also updates the newly-placed `claude/roadmap/displacement_debt_register.md`); prior — 2026-08-17 (post-ship closure 2026-08-14__release-v8.8, STEP 12 ID Uniqueness Scan finding: STEP 8.5.C.5's BLG-ID collision advisory now scans `backlog_archive.md` in addition to `backlog.md`, closing the gap that let `BLG-FEAT-84`/`BLG-SEC-18` each get reissued to a second, unrelated item); prior history retained — see prior entries in version control.
+**Version:** 9.17
+**Last Updated:** 2026-09-07 (ST-40, EPIC-05, v9.1, BLG-GOV-307 — STEP 12.1 gains 2 new structured .claude_current_state.json fields, last_rebalance_pvr and last_skill_silo_rolling_avg, mirroring STEP 2.4/STEP 7.1's already-computed values); prior — 2026-08-18 (ST-21, EPIC-06, v8.9, BLG-GOV-264: STEP 8's "Displacement candidate flag" instruction now also updates the newly-placed `claude/roadmap/displacement_debt_register.md`); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -853,10 +853,14 @@ Update `.claude_current_state.json` (rebalance keys only — do not overwrite `a
   "last_rebalance_cycle": "<cycle_id>",
   "last_rebalance_utc": "<ISO-8601 UTC>",
   "last_rebalance_outcome": "<No-change | Add | Replace | Defer | Kill — brief summary>",
+  "last_rebalance_pvr": "<STEP 2.4's computed user_value_ratio, as a bare number, e.g. 0.42 — null if STEP 2.4 did not run/compute a value this cycle>",
+  "last_skill_silo_rolling_avg": "<STEP 7.1's rolling 3-cycle Skill-Silo Governance story % / 100, as a bare number, e.g. 0.548 — null if STEP 7.1 did not run/compute a value this cycle>",
   "last_meta_review_cycle": "<cycle_id | unchanged if not due>",
   "last_sync_utc": "<ISO-8601 UTC>"
 }
 ```
+
+**Structured PVR/Skill-Silo fields (ST-40, EPIC-05, v9.1, BLG-GOV-307):** `last_rebalance_pvr` and `last_skill_silo_rolling_avg` are additive — they make STEP 2.4's/STEP 7.1's already-computed values queryable as top-level numeric state fields, without changing what `last_rebalance_outcome`'s own prose summary contains (that field's content is unchanged by this addition; it continues to carry the full narrative summary exactly as before). Both new fields are `null` on any rebalance where the corresponding STEP's diagnostic did not produce a value (e.g. a `--dry-run` invocation, or a future change to either STEP's own trigger conditions) — never fabricate a number to avoid a `null`.
 
 **Advisory — next_release after DL decision (OA-02/ST-22, v4.6; ownership clarified OA-1, post-ship closure `2026-07-24__release-v7.8`):** After the DL decision at STEP 8 sets the next planned release label, update `next_release` in `.claude_current_state.json` to the projected version label (e.g., `v4.7`) if determinable. This reduces the "version not on roadmap" annotation requirement at the next release planning invocation. This is advisory only — no hard gate — and is **not** this field's authoritative source: `release_planning_prompt.md` STEP 9 owns `next_release` and overwrites it unconditionally, from the sealed cycle's own `--version` argument, every time Release Planning seals. This advisory exists only to give the field a reasonable best-guess value in the window between a roadmap rebalance and the next Release Planning invocation; it must never be treated as authoritative if it disagrees with the last Release Planning STEP 9 write. If the next release label is not determinable from the DL decision (e.g., no-change rebalance with no new release horizon), leave `next_release` unchanged.
 

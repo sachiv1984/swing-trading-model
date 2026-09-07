@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-03-08
+**Version:** 1.2
+**Last Updated:** 2026-09-07 (ST-41, EPIC-05, v9.1, BLG-SPEC-126 — 5 terms added: Compliance Score, Concentration, Drift Score, R-Target, Setup Thesis; each cross-referenced to its authoritative spec)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -58,6 +58,10 @@ Health endpoints may explicitly be exceptions.
 
 **Cohort**: A group of trades segmented by the period in which positions were opened (e.g., monthly, quarterly, yearly). Used in cohort analysis to compare performance across entry time-windows. Canonical definition: `docs/specs/metrics_definitions.md`.
 
+**Compliance Score** *(ST-41, EPIC-05, v9.1)*: The Arc 5 signal compliance score displayed on the Performance Analytics page, distinct from **Drift Score** (below) — Compliance Score summarises rule-validation pass rates over a rolling window (overrides, sizing, regime); Drift Score measures *behavioural change over time* relative to a trader's own recent baseline. Canonical definition: `docs/specs/api_contracts/arc5_compliance_analytics.md`; component spec: `docs/specs/frontend/components/arc5_compliance_section.md`.
+
+**Concentration (Sector Concentration)** *(ST-41, EPIC-05, v9.1)*: A sizing-adjustment factor that reduces a suggested position size when opening it would increase exposure to a sector already heavily represented among open positions. Surfaced to the trader as an inline `concentration_reason` note, not a hard block. Canonical definition: `docs/specs/api_contracts/portfolio_endpoints.md` (`POST /portfolio/size`); component behaviour: `docs/specs/frontend/pages/trade_plan.md` §10.7.
+
 **Contract-Affecting Change**: A change that alters endpoints, request/response shapes, status codes, defaults, validation rules, or user-visible API behavior. Requires OpenAPI alignment review (when applicable).
 
 ---
@@ -74,6 +78,8 @@ See **Metrics Definitions** for the exact calculation.
 **Deterministic**: Identical inputs produce identical outputs. Determinism is a core system requirement for rule execution and analytics.
 
 **Drawdown**: Decline from peak to trough in portfolio value. Often expressed as a negative percentage (e.g., `-25%`).
+
+**Drift Score** *(ST-41, EPIC-05, v9.1)*: SI-02 Behavioural Drift Detection's composite measure of how a trader's recent execution (entry timing, sizing, post-loss behaviour, regime adherence) diverges from their own stated plan/settings over a rolling 90-day window. Distinct from **Compliance Score** (above) — Drift Score is baseline-relative and behavioural; Compliance Score is rule-pass-rate-relative. Canonical definition: `docs/specs/metrics/si02_drift_score.md`.
 
 ---
 
@@ -207,6 +213,8 @@ May be calculated frontend-only for visualization when explicitly documented. Se
 
 **Rebalance Frequency**: How often positions are reviewed/selected in a systematic portfolio strategy (primarily relevant to backtest logic if used).
 
+**R-Target** *(ST-41, EPIC-05, v9.1)*: A trader-entered target R-multiple on a trade plan, expressing the intended risk/reward ratio before entry — distinct from **R-Multiple** (above), which is the realised/actual ratio computed after a trade closes. Field: `trade_plans.r_target`. Canonical definition: `docs/specs/frontend/pages/trade_plan.md` §10.6a.
+
 **Reference Artifact**: A supporting representation of canonical specs (e.g., OpenAPI YAML). Must not contradict canonical documents and must be reviewed inline when contract-affecting changes occur.
 
 **Risk-Off Signal**: Regime condition indicating defensive posture (e.g., index below MA200). Often triggers exit recommendation.
@@ -216,6 +224,8 @@ May be calculated frontend-only for visualization when explicitly documented. Se
 ---
 
 ## S
+
+**Setup Thesis** *(ST-41, EPIC-05, v9.1)*: The free-text narrative rationale for a trade plan — either manually authored or AI-drafted via the "Improve with AI" feature (`isAiDraft: true`, editable before submission). Field: `trade_plans.setup_thesis`. Canonical definition: `docs/specs/frontend/pages/trade_plan.md`; AI-generation contract: `docs/specs/api_contracts/ai_endpoints.md`.
 
 **Sharpe Ratio**: Risk-adjusted return metric. Portfolio-based method preferred; trade-based fallback.
 See **Metrics Definitions** for exact calculation and variance conventions.
@@ -264,3 +274,9 @@ See the Validation System documentation where applicable.
 ## W
 
 **Win Rate**: Percentage of closed trades with positive P&L. Canonical definition lives in Metrics Definitions.
+
+---
+
+## Consolidation Notes (ST-41, EPIC-05, v9.1, BLG-SPEC-126)
+
+This glossary predates most of this system's shipped features (v1.1, 2026-03-08) — a large span of terminology introduced since then had never been reviewed against it. This pass added the 3 terms the backlog item's own problem statement explicitly named as inconsistently-defined (**Drift Score**, **Compliance Score** — genuinely missing; **Grace Period** was already present, confirmed) plus 2 more heavily-used, genuinely-missing terms found while cross-referencing this cycle's own spec work (**R-Target**, **Setup Thesis**, **Concentration**). This is not an exhaustive audit of every term shipped since v1.1 — that would be a substantially larger effort than this `M`-sized story budgets for. No inconsistency was found between the 5 added terms' usage across specs (each cross-references a single, unambiguous canonical source); this pass's scope was closing genuine terminology *gaps*, not resolving *conflicts* (none were found this pass).

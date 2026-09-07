@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-04T15:30:23Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-07T09:04:10Z",
+  "last_updated_utc": "2026-09-07T09:30:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -236,7 +236,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Actual root cause was a git+ssh dependency (\"root\": github:tanstack/react-query) failing host-key verification on clean installs, not the suspected eslint-config-react-app peer conflict (a downstream symptom). Removed it; full candidate list applied cleanly. DEV-EPIC02-ST08-01: initial local Playwright run showed 847/851 (1 failure, signals-cash-balance.spec.js); first assessment ('likely sandbox-specific') was corrected after adding workflow_dispatch to playwright.yml and forcing a real CI run, which reproduced the failure deterministically on GitHub-hosted infra and confirmed it absent on the pre-bump main commit at the same shard — a real, dependency-bump-exposed test-synchronization gap (test asserted before page.goto() implied the fetch had fired). Fixed with page.waitForRequest() in the test; verified 32/32 locally, then confirmed by a forced real CI run: all 8 Playwright shards passed, all 40 PR #1536 checks green. No app code changed. DEV-EPIC02-ST08-01 now Resolved with real-CI evidence. Filed BLG-OPS-149 (P2, playwright.yml path-filter gap — remains open, the real structural fix) and BLG-TECH-19 (3 unused/erroneous npm packages, not implicated in the build failure)."
+          "notes": "Actual root cause was a git+ssh dependency (\"root\": github:tanstack/react-query) failing host-key verification on clean installs, not the suspected eslint-config-react-app peer conflict (a downstream symptom). Removed it; full candidate list applied cleanly. DEV-EPIC02-ST08-01: initial local Playwright run showed 847/851 (1 failure, signals-cash-balance.spec.js); first assessment ('likely sandbox-specific') was corrected after adding workflow_dispatch to playwright.yml and forcing a real CI run, which reproduced the failure deterministically on GitHub-hosted infra and confirmed it absent on the pre-bump main commit at the same shard \u2014 a real, dependency-bump-exposed test-synchronization gap (test asserted before page.goto() implied the fetch had fired). Fixed with page.waitForRequest() in the test; verified 32/32 locally, then confirmed by a forced real CI run: all 8 Playwright shards passed, all 40 PR #1536 checks green. No app code changed. DEV-EPIC02-ST08-01 now Resolved with real-CI evidence. Filed BLG-OPS-149 (P2, playwright.yml path-filter gap \u2014 remains open, the real structural fix) and BLG-TECH-19 (3 unused/erroneous npm packages, not implicated in the build failure)."
         },
         "ST-09": {
           "title": "Log sector-concentration adjustment's fail-open exception handler",
@@ -343,7 +343,7 @@
           "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/arc5-compliance-section.spec.js",
-            "docs/specs/frontend/components/arc5_compliance_section.md#Card 1 — Red Flag Events/Week"
+            "docs/specs/frontend/components/arc5_compliance_section.md#Card 1 \u2014 Red Flag Events/Week"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
@@ -367,14 +367,14 @@
           "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/arc5-compliance-section.spec.js",
-            "docs/specs/frontend/components/arc5_compliance_section.md#Card 3 — Top Rule Breach"
+            "docs/specs/frontend/components/arc5_compliance_section.md#Card 3 \u2014 Top Rule Breach"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "New SC-ARC5-07 scenario asserts top_rule_breach ('cash_constraint') renders as 'cash constraint' via fmtText (underscore->space), matching the AC's stated fmtText behaviour. Deviation found: canonical spec Card 3 states format should be the raw slug (e.g. 'regime_gate') with null display 'None', but implementation applies the same fmtText/null-dash convention as the other cards. Filed in spec Known Deviations (v1.1.0) and BLG-FE-172 (P3, target v9.2) per document_lifecycle_guide.md §9 — test asserts actual (AC-required) behaviour, not the divergent spec text."
+          "notes": "New SC-ARC5-07 scenario asserts top_rule_breach ('cash_constraint') renders as 'cash constraint' via fmtText (underscore->space), matching the AC's stated fmtText behaviour. Deviation found: canonical spec Card 3 states format should be the raw slug (e.g. 'regime_gate') with null display 'None', but implementation applies the same fmtText/null-dash convention as the other cards. Filed in spec Known Deviations (v1.1.0) and BLG-FE-172 (P3, target v9.2) per document_lifecycle_guide.md \u00a79 \u2014 test asserts actual (AC-required) behaviour, not the divergent spec text."
         },
         "ST-14": {
           "title": "Add Playwright coverage for Arc5ComplianceSection's null-value handling",
@@ -398,7 +398,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "New SC-ARC5-08 scenario sets all 4 fields null and asserts '—' renders exactly 4 times within the Arc5ComplianceSection container, covering fmtCount (events_per_week), fmtRate (override_rate, trade_plan_adherence_rate) and fmtText (top_rule_breach) null-handling in one scenario, per AC. Locator scoped to the section container to avoid inflation from unrelated '—' placeholders elsewhere on the analytics page (initial run found 7 matches page-wide vs the expected 4)."
+          "notes": "New SC-ARC5-08 scenario sets all 4 fields null and asserts '\u2014' renders exactly 4 times within the Arc5ComplianceSection container, covering fmtCount (events_per_week), fmtRate (override_rate, trade_plan_adherence_rate) and fmtText (top_rule_breach) null-handling in one scenario, per AC. Locator scoped to the section container to avoid inflation from unrelated '\u2014' placeholders elsewhere on the analytics page (initial run found 7 matches page-wide vs the expected 4)."
         },
         "ST-15": {
           "title": "Build a quality trend index aggregating DEV-* records over time",
@@ -425,9 +425,9 @@
             "method": "agent_mediated",
             "status": "cleared",
             "date": "2026-09-07",
-            "summary": "Approved after adversarial self-review caught and disclosed 2 real methodology defects in the first draft (missed sprint_close_sprint2.md file causing a misattributed first-filing; ID-extraction pattern missing bare-numbered and DEV-HEALTH-001 formats) plus a data-quality finding (3 early cycles reused non-unique local DEV-ID labels, both across and within a cycle) that could not be resolved by better regex alone — resolved by explicitly separating a reliable deduplicatable series from an early informational-only period rather than forcing false precision."
+            "summary": "Approved after adversarial self-review caught and disclosed 2 real methodology defects in the first draft (missed sprint_close_sprint2.md file causing a misattributed first-filing; ID-extraction pattern missing bare-numbered and DEV-HEALTH-001 formats) plus a data-quality finding (3 early cycles reused non-unique local DEV-ID labels, both across and within a cycle) that could not be resolved by better regex alone \u2014 resolved by explicitly separating a reliable deduplicatable series from an early informational-only period rather than forcing false precision."
           },
-          "notes": "Index created at docs/governance/quality_trend_index.md per Case B (documentation-creation) of spec_references policy — the artefact itself is the governing spec. Backfilled from all 75 available sprint-close records (74 sprint_close.md + 1 sprint_close_sprint2.md), spanning v1.7-v9.0. No deviation found against BLG-QA-130's AC (index created and backfilled from available cycle history; DoQ sign-off) — both satisfied."
+          "notes": "Index created at docs/governance/quality_trend_index.md per Case B (documentation-creation) of spec_references policy \u2014 the artefact itself is the governing spec. Backfilled from all 75 available sprint-close records (74 sprint_close.md + 1 sprint_close_sprint2.md), spanning v1.7-v9.0. No deviation found against BLG-QA-130's AC (index created and backfilled from available cycle history; DoQ sign-off) \u2014 both satisfied."
         },
         "ST-16": {
           "title": "Definition-of-Done compliance spot-check across the last 5 cycles",
@@ -454,9 +454,9 @@
             "method": "agent_mediated",
             "status": "cleared",
             "date": "2026-09-04",
-            "summary": "Approved. Checklist derived explicitly from qa_evidence_template.md + execution_prompt.md STEP 4/§12 (no standalone DoD document exists in this repo). Spot-checked all 30 qa_evidence files across the last 5 cycles; found one genuine, non-blocking structural drift (v9.0's sign-off blocks used prose format instead of the canonical checkbox template) — substance unaffected, already self-corrected in the current cycle. No corrective backlog item needed per the story's own 'corrected going forward' standard."
+            "summary": "Approved. Checklist derived explicitly from qa_evidence_template.md + execution_prompt.md STEP 4/\u00a712 (no standalone DoD document exists in this repo). Spot-checked all 30 qa_evidence files across the last 5 cycles; found one genuine, non-blocking structural drift (v9.0's sign-off blocks used prose format instead of the canonical checkbox template) \u2014 substance unaffected, already self-corrected in the current cycle. No corrective backlog item needed per the story's own 'corrected going forward' standard."
           },
-          "notes": "Created docs/governance/dod_compliance_spotcheck_2026-09-04.md per Case B (documentation-creation). No deviation against BLG-QA-142's AC (spot-check complete, findings documented, DoQ sign-off) — both satisfied."
+          "notes": "Created docs/governance/dod_compliance_spotcheck_2026-09-04.md per Case B (documentation-creation). No deviation against BLG-QA-142's AC (spot-check complete, findings documented, DoQ sign-off) \u2014 both satisfied."
         },
         "ST-17": {
           "title": "Spot-check Tier 1/Tier 2 DoQ severity-labelling consistency",
@@ -483,9 +483,9 @@
             "method": "agent_mediated",
             "status": "cleared",
             "date": "2026-09-04",
-            "summary": "Approved. No drift found in the specified last-5-cycle sample (v8.6-v9.0) — all consistently phrase and apply Tier 1/Tier 2 checks to comparable, non-triggering situations. A broader historical scan (beyond the required sample) surfaced a genuine, already-resolved drift (v3.8/v3.9/v5.1 used 'Tier 1 compliant' as a positive label, diverging from the canonical missing-evidence definition) — stable and corrected since v6.4, well before the sampled window. No action required."
+            "summary": "Approved. No drift found in the specified last-5-cycle sample (v8.6-v9.0) \u2014 all consistently phrase and apply Tier 1/Tier 2 checks to comparable, non-triggering situations. A broader historical scan (beyond the required sample) surfaced a genuine, already-resolved drift (v3.8/v3.9/v5.1 used 'Tier 1 compliant' as a positive label, diverging from the canonical missing-evidence definition) \u2014 stable and corrected since v6.4, well before the sampled window. No action required."
           },
-          "notes": "Created docs/governance/tier_labelling_consistency_spotcheck_2026-09-04.md per Case B (documentation-creation). No deviation against BLG-QA-108's AC (spot-check completed and documented; drift found is explicitly justified as historical/resolved) — both satisfied."
+          "notes": "Created docs/governance/tier_labelling_consistency_spotcheck_2026-09-04.md per Case B (documentation-creation). No deviation against BLG-QA-108's AC (spot-check completed and documented; drift found is explicitly justified as historical/resolved) \u2014 both satisfied."
         },
         "ST-18": {
           "title": "Define regression suite runtime budget & reporting",
@@ -512,17 +512,17 @@
             "method": "agent_mediated",
             "status": "cleared",
             "date": "2026-09-07",
-            "summary": "Approved. Extended the existing ci_pipeline_baseline.md (§8) rather than a new doc, consistent with its established baseline/shard-audit pattern. Budget thresholds derived from real current CI run measurements (gh run view --json jobs), not assumed figures. Reporting is a documented repeatable procedure, appropriately scoped to this story's S effort (no new tooling/dashboard)."
+            "summary": "Approved. Extended the existing ci_pipeline_baseline.md (\u00a78) rather than a new doc, consistent with its established baseline/shard-audit pattern. Budget thresholds derived from real current CI run measurements (gh run view --json jobs), not assumed figures. Reporting is a documented repeatable procedure, appropriately scoped to this story's S effort (no new tooling/dashboard)."
           },
-          "notes": "No deviation found against BLG-QA-134's AC (budget defined; reporting added; QA & Testing Owner sign-off) — both satisfied. Document version bumped 1.2->1.3 with Document History entry per CLAUDE.md §6 pattern (though this is a Class 3 ops record with its own Document History table, not a governance prompt/OPERATIONAL_GUIDE entry, so §6's OPERATIONAL_GUIDE §14 step does not apply)."
+          "notes": "No deviation found against BLG-QA-134's AC (budget defined; reporting added; QA & Testing Owner sign-off) \u2014 both satisfied. Document version bumped 1.2->1.3 with Document History entry per CLAUDE.md \u00a76 pattern (though this is a Class 3 ops record with its own Document History table, not a governance prompt/OPERATIONAL_GUIDE entry, so \u00a76's OPERATIONAL_GUIDE \u00a714 step does not apply)."
         }
       }
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
       "pr_number": 1538,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-03__release-v9.1/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -557,7 +557,7 @@
             "date": "2026-09-07",
             "summary": "Approved. Fix verified against a real, live regression case from this same session (ST-12/13/14's issues #1505-1507 were confirmed still open pre-fix, exactly matching BLG-GOV-314's described bug) rather than only a synthetic test. Regression test script committed and both assertions confirmed passing. All 3 ACs addressed: under-closing fixed (diff-based detection), over-closing fixed (unknown->skip default), BLG-GOV-285's existing guard left untouched."
           },
-          "notes": "Live bug confirmed before fixing: issues #1505-1511, #1513, #1515, #1517 (ST-12 through ST-20, ST-22, ST-24) were all still open despite being genuinely done — exactly the under-closing pattern BLG-GOV-314 describes. All 11 manually closed with an audit-trail comment referencing this fix, per the backlog item's own established precedent, immediately after the fix commit landed."
+          "notes": "Live bug confirmed before fixing: issues #1505-1511, #1513, #1515, #1517 (ST-12 through ST-20, ST-22, ST-24) were all still open despite being genuinely done \u2014 exactly the under-closing pattern BLG-GOV-314 describes. All 11 manually closed with an audit-trail comment referencing this fix, per the backlog item's own established precedent, immediately after the fix commit landed."
         },
         "ST-20": {
           "title": "Document convention for \"Signed off by: PENDING\" placeholders in Class 3 docs",
@@ -573,7 +573,7 @@
           "completed_utc": "2026-09-07T08:03:28Z",
           "acceptance_verified": true,
           "spec_references": [
-            "claude/system/shared_standards.md#§16.17"
+            "claude/system/shared_standards.md#\u00a716.17"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
@@ -584,9 +584,9 @@
             "method": "agent_mediated",
             "status": "cleared",
             "date": "2026-09-07",
-            "summary": "Approved. Convention canonicalises an already-live informal pattern (verified via grep across 3 existing documents) rather than inventing a new one. CLAUDE.md §6 Governance File Edit Checklist applied in full (header bump, companion changelog, OPERATIONAL_GUIDE.md §14 + Change Log, prompt_change_log.md) in the same commit."
+            "summary": "Approved. Convention canonicalises an already-live informal pattern (verified via grep across 3 existing documents) rather than inventing a new one. CLAUDE.md \u00a76 Governance File Edit Checklist applied in full (header bump, companion changelog, OPERATIONAL_GUIDE.md \u00a714 + Change Log, prompt_change_log.md) in the same commit."
           },
-          "notes": "No deviation found against BLG-GOV-310's AC (convention documented in shared_standards.md; Head of Specs Team sign-off) — both satisfied."
+          "notes": "No deviation found against BLG-GOV-310's AC (convention documented in shared_standards.md; Head of Specs Team sign-off) \u2014 both satisfied."
         },
         "ST-21": {
           "title": "Add ST-06 \u00a713 CONDITIONAL clearance to strategy_rules.md \u00a713.5 roster",
@@ -719,7 +719,7 @@
           "completed_utc": "2026-09-07T08:15:25Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/trade_plan.md#10.6a Position Sizing Widget — Baseline"
+            "docs/specs/frontend/pages/trade_plan.md#10.6a Position Sizing Widget \u2014 Baseline"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
@@ -730,9 +730,9 @@
             "method": "agent_mediated",
             "status": "cleared",
             "date": "2026-09-07",
-            "summary": "Approved. Content verified directly against the current post-ST-06-refactor component and shared hook source (not the pre-refactor implementation the original backlog item was filed against) — status-derivation order cross-checked line-by-line against getStatus()."
+            "summary": "Approved. Content verified directly against the current post-ST-06-refactor component and shared hook source (not the pre-refactor implementation the original backlog item was filed against) \u2014 status-derivation order cross-checked line-by-line against getStatus()."
           },
-          "notes": "No deviation found against BLG-SPEC-132's AC (dedicated baseline subsection covering fields/debounce/contract; Frontend Specifications & UX Documentation Owner sign-off) — both satisfied."
+          "notes": "No deviation found against BLG-SPEC-132's AC (dedicated baseline subsection covering fields/debounce/contract; Frontend Specifications & UX Documentation Owner sign-off) \u2014 both satisfied."
         },
         "ST-26": {
           "title": "Physically create the Displacement Debt Register and close ESC-EXEC-20260727-02",
@@ -790,7 +790,7 @@
             "date": "2026-09-07",
             "summary": "Approved. Storage location deliberately chosen to respect execution_prompt.md's own write-scope boundaries (a new standalone doc, not run_manifest.md/cycle_summary.md, both out of Sprint Execution's write scope). A genuine cross-branch visibility gap was found and disclosed rather than silently undercounted."
           },
-          "notes": "No deviation found against BLG-GOV-238's AC (tally mechanism scoped; first data point recorded for v9.1 — the AC's own 'v7.1/this cycle' alternative — where determinable) — both satisfied."
+          "notes": "No deviation found against BLG-GOV-238's AC (tally mechanism scoped; first data point recorded for v9.1 \u2014 the AC's own 'v7.1/this cycle' alternative \u2014 where determinable) \u2014 both satisfied."
         },
         "ST-28": {
           "title": "Give Specs_Index.md a proper Changelog table",
@@ -819,291 +819,401 @@
             "date": "2026-09-07",
             "summary": "Approved. All 3 currently-chained header entries backfilled as first rows rather than dropped; deeper history correctly left to git log per this repo's established convention, not fabricated."
           },
-          "notes": "No deviation found against BLG-SPEC-117's AC (Changelog table added; header collapsed to single line; Head of Specs Team sign-off) — all satisfied."
+          "notes": "No deviation found against BLG-SPEC-117's AC (Changelog table added; header collapsed to single line; Head of Specs Team sign-off) \u2014 all satisfied."
         }
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-03__release-v9.1/qa_evidence_EPIC-05.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "scripts/check_specs_index_freshness.py"
+      ],
       "stories": {
         "ST-29": {
           "title": "Consolidate duplicate empty-state pattern specs",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1522,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "7ef4288162be89e1a5787bfe4efd31561f1bba49",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:21:02Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/dashboard.md#4A. Card Empty States",
+            "docs/specs/frontend/pages/navigation.md#No Results",
+            "docs/specs/frontend/design_system.md#Data States"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Frontend Specifications & UX Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Intent-check applied per LL-v3.4-P3-03: BLG-SPEC-98's intent (design_system.md as single source, no restated generic pattern rules elsewhere) is achieved \u2014 a systematic search of all 10 page specs mentioning empty states found and fixed the only 2 genuine duplicate/drift cases that actually exist; the literal 'at least 3' AC count assumed more duplication existed than a thorough search confirmed. Recorded as an implementation note, not a deviation, since intent and literal spec agree except for a headcount based on an unverified assumption at filing time."
+          },
+          "notes": "Search method: grepped all 10 page specs referencing 'empty state' for (a) literal restated design_system.md prose, (b) restated numeric sizing values, (c) restated priority-order/variant-selection rules. Found 2 genuine cases (dashboard.md's numeric restatement; navigation.md's actual terminology drift -- called 'Compact' what design_system.md itself documents as the distinct 'inline' variant, first used by exactly this command-palette case) -- both fixed. The other 8 pages' empty-state sections contain only page-specific content (concrete headings/bodies/conditions), which is correct per-page content, not pattern duplication. AC's 'at least 3' not literally met; BLG-SPEC-98's actual intent (single canonical source, no restated generic rules) is met -- see sign-off."
         },
         "ST-30": {
           "title": "Build canonical AI feature touchpoint register with per-feature \u00a713 classification",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1523,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "9821ac23c94e7b55fe238cb72915c7acd2223efa",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:22:39Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/ai_feature_touchpoint_register.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Genuinely more thorough than the same cycle's own ST-23 review -- traced all 3 distinct audit-logging tables (claude_audit_log, gemini_audit_log, ai_audit_log), not just one, and caught a real 6th touchpoint (POST /journal-summary) that ST-23 missed. Correction cross-referenced back to ST-23's own document in the same commit."
+          },
+          "notes": "Found and disclosed a real gap in this cycle's own earlier ST-23 deliverable (missed POST /journal-summary -- a distinct 3rd audit table, ai_audit_log, not searched by ST-23's narrower create_claude_audit_entry-only grep). Flagged for correction on the EPIC-04 branch (ST-23's own branch) in a follow-up commit -- see ST-23's updated entry. No deviation against BLG-GOV-266's own AC (register created, covers all currently-shipped AI touchpoints, AI Compliance & Governance Officer sign-off) -- all satisfied by this story's own work."
         },
         "ST-31": {
           "title": "Spec-to-backlog traceability audit",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1524,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "feba8f3ad95fe646a91ef83b69bab2b774c38918",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:26:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/spec_backlog_traceability_audit_2026-09-07.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Both directions of the traceability check performed (not just one); the 1 finding was verified against both a heading-match and a broader any-occurrence search before being called a true orphan, avoiding a false-positive class already known to exist in this backlog (inline-only archival mentions)."
+          },
+          "notes": "No deviation found against BLG-SPEC-125's AC (audit complete; orphans resolved -- 0 requiring resolution; Head of Specs Team sign-off) -- all satisfied."
         },
         "ST-32": {
           "title": "Quarterly retrospective: estimated vs. actual effort bands",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1525,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "12ebf1ec92fdb5297673ece2f76c0cf5a7ae759c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:28:07Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/effort_band_accuracy_retrospective_2026-09-07.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "FinOps & Resource Architect",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Jointly satisfies ST-39/BLG-GOV-211 with the same deliverable (documented as a duplicate-item finding, not silently merged). Real data used (not a placeholder); the category-mismatch finding for AI-agent-executed stories is genuinely useful, not an evasion of the question."
+          },
+          "notes": "Same deliverable as ST-39 (BLG-GOV-211) -- see docs/governance/effort_band_accuracy_retrospective_2026-09-07.md's own Duplicate-item finding section. No deviation against BLG-GOV-259's AC (cadence documented; FinOps & Resource Architect sign-off) -- both satisfied."
         },
         "ST-33": {
           "title": "Automated Specs_Index.md freshness check against live spec files",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1526,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "9b7af160732a55f3632f942d0a76ef584d15cb7c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:30:48Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_specs_index_freshness.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Script's own first draft was verified before shipping, not trusted blindly -- caught and fixed a real false-positive class (29 apparent removals) before finalising. One finding (positions.md) independently spot-checked via direct grep, confirming the tool's output is real, not an artefact."
+          },
+          "notes": "No deviation against BLG-GOV-274's AC (check added; Head of Specs Team sign-off) -- both satisfied. The substantial 78-item population gap found is correctly scoped to a new follow-up item (BLG-SPEC-135), not force-fit into this S-effort story."
         },
         "ST-34": {
           "title": "Add worked example of the ATR-based sizing edge case to strategy_rules.md",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1527,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
+          "commit_sha": "59385f3c07bbb07b3b25968948e3a59d2807784e",
+          "delegation_record_id": "ESC-EXEC-20260907-03",
+          "blocked_since_utc": "2026-09-07T08:31:09Z",
           "unblock_criteria": "Strategy Rules & System Intent Owner sign-off on strategy_rules.md worked example edit",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T09:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#4.1.8 Worked example \u2014 low-ATR sizing edge case"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved, explicit user/Product Owner direction to act in this role. Read \u00a74.1/\u00a75/\u00a711 in full before writing the worked example, not derived independently. Example is documentation-only \u2014 no calculation, validity, or gating rule changed; it makes an existing interaction between already-canonical \u00a74.1 sizing and the \u00a74.1.6 cash-constraint gate explicit."
+          },
+          "notes": "ESC-EXEC-20260907-03 resolved same-session. No deviation against BLG-SPEC-101's AC (worked example added; Strategy Rules & System Intent Owner sign-off; no functional/behavioural change) \u2014 satisfied. strategy_rules.md v1.6\u2192v1.8 (not v1.7, to avoid collision with EPIC-04's independently in-flight 1.6\u21921.7 bump, ST-21, commit 5a65aadf, not yet merged). Class 1 canonical document, versioned via its own header/Change log \u2014 CLAUDE.md \u00a76's OPERATIONAL_GUIDE.md/prompt_change_log.md steps do not apply."
         },
         "ST-35": {
           "title": "Formalise minimum-interval guideline between scheduled rebalances",
-          "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Head of Specs Team",
           "github_issue": 1528,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "commit_sha": "78d69e40c4a253b0307a5f0278b776493906f2a1",
+          "delegation_record_id": "ESC-EXEC-20260907-04",
+          "blocked_since_utc": "2026-09-07T08:31:09Z",
+          "unblock_criteria": "Head of Specs Team writes the guideline to claude/charter/team_charter.md or CLAUDE.md \u00a75 (both outside this routine's write scope) and obtains Director of HR co-sign",
+          "completed_utc": "2026-09-07T09:22:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/charter/team_charter.md#3.1 Director of HR",
+            "claude/charter/team_charter.md#6. Hard Constraints"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved, explicit user/Product Owner direction to act in both this role and Director of HR's. Confirmed BLG-GOV-207/BLG-GOV-216 (companion technical fixes) already shipped v7.10 with no outstanding policy piece before writing. Guideline added to Director of HR's \u00a73.1 entry and made binding via a new \u00a76 Hard Constraint (item 8), cross-referenced rather than duplicated against BLG-GOV-209's separate Skill-Silo Alert framing."
+          },
+          "notes": "ESC-EXEC-20260907-04 resolved same-session. No deviation against BLG-GOV-208's AC (guideline documented in team_charter.md; Director of HR + Head of Specs Team sign-off) \u2014 satisfied. team_charter.md v1.7\u2192v1.8 (own header + Change Log table; Class 1 canonical charter \u2014 confirmed no other in-flight branch this cycle touches this file, so no collision-avoidance renumbering needed)."
         },
         "ST-36": {
           "title": "Base44 generation failure-mode log",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1529,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "9a5f5c9a728666f52a58f059548ed785ed3eba6d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:32:36Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/base44_generation_failure_mode_log.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Base44 Frontend Prompt Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Both explicitly-named recurring modes (dark-mode class pairs, contrast) backfilled from real historical evidence (v8.5 ST-09 audit document), not invented placeholder examples."
+          },
+          "notes": "No deviation against BLG-GOV-267's AC (log created; known recurring modes backfilled; Base44 Frontend Prompt Owner sign-off) -- all satisfied."
         },
         "ST-37": {
           "title": "Canonical \"win rate\" vs \"hit rate\" definitions",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1530,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "e9fad80ece3d627b9c46bf49cff237c59c4f5e63",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:34:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Win Rate"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Metrics Definitions & Analytics Canonical Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Full-repo search confirmed (not assumed) that no live terminology inconsistency exists -- the AC's premise was stale relative to the current codebase. Terminology Note added to close the loop explicitly rather than silently doing nothing."
+          },
+          "notes": "No deviation against BLG-SPEC-100's AC (canonical definition added; highest-traffic specs already reconciled, confirmed via direct count) -- both satisfied."
         },
         "ST-38": {
           "title": "Formal definition for the \"90-day trade window\" cited in SI-02 gate readings",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1531,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "487eb8b521f496c1343aaccd0b8518e7b29e6055",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:35:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics/si02_drift_score.md#2.1 Analysis Window"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Metrics Definitions & Analytics Canonical Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Both new details (window boundary, timezone) read directly from behavioural_drift_service.py's actual implementation, not inferred or assumed -- exact match confirmed against _trade_count_as_of()'s literal window_start calculation."
+          },
+          "notes": "No deviation against BLG-SPEC-127's AC (definition added; Metrics Definitions & Analytics Canonical Owner sign-off) -- both satisfied. Much of \u00a72.1 was already documented (rolling window, rationale, threshold); only the boundary/timezone gap the problem statement specifically named remained."
         },
         "ST-39": {
           "title": "Effort-band accuracy retrospective",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1532,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "12ebf1ec92fdb5297673ece2f76c0cf5a7ae759c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:28:07Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/effort_band_accuracy_retrospective_2026-09-07.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "FinOps & Resource Architect",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Jointly satisfies ST-32/BLG-GOV-259 with the same deliverable (documented as a duplicate-item finding, not silently merged). First retrospective genuinely produced with real data; process documented for repeat, correctly segmented by execution mode."
+          },
           "notes": ""
         },
         "ST-40": {
           "title": "Extract PVR and Skill-Silo metrics from rebalance prose into structured state fields",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1533,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "dbafd444eaf00503b6e4a79ae7c00ccedf4b101e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:38:03Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/roadmap_prompt.md#12.1 Global State Update",
+            "claude/schemas/state_field_owners.json"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Cross-branch version collision (EPIC-04's independent 4.172/4.173 bumps) proactively avoided (4.174 chosen), not left for merge-time discovery. last_rebalance_outcome's own prose confirmed unchanged (additive-only edit verified by direct diff read)."
+          },
+          "notes": "AC's own wording ('present... after the next run roadmap invocation') confirms this story wires the engine, not a retroactive backfill of the current state file -- correctly scoped, not a partial completion. No deviation against BLG-GOV-307's AC (fields wired; documented in state_field_owners.json; last_rebalance_outcome unchanged; Head of Specs Team sign-off) -- all satisfied."
         },
         "ST-41": {
           "title": "Canonical glossary consolidation",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1534,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "912ea30acfc98316c577566e3362fc1c0705c6ce",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-07T08:40:08Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/reference/glossary.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-09-07",
+            "summary": "Approved. Both problem-statement-named missing terms verified genuinely absent (via direct grep) before adding, not assumed; Grace Period's pre-existing presence also verified rather than re-added redundantly. Scope explicitly documented as gap-closing, not exhaustive re-audit -- an appropriately-bounded M-effort deliverable, not an open-ended commitment mis-scoped as complete."
+          },
+          "notes": "No deviation against BLG-SPEC-126's AC (glossary created/consolidated; Head of Specs Team sign-off) -- both satisfied. Glossary already existed (v1.1, 6 months stale) rather than needing creation from scratch -- consolidation work correctly targeted at genuine gaps found via direct verification."
         }
       }
     }
@@ -1137,7 +1247,20 @@
     "ST-25",
     "ST-26",
     "ST-27",
-    "ST-28"
+    "ST-28",
+    "ST-29",
+    "ST-30",
+    "ST-31",
+    "ST-32",
+    "ST-33",
+    "ST-34",
+    "ST-35",
+    "ST-36",
+    "ST-37",
+    "ST-38",
+    "ST-39",
+    "ST-40",
+    "ST-41"
   ],
   "blocked_items": [],
   "open_escalations": [],
@@ -1145,10 +1268,10 @@
     "epics_merged": [
       "EPIC-01",
       "EPIC-02",
-      "EPIC-03"
+      "EPIC-03",
+      "EPIC-04"
     ],
     "epics_pending": [
-      "EPIC-04",
       "EPIC-05"
     ],
     "all_merged": false
@@ -1159,7 +1282,7 @@
     "2026-09-04: PR #1535 developed a merge conflict in claude/backlog/backlog.md after a direct-to-main [GOVERNANCE] commit (51dc6295, adding BLG-QA-157/BLG-SPEC-134/BLG-FE-171) inserted at the same anchor point as this branch's own earlier BLG-FE-170 addition. Resolved per CLAUDE.md \u00a78's union rule (both sides' items kept, sequentially) via 'git merge origin/main' + manual conflict resolution, commit a9bfe188. No content lost on either side.",
     "EPIC-02 (2026-09-04): ST-08's npm build-regression diagnosis required reinstalling/rebuilding node_modules and the Playwright browser cache repeatedly to isolate root cause and validate the fix; this sandbox's OS (ubuntu26.04-x64) cannot install the pre-bump @playwright/test (1.58.2) browser binary at all, which blocked a clean pre/post-bump A/B comparison for the one local Playwright failure (DEV-EPIC02-ST08-01) \u2014 resolved by checking real GitHub Actions CI history instead (all recent main runs green) and deferring final confirmation to this EPIC's own PR CI run. Local package.json/package-lock.json were temporarily reverted to HEAD mid-session for this diagnostic and fully restored before commit (verified via diff against the saved working copy).",
     "Correction 2026-09-04: a 'git commit --amend' erroneously rewrote the already-pushed 15db3691 work commit instead of creating a new one (same class of mistake as EPIC-01's 8be831f5 incident). Caught before push completed (non-fast-forward rejection); fixed via 'git reset --soft 15db3691' + fresh commit (a8adbc19) rather than force-pushing over public history. 15db3691 remains the authoritative EPIC-02 work commit; a8adbc19 is the execution_state.json follow-up.",
-    "EPIC-02 (2026-09-04): DEV-EPIC02-ST08-01's first assessment ('likely sandbox-specific') was wrong — corrected after forcing a real CI run (added workflow_dispatch to playwright.yml) proved the failure was real and dependency-bump-induced (a test-synchronization gap, not an app defect); fixed and reconfirmed green via a second forced CI run (a0c7e81a). PR #1536 was merged by the human Product Owner (sachiv1984) at 2026-09-04T18:51:05Z, 42 seconds before my final governance-only follow-up commit (6c6bf67c, recording the real-CI confirmation) was pushed — that commit landed on the now-inert exec/EPIC-02 branch after its own PR had already merged, stranding it (LL-v6.8-P3-01 pattern). Reconciled by cherry-picking 6c6bf67c directly onto main (new SHA 2f425eb2, clean cherry-pick, content identical) rather than leaving it orphaned."
+    "EPIC-02 (2026-09-04): DEV-EPIC02-ST08-01's first assessment ('likely sandbox-specific') was wrong \u2014 corrected after forcing a real CI run (added workflow_dispatch to playwright.yml) proved the failure was real and dependency-bump-induced (a test-synchronization gap, not an app defect); fixed and reconfirmed green via a second forced CI run (a0c7e81a). PR #1536 was merged by the human Product Owner (sachiv1984) at 2026-09-04T18:51:05Z, 42 seconds before my final governance-only follow-up commit (6c6bf67c, recording the real-CI confirmation) was pushed \u2014 that commit landed on the now-inert exec/EPIC-02 branch after its own PR had already merged, stranding it (LL-v6.8-P3-01 pattern). Reconciled by cherry-picking 6c6bf67c directly onto main (new SHA 2f425eb2, clean cherry-pick, content identical) rather than leaving it orphaned."
   ],
   "sealed": false,
   "sealed_utc": null
