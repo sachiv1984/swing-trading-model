@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-07 (session — 2 new items added: BLG-QA-158 (Arc5ComplianceSection SC-ARC5-06/SC-ARC5-07 unscoped text selectors, surfaced during agent-mediated Director of Quality review on PR #1537), BLG-QA-159 (governance_sync.yml over-closing prevention unverified in real CI, surfaced during agent-mediated Director of Quality review on PR #1538)); prior — 2026-09-04 (session — 1 new item added: BLG-OPS-149 (playwright.yml CI path-filter gap — dependency-bump PRs never trigger the E2E suite, discovered checking PR #1536's CI results)); prior — 2026-09-04 (session — 1 new item added: BLG-TECH-19 (unused/namesquatted npm dependency cleanup, surfaced during v9.1 EPIC-02 ST-08 while fixing BLG-TECH-18)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-07 (session — 3 new items added: BLG-QA-158 (Arc5ComplianceSection SC-ARC5-06/SC-ARC5-07 unscoped text selectors, surfaced during agent-mediated Director of Quality review on PR #1537), BLG-QA-159 (governance_sync.yml over-closing prevention unverified in real CI, surfaced during agent-mediated Director of Quality review on PR #1538), BLG-QA-160 (governance_sync.yml never recovers a story-issue close when the state-sync commit lands separately from the tagged work commit, found while confirming EPIC-05's 11 stuck-open GitHub issues were all genuinely done)); prior — 2026-09-04 (session — 1 new item added: BLG-OPS-149 (playwright.yml CI path-filter gap — dependency-bump PRs never trigger the E2E suite, discovered checking PR #1536's CI results)); prior — 2026-09-04 (session — 1 new item added: BLG-TECH-19 (unused/namesquatted npm dependency cleanup, surfaced during v9.1 EPIC-02 ST-08 while fixing BLG-TECH-18)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4528,6 +4528,28 @@ None of `src/components/analytics/Arc5ComplianceSection.js`'s three formatter fu
 **Acceptance Criteria**
 - A regression test (real CI exercise, or an extended local simulation script) specifically covers the `unknown` status fallback's skip behaviour
 - Test confirms no auto-close occurs for a story with no `execution_state.json` entry at push time that later resolves to a `blocked_*` status
+
+---
+
+### BLG-QA-160 — governance_sync.yml never recovers a story-issue close when the state-sync commit lands separately from the tagged work commit
+
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** User question ("are all STs for Epic 5 done, as GH issue shows it open"), cycle 2026-09-03__release-v9.1 EPIC-05 — 2026-09-07
+**Effort:** S (~0.5d)
+
+**Problem**
+11 of EPIC-05's 13 GitHub issues (ST-29 through ST-33, ST-36 through ST-41) remained open despite the underlying stories being genuinely `done` in `execution_state.json` with real merged commits. Root cause, confirmed via actual `gh run view --log` output: each story's own commit (carrying its `[ST-xx]` tag) was pushed individually, before `execution_state.json` was updated to mark that story `done` — that update landed in a later, separate batch commit (`1cbd31ee "[GOVERNANCE] Sync EPIC-05 tracking state (ST-29 through ST-41...)"`). `is_story_done()` correctly read "not done yet" at the tagged commit's own tree and skipped closing (working as designed — this is not the BLG-GOV-314/BLG-QA-159 over-closing case). But the later state-sync commit's message uses prose ("ST-29 through ST-41"), not bracketed `[ST-xx]` tags, so the existing `ST_IDS` regex scan never picked it up as a trigger to recheck and close those issues either. The two safety checks (commit-message tag scan, execution_state "done" gate) are each individually correct, but their combination silently drops any story whose tagged work-commit and state-sync-commit are pushed as separate events — closure never fires from either side. All 11 were confirmed `done` and closed manually with an audit-trail comment citing each commit SHA.
+
+**Scope**
+- Extend `governance_sync.yml`'s state-sync/batch-commit path to also scan `execution_state.json`'s diff for stories whose status transitions to `done`/`merged` in that commit (not just commit-message `[ST-xx]` tags), and attempt closure for each such story
+- Add a regression fixture exercising this exact split — a tagged work-commit pushed first (state not yet done), followed by a separate untagged state-sync commit that flips the story to `done` — confirming the issue closes on the second push
+
+**Acceptance Criteria**
+- A story whose work-commit and state-sync-commit are pushed as two separate events is auto-closed on the second push, without requiring the state-sync commit to carry a bracketed `[ST-xx]` tag
+- Regression test covers this split-commit scenario and passes
+- Existing BLG-GOV-314/BLG-QA-159 behaviour (under-closing/over-closing fixes) unaffected
 
 ---
 
