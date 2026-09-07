@@ -188,7 +188,7 @@ If no recent activity: show “No recent trade activity”
 
 **Design source:** `docs/design/2026-07-15__release-v7.2/dashboard-empty-states/ux_spec.md`
 
-`DataState` (`src/components/ui/DataState.js`) gains an optional `compact` prop (default `false`, non-breaking) that reduces the `empty` branch's padding/icon/heading size for use inside fixed-height card grids (`py-4`/`w-6 h-6` icon/`text-xs` heading vs the default `py-16`/`w-10 h-10`/`text-sm`). `loading`/`error` branches are unaffected by `compact`.
+`DataState`'s `compact` variant (canonical definition: `docs/specs/frontend/design_system.md` §Data States) is used for these cards' `empty` branch, since they live inside fixed-height card grids where the default sizing is oversized. `loading`/`error` branches are unaffected by `compact`.
 
 Applied with `compact` to the following cards' own content (inside `DashboardCard`, below the always-visible title label; `DashboardCard`'s own loading/error short-circuit is untouched):
 
