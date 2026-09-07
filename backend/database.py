@@ -4629,7 +4629,14 @@ def get_arc5_override_rate(week_ago_iso, conn=None):
 
 
 def get_arc5_trade_plan_adherence_rate(conn=None):
-    """trade_plan_adherence_rate (all-time) for GET /analytics/arc5-compliance."""
+    """trade_plan_adherence_rate + total_closed_trades (all-time) for GET /analytics/arc5-compliance.
+
+    Returns a dict {"rate": float|None, "total_trades": int} rather than a bare
+    rate — total_trades (the all-time closed-trade count already computed here
+    as the ratio's own denominator) is surfaced separately so the frontend can
+    render a low-trade-volume advisory without a second query (ST-01, EPIC-01,
+    v9.2, BLG-FEAT-44).
+    """
     def _fetch(c):
         try:
             with c.cursor() as cur:
@@ -4645,11 +4652,11 @@ def get_arc5_trade_plan_adherence_rate(conn=None):
                     """)
                     row = cur.fetchone()
                     with_plan = int(row['with_plan']) if row else 0
-                    return round(with_plan / total_trades, 4)
-                return None
+                    return {"rate": round(with_plan / total_trades, 4), "total_trades": total_trades}
+                return {"rate": None, "total_trades": total_trades}
         except (psycopg2.errors.UndefinedColumn, psycopg2.errors.UndefinedTable):
             c.rollback()
-            return None
+            return {"rate": None, "total_trades": 0}
     if conn is not None:
         return _fetch(conn)
     with get_db() as conn:
