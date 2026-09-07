@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-07 (groom backlog post-ship closure 2026-09-03__release-v9.1 — 43 items archived (41 v9.1 shipped items + 2 leftover already-resolved items, BLG-GOV-105/BLG-GOV-315); 1 ephemeral Release Slice section removed — v9.1; BLG-QA-160 Field-Completeness Gap corrected (missing Provisional-Target populated); Governance Prompt Duplicate Cross-Check: 15 raw candidates, 1 genuine (BLG-GOV-315, resolved by this run's own archival)); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 STEP 3.1 — all 41 v9.1 backlog items marked ✅ COMPLETE with closure date and cycle_id reference); prior — 2026-09-07 (session — 4 new items added: BLG-QA-158 (Arc5ComplianceSection SC-ARC5-06/SC-ARC5-07 unscoped text selectors, surfaced during agent-mediated Director of Quality review on PR #1537), BLG-QA-159 (governance_sync.yml over-closing prevention unverified in real CI, surfaced during agent-mediated Director of Quality review on PR #1538), BLG-QA-160 (governance_sync.yml never recovers a story-issue close when the state-sync commit lands separately from the tagged work commit, found while confirming EPIC-05's 11 stuck-open GitHub issues were all genuinely done), BLG-QA-161 (check_specs_index_freshness.py has zero automated test coverage, surfaced during agent-mediated Director of Quality review on PR #1539)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-07 (Release Planning v9.2 — Release Slice section added, 56 items across 5 EPICs, marker RP:v9.2:2026-09-07__release-v9.2; `BLG-FEAT-44` gate cleared and promoted to firm scope; `BLG-FEAT-92`/`BLG-FEAT-30` reconciliation reaffirmed unchanged — see `docs/product/decisions/decisions--2026-09-07__release-v9.2.md`); prior — 2026-09-07 (groom backlog post-ship closure 2026-09-03__release-v9.1 — 43 items archived (41 v9.1 shipped items + 2 leftover already-resolved items, BLG-GOV-105/BLG-GOV-315); 1 ephemeral Release Slice section removed — v9.1; BLG-QA-160 Field-Completeness Gap corrected (missing Provisional-Target populated); Governance Prompt Duplicate Cross-Check: 15 raw candidates, 1 genuine (BLG-GOV-315, resolved by this run's own archival)); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 STEP 3.1 — all 41 v9.1 backlog items marked ✅ COMPLETE with closure date and cycle_id reference); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -17,6 +17,73 @@
 > **Ephemeral sections** (Release Slice tables, Test Scenario Gap sections, and "Returned to Backlog" sections appended by governance engines) are temporary. They must be removed during the next `groom backlog` run after the cycle closes. Any still-open items within them must be promoted to the appropriate §1–§8 type section before the ephemeral section is removed.
 
 *Completed and killed items are recorded in `claude/backlog/backlog_archive.md`.*
+
+---
+
+## Release Slice — v9.2 (ephemeral — remove at next `groom backlog` after cycle closes)
+
+<!-- release-plan-marker: RP:v9.2:2026-09-07__release-v9.2 -->
+
+56 items committed to `2026-09-07__release-v9.2`. Full acceptance criteria: `claude/cycles/2026-09-07__release-v9.2/stage4_backlog_slice.md`.
+
+| ST | Source | Epic | Priority | Effort |
+|----|--------|------|----------|--------|
+| ST-01 | BLG-FEAT-44 | EPIC-01 | P1 | S |
+| ST-02 | BLG-FE-170 | EPIC-02 | P3 | XS |
+| ST-03 | BLG-FE-171 | EPIC-02 | P3 | XS |
+| ST-04 | BLG-FE-172 | EPIC-02 | P3 | XS |
+| ST-05 | BLG-SPEC-134 | EPIC-02 | P3 | S |
+| ST-06 | BLG-OPS-149 | EPIC-03 | P2 | XS |
+| ST-07 | BLG-QA-157 | EPIC-03 | P3 | S |
+| ST-08 | BLG-QA-158 | EPIC-03 | P3 | XS |
+| ST-09 | BLG-QA-159 | EPIC-03 | P3 | S |
+| ST-10 | BLG-QA-160 | EPIC-03 | P2 | S |
+| ST-11 | BLG-QA-161 | EPIC-03 | P3 | XS |
+| ST-12 | BLG-QA-147 | EPIC-03 | P3 | S |
+| ST-13 | BLG-QA-141 | EPIC-03 | P3 | S |
+| ST-14 | BLG-QA-103 | EPIC-03 | P3 | S |
+| ST-15 | BLG-QA-109 | EPIC-03 | P3 | S |
+| ST-16 | BLG-QA-132 | EPIC-03 | P3 | S |
+| ST-17 | BLG-GOV-242 | EPIC-04 | P3 | S |
+| ST-18 | BLG-GOV-244 | EPIC-04 | P3 | S |
+| ST-19 | BLG-GOV-245 | EPIC-04 | P3 | S |
+| ST-20 | BLG-GOV-287 | EPIC-04 | P3 | S |
+| ST-21 | BLG-GOV-149 | EPIC-04 | P3 | S |
+| ST-22 | BLG-GOV-203 | EPIC-04 | P3 | S |
+| ST-23 | BLG-GOV-205 | EPIC-04 | P3 | S |
+| ST-24 | BLG-GOV-209 | EPIC-04 | P3 | S |
+| ST-25 | BLG-GOV-210 | EPIC-04 | P3 | S |
+| ST-26 | BLG-GOV-215 | EPIC-04 | P3 | S |
+| ST-27 | BLG-GOV-217 | EPIC-04 | P3 | S |
+| ST-28 | BLG-GOV-252 | EPIC-04 | P3 | S |
+| ST-29 | BLG-GOV-253 | EPIC-04 | P3 | S |
+| ST-30 | BLG-GOV-255 | EPIC-04 | P3 | S |
+| ST-31 | BLG-GOV-261 | EPIC-04 | P3 | S |
+| ST-32 | BLG-GOV-271 | EPIC-04 | P3 | S |
+| ST-33 | BLG-GOV-272 | EPIC-04 | P3 | S |
+| ST-34 | BLG-GOV-275 | EPIC-04 | P3 | S |
+| ST-35 | BLG-GOV-277 | EPIC-04 | P3 | S |
+| ST-36 | BLG-GOV-299 | EPIC-04 | P3 | S |
+| ST-37 | BLG-GOV-300 | EPIC-04 | P3 | S |
+| ST-38 | BLG-GOV-247 | EPIC-04 | P3 | S |
+| ST-39 | BLG-GOV-262 | EPIC-04 | P3 | S |
+| ST-40 | BLG-GOV-276 | EPIC-04 | P3 | S |
+| ST-41 | BLG-GOV-282 | EPIC-04 | P3 | S |
+| ST-42 | BLG-GOV-306 | EPIC-04 | P3 | S |
+| ST-43 | BLG-SPEC-119 | EPIC-05 | P3 | S |
+| ST-44 | BLG-SPEC-120 | EPIC-05 | P3 | S |
+| ST-45 | BLG-SPEC-121 | EPIC-05 | P3 | S |
+| ST-46 | BLG-SPEC-122 | EPIC-05 | P3 | S |
+| ST-47 | BLG-SPEC-123 | EPIC-05 | P3 | S |
+| ST-48 | BLG-SPEC-128 | EPIC-05 | P3 | S |
+| ST-49 | BLG-SPEC-135 | EPIC-05 | P3 | M |
+| ST-50 | BLG-TECH-11 | EPIC-05 | P3 | S |
+| ST-51 | BLG-TECH-12 | EPIC-05 | P3 | S |
+| ST-52 | BLG-TECH-19 | EPIC-05 | P3 | XS |
+| ST-53 | BLG-OPS-106 | EPIC-05 | P3 | S |
+| ST-54 | BLG-OPS-112 | EPIC-05 | P3 | S |
+| ST-55 | BLG-OPS-141 | EPIC-05 | P3 | S |
+| ST-56 | BLG-OPS-150 | EPIC-05 | P3 | S |
 
 ---
 

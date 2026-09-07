@@ -1,0 +1,730 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Arc 5 compliance score utility advisory at low trade volume",
+    "epic": "EPIC-01",
+    "description": "Arc 5 compliance score utility advisory at low trade volume",
+    "ac_summary": "Assessment document produced (advisory or advisory-not-needed conclusion); If advisory warranted: UI advisory added to Arc5ComplianceSection for sub-20-trade states; Gate condition verified before spr",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Settings page heading-order axe-core finding (moderate, non-blocking)",
+    "epic": "EPIC-02",
+    "description": "Settings page heading-order axe-core finding (moderate, non-blocking)",
+    "ac_summary": "axe-core no longer reports a `heading-order` violation for the Settings page; No visual/layout regression (heading level correction should be semantic-only, e.g. `h2`/`h3` tag change with equivalent s",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "aria-label duplicates visible label text instead of using aria-labelledby (TradePlan.js, Settings.js)",
+    "epic": "EPIC-02",
+    "description": "aria-label duplicates visible label text instead of using aria-labelledby (TradePlan.js, Settings.js)",
+    "ac_summary": "All 5 affected controls (TradePlan: Market, Status, Setup Type; Settings: Default Currency, Theme) use `aria-labelledby` instead of a hardcoded `aria-label` string; `tests/e2e/accessibility-axe-scan.s",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Arc5ComplianceSection \"Top Rule Breach\" card diverges from canonical spec (text format + null display)",
+    "epic": "EPIC-02",
+    "description": "Arc5ComplianceSection \"Top Rule Breach\" card diverges from canonical spec (text format + null display)",
+    "ac_summary": "Spec and implementation agree on Card 3's text format and null display; `tests/e2e/arc5-compliance-section.spec.js` (SC-ARC5-07/SC-ARC5-08) updated to match the resolved behaviour if the implementatio",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Motion-vs-contrast trade-off (entrance fade-in animations) has no design_system.md guideline",
+    "epic": "EPIC-02",
+    "description": "Motion-vs-contrast trade-off (entrance fade-in animations) has no design_system.md guideline",
+    "ac_summary": "`design_system.md` either gains an explicit guideline addressing text-element entrance-animation contrast, or records an explicit decision that no guideline is needed and why; Head of UX & Design sign",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "playwright.yml CI trigger path filter excludes package.json/package-lock.json \u2014 dependency-bump PRs never run the E2E suite in CI",
+    "epic": "EPIC-03",
+    "description": "playwright.yml CI trigger path filter excludes package.json/package-lock.json \u2014 dependency-bump PRs never run the E2E suite in CI",
+    "ac_summary": "A PR that only modifies `package.json`/`package-lock.json` triggers the Playwright E2E Acceptance Tests job; No change to which paths trigger the job for existing frontend-file changes (additive only)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "accessibility-axe-scan.spec.js's runAxeScan() uses a fixed sleep instead of a condition-based wait",
+    "epic": "EPIC-03",
+    "description": "accessibility-axe-scan.spec.js's runAxeScan() uses a fixed sleep instead of a condition-based wait",
+    "ac_summary": "`runAxeScan()` no longer relies on a fixed-duration sleep to avoid animation-timing false positives; All 4 existing page scans (`DashboardHome`, `Positions`, `TradePlan`, `Settings`) continue to pass ",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "Arc5ComplianceSection Playwright tests SC-ARC5-06/SC-ARC5-07 use unscoped text selectors",
+    "epic": "EPIC-03",
+    "description": "Arc5ComplianceSection Playwright tests SC-ARC5-06/SC-ARC5-07 use unscoped text selectors",
+    "ac_summary": "`SC-ARC5-06` and `SC-ARC5-07` assertions are scoped to the `Arc5ComplianceSection` container (or an equivalent explicit justification is recorded for why scoping isn't needed there); Full `arc5-compli",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "governance_sync.yml's over-closing prevention (unknown\u2192skip) unverified in real CI",
+    "epic": "EPIC-03",
+    "description": "governance_sync.yml's over-closing prevention (unknown\u2192skip) unverified in real CI",
+    "ac_summary": "A regression test (real CI exercise, or an extended local simulation script) specifically covers the `unknown` status fallback's skip behaviour; Test confirms no auto-close occurs for a story with no ",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "governance_sync.yml never recovers a story-issue close when the state-sync commit lands separately from the tagged work commit",
+    "epic": "EPIC-03",
+    "description": "governance_sync.yml never recovers a story-issue close when the state-sync commit lands separately from the tagged work commit",
+    "ac_summary": "A story whose work-commit and state-sync-commit are pushed as two separate events is auto-closed on the second push, without requiring the state-sync commit to carry a bracketed `[ST-xx]` tag; Regress",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-11",
+    "title": "check_specs_index_freshness.py has zero automated test coverage",
+    "epic": "EPIC-03",
+    "description": "check_specs_index_freshness.py has zero automated test coverage",
+    "ac_summary": "A regression test exists and passes, covering both the addition and removal detection paths and at least one exclusion-rule case; Test explicitly confirms a legitimate non-`docs/specs/` cross-referenc",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-12",
+    "title": "Regression suite runtime budget & trend report (last 90 days)",
+    "epic": "EPIC-03",
+    "description": "Regression suite runtime budget & trend report (last 90 days)",
+    "ac_summary": "Trend report produced; QA & Testing Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-13",
+    "title": "DEV-* deviation recurrence pattern report",
+    "epic": "EPIC-03",
+    "description": "DEV-* deviation recurrence pattern report",
+    "ac_summary": "Report produced for the current deviation set; Director of Quality sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-14",
+    "title": "pip-audit trend log across sprint-planning runs",
+    "epic": "EPIC-03",
+    "description": "pip-audit trend log across sprint-planning runs",
+    "ac_summary": "Log convention documented and applied from the next sprint planning onward.",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-15",
+    "title": "DoQ sign-off template alignment check (FI-P3-02 wording-only exception)",
+    "epic": "EPIC-03",
+    "description": "DoQ sign-off template alignment check (FI-P3-02 wording-only exception)",
+    "ac_summary": "Comparison performed; template confirmed current or corrected.",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-16",
+    "title": "Staging sign-off backlog tracker (FI-P3-02 wording-only AC exceptions)",
+    "epic": "EPIC-03",
+    "description": "Staging sign-off backlog tracker (FI-P3-02 wording-only AC exceptions)",
+    "ac_summary": "Tracker created and backfilled where findable; QA Lead sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-17",
+    "title": "Quarterly model/prompt-drift compliance attestation log",
+    "epic": "EPIC-04",
+    "description": "Quarterly model/prompt-drift compliance attestation log",
+    "ac_summary": "Attestation log document created; first entry filed.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-18",
+    "title": "Deprecation header convention for retiring API endpoints",
+    "epic": "EPIC-04",
+    "description": "Deprecation header convention for retiring API endpoints",
+    "ac_summary": "Convention documented; referenced from `shared_standards.md` or an equivalent canonical location.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-19",
+    "title": "Formal expiry review for \u00a713-adjacent initiatives open more than 2 cycles",
+    "epic": "EPIC-04",
+    "description": "Formal expiry review for \u00a713-adjacent initiatives open more than 2 cycles",
+    "ac_summary": "Check specified; would have fired correctly against at least one historical example if run retroactively (or confirmed no qualifying example exists).",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-20",
+    "title": "stage4_backlog_slice.md post-gate-correction addendum mechanism",
+    "epic": "EPIC-04",
+    "description": "stage4_backlog_slice.md post-gate-correction addendum mechanism",
+    "ac_summary": "`design_gate_prompt.md` patched with the addendum mechanism; Head of Specs Team sign-off",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-21",
+    "title": "AI response caching evaluation for morning briefing",
+    "epic": "EPIC-04",
+    "description": "AI response caching evaluation for morning briefing",
+    "ac_summary": "Evaluation document produced covering cache key design, staleness risk, and cost-benefit analysis; Recommendation: cache / no-cache with rationale; Backend Engineering Owner and FinOps sign-off",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-22",
+    "title": "Gemini AI usage audit-trail retention policy",
+    "epic": "EPIC-04",
+    "description": "Gemini AI usage audit-trail retention policy",
+    "ac_summary": "Retention policy documented; archival mechanism specified; AI Compliance Officer sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-23",
+    "title": "Standardise `api_changelog.md` entry template",
+    "epic": "EPIC-04",
+    "description": "Standardise `api_changelog.md` entry template",
+    "ac_summary": "Template documented; existing entries conform or a migration note is filed.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-24",
+    "title": "Frame Skill-Silo Alert as workload-composition, not just product-mix",
+    "epic": "EPIC-04",
+    "description": "Frame Skill-Silo Alert as workload-composition, not just product-mix",
+    "ac_summary": "`roadmap_prompt.md` STEP 7.1 patched (versioned per `CLAUDE.md` \u00a76); Director of HR sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-25",
+    "title": "Governance-cycle wall-clock cost logging",
+    "epic": "EPIC-04",
+    "description": "Governance-cycle wall-clock cost logging",
+    "ac_summary": "Logging convention documented; applied from the next cycle onward.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-26",
+    "title": "Product Value Ratio historical trend row in `velocity_metrics.md`",
+    "epic": "EPIC-04",
+    "description": "Product Value Ratio historical trend row in `velocity_metrics.md`",
+    "ac_summary": "Row added retroactively for the last 3 readings; convention documented for future cycles.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-27",
+    "title": "Surface meta-review countdown in every `run_manifest.md`",
+    "epic": "EPIC-04",
+    "description": "Surface meta-review countdown in every `run_manifest.md`",
+    "ac_summary": "`roadmap_prompt.md` STEP 1.1 patched (versioned per `CLAUDE.md` \u00a76) to include the field.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-28",
+    "title": "Data-retention policy for closed-trade and journal records",
+    "epic": "EPIC-04",
+    "description": "Data-retention policy for closed-trade and journal records",
+    "ac_summary": "Policy documented; no implementation required until data volume warrants action.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-29",
+    "title": "Onboarding checklist for new governance agent roles",
+    "epic": "EPIC-04",
+    "description": "Onboarding checklist for new governance agent roles",
+    "ac_summary": "Checklist added to `claude/charter/` or `claude/system/`; Head of Specs Team sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-30",
+    "title": "Periodic \u00a713 boundary review cadence tied to SI-02's gate history",
+    "epic": "EPIC-04",
+    "description": "Periodic \u00a713 boundary review cadence tied to SI-02's gate history",
+    "ac_summary": "Review cadence documented; Strategy Rules & System Intent Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-31",
+    "title": "Lightweight due-date index for outstanding deferred-patch reminders across cycles",
+    "epic": "EPIC-04",
+    "description": "Lightweight due-date index for outstanding deferred-patch reminders across cycles",
+    "ac_summary": "Index file created and documented; PMO Lead sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-32",
+    "title": "Agent onboarding runbook for adding a new governance role",
+    "epic": "EPIC-04",
+    "description": "Agent onboarding runbook for adding a new governance role",
+    "ac_summary": "Runbook created; Director of HR sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-33",
+    "title": "Recurring spec-debt backlog review cadence",
+    "epic": "EPIC-04",
+    "description": "Recurring spec-debt backlog review cadence",
+    "ac_summary": "Cadence defined and documented in `backlog_management_prompt.md`; Head of Specs Team confirmation.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-34",
+    "title": "Searchable index of STEP 11.4 meta-review findings across cycles",
+    "epic": "EPIC-04",
+    "description": "Searchable index of STEP 11.4 meta-review findings across cycles",
+    "ac_summary": "Index created and backfilled from existing `meta_review.md` files; Head of Specs Team sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-35",
+    "title": "Document exact skill-category taxonomy used for Skill-Silo classification",
+    "epic": "EPIC-04",
+    "description": "Document exact skill-category taxonomy used for Skill-Silo classification",
+    "ac_summary": "Taxonomy documented; Metrics Definitions & Analytics Canonical Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-36",
+    "title": "AI feature cost-vs-value retrospective (6-month actuals vs original estimates)",
+    "epic": "EPIC-04",
+    "description": "AI feature cost-vs-value retrospective (6-month actuals vs original estimates)",
+    "ac_summary": "Retrospective document filed; FinOps & Resource Architect sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-37",
+    "title": "Formal alert threshold for the cross-role workload-concentration check",
+    "epic": "EPIC-04",
+    "description": "Formal alert threshold for the cross-role workload-concentration check",
+    "ac_summary": "Assessment filed; threshold confirmed or revised in `roadmap_prompt.md` \u00a77.2; Director of HR sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-38",
+    "title": "Formalise condensed-tier trigger thresholds beyond the \"no new FTE required\" test",
+    "epic": "EPIC-04",
+    "description": "Formalise condensed-tier trigger thresholds beyond the \"no new FTE required\" test",
+    "ac_summary": "Review completed; either a specific prompt change proposed, or an explicit decision recorded that the existing language is fine as-is.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-39",
+    "title": "Formalise a data-volume threshold trigger for the \u00a712.2 \"elements that may change\" review",
+    "epic": "EPIC-04",
+    "description": "Formalise a data-volume threshold trigger for the \u00a712.2 \"elements that may change\" review",
+    "ac_summary": "Threshold documented in \u00a712.2; Strategy Rules & System Intent Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-40",
+    "title": "Formalise Product Value Ratio rolling-window boundary-trade handling in metrics_definitions.md",
+    "epic": "EPIC-04",
+    "description": "Formalise Product Value Ratio rolling-window boundary-trade handling in metrics_definitions.md",
+    "ac_summary": "Rule documented; Metrics Definitions & Analytics Canonical Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-41",
+    "title": "strategy_rules.md version cross-reference consistency check in dependent docs",
+    "epic": "EPIC-04",
+    "description": "strategy_rules.md version cross-reference consistency check in dependent docs",
+    "ac_summary": "Check added; first run's findings triaged; Strategy Rules & System Intent Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-42",
+    "title": "Strategy rules change-justification template",
+    "epic": "EPIC-04",
+    "description": "Strategy rules change-justification template",
+    "ac_summary": "Template added; applied to the next `strategy_rules.md` version bump; Strategy Rules & System Intent Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-43",
+    "title": "Deprecated/superseded endpoint sunset tracker",
+    "epic": "EPIC-05",
+    "description": "Deprecated/superseded endpoint sunset tracker",
+    "ac_summary": "Tracker added; API Contracts & Documentation Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-44",
+    "title": "Contract example-payload freshness check against live response shape",
+    "epic": "EPIC-05",
+    "description": "Contract example-payload freshness check against live response shape",
+    "ac_summary": "Check added/scheduled; API Contracts & Documentation Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-45",
+    "title": "Base44 prompt-version provenance tag on generated components",
+    "epic": "EPIC-05",
+    "description": "Base44 prompt-version provenance tag on generated components",
+    "ac_summary": "Convention documented in `base44_prompt_template_library.md`; Base44 Frontend Prompt Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-46",
+    "title": "Base44 regeneration diff checklist \u2014 design-token compliance pass",
+    "epic": "EPIC-05",
+    "description": "Base44 regeneration diff checklist \u2014 design-token compliance pass",
+    "ac_summary": "Checklist added; Base44 Frontend Prompt Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-47",
+    "title": "Component prop-naming convention consistency audit",
+    "epic": "EPIC-05",
+    "description": "Component prop-naming convention consistency audit",
+    "ac_summary": "Audit complete; convention documented in `design_system.md`; Frontend Specifications & UX Documentation Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-48",
+    "title": "Gate-metric naming consistency across roadmap, SI-05 digest, and Reports page",
+    "epic": "EPIC-05",
+    "description": "Gate-metric naming consistency across roadmap, SI-05 digest, and Reports page",
+    "ac_summary": "Naming standardised; Metrics Definitions & Analytics Canonical Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-49",
+    "title": "Populate Specs_Index.md with the 78 spec files its own freshness check found unregistered",
+    "epic": "EPIC-05",
+    "description": "Populate Specs_Index.md with the 78 spec files its own freshness check found unregistered",
+    "ac_summary": "`scripts/check_specs_index_freshness.py` reports 0 unexplained additions after this work; Head of Specs Team sign-off",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-50",
+    "title": "Scope a future migration off Create React App (react-scripts v5)",
+    "epic": "EPIC-05",
+    "description": "Scope a future migration off Create React App (react-scripts v5)",
+    "ac_summary": "Migration scoping document produced (target toolchain recommendation, effort estimate, risk areas identified); Head of Engineering sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-51",
+    "title": "Unexplained package-lock.json \"dev\": true churn from the react-router-dom bump",
+    "epic": "EPIC-05",
+    "description": "Unexplained package-lock.json \"dev\": true churn from the react-router-dom bump",
+    "ac_summary": "Root cause confirmed and documented as benign, or a real issue found and fixed.",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-52",
+    "title": "Remove unused namesquatted/erroneous npm packages from package.json",
+    "epic": "EPIC-05",
+    "description": "Remove unused namesquatted/erroneous npm packages from package.json",
+    "ac_summary": "`package.json` no longer lists `x`, `textarea`, or `sqlalchemy` as dependencies; `package-lock.json` has no residual entries for any of the three; `CI=false npm run build` succeeds unchanged",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-53",
+    "title": "AI cost-threshold alert value review",
+    "epic": "EPIC-05",
+    "description": "AI cost-threshold alert value review",
+    "ac_summary": "Review documented; threshold confirmed or adjusted with rationale.",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-54",
+    "title": "AI endpoint (daily-briefing/chat) cost & latency drift monitoring",
+    "epic": "EPIC-05",
+    "description": "AI endpoint (daily-briefing/chat) cost & latency drift monitoring",
+    "ac_summary": "Anomaly check scoped and added; confirmed to fire on a simulated cost/latency spike.",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-55",
+    "title": "Staging environment data-reset cadence review",
+    "epic": "EPIC-05",
+    "description": "Staging environment data-reset cadence review",
+    "ac_summary": "Cadence defined and documented; Infrastructure & Operations Owner sign-off.",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-56",
+    "title": "AI feature cost-trend tracking has not kept pace with feature shipping",
+    "epic": "EPIC-05",
+    "description": "AI feature cost-trend tracking has not kept pace with feature shipping",
+    "ac_summary": "Cost-trend document reflects all 6 current AI-invoking endpoints; Real query data obtained for at least the current quarter; FinOps & Resource Architect sign-off",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-07__release-v9.2"
+    ],
+    "assignee": null
+  }
+]
