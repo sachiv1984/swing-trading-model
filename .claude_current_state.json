@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-09-03__release-v9.1",
   "cycle_name": "v9.1 — Frontend Accessibility, Backend Reliability & Governance/Spec Debt Consolidation",
-  "status": "Verified",
-  "prior_status": "Sprint_Complete",
+  "status": "Closed",
+  "prior_status": "Verified",
   "engine": "Sprint Execution",
   "execution_state_path": "claude/cycles/2026-09-03__release-v9.1/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-09-03__release-v9.1/stage4_backlog_slice.md",
