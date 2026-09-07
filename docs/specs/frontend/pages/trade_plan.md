@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.11
-**Last Updated:** 2026-09-07 (ST-24, EPIC-04, v9.1, BLG-SPEC-131 — §5.1's stale "Risk/Reward Notes" field row corrected to the live `r_target`-bound "R Target" field; §4.2's List Layout table corrected — "Notes" column is `setup_thesis`, not `risk_reward_notes` (confirmed via grep, no such field exists), and a "Stop Level" column that no longer exists in the live list removed; §5a.3's pre-population claim corrected to `setup_thesis`); prior — 2026-08-21 (ST-10, EPIC-02, v9.0, BLG-FE-164 — §5d.2 adds a panel-local FX Rate override input (US-market only); §5d.3's reproducibility claim corrected to depend on setting it); prior — 2026-08-18 (ST-05, EPIC-02, v8.9, BLG-FEAT-91 — sign-off review fix: DEV-v8.9-ST05-02, §5d.3 R at Risk now FX-converted to GBP for US-market plans, matching TradeEntry.js's Total Risk precedent; Format column corrected); prior history retained — see prior entries in version control.
+**Version:** 1.12
+**Last Updated:** 2026-09-07 (ST-25, EPIC-04, v9.1, BLG-SPEC-132 — new §10.6a Position Sizing Widget Baseline: fields, debounce behaviour, POST /portfolio/size contract, resolving §10.7's own "filed as spec debt" forward reference); prior — 2026-09-07 (ST-24, EPIC-04, v9.1, BLG-SPEC-131 — §5.1/§4.2/§5a.3 stale "Risk/Reward Notes" references corrected); prior — 2026-08-21 (ST-10, EPIC-02, v9.0, BLG-FE-164 — §5d.2 adds a panel-local FX Rate override input); prior history retained — see prior entries in version control.
 **Design Source (v1.7 what-if sizing preview):** docs/design/2026-08-17__release-v8.9/what-if-sizing-risk-simulator/ux_spec.md
 **Design Source (v1.7 concentration-aware sizing display):** docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md
 **Design Source (v1.5 invalidation condition):** docs/design/2026-08-12__release-v8.7/thesis-invalidation-condition/decision_record.md
@@ -507,13 +507,59 @@ Fires alongside (not instead of) any existing position-created confirmation; def
 
 > **§13 Compliance:** Display-only surfacing of an already-computed, already-persisted linkage outcome. No new decision logic; does not gate or affect position creation either way.
 
+### 10.6a Position Sizing Widget — Baseline (v1.12 — ST-25 BLG-SPEC-132)
+
+**Component:** `src/components/trades/PositionSizingWidget.js`, embedded in `TradeEntry.js`, invoked via §10's "Start Trade from Plan" hand-off. Shares its debounced-fetch/session-persistence mechanics with the §5d What-If Sizing Preview panel via the extracted `src/hooks/usePositionSizingFetch.js` hook (ST-06, BLG-TECH-14, v9.1 EPIC-01) — the two components are separate instances (own session key, own timing flag — see below) but not a duplicated implementation.
+
+> **§13 Compliance:** Deterministic, rule-based advisory suggestion the trader may still override (Shares field remains manually editable elsewhere on the page). No automated action; the widget itself creates or mutates nothing.
+
+**Fields:**
+
+| Field | Type | Source | Notes |
+|-------|------|--------|-------|
+| Risk % | Numeric input, `step="0.01"`, `min="0.01"`, `max="100"` | `useSessionRiskPercent(SESSION_KEY, defaultRiskPercent)` — session key `widget_risk_percent` | On mount, reads the last-used value from `sessionStorage` first; falls back to `defaultRiskPercent` (from settings) only when no session value exists yet. Persists on every change; cleared automatically when the tab closes. Distinct session key from the §5d panel's own (`what_if_preview_risk_percent`) so the two panels' Risk % values don't cross-couple. |
+| Suggested Shares | Read-only display (`{N}` to 4 decimal places, or `—`) | `POST /portfolio/size` response `suggested_shares` | Loading: spinner. Invalid or `suggested_shares == null`: `—`. Valid but cash-insufficient: value shown struck-through, 60% opacity. |
+| Concentration reason (conditional) | Inline note | `POST /portfolio/size` response `concentration_reason` | See §10.7 below — same field, documented there since it was that story's own addition. |
+| Status message (conditional) | Inline note, one of: amber (user-input problem), grey (system/affordability), or a "Use suggested shares" button | Derived from `sizingResult.valid`/`cash_sufficient`/`reason` | See "Status Derivation" below. |
+
+**Non-field props** (not rendered directly, drive the request body): `entryPrice`, `stopPrice`, `market`, `fxRate` (US-market only), `shares` (current Shares field value, read via ref to avoid stale-closure issues inside the debounce timer), `onSharesChange` (callback — the widget can auto-fill or explicitly set the Shares field but never renders its own shares input), `ticker` (enables concentration-aware sizing, §10.7).
+
+**Debounce behaviour:** 300ms after any of `entryPrice`, `stopPrice`, `market`, `fxRate`, `riskPercent`, or `ticker` changes (via `useDebouncedSizing`). Uses the `checkBeforeDebounce: false` (default) timing variant: the loading spinner shows immediately on any dependency change, and the readiness check (`entryPrice`/`stopPrice` both non-empty) happens 300ms later inside the debounce callback — so an invalid/empty input briefly shows the spinner before clearing, a pre-existing timing behaviour preserved exactly by the ST-06 hook extraction (not a design choice made fresh for this subsection). This differs from the §5d What-If Sizing Preview panel, which uses `checkBeforeDebounce: true` (readiness checked synchronously, no loading flash) — the two panels' timing was already different before consolidation and the hook keeps both as-is rather than silently harmonising them.
+
+**Request body** (`POST /portfolio/size`, per `docs/specs/api_contracts/portfolio_endpoints.md`):
+```json
+{
+  "entry_price": <entryPrice>,
+  "stop_price": <stopPrice>,
+  "risk_percent": <parseFloat(riskPercent) || 0>,
+  "market": <market>,
+  "fx_rate": <fxRate, only if market === "US" and fxRate is set>,
+  "ticker": <ticker, only if set — enables concentration-aware sizing, §10.7>
+}
+```
+Idempotent per the contract's own definition — safe to call repeatedly on every debounced keystroke; does not mutate portfolio state, cash balances, or position records.
+
+**Auto-fill behaviour:** on a successful, valid response with `cash_sufficient: true`, the widget auto-fills the Shares field with `suggested_shares` — but only when the Shares field is currently empty (checked via the `shares` ref, not the `shares` prop directly, to avoid a stale closure inside the debounce timer). Once the trader has entered any Shares value, later recalculations no longer auto-overwrite it; the trader can still explicitly click "Use suggested shares" to adopt the current suggestion at any time (see Status Derivation below).
+
+**Status Derivation** (mutually exclusive, evaluated in this order once a response is available):
+1. **Valid, cash-insufficient (grey):** `"Max affordable: {N} shares"` (`max_affordable_shares` from the response).
+2. **Valid, cash-sufficient, Shares already filled, not yet adopted this response (button):** "Use suggested shares" button — clicking it fills Shares with `suggested_shares` and marks the suggestion as adopted (resets on the next debounced response).
+3. **Valid, cash-sufficient, Shares empty or already adopted (none):** no status line — the auto-fill above already covers this case, or there is nothing actionable to surface.
+4. **Invalid, user-input reason** (`INVALID_RISK_PERCENT`, `INVALID_ENTRY_PRICE`, `INVALID_STOP_PRICE` — amber): the specific `AMBER_MESSAGES` text for that reason, e.g. `"Risk % must be greater than 0"`.
+5. **Invalid, system reason** (`INVALID_STOP_DISTANCE`, `NO_PORTFOLIO_VALUE_SNAPSHOT` — grey): the specific `SYSTEM_MESSAGES` text for that reason, e.g. `"Stop price must be below entry price"`.
+6. **No response yet, or an unrecognised `reason` value:** nothing rendered.
+
+**Known Deviations:** None — this subsection documents the widget as currently implemented; no divergence from any prior canonical description found (none existed before this subsection).
+
+---
+
 ### 10.7 Position Sizing Widget — Concentration-Aware Sizing (v1.7 — ST-04 BLG-BE-104)
 
 **Design source:** docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md
 
 > **§13 Compliance:** Deterministic, rule-based reduction to an advisory suggested value the trader may still override (shares field remains manually editable). No automated action.
 
-**Scope note:** this subsection documents only the new concentration-reason addition to the existing `PositionSizingWidget` (`src/components/trades/PositionSizingWidget.js`, embedded in `TradeEntry.js`, called via §10's "Start Trade from Plan" hand-off). The widget's baseline fields, debounce behaviour, and `POST /portfolio/size` contract predate this spec and are not otherwise documented here — filed as spec debt (see `trade_plan.md` Known Deviations / follow-up backlog item).
+**Scope note:** this subsection documents only the concentration-reason addition. See §10.6a immediately above for the widget's baseline fields, debounce behaviour, and `POST /portfolio/size` contract (added ST-25, BLG-SPEC-132 — resolves this scope note's own prior "filed as spec debt" forward reference).
 
 `POST /portfolio/size` response gains two fields: `concentration_adjusted` (boolean) and `concentration_reason` (string | null) — reflecting existing open-position sector concentration in the suggested size, not just the candidate ticker's own volatility.
 
@@ -572,6 +618,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.12 | 2026-09-07 | ST-25 (EPIC-04, v9.1, BLG-SPEC-132): new §10.6a Position Sizing Widget Baseline — fields (Risk %, Suggested Shares, session-persistence via `useSessionRiskPercent`), debounce behaviour (300ms, `checkBeforeDebounce: false` timing variant, shared with §5d via `usePositionSizingFetch.js` per ST-06/BLG-TECH-14), the `POST /portfolio/size` request body, auto-fill behaviour, and full status-derivation order. Resolves §10.7's own "baseline... filed as spec debt" forward reference, live since the `2026-08-17__release-v8.9` design gate. Authority: Frontend Specifications & UX Documentation Owner. |
 | 1.11 | 2026-09-07 | ST-24 (EPIC-04, v9.1, BLG-SPEC-131): §5.1's stale "Risk/Reward Notes" field row corrected to "R Target" (the live `r_target`-bound field, confirmed via `src/pages/TradePlan.js`) — no such field as `risk_reward_notes` has ever existed in the live form (matching the `1.6` entry's earlier finding for a different reference). §4.2's List Layout table corrected to match `src/pages/TradePlans.js`'s actual columns (`["Ticker", "Status", "R Target", "Notes", "Updated", "Actions"]`): "Notes" sourced from `setup_thesis` (not `risk_reward_notes`), a non-existent "Stop Level" column removed (no such column exists in the live list). §5a.3's pre-population claim corrected: pre-fills `setup_thesis` (via `buildSignalPrePopulation` in `SignalContextPanel.js`), not `risk_reward_notes`. Authority: Head of Specs Team. |
 | 1.10 | 2026-08-21 | ST-10 (EPIC-02, v9.0, BLG-FE-164): §5d.2 adds a panel-local FX Rate override input (US-market only); §5d.3's reproducibility claim corrected to depend on setting it. *(Backfilled into this table at v1.11 — was recorded in the header's own Last Updated field but not added here at the time.)* |
 | 1.9 | 2026-08-18 | ST-05 (EPIC-02, v8.9, BLG-FEAT-91) sign-off review fix: filed `DEV-v8.9-ST05-02` — §5d.3's "R at Risk" was implemented with no FX conversion for any market, contradicting its own "FX-converted for US market" wording (caught by Frontend Specifications & UX Documentation Owner review; same class of bug as ST-02/BLG-BE-103 earlier this cycle). Fixed: reads `fx_rate_used` from the `POST /portfolio/size` response, divides by it for US-market plans (matching `TradeEntry.js`'s `costs.totalRisk` precedent exactly), `£` symbol added. Format column corrected from "Native currency" to "GBP" (the cited precedent was always GBP-basis). Authority: Frontend Specifications & UX Documentation Owner. |
