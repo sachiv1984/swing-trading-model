@@ -600,14 +600,15 @@
           "assigned_to": "engine",
           "github_issue": 1516,
           "branch": "exec/2026-09-03__release-v9.1/EPIC-04",
-          "commit_sha": "1b1de4e7ddef95d62e23693d52a07389a40aff84",
+          "commit_sha": "ecafe116ec75b48a89379e15065b98b9d187a2a2",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": "2026-09-07T08:13:45Z",
+          "completed_utc": "2026-09-07T08:24:14Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/governance/ai_feature_usage_quarterly_review_2026-09-07.md"
+            "docs/governance/ai_feature_usage_quarterly_review_2026-09-07.md",
+            "docs/governance/ai_feature_touchpoint_register.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
@@ -618,7 +619,7 @@
             "method": "agent_mediated",
             "status": "cleared",
             "date": "2026-09-07",
-            "summary": "Approved. Best-available-proxy review (SBX-NO-LIVE-DB) grounded in a genuine grep-verified code audit of every claude_audit_log write call site, not a placeholder. Found and filed a real, actionable tracking gap (BLG-OPS-150) rather than reporting a clean bill without basis."
+            "summary": "Approved. Best-available-proxy review (SBX-NO-LIVE-DB) grounded in a genuine grep-verified code audit, not a placeholder. Found and filed a real, actionable tracking gap (BLG-OPS-150). CORRECTED 2026-09-07 (same commit follow-up): original search scope covered only claude_audit_log, missing a 6th touchpoint (POST /journal-summary, logs to the separate ai_audit_log table) -- caught by this cycle's own ST-30 (EPIC-05) independent 3-table audit and corrected same-day. Recorded transparently in the document's own Correction section rather than silently rewritten."
           },
           "notes": "No deviation found against BLG-GOV-74's (narrower, authoritative) sprint AC: audit log review completed, findings documented, anomaly filed (BLG-OPS-150), next review date recorded (2026-11-29)."
         },
