@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.1
 Cycle: 2026-09-03__release-v9.1
-Last Updated: 2026-09-03
+Last Updated: 2026-09-07
+
+Superseded by: v9.1 ship — 2026-09-07
+Changelog: docs/product/changelog.md#v91
+Verification report: claude/cycles/2026-09-03__release-v9.1/verification_report.md
+Cycle: 2026-09-03__release-v9.1
 
 ## Release Scope — v9.1 Frontend Accessibility, Backend Reliability & Governance/Spec Debt Consolidation
 

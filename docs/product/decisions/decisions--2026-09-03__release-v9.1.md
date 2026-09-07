@@ -1,9 +1,11 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.1
 Cycle: 2026-09-03__release-v9.1
-Last Updated: 2026-09-03
+Last Updated: 2026-09-07
+
+Superseded by: v9.1 ship — 2026-09-07, cycle 2026-09-03__release-v9.1
 
 ## Planning Decisions — v9.1 Frontend Accessibility, Backend Reliability & Governance/Spec Debt Consolidation
 

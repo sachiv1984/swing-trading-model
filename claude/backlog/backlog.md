@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-07 (session — 4 new items added: BLG-QA-158 (Arc5ComplianceSection SC-ARC5-06/SC-ARC5-07 unscoped text selectors, surfaced during agent-mediated Director of Quality review on PR #1537), BLG-QA-159 (governance_sync.yml over-closing prevention unverified in real CI, surfaced during agent-mediated Director of Quality review on PR #1538), BLG-QA-160 (governance_sync.yml never recovers a story-issue close when the state-sync commit lands separately from the tagged work commit, found while confirming EPIC-05's 11 stuck-open GitHub issues were all genuinely done), BLG-QA-161 (check_specs_index_freshness.py has zero automated test coverage, surfaced during agent-mediated Director of Quality review on PR #1539)); prior — 2026-09-04 (session — 1 new item added: BLG-OPS-149 (playwright.yml CI path-filter gap — dependency-bump PRs never trigger the E2E suite, discovered checking PR #1536's CI results)); prior — 2026-09-04 (session — 1 new item added: BLG-TECH-19 (unused/namesquatted npm dependency cleanup, surfaced during v9.1 EPIC-02 ST-08 while fixing BLG-TECH-18)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-07 (groom backlog post-ship closure 2026-09-03__release-v9.1 — 43 items archived (41 v9.1 shipped items + 2 leftover already-resolved items, BLG-GOV-105/BLG-GOV-315); 1 ephemeral Release Slice section removed — v9.1; BLG-QA-160 Field-Completeness Gap corrected (missing Provisional-Target populated); Governance Prompt Duplicate Cross-Check: 15 raw candidates, 1 genuine (BLG-GOV-315, resolved by this run's own archival)); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 STEP 3.1 — all 41 v9.1 backlog items marked ✅ COMPLETE with closure date and cycle_id reference); prior — 2026-09-07 (session — 4 new items added: BLG-QA-158 (Arc5ComplianceSection SC-ARC5-06/SC-ARC5-07 unscoped text selectors, surfaced during agent-mediated Director of Quality review on PR #1537), BLG-QA-159 (governance_sync.yml over-closing prevention unverified in real CI, surfaced during agent-mediated Director of Quality review on PR #1538), BLG-QA-160 (governance_sync.yml never recovers a story-issue close when the state-sync commit lands separately from the tagged work commit, found while confirming EPIC-05's 11 stuck-open GitHub issues were all genuinely done), BLG-QA-161 (check_specs_index_freshness.py has zero automated test coverage, surfaced during agent-mediated Director of Quality review on PR #1539)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -17,58 +17,6 @@
 > **Ephemeral sections** (Release Slice tables, Test Scenario Gap sections, and "Returned to Backlog" sections appended by governance engines) are temporary. They must be removed during the next `groom backlog` run after the cycle closes. Any still-open items within them must be promoted to the appropriate §1–§8 type section before the ephemeral section is removed.
 
 *Completed and killed items are recorded in `claude/backlog/backlog_archive.md`.*
-
----
-
-## Release Slice — v9.1 (ephemeral — remove at next `groom backlog` after cycle closes)
-
-<!-- release-plan-marker: RP:v9.1:2026-09-03__release-v9.1 -->
-
-41 items committed to `2026-09-03__release-v9.1`. Full acceptance criteria: `claude/cycles/2026-09-03__release-v9.1/stage4_backlog_slice.md`.
-
-| ST | Source | Epic | Priority | Effort |
-|----|--------|------|----------|--------|
-| ST-01 | BLG-FE-165 | EPIC-01 | P3 | XS |
-| ST-02 | BLG-FE-166 | EPIC-01 | P3 | S |
-| ST-03 | BLG-FE-167 | EPIC-01 | P3 | S |
-| ST-04 | BLG-FE-168 | EPIC-01 | P3 | S |
-| ST-05 | BLG-FE-169 | EPIC-01 | P3 | XS |
-| ST-06 | BLG-TECH-14 | EPIC-01 | P3 | S |
-| ST-07 | BLG-SPEC-99 | EPIC-01 | P3 | M |
-| ST-08 | BLG-TECH-18 | EPIC-02 | P2 | M |
-| ST-09 | BLG-TECH-16 | EPIC-02 | P3 | XS |
-| ST-10 | BLG-TECH-13 | EPIC-02 | P3 | S |
-| ST-11 | BLG-BE-110 | EPIC-02 | P3 | L |
-| ST-12 | BLG-QA-154 | EPIC-03 | P3 | XS |
-| ST-13 | BLG-QA-155 | EPIC-03 | P3 | XS |
-| ST-14 | BLG-QA-156 | EPIC-03 | P3 | XS |
-| ST-15 | BLG-QA-130 | EPIC-03 | P3 | M |
-| ST-16 | BLG-QA-142 | EPIC-03 | P3 | S |
-| ST-17 | BLG-QA-108 | EPIC-03 | P3 | S |
-| ST-18 | BLG-QA-134 | EPIC-03 | P3 | S |
-| ST-19 | BLG-GOV-314 | EPIC-04 | P2 | S |
-| ST-20 | BLG-GOV-310 | EPIC-04 | P3 | XS |
-| ST-21 | BLG-GOV-311 | EPIC-04 | P3 | XS |
-| ST-22 | BLG-GOV-312 | EPIC-04 | P3 | S |
-| ST-23 | BLG-GOV-74 | EPIC-04 | P2 | S |
-| ST-24 | BLG-SPEC-131 | EPIC-04 | P3 | XS |
-| ST-25 | BLG-SPEC-132 | EPIC-04 | P3 | S |
-| ST-26 | BLG-GOV-264 | EPIC-04 | P3 | XS |
-| ST-27 | BLG-GOV-238 | EPIC-04 | P3 | S |
-| ST-28 | BLG-SPEC-117 | EPIC-04 | P3 | S |
-| ST-29 | BLG-SPEC-98 | EPIC-05 | P3 | M |
-| ST-30 | BLG-GOV-266 | EPIC-05 | P3 | M |
-| ST-31 | BLG-SPEC-125 | EPIC-05 | P3 | M |
-| ST-32 | BLG-GOV-259 | EPIC-05 | P3 | S |
-| ST-33 | BLG-GOV-274 | EPIC-05 | P3 | S |
-| ST-34 | BLG-SPEC-101 | EPIC-05 | P3 | S |
-| ST-35 | BLG-GOV-208 | EPIC-05 | P3 | S |
-| ST-36 | BLG-GOV-267 | EPIC-05 | P3 | S |
-| ST-37 | BLG-SPEC-100 | EPIC-05 | P3 | S |
-| ST-38 | BLG-SPEC-127 | EPIC-05 | P3 | S |
-| ST-39 | BLG-GOV-211 | EPIC-05 | P3 | S |
-| ST-40 | BLG-GOV-307 | EPIC-05 | P3 | S |
-| ST-41 | BLG-SPEC-126 | EPIC-05 | P3 | M |
 
 ---
 
@@ -132,31 +80,6 @@ When a design-gate escalation changes an item's scope/AC/effort after the cycle'
 
 **Acceptance Criteria**
 - `design_gate_prompt.md` patched with the addendum mechanism
-- Head of Specs Team sign-off
-
----
-
-### BLG-GOV-307 — Extract PVR and Skill-Silo metrics from last_rebalance_outcome prose into top-level state fields
-**Priority:** P3 (Low)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** Governance-automation tooling review — 2026-08-13
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`.claude_current_state.json`'s `last_rebalance_outcome` field carries the Product Value Ratio (PVR) and Skill-Silo rolling-average readings that `roadmap_prompt.md` computes each rebalance — including Alert-tier thresholds (PVR < 0.30; a worsening 3-cycle Skill-Silo streak) that trigger mandatory pull-forward behaviour — but only as free text embedded in a long prose outcome summary. There is no direct field to read either number from; any automation wanting to trend-alert on these readings (e.g. a scheduled check that flags a new Alert-tier reading without waiting for the next `run roadmap` session) has to parse prose, which is brittle against wording changes. Raised alongside a governance-automation review that added `claude/schemas/state_field_owners.json`, `claude/schemas/execution_state.schema.json`, and three new hooks/workflows (branch `chore/governance-automation-tooling`) — this item is the one improvement from that review requiring an actual change to governance content (`claude/system/lifecycle_schema.json`, `claude/system/roadmap_prompt.md`), so it is filed here for the roadmap engine's own sanctioned process rather than made ad hoc.
-
-**Scope**
-- Add `last_rebalance_pvr` (number) and `last_skill_silo_rolling_avg` (number) top-level fields to `claude/system/lifecycle_schema.json`
-- Update `roadmap_prompt.md` to write both fields directly at the same STEP that currently composes `last_rebalance_outcome`'s prose summary, alongside the existing text (not a replacement — the prose stays, for narrative context)
-- Add both new fields to `claude/schemas/state_field_owners.json` (owner: `roadmap_prompt.md`, Phase 1) in the same change
-- Apply the standard governance file edit checklist per CLAUDE.md §6 (version bump, OPERATIONAL_GUIDE.md §14, prompt_change_log.md)
-
-**Acceptance Criteria**
-- `last_rebalance_pvr` and `last_skill_silo_rolling_avg` are present as top-level numeric fields in `.claude_current_state.json` after the next `run roadmap` invocation
-- Both fields are documented in `claude/schemas/state_field_owners.json`
-- `last_rebalance_outcome`'s existing prose summary is unchanged in content (fields are additive, not a replacement)
 - Head of Specs Team sign-off
 
 ---
@@ -1802,30 +1725,6 @@ Governance engine prompts have grown complex over 33 cycles. Without periodic co
 
 ---
 
-### BLG-GOV-74 — AI feature usage quarterly review (BLG-GOV-63 mandate)
-**Priority:** P2 (Medium)
-**Type:** Governance / Compliance
-**Owner:** AI Compliance & Governance Officer; PMO Lead
-**Source:** IDEA-ai-compliance-20260601-02 — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036; fulfills BLG-GOV-63 mandate)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v4.10 or first cycle after 2026-08-29
-**Gate date:** First review due 2026-08-29 (3 months after v4.0 AI feature ship 2026-05-29)
-
-**Problem**
-BLG-GOV-63 (shipped v4.2) requires a quarterly review of the claude_audit_log. First quarterly review due 2026-08-29. Without a backlog item it will be missed.
-
-**Scope**
-- Review claude_audit_log for the preceding quarter (v4.0–v4.8 window)
-- Assess: total thesis generation requests, model version used, override_rate, cost per use
-- Flag anomalies; document findings; file BLG items for any anomalies
-
-**Acceptance Criteria**
-- Quarterly audit log review completed; findings documented
-- Anomalies (if any) filed as BLG items
-- Next review date recorded (2026-11-29)
-
----
-
 ### BLG-OPS-53 — Application log retention policy expansion (Supabase + claude_audit_log)
 **Priority:** P3 (Low)
 **Type:** Operations / Data Lifecycle
@@ -2038,35 +1937,6 @@ BLG-GOV-89 (staged verification sprint protocol) defines the pattern. After 2+ u
 - Worksheet template produced and filed
 - Gate condition (BLG-GOV-89 used 2+ times) verified before authoring
 - Director of Quality and PMO Lead sign-off
-
----
-
-### BLG-GOV-105 — Arc 6 PS-03 Monte Carlo §13 threshold pre-assessment — ✅ CLOSED (confirmed duplicate, 2026-07-12)
-**Priority:** P2 (Medium)
-**Type:** Governance / §13 Compliance
-**Owner:** Strategy Rules & System Intent Owner
-**Source:** IDEA-strategy-owner-20260608-02 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
-**Effort:** S (~0.5–1 day)
-**Provisional-Target:** Unscheduled (before Arc 6 moves from Later to Next)
-**Displacement:** BLG-GOV-111 (v5.3 design gate pre-assessment, lower-P) deprioritised.
-
-**Problem**
-Arc 6 PS-03 (Monte Carlo simulation) requires a §13 review before sprint planning. The core §13 question — "is Monte Carlo simulation deterministic or predictive?" — can be answered definitively now without knowing implementation details. A pre-assessment scoped to this threshold question de-risks Arc 6 sprint planning entry.
-
-**Scope**
-- Assess whether Monte Carlo simulation as described in current_roadmap.md §5 (PS-03 notes) is deterministic (replaying own trade distribution) or predictive (forecasting future outcomes)
-- Determine: does PS-03 engage the §13 boundary "Not an ML-based prediction system"?
-- Produce a one-page §13 threshold assessment; if PASS (deterministic), note that binding conditions will be defined at full §13 review when Arc 6 moves to Next
-- Note: scope is threshold question only — NOT a full §13 review with binding conditions
-
-**Acceptance Criteria**
-- §13 threshold assessment produced for PS-03 (deterministic vs predictive question answered)
-- PASS/FAIL on the threshold question documented
-- Strategy Rules & System Intent Owner sign-off
-
-**Possible duplicate — flagged 2026-07-10 (backlog consistency audit, not yet dispositioned):** This item's threshold question — "is Monte Carlo simulation deterministic or predictive, does PS-03 engage the §13 boundary" — appears to already be answered by `BLG-GOV-45` ("Arc 6 Monte Carlo §13 pre-assessment"), which shipped in v4.6 (2026-05-31, ST-18): PASS, 10 binding conditions, decision doc filed at `docs/product/decisions/arc6_ps03_section13_preassessment.md` (confirmed on disk). This item may have been filed without visibility into that prior work. Not closed here — requires Strategy Rules & System Intent Owner confirmation that BLG-GOV-45 fully supersedes this item before disposition as duplicate/pre-met.
-
-**Confirmed and closed 2026-07-12 (roadmap rebalance 2026-07-12__scheduled, Strategy Rules & System Intent Owner):** Verified `docs/product/decisions/arc6_ps03_section13_preassessment.md` directly — it answers this item's exact threshold question (deterministic vs predictive) for the same feature (PS-03), with a full PASS determination and 10 binding conditions, superseding this item's narrower scope entirely. `BLG-GOV-45` fully supersedes this item. Closed as confirmed duplicate/pre-met — resolves `IDEA-head-of-specs-20260712-01` and `BLG-GOV-202` (see below).
 
 ---
 
@@ -3828,12 +3698,6 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Scope:** Define one canonical `api_changelog.md` entry template and apply retroactively where low-cost.
 **Acceptance Criteria:** Template documented; existing entries conform or a migration note is filed.
 
-### BLG-GOV-208 — Minimum-interval guideline between scheduled rebalances
-**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Director of HR | **Source:** IDEA-director-of-hr-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** 55+ completed cycles at high governance intensity, including a same-day double-run this cycle, risk operator fatigue even in a solo-plus-AI-delegation context.
-**Scope:** Propose a policy guideline against same-day double scheduled-rebalance runs absent explicit cause (complements `BLG-GOV-207`'s technical fix).
-**Acceptance Criteria:** Guideline documented in `claude/charter/team_charter.md` or `CLAUDE.md` §5; Director of HR + Head of Specs Team sign-off.
-
 ### BLG-GOV-209 — Frame Skill-Silo Alert as workload-composition, not just product-mix
 **Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Director of HR | **Source:** IDEA-director-of-hr-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** `roadmap_prompt.md` STEP 7.1's >40% governance ceiling is treated purely as a product-value problem; it is equally an HR/workload-composition signal for the one human operator.
@@ -3851,12 +3715,6 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Problem:** No estimate exists of session/compute time consumed per scheduled rebalance cycle, relevant given the recent same-day double-run.
 **Scope:** Log start/end timestamp and step count per cycle in `run_manifest.md` (partially already present); roll up into `velocity_metrics.md`.
 **Acceptance Criteria:** Logging convention documented; applied from the next cycle onward.
-
-### BLG-GOV-211 — Effort-band accuracy retrospective
-**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** `scored_initiatives.md` assigns S/M/L/XS effort bands at promotion time but nothing checks these against actual sprint-planning delivered effort afterward.
-**Scope:** Quarterly retrospective comparing assigned effort band vs actual sprint capacity consumed for shipped initiatives.
-**Acceptance Criteria:** First retrospective produced; process documented for repeat.
 
 ### BLG-SPEC-81 — Research view `signal_type` filter spec
 **Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-frontend-specs-20260712-02 | **Effort:** S | **Provisional-Target:** Unscheduled
@@ -3886,14 +3744,6 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 
 ---
 
-### BLG-QA-108 — Spot-check Tier 1/Tier 2 DoQ severity-labeling consistency
-**Priority:** P3 (Low) | **Type:** QA / Process | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260713-02 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** DoQ severity tiering (Tier 1/Tier 2) is applied per verification report without a periodic cross-report consistency check — risk of drift in how similar findings are labelled across cycles.
-**Scope:** Sample the last 5 `verification_report.md` files; confirm comparable findings received comparable tier labels; document any drift found.
-**Acceptance Criteria:** Spot-check completed and documented; any labelling drift found is either corrected going forward or explicitly justified.
-
----
-
 ### BLG-GOV-235 — Idea-intake minimum-submission flex condition
 **Priority:** P3 (Low) | **Type:** Governance | **Owner:** Head of Specs Team | **Source:** IDEA-director-of-hr-20260715-01 | **Effort:** S | **Provisional-Target:** TBD
 **Gate criteria:** Recurs at 3+ consecutive scheduled cycles where the Now horizon is already populated with 3+ ad-hoc (non-governed-cycle) P1 items at window-open — not yet met (this is the 1st such occurrence).
@@ -3907,35 +3757,11 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Scope:** Compare current DoQ sign-off block template/practice against the CLAUDE.md FI-P3-02 clause; correct if drifted.
 **Acceptance Criteria:** Comparison performed; template confirmed current or corrected.
 
-### BLG-GOV-238 — Governed-vs-ad-hoc backlog scope visibility
-**Priority:** P3 (Low) | **Type:** Governance / FinOps | **Owner:** PMO Lead; FinOps & Resource Architect | **Source:** IDEA-challenger-20260715-02, IDEA-pmo-lead-20260715-01, IDEA-finops-20260715-02 (3-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** Three independent submissions this window flagged the same underlying pattern from different angles: 5 P1 items were added to `backlog.md` outside a governed cycle in the session immediately preceding this rebalance (a 2nd occurrence of ad-hoc additions bypassing governed release scoping, per the Challenger's framing), with no lightweight tracking of governed-cycle-added vs. ad-hoc session-added items per release, nor visibility into whether ad-hoc additions are displacing gated/scored capacity.
-**Scope:** Add a lightweight running tally (e.g. a count/tag in each cycle's `run_manifest.md` or `cycle_summary.md`) distinguishing governed-cycle additions from ad-hoc session additions per release, to give FinOps/PMO Lead visibility into the trend.
-**Acceptance Criteria:** Tally mechanism scoped; first data point recorded retroactively for v7.1/this cycle where determinable.
-
 ### BLG-OPS-112 — AI endpoint (daily-briefing/chat) cost & latency drift monitoring
 **Priority:** P3 (Low) | **Type:** Operations / AI Governance | **Owner:** AI Compliance & Governance Officer; Infrastructure & Operations Owner | **Source:** IDEA-ai-compliance-20260716-01 | **Effort:** S (~1 day) | **Provisional-Target:** TBD
 **Problem:** `POST /ai/daily-briefing` and `POST /ai/chat` have per-call cost tracking (`gemini_audit_log`/Anthropic usage logging) but no rolling anomaly check — a latency or cost regression would only surface via manual review, not an alert.
 **Scope:** Extend existing cost-tracking infrastructure with a rolling anomaly check (e.g. week-over-week cost/latency delta threshold) for the two AI endpoints.
 **Acceptance Criteria:** Anomaly check scoped and added; confirmed to fire on a simulated cost/latency spike.
-
----
-
-### BLG-SPEC-117 — Give docs/specs/Specs_Index.md a proper Changelog table instead of a chained Last Updated header
-**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Head of Specs Team | **Source:** Found during 2026-08-07 session review of `**Last Updated:**` header bloat (`shared_standards.md` §16.14, broadened to universal scope this session) | **Effort:** S (~0.5d) | **Provisional-Target:** TBD
-
-**Problem**
-`docs/specs/Specs_Index.md` is a Class 1 (Authoritative) document, but its `**Last Updated:**` header chains every prior revision inline (`<date> (<reason>); prior — <date> (<reason>); ...`) rather than using a dedicated `## Changelog` table or companion `claude/system/changelogs/*.md` file the way other Class 1/6 canonical documents do. This session found the chain at 5 entries/~2,048 characters and truncated it to the standard 3-entry cap as an immediate stopgap (per §16.14), but the chained pattern will simply re-accumulate on the next few touches since the document has no structural place to put history other than the header field.
-
-**Scope**
-- Add a `## Changelog` table (or a companion `claude/system/changelogs/specs_index_changelog.md` file, matching the pattern used by Class 6 prompts) to `docs/specs/Specs_Index.md`
-- Migrate the existing truncated header history into the new table/file as its first backfilled rows
-- Collapse the header `**Last Updated:**` field to a bare single-line `<date> (<one-line summary>)` — no chaining — going forward
-
-**Acceptance Criteria**
-- `docs/specs/Specs_Index.md` has a `## Changelog` table or companion changelog file
-- `**Last Updated:**` header field is a single line, no `prior —` chaining
-- Head of Specs Team sign-off
 
 ---
 
@@ -3952,30 +3778,6 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Problem:** Each new governance agent role (`claude/agents/*.md`) is created ad hoc with no standard checklist of required charter fields, write-scope declarations, or review cadence.
 **Scope:** Document a standard onboarding checklist for new agent role creation.
 **Acceptance Criteria:** Checklist added to `claude/charter/` or `claude/system/`; Head of Specs Team sign-off.
-
----
-
-### BLG-SPEC-98 — Consolidate duplicate empty-state pattern specs
-**Priority:** P3 (Low) | **Type:** Spec Debt / Frontend | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-frontend-specs-20260724-01 | **Effort:** M | **Provisional-Target:** TBD
-**Problem:** Empty-state pattern definitions (the `DataState` pattern formalised in `design_system.md` v1.1, per v7.2) are restated with minor variation across multiple page specs rather than referencing one canonical definition.
-**Scope:** Consolidate empty-state pattern definitions into `design_system.md`; update page specs to reference rather than restate.
-**Acceptance Criteria:** Duplicate definitions removed from at least 3 page specs; `design_system.md` remains the single source.
-
----
-
-### BLG-SPEC-99 — Keyboard-navigation requirements section for table-based page specs
-**Priority:** P3 (Low) | **Type:** Spec Debt / Accessibility | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-frontend-specs-20260724-02 | **Effort:** M | **Provisional-Target:** TBD
-**Problem:** Table-based page specs (Positions, Trades, Red Flag Journal) have no documented keyboard-navigation requirements, leaving the expected behaviour implicit.
-**Scope:** Add a keyboard-navigation requirements section to the relevant page specs.
-**Acceptance Criteria:** Section added to at least Positions, Trades, and Red Flag Journal specs.
-
----
-
-### BLG-SPEC-100 — Canonical "win rate" vs "hit rate" definitions doc
-**Priority:** P3 (Low) | **Type:** Spec Debt / Metrics | **Owner:** Metrics Definitions & Analytics Canonical Owner | **Source:** IDEA-metrics-20260724-01 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** "Win rate" and "hit rate" terminology is used inconsistently across specs (`metrics_definitions.md` and page specs) without a single canonical distinction.
-**Scope:** Add canonical definitions for both terms to `metrics_definitions.md`; audit existing specs for inconsistent usage.
-**Acceptance Criteria:** Canonical definitions added; at least the highest-traffic specs (Performance Analytics, Reports) reconciled to use them consistently.
 
 ---
 
@@ -3996,28 +3798,12 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 
 ---
 
-### BLG-SPEC-101 — Worked example of the ATR-based sizing edge case in strategy_rules.md
-**Priority:** P3 (Low) | **Type:** Spec Debt / Strategy | **Owner:** Strategy Rules & System Intent Owner | **Source:** IDEA-strategy-owner-20260724-02 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** Several backlog items reference an ATR-based sizing edge case informally without a canonical worked example in `strategy_rules.md` itself.
-**Scope:** Add a worked numerical example of the edge case to `strategy_rules.md`.
-**Acceptance Criteria:** Worked example added; Strategy Rules & System Intent Owner sign-off; no functional/behavioural change (documentation only).
-
----
-
 ### BLG-QA-122 — Broker statement reconciliation (blocked — no broker import mechanism)
 **Priority:** P3 (Low) | **Type:** QA / Financial Reporting, gate-conditional | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260724-02 | **Effort:** M | **Provisional-Target:** TBD
 **Gate criteria:** A broker statement import mechanism exists. Per `current_roadmap.md` §2 Product Scope Exclusions, "Broker API integration (execution)" is currently a deferred (not strategically excluded) exclusion — no import path exists today for this item to reconcile against.
 **Problem:** Idea proposed a reconciliation check between journal/trade entries and broker statement data, but no broker statement import mechanism currently exists to reconcile against.
 **Scope:** Deferred until broker integration (or a manual statement upload path) exists.
 **Acceptance Criteria:** N/A until gate clears.
-
----
-
-### BLG-GOV-259 — Quarterly retrospective: estimated vs. actual effort bands (§16.7)
-**Priority:** P3 (Low) | **Type:** Governance / FinOps | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260727-01 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** `scored_initiatives.md` Effort Band (§16.7) and `backlog.md` Effort day-ranges (§16.12) are assigned at promotion time but never checked back against actual delivery time — no feedback loop exists to calibrate future estimates.
-**Scope:** Add a quarterly (or every-N-cycle) retrospective comparing estimated effort bands to actual sprint-close data.
-**Acceptance Criteria:** Retrospective cadence documented; FinOps & Resource Architect sign-off.
 
 ---
 
@@ -4037,31 +3823,6 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 
 ---
 
-### BLG-GOV-264 — Physically place the Displacement Debt Register and wire it into `roadmap_prompt.md` STEP 8
-**Priority:** P3 (Low) | **Type:** Governance | **Owner:** Roadmap Rebalance Engine / Head of Specs Team | **Source:** `ESC-EXEC-20260727-02` (`claude/cycles/2026-07-27__release-v7.9/execution_escalations.md`), raised during EPIC-14/ST-14 (`2026-07-27__release-v7.9`) | **Effort:** XS | **Provisional-Target:** TBD
-**Problem:** ST-14 designed the Displacement Debt Register (format + reconstructed seed content) in full, but `claude/roadmap/*` and `claude/system/roadmap_prompt.md` are outside Sprint Execution's write scope, so the design was handed off rather than applied. Two actions are needed together: (1) create `claude/roadmap/displacement_debt_register.md` using the format/seed content in `claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-14.md#Displacement Debt Register — Design`; (2) edit `roadmap_prompt.md` STEP 8's "Displacement candidate flag" instruction to also update this register going forward. Landing only one half leaves either a stale instruction (no file) or an unmaintained file (no forcing function).
-**Scope:** Both actions above, in the same session, per CLAUDE.md §6 Governance File Edit Checklist for the `roadmap_prompt.md` edit (version bump, `OPERATIONAL_GUIDE.md` §14 table update, `prompt_change_log.md` entry).
-**Acceptance Criteria:** `claude/roadmap/displacement_debt_register.md` created with the seeded content; `roadmap_prompt.md` STEP 8 updated to reference it; `ESC-EXEC-20260727-02` closed.
-**Status (2026-08-17__release-v8.9, ST-21/EPIC-06):** Half-achieved — the prompt-wiring action (`roadmap_prompt.md` STEP 8, v9.15→v9.16) is done; the file-creation action remains outstanding, architecturally outside Sprint Execution's write scope. Carried forward via `ESC-EXEC-20260818-02` (`claude/cycles/2026-08-17__release-v8.9/execution_escalations.md`), Open/non-blocking — will close on the next live `run roadmap`/`manage roadmap` invocation per `roadmap_prompt.md` STEP 8's create-if-absent instruction.
-
----
-
-### BLG-GOV-266 — Canonical AI feature touchpoint register with per-feature §13 classification
-**Priority:** P3 (Low) | **Type:** Governance / AI Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260728-02 | **Effort:** M | **Provisional-Target:** TBD
-**Problem:** AI-touching features (thesis generation, daily briefing, chat advisor, cost alerts) have each had individual §13 reviews over time, but no single register lists every AI touchpoint and its current §13 classification in one place.
-**Scope:** Build a register listing each AI-calling feature, its §13 classification, and a link to its review record.
-**Acceptance Criteria:** Register created and covers all currently-shipped AI touchpoints; AI Compliance & Governance Officer sign-off.
-
----
-
-### BLG-GOV-267 — Base44 generation failure-mode log (recurring manual-correction patterns)
-**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** Base44-generated components occasionally need manual correction (e.g. missed dark-mode class pairs, contrast issues) but no log tracks which failure modes recur, so prompt-template improvements are made ad hoc rather than targeting the most frequent gaps.
-**Scope:** Add a lightweight log of Base44 generation failure modes requiring manual correction, reviewed periodically to prioritise prompt-template fixes.
-**Acceptance Criteria:** Log created; at least the known recurring modes (dark-mode class pairs, contrast) backfilled; Base44 Frontend Prompt Owner sign-off.
-
----
-
 ### BLG-GOV-271 — Agent onboarding runbook for adding a new governance role
 **Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Director of HR | **Source:** IDEA-director-of-hr-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** Adding a new agent role (most recently done for several roles across the project's history) has no documented runbook — each addition has been done ad hoc (charter file, idea-intake slug mapping, required-roles lists across multiple prompt files).
@@ -4070,27 +3831,11 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 
 ---
 
-### BLG-QA-130 — Quality trend index aggregating DEV-* records over time
-**Priority:** P3 (Low) | **Type:** QA / Metrics | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260728-02 | **Effort:** M | **Provisional-Target:** TBD
-**Problem:** There is no single trend view of deviation volume/severity over time — each cycle's deviation count is only visible in that cycle's own `sprint_close.md`.
-**Scope:** Build a simple trend index (deviation count/severity per cycle, plotted or tabulated over time).
-**Acceptance Criteria:** Index created and backfilled from available cycle history; Director of Quality sign-off.
-
----
-
 ### BLG-GOV-272 — Recurring spec-debt backlog review cadence
 **Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-frontend-specs-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** BLG-SPEC-* items accumulate over time (105+ so far) with no defined periodic review cadence dedicated specifically to spec debt, distinct from general backlog grooming.
 **Scope:** Define a periodic review cadence specifically for BLG-SPEC-* items.
 **Acceptance Criteria:** Cadence defined and documented in `backlog_management_prompt.md`; Head of Specs Team confirmation.
-
----
-
-### BLG-GOV-274 — Automated Specs_Index.md freshness check against live spec files
-**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Head of Specs Team | **Source:** IDEA-head-of-specs-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** `Specs_Index.md`'s maintenance has previously lapsed silently for 5 consecutive cycles before being caught (per `2026-07-21__release-v7.7` closure Carry-Forward Item 3) — the check for staleness is currently manual.
-**Scope:** Add an automated check comparing `Specs_Index.md` entries against the live `docs/specs/` tree for additions/removals it doesn't yet reflect.
-**Acceptance Criteria:** Check added; Head of Specs Team sign-off.
 
 ---
 
@@ -4123,14 +3868,6 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Problem:** The `FI-P3-02` exception (wording-only ACs may substitute code review for staging sign-off) is applied per-story with no consolidated tracker of how often it's invoked, making it hard to spot if the exception is being over-relied upon.
 **Scope:** Add a tracker logging each `FI-P3-02` invocation across cycles.
 **Acceptance Criteria:** Tracker created and backfilled where findable; QA Lead sign-off.
-
----
-
-### BLG-QA-134 — Regression suite runtime budget & reporting
-**Priority:** P3 (Low) | **Type:** QA / CI | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** The regression suite has grown substantially (baseline updates at `BLG-QA-112`, `BLG-QA-114`) with no defined runtime budget or reporting on whether it's trending toward becoming a CI bottleneck.
-**Scope:** Define a runtime budget and add simple reporting on regression suite duration over time.
-**Acceptance Criteria:** Budget defined; reporting added; QA & Testing Owner sign-off.
 
 ---
 
@@ -4206,14 +3943,6 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 
 ---
 
-### BLG-QA-142 — Definition-of-Done compliance spot-check across the last 5 cycles
-**Priority:** P3 (Low) | **Type:** QA / Process | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** No periodic spot-check confirms DoQ sign-off blocks across recent cycles genuinely meet the Definition-of-Done bar (as opposed to the automated staleness lint at `BLG-QA-98`, which only checks for stale "Pending" rows, not substantive compliance).
-**Scope:** Spot-check a sample of DoQ sign-offs from the last 5 cycles against the Definition-of-Done checklist.
-**Acceptance Criteria:** Spot-check complete; findings documented; Director of Quality sign-off.
-
----
-
 ### BLG-GOV-302 — Idea-intake / roadmap-session compute cost attribution
 **Priority:** P3 (Low) | **Type:** Governance / FinOps | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** Governance overhead (idea intake, roadmap rebalance sessions) consumes compute/session cost that is not separately attributed from delivery spend, making it hard to assess the true cost-of-governance ratio.
@@ -4227,22 +3956,6 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Problem:** No audit has confirmed component prop names follow a consistent convention across the codebase — prior drift audits have focused on design tokens and colour, not prop naming.
 **Scope:** Audit prop-naming consistency across shared components; document the convention and fix drift.
 **Acceptance Criteria:** Audit complete; convention documented in `design_system.md`; Frontend Specifications & UX Documentation Owner sign-off.
-
----
-
-### BLG-SPEC-125 — Spec-to-backlog traceability audit
-**Priority:** P3 (Low) | **Type:** Spec Debt / Governance | **Owner:** Head of Specs Team | **Source:** IDEA-head-of-specs-20260809-01 | **Effort:** M | **Provisional-Target:** TBD
-**Problem:** No audit confirms every `docs/specs/` file is either linked to an active/shipped backlog item or explicitly marked historical — spec files can silently become orphaned as features evolve.
-**Scope:** Audit `docs/specs/` for orphaned files; link or mark historical as appropriate.
-**Acceptance Criteria:** Audit complete; orphans resolved; Head of Specs Team sign-off.
-
----
-
-### BLG-SPEC-126 — Canonical glossary consolidation
-**Priority:** P3 (Low) | **Type:** Spec Debt / Governance | **Owner:** Head of Specs Team | **Source:** IDEA-head-of-specs-20260809-02 | **Effort:** M | **Provisional-Target:** TBD
-**Problem:** Terms (e.g. "drift score", "compliance score", "grace period") are defined independently and sometimes inconsistently across `strategy_rules.md`, `metrics_definitions.md`, and `data_model.md`.
-**Scope:** Consolidate a canonical glossary cross-referencing each term's authoritative definition location.
-**Acceptance Criteria:** Glossary created; Head of Specs Team sign-off.
 
 ---
 
@@ -4299,14 +4012,6 @@ The only cost-focused record for AI feature usage on file, `docs/ops/anthropic_a
 
 ---
 
-### BLG-SPEC-127 — Formal definition for the "90-day trade window" cited in SI-02 gate reporting
-**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Metrics Definitions & Analytics Canonical Owner | **Source:** IDEA-metrics-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** SI-02 gate reporting cites a "90-day trade window" (`_WINDOW_DAYS = 90` in `behavioural_drift_service.py`, cross-referenced at `si02_drift_score.md` §2) informally in `current_roadmap.md` prose; the window itself (rolling vs fixed, timezone handling) is not formally specified.
-**Scope:** Add a formal definition of the 90-day window's exact semantics to `si02_drift_score.md`.
-**Acceptance Criteria:** Definition added; Metrics Definitions & Analytics Canonical Owner sign-off.
-
----
-
 ### BLG-SPEC-128 — Gate-metric naming consistency across roadmap, SI-05 digest, and Reports page
 **Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Metrics Definitions & Analytics Canonical Owner | **Source:** IDEA-metrics-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** The same gate metrics (e.g. SI-02 linked-trade-plan count) are referenced with slightly different naming/phrasing across `current_roadmap.md`, the SI-05 digest content, and the Reports page's SI-02 Gate Status section.
@@ -4331,14 +4036,6 @@ The only cost-focused record for AI feature usage on file, `docs/ops/anthropic_a
 
 ---
 
-### BLG-SPEC-131 — trade_plan.md §5.1 form-fields table still lists non-existent "Risk/Reward Notes" field
-**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Head of Specs Team | **Source:** ST-27 (BLG-SPEC-129, EPIC-06, `2026-08-14__release-v8.8`), discovered mid-sprint during agent-mediated Head of Specs Team review | **Effort:** XS | **Provisional-Target:** TBD
-**Problem:** `docs/specs/frontend/pages/trade_plan.md` §5.1's form-fields table (line ~123) still lists "Risk/Reward Notes | Textarea | No | Free text; used for pre-population of CHK-04" as a live field — but `src/pages/TradePlan.js` has zero `risk_reward_notes` binding (confirmed via grep). ST-27 (this same cycle) fixed the stale Changelog anchor that pointed to this field but deliberately left the table row itself untouched, since the AC's scope was narrowly "correct the anchor," not restructure the table.
-**Scope:** Determine what actually happened to this field (renamed? merged into another narrative field? genuinely removed with no replacement?) and either correct the table row to reflect current reality or remove it, updating any other section that still assumes its presence (e.g. §5a.3's pre-population rule, §6.2's CHK-04 rationale note both still reference `risk_reward_notes` by name).
-**Acceptance Criteria:** §5.1's field table accurately reflects the live form; any other section referencing `risk_reward_notes` reconciled or explicitly confirmed still accurate; Head of Specs Team sign-off.
-
----
-
 ### BLG-TECH-11 — Scope a future migration off Create React App (react-scripts v5)
 **Priority:** P3 (Low) | **Type:** Platform / Technical Debt | **Owner:** Head of Engineering | **Source:** ST-24 (BLG-SEC-18, EPIC-05, `2026-08-14__release-v8.8`) | **Effort:** S (scoping only) | **Provisional-Target:** TBD
 **Problem:** The ST-24 npm audit baseline review (`docs/security/npm_audit_baseline_review_2026-08-16.md`) found 14 HIGH/CRITICAL-advisory packages that cannot be fixed without a `react-scripts` major-version bump — all are pinned by CRA v5's own dependency tree (webpack-dev-server, svgo/postcss-loader chain), and Create React App is itself unmaintained upstream with no compatible non-breaking upgrade path. These were accepted as risk (build-toolchain-only exposure, never shipped to the browser — confirmed via repo-wide import grep) with a 6-month review-by date (2027-02-16), but individual accept-risk renewals every cycle only defer the underlying problem; the durable fix is migrating off the toolchain entirely.
@@ -4353,22 +4050,6 @@ The only cost-focused record for AI feature usage on file, `docs/ops/anthropic_a
 **Problem:** When `strategy_rules.md` is version-bumped, there is no required template ensuring the change cites the trade-history evidence (if any) motivating it — SI-04 (Strategy Version Comparison) will eventually need this history to be traceable.
 **Scope:** Add a change-justification template section to `strategy_rules.md`'s own change-log convention.
 **Acceptance Criteria:** Template added; applied to the next `strategy_rules.md` version bump; Strategy Rules & System Intent Owner sign-off.
-
----
-
-### BLG-SPEC-132 — Document PositionSizingWidget baseline in trade_plan.md
-**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** Design gate `2026-08-17__release-v8.9` (ST-04/EPIC-02 review) — filed by PMO Lead per the gate's own follow-up instruction | **Effort:** S (~0.5-1d) | **Provisional-Target:** v8.10
-**Problem:** While documenting ST-04's (BLG-BE-104, correlation/sector-concentration-aware sizing) concentration-reason addition to `PositionSizingWidget` (`trade_plan.md` §10.7) during the `2026-08-17__release-v8.9` design gate, it became clear the widget's baseline — fields, debounce behaviour, `POST /portfolio/size` contract — has never had a dedicated frontend spec section of its own, only a passing reference at §10. The design gate's write scope excludes `claude/backlog/backlog.md`, so filing this item was deferred to PMO Lead/Head of Specs Team after `plan sprint` completed (per `design_gate.md`'s own Notes section, `2026-08-17__release-v8.9`).
-**Scope:** Add a dedicated `PositionSizingWidget` baseline subsection to `trade_plan.md` covering its fields, debounce parameter, and the `POST /portfolio/size` contract it consumes — as the parent section §10.7's concentration-reason addition now assumes exists.
-**Acceptance Criteria:** `trade_plan.md` has a dedicated `PositionSizingWidget` baseline subsection documenting fields, debounce behaviour, and the `POST /portfolio/size` contract; Frontend Specifications & UX Documentation Owner sign-off.
-
----
-
-### BLG-GOV-310 — "Signed off by: PENDING" placeholder reads as unresolved in at-rest Class 3 docs
-**Priority:** P3 (Low) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** PR #1426 dual-role Director of Quality review (EPIC-05, `2026-08-14__release-v8.8`) | **Effort:** XS | **Provisional-Target:** TBD
-**Problem:** Some Class 3 docs carry a static `Signed off by: PENDING` field even after the actual sign-off has genuinely happened — the sign-off is recorded only in the separate `qa_evidence_EPIC-xx.md` consolidation log, not propagated back to the doc itself. A reader opening the doc directly (not the qa_evidence log) sees an apparently-unresolved sign-off gate.
-**Scope:** Document a convention for these fields — either point back to the qa_evidence log explicitly (e.g. "See qa_evidence_EPIC-xx.md"), or remove the field entirely from docs that don't themselves own a sign-off gate.
-**Acceptance Criteria:** Convention documented (in `shared_standards.md` or equivalent canonical location); Head of Specs Team sign-off.
 
 ---
 
@@ -4401,69 +4082,6 @@ The full pipeline (screener hit → watchlist → research → trade plan → po
 - Funnel view displays counts and conversion % for all 5 pipeline stages over a selectable date range
 - Reconciliation with `BLG-FEAT-30` completed and documented (merged, superseded, or confirmed distinct) before either item is scheduled
 - Product Owner sign-off
-
----
-
-### BLG-QA-154 — Add Playwright coverage for Arc5ComplianceSection's events_per_week value formatting
-
-**Priority:** P3 (Low)
-**Type:** QA / Test Automation
-**Owner:** QA Lead
-**Source:** ST-20 (BLG-QA-144, EPIC-04) Playwright coverage audit refresh, `docs/qa/arc5_coverage_audit.md` §3.3.1 (GAP-ARC5-06), cycle 2026-08-21__release-v9.0 — 2026-08-21
-**Effort:** XS (<1h)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-`src/components/analytics/Arc5ComplianceSection.js`'s `fmtCount` function (1-decimal-place formatting for `events_per_week`, e.g. `3.0`) has no scenario asserting its rendered value in `tests/e2e/arc5-compliance-section.spec.js` — SC-ARC5-05 (BLG-QA-58, v5.7) only covers the two `fmtRate` fields (`override_rate`, `trade_plan_adherence_rate`), leaving this third, distinct formatter function untested.
-
-**Scope**
-- Add a scenario to `tests/e2e/arc5-compliance-section.spec.js` asserting the formatted `events_per_week` value renders correctly from mocked data (e.g. `2.3` → `"2.3"`)
-
-**Acceptance Criteria**
-- New Playwright scenario asserts the rendered `events_per_week` text matches the expected `fmtCount` output for a known mock value
-- Test passes against current implementation
-
----
-
-### BLG-QA-155 — Add Playwright coverage for Arc5ComplianceSection's top_rule_breach text formatting
-
-**Priority:** P3 (Low)
-**Type:** QA / Test Automation
-**Owner:** QA Lead
-**Source:** ST-20 (BLG-QA-144, EPIC-04) Playwright coverage audit refresh, `docs/qa/arc5_coverage_audit.md` §3.3.1 (GAP-ARC5-07), cycle 2026-08-21__release-v9.0 — 2026-08-21
-**Effort:** XS (<1h)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-`src/components/analytics/Arc5ComplianceSection.js`'s `fmtText` function (underscore-to-space replacement for `top_rule_breach`, e.g. `cash_constraint` → `cash constraint`) has no scenario coverage at all — a regression to this formatting (or to the raw value passed through unformatted) would not be caught.
-
-**Scope**
-- Add a scenario to `tests/e2e/arc5-compliance-section.spec.js` asserting the formatted `top_rule_breach` value renders with spaces, not underscores, for a known mock value
-
-**Acceptance Criteria**
-- New Playwright scenario asserts the rendered `top_rule_breach` text matches the expected `fmtText` output (underscores replaced with spaces) for a known mock value
-- Test passes against current implementation
-
----
-
-### BLG-QA-156 — Add Playwright coverage for Arc5ComplianceSection's null-value handling
-
-**Priority:** P3 (Low)
-**Type:** QA / Test Automation
-**Owner:** QA Lead
-**Source:** ST-20 (BLG-QA-144, EPIC-04) Playwright coverage audit refresh, `docs/qa/arc5_coverage_audit.md` §3.3.1 (GAP-ARC5-08), cycle 2026-08-21__release-v9.0 — 2026-08-21
-**Effort:** XS (<1h)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-None of `src/components/analytics/Arc5ComplianceSection.js`'s three formatter functions (`fmtRate`/`fmtCount`/`fmtText`) have a scenario covering the case where an individual metric field is `null` (each renders `"—"` for `null`) — e.g. `top_rule_breach: null` while the other three fields are populated. This is a real, distinct code path (the `val != null` guard in each formatter) that has never been exercised.
-
-**Scope**
-- Add a scenario to `tests/e2e/arc5-compliance-section.spec.js` with at least one metric field set to `null` per formatter type, asserting the corresponding card renders `"—"`
-
-**Acceptance Criteria**
-- New Playwright scenario asserts `"—"` renders for at least one `null` field covering each of `fmtRate`/`fmtCount`/`fmtText`
-- Test passes against current implementation
 
 ---
 
@@ -4538,6 +4156,7 @@ None of `src/components/analytics/Arc5ComplianceSection.js`'s three formatter fu
 **Owner:** QA & Testing Owner
 **Source:** User question ("are all STs for Epic 5 done, as GH issue shows it open"), cycle 2026-09-03__release-v9.1 EPIC-05 — 2026-09-07
 **Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
 
 **Problem**
 11 of EPIC-05's 13 GitHub issues (ST-29 through ST-33, ST-36 through ST-41) remained open despite the underlying stories being genuinely `done` in `execution_state.json` with real merged commits. Root cause, confirmed via actual `gh run view --log` output: each story's own commit (carrying its `[ST-xx]` tag) was pushed individually, before `execution_state.json` was updated to mark that story `done` — that update landed in a later, separate batch commit (`1cbd31ee "[GOVERNANCE] Sync EPIC-05 tracking state (ST-29 through ST-41...)"`). `is_story_done()` correctly read "not done yet" at the tagged commit's own tree and skipped closing (working as designed — this is not the BLG-GOV-314/BLG-QA-159 over-closing case). But the later state-sync commit's message uses prose ("ST-29 through ST-41"), not bracketed `[ST-xx]` tags, so the existing `ST_IDS` regex scan never picked it up as a trigger to recheck and close those issues either. The two safety checks (commit-message tag scan, execution_state "done" gate) are each individually correct, but their combination silently drops any story whose tagged work-commit and state-sync-commit are pushed as separate events — closure never fires from either side. All 11 were confirmed `done` and closed manually with an audit-trail comment citing each commit SHA.
@@ -4639,274 +4258,6 @@ The v9.1 ST-05 fix for the Settings-subtitle `color-contrast` axe finding determ
 
 ---
 
-### BLG-TECH-16 — Sector-concentration adjustment's fail-open exception handler logs nothing on failure
-
-**Priority:** P3 (Low)
-**Type:** Platform / Technical Debt
-**Owner:** Head of Engineering
-**Source:** PR #1453 (EPIC-02) agent-mediated Director of Quality review — 2026-08-19
-**Effort:** XS (<1h)
-**Provisional-Target:** TBD
-
-**Problem**
-`backend/services/sizing_service.py`'s `_apply_concentration_adjustment()` wraps its body in `try/except Exception: return default` (fail-open, so a concentration-service error never blocks position sizing) — but the except block has no logging, so if `get_sector_exposure()` or any other call inside starts silently failing in production (e.g. a schema drift, a bad ticker-to-sector mapping), there's no signal anywhere that the concentration feature has gone dark; it just always returns the unadjusted default with no visible symptom.
-
-**Scope**
-- Add a log line (matching this codebase's existing fail-open logging convention, e.g. the pattern already used by `_calculate_heat_impact`'s sibling fail-open handler, which does log a warning) inside the except block before returning default
-
-**Acceptance Criteria**
-- Exception is logged (level appropriate to a fail-open path, e.g. warning) with enough context to diagnose (ticker/sector where available)
-- No change to the fail-open return behaviour itself
-- Existing tests still pass
-
----
-
-### BLG-GOV-311 — Add ST-06 §13 CONDITIONAL clearance to strategy_rules.md §13.5 semi-annual re-attestation roster
-
-**Priority:** P3 (Low)
-**Type:** Governance Process
-**Owner:** Strategy Rules & System Intent Owner
-**Source:** ST-23/EPIC-02, 2026-08-17__release-v8.9 — 2026-08-18
-**Effort:** XS (~15min)
-**Provisional-Target:** v8.9 (or next cycle touching `strategy_rules.md` under Strategy Rules & System Intent Owner authority)
-
-**Problem**
-`strategy_rules.md` §13.5's Maintenance rule requires: "New features entering the roster do so by adding a row to the table above in the same commit that records their own initial §13 clearance." ST-23 (this cycle) produced `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md` (Determination: CONDITIONAL) for ST-06 (Automated AI Post-Trade Debrief, BLG-FEAT-90), but `execution_prompt.md`'s write scope does not permit the Sprint Execution Engine to edit `claude/strategy/strategy_rules.md` — CLAUDE.md §2 restricts governance-file edits to cases "explicitly instructed by the relevant prompt," and `execution_prompt.md` §7 does not list `claude/strategy/` in its write scope. The roster update is therefore deferred to this backlog item rather than performed out-of-scope by this routine.
-
-**Scope**
-- Add a row for ST-06 / BLG-FEAT-90 to the §13.5 roster table (`Feature` | `§13 Review Record` | `Cleared` columns), citing `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md` and `v8.9` as the Cleared version
-- Perform under Strategy Rules & System Intent Owner authority — the same role that signed off the review this row documents
-- Follow `strategy_rules.md`'s own governance-file edit checklist (CLAUDE.md §6) if the edit bumps the document's version
-
-**Acceptance Criteria**
-- `strategy_rules.md` §13.5's roster table includes a ST-06/BLG-FEAT-90 row pointing at the CONDITIONAL review document
-- Edit committed under Strategy Rules & System Intent Owner authority, in a session/prompt whose write scope explicitly covers `claude/strategy/`
-- If `strategy_rules.md`'s version is bumped: CLAUDE.md §6 governance file edit checklist steps 1–4 completed in the same commit
-
----
-
-### BLG-GOV-312 — Recurrence-check false positive: named target file not read directly before concluding "not applied"
-
-**Priority:** P3 (Low)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** Post-ship closure `2026-08-17__release-v8.9`, `ESC-CLOSE-20260821-01` resolution — 2026-08-21
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Problem**
-`ESC-CLOSE-20260821-01` (a §6.4 2-cycle recurrence escalation for the "CI-green per-fix restatement clarification") turned out to be a false positive: the fix had actually been applied at `2026-08-12__release-v8.7` post-ship closure STEP 8 (`LL-v8.7-P4-01`, `qa_evidence_template.md` v1.10→v1.11), but both `2026-08-14__release-v8.8` and `2026-08-17__release-v8.9`'s Phase 4 recurrence checks (`lessons_learnt_prompt.md §3.7`) reported "no ... language change found in either target file" — searching `execution_prompt.md §5.3` and `prompt_change_log.md` — without ever actually reading `qa_evidence_template.md` itself, the file the original friction item's own Process Patch entry named as the fix target. This is a distinct failure mode from the one `lessons_learnt_prompt.md` v1.10→v1.11's "Patch-ID matching requirement" (`LL-v8.6-P4-01b`) already closed (that one was about searching `prompt_change_log.md` by date/filename instead of patch-ID; this one is about not reading the named target file at all) — the existing fix did not cover this case.
-
-**Scope**
-- `lessons_learnt_prompt.md §3.7`: when checking whether a deferred patch was subsequently applied, and the patch's own Process Patch entry names a specific target file (as most `→ Deferred patch` entries do, per §5's record structure), that file must be opened and read directly — not just grepped by an assumed keyword, and not silently substituted for a same-topic sibling file (e.g. `execution_prompt.md` when the named target was `qa_evidence_template.md`) — before concluding "not applied" and letting the recurrence/escalation clock advance.
-
-**Acceptance Criteria**
-- `lessons_learnt_prompt.md §3.7` gains an explicit "read the named target file directly" step
-- Standard CLAUDE.md §6 governance file edit checklist applied (version bump, `OPERATIONAL_GUIDE.md` §14, `prompt_change_log.md` entry)
-- Head of Specs Team sign-off
-
----
-
-### BLG-GOV-314 — governance_sync.yml's auto-close never fires when a story's completion-state commit is split from its work commit
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Engineering
-**Source:** `2026-08-21__release-v9.0` Sprint Execution session — 2026-08-21
-**Effort:** S (~0.5-1d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-`execution_prompt.md`'s own guidance (adopted mid-session this cycle as a self-identified process improvement, after an earlier mistake of setting `commit_sha: null`/omitted before the real SHA was known) is: commit the actual work → push → `git rev-parse HEAD` → *then* update `execution_state.json`'s status/commit_sha in a separate follow-up commit. This is procedurally sound for capturing the real commit SHA, but it silently defeats `governance_sync.yml`'s auto-close mechanism for every story handled this way — in **both** directions, confirmed at `2026-08-21__release-v9.0`:
-
-- **Under-closing (16 confirmed cases, ST-08 through ST-27 across EPIC-02–05):** the work commit (tagged `[EPIC-xx][ST-xx]`) triggers the workflow, which correctly finds the `[ST-xx]` tag but checks `execution_state.json`'s status *as of that commit* — still not `done` (the follow-up commit hasn't landed yet) — so it correctly skips closing per its anti-premature-closure guard (`BLG-GOV-285`). The follow-up commit that actually sets `status: done` is conventionally tagged `[GOVERNANCE] Record ST-xx completion...` — a bare `[GOVERNANCE]` tag with no `[ST-xx]` in it — so the workflow's `grep -oE '\[(ST-[0-9]+)\]'` parse finds nothing and the close-issue step never even runs. Net effect: the story is genuinely `done`, correctly verified — but its issue never auto-closes (issues #1469-1488 range; manually closed same-session with an audit-trail comment once discovered).
-- **Over-closing (1 confirmed case, ST-02/#1463, more serious — misrepresents an *incomplete* story as done):** when the work commit is pushed on its own *before* any `execution_state.json` entry exists for that story yet (e.g. the very first story of a fresh EPIC branch, pushed before the tracking-commit that follows it), the workflow's `is_story_done()` jq lookup finds no status at all and falls back to its documented `"unknown" = close unconditionally` behaviour (preserved for pre-per-EPIC-mechanism cycles). If that story's real eventual disposition is `blocked_backend`/`blocked_decision` rather than `done` — set 2 minutes later in the follow-up commit — the issue is now wrongly closed for a story that isn't actually finished, and nothing subsequently reopens it. Manually reopened same-session (`#1463`, ST-02) once discovered, with the real outstanding ACs and delegation record noted in the reopen comment.
-
-**Scope**
-- Either (a) change the follow-up commit-message convention to include the `[ST-xx]` tag alongside `[GOVERNANCE]` (e.g. `[GOVERNANCE][ST-xx] Record ST-xx completion...`) so the existing parser catches it on the completion commit too, or (b) change `governance_sync.yml`'s status-check logic to look at the *current* `execution_state.json` on the branch tip at workflow-run time rather than only the commit range's own diff, so a later completion-commit still triggers correctly for an earlier work-commit's `[ST-xx]` tag
-- Separately, reconsider the `"unknown" = close unconditionally` fallback: it was added to preserve pre-per-EPIC-mechanism behaviour, but on the mechanism this cycle actually uses, "unknown" more often means "the tracking commit for this story hasn't landed yet" than "this is a non-sprint-execution reference" — closing in that case is a false positive with real-world consequence (an actually-blocked story reads as done). Consider flipping the default to "skip" (matching the `"no"` branch) unless a story is unambiguously not part of any tracked cycle at all.
-- Whichever fix(es) are chosen, add a regression test/dry-run confirming both failure modes are closed: a split work-commit + governance-commit pair correctly auto-closes an eventually-`done` story, and does *not* auto-close a story that ends up `blocked_*`
-
-**Acceptance Criteria**
-- A story completed via the commit→push→get-SHA→separate-governance-commit pattern has its GitHub issue auto-closed by `governance_sync.yml` without manual intervention
-- A story that ends up `blocked_backend`/`blocked_decision` (rather than `done`) after its work commit is pushed does NOT have its issue auto-closed, even if no `execution_state.json` entry exists yet at the moment the work commit's own push triggers the workflow
-- Existing anti-premature-closure protection (`BLG-GOV-285` — a delegation-record-only commit must not close the issue) remains intact
-
----
-
-### BLG-GOV-315 — Require the resolving commit to update a pre-existing deviation's own labelled fields
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** STEP 5.1 cross-cycle deviation consolidation review, escalated after 3rd confirmed instance across 4 runs (`docs/governance/deviation_consolidation_review_2026-09-03.md`, Recommendation 1) — 3 prior soft recommendations (runs 1, 3, 4) with no backlog item filed until now — 2026-09-03
-**Effort:** S (~0.5d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-When a deviation (`DEV-*`) is resolved via a later story or a different cycle than the one that filed it, the resolving action's own evidence gets written (e.g. a narrative addendum in a supporting doc) but the deviation's own labelled Known Deviation fields (Target resolution release, Status) in its canonical spec/doc entry do not get updated in the same commit — because no step in the normal `plan release → sprint execution → post-ship closure` flow re-visits a pre-existing deviation's own fields when a later, different story closes its root cause. Confirmed 3 times across 4 cross-cycle deviation consolidation review runs: `DEV-ST14-01` (run 1, `docs/governance/deviation_consolidation_review_2026-08-03.md`), `DEV-v8.6-ST02-01` (run 3, `docs/governance/deviation_consolidation_review_2026-08-13.md`), `DEV-EPIC03-ST09-01` (run 4, `docs/governance/deviation_consolidation_review_2026-09-03.md`).
-
-**Scope**
-- Add a checklist item to `execution_prompt.md`'s STEP 3.1.A deviation-handling flow (or the correct owning step) requiring: when a story's work closes the root cause of a pre-existing, already-filed deviation (not one being newly filed by this story), the same commit must also update that deviation's own labelled Known Deviation fields (at minimum: Target resolution release / Status) in its canonical spec or supporting document entry — not just add narrative evidence elsewhere in the document
-- Apply `CLAUDE.md §6` Governance File Edit Checklist to the prompt edit itself (version bump, `OPERATIONAL_GUIDE.md` §14 update, `prompt_change_log.md` entry)
-
-**Acceptance Criteria**
-- `execution_prompt.md` (or the correct owning prompt) gains an explicit checklist step for this case
-- `CLAUDE.md` §6 Governance File Edit Checklist steps completed for the prompt edit in the same commit
-- Next cross-cycle deviation consolidation review confirms no new instance of this drift class
-
----
-
-### BLG-TECH-13 — Consolidate 4 independent sector-lookup implementations
-
-**Priority:** P3 (Low)
-**Type:** Platform / Technical Debt
-**Owner:** Backend Engineering Patterns Owner
-**Source:** ST-04/EPIC-02, 2026-08-17__release-v8.9 — 2026-08-18
-**Effort:** S (~0.5d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-The codebase now carries four independent implementations of "look up a ticker's sector, DB-first, falling back to open positions": `routers/pre_entry_validation.py::_get_ticker_sector`, `services/compliance_recheck_service.py::_get_ticker_sector`, `routers/portfolio_risk.py::_lookup_sector`/`_get_ticker_sector_map`, and the new `services/concentration_service.py::get_ticker_sector` added by ST-04 (BLG-BE-104). ST-04 deliberately did not refactor the first three — they are working, independently tested code (`test_pre_entry_validation.py`, `test_compliance_recheck.py`, `test_portfolio_risk_sector.py`) outside ST-04's scope, and touching them risked regressions unrelated to this story's own acceptance criteria. This mirrors the precedent of `check_market_regime()`'s two divergent implementations (BLG-BE-? consolidated as its own story rather than folded into the story that found it).
-
-**Scope**
-- Consolidate all sector-lookup logic into one shared function (candidate home: `services/concentration_service.py::get_ticker_sector`, already DB-first/no-live-call)
-- Update `pre_entry_validation.py`, `compliance_recheck_service.py`, and `portfolio_risk.py` to import and use the shared function
-- Preserve existing test-patch targets where possible (e.g. `patch("routers.pre_entry_validation._get_ticker_sector", ...)` continues to work if the name is imported into that module's namespace rather than removed outright), or update the affected tests in the same commit if patch targets must change
-
-**Acceptance Criteria**
-- Exactly one sector-lookup implementation exists in the codebase; the other three call sites delegate to it
-- All 4 existing test suites (`test_pre_entry_validation.py`, `test_compliance_recheck.py`, `test_portfolio_risk_sector.py`, `test_sizing_concentration.py`) pass unchanged in behaviour (same assertions, potentially updated patch targets)
-- Backend Engineering Patterns Owner sign-off
-
----
-
-### BLG-TECH-14 — Consolidate PositionSizingWidget.js / WhatIfSizingPreview.js debounced-fetch boilerplate
-
-**Priority:** P3 (Low)
-**Type:** Platform / Technical Debt
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** ST-05/EPIC-02 Head of Engineering sign-off review, 2026-08-17__release-v8.9 — 2026-08-18
-**Effort:** S (~0.5d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-`PositionSizingWidget.js` (§10.7) and `WhatIfSizingPreview.js` (§5d, added ST-05/BLG-FEAT-91) share only the two `AMBER_MESSAGES`/`SYSTEM_MESSAGES` constant objects (exported from `PositionSizingWidget.js` for reuse). The debounce/sessionStorage/fetch-effect boilerplate — ~30-40 lines each — is duplicated near-verbatim between the two components. Consistent with this codebase's already-acknowledged pattern of deferring widget-consolidation debt (§10.7's own baseline-documentation gap, BLG-SPEC-132), but worth tracking rather than left silently duplicated a second time.
-
-**Scope**
-- Extract a shared `useDebouncedSizing` hook (or equivalent) covering: debounced 300ms fetch to `POST /portfolio/size`, loading state, sessionStorage-backed risk-percent state (parameterised by storage key, since the two components deliberately use distinct keys)
-- Both components consume the shared hook, each keeping their own presentation/layout
-
-**Acceptance Criteria**
-- `PositionSizingWidget.js` and `WhatIfSizingPreview.js` share the debounce/fetch/session-storage logic via one hook
-- Existing Playwright coverage for both components (`position-sizing-concentration.spec.js`, `what-if-sizing-preview.spec.js`, `smoke-critical-paths.spec.js`) passes unchanged
-- Frontend Specifications & UX Documentation Owner sign-off
-
----
-
-### BLG-FE-165 — DashboardHome "AI Advisory" badge fails colour-contrast
-
-**Priority:** P3 (Low)
-**Type:** Frontend / UX / Accessibility
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
-**Effort:** XS (<1h)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-The new standalone axe-core CI scan (`tests/e2e/accessibility-axe-scan.spec.js`, ST-21) found a `serious`-impact `color-contrast` violation on DashboardHome: the amber "AI Advisory" badge (`.bg-amber-600` background, white text) does not meet the minimum WCAG contrast ratio. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline (pre-existing, not a regression introduced by ST-21) so the new CI gate does not fail on introduction — should be removed from that baseline once fixed.
-
-**Scope**
-- Darken the amber background, lighten the badge text, or otherwise adjust the colour pairing to meet WCAG AA contrast (4.5:1 for normal text)
-
-**Acceptance Criteria**
-- axe-core no longer reports a `color-contrast` violation for this badge
-- `KNOWN_VIOLATIONS["DashboardHome"]`'s `color-contrast` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
-
----
-
-### BLG-FE-166 — TradePlan select elements lack accessible names
-
-**Priority:** P3 (Low)
-**Type:** Frontend / UX / Accessibility
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
-**Effort:** S (~0.5d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-The new standalone axe-core CI scan found a `critical`-impact `select-name` violation on the TradePlan form: 3 `<select>` elements have no accessible name (no associated `<label>`, `aria-label`, or `aria-labelledby`) — a real barrier for screen-reader users completing the form. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline.
-
-**Scope**
-- Add a proper `<label>` (or `aria-label`) association to each of the 3 affected `<select>` elements
-
-**Acceptance Criteria**
-- axe-core no longer reports a `select-name` violation on TradePlan
-- `KNOWN_VIOLATIONS["TradePlan"]`'s `select-name` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
-
----
-
-### BLG-FE-167 — Settings page combobox buttons lack discernible text
-
-**Priority:** P3 (Low)
-**Type:** Frontend / UX / Accessibility
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
-**Effort:** S (~0.5d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-The new standalone axe-core CI scan found a `critical`-impact `button-name` violation on the Settings page: 2 buttons with `role="combobox"` (Radix UI Select trigger) have no discernible text for assistive technology. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline.
-
-**Scope**
-- Add `aria-label` (or visible, associated text) to the affected Radix Select trigger buttons
-
-**Acceptance Criteria**
-- axe-core no longer reports a `button-name` violation on Settings
-- `KNOWN_VIOLATIONS["Settings"]`'s `button-name` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
-
----
-
-### BLG-FE-168 — Settings page form inputs lack labels
-
-**Priority:** P3 (Low)
-**Type:** Frontend / UX / Accessibility
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
-**Effort:** S (~0.5d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-The new standalone axe-core CI scan found a `critical`-impact `label` violation on the Settings page: 12 numeric strategy-parameter input fields have no associated `<label>` element — a real barrier for screen-reader users. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline. This is also the largest single node count of any finding from the initial scan, worth prioritising above the other three accessibility items filed alongside it despite the shared P3 rating.
-
-**Scope**
-- Add a proper `<label>` (or `aria-label`) association to each of the 12 affected inputs
-
-**Acceptance Criteria**
-- axe-core no longer reports a `label` violation on Settings
-- `KNOWN_VIOLATIONS["Settings"]`'s `label` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
-
----
-
-### BLG-FE-169 — Settings page subtitle text fails colour-contrast
-
-**Priority:** P3 (Low)
-**Type:** Frontend / UX / Accessibility
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** ST-21 (BLG-QA-83, EPIC-04) axe-core accessibility scan, cycle 2026-08-21__release-v9.0 — 2026-08-21
-**Effort:** XS (<1h)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-The new standalone axe-core CI scan found a `serious`-impact `color-contrast` violation on the Settings page: the page subtitle ("Configure your strategy parameters and preferences", `.mt-1` / `text-slate-600 dark:text-slate-400`) does not meet the minimum WCAG contrast ratio against its background. Currently grandfathered in the scan's `KNOWN_VIOLATIONS` baseline. **Note:** this finding was observed once during initial exploration but did not reproduce across repeated re-runs of the same spec afterward — possibly a near-threshold or rendering-timing-dependent result. Worth a manual contrast-checker verification before spending implementation effort, since it may already be borderline-passing.
-
-**Scope**
-- Adjust the subtitle's text colour (or background) to meet WCAG AA contrast (4.5:1 for normal text) — likely affects other pages sharing the same `text-slate-600 dark:text-slate-400` subtitle convention; worth a quick grep-and-check across pages while fixing this one, though only Settings was in this scan's scope
-
-**Acceptance Criteria**
-- axe-core no longer reports a `color-contrast` violation for the Settings subtitle
-- `KNOWN_VIOLATIONS["Settings"]`'s `color-contrast` entry removed in `tests/e2e/accessibility-axe-scan.spec.js`
-
----
-
 ### BLG-FE-170 — Settings page heading-order axe-core finding (moderate, non-blocking)
 
 **Priority:** P3 (Low)
@@ -4974,50 +4325,3 @@ This has been filed as a deviation in the canonical spec's Known Deviations sect
 
 ---
 
-### BLG-BE-110 — Move raw SQL execution out of backend/routers/analytics.py and digest.py into the service/database layers
-**Priority:** P3 (Low)
-**Type:** Backend Engineering
-**Owner:** Backend Engineering Patterns Owner
-**Source:** ST-23 (BLG-BE-56, EPIC-05, v9.0) backend service-layer boundary review — 2026-08-21
-**Effort:** L (~3-5 days)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-ST-23's layering-boundary review (per `claude/agents/backend_engineering_patterns_owner.md`'s router→service→database pattern, "Routers must be thin. No business logic, no SQL, no calculations in a router") found that `backend/routers/analytics.py` contains ~25 direct `cursor.execute()` calls (including several f-string-interpolated queries) and `backend/routers/digest.py` contains 7, both bypassing the service/database layers entirely — SQL is built and executed directly inside router handler functions. `backend/routers/ai.py` had the same pattern (2 call sites) and was fixed directly within ST-23's own scope (moved to `database.fetch_journal_notes()`) since it was small and bounded; `analytics.py` and `digest.py` are too large (32 combined call sites across ~1200+ lines) to safely refactor within a single S-effort review story without disproportionate regression risk to production analytics/digest code paths.
-
-**Scope**
-- Extract each `cursor.execute()` call in `analytics.py` and `digest.py` into an appropriately-named function in `backend/database.py` (SQL only, no business logic, matching the existing `get_trade_history()`-style convention)
-- Update each router handler to call the new database-layer function instead of building/executing SQL directly
-- Preserve exact query behaviour (parameterization, filters, joins) — this is a structural move, not a query rewrite
-- Full backend test suite must pass with zero behavioural change
-
-**Acceptance Criteria**
-- Zero `cursor.execute()`/`conn.execute()` calls remain in `backend/routers/analytics.py` and `backend/routers/digest.py`
-- All existing tests for these routers' endpoints continue to pass unchanged
-- No new raw SQL introduced in the service layer either — `database.py` remains the sole SQL layer per the established pattern
-
----
-
-### BLG-TECH-18 — npm dependency tree produces a reproducible production-build regression after a routine `npm update`
-**Priority:** P2 (Medium)
-**Type:** Platform / Technical Debt
-**Owner:** Head of Engineering
-**Source:** ST-27 (BLG-OPS-98, EPIC-05, v9.0) quarterly dependency upgrade cadence policy, first pass — 2026-08-21
-**Effort:** M (~1-2 days)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-Running `npm update` (bumping ~20 packages, all within their existing `package.json` semver ranges — nothing outside declared compatibility bounds) produces a reproducible `CI=false npm run build` failure: `[eslint] Failed to load config "react-app" to extend from`. `eslint-config-react-app@7.0.1` (a transitive dependency of `react-scripts`) is present in `npm ls`'s reported tree but is not actually installed under `node_modules/eslint-config-react-app` after the update — confirmed reproducible across 3 independent installs (`npm install` after `npm update`, and two full `rm -rf node_modules && npm install` clean reinstalls from the bumped `package-lock.json`). A related but distinct issue also surfaced during the same investigation: bumping `recharts` specifically (3.7.0 → 3.10.1, also within its declared range) introduces a new `react-is` peer-dependency requirement that isn't satisfied by anything already in the tree (`Module not found: Can't resolve 'react-is'`) — adding `react-is@19.2.8` as an explicit direct dependency fixed that half, but did not fix the `eslint-config-react-app` resolution failure. The dual-eslint-version tree (this repo runs ESLint 9 flat config at the top level; `react-scripts` internally still requires ESLint 8.x, per `playwright.config.js`'s own documented `DISABLE_ESLINT_PLUGIN` workaround for a related but distinct symptom) is the likely root cause area, but was not conclusively isolated within ST-27's own effort budget — the clean, pre-bump `package-lock.json` builds successfully with the same dual-eslint-version structure present, so the trigger is something in the specific version deltas, not the mere existence of two eslint majors in the tree.
-
-**Scope**
-- Bisect which specific package version bump(s) among the ~20 in the `npm update` batch actually break `eslint-config-react-app`'s installation/hoisting (candidates: `eslint` 9.39.4→9.39.5, `eslint-plugin-playwright` 2.10.4→2.11.0, or an indirect effect from another bump reshuffling the dependency tree's hoisting decisions)
-- Once isolated, either fix forward (e.g. an explicit `overrides`/`resolutions` entry pinning the conflicting sub-dependency) or file the specific incompatibility upstream if it's a genuine bug in one of the packages
-- Re-attempt the full `npm update` batch (see `docs/ops/quarterly_dependency_upgrade_cadence_policy.md` §3.1 for the exact list) once the root cause is fixed, verifying `CI=false npm run build` succeeds
-- Also apply the already-diagnosed `react-is` fix (add `react-is@19.2.8` as an explicit dependency) as part of this same story, since it's a confirmed, isolated, real fix for the `recharts` half of this investigation
-
-**Acceptance Criteria**
-- `npm update`'s full candidate list from `quarterly_dependency_upgrade_cadence_policy.md` §3.1 applied and `CI=false npm run build` succeeds
-- Root cause of the `eslint-config-react-app` resolution failure documented (not just worked around)
-- Full Playwright E2E suite re-verified passing against the updated dependency tree
-
----

@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-07 (ST-28, EPIC-04, v9.1, BLG-SPEC-117 — gained a dedicated `## Changelog` table; see that section for full history going forward)
+**Last Updated:** 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 — §41 Test Coverage Gaps section added, STEP 7.3 full-document TSG sweep run; see Changelog table for full history)
 
 ---
 
@@ -971,6 +971,14 @@ Both are tracked as a lessons-learnt friction item, not backlog debt (`lessons_l
 
 ---
 
+## 41. Test Coverage Gaps — v9.1 (2026-09-03__release-v9.1)
+
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — every EPIC's `test_scenarios` array was cross-referenced against its `qa_evidence_EPIC-xx.md` "Scenarios run" field and confirmed executed. Table is N/A per §6.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep, per `post_ship_closure.md`'s no-fixed-section-number scan rule):** Scanned all 26 `### N.N TSG-*` entries (§9–§40) for literal `**Status:** Open`. 0 Open entries found — every existing TSG entry already carries a `RESOLVED`/`not_applicable`/confirmed-still-open disposition (most recently reconciled at v8.6/§39 and v9.0/§40 closures). 0 Open TSG entries checked, 0 resolved.
+
+---
+
 ## 12. Guiding Principle
 
 > Specs explain decisions.
@@ -984,6 +992,7 @@ Both are tracked as a lessons-learnt friction item, not backlog debt (`lessons_l
 
 | Date | Change |
 |------|--------|
+| 2026-09-07 | Post-ship closure `2026-09-03__release-v9.1` — §41 Test Coverage Gaps (v9.1) added, 0 new gaps this cycle; full-document TSG reconciliation sweep found 0 Open entries (all 26 already resolved). |
 | 2026-09-07 | ST-28 (EPIC-04, v9.1, BLG-SPEC-117): added this `## Changelog` table; collapsed the header `**Last Updated:**` field to a single line going forward. |
 | 2026-09-03 | Post-ship closure outstanding-actions resolution, Head of Specs Team/QA & Testing Owner direct action — TSG-v22-02 resolved via new `tests/test_health_response_schema.py`; TSG-v23-01 resolved, stale "staging-blocked" premise corrected — see §10.2/§10.3. |
 | 2026-09-03 | Post-ship closure `2026-08-21__release-v9.0` — §40 Test Coverage Gaps (v9.0) added, 2 findings both `not_applicable`; full-document TSG reconciliation sweep resolved 1 long-stale Open entry, `TSG-v40-01`. |

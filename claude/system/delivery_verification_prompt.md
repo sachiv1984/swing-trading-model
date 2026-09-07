@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.8
-**Last Updated:** 2026-08-12
+**Version:** 3.9
+**Last Updated:** 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding actions, Head of Specs Team direct action — §7 Resolved-deviation carve-out gains an "or equivalent" evidence clarification for deviations with no natural canonical-spec Known Deviations home, LL-v9.1-P4-01); prior — 2026-08-12
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -115,6 +115,8 @@ Must not modify: `claude/cycles/<cycle_id>/execution_state.json` (sealed), `clau
 **Any open item that is not a filed deviation** (returned item, flagged gap, unresolved escalation) must have a `backlog.md` entry before the verification report is sealed. Verification does not block on these items — but they must be traceable.
 
 **Resolved-deviation carve-out (LL-v8.6-P4-03, added v3.8):** The P0–P3 hard-block/documented-acceptance requirements above apply only to deviations that are **open** at the time of this sprint's own delivery. A deviation record filed this sprint with `Status: Resolved` — i.e. a retroactive record of a defect already fully fixed (in this cycle or a prior one), filed for traceability rather than to flag a current gap — is entered in the Deviation Register (STEP 3 output) for traceability but does **not** trigger the severity policy's hard-block or PO+DoQ acceptance-recording requirement, regardless of its priority field. Confirm the canonical spec's own Known Deviations entry states `RESOLVED` (or equivalent) with a resolution narrative before applying this carve-out — an entry merely *labelled* P1 with no resolution evidence still hard-blocks per the table above. This closes an interpretive gap first found at `2026-08-11__release-v8.6` (`DEV-NAV-ST06-01`, a retroactively-filed P1 record for an already-shipped v8.5 fix, required the verifying engine to infer this exemption rather than read it directly from this policy).
+
+**"Or equivalent" evidence for a deviation with no natural canonical-spec home (LL-v9.1-P4-01, added v3.9):** The "or equivalent" clause above assumes every deviation has a canonical product spec capable of carrying a Known Deviations entry. Some deviations do not — a test-synchronization bug (the AC gap was in a test file, not the app) or a CI/ops-policy divergence has `spec_references` pointing at a test file or an ops/process document, neither of which conventionally carries a Known Deviations section. For this deviation shape specifically: the qa_evidence_EPIC-xx.md file's own dedicated Resolution narrative (root cause, fix, and CI/verification confirmation), cross-referenced from `docs/System_status_report.md`'s relevant capability row, is sufficient "equivalent" evidence to apply the carve-out — a dedicated Known Deviations table entry is not required to exist in a test file or ops policy doc for this narrower case. This does not relax the carve-out for any deviation whose `spec_references` includes a genuine product/component spec — that spec's own Known Deviations entry remains the required evidence there. First found at `2026-09-03__release-v9.1` (`DEV-EPIC02-ST08-01`, a Playwright test-synchronization gap referencing `docs/ops/quarterly_dependency_upgrade_cadence_policy.md` and `tests/e2e/signals-cash-balance.spec.js`), where the verifying engine had to construct this reading rather than find it stated directly.
 
 ---
 
