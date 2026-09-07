@@ -4508,6 +4508,28 @@ The v9.1 ST-05 fix for the Settings-subtitle `color-contrast` axe finding determ
 
 ---
 
+### BLG-SPEC-135 — Populate Specs_Index.md with the 78 spec files its own freshness check found unregistered
+
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Head of Specs Team
+**Source:** v9.1 ST-33 (BLG-GOV-274) Specs_Index.md automated freshness check, cycle 2026-09-03__release-v9.1 — 2026-09-07
+**Effort:** M (~1-2d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`scripts/check_specs_index_freshness.py` (built ST-33, BLG-GOV-274) compared `Specs_Index.md`'s tracked references against the live `docs/specs/` tree and found 78 `.md` files with zero reference anywhere in the index — including nearly every `docs/specs/frontend/pages/*.md` file (spot-checked `positions.md`: confirmed zero mentions via direct grep). `Specs_Index.md`'s §3 "Canonical Spec Domains" section registers domain-level ownership (Strategy, Data Model, Metrics, API Contracts) but was never extended into a full per-file page/component registry — a structural gap in the index's own design, not simple staleness from a lapsed update.
+
+**Scope**
+- Review the full 78-file list (`python3 scripts/check_specs_index_freshness.py`) and, for each, either add a registry entry to `Specs_Index.md` (matching the existing `§3.2`-style "Canonical Documents" bullet format) or make an explicit, documented decision that the file is intentionally out of the index's scope
+- Re-run the freshness check to confirm the additions list is empty (or explains every remaining item) once done
+
+**Acceptance Criteria**
+- `scripts/check_specs_index_freshness.py` reports 0 unexplained additions after this work
+- Head of Specs Team sign-off
+
+---
+
 ### BLG-TECH-16 — Sector-concentration adjustment's fail-open exception handler logs nothing on failure
 
 **Priority:** P3 (Low)
