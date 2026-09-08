@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-08 (session — 1 new item added: BLG-SPEC-137); prior — 2026-09-08 (session — 1 new item added: BLG-QA-164); prior — 2026-09-07 (session — 1 new item added: BLG-SPEC-136); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-08 (session — 1 new item added: BLG-QA-165); prior — 2026-09-08 (session — 1 new item added: BLG-SPEC-137); prior — 2026-09-08 (session — 1 new item added: BLG-QA-164); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4522,6 +4522,30 @@ Two independent deviations in the same release (`v8.9`) hit the identical root c
 - Frontend Specifications & UX Documentation Owner sign-off
 
 **Reference:** `docs/governance/deviation_root_cause_pattern_report_2026-09-08.md` (Class A, Finding A1)
+
+---
+
+### BLG-QA-165 — Extract governance_sync.yml's embedded bash logic into a shared, sourced script
+
+**Priority:** P3 (Low)
+**Type:** QA / CI
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated Director of Quality review of PR #1598 (EPIC-03, cycle 2026-09-07__release-v9.2) — 2026-09-08
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`.github/workflows/governance_sync.yml` embeds two pieces of logic directly in its YAML `run:` blocks — the diff-based newly-done detection (Parse Commits for Governance step) and the `is_story_done()` close-gate check (Update State and Close Issues step). Both now have dedicated regression tests (`scripts/test_governance_sync_diff_logic.sh`, `scripts/test_governance_sync_close_gate_logic.sh`, added v9.1 ST-19/`BLG-GOV-314` and v9.2 ST-09/`BLG-QA-159` respectively), but each test script works by hand-maintaining its own copy of the corresponding bash function, with a comment asking a future editor to keep it in sync manually. A future edit to the workflow's embedded logic with no matching edit to the test script's copy would leave the tests silently validating stale logic while still reporting green — the tests would give false confidence exactly when they're most needed (right after a change to the logic they cover).
+
+**Scope**
+- Extract `governance_sync.yml`'s two embedded bash functions (the newly-done diff detection, and `is_story_done()`) into a shared script (or two) under `scripts/`, parameterised the same way the current test copies already are (e.g. accepting a base directory / ref pair rather than hardcoding paths)
+- Update `governance_sync.yml` to source/call the extracted script(s) instead of embedding the logic inline
+- Update both existing test scripts (`test_governance_sync_diff_logic.sh`, `test_governance_sync_close_gate_logic.sh`) to source the same extracted script(s) rather than maintaining their own copies, so a future logic change and its test are structurally the same code
+
+**Acceptance Criteria**
+- `governance_sync.yml`'s diff-detection and close-gate logic each live in exactly one place (a sourced script), not duplicated between the workflow and its tests
+- Both existing regression test scripts still pass, now by exercising the real extracted functions rather than hand-maintained copies
+- QA & Testing Owner sign-off
 
 ---
 
