@@ -1,11 +1,35 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.38
-**Last Updated:** 2026-09-07 (delivery verification 2026-09-03__release-v9.1 — status line updated Sprint_Complete → Verified); prior — 2026-09-07 (sprint close 2026-09-03__release-v9.1); prior — 2026-09-03 (delivery verification 2026-08-21__release-v9.0 — status line updated Sprint_Complete → Verified); prior history retained — see prior entries in version control.
+**Version:** 4.39
+**Last Updated:** 2026-09-08 (sprint close 2026-09-07__release-v9.2 — new Sprint section added); prior — 2026-09-07 (delivery verification 2026-09-03__release-v9.1 — status line updated Sprint_Complete → Verified); prior — 2026-09-07 (sprint close 2026-09-03__release-v9.1); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
+
+## Sprint: 2026-09-07__release-v9.2
+**Date:** 2026-09-08
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Arc 5 compliance score low-trade-volume advisory added to `Arc5ComplianceSection` — utility-limiting notice when `total_closed_trades` falls below the confidence threshold (ST-01) | `docs/specs/frontend/components/arc5_compliance_section.md#Low-Trade-Volume Advisory`; `docs/specs/api_contracts/arc5_compliance_analytics.md#total_closed_trades` | None |
+| EPIC-02 | Settings page heading-order axe-core fix (ST-02); `aria-label`→`aria-labelledby` swap across 5 TradePlan/Settings controls (ST-03); Arc5ComplianceSection Card 3 spec corrected to match shipped text-format/null-display behaviour, resolving `BLG-FE-172` (ST-04); new motion-vs-contrast entrance-animation guideline added to `design_system.md` after 3 agent-mediated review rounds (ST-05) | `docs/specs/frontend/pages/settings.md`; `docs/specs/frontend/components/arc5_compliance_section.md#Card 3 — Top Rule Breach`; `docs/specs/frontend/design_system.md#Accessibility` | None (resolves pre-existing `BLG-FE-172`) |
+| EPIC-03 | `playwright.yml` dependency-bump CI trigger gap fixed (ST-06); axe-scan helper's fixed sleep replaced with condition-based wait (ST-07); Arc5ComplianceSection Playwright selector scoping fixed (ST-08); `governance_sync.yml` over-closing prevention and split-commit recovery regression-tested (ST-09, ST-10); `check_specs_index_freshness.py` given test coverage (ST-11); regression-suite runtime trend re-measurement, DEV-* root-cause pattern report, pip-audit trend log, DoQ template alignment check, staging sign-off tracker (ST-12–ST-16) | `.github/workflows/playwright.yml`; `scripts/test_governance_sync_close_gate_logic.sh`; `tests/test_check_specs_index_freshness.py`; `docs/ops/ci_pipeline_baseline.md#8.5`; `docs/governance/deviation_root_cause_pattern_report_2026-09-08.md` | None |
+| EPIC-04 | 26 governance-process-debt items cleared: quarterly attestation/audit logs and retention policies (ST-17, ST-21, ST-22, ST-28); governance role onboarding checklist and runbook (ST-29, ST-32); deferred-patch due-date index and meta-review findings index (ST-31, ST-34); PVR trend row (ST-26); AI feature cost-vs-value retrospective (ST-36); deprecation-header convention, §13-adjacent expiry review, workload-balance/Skill-Silo formalisation, wall-clock cost logging, run-manifest meta-review countdown, spec-debt review cadence (ST-18–ST-20, ST-24, ST-25, ST-27, ST-33, ST-37); `api_changelog.md` entry template, §13 boundary review cadence, condensed-tier trigger thresholds, data-volume threshold trigger, strategy-rules cross-reference/change-justification mechanisms (ST-23, ST-30, ST-38, ST-39, ST-41, ST-42) | `claude/system/shared_standards.md#21`, `#22`; `claude/system/roadmap_prompt.md#7.1`, `#7.2`, `#1.1`, `#STEP 8.1.5`; `claude/strategy/strategy_rules.md#13.6`, `#15`, `#16`; `docs/specs/metrics_definitions.md#Appendix D` | None |
+| EPIC-05 | Deprecated-endpoint sunset tracker (ST-43); contract example-payload freshness check (ST-44); Base44 prompt-version provenance tag and regeneration diff checklist (ST-45, ST-46); component prop-naming audit (ST-47); gate-metric naming consistency (ST-48); full 78-file `Specs_Index.md` registry (ST-49); CRA migration scoping (ST-50); package-lock churn investigation (ST-51); unused-dependency cleanup (ST-52); AI cost-threshold review (ST-53); AI endpoint cost/latency anomaly-detection service (ST-54); staging data-reset cadence review (ST-55); AI feature cost-trend tracking brought current, 6/6 endpoints (ST-56) | `docs/specs/api_contracts/deprecated_endpoint_sunset_tracker.md`; `scripts/check_contract_example_freshness.py`; `docs/specs/frontend/base44_prompt_template_library.md#16`, `#17`; `docs/specs/Specs_Index.md#8b`; `backend/services/ai_endpoint_anomaly_service.py` | Pass_with_deviation — ST-56 real-query-data AC clause unmet from this environment (no production DB access), disclosed in-document; `BLG-OPS-152` filed |
+
+### Capabilities deferred or returned
+
+None — all 56 sprint-scope stories reached `done`/`merged`.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md, qa_evidence_EPIC-05.md
+- Deviations filed: None new (resolves pre-existing `BLG-FE-172`); ST-56 disclosed partial-AC gap, `BLG-OPS-152` filed
+- Test scenarios referenced: tests/e2e/arc5-compliance-section.spec.js, tests/e2e/accessibility-axe-scan.spec.js, tests/test_check_specs_index_freshness.py, scripts/test_governance_sync_close_gate_logic.sh, scripts/test_governance_sync_diff_logic.sh, tests/test_ai_endpoint_anomaly_service.py
 
 ## Sprint: 2026-09-03__release-v9.1
 **Date:** 2026-09-07
