@@ -5,14 +5,14 @@
   "invoked_utc": "2026-09-07T15:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-07T15:54:01Z",
+  "last_updated_utc": "2026-09-07T18:45:00Z",
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-07__release-v9.2/EPIC-01",
       "pr_number": 1596,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-07__release-v9.2/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/e2e/arc5-compliance-section.spec.js"],
@@ -61,12 +61,15 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
     "all_merged": false
   },
 
-  "process_notes": [],
+  "process_notes": [
+    "2026-09-07T18:45:00Z — Session-resume merge-gate sync (LL-v3.9-P3-1): PR #1596 (EPIC-01) found MERGED (mergedAt 2026-09-07T17:08:08Z) via gh pr view; execution_state.json pr_status/status synced from stale open/done to merged/merged; EPIC-01 moved epics_pending -> epics_merged.",
+    "2026-09-07T18:45:00Z — Orphaned post-merge commit check (LL-v6.8-P3-01): found 1 orphaned commit on exec/2026-09-07__release-v9.2/EPIC-01 (db6b0640, backlog.md — 3 follow-up items BLG-QA-162/BLG-BE-111/BLG-QA-163), made after PR #1596 merged. Content confirmed absent from main. Reconciled via cherry-pick onto main as 795ad8ad ([EPIC-01] Reconcile orphaned post-merge commit db6b0640 onto main)."
+  ],
 
   "sealed": false,
   "sealed_utc": null
