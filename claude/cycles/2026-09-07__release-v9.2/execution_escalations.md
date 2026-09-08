@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-09-08
+Last Updated: 2026-09-08 (ESC-EXEC-20260908-01 resolved)
 
 ---
 
@@ -18,5 +18,5 @@ Last Updated: 2026-09-08
 - **Unblock criteria:** Head of UX & Design (or Product Owner acting on their behalf) confirms the current `docs/specs/frontend/design_system.md` §Accessibility "Motion-vs-contrast guideline" bullet (v1.12) is accurate and acceptable, OR requests further specific changes.
 - **SLA due-by:** 2026-09-09T08:49:28Z (24h — Quality trigger; "Before execution" per shared_standards.md §4 table interpreted here as before EPIC-02's PR is opened)
 - **Blocks execution:** Yes — blocks EPIC-02 PR open (§3.2.B pre-condition: DoQ/sign-off block must be non-blank) and EPIC-02 merge gate. Does not block EPIC-03/04/05 (different EPIC branches, no shared-file dependency).
-- **Disposition:** Open
-- **Resolution summary:** (complete when closing)
+- **Disposition:** Resolved
+- **Resolution summary:** Resolved 2026-09-08T08:56:00Z. The user directly invoked the Head of UX & Design role (matching ST-05's Owner field — role-ownership check per CLAUDE.md passed) and reviewed the corrected `design_system.md` v1.12 guideline text in-session, rather than a further retry-limited agent-mediated pass. Every factual claim in the "Known non-compliant instances" sub-list was independently re-verified line-by-line against the actual source (`src/pages/SystemStatus.js`, `src/pages/Signals.js`, `src/pages/Reports.js`, `src/components/dashboard/widgets/RecentTradesWidget.js`) and confirmed accurate, including the specific point round 3 flagged (Signals.js's `filteredSignals.slice(0, topN)` cap exists; `topN` itself has only a `min="1"` HTML constraint and no `max`). Design source citation, header/changelog consistency, and absence of pre-judged sign-off language were also re-confirmed. Signed off: Head of UX & Design (via user direction), 2026-09-08. See `execution_state.json` `epics.EPIC-02.stories.ST-05.sign_off_record` for the formal record.
