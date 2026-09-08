@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-07T15:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-08T12:15:00Z",
+  "last_updated_utc": "2026-09-08T12:20:00Z",
   "epics": {
     "EPIC-02": {
       "status": "merged",
@@ -460,8 +460,8 @@
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
-      "pr_number": null,
-      "pr_status": null,
+      "pr_number": 1599,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-07__release-v9.2/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -1286,7 +1286,8 @@
     "2026-09-08T08:44:30Z \u2014 Near-miss self-caught (LL-v9.1-P3-02 class): a follow-up commit-msg-hook rejection on EPIC-02 was mistakenly handled with `git commit --amend`, which (because the intervening `git commit` attempt had itself failed, leaving no new commit to amend) amended the already-pushed 2ca7b178 ([EPIC-02][ST-02][ST-03][ST-04] Fix Settings heading-order...) instead, rewriting its message and folding in unrelated changes -- before any push of the rewritten commit occurred. Caught immediately via `git log`/`git show --stat` inspection; recovered per the guardrail's own prescribed remedy: `git reset --soft 2ca7b178` (commit still reachable, not yet pruned) followed by a fresh, correctly-scoped, correctly-messaged commit (07ecb641), pushed as a clean fast-forward. No force-push used; origin's history was never rewritten.",
     "2026-09-08T09:10:00Z \u2014 Session-start divergence check (LL-v7.2-P3-01): local main was 9 commits behind origin/main (last local sync predated PR #1596/#1597 merges); synced via `git fetch origin main:main` (safe \u2014 main was not the checked-out branch). Session-resume merge-gate sync (LL-v3.9-P3-1): PR #1597 (EPIC-02) found MERGED (mergedAt 2026-09-08T10:48:04Z) via gh pr view, as a real merge commit (b2e9e698) \u2014 not squashed. execution_state.json pr_status/status synced from stale open/done to merged/merged; EPIC-02 moved epics_pending -> epics_merged. Orphaned post-merge commit check (LL-v6.8-P3-01): `git log exec/.../EPIC-02 --not main` empty \u2014 no orphaned commits, branch fully contained in main.",
     "2026-09-08T00:00:00Z \u2014 Session-resume merge-gate sync (LL-v3.9-P3-1): PR #1598 (EPIC-03) found MERGED (mergedAt 2026-09-08T11:44:26Z) via gh pr view; execution_state.json pr_status/status synced from stale open/done to merged/merged; EPIC-03 moved epics_pending -> epics_merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-09-07__release-v9.2/EPIC-03 returned empty \u2014 no orphaned commits found. EPIC-01/EPIC-02 branches also re-checked: EPIC-02 empty (clean); EPIC-01's prior orphan (db6b0640) already reconciled onto main as 795ad8ad per prior session's note \u2014 no new orphans.",
-    "2026-09-08T12:10:00Z \u2014 EPIC-04 (26 stories, ST-17..ST-42) executed across 4 batched commits on exec/2026-09-07__release-v9.2/EPIC-04 (87632888, e4b7032a, 551b8225, 022c2588). All classified autonomous, all documentation/governance-process debt (no application code, no frontend-visible change). spec_references populated per Case A/B; deviations_filed=true (deviation check performed, none found against stage4_backlog_slice.md). 22 of 26 stories carry an explicit agent-mediated sign_off_record against a named role's charter (execution_prompt.md \u00a75.3); 4 (ST-17, ST-27, ST-28, ST-38) carry sign_off_record=null because neither their own AC nor their artefact named a specific reviewing role \u2014 verified by code/doc review only, consistent with BLG-GOV-19 autonomous-class eligibility. qa_evidence_EPIC-04.md and PR to follow."
+    "2026-09-08T12:10:00Z \u2014 EPIC-04 (26 stories, ST-17..ST-42) executed across 4 batched commits on exec/2026-09-07__release-v9.2/EPIC-04 (87632888, e4b7032a, 551b8225, 022c2588). All classified autonomous, all documentation/governance-process debt (no application code, no frontend-visible change). spec_references populated per Case A/B; deviations_filed=true (deviation check performed, none found against stage4_backlog_slice.md). 22 of 26 stories carry an explicit agent-mediated sign_off_record against a named role's charter (execution_prompt.md \u00a75.3); 4 (ST-17, ST-27, ST-28, ST-38) carry sign_off_record=null because neither their own AC nor their artefact named a specific reviewing role \u2014 verified by code/doc review only, consistent with BLG-GOV-19 autonomous-class eligibility. qa_evidence_EPIC-04.md and PR to follow.",
+    "2026-09-08T12:20:00Z \u2014 PR #1599 opened for EPIC-04 (exec/2026-09-07__release-v9.2/EPIC-04 -> main), 26/26 stories done, qa_signed_off=true. gh pr view: state=OPEN, mergeStateStatus=BLOCKED (branch protection requires PR review/status checks \u2014 expected, not a content issue; CI checks and Product Owner acceptance are outstanding, per the always-human merge gate)."
   ],
   "sealed": false,
   "sealed_utc": null
