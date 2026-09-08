@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.19.0
-**Last Updated:** 2026-09-08 (ST-35 + ST-40, EPIC-04, v9.2, BLG-GOV-277 + BLG-GOV-276 — new Appendix D Governance Metrics cross-reference: PVR rolling-window boundary-trade handling and the Skill-Silo skill-category taxonomy); prior — 2026-09-07 (ST-37, EPIC-05, v9.1, BLG-SPEC-100 — Win Rate section gains a Terminology Note confirming "hit rate" is not used anywhere in this system)
+**Version:** 1.20.0
+**Last Updated:** 2026-09-08 (ST-48, EPIC-05, v9.2, BLG-SPEC-128 — new Gate-Metric Naming glossary section, SI-02 Data-Sufficiency Gate canonical term + surface-name mapping); prior — 2026-09-08 (ST-35 + ST-40, EPIC-04, v9.2, BLG-GOV-277 + BLG-GOV-276 — new Governance Metrics cross-reference appendix, later relabelled Appendix F by ST-48 to resolve a duplicate-heading collision: PVR rolling-window boundary-trade handling and the Skill-Silo skill-category taxonomy); prior — 2026-09-07 (ST-37, EPIC-05, v9.1, BLG-SPEC-100 — Win Rate section gains a Terminology Note confirming "hit rate" is not used anywhere in this system)
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1168,6 +1168,25 @@ Profit `text-emerald-400`, loss `text-rose-400` — aligned with (not distinct f
 
 ---
 
+# Gate-Metric Naming (ST-48, BLG-SPEC-128, v9.2)
+
+**Canonical term:** the **SI-02 Data-Sufficiency Gate** — the `closed_trades >= 20` (and, per `reports.md`'s Gate Condition 2, `linked closed_trades >= 20`) threshold that must be met before SI-02 drift-detection metrics (`docs/specs/metrics/si02_drift_score.md`) have enough data to compute. Backed by `GET /portfolio/gate-metrics` (`gate_threshold`, `gate_met` fields).
+
+**Audit finding:** every current surface already uses a name consistent with this term — no renames required. Recorded here as the single glossary entry a reader can start from when jumping between surfaces:
+
+| Surface | Name used | Notes |
+|---------|-----------|-------|
+| `claude/roadmap/current_roadmap.md` | "SI-02 gate" / "gate NOT MET" | Roadmap-level status tracking (e.g. "0/11 linked trade plans"). |
+| Dashboard `GateProgressStrip.js` / `dashboard.md` §6 | "Gate Progress" strip; user-facing copy deliberately avoids the `SI-02` code name ("… more to unlock quality insights" — `BLG-SPEC-73` resolution, benefit-oriented framing for end users) | Single headline count only. |
+| Reports page `reports.md` | "SI-02 Gate Status" section; "Gate Condition 1/2/3" | Full 3-condition breakdown, distinct by design from the Dashboard's single-count strip (`reports.md` explicitly cross-references this distinction). |
+| SI-05 Weekly Digest (`claude/roadmap/current_roadmap.md` SI-05 entry) | "compliance score trend" | Digest surfaces the Arc 5 composite compliance score (this document, Tier 2 §Arc 5 Compliance) alongside — not part of — the SI-02 gate itself; the two are related but distinct metrics and the digest does not conflate their names. |
+
+**Historical note — `PT-04` is not part of this gate's live naming.** Dashboard `dashboard.md`'s Change Log (v2.2/v2.7) shows early copy drafts labelled the threshold "PT-04/SI-02 gate" — `PT-04` (Setup Quality Score) shared the same 20-closed-trade design-time threshold as SI-02 at v6.1, but PT-04 permanently gate-cleared at 15 trades that same cycle and has not been gated since (`current_roadmap.md`, Arc 2 ✅ Fully Complete). No current spec or shipped copy uses "PT-04" for this gate; the coupling was cycle-specific and historical. Do not reintroduce a combined "PT-04/SI-02" label in new copy — if a future feature needs its own data-sufficiency gate, give it its own name rather than bundling it with SI-02's.
+
+**Metrics Definitions & Analytics Canonical Owner sign-off:** Confirmed — audit complete across `current_roadmap.md`, `dashboard.md`, `reports.md`, and the SI-05 digest entry; naming already consistent, no renames required; this glossary entry and the PT-04 historical-coupling note are the standardising artefact. 2026-09-08.
+
+---
+
 ## Appendix A: Data Lineage (Referential)
 
 This Metrics Definitions document is the canonical source for **metric semantics and formulas**.
@@ -1215,6 +1234,8 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-09-08 | 1.20.0 | ST-48 (EPIC-05, v9.2, BLG-SPEC-128): Add Gate-Metric Naming section — canonical "SI-02 Data-Sufficiency Gate" term, surface-name mapping across roadmap/dashboard/reports/digest, and historical note that `PT-04` is no longer part of this gate's live naming (gate-cleared v6.1). Also relabelled the v1.19.0 Governance Metrics appendix from "Appendix D" (duplicate of the existing Change Log heading) to "Appendix F" (next free letter). Metrics Definitions & Analytics Canonical Owner sign-off cleared 2026-09-08. | Metrics Definitions & Analytics Canonical Owner |
+| 2026-09-08 | 1.19.0 | ST-35 + ST-40 (EPIC-04, v9.2, BLG-GOV-277 + BLG-GOV-276): Added the "Appendix D — Governance Metrics (Cross-Reference Only)" section below Appendix C — PVR rolling-window boundary-trade handling rules and the Skill-Silo skill-category taxonomy. (This row backfilled by ST-48, EPIC-05, v9.2 — the original EPIC-04 commit bumped the header version but omitted this Change Log entry.) | Metrics Definitions & Analytics Canonical Owner |
 | 2026-09-07 | 1.18.0 | ST-37 (EPIC-05, v9.1, BLG-SPEC-100): Win Rate section gains a Terminology Note — confirmed via a full-repo search that "hit rate" is not used anywhere else in `docs/specs/` or `src/`, so no live inconsistency exists between the two terms; "Win Rate" is this system's sole canonical term. Metrics Definitions & Analytics Owner agent-mediated sign-off cleared 2026-09-07. | Metrics Definitions & Analytics Owner |
 | 2026-08-17 | 1.17.0 | ST-03 (EPIC-01, v8.9, BLG-SPEC-85): Add Validation Tolerances subsection to Trailing Stop Action Rate — numeric bounds for insufficient-sample, expected range, anomalously low/high, and stale-capture conditions, replacing the previously qualitative-only description. Metrics Definitions & Analytics Owner agent-mediated sign-off cleared 2026-08-17. | Metrics Definitions & Analytics Owner |
 | 2026-07-14 | 1.16.0 | ST-06 (EPIC-03, v7.1, BLG-SPEC-83): Add Realized/Unrealized P&L Split section — formalises the v7.0 feature (no prior entry existed). Documents stored-vs-computed-on-read ownership decision (realized: stored at exit, immutable; unrealized: live on Positions page vs nightly-snapshot on Reports page — a genuine ambiguity surfaced this cycle, tracked as `BLG-SPEC-87`), currency/rounding rules (GBP, 2dp server-side, no client re-rounding), reconciliation rule (approximate tie-back to portfolio `total_pnl`, verified against production data), and visual treatment (aligned with Open Positions Panel convention). Metrics Definitions & Analytics Owner sign-off cleared 2026-07-14. | Metrics Definitions & Analytics Owner |
@@ -1356,7 +1377,9 @@ When any required input field is unavailable from the API (e.g. null `override_r
 
 ---
 
-## Appendix D — Governance Metrics (Cross-Reference Only)
+## Appendix F — Governance Metrics (Cross-Reference Only)
+
+**Heading correction (ST-48, EPIC-05, v9.2):** this section was originally titled "Appendix D", duplicating the existing Appendix D (Change Log) heading above — a labelling collision from the original EPIC-04 commit, corrected here to the next free letter (Appendix E is already in use for Known Deviations & Backlog Items).
 
 **Scope note:** the metrics in this appendix are **not** returned by `GET /analytics/metrics` and are exempt from this document's Completeness Guarantee (§Purpose) — they are governance-process metrics (roadmap/backlog composition), not product analytics. They are documented here, in the file owned by the Metrics Definitions & Analytics Canonical Owner, because that role is this system's single accountable owner of metric-definition rigor generally, governance metrics included — not because they belong to the API surface this document otherwise governs. The authoritative computation for each metric below lives in its cited governance prompt; this appendix is a definitional cross-reference, not a second source of truth.
 

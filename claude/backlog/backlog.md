@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-08 (session — 3 new items added: BLG-GOV-316, BLG-GOV-317, BLG-SPEC-138); prior — 2026-09-08 (session — 1 new item added: BLG-QA-165); prior — 2026-09-08 (session — 1 new item added: BLG-SPEC-137); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-08 (session — 2 new items added: BLG-QA-166, BLG-GOV-318); prior — 2026-09-08 (session — 3 new items added: BLG-SPEC-139, BLG-OPS-151, BLG-OPS-152); prior — 2026-09-08 (session — 3 new items added: BLG-GOV-316, BLG-GOV-317, BLG-SPEC-138); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4610,6 +4610,122 @@ ST-35/ST-40 (EPIC-04, v9.2) added governance metrics (Skill-Silo skill-category 
 **Acceptance Criteria**
 - Explicit placement decision recorded
 - Content relocated if the decision is to move it
+
+**Note (added 2026-09-08, ST-48/EPIC-05):** while resolving this same document's separate heading-collision defect (the "Appendix D" title was reused by two different sections — see `metrics_definitions.md` Appendix D's own Change Log v1.20.0 entry), the duplicate-heading symptom this item might otherwise have been half-describing is already fixed (relabelled to "Appendix F"). This item's actual AC — a Product Owner placement decision on whether governance-metrics content belongs in `docs/governance/` at all — is a separate, still-open question and is unaffected by that fix. Left open, not resolved, by this note.
+
+---
+
+### BLG-SPEC-139 — Triage contract example-payload freshness check findings
+
+**Priority:** P3 (Low)
+**Type:** Spec / Documentation Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-44 (EPIC-05, v9.2, BLG-SPEC-120) — 2026-09-08
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-44 added `scripts/check_contract_example_freshness.py`, a structural drift detector comparing `docs/specs/api_contracts/*.md` response examples against the `docs/reference/openapi.yaml` schema for the same method+path. Its first baseline run (`docs/ops/contract_example_freshness_baseline_2026-09-08.md`) flagged 37 examples as POSSIBLE DRIFT and 3 as SKIPPED. None of these have been individually triaged yet — some are likely genuine example/schema drift, others are likely artifacts of the script's own nested-array depth-resolution limit (documented in the baseline doc §3). Left untriaged, real drift and tooling noise stay indistinguishable.
+
+**Scope**
+- Review each of the 37 POSSIBLE DRIFT findings and 3 SKIPPED findings in `docs/ops/contract_example_freshness_baseline_2026-09-08.md`
+- For genuine drift: fix the stale contract example or the `openapi.yaml` schema, whichever is wrong
+- For script-resolver artifacts: note the specific limitation (and, if cheap, fix the script's depth handling)
+
+**Acceptance Criteria**
+- Every one of the 40 baseline findings has a recorded disposition (fixed, or documented as a resolver artifact)
+- `python3 scripts/check_contract_example_freshness.py` re-run and its updated finding count recorded
+- API Contracts & Documentation Owner sign-off
+
+---
+
+### BLG-OPS-151 — Wire the AI endpoint cost/latency anomaly check into a scheduled job and alert channel
+
+**Priority:** P3 (Low)
+**Type:** Operational / Infrastructure
+**Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
+**Source:** ST-54 (EPIC-05, v9.2, BLG-OPS-112) — 2026-09-08
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-54 added `backend/services/ai_endpoint_anomaly_service.py`, a pure cost/latency spike-detection function covering all 6 current AI-invoking endpoints, verified via simulated spikes in `tests/test_ai_endpoint_anomaly_service.py`. It is not yet wired to a live scheduled job or an alert-delivery channel — this environment has no production database access to source real recent-window/baseline figures (same constraint documented in `docs/ops/ai_feature_cost_trend_2026_q3.md` §3), so the check exists but never actually runs against live data today.
+
+**Scope**
+- Wire `check_cost_anomaly`/`check_latency_anomaly` into a scheduled job (e.g. alongside the existing `POST /ai/check-daily-cost` daily check, or a new dedicated scheduled endpoint/workflow) that sources real recent-window and baseline figures from `claude_audit_log`
+- Deliver a firing anomaly to an existing alert channel (Telegram, matching the SI-05/`BLG-OPS-57` precedent) rather than only logging it
+
+**Acceptance Criteria**
+- A scheduled job invokes the anomaly check against real production data on a defined cadence
+- A firing anomaly reaches a real alert channel (not log-only)
+- Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-OPS-152 — Run real Q3 2026 AI cost-trend query against production data
+
+**Priority:** P3 (Low)
+**Type:** Operational / Infrastructure
+**Owner:** FinOps & Resource Architect
+**Source:** ST-56 (EPIC-05, v9.2, BLG-OPS-150) — 2026-09-08
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-56 required "real query data obtained for at least the current quarter" for `docs/ops/ai_feature_cost_trend_2026_q3.md`. This environment has no production database access (`DATABASE_URL` not set, same constraint documented in `anthropic_api_cost_trend_2026.md` §3) — the document's §3 carries the recorded SQL query and a carried-forward estimate instead of a real result.
+
+**Scope**
+- From an environment with production DB access, run the query recorded in `docs/ops/ai_feature_cost_trend_2026_q3.md` §3 against `claude_audit_log` for Q3 2026 (2026-07-01 to 2026-09-30)
+- Confirm whether `claude_audit_log` carries a column identifying which of the 6 AI-invoking endpoints produced each row; if not, note that as its own prerequisite gap
+- Update the document's §3 with the real result, replacing the carried-forward estimate
+
+**Acceptance Criteria**
+- `docs/ops/ai_feature_cost_trend_2026_q3.md` §3 contains an actual query result for Q3 2026, not an estimate
+- FinOps & Resource Architect sign-off
+
+---
+
+### BLG-QA-166 — Add unit test coverage for check_contract_example_freshness.py
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated Director of Quality review of PR #1600 (EPIC-05, v9.2) — 2026-09-08
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`scripts/check_contract_example_freshness.py` (ST-44, EPIC-05, v9.2) was run once manually to produce its baseline doc (`docs/ops/contract_example_freshness_baseline_2026-09-08.md`), but nothing pins its `$ref`-resolution or envelope-unwrapping comparison logic going forward — unlike its sibling tool `check_specs_index_freshness.py`, which received dedicated pytest coverage (`tests/test_check_specs_index_freshness.py`) the same sprint it was added (EPIC-03 ST-11, v9.2). A future edit to the script could silently break its detection logic with no test to catch it.
+
+**Scope**
+- Add pytest coverage for `scripts/check_contract_example_freshness.py`, mirroring `test_check_specs_index_freshness.py`'s shape
+- Cover: `$ref` resolution (including `allOf`/nested schemas), the envelope-unwrapping comparison logic (`data.foo` vs. bare `foo`), and at least one known-good and one known-drift fixture
+
+**Acceptance Criteria**
+- New test file exists and passes
+- QA & Testing Owner sign-off
+
+---
+
+### BLG-GOV-318 — Codify whether opportunistic in-file fixes found mid-story need their own backlog entry
+
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** Agent-mediated Product Owner review of PR #1600 (EPIC-05, v9.2) — 2026-09-08
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`CLAUDE.md` §7 explicitly allows filing a *new* backlog item for a genuinely out-of-scope finding discovered mid-sprint, but says nothing about the case where the engine instead fixes a small incidental defect directly in a file it is already editing for an unrelated story. PR #1600 did this twice — a duplicate "Appendix D" heading collision in `metrics_definitions.md` (found while executing ST-48) and a stale `execution_state.json` field left by an unrelated, already-merged EPIC — both currently disclosed only via commit message, with no documented rule on when that is sufficient versus when the fix should get its own backlog entry first.
+
+**Scope**
+- Define the rule: backlog entry always required / commit-message disclosure sufficient / a size-or-risk-based threshold distinguishing the two
+- Record the rule in `CLAUDE.md` §7 or `shared_standards.md` (whichever this repo's existing convention for this kind of process rule prefers)
+
+**Acceptance Criteria**
+- Rule documented in a governance source file
+- Product Owner sign-off
 
 ---
 

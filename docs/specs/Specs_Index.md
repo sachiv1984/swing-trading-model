@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 — §41 Test Coverage Gaps section added, STEP 7.3 full-document TSG sweep run; see Changelog table for full history)
+**Last Updated:** 2026-09-08 (ST-49, EPIC-05, v9.2, BLG-SPEC-135 — §8b Full Spec File Registry added, populating all 78 additions `scripts/check_specs_index_freshness.py` had found unreferenced; see Changelog table for full history)
 
 ---
 
@@ -123,6 +123,7 @@ It points to the **single canonical source**.
 - `_external_api_template.md` — Template (created 2026-05-31, ST-21, cycle 2026-05-30__release-v4.6; BLG-SPEC-32): Standard template for external API integration contracts; 6 required sections (Overview, Authentication, Endpoints, Error Handling, Rate Limits, Change Log). Conformance advisory for existing contracts (Anthropic, Alpaca) noted in document. Sign-off: Head of Specs Team.
 - `strategy_version_comparison_contract.md` — Pre-authored contract v0.1.0 (created 2026-06-02, ST-07, cycle 2026-06-01__release-v4.8; BLG-SPEC-43): GET /analytics/strategy-version-comparison — SI-04 strategy version comparison endpoint contract pre-authored before SI-04 sprint; response schema, query parameters, error cases, §13 binding conditions. Placeholder entry in openapi.yaml. Implementation gated on SI-04 sprint planning. Sign-off: Strategy Rules & System Intent Owner + Head of Specs Team (autonomous class).
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
+- `deprecated_endpoint_sunset_tracker.md` — Operational Record (Class 3), v1.0, Active (created 2026-09-08, ST-43, EPIC-05, v9.2, BLG-SPEC-119): live register of endpoints currently inside their `conventions.md` §14 deprecation-notice window, plus a historical log of pre-§14 supersessions. Sign-off: API Contracts & Documentation Owner.
 
 **Supporting Reference**
 - `docs/reference/openapi.yaml` — *Supporting reference only; must not diverge from canonical contracts*
@@ -376,6 +377,155 @@ The Spec Dependency Map is a point-in-time reference document mapping all canoni
 The Coverage Inventory is the authoritative cross-domain record of spec-to-implementation coverage, lifecycle compliance status, and open documentation gaps. It is refreshed every 3 cycles (at `run audit`) and at the start of each major release.
 
 - `docs/specs/spec_coverage_inventory.md` — Class 3 Operational Record, v1.0, Filed 2026-03-17 (ST-17, EPIC-05). 38 documents audited; 7 actions identified.
+
+---
+
+## 8b. Full Spec File Registry (ST-49, BLG-SPEC-135)
+
+Populated by the ST-49 freshness-check remediation (`scripts/check_specs_index_freshness.py`, v9.1 ST-33/BLG-GOV-274) — the 78 live `docs/specs/` files the script found unreferenced anywhere above. Grouped by domain; each row is a direct reference so the freshness check counts it as indexed. This section is a flat registry, not a restatement of §3's domain ownership — where a file's subject matter is already governed by a §3 domain, §3 remains authoritative on content ownership; this table only records that the file exists and is tracked.
+
+**API Contracts**
+
+| Path | Title | Owner | Class |
+|------|-------|-------|-------|
+| `docs/specs/api_contracts/ai_advisory_contract_checklist.md` | AI Advisory Endpoint — Contract Review Checklist | API Contracts & Documentation Owner; Head of Specs Team | Canonical (Class 1) |
+| `docs/specs/api_contracts/ai_thesis_generation.md` | AI Thesis Generation API Contract | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
+| `docs/specs/api_contracts/arc5_compliance_analytics.md` | Arc 5 Compliance Analytics API Contract | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
+| `docs/specs/api_contracts/backend_engineering_patterns.md` | Backend Engineering Patterns | Backend Engineering Patterns Owner | Canonical Specification (Class 1) |
+| `docs/specs/api_contracts/cash_endpoints.md` | cash_endpoints.md | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
+| `docs/specs/api_contracts/changelog_endpoints.md` | changelog_endpoints.md | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
+| `docs/specs/api_contracts/gemini_thesis_generation.md` | AI Thesis Generation API Contract | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
+| `docs/specs/api_contracts/grace_period_alert_endpoint.md` | Grace Period Alert Endpoint Contract | — | — |
+| `docs/specs/api_contracts/pre_entry_validation.md` | pre_entry_validation.md | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
+| `docs/specs/api_contracts/red_flag_journal.md` | red_flag_journal.md | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
+| `docs/specs/api_contracts/research_endpoint.md` | API Contract — Research Endpoint | API Contracts & Documentation Owner | Supporting Document (Class 2) |
+| `docs/specs/api_contracts/stop_trail_endpoint.md` | Stop Trail Endpoint Contract | — | — |
+| `docs/specs/api_contracts/strategy_benchmark_endpoints.md` | Strategy Benchmark API Contract | Backend Engineering Patterns Owner; Product Owner | API Contract (Class 2) |
+
+**Frontend — Pages**
+
+| Path | Title | Owner | Class |
+|------|-------|-------|-------|
+| `docs/specs/frontend/pages/navigation.md` | Frontend Specification — Sidebar Navigation | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
+| `docs/specs/frontend/pages/notifications.md` | notifications.md — Notifications (Feed, Preferences, Alert Rules & History) | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
+| `docs/specs/frontend/pages/positions.md` | positions.md | Frontend Specifications & UX Documentation Owner | Class 1 |
+| `docs/specs/frontend/pages/pre_trade_research.md` | pre_trade_research.md — Pre-Trade Research View | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
+| `docs/specs/frontend/pages/red_flag_journal.md` | red_flag_journal.md — Red Flag Journal | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
+| `docs/specs/frontend/pages/reflections.md` | Frontend Specification — Reflections Page | Frontend Specifications & UX Documentation Owner | Canonical Specification (Class 1) |
+| `docs/specs/frontend/pages/research_view.md` | research_view.md — Research View | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
+| `docs/specs/frontend/pages/risk_dashboard.md` | Frontend Specification — Risk Dashboard Page | Frontend Specifications & UX Documentation Owner | Canonical Specification (Class 1) |
+| `docs/specs/frontend/pages/screener_morning_routine.md` | Screener Morning Routine — UX Workflow Spec | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
+| `docs/specs/frontend/pages/settings.md` | settings.md | Frontend Specifications & UX Documentation Owner | Class 1 |
+| `docs/specs/frontend/pages/signals.md` | signals.md | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
+| `docs/specs/frontend/pages/strategy_benchmark.md` | Frontend Specification — Strategy Benchmark Page | Frontend Specifications & UX Documentation Owner | Canonical Specification (Class 1) |
+| `docs/specs/frontend/pages/system_status.md` | system_status.md | Frontend Specifications & UX Documentation Owner | Class 1 |
+| `docs/specs/frontend/pages/ticker_universe.md` | ticker_universe.md — Ticker Universe Management Page | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
+| `docs/specs/frontend/pages/trade_plan.md` | trade_plan.md — Trade Plan | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
+| `docs/specs/frontend/pages/trade_reflection.md` | Frontend Specification — Trade Reflection Template | Frontend Specifications & UX Documentation Owner | Canonical Specification (Class 1) |
+| `docs/specs/frontend/pages/weekly_digest.md` | weekly_digest.md | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
+
+**Frontend — Components**
+
+| Path | Title | Owner | Class |
+|------|-------|-------|-------|
+| `docs/specs/frontend/components/arc5_compliance_section.md` | Arc5ComplianceSection — Component Specification | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
+| `docs/specs/frontend/components/cash_management_modal.md` | cash_management_modal.md | Frontend Specifications & UX Documentation Owner | Class 1 |
+| `docs/specs/frontend/components/exit_modal.md` | exit_modal.md | Frontend Specifications & UX Documentation Owner | Class 1 |
+| `docs/specs/frontend/components/journal_components.md` | journal_components.md | Frontend Specifications & UX Documentation Owner | Class 1 |
+| `docs/specs/frontend/components/position_detail_modal.md` | position_detail_modal.md | Frontend Specifications & UX Documentation Owner | Class 1 |
+| `docs/specs/frontend/components/position_form.md` | position_form.md | Frontend Specifications & UX Documentation Owner | Class 1 |
+
+**Frontend — Patterns**
+
+| Path | Title | Owner | Class |
+|------|-------|-------|-------|
+| `docs/specs/frontend/patterns/api_dependencies.md` | api_dependencies.md | Frontend Specifications & UX Documentation Owner | Class 2 |
+| `docs/specs/frontend/patterns/error_handling.md` | error_handling.md | Frontend Specifications & UX Documentation Owner | Class 2 |
+| `docs/specs/frontend/patterns/loading_states.md` | Frontend Pattern — Loading State Standardisation | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
+
+**Frontend — Reviews & Supporting**
+
+| Path | Title | Owner | Class |
+|------|-------|-------|-------|
+| `docs/specs/fe/rfj_design_review_scope.md` | Red Flag Journal — Design Review Scope Document | Frontend Specs & UX Documentation Owner | Planning Document (Class 4) |
+| `docs/specs/frontend/arc5_nav_cohesion_review_v4.6.md` | Arc 5 Nav Cohesion Review — v4.6 | Head of UX & Design | Planning Document (Class 4) |
+| `docs/specs/frontend/base44_prompt_template_library.md` | Base44 Prompt Template Library | Base44 Frontend Prompt Owner | Class 2 — Supporting |
+| `docs/specs/frontend/blg_qa_111_combined_design_review_shared_playwright_plan.md` | Combined Design Review + Shared Playwright Suite Plan | Head of UX & Design / Director of Quality | Planning Document (Class 4) |
+| `docs/specs/frontend/mobile_responsiveness_baseline_assessment_v7.2.md` | Mobile Responsiveness Baseline Assessment | Head of UX & Design | Planning Document (Class 4) |
+| `docs/specs/frontend/notification_surface_consolidation_review_v7.2.md` | Notification/Digest Surface Consolidation Review | Head of UX & Design | Planning Document (Class 4) |
+| `docs/specs/frontend/performance_budget.md` | Frontend Performance Budget | Frontend Specifications & UX Documentation Owner | Frontend Specification (Class 2) |
+
+**Security**
+
+| Path | Title | Owner | Class |
+|------|-------|-------|-------|
+| `docs/specs/security/ai_endpoint_security_checklist.md` | Mandatory Security Review Checklist — New AI-Calling Endpoints | Cybersecurity & Trust Lead | Governance (Class 3) |
+| `docs/specs/security/ai_injection_risk_assessment.md` | AI Response Injection Risk Assessment | Cybersecurity & Trust Lead; AI Compliance & Governance Officer | Governance (Class 3) |
+| `docs/specs/security/ai_vendor_tos_dpa_review.md` | AI Vendor Terms-of-Service & Data-Processing Review | AI Compliance & Governance Officer | Canonical Specification (Class 2) |
+| `docs/specs/security/trade_plan_data_sensitivity.md` | Trade Plan Data Sensitivity Classification | Cybersecurity & Trust Lead | Supporting Document (Class 2) |
+
+**Compliance**
+
+| Path | Title | Owner | Class |
+|------|-------|-------|-------|
+| `docs/specs/compliance/ai_journal_review_cadence.md` | AI Journal Summarisation — Quarterly Review Process | AI Compliance & Governance Officer | Class 2 Canonical Specification |
+| `docs/specs/compliance/pt05_entry_checklist_s13_review.md` | §13 Boundary Review — PT-05 Pre-Trade Entry Checklist | Strategy Rules & System Intent Owner | Compliance Document (Class 2) |
+
+**Data Model**
+
+| Path | Title | Owner | Class |
+|------|-------|-------|-------|
+| `docs/specs/data_model/trade_plan_schema_audit_v4.6.md` | Trade Plans Schema Audit — v4.6 | Data Model & Domain Schema Owner | Operational Record (Class 3) |
+| `docs/specs/data_model_positions_dictionary.md` | Positions Table — Data Dictionary | Data Model Domain & Schema Owner | Class 1 Canonical Specification |
+
+**Data Provenance**
+
+| Path | Title | Owner | Class |
+|------|-------|-------|-------|
+| `docs/specs/data_provenance/research_view_provenance.md` | Data Source Provenance — Research View | Head of Specs Team | Supporting Document (Class 2) |
+
+**Platform**
+
+| Path | Title | Owner | Class |
+|------|-------|-------|-------|
+| `docs/specs/platform/feature_flags.md` | Feature Flag System — Platform Specification | Infrastructure & Operations Owner | Supporting Document (Class 2) |
+
+**SI-02 Working Documents**
+
+| Path | Title | Owner | Class |
+|------|-------|-------|-------|
+| `docs/specs/si02/arc5_backend_architecture_review.md` | Arc 5 Backend Architecture Review | Head of Engineering; Head of Backend Engineering | Planning Document (Class 4) |
+| `docs/specs/si02/data_prerequisite_audit.md` | SI-02 Data Prerequisite Audit | Strategy Rules & System Intent Owner | Planning Document (Class 4) |
+| `docs/specs/si02/query_performance_assessment.md` | SI-02 DB Query Performance Pre-Assessment | Head of Engineering | Planning Document (Class 4) |
+| `docs/specs/si02/section13_criteria.md` | SI-02 §13 Evidence Criteria | Strategy Rules & System Intent Owner | Planning Document (Class 4) |
+| `docs/specs/si02/si02_background_job_adr.md` | SI-02 Background Job Architecture Design | Head of Backend Engineering; Head of Engineering | Planning Document (Class 4) |
+| `docs/specs/si02/si02_fe_component_predesign.md` | SI-02 Drift Detection Result Component Pre-Design | Frontend Specs & UX Documentation Owner | Planning Document (Class 4) |
+| `docs/specs/si02/si02_fe_interaction_spec.md` | SI-02 Drift Detection Interaction Specification | Frontend Specs & UX Documentation Owner | Planning Document (Class 4) |
+| `docs/specs/si02/si02_index_preassessment.md` | SI-02 Query Index Pre-Assessment | Head of Engineering; Head of Backend Engineering | Planning Document (Class 4) |
+| `docs/specs/si02/si02_query_predesign.md` | SI-02 Drift Detection Query Pre-Design | Head of Backend Engineering | Planning Document (Class 4) |
+| `docs/specs/si02_gap_analysis.md` | SI-02 Data Model Gap Analysis | Data Model & Domain Schema Owner; Head of Specs Team | Planning Document (Class 4) |
+
+**Pre-Implementation Readiness Passes**
+
+| Path | Title | Owner | Class |
+|------|-------|-------|-------|
+| `docs/specs/blg_fe_109_pre_implementation_readiness_pass.md` | BLG-FE-109 Pre-Implementation Readiness Pass — "Start Trade from Plan" | Head of Specs Team | Planning Document (Class 4) |
+| `docs/specs/blg_fe_110_111_pre_implementation_spec_instrumentation_pass.md` | BLG-FE-110/111 Pre-Implementation Spec & Instrumentation Pass | Frontend Specifications & UX Documentation Owner | Planning Document (Class 4) |
+| `docs/specs/blg_fe_115_pre_implementation_readiness_pass.md` | BLG-FE-115 Pre-Implementation Readiness Pass — Global Command Palette | Frontend Specs & UX Documentation Owner | Planning Document (Class 4) |
+| `docs/specs/blg_fe_116_pre_implementation_readiness_pass.md` | BLG-FE-116 Pre-Implementation Readiness Pass — Custom Price Alerts | Data Model & Domain Schema Owner | Planning Document (Class 4) |
+| `docs/specs/blg_fe_117_pre_implementation_readiness_pass.md` | BLG-FE-117 Pre-Implementation Readiness Pass — Bulk Actions | Backend Engineering Patterns Owner | Planning Document (Class 4) |
+| `docs/specs/blg_fe_118_pre_implementation_readiness_pass.md` | BLG-FE-118 Pre-Implementation Readiness Pass — Saved Filters & Calendar View | Data Model & Domain Schema Owner | Planning Document (Class 4) |
+| `docs/specs/blg_spec_95_v7_4_ui_readiness_pass.md` | v7.4 UI Feature Readiness Pass | Frontend Specifications & UX Documentation Owner | Planning Document (Class 4) |
+
+**General / Cross-Domain**
+
+| Path | Title | Owner | Class |
+|------|-------|-------|-------|
+| `docs/specs/ai_journal_model_contract.md` | AI Journal Model Version Contract | AI Compliance & Governance Officer | Class 2 Canonical Specification |
+| `docs/specs/nightly_batch_idempotency_audit.md` | Nightly Batch Job Idempotency Audit | Backend Engineering Patterns Owner | Canonical Specification (Class 1) |
+| `docs/specs/pnl_export_reconciliation.md` | P&L Export ↔ Trade Plan Closure Reconciliation | Financial Reporting & Records Owner | Canonical Specification (Class 1) |
+| `docs/specs/position_lifecycle_states_registry.md` | Canonical Position Lifecycle State Registry | Data Model & Domain Schema Owner | Spec (Class 5) |
+| `docs/specs/trade_plans_position_id_backfill_scoping.md` | trade_plans.position_id Historical Backfill — Scoping Document | Data Model & Domain Schema Owner | Planning Document (Class 4) |
 
 ---
 
@@ -992,6 +1142,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-09-08 | ST-49 (EPIC-05, v9.2, BLG-SPEC-135): added `## 8b. Full Spec File Registry` — all 78 files `scripts/check_specs_index_freshness.py` had flagged as unreferenced additions are now indexed by path, grouped by domain. Script now reports 0 unexplained additions (1 pre-existing REMOVALS entry, `qa_evidence_EPIC-xx.md`, is a template-pattern placeholder reference, not a real spec file, and is out of this story's scope). Later same day: ST-43's new `deprecated_endpoint_sunset_tracker.md` (§3.4) registered on creation to avoid immediately regressing the 0-additions state. |
 | 2026-09-07 | Post-ship closure `2026-09-03__release-v9.1` — §41 Test Coverage Gaps (v9.1) added, 0 new gaps this cycle; full-document TSG reconciliation sweep found 0 Open entries (all 26 already resolved). |
 | 2026-09-07 | ST-28 (EPIC-04, v9.1, BLG-SPEC-117): added this `## Changelog` table; collapsed the header `**Last Updated:**` field to a single line going forward. |
 | 2026-09-03 | Post-ship closure outstanding-actions resolution, Head of Specs Team/QA & Testing Owner direct action — TSG-v22-02 resolved via new `tests/test_health_response_schema.py`; TSG-v23-01 resolved, stale "staging-blocked" premise corrected — see §10.2/§10.3. |

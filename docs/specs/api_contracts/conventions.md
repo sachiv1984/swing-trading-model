@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.3
-**Last Updated:** 2026-08-06 (v1.3)
+**Version:** 1.4
+**Last Updated:** 2026-09-08 (v1.4 — §14.4 cross-references the new deprecated_endpoint_sunset_tracker.md, ST-43/EPIC-05/v9.2)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## 1. Authentication & Authorization
@@ -268,6 +268,8 @@ A canonical contract endpoint that is no longer wanted follows this policy only 
 
 Every deprecation and every completed removal gets its own `api_changelog.md` entry (per `BLG-GOV-205`'s canonical entry template, once that item lands — until then, follow the file's existing entry format), so the deprecation timeline is visible in one place rather than only inside individual contract files.
 
+**Sunset tracker (ST-43, BLG-SPEC-119, v9.2):** `deprecated_endpoint_sunset_tracker.md` is the live register of every endpoint currently inside its notice window — update it in the same commit as the `openapi.yaml` `deprecated: true` change (§14.3) and again on removal (§14.5). `api_changelog.md` remains the append-only historical log; the tracker is the "what's pending right now" view.
+
 ### 14.5 Removal
 
 - The endpoint may be removed from `backend/routers/`/`backend/main.py`, its contract file, and `openapi.yaml` only after the notice window (§14.2) has elapsed.
@@ -284,4 +286,5 @@ A deprecation-window policy exception (shorter notice, or removal without a depr
 
 | Date | Version | Summary |
 |---|---|---|
+| 2026-09-08 | 1.4 | §14.4 cross-references the new `deprecated_endpoint_sunset_tracker.md` as the live "pending sunset" register (ST-43, EPIC-05, v9.2, BLG-SPEC-119) |
 | 2026-08-06 | 1.3 | Added §14 API Endpoint Deprecation-Window Policy — genuinely new policy, no endpoint has ever been formally deprecated (ST-20, EPIC-04, v8.3, BLG-SPEC-96) |
