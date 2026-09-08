@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.11
-**Last Updated:** 2026-08-13 (post-ship closure `2026-08-12__release-v8.7` STEP 8 immediate action — LL-v8.7-P4-01: post-open CI-fix restatement requirement clarified as per-fix, not per-EPIC); prior — 2026-08-12 (post-open CI-fix restatement requirement added to Standard Sign-Off Block, LL-v8.5-P4-01, 2nd carry-forward); prior — 2026-08-11 (ST-24, EPIC-06, v8.6, BLG-GOV-296 — "Known deviations filed" line reworded to "Known deviations" with a wording note, so a "None found" line reads consistently alongside every story's deviations_filed: true, per shared_standards.md §16.15)
+**Version:** 1.12
+**Last Updated:** 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-03/ST-15, BLG-QA-109 — added an explicit FI-P3-02 wording-only-AC exception citation note, since the template previously named no standard place/format for it despite the exception already being exercised in practice); prior — 2026-08-13 (post-ship closure `2026-08-12__release-v8.7` STEP 8 immediate action — LL-v8.7-P4-01: post-open CI-fix restatement requirement clarified as per-fix, not per-EPIC); prior history retained — see prior entries in version control.
 
 # QA Evidence Template
 
@@ -36,6 +36,8 @@ Last Updated: <date>
 *(Reconcile any partial per-item entries from STEP 3.1.C into this table. Do not duplicate — one row per ST item.)*
 
 > **Requirement (OA-3/ST-03, elevated from advisory to hard requirement v1.7 — post-ship closure `2026-07-16__release-v7.3` STEP 8, Phase 4 lessons learnt):** Every AC in the backlog slice must appear in the evidence table — either as its own row, or explicitly named in a consolidated row's Evidence column (e.g. "Covers AC-01, AC-02, AC-03"). No AC may be silently absent from the table, even when it is functionally addressed elsewhere in the log (e.g. "What was built" narrative or "Regression areas checked"). This closes the gap found at `2026-07-16__release-v7.3` delivery verification, where an AC was addressed in prose but never listed in the evidence table itself.
+
+> **Wording-only AC exception citation (ST-15, EPIC-03, v9.2, BLG-QA-109):** When an individual AC is wording-only (text content, no visual rendering/colour/layout claim) and its `Result` is marked `Pass` on the strength of code review alone rather than Playwright coverage or a recorded staging run, name the exception explicitly rather than leaving the evidence column silent on why no staging/Playwright evidence is attached — e.g. `"Pass — text/data-source-only change, no rendered-output difference; verified by code review per CLAUDE.md §2's FI-P3-02 exception."` This mirrors phrasing already used ad hoc in prior EPICs (e.g. `qa_evidence_EPIC-02.md`, `2026-08-05__release-v8.3`) before this note existed to standardise it. **This is narrower than, and independent of, the BLG-GOV-19 Autonomous Class block below:** FI-P3-02 applies per-AC, inside a story that may otherwise contain visual/layout/interaction ACs still requiring Playwright or staging evidence — it does not exempt the rest of that story's or EPIC's observable ACs, and does not by itself make the EPIC eligible for the Autonomous Class Sign-Off Block (Criterion 3's frontend-file detection rule still applies independently). Any AC involving visual rendering, colour, layout, or interaction timing is never eligible for this substitution, regardless of how small the change looks.
 
 **QA test coverage:**
 - Scenarios run: <list scenario file names, or "manual acceptance review">

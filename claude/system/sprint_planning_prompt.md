@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.17
-**Last Updated:** 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — STEP 3.1 pre-seal stale-feature-target check, D1-tracked STALE since v8.7 Phase 3); prior — 2026-08-06; prior history retained — see prior entries in version control.
+**Version:** 3.18
+**Last Updated:** 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-03/ST-14, BLG-QA-103 — STEP -1 advisory 6 now also appends to docs/ops/pip_audit_trend_log.md); prior — 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — STEP 3.1 pre-seal stale-feature-target check, D1-tracked STALE since v8.7 Phase 3); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -192,6 +192,7 @@ Design gate hard gate (fires when `design_gate_required = true`):
 - Clean: note "pre-sprint pip-audit: clean".
 - Unavailable: flag; recommend installation before sprint execution.
 - Advisory — does not block sprint planning.
+- **Trend log (ST-14, BLG-QA-103, v9.2):** in the same session, append one row to `docs/ops/pip_audit_trend_log.md`'s table (cycle, date, dependencies scanned, result, resolution status, notes) — in addition to, not instead of, the `sprint_planning_notes.md` note above. See that file's own `## Convention` section for column definitions and the recurrence-escalation rule.
 
 **7. Hygiene advisories** (both advisory only — no halt):
 - **Prompt change log gaps (date-scan method, not file-position — BLG-GOV-257, v3.16):** for each Class 6 prompt file, run `grep "<filename>" claude/system/prompt_change_log.md` to collect **every** row mentioning that filename — do not take only the first match and do not assume the file's ordering (prepend-newest-first does not hold uniformly across the whole file: a contiguous prepend-ordered block sits above an older, ascending-chronological historical backfill, so a filename's true latest row can be either the first grep match or one further down). Parse the `Date` column (leftmost, `YYYY-MM-DD`) of every matched row and select the row with the **latest date** — not `head -1`, not file position. Extract the target version (the `v<X.Y>` after `→` in that row's version column). If the current `**Version:**` in the file exceeds that version: surface as "⚠ Prompt change log gap: `<filename>` current v<X.Y> — last log v<A.B>. Add a prepended row per CLAUDE.md §6." Record in `sprint_planning_notes.md`. Full method: `shared_standards.md §STEP -1.7-Class Prompt Change Log Gap Detection`.
