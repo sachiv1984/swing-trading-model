@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-07T15:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-08T08:44:02Z",
+  "last_updated_utc": "2026-09-08T08:50:40Z",
   "epics": {
     "EPIC-02": {
       "status": "in_progress",
@@ -19,6 +19,37 @@
         "tests/e2e/arc5-compliance-section.spec.js"
       ],
       "stories": {
+        "ST-05": {
+          "title": "Motion-vs-contrast trade-off (entrance fade-in animations) has no design_system.md guideline",
+          "classification": "autonomous",
+          "status": "blocked_decision",
+          "assigned_to": "engine",
+          "github_issue": 1544,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": "2026-09-08T08:49:28Z",
+          "unblock_criteria": "Head of UX & Design (or Product Owner) confirms the design_system.md v1.12 motion-vs-contrast guideline is accurate/acceptable -- see ESC-EXEC-20260908-01.",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Accessibility",
+            "docs/design/2026-09-07__release-v9.2/motion-contrast-guideline-standard/decision_record.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_retries_exhausted",
+          "sign_off_record": {
+            "status": "blocked",
+            "method": "agent_mediated",
+            "role": "Head of UX & Design",
+            "signer_field": null,
+            "date": null,
+            "evidence": "ESC-EXEC-20260908-01; 3 agent-mediated review rounds (initial + 2 retries, max per §5.3) -- rounds 1-2 findings fixed and re-verified clean; round 3 (final) found one residual factual imprecision (Signals.js list-cap description), corrected in-session but not re-verified (retry budget exhausted)."
+          },
+          "notes": "design_system.md v1.12 content (motion-vs-contrast guideline, BLG-SPEC-134) is authored and believed correct after 3 review rounds, but §5.3's 2-retry cap is exhausted with the fix from round 3 unverified by another automated pass. Escalated per §5.3 step 7 rather than retrying a 3rd time. Follow-up gap (BLG-SPEC-136, delay-based stagger not yet brought into ceiling compliance) already filed regardless of this escalation's outcome."
+        },
         "ST-02": {
           "title": "Settings page heading-order axe-core finding (moderate, non-blocking)",
           "classification": "autonomous",
@@ -134,7 +165,7 @@
       }
     }
   },
-  "blocked_items": [],
+  "blocked_items": ["ST-05"],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -142,7 +173,7 @@
     "ST-03",
     "ST-04"
   ],
-  "open_escalations": [],
+  "open_escalations": ["ESC-EXEC-20260908-01"],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01"
