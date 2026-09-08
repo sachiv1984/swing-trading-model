@@ -308,10 +308,13 @@ const EMPTY_FORM = {
 const TRADE_TAG_MAX_LENGTH = 20;
 const TRADE_TAG_MAX_COUNT = 10;
 
-function Field({ label, children }) {
+function Field({ label, labelId, children }) {
   return (
     <div className="space-y-1">
-      <label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">{label}</label>
+      {/* ST-03 (EPIC-02, v9.2, BLG-FE-171): labelId, when supplied, lets a
+          child control reference this label via aria-labelledby instead of
+          duplicating its text in a separate aria-label string. */}
+      <label id={labelId} className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">{label}</label>
       {children}
     </div>
   );
@@ -732,9 +735,9 @@ export default function TradePlan() {
           <Field label="Ticker">
             <TextInput value={form.ticker} onChange={set("ticker")} placeholder="e.g. AAPL" />
           </Field>
-          <Field label="Market">
+          <Field label="Market" labelId="trade-plan-market-label">
             <select
-              aria-label="Market"
+              aria-labelledby="trade-plan-market-label"
               className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               value={form.market}
               onChange={set("market")}
@@ -743,9 +746,9 @@ export default function TradePlan() {
               <option value="UK">UK</option>
             </select>
           </Field>
-          <Field label="Status">
+          <Field label="Status" labelId="trade-plan-status-label">
             <select
-              aria-label="Status"
+              aria-labelledby="trade-plan-status-label"
               className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
               value={form.status}
               onChange={set("status")}
@@ -847,10 +850,10 @@ export default function TradePlan() {
 
         {!editId && <SignalContextPanel signal={linkedSignal} market={form.market} />}
 
-        <Field label="Setup Type">
+        <Field label="Setup Type" labelId="trade-plan-setup-type-label">
           <select
             data-testid="setup-type-select"
-            aria-label="Setup Type"
+            aria-labelledby="trade-plan-setup-type-label"
             className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             value={form.setup_type || ""}
             onChange={(e) => setForm((prev) => ({ ...prev, setup_type: e.target.value || null }))}
