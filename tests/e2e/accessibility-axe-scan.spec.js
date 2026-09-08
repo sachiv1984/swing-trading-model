@@ -104,6 +104,37 @@ async function mockRoutes(page) {
   });
 }
 
+async function waitForEntranceAnimations(page) {
+  // ST-07 (BLG-QA-157, EPIC-03, v9.2): condition-based replacement for the
+  // fixed 1000ms sleep this helper used previously. framer-motion drives its
+  // animated values (opacity included) via a direct inline `style` attribute
+  // rather than a CSS class, both while animating and once settled — so
+  // polling for "no element still has an inline opacity below its settled
+  // value" detects the actual end of the fade instead of guessing a duration
+  // long enough to outlast it. This resolves as soon as the page has
+  // actually settled (typically well under the design_system.md v1.12
+  // 500ms time-to-full-opacity ceiling), rather than always paying a fixed
+  // 1000ms regardless of how long the animation actually took.
+  try {
+    await page.waitForFunction(
+      () => {
+        const stillAnimating = Array.from(document.querySelectorAll('[style*="opacity"]')).some((el) => {
+          const opacity = parseFloat(getComputedStyle(el).opacity);
+          return !Number.isNaN(opacity) && opacity < 0.98;
+        });
+        return !stillAnimating;
+      },
+      { timeout: 3000 },
+    );
+  } catch (e) {
+    // Timeout guard, not an assertion: if some element never reaches 0.98
+    // (e.g. an unrelated element with its own persistent low-opacity inline
+    // style, not a framer-motion entrance fade), proceed rather than fail
+    // the scan outright — this wait is a race-avoidance step, not itself
+    // a correctness check.
+  }
+}
+
 async function runAxeScan(page, pageName) {
   // BLG-FE-169 root cause (v9.1/ST-05): PageHeader.js (and other page-level
   // containers) fade in via framer-motion (opacity 0 -> 1, ~0.3-0.8s
@@ -115,7 +146,7 @@ async function runAxeScan(page, pageName) {
   // This is what made the Settings subtitle finding "non-reproduce
   // across repeated runs" — it's a scan-timing race, not a colour defect.
   // Waiting out the entrance animation before scanning removes the race.
-  await page.waitForTimeout(1000);
+  await waitForEntranceAnimations(page);
   const results = await new AxeBuilder({ page }).analyze();
   const known = KNOWN_VIOLATIONS[pageName] || new Set();
 
