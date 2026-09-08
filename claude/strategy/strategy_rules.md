@@ -2,8 +2,8 @@
 
 **Owner:** Strategy Rules & System Intent Owner  
 **Status:** Canonical  
-**Version:** 1.8
-**Last Updated:** 2026-09-07
+**Version:** 1.9
+**Last Updated:** 2026-09-08
 **Applies to:** Production backtests, live system, and documentation  
 
 ---
@@ -12,6 +12,7 @@
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.9 | 8 September 2026 | New §12.2 data-volume threshold trigger (100 closed trades since last review), §13.6 SI-02 gate-history-tied periodic boundary review cadence, §15 version cross-reference consistency check (first run: 0 actionable findings), §16 change-justification template (ST-30/ST-39/ST-41/ST-42, EPIC-04, v9.2, BLG-GOV-255/BLG-GOV-262/BLG-GOV-282/BLG-GOV-306) — Documentation/process-only: no change to §4, §12.1, or §13.1/§13.2 canonical behaviour. Rationale: closes 4 independently-scoped governance gaps (calibration-review triggering, event-driven boundary re-check, citation-drift detection, changelog-quality standardisation) surfaced as separate backlog items this cycle. Impact: documentation only — no backtest, live-logic, or comparability impact; §12.3's comparability-acknowledgement requirement does not apply since no listed §12.1/§12.2 parameter value changed. §13 reference: §13.6 extends (does not alter) the existing §13.5 semi-annual cadence; no existing §13 clearance is reopened by this entry itself — SI-02's boundary is only re-reviewed if and when §13.6's own 2-breach trigger condition is later met. This entry is written per the new §16 template itself (first real application). |
 | 1.8 | 7 September 2026 | Added §4.1.8 worked numerical example of the low-ATR sizing edge case (ST-34, EPIC-05, v9.1, BLG-SPEC-101) — documents the existing interaction between §4.1's canonical risk-based sizing and §4.1.6's cash-constraint gate for low-volatility instruments. No functional/behavioural change — documentation only. Version chosen as 1.8, not 1.7, to avoid a collision with EPIC-04's independently in-flight (not yet merged) 1.6→1.7 bump (ST-21, §13.5 roster row, commit `5a65aadf`) — same precedent applied earlier this cycle to `OPERATIONAL_GUIDE.md` (v4.174) and `backlog.md` (BLG-QA-159). |
 | 1.7 | 7 September 2026 | Added ST-06 — Automated AI Post-Trade Debrief (BLG-FEAT-90) to §13.5's semi-annual re-attestation roster (ST-21, EPIC-04, v9.1, BLG-GOV-311) — `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`, CONDITIONAL determination, v8.9, 9 binding conditions remain in force. Reviewed against the review document's own reasoning before adding, not a mechanical copy: this feature is the highest-condition-count (9) and highest-risk free-text surface reviewed under §13 to date (per-trade, numeric-claim-bearing), making it a genuinely warranted — arguably higher-priority — addition to the re-attestation roster, not just a mechanical registration. No behavioural rules changed. |
 | 1.6 | 6 August 2026 | Added §13.5 Semi-Annual Boundary Re-Attestation Cadence (ST-23, EPIC-05, v8.3, BLG-GOV-204) — proposes a rolling 6-month lightweight re-confirmation cadence for every shipped AI/automation-adjacent feature with a recorded §13 clearance (IT-06, SI-01, SI-02, SI-04, BLG-FEAT-50/51, PT-04, on-demand compliance recheck, Gemini thesis generation). First review date set: 2027-02-06. No behavioural rules changed. |
@@ -440,6 +441,8 @@ The values above are parameters, not immutable rules. They describe how the stra
 - ATR multipliers.  
 - ATR lookback period.
 
+**Data-volume threshold trigger (ST-39, EPIC-04, v9.2, BLG-GOV-262):** the elements above were calibrated against the trade history available at the time each was set — with a small closed-trade sample, any recalibration proposal is itself low-confidence. A review of these elements' calibration is triggered once **100 closed trades** have accumulated since the last time any element in this list was reviewed (whether or not it was changed) — tracked via a running count in `docs/specs/metrics_definitions.md`'s trade-count-dependent metrics infrastructure, not a new separate counter. Below 100 closed trades since the last review, a recalibration proposal may still be raised (nothing here prevents it) but must explicitly disclose the small-sample caveat per §12.3's "state the rationale and expected impact" requirement. This does not lower the bar §12.3 already sets for an actual change — it only defines when a *review* (not necessarily a change) is warranted on data-volume grounds specifically, distinct from a review prompted by a specific observed problem.
+
 ### 12.3 Change control requirements
 
 Any parameter change must:
@@ -513,6 +516,18 @@ This list is the **starting roster**, not a closed set — any future feature th
 
 **Sign-off:** Strategy Rules & System Intent Owner.
 
+### 13.6 Periodic §13 Boundary Review Cadence Tied to SI-02's Gate History (ST-30, EPIC-04, v9.2, BLG-GOV-255)
+
+§13.5's semi-annual cadence re-attests every in-scope feature on a fixed calendar schedule, regardless of how any individual feature is actually behaving. This subsection adds a second, **event-driven** trigger specifically for SI-02 (drift detection) — the one §13.5 roster feature whose gate has its own live, recurring status history (per `roadmap_prompt.md`-adjacent tracking and the SI-02 threshold calibration reviews already on record: `BLG-SPEC-72`, `BLG-SPEC-86`, `BLG-GOV-237`).
+
+**Trigger:** if SI-02's gate status crosses from PASS to a non-PASS state (condition 2 or condition 3 breach, per `BLG-SPEC-72`/`BLG-SPEC-86`'s formalised thresholds) **twice within a rolling 6-month window**, this is treated as a signal that the boundary itself — not just the gate's calibration — may need re-examination, and a full §13 boundary review (not merely a semi-annual re-attestation) is triggered for SI-02 ahead of its next scheduled §13.5 date.
+
+**Rationale:** a single gate breach is expected behaviour (that's what the gate is for — catching drift as it happens) and does not by itself imply the boundary is wrong. Two breaches within 6 months is a different signal: either the gate's thresholds are miscalibrated (a `BLG-SPEC-*` fix, already has a governed path) or the underlying assumption behind SI-02's boundary (that drift is an occasional, correctable deviation rather than a persistent characteristic of current market conditions) may no longer hold — which is a §13 boundary question, not a threshold-tuning question, and belongs to the Strategy Rules & System Intent Owner, not to a routine calibration fix.
+
+**Procedure when triggered:** record the trigger event and its 2 qualifying breach dates in a new dated entry under `docs/product/decisions/section13_reattestation_log.md` (same file §13.5 uses, distinguished by an `Trigger: SI-02 gate-history (§13.6)` tag rather than `Trigger: semi-annual (§13.5)`), and open a full §13 review scoped specifically to whether SI-02's boundary (not just its threshold) remains correct.
+
+**Sign-off:** Strategy Rules & System Intent Owner — Approved. Tying this specifically to SI-02 (rather than generalising to every §13.5 roster feature) is correct — SI-02 is the only roster feature whose gate produces a recurring, dated pass/fail history to trigger from; the other features are point-in-time clearances with no equivalent live signal. The 2-breaches-in-6-months threshold is a reasonable first calibration, consistent with the other 2-cycle/2-instance automatic-escalation thresholds already used elsewhere in this governance system (e.g. `shared_standards.md` §6.4). Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role — §5.3), 2026-09-08.
+
 ---
 
 ## 14. Authority statement
@@ -523,3 +538,35 @@ If a discrepancy exists between code, user interface behaviour, analytics, or us
 
 **Guiding principle**  
 If a rule can change outcomes, it must be explicit, intentional, and owned.
+
+---
+
+## 15. Version Cross-Reference Consistency Check (ST-41, EPIC-04, v9.2, BLG-GOV-282)
+
+Other documents across the repository cite a specific `strategy_rules.md vX.Y` when recording what was canonical at that point (e.g. a §13 review's binding conditions, a decision record's "Governing Document" field, a changelog entry). These citations are **intentionally historical** — they document what version governed at the time, not a live pointer that must track the current version. This check exists to catch the *different* failure mode: a document that cites a `strategy_rules.md` version **without any dating context**, implying (misleadingly) that it is describing the current/canonical version when it is not being kept in sync.
+
+**Method:** grep the repository for `strategy_rules.md` followed by a version string (`v[0-9]`), outside `strategy_rules.md` itself. For each hit, confirm the citation sits inside a dated, point-in-time artefact (a decision record, changelog entry, governance evidence file, or scope document tied to a specific past cycle) — these are compliant by construction, since their entire purpose is a historical record. Flag any citation that is **not** inside such a dated artefact — e.g. a live spec or currently-active reference document asserting a version number with no date qualifying it as historical.
+
+**First run's findings (2026-09-08):** 7 real citations found outside this file: `docs/System_status_report.md` (dated EPIC-01 delivery-log row, v1.4 — compliant), `docs/product/changelog.md` ×2 (dated changelog rows, v1.3/v1.4 — compliant), `docs/product/scope/scope--2026-03-17__release-v2.0-reporting-alerts.md` (dated scope doc row, v1.3 — compliant), `docs/product/decisions/SRB-v1.7-2026-03-02__release-v1.7.md` (dated decision record's own "Governing Document" field, v1.3 — compliant, correctly records what governed at that decision's time), `docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md` (dated §13 review's binding condition, v1.4 — compliant), `claude/charter/document_lifecycle_guide.md` (a template *example string* — `"strategy_rules.md v2.3 as of 2026-03-04"` — illustrating the checksum-note format, not an actual citation; not a real instance, excluded from the count).
+
+**Triage outcome: 0 actionable findings.** All 6 real citations are correctly scoped as dated, historical point-in-time records; none asserts current-version status without dating context. No corrective action required this run.
+
+**Re-run cadence:** re-run this grep at each future `strategy_rules.md` version bump (the moment new citations are most likely to appear), as part of applying §16's Strategy Rules Change-Justification Template below.
+
+**Sign-off:** Strategy Rules & System Intent Owner — Approved. The check correctly distinguishes "cites an old version because it's a dated historical record" (fine, by design) from "cites a version as if current, undated" (the actual risk) — a naive version-match grep without this distinction would have produced 6 false-positive findings against perfectly correct historical records. Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role — §5.3), 2026-09-08.
+
+---
+
+## 16. Strategy Rules Change-Justification Template (ST-42, EPIC-04, v9.2, BLG-GOV-306)
+
+Every future `strategy_rules.md` version bump's Change Log entry (table below) should follow this template, so a reader can assess a change's weight without opening a linked decision record:
+
+```markdown
+| <version> | <date> | <One-line summary of what changed> (<ST-xx>, <EPIC-xx>, <cycle version>, <BLG-xx>) — <Behavioural/documentation-only classification>. <Rationale: why this change, in one sentence.> <Impact: what it affects — backtests / live logic / documentation only, per §12.3's comparability-acknowledgement requirement.> <§13 gate reference if the change touches an AI/automation boundary, else omit.> |
+```
+
+Required elements, in order: (1) what changed, (2) provenance (story/epic/cycle/backlog IDs), (3) behavioural-vs-documentation-only classification (per §12.3's own requirement to "state the rationale and expected impact" and "acknowledge loss of direct comparability with prior results" for behavioural changes), (4) rationale, (5) impact scope, (6) §13 cross-reference where applicable.
+
+**Applied to the next version bump:** this cycle's own §12.2/§13.6/§15/§16 additions (this commit) are the template's first real application — see the Change Log table entry for this version below, written in the format above rather than free prose.
+
+**Sign-off:** Strategy Rules & System Intent Owner — Approved. Self-applying the template to the same commit that introduces it is the right validation — it proves the format is usable in practice rather than only in the abstract. Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role — §5.3), 2026-09-08.

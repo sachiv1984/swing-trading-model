@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.18
-**Last Updated:** 2026-09-08 (ST-19 + ST-24 + ST-27 + ST-37, EPIC-04, v9.2 — STEP 1.1 gains a Meta-Review Countdown field (BLG-GOV-217); §7.1 gains a workload-composition framing note distinguishing it from the U/G/D/P product-value lens (BLG-GOV-209); §7.2 gains a formal threshold review confirming the 40% ceiling stays advisory-only (BLG-GOV-300); new STEP 8.1.5 §13-Adjacent Initiative Expiry Review (BLG-GOV-245)); prior — 2026-09-07 (ST-40, EPIC-05, v9.1, BLG-GOV-307 — STEP 12.1 gains 2 new structured .claude_current_state.json fields); prior — 2026-08-18 (ST-21, EPIC-06, v8.9, BLG-GOV-264); prior history retained — see prior entries in version control.
+**Version:** 9.19
+**Last Updated:** 2026-09-08 (ST-38, EPIC-04, v9.2, BLG-GOV-247 — Step 0.C condensed-tier table gains a formal threshold review; decision: retain single "no new FTE required" test as-is, no additional thresholds); prior — 2026-09-08 (ST-19 + ST-24 + ST-27 + ST-37, EPIC-04, v9.2 — STEP 1.1 Meta-Review Countdown field; §7.1 workload-composition framing note; §7.2 formal threshold review; new STEP 8.1.5 §13-Adjacent Initiative Expiry Review); prior — 2026-09-07 (ST-40, EPIC-05, v9.1, BLG-GOV-307 — STEP 12.1 gains 2 new structured .claude_current_state.json fields); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -237,6 +237,8 @@ Classify (evaluate in order):
 | Horizon Review (2.3) | Performed | Performed | Performed + explicit Now→Next check |
 | Idea debate (STEP 4–5) | Skipped if zero advancing | Full | Full |
 | Hard gates | All apply | All apply | All apply |
+
+**Condensed-tier trigger threshold review (ST-38, EPIC-04, v9.2, BLG-GOV-247):** reviewed whether "Condensed if no new FTE required" is sufficient on its own, or whether it should be formalised into a multi-condition threshold set (e.g. additionally requiring the Skill-Silo Alert and PVR readings both be outside their Alert tiers, or initiative count below some N). **Decision: retain the single "no new FTE required" test as-is — no additional thresholds added.** Rationale: the Condensed row only applies within the **Lightweight** tier, whose own entry conditions (Step 0.C, above) already require zero Submitted ideas, no ⚠/❌ initiatives, and a completion-triggered run — i.e. by the time a session reaches the point of asking whether STEP 7 can condense, the surrounding context is already tightly scoped to a low-impact session. Adding further conditions specifically to the Condensed test itself would duplicate constraints the Lightweight-tier gate already enforces one level up, rather than closing a real gap. If a future cycle finds a Lightweight-tier session where "no new FTE required" alone produced an under-scrutinised workforce decision despite Lightweight's other conditions holding, that would be new evidence for revisiting this decision — none has been observed as of this review. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-38, 2026-09-08).
 
 All working content (STEPS 2–8) written as labelled sections of `claude/cycles/<cycle_id>/cycle_record.md`. `run_manifest.md`, `cycle_summary.md`, and `lessons_learnt.md` remain separate.
 
