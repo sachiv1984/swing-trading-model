@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.2.0
-**Last Updated:** 2026-09-07 (ST-01, EPIC-01, v9.2 — added Low-Trade-Volume Advisory subsection, BLG-FEAT-44); prior — 2026-09-04 (v9.1 ST-13 — Known Deviations: Card 3 text-format/null-display divergence documented, BLG-FE-172)
+**Version:** 1.3.0
+**Last Updated:** 2026-09-07 (ST-04, EPIC-02, v9.2 — Card 3 Format/Null display row corrected to match shipped `fmtText` behaviour, resolving the Known Deviations entry, BLG-FE-172); prior — 2026-09-07 (ST-01, EPIC-01, v9.2 — added Low-Trade-Volume Advisory subsection, BLG-FEAT-44); prior — 2026-09-04 (v9.1 ST-13 — Known Deviations: Card 3 text-format/null-display divergence documented, BLG-FE-172)
 **Story:** ST-10 (EPIC-03, v4.1) — BLG-FE-48
 **§13 Compliance:** Confirmed — display-only component. No automated recommendation generated.
 **API contract:** docs/specs/api_contracts/arc5_compliance_analytics.md
@@ -114,8 +114,8 @@ Grid class example: `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4`
 |----------|-------|
 | Label | `"Top Rule Breach"` |
 | Source field | `data.top_rule_breach` |
-| Format | Plain text rule type slug (e.g. `"regime_gate"`) |
-| Null display | `"None"` |
+| Format | Rule type slug with underscores replaced by spaces (e.g. `"regime gate"`) |
+| Null display | `"—"` (consistent with Cards 1, 2, and 4's null-display convention) |
 
 ### Card 4 — Trade Plan Adherence
 
@@ -174,16 +174,12 @@ This component is **§13 compliant — display-only**:
 
 ## Known Deviations
 
-| Field | Detail |
-|-------|--------|
-| **Deviation description** | Card 3 ("Top Rule Breach") renders `top_rule_breach` with underscores replaced by spaces (e.g. `"regime gate"`) and renders `"—"` when the value is null. |
-| **Canonical requirement** | This section's Card 3 table states: Format = "Plain text rule type slug (e.g. `"regime_gate"`)"; Null display = `"None"`. |
-| **Priority** | P3 |
-| **Target resolution release** | v9.2 |
-| **Owner** | Frontend Specifications & UX Documentation Owner |
-| **Backlog reference** | BLG-FE-172 |
+**Resolved — v9.2, ST-04 (EPIC-02), BLG-FE-172:** Card 3's Format/Null display row above previously read "Plain text rule type slug (e.g. `"regime_gate"`)" / `"None"`, diverging from the component's actual (already user-visible, tested) `fmtText` behaviour — underscores replaced by spaces, `"—"` on null. Resolved by updating this section's table to document the implementation as-shipped, rather than changing the component: the shipped behaviour already matches Cards 1/2/4's established null-display convention (`"—"`), and both `tests/e2e/arc5-compliance-section.spec.js` scenarios below already assert it, so no functional or test change was needed — only this document's own requirement text was out of date.
 
-Found while authoring Playwright coverage for this card (v9.1 ST-13). No functional/data impact — display-text-only divergence between the spec's originally-stated slug/`"None"` intent and the component's actual (and already user-visible, tested) `fmtText` behaviour, which matches the null-display convention used by the component's other three cards.
+- SC-ARC5-07 (`tests/e2e/arc5-compliance-section.spec.js`) — asserts underscore-to-space formatting
+- SC-ARC5-08 (`tests/e2e/arc5-compliance-section.spec.js`) — asserts `"—"` on null
+
+No other deviations open against this spec.
 
 ---
 
@@ -191,6 +187,7 @@ Found while authoring Playwright coverage for this card (v9.1 ST-13). No functio
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3.0 | 2026-09-07 | Card 3 ("Top Rule Breach") Format/Null display row corrected to document the shipped `fmtText` behaviour (space-separated slug, `"—"` on null) — ST-04, EPIC-02, v9.2, BLG-FE-172. Resolves the Known Deviations entry opened at v9.1 ST-13; no component or test change required. |
 | 1.2.0 | 2026-09-07 | Added Low-Trade-Volume Advisory subsection — ST-01, EPIC-01, v9.2, BLG-FEAT-44. New `total_closed_trades` field (contract v1.1.0) drives a static Info-tone banner below the stat grid when below 20. |
 | 1.1.0 | 2026-09-04 | Known Deviations: documented Card 3 text-format/null-display divergence from implementation — v9.1 ST-13, BLG-FE-172. No behavioural change to this document's own requirements. |
 | 1.0.0 | 2026-05-27 | Initial specification — ST-10 (EPIC-03, v4.1), BLG-FE-48. Formalises Arc5ComplianceSection shipped in v4.0 (ST-01). Component props, rendering conditions, stat card layout, data mapping documented. |

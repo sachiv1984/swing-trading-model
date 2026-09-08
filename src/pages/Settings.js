@@ -142,7 +142,10 @@ export default function Settings() {
         <div className={cn("p-2.5 rounded-xl", iconColor)}>
           <Icon className="w-5 h-5" />
         </div>
-        <h3 className="font-semibold text-white">{title}</h3>
+        {/* ST-02 (EPIC-02, v9.2, BLG-FE-170): was h3, skipping h2 under
+            PageHeader's h1 -- axe-core heading-order finding. Tag bumped to
+            h2; className unchanged, so no visual/layout change. */}
+        <h2 className="font-semibold text-white">{title}</h2>
       </div>
       {children}
     </motion.div>
@@ -337,12 +340,14 @@ export default function Settings() {
       >
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-slate-600 dark:text-slate-400">Default Currency</Label>
+            {/* ST-03 (EPIC-02, v9.2, BLG-FE-171): id + aria-labelledby
+                replaces the duplicate aria-label string below. */}
+            <Label id="settings-default-currency-label" className="text-slate-600 dark:text-slate-400">Default Currency</Label>
             <Select
               value={formData.default_currency}
               onValueChange={(value) => handleChange("default_currency", value)}
             >
-              <SelectTrigger aria-label="Default Currency" className="bg-slate-800/50 border-slate-700 text-white">
+              <SelectTrigger aria-labelledby="settings-default-currency-label" className="bg-slate-800/50 border-slate-700 text-white">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-slate-800 border-slate-700">
@@ -352,12 +357,12 @@ export default function Settings() {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-slate-600 dark:text-slate-400">Theme</Label>
+            <Label id="settings-theme-label" className="text-slate-600 dark:text-slate-400">Theme</Label>
             <Select
               value={formData.theme}
               onValueChange={(value) => handleChange("theme", value)}
             >
-              <SelectTrigger aria-label="Theme" className="bg-slate-800/50 border-slate-700 text-white">
+              <SelectTrigger aria-labelledby="settings-theme-label" className="bg-slate-800/50 border-slate-700 text-white">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-slate-800 border-slate-700">

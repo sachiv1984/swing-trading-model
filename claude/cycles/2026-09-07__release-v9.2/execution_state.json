@@ -8,6 +8,82 @@
   "last_updated_utc": "2026-09-07T18:45:00Z",
 
   "epics": {
+    "EPIC-02": {
+      "status": "in_progress",
+      "branch": "exec/2026-09-07__release-v9.2/EPIC-02",
+      "pr_number": null,
+      "pr_status": "not_created",
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": ["tests/e2e/accessibility-axe-scan.spec.js", "tests/e2e/arc5-compliance-section.spec.js"],
+      "stories": {
+        "ST-02": {
+          "title": "Settings page heading-order axe-core finding (moderate, non-blocking)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1541,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": true,
+          "spec_references": [],
+          "spec_reference_not_applicable": true,
+          "spec_reference_not_applicable_reason": "No canonical spec governs Settings page heading-tag levels; fixed a genuine axe-core heading-order violation (h1->h3 skip), verified via regression test tests/e2e/accessibility-axe-scan.spec.js.",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.pending_commit",
+          "sign_off_record": null,
+          "notes": "SectionCard's h3 bumped to h2 (src/pages/Settings.js) — className unchanged, semantic-only fix, no visual/layout regression. Full accessibility-axe-scan.spec.js (4/4) re-run green."
+        },
+        "ST-03": {
+          "title": "aria-label duplicates visible label text instead of using aria-labelledby (TradePlan.js, Settings.js)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1542,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": true,
+          "spec_references": [],
+          "spec_reference_not_applicable": true,
+          "spec_reference_not_applicable_reason": "No canonical spec dictates the accessible-name mechanism used per control; swapped duplicate aria-label strings for aria-labelledby across all 5 named controls, verified via regression test tests/e2e/accessibility-axe-scan.spec.js.",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.pending_commit",
+          "sign_off_record": null,
+          "notes": "TradePlan.js: Field component gained a labelId prop; Market/Status/Setup Type selects now use aria-labelledby. Settings.js: Default Currency/Theme Labels gained id, SelectTrigger uses aria-labelledby. No test relied on the aria-label string directly (data-testid or getByLabel accessible-name matching used throughout) -- accessibility-axe-scan.spec.js (4/4), trade-plan.spec.js (50/50), ai-usage-costs.spec.js all re-run green."
+        },
+        "ST-04": {
+          "title": "Arc5ComplianceSection \"Top Rule Breach\" card diverges from canonical spec (text format + null display)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1543,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/components/arc5_compliance_section.md#Card 3 — Top Rule Breach"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.pending_commit",
+          "sign_off_record": null,
+          "notes": "Resolved the Known Deviations entry opened at v9.1 ST-13 (BLG-FE-172) by correcting the spec's Card 3 Format/Null-display row to match the already-shipped, already-tested fmtText behaviour (space-separated slug, em-dash on null) -- matches the null-display convention already used by Cards 1/2/4. No component or test change required; SC-ARC5-07/SC-ARC5-08 already assert the shipped behaviour. tests/e2e/arc5-compliance-section.spec.js (15/15) re-run green."
+        }
+      }
+    },
     "EPIC-01": {
       "status": "merged",
       "branch": "exec/2026-09-07__release-v9.2/EPIC-01",
