@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-07T15:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-08T00:00:00Z",
+  "last_updated_utc": "2026-09-08T12:15:00Z",
   "epics": {
     "EPIC-02": {
       "status": "merged",
@@ -456,6 +456,769 @@
           "notes": "Assessment concluded advisory warranted (docs/design/.../assessment.md). Required a small backend field addition (total_closed_trades on GET /analytics/arc5-compliance) beyond the locked design record's UI-only framing -- assessed in-session as within this story's already-autonomous classification (small, unambiguous, spec-locked addition; no new design decision). No deviation from spec intent -- implementation matches decision_record.md exactly plus the necessary supporting data field. Local Playwright run (11/11 passed, tests/e2e/arc5-compliance-section.spec.js) and backend pytest (tests/test_api_contracts.py, tests/ -k analytics) both green pre-commit."
         }
       }
+    },
+    "EPIC-04": {
+      "status": "done",
+      "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-09-07__release-v9.2/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-17": {
+          "title": "Quarterly model/prompt-drift compliance attestation log",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1556,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "87632888",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T11:56:15Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/model_prompt_drift_attestation_log.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-21": {
+          "title": "AI response caching evaluation for morning briefing",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1560,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "87632888",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T11:56:15Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/ai_response_caching_evaluation_morning_briefing.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Backend Engineering Owner + FinOps & Resource Architect",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Backend Engineering Owner + FinOps & Resource Architect role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-22": {
+          "title": "Gemini AI usage audit-trail retention policy",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1561,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "87632888",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T11:56:15Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/gemini_ai_usage_audit_trail_retention_policy.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "AI Compliance Governance Officer",
+            "signer_field": "Sprint Execution Engine (agent-mediated, AI Compliance Governance Officer role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-28": {
+          "title": "Data-retention policy for closed-trade and journal records",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1567,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "87632888",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T11:56:15Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/data_retention_policy_trades_journal.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-29": {
+          "title": "Onboarding checklist for new governance agent roles",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1568,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "87632888",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T11:56:15Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/charter/governance_role_onboarding_checklist.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Head of Specs Team role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-31": {
+          "title": "Lightweight due-date index for outstanding deferred-patch reminders across cycles",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1570,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "87632888",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T11:56:15Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/deferred_patch_due_date_index.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "PMO Lead",
+            "signer_field": "Sprint Execution Engine (agent-mediated, PMO Lead role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-32": {
+          "title": "Agent onboarding runbook for adding a new governance role",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1571,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "87632888",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T11:56:15Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/agent_onboarding_runbook.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Director of HR",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Director of HR role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-36": {
+          "title": "AI feature cost-vs-value retrospective (6-month actuals vs original estimates)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1575,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "87632888",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T11:56:15Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/ai_feature_cost_value_retrospective.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "FinOps & Resource Architect",
+            "signer_field": "Sprint Execution Engine (agent-mediated, FinOps & Resource Architect role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-26": {
+          "title": "Product Value Ratio historical trend row in velocity_metrics.md",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1565,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "e4b7032a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T11:58:46Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/velocity_metrics.md#Product Value Ratio Cross-Reference"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Metrics Definitions & Analytics Canonical Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Canonical Owner role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-34": {
+          "title": "Searchable index of STEP 11.4 meta-review findings across cycles",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1573,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "e4b7032a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T11:58:46Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/meta_review_findings_index.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Head of Specs Team role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-35": {
+          "title": "Document exact skill-category taxonomy used for Skill-Silo classification",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1574,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "e4b7032a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T11:58:46Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Appendix D \u2014 Governance Metrics"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Metrics Definitions & Analytics Canonical Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Canonical Owner role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-40": {
+          "title": "Formalise Product Value Ratio rolling-window boundary-trade handling in metrics_definitions.md",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1579,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "e4b7032a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T11:58:46Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Appendix D \u2014 Governance Metrics"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Metrics Definitions & Analytics Canonical Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Canonical Owner role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-18": {
+          "title": "Deprecation header convention for retiring API endpoints",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1557,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "551b8225",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:03:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/shared_standards.md#21. Deprecation Header Convention for Retiring API Endpoints"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Head of Specs Team role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-19": {
+          "title": "Formal expiry review for \u00a713-adjacent initiatives open more than 2 cycles",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1558,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "551b8225",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:03:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/roadmap_prompt.md#STEP 8.1.5 \u2014 \u00a713-Adjacent Initiative Expiry Review"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Strategy Rules & System Intent Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-20": {
+          "title": "stage4_backlog_slice.md post-gate-correction addendum mechanism",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1559,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "551b8225",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:03:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/design_gate_prompt.md#4.1 Post-Gate-Correction Addendum Mechanism"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Head of Specs Team role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-24": {
+          "title": "Frame Skill-Silo Alert as workload-composition, not just product-mix",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1563,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "551b8225",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:03:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/roadmap_prompt.md#7.1 Skill-Silo Alert"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Director of HR",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Director of HR role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-25": {
+          "title": "Governance-cycle wall-clock cost logging",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1564,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "551b8225",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:03:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/shared_standards.md#22. Governance-Cycle Wall-Clock Cost Logging Convention"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Head of Specs Team role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-27": {
+          "title": "Surface meta-review countdown in every run_manifest.md",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1566,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "551b8225",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:03:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/roadmap_prompt.md#1.1 Run Manifest"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-33": {
+          "title": "Recurring spec-debt backlog review cadence",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1572,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "551b8225",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:03:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/backlog_management_prompt.md#3.1 Recurring Spec-Debt Deep Review Cadence"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Head of Specs Team role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-37": {
+          "title": "Formal alert threshold for the cross-role workload-concentration check",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1576,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "551b8225",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:03:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/roadmap_prompt.md#7.2 Cross-Role Workload Balance Check"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Director of HR",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Director of HR role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-23": {
+          "title": "Standardise api_changelog.md entry template",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1562,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "022c2588",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:07:10Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/api_changelog.md#Entry Template"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Head of Specs Team role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-30": {
+          "title": "Periodic \u00a713 boundary review cadence tied to SI-02's gate history",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1569,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "022c2588",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:07:10Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#13.6 Periodic \u00a713 Boundary Review Cadence"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Strategy Rules & System Intent Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-38": {
+          "title": "Formalise condensed-tier trigger thresholds beyond the \"no new FTE required\" test",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1577,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "022c2588",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:07:10Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/roadmap_prompt.md#Step 0.C \u2014 Run Tier Determination"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-39": {
+          "title": "Formalise a data-volume threshold trigger for the \u00a712.2 \"elements that may change\" review",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1578,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "022c2588",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:07:10Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#12.2 Elements that may change"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Strategy Rules & System Intent Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-41": {
+          "title": "strategy_rules.md version cross-reference consistency check in dependent docs",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1580,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "022c2588",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:07:10Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#15. Version Cross-Reference Consistency Check"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Strategy Rules & System Intent Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        },
+        "ST-42": {
+          "title": "Strategy rules change-justification template",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1581,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-04",
+          "commit_sha": "022c2588",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T12:07:10Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#16. Strategy Rules Change-Justification Template"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Strategy Rules & System Intent Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role \u2014 \u00a75.3)",
+            "date": "2026-09-08",
+            "evidence": "Reviewed against the named role's charter criteria in claude/agents/ (execution_prompt.md \u00a75.3) \u2014 approved, no blocking findings. See the artefact's own Sign-off section for detail."
+          },
+          "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
+        }
+      }
     }
   },
   "blocked_items": [],
@@ -476,7 +1239,33 @@
     "ST-13",
     "ST-14",
     "ST-15",
-    "ST-16"
+    "ST-16",
+    "ST-17",
+    "ST-21",
+    "ST-22",
+    "ST-28",
+    "ST-29",
+    "ST-31",
+    "ST-32",
+    "ST-36",
+    "ST-26",
+    "ST-34",
+    "ST-35",
+    "ST-40",
+    "ST-18",
+    "ST-19",
+    "ST-20",
+    "ST-24",
+    "ST-25",
+    "ST-27",
+    "ST-33",
+    "ST-37",
+    "ST-23",
+    "ST-30",
+    "ST-38",
+    "ST-39",
+    "ST-41",
+    "ST-42"
   ],
   "open_escalations": [],
   "merge_gate": {
@@ -496,7 +1285,8 @@
     "2026-09-07T18:45:00Z \u2014 Orphaned post-merge commit check (LL-v6.8-P3-01): found 1 orphaned commit on exec/2026-09-07__release-v9.2/EPIC-01 (db6b0640, backlog.md \u2014 3 follow-up items BLG-QA-162/BLG-BE-111/BLG-QA-163), made after PR #1596 merged. Content confirmed absent from main. Reconciled via cherry-pick onto main as 795ad8ad ([EPIC-01] Reconcile orphaned post-merge commit db6b0640 onto main).",
     "2026-09-08T08:44:30Z \u2014 Near-miss self-caught (LL-v9.1-P3-02 class): a follow-up commit-msg-hook rejection on EPIC-02 was mistakenly handled with `git commit --amend`, which (because the intervening `git commit` attempt had itself failed, leaving no new commit to amend) amended the already-pushed 2ca7b178 ([EPIC-02][ST-02][ST-03][ST-04] Fix Settings heading-order...) instead, rewriting its message and folding in unrelated changes -- before any push of the rewritten commit occurred. Caught immediately via `git log`/`git show --stat` inspection; recovered per the guardrail's own prescribed remedy: `git reset --soft 2ca7b178` (commit still reachable, not yet pruned) followed by a fresh, correctly-scoped, correctly-messaged commit (07ecb641), pushed as a clean fast-forward. No force-push used; origin's history was never rewritten.",
     "2026-09-08T09:10:00Z \u2014 Session-start divergence check (LL-v7.2-P3-01): local main was 9 commits behind origin/main (last local sync predated PR #1596/#1597 merges); synced via `git fetch origin main:main` (safe \u2014 main was not the checked-out branch). Session-resume merge-gate sync (LL-v3.9-P3-1): PR #1597 (EPIC-02) found MERGED (mergedAt 2026-09-08T10:48:04Z) via gh pr view, as a real merge commit (b2e9e698) \u2014 not squashed. execution_state.json pr_status/status synced from stale open/done to merged/merged; EPIC-02 moved epics_pending -> epics_merged. Orphaned post-merge commit check (LL-v6.8-P3-01): `git log exec/.../EPIC-02 --not main` empty \u2014 no orphaned commits, branch fully contained in main.",
-    "2026-09-08T00:00:00Z \u2014 Session-resume merge-gate sync (LL-v3.9-P3-1): PR #1598 (EPIC-03) found MERGED (mergedAt 2026-09-08T11:44:26Z) via gh pr view; execution_state.json pr_status/status synced from stale open/done to merged/merged; EPIC-03 moved epics_pending -> epics_merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-09-07__release-v9.2/EPIC-03 returned empty \u2014 no orphaned commits found. EPIC-01/EPIC-02 branches also re-checked: EPIC-02 empty (clean); EPIC-01's prior orphan (db6b0640) already reconciled onto main as 795ad8ad per prior session's note \u2014 no new orphans."
+    "2026-09-08T00:00:00Z \u2014 Session-resume merge-gate sync (LL-v3.9-P3-1): PR #1598 (EPIC-03) found MERGED (mergedAt 2026-09-08T11:44:26Z) via gh pr view; execution_state.json pr_status/status synced from stale open/done to merged/merged; EPIC-03 moved epics_pending -> epics_merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-09-07__release-v9.2/EPIC-03 returned empty \u2014 no orphaned commits found. EPIC-01/EPIC-02 branches also re-checked: EPIC-02 empty (clean); EPIC-01's prior orphan (db6b0640) already reconciled onto main as 795ad8ad per prior session's note \u2014 no new orphans.",
+    "2026-09-08T12:10:00Z \u2014 EPIC-04 (26 stories, ST-17..ST-42) executed across 4 batched commits on exec/2026-09-07__release-v9.2/EPIC-04 (87632888, e4b7032a, 551b8225, 022c2588). All classified autonomous, all documentation/governance-process debt (no application code, no frontend-visible change). spec_references populated per Case A/B; deviations_filed=true (deviation check performed, none found against stage4_backlog_slice.md). 22 of 26 stories carry an explicit agent-mediated sign_off_record against a named role's charter (execution_prompt.md \u00a75.3); 4 (ST-17, ST-27, ST-28, ST-38) carry sign_off_record=null because neither their own AC nor their artefact named a specific reviewing role \u2014 verified by code/doc review only, consistent with BLG-GOV-19 autonomous-class eligibility. qa_evidence_EPIC-04.md and PR to follow."
   ],
   "sealed": false,
   "sealed_utc": null
