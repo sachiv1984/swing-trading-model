@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-09-07__release-v9.2",
   "cycle_name": "v9.2 — Full-Capacity Debt Clearance & Arc 5 Advisory",
-  "status": "Sprint_Planning_Complete",
-  "prior_status": "Design_Gate_Passed",
+  "status": "Executing",
+  "prior_status": "Sprint_Planning_Complete",
   "engine": "Sprint Planning",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-09-07__release-v9.2/stage4_backlog_slice.md",
