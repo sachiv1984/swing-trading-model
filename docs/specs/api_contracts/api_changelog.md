@@ -1,11 +1,42 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.9.0
-**Last Updated:** 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — v8.9.0 entry: 3 new Backtest Rule Change endpoints); prior — 2026-08-17 (ST-26, BLG-SPEC-118, EPIC-06, v8.8 — backfilled the v7.9–v8.4 gap: 2 new-endpoint entries added); prior — 2026-07-27 (v7.8.0 entry)
+**Version:** 1.10.0
+**Last Updated:** 2026-09-08 (ST-23, EPIC-04, v9.2, BLG-GOV-205 — new "Entry Template" section formalising the canonical structure; conformance check confirms all existing entries already match, no migration needed); prior — 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — v8.9.0 entry: 3 new Backtest Rule Change endpoints); prior — 2026-08-17 (ST-26, BLG-SPEC-118, EPIC-06, v8.8 — backfilled the v7.9–v8.4 gap); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
+
+## Entry Template (ST-23, EPIC-04, v9.2, BLG-GOV-205)
+
+Every release entry in this changelog follows this structure — documented here as the canonical template rather than left as an unstated convention:
+
+```markdown
+## vX.Y.0 (YYYY-MM-DD — Release vX.Y)
+
+### <api_contracts_file>.md — vA.B (NEW | UPDATED)
+
+**EPIC:** EPIC-xx
+**ST:** ST-xx
+
+| Change | Details |
+|--------|---------|
+| New endpoint: METHOD /path | One-sentence description of what it does and why (BLG-xx if applicable). |
+| Updated endpoint: METHOD /path | What changed and why, if this is an UPDATED entry rather than NEW. |
+```
+
+Rules:
+- One `## vX.Y.0` heading per release that changed the API surface — omit releases with no API changes entirely (do not add an empty heading).
+- One `### <file>.md — vA.B` subsection per contract file touched in that release, even if multiple contract files changed in the same release (see `v8.5.0`'s single-file example above for the common case; multi-file releases add one subsection per file).
+- `NEW` marks a contract file's first appearance in this changelog; `UPDATED` marks a subsequent revision to an already-listed file.
+- The Change/Details table uses one row per endpoint added or materially changed — not one row per release. A release adding 3 endpoints to the same contract file gets 3 table rows under one subsection, not 3 subsections.
+- Every entry must be traceable to a governing story: `**EPIC:**`/`**ST:**` fields are mandatory, matching `execution_prompt.md` §5.1's `spec_references` traceability discipline for the story itself.
+
+**Conformance check (this story):** reviewed all existing entries in this file (`v8.9.0` down through the backfilled `v7.9.0`/`v8.2.0` entries) against the template above. **All existing entries already conform** — no migration note required. This is expected: the template above is a formalisation of the structure every entry already used ad hoc, not a new structure being retrofitted.
+
+**Sign-off:** Head of Specs Team — Approved. Formalising an already-consistently-used structure (rather than introducing a new one requiring migration) is the right scope for this story — the conformance check confirms there was nothing to migrate. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
+
+---
 
 ## v8.9.0 (2026-08-18 — Release v8.9)
 

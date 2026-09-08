@@ -2,8 +2,8 @@
 **Owner:** PMO Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 — v9.1 row added, rolling average window advanced to v8.6–v9.1; header self-consistency confirmed against table's most recent row before this append, per AUD-2026-08-21-007); prior — 2026-09-03 (post-ship closure 2026-08-21__release-v9.0 — v9.0 row added, rolling average window advanced to v8.5–v9.0; header self-consistency confirmed against table's most recent row before this append, per AUD-2026-08-21-007); prior — 2026-08-21 (post-ship closure 2026-08-17__release-v8.9 — v8.9 row added, rolling average window advanced to v8.4–v8.9); prior history retained — see prior entries in version control.
+**Version:** 1.4
+**Last Updated:** 2026-09-08 (ST-26, EPIC-04, v9.2, BLG-GOV-215 — new "Product Value Ratio Cross-Reference" section added, backfilling the last 3 PVR readings and documenting the Notes-column convention for future cycles); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 — v9.1 row added, rolling average window advanced to v8.6–v9.1); prior — 2026-09-03 (post-ship closure 2026-08-21__release-v9.0 — v9.0 row added, rolling average window advanced to v8.5–v9.0); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -135,3 +135,21 @@ Referenced by `claude/system/roadmap_prompt.md` v4.7 STEP 1.1 Run Manifest — C
 
 **Root cause (not remediated by this audit — informational only):** No CI or governance gate currently enforces that a velocity row is appended at every post-ship closure; the "Update Rule" above is a manual instruction to the Post-Ship Closure Engine, and 3 early cycles (predating the engine's own STEP that appends this row) were missed. Not scoped for a gate addition in this story — audit and backfill only, per AC.
 Do not re-derive velocity from cycle artefacts directly — always read this file.
+
+---
+
+## Product Value Ratio Cross-Reference (ST-26, EPIC-04, v9.2, BLG-GOV-215)
+
+`claude/roadmap/product_value_ratio_history.md` is the authoritative PVR history — this section is a lightweight cross-reference so a reader of this file's velocity trend can see the concurrent PVR reading without opening a second file, not a duplicate source of truth. Do not treat the table below as authoritative if it and `product_value_ratio_history.md` ever disagree — the latter wins; re-sync this table to match.
+
+**Retroactive backfill — last 3 readings as of this story (v9.2):**
+
+| Rebalance | Date | PVR | Tier | Velocity-history cycle(s) in this window |
+|-----------|------|-----|------|-------------------------------------------|
+| 2026-07-27__scheduled | 2026-07-27 | 0.42 | Advisory (unchanged tier) | v7.4–v7.8 |
+| 2026-07-28__scheduled | 2026-07-28 | 0.38 | Advisory (down from 0.42) | v7.5–v7.9 |
+| 2026-08-11__scheduled | 2026-08-11 | 0.110 | 🔴 Alert (first reading below 0.30 floor since 2026-07-12) | v8.1–v8.5 |
+
+**Convention for future cycles:** Whenever `roadmap_prompt.md` STEP 2.4 appends a new row to `product_value_ratio_history.md`, the next velocity-history row appended to this file (at the following post-ship closure) should carry the concurrent PVR reading and tier in its own Notes text, the same way it already carries deviation/delegation counts — no separate table row is required per cycle; this cross-reference table exists only to backfill the 3 most recent readings that predate the convention. Going forward, a reader can derive the concurrent PVR reading from the Notes column directly.
+
+**Sign-off:** Metrics Definitions & Analytics Canonical Owner — Approved. The cross-reference correctly defers to `product_value_ratio_history.md` as sole source of truth and avoids creating a second authoritative table that could drift out of sync; folding future readings into the Notes column (rather than a parallel per-cycle table) is the lower-maintenance choice. Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Canonical Owner role — §5.3), 2026-09-08.

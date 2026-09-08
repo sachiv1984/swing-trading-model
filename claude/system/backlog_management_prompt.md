@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.15
-**Last Updated:** 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — §1.2 gains a companion Field-Completeness Scan for mid-sprint-filed items, AUD-2026-08-21-008); prior — 2026-08-12 (STEP 1.5 gains a 4th ephemeral-section type, AUD-2026-08-12-003); prior history retained — see prior entries in version control.
+**Version:** 1.16
+**Last Updated:** 2026-09-08 (ST-33, EPIC-04, v9.2, BLG-GOV-272 — new §3.1 Recurring Spec-Debt Deep Review Cadence, every 3rd invocation, tracked via a backlog.md header marker); prior — 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — §1.2 gains a companion Field-Completeness Scan for mid-sprint-filed items); prior — 2026-08-12 (STEP 1.5 gains a 4th ephemeral-section type); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -232,6 +232,21 @@ For each item prefixed `BLG-SPEC-*`:
 - If the spec has been updated and the deviation/gap is resolved: mark as **Complete — Archive**
 - If the spec has been updated but the gap remains: update the item's "raised" note with current status
 - If the spec owner is unknown or the item is older than 2 cycles with no activity: add a staleness note
+
+### 3.1 Recurring Spec-Debt Deep Review Cadence (ST-33, EPIC-04, v9.2, BLG-GOV-272)
+
+STEP 3 above runs on **every** `groom backlog` invocation, but only checks items already tagged `BLG-SPEC-*` — it cannot surface undocumented spec drift that no one has yet raised as a backlog item. This subsection defines a periodic **deep review** that goes further, on a lower-frequency cadence.
+
+**Cadence:** every 3rd `groom backlog` invocation. Track via an HTML comment marker at the top of `claude/backlog/backlog.md`: `<!-- last-spec-debt-deep-review: <cycle_id> -->`. On each `groom backlog` run, count invocations since the marked cycle (using the same "no CI/state-schema dependency" approach already used for lightweight counters elsewhere in this engine); when the count reaches 3, perform the deep review below and update the marker to the current cycle.
+
+**Deep review method (when due):**
+1. Run `tests/test_check_specs_index_freshness.py`'s underlying check (or the `check_specs_index_freshness.py` script it wraps) to find specs referenced by `execution_state.json` `spec_references` fields across recent cycles that are not yet registered in `docs/specs/Specs_Index.md` — these are candidate undocumented spec-debt items that STEP 3's per-item check would never surface, since no `BLG-SPEC-*` item exists for them yet.
+2. For each candidate found: file a `BLG-SPEC-*` backlog item via `/backlog-add` if the gap is genuine (not already covered by an existing item), so it enters STEP 3's normal per-item tracking going forward.
+3. Record the deep review's findings (candidates found, items filed, items confirmed not-a-gap) in the backlog health summary (STEP 5) under a `## Spec-Debt Deep Review` heading, distinct from the regular STEP 3 output.
+
+If not due this run: no action, no report section — STEP 3's regular per-item check still runs every time regardless of the deep-review cadence.
+
+**Sign-off:** Head of Specs Team — Confirmed. Cadence tracked via a simple document marker rather than a new `.claude_current_state.json` field keeps this self-contained to `groom backlog`'s own write scope, avoiding a state-schema change for a lower-stakes periodic check. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
 
 ---
 

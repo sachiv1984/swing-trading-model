@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.18.0
-**Last Updated:** 2026-09-07 (ST-37, EPIC-05, v9.1, BLG-SPEC-100 — Win Rate section gains a Terminology Note confirming "hit rate" is not used anywhere in this system)
+**Version:** 1.19.0
+**Last Updated:** 2026-09-08 (ST-35 + ST-40, EPIC-04, v9.2, BLG-GOV-277 + BLG-GOV-276 — new Appendix D Governance Metrics cross-reference: PVR rolling-window boundary-trade handling and the Skill-Silo skill-category taxonomy); prior — 2026-09-07 (ST-37, EPIC-05, v9.1, BLG-SPEC-100 — Win Rate section gains a Terminology Note confirming "hit rate" is not used anywhere in this system)
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1353,3 +1353,38 @@ When any required input field is unavailable from the API (e.g. null `override_r
 - **Metrics Definitions & Analytics Owner:** agent-mediated sign-off cleared 2026-05-27 (ST-08, EPIC-03, v4.1)
 - **Product Owner:** agent-mediated sign-off cleared 2026-05-27 (ST-08, EPIC-03, v4.1)
 - **Metrics Definitions & Analytics Canonical Owner (v6.9 no-gap confirmation):** agent-mediated sign-off cleared 2026-08-04 (ST-10, EPIC-03, v8.2, BLG-GOV-214)
+
+---
+
+## Appendix D — Governance Metrics (Cross-Reference Only)
+
+**Scope note:** the metrics in this appendix are **not** returned by `GET /analytics/metrics` and are exempt from this document's Completeness Guarantee (§Purpose) — they are governance-process metrics (roadmap/backlog composition), not product analytics. They are documented here, in the file owned by the Metrics Definitions & Analytics Canonical Owner, because that role is this system's single accountable owner of metric-definition rigor generally, governance metrics included — not because they belong to the API surface this document otherwise governs. The authoritative computation for each metric below lives in its cited governance prompt; this appendix is a definitional cross-reference, not a second source of truth.
+
+### Product Value Ratio (PVR) — Rolling-Window Boundary-Trade Handling (ST-40, EPIC-04, v9.2, BLG-GOV-276)
+
+**Authoritative computation:** `claude/system/roadmap_prompt.md` STEP 2.4; historical readings: `claude/roadmap/product_value_ratio_history.md`.
+
+**Definition:** PVR = U ÷ (U + G + D + P), computed over all stories shipped in the last 3 completed cycles ("rolling window"), where U/G/D/P is each story's ship-time classification (per `post_ship_closure.md` STEP 11.2's ship-time tagging, closing the reconstruction-variance gap identified at `2026-07-02__scheduled` FI-3 and applied at `2026-07-03__scheduled`).
+
+**Boundary-trade rule (this story's addition):** two ambiguities were previously undocumented in how "last 3 completed cycles" resolves at a boundary:
+
+1. **What counts as a "cycle" for window purposes.** The window is defined by **shipped release-version range**, not by count of rebalance *events* — a scheduled rebalance that produces no full U/G/D/P breakdown (several rows in `product_value_ratio_history.md` are annotated "breakdown not recorded") still occupies its place in version-range sequence; it is not skipped or backfilled from an adjacent cycle. If a window's stated range (e.g. "v8.1-v8.5") cannot be reconstructed to 3 full cycles because an early row's breakdown is genuinely unrecoverable, record the reading with the recoverable subset and note the shortfall explicitly (do not silently substitute a 4th cycle to compensate).
+2. **A story reclassified after its window has already produced a recorded PVR reading.** If a story's U/G/D/P tag is corrected post-hoc (e.g. via a deviation, or a later audit finding it was mistagged at ship time), the **historical PVR reading is not retroactively recomputed** — `product_value_ratio_history.md`'s existing rows are append-only by convention (§ Maintenance in that file). The correction applies only to *future* readings once the corrected tag is in place. If the correction is material enough to change a historical reading's tier (e.g. Advisory → Alert), add a footnote to that row (not an edit to the ratio/tier columns themselves) flagging the known-stale classification and pointing to the correcting story.
+
+**Sign-off:** Metrics Definitions & Analytics Canonical Owner — Approved. Rule (1) correctly treats the window as version-range-based rather than event-count-based, consistent with how existing rows are already labelled (`v8.1-v8.5`, not "5 rebalances"); rule (2) correctly protects the append-only historical record from retroactive rewriting while still surfacing known staleness via a footnote rather than silence. Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Canonical Owner role — §5.3), 2026-09-08.
+
+### Skill-Category Taxonomy Used for Skill-Silo Classification (ST-35, EPIC-04, v9.2, BLG-GOV-277)
+
+**Authoritative computation:** `claude/system/roadmap_prompt.md` §7.1 (Skill-Silo Alert) and §7.2 (Cross-Role Workload Balance Check).
+
+§7.1 classifies each initiative as **Governance-heavy** or **Execution-heavy** but, prior to this story, did not name the exact role-to-bucket mapping used to make that call — leaving it to per-cycle judgement. This taxonomy fixes the mapping:
+
+| Bucket | Roles |
+|--------|-------|
+| **Governance-heavy** | Product Owner, Strategy Rules & System Intent Owner, Head of Specs Team, PMO Lead, Director of HR, AI Compliance Governance Officer, Facilitator |
+| **Execution-heavy** | Head of Engineering, Backend Engineering Owner, Director of Quality, QA Lead, QA & Testing Owner, Frontend Specs & UX Documentation Owner, Base44 Frontend Prompt Owner, Head of UX & Design, Infrastructure & Operations Owner, Cybersecurity & Trust Lead, Data Model & Domain Schema Owner, API Contracts & Documentation Owner |
+| **Cross-cutting (classify by story content, not role alone)** | FinOps & Resource Architect, Metrics Definitions & Analytics Canonical Owner, Financial Reporting & Records Owner — these roles sign off across both governance-shaped and execution-shaped stories; §7.1's per-initiative story-shape classification (via STEP 2.4's U/G/D/P) governs when a story's owning role is one of these three, not a fixed bucket assignment. |
+
+This taxonomy is the same role list §7.2 already tallies by `**Owner:**` field — §7.1's "workload composition" framing (see the companion `roadmap_prompt.md` §7.1 patch, ST-24, this cycle) uses this table to classify by *who actually did the work*, distinct from STEP 2.4's U/G/D/P classification of *why the work matters* (product-value lens). The two lenses can diverge for a single story (e.g. an audit-shaped `D`-classified story executed primarily by Backend Engineering Owner is execution-heavy by workload even though it is governance/debt-shaped by product value) — this is the gap ST-24 names and this taxonomy makes concrete.
+
+**Sign-off:** Metrics Definitions & Analytics Canonical Owner — Approved. The taxonomy correctly separates the workload-composition lens (this table) from the product-value lens (STEP 2.4's existing U/G/D/P), rather than conflating them as the pre-ST-24 §7.1 text did; the three-role "cross-cutting" carve-out is honest about roles that genuinely span both buckets rather than forcing a false binary. Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Canonical Owner role — §5.3), 2026-09-08.

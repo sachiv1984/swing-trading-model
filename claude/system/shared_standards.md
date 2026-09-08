@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.31
-**Last Updated:** 2026-09-07 (ST-20, EPIC-04, v9.1, BLG-GOV-310 — new §16.17 "Signed off by: PENDING" placeholder convention); prior — 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — §14 Preflight Field Scope table gains 4 missing engine rows: run ideas, run ideas housekeeping, manage roadmap, groom backlog); prior — 2026-08-21 (post-ship closure `2026-08-17__release-v8.9`, `ESC-CLOSE-20260821-02` resolution, BLG-GOV-313 — new §16.16 Sandbox Access Constraint Disclosure Block); prior history retained — see prior entries in version control.
+**Version:** 3.32
+**Last Updated:** 2026-09-08 (ST-18 + ST-25, EPIC-04, v9.2, BLG-GOV-244 + BLG-GOV-210 — new §21 Deprecation Header Convention for Retiring API Endpoints and §22 Governance-Cycle Wall-Clock Cost Logging Convention); prior — 2026-09-07 (ST-20, EPIC-04, v9.1, BLG-GOV-310 — new §16.17 "Signed off by: PENDING" placeholder convention); prior — 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — §14 Preflight Field Scope table gains 4 missing engine rows); prior history retained — see prior entries in version control.
 
 # Shared Standards — All Governed Routines
 
@@ -1127,6 +1127,42 @@ Tier 1 and Tier 2 never run `npm audit`, and both are gated on human/CI activity
 **New-vs-known dedup:** Tier 3 does not re-file an issue for every run against the same already-known findings — `docs/security/dependency_vuln_baseline.json` tracks advisory IDs already surfaced (see the file's own header comment for the baseline-vs-accepted-risk distinction). Only advisory IDs absent from that file trigger a new issue. Analysis logic: `scripts/check_dependency_vuln_rescan.py`.
 
 **Filed-item requirement:** Any new (not-in-baseline) HIGH/CRITICAL finding from Tier 3 results in a filed GitHub issue automatically (the CI-native equivalent of a backlog item — this workflow runs unattended on a schedule and cannot itself write to `claude/backlog/backlog.md`, which is governance-write-scoped to governed routines). Cybersecurity & Trust Lead triages the issue at the next convenient session, converting it to a formal `BLG-SEC-xx` backlog item via `/backlog-add` if it isn't resolved before then.
+
+---
+
+## 21. Deprecation Header Convention for Retiring API Endpoints (ST-18, EPIC-04, v9.2, BLG-GOV-244)
+
+When an API endpoint is being retired (superseded by a replacement, or removed with no replacement), mark it in `docs/specs/api_contracts/*.md` at the point of deprecation — do not silently remove its `## METHOD /path` section, and do not wait until physical removal to document the change.
+
+**Convention:** immediately below the endpoint's `## METHOD /path` heading, add:
+
+```markdown
+> **⚠ DEPRECATED (as of vX.Y, YYYY-MM-DD).** <One-line reason.> Superseded by: `METHOD /replacement-path` (or "No replacement — removed."). Scheduled removal: vX.Z (or "Not yet scheduled").
+```
+
+Rules:
+- The deprecation marker is added in the **same commit** that stops recommending the endpoint for new use (e.g. the commit that ships its replacement, or the decision commit if there is no replacement) — not retroactively once removal is imminent.
+- The endpoint's `openapi.yaml` entry gains `deprecated: true` in the same commit (OpenAPI's native deprecation flag), keeping the contract doc and the machine-readable spec in sync — this does not exempt the change from the existing OpenAPI Drift Detection gate (`CLAUDE.md` §2); a deprecated endpoint still requires both entries to exist and agree.
+- "Scheduled removal" is a target release, not a hard commitment — if it slips, update the marker's version rather than silently missing it (this is not itself a hard gate; a slipped removal date without an updated marker is a spec-debt finding, not a CI failure).
+- On actual removal: delete the `## METHOD /path` section and its `openapi.yaml` entry in the same commit, and add one line to `api_changelog.md` (per §21's sibling template, `api_changelog.md`'s own entry format — ST-23, this cycle) recording the removal and its original deprecation date for traceability.
+
+This convention is referenced from `CLAUDE.md` §2's existing OpenAPI Drift Detection non-negotiable — a deprecation marker does not bypass that gate, it runs alongside it.
+
+**Sign-off:** Head of Specs Team — Approved. Tying deprecation to the same commit as the replacement (rather than a separate later cleanup pass) is the right sequencing; it prevents the common failure mode where an endpoint quietly falls out of active use with no documented signal that new integrations should avoid it. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
+
+## 22. Governance-Cycle Wall-Clock Cost Logging Convention (ST-25, EPIC-04, v9.2, BLG-GOV-210)
+
+**Purpose:** record how long a governed routine session actually took in wall-clock time, so future capacity/economics review (per `roadmap_prompt.md` STEP 7 Workforce Economics Gate) has real session-duration data rather than only story-count-based velocity (`claude/cycles/velocity_metrics.md` already tracks story throughput, not elapsed time).
+
+**Convention:** every governed routine that writes a `run_manifest.md`, `cycle_record.md`, or equivalent Class 3 session record notes two timestamps in that record: `Session start (UTC)` and `Session end (UTC)`, captured via a real shell timestamp command (`date -u +%Y-%m-%dT%H:%M:%SZ`) at the actual start and end of the session — never estimated or narrated. Record the elapsed duration as a computed field (`end - start`), not re-typed by hand.
+
+- **Session start:** captured at the routine's first write (STEP 0/-1 equivalent, whenever the manifest/record file is first created).
+- **Session end:** captured at the routine's final write (immediately before the session's closing summary is produced) — if the session halts at a hard gate before reaching its normal end, record the halt point's timestamp instead and note `(halted, not completed)`.
+- **Applied from:** the next cycle onward (this story does not retroactively backfill wall-clock times for prior cycles — no reliable source exists for a session's actual start/end time on already-closed cycles; retroactive backfill would be fabricated, not measured, data).
+
+This is a logging convention only — it does not gate anything and has no pass/fail condition. Its value is purely as future input to workforce/economics review once enough readings accumulate to support a trend.
+
+**Sign-off:** Head of Specs Team — Approved. Explicitly declining to backfill prior cycles (§ "Applied from") is the correct call — fabricated timestamps presented as measured data would be worse than no data at all. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
 
 ---
 
