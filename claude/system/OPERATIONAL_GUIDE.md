@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.17)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.18)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -475,7 +475,7 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.5), `claude/system/backlog_management_prompt.md` (v1.15), `claude/system/ideas_housekeeping_prompt.md` (v1.2)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.5), `claude/system/backlog_management_prompt.md` (v1.16), `claude/system/ideas_housekeeping_prompt.md` (v1.2)  
 **Owner:** PMO Lead / Product Owner  
 **Trigger:** Optional — strongly recommended at either of the following windows:
 
@@ -567,7 +567,7 @@ Keeps `claude/ideas/ideas_register.md` lean and surfaces revival opportunities.
 
 ## 6.5 Phase 1.5 — Design Gate (Required*)
 
-**Source prompt:** `claude/system/design_gate_prompt.md` (v1.9)  
+**Source prompt:** `claude/system/design_gate_prompt.md` (v1.10)  
 **Owner:** Head of UX & Design (artefacts), PMO Lead (gate record)  
 **Pre-condition:** Phase 1B Publish Gate passed; `sprint_sealed = false`  
 **\*Required** unless all sprint items are confirmed Design Not Applicable
@@ -1363,16 +1363,16 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.180 |
+| Version | 4.181 |
 | Last Updated | 2026-09-08 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.5 |
-| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.15 |
-| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.9 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.16 |
+| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.10 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.17 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.18 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.49 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.18 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1382,7 +1382,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.31 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.31 |
+| Shared Standards | `claude/system/shared_standards.md` v3.32 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.13 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1497,6 +1497,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.181 | 2026-09-08 | **Sprint execution `2026-09-07__release-v9.2` EPIC-04/ST-18+ST-19+ST-20+ST-24+ST-25+ST-27+ST-33+ST-37 — 4 source prompts bumped.** §14 table updated: `shared_standards.md` v3.31→v3.32 (new §21 Deprecation Header Convention for Retiring API Endpoints, BLG-GOV-244; new §22 Governance-Cycle Wall-Clock Cost Logging Convention, BLG-GOV-210); `roadmap_prompt.md` v9.17→v9.18 (STEP 1.1 Meta-Review Countdown field, BLG-GOV-217; §7.1 workload-composition framing note, BLG-GOV-209; §7.2 formal threshold review confirming advisory-only, BLG-GOV-300; new STEP 8.1.5 §13-Adjacent Initiative Expiry Review, BLG-GOV-245); `design_gate_prompt.md` v1.9→v1.10 (new §4.1 Post-Gate-Correction Addendum Mechanism, BLG-GOV-287); `backlog_management_prompt.md` v1.15→v1.16 (new §3.1 Recurring Spec-Debt Deep Review Cadence, BLG-GOV-272). §6 source prompt header v9.17→v9.18 (line 405); §6.5 source prompt header v1.9→v1.10 (line 570); §6M source-prompts line backlog_management_prompt.md v1.15→v1.16 (line 478). §14 self-row Version/Last Updated 4.180/2026-09-08→4.181/2026-09-08. Authority: Head of Specs Team (STEP 1.1, §21/§22, §4.1, §3.1), Director of HR (§7.1/§7.2), Strategy Rules & System Intent Owner (STEP 8.1.5) — Sprint Execution Engine, agent-mediated, 2026-09-08. |
 | 4.180 | 2026-09-08 | **Sprint execution `2026-09-07__release-v9.2` EPIC-03/ST-15 (BLG-QA-109) — qa_evidence_template.md v1.11→v1.12: added an explicit FI-P3-02 wording-only-AC exception citation note.** §14 QA Evidence Template v1.11→v1.12. §14 self-row Version/Last Updated 4.179/2026-09-08→4.180/2026-09-08. Change: comparison found the template previously named no standard place/format for citing the FI-P3-02 exception despite it already being exercised in practice ad hoc (e.g. `qa_evidence_EPIC-02.md`, `2026-08-05__release-v8.3`) — added a callout after the OA-3/ST-03 AC-table requirement giving the expected citation format and explicitly distinguishing it from the (broader, EPIC-wide) BLG-GOV-19 Autonomous Class block. Authority: Head of Specs Team (Sprint Execution Engine, ST-15, 2026-09-08). |
 | 4.179 | 2026-09-08 | **Sprint execution `2026-09-07__release-v9.2` EPIC-03/ST-14 (BLG-QA-103) — sprint_planning_prompt.md v3.17→v3.18: STEP -1 advisory 6 (Vulnerability scan) now also appends to a new `docs/ops/pip_audit_trend_log.md`, tracking pip-audit result/dependency-count trend across cycles instead of leaving each cycle's reading isolated in its own `sprint_planning_notes.md`.** §14 Sprint Planning Engine v3.17→v3.18. §7 source prompt header v3.17→v3.18 (line 766). §14 self-row Version/Last Updated 4.178/2026-09-07→4.179/2026-09-08. Change: new log created and backfilled with the 6 most recent readings (`v8.7`–`v9.2`) as part of the same story. Authority: Head of Specs Team (Sprint Execution Engine, ST-14, 2026-09-08). |
 | 4.178 | 2026-09-07 | **Post-ship closure `2026-09-03__release-v9.1` outstanding-actions resolution (user-directed), Head of Specs Team direct action — execution_prompt.md v3.72→v3.73: STEP 3.1.A step 3 gains a confirming note that no dedicated STEP 3.2.C is needed for the PR-already-merged precondition.** §14 Execution Engine Source v3.72→v3.73. §8 source prompt header v3.72→v3.73 (line 887). §14 self-row Version/Last Updated 4.177/2026-09-07→4.178/2026-09-07. Change: resolves the residual design question left open by `LL-v9.1-P3-01`'s own filing — §3.1.C already inherits the precondition by cross-reference ("Commit and push per 3.1.A steps 3–9"); §3.1.B/§3.1.D never have the engine committing to the EPIC branch directly, so STEP 3.1.A step 3 is confirmed the single sufficient choke point. Authority: Head of Specs Team (post-ship closure `2026-09-03__release-v9.1` outstanding-actions resolution, user-directed, 2026-09-07). |

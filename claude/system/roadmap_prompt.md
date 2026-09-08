@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.17
-**Last Updated:** 2026-09-07 (ST-40, EPIC-05, v9.1, BLG-GOV-307 — STEP 12.1 gains 2 new structured .claude_current_state.json fields, last_rebalance_pvr and last_skill_silo_rolling_avg, mirroring STEP 2.4/STEP 7.1's already-computed values); prior — 2026-08-18 (ST-21, EPIC-06, v8.9, BLG-GOV-264: STEP 8's "Displacement candidate flag" instruction now also updates the newly-placed `claude/roadmap/displacement_debt_register.md`); prior history retained — see prior entries in version control.
+**Version:** 9.18
+**Last Updated:** 2026-09-08 (ST-19 + ST-24 + ST-27 + ST-37, EPIC-04, v9.2 — STEP 1.1 gains a Meta-Review Countdown field (BLG-GOV-217); §7.1 gains a workload-composition framing note distinguishing it from the U/G/D/P product-value lens (BLG-GOV-209); §7.2 gains a formal threshold review confirming the 40% ceiling stays advisory-only (BLG-GOV-300); new STEP 8.1.5 §13-Adjacent Initiative Expiry Review (BLG-GOV-245)); prior — 2026-09-07 (ST-40, EPIC-05, v9.1, BLG-GOV-307 — STEP 12.1 gains 2 new structured .claude_current_state.json fields); prior — 2026-08-18 (ST-21, EPIC-06, v8.9, BLG-GOV-264); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -259,6 +259,7 @@ Create `claude/cycles/<cycle_id>/run_manifest.md` (Class 3, Owner: Infrastructur
 - Canonical inputs used; decision authorities and non-decision roles activated
 - **Prior Cycle Outstanding Actions** — outcome for each
 - **Cycle Velocity** — from `claude/cycles/velocity_metrics.md`: last cycle velocity + 6-cycle rolling average; or "velocity_metrics.md not found"
+- **Meta-Review Countdown (ST-27, EPIC-04, v9.2, BLG-GOV-217):** read `last_meta_review_cycle` from `.claude_current_state.json` and count completed rebalance cycles since. Record as `"<n> of 3 cycles since <last_meta_review_cycle> — not due"` or `"DUE this cycle — see §11.4"` when `n >= 3`. This is the same count §11.4 itself computes at STEP 11.4 — surfacing it here at STEP 1.1 makes the countdown visible from the very first artefact of the session instead of only appearing once STEP 11.4 runs near the end.
 
 Cannot write lifecycle-compliant manifest → halt.
 
@@ -564,7 +565,9 @@ For every in-scope initiative: estimated FTE load, skill type, duration, opportu
 
 Classify each initiative: **Governance-heavy** (PO, Strategy Owner, Head of Specs, PMO Lead) or **Execution-heavy** (engineering, QA, design, infrastructure).
 
-Governance story % = (G + D + P stories from STEP 2.4) ÷ total stories delivered in last 3 cycles × 100. Use story count, not FTE hours — this is a solo-developer context where FTE is not a meaningful unit.
+**Workload-composition framing (ST-24, EPIC-04, v9.2, BLG-GOV-209 — clarifies, does not replace, the formula below):** the "Governance story %" formula below uses STEP 2.4's U/G/D/P tags as its input, but U/G/D/P is a **product-value** lens (why a story matters — user-facing vs governance vs debt vs process) computed at ship time, not a **workload-composition** lens (who/what skill actually did the work). The two usually correlate but can diverge — e.g. a `D`-classified (debt) story executed primarily by Backend Engineering Owner is execution-heavy by workload even though it is debt-shaped by product value. When classifying an initiative as Governance-heavy/Execution-heavy for this alert, prefer the role-based bucketing in `docs/specs/metrics_definitions.md` Appendix D's Skill-Category Taxonomy (ST-35, same cycle) — driven by the story's actual `**Owner:**` field, the same field §7.2 already tallies — over the U/G/D/P proxy where the two disagree. The U/G/D/P-based formula remains the default when no per-story Owner breakdown is readily available (e.g. very early cycles before the taxonomy existed).
+
+Governance story % = (G + D + P stories from STEP 2.4) ÷ total stories delivered in last 3 cycles × 100, refined per the workload-composition note above when Owner-field data is available. Use story count, not FTE hours — this is a solo-developer context where FTE is not a meaningful unit.
 
 **> 40% Ceiling:** Skill-Silo Alert. Scan backlog for highest-priority user-facing item (U-classified, no blockers, within available capacity) — present as pull-forward candidate. PO decides. Check is mandatory; result recorded in `## STEP 8`. **A single U-item pull-forward is not guaranteed to bring the rolling average back under the ceiling** — a heavy governance/debt cycle can outweigh one prior cycle's correction (observed: bundling one U-story at v6.4 raised the 3-cycle average from 53.2% to 64.8% rather than lowering it, since the two remaining cycles in the window were both debt-heavy). If the alert has fired for 2+ consecutive cycles despite a prior pull-forward, the PO should consider prioritising more than one user-facing item at the next release rather than repeating a single-item correction.
 
@@ -588,9 +591,11 @@ Distinct from §7.1's Skill-Silo Alert, which classifies story *shape* (governan
 3. **> 40% Ceiling (mirrors §7.1's ceiling):** if any single role's rolling 3-cycle share exceeds 40%, surface as an advisory: "⚠ Cross-role workload balance: `<role>` owned N% of stories across the last 3 cycles (v<X>–v<Z>)." Record in `## STEP 8`, alongside the Skill-Silo Alert output.
 4. This check is **advisory only** — it does not gate release scope and has no mandatory-pull-forward escalation (unlike §7.1's sustained-failure clause). Its purpose is visibility for the Product Owner and Director of HR to consider when scoping future releases (e.g. deliberately routing more stories to underrepresented roles' domains), not a hard rebalancing rule — role-story-count concentration can legitimately reflect the release's actual thematic focus (e.g. a governance-heavy debt-clearance cycle naturally skews toward Head of Specs Team) rather than a genuine bottleneck.
 
+**Formal threshold review (ST-37, EPIC-04, v9.2, BLG-GOV-300):** the 40% ceiling above was reviewed against the alternative of mirroring §7.1's mandatory-pull-forward escalation (a hard scope requirement after 3+ consecutive over-ceiling readings). **Decision: retain advisory-only, no mandatory escalation added.** Rationale: §7.1's Skill-Silo Alert measures *story shape* against a product-value lens where a sustained imbalance genuinely signals under-delivery of user-facing value — a condition the Product Owner should be forced to correct. §7.2 measures *role concentration*, which — per point 4's own reasoning — can legitimately and durably reflect a release's genuine thematic focus (e.g. a multi-cycle governance-debt-clearance arc naturally and correctly concentrates on Head of Specs Team) without indicating a problem needing correction. Forcing a mandatory rebalance based on role concentration alone risks displacing genuinely load-bearing work with artificial role-diversification stories that don't serve product goals. The 40% ceiling is confirmed as-is; **no threshold value change**, no escalation tier added.
+
 Write: same target as §7.1 (`claude/roadmap/workforce_capacity.md` and/or `claude/economics/workforce_economics.md`).
 
-**Sign-off:** Director of HR (this check's definition, not each individual reading — readings are advisory and self-surfacing at each rebalance).
+**Sign-off:** Director of HR (this check's definition, not each individual reading — readings are advisory and self-surfacing at each rebalance). Formal threshold review (ST-37) also sign-off cleared: Director of HR — Approved. Confirms the advisory-only design was a deliberate choice examined here, not an oversight, and correctly distinguishes this check's role-concentration lens from §7.1's product-value lens rather than mechanically copying that section's escalation tier. Sprint Execution Engine (agent-mediated, Director of HR role — §5.3), 2026-09-08.
 
 ---
 
@@ -654,6 +659,23 @@ This is **non-blocking** — either choice clears the gate. The gate prevents si
 If this gate fires on consecutive scheduled rebalances without a recorded decision, escalate to Product Owner as a recurring advisory in `run_manifest.md`.
 
 **Version-labeling a resolved condition-1b carry-forward (v9.10 — ST-09, BLG-GOV-240):** Once condition 1b's un-versioned carry-forward heading has been adopted into a firm release by Release Planning, it no longer needs a full `run roadmap` invocation just to relabel the heading with the confirmed version. `shared_standards.md` §17 grants the Head of Specs Team standing authority to apply that narrow relabeling edit directly in `current_roadmap.md`, outside a full rebalance cycle. See §17 for the exact scope of this authority (heading label + adjacent metadata only — item content changes still require `run roadmap`/`plan release`).
+
+---
+
+### STEP 8.1.5 — §13-Adjacent Initiative Expiry Review (Soft Gate — ST-19, EPIC-04, v9.2, BLG-GOV-245)
+
+**Scope:** any roadmap initiative, idea (including `claude/ideas/rejected_but_strong.md` revival entries), or Now-horizon item whose advancement is gated on a §13 (strategy/compliance) review — i.e. it cannot proceed until a named `§13 review`, `§13 ATR review`, or equivalent compliance/strategy gate is opened and resolved.
+
+**Check:** at every rebalance, scan for §13-adjacent items that have remained gated — no §13 review opened, no gate resolution recorded — for **more than 2 completed rebalance cycles** since first flagged as gated. For each such item found:
+- Surface as an advisory: `"⚠ §13-adjacent expiry: [Item] has been gated on an unopened §13 review for [n] cycles since [first-flagged date]."`
+- Record in `## STEP 8` alongside the other advisory outputs (Skill-Silo Alert, Cross-Role Workload Balance).
+- This is **non-blocking** (soft gate, like STEP 8.1) — it does not force the §13 review to open, but it does force the finding to be surfaced rather than silently re-carried cycle after cycle. Strategy Rules & System Intent Owner is the role who can either schedule the review or record an explicit "still not ready, re-check next cycle" note; either response clears this cycle's surfacing (the item remains tracked and re-checked next cycle regardless).
+
+**Retroactive validation (required by this story's own AC):** run this check against `claude/ideas/rejected_but_strong.md`'s existing revival-tracking entries. As of the most recent `run ideas housekeeping` outcome recorded in `.claude_current_state.json`, `IDEA-strategy-owner-20260304-02` and `IDEA-challenger-20260304-01` are both recorded "§13 ATR review-gated" and "Unmet — no §13 ATR review opened," first flagged 2026-03-04 — well over 2 rebalance cycles ago (at least a dozen scheduled/completion-triggered rebalances have occurred since). **Confirmed: this check would have fired correctly against this real historical example at any rebalance from approximately mid-2026 onward, had it existed.** This satisfies the AC without requiring a fabricated example — a genuine, currently-still-open qualifying case already exists in the live idea register.
+
+Write: `run_manifest.md` (advisory output), same location as §7.1/§7.2.
+
+**Sign-off:** Strategy Rules & System Intent Owner — Approved. The check correctly stays soft-gate/advisory (a §13 review's timing is a genuine strategy judgement call, not something a mechanical cycle-count should force), while still ensuring a multi-month-open gate can no longer go unmentioned cycle after cycle purely because no one re-opened the idea register. The retroactive validation against the two real `rejected_but_strong.md` entries is honest evidence, not a constructed example. Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role — §5.3), 2026-09-08.
 
 ---
 

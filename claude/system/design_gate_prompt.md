@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.9
-**Last Updated:** 2026-08-04
+**Version:** 1.10
+**Last Updated:** 2026-09-08 (ST-20, EPIC-04, v9.2, BLG-GOV-287 — new §4.1 Post-Gate-Correction Addendum Mechanism)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -224,6 +224,34 @@ Product Owner: confirmed
 **Gate status rules:**
 - **PASSED**: all Design Required items have approved artefacts and updated specs; all items classified
 - **BLOCKED**: one or more Design Required items have no approved artefact or unupdated spec
+
+### 4.1 Post-Gate-Correction Addendum Mechanism (ST-20, EPIC-04, v9.2, BLG-GOV-287)
+
+`claude/cycles/<cycle_id>/stage4_backlog_slice.md` is sealed once the design gate begins (`execution_prompt.md` §4 write-scope rules; `CLAUDE.md` §2 "Never modify sealed artefacts"). If this gate's own classification or §13 pre-check work surfaces a correction that would otherwise require editing the sealed slice — e.g. an acceptance-criteria clarification the design review revealed was ambiguous, a scope note the Head of UX & Design flagged as missing, or a `Gate Status: §13 PRE-CHECK REQUIRED` flag that changes an item's effective scope — do **not** edit `stage4_backlog_slice.md` directly.
+
+**Mechanism:** create or append to `claude/cycles/<cycle_id>/stage4_backlog_slice_addendum.md` (Class 4, append-only, Owner: PMO Lead):
+
+```markdown
+**Owner:** PMO Lead
+**Class:** Planning Document (Class 4)
+**Status:** Active
+**Cycle:** <cycle_id>
+
+# Post-Gate-Correction Addendum — <cycle_id>
+
+Corrections below are additive to the sealed `stage4_backlog_slice.md` — they do not replace or edit its content. Sprint Planning and Sprint Execution must read both files together as the combined authoritative scope.
+
+## <Item ID> — <one-line correction summary>
+**Found at:** Design Gate STEP <n>
+**Correction:** <what changed and why>
+**Date:** <date>
+```
+
+- Cross-reference the addendum's existence (path + item count) in `design_gate.md`'s own `## Notes` section, so a reader of the gate record knows to also check the addendum.
+- Sprint Planning (`sprint_planning_prompt.md`) and Sprint Execution (`execution_prompt.md`) must check for this addendum's existence alongside the sealed slice at their own STEP -1.1-equivalent preflight, the same way `amended_backlog_slice_path` is already checked — treat a present addendum the same way: authoritative, additive, non-optional to read.
+- This mechanism does not apply to actual scope changes (adding/removing items, changing priority) — those remain out of the design gate's authority and require an amendment cycle (`amend cycle`) or the next `run roadmap`/`plan release`. The addendum is for corrections *within* an item's existing scope that the sealed document did not capture precisely enough, not for scope changes.
+
+**Sign-off:** Head of Specs Team — Approved. Append-only-addendum-alongside-the-seal is the right shape here — it preserves the seal's integrity (never edited) while giving the design gate a governed path for the kind of small, in-scope correction that design review legitimately surfaces and that would otherwise have no home. The explicit non-scope-change boundary (last bullet) correctly keeps this narrow. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
 
 ---
 
