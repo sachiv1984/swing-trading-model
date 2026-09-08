@@ -249,10 +249,18 @@ test.describe('SC-ARC5-06 — Red Flag Events/Week value formatted via fmtCount'
     await mockArc5Compliance(page, ARC5_KNOWN_VALUES);
     await gotoAnalytics(page);
 
-    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+    const heading = page.getByText('Arc 5 Signal Compliance');
+    await expect(heading).toBeVisible({ timeout: 10000 });
+
+    // ST-08 (BLG-QA-158, EPIC-03, v9.2): scope to the Arc5ComplianceSection
+    // container (heading's parent), same convention as SC-ARC5-08 below —
+    // an unscoped page.getByText('3.0') risks a strict-mode multi-match (or
+    // a false positive) against unrelated "3.0"-valued text elsewhere on the
+    // analytics page.
+    const section = heading.locator('..');
 
     // events_per_week: 3.0 → fmtCount → val.toFixed(1) → "3.0"
-    await expect(page.getByText('3.0', { exact: true })).toBeVisible({ timeout: 8000 });
+    await expect(section.getByText('3.0', { exact: true })).toBeVisible({ timeout: 8000 });
   });
 });
 
@@ -266,10 +274,15 @@ test.describe('SC-ARC5-07 — Top Rule Breach text formatted via fmtText', () =>
     await mockArc5Compliance(page, ARC5_KNOWN_VALUES);
     await gotoAnalytics(page);
 
-    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+    const heading = page.getByText('Arc 5 Signal Compliance');
+    await expect(heading).toBeVisible({ timeout: 10000 });
+
+    // ST-08 (BLG-QA-158, EPIC-03, v9.2): scope to the Arc5ComplianceSection
+    // container (heading's parent) — see SC-ARC5-06's comment above for why.
+    const section = heading.locator('..');
 
     // top_rule_breach: 'cash_constraint' → fmtText → val.replace(/_/g, ' ') → "cash constraint"
-    await expect(page.getByText('cash constraint', { exact: true })).toBeVisible({ timeout: 8000 });
+    await expect(section.getByText('cash constraint', { exact: true })).toBeVisible({ timeout: 8000 });
   });
 });
 

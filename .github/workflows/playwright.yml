@@ -45,6 +45,13 @@ on:
       - 'playwright.config.js'
       - 'playwright.visual-regression.config.js'
       - '.github/workflows/playwright.yml'
+      # ST-06 (BLG-OPS-149, EPIC-03, v9.2): a dependency bump can change
+      # resolved package versions the E2E suite exercises (Playwright itself
+      # included) without touching any src/ or tests/e2e/ file — the job must
+      # still run so a bad bump is caught before merge, not just on the next
+      # unrelated frontend PR.
+      - 'package.json'
+      - 'package-lock.json'
   pull_request:
     branches:
       - main
@@ -61,6 +68,9 @@ on:
       - 'playwright.config.js'
       - 'playwright.visual-regression.config.js'
       - '.github/workflows/playwright.yml'
+      # ST-06 (BLG-OPS-149, EPIC-03, v9.2): see push.paths comment above.
+      - 'package.json'
+      - 'package-lock.json'
 
 jobs:
   playwright-e2e:

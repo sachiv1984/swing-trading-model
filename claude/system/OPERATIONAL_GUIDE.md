@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.178
-**Last Updated:** 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding-actions resolution — execution_prompt.md v3.72→v3.73: §8 "Source prompt" line and §14 Execution Engine Source row both updated to v3.73); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding-actions resolution — lessons_learnt_prompt.md v1.12→v1.13: §14 Lessons Learnt Prompt row updated to v1.13); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding actions — delivery_verification_prompt.md v3.8→v3.9: §9 "Source prompt" line and §14 Verification Engine Source row both updated to v3.9); prior history retained — see prior entries in version control.
+**Version:** 4.180
+**Last Updated:** 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-03/ST-15 — qa_evidence_template.md v1.11→v1.12: §14 QA Evidence Template row updated to v1.12); prior — 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-03/ST-14 — sprint_planning_prompt.md v3.17→v3.18: §7 "Source prompt" line and §14 Sprint Planning Engine row both updated to v3.18); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding-actions resolution — execution_prompt.md v3.72→v3.73: §8 "Source prompt" line and §14 Execution Engine Source row both updated to v3.73); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -763,7 +763,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.17)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.18)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1363,8 +1363,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.178 |
-| Last Updated | 2026-09-07 |
+| Version | 4.180 |
+| Last Updated | 2026-09-08 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1374,10 +1374,10 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.17 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.49 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.17 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.18 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.73 |
-| QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.11 |
+| QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.12 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.9 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.31 |
@@ -1497,6 +1497,8 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.180 | 2026-09-08 | **Sprint execution `2026-09-07__release-v9.2` EPIC-03/ST-15 (BLG-QA-109) — qa_evidence_template.md v1.11→v1.12: added an explicit FI-P3-02 wording-only-AC exception citation note.** §14 QA Evidence Template v1.11→v1.12. §14 self-row Version/Last Updated 4.179/2026-09-08→4.180/2026-09-08. Change: comparison found the template previously named no standard place/format for citing the FI-P3-02 exception despite it already being exercised in practice ad hoc (e.g. `qa_evidence_EPIC-02.md`, `2026-08-05__release-v8.3`) — added a callout after the OA-3/ST-03 AC-table requirement giving the expected citation format and explicitly distinguishing it from the (broader, EPIC-wide) BLG-GOV-19 Autonomous Class block. Authority: Head of Specs Team (Sprint Execution Engine, ST-15, 2026-09-08). |
+| 4.179 | 2026-09-08 | **Sprint execution `2026-09-07__release-v9.2` EPIC-03/ST-14 (BLG-QA-103) — sprint_planning_prompt.md v3.17→v3.18: STEP -1 advisory 6 (Vulnerability scan) now also appends to a new `docs/ops/pip_audit_trend_log.md`, tracking pip-audit result/dependency-count trend across cycles instead of leaving each cycle's reading isolated in its own `sprint_planning_notes.md`.** §14 Sprint Planning Engine v3.17→v3.18. §7 source prompt header v3.17→v3.18 (line 766). §14 self-row Version/Last Updated 4.178/2026-09-07→4.179/2026-09-08. Change: new log created and backfilled with the 6 most recent readings (`v8.7`–`v9.2`) as part of the same story. Authority: Head of Specs Team (Sprint Execution Engine, ST-14, 2026-09-08). |
 | 4.178 | 2026-09-07 | **Post-ship closure `2026-09-03__release-v9.1` outstanding-actions resolution (user-directed), Head of Specs Team direct action — execution_prompt.md v3.72→v3.73: STEP 3.1.A step 3 gains a confirming note that no dedicated STEP 3.2.C is needed for the PR-already-merged precondition.** §14 Execution Engine Source v3.72→v3.73. §8 source prompt header v3.72→v3.73 (line 887). §14 self-row Version/Last Updated 4.177/2026-09-07→4.178/2026-09-07. Change: resolves the residual design question left open by `LL-v9.1-P3-01`'s own filing — §3.1.C already inherits the precondition by cross-reference ("Commit and push per 3.1.A steps 3–9"); §3.1.B/§3.1.D never have the engine committing to the EPIC branch directly, so STEP 3.1.A step 3 is confirmed the single sufficient choke point. Authority: Head of Specs Team (post-ship closure `2026-09-03__release-v9.1` outstanding-actions resolution, user-directed, 2026-09-07). |
 | 4.177 | 2026-09-07 | **Post-ship closure `2026-09-03__release-v9.1` outstanding-actions resolution (user-directed), Head of Specs Team direct action — lessons_learnt_prompt.md v1.12→v1.13: §3.7 gains a re-verify-against-current-state rule for carried-forward deferred-patch claims (LL-v9.1-Closure-01).** §14 Lessons Learnt Prompt v1.12→v1.13. §14 Version 4.176→4.177/2026-09-07. Change: closes a gap one level up from `LL-v8.6-P4-01b`/`BLG-GOV-312` (both fix a single deferred-patch-table lookup at the moment it's first evaluated; this fixes that lookup's conclusion being carried forward across a further cycle boundary unchecked). Found live at `2026-09-03__release-v9.1`'s own post-ship closure: its Phase 4 section had carried `execution_prompt.md`'s `test_scenarios` completeness check as "not yet applied, first carry" 4 days after it had, in fact, already shipped (`LL-v9.0-P4-02`, v3.70→v3.71, 2026-09-03) — caught during this same closure's own STEP 8 cross-reading, not by the recurrence check itself. Authority: Head of Specs Team (post-ship closure `2026-09-03__release-v9.1` outstanding-actions resolution, user-directed, 2026-09-07). |
 | 4.176 | 2026-09-07 | **Post-ship closure `2026-09-03__release-v9.1` outstanding actions, Head of Specs Team direct action — delivery_verification_prompt.md v3.8→v3.9: §7 Resolved-deviation carve-out gains an "or equivalent" evidence clarification for deviations with no natural canonical-spec Known Deviations home (LL-v9.1-P4-01), resolving this cycle's own Phase 4 lessons-learnt friction item.** §14 Verification Engine Source v3.8→v3.9. §9 source prompt header v3.8→v3.9 (line 976). §14 self-row Version/Last Updated 4.175/2026-09-07→4.176/2026-09-07. Authority: Head of Specs Team (post-ship closure `2026-09-03__release-v9.1` outstanding-actions resolution, user-directed, 2026-09-07). |

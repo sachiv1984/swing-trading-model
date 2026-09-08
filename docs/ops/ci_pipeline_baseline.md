@@ -1,8 +1,8 @@
 **Owner:** QA Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-09-07 (ST-18, v9.1 EPIC-03, BLG-QA-134 — §9 Regression Suite Runtime Budget & Reporting added)
+**Version:** 1.4
+**Last Updated:** 2026-09-08 (ST-12, v9.2 EPIC-03, BLG-QA-147 — §8.5 first trend re-measurement added); prior — 2026-09-07 (ST-18, v9.1 EPIC-03, BLG-QA-134 — §9 Regression Suite Runtime Budget & Reporting added)
 **Cycle:** 2026-05-29__release-v4.3 (ST-11 — BLG-QA-38)
 
 ---
@@ -238,12 +238,54 @@ is still absorbing growth. No current breach; no immediate action required.
 Signed: Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3) — 2026-09-07
 ```
 
+### 8.5 First Trend Re-Measurement (2026-09-08, ST-12, EPIC-03, v9.2, BLG-QA-147)
+
+**Objective:** BLG-QA-147: §8.1's 2026-09-07 measurement was the *first* reading against the BLG-QA-134 budget defined that same day — one data point is not a trend. This is the first re-run of the §8.3 procedure, one day later.
+
+**Honesty note on "last 90 days":** BLG-QA-147's own title asks for a 90-day trend report. The budget (§8.2) and its first measurement (§8.1) are one day old as of this entry — a genuine 90-day trend against *this specific budget* cannot exist yet; the earliest it can is 2026-12-06. What follows is the second data point in that eventual series (day 0 → day 1), reported honestly as such rather than backfilled or extrapolated. §8.3's own cadence rules (re-run at next relevant `groom backlog`/rebalance, ≥25% spec-file growth, or quarterly) continue to govern when the next entries land; this one is prompted directly by this story rather than any of those triggers, which is fine — nothing in §8.3 prohibits an earlier re-run.
+
+**Playwright E2E (`playwright.yml`, 4-way shard), 5 most recent successful CI runs (as of 2026-09-08):**
+
+| Run | Shard 1/4 | Shard 2/4 | Shard 3/4 | Shard 4/4 | Critical path (slowest shard) |
+|-----|-----------|-----------|-----------|-----------|-------------------------------|
+| 34206117524 | 206 | 184 | 188 | 144 | 206 |
+| 34208226152 | 210 | 179 | 174 | 136 | 210 |
+| 34208259478 | 172 | 194 | 172 | 668† | 668† |
+| 34216928537 | 164 | 192 | 186 | 167 | 192 |
+| 34217351561 | 177 | 186 | 180 | 170 | 186 |
+| **Average (all 5)** | — | — | — | — | **292.4** |
+| **Average (excl. †)** | — | — | — | — | **198.5** |
+
+All durations in seconds, sourced the same way as §8.1/§7 (`gh run view <id> --json jobs`, per-shard `startedAt`/`completedAt`).
+
+**† Outlier investigated, not a suite-runtime regression.** Run 34208259478's shard 4/4 (668s) was pulled apart step-by-step (`gh api .../actions/jobs/<id>` per-step `started_at`/`completed_at`): the actual test-execution step ("Run E2E acceptance tests (shard 4/4)") ran a normal 129s (09:17:54→09:20:03) — the entire excess sat in "Install Playwright OS dependencies only (cache hit — browsers already present)", which took 8.5 minutes (09:09:24→09:17:54) against a typical ~1-3s for that step on every other sampled run. This is a runner/apt-level stall, the same class already called out in `playwright.yml`'s own comments ("observed hang on 2026-08-19, install-deps step never returning" — `DEBIAN_FRONTEND`/`NEEDRESTART_MODE` guards were added for exactly this), not a regression in the test suite itself. Excluding it, this sample's critical-path mean (198.5s) is in line with §8.1's 210.6s — flat to slightly faster, continuing §8.1's own observed trend. Per §8.2, a single reading over the 480s alert threshold does not itself trigger an alert (the threshold requires 3 *consecutive* runs) — correctly so here, since the other 4 of 5 runs in this same sample are unaffected and the cause is external to the suite.
+
+**Backend pytest (`ci-tests.yml`), 4 most recent successful CI runs (as of 2026-09-08):** 83s, 100s, 85s, 79s — mean 86.75s. Identical to §8.1's mean (also 86.75s, from a different 4-run sample the prior day) — no drift.
+
+**Trend so far (day 0 → day 1):** Playwright critical path 210.6s → 198.5s (excl. the investigated outlier); backend pytest 86.75s → 86.75s. Both flat/improving. No threshold breach; §8.2's "3 consecutive runs" bar was not met by the one outlier, and the underlying cause was confirmed external to the suite. No action required. This entry establishes day 1 of the real trend series — the next re-run (per §8.3's triggers) becomes day N.
+
+**Sign-off:**
+```
+QA & Testing Owner
+
+Second data point recorded against the BLG-QA-134 budget (§8.2), one day after its
+first measurement (§8.1). Playwright critical path and backend pytest runtime are
+both flat to improved; the one above-threshold single-run reading (668s, shard 4/4
+of run 34208259478) was traced to an "Install Playwright OS dependencies" runner
+stall external to the test suite, not a regression, and does not meet §8.2's
+3-consecutive-run bar for an alert regardless. No breach; no action required.
+Trend-tracking convention (§8.3) confirmed workable in practice with a real re-run.
+
+Signed: Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3) — 2026-09-08
+```
+
 ---
 
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 1.4 | 2026-09-08 | Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3) | ST-12 (EPIC-03, v9.2, BLG-QA-147) — new §8.5 first trend re-measurement (day 0 → day 1 against the §8.2 budget). Playwright critical path flat/improved (210.6s → 198.5s excl. one investigated non-suite outlier); backend pytest unchanged (86.75s). No breach. |
 | 1.0 | 2026-05-29 | Sprint Execution Engine | Initial CI pipeline baseline (ST-11, v4.3 EPIC-02, BLG-QA-38). p50=444s. BLG-QA-27 gate cleared. |
 | 1.3 | 2026-09-07 | Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3) | ST-18 (EPIC-03, v9.1, BLG-QA-134) — new §8 Regression Suite Runtime Budget & Reporting: budget thresholds defined (Playwright critical path, per-shard imbalance, backend pytest suite), repeatable manual reporting procedure established, current measurement recorded (no breach). |
 | 1.2 | 2026-08-03 | Sprint Execution Engine (agent-mediated, QA Lead role — §5.3) | ST-13 (EPIC-04, v8.1, BLG-QA-131) — REC-CI-01 follow-up: new §7 Post-Parallelization Shard Balance Audit. Measured per-shard wall-clock duration across the 5 most recent `playwright.yml` CI runs; shards balanced within ~13% peak-to-peak spread, no consistent per-shard bottleneck across samples. No rebalancing required. |
