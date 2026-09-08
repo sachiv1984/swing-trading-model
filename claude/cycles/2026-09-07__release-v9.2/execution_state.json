@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-07T15:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-08T12:20:00Z",
+  "last_updated_utc": "2026-09-08T14:26:58Z",
   "epics": {
     "EPIC-02": {
       "status": "merged",
@@ -1219,6 +1219,440 @@
           "notes": "Governance process-debt item (EPIC-04, v9.2). Deviation check: implementation matches AC intent, no deviation from stage4_backlog_slice.md."
         }
       }
+    },
+    "EPIC-05": {
+      "status": "done",
+      "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-09-07__release-v9.2/qa_evidence_EPIC-05.md",
+      "test_scenarios": [
+        "tests/test_ai_endpoint_anomaly_service.py"
+      ],
+      "stories": {
+        "ST-43": {
+          "title": "Deprecated/superseded endpoint sunset tracker",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1582,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/deprecated_endpoint_sunset_tracker.md",
+            "docs/specs/api_contracts/conventions.md#14. API Endpoint Deprecation-Window Policy"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "API Contracts & Documentation Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, API Contracts & Documentation Owner role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Confirmed \u2014 tracker created, register verified empty against current openapi.yaml (0 deprecated:true entries)."
+          },
+          "notes": "Tracker created; confirmed 0 endpoints currently in an active deprecation window (grep -i deprecat docs/reference/openapi.yaml -> 0 matches). conventions.md bumped to v1.4, cross-references the tracker."
+        },
+        "ST-44": {
+          "title": "Contract example-payload freshness check against live response shape",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1583,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_contract_example_freshness.py",
+            "docs/ops/contract_example_freshness_baseline_2026-09-08.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "API Contracts & Documentation Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, API Contracts & Documentation Owner role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Confirmed \u2014 check added and run once to establish baseline; scheduled cadence documented; triage follow-up filed (BLG-SPEC-139) rather than deferred silently."
+          },
+          "notes": "126 examples checked; 37 possible-drift + 3 skipped findings recorded in the baseline doc, not individually triaged (out of this story's 0.5d scope) -- follow-up filed as BLG-SPEC-139."
+        },
+        "ST-45": {
+          "title": "Base44 prompt-version provenance tag on generated components",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1584,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/base44_prompt_template_library.md#16. Prompt-Version Provenance Tag"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Base44 Frontend Prompt Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Base44 Frontend Prompt Owner role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Confirmed \u2014 convention documented (\u00a716), not retroactive to existing generated files per the section's own Scope note."
+          },
+          "notes": "base44_prompt_template_library.md v1.8."
+        },
+        "ST-46": {
+          "title": "Base44 regeneration diff checklist \u2014 design-token compliance pass",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1585,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/base44_prompt_template_library.md#17. Regeneration Diff Checklist"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Base44 Frontend Prompt Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Base44 Frontend Prompt Owner role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Confirmed \u2014 checklist added (\u00a717), uses existing design_system.md tokens as reference per story notes."
+          },
+          "notes": "base44_prompt_template_library.md v1.8 (same commit as ST-45)."
+        },
+        "ST-47": {
+          "title": "Component prop-naming convention consistency audit",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1586,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Component Prop-Naming Conventions"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Frontend Specifications & UX Documentation Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Frontend Specifications & UX Documentation Owner role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Confirmed \u2014 audit complete via codebase-wide grep of src/components/, src/pages/; both patterns already in near-universal use, no component renames required."
+          },
+          "notes": "design_system.md v1.13. Dependency on ST-05 (EPIC-02) satisfied -- EPIC-02 merged before this story executed."
+        },
+        "ST-48": {
+          "title": "Gate-metric naming consistency across roadmap, SI-05 digest, and Reports page",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1587,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Gate-Metric Naming"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Metrics Definitions & Analytics Canonical Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Canonical Owner role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Confirmed \u2014 audit complete across current_roadmap.md, dashboard.md, reports.md, SI-05 digest entry; naming already consistent, no renames required."
+          },
+          "notes": "metrics_definitions.md v1.20.0. Also fixed a pre-existing duplicate 'Appendix D' heading collision (relabelled to Appendix F) and backfilled a missing v1.19.0 Change Log row left by EPIC-04 -- both incidental hygiene fixes found while editing the same document, not separately delegated."
+        },
+        "ST-49": {
+          "title": "Populate Specs_Index.md with the 78 spec files its own freshness check found unregistered",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1588,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/Specs_Index.md#8b. Full Spec File Registry"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Head of Specs Team role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Confirmed \u2014 scripts/check_specs_index_freshness.py reports 0 unexplained additions after this work (verified directly, exit path re-run)."
+          },
+          "notes": "Largest item in scope. All 78 files indexed by path, grouped by domain, in new \u00a78b. 1 pre-existing REMOVALS entry (qa_evidence_EPIC-xx.md, a template-pattern placeholder, not a real file) is out of this story's scope (AC covers additions only)."
+        },
+        "ST-50": {
+          "title": "Scope a future migration off Create React App (react-scripts v5)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1589,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/cra_migration_scoping_2026-09-08.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Engineering",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Head of Engineering role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Confirmed \u2014 scoping complete, Vite target + M (2-3d) effort estimate recorded, dual-deploy-target asset-path risk flagged as dominant given BLG-OPS-148 precedent."
+          },
+          "notes": "Scoping document only, no migration implementation this cycle, per AC."
+        },
+        "ST-51": {
+          "title": "Unexplained package-lock.json \"dev\": true churn from the react-router-dom bump",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1590,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/package_lock_dev_flag_churn_investigation_2026-09-08.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Engineering",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Head of Engineering role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Confirmed \u2014 root cause traced to the eslint-webpack-plugin peer-dependency edge from the production-listed react-scripts; verified against current lockfile; no production-bundle or security impact; no fix required."
+          },
+          "notes": "Investigation only -- root cause confirmed benign per AC's own either/or wording."
+        },
+        "ST-52": {
+          "title": "Remove unused namesquatted/erroneous npm packages from package.json",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1591,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "spec_reference_not_applicable": true,
+          "spec_reference_not_applicable_reason": "dependency-hygiene fix (removing unused packages), no prior canonical spec applicable and no new spec artefact created -- verified via grep (0 usages in src/) and CI=false npm run build (succeeds unchanged).",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Engineering",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Head of Engineering role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Confirmed \u2014 x, textarea, sqlalchemy removed from package.json and package-lock.json (npm install regenerated lockfile, 22 packages removed); CI=false npm run build succeeds, bundle size unchanged (-121B)."
+          },
+          "notes": "No usages found in src/ before removal (grep confirmed). build/ directory artefacts from the verification build were not committed (pre-existing tracked build/404.html for gh-pages SPA routing left untouched)."
+        },
+        "ST-53": {
+          "title": "AI cost-threshold alert value review",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1592,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/ai_cost_threshold_review_2026-09-08.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "FinOps & Resource Architect",
+            "signer_field": "Sprint Execution Engine (agent-mediated, FinOps & Resource Architect role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Confirmed \u2014 threshold reviewed against the current 6-endpoint AI surface, no change warranted, rationale documented."
+          },
+          "notes": "$1.00/day threshold confirmed unchanged. \u00a713 pre-check confirmed not applicable per sprint_backlog.md notes."
+        },
+        "ST-54": {
+          "title": "AI endpoint (daily-briefing/chat) cost & latency drift monitoring",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1593,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/services/ai_endpoint_anomaly_service.py",
+            "tests/test_ai_endpoint_anomaly_service.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "FinOps & Resource Architect",
+            "signer_field": "Sprint Execution Engine (agent-mediated, FinOps & Resource Architect role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Confirmed \u2014 anomaly check added, confirmed to fire on simulated cost/latency spikes (8/8 tests pass); wiring to a live scheduled job/alert channel is out of this story's scope (no production DB access), filed as BLG-OPS-151."
+          },
+          "notes": "\u00a713 pre-check confirmed not applicable per sprint_backlog.md notes. Pure DB-independent detector, verified via simulated spikes per AC."
+        },
+        "ST-55": {
+          "title": "Staging environment data-reset cadence review",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1594,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/staging_data_reset_cadence_review_2026-09-08.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Infrastructure & Operations Owner",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Confirmed \u2014 cadence defined (manual, session-triggered, 30-day staleness ceiling); no scheduled-trigger automation added deliberately (risk of an unattended reset destroying an in-progress QA session)."
+          },
+          "notes": "No change made to the existing workflow_dispatch-only trigger mechanism, deliberately."
+        },
+        "ST-56": {
+          "title": "AI feature cost-trend tracking has not kept pace with feature shipping",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1595,
+          "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
+          "commit_sha": "04ef5d6c8a3dcb2639b380a29e66b0866c4b89a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-08T14:26:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/ai_feature_cost_trend_2026_q3.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "FinOps & Resource Architect",
+            "signer_field": "Sprint Execution Engine (agent-mediated, FinOps & Resource Architect role -- \u00a75.3), 2026-09-08",
+            "date": "2026-09-08",
+            "evidence": "Partial \u2014 endpoint inventory confirmed current (6 of 6, up from 2). Real-query-data AC clause not met from this environment (no DATABASE_URL access); disclosed rather than fabricated, query recorded for direct execution, follow-up filed (BLG-OPS-152)."
+          },
+          "notes": "\u00a713 pre-check confirmed not applicable per sprint_backlog.md notes. Real-query-data AC clause partially unmet -- see sign_off note and BLG-OPS-152."
+        }
+      }
     }
   },
   "blocked_items": [],
@@ -1265,7 +1699,21 @@
     "ST-38",
     "ST-39",
     "ST-41",
-    "ST-42"
+    "ST-42",
+    "ST-43",
+    "ST-44",
+    "ST-45",
+    "ST-46",
+    "ST-47",
+    "ST-48",
+    "ST-49",
+    "ST-50",
+    "ST-51",
+    "ST-52",
+    "ST-53",
+    "ST-54",
+    "ST-55",
+    "ST-56"
   ],
   "open_escalations": [],
   "merge_gate": {
