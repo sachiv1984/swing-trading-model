@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-07T15:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-08T09:10:00Z",
+  "last_updated_utc": "2026-09-08T00:00:00Z",
   "epics": {
     "EPIC-02": {
       "status": "merged",
@@ -44,9 +44,9 @@
             "status": "cleared",
             "method": "direct_role_assumption",
             "role": "Head of UX & Design",
-            "signer_field": "Sprint Execution Engine, acting directly as Head of UX & Design at explicit user direction (2026-09-08) -- role matches ST-05's Owner field in sprint_backlog.md, confirmed before acting per CLAUDE.md's role-ownership-verification rule. Not an agent-mediated §5.3 sign-off (those were exhausted at 2 retries, both Blocked) -- this is the user directly invoking the role rather than a further retry.",
+            "signer_field": "Sprint Execution Engine, acting directly as Head of UX & Design at explicit user direction (2026-09-08) -- role matches ST-05's Owner field in sprint_backlog.md, confirmed before acting per CLAUDE.md's role-ownership-verification rule. Not an agent-mediated \u00a75.3 sign-off (those were exhausted at 2 retries, both Blocked) -- this is the user directly invoking the role rather than a further retry.",
             "date": "2026-09-08",
-            "evidence": "ESC-EXEC-20260908-01 (Resolved). 3 prior agent-mediated review rounds (initial + 2 retries, §5.3 max) each found a genuine issue, each fixed; round 3's fix (Signals.js list-cap description) was the one left unverified when the retry budget was exhausted. Independently re-verified line-by-line against source (src/pages/SystemStatus.js, src/pages/Signals.js, src/pages/Reports.js, src/components/dashboard/widgets/RecentTradesWidget.js) before signing off -- all claims in the Known non-compliant instances sub-list confirmed accurate, Design source citation present, no pre-judged sign-off language remaining."
+            "evidence": "ESC-EXEC-20260908-01 (Resolved). 3 prior agent-mediated review rounds (initial + 2 retries, \u00a75.3 max) each found a genuine issue, each fixed; round 3's fix (Signals.js list-cap description) was the one left unverified when the retry budget was exhausted. Independently re-verified line-by-line against source (src/pages/SystemStatus.js, src/pages/Signals.js, src/pages/Reports.js, src/components/dashboard/widgets/RecentTradesWidget.js) before signing off -- all claims in the Known non-compliant instances sub-list confirmed accurate, Design source citation present, no pre-judged sign-off language remaining."
           },
           "notes": "design_system.md v1.12 content (motion-vs-contrast guideline, BLG-SPEC-134) authored, reviewed across 3 agent-mediated rounds (each finding and fixing one genuine issue), then signed off by the user acting directly as Head of UX & Design after independent re-verification of every factual claim against source. ESC-EXEC-20260908-01 resolved. Follow-up gap (BLG-SPEC-136, delay-based stagger not yet brought into ceiling compliance) remains filed and open regardless -- it documents a real pre-existing app-wide non-compliance, not a defect in this story's own deliverable."
         },
@@ -118,10 +118,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-07__release-v9.2/EPIC-03",
       "pr_number": 1598,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-07__release-v9.2/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -133,7 +133,7 @@
       ],
       "stories": {
         "ST-06": {
-          "title": "playwright.yml CI trigger path filter excludes package.json/package-lock.json — dependency-bump PRs never run the E2E suite in CI",
+          "title": "playwright.yml CI trigger path filter excludes package.json/package-lock.json \u2014 dependency-bump PRs never run the E2E suite in CI",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -145,7 +145,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-09-08T11:01:57Z",
           "acceptance_verified": true,
-          "spec_references": [".github/workflows/playwright.yml"],
+          "spec_references": [
+            ".github/workflows/playwright.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
@@ -154,7 +156,7 @@
             "status": "cleared",
             "method": "agent_mediated",
             "role": "Infrastructure & Operations Owner",
-            "signer_field": "Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3)",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role \u2014 \u00a75.3)",
             "date": "2026-09-08",
             "evidence": "Both push.paths and pull_request.paths in playwright.yml confirmed to have received package.json/package-lock.json; diff confirmed additive-only (no existing entries removed); YAML validity confirmed; sibling-job trigger side effect (playwright-visual/playwright-visual-regression also now run) assessed as reasonable, not a defect. Approved, no blocking findings."
           },
@@ -203,7 +205,7 @@
           "notes": "Both assertions scoped via heading.locator('..'), matching the pattern already used by SC-ARC5-08. Full spec file re-run green."
         },
         "ST-09": {
-          "title": "governance_sync.yml's over-closing prevention (unknown→skip) unverified in real CI",
+          "title": "governance_sync.yml's over-closing prevention (unknown\u2192skip) unverified in real CI",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -215,13 +217,15 @@
           "unblock_criteria": null,
           "completed_utc": "2026-09-08T11:01:57Z",
           "acceptance_verified": true,
-          "spec_references": ["scripts/test_governance_sync_close_gate_logic.sh"],
+          "spec_references": [
+            "scripts/test_governance_sync_close_gate_logic.sh"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "New regression script directly exercises is_story_done()'s unknown/no/yes branches (parameterised copy of the governance_sync.yml function) — confirms unknown (no execution_state entry) and no (blocked_* status) both skip auto-close; only yes (done/merged) closes. 4/4 cases pass."
+          "notes": "New regression script directly exercises is_story_done()'s unknown/no/yes branches (parameterised copy of the governance_sync.yml function) \u2014 confirms unknown (no execution_state entry) and no (blocked_* status) both skip auto-close; only yes (done/merged) closes. 4/4 cases pass."
         },
         "ST-10": {
           "title": "governance_sync.yml never recovers a story-issue close when the state-sync commit lands separately from the tagged work commit",
@@ -257,7 +261,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-09-08T11:01:57Z",
           "acceptance_verified": true,
-          "spec_references": ["tests/test_check_specs_index_freshness.py"],
+          "spec_references": [
+            "tests/test_check_specs_index_freshness.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
@@ -278,7 +284,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-09-08T11:22:12Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/ops/ci_pipeline_baseline.md#8.5 First Trend Re-Measurement"],
+          "spec_references": [
+            "docs/ops/ci_pipeline_baseline.md#8.5 First Trend Re-Measurement"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
@@ -287,11 +295,11 @@
             "status": "cleared",
             "method": "agent_mediated",
             "role": "QA & Testing Owner",
-            "signer_field": "Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3)",
+            "signer_field": "Sprint Execution Engine (agent-mediated, QA & Testing Owner role \u2014 \u00a75.3)",
             "date": "2026-09-08",
-            "evidence": "Arithmetic re-derivation confirmed (292.4/198.5/86.75 all reproduce from the listed per-run values); outlier investigation (668s shard traced to an 8.5min OS-deps install stall via per-step gh api timestamps, not the 129s test-execution step itself) found adequately evidenced inline per LL-v8.6-P3-01; 90-day-trend honesty note confirmed non-overclaiming; diff confirmed no prior §8.1-8.4 content disturbed. Approved."
+            "evidence": "Arithmetic re-derivation confirmed (292.4/198.5/86.75 all reproduce from the listed per-run values); outlier investigation (668s shard traced to an 8.5min OS-deps install stall via per-step gh api timestamps, not the 129s test-execution step itself) found adequately evidenced inline per LL-v8.6-P3-01; 90-day-trend honesty note confirmed non-overclaiming; diff confirmed no prior \u00a78.1-8.4 content disturbed. Approved."
           },
-          "notes": "First re-measurement (day 0 -> day 1) since §8.1's budget-defining reading. Real gh run data pulled fresh, not estimated."
+          "notes": "First re-measurement (day 0 -> day 1) since \u00a78.1's budget-defining reading. Real gh run data pulled fresh, not estimated."
         },
         "ST-13": {
           "title": "DEV-* deviation recurrence pattern report",
@@ -306,7 +314,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-09-08T11:22:12Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/governance/deviation_root_cause_pattern_report_2026-09-08.md"],
+          "spec_references": [
+            "docs/governance/deviation_root_cause_pattern_report_2026-09-08.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
@@ -315,7 +325,7 @@
             "status": "cleared",
             "method": "agent_mediated",
             "role": "Director of Quality",
-            "signer_field": "Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Director of Quality role \u2014 \u00a75.3)",
             "date": "2026-09-08",
             "evidence": "1st pass Blocked on one factual error (Class A 'four days apart' claim; actual gap one day, 2026-08-17->2026-08-18) found via independent date cross-check against canonical spec files. Corrected in-session; 2nd pass confirmed the fix, no collateral disturbance to the rest of the report, and re-confirmed the 16-record reconciliation, BLG-SPEC-137 filing, and analytical-value assessment from the first pass. Approved on retry 1 of 2 allowed."
           },
@@ -334,13 +344,16 @@
           "unblock_criteria": null,
           "completed_utc": "2026-09-08T11:22:12Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/ops/pip_audit_trend_log.md", "claude/system/sprint_planning_prompt.md#STEP -1 Advisory 6"],
+          "spec_references": [
+            "docs/ops/pip_audit_trend_log.md",
+            "claude/system/sprint_planning_prompt.md#STEP -1 Advisory 6"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "No named sign-off role in this story's own AC (unlike ST-12/13/16). Log created + backfilled (v8.7-v9.2, 6 readings); sprint_planning_prompt.md v3.17->v3.18 applies the convention from next sprint planning onward. Full CLAUDE.md §6 checklist completed (OPERATIONAL_GUIDE.md v4.178->4.179, §7 line, §14 row, prompt_change_log.md, sprint_planning_changelog.md)."
+          "notes": "No named sign-off role in this story's own AC (unlike ST-12/13/16). Log created + backfilled (v8.7-v9.2, 6 readings); sprint_planning_prompt.md v3.17->v3.18 applies the convention from next sprint planning onward. Full CLAUDE.md \u00a76 checklist completed (OPERATIONAL_GUIDE.md v4.178->4.179, \u00a77 line, \u00a714 row, prompt_change_log.md, sprint_planning_changelog.md)."
         },
         "ST-15": {
           "title": "DoQ sign-off template alignment check (FI-P3-02 wording-only exception)",
@@ -355,13 +368,15 @@
           "unblock_criteria": null,
           "completed_utc": "2026-09-08T11:22:12Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/templates/qa_evidence_template.md"],
+          "spec_references": [
+            "claude/system/templates/qa_evidence_template.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "No named sign-off role in this story's own AC. Comparison performed: template had zero FI-P3-02 mentions despite ad hoc use in practice (v8.3/qa_evidence_EPIC-02.md) -- drift confirmed and corrected. qa_evidence_template.md v1.11->v1.12; full CLAUDE.md §6 checklist completed (OPERATIONAL_GUIDE.md v4.179->4.180)."
+          "notes": "No named sign-off role in this story's own AC. Comparison performed: template had zero FI-P3-02 mentions despite ad hoc use in practice (v8.3/qa_evidence_EPIC-02.md) -- drift confirmed and corrected. qa_evidence_template.md v1.11->v1.12; full CLAUDE.md \u00a76 checklist completed (OPERATIONAL_GUIDE.md v4.179->4.180)."
         },
         "ST-16": {
           "title": "Staging sign-off backlog tracker (FI-P3-02 wording-only AC exceptions)",
@@ -376,7 +391,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-09-08T11:22:12Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/governance/fi_p3_02_staging_signoff_tracker.md"],
+          "spec_references": [
+            "docs/governance/fi_p3_02_staging_signoff_tracker.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
@@ -385,11 +402,11 @@
             "status": "cleared",
             "method": "agent_mediated",
             "role": "QA Lead",
-            "signer_field": "Sprint Execution Engine (agent-mediated, QA Lead role — §5.3)",
+            "signer_field": "Sprint Execution Engine (agent-mediated, QA Lead role \u2014 \u00a75.3)",
             "date": "2026-09-08",
             "evidence": "Independent grep confirmed the same 3 files found; all 3 characterizations (v6.4 rule-origin exclusion, v7.0 and v8.3 genuine invocations including the v8.3 local-execution-gap nuance) verified accurate against source text; backfill scope note confirmed honest; current-cycle no-invocation claim independently confirmed. Approved."
           },
-          "notes": "Backfilled via literal-string grep across all qa_evidence_EPIC-*.md — 2 genuine invocations (v7.0/ST-10, v8.3/ST-08) plus 1 correctly-excluded rule-origin story (v6.4/ST-06)."
+          "notes": "Backfilled via literal-string grep across all qa_evidence_EPIC-*.md \u2014 2 genuine invocations (v7.0/ST-10, v8.3/ST-08) plus 1 correctly-excluded rule-origin story (v6.4/ST-06)."
         }
       }
     },
@@ -465,10 +482,10 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
-      "EPIC-02"
+      "EPIC-02",
+      "EPIC-03"
     ],
     "epics_pending": [
-      "EPIC-03",
       "EPIC-04",
       "EPIC-05"
     ],
@@ -478,7 +495,8 @@
     "2026-09-07T18:45:00Z \u2014 Session-resume merge-gate sync (LL-v3.9-P3-1): PR #1596 (EPIC-01) found MERGED (mergedAt 2026-09-07T17:08:08Z) via gh pr view; execution_state.json pr_status/status synced from stale open/done to merged/merged; EPIC-01 moved epics_pending -> epics_merged.",
     "2026-09-07T18:45:00Z \u2014 Orphaned post-merge commit check (LL-v6.8-P3-01): found 1 orphaned commit on exec/2026-09-07__release-v9.2/EPIC-01 (db6b0640, backlog.md \u2014 3 follow-up items BLG-QA-162/BLG-BE-111/BLG-QA-163), made after PR #1596 merged. Content confirmed absent from main. Reconciled via cherry-pick onto main as 795ad8ad ([EPIC-01] Reconcile orphaned post-merge commit db6b0640 onto main).",
     "2026-09-08T08:44:30Z \u2014 Near-miss self-caught (LL-v9.1-P3-02 class): a follow-up commit-msg-hook rejection on EPIC-02 was mistakenly handled with `git commit --amend`, which (because the intervening `git commit` attempt had itself failed, leaving no new commit to amend) amended the already-pushed 2ca7b178 ([EPIC-02][ST-02][ST-03][ST-04] Fix Settings heading-order...) instead, rewriting its message and folding in unrelated changes -- before any push of the rewritten commit occurred. Caught immediately via `git log`/`git show --stat` inspection; recovered per the guardrail's own prescribed remedy: `git reset --soft 2ca7b178` (commit still reachable, not yet pruned) followed by a fresh, correctly-scoped, correctly-messaged commit (07ecb641), pushed as a clean fast-forward. No force-push used; origin's history was never rewritten.",
-    "2026-09-08T09:10:00Z \u2014 Session-start divergence check (LL-v7.2-P3-01): local main was 9 commits behind origin/main (last local sync predated PR #1596/#1597 merges); synced via `git fetch origin main:main` (safe \u2014 main was not the checked-out branch). Session-resume merge-gate sync (LL-v3.9-P3-1): PR #1597 (EPIC-02) found MERGED (mergedAt 2026-09-08T10:48:04Z) via gh pr view, as a real merge commit (b2e9e698) \u2014 not squashed. execution_state.json pr_status/status synced from stale open/done to merged/merged; EPIC-02 moved epics_pending -> epics_merged. Orphaned post-merge commit check (LL-v6.8-P3-01): `git log exec/.../EPIC-02 --not main` empty \u2014 no orphaned commits, branch fully contained in main."
+    "2026-09-08T09:10:00Z \u2014 Session-start divergence check (LL-v7.2-P3-01): local main was 9 commits behind origin/main (last local sync predated PR #1596/#1597 merges); synced via `git fetch origin main:main` (safe \u2014 main was not the checked-out branch). Session-resume merge-gate sync (LL-v3.9-P3-1): PR #1597 (EPIC-02) found MERGED (mergedAt 2026-09-08T10:48:04Z) via gh pr view, as a real merge commit (b2e9e698) \u2014 not squashed. execution_state.json pr_status/status synced from stale open/done to merged/merged; EPIC-02 moved epics_pending -> epics_merged. Orphaned post-merge commit check (LL-v6.8-P3-01): `git log exec/.../EPIC-02 --not main` empty \u2014 no orphaned commits, branch fully contained in main.",
+    "2026-09-08T00:00:00Z \u2014 Session-resume merge-gate sync (LL-v3.9-P3-1): PR #1598 (EPIC-03) found MERGED (mergedAt 2026-09-08T11:44:26Z) via gh pr view; execution_state.json pr_status/status synced from stale open/done to merged/merged; EPIC-03 moved epics_pending -> epics_merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-09-07__release-v9.2/EPIC-03 returned empty \u2014 no orphaned commits found. EPIC-01/EPIC-02 branches also re-checked: EPIC-02 empty (clean); EPIC-01's prior orphan (db6b0640) already reconciled onto main as 795ad8ad per prior session's note \u2014 no new orphans."
   ],
   "sealed": false,
   "sealed_utc": null
