@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-08 (session — 1 new item added: BLG-QA-165); prior — 2026-09-08 (session — 1 new item added: BLG-SPEC-137); prior — 2026-09-08 (session — 1 new item added: BLG-QA-164); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-08 (session — 3 new items added: BLG-GOV-316, BLG-GOV-317, BLG-SPEC-138); prior — 2026-09-08 (session — 1 new item added: BLG-QA-165); prior — 2026-09-08 (session — 1 new item added: BLG-SPEC-137); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4546,6 +4546,70 @@ Two independent deviations in the same release (`v8.9`) hit the identical root c
 - `governance_sync.yml`'s diff-detection and close-gate logic each live in exactly one place (a sourced script), not duplicated between the workflow and its tests
 - Both existing regression test scripts still pass, now by exercising the real extracted functions rather than hand-maintained copies
 - QA & Testing Owner sign-off
+
+---
+
+### BLG-GOV-316 — Wire the wall-clock cost logging convention (§22) into an engine's STEP list
+
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Agent-mediated DoQ + Product Owner review of PR #1599 (EPIC-04, v9.2) — 2026-09-08
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.3
+
+**Problem**
+`shared_standards.md` §22 (Governance-Cycle Wall-Clock Cost Logging Convention) declares that every governed routine should capture `Session start (UTC)`/`Session end (UTC)` timestamps in its `run_manifest.md`/`cycle_record.md`, but no engine's STEP list was actually patched to do so — grepped every `claude/system/*_prompt.md` for the field names, zero hits outside the standard itself. §22's own AC ("applied from the next cycle onward") cannot happen until some engine's STEP list references it.
+
+**Scope**
+- Patch `roadmap_prompt.md` STEP 1.1 (or each engine's own manifest-equivalent STEP) to capture and record `Session start (UTC)` at first write and `Session end (UTC)` at final write, per §22's own derivation rules
+
+**Acceptance Criteria**
+- At least one engine's STEP list explicitly instructs capturing `Session start (UTC)`/`Session end (UTC)`
+- A real session record demonstrates the convention in use
+
+---
+
+### BLG-GOV-317 — Seed the spec-debt deep-review cadence marker in backlog.md
+
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Agent-mediated DoQ + Product Owner review of PR #1599 (EPIC-04, v9.2) — 2026-09-08
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.3
+
+**Problem**
+`backlog_management_prompt.md` §3.1 (Recurring Spec-Debt Deep Review Cadence) counts `groom backlog` invocations since a `<!-- last-spec-debt-deep-review: <cycle_id> -->` marker at the top of `backlog.md`, but the marker was never seeded — confirmed absent via direct grep. The first `groom backlog` run after this cycle has undefined starting state for the 3-run counter.
+
+**Scope**
+- Add the `<!-- last-spec-debt-deep-review: <cycle_id> -->` marker to the top of `backlog.md`, initialised to the current cycle ID
+
+**Acceptance Criteria**
+- Marker present in `backlog.md`
+- The next `groom backlog` run can correctly count invocations from it
+
+---
+
+### BLG-SPEC-138 — Review placement of Appendix D governance metrics in metrics_definitions.md
+
+**Priority:** P3 (Low)
+**Type:** Spec / Documentation Debt
+**Owner:** Metrics Definitions & Analytics Canonical Owner
+**Source:** Agent-mediated DoQ + Product Owner review of PR #1599 (EPIC-04, v9.2) — 2026-09-08
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-35/ST-40 (EPIC-04, v9.2) added governance metrics (Skill-Silo skill-category taxonomy, PVR rolling-window boundary-trade handling) to `docs/specs/metrics_definitions.md` — a Class 1 canonical **API-facing** spec governing `GET /analytics/metrics` — as a self-disclosed exception to that document's own Completeness Guarantee, rather than alongside this same EPIC's other 8 new `docs/governance/*.md` documents.
+
+**Scope**
+- Product Owner + Metrics Definitions & Analytics Canonical Owner confirm the intended long-term home for governance-process metrics documentation
+- Relocate Appendix D to `docs/governance/` if confirmed as the wrong placement
+
+**Acceptance Criteria**
+- Explicit placement decision recorded
+- Content relocated if the decision is to move it
 
 ---
 
