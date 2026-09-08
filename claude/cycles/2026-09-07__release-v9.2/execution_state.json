@@ -1,12 +1,11 @@
 {
   "cycle_id": "2026-09-07__release-v9.2",
-  "sprint_goal": "Ship the Arc 5 low-volume compliance-score advisory and clear a full-capacity slate of 55 accessibility, QA/CI reliability, governance-process, and spec/tech/ops debt items across all 5 EPICs — exhausting the confirmed ~24–28 day capacity band at 27.55 days, with 0 P1/P2 debt items carried past this sprint on capacity grounds.",
+  "sprint_goal": "Ship the Arc 5 low-volume compliance-score advisory and clear a full-capacity slate of 55 accessibility, QA/CI reliability, governance-process, and spec/tech/ops debt items across all 5 EPICs \u2014 exhausting the confirmed ~24\u201328 day capacity band at 27.55 days, with 0 P1/P2 debt items carried past this sprint on capacity grounds.",
   "backlog_slice_source": "claude/cycles/2026-09-07__release-v9.2/stage4_backlog_slice.md",
   "invoked_utc": "2026-09-07T15:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-07T18:45:00Z",
-
+  "last_updated_utc": "2026-09-08T08:44:02Z",
   "epics": {
     "EPIC-02": {
       "status": "in_progress",
@@ -15,7 +14,10 @@
       "pr_status": "not_created",
       "qa_signed_off": false,
       "qa_evidence_log": null,
-      "test_scenarios": ["tests/e2e/accessibility-axe-scan.spec.js", "tests/e2e/arc5-compliance-section.spec.js"],
+      "test_scenarios": [
+        "tests/e2e/accessibility-axe-scan.spec.js",
+        "tests/e2e/arc5-compliance-section.spec.js"
+      ],
       "stories": {
         "ST-02": {
           "title": "Settings page heading-order axe-core finding (moderate, non-blocking)",
@@ -24,19 +26,19 @@
           "assigned_to": "engine",
           "github_issue": 1541,
           "branch": "exec/2026-09-07__release-v9.2/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "2ca7b1786c3a24d852eccbb6c738dc6c02e20ce9",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-09-08T08:44:02Z",
           "acceptance_verified": true,
           "spec_references": [],
           "spec_reference_not_applicable": true,
           "spec_reference_not_applicable_reason": "No canonical spec governs Settings page heading-tag levels; fixed a genuine axe-core heading-order violation (h1->h3 skip), verified via regression test tests/e2e/accessibility-axe-scan.spec.js.",
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pending_commit",
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "SectionCard's h3 bumped to h2 (src/pages/Settings.js) — className unchanged, semantic-only fix, no visual/layout regression. Full accessibility-axe-scan.spec.js (4/4) re-run green."
+          "notes": "SectionCard's h3 bumped to h2 (src/pages/Settings.js) \u2014 className unchanged, semantic-only fix, no visual/layout regression. Full accessibility-axe-scan.spec.js (4/4) re-run green."
         },
         "ST-03": {
           "title": "aria-label duplicates visible label text instead of using aria-labelledby (TradePlan.js, Settings.js)",
@@ -45,17 +47,17 @@
           "assigned_to": "engine",
           "github_issue": 1542,
           "branch": "exec/2026-09-07__release-v9.2/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "2ca7b1786c3a24d852eccbb6c738dc6c02e20ce9",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-09-08T08:44:02Z",
           "acceptance_verified": true,
           "spec_references": [],
           "spec_reference_not_applicable": true,
           "spec_reference_not_applicable_reason": "No canonical spec dictates the accessible-name mechanism used per control; swapped duplicate aria-label strings for aria-labelledby across all 5 named controls, verified via regression test tests/e2e/accessibility-axe-scan.spec.js.",
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pending_commit",
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
           "notes": "TradePlan.js: Field component gained a labelId prop; Market/Status/Setup Type selects now use aria-labelledby. Settings.js: Default Currency/Theme Labels gained id, SelectTrigger uses aria-labelledby. No test relied on the aria-label string directly (data-testid or getByLabel accessible-name matching used throughout) -- accessibility-axe-scan.spec.js (4/4), trade-plan.spec.js (50/50), ai-usage-costs.spec.js all re-run green."
         },
@@ -66,19 +68,19 @@
           "assigned_to": "engine",
           "github_issue": 1543,
           "branch": "exec/2026-09-07__release-v9.2/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "2ca7b1786c3a24d852eccbb6c738dc6c02e20ce9",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-09-08T08:44:02Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/components/arc5_compliance_section.md#Card 3 — Top Rule Breach"
+            "docs/specs/frontend/components/arc5_compliance_section.md#Card 3 \u2014 Top Rule Breach"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pending_commit",
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
           "notes": "Resolved the Known Deviations entry opened at v9.1 ST-13 (BLG-FE-172) by correcting the spec's Card 3 Format/Null-display row to match the already-shipped, already-tested fmtText behaviour (space-separated slug, em-dash on null) -- matches the null-display convention already used by Cards 1/2/4. No component or test change required; SC-ARC5-07/SC-ARC5-08 already assert the shipped behaviour. tests/e2e/arc5-compliance-section.spec.js (15/15) re-run green."
         }
@@ -91,7 +93,9 @@
       "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-07__release-v9.2/qa_evidence_EPIC-01.md",
-      "test_scenarios": ["tests/e2e/arc5-compliance-section.spec.js"],
+      "test_scenarios": [
+        "tests/e2e/arc5-compliance-section.spec.js"
+      ],
       "stories": {
         "ST-01": {
           "title": "Arc 5 compliance score utility advisory at low trade volume",
@@ -121,7 +125,7 @@
             "status": "cleared",
             "method": "agent_mediated",
             "role": "Director of Quality",
-            "signer_field": "Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)",
+            "signer_field": "Sprint Execution Engine (agent-mediated, Director of Quality role \u2014 \u00a75.3)",
             "date": "2026-09-07",
             "evidence": "claude/cycles/2026-09-07__release-v9.2/qa_evidence_EPIC-01.md"
           },
@@ -130,23 +134,31 @@
       }
     }
   },
-
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01"],
+  "completed_items": [
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04"
+  ],
   "open_escalations": [],
-
   "merge_gate": {
-    "epics_merged": ["EPIC-01"],
-    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
+    "epics_merged": [
+      "EPIC-01"
+    ],
+    "epics_pending": [
+      "EPIC-02",
+      "EPIC-03",
+      "EPIC-04",
+      "EPIC-05"
+    ],
     "all_merged": false
   },
-
   "process_notes": [
-    "2026-09-07T18:45:00Z — Session-resume merge-gate sync (LL-v3.9-P3-1): PR #1596 (EPIC-01) found MERGED (mergedAt 2026-09-07T17:08:08Z) via gh pr view; execution_state.json pr_status/status synced from stale open/done to merged/merged; EPIC-01 moved epics_pending -> epics_merged.",
-    "2026-09-07T18:45:00Z — Orphaned post-merge commit check (LL-v6.8-P3-01): found 1 orphaned commit on exec/2026-09-07__release-v9.2/EPIC-01 (db6b0640, backlog.md — 3 follow-up items BLG-QA-162/BLG-BE-111/BLG-QA-163), made after PR #1596 merged. Content confirmed absent from main. Reconciled via cherry-pick onto main as 795ad8ad ([EPIC-01] Reconcile orphaned post-merge commit db6b0640 onto main)."
+    "2026-09-07T18:45:00Z \u2014 Session-resume merge-gate sync (LL-v3.9-P3-1): PR #1596 (EPIC-01) found MERGED (mergedAt 2026-09-07T17:08:08Z) via gh pr view; execution_state.json pr_status/status synced from stale open/done to merged/merged; EPIC-01 moved epics_pending -> epics_merged.",
+    "2026-09-07T18:45:00Z \u2014 Orphaned post-merge commit check (LL-v6.8-P3-01): found 1 orphaned commit on exec/2026-09-07__release-v9.2/EPIC-01 (db6b0640, backlog.md \u2014 3 follow-up items BLG-QA-162/BLG-BE-111/BLG-QA-163), made after PR #1596 merged. Content confirmed absent from main. Reconciled via cherry-pick onto main as 795ad8ad ([EPIC-01] Reconcile orphaned post-merge commit db6b0640 onto main)."
   ],
-
   "sealed": false,
   "sealed_utc": null
 }
