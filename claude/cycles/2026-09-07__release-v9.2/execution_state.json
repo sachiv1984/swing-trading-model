@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-07T15:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-08T14:26:58Z",
+  "last_updated_utc": "2026-09-08T14:45:00Z",
   "epics": {
     "EPIC-02": {
       "status": "merged",
@@ -1225,7 +1225,7 @@
       "branch": "exec/2026-09-07__release-v9.2/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-07__release-v9.2/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_ai_endpoint_anomaly_service.py"
