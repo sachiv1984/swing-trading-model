@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-08 (session — 3 new items added: BLG-SPEC-139, BLG-OPS-151, BLG-OPS-152); prior — 2026-09-08 (session — 3 new items added: BLG-GOV-316, BLG-GOV-317, BLG-SPEC-138); prior — 2026-09-08 (session — 1 new item added: BLG-QA-165); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-08 (session — 2 new items added: BLG-QA-166, BLG-GOV-318); prior — 2026-09-08 (session — 3 new items added: BLG-SPEC-139, BLG-OPS-151, BLG-OPS-152); prior — 2026-09-08 (session — 3 new items added: BLG-GOV-316, BLG-GOV-317, BLG-SPEC-138); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4682,6 +4682,50 @@ ST-56 required "real query data obtained for at least the current quarter" for `
 **Acceptance Criteria**
 - `docs/ops/ai_feature_cost_trend_2026_q3.md` §3 contains an actual query result for Q3 2026, not an estimate
 - FinOps & Resource Architect sign-off
+
+---
+
+### BLG-QA-166 — Add unit test coverage for check_contract_example_freshness.py
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated Director of Quality review of PR #1600 (EPIC-05, v9.2) — 2026-09-08
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`scripts/check_contract_example_freshness.py` (ST-44, EPIC-05, v9.2) was run once manually to produce its baseline doc (`docs/ops/contract_example_freshness_baseline_2026-09-08.md`), but nothing pins its `$ref`-resolution or envelope-unwrapping comparison logic going forward — unlike its sibling tool `check_specs_index_freshness.py`, which received dedicated pytest coverage (`tests/test_check_specs_index_freshness.py`) the same sprint it was added (EPIC-03 ST-11, v9.2). A future edit to the script could silently break its detection logic with no test to catch it.
+
+**Scope**
+- Add pytest coverage for `scripts/check_contract_example_freshness.py`, mirroring `test_check_specs_index_freshness.py`'s shape
+- Cover: `$ref` resolution (including `allOf`/nested schemas), the envelope-unwrapping comparison logic (`data.foo` vs. bare `foo`), and at least one known-good and one known-drift fixture
+
+**Acceptance Criteria**
+- New test file exists and passes
+- QA & Testing Owner sign-off
+
+---
+
+### BLG-GOV-318 — Codify whether opportunistic in-file fixes found mid-story need their own backlog entry
+
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** Agent-mediated Product Owner review of PR #1600 (EPIC-05, v9.2) — 2026-09-08
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`CLAUDE.md` §7 explicitly allows filing a *new* backlog item for a genuinely out-of-scope finding discovered mid-sprint, but says nothing about the case where the engine instead fixes a small incidental defect directly in a file it is already editing for an unrelated story. PR #1600 did this twice — a duplicate "Appendix D" heading collision in `metrics_definitions.md` (found while executing ST-48) and a stale `execution_state.json` field left by an unrelated, already-merged EPIC — both currently disclosed only via commit message, with no documented rule on when that is sufficient versus when the fix should get its own backlog entry first.
+
+**Scope**
+- Define the rule: backlog entry always required / commit-message disclosure sufficient / a size-or-risk-based threshold distinguishing the two
+- Record the rule in `CLAUDE.md` §7 or `shared_standards.md` (whichever this repo's existing convention for this kind of process rule prefers)
+
+**Acceptance Criteria**
+- Rule documented in a governance source file
+- Product Owner sign-off
 
 ---
 
