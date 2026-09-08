@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.12
-**Last Updated:** 2026-09-07 (v9.2 ST-05, EPIC-02 — added the motion-vs-contrast guideline for text-element entrance animations, BLG-SPEC-134)
+**Version:** 1.13
+**Last Updated:** 2026-09-08 (v9.2 ST-47, EPIC-05 — added the Component Prop-Naming Conventions section, BLG-SPEC-123)
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.13 (ST-47, EPIC-05, v9.2, BLG-SPEC-123):** added the Component Prop-Naming Conventions section (bottom of document) — codifies the two valid callback-prop forms (imperative action-request vs. past-tense completion-notification) and the two valid boolean-prop forms (`is`/`has`-prefixed vs. bare-word mirroring an underlying primitive's own prop name), based on a codebase-wide audit that found existing naming already substantially consistent (no component renames required). Frontend Specifications & UX Documentation Owner sign-off recorded in the new section itself.
 **v1.12 (ST-05, EPIC-02, v9.2, BLG-SPEC-134):** Accessibility — added the motion-vs-contrast guideline for text-element entrance animations: accepts the transient reduced-contrast window during opacity fade-ins as an intentional trade-off (capped at a 500ms time-to-full-opacity ceiling), and requires automated contrast scans to evaluate the settled post-animation state rather than a mid-transition frame. Confirms the existing `tests/e2e/accessibility-axe-scan.spec.js` `runAxeScan()` fix (originally scoped to the Settings-page `BLG-FE-169` finding) already applies uniformly to the 4 axe-scanned pages (does not by itself confirm the same for every page in the app — see guideline text). Delay-based stagger animations found not yet compliant with the ceiling; follow-up filed as `BLG-SPEC-136`. Design source: `docs/design/2026-09-07__release-v9.2/motion-contrast-guideline-standard/decision_record.md`.
 **v1.11 (ST-16, EPIC-03, v8.8, BLG-FE-159):** Modal / Dialog Theming §Known non-compliant instances — removed `PositionEntryModal.js`. Confirmed dead/unreachable code (no live import/mount anywhere in `src/`) and deleted from the codebase rather than converted; no longer applicable to this list either way. Design source: `docs/design/2026-08-14__release-v8.8/position-entry-modal-dead-code-removal/decision_record.md`.
 **v1.10 (ST-21, EPIC-07, v8.7, BLG-SPEC-124):** added the `gated` `DataState` variant (§Shared UI Components → Cards → Data States) — a dedicated branch for feature surfaces that exist but are not yet unlocked, evaluated before `loading`/`error`/`empty` (a gated feature never fires its data fetch). `Lock` icon, distinct copy pattern from the `empty` microcopy rule ("<Feature> — Locked" heading, states the gate condition rather than a live progress count), no default CTA (not user-actionable), optional `gatedProgress` subtext. Design source: `docs/design/2026-08-12__release-v8.7/gated-datastate-variant/decision_record.md`.
@@ -341,6 +342,23 @@ The application adheres to core accessibility principles:
   - Decimal place limits (e.g., shares, prices, FX rate)  
   - Date validity and ordering  
   - Error messages use consistent phrasing  
+
+---
+
+## Component Prop-Naming Conventions (ST-47, BLG-SPEC-123, v9.2)
+
+**Audit finding:** a codebase-wide grep of `src/components/`/`src/pages/` prop names (callback and boolean props) found the naming already substantially consistent — no renames are required by this story. This section formalises the pattern already in near-universal use, so future components follow it deliberately rather than by accident, and documents the one legitimate exception already present.
+
+**Callback props — two valid forms, chosen by what the callback means:**
+- **Imperative / action-request** (`onSubmit`, `onSave`, `onCancel`, `onConfirm`, `onRetry`, `onSelect`) — used when the child is asking the parent to *perform* an action. Prefer this form for anything triggered by a direct user action inside the child (button click, form submit, selection).
+- **Past-tense / completion-notification** (`onAdded`, `onUpdated`, `onDeleted`, `onSuccess`) — used when the child is *informing* the parent that an async operation it already carried out (typically an API call) has completed, so the parent can react (close a modal, refetch a list, show a toast). Do not use the imperative form for this case (e.g. do not name it `onAdd` when the child already performed the add and is reporting completion) — the tense signals which side owns the action.
+- Internal handler implementations are conventionally named `handleX` (e.g. `handleSubmit`) and passed to a child as the differently-named `onX` prop (e.g. `onSubmit={handleSubmit}`) — `handleX` should never itself be the prop name a component exposes; it is implementation-local by convention.
+
+**Boolean props — two valid forms:**
+- **`is`/`has`-prefixed** (`isLoading`, `isEditing`, `isSelected`, `hasResearch`) — the default for a component-specific state or flag this design system introduced.
+- **Bare-word, unprefixed** (`open`, `checked`, `disabled`, `active`, `selected`, `visible`) — the deliberate exception, used only when the prop mirrors an underlying primitive/library component's own API (Radix/shadcn `Dialog`'s `open`, `Checkbox`'s `checked`, native `disabled`, etc.). Do not rename these to an `is`-prefixed form when wrapping or extending a primitive — matching the primitive's own prop name keeps the wrapper's API predictable to anyone who already knows the underlying library.
+
+**Frontend Specifications & UX Documentation Owner sign-off:** Confirmed — audit complete, both patterns above reflect actual current usage (verified via grep across `src/components/`, `src/pages/`), no component renames required. 2026-09-08.
 
 ---
 
