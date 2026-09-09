@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-09-09 (initial filing)
+Last Updated: 2026-09-09 (Addendum — all 7 outstanding deferred patches resolved same-session, user-directed follow-up); prior: 2026-09-09 (initial filing)
 Cycle: 2026-09-07__release-v9.2
 
 # Lessons Learnt — Post-Ship Closure
@@ -82,17 +82,19 @@ None — this closure's document changes were all updates to existing artefacts 
 
 ## Outstanding deferred patches
 
-| File | Section | Change required | Owner | Target | Carried since |
-|------|---------|----------------|-------|--------|---------------|
-| `claude/roadmap/backlog.md` (via `groom backlog`'s field-completeness scan design) | Field-completeness scan | Extend the scan to flag a backlog item whose exclusion depends on another item's gate but which itself carries no `**Gate criteria:**` field (Release Planning Friction Item 1, `BLG-FEAT-92`'s 4th-consecutive-cycle manual reconciliation) | Head of Specs Team / PMO Lead | Next `groom backlog`/`backlog_management_prompt.md` design review | v9.2 (new — 4th consecutive cycle the underlying manual-lookup friction has recurred, though not previously filed as a closure-tracked deferred patch) |
-| `claude/roadmap/workforce_capacity.md` or `claude/system/shared_standards.md` | New canonical band-to-days table | Add a canonical XS/S/M/L→days conversion table so Release/Sprint Planning stop re-deriving it from scattered per-item `**Effort:**` parentheticals each cycle (Release Planning Friction Item 2) | Head of Specs Team | Next `release_planning_prompt.md` or `shared_standards.md` revision | v9.2 (new) |
-| `claude/system/execution_prompt.md` | STEP 4 (Merge Gate), step 3a | Add a same-step self-verification read-back (`gh pr view` + `execution_state.json` field re-read) after the persist-state-before-halt commit, mirroring `LL-v9.0-P3-01`'s fix for STEP 3.1.A step 10a | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 4 | v9.2 (new) |
-| `claude/system/execution_prompt.md` | STEP 3.1.A, commit guidance | Extend the never-`amend`-a-pushed-commit guardrail (`LL-v9.1-P3-02`) to explicitly cover the failed-intermediate-commit trigger path, not only the amend-after-successful-push path | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 3.1.A | v9.2 (new) |
-| `claude/system/delivery_verification_prompt.md` (+ `claude/system/templates/qa_evidence_template.md`) | §2.1 (QA Evidence Review — Per-Item Review) | Add `Pass_with_deviation` to the enumerated Result value set with defined semantics (AC partially unmet, disclosed transparently, requires a confirmed backlog item, defaults to P3 unless later assessed as core-behaviour-incomplete) | Head of Specs Team | Next `delivery_verification_prompt.md` revision touching §2.1 | v9.2 (new) |
-| `claude/cycles/2026-09-07__release-v9.2/qa_evidence_EPIC-02.md`, `qa_evidence_EPIC-03.md` | Sign-Off Block comments | Strike or update the stale "STEP 4 merge-gate...remains outstanding before merge" sentence now that both PRs (#1597, #1598) are confirmed merged | Director of Quality | Next touch of either file | v9.2 (new) |
-| `claude/system/post_ship_closure.md` | STEP 6, Endpoint Coverage Drift Check | Add a parsing note: normalise both documents' endpoint identifiers to canonical `METHOD /path` regardless of Markdown formatting (backticks, query-string suffixes) before diffing (this closure's own Friction Item 1) | Head of Specs Team | Next `post_ship_closure.md` revision touching STEP 6 | v9.2 (new) |
+**All 7 below resolved same-session (2026-09-09, later the same day), acting per-role at explicit user direction ("act as the relevant agents and deal with the 7 outstanding actions") — see Addendum at the end of this file and `closure_record.md`'s own Addendum for full detail.**
 
-None of the above meet the `shared_standards.md §6.4` 2-cycle escalation threshold — all are first-cycle deferrals with a named owner and target.
+| File | Section | Change required | Owner | Target | Carried since | Resolution |
+|------|---------|----------------|-------|--------|---------------|------------|
+| `claude/roadmap/backlog.md` (via `groom backlog`'s field-completeness scan design) | Field-completeness scan | Extend the scan to flag a backlog item whose exclusion depends on another item's gate but which itself carries no `**Gate criteria:**` field (Release Planning Friction Item 1, `BLG-FEAT-92`'s 4th-consecutive-cycle manual reconciliation) | Head of Specs Team / PMO Lead | Next `groom backlog`/`backlog_management_prompt.md` design review | v9.2 (new) | ✅ Resolved — Gate-Inheritance Field-Completeness Scan added, `backlog_management_prompt.md` v1.16→v1.17; applied immediately to `BLG-FEAT-92` |
+| `claude/roadmap/workforce_capacity.md` or `claude/system/shared_standards.md` | New canonical band-to-days table | Add a canonical XS/S/M/L→days conversion table so Release/Sprint Planning stop re-deriving it from scattered per-item `**Effort:**` parentheticals each cycle (Release Planning Friction Item 2) | Head of Specs Team | Next `release_planning_prompt.md` or `shared_standards.md` revision | v9.2 (new) | ✅ Resolved — table added to `workforce_capacity.md` (chosen over `shared_standards.md`: lighter-weight, not a governance prompt) |
+| `claude/system/execution_prompt.md` | STEP 4 (Merge Gate), step 3a | Add a same-step self-verification read-back (`gh pr view` + `execution_state.json` field re-read) after the persist-state-before-halt commit, mirroring `LL-v9.0-P3-01`'s fix for STEP 3.1.A step 10a | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 4 | v9.2 (new) | ✅ Resolved — `LL-v9.2-P3-01` added, v3.73→v3.74 |
+| `claude/system/execution_prompt.md` | STEP 3.1.A, commit guidance | Extend the never-`amend`-a-pushed-commit guardrail (`LL-v9.1-P3-02`) to explicitly cover the failed-intermediate-commit trigger path, not only the amend-after-successful-push path | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 3.1.A | v9.2 (new) | ✅ Resolved — `LL-v9.2-P3-02` added, same v3.74 bump |
+| `claude/system/delivery_verification_prompt.md` (+ `claude/system/templates/qa_evidence_template.md`) | §2.1 (QA Evidence Review — Per-Item Review) | Add `Pass_with_deviation` to the enumerated Result value set with defined semantics (AC partially unmet, disclosed transparently, requires a confirmed backlog item, defaults to P3 unless later assessed as core-behaviour-incomplete) | Head of Specs Team | Next `delivery_verification_prompt.md` revision touching §2.1 | v9.2 (new) | ✅ Resolved — `LL-v9.2-P4-01` added, v3.9→v3.10 + companion template v1.12→v1.13 |
+| `claude/cycles/2026-09-07__release-v9.2/qa_evidence_EPIC-02.md`, `qa_evidence_EPIC-03.md` | Sign-Off Block comments | Strike or update the stale "STEP 4 merge-gate...remains outstanding before merge" sentence now that both PRs (#1597, #1598) are confirmed merged | Director of Quality | Next touch of either file | v9.2 (new) | ✅ Resolved — both files' stale sentences struck |
+| `claude/system/post_ship_closure.md` | STEP 6, Endpoint Coverage Drift Check | Add a parsing note: normalise both documents' endpoint identifiers to canonical `METHOD /path` regardless of Markdown formatting (backticks, query-string suffixes) before diffing (this closure's own Friction Item 1) | Head of Specs Team | Next `post_ship_closure.md` revision touching STEP 6 | v9.2 (new) | ✅ Resolved — `LL-v9.2-P-Closure-01` added, v2.32→v2.33 (also backfilled a missing v2.32 row found omitted from the companion changelog during this same edit) |
+
+0 deferred patches remain open from this closure as of this addendum.
 
 ---
 
@@ -109,7 +111,22 @@ Items: 2
 | # | Observation | Implication | Engine |
 |---|-------------|-------------|--------|
 | 1 | `2026-09-03__release-v9.1`'s own Carry-Forward items were both resolved or confirmed working this cycle (item 1 confirmed live in this cycle's own Phase 4 recurrence check; item 2 applied directly at this closure's STEP 8) — the closure-to-closure Carry-Forward mechanism itself is functioning as intended across a full cycle boundary. | No action needed; continue relying on the mechanism. | Post-Ship Closure |
-| 2 | 6 deferred patches are now open simultaneously across `execution_prompt.md` (2), `delivery_verification_prompt.md`/`qa_evidence_template.md` (1), `qa_evidence_EPIC-xx.md` (1), `groom backlog` design (1), and a canonical effort-band table (1) — all first-cycle, none yet at the 2-cycle escalation threshold, but a noticeably larger simultaneous backlog than the 1-3 typical of recent cycles. | Worth a lighter-weight sweep at the *next* cycle's own STEP 8 (before the 2-cycle threshold forces individual escalations) to confirm none have quietly missed their "next revision touching X" trigger opportunity. | Post-Ship Closure |
+| 2 | 6 deferred patches were open simultaneously across `execution_prompt.md` (2), `delivery_verification_prompt.md`/`qa_evidence_template.md` (1), `qa_evidence_EPIC-xx.md` (1), `groom backlog` design (1), and a canonical effort-band table (1) — a noticeably larger simultaneous backlog than the 1-3 typical of recent cycles, but all resolved same-day per the Addendum below rather than carried forward. | The 2-cycle escalation threshold was never tested this time (all resolved within hours), so this observation is now informational only — the "lighter-weight sweep" recommendation is moot for this specific batch, but the underlying pattern (a larger-than-typical outstanding-action count) is worth noting if it recurs and is *not* resolved same-day next time. | Post-Ship Closure |
+
+## Addendum — 2026-09-09 (same-session follow-up, user-directed: "act as the relevant agents and deal with the 7 outstanding actions")
+
+All 7 items in the Outstanding Deferred Patches table above were actioned later the same day, acting as Head of Specs Team (items 1–5, 7) and Director of Quality (item 6) per explicit user direction, following the role-ownership-verification rule. Summary here for this file's own tracking (full narrative in `closure_record.md`'s own Addendum):
+
+- Item 1 (gate-inheritance scan): `backlog_management_prompt.md` v1.16→v1.17, applied immediately to `BLG-FEAT-92`.
+- Item 2 (effort-band table): added to `workforce_capacity.md`.
+- Items 3–4 (execution_prompt.md self-check + amend-guardrail extension): both landed in one `execution_prompt.md` v3.73→v3.74 bump.
+- Item 5 (`Pass_with_deviation`): `delivery_verification_prompt.md` v3.9→v3.10 + `qa_evidence_template.md` v1.12→v1.13.
+- Item 6 (stale caveat): both `qa_evidence_EPIC-xx.md` files struck.
+- Item 7 (endpoint-drift parsing note): `post_ship_closure.md` v2.32→v2.33 — also caught and backfilled a missing v2.32 row in the companion changelog, found omitted during this same edit.
+
+`OPERATIONAL_GUIDE.md` synced in one consolidated pass (v4.183→v4.184) for all 5 governance-prompt bumps.
+
+0 deferred patches remain open from this closure as of this addendum.
 
 ```json
 // ARTEFACT_STATUS
@@ -120,7 +137,8 @@ Items: 2
   "filed_utc": "2026-09-09T00:00:00Z",
   "friction_item_count": 1,
   "action_now_count": 1,
-  "deferred_count": 6,
+  "deferred_count": 0,
+  "resolved_same_day_count": 7,
   "escalation_count": 0,
   "overdue_patches": 0,
   "status": "Active"

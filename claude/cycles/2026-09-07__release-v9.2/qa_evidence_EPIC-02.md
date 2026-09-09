@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-09-08
+Last Updated: 2026-09-09 (Director of Quality — struck stale pre-merge caveat sentence, both PRs now confirmed merged; post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution)
 
 ---
 
@@ -43,4 +43,4 @@ Last Updated: 2026-09-08
 - [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no new URL construction introduced this EPIC
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-09-08
-- Comments: All 4 stories' local Playwright evidence (accessibility-axe-scan.spec.js 4/4, arc5-compliance-section.spec.js 15/15, trade-plan.spec.js 50/50, ai-usage-costs.spec.js 9/9) re-run green post-change. Pixel-level visual regression coverage (Settings/TradePlan) exists but runs only in its dedicated advisory CI job — will confirm on the PR. This EPIC-level block is agent-mediated per §5.3, consistent with the precedent set at EPIC-01 (`qa_evidence_EPIC-01.md`); it evidences the aggregate story-level verification but does not itself satisfy STEP 4's separate merge-gate condition requiring a human Director of Quality comment on the PR — that remains outstanding before merge.
+- Comments: All 4 stories' local Playwright evidence (accessibility-axe-scan.spec.js 4/4, arc5-compliance-section.spec.js 15/15, trade-plan.spec.js 50/50, ai-usage-costs.spec.js 9/9) re-run green post-change. Pixel-level visual regression coverage (Settings/TradePlan) exists but runs only in its dedicated advisory CI job — will confirm on the PR. This EPIC-level block is agent-mediated per §5.3, consistent with the precedent set at EPIC-01 (`qa_evidence_EPIC-01.md`); it evidences the aggregate story-level verification. STEP 4's separate merge-gate condition (human Director of Quality comment on the PR) has since been satisfied — PR #1597 confirmed merged (per `execution_state.json.merge_gate.all_merged: true`).

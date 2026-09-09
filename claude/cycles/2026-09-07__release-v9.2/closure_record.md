@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-09-09
+Last Updated: 2026-09-09 (Addendum — all 7 outstanding actions resolved same-session, user-directed follow-up); prior: 2026-09-09 (initial filing)
 Cycle: 2026-09-07__release-v9.2
 
 # Post-Ship Closure Record — 2026-09-07__release-v9.2
@@ -66,15 +66,19 @@ All items recorded with a disposition — none blank or unreviewed. Records revi
 
 ## §6 — Outstanding Actions
 
+**All 7 below resolved same-day (2026-09-09), acting per-role at explicit user direction ("act as the relevant agents and deal with the 7 outstanding actions") — see Addendum below for full detail.**
+
 | # | Description | Owner | Deadline | Escalation path | Resolution |
 |---|-------------|-------|----------|-----------------|------------|
-| 1 | `groom backlog` field-completeness scan extension for gate-inheriting items with no own `Gate criteria:` field | Head of Specs Team / PMO Lead | Next `groom backlog` design review | Escalate per `shared_standards.md §6.4` if uncleared after 2 cycles | *(open)* |
-| 2 | Canonical effort-band (XS/S/M/L) → days conversion table | Head of Specs Team | Next `release_planning_prompt.md`/`shared_standards.md` revision | Escalate per `shared_standards.md §6.4` if uncleared after 2 cycles | *(open)* |
-| 3 | `execution_prompt.md` STEP 4 step 3a self-verification read-back | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 4 | Escalate per `shared_standards.md §6.4` if uncleared after 2 cycles | *(open)* |
-| 4 | `execution_prompt.md` STEP 3.1.A `--amend` guardrail extension (failed-intermediate-commit path) | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 3.1.A | Escalate per `shared_standards.md §6.4` if uncleared after 2 cycles | *(open)* |
-| 5 | `delivery_verification_prompt.md` §2.1 `Pass_with_deviation` Result-value definition | Head of Specs Team | Next `delivery_verification_prompt.md` revision touching §2.1 | Escalate per `shared_standards.md §6.4` if uncleared after 2 cycles | *(open)* |
-| 6 | Strike stale merge-gate caveat in `qa_evidence_EPIC-02.md`/`qa_evidence_EPIC-03.md` | Director of Quality | Next touch of either file | Outside this engine's write scope — no closure-cycle escalation applies | *(open)* |
-| 7 | `post_ship_closure.md` STEP 6 endpoint-drift-check parsing-normalisation note | Head of Specs Team | Next `post_ship_closure.md` revision touching STEP 6 | Escalate per `shared_standards.md §6.4` if uncleared after 2 cycles | *(open)* |
+| 1 | `groom backlog` field-completeness scan extension for gate-inheriting items with no own `Gate criteria:` field | Head of Specs Team / PMO Lead | Next `groom backlog` design review | Escalate per `shared_standards.md §6.4` if uncleared after 2 cycles | ✅ Resolved — new Gate-Inheritance Field-Completeness Scan added, `backlog_management_prompt.md` v1.16→v1.17; applied immediately to `BLG-FEAT-92` |
+| 2 | Canonical effort-band (XS/S/M/L) → days conversion table | Head of Specs Team | Next `release_planning_prompt.md`/`shared_standards.md` revision | Escalate per `shared_standards.md §6.4` if uncleared after 2 cycles | ✅ Resolved — new table added to `claude/roadmap/workforce_capacity.md` |
+| 3 | `execution_prompt.md` STEP 4 step 3a self-verification read-back | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 4 | Escalate per `shared_standards.md §6.4` if uncleared after 2 cycles | ✅ Resolved — `LL-v9.2-P3-01` added, `execution_prompt.md` v3.73→v3.74 |
+| 4 | `execution_prompt.md` STEP 3.1.A `--amend` guardrail extension (failed-intermediate-commit path) | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 3.1.A | Escalate per `shared_standards.md §6.4` if uncleared after 2 cycles | ✅ Resolved — `LL-v9.2-P3-02` added, same v3.73→v3.74 bump |
+| 5 | `delivery_verification_prompt.md` §2.1 `Pass_with_deviation` Result-value definition | Head of Specs Team | Next `delivery_verification_prompt.md` revision touching §2.1 | Escalate per `shared_standards.md §6.4` if uncleared after 2 cycles | ✅ Resolved — `LL-v9.2-P4-01` added, `delivery_verification_prompt.md` v3.9→v3.10 + companion `qa_evidence_template.md` v1.12→v1.13 |
+| 6 | Strike stale merge-gate caveat in `qa_evidence_EPIC-02.md`/`qa_evidence_EPIC-03.md` | Director of Quality | Next touch of either file | Outside this engine's write scope — no closure-cycle escalation applies | ✅ Resolved — both files' stale caveat sentences struck, both PRs confirmed merged |
+| 7 | `post_ship_closure.md` STEP 6 endpoint-drift-check parsing-normalisation note | Head of Specs Team | Next `post_ship_closure.md` revision touching STEP 6 | Escalate per `shared_standards.md §6.4` if uncleared after 2 cycles | ✅ Resolved — `LL-v9.2-P-Closure-01` added, `post_ship_closure.md` v2.32→v2.33 |
+
+0 outstanding actions remain open from this closure as of this addendum.
 
 ## §7 — Closure Confirmation
 
@@ -83,6 +87,22 @@ Post-ship closure complete — 2026-09-07__release-v9.2 — 2026-09-09
 Release: v9.2 — Full-Capacity Debt Clearance & Arc 5 Advisory
 Verification status: Verified_with_deviations
 Lessons learnt applied: 1 immediate | 6 deferred | 0 escalated
-Outstanding actions carried forward: 7 (see §6)
+Outstanding actions carried forward: 0 — all 7 resolved same-day (see §6 Addendum)
 Next cycle may now open.
 ```
+
+## Addendum — 2026-09-09 (same-day follow-up, user-directed: "act as the relevant agents and deal with the 7 outstanding actions")
+
+All 7 items in the §6 table above were actioned the same day, acting as Head of Specs Team (items 1–5, 7) and Director of Quality (item 6) per explicit user direction, following the role-ownership-verification rule (CLAUDE.md — Owner field confirmed for each item before acting).
+
+- **Item 1** (gate-inheritance field-completeness scan): `backlog_management_prompt.md` §1.2 gains a new Gate-Inheritance Field-Completeness Scan (`LL-v9.2-Closure-01`, v1.16→v1.17). Applied immediately to `BLG-FEAT-92` — added an explicit `**Gate criteria:**` field stating it inherits `BLG-FEAT-30`'s gate, closing the 4-consecutive-cycle (v8.9–v9.2) manual-reconciliation friction.
+- **Item 2** (effort-band conversion table): added to `claude/roadmap/workforce_capacity.md` as a new "Canonical Effort Band → Days Conversion Table" section (not a governance prompt — no version-bump checklist applies). Its own stale 4-deep `**Last Updated:**` chain (found exceeding the §16.14 3-entry limit during this edit) was corrected to 3 in the same pass.
+- **Item 3** (STEP 4 step 3a self-verification): `execution_prompt.md` gains `LL-v9.2-P3-01` (v3.73→v3.74) — mirrors the existing step 10a `deviations_filed` self-check.
+- **Item 4** (`--amend` guardrail extension): same `execution_prompt.md` v3.74 bump — `LL-v9.2-P3-02` extends the guardrail to the failed-intermediate-commit trigger path.
+- **Item 5** (`Pass_with_deviation` Result value): `delivery_verification_prompt.md` v3.9→v3.10 (`LL-v9.2-P4-01`) + companion `qa_evidence_template.md` v1.12→v1.13.
+- **Item 6** (stale merge-gate caveat): `qa_evidence_EPIC-02.md`/`qa_evidence_EPIC-03.md` both struck and updated — both PRs (#1597, #1598) confirmed merged via `execution_state.json.merge_gate.all_merged: true`.
+- **Item 7** (endpoint-drift-check parsing note): `post_ship_closure.md` v2.32→v2.33 (`LL-v9.2-P-Closure-01`). **Governance drift found and corrected in the same pass:** the v2.32 bump made earlier this same closure session had never received its own row in the companion `changelogs/post_ship_closure_changelog.md` — backfilled that missing row before adding the new v2.33 row, so the companion file's history is now complete and in sync with the header chain and `prompt_change_log.md`.
+
+`OPERATIONAL_GUIDE.md` synced for all 5 governance-prompt bumps in one consolidated pass (v4.183→v4.184): §8/§9/§6M/§10 source-prompt lines, 5 §14 table rows, document header, and a new §14 history row. `prompt_change_log.md` carries one row per file changed (6 rows: 5 source prompts + the OPERATIONAL_GUIDE bump), correctly ordered chronologically after the existing v2.31→v2.32/4.180→4.183 rows from earlier in this same closure session (a mid-edit ordering slip — the new rows were initially inserted before, not after, the file's true last row — was caught and corrected before commit).
+
+0 items remain open from this closure as of this addendum.

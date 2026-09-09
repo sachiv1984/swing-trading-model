@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-09-08
+Last Updated: 2026-09-09 (Director of Quality — struck stale pre-merge caveat sentence, both PRs now confirmed merged; post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution)
 
 ---
 
@@ -44,4 +44,4 @@ Last Updated: 2026-09-08
 
 - Signed off by: Sprint Execution Engine (autonomous class)
 - Date: 2026-09-08
-- Comments: Autonomous class sign-off — all four qualifying criteria met (all 11 stories autonomous, all AC verified by direct code review and test-run evidence with no observable UI behaviour anywhere in this EPIC, zero `src/pages/`/`src/components/` changes confirmed via diff, engine signer field populated). 4 of the 11 stories additionally carry their own named-role agent-mediated sign-off per their individual AC (ST-06: Infrastructure & Operations Owner; ST-12: QA & Testing Owner; ST-13: Director of Quality; ST-16: QA Lead) — all Approved, recorded in full in `execution_state.json`'s per-story `sign_off_record` fields. This EPIC-level block is the aggregate autonomous-class acknowledgement per `qa_evidence_template.md`; it does not itself satisfy STEP 4's separate merge-gate condition requiring a human comment on the PR — that remains outstanding before merge.
+- Comments: Autonomous class sign-off — all four qualifying criteria met (all 11 stories autonomous, all AC verified by direct code review and test-run evidence with no observable UI behaviour anywhere in this EPIC, zero `src/pages/`/`src/components/` changes confirmed via diff, engine signer field populated). 4 of the 11 stories additionally carry their own named-role agent-mediated sign-off per their individual AC (ST-06: Infrastructure & Operations Owner; ST-12: QA & Testing Owner; ST-13: Director of Quality; ST-16: QA Lead) — all Approved, recorded in full in `execution_state.json`'s per-story `sign_off_record` fields. This EPIC-level block is the aggregate autonomous-class acknowledgement per `qa_evidence_template.md`. STEP 4's separate merge-gate condition (a human comment on the PR) has since been satisfied — PR #1598 confirmed merged (per `execution_state.json.merge_gate.all_merged: true`).

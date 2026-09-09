@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.9
-**Last Updated:** 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding actions, Head of Specs Team direct action — §7 Resolved-deviation carve-out gains an "or equivalent" evidence clarification for deviations with no natural canonical-spec Known Deviations home, LL-v9.1-P4-01); prior — 2026-08-12
+**Version:** 3.10
+**Last Updated:** 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, Head of Specs Team direct action — §2.1 gains a `Pass_with_deviation` Result value with defined semantics, LL-v9.2-P4-01); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding actions, Head of Specs Team direct action — §7 Resolved-deviation carve-out gains an "or equivalent" evidence clarification for deviations with no natural canonical-spec Known Deviations home, LL-v9.1-P4-01); prior — 2026-08-12
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -260,8 +260,9 @@ For each merged EPIC, read `qa_evidence_EPIC-xx.md`:
 ### 2.1 Per-Item Review
 
 For each ST item row in the evidence table:
-- `Result` must be `Pass`, `Pass with notes`, or `Staging-deferred (per CLAUDE.md §2 / shared_standards.md §16.11)`.
+- `Result` must be `Pass`, `Pass with notes`, `Staging-deferred (per CLAUDE.md §2 / shared_standards.md §16.11)`, or `Pass_with_deviation`.
 - `Staging-deferred (per CLAUDE.md §2 / shared_standards.md §16.11)` is valid only when a backlog item for the deferred staging sign-off was filed pre-PR (confirm the backlog reference is present and traceable). It is not a blocking `Fail` when that condition holds.
+- `Pass_with_deviation` (added v3.10, LL-v9.2-P4-01): valid when an acceptance criterion was narrowed or partially unmet, the gap is disclosed transparently in the `Comments` field (not fabricated or silently omitted), and a confirmed backlog item tracks the remaining gap. Treated as functionally equivalent to `Pass with notes` for verification-status purposes (substantive comment present, AC gap named, no fabrication — not a `Fail`) — defaults to P3 severity unless the underlying gap is later assessed as core-behaviour-incomplete, in which case it is re-classified and handled as a `Fail` instead. Formalises a value found in live use at `2026-09-07__release-v9.2` (`qa_evidence_EPIC-05.md`, ST-56/`BLG-OPS-152`) before this enumeration recognised it — added so a future verification run reads it as a defined, routine P3 disposition rather than an unrecognised state requiring escalation.
 - If `Result = Fail`: verification blocker — record in open items. In `strict` mode: halt immediately. In `standard` mode: continue reviewing remaining EPICs; verification status cannot be `Verified` or `Verified_with_deviations` until resolved.
 
 ### 2.2 Acceptance Criteria Check
@@ -274,7 +275,7 @@ Cross-reference each ST item's acceptance criteria (from `sprint_backlog.md`) ag
 Confirm the QA sign-off block is complete:
 - All three checkboxes marked
 - `Signed off by: Director of Quality` with a date
-- `Pass with notes` results have substantive comments (not blank)
+- `Pass with notes` and `Pass_with_deviation` results have substantive comments (not blank) — for `Pass_with_deviation`, the comment must name the specific AC gap and the confirmed backlog item tracking it
 
 ---
 
