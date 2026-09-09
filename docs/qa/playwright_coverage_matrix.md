@@ -1,9 +1,9 @@
 **Owner:** Director of Quality
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-07-20
-**Cycle:** 2026-06-01__release-v4.8 (ST-06 — BLG-QA-39)
+**Version:** 1.4
+**Last Updated:** 2026-09-09 (ST-05, BLG-QA-82, v9.3 — SignalCard rows consolidated to signal-card.spec.js; stale total-count gap filed as BLG-QA-167); prior — 2026-07-20 (ST-06, BLG-QA-39, v4.8)
+**Cycle:** 2026-06-01__release-v4.8 (ST-06 — BLG-QA-39); 2026-09-09__release-v9.3 (ST-05 — BLG-QA-82)
 
 ---
 
@@ -47,8 +47,7 @@ This matrix maps delivered features and stories (v3.7–v4.2) to their Playwrigh
 | `screener.spec.js` | 20 | Screener core functionality |
 | `si01-si03-integration.spec.js` | 8 | SI-01→SI-03 integration path |
 | `sidebar-nav-groups.spec.js` | 8 | Sidebar navigation grouping |
-| `signals-add-to-watchlist.spec.js` | 3 | Signals add-to-watchlist feature |
-| `signals-cash-balance.spec.js` | 4 | Signals cash balance display |
+| `signal-card.spec.js` | 12 | SignalCard: add-to-watchlist, cash balance, allocation_insufficient badge (consolidated v9.3 ST-05, BLG-QA-82 — was 3 files: signals-add-to-watchlist.spec.js, signals-cash-balance.spec.js, signals-allocation-insufficient.spec.js) |
 | `slippage-tracking.spec.js` | — | Slippage tracking (count uncertain) |
 | `smoke-critical-paths.spec.js` | 3 | Critical path smoke tests |
 | `staleness-indicator.spec.js` | 5 | Data staleness indicator |
@@ -59,7 +58,7 @@ This matrix maps delivered features and stories (v3.7–v4.2) to their Playwrigh
 | `visual-snapshots.spec.js` | 14 | Visual snapshot regression tests |
 | `weekly-digest.spec.js` | 5 | Weekly digest rendering |
 
-**Total: 39 spec files, ~325+ test scenarios**
+**Total: 39 spec files, ~325+ test scenarios** *(this file-inventory count was already stale relative to the actual `tests/e2e/` directory as of the 2026-07-20 Last Updated date — see BLG-QA-167, filed v9.3 ST-05. The SignalCard consolidation above (v9.3 ST-05, BLG-QA-82) reduces the actual spec-file count by 2 net; this document's own running total is not corrected here as a full re-inventory is out of scope for ST-05.)*
 
 ---
 
@@ -69,8 +68,8 @@ This matrix maps delivered features and stories (v3.7–v4.2) to their Playwrigh
 
 | Feature/Story | Playwright Coverage | Spec File | Scenarios | Staging-only ACs |
 |---------------|--------------------|-----------|-----------|--------------------|
-| Add signal to watchlist (IT-02 partial) | ✅ Covered | `signals-add-to-watchlist.spec.js` | 3 | None |
-| Signals cash balance display | ✅ Covered | `signals-cash-balance.spec.js` | 4 | None |
+| Add signal to watchlist (IT-02 partial) | ✅ Covered | `signal-card.spec.js` (consolidated v9.3) | 3 | None |
+| Signals cash balance display | ✅ Covered | `signal-card.spec.js` (consolidated v9.3) | 4 | None |
 | Screener (signals integration) | ✅ Covered | `screener.spec.js` | 20 | None |
 
 ### v3.8 — (No new Playwright coverage added — primarily backend/governance cycle)
