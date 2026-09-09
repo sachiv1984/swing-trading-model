@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.1.0
-**Last Updated:** 2026-09-07 (ST-01, EPIC-01, v9.2 — added `total_closed_trades` field, backs the low-trade-volume advisory)
+**Version:** 1.2.0
+**Last Updated:** 2026-09-09 (ST-04, EPIC-01, v9.3 — `total_closed_trades` is now nullable: `null` distinguishes a missing/broken `trade_history` table from a genuine zero-trades portfolio); prior — 2026-09-07 (ST-01, EPIC-01, v9.2 — added `total_closed_trades` field, backs the low-trade-volume advisory)
 **Shipped:** v4.0 — ST-01, EPIC-01, cycle 2026-05-22__release-v4.0
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -104,7 +104,7 @@ Return Arc 5 signal compliance metrics for a rolling time window. Covers:
 | override_rate | number | Yes | Pre-entry override events ÷ total validation attempts in the last 7 days. `null` if no validation attempts exist. |
 | top_rule_breach | string | Yes | `rule_type` value of the most frequently failing rule in the period. `null` if no failures exist. |
 | trade_plan_adherence_rate | number | Yes | Closed trades with associated trade plan ÷ total closed trades (all-time). `null` if no closed trades exist. |
-| total_closed_trades | integer | No | All-time closed trade count — the denominator of `trade_plan_adherence_rate`. `0` if no closed trades exist (never `null`). Added v1.1.0 to back the frontend low-trade-volume advisory (`docs/specs/frontend/components/arc5_compliance_section.md` §Low-Trade-Volume Advisory). |
+| total_closed_trades | integer | Yes | All-time closed trade count — the denominator of `trade_plan_adherence_rate`. `0` if `trade_history` exists and is genuinely empty (no closed trades yet). `null` if `trade_history` is missing or broken (schema error) — distinct from the genuine-empty case since v1.2.0 (ST-04, EPIC-01, v9.3, BLG-BE-111); before that fix both cases returned `0`, indistinguishable to the frontend. Added v1.1.0 to back the frontend low-trade-volume advisory (`docs/specs/frontend/components/arc5_compliance_section.md` §Low-Trade-Volume Advisory) — that advisory's rendering does not currently branch on `total_closed_trades` being `null` vs. `0` (see Frontend note below). |
 
 #### `validation_pass_rate_by_rule` entry schema
 
@@ -133,6 +133,8 @@ Return Arc 5 signal compliance metrics for a rolling time window. Covers:
 
 If a source table does not exist in the database (e.g. `pre_entry_validation_log` or `red_flag_events`), the endpoint catches `psycopg2.errors.UndefinedTable`, rolls back the cursor, and returns an empty or zero value for that metric rather than raising an error. The response always returns HTTP 200 with the `status: "ok"` envelope.
 
+**Exception — `total_closed_trades` (v1.2.0):** unlike the other metrics' empty/zero degradation, a `trade_history` schema error (`UndefinedColumn`/`UndefinedTable`) returns `total_closed_trades: null`, not `0` — `0` is reserved for a genuinely empty (but present and queryable) `trade_history` table. A schema error is an operational fault, not "zero trades so far," and must not be silently rendered as the latter.
+
 ---
 
 ### Error Response (500)
@@ -151,5 +153,6 @@ Raised for unexpected server-side failures unrelated to missing tables (e.g. dat
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2.0 | 2026-09-09 | ST-04 (EPIC-01, v9.3, BLG-BE-111): `total_closed_trades` is now nullable — `null` on a `trade_history` schema error (`UndefinedColumn`/`UndefinedTable`), `0` reserved for a genuine zero-trades portfolio. Previously both cases returned `0`, indistinguishable to the frontend. Fixed in `database.get_arc5_trade_plan_adherence_rate()`; no other field changed. See Frontend note under the field table re: `arc5_compliance_section.md`'s low-trade-volume advisory not yet branching on this distinction. |
 | 1.1.0 | 2026-09-07 | Added `total_closed_trades` field (all-time closed trade count, `trade_plan_adherence_rate`'s own denominator) — ST-01, EPIC-01, v9.2, BLG-FEAT-44. Backs the frontend low-trade-volume advisory. No breaking change to existing fields. |
 | 1.0.0 | 2026-05-25 | Initial contract — ST-01, EPIC-01, v4.0. |

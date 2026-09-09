@@ -1,8 +1,8 @@
 **Owner:** Head of Engineering
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.0
-**Last Updated:** 2026-03-02
+**Version:** 0.1.1
+**Last Updated:** 2026-09-09 (ST-03, EPIC-01, v9.3 — Known Deviations section added; no normative change); prior — 2026-03-02 (initial draft)
 
 
 > **Lifecycle Sign-off:** Head of Specs Team — Class 1 (Canonical Specification) assigned 2026-03-02 (Delegated Authority). This document is the authoritative source of truth for structured logging standards. All backend implementations must conform. v2.0 hard gate (structured logging / observability) cleared.
@@ -199,8 +199,33 @@ The following must **never** appear in any log record, regardless of level:
 
 ---
 
+## Known Deviations
+
+Per `claude/charter/document_lifecycle_guide.md` §9 (Known Deviation Documentation Standard).
+
+**Deviation 1 — Backend log output is plain text, not JSON Lines**
+- **Deviation description:** `backend/main.py`'s `logging.basicConfig` emits plain-text formatted log lines (`"%(asctime)s %(levelname)s %(name)s [%(correlation_id)s]: %(message)s"`), not the JSON Lines (NDJSON) format this document's §Structured Log Format mandates.
+- **Canonical requirement:** All log output MUST be valid JSON, one object per line, with the required fields listed in §Structured Log Format.
+- **Priority:** P3
+- **Target resolution release:** Backlog (reviewed at next quarterly audit per the P3 resolution rule)
+- **Owner:** Backend Engineering Patterns Owner; Head of Engineering
+- **Backlog reference:** `BLG-BE-112`
+- **Found:** ST-03 (EPIC-01, `2026-09-09__release-v9.3`, BLG-BE-48) — discovered while implementing correlation-ID propagation; pre-existing, not introduced by that story.
+
+**Deviation 2 — Correlation ID propagation mechanism differs from the §Correlation ID Scheme sample implementation**
+- **Deviation description:** This document's §Correlation ID Scheme illustrates storing the correlation ID on `request.state.correlation_id`, which is reachable only from code holding a reference to the FastAPI `Request` object. ST-03's actual implementation (`backend/utils/correlation_id.py`) instead uses a `contextvars.ContextVar`, set by `main.py`'s `correlation_id_middleware` and read by a `logging.setLogRecordFactory()` override — because the AC requires the correlation ID in *every* log line for a request, including those emitted from service- and database-layer functions that never receive the `Request` object. The `request.state` pattern alone cannot satisfy that requirement; the actual behavioural contract this section defines (generation, inbound-header reuse, response-header echo, one ID per request) is otherwise met.
+- **Canonical requirement:** §Correlation ID Scheme's "Implementation (FastAPI Middleware)" sample.
+- **Priority:** P3
+- **Target resolution release:** Backlog — this document's illustrative snippet should be updated to the contextvars-based pattern at the next revision of this section, so future readers aren't pointed at a mechanism that doesn't cover the service/database layers.
+- **Owner:** Backend Engineering Patterns Owner
+- **Backlog reference:** None filed separately — tracked as a documentation-freshness note against this section; folds into any future revision of this document.
+- **Found:** ST-03 (EPIC-01, `2026-09-09__release-v9.3`, BLG-BE-48).
+
+---
+
 ## Changelog
 
 | Version | Date | Change | Author |
 |---------|------|--------|--------|
+| 0.1.1 | 2026-09-09 | ST-03 (EPIC-01, v9.3, BLG-BE-48): Added §Known Deviations documenting (1) backend log output remains plain-text, not the JSON Lines this spec mandates (pre-existing gap, `BLG-BE-112` filed), and (2) the correlation-ID propagation mechanism actually implemented (`backend/utils/correlation_id.py`, contextvars-based) differs from this document's `request.state`-based sample, because service/database-layer log lines have no access to the `Request` object. No change to this document's normative requirements. | Sprint Execution Engine (autonomous) |
 | 0.1.0 | 2026-03-02 | Initial draft — TASK-11/12/13/14/15 complete. TASK-16: Class 1 (Canonical Specification) assigned by Head of Specs Team (Delegated Authority). Document status set to Active. v2.0 hard gate cleared. | Head of Engineering + Head of Specs Team |

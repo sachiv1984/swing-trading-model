@@ -465,3 +465,108 @@ def test_regime_distribution_endpoint_rejects_invalid_window():
 
     resp = client.get("/screener/regime-distribution?window=7d")
     assert resp.status_code == 400
+
+
+# ---------------------------------------------------------------------------
+# get_screener_run_history (ST-01, BLG-BE-13, EPIC-01, v9.3)
+# ---------------------------------------------------------------------------
+
+def _mock_run_history_rows(rows, total):
+    """Mock a get_db() connection whose cursor answers a COUNT(*) query
+    (fetchone) followed by the paginated SELECT (fetchall)."""
+    cur = MagicMock()
+    cur.fetchone.return_value = {"cnt": total}
+    cur.fetchall.return_value = rows
+    cur_ctx = MagicMock()
+    cur_ctx.__enter__ = MagicMock(return_value=cur)
+    cur_ctx.__exit__ = MagicMock(return_value=False)
+    conn = MagicMock()
+    conn.__enter__ = lambda s: conn
+    conn.__exit__ = MagicMock(return_value=False)
+    conn.cursor.return_value = cur_ctx
+    return conn, cur
+
+
+def test_get_screener_run_history_shapes_regime_distribution():
+    rows = [
+        {
+            "run_id": "3f2a1b4c-0000-0000-0000-000000000001",
+            "run_timestamp": None,
+            "tickers_requested": 500,
+            "tickers_passed": 12,
+            "regime_us": "risk_on",
+            "regime_uk": "risk_off",
+            "degraded_run": False,
+            "failure_rate": 0.04,
+        }
+    ]
+    conn, cur = _mock_run_history_rows(rows, total=1)
+    with patch("services.screener_batch_service.get_db", return_value=conn):
+        from services.screener_batch_service import get_screener_run_history
+        result = get_screener_run_history(limit=50, offset=0)
+
+    assert result["total"] == 1
+    assert result["limit"] == 50
+    assert result["offset"] == 0
+    run = result["runs"][0]
+    assert run["run_id"] == "3f2a1b4c-0000-0000-0000-000000000001"
+    assert run["total_tickers"] == 500
+    assert run["pass_count"] == 12
+    assert run["regime_distribution"] == {"US": "risk_on", "UK": "risk_off"}
+    assert run["degraded_run"] is False
+    assert run["failure_rate"] == 0.04
+
+
+def test_get_screener_run_history_empty():
+    conn, cur = _mock_run_history_rows([], total=0)
+    with patch("services.screener_batch_service.get_db", return_value=conn):
+        from services.screener_batch_service import get_screener_run_history
+        result = get_screener_run_history()
+
+    assert result["runs"] == []
+    assert result["total"] == 0
+
+
+def test_get_screener_run_history_paginates_via_limit_offset():
+    conn, cur = _mock_run_history_rows([], total=0)
+    with patch("services.screener_batch_service.get_db", return_value=conn):
+        from services.screener_batch_service import get_screener_run_history
+        get_screener_run_history(limit=10, offset=20)
+
+    # The SELECT call is the second cur.execute() call (first is the COUNT).
+    select_call = cur.execute.call_args_list[-1]
+    assert select_call[0][1] == (10, 20)
+
+
+def test_screener_history_endpoint_returns_paginated_history():
+    from fastapi.testclient import TestClient
+    from fastapi import FastAPI
+    from routers.screener import router
+
+    app = FastAPI()
+    app.include_router(router)
+    client = TestClient(app)
+
+    with patch(
+        "routers.screener.get_screener_run_history",
+        return_value={"runs": [], "total": 0, "limit": 50, "offset": 0},
+    ):
+        resp = client.get("/screener/history")
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["ok"] is True
+    assert body["data"]["runs"] == []
+
+
+def test_screener_history_endpoint_rejects_limit_over_200():
+    from fastapi.testclient import TestClient
+    from fastapi import FastAPI
+    from routers.screener import router
+
+    app = FastAPI()
+    app.include_router(router)
+    client = TestClient(app)
+
+    resp = client.get("/screener/history?limit=500")
+    assert resp.status_code == 400

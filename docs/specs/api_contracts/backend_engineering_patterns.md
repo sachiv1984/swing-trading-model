@@ -1,8 +1,8 @@
 **Owner:** Backend Engineering Patterns Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 1.5
-**Last Updated:** 2026-08-03
+**Version:** 1.6
+**Last Updated:** 2026-09-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -222,10 +222,32 @@ def get_resource_endpoint(format: Optional[str] = None):
 
 ---
 
+## Correlation-ID request tracing
+
+**Added:** v1.6 — ST-03 (EPIC-01, v9.3, BLG-BE-48)
+
+**Purpose:** Every log line emitted while handling a request must be traceable back to that request, across the router -> service -> database layers, without threading an explicit parameter through every function call.
+
+**Shared module:** `backend/utils/correlation_id.py`
+- `get_correlation_id() / set_correlation_id(value) / reset_correlation_id(token)` — a `contextvars.ContextVar` holding the current request's correlation ID. A `ContextVar` (not thread-local storage) is used because the backend is an async FastAPI app — each request runs as its own asyncio Task, and each Task captures its own copy of the context, so one request's ID is never visible to a concurrently-handled request.
+- `new_correlation_id()` — generates a UUID v4 for a request that did not supply one.
+- `install_correlation_id_log_record_factory()` — installs a `logging.setLogRecordFactory()` override that stamps `record.correlation_id` onto every `LogRecord` at creation time. A record factory is used rather than a `logging.Filter` attached to specific handlers, because a filter only runs for the handlers it is attached to at the time it is attached — it would silently miss a handler added later (e.g. pytest's `caplog` fixture attaches its own handler to the root logger per test). The factory approach stamps every record before any handler exists, so every handler sees the field regardless of when it was attached. Called once, in `main.py`, immediately after `logging.basicConfig()` (same ordering requirement as the BLG-BE-107 root-logger fix already documented in that file) — its `%(correlation_id)s` field must appear in the `basicConfig` format string.
+
+**Middleware (`main.py::correlation_id_middleware`):** Reuses an inbound `X-Correlation-ID` request header if present (allows a caller to chain its own trace ID through); otherwise generates one. Sets it into the context var for the duration of the request, echoes it back as the `X-Correlation-ID` response header, and resets the context var afterward. Registered **after** `api_key_middleware` in `main.py` — Starlette's `@app.middleware("http")` stack runs in reverse-registration order on the way in (last-registered is outermost), so this ordering makes `correlation_id_middleware` the outermost layer, meaning the ID is assigned — and therefore present in the 401 log line too — even for a request `api_key_middleware` rejects. Get this ordering backwards and requests rejected by auth silently lose correlation tracing.
+
+**Usage in application code:** No change required to existing `logging.getLogger(__name__)` call sites — any log line, at any layer, automatically carries the current request's correlation ID once the format string includes `%(correlation_id)s`. Nothing needs to be passed into service or database functions.
+
+**Known deviation from `docs/specs/structured_logging_standards.md`:** that document's own §Correlation ID Scheme illustrates a `request.state.correlation_id` pattern, which is reachable only from code holding the `Request` object — insufficient for propagating into service/database-layer log lines, which is the actual requirement here. See that document's §Known Deviations for the full note. That document also mandates JSON Lines log output, which this backend does not yet produce (pre-existing gap, tracked as `BLG-BE-112`, unrelated to this pattern).
+
+**Tested via:** `tests/test_correlation_id_propagation.py` (context var get/set/reset, log record factory, and 2 representative multi-step endpoints — `GET /health/detailed`, `GET /screener/history` — confirming the response header and the service-layer log line both carry the request's correlation ID, including under an inbound header and under a 401 rejection).
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6 | 2026-09-09 | ST-03 (EPIC-01, v9.3, BLG-BE-48): Add §Correlation-ID request tracing pattern — contextvars-based request correlation ID (`backend/utils/correlation_id.py`), propagated to every log line via a `logging.setLogRecordFactory()` override, assigned by `main.py::correlation_id_middleware` (registered outermost so it covers 401 rejections too). Documents a deviation from `structured_logging_standards.md`'s illustrative `request.state`-based sample (insufficient for service/database-layer log lines) and cross-references the pre-existing JSON-Lines-format gap (`BLG-BE-112`). Tested via `tests/test_correlation_id_propagation.py`. |
 | 1.5 | 2026-08-03 | ST-17 (EPIC-06, v8.1, BLG-BE-47): Add §Cursor-based pagination pattern for list endpoints — additive, opt-in-only keyset pagination via `backend/utils/pagination.py` (`encode_cursor`/`decode_cursor`/`cursor_where_clause`/`paginate_results`). Reference migration: `GET /trade-plans`. Tested via `tests/test_pagination.py` (pure-function coverage). Not required to retrofit all existing list endpoints in this item — the next 2 new/modified list endpoints are expected to follow this pattern. |
 | 1.4 | 2026-07-29 | ST-03 (EPIC-01, v7.10, BLG-BE-76): Add §Idempotency-key pattern for state-mutating POST endpoints — additive, opt-in-only (client-supplied key) dedup pattern via a generic `idempotency_keys` table and `utils/idempotency.py::replay_or_create`. Applied to `POST /portfolio/position` and `POST /trade-plans`; no change to behaviour when the key is absent (RISK-02). |
 | 1.3 | 2026-07-20 | ST-04 (EPIC-04, v7.6, BLG-BE-65): Add §Error-response envelope conformance — full audit of `backend/routers/` (23 files, 79 endpoints) against the canonical envelope in `conventions.md` §13. Three non-conformance patterns found (default FastAPI `{detail}` shape; errors masked as HTTP 200 in `portfolio_risk.py`; correct shape but wrong status code in `digest.py`). Non-conforming endpoints filed as follow-up items (`BLG-BE-67`, `BLG-BE-68`) per this item's acceptance criteria — no router code changed in this item. |

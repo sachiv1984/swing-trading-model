@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-09-09__release-v9.3",
   "cycle_name": "v9.3 — Full-Capacity Debt Clearance",
-  "status": "Sprint_Planning_Complete",
+  "status": "Executing",
   "prior_status": "Release_Planning_Complete",
   "engine": "Sprint Planning",
   "execution_state_path": "claude/cycles/2026-09-07__release-v9.2/execution_state.json",

@@ -173,10 +173,16 @@ def test_generate_rebalance_exit_signals_end_to_end_with_numpy_position_data():
         )
 
     # Also confirm the specific numeric fields resolved to the expected native
-    # values. Param order matches create_rebalance_exit_signal's cur.execute()
-    # call: (portfolio_id, ticker, market, signal_date, current_price, price_gbp, reason).
-    inserted_current_price = params[4]
-    inserted_price_gbp = params[5]
+    # values. Param order matches the consolidated _signal_upsert() INSERT
+    # (ST-02, EPIC-01, v9.3, BLG-BE-44): (portfolio_id, ticker, market,
+    # signal_date, rank, momentum_percent, current_price, price_gbp,
+    # atr_value, volatility, initial_stop, suggested_shares, allocation_gbp,
+    # total_cost, status, reason) — current_price/price_gbp moved from
+    # index 4/5 (pre-consolidation, when the sizing-sentinel columns were
+    # inline SQL literals rather than bound parameters) to index 6/7 now that
+    # every column is uniformly bound.
+    inserted_current_price = params[6]
+    inserted_price_gbp = params[7]
     assert inserted_current_price == pytest.approx(250.12)
     assert type(inserted_current_price) is float
     assert type(inserted_price_gbp) is float

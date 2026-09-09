@@ -780,13 +780,36 @@ def _sanitize_signal_string(value: str) -> str:
     return cleaned[:_SIGNAL_STRING_MAX_LEN]
 
 
-def create_signal(portfolio_id: str, signal_data: Dict) -> Dict:
-    """Create or update a signal"""
-    ticker = _sanitize_signal_string(signal_data['ticker'])
-    market = _sanitize_signal_string(signal_data['market'])
+def _signal_upsert(
+    portfolio_id: str, ticker: str, market: str, signal_date: str, rank,
+    momentum_percent, current_price, price_gbp, atr_value, volatility,
+    initial_stop, suggested_shares, allocation_gbp, total_cost, status: str,
+    reason: Optional[str], conflict_update_columns: List[str],
+) -> Dict:
+    """Single validated INSERT ... ON CONFLICT ... DO UPDATE path for the `signals`
+    table (ST-02, EPIC-01, v9.3, BLG-BE-44 — consolidates the previously-separate
+    create_signal() and create_rebalance_exit_signal() write paths, which each
+    independently reimplemented the same INSERT/upsert shape and its BLG-SEC-02
+    ticker/market sanitisation).
+
+    `conflict_update_columns` preserves each caller's distinct on-conflict
+    semantics rather than forcing a lossy full merge:
+    - create_signal() must not reset `status` on conflict (would clobber a
+      signal already marked `entered`/`dismissed`/etc by the user).
+    - create_rebalance_exit_signal() must not overwrite real sizing fields
+      with its 0/None sentinels on conflict.
+
+    update_signal() (PATCH /signals/{id}) remains a distinct write path by
+    design — a partial-column UPDATE against caller-supplied fields, not an
+    upsert against a fixed column set — and is not folded into this function;
+    it already shares _sanitize_signal_string() for ticker/market.
+    """
+    ticker = _sanitize_signal_string(ticker)
+    market = _sanitize_signal_string(market)
+    set_clause = ", ".join(f"{col} = EXCLUDED.{col}" for col in conflict_update_columns)
     with get_db() as conn:
         with conn.cursor() as cur:
-            cur.execute("""
+            cur.execute(f"""
                 INSERT INTO signals (
                     portfolio_id, ticker, market, signal_date, rank,
                     momentum_percent, current_price, price_gbp, atr_value,
@@ -796,39 +819,42 @@ def create_signal(portfolio_id: str, signal_data: Dict) -> Dict:
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 )
                 ON CONFLICT (portfolio_id, ticker, signal_date)
-                DO UPDATE SET
-                    rank = EXCLUDED.rank,
-                    momentum_percent = EXCLUDED.momentum_percent,
-                    current_price = EXCLUDED.current_price,
-                    price_gbp = EXCLUDED.price_gbp,
-                    atr_value = EXCLUDED.atr_value,
-                    volatility = EXCLUDED.volatility,
-                    initial_stop = EXCLUDED.initial_stop,
-                    suggested_shares = EXCLUDED.suggested_shares,
-                    allocation_gbp = EXCLUDED.allocation_gbp,
-                    total_cost = EXCLUDED.total_cost,
-                    reason = EXCLUDED.reason,
-                    updated_at = NOW()
+                DO UPDATE SET {set_clause}, updated_at = NOW()
                 RETURNING *
             """, (
-                portfolio_id,
-                ticker,
-                market,
-                signal_data['signal_date'],
-                signal_data['rank'],
-                signal_data['momentum_percent'],
-                signal_data['current_price'],
-                signal_data['price_gbp'],
-                signal_data['atr_value'],
-                signal_data['volatility'],
-                signal_data['initial_stop'],
-                signal_data['suggested_shares'],
-                signal_data['allocation_gbp'],
-                signal_data['total_cost'],
-                signal_data.get('status', 'new'),
-                signal_data.get('reason')
+                portfolio_id, ticker, market, signal_date, rank,
+                momentum_percent, current_price, price_gbp, atr_value,
+                volatility, initial_stop, suggested_shares, allocation_gbp,
+                total_cost, status, reason,
             ))
             return cur.fetchone()
+
+
+def create_signal(portfolio_id: str, signal_data: Dict) -> Dict:
+    """Create or update a signal (momentum path). See _signal_upsert()."""
+    return _signal_upsert(
+        portfolio_id=portfolio_id,
+        ticker=signal_data['ticker'],
+        market=signal_data['market'],
+        signal_date=signal_data['signal_date'],
+        rank=signal_data['rank'],
+        momentum_percent=signal_data['momentum_percent'],
+        current_price=signal_data['current_price'],
+        price_gbp=signal_data['price_gbp'],
+        atr_value=signal_data['atr_value'],
+        volatility=signal_data['volatility'],
+        initial_stop=signal_data['initial_stop'],
+        suggested_shares=signal_data['suggested_shares'],
+        allocation_gbp=signal_data['allocation_gbp'],
+        total_cost=signal_data['total_cost'],
+        status=signal_data.get('status', 'new'),
+        reason=signal_data.get('reason'),
+        conflict_update_columns=[
+            "rank", "momentum_percent", "current_price", "price_gbp",
+            "atr_value", "volatility", "initial_stop", "suggested_shares",
+            "allocation_gbp", "total_cost", "reason",
+        ],
+    )
 
 
 def get_signals(portfolio_id: str, status: str = None) -> List[Dict]:
@@ -3380,32 +3406,16 @@ def create_rebalance_exit_signal(portfolio_id: str, ticker: str, market: str,
 
     Uses the existing signals table with non-applicable sizing fields set to 0/null.
     The UNIQUE(portfolio_id, ticker, signal_date) constraint prevents duplicates.
+    See _signal_upsert() (ST-02, EPIC-01, v9.3, BLG-BE-44).
     """
-    ticker = _sanitize_signal_string(ticker)
-    market = _sanitize_signal_string(market)
-    with get_db() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO signals (
-                    portfolio_id, ticker, market, signal_date, rank,
-                    momentum_percent, current_price, price_gbp, atr_value,
-                    volatility, initial_stop, suggested_shares, allocation_gbp,
-                    total_cost, status, reason
-                ) VALUES (
-                    %s, %s, %s, %s, 0,
-                    0, %s, %s, 0,
-                    0, 0, 0, 0,
-                    0, 'exit_rebalance', %s
-                )
-                ON CONFLICT (portfolio_id, ticker, signal_date) DO UPDATE SET
-                    status = 'exit_rebalance',
-                    reason = EXCLUDED.reason,
-                    updated_at = NOW()
-                RETURNING *
-            """, (portfolio_id, ticker, market, signal_date,
-                  current_price, price_gbp, reason))
-            conn.commit()
-            return cur.fetchone()
+    return _signal_upsert(
+        portfolio_id=portfolio_id, ticker=ticker, market=market,
+        signal_date=signal_date, rank=0, momentum_percent=0,
+        current_price=current_price, price_gbp=price_gbp, atr_value=0,
+        volatility=0, initial_stop=0, suggested_shares=0, allocation_gbp=0,
+        total_cost=0, status='exit_rebalance', reason=reason,
+        conflict_update_columns=["status", "reason"],
+    )
 
 
 # ============================================================================
@@ -4631,11 +4641,19 @@ def get_arc5_override_rate(week_ago_iso, conn=None):
 def get_arc5_trade_plan_adherence_rate(conn=None):
     """trade_plan_adherence_rate + total_closed_trades (all-time) for GET /analytics/arc5-compliance.
 
-    Returns a dict {"rate": float|None, "total_trades": int} rather than a bare
-    rate — total_trades (the all-time closed-trade count already computed here
-    as the ratio's own denominator) is surfaced separately so the frontend can
-    render a low-trade-volume advisory without a second query (ST-01, EPIC-01,
-    v9.2, BLG-FEAT-44).
+    Returns a dict {"rate": float|None, "total_trades": int|None} rather than a
+    bare rate — total_trades (the all-time closed-trade count already computed
+    here as the ratio's own denominator) is surfaced separately so the frontend
+    can render a low-trade-volume advisory without a second query (ST-01,
+    EPIC-01, v9.2, BLG-FEAT-44).
+
+    total_trades is `0` for a genuine zero-trades portfolio (the `trade_history`
+    table exists and is queryable, it is simply empty) and `None` when the
+    table is missing/broken (UndefinedColumn/UndefinedTable) — these are not
+    the same state and must not be conflated into the same `0` value (ST-04,
+    EPIC-01, v9.3, BLG-BE-111): a broken schema is an error condition the
+    frontend's low-trade-volume advisory should not silently render as "0
+    trades so far", per docs/specs/api_contracts/arc5_compliance_analytics.md.
     """
     def _fetch(c):
         try:
@@ -4656,7 +4674,7 @@ def get_arc5_trade_plan_adherence_rate(conn=None):
                 return {"rate": None, "total_trades": total_trades}
         except (psycopg2.errors.UndefinedColumn, psycopg2.errors.UndefinedTable):
             c.rollback()
-            return {"rate": None, "total_trades": 0}
+            return {"rate": None, "total_trades": None}
     if conn is not None:
         return _fetch(conn)
     with get_db() as conn:
