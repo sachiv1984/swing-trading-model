@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.180
-**Last Updated:** 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-03/ST-15 — qa_evidence_template.md v1.11→v1.12: §14 QA Evidence Template row updated to v1.12); prior — 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-03/ST-14 — sprint_planning_prompt.md v3.17→v3.18: §7 "Source prompt" line and §14 Sprint Planning Engine row both updated to v3.18); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding-actions resolution — execution_prompt.md v3.72→v3.73: §8 "Source prompt" line and §14 Execution Engine Source row both updated to v3.73); prior history retained — see prior entries in version control.
+**Version:** 4.183
+**Last Updated:** 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 STEP 8 immediate action — post_ship_closure.md v2.31→v2.32: §14 Post-Ship Closure Engine row and §10 "Source prompt" line both updated to v2.32; header itself corrected from a stale 4.180 to 4.183, matching the table's own most recent pre-existing row — CLAUDE.md §6 step 1 pre-check found the top-of-file `**Version:**`/`**Last Updated:**` fields had fallen 2 rows behind the table's own most recent entries, 4.181/4.182, both landed 2026-09-08 without the corresponding header update); prior — 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-04/ST-38 — roadmap_prompt.md v9.18→v9.19: §14 self-row 4.182); prior — 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-04/ST-18+ST-19+ST-20+ST-24+ST-25+ST-27+ST-33+ST-37 — 4 source prompts bumped: §14 self-row 4.181); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.31)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.32)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1380,7 +1380,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.12 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.9 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.31 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.32 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.32 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1497,6 +1497,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.183 | 2026-09-09 | **Post-ship closure `2026-09-07__release-v9.2` STEP 8 immediate action — post_ship_closure.md v2.31→v2.32: STEP 8 gains a "same-cycle application pattern" formalisation.** §14 Post-Ship Closure Engine v2.31→v2.32. §10 source prompt header v2.31→v2.32 (line 1062). §14 self-row Version/Last Updated 4.182/2026-09-08→4.183/2026-09-09 (header also corrected — found 2 rows stale, still reading 4.180, against the table's own already-current 4.182; no content beyond the header pointer was actually behind). Change: resolves `2026-09-03__release-v9.1` closure's own Carry-Forward item 2 — formalises "apply an unambiguous Phase 3/4 friction-item fix at the immediately-following Post-Ship Closure's own STEP 8" as the expected default rather than an unwritten precedent, per the confirmed-repeatable pattern at `2026-08-21__release-v9.0`/`2026-09-03__release-v9.1`. Authority: Head of Specs Team (post-ship closure `2026-09-07__release-v9.2`, STEP 8 immediate-action rule). |
 | 4.182 | 2026-09-08 | **Sprint execution `2026-09-07__release-v9.2` EPIC-04/ST-38 — roadmap_prompt.md v9.18→v9.19: Step 0.C condensed-tier threshold review.** §14 Roadmap Engine Source v9.18→v9.19. §6 source prompt header v9.18→v9.19 (line 399). §14 self-row Version/Last Updated 4.181/2026-09-08→4.182/2026-09-08. Change: reviewed whether "Condensed if no new FTE required" needs additional formal thresholds; decision recorded as retain-as-is (Lightweight tier's own entry conditions already narrow the scope). Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-38, 2026-09-08). |
 | 4.181 | 2026-09-08 | **Sprint execution `2026-09-07__release-v9.2` EPIC-04/ST-18+ST-19+ST-20+ST-24+ST-25+ST-27+ST-33+ST-37 — 4 source prompts bumped.** §14 table updated: `shared_standards.md` v3.31→v3.32 (new §21 Deprecation Header Convention for Retiring API Endpoints, BLG-GOV-244; new §22 Governance-Cycle Wall-Clock Cost Logging Convention, BLG-GOV-210); `roadmap_prompt.md` v9.17→v9.18 (STEP 1.1 Meta-Review Countdown field, BLG-GOV-217; §7.1 workload-composition framing note, BLG-GOV-209; §7.2 formal threshold review confirming advisory-only, BLG-GOV-300; new STEP 8.1.5 §13-Adjacent Initiative Expiry Review, BLG-GOV-245); `design_gate_prompt.md` v1.9→v1.10 (new §4.1 Post-Gate-Correction Addendum Mechanism, BLG-GOV-287); `backlog_management_prompt.md` v1.15→v1.16 (new §3.1 Recurring Spec-Debt Deep Review Cadence, BLG-GOV-272). §6 source prompt header v9.17→v9.18 (line 405); §6.5 source prompt header v1.9→v1.10 (line 570); §6M source-prompts line backlog_management_prompt.md v1.15→v1.16 (line 478). §14 self-row Version/Last Updated 4.180/2026-09-08→4.181/2026-09-08. Authority: Head of Specs Team (STEP 1.1, §21/§22, §4.1, §3.1), Director of HR (§7.1/§7.2), Strategy Rules & System Intent Owner (STEP 8.1.5) — Sprint Execution Engine, agent-mediated, 2026-09-08. |
 | 4.180 | 2026-09-08 | **Sprint execution `2026-09-07__release-v9.2` EPIC-03/ST-15 (BLG-QA-109) — qa_evidence_template.md v1.11→v1.12: added an explicit FI-P3-02 wording-only-AC exception citation note.** §14 QA Evidence Template v1.11→v1.12. §14 self-row Version/Last Updated 4.179/2026-09-08→4.180/2026-09-08. Change: comparison found the template previously named no standard place/format for citing the FI-P3-02 exception despite it already being exercised in practice ad hoc (e.g. `qa_evidence_EPIC-02.md`, `2026-08-05__release-v8.3`) — added a callout after the OA-3/ST-03 AC-table requirement giving the expected citation format and explicitly distinguishing it from the (broader, EPIC-wide) BLG-GOV-19 Autonomous Class block. Authority: Head of Specs Team (Sprint Execution Engine, ST-15, 2026-09-08). |

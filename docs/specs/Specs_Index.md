@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-08 (ST-49, EPIC-05, v9.2, BLG-SPEC-135 — §8b Full Spec File Registry added, populating all 78 additions `scripts/check_specs_index_freshness.py` had found unreferenced; see Changelog table for full history)
+**Last Updated:** 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 — §42 Test Coverage Gaps section added, 0 new gaps, TSG sweep 0 Open entries; see Changelog table for full history)
 
 ---
 
@@ -1129,6 +1129,16 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ---
 
+## 42. Test Coverage Gaps — v9.2 (2026-09-07__release-v9.2)
+
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — EPIC-01/02/03/05's `test_scenarios` arrays were each cross-referenced against their `qa_evidence_EPIC-xx.md` "Scenarios run" field and confirmed executed; EPIC-04's short-circuit (`not_applicable` — no frontend-visible AC anywhere in the EPIC, confirmed via `git diff --stat`) applied cleanly. Table is N/A per §6.
+
+**Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** `docs/reference/openapi.yaml` (139 normalised method+path endpoints) vs `docs/ops/api_performance_baseline.md` (138 normalised entries) — after normalising path parameters and the query-string-suffixed rows for `GET /analytics/metrics`/`GET /analytics/tag-performance` (baseline registers these with an example query string appended to the endpoint-name column, a pre-existing formatting quirk, not a missing registration), 0 genuine gaps found. No new `BLG-OPS-*` filing required.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep, per `post_ship_closure.md`'s no-fixed-section-number scan rule):** Scanned all 26 `### N.N TSG-*` entries (§9–§40) plus §41 for literal `**Status:** Open`. 0 Open entries found — every existing TSG entry already carries a `RESOLVED`/`not_applicable`/confirmed-still-open disposition (most recently reconciled at v8.6/§39, v9.0/§40, and v9.1/§41 closures). 0 Open TSG entries checked, 0 resolved.
+
+---
+
 ## 12. Guiding Principle
 
 > Specs explain decisions.
@@ -1142,6 +1152,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-09-09 | Post-ship closure `2026-09-07__release-v9.2` — §42 Test Coverage Gaps (v9.2) added, 0 new gaps this cycle; endpoint coverage drift check found 0 genuine gaps (openapi.yaml 139 vs api_performance_baseline.md 138 normalised endpoints, remaining delta is a query-string formatting quirk, not a missing registration); full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-08 | ST-49 (EPIC-05, v9.2, BLG-SPEC-135): added `## 8b. Full Spec File Registry` — all 78 files `scripts/check_specs_index_freshness.py` had flagged as unreferenced additions are now indexed by path, grouped by domain. Script now reports 0 unexplained additions (1 pre-existing REMOVALS entry, `qa_evidence_EPIC-xx.md`, is a template-pattern placeholder reference, not a real spec file, and is out of this story's scope). Later same day: ST-43's new `deprecated_endpoint_sunset_tracker.md` (§3.4) registered on creation to avoid immediately regressing the 0-additions state. |
 | 2026-09-07 | Post-ship closure `2026-09-03__release-v9.1` — §41 Test Coverage Gaps (v9.1) added, 0 new gaps this cycle; full-document TSG reconciliation sweep found 0 Open entries (all 26 already resolved). |
 | 2026-09-07 | ST-28 (EPIC-04, v9.1, BLG-SPEC-117): added this `## Changelog` table; collapsed the header `**Last Updated:**` field to a single line going forward. |

@@ -3,11 +3,95 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 — v9.1 entry added); prior — 2026-09-03 (post-ship closure 2026-08-21__release-v9.0 — v9.0 entry added); prior — 2026-08-21 (post-ship closure 2026-08-17__release-v8.9 — v8.9 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 — v9.2 entry added); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 — v9.1 entry added); prior — 2026-09-03 (post-ship closure 2026-08-21__release-v9.0 — v9.0 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.2 — Full-Capacity Debt Clearance & Arc 5 Advisory — 2026-09-09
+Cycle: 2026-09-07__release-v9.2
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-09-07__release-v9.2/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Arc 5 Compliance Score Low-Volume Advisory — Arc5ComplianceSection now shows an explanatory advisory instead of an unqualified score when a portfolio has fewer than 20 closed trades | Users with a young or low-volume trading history now see a clear note explaining that the compliance score isn't yet statistically meaningful, instead of a bare number that could be mistaken for a reliable reading. | `docs/specs/frontend/components/arc5_compliance_section.md#Low-Trade-Volume Advisory`; `docs/specs/api_contracts/arc5_compliance_analytics.md#total_closed_trades`; `docs/design/2026-09-07__release-v9.2/arc5-low-volume-advisory/assessment.md`; `docs/design/2026-09-07__release-v9.2/arc5-low-volume-advisory/decision_record.md` |
+| EPIC-02 | Frontend accessibility & spec compliance — Settings page heading-order fix, `aria-label`→`aria-labelledby` correction on 5 TradePlan/Settings controls, Arc5ComplianceSection Card 3 spec/implementation divergence resolved (spec updated to match shipped behaviour), and a design-system guideline added for motion-vs-contrast entrance animations | Screen-reader and keyboard users navigating the Settings page and the Trade Plan page's filter selects now get correctly announced headings and control names, removing a source of confusion when using assistive technology in those areas. | `docs/specs/frontend/components/arc5_compliance_section.md#Card 3 — Top Rule Breach`; `docs/specs/frontend/design_system.md#Accessibility`; `docs/design/2026-09-07__release-v9.2/motion-contrast-guideline-standard/decision_record.md`; `tests/e2e/accessibility-axe-scan.spec.js` |
+| EPIC-03 | QA & CI reliability debt — Playwright CI trigger gap for dependency-bump PRs fixed; axe-scan replaced a fixed sleep with a condition-based wait; unscoped Arc5ComplianceSection selectors scoped; `governance_sync.yml` over-closing/under-recovering behaviour verified and hardened; `check_specs_index_freshness.py` given test coverage; regression-suite runtime budget & trend reporting, DEV-* recurrence pattern report, pip-audit trend log, DoQ sign-off template alignment check, and staging sign-off backlog tracker all delivered | — | `.github/workflows/playwright.yml`; `tests/e2e/accessibility-axe-scan.spec.js`; `tests/e2e/arc5-compliance-section.spec.js`; `claude/system/templates/qa_evidence_template.md`; `claude/system/sprint_planning_prompt.md#STEP -1 Advisory 6`; `docs/governance/deviation_root_cause_pattern_report_2026-09-08.md` |
+| EPIC-04 | Governance process debt — 26 process/spec-cadence items delivered: compliance attestation logging, deprecation-header convention, §13-adjacent expiry review, backlog-slice addendum mechanism, AI response-caching evaluation, audit-trail and data-retention policies, agent onboarding materials, meta-review findings index, Skill-Silo/Product Value Ratio formalisation, and related governance-cadence documentation | — | `claude/charter/governance_role_onboarding_checklist.md`; `claude/cycles/velocity_metrics.md#Product Value Ratio Cross-Reference`; `claude/strategy/strategy_rules.md#12.2 Elements that may change`; `claude/strategy/strategy_rules.md#13.6 Periodic §13 Boundary Review Cadence` (25 spec/prompt files touched in total — see `verification_report.md §2`) |
+| EPIC-05 | Spec, tech & ops debt — deprecated-endpoint sunset tracker, contract example-payload freshness check, Base44 prompt-provenance tagging and regeneration checklist, component prop-naming audit, gate-metric naming consistency pass, `Specs_Index.md` populated with all 78 spec files, CRA-migration scoping, npm dependency-churn investigation and cleanup, AI cost-threshold/latency-drift monitoring, and staging data-reset cadence review | — | `backend/services/ai_endpoint_anomaly_service.py`; `docs/ops/ai_cost_threshold_review_2026-09-08.md`; `docs/ops/ai_feature_cost_trend_2026_q3.md`; `docs/ops/contract_example_freshness_baseline_2026-09-08.md` (16 spec/ops files touched in total — see `verification_report.md §2`) |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| *(none — both register entries are P3)* | — | — | — |
+
+2 minor (P3) deviations — see `verification_report.md §4`: `BLG-FE-172` (Arc5ComplianceSection Card 3 text-format/null-display divergence — resolved this sprint via ST-04, spec's own Known Deviations entry updated to Resolved); `BLG-OPS-152` (ST-56 "real query data" AC clause unmet — no production DB access from this environment, transparently disclosed, target release not yet set).
+
+### Tech backlog items shipped
+- [ST-01] [U] Arc 5 compliance score utility advisory at low trade volume
+- [ST-02] [U] Fix Settings page heading-order axe-core finding
+- [ST-03] [U] Replace duplicated aria-label with aria-labelledby (TradePlan.js, Settings.js)
+- [ST-04] [D] Resolve Arc5ComplianceSection Top Rule Breach card spec/implementation divergence
+- [ST-05] [D] Add motion-vs-contrast guideline to design_system.md
+- [ST-06] [D] Fix playwright.yml CI trigger path filter to include package.json/package-lock.json
+- [ST-07] [D] Replace accessibility-axe-scan.spec.js fixed sleep with condition-based wait
+- [ST-08] [D] Scope Arc5ComplianceSection Playwright selectors (SC-ARC5-06/07)
+- [ST-09] [D] Verify governance_sync.yml over-closing prevention (unknown→skip)
+- [ST-10] [D] Add governance_sync.yml story-issue close recovery
+- [ST-11] [D] Add test coverage for check_specs_index_freshness.py
+- [ST-12] [D] Regression suite runtime budget & trend report (last 90 days)
+- [ST-13] [D] DEV-* deviation recurrence pattern report
+- [ST-14] [D] pip-audit trend log across sprint-planning runs
+- [ST-15] [D] DoQ sign-off template alignment check (FI-P3-02 wording-only exception)
+- [ST-16] [D] Staging sign-off backlog tracker (FI-P3-02 wording-only AC exceptions)
+- [ST-17] [G] Quarterly model/prompt-drift compliance attestation log
+- [ST-18] [G] Deprecation header convention for retiring API endpoints
+- [ST-19] [G] Formal expiry review for §13-adjacent initiatives open more than 2 cycles
+- [ST-20] [G] stage4_backlog_slice.md post-gate-correction addendum mechanism
+- [ST-21] [G] AI response caching evaluation for morning briefing
+- [ST-22] [G] Gemini AI usage audit-trail retention policy
+- [ST-23] [G] Standardise api_changelog.md entry template
+- [ST-24] [G] Frame Skill-Silo Alert as workload-composition, not just product-mix
+- [ST-25] [G] Governance-cycle wall-clock cost logging
+- [ST-26] [G] Product Value Ratio historical trend row in velocity_metrics.md
+- [ST-27] [G] Surface meta-review countdown in every run_manifest.md
+- [ST-28] [G] Data-retention policy for closed-trade and journal records
+- [ST-29] [G] Onboarding checklist for new governance agent roles
+- [ST-30] [G] Periodic §13 boundary review cadence tied to SI-02's gate history
+- [ST-31] [G] Lightweight due-date index for outstanding deferred-patch reminders
+- [ST-32] [G] Agent onboarding runbook for adding a new governance role
+- [ST-33] [G] Recurring spec-debt backlog review cadence
+- [ST-34] [G] Searchable index of STEP 11.4 meta-review findings across cycles
+- [ST-35] [G] Document skill-category taxonomy used for Skill-Silo classification
+- [ST-36] [G] AI feature cost-vs-value retrospective (6-month actuals vs original estimate)
+- [ST-37] [G] Formal alert threshold for the cross-role workload-concentration check
+- [ST-38] [G] Formalise condensed-tier trigger thresholds
+- [ST-39] [G] Formalise a data-volume threshold trigger for the §12.2 review
+- [ST-40] [G] Formalise Product Value Ratio rolling-window boundary-trade handling
+- [ST-41] [G] strategy_rules.md version cross-reference consistency check
+- [ST-42] [G] Strategy rules change-justification template
+- [ST-43] [D] Deprecated/superseded endpoint sunset tracker
+- [ST-44] [D] Contract example-payload freshness check against live response shape
+- [ST-45] [D] Base44 prompt-version provenance tag on generated components
+- [ST-46] [D] Base44 regeneration diff checklist — design-token compliance pass
+- [ST-47] [D] Component prop-naming convention consistency audit
+- [ST-48] [D] Gate-metric naming consistency across roadmap, SI-05 digest, and Reports
+- [ST-49] [D] Populate Specs_Index.md with the 78 spec files its own freshness check tracks
+- [ST-50] [D] Scope a future migration off Create React App (react-scripts v5)
+- [ST-51] [D] Investigate unexplained package-lock.json "dev": true churn
+- [ST-52] [D] Remove unused/namesquatted npm packages from package.json
+- [ST-53] [D] AI cost-threshold alert value review
+- [ST-54] [D] AI endpoint (daily-briefing/chat) cost & latency drift monitoring
+- [ST-55] [D] Staging environment data-reset cadence review
+- [ST-56] [D] AI feature cost-trend tracking pace-with-shipping review
+
+Sign-off: Product Owner — 2026-09-09
+QA sign-off: Director of Quality — 2026-09-09
 
 ---
 

@@ -1,9 +1,9 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.2
 Cycle: 2026-09-07__release-v9.2
-Last Updated: 2026-09-07
+Last Updated: 2026-09-09
 
 ## Planning Decisions — v9.2 Full-Capacity Debt Clearance & Arc 5 Advisory
 
@@ -26,8 +26,7 @@ Last Updated: 2026-09-07
 | — | — | None. *(No Accepted Risk escalations raised this cycle — 0 open, 0 deferred escalations.)* | — | — |
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
+Superseded by: v9.2 ship — 2026-09-09
+Changelog: docs/product/changelog.md#v9.2
 Cycle: 2026-09-07__release-v9.2

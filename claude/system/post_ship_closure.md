@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.31
-**Last Updated:** 2026-09-03 (post-ship closure 2026-08-21__release-v9.0 outstanding actions, Head of Specs Team direct action — STEP 3.1 gains a split-achievability carve-out before marking a backlog item COMPLETE (LL-v8.9-P-Closure-01); STEP 7.3 gains a mandatory explicit-reporting requirement for the full-document TSG sweep, closing a 3-consecutive-cycle gap where no new dated TSG section was added (LL-v9.0-Closure-01)); prior — 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — STEP 6 velocity_metrics.md header self-consistency check, AUD-2026-08-21-007); prior — 2026-08-18 (ST-19/BLG-GOV-308, EPIC-06, v8.9: STEP 10 now unconditionally writes `last_post_ship_cycle`/`last_post_ship_utc`); prior history retained — see prior entries in version control.
+**Version:** 2.32
+**Last Updated:** 2026-09-09 (post-ship closure 2026-09-07__release-v9.2, STEP 8 immediate action — STEP 8 gains an explicit "same-cycle application pattern" formalisation, resolving 2026-09-03__release-v9.1 closure's own Carry-Forward item 2); prior — 2026-09-03 (post-ship closure 2026-08-21__release-v9.0 outstanding actions, Head of Specs Team direct action — STEP 3.1 gains a split-achievability carve-out before marking a backlog item COMPLETE (LL-v8.9-P-Closure-01); STEP 7.3 gains a mandatory explicit-reporting requirement for the full-document TSG sweep, closing a 3-consecutive-cycle gap where no new dated TSG section was added (LL-v9.0-Closure-01)); prior — 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — STEP 6 velocity_metrics.md header self-consistency check, AUD-2026-08-21-007); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -554,6 +554,8 @@ For each action item in all records, classify it:
 **Immediate action rule:** If a lessons learnt action specifies updating a template or prompt and that update can be made without ambiguity, make it now within the permitted write scope. Do not defer what can be done immediately.
 
 **Filing without reviewing is equivalent to skipping.** Every action item must have a recorded disposition (`immediate`, `deferred`, or `decision_required`) in the closure record. Blank or unreviewed items are non-compliant.
+
+**Same-cycle application pattern (formalised v2.32, carried forward from `2026-09-03__release-v9.1` closure Carry-Forward item 2):** When a Phase 3 or Phase 4 friction item's recommended fix is unambiguous once read closely, apply it at *this* — the immediately-following — Post-Ship Closure's own STEP 8, rather than deferring it to a later cycle. This is the expected default, not an exception requiring special justification: `LL-v9.0-P3-01` (deferred at Phase 3, applied at the same cycle's own closure) and its repetition at `2026-09-03__release-v9.1` (3 friction items, all applied same-cycle) both confirm this is a repeatable, working pattern. Defer only when the fix genuinely requires design input, a named-authority decision, or context only the next cycle will have — not merely because the friction item's own record frames itself as "needs Head of Specs Team design input" when that input is in fact already implicit in the item's own recommendation text.
 
 Produce a consolidated action summary:
 - Immediate actions applied: `N` (list each: document updated, version bumped)

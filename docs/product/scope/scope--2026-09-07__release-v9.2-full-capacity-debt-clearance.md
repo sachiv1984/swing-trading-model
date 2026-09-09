@@ -1,9 +1,9 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.2
 Cycle: 2026-09-07__release-v9.2
-Last Updated: 2026-09-07
+Last Updated: 2026-09-09
 
 ## Release Scope — v9.2 Full-Capacity Debt Clearance & Arc 5 Advisory
 
@@ -25,9 +25,8 @@ Last Updated: 2026-09-07
 | `BLG-SPEC-56`, `BLG-SPEC-57`, `BLG-QA-59` | Arc 4 (PO-02/03/04) pre-authoring work — deliberately excluded as premature while the SI-02/PO-02 data-density gate remains unmet | Unscheduled |
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
-Verification report: [TBD]
+Superseded by: v9.2 ship — 2026-09-09
+Changelog: docs/product/changelog.md#v9.2
+Verification report: claude/cycles/2026-09-07__release-v9.2/verification_report.md
 Cycle: 2026-09-07__release-v9.2
