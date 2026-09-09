@@ -2,14 +2,14 @@
 **Class:** Living Document (Class 3)
 **Status:** Active
 **Version:** 4.39
-**Last Updated:** 2026-09-08 (sprint close 2026-09-07__release-v9.2 — new Sprint section added); prior — 2026-09-07 (delivery verification 2026-09-03__release-v9.1 — status line updated Sprint_Complete → Verified); prior — 2026-09-07 (sprint close 2026-09-03__release-v9.1); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-09 (delivery verification 2026-09-07__release-v9.2 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-09-08 (sprint close 2026-09-07__release-v9.2 — new Sprint section added); prior — 2026-09-07 (delivery verification 2026-09-03__release-v9.1 — status line updated Sprint_Complete → Verified); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
 
 ## Sprint: 2026-09-07__release-v9.2
 **Date:** 2026-09-08
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified_with_deviations — 2026-09-09
 
 ### Capabilities now live (merged this sprint)
 

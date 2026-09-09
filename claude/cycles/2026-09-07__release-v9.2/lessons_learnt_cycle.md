@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-09-08
+Last Updated: 2026-09-09 (Phase 4 — Delivery Verification section appended)
 Cycle: 2026-09-07__release-v9.2
 
 ## Phase 3
@@ -50,6 +50,44 @@ None.
 |------|-------------------|--------|----------------|
 | STEP 4 step 3a self-verification read-back (see Outstanding deferred patches above) | 2026-09-07__release-v9.2 | Deferred, pending Head of Specs Team | Next `execution_prompt.md` revision touching STEP 4, or next post-ship closure for this cycle |
 | STEP 3.1.A `--amend` guardrail extension (see Outstanding deferred patches above) | 2026-09-07__release-v9.2 | Deferred, pending Head of Specs Team | Next `execution_prompt.md` revision touching STEP 3.1.A, or next post-ship closure for this cycle |
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-09-07__release-v9.2
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-09-09
+**Reviewed by:** Director of Quality
+**Prior cycle checked:** 2026-09-03__release-v9.1 (`lessons_learnt_cycle.md` `## Phase 4`) — 1 friction item carried in: §7's Resolved-deviation carve-out wording gap for test-file/ops-policy-class deviations (deferred to Head of Specs Team, next `delivery_verification_prompt.md` revision touching §7). Re-verified against current state per LL-v9.1-Closure-01: `delivery_verification_prompt.md` v3.9 (read directly, this run) already carries the "or equivalent" evidence clarification (LL-v9.1-P4-01), confirmed applied at `2026-09-03__release-v9.1`'s own post-ship closure (`prompt_change_log.md`, 2026-09-07 entry, patch-ID matched) — resolved, does not recur. Two further-carried items from v9.0 (`qa_evidence_EPIC-01.md` ST-02 row correction; `execution_prompt.md` STEP 3 `test_scenarios` completeness check) also independently confirmed applied (`execution_prompt.md` v3.70→v3.71, `prompt_change_log.md` 2026-09-03 entry, LL-v9.0-P4-02) — resolved, does not recur.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| ST-56 (EPIC-05)'s `qa_evidence_EPIC-05.md` Result column uses the value `Pass_with_deviation`, which is not one of STEP 2.1's enumerated Result values (`Pass` / `Pass with notes` / `Staging-deferred...`). The underlying disclosure is high-quality (exact query recorded, no fabrication, backlog item `BLG-OPS-152` filed) and was treated as functionally equivalent to `Pass with notes` for this run, but the value itself has no defined semantics in `delivery_verification_prompt.md` §2.1 or `qa_evidence_template.md` — a future verification run could reasonably read an unrecognised Result value as an undefined state requiring escalation rather than routine P3 handling. | Phase 4 | B | defer | Add `Pass_with_deviation` (or an equivalent named value) to STEP 2.1's enumerated Result set in `delivery_verification_prompt.md`, with defined semantics (AC partially unmet, disclosed transparently, requires a confirmed backlog item, defaults to P3 severity unless the gap is later assessed as core-behaviour-incomplete) and a matching update to `qa_evidence_template.md`'s own Result column guidance. | Head of Specs Team | next `delivery_verification_prompt.md` revision touching §2.1 |
+| `qa_evidence_EPIC-02.md` and `qa_evidence_EPIC-03.md`'s Standard/Autonomous-Class Sign-Off Block comments both retain the sentence "...does not itself satisfy STEP 4's separate merge-gate condition requiring a human Director of Quality comment on the PR — that remains outstanding before merge," despite PR #1597 and PR #1598 both being confirmed merged (per `execution_state.json.merge_gate.all_merged: true` and `sprint_close.md`'s merge timestamps) before this verification run. The sentence was accurate at authoring time (pre-merge) but was not revisited/struck once the merge gate was actually cleared, leaving a stale forward-looking caveat in a document that otherwise reads as a closed record. Low impact (no functional gate was actually skipped — both PRs merged after the full autonomous-class/agent-mediated criteria were met, per the same files' own checklists), but could mislead a future reader into believing an open gate exists. | Phase 4 | D | defer | On next Director-of-Quality touch of either file, strike or update the stale caveat sentence to reflect the confirmed-merged state, or replace it with a standing template note that's evaluated once at merge time rather than left as an unresolved forward reference. Outside this engine's write scope (`qa_evidence_EPIC-xx.md` is Director-of-Quality-owned, §5). | Director of Quality | next touch of `qa_evidence_EPIC-02.md` / `qa_evidence_EPIC-03.md` |
+
+**Recurrence Notes:**
+Neither friction item appeared in `2026-09-03__release-v9.1`'s own Phase 4 record — both are first occurrences. No recurrence escalation triggered.
+
+## Recurrence Escalations (Phase 4)
+
+None. Both friction items above are first occurrences; all three carried-forward deferred patches from prior cycles were independently re-confirmed applied this run (see "Prior cycle checked" note above) — no recurrence escalation required.
+
+## Process improvements actioned this run (Phase 4)
+
+None applied this run — both friction items above are deferred, targeting files outside this engine's write scope (`delivery_verification_prompt.md` governance prompt; `qa_evidence_EPIC-xx.md` Director-of-Quality-owned document).
+
+## Outstanding deferred patches (Phase 4)
+
+| File | Section | Change required | Owner | Target |
+|------|---------|----------------|-------|--------|
+| `claude/system/delivery_verification_prompt.md` (+ `claude/system/templates/qa_evidence_template.md`) | §2.1 (QA Evidence Review — Per-Item Review) | Add `Pass_with_deviation` to the enumerated Result value set with defined semantics (see friction item above) | Head of Specs Team | next `delivery_verification_prompt.md` revision touching §2.1 |
+| `claude/cycles/2026-09-07__release-v9.2/qa_evidence_EPIC-02.md`, `qa_evidence_EPIC-03.md` | Standard/Autonomous-Class Sign-Off Block comments | Strike or update the stale "STEP 4 merge-gate...remains outstanding before merge" sentence now that both PRs are confirmed merged | Director of Quality | next touch of either file |
+
+## Escalations (Phase 4)
+
+None.
 
 ---
 
