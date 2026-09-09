@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-09-08 (created — ST-14, v9.2 EPIC-03, BLG-QA-103)
+**Last Updated:** 2026-09-09 (sprint planning `2026-09-09__release-v9.3` — trend row appended); prior — 2026-09-08 (created — ST-14, v9.2 EPIC-03, BLG-QA-103)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -32,6 +32,7 @@ A recurring `Unavailable` reading (the same environment gap appearing 2+ consecu
 
 | Cycle | Date | Dependencies scanned | Result | Resolution status | Notes |
 |-------|------|----------------------|--------|--------------------|-------|
+| `2026-09-09__release-v9.3` | 2026-09-09 | 57 | Clean | — | — |
 | `2026-09-07__release-v9.2` | 2026-09-07 | 58 | Clean | — | — |
 | `2026-09-03__release-v9.1` | 2026-09-03 | 58 | Clean | — | — |
 | `2026-08-21__release-v9.0` | 2026-08-21 | 57 | Clean | — | Dependency count dropped 58→57 vs the prior two readings; not investigated as part of this backfill (no finding was associated with the drop) — noted here so a future reviewer has the data point if the count matters later. |
