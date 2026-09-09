@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.32
-**Date:** 2026-08-21
+**Version:** 2.33
+**Date:** 2026-09-09
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -1944,10 +1944,43 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 42. v9.3 Endpoint Registration — Screener Run History (ST-01, EPIC-01, BLG-BE-13)
+
+**Date:** 2026-09-09
+**Story:** ST-01 (EPIC-01, v9.3) — BLG-BE-13, screener run history
+**Environment:** N/A — see endpoint notes below.
+**Method:** Registered pending live measurement per §13 pattern.
+
+### 42.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /screener/history | v9.3 | Read — pending live timing run | 60–150ms (est.) | 120–280ms (est.) | Pending next baseline re-run |
+
+**Endpoint characteristics:**
+- `GET /screener/history`: paginated indexed `SELECT` against `screener_runs` (`idx_screener_runs_ts` on `run_timestamp DESC`, existing index) plus one `COUNT(*)` — same table and query shape already exercised by `GET /screener/regime-distribution` (§4.2 of this section's contract), estimated in the same range as other single-table paginated read endpoints in this document (e.g. §38's comparable single-query reads).
+
+### 42.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-01 (v9.3 EPIC-01, BLG-BE-13) — Screener Run History Endpoint Registration Sign-Off
+
+AC-01: Endpoint added with estimated p50/p95 and measurement date
+       (2026-09-09 — estimated from comparable single-table paginated-read
+       baselines against the same screener_runs table). ✅ PASS
+AC-02: Estimation methodology documented. ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§41 pattern). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-09-09
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.33 | 2026-09-09 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-01 (v9.3 EPIC-01, BLG-BE-13): §42 added — GET /screener/history registered pending live timing run. Same table/index shape as GET /screener/regime-distribution. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/screener/history` path in the same PR. |
 | 2.32 | 2026-09-03 | Post-Ship Closure Engine (agent-mediated, Director of Quality role — §5.3) | STEP 5.1 cross-cycle deviation consolidation review (post-ship closure, `2026-08-21__release-v9.0`): `DEV-EPIC03-ST09-01`'s labeled `Target resolution release` field still read "Superseded once `BLG-BE-107` lands..." despite §36.7 (added `2026-09-03`, ST-02/EPIC-01/v9.0) already recording the deviation's actual resolution — same resolution-status-drift pattern the consolidation review has now confirmed 3 prior times (`DEV-ST14-01`, `DEV-v8.6-ST02-01`, and implicitly others). Corrected the field to state the resolution in place, without altering the existing §36.5/§36.7 narrative. See `docs/governance/deviation_consolidation_review_2026-09-03.md`. |
 | 2.31 | 2026-08-21 | Post-Ship Closure Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | STEP 5 canonical spec deviation compliance check (post-ship closure, `2026-08-17__release-v8.9`): `DEV-EPIC03-ST09-01`'s §36.5 narrative covered all required §3 Known Deviation Standard content but not under explicit labeled fields — added a compact labeled-fields block (Description, Canonical requirement, Priority, Target resolution release, Owner, Backlog reference) immediately after §36.5's interim-measurement table so the entry is unambiguously compliant, without altering the existing narrative/sign-off content. |
 | 2.29 | 2026-08-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-09 (v8.9 EPIC-03, BLG-BE-99): §36.5/§36.6 added — post-`BLG-BE-87` real invocation attempted (`si05-weekly-digest.yml` run 32342881081), digest-timing log line still absent; root-caused to production's `uvicorn` having no root logging configuration (`BLG-BE-107` filed, P2). Interim GitHub Actions step-timing proxy recorded (second sample, same methodology as §36.3), per Product Owner direction. **Self-corrected same-day (this row was missing from Document History despite the header already reading 2.29 — added per shared_standards.md §9.1's self-consistency check, run before this document's own next bump to 2.30 below.)** |

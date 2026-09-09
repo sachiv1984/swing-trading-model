@@ -4397,6 +4397,72 @@ paths:
         "400":
           description: Invalid window parameter
 
+  /screener/history:
+    get:
+      tags:
+        - Screener
+      summary: Get paginated screener run history
+      description: |
+        Returns paginated screener run history (one row per completed run) —
+        run_id, run_timestamp, total_tickers, pass_count, and regime_distribution
+        per run. Backed by the same screener_runs table as
+        GET /screener/regime-distribution — no new table introduced.
+        Population begins from the next run forward; no backfill.
+        ST-01 (BLG-BE-13, EPIC-01, v9.3).
+        Canonical contract: docs/specs/api_contracts/screener_api_contract.md
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+            maximum: 200
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Paginated screener run history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      runs:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            run_id: { type: string, format: uuid }
+                            run_timestamp: { type: string, format: date-time }
+                            total_tickers: { type: integer }
+                            pass_count: { type: integer }
+                            regime_distribution:
+                              type: object
+                              properties:
+                                US: { type: string, nullable: true }
+                                UK: { type: string, nullable: true }
+                            degraded_run: { type: boolean }
+                            failure_rate: { type: number }
+                      total: { type: integer }
+                      limit: { type: integer }
+                      offset: { type: integer }
+        "400":
+          description: Invalid limit parameter
+          content:
+            application/json:
+              example:
+                status: error
+                message: "INVALID_PARAMS: limit must be ≤ 200"
+
   /trade-plans:
     post:
       summary: Create a new trade plan

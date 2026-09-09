@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2 Canonical Specification
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-08-10 (ST-21, BLG-FEAT-29, v8.5 — added GET /screener/regime-distribution); prior — 2026-06-19
+**Version:** 1.4
+**Last Updated:** 2026-09-09 (ST-01, BLG-BE-13, v9.3 — added GET /screener/history); prior — 2026-08-10 (ST-21, BLG-FEAT-29, v8.5 — added GET /screener/regime-distribution)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Schema reference:** docs/specs/screener_results_schema.md
 
@@ -160,6 +160,63 @@ Returns the aggregate market regime (risk-on / risk-off) distribution over scree
 | HTTP status | Code | Description |
 |------------|------|-------------|
 | 400 | `INVALID_PARAMS` | `window` is not one of `30d`, `60d`, `all` |
+
+---
+
+## GET /screener/history
+
+Returns paginated screener run history (one row per completed run) — `run_id`, `run_timestamp`, `total_tickers`, `pass_count`, and `regime_distribution` per run. ST-01 (BLG-BE-13, EPIC-01, v9.3). Backed by the same `screener_runs` table as `GET /screener/regime-distribution` — no new table introduced (see `qa_evidence_EPIC-01.md` implementation note for rationale). Population begins from the next run forward; no backfill.
+
+**Authentication:** Standard API key authentication (per `docs/specs/api_contracts/conventions.md`).
+
+### Request
+
+| Parameter | Location | Type | Required | Description |
+|-----------|----------|------|----------|-------------|
+| `limit` | query | integer | NO | Number of runs to return. Default: 50. Maximum: 200 |
+| `offset` | query | integer | NO | Pagination offset. Default: 0 |
+
+### Response (HTTP 200)
+
+```json
+{
+  "ok": true,
+  "data": {
+    "runs": [
+      {
+        "run_id": "3f2a1b4c-...",
+        "run_timestamp": "2026-09-09T08:00:00Z",
+        "total_tickers": 500,
+        "pass_count": 12,
+        "regime_distribution": { "US": "risk_on", "UK": "risk_off" },
+        "degraded_run": false,
+        "failure_rate": 0.04
+      }
+    ],
+    "total": 214,
+    "limit": 50,
+    "offset": 0
+  }
+}
+```
+
+| Response field | Type | Description |
+|---------------|------|-------------|
+| `run_id` | string (UUID) | Identifies the run — same ID used by `GET /screener/results?run_id=` |
+| `run_timestamp` | string | ISO-8601 timestamp the run started |
+| `total_tickers` | int | Number of tickers the screener attempted to evaluate in this run (`screener_runs.tickers_requested`) |
+| `pass_count` | int | Number of tickers that passed the screener's criteria in this run (`screener_runs.tickers_passed`) |
+| `regime_distribution` | object | `{"US": <regime_status>, "UK": <regime_status>}` for this run — either value may be `null` if that market's regime failed to resolve |
+| `degraded_run` | boolean | `true` when >20% of tickers returned no OHLCV data during the run |
+| `failure_rate` | float | Fraction of tickers with no OHLCV data (0.0–1.0) |
+
+**Ordering:** Runs are ordered by `run_timestamp` descending (most recent first).
+
+### Error Responses
+
+| HTTP status | Code | Description |
+|------------|------|-------------|
+| 400 | `INVALID_PARAMS` | `limit` exceeds 200 |
 
 ---
 

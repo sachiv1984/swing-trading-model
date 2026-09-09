@@ -509,6 +509,66 @@ def get_screener_results(
     }
 
 
+def get_screener_run_history(limit: int = 50, offset: int = 0) -> Dict:
+    """
+    ST-01 (BLG-BE-13, EPIC-01, v9.3): paginated screener run history.
+
+    Backed by the existing `screener_runs` table (one row per completed run,
+    already populated by _persist_run() on every run since v8.8) rather than a
+    new duplicate table — `screener_runs` already carries run_id,
+    run_timestamp, tickers_requested (total_tickers), tickers_passed
+    (pass_count), and regime_us/regime_uk, which this function combines into a
+    single `regime_distribution` object per the AC. See qa_evidence_EPIC-01.md
+    for the implementation-note rationale (AC intent — a paginated run-history
+    endpoint backed by persisted run metadata — is met without introducing a
+    second, redundant run-metadata table).
+
+    Returns {runs: [...], total, limit, offset}.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT COUNT(*) AS cnt FROM screener_runs")
+            total = cur.fetchone()["cnt"]
+
+            cur.execute(
+                """
+                SELECT run_id::text AS run_id, run_timestamp,
+                       tickers_requested, tickers_passed,
+                       regime_us, regime_uk, degraded_run, failure_rate
+                FROM screener_runs
+                ORDER BY run_timestamp DESC
+                LIMIT %s OFFSET %s
+                """,
+                (limit, offset),
+            )
+            rows = cur.fetchall()
+
+    runs = []
+    for r in rows:
+        row = dict(r)
+        ts = row.get("run_timestamp")
+        failure_rate_val = row.get("failure_rate")
+        runs.append({
+            "run_id": row["run_id"],
+            "run_timestamp": ts.strftime("%Y-%m-%dT%H:%M:%SZ") if hasattr(ts, "strftime") else str(ts),
+            "total_tickers": row.get("tickers_requested") or 0,
+            "pass_count": row.get("tickers_passed") or 0,
+            "regime_distribution": {
+                "US": row.get("regime_us"),
+                "UK": row.get("regime_uk"),
+            },
+            "degraded_run": bool(row.get("degraded_run", False)),
+            "failure_rate": float(failure_rate_val) if failure_rate_val is not None else 0.0,
+        })
+
+    return {
+        "runs": runs,
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+    }
+
+
 _REGIME_WINDOW_DAYS = {"30d": 30, "60d": 60}
 
 

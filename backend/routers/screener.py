@@ -8,7 +8,7 @@ from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional, List
-from services.screener_batch_service import run_screener, get_screener_results, is_run_in_progress, get_regime_distribution
+from services.screener_batch_service import run_screener, get_screener_results, is_run_in_progress, get_regime_distribution, get_screener_run_history
 from services.health_service import record_nightly_job
 
 logger = logging.getLogger(__name__)
@@ -49,6 +49,21 @@ def screener_results(
                 content={"ok": True, "data": {"status": "running", "run_id": run_id}},
             )
         return JSONResponse(status_code=404, content={"status": "error", "message": "NO_RESULTS"})
+
+
+@router.get("/history")
+def screener_history(limit: int = 50, offset: int = 0):
+    """
+    GET /screener/history
+
+    Returns paginated screener run history (run_id, run_timestamp,
+    total_tickers, pass_count, regime_distribution per run).
+    Contract: screener_api_contract.md. ST-01 (BLG-BE-13, EPIC-01, v9.3).
+    """
+    if limit > 200:
+        return JSONResponse(status_code=400, content={"status": "error", "message": "INVALID_PARAMS: limit must be ≤ 200"})
+    data = get_screener_run_history(limit=limit, offset=offset)
+    return {"ok": True, "data": data}
 
 
 @router.get("/regime-distribution")

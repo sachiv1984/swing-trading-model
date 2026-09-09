@@ -385,4 +385,21 @@ test.describe('SC-ARC5-10 — Low-trade-volume advisory not shown', () => {
     await expect(page.getByText('Override Rate')).toBeVisible({ timeout: 5000 });
     await expect(page.getByTestId('arc5-low-volume-advisory')).toHaveCount(0);
   });
+
+  test('SC-ARC5-10c: advisory does not render when total_closed_trades is explicit null (ST-04, EPIC-01, v9.3, BLG-BE-111 — trade_history schema-error case)', async ({ page }) => {
+    // Before ST-04, the backend could never emit an explicit null here (a
+    // schema error was indistinguishable from 0 genuine trades). Now that it
+    // can, the low-volume advisory must stay hidden rather than misrender
+    // "Based on null closed trades" or (worse) fall back to treating it as 0.
+    await mockFallback(page);
+    await mockArc5Compliance(page, {
+      status: 'ok',
+      data: { ...ARC5_COMPLIANCE_OK.data, total_closed_trades: null },
+    });
+    await gotoAnalytics(page);
+
+    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Override Rate')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('arc5-low-volume-advisory')).toHaveCount(0);
+  });
 });

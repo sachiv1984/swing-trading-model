@@ -18,8 +18,20 @@ import logging
 # this file, ahead of every other import.
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    format="%(asctime)s %(levelname)s %(name)s [%(correlation_id)s]: %(message)s",
 )
+
+# ST-03 (EPIC-01, v9.3, BLG-BE-48): install the correlation-ID log record
+# factory so every log line emitted anywhere in the backend (any
+# logging.getLogger(__name__) call) carries the current request's
+# correlation ID via the %(correlation_id)s field added to the format string
+# above. Must run immediately after basicConfig(), before any other module
+# logs anything (same ordering rationale as BLG-BE-107, above).
+from utils.correlation_id import (  # noqa: E402
+    install_correlation_id_log_record_factory, new_correlation_id,
+    set_correlation_id, reset_correlation_id,
+)
+install_correlation_id_log_record_factory()
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -210,6 +222,31 @@ async def api_key_middleware(request: Request, call_next):
             content={"status": "error", "message": "Unauthorized"},
         )
     return await call_next(request)
+
+
+@app.middleware("http")
+async def correlation_id_middleware(request: Request, call_next):
+    """ST-03 (EPIC-01, v9.3, BLG-BE-48): assign a correlation ID to every
+    request (reusing an inbound X-Correlation-ID header if the caller
+    supplied one, e.g. for a request chained from another service) so every
+    log line emitted while handling this request can be tied back to it.
+
+    Registered after api_key_middleware: Starlette's http middleware runs in
+    reverse-registration order on the way in (the last-registered
+    `@app.middleware("http")` function is outermost), so this ordering makes
+    correlation_id_middleware the outermost layer — the ID is assigned, and
+    therefore present in the 401 log line too, even for a request
+    api_key_middleware rejects.
+    """
+    incoming = request.headers.get("X-Correlation-ID")
+    correlation_id = incoming if incoming else new_correlation_id()
+    token = set_correlation_id(correlation_id)
+    try:
+        response = await call_next(request)
+    finally:
+        reset_correlation_id(token)
+    response.headers["X-Correlation-ID"] = correlation_id
+    return response
 
 
 app.include_router(validation.router)

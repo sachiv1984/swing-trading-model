@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-09 (Release Planning `2026-09-09__release-v9.3` STEP 4 — ephemeral Release Slice section appended, marker `RP:v9.3:2026-09-09__release-v9.3`, 27 items); prior — 2026-09-09 (`groom backlog` — post-ship closure 2026-09-07__release-v9.2 STEP 12: 57 items archived — 56 shipped v9.2 items + BLG-GOV-317 resolved directly by this run's own marker-seeding; 1 ephemeral Release Slice section removed; spec-debt deep-review marker seeded; 0 orphans, 0 stale blockers, 0 promotion candidates); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 STEP 3 — 56 shipped items marked ✅ COMPLETE, Phase 4 additions confirmed present, 0 stale parked items); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-09 (session — 1 new item added: BLG-BE-112, discovered mid-sprint executing ST-03/EPIC-01/`2026-09-09__release-v9.3`); prior — 2026-09-09 (Release Planning `2026-09-09__release-v9.3` STEP 4 — ephemeral Release Slice section appended, marker `RP:v9.3:2026-09-09__release-v9.3`, 27 items); prior — 2026-09-09 (`groom backlog` — post-ship closure 2026-09-07__release-v9.2 STEP 12: 57 items archived — 56 shipped v9.2 items + BLG-GOV-317 resolved directly by this run's own marker-seeding; 1 ephemeral Release Slice section removed; spec-debt deep-review marker seeded; 0 orphans, 0 stale blockers, 0 promotion candidates); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -3974,6 +3974,27 @@ ST-56 required "real query data obtained for at least the current quarter" for `
 **Acceptance Criteria**
 - Rule documented in a governance source file
 - Product Owner sign-off
+
+---
+
+### BLG-BE-112 — Backend logging output does not conform to structured_logging_standards.md's mandatory JSON Lines format
+**Priority:** P3 (Low)
+**Type:** Backend / Technical Debt
+**Owner:** Backend Engineering Patterns Owner; Head of Engineering
+**Source:** Discovered mid-sprint while executing ST-03 (EPIC-01, `2026-09-09__release-v9.3`, correlation-ID logging propagation) — 2026-09-09
+**Effort:** M (~2-3 days)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`docs/specs/structured_logging_standards.md` (Class 1 Canonical Specification, v0.1.0, Status: Active) mandates that all backend log output be valid JSON Lines (NDJSON) with required top-level fields (`timestamp`, `level`, `correlation_id`, `service`, `message`). The actual backend logging configuration (`backend/main.py`'s `logging.basicConfig`) has only ever emitted plain-text formatted log lines (`"%(asctime)s %(levelname)s %(name)s [%(correlation_id)s]: %(message)s"`), never JSON — a pre-existing spec-vs-implementation gap, not introduced by ST-03. ST-03 itself only added the `correlation_id` value (via a contextvars-based mechanism, documented as a deviation in `structured_logging_standards.md` — see that document's Known Deviations) and does not resolve the wider JSON-format gap, which is out of that story's scope.
+
+**Scope**
+- Migrate `backend/main.py`'s logging configuration to emit JSON Lines per `structured_logging_standards.md` §Structured Log Format (or formally revise that spec's Status/requirement if plain-text logging is the accepted long-term choice)
+- Confirm the required fields (`timestamp`, `level`, `correlation_id`, `service`, `message`) are present on every emitted record
+
+**Acceptance Criteria**
+- Backend log output is valid JSON Lines matching the canonical example in `structured_logging_standards.md`, OR the spec is formally revised to match accepted practice
+- No regression to existing log-based monitoring/alerting that depends on the current plain-text format
 
 ---
 
