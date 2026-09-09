@@ -1,0 +1,118 @@
+{
+  "cycle_id": "2026-09-09__release-v9.3",
+  "sprint_goal": "Clear a full-capacity, cross-category slate of 27 debt items — backend reliability/correctness, QA/test infrastructure, operations/cost monitoring, spec/documentation, and governance-process/security — exhausting the confirmed ~24–28 day capacity band at 27.50 days, with zero P1/P2 debt items deferred on capacity grounds this cycle.",
+  "backlog_slice_source": "claude/cycles/2026-09-09__release-v9.3/stage4_backlog_slice.md",
+  "invoked_utc": "2026-09-09T10:58:58Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-09-09T11:54:16Z",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-09-09__release-v9.3/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-09-09__release-v9.3/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/test_screener_batch_service.py",
+        "tests/test_signal_write_path_consolidation.py",
+        "tests/test_signal_write_sanitization.py",
+        "tests/test_rebalance_exit_signal_numpy_regression.py",
+        "tests/test_correlation_id_propagation.py",
+        "tests/test_arc5_total_closed_trades_null_vs_zero.py",
+        "tests/e2e/arc5-compliance-section.spec.js",
+        "tests/test_system_status_endpoint_count.py"
+      ],
+      "stories": {
+        "ST-01": {"title": "Screener result history table", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 1601, "branch": "exec/2026-09-09__release-v9.3/EPIC-01", "commit_sha": "e6845cbe0b53971b14c021cec141df7df812b218", "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-09-09T11:54:16Z", "acceptance_verified": true, "spec_references": ["docs/specs/api_contracts/screener_api_contract.md#GET /screener/history"], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": true, "last_completed_substep": "3.1.A.complete", "sign_off_record": {"required_by": "Director of Quality", "method": "agent_mediated", "status": "cleared", "findings_applied": [], "cleared_utc": "2026-09-09T12:01:59Z"}, "notes": "Backed by existing screener_runs table rather than a new duplicate table — see qa_evidence_EPIC-01.md implementation note."},
+        "ST-02": {"title": "Signal write-path schema consolidation", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 1602, "branch": "exec/2026-09-09__release-v9.3/EPIC-01", "commit_sha": "e6845cbe0b53971b14c021cec141df7df812b218", "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-09-09T11:54:16Z", "acceptance_verified": true, "spec_references": [], "spec_reference_not_applicable": true, "spec_reference_not_applicable_reason": "signal write-path internal structure has no prior canonical spec — verified via tests/test_signal_write_path_consolidation.py and tests/test_signal_write_sanitization.py regression suite", "deviations_filed": true, "last_completed_substep": "3.1.A.complete", "sign_off_record": {"required_by": "Director of Quality", "method": "agent_mediated", "status": "cleared", "findings_applied": [], "cleared_utc": "2026-09-09T12:01:59Z"}, "notes": "create_signal/create_rebalance_exit_signal consolidated into shared _signal_upsert(); update_signal (PATCH) intentionally kept separate (different write semantics)."},
+        "ST-03": {"title": "Structured logging correlation-ID propagation across FastAPI request lifecycle", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 1603, "branch": "exec/2026-09-09__release-v9.3/EPIC-01", "commit_sha": "e6845cbe0b53971b14c021cec141df7df812b218", "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-09-09T11:54:16Z", "acceptance_verified": true, "spec_references": ["docs/specs/api_contracts/backend_engineering_patterns.md#Correlation-ID request tracing", "docs/specs/structured_logging_standards.md#Known Deviations"], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": true, "last_completed_substep": "3.1.A.complete", "sign_off_record": {"required_by": "Director of Quality", "method": "agent_mediated", "status": "cleared", "findings_applied": [], "cleared_utc": "2026-09-09T12:01:59Z"}, "notes": "2 Known Deviations filed in structured_logging_standards.md (request.state sample insufficient for service/DB-layer logging; JSON-Lines format gap tracked separately as BLG-BE-112)."},
+        "ST-04": {"title": "Arc5 compliance total_closed_trades conflates DB schema error with genuine zero-trades state", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 1604, "branch": "exec/2026-09-09__release-v9.3/EPIC-01", "commit_sha": "e6845cbe0b53971b14c021cec141df7df812b218", "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": "2026-09-09T11:54:16Z", "acceptance_verified": true, "spec_references": ["docs/specs/api_contracts/arc5_compliance_analytics.md#total_closed_trades"], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": true, "last_completed_substep": "3.1.A.complete", "sign_off_record": {"required_by": "Director of Quality", "method": "agent_mediated", "status": "cleared", "findings_applied": [], "cleared_utc": "2026-09-09T12:01:59Z"}, "notes": "Frontend Arc5ComplianceSection.js already guarded on != null — no frontend code change needed; added SC-ARC5-10c Playwright scenario to lock in the behaviour."}
+      }
+    },
+    "EPIC-02": {
+      "status": "not_started",
+      "branch": "exec/2026-09-09__release-v9.3/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-09-09__release-v9.3/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-05": {"title": "Consolidate 3 overlapping SignalCard Playwright specs", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1605, "branch": "exec/2026-09-09__release-v9.3/EPIC-02", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-06": {"title": "Contract test suite: openapi.yaml vs. actual route behaviour", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1606, "branch": "exec/2026-09-09__release-v9.3/EPIC-02", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-07": {"title": "DoQ sign-off template freshness check", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1607, "branch": "exec/2026-09-09__release-v9.3/EPIC-02", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-08": {"title": "Watchlist.js post-refactor visual QA", "classification": "delegated_qa", "status": "not_started", "assigned_to": "qa", "github_issue": 1608, "branch": "exec/2026-09-09__release-v9.3/EPIC-02", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-09": {"title": "Cross-browser Playwright matrix evaluation", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1609, "branch": "exec/2026-09-09__release-v9.3/EPIC-02", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-10": {"title": "Backend test suite runtime baseline", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1610, "branch": "exec/2026-09-09__release-v9.3/EPIC-02", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""}
+      }
+    },
+    "EPIC-03": {
+      "status": "not_started",
+      "branch": "exec/2026-09-09__release-v9.3/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-09-09__release-v9.3/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-11": {"title": "Alpaca API cost monitoring", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1611, "branch": "exec/2026-09-09__release-v9.3/EPIC-03", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-12": {"title": "Research endpoint cost monitoring", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1612, "branch": "exec/2026-09-09__release-v9.3/EPIC-03", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-13": {"title": "Data retention policy for AI audit log tables", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1613, "branch": "exec/2026-09-09__release-v9.3/EPIC-03", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-14": {"title": "Anthropic API cost per-feature attribution", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1614, "branch": "exec/2026-09-09__release-v9.3/EPIC-03", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-15": {"title": "CI pipeline build-time reduction via parallelized test jobs", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1615, "branch": "exec/2026-09-09__release-v9.3/EPIC-03", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""}
+      }
+    },
+    "EPIC-04": {
+      "status": "not_started",
+      "branch": "exec/2026-09-09__release-v9.3/EPIC-04",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-09-09__release-v9.3/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-16": {"title": "Spec debt dashboard", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1616, "branch": "exec/2026-09-09__release-v9.3/EPIC-04", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-18": {"title": "OpenAPI response examples for Arc 5 endpoints", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1618, "branch": "exec/2026-09-09__release-v9.3/EPIC-04", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-19": {"title": "Migration block consolidation review", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1619, "branch": "exec/2026-09-09__release-v9.3/EPIC-04", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-20": {"title": "Trade tagging taxonomy documentation", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1620, "branch": "exec/2026-09-09__release-v9.3/EPIC-04", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-17": {"title": "Canonical spec cross-reference linter", "classification": "delegated_decision", "status": "not_started", "assigned_to": "Head of Specs Team", "github_issue": 1617, "branch": "exec/2026-09-09__release-v9.3/EPIC-04", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": "Sequenced last within EPIC-04 per sprint_planning_notes.md Dependency Map"}
+      }
+    },
+    "EPIC-05": {
+      "status": "not_started",
+      "branch": "exec/2026-09-09__release-v9.3/EPIC-05",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-09-09__release-v9.3/qa_evidence_EPIC-05.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-21": {"title": "Database connection pool sizing review for AI endpoints", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1621, "branch": "exec/2026-09-09__release-v9.3/EPIC-05", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-22": {"title": "Quarterly AI output sampling audit (consolidated)", "classification": "delegated_decision", "status": "not_started", "assigned_to": "AI Compliance & Governance Officer", "github_issue": 1622, "branch": "exec/2026-09-09__release-v9.3/EPIC-05", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-23": {"title": "Local pre-commit lint for OpenAPI contract completeness", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1623, "branch": "exec/2026-09-09__release-v9.3/EPIC-05", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-24": {"title": "Base44 prompt versioning changelog", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1624, "branch": "exec/2026-09-09__release-v9.3/EPIC-05", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-25": {"title": "Base44 component regeneration diff review checklist", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1625, "branch": "exec/2026-09-09__release-v9.3/EPIC-05", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-26": {"title": "Onboarding template for new agent role charters", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 1626, "branch": "exec/2026-09-09__release-v9.3/EPIC-05", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": ""},
+        "ST-27": {"title": "API key rotation drill", "classification": "delegated_backend", "status": "not_started", "assigned_to": "Cybersecurity & Trust Lead", "github_issue": 1627, "branch": "exec/2026-09-09__release-v9.3/EPIC-05", "commit_sha": null, "delegation_record_id": null, "blocked_since_utc": null, "unblock_criteria": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "spec_reference_not_applicable": false, "spec_reference_not_applicable_reason": null, "deviations_filed": false, "last_completed_substep": null, "sign_off_record": null, "notes": "Touches live credentials and an external provider — requires human-supervised execution"}
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04"],
+  "open_escalations": [],
+  "process_notes": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}
