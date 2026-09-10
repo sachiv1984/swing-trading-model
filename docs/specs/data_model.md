@@ -4,7 +4,7 @@
 **Class:** Class 1
 **Status:** Canonical
 **Version:** 2.31
-**Last Updated:** 2026-08-20 (ST-06, EPIC-02, v8.9, BLG-FEAT-90 — DS-16 trade_debriefs table added); prior — 2026-08-18 (ST-10, EPIC-03, v8.9, BLG-BE-100 — transaction-isolation fix-or-accept decision documented for position_audit_log/position_state_history: audit-log write ordering); prior — 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — DS-15 trade_plans.triggered_by_price_alert_id, reporting-treatment decision documented); prior history retained — see prior entries in version control
+**Last Updated:** 2026-09-10 (ST-19, EPIC-04, v9.3, BLG-SPEC-75 — Migration History reviewed in ascending version order; "Migration from v1.9 to v2.0" relocated to correct chronological position, previously listed before v1.8→v1.9; content unchanged. Footer version confirmed to already match the highest migration block, DS-16 v2.31 — no correction needed there); prior — 2026-08-20 (ST-06, EPIC-02, v8.9, BLG-FEAT-90 — DS-16 trade_debriefs table added); prior — 2026-08-18 (ST-10, EPIC-03, v8.9, BLG-BE-100 — transaction-isolation fix-or-accept decision documented for position_audit_log/position_state_history: audit-log write ordering); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -716,19 +716,6 @@ FROM settings;
 -- Expected: all rows show 1.00
 ```
 
-### Migration from v1.9 to v2.0
-
-**Purpose:** Add slippage tracking. `positions.user_fill_price` captures the user's actual broker fill at entry time (optional). `trade_history.fill_price` is copied from `user_fill_price` at exit and used to compute `slippage_pct` in the API response.
-
-**Safety:** Both columns are nullable — no existing row will violate any constraint. Safe to apply without downtime.
-
-```sql
-BEGIN;
-ALTER TABLE positions ADD COLUMN user_fill_price DECIMAL(10, 4);
-ALTER TABLE trade_history ADD COLUMN fill_price DECIMAL(10, 4);
-COMMIT;
-```
-
 ---
 
 ## Deprecated Tables
@@ -894,6 +881,23 @@ WHERE table_schema = 'public'
   AND table_name IN ('alert_rules', 'notifications', 'notification_preferences');
 -- Expected: 3 rows
 ```
+
+---
+
+### Migration from v1.9 to v2.0
+
+**Purpose:** Add slippage tracking. `positions.user_fill_price` captures the user's actual broker fill at entry time (optional). `trade_history.fill_price` is copied from `user_fill_price` at exit and used to compute `slippage_pct` in the API response.
+
+**Safety:** Both columns are nullable — no existing row will violate any constraint. Safe to apply without downtime.
+
+```sql
+BEGIN;
+ALTER TABLE positions ADD COLUMN user_fill_price DECIMAL(10, 4);
+ALTER TABLE trade_history ADD COLUMN fill_price DECIMAL(10, 4);
+COMMIT;
+```
+
+*(Relocated here from its previous out-of-order position — ST-19, BLG-SPEC-75, EPIC-04, v9.3. Was previously listed before "Migration from v1.8 to v1.9" despite being the later version; content unchanged, only its position in the document moved to restore ascending order.)*
 
 ---
 
@@ -2128,4 +2132,4 @@ Reversible: `DROP TABLE IF EXISTS trade_debriefs;`
 
 **Document Version:** 2.31
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-08-20
+**Last Review:** 2026-09-10 (ST-19, EPIC-04, v9.3, BLG-SPEC-75 — Migration History ascending-order review; footer version confirmed to match highest migration block, DS-16 v2.31)
