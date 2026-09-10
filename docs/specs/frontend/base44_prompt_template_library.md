@@ -2,8 +2,8 @@
 **Class:** Class 2 — Supporting
 **Status:** Supporting
 **Canonical Source:** docs/specs/frontend/design_system.md
-**Version:** 1.8
-**Last Updated:** 2026-09-08 (v1.8 — added §16 Prompt-Version Provenance Tag convention and §17 Regeneration Diff Checklist, ST-45/ST-46, EPIC-05, v9.2)
+**Version:** 1.9
+**Last Updated:** 2026-09-10 (v1.9 — §17 Regeneration Diff Checklist extended with 3 items: dropped props, changed class names relied on outside the component, detached event handlers — ST-25, BLG-GOV-181, EPIC-05, v9.3); prior — 2026-09-08 (v1.8 — added §16 Prompt-Version Provenance Tag convention and §17 Regeneration Diff Checklist, ST-45/ST-46, EPIC-05, v9.2)
 **Version history index:** `docs/specs/frontend/base44_prompt_changelog.md` (ST-24, BLG-GOV-180, v9.3) indexes this Change Log alongside `claude/agents/base44_frontend_prompt_owner.md` §3's own Changelog.
 **Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3); ST-06 (BLG-SPEC-93, EPIC-04, v7.3); ST-13 (BLG-FE-129, EPIC-13, v7.9); ST-18 (BLG-FE-124, EPIC-03, v8.0); ST-12 (BLG-FE-121, EPIC-03, v8.3); ST-14 (BLG-FE-132, EPIC-03, v8.3); ST-17 (BLG-FE-99, EPIC-05, v8.5)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -316,7 +316,7 @@ None. This is a net-new artefact — no prior canonical spec governed this work.
 
 **Scope:** required for new files generated via a `delegated_frontend` Base44 prompt draft going forward. Not retroactive — existing generated files are not required to be back-tagged as part of this story; a future story touching one may add the tag opportunistically but this is not itself an AC.
 
-## 17. Regeneration Diff Checklist — Design-Token Compliance Pass (ST-46, BLG-SPEC-122, v9.2)
+## 17. Regeneration Diff Checklist — Design-Token Compliance Pass (ST-46, BLG-SPEC-122, v9.2; extended ST-25, BLG-GOV-181, v9.3)
 
 **When to use:** whenever a Base44 component is regenerated (re-prompted against an updated template or design requirement) and the diff against its previous version is being reviewed before commit.
 
@@ -327,6 +327,9 @@ Run this checklist against the diff, not just the new file in isolation — a re
 - [ ] No hardcoded pixel/color value was introduced where a design-system token already exists for the same purpose (spot-check against `design_system.md`'s token reference, not an exhaustive re-audit).
 - [ ] If the component renders in both a loading and error state, confirm the regeneration diff didn't drop either branch (a common regeneration failure mode: only the "happy path" gets faithfully regenerated).
 - [ ] The file's `## 16` provenance tag (if present) is updated to the new template/version citation used for this regeneration.
+- [ ] **No prop dropped from the component's public interface** (ST-25, BLG-GOV-181): diff every prop destructured/declared in the previous version against the regenerated version — a prop silently dropped from the signature or from a `PropTypes`/JSDoc declaration is invisible to a visual review (the component may still render correctly with a missing optional prop) but breaks any parent passing it. Cross-check the component's call sites (`grep` the component name across `src/`) if any prop is missing.
+- [ ] **No class name relied on outside this component was changed or removed** (ST-25, BLG-GOV-181): a regeneration can rename or restructure Tailwind/CSS classes on elements that Playwright specs target by class selector (not just `data-testid`) or that a sibling component's CSS depends on (e.g. a parent using a descendant selector). Cross-check `tests/e2e/*.spec.js` for any class-based (not just `data-testid`-based) selector referencing this component before assuming a class rename is safe — mirrors the existing "Cross-spec selector check" convention already used elsewhere in this codebase's governance for DOM-modifying changes (`claude/system/execution_prompt.md` §3.1.A step 13).
+- [ ] Any event handler prop (`onClick`, `onChange`, etc.) present in the previous version is still wired to the same element/interaction — a regeneration can silently detach a handler while leaving the prop declaration in place, which the "dropped prop" check above would not catch on its own.
 
 **Sign-off:** Base44 Frontend Prompt Owner confirms the checklist was run for any regeneration diff before merge; record confirmation in the story's delegation log entry or commit message, not in this file.
 
@@ -336,6 +339,7 @@ Run this checklist against the diff, not just the new file in isolation — a re
 
 | Date | Version | Summary |
 |---|---|---|
+| 2026-09-10 | 1.9 | §17 Regeneration Diff Checklist extended with 3 items — dropped props, changed class names relied on outside the component (cross-check `tests/e2e/*.spec.js` class-based selectors and sibling-component CSS dependencies), detached event handlers — closing the gap between the checklist's existing design-token-only scope and BLG-GOV-181's own named examples (ST-25, EPIC-05, v9.3). Also referenced from `claude/agents/base44_frontend_prompt_owner.md` §5 rule 2 for the first time. |
 | 2026-09-08 | 1.8 | Added §16 Prompt-Version Provenance Tag convention (generated files carry a one-line `template_library vX.Y §N` comment) and §17 Regeneration Diff Checklist — design-token compliance pass (ST-45/BLG-SPEC-121, ST-46/BLG-SPEC-122, EPIC-05, v9.2) |
 | 2026-08-10 | 1.7 | Added §12 Standard Full-Page/Section Empty-State (Non-Card Context) — the full `DataState` empty-branch stack (icon+heading+body, `py-16`) for page/section-level empty states, distinct from §2's small-grid-card `compact` variant; incorporates the empty-state microcopy pattern (`design_system.md` v1.8) and the trailing-period generation mistake caught and fixed at `EPIC-04/ST-10` (`TradePlans.js`, `CalendarView.js`) this same cycle — the 2 concrete precedents satisfying §14's Maintenance threshold; renumbered old §12/§13/§14 → §13/§14/§15 (ST-17, EPIC-05, v8.5, BLG-FE-99) |
 | 2026-08-06 | 1.6 | Added §11 Standard Theme-Compliance Section (Generation-Time) — a generation-time prompt fragment distinct from §4's review-time checklist, addressing the recurring dark-mode defect class (`BLG-FE-87/88/95/125/129`) at prompt-draft time instead of catching it after generation; renumbered old §11/§12/§13 → §12/§13/§14 (ST-14, EPIC-03, v8.3, BLG-FE-132) |
