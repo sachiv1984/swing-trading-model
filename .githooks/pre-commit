@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Pre-commit hook — ST-10 (EPIC-10, v7.9, BLG-QA-125); extended ST-05 (EPIC-02, v7.10, BLG-SEC-22)
+# Pre-commit hook — ST-10 (EPIC-10, v7.9, BLG-QA-125); extended ST-05 (EPIC-02, v7.10, BLG-SEC-22);
+# extended ST-23 (EPIC-05, v9.3, BLG-GOV-179)
 #
 # Blocks a commit that adds a new backend route without a matching
 # backend/routers/test.py registration. Setup: `git config core.hooksPath .githooks`
@@ -12,6 +13,12 @@
 set -e
 
 python3 scripts/check_router_test_registration.py
+
+# ST-23 (BLG-GOV-179): local mirror of the CI-level OpenAPI Drift Detection
+# gate (.github/workflows/openapi-drift.yml) — catches a new
+# `## METHOD /path` contract heading with no matching openapi.yaml entry
+# (or vice versa) before the commit leaves the local machine.
+python3 scripts/check_local_openapi_contract_completeness.py
 
 # ST-05 (BLG-SEC-22): local secrets-scanning gate, complementing the CI-level
 # gitleaks gate (BLG-OPS-58, .github/workflows/secret-scanning.yml). Scans
