@@ -901,8 +901,6 @@ COMMIT;
 
 ---
 
----
-
 ## DS-03 — Sector & Industry Enrichment (v2.4, 2026-04-24)
 
 **Story:** ST-05 (EPIC-02, v2.9)

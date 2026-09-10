@@ -35,5 +35,6 @@ For a duplicated basename, a reference to *either* file clears *both* from being
 
 ## Acceptance
 
-- Run by: Sprint Execution Engine (autonomous class, per BLG-GOV-19 — a detection script run + result documentation, no observable UI behaviour). No delegated_decision escalation to Head of Specs Team was raised, since 0 orphans means RISK-04's triage step has nothing to act on.
+- Run by: Sprint Execution Engine. This story's `delegated_decision` classification anticipated a triage judgment call (keep / merge / archive an orphaned spec) — with 0 orphans found, that specific judgment call is a no-op, but the story's overall closure (is the 0-orphan result trustworthy, is the disclosed basename-collision limitation an adequate resolution rather than a corner cut) still received Head of Specs Team sign-off, via the agent-mediated review recorded in `qa_evidence_EPIC-04.md`.
+- Signed off by: Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3) — 2026-09-10
 - Date: 2026-09-10
