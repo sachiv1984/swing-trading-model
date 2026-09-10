@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-09 (session — 1 new item added: BLG-BE-113, discovered via Director of Quality agent-mediated review of PR #1629/EPIC-01/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-BE-112, discovered mid-sprint executing ST-03/EPIC-01/`2026-09-09__release-v9.3`); prior — 2026-09-09 (Release Planning `2026-09-09__release-v9.3` STEP 4 — ephemeral Release Slice section appended, marker `RP:v9.3:2026-09-09__release-v9.3`, 27 items); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-10 (session — 7 new items added: BLG-QA-168, BLG-QA-169, BLG-OPS-154, BLG-QA-170, BLG-OPS-155, BLG-SPEC-141, BLG-GOV-320, discovered via agent-mediated Director of Quality/Product Owner review of PRs #1630/#1631/#1632/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-BE-113, discovered via Director of Quality agent-mediated review of PR #1629/EPIC-01/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-BE-112, discovered mid-sprint executing ST-03/EPIC-01/`2026-09-09__release-v9.3`); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4016,6 +4016,154 @@ ST-56 required "real query data obtained for at least the current quarter" for `
 **Acceptance Criteria**
 - A negative `limit` or `offset` on either endpoint returns HTTP 400 `INVALID_PARAMS`, not a 500
 - Any other paginated endpoint found with the same gap is either fixed or filed as a follow-up item
+
+---
+
+### BLG-QA-168 — ST-09 cross-browser evaluation cites stale pre-sharding CI baseline
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated Director of Quality review of PR #1630 (EPIC-02, `2026-09-09__release-v9.3`) — 2026-09-10
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`docs/qa/cross_browser_playwright_matrix_evaluation_20260909.md` bases its "~3×" cost extrapolation on `ci_pipeline_baseline.md` §3.1's 2026-05-29 single-sample figure (~133s), taken before 4-way sharding was added (REC-CI-01, actioned 2026-07-28) — the "4 parallel workers" framing attached to that figure is inconsistent with what §3.1 actually measured at that date (workers were still forced to 1). The same source document's own §8.5 (2026-09-08, one day before this PR's cycle date) records the current sharded critical path at 198.5–210.6s, roughly 1.5–1.6× the figure actually used. This does not overturn the evaluation's "defer" recommendation — a higher current baseline strengthens, not weakens, the case against adding 2 more unsharded browsers — but the quantitative estimate underpinning it is built on a stale, superseded number from the same document rather than the correct current one sitting one section later.
+
+**Scope**
+- Correct the cost/benefit figure in `cross_browser_playwright_matrix_evaluation_20260909.md` to cite `ci_pipeline_baseline.md` §8.5's current sharded baseline instead of §3.1's pre-sharding figure
+- Recompute the cost multiplier and confirm the "defer" recommendation still holds under the corrected figure
+
+**Acceptance Criteria**
+- Document cites the current CI baseline, not the superseded pre-sharding one
+- QA & Testing Owner sign-off
+
+---
+
+### BLG-QA-169 — ST-05 SignalCard spec consolidation lacks before/after runtime evidence
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated Product Owner review of PR #1630 (EPIC-02, `2026-09-09__release-v9.3`) — 2026-09-10
+**Effort:** XS (<1h)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-05's acceptance criteria include "suite runtime reduced" following the consolidation of 3 SignalCard Playwright spec files into `tests/e2e/signal-card.spec.js`. Full scenario coverage was independently confirmed retained (1:1 diff against the 3 deleted files), and a runtime reduction is plausible given shared setup and fewer browser-context spins, but no before/after timing number was ever captured anywhere in the PR, `qa_evidence_EPIC-02.md`, or the consolidation doc to substantiate the claim.
+
+**Scope**
+- Capture a `time npx playwright test` (or equivalent) before/after comparison, using the pre-consolidation 3-file baseline (recoverable via `git show` on the parent commit) and the current single file
+- Record the result in the existing consolidation documentation
+
+**Acceptance Criteria**
+- A real before/after runtime number is recorded substantiating (or correcting) the "runtime reduced" claim
+- QA & Testing Owner sign-off
+
+---
+
+### BLG-OPS-154 — New `api_call_log` table has no retention/purge policy
+
+**Priority:** P3 (Low)
+**Type:** Operational / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** Agent-mediated Director of Quality review of PR #1631 (EPIC-03, `2026-09-09__release-v9.3`) — 2026-09-10
+**Effort:** S (~0.5d)
+
+**Problem**
+ST-13 (this same EPIC) defines and wires retention/purge policies for `gemini_audit_log` and `claude_audit_log`, but ST-11/ST-12 (also this EPIC) introduce a new `api_call_log` table (`backend/database.py`) with no retention window, purge function, or scheduled cleanup of its own. Left as-is, it will grow unbounded indefinitely — the exact problem this EPIC exists to fix for the other two tables.
+
+**Scope**
+- Define a retention window for `api_call_log` (e.g. mirroring the 730-day window chosen for `claude_audit_log`, or a shorter window appropriate to per-call operational logs)
+- Add a purge function and wire it into the existing scheduled purge step (`.github/workflows/daily-snapshot.yml`) alongside the gemini/claude purges
+
+**Acceptance Criteria**
+- `api_call_log` has a documented retention window and a scheduled purge function
+- Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-QA-170 — `qa_evidence_EPIC-03.md` test-count claim inaccurate (30 vs. actual 28)
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated Director of Quality review of PR #1631 (EPIC-03, `2026-09-09__release-v9.3`) — 2026-09-10
+**Effort:** XS (<1h)
+
+**Problem**
+`qa_evidence_EPIC-03.md` and PR #1631's description both state `tests/test_cost_monitoring.py` contains "30 tests" / "30/30 pass". Independently counting `def test_*` functions in the file at the PR head commit finds 28, all passing. Coverage itself is solid (every new DB function, both instrumentation call sites, and all 4 new endpoints have direct tests) — this is a factual inaccuracy in the self-reported count, not a coverage gap, but the QA evidence document is exactly the artifact the STEP 4 merge gate relies on being accurate.
+
+**Scope**
+- Correct the test count in `qa_evidence_EPIC-03.md` and, if still editable, the PR description
+
+**Acceptance Criteria**
+- Test count in `qa_evidence_EPIC-03.md` matches the actual number of tests in `tests/test_cost_monitoring.py`
+- QA & Testing Owner sign-off
+
+---
+
+### BLG-OPS-155 — `get_api_session_report()` anomaly baseline is self-inclusive
+
+**Priority:** P3 (Low)
+**Type:** Operational / Infrastructure
+**Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
+**Source:** Agent-mediated Director of Quality review of PR #1631 (EPIC-03, `2026-09-09__release-v9.3`) — 2026-09-10
+**Effort:** S (~0.5d)
+
+**Problem**
+`backend/database.py::get_api_session_report()`'s "&gt;2x baseline" anomaly check (ST-12) computes its baseline as the mean of all sessions' call counts, including any anomalous session(s) themselves — a large outlier inflates the very baseline it is compared against, and two similarly-sized outliers can mask each other (e.g. sessions `[1, 10, 10]` → mean 7, threshold 14, neither 10 flags). This meets the story's literal AC ("&gt;2x baseline" is implemented correctly for the tested case) but is a real methodological limitation for a signal intended to catch genuine cost anomalies.
+
+**Scope**
+- Replace the self-inclusive mean baseline with a trimmed mean, median, or leave-one-out baseline
+- Add a test case covering the multiple-similarly-sized-outliers scenario
+
+**Acceptance Criteria**
+- Anomaly baseline is no longer inflated by the session(s) it is evaluating
+- Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-SPEC-141 — Spec debt dashboard sort key mishandles same-day-filed items
+
+**Priority:** P3 (Low)
+**Type:** Spec / Documentation Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** Agent-mediated Director of Quality review of PR #1632 (EPIC-04, `2026-09-09__release-v9.3`) — 2026-09-10
+**Effort:** XS (<1h)
+
+**Problem**
+`scripts/generate_spec_debt_dashboard.py`'s sort key uses `-(r["age_days"] or -1)`. Because `0` is falsy in Python, an item filed the same day the dashboard is generated (`age_days == 0`) evaluates identically to the `None` (undated) case, so it would silently sort as if undated rather than as the newest item in its priority tier. Verified via direct interpreter check. No current dashboard row triggers it (no live BLG-SPEC item has age 0 today), and it is not covered by the script's 14-test suite.
+
+**Scope**
+- Fix the sort key to distinguish `age_days == 0` from `age_days is None` (e.g. an explicit `-1 if r["age_days"] is None else -r["age_days"]`)
+- Add a test case covering `age_days == 0`
+
+**Acceptance Criteria**
+- A same-day-filed item sorts as the newest item in its priority tier, not as undated
+- API Contracts & Documentation Owner sign-off
+
+---
+
+### BLG-GOV-320 — File a Product Owner decision record for ST-20's trade-tagging "no closed taxonomy" call
+
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Product Owner; Head of Specs Team
+**Source:** Agent-mediated Product Owner review of PR #1632 (EPIC-04, `2026-09-09__release-v9.3`) — 2026-09-10
+**Effort:** XS (<1h)
+
+**Problem**
+ST-20's AC reads "canonical allowed-tag taxonomy... documented," which a literal reading suggests a closed vocabulary. The story instead correctly determined (and independently verified as accurate) that `trade_plans.trade_tags` is intentionally free-text/format-constrained by design, and documented that instead of inventing a fake enum. This codebase has an established pattern for exactly this kind of "AC assumed X, accepting Y instead" call — a dedicated `docs/product/decisions/*.md` record (precedent: `setup-type-other-conflation-decision--2026-08-21.md`) — but no equivalent record was filed for ST-20; the reasoning is only documented inline in the new spec doc's Purpose section.
+
+**Scope**
+- File a short `docs/product/decisions/*.md` record for the trade-tagging taxonomy-scope reframing, consistent with the existing precedent
+- Cross-reference it from `docs/specs/trade_tagging_taxonomy.md`
+
+**Acceptance Criteria**
+- Decision record filed and cross-referenced
+- Product Owner sign-off
 
 ---
 
