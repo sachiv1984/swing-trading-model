@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.8
-**Last Updated:** 2026-07-27
+**Version:** 1.9
+**Last Updated:** 2026-09-10 (ST-14, BLG-OPS-96, v9.3 — added GET /ai/monthly-cost-by-feature); prior — 2026-07-27 (ST-06, EPIC-06, v7.8 — added GET /ai/spend-trend)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -23,6 +23,7 @@ All AI output is **display-only** and must NOT be used as input to any signal, s
 - [POST /ai/check-daily-cost](#post-aicheck-daily-cost)
 - [GET /ai/claude-audit-log](#get-aiclaude-audit-log)
 - [GET /ai/monthly-cost](#get-aimonthly-cost)
+- [GET /ai/monthly-cost-by-feature](#get-aimonthly-cost-by-feature)
 
 ---
 
@@ -551,6 +552,67 @@ No parameters.
 
 ---
 
+## GET /ai/monthly-cost-by-feature
+
+Returns the current calendar month's Claude API spend, broken down by feature — extends `GET /ai/monthly-cost` (a single total) with a per-feature (`claude_audit_log.endpoint`) breakdown.
+
+Added for ST-14 (BLG-OPS-96, EPIC-03, v9.3). Read-only, sourced from the same `claude_audit_log` table as `GET /ai/monthly-cost`, grouped by the existing `endpoint` tag column rather than a new data-collection mechanism (RISK-03 — reuses the existing logging approach; per-feature tagging already existed on every `create_claude_audit_entry()` caller before this story, this endpoint is the first to surface it as a breakdown).
+
+**§13 Status:** N/A — read-only cost aggregate; no AI output generated.
+
+**Feature tag taxonomy** (current `endpoint` values in use, set by each caller at the `create_claude_audit_entry()` call site — see `backend/database.py`):
+
+| Tag | Feature | Caller |
+|-----|---------|--------|
+| `POST /ai/daily-briefing` | Daily briefing | `backend/services/ai_service.py` |
+| `POST /ai/chat` | AI trade advisor chat | `backend/services/ai_service.py` |
+| `POST /trades/{trade_id}/debrief` | Post-trade debrief | `backend/services/debrief_service.py` |
+| `POST /trade-plans/generate-plan` | Trade plan generation | `backend/services/gemini_service.py` |
+| `POST /trade-plans/{plan_id}/generate-thesis` | Thesis generation | `backend/services/gemini_service.py` |
+
+### Request
+
+```
+GET /ai/monthly-cost-by-feature
+```
+
+No parameters.
+
+### Response — 200 OK
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "features": [
+      {"endpoint": "POST /ai/daily-briefing", "total_cost_usd": 0.0041, "request_count": 4},
+      {"endpoint": "POST /trade-plans/{plan_id}/generate-thesis", "total_cost_usd": 0.0022, "request_count": 2}
+    ]
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|--------------|
+| `features` | array | One entry per distinct `endpoint` tag with at least 1 call this calendar month, ordered by `total_cost_usd` descending. Empty array if no calls this month. |
+| `features[].endpoint` | string | The feature tag (see taxonomy table above). |
+| `features[].total_cost_usd` | float | Sum of `cost_usd` for this tag, current calendar month (UTC). |
+| `features[].request_count` | integer | Count of calls for this tag, current calendar month. |
+
+### Error responses
+
+| Status | Condition |
+|--------|-----------|
+| 500 | Internal failure — returns `{"features": []}` rather than propagating the error (matches `get_monthly_claude_cost`'s existing fail-safe convention), so this endpoint does not return a 500 body under normal operation. |
+
+### Implementation constraints
+
+- Read-only endpoint: no writes to any table.
+- Uses `date_trunc('month', NOW())` (UTC) as the month boundary, same as `GET /ai/monthly-cost`.
+- Reporting cycle: this month's data becomes available as soon as the first tagged call is logged — no backfill of pre-existing untagged rows (there are none; every `create_claude_audit_entry()` caller has always passed `endpoint`).
+
+---
+
 ## GET /ai/spend-trend
 
 Returns Claude API spend for the last 6 release cycles (oldest to newest), for the Settings page's AI spend trend chart (`settings.md` §6, extends the existing current-month spend card).
@@ -616,6 +678,7 @@ None at v1.8.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.9 | 2026-09-10 | ST-14 (EPIC-03, v9.3, BLG-OPS-96): Added `GET /ai/monthly-cost-by-feature` — current calendar month's Claude API spend broken down by the existing `claude_audit_log.endpoint` feature tag (5 tags documented in the endpoint section's taxonomy table). Reuses existing tagging, no new data collection. `openapi.yaml` updated in the same commit. |
 | 1.8 | 2026-07-27 | ST-06 (EPIC-06, v7.8, BLG-FEAT-82): Added `GET /ai/spend-trend` — Claude API spend for the last 6 release cycles, bucketed by date windows parsed from `docs/product/changelog.md` version headings (documented alternative to the UX spec's `claude/cycles/*/state.json` suggestion — see endpoint section for rationale). `openapi.yaml` updated in the same commit. |
 | 1.7 | 2026-07-20 | ST-07 (EPIC-07, v7.6, BLG-FEAT-77): Added `GET /ai/monthly-cost` — current calendar month's Claude API spend total, sourced from `claude_audit_log`. Reframed per `ESC-EXEC-20260720-01`: original AC assumed a separate Gemini provider; no such integration exists in this codebase (confirmed: no `google-generativeai`, no `GEMINI_API_KEY`, `gemini_service.py` calls only the Anthropic API). `openapi.yaml` updated in the same commit. |
 | 1.6 | 2026-07-13 | v7.0 EPIC-02 ST-11 (BLG-BE-51): Added optional `endpoint` (exact match) and `date_from`/`date_to` (inclusive, `YYYY-MM-DD`, applied to `generated_at`) query filters to `GET /ai/claude-audit-log` — independently or combined, and combinable with `limit`. No new endpoint; existing unfiltered behaviour unchanged when all three are omitted. `openapi.yaml` updated in the same commit. |

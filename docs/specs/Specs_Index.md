@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 — §42 Test Coverage Gaps section added, 0 new gaps, TSG sweep 0 Open entries; see Changelog table for full history)
+**Last Updated:** 2026-09-10 (ST-11/ST-12, EPIC-03, v9.3 — new `ops_endpoints.md` registered on creation, per the standing on-creation-registration precedent; see Changelog table for full history)
 
 ---
 
@@ -124,6 +124,7 @@ It points to the **single canonical source**.
 - `strategy_version_comparison_contract.md` — Pre-authored contract v0.1.0 (created 2026-06-02, ST-07, cycle 2026-06-01__release-v4.8; BLG-SPEC-43): GET /analytics/strategy-version-comparison — SI-04 strategy version comparison endpoint contract pre-authored before SI-04 sprint; response schema, query parameters, error cases, §13 binding conditions. Placeholder entry in openapi.yaml. Implementation gated on SI-04 sprint planning. Sign-off: Strategy Rules & System Intent Owner + Head of Specs Team (autonomous class).
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 - `deprecated_endpoint_sunset_tracker.md` — Operational Record (Class 3), v1.0, Active (created 2026-09-08, ST-43, EPIC-05, v9.2, BLG-SPEC-119): live register of endpoints currently inside their `conventions.md` §14 deprecation-notice window, plus a historical log of pre-§14 supersessions. Sign-off: API Contracts & Documentation Owner.
+- `ops_endpoints.md` — Class 1 Canonical, v1.1, Active (created v1.0 2026-09-10, ST-11/ST-12, EPIC-03, v9.3, BLG-OPS-17/BLG-OPS-20; updated v1.1 same day, ST-13, BLG-OPS-94): GET /ops/alpaca-call-report, GET /ops/research-session-report — external API call-count instrumentation and reporting (`api_call_log` table), distinct from `ai_endpoints.md`'s Claude-cost tracking; POST /ops/purge-audit-logs — AI audit log retention enforcement. Sign-off: Infrastructure & Operations Owner (per sprint_backlog.md AC).
 
 **Supporting Reference**
 - `docs/reference/openapi.yaml` — *Supporting reference only; must not diverge from canonical contracts*
@@ -1152,6 +1153,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-09-10 | ST-11/ST-12 (EPIC-03, v9.3, BLG-OPS-17/BLG-OPS-20): new `api_contracts/ops_endpoints.md` (§3.4) registered on creation, mirroring ST-43's same-day-registration precedent for `deprecated_endpoint_sunset_tracker.md` (2026-09-08 row below). |
 | 2026-09-09 | Post-ship closure `2026-09-07__release-v9.2` — §42 Test Coverage Gaps (v9.2) added, 0 new gaps this cycle; endpoint coverage drift check found 0 genuine gaps (openapi.yaml 139 vs api_performance_baseline.md 138 normalised endpoints, remaining delta is a query-string formatting quirk, not a missing registration); full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-08 | ST-49 (EPIC-05, v9.2, BLG-SPEC-135): added `## 8b. Full Spec File Registry` — all 78 files `scripts/check_specs_index_freshness.py` had flagged as unreferenced additions are now indexed by path, grouped by domain. Script now reports 0 unexplained additions (1 pre-existing REMOVALS entry, `qa_evidence_EPIC-xx.md`, is a template-pattern placeholder reference, not a real spec file, and is out of this story's scope). Later same day: ST-43's new `deprecated_endpoint_sunset_tracker.md` (§3.4) registered on creation to avoid immediately regressing the 0-additions state. |
 | 2026-09-07 | Post-ship closure `2026-09-03__release-v9.1` — §41 Test Coverage Gaps (v9.1) added, 0 new gaps this cycle; full-document TSG reconciliation sweep found 0 Open entries (all 26 already resolved). |

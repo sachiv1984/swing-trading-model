@@ -20,6 +20,19 @@ from typing import Optional, List, Dict
 
 logger = logging.getLogger(__name__)
 
+
+def _log_alpaca_call(success: bool) -> None:
+    """ST-11 (BLG-OPS-17, EPIC-03, v9.3): log one Alpaca API call-count row
+    per get_ohlcv_bars() invocation (per endpoint per run — not per retry
+    attempt, so the count reflects logical calls made by callers, not the
+    internal retry mechanics). Reference instrumentation pattern reused by
+    ST-12 (research endpoint) — see database.py's api_call_log block."""
+    try:
+        from database import log_api_call
+        log_api_call("alpaca", _BARS_PATH, success=success)
+    except Exception:
+        pass
+
 ALPACA_BASE_URL = "https://data.alpaca.markets"
 ALPACA_API_KEY = os.environ.get("APCA_API_KEY_ID", "")
 ALPACA_API_SECRET = os.environ.get("APCA_API_SECRET_KEY", "")
@@ -75,6 +88,7 @@ def get_ohlcv_bars(symbol: str, limit: int = 30, timeframe: str = "1Day") -> Opt
                     logger.info("Alpaca bars fetched for %s: %d bars (feed=%s)", symbol, len(bars), ALPACA_DATA_FEED)
                 else:
                     logger.warning("Alpaca returned 0 bars for %s (feed=%s) — symbol may not trade on this feed", symbol, ALPACA_DATA_FEED)
+                _log_alpaca_call(success=True)
                 return bars or None
             elif resp.status_code == 429:
                 if attempt < max_attempts:
@@ -82,9 +96,11 @@ def get_ohlcv_bars(symbol: str, limit: int = 30, timeframe: str = "1Day") -> Opt
                     delay = min(delay * 2, 30)
                     continue
                 logger.warning("Alpaca rate limit exceeded for %s after %d attempts", symbol, attempt)
+                _log_alpaca_call(success=False)
                 return None
             elif resp.status_code == 403:
                 logger.error("Alpaca 403 Forbidden for %s — check credentials", symbol)
+                _log_alpaca_call(success=False)
                 return None
             elif resp.status_code >= 500 and attempt <= 3:
                 time.sleep(delay)
@@ -92,13 +108,21 @@ def get_ohlcv_bars(symbol: str, limit: int = 30, timeframe: str = "1Day") -> Opt
                 continue
             else:
                 logger.warning("Alpaca unexpected status %d for %s", resp.status_code, symbol)
+                _log_alpaca_call(success=False)
                 return None
         except requests.RequestException as exc:
             logger.warning("Alpaca request error for %s (attempt %d): %s", symbol, attempt, exc)
             if attempt >= 3:
+                _log_alpaca_call(success=False)
                 return None
             time.sleep(delay)
 
+    # Unreachable in practice (pre-existing — every branch inside the loop
+    # above returns by attempt max_attempts at the latest; noted in
+    # agent-mediated I&O Owner review, ST-11, v9.3), kept as a defensive
+    # fallback against a future change to the retry logic above accidentally
+    # introducing a real fall-through path.
+    _log_alpaca_call(success=False)
     return None
 
 

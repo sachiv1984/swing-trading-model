@@ -3213,6 +3213,44 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /ai/monthly-cost-by-feature:
+    get:
+      tags: [AI]
+      summary: Current calendar month's Claude API spend, broken down by feature
+      description: |
+        Extends GET /ai/monthly-cost (a single total) with a per-feature
+        breakdown, grouped by the existing claude_audit_log.endpoint tag.
+        Read-only, no side effects. Reuses existing feature tagging (RISK-03)
+        -- no new data collection.
+        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.9 §GET /ai/monthly-cost-by-feature
+      responses:
+        "200":
+          description: Per-feature Claude API cost breakdown for the current month
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          features:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                endpoint:
+                                  type: string
+                                total_cost_usd:
+                                  type: number
+                                  format: float
+                                request_count:
+                                  type: integer
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /ai/spend-trend:
     get:
       tags: [AI]
@@ -3247,6 +3285,135 @@ paths:
                               type: number
                               format: float
                               example: 1.45
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /ops/alpaca-call-report:
+    get:
+      tags: [Cost Monitoring]
+      summary: Alpaca API call count report (daily or weekly)
+      description: |
+        Aggregated Alpaca Data API call counts from api_call_log, the
+        reference external-API instrumentation pattern (ST-11, reused by
+        GET /ops/research-session-report). Read-only, no side effects.
+        Canonical contract: docs/specs/api_contracts/ops_endpoints.md v1.0 §GET /ops/alpaca-call-report
+      parameters:
+        - in: query
+          name: window
+          schema:
+            type: string
+            enum: [daily, weekly]
+            default: daily
+      responses:
+        "200":
+          description: Alpaca API call count aggregate
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          service:
+                            type: string
+                            example: alpaca
+                          window:
+                            type: string
+                          total_calls:
+                            type: integer
+                          success_count:
+                            type: integer
+                          failure_count:
+                            type: integer
+        "422":
+          description: Invalid window value
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /ops/research-session-report:
+    get:
+      tags: [Cost Monitoring]
+      summary: Research endpoint per-session external-call counts with anomaly flagging
+      description: |
+        Per-session (one UUID per cache-miss GET /research/{ticker} request)
+        external-call counts over the last 7 days, with a computed baseline
+        (mean calls/session) and sessions flagged anomalous above 2x that
+        baseline. Reuses ST-11's api_call_log instrumentation (RISK-03).
+        Read-only, no side effects.
+        Canonical contract: docs/specs/api_contracts/ops_endpoints.md v1.0 §GET /ops/research-session-report
+      responses:
+        "200":
+          description: Research endpoint session call-count report
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          service:
+                            type: string
+                            example: research
+                          period_days:
+                            type: integer
+                          session_count:
+                            type: integer
+                          baseline_calls_per_session:
+                            type: number
+                            format: float
+                          anomaly_multiplier:
+                            type: number
+                            format: float
+                          sessions:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                session_id:
+                                  type: string
+                                call_count:
+                                  type: integer
+                                anomalous:
+                                  type: boolean
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /ops/purge-audit-logs:
+    post:
+      tags: [Cost Monitoring]
+      summary: Delete AI audit log rows past their retention window
+      description: |
+        Deletes gemini_audit_log rows older than 90 days and claude_audit_log
+        rows older than 730 days (24 months), enforcing the retention windows
+        in docs/ops/ai_audit_log_retention_policy.md. Idempotent -- safe to
+        call repeatedly (e.g. from a daily scheduled workflow); deletes
+        nothing when no rows qualify.
+        Canonical contract: docs/specs/api_contracts/ops_endpoints.md v1.1 §POST /ops/purge-audit-logs
+      responses:
+        "200":
+          description: Purge completed (possibly deleting 0 rows)
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          gemini_audit_log_rows_deleted:
+                            type: integer
+                          claude_audit_log_rows_deleted:
+                            type: integer
         "401":
           $ref: "#/components/responses/Unauthorized"
         "500":

@@ -14,6 +14,7 @@ from typing import Optional
 import logging
 import requests
 import time
+import uuid
 
 logger = logging.getLogger(__name__)
 from database import get_portfolio
@@ -33,6 +34,18 @@ _RESEARCH_CACHE_TTL_SECONDS = 900
 _research_cache: dict = {}  # key: (ticker_upper, market) → {"data": ..., "expires_at": float}
 _cache_hits = 0
 _cache_misses = 0
+
+
+def _log_research_call(session_id: str, endpoint: str, success: bool) -> None:
+    """ST-12 (BLG-OPS-20, EPIC-03, v9.3): log one research-endpoint external
+    call, tagged by session_id (one per cache-miss GET /research/{ticker}
+    request). Reuses ST-11's api_call_log instrumentation (RISK-03) — see
+    database.py's api_call_log block and GET /ops/research-session-report."""
+    try:
+        from database import log_api_call
+        log_api_call("research", endpoint, session_id=session_id, success=success)
+    except Exception:
+        pass
 
 
 def invalidate_research_cache(tickers: list = None) -> None:
@@ -236,7 +249,17 @@ def get_research(ticker: str, market: Optional[str] = None):
         portfolio = get_portfolio()
         portfolio_id = str(portfolio["id"]) if portfolio else None
 
+        # ST-12 (BLG-OPS-20, EPIC-03, v9.3): one session_id per cache-miss
+        # request, tagging every external call this request triggers — see
+        # _log_research_call below and GET /ops/research-session-report.
+        session_id = str(uuid.uuid4())
+
         price_data = _get_price_data(ticker, market)
+        # success reflects whether the call was attempted, not whether it returned
+        # data — ST-12's AC is call *count* for anomaly detection, not a success/
+        # failure breakdown (contrast with ST-11's alpaca instrumentation, which
+        # does distinguish, because that AC is about Alpaca's own reliability).
+        _log_research_call(session_id, "_get_price_data", success=price_data not in (_YF_UNAVAILABLE, _TICKER_NOT_FOUND))
 
         if price_data is _YF_UNAVAILABLE:
             return JSONResponse(
@@ -254,8 +277,17 @@ def get_research(ticker: str, market: Optional[str] = None):
         sector = _get_sector(ticker, market)
         screener = _get_screener(ticker)
         earnings = _get_earnings(ticker, market)
+        # _get_earnings/_get_market_cap/_get_news all swallow their own exceptions
+        # internally (return None/[] on both "no data" and "call failed") — no
+        # sentinel distinguishes the two from outside, unlike _get_price_data
+        # above. Logged as success=True (the call was attempted); this is a
+        # call-count instrumentation, not a success/failure breakdown, per ST-12's
+        # AC.
+        _log_research_call(session_id, "_get_earnings", success=True)
         market_cap = _get_market_cap(ticker)
+        _log_research_call(session_id, "_get_market_cap", success=True)
         news_headlines = _get_news(ticker, market)
+        _log_research_call(session_id, "_get_news", success=True)
 
         response = {
             "status": "ok",
