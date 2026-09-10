@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.5.0
-**Last Updated:** 2026-08-11
+**Version:** 2.5.1
+**Last Updated:** 2026-09-10 (ST-20, EPIC-04, v9.3, BLG-SPEC-76 — GET /analytics/tag-performance now cross-references new canonical docs/specs/trade_tagging_taxonomy.md); prior — 2026-08-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -851,6 +851,8 @@ Returns win rate and average R-multiple per requested trade-plan tag.
 
 **Source:** ST-05, BLG-FEAT-52, v6.8. Reads only `trade_plans.trade_tags` and existing closed-trade linkage — no dependency on `trade_annotations`/PO-02.
 
+**Tag taxonomy:** `docs/specs/trade_tagging_taxonomy.md` (added ST-20, EPIC-04, v9.3, BLG-SPEC-76) is the canonical reference for what a `trade_tags` value is — free-text, format-constrained (lowercase/hyphen, ≤20 chars, ≤10 per plan), not a closed enum. This endpoint performs no taxonomy validation of its own; it reads whatever tags already exist on closed-trade-linked plans.
+
 ### Request
 
 **Method:** GET
@@ -998,6 +1000,7 @@ No parameters.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.5.1 | 2026-09-10 | ST-20 (EPIC-04, v9.3, BLG-SPEC-76): `GET /analytics/tag-performance` now cross-references the new canonical `docs/specs/trade_tagging_taxonomy.md` — no taxonomy documentation previously existed on the reporting side. No schema/behaviour change. |
 | 2.5.0 | 2026-08-11 | v8.6 ST-01 (BLG-FEAT-32, EPIC-01): Added `GET /analytics/trade-plan-completion-rate` — `plans_created`/`plans_completed`/`plans_abandoned`/`completion_rate` for the Performance Analytics page §21. `plans_completed` derived via the `trade_plans.position_id = trade_history.position_id` equijoin. API Contracts & Documentation Owner sign-off. |
 | 2.4.0 | 2026-07-09 | v6.8 ST-05 (BLG-FEAT-52, EPIC-02): Added `GET /analytics/tag-performance` — win rate and average R-multiple per trade-plan tag. Reads only `trade_plans.trade_tags` and existing closed-trade linkage; no dependency on `trade_annotations`/PO-02. API Contracts & Documentation Owner sign-off. |
 | 2.3.0 | 2026-06-09 | v5.3 ST-05 (BLG-SPEC-50, EPIC-01): Added `GET /analytics/compliance-metrics` — discipline and compliance scalars endpoint. API Contracts & Documentation Owner sign-off. |
