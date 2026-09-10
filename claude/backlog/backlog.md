@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-10 (session — 1 new item added: BLG-OPS-153, discovered via agent-mediated FinOps & Resource Architect review of ST-13/ST-14/EPIC-03/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-BE-113, discovered via Director of Quality agent-mediated review of PR #1629/EPIC-01/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-BE-112, discovered mid-sprint executing ST-03/EPIC-01/`2026-09-09__release-v9.3`); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-10 (session — 1 new item added: BLG-OPS-153, discovered via agent-mediated FinOps & Resource Architect review of ST-13/ST-14/EPIC-03/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-GOV-319, discovered mid-sprint executing ST-07/EPIC-02/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-QA-167, discovered mid-sprint executing ST-05/EPIC-02/`2026-09-09__release-v9.3`); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -3981,6 +3981,30 @@ ST-13 (BLG-OPS-94, retention policy) and ST-14 (BLG-OPS-96, per-feature cost bre
 
 ---
 
+### BLG-QA-167 — Playwright coverage matrix file-inventory count is stale (39 vs actual ~100+ spec files)
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** QA & Testing Owner; Director of Quality
+**Source:** ST-05 (BLG-QA-82, EPIC-02, v9.3 sprint execution) — 2026-09-09
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`docs/qa/playwright_coverage_matrix.md`'s "Total: 39 spec files" line (Last Updated 2026-07-20) is far behind the actual `tests/e2e/` directory count (102 as of 2026-09-09). Discovered while consolidating the 3 overlapping SignalCard specs into `tests/e2e/signal-card.spec.js` (ST-05) — updating that one row highlighted that the doc's running total and per-file table have not kept pace with the many spec files added since v4.8. A full re-inventory is out of scope for ST-05, which only touches the SignalCard rows.
+
+**Scope**
+- Full re-scan of `tests/e2e/*.spec.js` against the matrix's per-file table
+- Add missing rows, remove stale ones (including reconciling the ST-05 SignalCard consolidation once it lands)
+- Correct the running total
+
+**Acceptance Criteria**
+- Per-file table matches the actual `tests/e2e/` directory contents
+- Running total corrected
+- Doc Version/Last Updated bumped per the doc's own convention
+
+---
+
 ### BLG-GOV-318 — Codify whether opportunistic in-file fixes found mid-story need their own backlog entry
 
 **Priority:** P3 (Low)
@@ -4000,6 +4024,29 @@ ST-13 (BLG-OPS-94, retention policy) and ST-14 (BLG-OPS-96, per-feature cost bre
 **Acceptance Criteria**
 - Rule documented in a governance source file
 - Product Owner sign-off
+
+---
+
+### BLG-GOV-319 — record-visual-qa skill's documented output format has drifted ~5 months from actual staging sign-off practice
+
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** ST-07 (BLG-QA-88, EPIC-02, v9.3 sprint execution — DoQ sign-off template freshness check) — 2026-09-09
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`.claude/skills/record-visual-qa/SKILL.md` documents a structured output format for recording staging visual QA results (a `**Visual AC — Staging results**` table plus a `**Visual sign-off status:**` line in the QA evidence file). This format appears in only 2 `qa_evidence_EPIC-*.md` entries across the entire cycle history, both from `2026-03-24__release-v2.3`/`2026-04-11__release-v2.6`. Git history confirms only 3 actual invocations of the skill, the most recent on 2026-04-12 (`2307c91d`) — roughly 5 months before this review. Every staging sign-off recorded since then instead uses free-form prose directly in the DoQ sign-off block's `Comments:` field or an ad hoc `Staging sign-off:`/`Staging confirmation:` line (see `docs/testing/doq_signoff_template_freshness_review_20260909.md` for sampled examples). The freeform format is functionally valid — it satisfies CLAUDE.md's frontend testing gate — but the skill has not been the actual mechanism producing it for a long time, and its documented format no longer matches what "current staging sign-off practice" looks like.
+
+**Scope**
+- Determine whether the skill's structured-table format should be updated to match the freeform practice that has actually been used for ~5 months, or whether the freeform practice should be reined back in favour of the skill's structured format (a real design decision, not a mechanical sync)
+- Update `.claude/skills/record-visual-qa/SKILL.md` accordingly, or formally deprecate/narrow it if freeform is the accepted path going forward
+- Consider whether the skill's assumption of a pre-authored `docs/testing/staging_visual_test_script_ST-xx.md` file with named check IDs is still a good fit for how staging sign-offs are actually being requested/performed today (single ad hoc confirmations, not always against a pre-written check list)
+
+**Acceptance Criteria**
+- Skill documentation matches actual current staging sign-off practice, confirmed against a sample of recent `qa_evidence_EPIC-*.md` entries
+- Director of Quality sign-off on the reconciled approach
 
 ---
 

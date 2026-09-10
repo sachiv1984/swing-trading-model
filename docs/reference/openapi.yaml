@@ -6244,6 +6244,9 @@ components:
         total_deposits: { type: number }
         total_withdrawals: { type: number }
         net_cash_flow: { type: number }
+        current_cash:
+          type: number
+          description: "Current cash balance (GBP). Added ST-06 (BLG-QA-85, EPIC-02, v9.3) — field was already returned by backend/services/cash_service.py::get_summary() and documented in docs/specs/api_contracts/cash_endpoints.md, but missing from this schema (contract-test drift finding)."
 
     Signal:
       type: object
@@ -6253,7 +6256,9 @@ components:
         market: { type: string, enum: [US, UK] }
         signal_date: { type: string, format: date }
         status: { type: string, enum: [new, entered, dismissed, expired, already_held, allocation_insufficient] }
-        momentum_score: { type: number }
+        momentum_percent:
+          type: number
+          description: "Renamed from momentum_score ST-06 (BLG-QA-85, EPIC-02, v9.3) — field was never actually named momentum_score; backend/services/signal_service.py returns momentum_percent, matching docs/specs/api_contracts/signal_endpoints.md's own JSON example (contract-test drift finding)."
         current_price: { type: number }
         reason: { type: string, nullable: true }
         relative_strength_pct:
