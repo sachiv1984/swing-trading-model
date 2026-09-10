@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 — §42 Test Coverage Gaps section added, 0 new gaps, TSG sweep 0 Open entries; see Changelog table for full history)
+**Last Updated:** 2026-09-10 (ST-16, EPIC-04, v9.3 — new `spec_debt_dashboard.md` registered on creation, per the standing on-creation-registration precedent; see Changelog table for full history)
 
 ---
 
@@ -377,6 +377,7 @@ The Spec Dependency Map is a point-in-time reference document mapping all canoni
 The Coverage Inventory is the authoritative cross-domain record of spec-to-implementation coverage, lifecycle compliance status, and open documentation gaps. It is refreshed every 3 cycles (at `run audit`) and at the start of each major release.
 
 - `docs/specs/spec_coverage_inventory.md` — Class 3 Operational Record, v1.0, Filed 2026-03-17 (ST-17, EPIC-05). 38 documents audited; 7 actions identified.
+- `docs/specs/spec_debt_dashboard.md` — Class 3 Operational Record, generated 2026-09-10 (ST-16, EPIC-04, v9.3, BLG-SPEC-69). Single-page summary of all open `BLG-SPEC-*` backlog items with age since filing, sorted by priority then age. Regenerate via `scripts/generate_spec_debt_dashboard.py` (read-only against `backlog.md`) — refreshable at any future `groom backlog` run or on demand.
 
 ---
 
@@ -1152,6 +1153,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-09-10 | ST-16 (EPIC-04, v9.3, BLG-SPEC-69): new `spec_debt_dashboard.md` (§8) registered on creation, mirroring `ops_endpoints.md`'s same-day-registration precedent. |
 | 2026-09-09 | Post-ship closure `2026-09-07__release-v9.2` — §42 Test Coverage Gaps (v9.2) added, 0 new gaps this cycle; endpoint coverage drift check found 0 genuine gaps (openapi.yaml 139 vs api_performance_baseline.md 138 normalised endpoints, remaining delta is a query-string formatting quirk, not a missing registration); full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-08 | ST-49 (EPIC-05, v9.2, BLG-SPEC-135): added `## 8b. Full Spec File Registry` — all 78 files `scripts/check_specs_index_freshness.py` had flagged as unreferenced additions are now indexed by path, grouped by domain. Script now reports 0 unexplained additions (1 pre-existing REMOVALS entry, `qa_evidence_EPIC-xx.md`, is a template-pattern placeholder reference, not a real spec file, and is out of this story's scope). Later same day: ST-43's new `deprecated_endpoint_sunset_tracker.md` (§3.4) registered on creation to avoid immediately regressing the 0-additions state. |
 | 2026-09-07 | Post-ship closure `2026-09-03__release-v9.1` — §41 Test Coverage Gaps (v9.1) added, 0 new gaps this cycle; full-document TSG reconciliation sweep found 0 Open entries (all 26 already resolved). |
