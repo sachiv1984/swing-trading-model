@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-09 (session — 1 new item added: BLG-GOV-319, discovered mid-sprint executing ST-07/EPIC-02/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-QA-167, discovered mid-sprint executing ST-05/EPIC-02/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-BE-113, discovered via Director of Quality agent-mediated review of PR #1629/EPIC-01/`2026-09-09__release-v9.3`); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-10 (session — 1 new item added: BLG-OPS-153, discovered via agent-mediated FinOps & Resource Architect review of ST-13/ST-14/EPIC-03/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-GOV-319, discovered mid-sprint executing ST-07/EPIC-02/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-QA-167, discovered mid-sprint executing ST-05/EPIC-02/`2026-09-09__release-v9.3`); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -3929,6 +3929,32 @@ ST-56 required "real query data obtained for at least the current quarter" for `
 
 **Acceptance Criteria**
 - `docs/ops/ai_feature_cost_trend_2026_q3.md` §3 contains an actual query result for Q3 2026, not an estimate
+- FinOps & Resource Architect sign-off
+
+---
+
+### BLG-OPS-153 — AI audit log cost-monitoring follow-ons: storage projection, per-feature trend, silent-purge-failure visibility
+
+**Priority:** P3 (Low)
+**Type:** Operations / Cost Monitoring
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** Agent-mediated FinOps & Resource Architect review of ST-13/ST-14 (EPIC-03, `2026-09-09__release-v9.3`) — 2026-09-10
+**Effort:** M (~2 days, 3 small sub-items)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-13 (BLG-OPS-94, retention policy) and ST-14 (BLG-OPS-96, per-feature cost breakdown) both met their acceptance criteria, but the agent-mediated FinOps & Resource Architect review identified 3 related, non-blocking gaps worth tracking as deliberate follow-ons rather than left implicit:
+1. `docs/ops/ai_audit_log_retention_policy.md`'s 730-day window for `claude_audit_log` is qualitatively justified but carries no estimated row-count/storage-size projection at current call volume.
+2. `GET /ai/monthly-cost-by-feature` (current month only) and `GET /ai/spend-trend` (overall total, last 6 cycles) don't combine into a per-feature trend-over-time view — there's no way to see "is feature X's spend trending up" without manually cross-referencing both endpoints across cycles.
+3. `POST /ops/purge-audit-logs` and its underlying purge functions fail safe (return `0` rather than raise on error) — good defensive design against breaking the daily scheduled job, but it also means a silently-broken purge (e.g. a credentials issue on the cron step) produces no error signal; deletions would stay at 0 indefinitely with nothing to notice beyond manually checking workflow run logs.
+
+**Scope**
+- Add a rough row-count/storage-size projection to `ai_audit_log_retention_policy.md` at current observed call volume
+- Add a per-feature spend-trend view (combining `monthly-cost-by-feature`'s grouping with `spend-trend`'s multi-cycle window), and consider tying it to `gemini_cost_tracking.md`'s existing (currently manual-check-only) $5/month alert threshold
+- Add a lightweight signal (log line or similar) if `claude_audit_log_rows_deleted`/`gemini_audit_log_rows_deleted` stays at 0 for an implausibly long stretch given known accumulation, to surface a silently-broken purge
+
+**Acceptance Criteria**
+- All 3 sub-items addressed (or explicitly re-scoped/split into separate items at grooming time)
 - FinOps & Resource Architect sign-off
 
 ---

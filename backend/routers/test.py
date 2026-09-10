@@ -200,6 +200,12 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /ai/monthly-cost", "method": "GET", "url": f"{base_url}/ai/monthly-cost", "critical": False},
         {"name": "GET /ai/spend-trend", "method": "GET", "url": f"{base_url}/ai/spend-trend", "critical": False},
 
+        # Cost Monitoring (v9.3 / EPIC-03 ST-11/ST-12/ST-13/ST-14)
+        {"name": "GET /ops/alpaca-call-report", "method": "GET", "url": f"{base_url}/ops/alpaca-call-report", "critical": False},
+        {"name": "GET /ops/research-session-report", "method": "GET", "url": f"{base_url}/ops/research-session-report", "critical": False},
+        {"name": "GET /ai/monthly-cost-by-feature", "method": "GET", "url": f"{base_url}/ai/monthly-cost-by-feature", "critical": False},
+        {"name": "POST /ops/purge-audit-logs", "method": "POST", "url": f"{base_url}/ops/purge-audit-logs", "critical": False},
+
         # SI-02 Behavioural Drift Detection (v4.6 / ST-04)
         {"name": "GET /analytics/behavioural-drift", "method": "GET", "url": f"{base_url}/analytics/behavioural-drift", "critical": False},
 

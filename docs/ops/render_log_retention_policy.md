@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-31
+**Version:** 1.1
+**Last Updated:** 2026-09-10 (ST-13, BLG-OPS-94, v9.3 — §3.1 claude_audit_log retention updated from indefinite to 730 days, enforced daily; see docs/ops/ai_audit_log_retention_policy.md); prior — 2026-05-31
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Backlog ref:** BLG-OPS-31
 **Cycle:** 2026-05-31__release-v4.7 (ST-07)
@@ -50,11 +50,11 @@ The application maintains two primary audit tables that persist independently of
 |-----------|-------|
 | Table | `claude_audit_log` (added v4.2 EPIC-03) |
 | Records | Every Claude API call: model, input/output token counts, cost estimate, request timestamp, success/error status |
-| Retention | PostgreSQL database — no row-level expiry configured; rows persist indefinitely |
+| Retention | **730 days (24 months)**, enforced daily via `POST /ops/purge-audit-logs` — updated ST-13 (BLG-OPS-94, EPIC-03, v9.3; was "no row-level expiry configured" through v4.7). See `docs/ops/ai_audit_log_retention_policy.md` for full rationale: the prior indefinite-retention assessment traded off unbounded storage/query-performance growth against compliance durability; 24 months preserves the durability intent for practical audit-review purposes while bounding growth. |
 | Durability | Render PostgreSQL managed database — data survives Render service restarts and plan changes |
 | Audit trail for | Claude API cost monitoring, thesis generation history, daily cost threshold evaluation |
 
-**Assessment: DURABLE** — `claude_audit_log` provides a persistent, queryable record of all Claude API interactions. It is independent of Render's 7-day application log window.
+**Assessment: DURABLE (within its 730-day window, updated v9.3)** — `claude_audit_log` provides a persistent, queryable record of all Claude API interactions for 24 months. It remains independent of Render's 7-day application log window.
 
 ### 3.2 red_flag_events (Arc 5 SI-03 override events)
 

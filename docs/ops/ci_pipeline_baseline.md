@@ -1,8 +1,8 @@
 **Owner:** QA Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-09-08 (ST-12, v9.2 EPIC-03, BLG-QA-147 — §8.5 first trend re-measurement added); prior — 2026-09-07 (ST-18, v9.1 EPIC-03, BLG-QA-134 — §9 Regression Suite Runtime Budget & Reporting added)
+**Version:** 1.5
+**Last Updated:** 2026-09-10 (ST-15, v9.3 EPIC-03, BLG-OPS-97 — new §9 Shard Count Increase 4→8 Before/After Evidence added; Document History renumbered §9→§10); prior — 2026-09-08 (ST-12, v9.2 EPIC-03, BLG-QA-147 — §8.5 first trend re-measurement added)
 **Cycle:** 2026-05-29__release-v4.3 (ST-11 — BLG-QA-38)
 
 ---
@@ -281,10 +281,48 @@ Signed: Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5
 
 ---
 
-## 9. Document History
+## 9. Shard Count Increase 4→8 — Before/After Evidence (ST-15, EPIC-03, v9.3, BLG-OPS-97)
+
+**Objective:** BLG-OPS-97: with backend/frontend jobs already fully parallel (separate workflow files, no `needs:` dependency anywhere in `.github/workflows/` except 2 unrelated maintenance workflows) and Playwright's 4-way shard already confirmed balanced (§7) and within budget (§8), the only remaining lever to reduce the Playwright critical path itself — this pipeline's dominant workflow per §3/§8.1 — was increasing shard count. `playwright-e2e`'s `shardTotal` changed 4→8 in this same commit.
+
+**Before (most recent prior measurement, §8.5, 2026-09-08, 4-way shard):** critical-path mean 198.5s (excluding the investigated apt-stall outlier), max 235s (§8.1).
+
+**After (8-way shard, this story's own commit, 2 sampled runs on `exec/2026-09-09__release-v9.3/EPIC-03`):**
+
+| Run | Trigger | Shard 1 | Shard 2 | Shard 3 | Shard 4 | Shard 5 | Shard 6 | Shard 7 | Shard 8 | Critical path |
+|-----|---------|---------|---------|---------|---------|---------|---------|---------|---------|----------------|
+| 34463188939 | push | 161 | 129 | 154 | 136 | 135 | 128 | 108 | 138 | 161 |
+| 34463474287 | workflow_dispatch | 165 | 136 | 118 | 106 | 142 | 138 | 135 | 143 | 165 |
+| **Average** | | | | | | | | | | **163.0** |
+
+All durations in seconds, sourced the same way as §7/§8 (`gh run view <id> --json jobs`, per-shard `startedAt`/`completedAt`).
+
+**Result: critical path 198.5s → 163.0s, a 35.5s (~17.9%) reduction.** Consistent with the expectation set in `playwright.yml`'s own ST-15 comment (each shard's fixed setup cost — `npm ci` + browser install, ~55-70s per prior measurements — stays flat while the test-execution portion roughly halves). The reduction is smaller than a naive halving of the full 198.5s would suggest precisely because that fixed setup cost doesn't shrink with more shards — consistent with, not contradicting, the mechanism.
+
+**Honesty note (2-run sample, not 5):** §7/§8's methodology samples 5 runs; this entry has 2, both triggered directly by this story's own testing rather than pulled from independent organic CI activity (this branch is new, with no other push history to sample from yet). The direction and rough magnitude of the improvement are clear from 2 consistent samples (161s/165s, a tight 4s spread), but per this document's own precedent (§8.5's "honesty note"), this should be treated as an initial reading, not a fully-powered 5-run measurement — re-confirm with a proper 5-run sample once this branch merges and organic `main`/`exec/**` CI activity accumulates, per §8.3's standing re-measurement triggers.
+
+**Sign-off:**
+```
+Infrastructure & Operations Owner
+
+Shard count increase 4->8 implemented and verified against 2 real CI runs on the
+story's own branch: critical path 198.5s (prior 4-shard baseline, §8.5) -> 163.0s
+(8-shard average), a ~17.9% reduction, consistent with the fixed-setup-cost
+mechanism documented in playwright.yml's own comment. 2-run sample flagged as an
+initial reading pending a full 5-run re-confirmation post-merge, per this
+document's own §8.5 honesty-note precedent. No shard exceeded a reasonable
+per-shard ceiling; all runs green.
+
+Signed: Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) — 2026-09-10
+```
+
+---
+
+## 10. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 1.5 | 2026-09-10 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-15 (EPIC-03, v9.3, BLG-OPS-97) — new §9 Shard Count Increase 4→8 Before/After Evidence: `playwright-e2e` shard count doubled (4→8); critical path 198.5s (prior §8.5 baseline) → 163.0s (8-shard, 2-run sample), a ~17.9% reduction. Former §9 Document History renumbered to §10. |
 | 1.4 | 2026-09-08 | Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3) | ST-12 (EPIC-03, v9.2, BLG-QA-147) — new §8.5 first trend re-measurement (day 0 → day 1 against the §8.2 budget). Playwright critical path flat/improved (210.6s → 198.5s excl. one investigated non-suite outlier); backend pytest unchanged (86.75s). No breach. |
 | 1.0 | 2026-05-29 | Sprint Execution Engine | Initial CI pipeline baseline (ST-11, v4.3 EPIC-02, BLG-QA-38). p50=444s. BLG-QA-27 gate cleared. |
 | 1.3 | 2026-09-07 | Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3) | ST-18 (EPIC-03, v9.1, BLG-QA-134) — new §8 Regression Suite Runtime Budget & Reporting: budget thresholds defined (Playwright critical path, per-shard imbalance, backend pytest suite), repeatable manual reporting procedure established, current measurement recorded (no breach). |
