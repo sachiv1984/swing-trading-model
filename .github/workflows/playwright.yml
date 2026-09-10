@@ -1,5 +1,19 @@
 name: Playwright E2E Acceptance Tests
 
+# ST-15 (BLG-OPS-97, EPIC-03, v9.3): playwright-e2e's shard count increased
+# 4 -> 8. docs/ops/ci_pipeline_baseline.md §8.1 (2026-09-07) measured the
+# 4-way critical path (slowest shard) at 210.6s mean / 235s max — comfortably
+# under the 480s alert budget, but backend/frontend jobs were already fully
+# parallel with each other (separate workflow files, no `needs:` dependency
+# anywhere in .github/workflows/ except 2 unrelated maintenance workflows)
+# and Playwright's own shard balance was already confirmed healthy (§7).
+# With no serial bottleneck left to remove, the remaining lever for reducing
+# the critical path itself is more shards — each shard is an independent
+# runner VM (public repo, no concurrency/cost limit), so doubling shard count
+# roughly halves the test-execution portion of each shard's wall-clock while
+# its fixed per-shard setup cost (npm ci + browser install, ~70s) stays flat.
+# Before/after evidence: docs/ops/ci_pipeline_baseline.md §10.
+#
 # Two jobs:
 #
 # 1. playwright-e2e  — behavioural acceptance tests (blocking gate)
@@ -80,8 +94,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4]
-        shardTotal: [4]
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8]
+        shardTotal: [8]
 
     steps:
       - name: Checkout repository

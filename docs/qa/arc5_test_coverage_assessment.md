@@ -1,7 +1,7 @@
 **Owner:** Director of Quality; QA Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-16
+**Last Updated:** 2026-09-09 (ST-05, BLG-QA-82, v9.3 — updated file reference to consolidated signal-card.spec.js); prior — 2026-06-16 (ST-10, BLG-QA-49, v5.6 — sprint execution)
 **Source:** ST-10 / BLG-QA-49 — v5.6 sprint execution
 
 ---
@@ -46,15 +46,15 @@ Intermediate assessment of Playwright and unit test coverage for the three shipp
 
 #### allocation_insufficient badge (Signals page)
 
-**Source:** `tests/e2e/signals-allocation-insufficient.spec.js`
+**Source:** `tests/e2e/signal-card.spec.js` (consolidated v9.3 ST-05, BLG-QA-82; was signals-allocation-insufficient.spec.js)
 
 | AC | Description | Test Scenario | File | Status |
 |----|-------------|--------------|------|--------|
-| Badge visible on signal card | Orange "Cannot Size" badge | SC-SIG-AI-01a | signals-allocation-insufficient.spec.js | ✅ Covered |
-| Panel rendered below card | "Allocation insufficient" panel | SC-SIG-AI-01b | signals-allocation-insufficient.spec.js | ✅ Covered |
-| Reason string rendered | Reason text in card | SC-SIG-AI-02a | signals-allocation-insufficient.spec.js | ✅ Covered |
-| Null reason no error | No crash when reason is null | SC-SIG-AI-02b | signals-allocation-insufficient.spec.js | ✅ Covered |
-| Active signal badge correct | "New Signal" not "Cannot Size" | SC-SIG-AI-03a | signals-allocation-insufficient.spec.js | ✅ Covered |
+| Badge visible on signal card | Orange "Cannot Size" badge | SC-SIG-AI-01a | signal-card.spec.js | ✅ Covered |
+| Panel rendered below card | "Allocation insufficient" panel | SC-SIG-AI-01b | signal-card.spec.js | ✅ Covered |
+| Reason string rendered | Reason text in card | SC-SIG-AI-02a | signal-card.spec.js | ✅ Covered |
+| Null reason no error | No crash when reason is null | SC-SIG-AI-02b | signal-card.spec.js | ✅ Covered |
+| Active signal badge correct | "New Signal" not "Cannot Size" | SC-SIG-AI-03a | signal-card.spec.js | ✅ Covered |
 
 #### Arc 5 Compliance Section (PerformanceAnalytics page)
 

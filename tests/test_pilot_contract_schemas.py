@@ -1,20 +1,25 @@
 """
-Pilot Contract Schema Tests — ST-11 (EPIC-11, v7.8, RISK-03).
+Contract Schema Tests — ST-11 (EPIC-11, v7.8, RISK-03) pilot,
+extended ST-06 (BLG-QA-85, EPIC-02, v9.3).
 
-Lightweight schema-contract tests for the 3 pilot endpoints confirmed by
-Head of Engineering review (ESC-EXEC-20260727-01): GET /positions,
-GET /trades, GET /portfolio.
+Lightweight schema-contract tests, now covering 5 representative endpoints:
+GET /positions, GET /trades, GET /portfolio (original ST-11 pilot, schema
+sourced from docs/specs/api_contracts/*.md), plus GET /cash/summary and
+GET /signals (ST-06 extension, schema sourced directly from
+docs/reference/openapi.yaml's #/components/schemas, per ST-06's specific
+"openapi.yaml vs actual route behaviour" acceptance criterion).
 
 Distinct from the existing status-code/envelope smoke tests in
-test_api_contracts.py (TestPositionEndpoints, TestTradeEndpoints,
-TestPortfolioEndpoints), this file validates that every field documented in
-docs/specs/api_contracts/{position,trade,portfolio}_endpoints.md is actually
-present on a realistic (non-empty) response, with the documented type. This
-catches "field silently removed/renamed" contract drift that an empty-list
-smoke test cannot — an empty list has no fields to check.
+test_api_contracts.py, this file validates that every field documented in
+the relevant contract source is actually present on a realistic (non-empty)
+response, with the documented type. This catches "field silently
+removed/renamed" contract drift that an empty-list smoke test cannot — an
+empty list has no fields to check.
 
 Approach documented for extending to further endpoints:
-docs/testing/pilot_contract_test_approach.md.
+docs/testing/pilot_contract_test_approach.md (ST-06 update: now reflects 5
+endpoints covered, 2 of them openapi.yaml-sourced, and records the drift
+found/fixed by this extension).
 
 No new dependency added — plain dict/type assertions, consistent with this
 repo's existing lint-style tests (e.g. test_lint_api_contract_headings.py),
@@ -355,6 +360,118 @@ class TestPortfolioContractSchema:
         assert_schema(
             data["positions"][0], PORTFOLIO_POSITION_SUMMARY_SCHEMA, "GET /portfolio data.positions[0]"
         )
+
+
+# ---------------------------------------------------------------------------
+# GET /cash/summary  (docs/reference/openapi.yaml #/components/schemas/CashSummary
+#                     + docs/specs/api_contracts/cash_endpoints.md)
+#
+# ST-06 (BLG-QA-85, EPIC-02, v9.3) extension #1 of 2 — first extension of this
+# pilot to source its schema from openapi.yaml directly (endpoints 1-3 above
+# source from docs/specs/api_contracts/*.md, per the original ST-11 pilot).
+# ---------------------------------------------------------------------------
+
+CASH_SUMMARY_SCHEMA = {
+    "total_deposits": NUM,
+    "total_withdrawals": NUM,
+    "net_cash_flow": NUM,
+    "current_cash": NUM,
+}
+
+MOCK_CASH_SUMMARY_FULL = {
+    "total_deposits": 15000.00,
+    "total_withdrawals": 1000.00,
+    "net_cash_flow": 14000.00,
+    "current_cash": 5000.00,
+}
+
+
+class TestCashSummaryContractSchema:
+
+    @patch("main.get_cash_summary", return_value=dict(MOCK_CASH_SUMMARY_FULL))
+    def test_get_cash_summary_matches_documented_schema(self, _):
+        r = CLIENT.get("/cash/summary")
+        assert r.status_code == 200
+        body = r.json()
+        assert body.get("status") == "ok"
+        assert_schema(body["data"], CASH_SUMMARY_SCHEMA, "GET /cash/summary data")
+
+
+# ---------------------------------------------------------------------------
+# GET /signals  (docs/reference/openapi.yaml #/components/schemas/Signal
+#                + docs/specs/api_contracts/signal_endpoints.md)
+#
+# ST-06 (BLG-QA-85, EPIC-02, v9.3) extension #2 of 2.
+#
+# Drift found and fixed inline in openapi.yaml as part of this story (simple,
+# safe additive/rename corrections, unlike the envelope finding below which
+# is a bigger behavioural question left as a recorded finding per this
+# pilot's own established precedent — see class docstring/module comment):
+#   - Signal.momentum_score never matched reality; the real field (per
+#     backend/services/signal_service.py and signal_endpoints.md's own JSON
+#     example) is momentum_percent. Renamed in openapi.yaml.
+#   - CashSummary was missing current_cash, a field already returned by
+#     cash_service.py::get_summary() and already documented correctly in
+#     cash_endpoints.md. Added in openapi.yaml (see class above).
+# ---------------------------------------------------------------------------
+
+SIGNAL_SCHEMA = {
+    "id": str,
+    "ticker": str,
+    "market": str,
+    "signal_date": str,
+    "status": str,
+    "momentum_percent": NUM,
+    "current_price": NUM,
+    "reason": STR_OR_NONE,
+    "relative_strength_pct": NUM_OR_NONE,
+    "week52_high_proximity_pct": NUM_OR_NONE,
+    "avg_daily_volume_20d": (int, type(None)),
+    "price_vs_50d_ma": NUM_OR_NONE,
+}
+
+MOCK_SIGNAL_FULL = {
+    "id": "950e8400-e29b-41d4-a716-446655440000",
+    "ticker": "TSLA",
+    "market": "US",
+    "signal_date": "2026-02-17",
+    "status": "new",
+    "momentum_percent": 45.2,
+    "current_price": 220.50,
+    "reason": None,
+    "relative_strength_pct": 12.4,
+    "week52_high_proximity_pct": -3.1,
+    "avg_daily_volume_20d": 98000000,
+    "price_vs_50d_ma": 5.6,
+}
+
+
+class TestSignalsContractSchema:
+
+    @patch("main.get_signals", return_value=[dict(MOCK_SIGNAL_FULL)])
+    def test_get_signals_matches_documented_schema(self, _):
+        r = CLIENT.get("/signals")
+        assert r.status_code == 200
+        body = r.json()
+
+        # Finding (recorded, not silently fixed — same treatment as the
+        # GET /positions envelope finding above): both openapi.yaml's
+        # OkSignalsList response and signal_endpoints.md's "Response uses
+        # the standard success envelope" claim say this endpoint returns
+        # {"status": "ok", "data": [...]}. The real handler
+        # (backend/main.py::get_signals_endpoint) returns the signals list
+        # directly, no envelope. Asserting REALITY, matching this pilot's
+        # established philosophy that a contract test's job is to catch
+        # drift against actual behaviour. Not fixed inline — an envelope
+        # change is a bigger behavioural/compatibility question than the two
+        # field-level fixes made in openapi.yaml as part of this story.
+        assert isinstance(body, list), (
+            "GET /signals does not return a raw list — either the "
+            "implementation changed to add an envelope (update this test) "
+            "or this assertion needs revisiting."
+        )
+        assert len(body) == 1
+        assert_schema(body[0], SIGNAL_SCHEMA, "GET /signals[0]")
 
 
 # ---------------------------------------------------------------------------
