@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-09 (session — 1 new item added: BLG-BE-113, discovered via Director of Quality agent-mediated review of PR #1629/EPIC-01/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-BE-112, discovered mid-sprint executing ST-03/EPIC-01/`2026-09-09__release-v9.3`); prior — 2026-09-09 (Release Planning `2026-09-09__release-v9.3` STEP 4 — ephemeral Release Slice section appended, marker `RP:v9.3:2026-09-09__release-v9.3`, 27 items); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-10 (session — 1 new item added: BLG-SPEC-140, discovered mid-sprint executing ST-17/EPIC-04/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-BE-113, discovered via Director of Quality agent-mediated review of PR #1629/EPIC-01/`2026-09-09__release-v9.3`); prior — 2026-09-09 (session — 1 new item added: BLG-BE-112, discovered mid-sprint executing ST-03/EPIC-01/`2026-09-09__release-v9.3`); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -3884,6 +3884,30 @@ ST-44 added `scripts/check_contract_example_freshness.py`, a structural drift de
 - Every one of the 40 baseline findings has a recorded disposition (fixed, or documented as a resolver artifact)
 - `python3 scripts/check_contract_example_freshness.py` re-run and its updated finding count recorded
 - API Contracts & Documentation Owner sign-off
+
+---
+
+### BLG-SPEC-140 — Make check_orphaned_specs.py path-aware to resolve duplicate-basename blind spots
+
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Tooling
+**Owner:** Head of Specs Team
+**Source:** ST-17 (BLG-SPEC-70, EPIC-04, `2026-09-09__release-v9.3` sprint execution) — 2026-09-10
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`scripts/check_orphaned_specs.py` (ST-17, BLG-SPEC-70, v9.3) matches spec references by basename only. `docs/specs/` currently has 2 duplicated basenames (`README.md` in `frontend/` and `api_contracts/`; `red_flag_journal.md` in `frontend/pages/` and `api_contracts/`) — for a duplicated name, a reference to either file clears both from the orphan scan, so a genuinely-orphaned file sharing a name with a well-referenced one would go undetected. See `docs/specs/orphaned_spec_scan_20260910.md` for the full disclosure from this story's initial run (0 orphans found; both current duplicate pairs manually spot-checked as non-orphans, so this is a latent blind spot, not a known-missed finding today).
+
+**Scope**
+- Extend the detector to resolve references by full relative path where the reference text includes a directory prefix (a common but not universal pattern in this codebase — many existing references cite bare filenames without a path)
+- For a duplicated basename referenced only by bare filename (no path), fall back to today's basename-only behaviour (conservative — clears both) but flag the ambiguity explicitly in the output rather than silently clearing both
+- Add a `--duplicates` flag or section to the output listing all duplicate-basename pairs found, independent of whether either is flagged as orphaned
+
+**Acceptance Criteria**
+- Detector distinguishes path-qualified references to same-named files in different directories
+- A duplicate-basename pair with only one member referenced (unambiguous path-qualified reference) correctly flags the other as orphaned
+- Existing 10 unit tests in `tests/test_check_orphaned_specs.py` still pass; new tests added for path-aware resolution and the ambiguity-flagging fallback
 
 ---
 

@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-10 (ST-20, EPIC-04, v9.3 — new `trade_tagging_taxonomy.md` registered on creation; see Changelog table for full history)
+**Last Updated:** 2026-09-10 (ST-17, EPIC-04, v9.3 — new `orphaned_spec_scan_20260910.md` registered on creation; see Changelog table for full history)
 
 ---
 
@@ -379,6 +379,7 @@ The Coverage Inventory is the authoritative cross-domain record of spec-to-imple
 
 - `docs/specs/spec_coverage_inventory.md` — Class 3 Operational Record, v1.0, Filed 2026-03-17 (ST-17, EPIC-05). 38 documents audited; 7 actions identified.
 - `docs/specs/spec_debt_dashboard.md` — Class 3 Operational Record, generated 2026-09-10 (ST-16, EPIC-04, v9.3, BLG-SPEC-69). Single-page summary of all open `BLG-SPEC-*` backlog items with age since filing, sorted by priority then age. Regenerate via `scripts/generate_spec_debt_dashboard.py` (read-only against `backlog.md`) — refreshable at any future `groom backlog` run or on demand.
+- `docs/specs/orphaned_spec_scan_20260910.md` — Class 3 Operational Record, Filed 2026-09-10 (ST-17, EPIC-04, v9.3, BLG-SPEC-70). Result of `scripts/check_orphaned_specs.py`'s canonical spec cross-reference linter: 0 orphaned specs found across 133 files; 2 duplicate-basename pairs disclosed as a known detector limitation (filed as `BLG-SPEC-140`).
 
 ---
 
@@ -1154,6 +1155,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-09-10 | ST-17 (EPIC-04, v9.3, BLG-SPEC-70): new `orphaned_spec_scan_20260910.md` (§8) registered on creation — canonical spec cross-reference linter run, 0 orphans found. |
 | 2026-09-10 | ST-20 (EPIC-04, v9.3, BLG-SPEC-76): new `trade_tagging_taxonomy.md` (§3.4) registered on creation. |
 | 2026-09-10 | ST-16 (EPIC-04, v9.3, BLG-SPEC-69): new `spec_debt_dashboard.md` (§8) registered on creation, mirroring `ops_endpoints.md`'s same-day-registration precedent. |
 | 2026-09-09 | Post-ship closure `2026-09-07__release-v9.2` — §42 Test Coverage Gaps (v9.2) added, 0 new gaps this cycle; endpoint coverage drift check found 0 genuine gaps (openapi.yaml 139 vs api_performance_baseline.md 138 normalised endpoints, remaining delta is a query-string formatting quirk, not a missing registration); full-document TSG reconciliation sweep found 0 Open entries. |
