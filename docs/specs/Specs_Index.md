@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 — §42 Test Coverage Gaps section added, 0 new gaps, TSG sweep 0 Open entries; see Changelog table for full history)
+**Last Updated:** 2026-09-10 (ST-24, EPIC-05, v9.3 — new `base44_prompt_changelog.md` registered on creation; see Changelog table for full history)
 
 ---
 
@@ -450,6 +450,7 @@ Populated by the ST-49 freshness-check remediation (`scripts/check_specs_index_f
 | `docs/specs/fe/rfj_design_review_scope.md` | Red Flag Journal — Design Review Scope Document | Frontend Specs & UX Documentation Owner | Planning Document (Class 4) |
 | `docs/specs/frontend/arc5_nav_cohesion_review_v4.6.md` | Arc 5 Nav Cohesion Review — v4.6 | Head of UX & Design | Planning Document (Class 4) |
 | `docs/specs/frontend/base44_prompt_template_library.md` | Base44 Prompt Template Library | Base44 Frontend Prompt Owner | Class 2 — Supporting |
+| `docs/specs/frontend/base44_prompt_changelog.md` | Base44 Prompt Versioning Changelog | Base44 Frontend Prompt Owner | Class 3 — Operational Record |
 | `docs/specs/frontend/blg_qa_111_combined_design_review_shared_playwright_plan.md` | Combined Design Review + Shared Playwright Suite Plan | Head of UX & Design / Director of Quality | Planning Document (Class 4) |
 | `docs/specs/frontend/mobile_responsiveness_baseline_assessment_v7.2.md` | Mobile Responsiveness Baseline Assessment | Head of UX & Design | Planning Document (Class 4) |
 | `docs/specs/frontend/notification_surface_consolidation_review_v7.2.md` | Notification/Digest Surface Consolidation Review | Head of UX & Design | Planning Document (Class 4) |
@@ -1152,6 +1153,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-09-10 | ST-24 (EPIC-05, v9.3, BLG-GOV-180): new `frontend/base44_prompt_changelog.md` registered on creation — indexes the 2 pre-existing Base44 prompt changelogs (`base44_frontend_prompt_owner.md` §3, `base44_prompt_template_library.md`), each cross-linked back to it. |
 | 2026-09-09 | Post-ship closure `2026-09-07__release-v9.2` — §42 Test Coverage Gaps (v9.2) added, 0 new gaps this cycle; endpoint coverage drift check found 0 genuine gaps (openapi.yaml 139 vs api_performance_baseline.md 138 normalised endpoints, remaining delta is a query-string formatting quirk, not a missing registration); full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-08 | ST-49 (EPIC-05, v9.2, BLG-SPEC-135): added `## 8b. Full Spec File Registry` — all 78 files `scripts/check_specs_index_freshness.py` had flagged as unreferenced additions are now indexed by path, grouped by domain. Script now reports 0 unexplained additions (1 pre-existing REMOVALS entry, `qa_evidence_EPIC-xx.md`, is a template-pattern placeholder reference, not a real spec file, and is out of this story's scope). Later same day: ST-43's new `deprecated_endpoint_sunset_tracker.md` (§3.4) registered on creation to avoid immediately regressing the 0-additions state. |
 | 2026-09-07 | Post-ship closure `2026-09-03__release-v9.1` — §41 Test Coverage Gaps (v9.1) added, 0 new gaps this cycle; full-document TSG reconciliation sweep found 0 Open entries (all 26 already resolved). |

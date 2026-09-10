@@ -7,6 +7,7 @@
 **Status:** Canonical
 **Version:** 1.3
 **Last Updated:** 2026-07-02
+**Version history index:** `docs/specs/frontend/base44_prompt_changelog.md` (ST-24, BLG-GOV-180, v9.3) indexes this Changelog alongside `docs/specs/frontend/base44_prompt_template_library.md`'s own Change Log — the two documents together cover Base44 prompt versioning; that index explains which governs which kind of change.
 
 ### Changelog
 

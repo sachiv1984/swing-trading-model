@@ -4,6 +4,7 @@
 **Canonical Source:** docs/specs/frontend/design_system.md
 **Version:** 1.8
 **Last Updated:** 2026-09-08 (v1.8 — added §16 Prompt-Version Provenance Tag convention and §17 Regeneration Diff Checklist, ST-45/ST-46, EPIC-05, v9.2)
+**Version history index:** `docs/specs/frontend/base44_prompt_changelog.md` (ST-24, BLG-GOV-180, v9.3) indexes this Change Log alongside `claude/agents/base44_frontend_prompt_owner.md` §3's own Changelog.
 **Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3); ST-06 (BLG-SPEC-93, EPIC-04, v7.3); ST-13 (BLG-FE-129, EPIC-13, v7.9); ST-18 (BLG-FE-124, EPIC-03, v8.0); ST-12 (BLG-FE-121, EPIC-03, v8.3); ST-14 (BLG-FE-132, EPIC-03, v8.3); ST-17 (BLG-FE-99, EPIC-05, v8.5)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
