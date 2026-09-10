@@ -68,8 +68,8 @@
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-09-09__release-v9.3/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1632,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-09__release-v9.3/qa_evidence_EPIC-04.md",
       "test_scenarios": ["tests/test_generate_spec_debt_dashboard.py", "tests/test_check_orphaned_specs.py"],
