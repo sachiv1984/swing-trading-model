@@ -4528,6 +4528,32 @@ The hosting provider's dashboard-only deploy path filters are invisible to a rep
 
 ---
 
+### BLG-OPS-160 — nightly-stop-update and rebalance-exit appear to have no live scheduled trigger
+**Priority:** P1 (High)
+**Type:** Operations / Backend Correctness
+**Owner:** Infrastructure & Operations Owner; Head of Engineering
+**Source:** ST-05, EPIC-01, v9.4 (2026-09-14__release-v9.4) — surfaced during the scheduled-job-runner inventory; out of ST-05's own spec-only scope, filed separately per execution_prompt.md §7
+**Effort:** S (investigation/confirmation) — remediation effort TBD pending confirmation
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/qa/scheduler_architecture_review_v6.3.md` (2026-06-29, ST-13/BLG-OPS-79/v6.3) explicitly flagged as a "pre-existing configuration gap" that `POST /positions/nightly-stop-update` (trailing-stop recompute) and `POST /signals/rebalance-exit` (rebalance-exit + inv_vol_sizing signal generation) were "currently absent from `daily-snapshot.yml`" and "must be invoked externally." Re-checked live at ST-05 (v9.4, ~11 weeks later): a repo-wide search for callers of either endpoint (`.github/workflows/*.yml`, `production_strategy.py`, and all backend/scripts sources) found none outside the endpoint definitions themselves and their test files — `daily-snapshot.yml` still does not call either endpoint, and no other workflow file does either. If accurate, trailing stops have not been recalculated, and rebalance-exit/inv_vol_sizing signals have not been generated, by any automated process since before v6.3 — both are risk-management-relevant features that would be silently inert in production.
+
+**Important caveat — verify before treating as confirmed:** this repo has a documented precedent (`render_build_filters_gotcha`, 2026-07-28, `docs/ops/` deploy-filter incident) for scheduling/trigger configuration living Render-dashboard-side only (e.g. a native Render Cron Job), invisible to any repo grep. `RENDER_API_KEY` in this repo is the app's own `X-API-Key`, not a Render platform key, so it cannot be used to query Render's API to check this either. **Do not treat this as a confirmed gap until the Render dashboard's own Cron Jobs / Scheduled Jobs configuration has been checked directly** — if a dashboard-native cron already calls these two endpoints, this item should be closed as a documentation-only fix (update the stale `scheduler_architecture_review_v6.3.md` trigger-mechanism table to record the dashboard-side cron instead of "GitHub Actions (external call)"). If no such dashboard cron exists either, this is a live P0-class correctness gap and should be escalated accordingly.
+
+**Scope**
+- Infrastructure & Operations Owner: check the Render dashboard for `trading-assistant-api-c0f9` (or the relevant service) for any native Cron Job calling `/positions/nightly-stop-update` or `/signals/rebalance-exit`
+- If none found: wire both into `daily-snapshot.yml` (or a dedicated workflow) on an appropriate schedule, matching the cadence implied by their nature (trailing-stop: daily; rebalance-exit: last trading day of month, per its own endpoint docstring)
+- Either way: correct `docs/specs/qa/scheduler_architecture_review_v6.3.md`'s trigger-mechanism table, which is currently stale/inaccurate regardless of which outcome applies
+- Cross-check `GET /health/scheduler`'s `trailing_stop`/`rebalance_exit`/`inv_vol_sizing` job entries in production for their actual `last_run` timestamps as a second, independent confirmation signal
+
+**Acceptance Criteria**
+- Render dashboard checked and outcome documented (dashboard-cron found, or confirmed absent)
+- If absent: both endpoints wired into a live schedule; live confirmation that `GET /health/scheduler` shows a recent `last_run` for all three affected job names
+- `scheduler_architecture_review_v6.3.md` corrected to match the confirmed live trigger mechanism
+
+---
+
 ### BLG-SPEC-146 — Canonicalise the Sharpe-ratio lookback window
 **Priority:** P3 (Low)
 **Type:** Spec Debt / Metrics
