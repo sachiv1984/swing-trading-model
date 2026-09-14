@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-10 (ST-11/ST-12, EPIC-03, v9.3 — new `ops_endpoints.md` registered on creation, per the standing on-creation-registration precedent; see Changelog table for full history)
+**Last Updated:** 2026-09-10 (ST-17, EPIC-04, v9.3 — new `orphaned_spec_scan_20260910.md` registered on creation; see Changelog table for full history)
 
 ---
 
@@ -104,6 +104,7 @@ It points to the **single canonical source**.
 - `market_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-08, ST-16): GET /market/status
 - `reports_endpoints.md` — Class 1 Canonical, v0.9, Active (created 2026-03-17, ST-03; updated v0.4 by ST-11 cycle 2026-04-29__release-v3.1; updated v0.9 2026-07-20 ST-04 v7.5 EPIC-04 BLG-FE-118 — GET /reports/daily-pnl added for the Trade History Calendar View): GET /reports/tax-year (UK tax-year P&L) + GET /reports/monthly-pnl (monthly P&L summary) + GET /reports/daily-pnl (daily P&L summary). Dual sign-off: Head of Specs Team + Financial Reporting & Records Owner.
 - `trade_plan_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-30, ST-01, cycle 2026-04-29__release-v3.1): POST /trade-plans, GET /trade-plans/{id}, PUT /trade-plans/{id}, DELETE /trade-plans/{id}, GET /trade-plans/by-position/{position_id}, GET /trade-plans/by-ticker/{ticker}. Sign-off: Sprint Execution Engine (autonomous class).
+- `trade_tagging_taxonomy.md` — Class 1 Canonical, v1.0, Active (created 2026-09-10, ST-20, EPIC-04, v9.3, BLG-SPEC-76): canonical reference for `trade_plans.trade_tags` — free-text tagging, format-constrained (not a closed enum); referenced by `trade_plan_endpoints.md` (UI/creation side) and `analytics_endpoints.md` (reporting side, `GET /analytics/tag-performance`). Sign-off: Sprint Execution Engine (autonomous class).
 - `pre_trade_research_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-30, ST-04, cycle 2026-04-29__release-v3.1): GET /research/{ticker} — aggregates signal, regime, sector, screener, earnings (all sub-sources null-safe). Sign-off: Sprint Execution Engine (autonomous class).
 - `earnings_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-30, ST-07, cycle 2026-04-29__release-v3.1): GET /earnings/{ticker} — upcoming earnings date via yfinance; proximity flag. Sign-off: Sprint Execution Engine (autonomous class).
 - `alerts_endpoints.md` — Class 1 Canonical, v0.3, Active (created 2026-03-20, ST-02; updated v0.3 2026-03-24, ST-05): Alert rules CRUD, alert evaluation, notification feed, notification preferences, alert history (GET /alerts/history). Architecture: FastAPI BackgroundTasks per ADR-003. Sign-off: Head of Specs Team (2026-03-20).
@@ -378,6 +379,8 @@ The Spec Dependency Map is a point-in-time reference document mapping all canoni
 The Coverage Inventory is the authoritative cross-domain record of spec-to-implementation coverage, lifecycle compliance status, and open documentation gaps. It is refreshed every 3 cycles (at `run audit`) and at the start of each major release.
 
 - `docs/specs/spec_coverage_inventory.md` — Class 3 Operational Record, v1.0, Filed 2026-03-17 (ST-17, EPIC-05). 38 documents audited; 7 actions identified.
+- `docs/specs/spec_debt_dashboard.md` — Class 3 Operational Record, generated 2026-09-10 (ST-16, EPIC-04, v9.3, BLG-SPEC-69). Single-page summary of all open `BLG-SPEC-*` backlog items with age since filing, sorted by priority then age. Regenerate via `scripts/generate_spec_debt_dashboard.py` (read-only against `backlog.md`) — refreshable at any future `groom backlog` run or on demand.
+- `docs/specs/orphaned_spec_scan_20260910.md` — Class 3 Operational Record, Filed 2026-09-10 (ST-17, EPIC-04, v9.3, BLG-SPEC-70). Result of `scripts/check_orphaned_specs.py`'s canonical spec cross-reference linter: 0 orphaned specs found across 133 files; 2 duplicate-basename pairs disclosed as a known detector limitation (filed as `BLG-SPEC-140`).
 
 ---
 
@@ -1153,6 +1156,9 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-09-10 | ST-17 (EPIC-04, v9.3, BLG-SPEC-70): new `orphaned_spec_scan_20260910.md` (§8) registered on creation — canonical spec cross-reference linter run, 0 orphans found. |
+| 2026-09-10 | ST-20 (EPIC-04, v9.3, BLG-SPEC-76): new `trade_tagging_taxonomy.md` (§3.4) registered on creation. |
+| 2026-09-10 | ST-16 (EPIC-04, v9.3, BLG-SPEC-69): new `spec_debt_dashboard.md` (§8) registered on creation, mirroring `ops_endpoints.md`'s same-day-registration precedent. |
 | 2026-09-10 | ST-11/ST-12 (EPIC-03, v9.3, BLG-OPS-17/BLG-OPS-20): new `api_contracts/ops_endpoints.md` (§3.4) registered on creation, mirroring ST-43's same-day-registration precedent for `deprecated_endpoint_sunset_tracker.md` (2026-09-08 row below). |
 | 2026-09-09 | Post-ship closure `2026-09-07__release-v9.2` — §42 Test Coverage Gaps (v9.2) added, 0 new gaps this cycle; endpoint coverage drift check found 0 genuine gaps (openapi.yaml 139 vs api_performance_baseline.md 138 normalised endpoints, remaining delta is a query-string formatting quirk, not a missing registration); full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-08 | ST-49 (EPIC-05, v9.2, BLG-SPEC-135): added `## 8b. Full Spec File Registry` — all 78 files `scripts/check_specs_index_freshness.py` had flagged as unreferenced additions are now indexed by path, grouped by domain. Script now reports 0 unexplained additions (1 pre-existing REMOVALS entry, `qa_evidence_EPIC-xx.md`, is a template-pattern placeholder reference, not a real spec file, and is out of this story's scope). Later same day: ST-43's new `deprecated_endpoint_sunset_tracker.md` (§3.4) registered on creation to avoid immediately regressing the 0-additions state. |
