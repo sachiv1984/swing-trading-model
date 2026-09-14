@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-14 (AI Compliance & Governance Officer resolution of `ESC-EXEC-20260910-01` — 1 new item added, `BLG-AI-06` (generation-time sampling hook, concrete remediation path); `BLG-GOV-178` cross-reference updated to record escalation disposition `Open` → `Deferred`); prior — 2026-09-14 (`groom backlog` post-ship closure `2026-09-09__release-v9.3` STEP 12: 26 items archived (all v9.3 shipped items except `BLG-GOV-178`, left as-is per the split-achievability carve-out — open escalation `ESC-EXEC-20260910-01`); 1 ephemeral Release Slice section removed; 0 orphans, 0 stale blockers, 0 promotion candidates); prior — 2026-09-14 (post-ship closure `2026-09-09__release-v9.3` STEP 3 + STEP 6 — 26 shipped items marked ✅ COMPLETE; 1 new item added, `BLG-OPS-156` (endpoint coverage drift check, `GET /positions/{id}` missing from `api_performance_baseline.md`)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-14 (Release Planning `2026-09-14__release-v9.4` STEP 4 — 28-item / 27.55-day release slice appended, marker `RP:v9.4:2026-09-14__release-v9.4`; `BLG-FEAT-95` Priority corrected P3→P2 per STEP 7.1 note); prior — 2026-09-14 (AI Compliance & Governance Officer resolution of `ESC-EXEC-20260910-01` — 1 new item added, `BLG-AI-06` (generation-time sampling hook, concrete remediation path); `BLG-GOV-178` cross-reference updated to record escalation disposition `Open` → `Deferred`); prior — 2026-09-14 (`groom backlog` post-ship closure `2026-09-09__release-v9.3` STEP 12: 26 items archived; 1 ephemeral Release Slice section removed; 0 orphans, 0 stale blockers, 0 promotion candidates); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4587,14 +4587,14 @@ Given the sustained scheduled-rebalance cadence and heavily governance/debt-weig
 ---
 
 ### BLG-FEAT-95 — Minimal "trade plan required before entry" UI soft-nudge
-**Priority:** P3 (Low)
+**Priority:** P2 (Medium) — corrected from P3 at `plan release v9.4` (2026-09-14), per the STEP 7.1 note below
 **Type:** Product Feature / Frontend
 **Owner:** Product Owner
 **Source:** IDEA-product-owner-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
 **Effort:** S
-**Provisional-Target:** TBD
+**Provisional-Target:** v9.4
 
-> **STEP 7.1 note (roadmap rebalance 2026-09-14__scheduled):** Named as this cycle's sole genuinely ungated, build-and-ship-shaped U-item pull-forward candidate (Skill-Silo mandatory-pull-forward clause — see `run_manifest.md`/decision log `DL-079`). Escalated P3→P2 at STEP 8 alongside that finding; Priority above will be corrected to P2 at the next document touch (`groom backlog` or `plan release`) per the same escalation-recording pattern used for `BLG-FEAT-32` at `2026-08-11__scheduled` (DL-078).
+> **STEP 7.1 note (roadmap rebalance 2026-09-14__scheduled):** Named as this cycle's sole genuinely ungated, build-and-ship-shaped U-item pull-forward candidate (Skill-Silo mandatory-pull-forward clause — see `run_manifest.md`/decision log `DL-079`). Escalated P3→P2 at STEP 8 alongside that finding; corrected P3→P2 above at `plan release v9.4` (2026-09-14), per the same escalation-recording pattern used for `BLG-FEAT-32` at `2026-08-11__scheduled` (DL-078). Selected into `2026-09-14__release-v9.4` scope as ST-28/EPIC-06 — see `claude/cycles/2026-09-14__release-v9.4/stage4_backlog_slice.md`.
 
 **Problem**
 `BLG-BE-91` (shipped v8.6) enforces trade-plan linkage at the data layer going forward, but there is no lighter-weight UI-level nudge encouraging the user to create a trade plan *before* opening a position in the first place — the DB-level enforcement only catches the case after the fact.
@@ -4751,6 +4751,47 @@ This is the same substantive question `IDEA-challenger-20260809-02` raised and h
 
 **Acceptance Criteria**
 - Disposition recorded: re-examine (with new analysis) or confirm-closed (citing `BLG-GOV-237`, no new information)
+
+---
+
+## Release Slice — v9.4 (ephemeral — remove at next `groom backlog` per Placement Rule)
+
+<!-- release-plan-marker: RP:v9.4:2026-09-14__release-v9.4 -->
+
+28 items selected into `2026-09-14__release-v9.4` scope (27.55 estimated days, full capacity). Full acceptance criteria: `claude/cycles/2026-09-14__release-v9.4/stage4_backlog_slice.md`. Round-robin, category-balanced, P2-first-then-oldest-first selection from a 74-item / ~65.05-day ungated ready pool.
+
+| ST-ID | Item | EPIC |
+|-------|------|------|
+| ST-01 | BLG-BE-115 | EPIC-01 |
+| ST-02 | BLG-BE-116 | EPIC-01 |
+| ST-03 | BLG-API-02 | EPIC-01 |
+| ST-04 | BLG-API-03 | EPIC-01 |
+| ST-05 | BLG-TECH-20 | EPIC-01 |
+| ST-06 | BLG-QA-162 | EPIC-02 |
+| ST-07 | BLG-QA-163 | EPIC-02 |
+| ST-08 | BLG-QA-164 | EPIC-02 |
+| ST-09 | BLG-OPS-151 | EPIC-03 |
+| ST-10 | BLG-OPS-152 | EPIC-03 |
+| ST-11 | BLG-SEC-35 | EPIC-03 |
+| ST-12 | BLG-SEC-36 | EPIC-03 |
+| ST-13 | BLG-SPEC-136 | EPIC-04 |
+| ST-14 | BLG-SPEC-137 | EPIC-04 |
+| ST-15 | BLG-SPEC-138 | EPIC-04 |
+| ST-16 | BLG-FR-02 | EPIC-04 |
+| ST-17 | BLG-FR-03 | EPIC-04 |
+| ST-18 | BLG-GOV-301 | EPIC-05 |
+| ST-19 | BLG-GOV-302 | EPIC-05 |
+| ST-20 | BLG-GOV-304 | EPIC-05 |
+| ST-21 | BLG-AI-04 | EPIC-05 |
+| ST-22 | BLG-AI-05 | EPIC-05 |
+| ST-23 | BLG-AI-06 | EPIC-05 |
+| ST-24 | BLG-FE-173 | EPIC-06 |
+| ST-25 | BLG-FE-174 | EPIC-06 |
+| ST-26 | BLG-UX-03 | EPIC-06 |
+| ST-27 | BLG-UX-04 | EPIC-06 |
+| ST-28 | BLG-FEAT-95 | EPIC-06 |
+
+Not re-selected: `BLG-GOV-178` (already substantively fulfilled, escalation-tracking only). Design-gate-triggering: `BLG-FE-174`, `BLG-FEAT-95`, `BLG-AI-05` (observable UI ACs) — `run design-gate --cycle 2026-09-14__release-v9.4` required before `plan sprint` seals.
 
 ---
 
