@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.185
-**Last Updated:** 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 STEP 8 immediate actions — 3 source prompts bumped: execution_prompt.md v3.75, delivery_verification_prompt.md v3.11, qa_evidence_template.md v1.14; §8, §9 source-prompt lines and 3 §14 table rows updated); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, acting per-role at explicit user direction — 5 source prompts bumped: execution_prompt.md v3.74, delivery_verification_prompt.md v3.10, qa_evidence_template.md v1.13, backlog_management_prompt.md v1.17, post_ship_closure.md v2.33; §6M, §8, §9, §10 source-prompt lines and 5 §14 table rows updated); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 STEP 8 immediate action — post_ship_closure.md v2.31→v2.32: §14 Post-Ship Closure Engine row and §10 "Source prompt" line both updated to v2.32; header itself corrected from a stale 4.180 to 4.183); prior history retained — see prior entries in version control.
+**Version:** 4.186
+**Last Updated:** 2026-09-14 (lifecycle audit AUD-2026-09-14, action-all-audit-points session — 2 source prompts bumped: release_planning_prompt.md v2.50, lessons_learnt_prompt.md v1.14; plus 2 backfilled §14 corrections, team_charter.md v1.7→v1.8 and .github/pull_request_template.md v1.2→v1.3; §6B source-prompt line and 4 §14 table rows updated); prior — 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 STEP 8 immediate actions — 3 source prompts bumped: execution_prompt.md v3.75, delivery_verification_prompt.md v3.11, qa_evidence_template.md v1.14; §8, §9 source-prompt lines and 3 §14 table rows updated); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, acting per-role at explicit user direction — 5 source prompts bumped: execution_prompt.md v3.74, delivery_verification_prompt.md v3.10, qa_evidence_template.md v1.13, backlog_management_prompt.md v1.17, post_ship_closure.md v2.33; §6M, §8, §9, §10 source-prompt lines and 5 §14 table rows updated); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.49)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.50)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1363,7 +1363,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.185 |
+| Version | 4.186 |
 | Last Updated | 2026-09-14 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
@@ -1373,7 +1373,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.10 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.19 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.49 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.50 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.18 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.75 |
@@ -1384,12 +1384,12 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.32 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
-| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.13 |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.14 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | GitHub Issue Template | `claude/system/gh_issue_template.md` v1.0 |
-| PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.2 |
+| PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.3 |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.7 |
-| Team Charter | `claude/charter/team_charter.md` v1.7 |
+| Team Charter | `claude/charter/team_charter.md` v1.8 |
 
 This playbook is subordinate to and must remain consistent with all governing documents above. In any conflict, governance documents prevail. Update this playbook to reflect the change — do not operate with a known divergence.
 
@@ -1497,6 +1497,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.186 | 2026-09-14 | **Lifecycle audit AUD-2026-09-14, action-all-audit-points session — 2 source prompts bumped, plus 2 backfilled §14 corrections.** `release_planning_prompt.md` v2.49→v2.50 (AUD-2026-09-14-001: STEP -1.6 gains an SLA-breach carry-forward hard gate — reads `.claude_current_state.json.open_escalations`, halts if any entry is `disposition: Open` and past `sla_due_utc`; closes a confirmed live gap where `ESC-EXEC-20260910-01` crossed both Delivery Verification and Post-Ship Closure of `2026-09-09__release-v9.3` breached and unhalted, since only `execution_prompt.md` structurally checked this rule). `lessons_learnt_prompt.md` v1.13→v1.14 (AUD-2026-09-14-003: §5 Type A–E classification gains a verbatim-requirement rule, closing a confirmed drift from the canonical taxonomy found at `2026-09-07__release-v9.2` and `2026-09-09__release-v9.3`). **Backfilled §14 corrections (AUD-2026-09-14-002/-004):** Team Charter v1.7→v1.8 (actual bump occurred 2026-09-07, ST-35/BLG-GOV-208/v9.1, but was never logged or reflected in §14 until this audit); PR DoQ Enforcement Template v1.2→v1.3 (actual bump occurred 2026-06-03, over 3 months undetected). §6B source prompt header v2.49→v2.50 (line 623). §14 table updated: Release Engine Source, Lessons Learnt Prompt, Team Charter, PR DoQ Enforcement Template (4 rows). §14 self-row Version/Last Updated 4.185/2026-09-14→4.186/2026-09-14. Authority: Head of Specs Team (lifecycle audit AUD-2026-09-14, action-all-audit-points session). |
 | 4.185 | 2026-09-14 | **Post-ship closure `2026-09-09__release-v9.3` STEP 8 immediate actions — 3 source prompts bumped.** §14 table updated: `execution_prompt.md` v3.74→v3.75 (§5.3 gains a pre-merge sign-off format lint, LL-v9.3-P4-01); `delivery_verification_prompt.md` v3.10→v3.11 (§2.1 gains a `Pass, escalation open` Result value with defined semantics, distinct from `Pass_with_deviation`, LL-v9.3-P4-02); `qa_evidence_template.md` v1.13→v1.14 (companion Result-column guidance for the same value). §8 source prompt header v3.74→v3.75 (line 887); §9 source prompt header v3.10→v3.11 (line 976). §14 self-row Version/Last Updated 4.184/2026-09-09→4.185/2026-09-14. Authority: Head of Specs Team (post-ship closure `2026-09-09__release-v9.3`, STEP 8 same-cycle application pattern). |
 | 4.184 | 2026-09-09 | **Post-ship closure `2026-09-07__release-v9.2` outstanding-actions resolution (user-directed, "act as the relevant agents and deal with the 7 outstanding actions") — 5 source prompts bumped, resolving 6 of the closure's 7 outstanding actions (the 7th, item 6, targets `qa_evidence_EPIC-xx.md` — Director-of-Quality-owned cycle artefacts, not a governance prompt, so it carries no §14/OPERATIONAL_GUIDE entry).** §14 table updated: `execution_prompt.md` v3.73→v3.74 (STEP 4 step 3a gains a same-step self-verification read-back, LL-v9.2-P3-01; STEP 3.1.A's never-amend-a-pushed-commit guardrail extended to the failed-intermediate-commit trigger path, LL-v9.2-P3-02); `delivery_verification_prompt.md` v3.9→v3.10 (§2.1 gains a `Pass_with_deviation` Result value with defined semantics, LL-v9.2-P4-01); `qa_evidence_template.md` v1.12→v1.13 (companion Result-column guidance for the same value); `backlog_management_prompt.md` v1.16→v1.17 (§1.2 gains a Gate-Inheritance Field-Completeness Scan, LL-v9.2-Closure-01 — applied immediately to `BLG-FEAT-92`, closing its 4-cycle manual-reconciliation friction); `post_ship_closure.md` v2.32→v2.33 (STEP 6 Endpoint Coverage Drift Check gains a Markdown-formatting normalisation note, LL-v9.2-P-Closure-01 — also backfilled a missing 2.32 row in `post_ship_closure_changelog.md`, found omitted during this same edit). §8 source prompt header v3.73→v3.74 (line 887); §9 source prompt header v3.9→v3.10 (line 976); §6M source-prompts line backlog_management_prompt.md v1.16→v1.17 (line 478); §10 source prompt header v2.32→v2.33 (line 1062). Also applied directly: `claude/roadmap/workforce_capacity.md` gains a new "Canonical Effort Band → Days Conversion Table" section (not a governance prompt — no §14 entry; its own stale 4-deep `**Last Updated:**` chain corrected to 3 in the same edit, `shared_standards.md §16.14`). Authority: Head of Specs Team (items 1–5, 7), Director of Quality (item 6, `qa_evidence_EPIC-02.md`/`qa_evidence_EPIC-03.md` — no OPERATIONAL_GUIDE entry) — acting per-role at explicit user direction, 2026-09-09. |
 | 4.183 | 2026-09-09 | **Post-ship closure `2026-09-07__release-v9.2` STEP 8 immediate action — post_ship_closure.md v2.31→v2.32: STEP 8 gains a "same-cycle application pattern" formalisation.** §14 Post-Ship Closure Engine v2.31→v2.32. §10 source prompt header v2.31→v2.32 (line 1062). §14 self-row Version/Last Updated 4.182/2026-09-08→4.183/2026-09-09 (header also corrected — found 2 rows stale, still reading 4.180, against the table's own already-current 4.182; no content beyond the header pointer was actually behind). Change: resolves `2026-09-03__release-v9.1` closure's own Carry-Forward item 2 — formalises "apply an unambiguous Phase 3/4 friction-item fix at the immediately-following Post-Ship Closure's own STEP 8" as the expected default rather than an unwritten precedent, per the confirmed-repeatable pattern at `2026-08-21__release-v9.0`/`2026-09-03__release-v9.1`. Authority: Head of Specs Team (post-ship closure `2026-09-07__release-v9.2`, STEP 8 immediate-action rule). |

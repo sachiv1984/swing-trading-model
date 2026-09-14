@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.13
-**Last Updated:** 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding actions, Head of Specs Team direct action — §3.7 gains a re-verify-against-current-state rule for carried-forward deferred-patch claims, LL-v9.1-Closure-01); prior — 2026-09-07 (ST-22, EPIC-04, v9.1, BLG-GOV-312 — §3.7 gains a "read the named target file directly" step, a distinct failure mode from LL-v8.6-P4-01b); prior — 2026-08-12 (§3.7 gains a patch-ID matching requirement, LL-v8.6-P4-01b — closes a false-positive recurrence-claim gap)
+**Version:** 1.14
+**Last Updated:** 2026-09-14 (AUD-2026-09-14-003: §5 Type A–E classification gains a verbatim-requirement rule — the Classification line must reproduce the canonical description exactly, not a paraphrased per-cycle label); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding actions, Head of Specs Team direct action — §3.7 gains a re-verify-against-current-state rule for carried-forward deferred-patch claims, LL-v9.1-Closure-01); prior — 2026-09-07 (ST-22, EPIC-04, v9.1, BLG-GOV-312 — §3.7 gains a "read the named target file directly" step, a distinct failure mode from LL-v8.6-P4-01b)
 
 ---
 
@@ -322,6 +322,8 @@ Prior cycle checked: <prior_cycle_id | "None — first cycle" | "File not found"
 - Type C — Dependency Stall: A gate or pre-condition was invisible, ambiguous, or not enforced
 - Type D — Cognitive Fatigue: A detail was missed due to prompt length, context overload, or accumulated complexity
 - Type E — Authority Gap: A decision was needed and no role was clearly empowered to make it
+
+**Verbatim requirement (AUD-2026-09-14-003):** The Classification line must reproduce one of the five descriptions above exactly (letter + fixed text), e.g. `Type A — Governance Drift: A documented rule or header requirement was ignored or missed`. Do not paraphrase or replace the fixed description with a situation-specific label — situation-specific nuance belongs in the item's other fields (What happened / Root cause), not in the Classification line itself. Confirmed drifted in live use at `2026-09-07__release-v9.2` and `2026-09-09__release-v9.3` (invented labels such as "Enumeration Gap", "Minor Process Friction" in place of the canonical text) before this rule was added — this keeps Type meaning stable across cycles for Stage 2 audit pattern tracking.
 
 **Recurrence:** Yes — appeared in <prior_cycle_id> | No | Not checkable (no prior file)
 

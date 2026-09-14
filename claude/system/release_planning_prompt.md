@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.49
-**Last Updated:** 2026-08-10
+**Version:** 2.50
+**Last Updated:** 2026-09-14 (AUD-2026-09-14-001: STEP -1.6 gains an SLA-breach carry-forward hard gate — a prior cycle's breached, unresolved escalation now blocks opening a new release cycle); prior — 2026-08-10 (BLG-GOV-288, ST-23 — root `sprint_sealed` reset on new-cycle publish)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -315,6 +315,8 @@ Read `.claude_current_state.json`:
 This check adds a second layer of safety beyond the lifecycle status guard (`status = Closed`): it ensures that `status = Closed` was set via the legitimate post-ship path, not via a partial write or session crash.
 
 **Exception:** If this is the very first cycle in this repository (no `prior_cycle` field in `.claude_current_state.json`), skip this check.
+
+**SLA-breach carry-forward check (AUD-2026-09-14-001):** Read `.claude_current_state.json.open_escalations`. For each entry with `disposition: Open`: if the current UTC time is at or past that entry's `sla_due_utc`, halt — output per `shared_standards.md §5` (gate: `SLA_BREACH_CARRIED`), naming the escalation ID, `owning_authority`, and how many hours past due. A new release cycle may not open while a prior cycle's SLA-breached escalation remains unresolved, regardless of that escalation's `blocks_execution` value — `blocks_execution` governs whether the *originating* engine halts mid-sprint, not whether the breach may be carried silently across a cycle boundary. (Closes the gap found live at `2026-09-14`: `ESC-EXEC-20260910-01` breached SLA on 2026-09-13T10:45Z and remained open, unhalted, through both Delivery Verification and Post-Ship Closure of `2026-09-09__release-v9.3` — no engine's preflight checked this field until now.)
 
 ### -1.7 Prompt Change Log Integrity Check (Advisory — not a hard gate)
 
