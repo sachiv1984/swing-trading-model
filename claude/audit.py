@@ -25,17 +25,18 @@ AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
 PRIOR_AUDIT_ID = "AUD-2026-09-14"
-PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-09-14-001", "AUD-2026-09-14-002", "AUD-2026-09-14-003",
-    "AUD-2026-09-14-004", "AUD-2026-09-14-005",
-]
-  # All 5 improvements filed at AUD-2026-09-14 remain open at session end — filed for review, not
-  # auto-applied (no explicit user direction to action them yet, unlike AUD-2026-08-21's same-day
-  # application). See claude/cycles/2026-09-09__release-v9.3/audit_report_AUD-2026-09-14.md §5b for
-  # full PATCH blocks: -001 (release_planning_prompt.md SLA-breach carry-forward gate), -002/-004
-  # (OPERATIONAL_GUIDE.md §14 + prompt_change_log.md backfills for team_charter.md and
-  # pull_request_template.md), -003 (lessons_learnt_prompt.md Type-taxonomy verbatim requirement),
-  # -005 (advisory only, no patch).
+PRIOR_AUDIT_OPEN_ITEMS = []
+  # All 5 improvements filed at AUD-2026-09-14 were resolved same session, per explicit user
+  # direction ("review the 5 improvements and action"). 4 patched: release_planning_prompt.md
+  # v2.49->v2.50 (001), lessons_learnt_prompt.md v1.13->v1.14 (003), OPERATIONAL_GUIDE.md
+  # v4.185->v4.186 (002 + 004, backfilling team_charter.md and .github/pull_request_template.md
+  # §14 rows). Companion changelogs and prompt_change_log.md updated in the same pass. -005
+  # (CLAUDE.md staleness) was reviewed against this session's actual work per the user's explicit
+  # instruction and closed no-change-needed (advisory only, no file to patch — nothing in
+  # CLAUDE.md's command table, non-negotiables, or §6 checklist was found stale or broken).
+  # Left out of this list (not "OPEN") since it has no prompt_change_log.md entry by design and
+  # would otherwise be misclassified OPEN by the next audit's Phase 0 evidence search. Full
+  # disposition recorded in the filed report's post-publication note.
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
