@@ -142,6 +142,24 @@ def check_daily_cost():
     return check_and_alert_daily_cost(threshold_usd=AI_DAILY_COST_THRESHOLD)
 
 
+@router.post("/check-endpoint-anomalies")
+def check_endpoint_anomalies():
+    """
+    Run the per-endpoint cost/latency anomaly check (ST-54/ai_endpoint_anomaly_service.py)
+    across the 6 AI-invoking endpoints and send a Telegram alert if any fire.
+    Intended to be called by a daily scheduler (GitHub Actions cron —
+    .github/workflows/ai-endpoint-anomaly-check.yml).
+
+    Cost is checked against real claude_audit_log data (recent 24h vs
+    trailing 7-day baseline, per endpoint). Latency has no real data source
+    yet (claude_audit_log carries no latency column — BLG-OPS-161) and is
+    not checked here; `latency_data_source` in the response discloses this
+    as pending rather than a silent pass. ST-09 (BLG-OPS-151, EPIC-03, v9.4).
+    """
+    from services.ai_endpoint_anomaly_service import run_scheduled_anomaly_check
+    return run_scheduled_anomaly_check()
+
+
 class DailyBriefingResponse(BaseModel):
     summary: Optional[str]
     actions: List[Any]

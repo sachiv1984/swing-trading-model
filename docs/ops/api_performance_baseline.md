@@ -2,9 +2,9 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.34
-**Date:** 2026-09-09
-**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
+**Version:** 2.35
+**Date:** 2026-09-14
+**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration; ST-09 (v9.4 EPIC-03, BLG-OPS-151) — POST /ai/check-endpoint-anomalies registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 ---
@@ -2015,10 +2015,39 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 44. POST /ai/check-endpoint-anomalies (v9.4)
+
+### 44.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| POST /ai/check-endpoint-anomalies | v9.4 | Write (Telegram side-effect, conditional) — pending live timing run | 40–100ms (est., no anomaly) | 150–400ms (est., anomaly firing incl. Telegram round-trip) | Pending next baseline re-run |
+
+**Endpoint characteristics:** one `GROUP BY endpoint` aggregate with `FILTER` clauses against the existing, already-indexed `claude_audit_log` table (`database.get_claude_endpoint_cost_windows`, same table `GET /ai/monthly-cost-by-feature` queries — comparable shape, one extra pair of windowed `FILTER` aggregates) plus in-Python anomaly comparison over at most 6 rows (the 6 AI-invoking endpoints). p95 estimate widens to cover the conditional Telegram HTTP round-trip on the (expected rare) path where an anomaly actually fires — mirrors `POST /ai/check-daily-cost`'s existing estimate shape (§14) for the same reason.
+
+### 44.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-09 (v9.4 EPIC-03, BLG-OPS-151) — AI Endpoint Anomaly Check Scheduled-Job Registration Sign-Off
+
+AC-01: 1 endpoint added with estimated p50/p95 and measurement date
+       (2026-09-14 — estimated from comparable GROUP BY/FILTER aggregate
+       baseline against claude_audit_log, §43 GET /ai/monthly-cost-by-feature,
+       widened for the conditional Telegram alert path per §14 POST
+       /ai/check-daily-cost precedent). ✅ PASS
+AC-02: Estimation methodology documented. ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§43 pattern). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-09-14
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.35 | 2026-09-14 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-09 (v9.4 EPIC-03, BLG-OPS-151): §44 added — POST /ai/check-endpoint-anomalies registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained this path in the same PR. |
 | 2.34 | 2026-09-10 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-11/ST-12/ST-13/ST-14 (v9.3 EPIC-03, BLG-OPS-17/BLG-OPS-20/BLG-OPS-94/BLG-OPS-96): §43 added — GET /ops/alpaca-call-report, GET /ops/research-session-report, GET /ai/monthly-cost-by-feature, POST /ops/purge-audit-logs registered pending live timing runs. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained these 4 paths across this EPIC's stories. |
 | 2.33 | 2026-09-09 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-01 (v9.3 EPIC-01, BLG-BE-13): §42 added — GET /screener/history registered pending live timing run. Same table/index shape as GET /screener/regime-distribution. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/screener/history` path in the same PR. |
 | 2.32 | 2026-09-03 | Post-Ship Closure Engine (agent-mediated, Director of Quality role — §5.3) | STEP 5.1 cross-cycle deviation consolidation review (post-ship closure, `2026-08-21__release-v9.0`): `DEV-EPIC03-ST09-01`'s labeled `Target resolution release` field still read "Superseded once `BLG-BE-107` lands..." despite §36.7 (added `2026-09-03`, ST-02/EPIC-01/v9.0) already recording the deviation's actual resolution — same resolution-status-drift pattern the consolidation review has now confirmed 3 prior times (`DEV-ST14-01`, `DEV-v8.6-ST02-01`, and implicitly others). Corrected the field to state the resolution in place, without altering the existing §36.5/§36.7 narrative. See `docs/governance/deviation_consolidation_review_2026-09-03.md`. |

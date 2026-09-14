@@ -7,14 +7,16 @@ AI-invoking endpoint and flags a spike when the recent value exceeds the
 baseline by more than a configurable multiplier.
 
 Scope (ST-54 AC: "Anomaly check scoped and added; confirmed to fire on a
-simulated cost/latency spike"): this module provides the detection function
-and is verified via a simulated spike in tests/test_ai_endpoint_anomaly_service.py
--- it is not wired to a live scheduled job or alert-delivery channel this
-cycle (no production DB access from this environment to source real
-recent-window data; see docs/ops/ai_feature_cost_trend_2026_q3.md §3 for the
-same constraint documented against ST-56). Wiring this into an actual
-scheduled check (e.g. alongside POST /ai/check-daily-cost) is follow-up
-scope, filed as BLG-OPS-151.
+simulated cost/latency spike"): this module provides the detection functions,
+verified via a simulated spike in tests/test_ai_endpoint_anomaly_service.py.
+
+Wiring update (ST-09, BLG-OPS-151, EPIC-03, v9.4): `run_scheduled_anomaly_check()`
+below wires these into POST /ai/check-endpoint-anomalies, triggered by
+.github/workflows/ai-endpoint-anomaly-check.yml on a daily cadence, with a
+Telegram alert on any firing anomaly (not log-only) -- see that function's
+docstring for the real-vs-simulated data source split (cost: real
+claude_audit_log data; latency: no latency column exists yet, so verified
+against a simulated feed only, per RISK-03 -- disclosed, not fabricated).
 
 Covers all 6 current AI-invoking endpoints (per the same inventory used in
 docs/ops/ai_feature_cost_trend_2026_q3.md):
@@ -131,3 +133,119 @@ def check_latency_anomaly(
         spike_multiplier,
         MIN_LATENCY_BASELINE_MS,
     )
+
+
+def run_scheduled_anomaly_check(
+    send_alert: bool = True,
+    simulated_latency_feed: Optional[dict] = None,
+) -> dict:
+    """Wire check_cost_anomaly/check_latency_anomaly into a callable a
+    scheduler can invoke (ST-09, BLG-OPS-151, EPIC-03, v9.4).
+
+    Cost: sourced from real `claude_audit_log` data via
+    `database.get_claude_endpoint_cost_windows()` (recent 24h vs trailing
+    7-day baseline, per endpoint).
+
+    Latency: `claude_audit_log` has no latency column (confirmed — see
+    `database.get_claude_endpoint_cost_windows` docstring; BLG-OPS-161 filed
+    as the prerequisite gap), so there is no real-data source to check
+    against in this execution environment or in production today. Per
+    RISK-03, this sub-criterion is delivered and verified against a
+    simulated feed only: pass `simulated_latency_feed` as
+    `{endpoint: {"recent_p95_ms": x, "baseline_p95_ms": y}}` to exercise it
+    (e.g. from a scheduler dry-run or this module's tests). When omitted,
+    latency checks are skipped and explicitly disclosed as pending via
+    `latency_data_source` in the return value — not silently passed.
+
+    On any firing anomaly (cost or, when simulated, latency), sends a
+    Telegram alert reusing the delivery pattern already used by
+    `services.gemini_service.check_and_alert_daily_cost` (SI-05/BLG-OPS-57
+    precedent) — not log-only, per this story's AC.
+    """
+    from database import get_claude_endpoint_cost_windows
+
+    cost_results = []
+    for window in get_claude_endpoint_cost_windows():
+        cost_results.append(
+            check_cost_anomaly(
+                endpoint=window["endpoint"],
+                recent_cost_usd=window["recent_avg_cost_usd"],
+                baseline_cost_usd=window["baseline_avg_cost_usd"],
+            )
+        )
+
+    latency_results = []
+    if simulated_latency_feed:
+        for endpoint, values in simulated_latency_feed.items():
+            latency_results.append(
+                check_latency_anomaly(
+                    endpoint=endpoint,
+                    recent_p95_latency_ms=values["recent_p95_ms"],
+                    baseline_p95_latency_ms=values["baseline_p95_ms"],
+                )
+            )
+
+    firing = [r for r in cost_results + latency_results if r.is_anomaly]
+    alert_sent = False
+    if firing and send_alert:
+        alert_sent = _send_anomaly_telegram_alert(firing)
+
+    return {
+        "checked_utc": _now_iso(),
+        "cost_anomalies": [_result_dict(r) for r in cost_results],
+        "latency_anomalies": [_result_dict(r) for r in latency_results],
+        "firing_count": len(firing),
+        "alert_sent": alert_sent,
+        "latency_data_source": (
+            "simulated_feed" if simulated_latency_feed else "not_available_pending_BLG-OPS-161"
+        ),
+    }
+
+
+def _result_dict(r: AnomalyResult) -> dict:
+    return {
+        "endpoint": r.endpoint,
+        "metric": r.metric,
+        "is_anomaly": r.is_anomaly,
+        "recent_value": r.recent_value,
+        "baseline_value": r.baseline_value,
+        "multiplier": r.multiplier,
+        "reason": r.reason,
+    }
+
+
+def _now_iso() -> str:
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _send_anomaly_telegram_alert(firing: list) -> bool:
+    """Send one Telegram alert summarising all firing anomalies. Mirrors
+    `services.gemini_service.check_and_alert_daily_cost`'s delivery
+    mechanism (urllib, same bot/chat env vars) rather than a log-only
+    notification."""
+    from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+    import urllib.request
+    import urllib.parse
+
+    if not (TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID):
+        return False
+
+    lines = ["⚠️ AI endpoint cost/latency anomaly detected"]
+    for r in firing:
+        lines.append(
+            f"{r.endpoint} [{r.metric}]: recent={r.recent_value:.4g} "
+            f"baseline={r.baseline_value:.4g} ({r.multiplier:.1f}x)"
+        )
+    msg = "\n".join(lines)
+    params = urllib.parse.urlencode({
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": msg,
+        "parse_mode": "HTML",
+    })
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage?{params}"
+    try:
+        urllib.request.urlopen(url, timeout=10)
+        return True
+    except Exception:
+        return False

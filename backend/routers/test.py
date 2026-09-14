@@ -192,6 +192,7 @@ async def test_all_endpoints(request: Request):
 
         # AI Cost Monitoring (v4.1 / ST-09)
         {"name": "POST /ai/check-daily-cost", "method": "POST", "url": f"{base_url}/ai/check-daily-cost", "critical": False},
+        {"name": "POST /ai/check-endpoint-anomalies", "method": "POST", "url": f"{base_url}/ai/check-endpoint-anomalies", "critical": False},
 
         # Claude API Audit Trail (v4.2 / ST-07)
         {"name": "GET /ai/claude-audit-log", "method": "GET", "url": f"{base_url}/ai/claude-audit-log", "critical": False},
