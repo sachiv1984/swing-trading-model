@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.13
-**Last Updated:** 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, Head of Specs Team direct action — added "Pass_with_deviation" to the Result column's enumerated values with defined semantics, matching delivery_verification_prompt.md v3.10 §2.1, LL-v9.2-P4-01); prior — 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-03/ST-15, BLG-QA-109 — added an explicit FI-P3-02 wording-only-AC exception citation note); prior — 2026-08-13 (post-ship closure `2026-08-12__release-v8.7` STEP 8 immediate action — LL-v8.7-P4-01: post-open CI-fix restatement requirement clarified as per-fix, not per-EPIC); prior history retained — see prior entries in version control.
+**Version:** 1.14
+**Last Updated:** 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 STEP 8 immediate action, Head of Specs Team direct action — added "Pass, escalation open" to the Result column's enumerated values with defined semantics, matching delivery_verification_prompt.md v3.11 §2.1, LL-v9.3-P4-02); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, Head of Specs Team direct action — added "Pass_with_deviation" to the Result column's enumerated values with defined semantics, matching delivery_verification_prompt.md v3.10 §2.1, LL-v9.2-P4-01); prior — 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-03/ST-15, BLG-QA-109 — added an explicit FI-P3-02 wording-only-AC exception citation note); prior history retained — see prior entries in version control.
 
 # QA Evidence Template
 
@@ -31,9 +31,11 @@ Last Updated: <date>
 |---------|----------------|----------------|---------------------|--------|------------|
 | ST-xx | <spec file#section> | <one line> | <criteria text> | Pass / Fail | None / DEV-ref |
 
-*(Result column: use "Pass", "Pass with notes", "Fail", or "Pass_with_deviation". "Pending DoQ" and "Awaiting QA" are pre-signing placeholders only — must be updated to "Pass"/"Fail" before sign-off block is completed.)*
+*(Result column: use "Pass", "Pass with notes", "Fail", "Pass_with_deviation", or "Pass, escalation open". "Pending DoQ" and "Awaiting QA" are pre-signing placeholders only — must be updated to "Pass"/"Fail" before sign-off block is completed.)*
 
 > **`Pass_with_deviation` (added v1.13, LL-v9.2-P4-01):** use when an AC was narrowed or partially unmet, the gap is disclosed transparently in this row's own comment/notes (not fabricated or silently omitted), and a confirmed backlog item tracks the remaining gap. The `Deviations` cell must name that backlog item. Treated as functionally equivalent to `Pass with notes` for verification purposes — not a `Fail` — and defaults to P3 severity unless the gap is later assessed as core-behaviour-incomplete. See `delivery_verification_prompt.md` §2.1.
+
+> **`Pass, escalation open` (added v1.14, LL-v9.3-P4-02):** use when the AC's own literal wording is fully met (nothing narrowed or unmet), but a related, non-blocking escalation tracks a stronger evidentiary bar than the AC itself requires. The `Deviations` cell must name the open escalation ID (no backlog item is required, since nothing was narrowed or unmet). Treated as functionally equivalent to `Pass with notes` for verification purposes — not a `Fail` and not a deviation. See `delivery_verification_prompt.md` §2.1.
 
 *(Reconcile any partial per-item entries from STEP 3.1.C into this table. Do not duplicate — one row per ST item.)*
 

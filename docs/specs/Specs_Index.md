@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-10 (ST-24, EPIC-05, v9.3 — new `base44_prompt_changelog.md` registered on creation; see Changelog table for full history)
+**Last Updated:** 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 — §43 Test Coverage Gaps v9.3 section added, 0 new gaps, TSG sweep 0 Open; see Changelog table for full history)
 
 ---
 
@@ -1144,6 +1144,16 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ---
 
+## 43. Test Coverage Gaps — v9.3 (2026-09-09__release-v9.3)
+
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — every EPIC's `test_scenarios` array was cross-referenced against its `qa_evidence_EPIC-xx.md` "Scenarios run" field and confirmed executed (EPIC-05's path-naming inconsistency — `test_scenarios` lists the script path, `qa_evidence` lists its corresponding test file — flagged as a naming inconsistency only, not a coverage gap). Table is N/A per §6.
+
+**Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** `docs/reference/openapi.yaml` (144 normalised method+path endpoints) vs `docs/ops/api_performance_baseline.md` (250 normalised entries) — after normalising path parameters and stripping backticks/query-string suffixes, 1 genuine gap found: `GET /positions/{id}` (bare single-position fetch) has no baseline measurement row. No existing open `BLG-OPS-*` item covered this specific gap; filed `BLG-OPS-156`.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep, per `post_ship_closure.md`'s no-fixed-section-number scan rule):** Scanned all 26 `### N.N TSG-*` entries (§9–§40) for literal `**Status:** Open`. 0 Open entries found — every existing TSG entry already carries a `RESOLVED`/`not_applicable`/confirmed-still-open disposition (most recently reconciled at v8.6/§39, v9.0/§40, v9.1/§41, and v9.2/§42 closures). 0 Open TSG entries checked, 0 resolved.
+
+---
+
 ## 12. Guiding Principle
 
 > Specs explain decisions.
@@ -1157,6 +1167,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-09-14 | Post-ship closure `2026-09-09__release-v9.3` — §43 Test Coverage Gaps (v9.3) added, 0 new gaps this cycle; endpoint coverage drift check found 1 genuine gap (`GET /positions/{id}` missing from `api_performance_baseline.md`, `BLG-OPS-156` filed); full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-10 | ST-24 (EPIC-05, v9.3, BLG-GOV-180): new `frontend/base44_prompt_changelog.md` registered on creation — indexes the 2 pre-existing Base44 prompt changelogs (`base44_frontend_prompt_owner.md` §3, `base44_prompt_template_library.md`), each cross-linked back to it. |
 | 2026-09-10 | ST-17 (EPIC-04, v9.3, BLG-SPEC-70): new `orphaned_spec_scan_20260910.md` (§8) registered on creation — canonical spec cross-reference linter run, 0 orphans found. |
 | 2026-09-10 | ST-20 (EPIC-04, v9.3, BLG-SPEC-76): new `trade_tagging_taxonomy.md` (§3.4) registered on creation. |

@@ -1,9 +1,14 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.3
 Cycle: 2026-09-09__release-v9.3
-Last Updated: 2026-09-09
+Last Updated: 2026-09-14 (post-ship closure — superseded on ship)
+
+Superseded by: v9.3 ship — 2026-09-14
+Changelog: docs/product/changelog.md#v9.3
+Verification report: claude/cycles/2026-09-09__release-v9.3/verification_report.md
+Cycle: 2026-09-09__release-v9.3
 
 ## Planning Decisions — v9.3 Full-Capacity Debt Clearance
 

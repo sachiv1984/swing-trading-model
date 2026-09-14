@@ -3,11 +3,66 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 — v9.2 entry added); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 — v9.1 entry added); prior — 2026-09-03 (post-ship closure 2026-08-21__release-v9.0 — v9.0 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 — v9.3 entry added); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 — v9.2 entry added); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 — v9.1 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.3 — Full-Capacity Debt Clearance — 2026-09-14
+Cycle: 2026-09-09__release-v9.3
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Backend reliability & data-correctness debt — screener result history table + `GET /screener/history`; the 3 signal write paths consolidated into a single validated path; request-scoped correlation-ID propagation added across the FastAPI request lifecycle; Arc5 compliance `total_closed_trades` null-vs-zero conflation fixed | — | `docs/specs/api_contracts/screener_api_contract.md#GET /screener/history`; `docs/specs/api_contracts/backend_engineering_patterns.md#Correlation-ID request tracing`; `docs/specs/structured_logging_standards.md#Known Deviations`; `docs/specs/api_contracts/arc5_compliance_analytics.md#total_closed_trades` |
+| EPIC-02 | QA & test-infrastructure debt — 3 overlapping SignalCard Playwright specs consolidated into one; openapi.yaml-vs-route contract test pilot extended to 5 endpoints (2 field-level drifts fixed inline); DoQ sign-off template freshness confirmed; Watchlist.js post-refactor visual QA passed; cross-browser (Firefox/WebKit) Playwright matrix evaluated and deferred with rationale; backend test suite runtime baseline recorded | — | `tests/e2e/signal-card.spec.js`; `tests/test_pilot_contract_schemas.py`; `docs/reference/openapi.yaml`; `docs/testing/doq_signoff_template_freshness_review_20260909.md`; `docs/specs/frontend/pages/watchlist.md`; `docs/qa/cross_browser_playwright_matrix_evaluation_20260909.md`; `docs/ops/backend_test_suite_runtime_baseline.md` |
+| EPIC-03 | Operations & cost-monitoring debt — Alpaca API and research-endpoint call counts now logged and reportable; AI audit log retention policy (`gemini_audit_log` 90 days, new `claude_audit_log` 730 days) now actually enforced; Anthropic API cost now attributable per feature; CI Playwright shard count doubled 4→8 (~18% critical-path reduction) | — | `docs/specs/api_contracts/ops_endpoints.md#GET /ops/alpaca-call-report,GET /ops/research-session-report`; `docs/ops/ai_audit_log_retention_policy.md`; `docs/specs/api_contracts/ai_endpoints.md#GET /ai/monthly-cost-by-feature`; `docs/ops/ci_pipeline_baseline.md#9. Shard Count Increase 4->8` |
+| EPIC-04 | Spec & documentation debt — spec debt dashboard (refreshable at future `groom backlog` runs); OpenAPI response examples added for Arc 5 endpoints; `data_model.md` migration blocks reviewed/reconciled; canonical trade-tagging taxonomy documented; canonical spec cross-reference linter authored, 0 orphans confirmed across 133 spec files | — | `scripts/generate_spec_debt_dashboard.py`; `docs/specs/spec_debt_dashboard.md`; `docs/reference/openapi.yaml`; `docs/specs/data_model.md`; `docs/specs/trade_tagging_taxonomy.md`; `scripts/check_orphaned_specs.py`; `docs/specs/orphaned_spec_scan_20260910.md` |
+| EPIC-05 | Governance process debt & security — AI-endpoint DB connection pool sizing reviewed (no change needed); quarterly AI-output boundary-language sampling audit conducted (dry-run, 0 findings; stronger live-production sample tracked as a non-blocking open escalation); local pre-commit lint added for OpenAPI contract completeness; Base44 prompt-versioning changelog and component-regeneration diff-review checklist created; onboarding template authored for new agent role charters; API key rotation drill exercised end-to-end on a live key | — | `docs/ops/db_connection_pool_ai_endpoint_review_20260910.md`; `scripts/run_ai_output_boundary_sample_audit.py`; `docs/ops/ai_output_boundary_sample_audit_20260910.md`; `scripts/check_local_openapi_contract_completeness.py`; `.githooks/pre-commit`; `docs/specs/frontend/base44_prompt_changelog.md`; `docs/specs/frontend/base44_prompt_template_library.md#17`; `claude/agents/_role_charter_template.md`; `claude/agents/README.md`; `docs/ops/api_key_rotation_policy.md#Rotation Drill History` |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| *(none — both register entries are P3)* | — | — | — |
+
+2 minor (P3) Known Deviations recorded in `structured_logging_standards.md` — see `verification_report.md §4`: backend log output remains plain-text, not the mandated JSON Lines format (pre-existing gap, `BLG-BE-112` filed); the correlation-ID propagation mechanism implemented (`contextvars`-based) differs from the document's illustrative `request.state`-based sample, because service/database-layer log lines have no `Request` object (documentation-freshness note, no backlog item — folds into a future revision of that section). 1 open non-blocking escalation carried forward past this sprint's close: `ESC-EXEC-20260910-01` (ST-22/EPIC-05, cross-referenced in `BLG-GOV-178`) — AI Compliance & Governance Officer to perform or authorise a genuine live-production AI-output boundary-language sample; the dry-run against illustrative examples satisfied ST-22's literal AC.
+
+### Tech backlog items shipped
+- [ST-01] [D] Screener result history table
+- [ST-02] [D] Signal write-path schema consolidation
+- [ST-03] [D] Structured logging correlation-ID propagation across FastAPI request lifecycle
+- [ST-04] [D] Arc5 compliance total_closed_trades conflates DB schema error with genuine zero-trades state
+- [ST-05] [D] Consolidate 3 overlapping SignalCard Playwright specs
+- [ST-06] [D] Contract test suite: openapi.yaml vs. actual route behaviour
+- [ST-07] [D] DoQ sign-off template freshness check
+- [ST-08] [D] Watchlist.js post-refactor visual QA
+- [ST-09] [D] Cross-browser Playwright matrix evaluation
+- [ST-10] [D] Backend test suite runtime baseline
+- [ST-11] [D] Alpaca API cost monitoring
+- [ST-12] [D] Research endpoint cost monitoring
+- [ST-13] [D] Data retention policy for AI audit log tables
+- [ST-14] [D] Anthropic API cost per-feature attribution
+- [ST-15] [D] CI pipeline build-time reduction via parallelized test jobs
+- [ST-16] [D] Spec debt dashboard
+- [ST-17] [D] Canonical spec cross-reference linter
+- [ST-18] [D] OpenAPI response examples for Arc 5 endpoints
+- [ST-19] [D] Migration block consolidation review
+- [ST-20] [D] Trade tagging taxonomy documentation
+- [ST-21] [D] Database connection pool sizing review for AI endpoints
+- [ST-22] [G] Quarterly AI output sampling audit (consolidated)
+- [ST-23] [G] Local pre-commit lint for OpenAPI contract completeness
+- [ST-24] [G] Base44 prompt versioning changelog
+- [ST-25] [G] Base44 component regeneration diff review checklist
+- [ST-26] [G] Onboarding template for new agent role charters
+- [ST-27] [D] API key rotation drill
+
+Sign-off: Product Owner — 2026-09-14
+QA sign-off: Director of Quality — 2026-09-14
 
 ---
 

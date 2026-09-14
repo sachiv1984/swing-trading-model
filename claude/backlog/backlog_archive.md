@@ -1,11 +1,768 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-07 (groom backlog post-ship closure 2026-09-03__release-v9.1 — 43 items archived: 41 v9.1 shipped items (ST-01 through ST-41) plus 2 leftover already-resolved items, `BLG-GOV-105` (killed — confirmed duplicate of `BLG-GOV-45`) and `BLG-GOV-315` (already resolved same-day at v9.0's own post-ship closure, `execution_prompt.md` v3.70→v3.71, found via this run's §1.3 Governance Prompt Duplicate Cross-Check — 1 genuine match of 15 raw candidates); 1 ephemeral Release Slice section removed — v9.1); prior — 2026-09-03 (Product Owner direct action — Duplicate ID Review: confirmed BLG-OPS-37/31/28, BLG-FE-49, BLG-FEAT-38 are same-item double-archival from a one-time 2026-06-16 bulk-sweep gap, not ID collisions; no renumbering required, see disposition note); prior — 2026-09-03 (groom backlog post-ship closure 2026-08-21__release-v9.0 — 28 items archived: BLG-QA-26/81/83/84/89/144/153, BLG-OPS-25/90/95/98/101/103/147/148, BLG-BE-49/54/56/105/106/107/108/109, BLG-FEAT-93, BLG-FE-164, BLG-TECH-15/17, BLG-GOV-313 (leftover already-complete item missed by the 2026-08-21 sweep); 1 ephemeral Release Slice section removed — v9.0; 5 pre-existing genuine duplicate IDs found by this run's ID Uniqueness Scan flagged for Product Owner review, not auto-resolved); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
+**Last Updated:** 2026-09-14 (groom backlog post-ship closure 2026-09-09__release-v9.3 — 26 items archived: all v9.3 shipped items except `BLG-GOV-178` (left in active backlog per the split-achievability carve-out — open escalation `ESC-EXEC-20260910-01`); 1 ephemeral Release Slice section removed — v9.3); prior — 2026-09-09 (groom backlog post-ship closure 2026-09-07__release-v9.2 — 57 items archived: 56 v9.2 shipped items + `BLG-GOV-317` resolved directly by this run's own spec-debt-deep-review marker seeding; 1 ephemeral Release Slice section removed — v9.2); prior — 2026-09-07 (groom backlog post-ship closure 2026-09-03__release-v9.1 — 43 items archived: 41 v9.1 shipped items (ST-01 through ST-41) plus 2 leftover already-resolved items, `BLG-GOV-105`/`BLG-GOV-315`; 1 ephemeral Release Slice section removed — v9.1); prior history retained — see prior entries in version control.
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-BE-13 — Screener result history table
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-BE-13 — Screener result history table
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Backend Engineering
+**Source:** IDEA-backend-20260421-01 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** ~~Screener live ≥ 60 days (sufficient history to make a queryable history table valuable).~~ **Gate cleared 2026-08-08** — Screener shipped v3.0 (2026-04-27, 103 days ago); threshold long since passed.
+
+**Problem**
+Each screener run overwrites or appends to the current results without a queryable historical table. After 60 days, trend analysis (how screener output has evolved over time) becomes valuable but requires a properly structured history table with per-run metadata (run_timestamp, run_id, ticker count, pass count, regime distribution). Without this, historical comparison is not possible.
+
+**Scope**
+- `screener_run_history` table: run_id, run_timestamp, total_tickers, pass_count, regime_distribution JSON
+- `GET /screener/history` endpoint returning run history with pagination
+- Backfill not required; populate from next run forward
+
+**Acceptance Criteria**
+- History table created and populated on each screener run
+- `GET /screener/history` returns paginated run history
+- Gate condition verified by Product Owner before sprint planning
+
+---
+
+### BLG-BE-44 — Signal write-path schema consolidation
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-BE-44 — Signal write-path schema consolidation
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Backend / Refactor
+**Owner:** Data Model & Domain Schema Owner
+**Source:** IDEA-data-model-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** ~~BLG-SEC-02's 3-path sanitisation fix (shipped v6.4) has run in production for ≥30 days with no incident (clears ~2026-08-01).~~ **Gate cleared 2026-08-08** — 37 days in production since v6.4 (2026-07-02) with no incident on record.
+
+**Problem**
+BLG-SEC-02 just shipped a 3-path sanitisation fix to the signal write path; consolidating that code now, before it has stabilised in production, risks compounding an unproven change with a refactor.
+
+**Scope**
+- Consolidate the 3 signal write paths into a single validated path once the sanitisation fix has proven stable
+
+**Acceptance Criteria**
+- Refactor only commences after gate condition (30-day stability window) confirmed
+
+---
+
+### BLG-BE-48 — Structured logging correlation-ID propagation across FastAPI request lifecycle
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-BE-48 — Structured logging correlation-ID propagation across FastAPI request lifecycle
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Backend / Observability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** IDEA-backend-engineering-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Log lines from a single request cannot currently be correlated across service boundaries (e.g. a signal-generation request that also calls the AI service) — debugging multi-step requests requires manual timestamp correlation.
+
+**Scope**
+- Add a request-scoped correlation ID (middleware-generated or accepted via header), included in all log lines emitted during that request
+
+**Acceptance Criteria**
+- Correlation ID present in logs for at least 2 representative multi-step endpoints
+- Documented in `backend_engineering_patterns.md`
+
+---
+
+### BLG-BE-111 — Arc5 compliance total_closed_trades conflates DB schema error with genuine zero-trades state
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-BE-111 — Arc5 compliance total_closed_trades conflates DB schema error with genuine zero-trades state
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Backend Engineering Patterns Owner
+**Source:** Agent-mediated QA review of PR #1596 (EPIC-01/ST-01, cycle 2026-09-07__release-v9.2) — 2026-09-07
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`get_arc5_trade_plan_adherence_rate()`'s `UndefinedTable`/`UndefinedColumn` fallback (`backend/database.py`) returns `{"rate": None, "total_trades": 0}` — identical to a genuine zero-closed-trades response. `GET /analytics/arc5-compliance`'s `total_closed_trades` field can't currently distinguish "no `trade_history` table / broken schema" from "a real portfolio with zero closed trades," so the frontend's low-trade-volume advisory (v9.2 ST-01) renders "Based on 0 closed trades" in what may actually be a DB error state.
+
+**Scope**
+- Add a way to signal the schema-error fallback distinctly from a genuine zero count (e.g. `null` `total_trades` on error vs. `0` on genuine empty, with contract/frontend updates to match)
+
+**Acceptance Criteria**
+- A missing/broken `trade_history` table no longer produces a `total_closed_trades` value indistinguishable from a genuine zero-trades portfolio
+- `docs/specs/api_contracts/arc5_compliance_analytics.md` updated to document the distinction
+
+---
+
+### BLG-QA-82 — Consolidate 3 overlapping SignalCard Playwright specs
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-QA-82 — Consolidate 3 overlapping SignalCard Playwright specs
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** QA Lead
+**Source:** IDEA-qa-lead-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+3 Playwright spec files cover overlapping SignalCard scenarios, accumulated incrementally across features (allocation_insufficient, badge colours, etc.) — redundant coverage slows the suite without adding confidence.
+
+**Scope**
+- Audit the 3 spec files; consolidate into 1 with no coverage loss
+
+**Acceptance Criteria**
+- Consolidated into 1 spec file; full scenario coverage confirmed retained; suite runtime reduced
+
+---
+
+### BLG-QA-85 — Contract test suite: openapi.yaml vs. actual route behaviour
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-QA-85 — Contract test suite: openapi.yaml vs. actual route behaviour
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** QA / API Contracts
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The existing OpenAPI drift gate only checks that a `## METHOD /path` heading has a matching `openapi.yaml` entry (presence check) — it does not verify the entry's schema (request/response shape) actually matches route behaviour.
+
+**Scope**
+- Contract tests for a representative sample of endpoints, asserting actual response shape matches the documented `openapi.yaml` schema
+
+**Acceptance Criteria**
+- Contract tests passing for at least 5 representative endpoints; documented pattern for extending coverage
+
+---
+
+### BLG-QA-88 — DoQ sign-off template freshness check
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-QA-88 — DoQ sign-off template freshness check
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** QA / Process
+**Owner:** Director of Quality
+**Source:** Idea intake IW-20260710-01 (IDEA-director-of-quality-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The `record-visual-qa` skill's evidence format was defined against a staging practice that may have since evolved; no periodic check confirms the template still matches actual practice.
+
+**Proposed solution**
+Periodically (e.g. every few releases) confirm the DoQ sign-off template and the skill that populates it still reflect current staging sign-off practice.
+
+---
+
+### BLG-QA-90 — Watchlist.js post-refactor visual QA
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-QA-90 — Watchlist.js post-refactor visual QA
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** QA / Frontend
+**Owner:** Head of UX & Design
+**Source:** Idea intake IW-20260710-01 (IDEA-head-of-ux-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The v6.8 Watchlist.js ESLint refactor (BLG-OPS-61) was a code-quality change; no explicit visual QA pass has confirmed it introduced no visual regressions.
+
+**Proposed solution**
+Perform a visual QA pass on the Watchlist page to confirm the ESLint refactor did not change rendered behaviour.
+
+---
+
+### BLG-QA-91 — Cross-browser Playwright matrix evaluation
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-QA-91 — Cross-browser Playwright matrix evaluation
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** QA
+**Owner:** QA Lead
+**Source:** Idea intake IW-20260710-01 (IDEA-qa-lead-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Playwright coverage currently runs Chromium-only; critical-path behaviour on Firefox/WebKit is unverified.
+
+**Proposed solution**
+Evaluate the cost/benefit of adding Firefox/WebKit to the CI matrix for a small set of critical-path specs.
+
+---
+
+### BLG-QA-92 — Backend test suite runtime baseline
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-QA-92 — Backend test suite runtime baseline
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** QA / Backend
+**Owner:** QA & Testing Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-qa-testing-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+No current baseline records pytest suite runtime, making future runtime regressions hard to detect early.
+
+**Proposed solution**
+Record current `backend/.venv/bin/python3 -m pytest` runtime as a baseline for future comparison.
+
+---
+
+### BLG-OPS-17 — Alpaca API cost monitoring
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-OPS-17 — Alpaca API cost monitoring
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Operations / Cost Monitoring
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-ops-20260421-01 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** ~~Screener live ≥ 60 days (sufficient history to establish a meaningful cost baseline).~~ **Gate cleared 2026-08-08** — Screener shipped v3.0 (2026-04-27, 103 days ago); threshold long since passed.
+
+**Problem**
+Alpaca API call volume (paper-positions, orders, account data) is not tracked. After 60 days of screener and research operations, a cost-per-run baseline can be established. Without a baseline, it is impossible to detect cost regressions when new features or higher screener frequency are introduced.
+
+**Scope**
+- Instrument Alpaca API call count per endpoint per day
+- Log to `api_cost_log` or equivalent structured log
+- Daily/weekly aggregate report
+
+**Acceptance Criteria**
+- Alpaca API call count logged per endpoint per run
+- Aggregate report computable
+- Gate condition verified by Infrastructure & Operations Owner before sprint planning
+
+---
+
+### BLG-OPS-20 — Research endpoint cost monitoring
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-OPS-20 — Research endpoint cost monitoring
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Operations / Cost Monitoring
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-ops-20260421-04 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** ~~PT-02 (Research View) live ≥ 30 days.~~ **Gate cleared 2026-08-08** — PT-02 shipped v3.2 (2026-05-08, 92 days ago); threshold long since passed.
+
+**Problem**
+Research view loads trigger multiple downstream API calls (Yahoo Finance OHLCV, earnings, news). The per-session API cost of the research endpoint is not tracked. After 30 days of research view usage, a cost-per-session baseline can be established and anomalies detected.
+
+**Scope**
+- Instrument research endpoint: log external API calls triggered per request
+- Cost-per-session aggregate (weekly baseline)
+- Anomaly detection: sessions with >2× baseline API call count
+
+**Acceptance Criteria**
+- Research endpoint API call count logged per session
+- Weekly baseline computable
+- Gate condition verified by Infrastructure & Operations Owner before sprint planning
+
+---
+
+### BLG-OPS-94 — Data retention policy for AI audit log tables
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-OPS-94 — Data retention policy for AI audit log tables
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Operations / Data Management
+**Owner:** Data Model & Domain Schema Owner
+**Source:** IDEA-data-model-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+`gemini_audit_log` and the Claude audit log table grow without a retention policy — unbounded growth over a multi-year horizon.
+
+**Scope**
+- Define a retention window (e.g. 12–24 months) and an archival/deletion procedure
+
+**Acceptance Criteria**
+- Policy documented; first cleanup pass (if any rows exceed the window) executed or explicitly deferred with rationale
+
+---
+
+### BLG-OPS-96 — Anthropic API cost per-feature attribution
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-OPS-96 — Anthropic API cost per-feature attribution
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps
+**Owner:** FinOps & Resource Architect
+**Source:** IDEA-finops-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Anthropic API cost is tracked in aggregate — no breakdown by feature (thesis generation vs. chat vs. daily briefing), making it hard to identify which feature drives cost.
+
+**Scope**
+- Tag cost-tracking records by feature/endpoint; produce a per-feature monthly breakdown
+
+**Acceptance Criteria**
+- Monthly cost breakdown available by feature for at least 1 reporting cycle
+
+---
+
+### BLG-OPS-97 — CI pipeline build-time reduction via parallelized test jobs
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-OPS-97 — CI pipeline build-time reduction via parallelized test jobs
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Operations / CI
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-engineering-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Backend and frontend test suites currently run sequentially in CI, extending PR feedback time as the suites grow.
+
+**Scope**
+- Parallelize independent CI test jobs (backend/frontend at minimum)
+
+**Acceptance Criteria**
+- Measured CI wall-clock time reduced for a representative PR
+
+---
+
+### BLG-SPEC-69 — Spec debt dashboard
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-SPEC-69 — Spec debt dashboard
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Tooling
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+All `BLG-SPEC-*` items must currently be found by grepping `backlog.md` — no single view shows spec debt volume or age.
+
+**Scope**
+- Generate a single-page summary of all open `BLG-SPEC-*` items with age since filing
+
+**Acceptance Criteria**
+- Dashboard produced; refreshable at future `groom backlog` runs
+
+---
+
+### BLG-SPEC-70 — Canonical spec cross-reference linter
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-SPEC-70 — Canonical spec cross-reference linter
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Tooling
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+A canonical spec document can become orphaned (no backlog item or code references it) with no automated way to detect this.
+
+**Scope**
+- Script scanning `docs/specs/**` for files not referenced by any backlog item or codebase comment
+
+**Acceptance Criteria**
+- Linter run once; any orphaned specs found are triaged (kept, merged, or archived)
+
+---
+
+### BLG-SPEC-74 — OpenAPI response examples for Arc 5 endpoints
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-SPEC-74 — OpenAPI response examples for Arc 5 endpoints
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-api-contracts-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+`docs/reference/openapi.yaml` lacks example response payloads for Arc 5 endpoints, slowing frontend integration since developers must infer shapes from the schema alone.
+
+**Proposed solution**
+Add representative example payloads to the Arc 5 endpoint definitions in `openapi.yaml`.
+
+---
+
+### BLG-SPEC-75 — Migration block consolidation review
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-SPEC-75 — Migration block consolidation review
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Data Model & Domain Schema Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-data-model-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+`data_model.md`'s migration block history has not been reviewed for consistency since before v6.8's schema changes.
+
+**Proposed solution**
+Review all migration blocks in ascending version order for consistency and confirm the footer version matches the highest block.
+
+---
+
+### BLG-SPEC-76 — Trade tagging taxonomy documentation
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-SPEC-76 — Trade tagging taxonomy documentation
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Financial Reporting & Records Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-financial-reporting-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+BLG-FEAT-52 (trade tagging) shipped without a canonical list of allowed tags, risking inconsistent tag usage that would undermine tag-based reporting.
+
+**Proposed solution**
+Document a canonical allowed-tag taxonomy for trade tagging, referenced by both the UI and reporting logic.
+
+---
+
+### BLG-GOV-145 — Database connection pool sizing review for AI endpoints
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-GOV-145 — Database connection pool sizing review for AI endpoints
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Governance Process / Operations Assessment
+**Owner:** Head of Engineering; Infrastructure & Operations Owner
+**Source:** IDEA-head-of-engineering-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** ~~30+ days AI endpoint usage observation post-v6.2 ship (by 2026-07-25). v6.2 AI endpoints make additional DB reads; pool sizing should be reviewed under real load.~~ **Gate cleared 2026-08-08** — v6.2 shipped 2026-06-25; 44 days of AI endpoint usage observation now available, past the 30-day threshold.
+
+**Problem**
+v6.2 added POST /ai/daily-briefing and POST /ai/chat, both of which read from the database (portfolio state, trade history for context). Supavisor connection pool configuration was set before AI endpoints existed. Under sustained AI endpoint load, the pool may be undersized. A review at 30 days confirms the pool is sized correctly or identifies adjustment needed.
+
+**Scope**
+- Review current Supavisor pool configuration (connection count, timeout settings)
+- Cross-reference with AI endpoint DB query volume (from logs or monitoring)
+- Identify whether pool size adjustment is warranted
+- Document findings; file implementation item if adjustment needed
+
+**Acceptance Criteria**
+- Pool configuration review document produced
+- Findings: "no change needed" or specific adjustment filed as a separate item
+- Gate condition (30+ days usage) verified before review commences
+
+---
+
+### BLG-GOV-179 — Local pre-commit lint for OpenAPI contract completeness
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-GOV-179 — Local pre-commit lint for OpenAPI contract completeness
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Governance / Tooling
+**Owner:** API Contracts & Documentation Owner
+**Source:** IDEA-api-contracts-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The `openapi.yaml` completeness check currently only fires at PR/CI time — a local pre-commit lint would catch omissions before push, reducing CI churn.
+
+**Scope**
+- Pre-commit hook scanning `docs/specs/api_contracts/*.md` for new `## METHOD /path` headings without a matching `openapi.yaml` entry, mirroring the existing CI gate's logic
+
+**Acceptance Criteria**
+- Hook catches at least the same class of omission as the CI gate, locally, before commit
+
+---
+
+### BLG-GOV-180 — Base44 prompt versioning changelog
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-GOV-180 — Base44 prompt versioning changelog
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Governance / Tooling
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IDEA-base44-frontend-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Base44 frontend scaffold prompts change over time with no changelog — regressions from a prompt change are hard to trace.
+
+**Scope**
+- Create a changelog file tracking Base44 prompt versions and what changed
+
+**Acceptance Criteria**
+- Changelog created; first entry backfilled from the most recent known prompt change
+
+---
+
+### BLG-GOV-181 — Base44 component regeneration diff review checklist
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-GOV-181 — Base44 component regeneration diff review checklist
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Governance / QA
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IDEA-base44-frontend-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+When a Base44-generated component is regenerated, there's no checklist to catch silent regressions (e.g. dropped props, changed class names) before merge.
+
+**Scope**
+- Short checklist: diff review points to check when a Base44 component is regenerated
+
+**Acceptance Criteria**
+- Checklist authored and referenced from the Base44 frontend prompt owner's charter
+
+---
+
+### BLG-GOV-183 — Onboarding template for new agent role charters
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-GOV-183 — Onboarding template for new agent role charters
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Director of HR
+**Source:** IDEA-director-of-hr-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Adding a new agent role charter currently means copying and adapting an existing one with no explicit template — inconsistent header/section coverage risk.
+
+**Scope**
+- Author a template charter file with required sections annotated
+
+**Acceptance Criteria**
+- Template authored and referenced from `claude/agents/` documentation
+
+---
+
+### BLG-SEC-11 — API key rotation drill
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-09-14
+**Shipped in:** v9.3
+**Evidence:** docs/product/changelog.md#v93; claude/cycles/2026-09-09__release-v9.3/verification_report.md
+
+### BLG-SEC-11 — API key rotation drill
+**Status:** ✅ COMPLETE — closure `2026-09-09__release-v9.3`, closed 2026-09-14
+**Priority:** P3 (Low)
+**Type:** Security / Operations
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The API key rotation runbook has never been exercised end-to-end — its first real use would be during an actual incident, the worst time to discover a gap.
+
+**Scope**
+- Exercise the rotation runbook for one non-critical key; document any gaps found
+
+**Acceptance Criteria**
+- Drill completed; runbook corrected if any step failed
+
 
 ---
 
