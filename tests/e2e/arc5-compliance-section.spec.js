@@ -12,6 +12,8 @@
  *   SC-ARC5-04  Error state shows "Unable to load" when API returns error
  *   SC-ARC5-09  Low-trade-volume advisory shown when total_closed_trades < 20 (ST-01, v9.2)
  *   SC-ARC5-10  Low-trade-volume advisory hidden when total_closed_trades >= 20 or absent (ST-01, v9.2)
+ *   SC-ARC5-11  Advisory boundary: shown at 19, hidden at 20 (strict < 20) (ST-06, EPIC-02, v9.4, BLG-QA-162)
+ *   SC-ARC5-12  Advisory copy: singular "1 closed trade" at count 1, "0 closed trades" at count 0 (ST-06, EPIC-02, v9.4, BLG-QA-162)
  *
  * Spec ref: docs/specs/frontend/components/arc5_compliance_section.md v1.2.0
  * API contract: docs/specs/api_contracts/arc5_compliance_analytics.md
@@ -401,5 +403,70 @@ test.describe('SC-ARC5-10 — Low-trade-volume advisory not shown', () => {
     await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('Override Rate')).toBeVisible({ timeout: 5000 });
     await expect(page.getByTestId('arc5-low-volume-advisory')).toHaveCount(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-ARC5-11 — Advisory boundary: shown at 19, hidden at 20
+// (ST-06, EPIC-02, v9.4, BLG-QA-162)
+// ---------------------------------------------------------------------------
+
+function arc5PayloadWithCount(count) {
+  return {
+    status: 'ok',
+    data: { ...ARC5_COMPLIANCE_OK.data, total_closed_trades: count },
+  };
+}
+
+test.describe('SC-ARC5-11 — Low-trade-volume advisory strict <20 boundary', () => {
+  test('SC-ARC5-11a: advisory shown when total_closed_trades = 19', async ({ page }) => {
+    await mockFallback(page);
+    await mockArc5Compliance(page, arc5PayloadWithCount(19));
+    await gotoAnalytics(page);
+
+    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+    const advisory = page.getByTestId('arc5-low-volume-advisory');
+    await expect(advisory).toBeVisible({ timeout: 8000 });
+    await expect(advisory).toContainText('Based on 19 closed trades');
+  });
+
+  test('SC-ARC5-11b: advisory hidden when total_closed_trades = 20', async ({ page }) => {
+    await mockFallback(page);
+    await mockArc5Compliance(page, arc5PayloadWithCount(20));
+    await gotoAnalytics(page);
+
+    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Override Rate')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('arc5-low-volume-advisory')).toHaveCount(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-ARC5-12 — Advisory copy: singular at count 1, "0 closed trades" at count 0
+// (ST-06, EPIC-02, v9.4, BLG-QA-162)
+// ---------------------------------------------------------------------------
+
+test.describe('SC-ARC5-12 — Low-trade-volume advisory singular/plural copy', () => {
+  test('SC-ARC5-12a: advisory reads "1 closed trade" (singular) when total_closed_trades = 1', async ({ page }) => {
+    await mockFallback(page);
+    await mockArc5Compliance(page, arc5PayloadWithCount(1));
+    await gotoAnalytics(page);
+
+    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+    const advisory = page.getByTestId('arc5-low-volume-advisory');
+    await expect(advisory).toBeVisible({ timeout: 8000 });
+    await expect(advisory).toContainText('Based on 1 closed trade —');
+    await expect(advisory).not.toContainText('1 closed trades');
+  });
+
+  test('SC-ARC5-12b: advisory reads "0 closed trades" (plural) when total_closed_trades = 0', async ({ page }) => {
+    await mockFallback(page);
+    await mockArc5Compliance(page, arc5PayloadWithCount(0));
+    await gotoAnalytics(page);
+
+    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+    const advisory = page.getByTestId('arc5-low-volume-advisory');
+    await expect(advisory).toBeVisible({ timeout: 8000 });
+    await expect(advisory).toContainText('Based on 0 closed trades');
   });
 });
