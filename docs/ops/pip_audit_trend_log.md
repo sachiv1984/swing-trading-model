@@ -32,6 +32,7 @@ A recurring `Unavailable` reading (the same environment gap appearing 2+ consecu
 
 | Cycle | Date | Dependencies scanned | Result | Resolution status | Notes |
 |-------|------|----------------------|--------|--------------------|-------|
+| `2026-09-14__release-v9.4` | 2026-09-14 | 58 | Clean | — | — |
 | `2026-09-09__release-v9.3` | 2026-09-09 | 57 | Clean | — | — |
 | `2026-09-07__release-v9.2` | 2026-09-07 | 58 | Clean | — | — |
 | `2026-09-03__release-v9.1` | 2026-09-03 | 58 | Clean | — | — |
