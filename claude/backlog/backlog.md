@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-14 (`groom backlog` post-ship closure `2026-09-09__release-v9.3` STEP 12: 26 items archived (all v9.3 shipped items except `BLG-GOV-178`, left as-is per the split-achievability carve-out — open escalation `ESC-EXEC-20260910-01`); 1 ephemeral Release Slice section removed; 0 orphans, 0 stale blockers, 0 promotion candidates); prior — 2026-09-14 (post-ship closure `2026-09-09__release-v9.3` STEP 3 + STEP 6 — 26 shipped items marked ✅ COMPLETE; 1 new item added, `BLG-OPS-156` (endpoint coverage drift check, `GET /positions/{id}` missing from `api_performance_baseline.md`)); prior — 2026-09-14 (delivery verification `2026-09-09__release-v9.3` STEP 4.1 — `BLG-GOV-178` appended with a cross-reference to the open carried-forward escalation `ESC-EXEC-20260910-01`); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-14 (AI Compliance & Governance Officer resolution of `ESC-EXEC-20260910-01` — 1 new item added, `BLG-AI-06` (generation-time sampling hook, concrete remediation path); `BLG-GOV-178` cross-reference updated to record escalation disposition `Open` → `Deferred`); prior — 2026-09-14 (`groom backlog` post-ship closure `2026-09-09__release-v9.3` STEP 12: 26 items archived (all v9.3 shipped items except `BLG-GOV-178`, left as-is per the split-achievability carve-out — open escalation `ESC-EXEC-20260910-01`); 1 ephemeral Release Slice section removed; 0 orphans, 0 stale blockers, 0 promotion candidates); prior — 2026-09-14 (post-ship closure `2026-09-09__release-v9.3` STEP 3 + STEP 6 — 26 shipped items marked ✅ COMPLETE; 1 new item added, `BLG-OPS-156` (endpoint coverage drift check, `GET /positions/{id}` missing from `api_performance_baseline.md`)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -2761,6 +2761,8 @@ No test failures have been attributed to stale fixtures since v6.4's signal/secu
 **Gate criteria:** None
 **Cross-reference (delivery verification, added 2026-09-14):** ST-22/EPIC-05, cycle `2026-09-09__release-v9.3` — dry-run sample conducted (10 illustrative examples, 0 findings), satisfying this item's literal AC. The stronger live-production-sample bar remains open as escalation `ESC-EXEC-20260910-01` (non-blocking, owned by AI Compliance & Governance Officer, SLA breached 2026-09-13, carried forward past sprint close).
 
+**Update (AI Compliance & Governance Officer, 2026-09-14):** `ESC-EXEC-20260910-01` reviewed. Its SLA-breach was carried forward and caught by `plan release`'s new STEP -1.6 SLA-breach carry-forward gate (`AUD-2026-09-14-001`) when opening v9.4. Genuine resolution (an actual live-production sample) remains structurally blocked in this execution environment (no `DATABASE_URL`, no `ANTHROPIC_API_KEY` — re-confirmed this session); Accepted Risk is not a permitted disposition for a Strategy-boundary trigger-type escalation (`shared_standards.md` §4). Disposition changed `Open` → `Deferred` (see `.claude_current_state.json`); concrete remediation filed as `BLG-AI-06` (generation-time sampling hook). Re-acknowledgement due once `BLG-AI-06` ships or production credentials become available in-session, whichever is first.
+
 **Problem**
 AI output (thesis generation, chat, daily briefing) has no recurring compliance sampling — only ad hoc review during feature work. As prompts and models evolve over time, outputs could drift from §13's determinism/no-prediction boundary without a scheduled check to catch it.
 
@@ -3839,6 +3841,33 @@ Comparing `docs/reference/openapi.yaml` (144 normalised method+path endpoints) a
 **Acceptance Criteria**
 - `api_performance_baseline.md` has a row for `GET /positions/{id}`
 - Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-AI-06 — Implement generation-time opt-in sampling hook for AI-output boundary-language audits
+**Priority:** P2 (Medium)
+**Type:** Governance / AI Compliance
+**Owner:** AI Compliance & Governance Officer
+**Source:** AI Compliance & Governance Officer resolution of `ESC-EXEC-20260910-01` (ST-22/EPIC-05, cycle `2026-09-09__release-v9.3`) — filed as the concrete mitigation path when deferring that escalation (Strategy-boundary trigger type; Accepted Risk is not a permitted disposition per `shared_standards.md` §4) — 2026-09-14
+**Effort:** M (~1–2d)
+**Provisional-Target:** TBD
+**Depends on:** none; complements `BLG-GOV-178` (quarterly audit item) and `BLG-AI-04` (calendar-driven re-scan cadence — that item schedules *when* to sample, this item is what makes a *genuine* sample possible at all)
+
+**Problem**
+Every environment this project has run governed routines in across `2026-09-09__release-v9.3` (ST-13 AI audit log retention, ST-21 DB connection pool review, ST-22 quarterly boundary-language sample) has disclosed the same constraint: no live production DB connection and no configured `ANTHROPIC_API_KEY`, so no genuine live AI-generated text is retrievable for compliance sampling. ST-22's own audit doc further discloses that even with DB access, `claude_audit_log`/`gemini_audit_log` do not store the generated text itself (only cost/token metadata) — so DB access alone would not fully solve this either. As a result the quarterly §13.2 boundary-language sampling audit (`BLG-GOV-178`) has only ever been able to run against hand-authored illustrative examples from spec docs, which the audit's own author disclosed is a materially weaker evidentiary bar than genuine model output (hand-authored examples are more likely to already read as compliant). `ESC-EXEC-20260910-01` (owned by this role) has been carried Deferred rather than Resolved specifically because this gap has no remediation path yet — this item is that path.
+
+**Scope**
+- Add a lightweight, opt-in sampling hook at AI-output generation time (e.g. in the shared AI-response path used by journal-summary, daily-briefing, chat, debrief, and trade-plan generation) that, when enabled, persists a small random sample of generated text (with appropriate scoping/redaction) to a queryable store
+- Hook must be opt-in / sampling-rate-bounded (not full-content logging of every AI response) to bound storage and privacy exposure
+- Wire `scripts/run_ai_output_boundary_sample_audit.py` to optionally read from this new store instead of only its hardcoded illustrative `SAMPLE` list
+- Update `docs/ops/ai_output_boundary_sample_audit_20260910.md`'s methodology (or its successor quarterly report) once this ships, so the next quarterly sample can be genuine rather than illustrative
+
+**Acceptance Criteria**
+- Sampling hook implemented and gated behind an explicit opt-in flag (env var or settings toggle), default off
+- Scanner script can consume real sampled records from the new store when available
+- A genuine (non-illustrative) sample of at least 10 AI outputs can be drawn and scanned using this mechanism
+- Documented in the AI-endpoint contract docs and cross-referenced from `BLG-GOV-178`
+- `ESC-EXEC-20260910-01` closed as `Resolved` (superseding its interim `Deferred` disposition) once a genuine sample has actually been run using this mechanism, findings filed as backlog items if any
 
 ---
 

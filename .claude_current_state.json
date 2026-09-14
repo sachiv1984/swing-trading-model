@@ -37,8 +37,8 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-09-14T10:00:52Z",
-  "last_sync_utc": "2026-09-14T12:30:00Z",
-  "blocked_sla_breached": true,
+  "last_sync_utc": "2026-09-14T12:42:04Z",
+  "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-09-03T17:30:00Z",
   "deviation_consolidation_review_cycle_count": 2,
   "release_complete": false,
@@ -52,15 +52,22 @@
   "prior_cycle": "2026-09-09__release-v9.3",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
-  "open_escalations": {
+  "open_escalations": {},
+  "deferred_escalations": {
     "ESC-EXEC-20260910-01": {
       "cycle": "2026-09-09__release-v9.3",
       "summary": "ST-22/EPIC-05 — genuine live-production AI-output boundary-language sample still pending (dry-run against illustrative examples satisfied the literal AC only)",
+      "trigger_type": "Strategy",
       "owning_authority": "AI Compliance & Governance Officer",
       "raised_utc": "2026-09-10T10:45:00Z",
       "sla_due_utc": "2026-09-13T10:45:00Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Deferred",
+      "deferred_utc": "2026-09-14T12:42:04Z",
+      "deferred_by": "AI Compliance & Governance Officer",
+      "deferred_rationale": "72h SLA breached (~26h past due when reviewed); genuine live-production sample still structurally blocked in this execution environment (no DATABASE_URL, no ANTHROPIC_API_KEY — re-confirmed). Cannot mark Resolved without fabricating evidence. Cannot mark Accepted Risk — Strategy-boundary trigger type is barred from that disposition per shared_standards.md §4.",
+      "deferred_trigger": "Re-acknowledge once BLG-AI-06 (generation-time sampling hook) ships and a genuine sample can be drawn, or sooner if production credentials become available in an execution session.",
+      "resolution_summary": "Deferred, not Resolved — see docs/ops/ai_output_boundary_sample_audit_20260910.md Addendum (2026-09-14) and claude/backlog/backlog.md BLG-GOV-178/BLG-AI-06."
     }
   },
   "last_rebalance_cycle": "2026-09-14__scheduled",

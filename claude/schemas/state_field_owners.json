@@ -62,6 +62,7 @@
     "lifecycle_schema": { "owner": "claude/system/lifecycle_schema.json (self-reference)", "phase": "n/a — schema meta, changed only via sanctioned schema-change process" },
     "schema_version": { "owner": "claude/system/lifecycle_schema.json (self-reference)", "phase": "n/a" },
     "open_escalations": { "owner": "whichever engine raises/resolves the escalation", "phase": "all — format defined in shared_standards.md" },
+    "deferred_escalations": { "owner": "whichever role holds owning_authority for the escalation being deferred", "phase": "all — format defined in shared_standards.md §4", "notes": "Added 2026-09-14 (AI Compliance & Governance Officer resolution of ESC-EXEC-20260910-01, outside any single governed routine's STEP list — an ad hoc role-delegated disposition per CLAUDE.md's Delegated Authority Model). Mirrors the open_escalations/deferred_escalations/accepted_risk_escalations bucket split escalation_subroutine.md already uses at cycle-level state.json; this is the first entry to move an escalation to a root-level Deferred bucket rather than resolving or carrying it Open. Entries move here only via a genuine Deferred disposition by the named owning_authority (never Accepted Risk for Strategy/Quality/Lifecycle trigger types, per shared_standards.md §4)." },
     "last_rebalance_cycle": { "owner": "roadmap_prompt.md", "phase": "Phase 1" },
     "last_rebalance_utc": { "owner": "roadmap_prompt.md", "phase": "Phase 1" },
     "last_scheduled_rebalance_utc": { "owner": "roadmap_prompt.md", "phase": "Phase 1" },

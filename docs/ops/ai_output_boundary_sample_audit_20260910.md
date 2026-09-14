@@ -1,7 +1,7 @@
 **Owner:** AI Compliance & Governance Officer
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-09-10
+**Last Updated:** 2026-09-14 (AI Compliance & Governance Officer addendum — `ESC-EXEC-20260910-01` disposition set to Deferred, remediation filed as `BLG-AI-06`); prior — 2026-09-10 (initial dry-run sample, escalation filed)
 **Source:** ST-22 (BLG-GOV-178, EPIC-05, v9.3 sprint execution)
 
 ---
@@ -49,3 +49,26 @@ Per this sprint's `delegated_decision` classification of ST-22 (§13.2 boundary-
 
 - Scanned by: Sprint Execution Engine (autonomous class, per BLG-GOV-19 — a detection script run + result documentation, no observable UI behaviour). Escalation above requires human AI Compliance & Governance Officer action for the genuine live-data sample.
 - Date: 2026-09-10
+
+---
+
+## Addendum — AI Compliance & Governance Officer Disposition (2026-09-14)
+
+**Acting authority:** AI Compliance & Governance Officer (session-delegated, per `claude/agents/ai_compliance_governance_officer.md` and CLAUDE.md's Delegated Authority Model).
+
+**Trigger:** `ESC-EXEC-20260910-01`'s 72-hour SLA (due 2026-09-13T10:45Z) breached and remained `Open` through sprint close, delivery verification, and post-ship closure of `2026-09-09__release-v9.3`. `plan release`'s STEP -1.6 SLA-breach carry-forward gate (`AUD-2026-09-14-001`) correctly blocked opening the next release cycle (v9.4) on this open, breached escalation and surfaced it for disposition.
+
+**Re-verification of the unblock criteria (this session):** Re-checked this execution environment for the two access paths named in the escalation's own unblock criteria — `DATABASE_URL` is unset (`backend/database.py` raises without it) and `ANTHROPIC_API_KEY` is unset. No local database file, application log, or other retrievable store of real generated AI-output text was found either. The constraint disclosed on 2026-09-10 is unchanged: **no genuine live-production sample can be drawn in this environment today.**
+
+**Disposition decision:**
+- **Not marked `Resolved`.** Doing so would require presenting a fabricated or re-labelled illustrative sample as genuine live-production evidence — precisely the kind of unexplainable, untrustworthy AI-governance behaviour this role exists to prevent (see role charter §7 Guiding Principles: "Explainability beats cleverness," "Trust must be maintained continuously"). No such record has been produced.
+- **Not marked `Accepted Risk`.** This escalation's Trigger type is Strategy boundary (72h SLA matches `shared_standards.md` §4's Strategy row). Per that same table: "Strategy, Quality, and Lifecycle escalations may never be marked Accepted Risk. Attempting to do so is a governance violation requiring a routine halt." That path is not available regardless of how low the assessed risk is judged to be.
+- **Marked `Deferred`** — the remaining disposition value permitted to the owning authority for a Strategy-type escalation per the Escalation Record Format (`shared_standards.md` §4: `Disposition: Open | Resolved | Accepted Risk | Deferred`). Deferred does not bypass the underlying gap; it requires a trigger and does not auto-carry silently (`escalation_subroutine.md`'s Deferred Governance Constraint).
+
+**Trigger for re-acknowledgement:** `BLG-AI-06` (generation-time opt-in AI-output sampling hook) is filed as the concrete remediation — it targets the actual root cause disclosed above (even production DB access alone would not have sufficed, since `claude_audit_log`/`gemini_audit_log` do not store generated text). Re-acknowledge this escalation at the next checkpoint where either (a) `BLG-AI-06` has shipped and a genuine sample can be drawn through it, or (b) production credentials become available in an execution session sooner. Do not allow this to silently recur past that point without a fresh, substantive disposition.
+
+**Blocks execution:** No (unchanged from original escalation record).
+
+**State recorded:** `.claude_current_state.json` — `ESC-EXEC-20260910-01` moved from `open_escalations` to `deferred_escalations` with `disposition: Deferred` and the fields above. `claude/backlog/backlog.md` — `BLG-GOV-178` cross-reference updated; `BLG-AI-06` filed.
+
+**This is not a claim that the underlying compliance question is settled** — only that, absent fabrication or a prohibited Accepted-Risk disposition, Deferred-with-a-named-remediation is the honest and correctly-authorised disposition available today.
