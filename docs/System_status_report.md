@@ -1,11 +1,35 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.39
-**Last Updated:** 2026-09-09 (delivery verification 2026-09-07__release-v9.2 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-09-08 (sprint close 2026-09-07__release-v9.2 — new Sprint section added); prior — 2026-09-07 (delivery verification 2026-09-03__release-v9.1 — status line updated Sprint_Complete → Verified); prior history retained — see prior entries in version control.
+**Version:** 4.40
+**Last Updated:** 2026-09-14 (sprint close 2026-09-09__release-v9.3 — new Sprint section added); prior — 2026-09-09 (delivery verification 2026-09-07__release-v9.2 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-09-08 (sprint close 2026-09-07__release-v9.2 — new Sprint section added); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
+
+## Sprint: 2026-09-09__release-v9.3
+**Date:** 2026-09-14
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Screener result history table (ST-01); signal write-path schema consolidation (ST-02); structured logging correlation-ID propagation across the FastAPI request lifecycle (ST-03); Arc5 compliance `total_closed_trades` null-vs-zero fix (ST-04) | `docs/specs/api_contracts/screener_api_contract.md#GET /screener/history`; `docs/specs/api_contracts/backend_engineering_patterns.md#Correlation-ID request tracing`; `docs/specs/structured_logging_standards.md#Known Deviations`; `docs/specs/api_contracts/arc5_compliance_analytics.md#total_closed_trades` | 2 Known Deviations in `structured_logging_standards.md` (P3, `BLG-BE-112`) |
+| EPIC-02 | Consolidated 3 overlapping SignalCard Playwright specs (ST-05); openapi.yaml-vs-route contract test pilot extended to 5 endpoints (ST-06); DoQ sign-off template freshness check (ST-07); Watchlist.js post-refactor visual QA (ST-08); cross-browser Playwright matrix evaluation (ST-09); backend test suite runtime baseline (ST-10) | `tests/e2e/signal-card.spec.js`; `tests/test_pilot_contract_schemas.py`; `docs/testing/doq_signoff_template_freshness_review_20260909.md`; `docs/specs/frontend/pages/watchlist.md`; `docs/qa/cross_browser_playwright_matrix_evaluation_20260909.md`; `docs/ops/backend_test_suite_runtime_baseline.md` | None |
+| EPIC-03 | Alpaca API cost monitoring (ST-11); research endpoint cost monitoring (ST-12); AI audit log data retention policy, now enforced (ST-13); Anthropic API cost per-feature attribution (ST-14); CI pipeline shard count 4→8 (ST-15) | `docs/specs/api_contracts/ops_endpoints.md#GET /ops/alpaca-call-report,GET /ops/research-session-report`; `docs/ops/ai_audit_log_retention_policy.md`; `docs/specs/api_contracts/ai_endpoints.md#GET /ai/monthly-cost-by-feature`; `docs/ops/ci_pipeline_baseline.md#9` | None |
+| EPIC-04 | Spec debt dashboard (ST-16); OpenAPI response examples for Arc 5 endpoints (ST-18); migration block consolidation review (ST-19); trade tagging taxonomy documentation (ST-20); canonical spec cross-reference linter, 0 orphans across 133 files (ST-17) | `scripts/generate_spec_debt_dashboard.py`; `docs/reference/openapi.yaml`; `docs/specs/data_model.md`; `docs/specs/trade_tagging_taxonomy.md`; `scripts/check_orphaned_specs.py` | None |
+| EPIC-05 | DB connection pool sizing review for AI endpoints (ST-21); quarterly AI output boundary-language sampling audit, consolidated (ST-22); local pre-commit lint for OpenAPI contract completeness (ST-23); Base44 prompt versioning changelog (ST-24); Base44 regeneration diff review checklist (ST-25); onboarding template for new agent role charters (ST-26); API key rotation drill (ST-27) | `docs/ops/db_connection_pool_ai_endpoint_review_20260910.md`; `scripts/run_ai_output_boundary_sample_audit.py`; `scripts/check_local_openapi_contract_completeness.py`; `docs/specs/frontend/base44_prompt_changelog.md`; `claude/agents/_role_charter_template.md`; `docs/ops/api_key_rotation_policy.md#Rotation Drill History` | `ESC-EXEC-20260910-01` open (non-blocking, SLA breached) — stronger live-production AI-output sample still pending |
+
+### Capabilities deferred or returned
+
+None — all 27 sprint-scope stories reached `done`/`merged`.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md, qa_evidence_EPIC-05.md
+- Deviations filed: 2 Known Deviations in `structured_logging_standards.md` (P3, `BLG-BE-112`); no `DEV-*` records this cycle
+- Test scenarios referenced: tests/e2e/signal-card.spec.js, tests/test_pilot_contract_schemas.py, tests/test_cost_monitoring.py, tests/test_generate_spec_debt_dashboard.py, tests/test_check_orphaned_specs.py, tests/test_run_ai_output_boundary_sample_audit.py, tests/test_check_local_openapi_contract_completeness.py
 
 ## Sprint: 2026-09-07__release-v9.2
 **Date:** 2026-09-08

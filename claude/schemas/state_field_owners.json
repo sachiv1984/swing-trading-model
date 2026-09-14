@@ -47,6 +47,7 @@
     "sprint2_close_utc": { "owner": "execution_prompt.md", "phase": "Phase 3" },
     "verification_utc": { "owner": "delivery_verification_prompt.md", "phase": "Phase 4" },
     "last_sync_utc": { "owner": "CLAUDE.md §4 (sync gh, inline implementation)", "phase": "n/a — not a governance prompt file" },
+    "blocked_sla_breached": { "owner": "execution_prompt.md", "phase": "Phase 3, STEP 6 Global State Update", "notes": "Set true only if any execution_escalations.md entry is open ≥72h at STEP 6; omitted otherwise. First written 2026-09-14, cycle 2026-09-09__release-v9.3 (ESC-EXEC-20260910-01 SLA breach)." },
     "last_deviation_consolidation_review_utc": { "owner": "execution_prompt.md", "phase": "Phase 3, deviation consolidation review step" },
     "deviation_consolidation_review_cycle_count": { "owner": "execution_prompt.md", "phase": "Phase 3" },
     "release_complete": { "owner": "post_ship_closure.md", "phase": "Post-Ship" },
