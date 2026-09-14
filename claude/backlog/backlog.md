@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-14 (session — 1 new item added: `BLG-FE-175`, design gate `2026-09-14__release-v9.4` follow-up — v9.5 motion-timing remediation across the 4 known non-compliant components); prior — 2026-09-14 (Release Planning `2026-09-14__release-v9.4` STEP 4 — 28-item / 27.55-day release slice appended, marker `RP:v9.4:2026-09-14__release-v9.4`; `BLG-FEAT-95` Priority corrected P3→P2 per STEP 7.1 note); prior — 2026-09-14 (AI Compliance & Governance Officer resolution of `ESC-EXEC-20260910-01` — 1 new item added, `BLG-AI-06` (generation-time sampling hook, concrete remediation path); `BLG-GOV-178` cross-reference updated to record escalation disposition `Open` → `Deferred`); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-14 (session — 4 new items added during EPIC-01/v9.4 sprint execution and its PR review: `BLG-OPS-160` (missing scheduler trigger, surfaced ST-05), `BLG-SPEC-D18` (positions schema confirmation debt, surfaced ST-01 sign-off), `BLG-BE-117` (CI-blocking changelog test failure, surfaced PR #1662 review), `BLG-GOV-331` (governance JSON write-hygiene convention, surfaced PR #1662 review)); prior — 2026-09-14 (1 new item added: `BLG-FE-175`, design gate `2026-09-14__release-v9.4` follow-up — v9.5 motion-timing remediation across the 4 known non-compliant components); prior — 2026-09-14 (Release Planning `2026-09-14__release-v9.4` STEP 4 — 28-item / 27.55-day release slice appended, marker `RP:v9.4:2026-09-14__release-v9.4`; `BLG-FEAT-95` Priority corrected P3→P2 per STEP 7.1 note); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4823,6 +4823,46 @@ This is the same substantive question `IDEA-challenger-20260809-02` raised and h
 
 **Acceptance Criteria**
 - Disposition recorded: re-examine (with new analysis) or confirm-closed (citing `BLG-GOV-237`, no new information)
+
+---
+
+### BLG-BE-117 — CI-blocking test_changelog_service.py failure on every PR
+**Priority:** P1 (High)
+**Type:** Bug / CI
+**Owner:** Product Owner; API Contracts & Documentation Owner (changelog ownership — confirm exact owner during investigation)
+**Source:** PR #1662 agent-mediated Director of Quality review, EPIC-01/v9.4 — 2026-09-14
+**Effort:** S (~0.5–1d, pending root cause)
+**Provisional-Target:** v9.5
+
+**Problem**
+`tests/test_changelog_service.py::test_real_changelog_is_parseable` fails with `assert None is not None` (`tests/test_changelog_service.py:90`) on every current CI run — confirmed failing 2 jobs (`Backend Test Coverage Report`, both `Pytest Phase B` matrix legs) on PR #1662, and confirmed via `git diff main...HEAD` that PR #1662 touches none of `docs/product/changelog.md`, `backend/services/changelog_service.py`, or the test file itself, so this is pre-existing on `main`, not a regression from that PR. Every open and future PR inherits this same CI-red state, blocking the merge gate's "CI passed, all checks green" requirement across the board, not just for one PR.
+
+**Scope**
+- Determine why `changelog_service`'s real-changelog parse returns `None` against the current `docs/product/changelog.md` (likely a changed heading/format the parser no longer recognises)
+- Fix whichever side is wrong per canonical spec — the parser or the changelog file
+
+**Acceptance Criteria**
+- `test_real_changelog_is_parseable` passes against the real `docs/product/changelog.md`
+- A clean PR shows CI green with no dependency on this fix
+
+---
+
+### BLG-GOV-331 — Document ensure_ascii=False convention for governance JSON writes
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** PR #1662 agent-mediated Director of Quality review, EPIC-01/v9.4 — 2026-09-14
+**Effort:** XS
+**Provisional-Target:** TBD
+
+**Problem**
+A programmatic write to `.claude_current_state.json` during EPIC-01/v9.4 execution used Python's `json.dump(..., indent=2)` with the default `ensure_ascii=True`, which re-escaped every non-ASCII character (em-dashes, `§`) across the *entire* ~125-line file into `\uXXXX` sequences — not just the ~5 fields that actually changed. Result: 15 of 125 lines showed as changed in the PR diff for a semantically ~5-field edit, and the file's raw readability degraded (literal `—`/`§` replaced by escape sequences). No existing convention documents the correct approach for future writers (agent or human) to this and other governance JSON files (`execution_state.json`, etc.) that routinely carry non-ASCII prose.
+
+**Scope**
+- Add a short note (e.g. `shared_standards.md` or a `CLAUDE.md` line) stating that any programmatic write to governance JSON files must preserve non-ASCII characters literally (e.g. Python's `json.dump(..., ensure_ascii=False)`) rather than escaping them, to keep diffs minimal and files human-readable
+
+**Acceptance Criteria**
+- Convention documented somewhere a future governance-JSON writer (agent or human) would see it before writing
 
 ---
 
