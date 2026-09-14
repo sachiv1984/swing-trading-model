@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.31
-**Last Updated:** 2026-09-10 (ST-19, EPIC-04, v9.3, BLG-SPEC-75 — Migration History reviewed in ascending version order; "Migration from v1.9 to v2.0" relocated to correct chronological position, previously listed before v1.8→v1.9; content unchanged. Footer version confirmed to already match the highest migration block, DS-16 v2.31 — no correction needed there); prior — 2026-08-20 (ST-06, EPIC-02, v8.9, BLG-FEAT-90 — DS-16 trade_debriefs table added); prior — 2026-08-18 (ST-10, EPIC-03, v8.9, BLG-BE-100 — transaction-isolation fix-or-accept decision documented for position_audit_log/position_state_history: audit-log write ordering); prior history retained — see prior entries in version control
+**Version:** 2.33
+**Last Updated:** 2026-09-14 (ST-01, EPIC-01, v9.4, BLG-BE-115 — DS-17 added: unique index on positions(portfolio_id, ticker, entry_date) for open positions; header/footer version brought back in sync); prior — 2026-09-14 (ST-02, EPIC-01, v9.4, BLG-BE-116 — added "Migration approach: forward-only, no backfill" subsection under Trade Plan to Position Linkage; no schema change); prior — 2026-09-10 (ST-19, EPIC-04, v9.3, BLG-SPEC-75 — Migration History reviewed in ascending version order; content unchanged); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1025,6 +1025,24 @@ In both cases the link is written only if a matching plan is found and its `posi
 
 - `position_id` is nullable by design: a plan can be drafted before any position exists (`status = 'draft'`), and plans never tied to an actual trade (abandoned, exploratory) are expected to remain unlinked indefinitely.
 - The 11 `trade_plans` rows created before the `BLG-BE-46` fix (v6.8) have `position_id = NULL` and were **not backfilled** — a ticker/date-proximity match against `trade_history` was assessed at the time and judged unreliable (decision recorded in `claude/cycles/2026-07-08__release-v6.8/qa_evidence_EPIC-01.md` and `lessons_learnt_closure.md` LP-12). These rows remain permanently unlinked; only trade plans created after the v6.8 fix accrue toward SI-02's linked-trade-plan count.
+
+### Migration approach: forward-only, no backfill (ST-02, EPIC-01, v9.4)
+
+**Story:** ST-02 (EPIC-01, v9.4) — `BLG-BE-116`
+
+This subsection formalises, as an explicit migration-approach statement, the disposition already reached by `BLG-BE-52` and already assumed in practice by `DS-12`'s enforcement below. It does not reopen or re-litigate either.
+
+Two approaches exist for handling `trade_plans.position_id` nullability against the 11 pre-`BLG-BE-46` legacy unlinked rows described above:
+
+1. **Backfill** — retroactively resolve the 11 legacy `position_id IS NULL` rows to a linked position via some matching heuristic (e.g. ticker/date proximity against `trade_history`).
+2. **Forward-only** — leave the 11 legacy rows permanently unlinked; apply any new integrity rules and enforcement only to rows inserted or updated going forward, with no retroactive validation pass against pre-existing data.
+
+**Approach in effect: forward-only. Backfill is explicitly out of scope.** This is not a new decision — it formalises `BLG-BE-52`'s existing disposition (2026-07-09, Product Owner: declined to backfill, "no reliable ticker/time match exists" per the underlying `BLG-BE-46` RISK-01 assessment). A full scoping of what a backfill design would look like, kept for reference only should circumstances ever change, is documented separately at `docs/specs/trade_plans_position_id_backfill_scoping.md` (`ST-18`, prior cycle) — that document does not reopen `BLG-BE-52` either, and neither does this one.
+
+**Which approach `DS-12` already assumes:** `DS-12`'s `trade_plans_active_requires_position_check` CHECK constraint (below) is added `NOT VALID` specifically so it enforces the active-requires-position rule on rows inserted or updated from `v2.25` forward, without retroactively validating the 11 pre-existing legacy rows against it. That is the forward-only approach described above, applied concretely — `DS-12` is this subsection's approach already in effect at the schema level, not a separate or later decision.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-09-14 (agent-mediated; documentation-only, no schema change, formalises the already-effective `BLG-BE-52`/`DS-12` disposition; cross-checked against `docs/specs/trade_plans_position_id_backfill_scoping.md` and `DS-12`'s own `NOT VALID` migration for consistency)
 
 ### Known deviation — roadmap gate query
 
@@ -2128,6 +2146,87 @@ Reversible: `DROP TABLE IF EXISTS trade_debriefs;`
 
 ---
 
-**Document Version:** 2.31
+## DS-17 — positions unique constraint on (portfolio_id, ticker, entry_date) for open positions (v2.33, 2026-09-14)
+
+**Story:** ST-01 (EPIC-01, v9.4) — `BLG-BE-115`
+
+DB-level safeguard against two open-position rows sharing the same ticker and entry date, which previously relied entirely on application-level checks (bypassable by a direct write or a race).
+
+**Scoping decision (Head of Engineering, resolving the question raised in `delegation_log.md` DEL-20260914-01):** `BLG-BE-115`'s AC text names `(ticker, entry_date)` without `portfolio_id`, but `positions.portfolio_id` is a real FK and the schema does not itself enforce single-portfolio use. A bare `(ticker, entry_date)` partial unique index would incorrectly reject a second, independent portfolio's legitimate open position in the same ticker on the same date. Decision: scope the index to `(portfolio_id, ticker, entry_date)`. This still fully satisfies the AC's intent — a duplicate insert attempt within the scope the AC actually cares about (the same book of positions) is rejected at the DB layer with a clear error — while avoiding a cross-portfolio false-rejection bug the literal AC wording didn't anticipate. Verified in `tests/test_positions_open_ticker_entry_date_unique_migration.py::TestUniqueIndexEnforcement::test_allows_same_ticker_entry_date_across_different_portfolios`.
+
+Partial index (`WHERE status = 'open'`) rather than a table-wide constraint — closed positions are historical records and are expected to legitimately share `(portfolio_id, ticker, entry_date)` with a later re-entry (e.g. a position closed and re-opened at the same ticker/date is not itself a data-integrity violation; only two simultaneously-*open* rows are).
+
+**RISK-01 (no live DB access in this execution environment):** the migration's own pre-check `DO` block fails loudly with a full offending-rows report rather than relying on a separate manual pre-check against a live database — per the story's staging-only AC-03, a live pre-check against production-shaped data could not be run here (`DATABASE_URL` unavailable). Verified instead against a synthetic, positions-shaped SQLite fixture (`tests/test_positions_open_ticker_entry_date_unique_migration.py`) — a faithful proxy for the partial-unique-index mechanism, not a substitute for the real run. **AC-03 remains disclosed as pending, not claimed complete:** the live pre-check against actual production data must still be run (by a session with `DATABASE_URL` access) before or during this migration's real application to production.
+
+### Up Migration (v2.32 → v2.33)
+
+```sql
+BEGIN;
+
+-- Pre-check (RISK-01): fail loudly, with the offending rows listed, if any
+-- existing open-position (portfolio_id, ticker, entry_date) group already
+-- has >1 row — do not apply the constraint over live duplicate data.
+DO $$
+DECLARE
+    dup_count INTEGER;
+    dup_report TEXT;
+BEGIN
+    SELECT COUNT(*) INTO dup_count
+    FROM (
+        SELECT portfolio_id, ticker, entry_date
+        FROM positions
+        WHERE status = 'open'
+        GROUP BY portfolio_id, ticker, entry_date
+        HAVING COUNT(*) > 1
+    ) dups;
+
+    IF dup_count > 0 THEN
+        SELECT string_agg(format('  - portfolio %s / %s / %s (%s rows)', portfolio_id, ticker, entry_date, cnt), E'\n')
+        INTO dup_report
+        FROM (
+            SELECT portfolio_id, ticker, entry_date, COUNT(*) AS cnt
+            FROM positions
+            WHERE status = 'open'
+            GROUP BY portfolio_id, ticker, entry_date
+            HAVING COUNT(*) > 1
+        ) t;
+
+        RAISE EXCEPTION E'DS-17 migration aborted: % existing open-position duplicate (portfolio_id, ticker, entry_date) group(s) found -- resolve before applying this constraint:\n%', dup_count, dup_report;
+    END IF;
+END $$;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_positions_open_ticker_entry_date_unique
+    ON positions (portfolio_id, ticker, entry_date)
+    WHERE status = 'open';
+
+COMMIT;
+```
+
+### Down Migration (v2.33 → v2.32)
+
+```sql
+BEGIN;
+DROP INDEX IF EXISTS idx_positions_open_ticker_entry_date_unique;
+COMMIT;
+```
+
+### Verification
+
+```sql
+SELECT indexname, indexdef
+FROM pg_indexes
+WHERE tablename = 'positions'
+  AND indexname = 'idx_positions_open_ticker_entry_date_unique';
+```
+
+A subsequent duplicate `INSERT` (same `portfolio_id`/`ticker`/`entry_date`, `status = 'open'`) must fail with a unique-violation error surfaced to the caller — per `BLG-BE-115`'s AC, this should be confirmed against staging/production data by whoever runs this migration live, since it could not be run live in this execution environment (RISK-01).
+
+**Sign-off:**
+- Head of Engineering: Resolved the `portfolio_id` scoping question raised at delegation (DEL-20260914-01), finalised the migration, verified pre-check and index-enforcement logic against a synthetic SQLite fixture. 2026-09-14.
+- Data Model & Domain Schema Owner: Accepted — 2026-09-14 (agent-mediated, §5.3, 2nd pass after 1 Blocked retry). First pass flagged a prematurely-written sign-off and a missing `BLG-SPEC-D` filing (charter §8 — live-schema confirmation not possible here per RISK-01); both corrected (`BLG-SPEC-D18` filed; this line rewritten post-review). Second pass confirmed both fixes and the underlying migration content: `(portfolio_id, ticker, entry_date)` scoping, partial-index shape, Up/Down consistency, and RISK-01 disclosure all sound. Live production pre-check remains explicitly pending, not claimed run.
+
+---
+
+**Document Version:** 2.33
 **Maintained By:** Data Model & Domain Schema Owner
 **Last Review:** 2026-09-10 (ST-19, EPIC-04, v9.3, BLG-SPEC-75 — Migration History ascending-order review; footer version confirmed to match highest migration block, DS-16 v2.31)
