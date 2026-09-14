@@ -48,6 +48,9 @@ The goal is a compounding improvement: each mistake makes the next run of that s
 ### record-visual-qa
 *(No lessons recorded yet)*
 
+### governance-drift
+| 2026-09-14 | governance-drift | Step 3's untracked-file scan only globbed `claude/system/*.md`, never `claude/charter/*.md` — even though Step 1's §14 extraction already expects charter files to appear in the map (e.g. `team_charter.md`). This let `claude/charter/governance_role_onboarding_checklist.md` v1.0 (created alongside `claude/system/agent_onboarding_runbook.md` at the same ST-32/BLG-GOV-271 commit, 2026-09-08) go undetected through a full lifecycle audit (AUD-2026-09-14) and one governance-drift re-run before a second, broader re-run caught it. | Step 3 must glob both `claude/system/*.md` and `claude/charter/*.md` for the untracked-file scan, not just the directory Step 1's extraction happens to read from first. SKILL.md Step 3 updated to make this explicit (2026-09-14). |
+
 ---
 
 ## Cross-skill lessons (general patterns)

@@ -57,7 +57,7 @@ If a file exists but has no `**Version:**` header: mark as `NO_HEADER`.
 
 ## Step 3 — Scan for unreferenced Class 6 files
 
-Glob all files in `claude/system/` matching `*.md` that are NOT in `claude/system/changelogs/` and NOT in `claude/system/shared/`.
+Glob all files in `claude/system/` matching `*.md` that are NOT in `claude/system/changelogs/` and NOT in `claude/system/shared/`. **Also glob all files in `claude/charter/` matching `*.md`** — §14 tracks charter-adjacent reference docs too (e.g. `team_charter.md`, `document_lifecycle_guide.md`), so a Class 6 file created in `claude/charter/` and never added to §14 is exactly as invisible to a system/-only scan as one in `claude/system/`. (Confirmed missed this way 2026-09-14: `claude/charter/governance_role_onboarding_checklist.md` v1.0, created alongside `claude/system/agent_onboarding_runbook.md` at the same ST-32/BLG-GOV-271 commit, went undetected for two full audit/drift-check passes because the scan never looked in `claude/charter/` at all — Step 1's extraction already expected charter files to appear in the map, but Step 3 never gave a charter file the chance to be flagged UNTRACKED if it *wasn't* in the map.)
 
 For each file found, check whether it appears in the §14 map from Step 1.
 
