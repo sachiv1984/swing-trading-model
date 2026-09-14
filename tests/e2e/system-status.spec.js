@@ -175,7 +175,7 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     await expect(page.getByRole('button', { name: /run tests/i })).toBeVisible({ timeout: 8000 });
   });
 
-  test('SC-SS-01b: Pre-run state shows "118 endpoints" placeholder', async ({ page }) => {
+  test('SC-SS-01b: Pre-run state shows "122 endpoints" placeholder', async ({ page }) => {
     // Before running tests, the page shows: "Tests 118 endpoints"
     // (totalTests || '115' → '115' before any test run). Baseline corrected v7.7
     // EPIC-11 ST-11 (BLG-QA-102): an AST-verified count of backend/routers/test.py's
@@ -211,7 +211,17 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     // GET /strategy/backtest-rule-change/runs/{run_id}.
     // +2 (115 -> 117) from v8.9 EPIC-02 ST-06 (BLG-FEAT-90), which added
     // GET /trades/{trade_id}/debrief, POST /trades/{trade_id}/debrief.
-    await expect(page.getByText(/tests 118 endpoints/i)).toBeVisible({ timeout: 8000 });
+    // +1 (117 -> 118) — an untracked increment predating this comment (found
+    // as a fait accompli: the assertion below already read 118 with no
+    // corresponding log entry when this session picked the file up; not
+    // re-derived, since the current 121 count was independently confirmed via
+    // AST parse regardless of this one historical gap).
+    // +3 (118 -> 121) from v9.3 EPIC-03 ST-11/ST-12/ST-14 (BLG-OPS-17,
+    // BLG-OPS-20, BLG-OPS-96), which added GET /ops/alpaca-call-report,
+    // GET /ops/research-session-report, GET /ai/monthly-cost-by-feature.
+    // +1 (121 -> 122) from v9.3 EPIC-03 ST-13 (BLG-OPS-94), which added
+    // POST /ops/purge-audit-logs.
+    await expect(page.getByText(/tests 122 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {

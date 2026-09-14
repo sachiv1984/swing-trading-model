@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.14
-**Last Updated:** 2026-08-21 (ST-07, EPIC-02, v9.0, BLG-FEAT-93 — document that PUT /trade-plans/{id} does NOT apply POST's null→"Other" setup_type default, per Product Owner accept-as-is decision); prior — 2026-08-18 (ST-13, EPIC-04, v8.9, BLG-QA-150 — document server-side setup_type default to "Other" on POST /trade-plans); prior — 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — add triggered_by_price_alert_id to POST /trade-plans request schema); prior history retained — see prior entries in version control.
+**Version:** 0.15
+**Last Updated:** 2026-09-10 (ST-20, EPIC-04, v9.3, BLG-SPEC-76 — trade_tags row cross-references new canonical docs/specs/trade_tagging_taxonomy.md); prior — 2026-08-21 (ST-07, EPIC-02, v9.0, BLG-FEAT-93 — document that PUT /trade-plans/{id} does NOT apply POST's null→"Other" setup_type default, per Product Owner accept-as-is decision); prior — 2026-08-18 (ST-13, EPIC-04, v8.9, BLG-QA-150 — document server-side setup_type default to "Other" on POST /trade-plans); prior history retained — see prior entries in version control.
 **Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07); 2026-08-12__release-v8.7 (ST-01/ST-03); 2026-08-14__release-v8.8 (ST-09); 2026-08-18__release-v8.9 (ST-13); 2026-08-21__release-v9.0 (ST-07)
 
 ---
@@ -64,7 +64,7 @@ Create a new trade plan.
 | checklist_items | array | No | `[{item: string, checked: boolean}]` |
 | status | string | No | `draft` \| `active` \| `closed` — default: `draft` |
 | pre_entry_override_acknowledged | boolean | No | Whether user acknowledged pre-entry advisory warnings. Default: false. |
-| trade_tags | array of string | No | *(v0.6 — ST-05)* Data-independent tag field on `trade_plans`. Lowercase, alphanumeric+hyphen, max 20 chars per tag, max 10 tags. Invalid entries silently dropped server-side. Default: `[]`. |
+| trade_tags | array of string | No | *(v0.6 — ST-05)* Data-independent tag field on `trade_plans`. Lowercase, alphanumeric+hyphen, max 20 chars per tag, max 10 tags. Invalid entries silently dropped server-side. Default: `[]`. Canonical taxonomy reference (added ST-20, EPIC-04, v9.3, BLG-SPEC-76): `docs/specs/trade_tagging_taxonomy.md` — free-text tagging, not a closed enum; this row's rules are that document's format-rule table, restated here for local convenience. |
 | thesis_model_version | string | No | *(v0.9 — ST-12, BLG-BE-70)* AI compliance/audit provenance field. Frontend-passed and persisted without validation — set only when `setup_thesis`/`entry_rationale`/etc. were saved as-received from a prior `POST /trade-plans/generate-plan` or `POST /trade-plans/{id}/generate-thesis` response (see that response's `model_version` field), not user-edited before save. Null when the plan's narrative fields were typed manually. Nullable. No backfill of existing rows. |
 | thesis_prompt_version | string | No | *(v0.9 — ST-12, BLG-BE-70)* Companion to `thesis_model_version` — the generate-plan/generate-thesis response's `prompt_version` field, saved the same way. Nullable. |
 | invalidation_condition | string | No | *(v0.11 — ST-01, EPIC-01, v8.7, BLG-FEAT-84)* Optional, manually authored "what would prove this thesis wrong?" field. `trade_plan.md` §5.1. Nullable. |
@@ -515,6 +515,7 @@ score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.15 | 2026-09-10 | ST-20 (EPIC-04, v9.3, BLG-SPEC-76): `trade_tags` row now cross-references the new canonical `docs/specs/trade_tagging_taxonomy.md` — confirms trade tagging is intentionally free-text (not a closed taxonomy) and consolidates the format rules this row already stated with the same rules documented in `journal_components.md` and now referenced from `analytics_endpoints.md`'s reporting side. No schema/behaviour change. |
 | 0.14 | 2026-08-21 | ST-07 (EPIC-02, v9.0, BLG-FEAT-93): Documented that `PUT /trade-plans/{id}` does NOT apply `POST`'s null→`"Other"` `setup_type` default — `null`/omitted leaves the existing value unchanged, per every other field's semantics. Product Owner accept-as-is decision: `docs/product/decisions/setup-type-other-conflation-decision--2026-08-21.md`. No schema/behaviour change to the endpoint itself, documentation only. |
 | 0.11 | 2026-08-12 | ST-01/ST-03 (EPIC-01, v8.7, BLG-FEAT-84/BLG-BE-95): Add `invalidation_condition` (optional manual textarea) and `is_ai_draft` (AI-origin flag, default false) to POST/PUT /trade-plans request schema. `trade_plan.md` §5.1, §10.5. |
 | 0.10 | 2026-08-12 | ST-03 (EPIC-02, v8.6, BLG-BE-91): `PUT /trade-plans/{id}` — `status: 'active'` now requires a `position_id` (either already on the plan, or supplied in this same update); 400 if neither. New Errors section documents this alongside the pre-existing (previously undocumented) abandonment-rule 400s and 404. DB-level backstop: `docs/specs/data_model.md` DS-12. |

@@ -2487,6 +2487,195 @@ def create_claude_audit_entry(
         pass
 
 
+# ---------------------------------------------------------------------------
+# api_call_log — generic external-API call-count instrumentation
+#
+# ST-11 (BLG-OPS-17, EPIC-03, v9.3): reference instrumentation pattern for
+# tracking external API call volume (distinct from claude_audit_log/
+# gemini_audit_log above, which track LLM cost/tokens per call — this table
+# tracks call *counts* for rate-limit/quota-sensitive external services with
+# no per-call cost figure, e.g. Alpaca market data, the Research endpoint's
+# upstream sources). Reused by ST-12 (research endpoint session reporting).
+# ---------------------------------------------------------------------------
+
+def ensure_api_call_log_table() -> None:
+    """Create api_call_log table if it does not exist (ST-11, BLG-OPS-17)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS api_call_log (
+                    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    service     TEXT NOT NULL,
+                    endpoint    TEXT NOT NULL,
+                    session_id  TEXT,
+                    called_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    success     BOOLEAN NOT NULL
+                )
+            """)
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_acl_service_called_at ON api_call_log (service, called_at DESC)"
+            )
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_acl_session_id ON api_call_log (session_id)"
+            )
+        conn.commit()
+
+
+def log_api_call(service: str, endpoint: str, session_id: str | None = None, success: bool = True) -> None:
+    """Append one row to api_call_log. Non-blocking on failure (matches
+    create_claude_audit_entry/create_gemini_audit_entry's fail-safe convention
+    above — instrumentation must never break the caller's actual request)."""
+    try:
+        ensure_api_call_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """INSERT INTO api_call_log (service, endpoint, session_id, success)
+                       VALUES (%s, %s, %s, %s)""",
+                    (service, endpoint, session_id, success),
+                )
+            conn.commit()
+    except Exception:
+        pass
+
+
+def get_api_call_report(service: str, window: str = "daily") -> dict:
+    """Aggregate api_call_log call counts for `service` over `window`
+    ("daily" = today UTC, "weekly" = last 7 days). ST-11.
+    """
+    since_clause = "CURRENT_DATE" if window == "daily" else "NOW() - INTERVAL '7 days'"
+    try:
+        ensure_api_call_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    f"""
+                    SELECT
+                        COUNT(*) AS total_calls,
+                        COUNT(*) FILTER (WHERE success) AS success_count,
+                        COUNT(*) FILTER (WHERE NOT success) AS failure_count
+                    FROM api_call_log
+                    WHERE service = %s AND called_at >= {since_clause}
+                    """,
+                    (service,),
+                )
+                row = cur.fetchone()
+                return {
+                    "service": service,
+                    "window": window,
+                    "total_calls": int(row["total_calls"]),
+                    "success_count": int(row["success_count"]),
+                    "failure_count": int(row["failure_count"]),
+                }
+    except Exception:
+        return {"service": service, "window": window, "total_calls": 0, "success_count": 0, "failure_count": 0}
+
+
+def get_api_session_report(service: str, anomaly_multiplier: float = 2.0) -> dict:
+    """Per-session call counts for `service` over the last 7 days, with a
+    baseline (mean calls/session) and sessions flagged as anomalous when
+    their call count exceeds `anomaly_multiplier` × baseline. ST-12
+    (BLG-OPS-20, EPIC-03, v9.3) — reuses ST-11's api_call_log rather than a
+    separate logging mechanism (RISK-03). `anomaly_multiplier` default (2.0)
+    matches sprint_backlog.md's documented ">2x baseline" threshold — see
+    ANOMALY_MULTIPLIER in routers/cost_monitoring.py for the single
+    configurable constant this default is sourced from.
+    """
+    try:
+        ensure_api_call_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT session_id, COUNT(*) AS call_count
+                    FROM api_call_log
+                    WHERE service = %s AND called_at >= NOW() - INTERVAL '7 days'
+                      AND session_id IS NOT NULL
+                    GROUP BY session_id
+                    ORDER BY call_count DESC
+                    """,
+                    (service,),
+                )
+                sessions = cur.fetchall()
+                counts = [int(s["call_count"]) for s in sessions]
+                baseline = (sum(counts) / len(counts)) if counts else 0.0
+                threshold = baseline * anomaly_multiplier
+                return {
+                    "service": service,
+                    "period_days": 7,
+                    "session_count": len(sessions),
+                    "baseline_calls_per_session": round(baseline, 2),
+                    "anomaly_multiplier": anomaly_multiplier,
+                    "sessions": [
+                        {
+                            "session_id": s["session_id"],
+                            "call_count": int(s["call_count"]),
+                            "anomalous": baseline > 0 and int(s["call_count"]) > threshold,
+                        }
+                        for s in sessions
+                    ],
+                }
+    except Exception:
+        return {
+            "service": service, "period_days": 7, "session_count": 0,
+            "baseline_calls_per_session": 0.0, "anomaly_multiplier": anomaly_multiplier, "sessions": [],
+        }
+
+
+def get_monthly_claude_cost_by_feature() -> list[dict]:
+    """Per-feature (endpoint-tagged) breakdown of the current calendar
+    month's Claude API spend from claude_audit_log. ST-14 (BLG-OPS-96,
+    EPIC-03, v9.3) — extends get_monthly_claude_cost() (single total above)
+    with a GROUP BY endpoint breakdown. Feature tag taxonomy (the `endpoint`
+    column's values): see docs/specs/api_contracts/ai_endpoints.md
+    #GET /ai/monthly-cost-by-feature.
+    """
+    try:
+        ensure_claude_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT
+                        endpoint,
+                        COALESCE(SUM(cost_usd), 0.0) AS total_cost,
+                        COUNT(*) AS request_count
+                    FROM claude_audit_log
+                    WHERE generated_at >= date_trunc('month', NOW())
+                    GROUP BY endpoint
+                    ORDER BY total_cost DESC
+                """)
+                rows = cur.fetchall()
+                return [
+                    {
+                        "endpoint": r["endpoint"],
+                        "total_cost_usd": float(r["total_cost"]),
+                        "request_count": int(r["request_count"]),
+                    }
+                    for r in rows
+                ]
+    except Exception:
+        return []
+
+
+def purge_claude_audit_log_older_than_730_days() -> int:
+    """Delete claude_audit_log rows older than 730 days (24 months). Returns
+    rows deleted. ST-13 (BLG-OPS-94, EPIC-03, v9.3) — mirrors
+    purge_gemini_audit_log_older_than_90_days()'s existing fail-safe shape.
+    Retention window rationale: docs/ops/ai_audit_log_retention_policy.md.
+    """
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "DELETE FROM claude_audit_log WHERE generated_at < NOW() - INTERVAL '730 days'"
+                )
+                deleted = cur.rowcount
+            conn.commit()
+        return deleted
+    except Exception:
+        return 0
+
+
 def query_claude_audit_log(
     limit: int = 50,
     endpoint: str = None,

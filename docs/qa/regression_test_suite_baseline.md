@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-08-08
-**Source:** refreshed v8.4 ST-26 (BLG-QA-116, full backfill); refreshed v7.6 ST-02 (BLG-QA-112); refreshed v5.9 ST-10 — prior history retained, see prior entries in version control
+**Last Updated:** 2026-09-09 (ST-05, BLG-QA-82, v9.3 — SignalCard rows consolidated to signal-card.spec.js); prior — 2026-08-08 (ST-26, BLG-QA-116, v8.4, full backfill); prior history retained — see prior entries in version control
+**Source:** refreshed v9.3 ST-05 (BLG-QA-82, SignalCard consolidation); refreshed v8.4 ST-26 (BLG-QA-116, full backfill); refreshed v7.6 ST-02 (BLG-QA-112); refreshed v5.9 ST-10 — prior history retained, see prior entries in version control
 
 ---
 
@@ -168,9 +168,7 @@ Source directory: `tests/e2e/`
 | si01-si03-integration.spec.js | 10 | SI-01/SI-03 integration | v3.9 |
 | si04-version-comparison.spec.js | 5 | SI-04 strategy-version performance comparison | v7.7 |
 | sidebar-nav-groups.spec.js | 8 | Sidebar navigation groups | v3.3 |
-| signals-add-to-watchlist.spec.js | 3 | Signal watchlist add | v5.3 |
-| signals-allocation-insufficient.spec.js | 5 | Allocation insufficient signal flow | v5.0 |
-| signals-cash-balance.spec.js | 4 | Signals cash balance display | v5.0 |
+| signal-card.spec.js | 12 | SignalCard: watchlist add, cash balance, allocation-insufficient badge (consolidated v9.3, BLG-QA-82; was 3 files: signals-add-to-watchlist v5.3, signals-allocation-insufficient v5.0, signals-cash-balance v5.0) | v9.3 |
 | slippage-tracking.spec.js | 8 | Slippage tracking | v3.6 |
 | smoke-critical-paths.spec.js | 3 | Smoke — critical paths | v2.0 |
 | staleness-indicator.spec.js | 5 | Data staleness indicator | v3.2 |
@@ -202,7 +200,7 @@ Source directory: `tests/e2e/`
 | Arc 2 | Analytics, compliance, PT plan vs reality, reports | 9 | compliance-panel, arc5-compliance-section, reports-performance-tab, plan-vs-reality, positions-pnl-columns, chart-interactivity, compliance-recheck, monthly-pnl-avg-per-trade, monthly-pnl-csv-export, monthly-pnl-realized-unrealized, net-r-trade-history, r-multiple-reflection, reports-reconciliation, reports-si02-gate-status, strategy-benchmark, tax-year-csv-export |
 | Arc 3 | Position lifecycle, risk dashboard, red flag journal, IT-xx | 8 | epic01-v34-lifecycle, epic02-v34-risk-prompts, risk-dashboard, red-flag-journal, entry-checklist, trade-plan, trade-plan-signal-context, print-export-pdf, epic01-v62-stops-alerts, gap-risk-flag, gate-progress, position-review-cadence-nudge, red-flag-journal-filter-persistence, sector-heatmap, sector-regime-exposure-trend, trailing-stop-explainer-tooltip |
 | Arc 4 | Screener, ticker universe, pre-trade research, trade plans | 11 | screener, screener-uk-suffix, ticker-universe, pre-trade-research, research-typography, research-view-signal-type, earnings-calendar, saved-filters-calendar-view, pre-entry-panel-badge, screener-quality, setup-quality-score, trade-plan-tag-filter, watchlist, watchlist-staleness-review |
-| Arc 5 | SI-01/02/03/05, signals, paper trading, AI | 12 | si01-si03-integration, si05-digest-delivery (removed v6.8, see Part 2), signals-add-to-watchlist, signals-allocation-insufficient, signals-cash-balance, paper-account, keyboard-shortcuts, sidebar-nav-groups, ai-briefing-progressive-disclosure, ai-usage-costs, epic02-v62-ai-briefing-chat, morning-briefing, si04-version-comparison, trade-history-ai-journal-summary |
+| Arc 5 | SI-01/02/03/05, signals, paper trading, AI | 10 | si01-si03-integration, si05-digest-delivery (removed v6.8, see Part 2), signal-card (consolidated v9.3 from signals-add-to-watchlist/signals-allocation-insufficient/signals-cash-balance, BLG-QA-82), paper-account, keyboard-shortcuts, sidebar-nav-groups, ai-briefing-progressive-disclosure, ai-usage-costs, epic02-v62-ai-briefing-chat, morning-briefing, si04-version-comparison, trade-history-ai-journal-summary |
 | Ops/QA | System status, validation, market correlation, visual regression, cross-page utilities | 6 | system-status, market-correlation, slippage-tracking, fee-drag-trade-history, visual-snapshots, epic03-v34-frontend, command-palette, bulk-actions-toolbar, dialog-classname-override-fixes, epic01-v70-grid-badge-parity, form-validation-error-color-fixes, heading-light-theme-contrast, page-header-dark-gradient-contrast, secondary-text-contrast, v7.2-dashboard-tradeplan-ux-hardening, whats-new-panel |
 
 ---

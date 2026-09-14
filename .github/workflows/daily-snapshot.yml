@@ -43,3 +43,15 @@ jobs:
         run: |
           echo "Generating Signals..."
           curl --fail --show-error --max-time 300 -X POST "${API_URL}/signals/generate" -H "X-API-Key: ${API_KEY}"
+
+      - name: Purge AI Audit Logs
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          # ST-13 (BLG-OPS-94, EPIC-03, v9.3): enforces the retention windows
+          # in docs/ops/ai_audit_log_retention_policy.md — gemini_audit_log
+          # (90 days) and claude_audit_log (730 days). Idempotent; deletes 0
+          # rows on a day with nothing past its window.
+          echo "Purging AI audit logs past their retention window..."
+          curl --fail --show-error --max-time 120 -X POST "${API_URL}/ops/purge-audit-logs" -H "X-API-Key: ${API_KEY}"

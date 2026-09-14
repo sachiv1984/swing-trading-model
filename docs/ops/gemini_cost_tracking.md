@@ -1,8 +1,8 @@
 **Owner:** FinOps & Resource Architect
 **Class:** Operations Document (Class 3)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-05-27
+**Version:** 1.3
+**Last Updated:** 2026-09-10 (ST-13, BLG-OPS-94, v9.3 — retention policy now actually enforced via daily-snapshot.yml; see docs/ops/ai_audit_log_retention_policy.md); prior — 2026-05-27
 **Source:** ST-08 (BLG-OPS-26, v4.0 EPIC-03); ST-15 (BLG-OPS-30, v4.1 EPIC-04)
 
 # Claude API Cost Tracking
@@ -54,7 +54,9 @@ The `gemini_audit_log` table (created by `ensure_gemini_audit_log_table()` in `b
 
 ## Retention Policy
 
-Rows older than 90 days are eligible for deletion via `purge_gemini_audit_log_older_than_90_days()`. This function should be called periodically (e.g. via a scheduled maintenance job or startup hook) to enforce the 90-day retention minimum.
+Rows older than 90 days are eligible for deletion via `purge_gemini_audit_log_older_than_90_days()`.
+
+**Enforced as of ST-13 (BLG-OPS-94, EPIC-03, v9.3):** this function was defined but never actually invoked anywhere in the codebase — the 90-day window existed only as documentation. `.github/workflows/daily-snapshot.yml`'s "Purge AI Audit Logs" step now calls `POST /ops/purge-audit-logs` daily, which invokes this function (alongside `claude_audit_log`'s own newly-defined 730-day purge). Full policy, rationale, and the "first cleanup pass" disposition: `docs/ops/ai_audit_log_retention_policy.md`.
 
 ## Monthly Aggregate Query
 

@@ -6,6 +6,7 @@ POST /ai/daily-briefing       — Plain-English portfolio briefing + ordered act
 POST /ai/chat                 — Stateless per-request AI trade advisor.
 GET  /ai/claude-audit-log     — Query the immutable Claude API call audit trail.
 GET  /ai/monthly-cost         — Current calendar month's Claude API spend total.
+GET  /ai/monthly-cost-by-feature — Same, broken down by feature tag.
 
 AI output is display-only and must NOT feed into any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
@@ -243,6 +244,23 @@ def get_monthly_cost():
     from database import get_monthly_claude_cost
     result = get_monthly_claude_cost()
     return {"status": "ok", "data": result}
+
+
+@router.get("/monthly-cost-by-feature")
+def get_monthly_cost_by_feature():
+    """
+    Return the current calendar month's Claude API spend, broken down by
+    feature (the claude_audit_log `endpoint` tag — e.g. "POST /ai/daily-briefing",
+    "POST /ai/chat", "POST /trade-plans/{plan_id}/generate-thesis").
+
+    Read-only, no side effects. Extends GET /ai/monthly-cost (single total)
+    with a per-feature breakdown.
+
+    ST-14 (BLG-OPS-96, EPIC-03, v9.3).
+    Contract: docs/specs/api_contracts/ai_endpoints.md#GET /ai/monthly-cost-by-feature
+    """
+    from database import get_monthly_claude_cost_by_feature
+    return {"status": "ok", "data": {"features": get_monthly_claude_cost_by_feature()}}
 
 
 @router.get("/spend-trend")

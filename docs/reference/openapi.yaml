@@ -444,6 +444,17 @@ paths:
                       newest_trade_date:
                         type: string
                         nullable: true
+                    example:
+                      # ST-18 (BLG-SPEC-74, EPIC-04, v9.3) — no dedicated contract doc exists for this
+                      # endpoint with its own JSON example; constructed directly from this schema's own
+                      # field names/types rather than copied from a doc, unlike this story's other 5
+                      # endpoints (see qa_evidence_EPIC-04.md for the full list).
+                      closed_trades_count: 23
+                      closed_trades_with_plans: 19
+                      active_positions_count: 4
+                      ai_journal_entry_count: 15
+                      oldest_trade_date: "2026-03-12"
+                      newest_trade_date: "2026-09-01"
 
   /portfolio/paper-positions:
     get:
@@ -573,6 +584,20 @@ paths:
                               type: string
                             severity:
                               type: string
+                    example:
+                      # ST-18 (BLG-SPEC-74, EPIC-04, v9.3) — copied from
+                      # docs/specs/api_contracts/pre_entry_validation.md's own Response (200 OK) example.
+                      ticker: "AAPL"
+                      market: "US"
+                      quantity: 10
+                      advisory_status: "warn"
+                      override_required: true
+                      checks:
+                        - {rule: "regime_gate", status: "pass", detail: "US market is Risk-On (SPY above 200-day MA)", severity: "fail"}
+                        - {rule: "cash_constraint", status: "pass", detail: "Estimated cost £2,150.00 within available cash £5,000.00", severity: "fail"}
+                        - {rule: "sector_concentration", status: "warn", detail: "Projected Technology sector allocation 32.4% would exceed 30% advisory limit", severity: "warn"}
+                        - {rule: "earnings_proximity", status: "pass", detail: "Next earnings 2026-07-30 (71 days) — outside 5-day proximity window", severity: "warn"}
+                        - {rule: "sizing_validity", status: "skipped", detail: "Provide entry_price and stop_price query params for sizing validity check", severity: "fail"}
         "422":
           description: Missing required query params
 
@@ -663,6 +688,22 @@ paths:
                               type: string
                               enum: [info, warning, critical]
                               description: Event severity level (v4.6 ST-09)
+                    example:
+                      # ST-18 (BLG-SPEC-74, EPIC-04, v9.3) — copied from
+                      # docs/specs/api_contracts/red_flag_journal.md's own Response (200 OK) example
+                      # (severity field added — present in the schema since v4.6 ST-09, added to this
+                      # example for completeness; the doc's own example predates that field).
+                      total: 12
+                      page: 1
+                      page_size: 20
+                      items:
+                        - id: "550e8400-e29b-41d4-a716-446655440000"
+                          event_type: "pre_entry_override"
+                          ticker: "AAPL"
+                          position_id: null
+                          context: {source: "trade_plan", override_acknowledged: true}
+                          created_at: "2026-05-22T10:30:00+00:00"
+                          severity: "warning"
         "500":
           description: Internal server error
 
@@ -2772,6 +2813,18 @@ paths:
                       total_closed_trades:
                         type: integer
                         description: All-time closed trade count — denominator of trade_plan_adherence_rate. Backs the frontend low-trade-volume advisory (v1.1.0, ST-01, v9.2).
+                    example:
+                      # ST-18 (BLG-SPEC-74, EPIC-04, v9.3) — copied from
+                      # docs/specs/api_contracts/arc5_compliance_analytics.md's own Response (200) example.
+                      period: "7d"
+                      validation_pass_rate_by_rule:
+                        regime_gate: {pass_rate: 0.85, pass_count: 17, fail_count: 3}
+                        earnings_proximity: {pass_rate: 1.0, pass_count: 20, fail_count: 0}
+                      events_per_week: 1.43
+                      override_rate: 0.1
+                      top_rule_breach: "regime_gate"
+                      trade_plan_adherence_rate: 0.72
+                      total_closed_trades: 34
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -2942,6 +2995,23 @@ paths:
                         type: string
                         enum: [increasing, decreasing, flat]
                         description: Present only when status is insufficient_data.
+                    example:
+                      # ST-18 (BLG-SPEC-74, EPIC-04, v9.3) — copied from
+                      # docs/specs/api_contracts/behavioural_drift_contract.md's own Response Shape (200 OK)
+                      # example (the "ok" state, not the insufficient_data variant documented separately there).
+                      # NOTE: the doc's own example literally shows the placeholder text
+                      # "insufficient_data | no_drift | drift_detected | error" for this field (illustrating
+                      # the enum inline) rather than a real value — picked "no_drift" here as a concrete,
+                      # realistic example value instead of copying that placeholder verbatim.
+                      status: "no_drift"
+                      analysis_window_days: 90
+                      trade_count_in_window: 12
+                      metrics:
+                        - {metric_id: "entry_timing_drift", label: "Entry Timing", measured_value: 0.75, unit: "days", status: "ok", threshold_value: 1.0, deviation_pct: -25.0, advisory_note: null}
+                        - {metric_id: "sizing_adherence", label: "Sizing Adherence", measured_value: 1.45, unit: "pct_of_portfolio", status: "approaching", threshold_value: 1.5, deviation_pct: -3.33, advisory_note: null}
+                        - {metric_id: "consecutive_loss_sizing", label: "Post-Loss Sizing", measured_value: null, unit: "pct_of_portfolio", status: "insufficient_data", threshold_value: 1.5, deviation_pct: null, advisory_note: "Insufficient post-loss-streak trades (1 of 3 required)."}
+                        - {metric_id: "regime_context", label: "Regime Adherence", measured_value: 95.5, unit: "pct", status: "ok", threshold_value: 90.0, deviation_pct: 6.11, advisory_note: null}
+                      computed_at: "2026-05-30T21:00:00Z"
         "401":
           $ref: "#/components/responses/Unauthorized"
 
@@ -3213,6 +3283,44 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /ai/monthly-cost-by-feature:
+    get:
+      tags: [AI]
+      summary: Current calendar month's Claude API spend, broken down by feature
+      description: |
+        Extends GET /ai/monthly-cost (a single total) with a per-feature
+        breakdown, grouped by the existing claude_audit_log.endpoint tag.
+        Read-only, no side effects. Reuses existing feature tagging (RISK-03)
+        -- no new data collection.
+        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.9 §GET /ai/monthly-cost-by-feature
+      responses:
+        "200":
+          description: Per-feature Claude API cost breakdown for the current month
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          features:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                endpoint:
+                                  type: string
+                                total_cost_usd:
+                                  type: number
+                                  format: float
+                                request_count:
+                                  type: integer
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /ai/spend-trend:
     get:
       tags: [AI]
@@ -3247,6 +3355,135 @@ paths:
                               type: number
                               format: float
                               example: 1.45
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /ops/alpaca-call-report:
+    get:
+      tags: [Cost Monitoring]
+      summary: Alpaca API call count report (daily or weekly)
+      description: |
+        Aggregated Alpaca Data API call counts from api_call_log, the
+        reference external-API instrumentation pattern (ST-11, reused by
+        GET /ops/research-session-report). Read-only, no side effects.
+        Canonical contract: docs/specs/api_contracts/ops_endpoints.md v1.0 §GET /ops/alpaca-call-report
+      parameters:
+        - in: query
+          name: window
+          schema:
+            type: string
+            enum: [daily, weekly]
+            default: daily
+      responses:
+        "200":
+          description: Alpaca API call count aggregate
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          service:
+                            type: string
+                            example: alpaca
+                          window:
+                            type: string
+                          total_calls:
+                            type: integer
+                          success_count:
+                            type: integer
+                          failure_count:
+                            type: integer
+        "422":
+          description: Invalid window value
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /ops/research-session-report:
+    get:
+      tags: [Cost Monitoring]
+      summary: Research endpoint per-session external-call counts with anomaly flagging
+      description: |
+        Per-session (one UUID per cache-miss GET /research/{ticker} request)
+        external-call counts over the last 7 days, with a computed baseline
+        (mean calls/session) and sessions flagged anomalous above 2x that
+        baseline. Reuses ST-11's api_call_log instrumentation (RISK-03).
+        Read-only, no side effects.
+        Canonical contract: docs/specs/api_contracts/ops_endpoints.md v1.0 §GET /ops/research-session-report
+      responses:
+        "200":
+          description: Research endpoint session call-count report
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          service:
+                            type: string
+                            example: research
+                          period_days:
+                            type: integer
+                          session_count:
+                            type: integer
+                          baseline_calls_per_session:
+                            type: number
+                            format: float
+                          anomaly_multiplier:
+                            type: number
+                            format: float
+                          sessions:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                session_id:
+                                  type: string
+                                call_count:
+                                  type: integer
+                                anomalous:
+                                  type: boolean
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /ops/purge-audit-logs:
+    post:
+      tags: [Cost Monitoring]
+      summary: Delete AI audit log rows past their retention window
+      description: |
+        Deletes gemini_audit_log rows older than 90 days and claude_audit_log
+        rows older than 730 days (24 months), enforcing the retention windows
+        in docs/ops/ai_audit_log_retention_policy.md. Idempotent -- safe to
+        call repeatedly (e.g. from a daily scheduled workflow); deletes
+        nothing when no rows qualify.
+        Canonical contract: docs/specs/api_contracts/ops_endpoints.md v1.1 §POST /ops/purge-audit-logs
+      responses:
+        "200":
+          description: Purge completed (possibly deleting 0 rows)
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          gemini_audit_log_rows_deleted:
+                            type: integer
+                          claude_audit_log_rows_deleted:
+                            type: integer
         "401":
           $ref: "#/components/responses/Unauthorized"
         "500":
@@ -3485,6 +3722,13 @@ paths:
                     type: string
                     nullable: true
                     description: Error description if not sent; null on success
+                example:
+                  # ST-18 (BLG-SPEC-74, EPIC-04, v9.3) — copied from
+                  # docs/specs/api_contracts/digest_endpoints.md's own Response (200 — sent) example.
+                  status: "ok"
+                  sent: true
+                  message_length: 265
+                  error: null
 
   /validate/calculations:
     post:
@@ -6077,6 +6321,9 @@ components:
         total_deposits: { type: number }
         total_withdrawals: { type: number }
         net_cash_flow: { type: number }
+        current_cash:
+          type: number
+          description: "Current cash balance (GBP). Added ST-06 (BLG-QA-85, EPIC-02, v9.3) — field was already returned by backend/services/cash_service.py::get_summary() and documented in docs/specs/api_contracts/cash_endpoints.md, but missing from this schema (contract-test drift finding)."
 
     Signal:
       type: object
@@ -6086,7 +6333,9 @@ components:
         market: { type: string, enum: [US, UK] }
         signal_date: { type: string, format: date }
         status: { type: string, enum: [new, entered, dismissed, expired, already_held, allocation_insufficient] }
-        momentum_score: { type: number }
+        momentum_percent:
+          type: number
+          description: "Renamed from momentum_score ST-06 (BLG-QA-85, EPIC-02, v9.3) — field was never actually named momentum_score; backend/services/signal_service.py returns momentum_percent, matching docs/specs/api_contracts/signal_endpoints.md's own JSON example (contract-test drift finding)."
         current_price: { type: number }
         reason: { type: string, nullable: true }
         relative_strength_pct:
