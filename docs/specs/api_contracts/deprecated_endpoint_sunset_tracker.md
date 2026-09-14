@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-09-08 (ST-43, EPIC-05, v9.2, BLG-SPEC-119 — tracker created)
+**Version:** 1.1
+**Last Updated:** 2026-09-14 (ST-04, EPIC-01, v9.4, BLG-API-03 — re-ran the deprecated-endpoint scan, 0 matches, re-confirmed §3 has no outstanding removal follow-up; no schema change); prior — 2026-09-08 (ST-43, EPIC-05, v9.2, BLG-SPEC-119 — tracker created)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -22,6 +22,8 @@ This tracker is updated as part of the same commit that marks an endpoint `depre
 | — | — | — | — | — | None currently active |
 
 **Confirmed 2026-09-08 (ST-43):** `grep -i "deprecat" docs/reference/openapi.yaml` returns 0 matches — no endpoint in the live contract is currently marked `deprecated: true`. This matches `conventions.md` §14's own note that no endpoint has ever been formally deprecated under the §14 process (the process was written ahead of the first real deprecation, v8.3).
+
+**Re-confirmed 2026-09-14 (ST-04, EPIC-01, v9.4, BLG-API-03 — deprecated-endpoint removal-follow-through scan):** Re-ran `grep -i "deprecat" docs/reference/openapi.yaml` — still 0 matches. §3's two historical rows were also re-checked: both are already recorded as fully resolved (contract renamed/superseded, or replaced) with no open removal follow-up outstanding, so neither qualifies as a "deprecated > 2 releases ago, no removal follow-up filed" stale case. Scan method: manual grep against `openapi.yaml` plus a re-read of this tracker's §3 historical register (acceptable at current scale — this document's own §2/§3 structure means a full scan is just these two checks, not a search across every contract file). No qualifying stale endpoint found this run; nothing to file as a new backlog item.
 
 ## 3. Historical Register — Superseded or Removed Before §14 Existed
 

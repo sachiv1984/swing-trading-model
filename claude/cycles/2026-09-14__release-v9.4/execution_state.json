@@ -65,23 +65,23 @@
         "ST-03": {
           "title": "CI check for the inverse OpenAPI drift case",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1636,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "6859b92146a9ec09b68e2fb99266055d980fdd67",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-14T13:50:27Z",
+          "acceptance_verified": true,
           "spec_references": [
             "tests/test_openapi_drift_inverse_case.py",
             ".github/workflows/openapi-drift.yml"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": "Pre-met finding (LL-v2.4-P4-02 style): the inverse OpenAPI-drift case (openapi.yaml path missing from contracts) is ALREADY caught and already blocks merge in the existing openapi-drift.yml gate (in_openapi_not_contracts, summed into drift_count) and mirrored pre-commit via check_local_openapi_contract_completeness.py -> openapi_3way_drift_sweep.py. BLG-API-02s problem statement was stale at filing time. No new CI check added (would duplicate existing enforcement); added a unit-level regression guard (tests/test_openapi_drift_inverse_case.py) for the inverse-direction detection logic itself, plus a live-repo baseline test confirming 0 pre-existing drift. Intent of the AC (inverse case is caught in CI) is met -- no deviation filed per LL-v3.4-P3-03."
@@ -89,7 +89,7 @@
         "ST-04": {
           "title": "Deprecated-endpoint removal-follow-through scan",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 1637,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-01",
@@ -99,13 +99,15 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/api_contracts/deprecated_endpoint_sunset_tracker.md#Currently Active Deprecations (Notice Window Open)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case B (documentation-creation-adjacent \u2014 updates the live tracker artefact that IS the governing record). Re-ran grep scan: 0 currently-deprecated endpoints; both historical rows already fully resolved. Nothing to file."
         },
         "ST-05": {
           "title": "Investigate consolidating the 3 scheduled-job runners into one orchestrator",
@@ -672,7 +674,8 @@
   "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
-    "EPIC-01/ST-02"
+    "EPIC-01/ST-02",
+    "EPIC-01/ST-03"
   ],
   "open_escalations": [],
   "merge_gate": {
