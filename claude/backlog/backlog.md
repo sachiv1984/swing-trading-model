@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-14 (session — 1 new item added during EPIC-03/v9.4 sprint execution: `BLG-OPS-161` (claude_audit_log has no latency column, no real-data source for AI endpoint latency anomaly checks, surfaced ST-09)); prior — 2026-09-14 (session — 4 new items added during EPIC-01/v9.4 sprint execution and its PR review: `BLG-OPS-160` (missing scheduler trigger, surfaced ST-05), `BLG-SPEC-D18` (positions schema confirmation debt, surfaced ST-01 sign-off), `BLG-BE-117` (CI-blocking changelog test failure, surfaced PR #1662 review), `BLG-GOV-331` (governance JSON write-hygiene convention, surfaced PR #1662 review)); prior — 2026-09-14 (1 new item added: `BLG-FE-175`, design gate `2026-09-14__release-v9.4` follow-up — v9.5 motion-timing remediation across the 4 known non-compliant components); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-14 (session — 1 new item added during EPIC-03/v9.4 PR #1665 review: `BLG-QA-177` (untested SQL in `get_claude_endpoint_cost_windows()`, surfaced by agent-mediated Director of Quality review, ST-09)); prior — 2026-09-14 (session — 1 new item added during EPIC-03/v9.4 sprint execution: `BLG-OPS-161` (claude_audit_log has no latency column, no real-data source for AI endpoint latency anomaly checks, surfaced ST-09)); prior — 2026-09-14 (session — 4 new items added during EPIC-01/v9.4 sprint execution and its PR review: `BLG-OPS-160` (missing scheduler trigger, surfaced ST-05), `BLG-SPEC-D18` (positions schema confirmation debt, surfaced ST-01 sign-off), `BLG-BE-117` (CI-blocking changelog test failure, surfaced PR #1662 review), `BLG-GOV-331` (governance JSON write-hygiene convention, surfaced PR #1662 review)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4886,6 +4886,27 @@ A programmatic write to `.claude_current_state.json` during EPIC-01/v9.4 executi
 **Acceptance Criteria**
 - `claude_audit_log` carries a populated latency column for new rows
 - `POST /ai/check-endpoint-anomalies` reports real (non-simulated) `latency_anomalies` with `latency_data_source` no longer `"not_available_pending_BLG-OPS-161"`
+
+---
+
+### BLG-QA-177 — Validate `get_claude_endpoint_cost_windows()` SQL against a real Postgres instance
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Data Model & Domain Schema Owner / QA Testing Owner
+**Source:** PR #1665 agent-mediated Director of Quality review, EPIC-03/ST-09, `2026-09-14__release-v9.4` — 2026-09-14
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.5
+
+**Problem**
+`backend/database.py`'s `get_claude_endpoint_cost_windows()` (added ST-09, `BLG-OPS-151`) uses `FILTER` clauses and `(param || ' hours')::interval` / `(param || ' days')::interval` string-concatenation arithmetic to compute recent-vs-baseline cost windows. No test in the repo actually executes this SQL: `tests/test_ai_endpoint_anomaly_service.py`'s new tests all go through `tests/conftest.py`'s session-scoped `database`-module stub (every `from database import (...)` anywhere in `backend/` is AST-discovered and replaced with a `MagicMock`), and since `ai_endpoint_anomaly_service.py` imports `get_claude_endpoint_cost_windows` locally inside the function body, even the "monkeypatched" tests only patch the stub's attribute, never the real function. No `DATABASE_URL` is available in the current execution environment to run it live either. The query is nontrivial (interval arithmetic via the `||` operator + cast) and has zero real or synthetic execution coverage.
+
+**Scope**
+- Run the query manually against a real (or synthetic/local) Postgres instance and confirm the recent/baseline window boundaries and `FILTER` aggregates behave as documented
+- Or add a synthetic-DB test (e.g. a local Postgres/sqlite-compatible fixture, following the pattern used for `tests/test_positions_open_ticker_entry_date_unique_migration.py` in EPIC-01/ST-01 this same cycle) that actually executes the real function rather than a stub
+
+**Acceptance Criteria**
+- The query has been run at least once against a real or synthetic Postgres instance with confirmed-correct recent/baseline window boundaries, or a new test exists that executes the real (non-stubbed) `get_claude_endpoint_cost_windows()` and asserts its output shape/values
 
 ---
 
