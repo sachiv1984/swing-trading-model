@@ -1,9 +1,9 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-08-16 (ST-25, BLG-SEC-28, v8.8 — Telegram Bot Token/Chat ID added to Scope/Rotation Schedule/Credential-Specific Notes, cross-referencing the api_key_security_register.md §7 entry that has held this credential since v6.8); prior — 2026-08-10 (ST-05, BLG-SEC-16, v8.5 — Application X-API-Key added); prior — 2026-05-29 (ST-15, BLG-GOV-36 — initial policy)
-**Cycle:** 2026-08-14__release-v8.8 (ST-25 — BLG-SEC-28)
+**Version:** 1.4
+**Last Updated:** 2026-09-14 (ST-27, EPIC-05, v9.3, DEL-20260910-01 — added `## Rotation Drill History` section, first entry: News API Key drill, General Procedure confirmed working as written); prior — 2026-08-16 (ST-25, BLG-SEC-28, v8.8 — Telegram Bot Token/Chat ID added to Scope/Rotation Schedule/Credential-Specific Notes, cross-referencing the api_key_security_register.md §7 entry that has held this credential since v6.8); prior — 2026-08-10 (ST-05, BLG-SEC-16, v8.5 — Application X-API-Key added); prior history retained — see prior entries in version control
+**Cycle:** 2026-09-09__release-v9.3 (ST-27 — DEL-20260910-01)
 
 ---
 
@@ -126,6 +126,16 @@ Follows the General Procedure above with one substitution — regeneration happe
 5. Update the register: `last_rotated` in `docs/security/api_key_security_register.md` §7.
 
 Full credential details (scope, storage location, gap-discovery history): `docs/security/api_key_security_register.md` §7 Telegram Bot Token and Chat ID.
+
+---
+
+## Rotation Drill History
+
+Periodic drills exercise the General Procedure end-to-end against a real, non-critical credential to catch gaps before an emergency rotation ever needs to rely on it untested. Findings are recorded here regardless of outcome.
+
+| Date | Credential | Drilled by | Result |
+|------|-----------|------------|--------|
+| 2026-09-14 | News API Key | Cybersecurity & Trust Lead (delegated, `DEL-20260910-01`, ST-27/EPIC-05/v9.3) | General Procedure (Steps 1–8) executed end-to-end — new key generated, staging and production Render environments updated and each independently verified via a live `GET /news/{ticker}` call, old key revoked, register updated. **Worked exactly as written — no correction or Credential-Specific Notes addition needed.** News API Key was chosen as the drill target because it was the only in-scope credential with no existing Credential-Specific Notes subsection at the time, making it the highest-value choice for surfacing runbook gaps. |
 
 ---
 

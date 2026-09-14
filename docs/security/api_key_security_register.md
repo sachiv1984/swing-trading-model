@@ -1,9 +1,9 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.7
-**Last Updated:** 2026-08-10 (ST-02, BLG-OPS-134, v8.5 — entry #6 updated: STAGING_API_KEY secret confirmed added, cross-environment check confirmed genuinely running via live log, false-positive alert bug hardened); prior — 2026-08-05 (ST-04/ST-03, v8.3 — entries #3/#6); prior history retained — see prior entries in version control
-**Cycle:** 2026-08-08__release-v8.5 (ST-02 — BLG-OPS-134: entry #6 updated)
+**Version:** 1.8
+**Last Updated:** 2026-09-14 (ST-27, EPIC-05, v9.3, DEL-20260910-01 — entry #4 updated: News API Key rotation drill completed, Last rotation date set); prior — 2026-08-10 (ST-02, BLG-OPS-134, v8.5 — entry #6 updated: STAGING_API_KEY secret confirmed added, cross-environment check confirmed genuinely running via live log, false-positive alert bug hardened); prior history retained — see prior entries in version control
+**Cycle:** 2026-09-09__release-v9.3 (ST-27 — DEL-20260910-01: entry #4 updated)
 
 ---
 
@@ -83,9 +83,9 @@ For rotation procedures, see: `docs/ops/api_key_rotation_policy.md`
 | Storage location | Render environment variables (staging and production services) |
 | Rotation cadence | Annual minimum (12 months) |
 | Rotation procedure | Follow general procedure in `docs/ops/api_key_rotation_policy.md`; adapt Steps 1–5 for the news API provider's dashboard |
-| Last rotation date | Unknown (pre-register baseline) |
-| Next rotation due | 12 months from last rotation |
-| Notes | Free tier rate limits apply. Provider-specific dashboard for rotation. |
+| Last rotation date | 2026-09-14 (ST-27, EPIC-05, v9.3, DEL-20260910-01 — rotation drill) |
+| Next rotation due | 2027-09-14 |
+| Notes | Free tier rate limits apply. Provider-specific dashboard for rotation. Rotation drill performed 2026-09-14 confirming the General Procedure works as written for this credential — see `docs/ops/api_key_rotation_policy.md` §Rotation Drill History. |
 
 ---
 

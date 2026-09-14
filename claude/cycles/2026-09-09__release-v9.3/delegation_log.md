@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-09-10
+Last Updated: 2026-09-14 (DEL-20260910-01 resolved)
 
 ---
 
@@ -25,4 +25,6 @@ Last Updated: 2026-09-10
 - **Spec reference:** `docs/ops/api_key_rotation_policy.md` §Rotation Procedure (General Procedure, lines 62-73); `docs/security/api_key_security_register.md` (News API Key entry, `last_rotated` field to update); `docs/security/external_api_credential_inventory.md` (background)
 - **Unblock criteria:** Runbook exercised end-to-end against a live News API key rotation (staging + production Render env updates, verified via a real `GET /news/{ticker}` call against each environment, old key revoked); findings documented — either "runbook worked as written, no correction needed" or the specific correction applied to `api_key_rotation_policy.md`; `last_rotated` updated in the security register.
 - **Commit format required:** `[EPIC-05][ST-27] <description>` pushed to `exec/2026-09-09__release-v9.3/EPIC-05`
-- **Status:** Pending
+- **Status:** Resolved
+- **Resolved at:** 2026-09-14
+- **Findings:** General Procedure (Steps 1–8) executed end-to-end against a live News API key — new key generated, staging and production Render environments each updated and independently verified via a real `GET /news/{ticker}` call, old key revoked, register `last_rotated` updated. Worked exactly as written — no correction needed. Recorded in `docs/ops/api_key_rotation_policy.md` §Rotation Drill History (v1.3→v1.4) and `docs/security/api_key_security_register.md` §4 (v1.7→v1.8).
