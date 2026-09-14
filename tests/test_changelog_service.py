@@ -2,6 +2,7 @@
 Unit tests for the changelog service (ST-01, EPIC-01, v7.8, BLG-FE-128;
 User Impact sourcing added ST-13, EPIC-03, v8.8, BLG-FE-161).
 """
+import re
 import sys
 from pathlib import Path
 
@@ -85,8 +86,26 @@ def test_get_latest_returns_none_when_no_changes_shipped_table(monkeypatch, tmp_
 
 
 def test_real_changelog_is_parseable():
-    # Integration sanity check against the actual repo changelog.
+    # Integration sanity check against the actual repo changelog: confirms
+    # the real file has at least one structurally parseable "## vX.Y — ..."
+    # version heading. Does NOT assert the latest release has any
+    # user-facing changes -- a pure engineering-debt release (every EPIC row
+    # marked "-"/"—" User Impact) legitimately produces changes == [], and
+    # get_latest_changelog_entry() correctly returns None in that case (see
+    # dashboard.md §6A's own defined "Empty" state -- "Nothing to show" --
+    # for exactly this scenario). Asserting non-empty content here made this
+    # test break every time the latest real release happened to be
+    # debt-only (confirmed live: v9.3, "Full-Capacity Debt Clearance", all 5
+    # EPIC rows are "-"), which is an expected, not exceptional, state --
+    # not a parser regression. BLG-BE-117.
+    text = changelog_service.CHANGELOG_PATH.read_text()
+    assert re.search(r"^## v\S+ — .+$", text, re.MULTILINE), (
+        "real changelog.md has no parseable '## vX.Y — ...' heading"
+    )
+
     result = changelog_service.get_latest_changelog_entry()
-    assert result is not None
-    assert result["version"]
-    assert len(result["changes"]) > 0
+    if result is not None:
+        assert result["version"]
+        assert len(result["changes"]) > 0
+    # else: latest release legitimately has 0 user-facing changes -- valid,
+    # not a failure.
