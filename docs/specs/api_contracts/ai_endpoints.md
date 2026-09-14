@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.9
-**Last Updated:** 2026-09-10 (ST-14, BLG-OPS-96, v9.3 — added GET /ai/monthly-cost-by-feature); prior — 2026-07-27 (ST-06, EPIC-06, v7.8 — added GET /ai/spend-trend)
+**Version:** 1.10
+**Last Updated:** 2026-09-14 (ST-09, BLG-OPS-151, v9.4 — added POST /ai/check-endpoint-anomalies); prior — 2026-09-10 (ST-14, BLG-OPS-96, v9.3 — added GET /ai/monthly-cost-by-feature); prior — 2026-07-27 (ST-06, EPIC-06, v7.8 — added GET /ai/spend-trend)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -21,6 +21,7 @@ All AI output is **display-only** and must NOT be used as input to any signal, s
 - [POST /ai/daily-briefing](#post-aidaily-briefing)
 - [POST /ai/chat](#post-aichat)
 - [POST /ai/check-daily-cost](#post-aicheck-daily-cost)
+- [POST /ai/check-endpoint-anomalies](#post-aicheck-endpoint-anomalies)
 - [GET /ai/claude-audit-log](#get-aiclaude-audit-log)
 - [GET /ai/monthly-cost](#get-aimonthly-cost)
 - [GET /ai/monthly-cost-by-feature](#get-aimonthly-cost-by-feature)
@@ -366,6 +367,61 @@ When `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` is absent, no alert is sent even
 
 ---
 
+## POST /ai/check-endpoint-anomalies
+
+Runs the per-endpoint cost/latency anomaly check across the 6 AI-invoking endpoints (`POST /ai/journal-summary`, `POST /ai/daily-briefing`, `POST /ai/chat`, `POST /trade-plans/generate-plan`, `POST /trade-plans/{plan_id}/generate-thesis`, `POST /trades/{trade_id}/debrief`). Sends a Telegram alert if any endpoint's cost or latency fires. Intended to be called by a daily scheduler (GitHub Actions cron — `.github/workflows/ai-endpoint-anomaly-check.yml`).
+
+**§13 Status:** N/A — operational monitoring endpoint. No AI output generated; no display surface.
+
+### Request
+
+```
+POST /ai/check-endpoint-anomalies
+Content-Type: application/json
+```
+
+No request body required.
+
+### Response — 200 OK
+
+```json
+{
+  "checked_utc": "2026-09-14T07:00:03+00:00",
+  "cost_anomalies": [
+    {"endpoint": "POST /ai/chat", "metric": "cost", "is_anomaly": false, "recent_value": 0.11, "baseline_value": 0.10, "multiplier": 1.1, "reason": "within_normal_range"}
+  ],
+  "latency_anomalies": [],
+  "firing_count": 0,
+  "alert_sent": false,
+  "latency_data_source": "not_available_pending_BLG-OPS-161"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `checked_utc` | string | UTC timestamp the check ran, ISO 8601. |
+| `cost_anomalies` | array | One entry per endpoint with `>=1` request in the combined recent+baseline window, from `check_cost_anomaly` (recent 24h avg cost vs trailing 7-day baseline avg cost, per `endpoint` tag in `claude_audit_log`). |
+| `latency_anomalies` | array | Entries from `check_latency_anomaly`. Empty unless a simulated feed is injected (see Implementation constraints) — no real data source exists yet. |
+| `firing_count` | integer | Count of entries across both arrays with `is_anomaly: true`. |
+| `alert_sent` | boolean | `true` when `firing_count > 0` AND Telegram credentials (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`) are configured and delivery succeeded. |
+| `latency_data_source` | string | `"not_available_pending_BLG-OPS-161"` in production today (no `latency_ms` column exists in `claude_audit_log`) or `"simulated_feed"` when a test/dry-run supplies one. Never silently omitted — this discloses the gap rather than implying latency was checked against real data. |
+
+### Error responses
+
+| Status | Condition |
+|--------|-----------|
+| 401 | Missing or invalid API key. |
+
+### Implementation constraints
+
+- Cost data source: `database.get_claude_endpoint_cost_windows()` — real `claude_audit_log` data, recent 24h vs trailing 7-day baseline, per endpoint. Below `MIN_COST_BASELINE_USD` the ratio is suppressed as noise (see `services/ai_endpoint_anomaly_service.py`).
+- Latency data source: none in production — `claude_audit_log` has no latency column (BLG-OPS-161, prerequisite gap for a future story). This endpoint's public request/response shape never accepts a caller-supplied `simulated_latency_feed` (that parameter exists on the underlying service function for tests/dry-runs only); via this endpoint, `latency_anomalies` is always `[]` and `latency_data_source` is always `"not_available_pending_BLG-OPS-161"` until BLG-OPS-161 ships.
+- On any firing anomaly, sends one Telegram message summarising all firing entries (not one message per entry).
+- If Telegram delivery fails (network error) or credentials are absent, `alert_sent: false`; endpoint still returns 200.
+- No write operations: `claude_audit_log` is read-only for this endpoint.
+
+---
+
 ## GET /ai/claude-audit-log
 
 Returns the most recent entries from the `claude_audit_log` table — the immutable audit trail of all Claude API calls made by the application. Intended for compliance monitoring and cost review (ST-05, ST-07).
@@ -670,7 +726,7 @@ No parameters.
 
 ## Known Deviations
 
-None at v1.8.
+None at v1.10.
 
 ---
 
@@ -678,6 +734,7 @@ None at v1.8.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.10 | 2026-09-14 | ST-09 (EPIC-03, v9.4, BLG-OPS-151): Added `POST /ai/check-endpoint-anomalies` — wires the existing pure cost/latency anomaly detector (`services/ai_endpoint_anomaly_service.py`, ST-54/v9.2) into a scheduled job (`.github/workflows/ai-endpoint-anomaly-check.yml`, daily) and Telegram alert. Cost checked against real `claude_audit_log` data; latency has no real data source (`claude_audit_log` has no latency column — BLG-OPS-161 filed as the prerequisite gap) and is disclosed as pending via `latency_data_source`, not fabricated. `openapi.yaml` and `docs/ops/api_performance_baseline.md` §44 updated in the same commit. |
 | 1.9 | 2026-09-10 | ST-14 (EPIC-03, v9.3, BLG-OPS-96): Added `GET /ai/monthly-cost-by-feature` — current calendar month's Claude API spend broken down by the existing `claude_audit_log.endpoint` feature tag (5 tags documented in the endpoint section's taxonomy table). Reuses existing tagging, no new data collection. `openapi.yaml` updated in the same commit. |
 | 1.8 | 2026-07-27 | ST-06 (EPIC-06, v7.8, BLG-FEAT-82): Added `GET /ai/spend-trend` — Claude API spend for the last 6 release cycles, bucketed by date windows parsed from `docs/product/changelog.md` version headings (documented alternative to the UX spec's `claude/cycles/*/state.json` suggestion — see endpoint section for rationale). `openapi.yaml` updated in the same commit. |
 | 1.7 | 2026-07-20 | ST-07 (EPIC-07, v7.6, BLG-FEAT-77): Added `GET /ai/monthly-cost` — current calendar month's Claude API spend total, sourced from `claude_audit_log`. Reframed per `ESC-EXEC-20260720-01`: original AC assumed a separate Gemini provider; no such integration exists in this codebase (confirmed: no `google-generativeai`, no `GEMINI_API_KEY`, `gemini_service.py` calls only the Anthropic API). `openapi.yaml` updated in the same commit. |

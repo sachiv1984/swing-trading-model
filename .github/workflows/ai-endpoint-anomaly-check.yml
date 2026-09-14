@@ -1,0 +1,28 @@
+# .github/workflows/ai-endpoint-anomaly-check.yml
+# Daily AI endpoint cost/latency anomaly check — Telegram delivery.
+# ST-09 (BLG-OPS-151, EPIC-03, v9.4): wires the existing pure detector
+# (backend/services/ai_endpoint_anomaly_service.py, ST-54/v9.2) into a
+# scheduled trigger + alert channel. Follows the same GitHub Actions
+# schedule pattern already used for si05-weekly-digest.yml (Render cron
+# requires a paid tier — see render.yaml).
+name: AI Endpoint Anomaly Check
+
+on:
+  schedule:
+    - cron: '0 7 * * *'  # 07:00 UTC daily
+  workflow_dispatch:         # Allow manual trigger for testing
+
+jobs:
+  check-endpoint-anomalies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger AI endpoint anomaly check
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          echo "Triggering AI endpoint anomaly check at $(date -u)..."
+          curl -f --max-time 120 -X POST "${API_URL}/ai/check-endpoint-anomalies" \
+            -H "X-API-Key: ${API_KEY}" \
+            -H "Content-Type: application/json"
+          echo "AI endpoint anomaly check trigger complete."

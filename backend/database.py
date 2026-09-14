@@ -2657,6 +2657,73 @@ def get_monthly_claude_cost_by_feature() -> list[dict]:
         return []
 
 
+def get_claude_endpoint_cost_windows(recent_hours: int = 24, baseline_days: int = 7) -> list[dict]:
+    """Per-endpoint recent-window vs baseline-window average cost-per-request
+    from `claude_audit_log`, for the AI endpoint cost anomaly check (ST-09,
+    BLG-OPS-151, EPIC-03, v9.4).
+
+    `recent_window`: mean `cost_usd` over the last `recent_hours` hours.
+    `baseline_window`: mean `cost_usd` over the `baseline_days` days
+    immediately preceding the recent window (i.e. excludes it — a spike in
+    the recent window must not inflate its own baseline).
+
+    Feeds `services/ai_endpoint_anomaly_service.check_cost_anomaly`. Real
+    (non-simulated) cost data source — `claude_audit_log.endpoint` already
+    tags which of the 6 AI-invoking endpoints produced each row (see
+    docs/ops/ai_feature_cost_trend_2026_q3.md §3). There is no equivalent
+    real-data source for latency: `claude_audit_log` carries no latency
+    column (confirmed — schema has no `latency_ms` field), so no
+    `get_claude_endpoint_latency_windows()` counterpart exists yet; adding
+    one is a data-model change, filed as BLG-OPS-161, and out of scope for
+    this wiring story per RISK-03.
+    """
+    try:
+        ensure_claude_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT
+                        endpoint,
+                        COALESCE(AVG(cost_usd) FILTER (
+                            WHERE generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                        ), 0.0) AS recent_avg_cost,
+                        COUNT(*) FILTER (
+                            WHERE generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                        ) AS recent_count,
+                        COALESCE(AVG(cost_usd) FILTER (
+                            WHERE generated_at < NOW() - (%(recent_hours)s || ' hours')::interval
+                              AND generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                                    - (%(baseline_days)s || ' days')::interval
+                        ), 0.0) AS baseline_avg_cost,
+                        COUNT(*) FILTER (
+                            WHERE generated_at < NOW() - (%(recent_hours)s || ' hours')::interval
+                              AND generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                                    - (%(baseline_days)s || ' days')::interval
+                        ) AS baseline_count
+                    FROM claude_audit_log
+                    WHERE generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                                - (%(baseline_days)s || ' days')::interval
+                    GROUP BY endpoint
+                    ORDER BY endpoint
+                    """,
+                    {"recent_hours": recent_hours, "baseline_days": baseline_days},
+                )
+                rows = cur.fetchall()
+                return [
+                    {
+                        "endpoint": r["endpoint"],
+                        "recent_avg_cost_usd": float(r["recent_avg_cost"]),
+                        "recent_count": int(r["recent_count"]),
+                        "baseline_avg_cost_usd": float(r["baseline_avg_cost"]),
+                        "baseline_count": int(r["baseline_count"]),
+                    }
+                    for r in rows
+                ]
+    except Exception:
+        return []
+
+
 def purge_claude_audit_log_older_than_730_days() -> int:
     """Delete claude_audit_log rows older than 730 days (24 months). Returns
     rows deleted. ST-13 (BLG-OPS-94, EPIC-03, v9.3) — mirrors
