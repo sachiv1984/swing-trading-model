@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.31
-**Last Updated:** 2026-09-10 (ST-19, EPIC-04, v9.3, BLG-SPEC-75 — Migration History reviewed in ascending version order; "Migration from v1.9 to v2.0" relocated to correct chronological position, previously listed before v1.8→v1.9; content unchanged. Footer version confirmed to already match the highest migration block, DS-16 v2.31 — no correction needed there); prior — 2026-08-20 (ST-06, EPIC-02, v8.9, BLG-FEAT-90 — DS-16 trade_debriefs table added); prior — 2026-08-18 (ST-10, EPIC-03, v8.9, BLG-BE-100 — transaction-isolation fix-or-accept decision documented for position_audit_log/position_state_history: audit-log write ordering); prior history retained — see prior entries in version control
+**Version:** 2.32
+**Last Updated:** 2026-09-14 (ST-02, EPIC-01, v9.4, BLG-BE-116 — added "Migration approach: forward-only, no backfill" subsection under Trade Plan to Position Linkage, formalising BLG-BE-52's existing no-backfill decision and confirming DS-12 already assumes forward-only; no schema change); prior — 2026-09-10 (ST-19, EPIC-04, v9.3, BLG-SPEC-75 — Migration History reviewed in ascending version order; content unchanged); prior — 2026-08-20 (ST-06, EPIC-02, v8.9, BLG-FEAT-90 — DS-16 trade_debriefs table added); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1025,6 +1025,24 @@ In both cases the link is written only if a matching plan is found and its `posi
 
 - `position_id` is nullable by design: a plan can be drafted before any position exists (`status = 'draft'`), and plans never tied to an actual trade (abandoned, exploratory) are expected to remain unlinked indefinitely.
 - The 11 `trade_plans` rows created before the `BLG-BE-46` fix (v6.8) have `position_id = NULL` and were **not backfilled** — a ticker/date-proximity match against `trade_history` was assessed at the time and judged unreliable (decision recorded in `claude/cycles/2026-07-08__release-v6.8/qa_evidence_EPIC-01.md` and `lessons_learnt_closure.md` LP-12). These rows remain permanently unlinked; only trade plans created after the v6.8 fix accrue toward SI-02's linked-trade-plan count.
+
+### Migration approach: forward-only, no backfill (ST-02, EPIC-01, v9.4)
+
+**Story:** ST-02 (EPIC-01, v9.4) — `BLG-BE-116`
+
+This subsection formalises, as an explicit migration-approach statement, the disposition already reached by `BLG-BE-52` and already assumed in practice by `DS-12`'s enforcement below. It does not reopen or re-litigate either.
+
+Two approaches exist for handling `trade_plans.position_id` nullability against the 11 pre-`BLG-BE-46` legacy unlinked rows described above:
+
+1. **Backfill** — retroactively resolve the 11 legacy `position_id IS NULL` rows to a linked position via some matching heuristic (e.g. ticker/date proximity against `trade_history`).
+2. **Forward-only** — leave the 11 legacy rows permanently unlinked; apply any new integrity rules and enforcement only to rows inserted or updated going forward, with no retroactive validation pass against pre-existing data.
+
+**Approach in effect: forward-only. Backfill is explicitly out of scope.** This is not a new decision — it formalises `BLG-BE-52`'s existing disposition (2026-07-09, Product Owner: declined to backfill, "no reliable ticker/time match exists" per the underlying `BLG-BE-46` RISK-01 assessment). A full scoping of what a backfill design would look like, kept for reference only should circumstances ever change, is documented separately at `docs/specs/trade_plans_position_id_backfill_scoping.md` (`ST-18`, prior cycle) — that document does not reopen `BLG-BE-52` either, and neither does this one.
+
+**Which approach `DS-12` already assumes:** `DS-12`'s `trade_plans_active_requires_position_check` CHECK constraint (below) is added `NOT VALID` specifically so it enforces the active-requires-position rule on rows inserted or updated from `v2.25` forward, without retroactively validating the 11 pre-existing legacy rows against it. That is the forward-only approach described above, applied concretely — `DS-12` is this subsection's approach already in effect at the schema level, not a separate or later decision.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-09-14 (agent-mediated; documentation-only, no schema change, formalises the already-effective `BLG-BE-52`/`DS-12` disposition; cross-checked against `docs/specs/trade_plans_position_id_backfill_scoping.md` and `DS-12`'s own `NOT VALID` migration for consistency)
 
 ### Known deviation — roadmap gate query
 
