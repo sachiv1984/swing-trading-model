@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-14T13:45:17Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-14T13:58:00Z",
+  "last_updated_utc": "2026-09-14T14:35:44Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -147,76 +147,86 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-14__release-v9.4/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-14__release-v9.4/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/arc5-compliance-section.spec.js",
+        "tests/test_arc5_total_closed_trades_null_vs_zero.py",
+        "tests/e2e/settings-heading-order-and-aria-labelledby-regression.spec.js"
+      ],
       "stories": {
         "ST-06": {
           "title": "Add boundary-condition Playwright coverage for Arc5ComplianceSection low-trade-volume advisory",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1639,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "b62a6f9edbeab8d13351a511a54758856e68c7ff",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-14T14:34:53Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/arc5-compliance-section.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case C (test-authoring). Added SC-ARC5-11 (strict <20 boundary: shown at 19, hidden at 20) and SC-ARC5-12 (singular '1 closed trade' at count 1, '0 closed trades' at count 0) to the existing suite. All 16 scenarios in the file verified passing locally (npx playwright test)."
         },
         "ST-07": {
           "title": "Add backend pytest coverage for GET /analytics/arc5-compliance total_closed_trades field",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1640,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "e6845cbe0b53971b14c021cec141df7df812b218",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-09T11:54:16Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_arc5_total_closed_trades_null_vs_zero.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Pre-met path (LL-v2.4-P4-02). tests/test_arc5_total_closed_trades_null_vs_zero.py (filed under EPIC-01/ST-04, v9.3, BLG-BE-111) already covers all three return paths of get_arc5_trade_plan_adherence_rate (test_trades_with_plans_computes_rate_and_real_count = success, test_genuine_zero_trades_returns_zero_not_none = zero-trades, test_missing_trade_history_table_returns_none_not_zero = UndefinedTable), plus test_broken_column_returns_none_not_zero (UndefinedColumn, bonus coverage), and two integration tests (test_endpoint_returns_json_null_not_zero_on_schema_error, test_endpoint_returns_zero_for_genuine_empty_portfolio) confirming total_closed_trades is present in the GET /analytics/arc5-compliance response. Re-verified still passing on main today (backend/.venv/bin/python3 -m pytest tests/test_arc5_total_closed_trades_null_vs_zero.py -q -> 6 passed). No new code required; BLG-QA-163's problem statement was stale at filing time (same pattern as EPIC-01/ST-03 this cycle)."
         },
         "ST-08": {
           "title": "Pinned regression assertion for Settings heading-order fix and TradePlan/Settings aria-labelledby swap",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1641,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "63a24c1aa29157e5a73b1156e00bd62b17c1ab62",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-14T14:34:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/settings-heading-order-and-aria-labelledby-regression.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case C (test-authoring). New spec file pins Settings heading order (h1 x1, SectionCard headings render as h2 not h3 -- BLG-FE-170) and aria-labelledby association on all 5 controls named in the AC (2 Settings Select triggers + 3 TradePlan native selects -- BLG-FE-171/BLG-FE-166). All 4 scenarios verified passing locally (npx playwright test)."
         }
       }
     },
@@ -692,7 +702,10 @@
     "EPIC-01/ST-03",
     "EPIC-01/ST-04",
     "EPIC-01/ST-05",
-    "EPIC-01/ST-01"
+    "EPIC-01/ST-01",
+    "EPIC-02/ST-06",
+    "EPIC-02/ST-07",
+    "EPIC-02/ST-08"
   ],
   "open_escalations": [],
   "merge_gate": {
