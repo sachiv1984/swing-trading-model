@@ -3842,3 +3842,886 @@ Comparing `docs/reference/openapi.yaml` (144 normalised method+path endpoints) a
 
 ---
 
+## Idea Intake IW-20260914-01 — Promoted-Backlog Disposition (roadmap rebalance `2026-09-14__scheduled`)
+
+*40 of the window's 44 submissions promoted directly to backlog per STEP 4 "📋 Backlog (gate-conditional)" disposition — no hard gate on any item, all ungated and ready. 2 Challenger submissions resolved as process patches feeding this cycle's STEP 11.4 meta-review (see `lessons_learnt.md`/`meta_review.md`), not filed here. All items carry `**Provisional-Target:** TBD` (Now/Next horizons both empty — §16.6 fallback) and no day-range effort (§16.12 n/a, target not release-specific).*
+
+### BLG-AI-04 — Quarterly automated re-scan of AI-generated copy for boundary-language drift
+**Priority:** P3 (Low)
+**Type:** Governance / AI Compliance
+**Owner:** AI Compliance & Governance Officer
+**Source:** IDEA-ai-compliance-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+Post-ship spot-checks confirm AI-generated copy against boundary-language rules only when a story happens to touch that copy. There is no recurring, calendar-driven re-scan that would catch drift introduced incidentally (e.g. a prompt-template edit made for an unrelated reason).
+
+**Scope**
+- Define a quarterly cadence and scope (which templates/screens/AI-surfaced copy are in scope)
+- Produce a lightweight checklist re-usable each quarter
+
+**Acceptance Criteria**
+- Cadence and scope documented
+- First scan scheduled with an owner and date
+
+---
+
+### BLG-AI-05 — In-app disclosure block: advisory-only AI outputs vs deterministic outputs
+**Priority:** P3 (Low)
+**Type:** Governance / AI Compliance
+**Owner:** AI Compliance & Governance Officer
+**Source:** IDEA-ai-compliance-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** M
+**Provisional-Target:** TBD
+
+**Problem**
+Users have no in-app way to distinguish which surfaced outputs are AI-generated/advisory-only (e.g. debrief narrative, chat) from deterministic system outputs (e.g. ATR stops, screener scores). This is a clarity gap, not a §13 boundary violation — all current AI features are already advisory-only per canonical spec.
+
+**Scope**
+- Design a small, reusable disclosure/badge component
+- Apply to the existing AI-surfaced screens (daily briefing, chat, debrief) per canonical spec sign-off
+
+**Acceptance Criteria**
+- Disclosure component exists and is documented in a canonical frontend spec
+- Applied to at least the daily-briefing surface as a first instance
+
+---
+
+### BLG-API-02 — CI check for the inverse OpenAPI drift case
+**Priority:** P3 (Low)
+**Type:** Governance / CI Tooling
+**Owner:** API Contracts & Documentation Owner
+**Source:** IDEA-api-contracts-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** M
+**Provisional-Target:** TBD
+
+**Problem**
+The existing OpenAPI Drift Detection gate catches a contract heading with no `openapi.yaml` entry, but not the inverse: an `openapi.yaml` path with no corresponding `## METHOD /path` heading in `docs/specs/api_contracts/`. Both directions of drift are equally real spec debt.
+
+**Scope**
+- Extend (or add a companion to) the existing drift-detection script/workflow to check the inverse direction
+- Run once against the current `openapi.yaml` to baseline any existing gaps
+
+**Acceptance Criteria**
+- New check runs in CI alongside the existing gate
+- Any pre-existing inverse-drift gap found is filed as its own BLG-SPEC item, not silently fixed inline
+
+---
+
+### BLG-API-03 — Deprecated-endpoint removal-follow-through scan
+**Priority:** P3 (Low)
+**Type:** Governance / API Contracts
+**Owner:** API Contracts & Documentation Owner
+**Source:** IDEA-api-contracts-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+The §21 Deprecation Header convention marks endpoints as deprecated but nothing currently checks whether a deprecated endpoint has sat unremoved for an unreasonable number of releases.
+
+**Scope**
+- Grep `docs/reference/openapi.yaml` / contract files for deprecation headers with a release/date field
+- Flag any endpoint deprecated > 2 releases ago with no removal follow-up filed
+
+**Acceptance Criteria**
+- Scan method documented (manual grep acceptable at current scale)
+- Any qualifying stale-deprecated endpoint found this run is filed as its own item
+
+---
+
+### BLG-BE-114 — Consolidate duplicated ATR trailing-stop recalculation logic
+**Priority:** P3 (Low)
+**Type:** Backend / Tech Debt
+**Owner:** Backend Engineering Patterns Owner
+**Source:** IDEA-backend-engineering-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** M
+**Provisional-Target:** TBD
+
+**Problem**
+ATR trailing-stop recalculation logic is duplicated across 3 call sites (nightly job, on-demand recompute endpoint, and a test helper), risking drift between them if one is updated and the others are not.
+
+**Scope**
+- Identify all 3 call sites precisely
+- Extract to one shared service function; update all call sites to use it
+
+**Acceptance Criteria**
+- Single shared implementation exists; all 3 call sites use it
+- Existing trailing-stop tests still pass unchanged
+
+---
+
+### BLG-BE-115 — DB-level unique constraint on (ticker, entry_date) for open positions
+**Priority:** P2 (Medium)
+**Type:** Backend / Data Integrity
+**Owner:** Backend Engineering Patterns Owner
+**Source:** IDEA-backend-engineering-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+No DB-level constraint currently prevents two open-position rows with the same ticker and entry date, relying entirely on application-level checks (which can be bypassed by a direct write or a race).
+
+**Scope**
+- Add a migration introducing a unique constraint (or partial unique index scoped to open positions) on (ticker, entry_date)
+- Confirm no existing duplicate rows would violate the constraint before applying
+
+**Acceptance Criteria**
+- Migration applies cleanly against production-shaped data
+- A duplicate insert attempt is rejected at the DB layer with a clear error surfaced to the caller
+
+---
+
+### BLG-FE-173 — Audit Base44 components for orphaned props
+**Priority:** P3 (Low)
+**Type:** Frontend / Tech Debt
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IDEA-base44-frontend-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+Components regenerated across successive Base44 prompt revisions can accumulate props that are no longer read anywhere, adding noise and confusing future prompt edits.
+
+**Scope**
+- Audit components with 3+ recorded prompt revisions (per the Base44 prompt versioning changelog) for unused props
+- Remove confirmed-orphaned props
+
+**Acceptance Criteria**
+- Audit list produced
+- Confirmed-orphaned props removed with no visual/behavioural regression (existing Playwright coverage passes)
+
+---
+
+### BLG-FE-174 — Standardise the loading-skeleton pattern across screens
+**Priority:** P3 (Low)
+**Type:** Frontend / Consistency
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IDEA-base44-frontend-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** M
+**Provisional-Target:** TBD
+
+**Problem**
+3 divergent loading-skeleton implementations exist across screens (Dashboard, Screener, Journal), each with slightly different shape/animation, with no single documented pattern to regenerate against.
+
+**Scope**
+- Document one canonical loading-skeleton pattern in the relevant frontend spec
+- Apply to the 3 divergent screens
+
+**Acceptance Criteria**
+- Canonical pattern documented
+- All 3 screens use the same pattern (Playwright visual check or staging sign-off per the frontend-visible-change standard)
+
+---
+
+### BLG-SEC-35 — Rotate and scope-narrow the CI service account token
+**Priority:** P2 (Medium)
+**Type:** Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+The CI service account token is broad-scope and has not been rotated in 6+ months, an unnecessarily large blast radius if it were ever compromised.
+
+**Scope**
+- Confirm the minimum scopes CI workflows actually require
+- Rotate the token and narrow its scope to that minimum
+
+**Acceptance Criteria**
+- New token in place with confirmed-minimal scope
+- All CI workflows still pass with the new token
+
+---
+
+### BLG-SEC-36 — Automated secret-scanning pre-commit hook
+**Priority:** P2 (Medium)
+**Type:** Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+Nothing currently catches an accidental commit of `.env`-shaped secret content before it lands in git history — the only safeguard today is the `.gitignore` entry, which does not stop a forced-add or a pasted value in a tracked file.
+
+**Scope**
+- Add a pre-commit hook (or CI check) using a standard secret-pattern scanner
+- Document the bypass/override procedure for confirmed false positives
+
+**Acceptance Criteria**
+- Hook/check runs and blocks a deliberately-introduced test secret pattern
+- False-positive override procedure documented
+
+---
+
+### BLG-BE-116 — Nullable trade_plan_id FK migration path
+**Priority:** P2 (Medium)
+**Type:** Backend / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** IDEA-data-model-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** M
+**Provisional-Target:** TBD
+
+**Problem**
+`BLG-BE-91` (shipped v8.6) enforces trade-plan linkage for new positions going forward, but there is no explicit migration path documented for backfilling or safely relating existing unlinked rows if a future feature needs to reason about them (e.g. `BLG-FEAT-73`'s gate condition explicitly relies on new-forward-only linkage).
+
+**Scope**
+- Document (not necessarily execute) a migration approach for a nullable `trade_plan_id` FK path, distinguishing "backfill" from "forward-only" options
+- Confirm which approach `BLG-BE-91`'s existing enforcement already assumes
+
+**Acceptance Criteria**
+- Migration approach documented in `data_model.md`
+- Explicit statement of whether backfill is in scope (expected: no, per `BLG-BE-52`'s existing decision not to backfill) — this item only needs to formalise/cross-reference that decision, not reopen it
+
+---
+
+### BLG-SPEC-142 — Canonical position/trade lifecycle state diagram
+**Priority:** P3 (Low)
+**Type:** Documentation / Spec Debt
+**Owner:** Data Model & Domain Schema Owner
+**Source:** IDEA-data-model-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** M
+**Provisional-Target:** TBD
+
+**Problem**
+The position/trade lifecycle (open → managed → closed → journalled) is implicit across `position_service.py`, `trade_plan.md`, and the frontend state machine, with no single canonical diagram a new contributor (human or agent) could read to understand the whole lifecycle.
+
+**Scope**
+- Produce one state diagram in `data_model.md` covering the full lifecycle across all 3 current implicit sources
+- Cross-reference from each of the 3 sources back to the canonical diagram
+
+**Acceptance Criteria**
+- Diagram exists in `data_model.md`
+- All 3 source files cross-reference it
+
+---
+
+### BLG-GOV-321 — Lightweight role-retirement process for inactive agent charters
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Director of HR
+**Source:** IDEA-director-of-hr-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+No documented process exists for what to do with an agent role charter that has gone 6+ months with no idea-intake submission and no owned story — leave it in `claude/agents/` indefinitely, or formally flag/retire it.
+
+**Scope**
+- Define a lightweight review trigger (e.g. checked at each `run ideas housekeeping` or annual review)
+- Define outcomes: keep as-is, merge into another role, or formally retire with rationale
+
+**Acceptance Criteria**
+- Process documented (likely a short addition to `team_charter.md` or a new §)
+- Applied at least once to confirm it runs end to end (may find 0 qualifying roles — that is a valid outcome)
+
+---
+
+### BLG-GOV-322 — Cross-role pairing rotation note in workforce_capacity.md
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Director of HR
+**Source:** IDEA-director-of-hr-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+Skill-Silo mitigation (§7.1) currently relies on ad hoc pull-forward candidate naming each cycle rather than any standing rotation guidance for which roles should be favoured next given recent concentration.
+
+**Scope**
+- Add a short rotation-guidance note to `workforce_capacity.md`, informed by the §7.1/§7.2 historical readings
+- Not a hard rule — advisory input for release planning's scope selection
+
+**Acceptance Criteria**
+- Note added and cross-referenced from `roadmap_prompt.md` §7.1's pull-forward step
+
+---
+
+### BLG-QA-171 — Quarterly full-suite Playwright re-run against a fresh staging seed
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** M
+**Provisional-Target:** TBD
+
+**Problem**
+The full Playwright suite is currently only re-run when a story touches the relevant surface, so a regression introduced by an unrelated change (data drift, dependency bump) between touches could go undetected for a long stretch.
+
+**Scope**
+- Define a quarterly cadence and a fresh-staging-seed procedure
+- Run once to confirm the procedure works end to end
+
+**Acceptance Criteria**
+- Cadence and seed procedure documented
+- First quarterly run completed with results recorded
+
+---
+
+### BLG-QA-172 — DoQ checklist addendum for flaky-test disposition
+**Priority:** P3 (Low)
+**Type:** QA / Governance
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+When a test is found flaky, the DoQ sign-off process has no documented decision framework for whether to retry, quarantine, or fix immediately — each occurrence is handled ad hoc.
+
+**Scope**
+- Add a short decision-framework addendum to the DoQ sign-off template/checklist
+- Cross-reference the existing flaky-test quarantine backlog item (gate-conditional) so the two do not diverge
+
+**Acceptance Criteria**
+- Addendum added to the DoQ checklist
+- Cross-reference confirmed correct against the existing quarantine item
+
+---
+
+### BLG-FR-02 — Reconciliation check: journal-derived P&L vs broker-statement import totals
+**Priority:** P3 (Low)
+**Type:** Financial Reporting
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** M
+**Provisional-Target:** TBD
+
+**Problem**
+There is no automated check comparing journal-derived realised P&L totals against broker-statement import totals — any discrepancy is currently only caught if a user notices it manually.
+
+**Scope**
+- Define the reconciliation calculation and acceptable tolerance
+- Surface any discrepancy beyond tolerance somewhere the user will see it (existing note: `BLG-QA-122` broker-statement reconciliation is currently blocked on no broker-import mechanism — confirm this item's dependency on that before scoping further)
+
+**Acceptance Criteria**
+- Reconciliation logic documented, with explicit dependency note against `BLG-QA-122`'s blocked status
+- Not blocked on implementation this cycle — spec/dependency-mapping only until `BLG-QA-122` clears
+
+---
+
+### BLG-FR-03 — Carried-forward-loss field on the tax-year P&L statement
+**Priority:** P3 (Low)
+**Type:** Financial Reporting
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** M
+**Provisional-Target:** TBD
+
+**Problem**
+The tax-year P&L statement (v2.0, `4.1b`) has no field for a loss carried forward from a prior tax year, limiting its usefulness for multi-year continuity.
+
+**Scope**
+- Add a carried-forward-loss input/field to the statement
+- Confirm the calculation this feeds into (if any) or document it as informational-only for this iteration
+
+**Acceptance Criteria**
+- Field present on the statement
+- Calculation behaviour (or explicit informational-only status) documented
+
+---
+
+### BLG-OPS-157 — Recurring quarterly hosting-cost trend review
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps
+**Owner:** FinOps & Resource Architect
+**Source:** IDEA-finops-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+Hosting-cost trend review has happened ad hoc (see `BLG-OPS-25`/`26` precedent items) rather than on a recurring cadence, risking cost drift going unnoticed between reviews.
+
+**Scope**
+- Define a quarterly cadence
+- Run the first review under the new cadence
+
+**Acceptance Criteria**
+- Cadence documented
+- First cadence-driven review completed with results recorded
+
+---
+
+### BLG-GOV-323 — Cost-per-cycle wall-clock rollup in workforce_capacity.md
+**Priority:** P3 (Low)
+**Type:** Governance / FinOps
+**Owner:** FinOps & Resource Architect
+**Source:** IDEA-finops-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+The §22 governance-cycle wall-clock cost logging convention produces per-cycle figures, but nothing rolls them up into a trend view across cycles — each figure is only ever read in isolation.
+
+**Scope**
+- Add a rollup table to `workforce_capacity.md` aggregating the last 10 cycles' §22 figures
+- Define the refresh cadence (likely: updated at each rebalance)
+
+**Acceptance Criteria**
+- Rollup table added and populated with available historical figures
+- Refresh cadence documented
+
+---
+
+### BLG-SPEC-143 — Consolidate divergent empty-state copy patterns
+**Priority:** P3 (Low)
+**Type:** Frontend Spec / Consistency
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+`v9.1`'s ST-29 already began consolidating duplicate empty-state pattern specs; this submission confirms 3 divergent copy patterns remain across Dashboard/Screener/Journal specifically (a narrower, still-open remainder of that broader effort).
+
+**Scope**
+- Confirm current state post-v9.1-ST-29 (some consolidation may already be done)
+- Document one canonical empty-state copy pattern for the 3 named screens if still divergent
+
+**Acceptance Criteria**
+- Confirmed status against v9.1 ST-29's prior consolidation recorded
+- Canonical pattern documented if a genuine remaining gap is confirmed
+
+---
+
+### BLG-SPEC-144 — Canonical colour-blind-safe chart palette spec
+**Priority:** P3 (Low)
+**Type:** Frontend Spec
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+Chart colour usage is referenced ad hoc across chart components with no single documented colour-blind-safe palette spec to regenerate or extend against.
+
+**Scope**
+- Document a canonical palette in the relevant design/frontend spec
+- Cross-reference from existing chart components (documentation only this cycle, not a visual re-skin)
+
+**Acceptance Criteria**
+- Palette documented with justification (e.g. a recognised colour-blind-safe source)
+- Cross-referenced from at least the design system spec
+
+---
+
+### BLG-SPEC-145 — Lightweight ADR log for cross-cutting backend decisions
+**Priority:** P3 (Low)
+**Type:** Documentation / Process
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-engineering-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** M
+**Provisional-Target:** TBD
+
+**Problem**
+Cross-cutting backend architecture decisions currently live scattered across individual PR descriptions with no single searchable log, making it hard to answer "why was it built this way" without archaeology.
+
+**Scope**
+- Create `docs/ops/architecture_decisions.md` (or similar) with a lightweight ADR template
+- Backfill 2-3 of the most consequential recent decisions as a starting seed (not a full historical backfill)
+
+**Acceptance Criteria**
+- File exists with template and at least 2 seeded entries
+- Referenced from a relevant onboarding/index document
+
+---
+
+### BLG-TECH-20 — Investigate consolidating the 3 scheduled-job runners into one orchestrator
+**Priority:** P3 (Low)
+**Type:** Backend / Architecture
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-engineering-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** M
+**Provisional-Target:** TBD
+
+**Problem**
+3 separate scheduled-job runners exist (nightly backtest rebalance, screener refresh / risk-off alerts, and a third minor job runner), each with its own registration/wiring, increasing the surface area for the kind of job-registration wiring gaps already found and fixed in `v8.9` (`ST-12`).
+
+**Scope**
+- Inventory the 3 runners and their trigger mechanisms
+- Investigate (spec-only this cycle) whether consolidating onto one orchestrator is worth the migration cost
+
+**Acceptance Criteria**
+- Inventory produced
+- Recommendation documented (consolidate now / defer / not worth it) with rationale
+
+---
+
+### BLG-GOV-324 — Formalise the STEP 8.0.5 / STEP 8.2 candidate-verification pattern as one subroutine
+**Priority:** P3 (Low)
+**Type:** Governance / Prompt Engineering
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+`roadmap_prompt.md` STEP 8.0.5 and STEP 8.2 both independently verify that a candidate BLG-ID is still active/unshipped, with near-duplicated logic and rationale text, rather than one shared subroutine both steps call.
+
+**Scope**
+- Extract the shared verification logic into one callable subroutine (matching the pattern already used for `preflight_common.md`/`governance_preamble.md`)
+- Update both STEP 8.0.5 and STEP 8.2 to reference it
+
+**Acceptance Criteria**
+- Subroutine extracted; version bump + `prompt_change_log.md` entry per the Governance File Edit Checklist
+- Both steps reference the shared subroutine with no behavioural change
+
+---
+
+### BLG-GOV-325 — Fixed-cadence audit of every governance prompt's §14 version-table entry
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+The `governance-drift` skill catches §14 version-table mismatches when invoked, but nothing guarantees it is invoked on any particular cadence — drift could persist for a long stretch between voluntary invocations.
+
+**Scope**
+- Define a fixed cadence (e.g. every N cycles) at which `governance-drift` is invoked as a mandatory step rather than an optional check
+- Likely insertion point: a STEP in `roadmap_prompt.md` or `manage roadmap`
+
+**Acceptance Criteria**
+- Cadence defined and wired into a governed routine's mandatory steps
+- First mandatory-cadence run completed with results recorded
+
+---
+
+### BLG-UX-03 — Usability pass on the Arc 5 compliance advisory banner
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Review
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+The Arc 5 compliance advisory banner has been through 3 UI revisions since its original ship; no usability pass has confirmed the text hierarchy still reads correctly after cumulative changes.
+
+**Scope**
+- Review current banner against its original intent and the 3 subsequent revisions
+- Recommend any adjustment needed
+
+**Acceptance Criteria**
+- Review completed and documented
+- Any recommended change filed as its own item (not fixed inline as part of this review)
+
+---
+
+### BLG-UX-04 — Standard interaction-timing rule for toast notifications
+**Priority:** P3 (Low)
+**Type:** Frontend Spec
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+Toast notification duration is inconsistent (2s/3s/4s) across screens with no documented standard governing which duration applies when.
+
+**Scope**
+- Document a standard timing rule (e.g. by message length or severity) in the relevant frontend spec
+- Note existing screens that would need to change to conform (documentation only this cycle)
+
+**Acceptance Criteria**
+- Standard documented
+- List of non-conforming screens produced for future remediation
+
+---
+
+### BLG-OPS-158 — Synthetic uptime monitor for /health independent of hosting dashboard
+**Priority:** P3 (Low)
+**Type:** Operations
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+Uptime monitoring currently relies solely on the hosting provider's own dashboard — there is no independent synthetic check that would catch an outage the provider's own monitoring itself misses or is unavailable to report.
+
+**Scope**
+- Stand up an external synthetic monitor (free-tier service acceptable at this scale) hitting `/health` on a fixed interval
+- Configure a notification path (e.g. email) on failure
+
+**Acceptance Criteria**
+- Monitor configured and confirmed firing on a deliberate test failure
+- Notification path confirmed working
+
+---
+
+### BLG-OPS-159 — Document the dashboard-only deploy path-filter gotcha in the ops runbook
+**Priority:** P3 (Low)
+**Type:** Operations / Documentation
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** XS
+**Provisional-Target:** TBD
+
+**Problem**
+The hosting provider's dashboard-only deploy path filters are invisible to a repo-only search — a runtime-read file can be changed without triggering a deploy, and nothing in the repo documents this so a future session catches it before, not after, a missed deploy.
+
+**Scope**
+- Add a short, explicit note to the ops runbook describing the gotcha and how to check the dashboard-side filter configuration
+- Cross-reference from wherever deploy troubleshooting is currently documented
+
+**Acceptance Criteria**
+- Note added to the ops runbook
+- Cross-referenced from the deploy-troubleshooting doc
+
+---
+
+### BLG-SPEC-146 — Canonicalise the Sharpe-ratio lookback window
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Metrics
+**Owner:** Metrics Definitions & Analytics Canonical Owner
+**Source:** IDEA-metrics-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+3 slightly different Sharpe-ratio lookback windows are used across the dashboard, a generated report, and an API response, with no single canonical definition to reconcile against.
+
+**Scope**
+- Identify the 3 current windows precisely (dashboard, report, API)
+- Decide and document one canonical window in `metrics_definitions.md`
+
+**Acceptance Criteria**
+- Canonical window documented with rationale
+- Discrepancy noted explicitly for each of the 3 current call sites (fix itself may be a separate follow-on item)
+
+---
+
+### BLG-SPEC-147 — Formal definition of "linked trade plan" counting for the SI-02 gate
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Metrics
+**Owner:** Metrics Definitions & Analytics Canonical Owner
+**Source:** IDEA-metrics-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+The SI-02 gate's "linked trade plan" count is well-specified as a query (`current_roadmap.md` §5) but has no formal canonical definition document of its own, unlike the drift-score threshold which already has one (`docs/specs/metrics/si02_drift_score.md`).
+
+**Scope**
+- Create a companion canonical definition doc (or extend the existing drift-score one) formally defining "linked trade plan" for gate purposes
+- Cross-reference from `current_roadmap.md`'s SI-02 structured field
+
+**Acceptance Criteria**
+- Canonical definition exists
+- `current_roadmap.md` SI-02 field cross-references it
+
+---
+
+### BLG-GOV-326 — Rolling wall-clock cost dashboard across the last 10 cycles
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** PMO Lead
+**Source:** IDEA-pmo-lead-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+Overlaps materially with `BLG-GOV-323` (FinOps's cost-per-cycle rollup submission this same window) — both ask for a rollup of §22 wall-clock figures. Filed as a separate item only because it names a slightly different consumer (PMO trend visibility vs FinOps capacity planning); should likely be merged into `BLG-GOV-323`'s implementation rather than built twice.
+
+**Scope**
+- Confirm with `BLG-GOV-323`'s owner whether one rollup satisfies both use cases before either is implemented
+
+**Acceptance Criteria**
+- Merge decision recorded (expected: yes, satisfied by `BLG-GOV-323`) before either enters sprint planning
+
+---
+
+### BLG-GOV-327 — Quarterly "governance overhead ratio" metric
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** PMO Lead
+**Source:** IDEA-pmo-lead-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** M
+**Provisional-Target:** TBD
+
+**Problem**
+Given the sustained scheduled-rebalance cadence and heavily governance/debt-weighted release composition (see this cycle's Product Value Ratio finding), there is no single metric tracking the ratio of process-cycle effort to shipped-cycle effort over time.
+
+**Scope**
+- Define the metric precisely (candidate: governance-tagged wall-clock time ÷ total wall-clock time, using §22 logging)
+- Compute a first historical baseline reading
+
+**Acceptance Criteria**
+- Metric defined in a canonical spec (likely `metrics_definitions.md`)
+- First baseline reading recorded
+
+---
+
+### BLG-FEAT-95 — Minimal "trade plan required before entry" UI soft-nudge
+**Priority:** P3 (Low)
+**Type:** Product Feature / Frontend
+**Owner:** Product Owner
+**Source:** IDEA-product-owner-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+> **STEP 7.1 note (roadmap rebalance 2026-09-14__scheduled):** Named as this cycle's sole genuinely ungated, build-and-ship-shaped U-item pull-forward candidate (Skill-Silo mandatory-pull-forward clause — see `run_manifest.md`/decision log `DL-079`). Escalated P3→P2 at STEP 8 alongside that finding; Priority above will be corrected to P2 at the next document touch (`groom backlog` or `plan release`) per the same escalation-recording pattern used for `BLG-FEAT-32` at `2026-08-11__scheduled` (DL-078).
+
+**Problem**
+`BLG-BE-91` (shipped v8.6) enforces trade-plan linkage at the data layer going forward, but there is no lighter-weight UI-level nudge encouraging the user to create a trade plan *before* opening a position in the first place — the DB-level enforcement only catches the case after the fact.
+
+**Scope**
+- A non-blocking UI nudge (e.g. a soft warning/confirmation) when a position entry flow is started with no linked trade plan
+- Explicitly non-blocking — this is a nudge, not a new hard gate; does not conflict with §13 (no automation of the entry decision itself)
+
+**Acceptance Criteria**
+- Nudge appears on the position-entry flow when no trade plan is linked
+- User can proceed without one (non-blocking) — Playwright coverage confirming the nudge does not block entry
+
+---
+
+### BLG-GOV-328 — Revisit sprint capacity band given sustained ≥90% utilisation
+**Priority:** P3 (Low)
+**Type:** Governance / Workforce
+**Owner:** Product Owner
+**Source:** IDEA-product-owner-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+The ~24-28 working-day-equivalent sprint capacity band has now seen 9+ consecutive cycles at or above ~90% utilisation (per `workforce_capacity.md` history) without a formal re-baseline decision since the band was last confirmed unchanged at `2026-07-28__scheduled`.
+
+**Scope**
+- FinOps & Resource Architect to review the full utilisation history against the band
+- Decide: hold, raise, or explicitly reconfirm the band as correctly calibrated (sustained high utilisation is not automatically evidence the band is wrong — it may reflect a deliberate "use full capacity" operating pattern)
+
+**Acceptance Criteria**
+- Review completed and documented in `workforce_capacity.md`
+- Explicit hold/raise decision recorded, not merely re-noted as "revisit again next cycle"
+
+---
+
+### BLG-QA-173 — Standing regression check for the OpenAPI Drift Detection gate itself
+**Priority:** P3 (Low)
+**Type:** QA / CI Tooling
+**Owner:** QA Lead
+**Source:** IDEA-qa-lead-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+The OpenAPI Drift Detection gate is relied upon heavily (it is a hard, PR-blocking gate) but has no test of its own confirming it actually still fires when it should — a regression in the gate's own script could silently stop protecting anything.
+
+**Scope**
+- Add a test fixture that deliberately introduces a drift case (missing contract heading) and confirms the gate fires
+- Add a second fixture confirming a compliant case passes
+
+**Acceptance Criteria**
+- Both fixtures exist and pass in CI
+- A deliberate revert of the gate's logic is confirmed to fail the fixture (proving the test actually tests something)
+
+---
+
+### BLG-QA-174 — CI check flagging merged `.skip()`/`.only()` Playwright specs
+**Priority:** P3 (Low)
+**Type:** QA / CI Tooling
+**Owner:** QA Lead
+**Source:** IDEA-qa-lead-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+A Playwright spec left with `.skip()` or `.only()` in a merged PR silently disables coverage (or narrows a full run to one spec) with no CI signal calling it out — this is a distinct gap from the existing flaky-test quarantine item, which addresses tests confirmed flaky, not specs left skipped/scoped for unrelated reasons.
+
+**Scope**
+- Add a CI grep/lint step scanning merged Playwright spec files for `.skip(`/`.only(` usage
+- Allow a documented, deliberate exception mechanism (e.g. a comment tag) for genuinely intentional long-term skips
+
+**Acceptance Criteria**
+- CI check added and fires on a deliberately-introduced test case
+- Exception mechanism documented
+
+---
+
+### BLG-QA-175 — Recurring pre-sprint endpoint test coverage audit
+**Priority:** P3 (Low)
+**Type:** QA / Process
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+Endpoint test coverage (the CLAUDE.md-mandated same-commit `backend/routers/test.py` requirement) is only checked at commit time. A drift that slipped through (e.g. an older endpoint predating the rule) is only caught reactively, not proactively before a sprint starts.
+
+**Scope**
+- Add a pre-sprint audit step (likely in `sprint_planning_prompt.md` STEP 0) scanning all `@router.*` decorators against `test.py` coverage
+- Report any gap found before sprint scope is sealed, not after
+
+**Acceptance Criteria**
+- Audit method documented
+- First run completed; any gap found filed as its own item (e.g. this cycle's own `BLG-OPS-156` is an example of the same class of gap, caught at post-ship instead — this item would catch it earlier)
+
+---
+
+### BLG-QA-176 — Backfill negative-path tests for the 3 newest v9.2/v9.3 routers
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** M
+**Provisional-Target:** TBD
+
+**Problem**
+The 3 newest routers shipped in v9.2/v9.3 have positive-path endpoint test coverage (satisfying the CLAUDE.md same-commit requirement) but no negative-path coverage (invalid input, missing auth, not-found) confirmed yet.
+
+**Scope**
+- Identify the 3 newest routers precisely
+- Add negative-path test cases for each
+
+**Acceptance Criteria**
+- 3 routers identified
+- Negative-path tests added and passing for each
+
+---
+
+### BLG-GOV-329 — Re-confirm §13 boundary review cadence
+**Priority:** P3 (Low)
+**Type:** Governance / Strategy
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+Per this cycle's STEP 8.1.5 §13-Adjacent Initiative Expiry Review, 2 `rejected_but_strong.md` entries (`IDEA-strategy-owner-20260304-02`/`IDEA-challenger-20260304-01`) have sat "§13 ATR review-gated" and "Unmet" since 2026-03-04 — 6+ months with no scheduled ATR review, and no standing cadence exists to force one to be scheduled rather than re-flagged indefinitely.
+
+**Scope**
+- Decide whether to schedule the named ATR review now, or formally document why it remains not-yet-warranted with a concrete future trigger
+- Consider whether a standing cadence (not just per-item expiry flagging) is warranted given this is the item's 2nd rebalance being carried past the STEP 8.1.5 threshold
+
+**Acceptance Criteria**
+- Explicit decision recorded (schedule now / defer with concrete trigger)
+- If deferred again, the new trigger must be more concrete than the prior one (per the STEP 8.1.5 finding)
+
+---
+
+### BLG-GOV-330 — Review whether the SI-02 gate threshold should scale with observed trade cadence
+**Priority:** P3 (Low)
+**Type:** Governance / Strategy
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
+**Effort:** S
+**Provisional-Target:** TBD
+
+**Problem**
+This is the same substantive question `IDEA-challenger-20260809-02` raised and had rejected-strong as a duplicate of `BLG-GOV-237`'s "still appropriate" answer (v8.3). This submission restates it from the Strategy Rules & System Intent Owner's own perspective rather than the Challenger's — arguably not materially new, but filed rather than dropped since the submitting role differs and the underlying data (9+ consecutive NOT MET readings, now approaching a full year) has continued to accumulate since `BLG-GOV-237` last examined it.
+
+**Scope**
+- Confirm whether `BLG-GOV-237`'s "still appropriate" conclusion should be formally re-examined given the extended data since, or whether this is correctly closed as no-new-information
+
+**Acceptance Criteria**
+- Disposition recorded: re-examine (with new analysis) or confirm-closed (citing `BLG-GOV-237`, no new information)
+
+---
+
