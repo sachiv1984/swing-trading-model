@@ -15,13 +15,14 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-14__release-v9.4/qa_evidence_EPIC-01.md",
       "test_scenarios": [
-        "tests/test_openapi_drift_inverse_case.py"
+        "tests/test_openapi_drift_inverse_case.py",
+        "tests/test_positions_open_ticker_entry_date_unique_migration.py"
       ],
       "stories": {
         "ST-01": {
           "title": "DB-level unique constraint on (ticker, entry_date) for open positions",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "in_progress",
           "assigned_to": "human",
           "github_issue": 1634,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-01",
@@ -31,13 +32,24 @@
           "unblock_criteria": "Migration finalised (portfolio_id scoping confirmed), verified against synthetic/staging-shaped data, landed as DS-17 in data_model.md with Data Model & Domain Schema Owner sign-off, committed to exec/2026-09-14__release-v9.4/EPIC-01.",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/data_model.md#DS-17 \u2014 positions unique constraint on (portfolio_id, ticker, entry_date) for open positions (v2.33, 2026-09-14)",
+            "tests/test_positions_open_ticker_entry_date_unique_migration.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Delegated per 3.1.B (sealed classification: delegated_backend) -- draft migration with built-in duplicate pre-check attached to DEL-20260914-01 as a starting point for Head of Engineering; not self-completed since final verification/sign-off authority sits with that role, and RISK-01 (no DATABASE_URL) means live-production pre-check cannot be run in this environment regardless."
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "attempts": 2,
+            "first_pass_verdict": "Blocked (premature sign-off provenance; missing BLG-SPEC-D18 filing per charter Sec8)",
+            "second_pass_verdict": "Approved",
+            "date": "2026-09-14"
+          },
+          "notes": "Head of Engineering (acting) resolved the portfolio_id scoping open question from DEL-20260914-01, finalised DS-17. Data Model & Domain Schema Owner agent-mediated review: 1st pass Blocked (process findings: pre-dated sign-off text; missing BLG-SPEC-D per charter Sec8 for unconfirmable live schema under RISK-01) -- filed BLG-SPEC-D18, corrected sign-off provenance, 2nd pass Approved. AC-03 (live-DB pre-check) remains explicitly disclosed as pending, not claimed complete, per RISK-01."
         },
         "ST-02": {
           "title": "Nullable trade_plan_id FK migration path",
@@ -673,12 +685,8 @@
       }
     }
   },
-  "blocked_items": [
-    "EPIC-01/ST-01"
-  ],
-  "delegated_items": [
-    "EPIC-01/ST-01 (DEL-20260914-01)"
-  ],
+  "blocked_items": [],
+  "delegated_items": [],
   "completed_items": [
     "EPIC-01/ST-02",
     "EPIC-01/ST-03",

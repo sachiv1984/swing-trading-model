@@ -4554,6 +4554,28 @@ The hosting provider's dashboard-only deploy path filters are invisible to a rep
 
 ---
 
+### BLG-SPEC-D18 — data_model.md `positions` table (DS-17 addition) not confirmed against live deployed schema
+**Priority:** P2 (Medium)
+**Type:** Spec Debt / Documentation Drift
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-01, EPIC-01, v9.4 (2026-09-14__release-v9.4) — filed per this role's own charter §8 ("Any divergence between `data_model.md` column definitions and the live deployed schema is a P2 spec debt item... If confirmation cannot be given, a BLG-SPEC-D item must be filed before the dependent work proceeds"), raised during the DS-17 agent-mediated review of ST-01's migration
+**Effort:** XS (confirmation only, once DB access is available)
+**Provisional-Target:** TBD
+
+**Problem**
+DS-17 (`docs/specs/data_model.md`, `positions` unique-constraint migration) was drafted and reviewed with no live database access in this execution environment (RISK-01 — no `DATABASE_URL`). The charter for this role requires the live `positions` schema be confirmed to match the spec before sign-off on a migration/integration test against a domain table; that confirmation could not be given here. This mirrors the existing precedent at `data_model.md` §1 (`portfolios` table's own "Schema verification" note, confirmed 2026-04-02 against actual Supabase output) — `positions` has had no equivalent direct-DB confirmation logged since DS-17 was added.
+
+**Scope**
+- When DB access is available, run `CREATE TABLE public.positions` (or equivalent introspection) against the live/production Supabase instance
+- Confirm the deployed `positions` schema matches `docs/specs/data_model.md`'s documented definition, including the new `idx_positions_open_ticker_entry_date_unique` partial index from DS-17
+- Add a "Schema verification" note to the `positions` table section, dated, per the existing `portfolios` table convention
+
+**Acceptance Criteria**
+- Live schema confirmed to match spec (or discrepancies filed as their own follow-on items)
+- Schema verification note added to `data_model.md`'s Positions Table section
+
+---
+
 ### BLG-SPEC-146 — Canonicalise the Sharpe-ratio lookback window
 **Priority:** P3 (Low)
 **Type:** Spec Debt / Metrics
