@@ -1,9 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §9 Keyboard Navigation Requirements)
+**Version:** 1.2
+**Last Updated:** 2026-09-14 (v9.4 design gate — ST-25/BLG-FE-174: §8 loading state now cites the canonical loading-skeleton pattern/shared `Skeleton` primitive); prior — 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §9 Keyboard Navigation Requirements)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Design Source (v1.2):** docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md
 **Design Source:** docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md
 **API contract:** docs/specs/api_contracts/portfolio_api_contract.md
 
@@ -98,7 +99,7 @@ Paginated list. 20 events per page. Most recent first.
 
 | State | Display |
 |-------|---------|
-| Loading | Skeleton rows (matching event row height) |
+| Loading | Skeleton rows (matching event row height) — Table/List Row Skeleton template (`base44_prompt_template_library.md` §8), backed by the shared `Skeleton` primitive (`design_system.md` §Shared UI Components → Data States), per the v9.4 canonical loading-skeleton pattern (ST-25, BLG-FE-174) |
 | Error | "Unable to load Red Flag Journal. Please try again." + Retry button |
 
 ---
@@ -120,5 +121,6 @@ Paginated list. 20 events per page. Most recent first.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-09-14 | v9.4 design gate — ST-25 (EPIC-06, BLG-FE-174): §8 Loading state now cites the canonical loading-skeleton pattern — Table/List Row Skeleton template (`base44_prompt_template_library.md` §8) backed by the shared `Skeleton` primitive. No visual change. Design source: `docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md`. Head of UX & Design sign-off: 2026-09-14. Product Owner approved: 2026-09-14. Head of Specs Team confirmed. |
 | 1.1 | 2026-09-04 | v9.1 ST-07 (BLG-SPEC-99, EPIC-01): added §9 Keyboard Navigation Requirements — documentation-only baseline covering Filter Controls, Event List, Pagination, empty/error-state controls, and focus-indicator contrast. No implementation change. |
 | 1.0 | 2026-05-21 | Initial spec. v3.9 design gate — full page spec for Red Flag Journal (SI-03, EPIC-03, ST-08). Design source: docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |

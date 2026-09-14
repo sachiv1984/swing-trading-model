@@ -3,9 +3,11 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.13
-**Last Updated:** 2026-09-08 (v9.2 ST-47, EPIC-05 — added the Component Prop-Naming Conventions section, BLG-SPEC-123)
+**Version:** 1.15
+**Last Updated:** 2026-09-14 (v9.4 design gate — ST-27/BLG-UX-04: new Toast Notification Timing standard, severity-based durations); prior — 2026-09-14 (v9.4 design gate — ST-13/BLG-SPEC-136: target release assigned for the 4 known motion-timing non-compliant components; ST-22/BLG-AI-05: new reusable AdvisoryBadge shared component); prior — 2026-09-08 (v9.2 ST-47, EPIC-05 — added the Component Prop-Naming Conventions section, BLG-SPEC-123)
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.15 (ST-27, EPIC-06, v9.4, BLG-UX-04):** added the Toast Notification Timing standard (§Shared UI Components → Toast Notification Timing) — severity-based duration table (success/info 4s unchanged, warning 6s, error 8s-or-manual-dismiss, undo-actionable unchanged 5s) plus a message-length floor (≥80 chars → minimum 6s). Classified Design Required under the §6 motion/timing special rule (BLG-FE-131) despite no shipped call-site change this cycle — standard-setting only, full non-conforming-screen inventory deferred to ST-27's own execution-phase deliverable. Design source: `docs/design/2026-09-14__release-v9.4/toast-timing-standard/decision_record.md`.
+**v1.14 (ST-13 + ST-22, EPIC-04 + EPIC-05, v9.4, BLG-SPEC-136 + BLG-AI-05):** (1) Motion-vs-contrast guideline — the 4 known non-compliant components (§Accessibility, added v1.12) now carry a target release (v9.5) and per-component remediation approach, closing the "no target release" gap in the AC. (2) New AdvisoryBadge shared component (§Shared UI Components) — extracted from the Dashboard AI Daily Briefing Card's existing "AI Advisory" badge (shipped since v2.5/`BLG-UX-01`, colour-fixed v3.4/`BLG-FE-165`), generalised for reuse by any future AI-generated/advisory-only output surface. No shipped UI change — both entries generalise/extend already-approved decisions. Design sources: `docs/design/2026-09-14__release-v9.4/motion-timing-target-release/decision_record.md`, `docs/design/2026-09-14__release-v9.4/ai-advisory-disclosure-badge/decision_record.md`.
 **v1.13 (ST-47, EPIC-05, v9.2, BLG-SPEC-123):** added the Component Prop-Naming Conventions section (bottom of document) — codifies the two valid callback-prop forms (imperative action-request vs. past-tense completion-notification) and the two valid boolean-prop forms (`is`/`has`-prefixed vs. bare-word mirroring an underlying primitive's own prop name), based on a codebase-wide audit that found existing naming already substantially consistent (no component renames required). Frontend Specifications & UX Documentation Owner sign-off recorded in the new section itself.
 **v1.12 (ST-05, EPIC-02, v9.2, BLG-SPEC-134):** Accessibility — added the motion-vs-contrast guideline for text-element entrance animations: accepts the transient reduced-contrast window during opacity fade-ins as an intentional trade-off (capped at a 500ms time-to-full-opacity ceiling), and requires automated contrast scans to evaluate the settled post-animation state rather than a mid-transition frame. Confirms the existing `tests/e2e/accessibility-axe-scan.spec.js` `runAxeScan()` fix (originally scoped to the Settings-page `BLG-FE-169` finding) already applies uniformly to the 4 axe-scanned pages (does not by itself confirm the same for every page in the app — see guideline text). Delay-based stagger animations found not yet compliant with the ceiling; follow-up filed as `BLG-SPEC-136`. Design source: `docs/design/2026-09-07__release-v9.2/motion-contrast-guideline-standard/decision_record.md`.
 **v1.11 (ST-16, EPIC-03, v8.8, BLG-FE-159):** Modal / Dialog Theming §Known non-compliant instances — removed `PositionEntryModal.js`. Confirmed dead/unreachable code (no live import/mount anywhere in `src/`) and deleted from the codebase rather than converted; no longer applicable to this list either way. Design source: `docs/design/2026-08-14__release-v8.8/position-entry-modal-dead-code-removal/decision_record.md`.
@@ -246,6 +248,31 @@ A condition requiring sustained user awareness until acknowledged is a distinct 
 
 **Integration point (identified, not wired this cycle):** the Notification Feed page (`/notifications`, top of content area, above the notification list) is the landing zone for `BLG-FE-116`'s future live-evaluation work — when implemented, a triggered custom price alert renders here as a `StandingAlert` in addition to (not instead of) the persisted Feed row.
 
+### Toast Notification Timing (v1.15, ST-27, EPIC-06, v9.4, BLG-UX-04)
+
+Standard duration for transient `sonner` toasts, by severity — supersedes ad hoc per-call-site duration choices:
+
+| Severity | Duration | Notes |
+|----------|----------|-------|
+| Success / informational (default) | 4s (`sonner` default, unchanged) | The common case — no regression |
+| Warning | 6s | Needs more read time than a routine confirmation |
+| Error | 8s, or manual dismiss if the message includes a required next action | Must not disappear before the user can read and respond |
+| Undo-actionable (`ConfirmationModal` undo-window, §Confirmation Modal above) | Unchanged — 5s default, carries its own countdown | Pre-existing exception, not superseded by this table |
+
+**Message-length floor:** any toast whose body text exceeds ~80 characters gets a minimum 6s duration regardless of the severity table above (reading time) — a floor, not a replacement value.
+
+**Non-conforming screens:** not inventoried at this gate (standard-setting scope only, per the same deferred-audit pattern as the motion-vs-contrast guideline below) — the inventory is ST-27's own execution-phase deliverable. Design source: `docs/design/2026-09-14__release-v9.4/toast-timing-standard/decision_record.md`.
+
+### AdvisoryBadge (v1.14, ST-22, EPIC-05, v9.4, BLG-AI-05)
+
+A small, static provenance label for any surface displaying an AI-generated, advisory-only output alongside deterministic system output, per `strategy_rules.md` §13.1/§13.2 (human-in-the-loop, non-blocking). Extracted verbatim from the Dashboard AI Daily Briefing Card's existing badge (`dashboard.md` §5, shipped since v2.5/`BLG-UX-01`, colour-fixed v3.4/`BLG-FE-165`) — no visual change to that instance.
+
+**Composition:** badge (`bg-amber-700` background, white text — fixed, does not vary by theme, unlike most badges, since this is a compliance-disclosure surface) plus an optional inline caption below it. Both the badge label (e.g. `"AI Advisory"`) and any caption (e.g. `"All actions require your confirmation"`) are **non-dismissible** wherever used — there is no `onDismiss` prop.
+
+**Distinct from `StandingAlert` above:** `StandingAlert` is for conditions requiring sustained *acknowledgement* (dismissible, in-flow); `AdvisoryBadge` is a static label with no dismiss/acknowledge affordance — it does not go away on interaction, only when the underlying content it labels is no longer shown.
+
+**First applied instance:** Dashboard AI Daily Briefing Card (§5 of `dashboard.md`) — already conformant, no code change. Future AI-generated/advisory output surfaces (e.g. Gemini thesis generation, AI Trade Advisor) should reuse this component rather than re-deriving badge styling; not applied retroactively to those surfaces this cycle. Design source: `docs/design/2026-09-14__release-v9.4/ai-advisory-disclosure-badge/decision_record.md`.
+
 ### Inputs & Form Controls
 Common input types used across multiple pages:
 
@@ -318,6 +345,8 @@ The application adheres to core accessibility principles:
     - **Fixed manual stagger values already at or over the ceiling on their own** (bounded, but non-compliant regardless of list length): `src/pages/Reports.js` (four hardcoded per-card delays, `0.05`–`0.2`, not index-driven at all — a fixed set of 4 elements) and `src/components/dashboard/widgets/RecentTradesWidget.js` (`delay: idx * 0.05` over a list already capped at 5 items, `slice(0, 5)`, so its own max delay is a fixed `0.2`) — in both cases the max delay (`0.2s`) plus Framer Motion's default tween duration (~0.3s) already lands at or over 500ms regardless of any list-length change.
     
     Not fixed by this guideline's own authoring pass (ST-05's scope was the guideline text, not an app-wide animation audit) — tracked as `BLG-SPEC-136`. Remove an instance from this list in the same commit that brings it into compliance (or confirms it already is), per the same convention as §Modal / Dialog Theming's own non-compliant-instances list above.
+
+    **Target release (v1.14, ST-13, EPIC-04, v9.4, BLG-SPEC-136): v9.5** for all 4 components. Remediation approach fixed in advance so the v9.5 implementer does not re-derive it: fixed-value components (`Reports.js`, `RecentTradesWidget.js`) reduce max per-item `delay` (or shorten `duration`) so `max(delay) + duration ≤ 500ms`, verified against each component's own actual `duration` value rather than assumed at the ~0.3–0.5s default; unbounded/user-editable components (`SystemStatus.js`, `Signals.js`) gain a fixed stagger cap independent of list length or user-editable bounds (e.g. `delay: Math.min(index, N) * step` with `N` chosen so the combined total stays under the ceiling) rather than removing staggering outright. Full guidance: `docs/design/2026-09-14__release-v9.4/motion-timing-target-release/decision_record.md`. Implementation itself remains a separate, not-yet-filed backlog item (Product Owner/PMO Lead action, outside this design gate's write scope) — this bullet fixes the standard and deadline only.
   - Automated accessibility scans (axe-core or equivalent) must evaluate contrast against the element's **settled** (post-animation) state, not a mid-transition frame — an animation-timing race is a scan artifact, not a real contrast defect. `tests/e2e/accessibility-axe-scan.spec.js`'s shared `runAxeScan()` helper already does this (a fixed pre-scan wait past the entrance-animation window) for the 4 pages it scans (DashboardHome, Positions, TradePlan, Settings) — this confirms only those 4; other pages using the same fade-in pattern (including the 4 listed above) are not currently axe-scanned at all, so this guideline does not claim their scan behaviour is already correct, only that the *pattern* for doing so exists.
   - This guideline covers *entrance*-animation contrast only; a text element that is deliberately kept at reduced opacity in its steady state (e.g. a disabled/placeholder token) is a colour-token contrast question, governed by §Color Usage above, not this bullet.
 

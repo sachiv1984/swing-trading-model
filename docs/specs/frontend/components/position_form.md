@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.3
-**Last Updated:** 2026-03-18
+**Version:** 1.4
+**Last Updated:** 2026-09-14 (v9.4 design gate — ST-28/BLG-FEAT-95: new Trade Plan Linkage Advisory section — non-blocking soft nudge when no trade plan is linked); prior — 2026-03-18 (initial canonical spec)
+**Design Source (v1.4):** docs/design/2026-09-14__release-v9.4/trade-plan-required-nudge/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose & Usage Context
@@ -211,6 +212,28 @@ If the API call fails (network error, 500): the widget shows `—` in all output
 - Loading state uses opacity/visibility rather than conditional rendering to preserve screen reader focus
 - "Use suggested shares" button has a descriptive `aria-label` including the share count
 - Amber and muted text must meet WCAG AA contrast against the dark panel background
+
+---
+
+## Trade Plan Linkage Advisory (v1.4, ST-28, EPIC-06, v9.4, BLG-FEAT-95)
+
+A non-blocking inline advisory banner, shown above the submit button, when no `trade_plan_id` is associated with the in-progress entry.
+
+**Copy:** "No trade plan linked to this position. Consider creating one before entering — or continue without."
+
+**Treatment:** advisory (amber) tone, not error/destructive — `bg-amber-50 dark:bg-amber-950/30` + amber icon, matching `strategy_rules.md` §4.2's existing pre-entry advisory panel convention, not a red/blocking warning.
+
+**Actions (both non-blocking):**
+- **"Create Trade Plan"** — secondary-button link to the Trade Plan creation flow; does not discard in-progress form state.
+- **Submit button remains enabled throughout** — no change to §Form submission behaviour above; this banner adds no new gate.
+
+**Visibility:** renders only while `trade_plan_id` is absent; stops rendering once one becomes associated with the entry (e.g. user follows the Create Trade Plan link and returns with a plan attached). No manual dismiss control — condition-driven, per `strategy_rules.md` §4.2's advisory checks (not manually dismissed).
+
+**§13 compliance:** surfaces an existing fact (plan-linkage absence); does not compute a recommendation or force a default action. Generalises `strategy_rules.md` §4.2's already-cleared advisory pattern — no new §13 review required.
+
+**Test coverage required (CLAUDE.md frontend-visible-change standard):** Playwright coverage confirming (1) banner renders when `trade_plan_id` is absent, (2) does not render when present, (3) submission succeeds with the banner visible.
+
+Design source: `docs/design/2026-09-14__release-v9.4/trade-plan-required-nudge/decision_record.md`.
 
 ---
 

@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.16
-**Last Updated:** 2026-08-08 — v8.5 design gate: Tax Year Trades Table's exact-zero Realised P&L colour converged with the Monthly Financial Table (grey/neutral for both, was red on Tax Year), resolving DEV-REPORTS-ST01-02/BLG-FE-144 (ST-08); prior — 2026-08-07 (sprint execution: Monthly Financial Table's zero-P&L colour rule corrected to match live behaviour, ST-01); prior — 2026-08-07 (v8.4 design gate: Avg P&L/Trade column added to Monthly Financial Table, ST-01); prior history retained — see prior entries in version control
+**Version:** 0.17
+**Last Updated:** 2026-09-14 — v9.4 design gate: Carried Forward Loss row added to the Tax Year Summary Bar (Design Only — Implementation Pending), ST-17/BLG-FR-03; prior — 2026-08-08 (v8.5 design gate: Tax Year Trades Table's exact-zero Realised P&L colour converged with the Monthly Financial Table, DEV-REPORTS-ST01-02/BLG-FE-144, ST-08); prior — 2026-08-07 (sprint execution: Monthly Financial Table's zero-P&L colour rule corrected to match live behaviour, ST-01); prior history retained — see prior entries in version control
+**Design Source (v0.17 carried-forward loss field):** docs/design/2026-09-14__release-v9.4/carried-forward-loss-field/decision_record.md
 **Design Source (v0.11 monthly CSV export):** docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md
 **Design Source (v0.7 CSV export + monthly realised/unrealised split):** docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md, docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md
 **Design Source (v0.6 SI-02 gate status):** docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md
@@ -90,12 +91,13 @@ Displayed below the year selector. Sourced from the `summary` object in the API 
 | Field | Label | Notes |
 |-------|-------|-------|
 | `total_realised_pnl` | Total Realised P&L | GBP. Green if positive, red if negative. |
+| `carried_forward_loss_gbp` | Carried Forward Loss | GBP, red text. **Design Only — Implementation Pending (v0.17, ST-17, BLG-FR-03).** Shown only when non-zero, directly below `total_realised_pnl`, preceded by muted caption "Carried forward from `<prior_tax_year_label>`". No backend field exists yet — field mapping locked (prior tax year's `total_realised_pnl` if negative, else absent) but not implemented this cycle; does not compound across more than one prior year. Design source: `docs/design/2026-09-14__release-v9.4/carried-forward-loss-field/decision_record.md`. |
 | `total_gross_profit` | Gross Profit | GBP. Always ≥ 0. |
 | `total_gross_loss` | Gross Loss | GBP. Always ≤ 0. |
 | `win_rate` | Win Rate | Percentage. |
 | `total_closed_trades` | Trades | Integer count. |
 
-All values are sourced directly from the API response. The frontend must not calculate or derive these figures.
+All values are sourced directly from the API response. The frontend must not calculate or derive these figures. (`carried_forward_loss_gbp` is Design Only — see row above — no API response contains it yet.)
 
 ---
 
@@ -442,6 +444,7 @@ A new **"Reconciliation"** tab (4th tab in the page's tab navigation, alongside 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.17 | 2026-09-14 | v9.4 design gate — ST-17 (EPIC-04, BLG-FR-03): Carried Forward Loss row added to the Summary Bar — **Design Only — Implementation Pending**, same convention as §Arc 5 Compliance Summary/§Gross vs Net Comparison (v0.8). Field mapping locked (`carried_forward_loss_gbp`, prior year's negative `total_realised_pnl`), no backend work this cycle. Design source: `docs/design/2026-09-14__release-v9.4/carried-forward-loss-field/decision_record.md`. Head of UX & Design sign-off: 2026-09-14. Financial Reporting & Records Owner: 2026-09-14. Product Owner approved: 2026-09-14. Head of Specs Team confirmed. |
 | 0.16 | 2026-08-08 | v8.5 design gate — ST-08 (EPIC-03, BLG-FE-144): resolved `DEV-REPORTS-ST01-02` — Tax Year Trades Table's `Realised P&L` column colour rule converged with the Monthly Financial Table's (green if positive, red if negative, grey/neutral if exactly zero; was binary red-for-zero on the Tax Year table). No change to non-zero colouring in either table. Design source: `docs/design/2026-08-08__release-v8.5/exact-zero-pnl-colour-convention/decision_record.md`. Head of UX & Design sign-off: 2026-08-08. Product Owner approved: 2026-08-08. Head of Specs Team confirmed. |
 | 0.15 | 2026-08-07 | Sprint execution — ST-01 (EPIC-01, BLG-FE-141) follow-up correction, agent-mediated on behalf of Frontend Specifications & UX Documentation Owner (Product Owner directed): Monthly Financial Table's Realised P&L and Avg P&L/Trade rows corrected from "red if negative or zero" to "red if negative, grey/neutral if exactly zero" — the prior wording never matched `MonthlyPnlTable`'s actual code (only the separate Tax Year Trades Table implements literal red-for-zero). Filed as `DEV-REPORTS-ST01-02`/`BLG-FE-144` rather than silently rewritten, since the two tables' now-documented behaviours still disagree with each other — that convergence decision is not made here. |
 | 0.14 | 2026-08-07 | v8.4 design gate — ST-01 (EPIC-01, BLG-FE-141): Avg P&L/Trade column added to the Monthly Financial Table — client-side derived (`realised_pnl_gbp / trade_count`), same colour rule as Realised P&L, zero-trade months show "—" rather than a fabricated `£0.00`. Explicitly excluded from the Monthly CSV export's column set (display-only figure). Design source: `docs/design/2026-08-07__release-v8.4/avg-pnl-per-trade-column/decision_record.md`. Head of UX & Design sign-off: 2026-08-07. Product Owner approved: 2026-08-07. Head of Specs Team confirmed. |

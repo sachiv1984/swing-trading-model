@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-08-08
+**Version:** 1.5
+**Last Updated:** 2026-09-14 (v9.4 design gate — ST-25/BLG-FE-174: §10 skeleton UI now cites the canonical loading-skeleton pattern/shared `Skeleton` primitive); prior — 2026-08-08 (v8.5 design gate — regime distribution panel added)
+**Design Source (v1.5):** docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md
 **Design Source (v1.4):** docs/design/2026-08-08__release-v8.5/regime-distribution-panel/decision_record.md
 **Design Source (v1.3):** docs/design/2026-06-19__release-v6.0/screener-quality-telemetry/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -187,6 +188,8 @@ Each result row has a news headline count badge. Clicking the badge expands an i
 
 ## 10. Progressive Loading Pattern (Skeleton UI)
 
+**Canonical pattern (v1.5, ST-25, EPIC-06, v9.4, BLG-FE-174):** implements the Table/List Row Skeleton template (`base44_prompt_template_library.md` §8), backed by the shared `Skeleton` primitive (`src/components/ui/Skeleton.js`, `design_system.md` §Shared UI Components → Data States) — not a standalone pattern. `SkeletonRow`/`SkeletonRows` must be composed from the shared primitive rather than a page-local implementation. No change to the visual output below (row count, per-cell shimmer). Design source: `docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md`.
+
 While `GET /screener/results` is loading:
 
 1. Show the column header row with filter/sort controls (non-interactive, greyed out)
@@ -298,6 +301,7 @@ This spec covers all DS-02 interaction patterns:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-09-14 | v9.4 design gate — ST-25 (EPIC-06, BLG-FE-174): §10 Progressive Loading Pattern now cites the canonical loading-skeleton pattern — Table/List Row Skeleton template (`base44_prompt_template_library.md` §8) backed by the shared `Skeleton` primitive, superseding the implicit assumption that `SkeletonRow` was a standalone pattern. No visual/row-count change. Design source: `docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md`. Head of UX & Design sign-off: 2026-09-14. Product Owner approved: 2026-09-14. Head of Specs Team confirmed. |
 | 1.4 | 2026-08-08 | v8.5 design gate — ST-21 (EPIC-06, BLG-FEAT-29): added §5.0 Regime History Panel — rolling 30d/60d/All window selector (Segmented button, reusing the Market filter pattern) and a two-segment percentage breakdown bar (risk-on/risk-off), reusing the per-row Regime column's chip colours. Design source: `regime-distribution-panel/decision_record.md`. Approved: Head of UX & Design + Product Owner 2026-08-08. Head of Specs Team confirmed. |
 | 1.3 | 2026-06-19 | v6.0 design gate — §12 replaced: Degraded Run Warning Banner (v3.9) superseded by Run Quality Panel with FULL/DEGRADED/FAILED states, loaded ratio, expandable failed ticker list, stale advisory, and retry prompt. §3 API reference updated: new response fields (tickers_requested, tickers_loaded, tickers_failed, last_full_run_utc, run_quality); legacy degraded_run/failure_rate deprecated. Design source: screener-quality-telemetry/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |
 | 1.2 | 2026-05-21 | v3.9 design gate — added §12 Degraded Run Warning Banner (ST-04: banner when degraded_run: true, percentage text, amber style, SC-SCR-DEG-01/02). §3 API reference updated to note degraded_run and failure_rate fields. Design source: degraded-run-banner/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |
