@@ -24,28 +24,31 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-08-21"
-PRIOR_AUDIT_OPEN_ITEMS = []
-  # All 11 improvements filed at AUD-2026-08-21 (001-011) were applied post-publication, same day,
-  # per explicit user direction ("action the 11 improvements"). Files touched: execution_prompt.md
-  # v3.69->v3.70 (5 patches: 004/005/006/009/010), sprint_planning_prompt.md v3.16->v3.17 (011),
-  # shared_standards.md v3.29->v3.30 (002), post_ship_closure.md v2.29->v2.30 (007),
-  # backlog_management_prompt.md v1.14->v1.15 (008), OPERATIONAL_GUIDE.md v4.169->v4.170
-  # (001 manual reorder + 003 register row + the 5 files' §14 table updates). All 6 changed prompts'
-  # companion changelogs and prompt_change_log.md updated in the same pass. 0 items open at session end.
+PRIOR_AUDIT_ID = "AUD-2026-09-14"
+PRIOR_AUDIT_OPEN_ITEMS = [
+    "AUD-2026-09-14-001", "AUD-2026-09-14-002", "AUD-2026-09-14-003",
+    "AUD-2026-09-14-004", "AUD-2026-09-14-005",
+]
+  # All 5 improvements filed at AUD-2026-09-14 remain open at session end — filed for review, not
+  # auto-applied (no explicit user direction to action them yet, unlike AUD-2026-08-21's same-day
+  # application). See claude/cycles/2026-09-09__release-v9.3/audit_report_AUD-2026-09-14.md §5b for
+  # full PATCH blocks: -001 (release_planning_prompt.md SLA-breach carry-forward gate), -002/-004
+  # (OPERATIONAL_GUIDE.md §14 + prompt_change_log.md backfills for team_charter.md and
+  # pull_request_template.md), -003 (lessons_learnt_prompt.md Type-taxonomy verbatim requirement),
+  # -005 (advisory only, no patch).
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
-    "token_efficiency":      84,
-    "governance_integrity":  74,
+    "token_efficiency":      100,
+    "governance_integrity":  84,
     "execution_reliability": 53,
-    "friction_load":         44,
+    "friction_load":         73,
     "document_hygiene":      100,
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 76  # current completed_cycle_count at AUD-2026-08-21
+COMPLETED_CYCLES = 80  # current completed_cycle_count at AUD-2026-09-14
 
 # -------------------------
 # MISSING FILE RULE
