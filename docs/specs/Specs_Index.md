@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-10 (ST-17, EPIC-04, v9.3 — new `orphaned_spec_scan_20260910.md` registered on creation; see Changelog table for full history)
+**Last Updated:** 2026-09-10 (ST-24, EPIC-05, v9.3 — new `base44_prompt_changelog.md` registered on creation; see Changelog table for full history)
 
 ---
 
@@ -454,6 +454,7 @@ Populated by the ST-49 freshness-check remediation (`scripts/check_specs_index_f
 | `docs/specs/fe/rfj_design_review_scope.md` | Red Flag Journal — Design Review Scope Document | Frontend Specs & UX Documentation Owner | Planning Document (Class 4) |
 | `docs/specs/frontend/arc5_nav_cohesion_review_v4.6.md` | Arc 5 Nav Cohesion Review — v4.6 | Head of UX & Design | Planning Document (Class 4) |
 | `docs/specs/frontend/base44_prompt_template_library.md` | Base44 Prompt Template Library | Base44 Frontend Prompt Owner | Class 2 — Supporting |
+| `docs/specs/frontend/base44_prompt_changelog.md` | Base44 Prompt Versioning Changelog | Base44 Frontend Prompt Owner | Class 3 — Operational Record |
 | `docs/specs/frontend/blg_qa_111_combined_design_review_shared_playwright_plan.md` | Combined Design Review + Shared Playwright Suite Plan | Head of UX & Design / Director of Quality | Planning Document (Class 4) |
 | `docs/specs/frontend/mobile_responsiveness_baseline_assessment_v7.2.md` | Mobile Responsiveness Baseline Assessment | Head of UX & Design | Planning Document (Class 4) |
 | `docs/specs/frontend/notification_surface_consolidation_review_v7.2.md` | Notification/Digest Surface Consolidation Review | Head of UX & Design | Planning Document (Class 4) |
@@ -1156,6 +1157,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-09-10 | ST-24 (EPIC-05, v9.3, BLG-GOV-180): new `frontend/base44_prompt_changelog.md` registered on creation — indexes the 2 pre-existing Base44 prompt changelogs (`base44_frontend_prompt_owner.md` §3, `base44_prompt_template_library.md`), each cross-linked back to it. |
 | 2026-09-10 | ST-17 (EPIC-04, v9.3, BLG-SPEC-70): new `orphaned_spec_scan_20260910.md` (§8) registered on creation — canonical spec cross-reference linter run, 0 orphans found. |
 | 2026-09-10 | ST-20 (EPIC-04, v9.3, BLG-SPEC-76): new `trade_tagging_taxonomy.md` (§3.4) registered on creation. |
 | 2026-09-10 | ST-16 (EPIC-04, v9.3, BLG-SPEC-69): new `spec_debt_dashboard.md` (§8) registered on creation, mirroring `ops_endpoints.md`'s same-day-registration precedent. |
