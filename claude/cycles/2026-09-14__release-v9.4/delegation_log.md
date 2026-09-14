@@ -73,3 +73,23 @@ Append-only. Do not edit previous entries.
 - **Unblock criteria:** Migration script finalised (portfolio_id question resolved), verified against synthetic/staging-shaped data (not production — `DATABASE_URL` unavailable in this environment), landed in `docs/specs/data_model.md` as `## DS-17` with Data Model & Domain Schema Owner sign-off, committed and pushed to `exec/2026-09-14__release-v9.4/EPIC-01` with commit message `[EPIC-01][ST-01] <description>`. AC-03's live-production pre-check remains explicitly disclosed as pending per RISK-01 until a session with `DATABASE_URL` access can run it — that disclosure itself, not a fabricated live confirmation, satisfies the sprint-sealed staging-only AC framing for this item.
 - **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-09-14__release-v9.4/EPIC-01`
 - **Status:** Unblocked — sign-off cleared (Head of Engineering resolved portfolio_id scoping and finalised the migration; Data Model & Domain Schema Owner agent-mediated Approved after 1 Blocked retry — see DS-17 sign-off block in `data_model.md`). Commit: `13597aedce2c309e5383a5c49974250ee0b4a4bd` (`[EPIC-01][ST-01] Land DS-17...`), pushed 2026-09-14T14:08:01Z.
+
+---
+
+## DEL-20260914-02
+
+- **ST Item:** ST-11 — Rotate and scope-narrow the CI service account token
+- **EPIC:** EPIC-03
+- **Classification:** delegated_backend
+- **Assigned to:** Cybersecurity & Trust Lead (requires GitHub account/organization security-settings access this execution environment does not have — Infra/ops verification pattern, `execution_prompt.md` §5.1 / LL-v8.0-P3-01)
+- **GitHub Issue:** #1644
+- **Branch:** exec/2026-09-14__release-v9.4/EPIC-03
+- **Delegated at:** 2026-09-14T15:10:00Z
+- **What is needed:**
+  `BLG-SEC-35`'s AC-02/AC-03 (rotate the CI service-account token and confirm CI still passes with it) require generating a new GitHub credential and swapping it in wherever this execution environment sources its `gh`/git authentication — outside this repo's write scope and outside any capability this session has (no access to GitHub account/org security settings). AC-01 (confirm minimum required scopes) was completed autonomously this session — see `docs/security/ci_service_account_token_scope_audit_2026-09-14.md` §3 for the full command-by-command audit and the recommended minimum fine-grained-PAT permission set (Contents, Issues, Pull requests, Workflows: Read and write; Metadata: Read-only — no account-wide or org-wide scopes).
+
+  Full rotation steps for the assigned human are in that document's §4.
+- **Spec reference:** `docs/security/ci_service_account_token_scope_audit_2026-09-14.md`
+- **Unblock criteria:** New fine-grained PAT generated per §3's minimum scope recommendation, execution environment's credential source updated, and a subsequent `run sprint`/`sync gh` cycle confirms `gh issue create`, `gh pr create`, `gh pr merge`, and `git push` to an `exec/**` branch all succeed with the new token (AC-03). Old token revoked. Document §4 status updated to "Rotated" and `BLG-SEC-35` closed.
+- **Commit format required:** `[EPIC-03][ST-11] <description>` pushed to `exec/2026-09-14__release-v9.4/EPIC-03` once the human confirms rotation (or a follow-up commit updating this document's status)
+- **Status:** Blocked — awaiting human action outside this session's capability. Not counted as `done`; tracked in `execution_state.json` `blocked_items`.
