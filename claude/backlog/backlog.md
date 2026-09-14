@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-14 (Release Planning `2026-09-14__release-v9.4` STEP 4 — 28-item / 27.55-day release slice appended, marker `RP:v9.4:2026-09-14__release-v9.4`; `BLG-FEAT-95` Priority corrected P3→P2 per STEP 7.1 note); prior — 2026-09-14 (AI Compliance & Governance Officer resolution of `ESC-EXEC-20260910-01` — 1 new item added, `BLG-AI-06` (generation-time sampling hook, concrete remediation path); `BLG-GOV-178` cross-reference updated to record escalation disposition `Open` → `Deferred`); prior — 2026-09-14 (`groom backlog` post-ship closure `2026-09-09__release-v9.3` STEP 12: 26 items archived; 1 ephemeral Release Slice section removed; 0 orphans, 0 stale blockers, 0 promotion candidates); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-14 (session — 1 new item added: `BLG-FE-175`, design gate `2026-09-14__release-v9.4` follow-up — v9.5 motion-timing remediation across the 4 known non-compliant components); prior — 2026-09-14 (Release Planning `2026-09-14__release-v9.4` STEP 4 — 28-item / 27.55-day release slice appended, marker `RP:v9.4:2026-09-14__release-v9.4`; `BLG-FEAT-95` Priority corrected P3→P2 per STEP 7.1 note); prior — 2026-09-14 (AI Compliance & Governance Officer resolution of `ESC-EXEC-20260910-01` — 1 new item added, `BLG-AI-06` (generation-time sampling hook, concrete remediation path); `BLG-GOV-178` cross-reference updated to record escalation disposition `Open` → `Deferred`); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -3868,6 +3868,30 @@ Every environment this project has run governed routines in across `2026-09-09__
 - A genuine (non-illustrative) sample of at least 10 AI outputs can be drawn and scanned using this mechanism
 - Documented in the AI-endpoint contract docs and cross-referenced from `BLG-GOV-178`
 - `ESC-EXEC-20260910-01` closed as `Resolved` (superseding its interim `Deferred` disposition) once a genuine sample has actually been run using this mechanism, findings filed as backlog items if any
+
+---
+
+### BLG-FE-175 — Bring the 4 known motion-timing non-compliant components under the 500ms ceiling
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** Design gate `2026-09-14__release-v9.4` (ST-13/BLG-SPEC-136) — target release assigned, remediation approach fixed in `docs/design/2026-09-14__release-v9.4/motion-timing-target-release/decision_record.md` and `design_system.md` v1.14 §Accessibility — 2026-09-14
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v9.5
+
+**Problem**
+`design_system.md`'s motion-vs-contrast guideline (v1.12+) caps entrance-animation text elements at a combined `delay + duration ≤ 500ms`. Four components are documented as non-compliant, via two distinct failure modes: unbounded/user-editable index-scaled stagger (`src/pages/SystemStatus.js` — `delay: index * 0.02`/`index * 0.05`, no cap; `src/pages/Signals.js` — `delay: index * 0.05` over a list capped via `slice(0, topN)`, but `topN` has no `max`), and fixed stagger values already at/over the ceiling (`src/pages/Reports.js` — four hardcoded per-card delays, `0.05`–`0.2`; `src/components/dashboard/widgets/RecentTradesWidget.js` — `delay: idx * 0.05` over a list capped at 5 items, max delay `0.2s`). The v9.4 design gate fixed a target release (v9.5) and a remediation approach per failure mode but did not implement any fix — this item is that implementation.
+
+**Scope**
+- `Reports.js` and `RecentTradesWidget.js`: reduce max per-item `delay` (or shorten `duration`) so `max(delay) + duration ≤ 500ms`, verified against each component's own actual current `duration` value (not assumed at the ~0.3–0.5s Framer Motion default)
+- `SystemStatus.js` and `Signals.js`: introduce a fixed stagger cap independent of list length or user-editable bounds (e.g. `delay: Math.min(index, N) * step`, with `N` chosen so the combined total stays under the ceiling) rather than removing staggering outright
+- Remove each component from `design_system.md`'s known-non-compliant list in the same commit that fixes it, per that list's existing convention
+
+**Acceptance Criteria**
+- All 4 components verified against their own actual current `duration` value and brought to `max(delay) + duration ≤ 500ms`
+- Each component removed from `design_system.md`'s known-non-compliant list in the same commit that fixes it
+- No visual regression beyond the timing change itself — existing Playwright coverage, if any, still passes
 
 ---
 
