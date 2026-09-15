@@ -27,7 +27,7 @@ For a given cycle's commit window on `main` (from its `plan release`/`run roadma
 1. Run `git log main --since=<cycle_start> --until=<cycle_end> --pretty=format:"%s" --shortstat` (or an exact `--since`/`--until` pair bounding the cycle).
 2. Classify each commit by its message prefix, per CLAUDE.md §2's commit format:
    - `[GOVERNANCE] ...` → **governance-overhead** (idea intake, roadmap rebalance, release planning, design gate, sprint planning seal, delivery verification, post-ship closure, and any other non-delivery governed routine — these all use the `[GOVERNANCE]` prefix per CLAUDE.md §2).
-   - `[EPIC-xx][ST-xx] ...` (one or more ST tags) → **delivery** (sprint execution work against a specific story).
+   - `[EPIC-xx] ...` with or without an `[ST-xx]` tag, provided it does not carry the `[GOVERNANCE]` prefix → **delivery** (sprint execution work against a specific story, or delivery-branch housekeeping such as a merge-gate state sync or an orphaned-commit reconciliation — CLAUDE.md §8 — that legitimately has no single ST to tag).
    - `Merge pull request ...` → structural, zero-diff-of-its-own (the merge commit itself carries no line changes on a fast-forward-eligible history; excluded from the ratio rather than mis-attributed to either side).
 3. Sum commit count and `insertions`/`deletions` (from `--shortstat`) per category.
 4. Report the ratio. A rising governance-overhead share over successive cycles is exactly the signal the existing **Product Value Ratio** metric (`.claude_current_state.json.last_rebalance_pvr` — currently `0.092`, 2nd consecutive Alert-tier reading per the 2026-09-14 scheduled rebalance) already tracks from the opposite direction (U/G/D/P item counts rather than commit volume) — this document's ratio is a second, independent proxy for the same underlying concern, not a replacement for it.
@@ -55,9 +55,9 @@ Re-run §3's method against any other cycle by substituting its own start/end co
 
 ## 6. Sign-Off
 
-- Signed off by: <fill in — pending §5.3 agent-mediated review>
-- Date: <fill in — must be non-blank>
-- Comments:
+- Signed off by: Sprint Execution Engine (agent-mediated, FinOps & Resource Architect role — §5.3)
+- Date: 2026-09-15
+- Comments: Independently re-ran §4's git commands; all figures (39/9,894/2,071 governance; 66/8,671/1,401 delivery; 9 merges) matched exactly. Minor wording gap noted (§3 step 2's delivery-bucket definition didn't literally cover 3 no-ST-tag `[EPIC-xx]` housekeeping commits already included in the 66) — fixed in the same edit as this sign-off.
 
 ---
 
