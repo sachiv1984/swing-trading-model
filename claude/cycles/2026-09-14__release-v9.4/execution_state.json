@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-14T13:45:17Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-15T06:57:20Z",
+  "last_updated_utc": "2026-09-15T12:40:58Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -357,11 +357,11 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "merged",
       "branch": "exec/2026-09-14__release-v9.4/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1668,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-14__release-v9.4/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
@@ -416,23 +416,32 @@
         "ST-15": {
           "title": "Review placement of Appendix D governance metrics in metrics_definitions.md",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1648,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "ec38517aec86b8d7e000a1658b9915bb5753b12e",
           "delegation_record_id": "ESC-EXEC-20260915-01",
           "blocked_since_utc": "2026-09-15T07:03:02Z",
           "unblock_criteria": "Product Owner and Metrics Definitions & Analytics Canonical Owner record an explicit placement decision for Appendix D (keep vs. relocate to docs/governance/); if relocation is chosen, the move itself must also complete.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-15T12:10:13Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/decisions--2026-09-14__release-v9.4--ST-15-appendix-f-governance-metrics-placement.md",
+            "docs/specs/metrics_definitions.md#Appendix F — Governance Metrics (Cross-Reference Only)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Escalated per STEP 3.1.D — see execution_escalations.md#ESC-EXEC-20260915-01."
+          "sign_off_record": {
+            "required_by": "Product Owner; Metrics Definitions & Analytics Canonical Owner",
+            "method": "human",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-09-15T12:10:00Z"
+          },
+          "notes": "Escalated per STEP 3.1.D — see execution_escalations.md#ESC-EXEC-20260915-01. Resolved on explicit user direction to act as Product Owner + Metrics Definitions & Analytics Canonical Owner: decision recorded (keep Appendix F content in metrics_definitions.md, no relocation), cross-referenced from the appendix itself. AC's second bullet (relocate if moving) not triggered -- decision was to keep. No deviation from AC intent."
         },
         "ST-16": {
           "title": "Reconciliation check: journal-derived P&L vs broker-statement import totals",
@@ -485,10 +494,10 @@
       }
     },
     "EPIC-05": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-14__release-v9.4/EPIC-05",
       "pr_number": 1666,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-14__release-v9.4/qa_evidence_EPIC-05.md",
       "test_scenarios": [
@@ -822,7 +831,8 @@
   },
   "blocked_items": [],
   "delegated_items": [
-    "EPIC-03/ST-11"
+    "EPIC-03/ST-11",
+    "EPIC-05/ST-23"
   ],
   "completed_items": [
     "EPIC-01/ST-02",
@@ -836,18 +846,29 @@
     "EPIC-03/ST-09",
     "EPIC-03/ST-10",
     "EPIC-03/ST-12",
-    "EPIC-03/ST-11"
+    "EPIC-03/ST-11",
+    "EPIC-04/ST-13",
+    "EPIC-04/ST-14",
+    "EPIC-04/ST-15",
+    "EPIC-04/ST-16",
+    "EPIC-04/ST-17",
+    "EPIC-05/ST-18",
+    "EPIC-05/ST-19",
+    "EPIC-05/ST-20",
+    "EPIC-05/ST-21",
+    "EPIC-05/ST-22",
+    "EPIC-05/ST-23"
   ],
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
       "EPIC-02",
-      "EPIC-03"
+      "EPIC-03",
+      "EPIC-04",
+      "EPIC-05"
     ],
     "epics_pending": [
-      "EPIC-04",
-      "EPIC-05",
       "EPIC-06"
     ],
     "all_merged": false
