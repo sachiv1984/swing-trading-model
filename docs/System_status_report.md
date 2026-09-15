@@ -1,9 +1,37 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.41
-**Last Updated:** 2026-09-14 (delivery verification 2026-09-09__release-v9.3 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-09-14 (sprint close 2026-09-09__release-v9.3 — new Sprint section added); prior — 2026-09-09 (delivery verification 2026-09-07__release-v9.2 — status line updated Sprint_Complete → Verified_with_deviations); prior history retained — see prior entries in version control.
+**Version:** 4.42
+**Last Updated:** 2026-09-15 (sprint close 2026-09-14__release-v9.4 — new Sprint section added); prior — 2026-09-14 (delivery verification 2026-09-09__release-v9.3 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-09-14 (sprint close 2026-09-09__release-v9.3 — new Sprint section added); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-09-14__release-v9.4
+**Date:** 2026-09-15
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | DB-level unique constraint on (ticker, entry_date) for open positions, portfolio-scoped (ST-01); nullable trade_plan_id FK migration path (ST-02); inverse OpenAPI drift-case regression guard (ST-03); deprecated-endpoint sunset tracker re-scan, 0 active (ST-04); scheduled-job-runner consolidation investigation (ST-05) | `docs/specs/data_model.md#DS-17`; `tests/test_openapi_drift_inverse_case.py`; `deprecated_endpoint_sunset_tracker.md`; `docs/ops/scheduled_job_runner_consolidation_investigation.md` | None |
+| EPIC-02 | Arc5ComplianceSection low-trade-volume boundary Playwright coverage (ST-06); backend pytest coverage for `total_closed_trades` null-vs-zero (ST-07, pre-met); pinned regression assertion for Settings heading-order / aria-labelledby fixes (ST-08) | `tests/e2e/arc5-compliance-section.spec.js`; `tests/test_arc5_total_closed_trades_null_vs_zero.py`; `tests/e2e/settings-heading-order-and-aria-labelledby-regression.spec.js` | None |
+| EPIC-03 | AI endpoint cost/latency anomaly check wired into a daily scheduled job + Telegram alert (ST-09); real Q3 2026 AI cost-trend query re-verified (ST-10); CI service account token scope audit + rotation (ST-11); secret-scanning false-positive override procedure documented (ST-12) | `ai_endpoints.md#POST /ai/check-endpoint-anomalies`; `docs/ops/ai_feature_cost_trend_2026_q3.md`; `docs/security/ci_service_account_token_scope_audit_2026-09-14.md`; `.githooks/README.md` | None |
+| EPIC-04 | Framer Motion stagger-delay animation ceiling named in design_system.md (ST-13); GBP-basis FX-conversion display pattern named, 2 distinct failure modes keyed (ST-14); Appendix D/F governance-metrics placement decision — kept in metrics_definitions.md (ST-15); journal-vs-broker-statement P&L reconciliation spec (ST-16); carried-forward-loss field on tax-year P&L statement, design-only (ST-17) | `design_system.md#Accessibility`; `design_system.md#Currency-Basis Correctness Pattern`; `metrics_definitions.md#Appendix F`; `pnl_export_reconciliation.md#8`; `reports.md#Tax Year Summary Bar` | None |
+| EPIC-05 | Cross-role escalation response-time tracker (ST-18); governance-session compute cost attribution method (ST-19); data-density gate trajectory recurring re-estimate cadence (ST-20); quarterly AI-copy boundary-language scan cadence formalised (ST-21); AI Advisory badge Playwright regression guard on Daily Briefing (ST-22); generation-time opt-in AI-output boundary-language sampling hook — `BLG-AI-06`, all 5 real call sites wired (ST-23) | `docs/governance/escalation_response_time_tracker.md`; `docs/ops/governance_session_cost_attribution.md`; `arc4_data_density_trajectory_v4.6.md#10`; `docs/ops/quarterly_ai_copy_boundary_scan_cadence.md`; `tests/e2e/epic02-v62-ai-briefing-chat.spec.js#SC-AB-05`; `data_model.md#DS-18`; `ai_endpoints.md#AI Output Boundary-Language Sampling Hook` | None filed as spec-level `DEV-*` — ST-23 AC 4 (genuine ≥10-output live sample) and AC 6 (`ESC-EXEC-20260910-01` closure) remain disclosed staging-only, not met this session (no `ANTHROPIC_API_KEY`/`DATABASE_URL`) |
+| EPIC-06 | Base44 orphaned-props audit, 0 found (ST-24); loading-skeleton pattern standardised across Screener/RedFlagJournal (ST-25); Arc 5 compliance advisory banner usability review, 2 findings filed as `BLG-UX-05` (ST-26); toast notification interaction-timing rule + non-conforming-screens inventory (ST-27); "trade plan required before entry" non-blocking UI soft-nudge (ST-28) | `decisions--...--ST-24-base44-orphaned-props-audit.md`; `screener_results.md#10`; `decisions--...--ST-26-arc5-advisory-banner-usability-review.md`; `design_system.md#Toast Notification Timing`; `position_form.md#Trade Plan Linkage Advisory` | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| None | All 28 scoped items delivered within the sprint | — |
+
+### Verification inputs ready
+- QA evidence logs: `qa_evidence_EPIC-01.md`, `qa_evidence_EPIC-02.md`, `qa_evidence_EPIC-03.md`, `qa_evidence_EPIC-04.md`, `qa_evidence_EPIC-05.md`, `qa_evidence_EPIC-06.md`
+- Deviations filed: None
+- Test scenarios referenced: `tests/test_openapi_drift_inverse_case.py`; `tests/e2e/arc5-compliance-section.spec.js`; `tests/test_arc5_total_closed_trades_null_vs_zero.py`; `tests/e2e/settings-heading-order-and-aria-labelledby-regression.spec.js`; `tests/e2e/epic02-v62-ai-briefing-chat.spec.js` (SC-AB-05); `tests/test_ai_output_sampling_service.py`; `tests/test_run_ai_output_boundary_sample_audit.py`; `tests/e2e/red-flag-journal.spec.js`; `tests/e2e/trade-plan-linkage-advisory.spec.js` (SC-TPA-01..03)
 
 ---
 
