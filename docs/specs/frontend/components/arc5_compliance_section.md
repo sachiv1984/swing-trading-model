@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.3.0
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 remediation, `LL-v9.4-Closure-01` — Known Deviations entry retroactively assigned `DEV-v9.1-ST13-01`, closing a DEV-ID assignment gap; no normative change); prior — 2026-09-07 (ST-04, EPIC-02, v9.2 — Card 3 Format/Null display row corrected to match shipped `fmtText` behaviour, resolving the Known Deviations entry, BLG-FE-172); prior — 2026-09-07 (ST-01, EPIC-01, v9.2 — added Low-Trade-Volume Advisory subsection, BLG-FEAT-44); prior history retained — see prior entries in version control.
+**Version:** 1.4.0
+**Last Updated:** 2026-09-15 (ST-43, EPIC-06, v9.5, BLG-UX-05 — Low-Trade-Volume Advisory copy extended with reliability/remaining-count clause, placement moved above the stat grid); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 remediation, `LL-v9.4-Closure-01` — Known Deviations entry retroactively assigned `DEV-v9.1-ST13-01`, closing a DEV-ID assignment gap; no normative change); prior — 2026-09-07 (ST-04, EPIC-02, v9.2 — Card 3 Format/Null display row corrected to match shipped `fmtText` behaviour, resolving the Known Deviations entry, BLG-FE-172); prior history retained — see prior entries in version control.
 **Story:** ST-10 (EPIC-03, v4.1) — BLG-FE-48
 **§13 Compliance:** Confirmed — display-only component. No automated recommendation generated.
 **API contract:** docs/specs/api_contracts/arc5_compliance_analytics.md
@@ -132,17 +132,18 @@ Grid class example: `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4`
 
 **Added:** v1.2.0 (ST-01, EPIC-01, v9.2, BLG-FEAT-44)
 
-**Design source:** `docs/design/2026-09-07__release-v9.2/arc5-low-volume-advisory/decision_record.md`
+**Design source:** `docs/design/2026-09-07__release-v9.2/arc5-low-volume-advisory/decision_record.md`; extended `docs/design/2026-09-15__release-v9.5/arc5-low-volume-advisory-placement/decision_record.md` (ST-43, EPIC-06, v9.5, BLG-UX-05 — threshold/remaining-count copy + placement change).
 
 **Assessment outcome:** Advisory warranted. Source data: `docs/design/2026-09-07__release-v9.2/arc5-low-volume-advisory/assessment.md`.
 
-When `data.total_closed_trades` is a non-null number below **20**, render a static advisory banner beneath the four-card stat grid (inside this component's own container, not a page-level `StandingAlertStack` entry). The banner does not render while loading or on error, and does not render when `total_closed_trades` is `null`/absent (a pre-v1.1.0 API response) — absence of the field is treated as "unknown", not "low volume".
+When `data.total_closed_trades` is a non-null number below **20**, render a static advisory banner above the four-card stat grid (inside this component's own container, not a page-level `StandingAlertStack` entry — moved from beneath the grid at v1.4.0/ST-43 so the caveat is read before the numbers it qualifies). The banner does not render while loading or on error, and does not render when `total_closed_trades` is `null`/absent (a pre-v1.1.0 API response) — absence of the field is treated as "unknown", not "low volume".
 
 | Property | Value |
 |----------|-------|
 | Container | `bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-200` (StandingAlert Info tone, reused verbatim as a bespoke inline banner — not the `<StandingAlert>` component itself) |
 | Icon | `Info` (lucide-react) |
-| Copy | `"Based on {N} closed trade(s) — treat these figures as indicative until more trade history accumulates."` where `{N}` is `data.total_closed_trades` |
+| Copy | `"Based on {N} closed trade(s) — treat these figures as indicative until more trade history accumulates. Reliability improves at 20+ closed trades ({20-N} more needed)."` where `{N}` is `data.total_closed_trades` (v1.4.0/ST-43 — appended the reliability/remaining-count clause after the original sentence, verbatim-preserving both substrings `tests/e2e/arc5-compliance-section.spec.js`'s `SC-ARC5-09` already asserts) |
+| Placement | Above the 4-card stat grid (v1.4.0/ST-43; was below at v1.2.0) |
 | Dismissal | None — static while the condition holds, re-evaluated on each data fetch (no `onDismiss`, no dismiss button — distinct from `StandingAlert`'s manual-dismiss pattern) |
 | Threshold | `total_closed_trades < 20` |
 | Source field | `data.total_closed_trades` (`docs/specs/api_contracts/arc5_compliance_analytics.md` v1.1.0) |
@@ -189,6 +190,7 @@ No other deviations open against this spec.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4.0 | 2026-09-15 | Low-Trade-Volume Advisory: copy extended with a reliability/remaining-count clause (`"Reliability improves at 20+ closed trades ({20-N} more needed)."`, appended so both substrings `SC-ARC5-09` already asserts remain intact); placement moved from below to above the 4-card stat grid — ST-43, EPIC-06, v9.5, BLG-UX-05. Design source: `docs/design/2026-09-15__release-v9.5/arc5-low-volume-advisory-placement/decision_record.md`. |
 | 1.3.0 | 2026-09-07 | Card 3 ("Top Rule Breach") Format/Null display row corrected to document the shipped `fmtText` behaviour (space-separated slug, `"—"` on null) — ST-04, EPIC-02, v9.2, BLG-FE-172. Resolves the Known Deviations entry opened at v9.1 ST-13; no component or test change required. |
 | 1.2.0 | 2026-09-07 | Added Low-Trade-Volume Advisory subsection — ST-01, EPIC-01, v9.2, BLG-FEAT-44. New `total_closed_trades` field (contract v1.1.0) drives a static Info-tone banner below the stat grid when below 20. |
 | 1.1.0 | 2026-09-04 | Known Deviations: documented Card 3 text-format/null-display divergence from implementation — v9.1 ST-13, BLG-FE-172. No behavioural change to this document's own requirements. |
