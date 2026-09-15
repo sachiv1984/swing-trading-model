@@ -745,23 +745,31 @@
         "ST-27": {
           "title": "Standard interaction-timing rule for toast notifications",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1660,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "b8ec45106807e62ad5cc51bdd72d4f3034a6b90e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-15T08:01:33Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/frontend/design_system.md#Toast Notification Timing (v1.15/v1.17, ST-27, EPIC-06, v9.4, BLG-UX-04)"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "required_by": "Frontend Specifications & UX Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "1st pass Blocked: undercounted call sites (17 vs actual 18, missed ConfirmationModal.js's toast.custom undo-window call) and the table's own per-row sum (9/6 files) didn't match the headline prose (8/5 files); BLG-FE-176 correspondingly undercounted Positions.js. Fixed: corrected to 18 total/9 non-conforming/6 files throughout design_system.md and BLG-FE-176."
+            ],
+            "cleared_utc": "2026-09-15T08:03:00Z"
+          },
+          "notes": "AC bullet 1 (standard documented) pre-met via design gate commit fffbc231 (v1.15). This session's own work: AC bullet 2, the non-conforming-screens inventory (18 real call sites, 9 non-conforming across 6 files) -- documentation only per AC, remediation filed as BLG-FE-176. Agent-mediated sign-off: 1st pass Blocked (count-accuracy defects), fixed same-session, 2nd pass (retry 1 of 2) Approved."
         },
         "ST-28": {
           "title": "Minimal \"trade plan required before entry\" UI soft-nudge",
