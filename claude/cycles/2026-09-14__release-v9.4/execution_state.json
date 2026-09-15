@@ -446,8 +446,14 @@
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Case B (documentation-creation) — the artefact created IS the governing spec. Calculation + tolerance (£1.00 or 0.5%, whichever larger) defined; explicit dependency note against BLG-QA-122's blocked status recorded per AC. Not blocked on implementation this cycle by design — spec/dependency-mapping only. No deviation."
+          "sign_off_record": {
+            "required_by": "Financial Reporting & Records Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-09-15T07:10:00Z"
+          },
+          "notes": "Case B (documentation-creation) — the artefact created IS the governing spec. Calculation + tolerance (£1.00 or 0.5%, whichever larger) defined; explicit dependency note against BLG-QA-122's blocked status recorded per AC. Not blocked on implementation this cycle by design — spec/dependency-mapping only. No deviation. Agent-mediated sign-off Approved, no findings — §5.3."
         },
         "ST-17": {
           "title": "Carried-forward-loss field on the tax-year P&L statement",
