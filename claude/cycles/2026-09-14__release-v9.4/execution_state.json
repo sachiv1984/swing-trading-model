@@ -393,19 +393,25 @@
           "assigned_to": "engine",
           "github_issue": 1647,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-04",
-          "commit_sha": "8a473b71ac35998cce7cb9a58df59fc118f1e209",
+          "commit_sha": "cdb70434b6613ba81f3ab50855fe36accba8e624",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": "2026-09-15T07:03:52Z",
+          "completed_utc": "2026-09-15T07:07:26Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/frontend/design_system.md#GBP-Basis FX-Conversion Display Pattern (ST-14, BLG-SPEC-137, v9.4)"],
+          "spec_references": ["docs/specs/frontend/design_system.md#Currency-Basis Correctness Pattern for US-Market Positions (ST-14, BLG-SPEC-137, v9.4)"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Case B (documentation-creation) — the artefact created IS the governing spec. Both precedent instances (positions.md Trail Stop tile DEV-EPIC01-ST02-01, trade_plan.md R at Risk DEV-v8.9-ST05-02) cross-referenced per AC. No deviation — pure spec debt, no shipped UI change."
+          "sign_off_record": {
+            "required_by": "Frontend Specifications & UX Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["Restructured single-rule framing (falsely claimed both v8.9 precedents converged on one fx_rate_used-division fix) into two explicitly distinct, opposite failure modes (Mode 1: GBP-converted value mislabelled native, fixed via dedicated native field; Mode 2: value needing GBP conversion has none, fixed via dividing by fx_rate_used), keyed guidance so a future engineer applies the correct fix per mode."],
+            "cleared_utc": "2026-09-15T07:12:00Z"
+          },
+          "notes": "Case B (documentation-creation) — the artefact created IS the governing spec. Both precedent instances (positions.md Trail Stop tile DEV-EPIC01-ST02-01, trade_plan.md R at Risk DEV-v8.9-ST05-02) cross-referenced per AC. No deviation — pure spec debt, no shipped UI change. Agent-mediated sign-off: 1st pass Blocked (factual accuracy finding — see commit history), fixed same-session, 2nd pass (retry 1 of 2) Approved — §5.3."
         },
         "ST-15": {
           "title": "Review placement of Appendix D governance metrics in metrics_definitions.md",
