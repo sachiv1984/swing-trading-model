@@ -794,14 +794,14 @@
           "assigned_to": "engine",
           "github_issue": 1661,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-06",
-          "commit_sha": "499bd3ca55eff59360e73cddaf177ee5a5d42822",
+          "commit_sha": "fac91a28285e95eccc9845b18ecd5d9222a213b5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": "2026-09-15T08:15:27Z",
+          "completed_utc": "2026-09-15T08:42:07Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/components/position_form.md#Trade Plan Linkage Advisory (v1.4/v1.5, ST-28, EPIC-06, v9.4, BLG-FEAT-95)",
+            "docs/specs/frontend/components/position_form.md#Trade Plan Linkage Advisory (v1.4-v1.6, ST-28, EPIC-06, v9.4, BLG-FEAT-95)",
             "tests/e2e/trade-plan-linkage-advisory.spec.js"
           ],
           "spec_reference_not_applicable": false,
@@ -815,7 +815,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-09-15T08:20:00Z"
           },
-          "notes": "Non-blocking amber advisory on TradeEntry.js, gated on !linkedPlanId, matching position_form.md's design-gate spec verbatim (copy, treatment, non-dismissible, submit button unconditionally enabled). §13 compliance independently judged sound by reviewer (surfaces an existing fact, computes no recommendation), not just accepted from the spec's own claim. 3 new Playwright scenarios pass; full pre-existing linked-plan-flow suite (15 tests) unaffected. Agent-mediated sign-off Approved, no findings."
+          "notes": "Non-blocking amber advisory on TradeEntry.js, gated on !linkedPlanId, matching position_form.md's design-gate spec verbatim (copy, treatment, non-dismissible, submit button unconditionally enabled). §13 compliance independently judged sound by reviewer (surfaces an existing fact, computes no recommendation), not just accepted from the spec's own claim. 3 new Playwright scenarios pass; full pre-existing linked-plan-flow suite (15 tests) unaffected. Agent-mediated sign-off Approved, no findings. Post-approval CI finding (commit fac91a28): PR #1667's Playwright shard 4/8 failed -- the banner's original AlertTriangle icon collided with position-sizing-concentration.spec.js#V-SIZE-02's svg.lucide-triangle-alert count-0 assertion (an unrelated widget's test). Fixed by swapping to Info; verified via that test plus a 30-test sweep of adjacent TradeEntry.js suites, no other collision found."
         }
       }
     }
