@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-15 (session — 1 new item added resolving post-ship closure `2026-09-14__release-v9.4` Outstanding Action #5: `BLG-GOV-332` (resolving-commit-must-update-canonical-spec deviation discipline)); prior — 2026-09-15 (post-ship closure `2026-09-14__release-v9.4` STEP 3 + STEP 12 — 28 shipped ST items marked ✅ COMPLETE then archived to `backlog_archive.md`; `groom backlog` pass: 6 Field-Completeness Gaps filled, ephemeral `## Release Slice — v9.4` section removed); prior — 2026-09-15 (session — 1 new item added during EPIC-05/v9.4 CI investigation for ST-23: `BLG-QA-178`); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-15 (Release Planning `2026-09-15__release-v9.5` STEP 4 — 43-item / 27.99-day release slice appended, marker `RP:v9.5:2026-09-15__release-v9.5`); prior — 2026-09-15 (session — 1 new item added: `BLG-FE-177` (trade plan link display shows raw snake_case on trade entry)); prior — 2026-09-15 (session — 1 new item added resolving post-ship closure `2026-09-14__release-v9.4` Outstanding Action #5: `BLG-GOV-332` (resolving-commit-must-update-canonical-spec deviation discipline)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4376,6 +4376,85 @@ When a story or engine action fixes the root cause of a pre-existing, already-fi
 - A named governed-routine step requires resolving-commit-updates-canonical-entry discipline, mirroring the existing filing-time discipline
 - Next Cross-EPIC Deviation Consolidation Review confirms 0 new resolution-status-drift instances found after this rule lands
 - Head of Specs Team sign-off
+
+---
+
+### BLG-FE-177 — Fix trade plan link display to use formatted text instead of snake_case
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX Bug
+**Owner:** Base44 Frontend Prompt Owner; Head of UX & Design
+**Source:** User request, session 2026-09-15
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.5
+
+**Problem**
+On trade entry, when linking to a trade plan, the linked plan's identifier/name is rendered in raw snake_case (e.g. `aapl_swing_plan`) rather than human-readable formatted text. This is inconsistent with the rest of the trade entry UI and makes the linked plan harder to scan at a glance.
+
+**Scope**
+- Identify the component rendering the trade plan link on the trade entry screen
+- Apply a display-formatting transform (snake_case → readable text) before rendering
+- Apply consistently to any other trade-plan references formatted the same way nearby, if trivial
+
+**Acceptance Criteria**
+- Trade plan link/reference on trade entry displays human-readable formatted text, not snake_case
+- No underscores visible in the rendered trade plan link text
+- Existing trade plan linkage functionality (click-through/navigation) unaffected
+
+---
+
+## Release Slice — v9.5 (ephemeral — remove at next `groom backlog` per Placement Rule)
+
+<!-- release-plan-marker: RP:v9.5:2026-09-15__release-v9.5 -->
+
+43 items selected into `2026-09-15__release-v9.5` scope (27.99 estimated days, full capacity). Full acceptance criteria: `claude/cycles/2026-09-15__release-v9.5/stage4_backlog_slice.md`. Selection method: P1 items first, then P2 items (ascending ID), then category-balanced round-robin oldest-first, from a 62-item / ~43.79-day ungated ready pool.
+
+| ST-ID | Item | EPIC |
+|-------|------|------|
+| ST-01 | BLG-BE-117 | EPIC-01 |
+| ST-02 | BLG-BE-112 | EPIC-01 |
+| ST-03 | BLG-BE-113 | EPIC-01 |
+| ST-04 | BLG-BE-114 | EPIC-01 |
+| ST-05 | BLG-OPS-160 | EPIC-02 |
+| ST-06 | BLG-OPS-153 | EPIC-02 |
+| ST-07 | BLG-OPS-154 | EPIC-02 |
+| ST-08 | BLG-OPS-155 | EPIC-02 |
+| ST-09 | BLG-OPS-156 | EPIC-02 |
+| ST-10 | BLG-OPS-157 | EPIC-02 |
+| ST-11 | BLG-OPS-158 | EPIC-02 |
+| ST-12 | BLG-OPS-159 | EPIC-02 |
+| ST-13 | BLG-OPS-161 | EPIC-02 |
+| ST-14 | BLG-OPS-162 | EPIC-02 |
+| ST-15 | BLG-QA-59 | EPIC-03 |
+| ST-16 | BLG-QA-165 | EPIC-03 |
+| ST-17 | BLG-QA-166 | EPIC-03 |
+| ST-18 | BLG-QA-167 | EPIC-03 |
+| ST-19 | BLG-QA-168 | EPIC-03 |
+| ST-20 | BLG-QA-169 | EPIC-03 |
+| ST-21 | BLG-QA-170 | EPIC-03 |
+| ST-22 | BLG-SPEC-D18 | EPIC-04 |
+| ST-23 | BLG-SPEC-56 | EPIC-04 |
+| ST-24 | BLG-SPEC-57 | EPIC-04 |
+| ST-25 | BLG-SPEC-133 | EPIC-04 |
+| ST-26 | BLG-SPEC-139 | EPIC-04 |
+| ST-27 | BLG-SPEC-140 | EPIC-04 |
+| ST-28 | BLG-SPEC-141 | EPIC-04 |
+| ST-29 | BLG-SPEC-142 | EPIC-04 |
+| ST-30 | BLG-SPEC-143 | EPIC-04 |
+| ST-31 | BLG-GOV-332 | EPIC-05 |
+| ST-32 | BLG-GOV-316 | EPIC-05 |
+| ST-33 | BLG-GOV-318 | EPIC-05 |
+| ST-34 | BLG-GOV-319 | EPIC-05 |
+| ST-35 | BLG-GOV-320 | EPIC-05 |
+| ST-36 | BLG-GOV-321 | EPIC-05 |
+| ST-37 | BLG-GOV-322 | EPIC-05 |
+| ST-38 | BLG-GOV-323 | EPIC-05 |
+| ST-39 | BLG-GOV-324 | EPIC-05 |
+| ST-40 | BLG-FE-177 | EPIC-06 |
+| ST-41 | BLG-FE-175 | EPIC-06 |
+| ST-42 | BLG-FE-176 | EPIC-06 |
+| ST-43 | BLG-UX-05 | EPIC-06 |
+
+Not re-selected: `BLG-FEAT-73`, `BLG-FEAT-74`, `BLG-FEAT-76` (substantively gate-blocked per their own body text, no formal `Gate` field). Design-gate-triggering: `BLG-FE-177`, `BLG-FE-175`, `BLG-FE-176`, `BLG-UX-05` (all of EPIC-06 — observable UI ACs) — `run design-gate --cycle 2026-09-15__release-v9.5` required before `plan sprint` seals.
 
 ---
 
