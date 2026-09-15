@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-14 (session — 1 new item added, user-requested: `BLG-OPS-162` (provision read-only staging `DATABASE_URL` for sprint-execution sessions, following recurring RISK-01/RISK-03 disclosure pattern)); prior — 2026-09-14 (session — 1 new item added during EPIC-03/v9.4 PR #1665 review: `BLG-QA-177` (untested SQL in `get_claude_endpoint_cost_windows()`, surfaced by agent-mediated Director of Quality review, ST-09)); prior — 2026-09-14 (session — 1 new item added during EPIC-03/v9.4 sprint execution: `BLG-OPS-161` (claude_audit_log has no latency column, no real-data source for AI endpoint latency anomaly checks, surfaced ST-09)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-15 (session — 1 new item added during EPIC-06/v9.4 sprint execution: `BLG-UX-05` (Arc 5 low-trade-volume advisory threshold/placement recommendation, surfaced ST-26 usability review)); prior — 2026-09-14 (session — 1 new item added, user-requested: `BLG-OPS-162` (provision read-only staging `DATABASE_URL` for sprint-execution sessions, following recurring RISK-01/RISK-03 disclosure pattern)); prior — 2026-09-14 (session — 1 new item added during EPIC-03/v9.4 PR #1665 review: `BLG-QA-177` (untested SQL in `get_claude_endpoint_cost_windows()`, surfaced by agent-mediated Director of Quality review, ST-09)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -3892,6 +3892,28 @@ Every environment this project has run governed routines in across `2026-09-09__
 - All 4 components verified against their own actual current `duration` value and brought to `max(delay) + duration ≤ 500ms`
 - Each component removed from `design_system.md`'s known-non-compliant list in the same commit that fixes it
 - No visual regression beyond the timing change itself — existing Playwright coverage, if any, still passes
+
+---
+
+### BLG-UX-05 — Arc 5 low-trade-volume advisory: surface the 20-trade threshold and remaining-trades count, reconsider placement above the stat grid
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** ST-26 (EPIC-06, v9.4, BLG-UX-03) usability review — 2026-09-15
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.5
+
+**Problem**
+The Arc 5 Signal Compliance low-trade-volume advisory banner (`docs/specs/frontend/components/arc5_compliance_section.md#Low-Trade-Volume Advisory`, `src/components/analytics/Arc5ComplianceSection.js`) tells the user "treat these figures as indicative until more trade history accumulates" but never states the actual threshold (20 closed trades) or how many more trades the user needs before the figures are considered fully reliable. It also renders below the four stat cards, so the user sees the (potentially low-confidence) numbers before the caveat that qualifies them.
+
+**Scope**
+- Consider stating the threshold explicitly and/or a remaining-trades count (e.g. "Based on 5 closed trades — figures become more reliable at 20+ (15 more needed).")
+- Consider moving the advisory above the stat grid so the caveat is read before the numbers, not after
+- Head of UX & Design to decide whether either change is worth making, or whether the current copy/placement is an acceptable simplicity trade-off
+
+**Acceptance Criteria**
+- Placement and copy decision recorded (keep as-is, or specify the change)
+- If changed: `arc5_compliance_section.md` updated in the same commit as the implementation, existing Playwright coverage (`tests/e2e/arc5-compliance-section.spec.js`) still passes
 
 ---
 
