@@ -661,8 +661,8 @@
     "EPIC-06": {
       "status": "done",
       "branch": "exec/2026-09-14__release-v9.4/EPIC-06",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1667,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-14__release-v9.4/qa_evidence_EPIC-06.md",
       "test_scenarios": [
