@@ -99,6 +99,9 @@ def summarise_journal_notes(
             messages=[{"role": "user", "content": prompt}],
         )
         summary_text = response.content[0].text if response.content else None
+        if summary_text:
+            from ai_output_sampling_service import maybe_sample_output
+            maybe_sample_output("journal-summary (POST /ai/journal-summary)", summary_text, model)
         return {"summary": summary_text, "model": model, "message": None}
     except Exception as exc:
         logger.error("summarise_journal_notes failed: %s", exc, exc_info=True)
@@ -258,6 +261,9 @@ def generate_daily_briefing() -> dict:
             pass
 
         parsed = json.loads(content)
+        if content and content != "{}":
+            from ai_output_sampling_service import maybe_sample_output
+            maybe_sample_output("daily-briefing (POST /ai/daily-briefing)", content, MODEL_BRIEFING)
         return {
             "summary": parsed.get("summary", ""),
             "actions": parsed.get("actions", []),
@@ -416,6 +422,9 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
         except Exception:
             pass
 
+        if content and content != "I was unable to generate a response.":
+            from ai_output_sampling_service import maybe_sample_output
+            maybe_sample_output("chat (POST /ai/chat)", content, MODEL_BRIEFING)
         return {"response": content, "advisory": True, "model": MODEL_BRIEFING}
     except Exception:
         return {"response": "Unable to get a response. Please try again.", "advisory": True}
