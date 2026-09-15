@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-15 (session — 1 new item added during EPIC-06/v9.4 sprint execution: `BLG-FE-176` (8 non-conforming toast-timing call sites, surfaced ST-27 inventory)); prior — 2026-09-15 (session — 1 new item added during EPIC-06/v9.4 sprint execution: `BLG-UX-05` (Arc 5 low-trade-volume advisory threshold/placement recommendation, surfaced ST-26 usability review)); prior — 2026-09-14 (session — 1 new item added, user-requested: `BLG-OPS-162` (provision read-only staging `DATABASE_URL` for sprint-execution sessions, following recurring RISK-01/RISK-03 disclosure pattern)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-15 (session — 1 new item added during EPIC-05/v9.4 CI investigation for ST-23: `BLG-QA-178` (unrestored sys.modules["database"] swap latent test-isolation hazard)); prior — 2026-09-15 (session — 1 new item added during EPIC-06/v9.4 sprint execution: `BLG-FE-176` (9 non-conforming toast-timing call sites, surfaced ST-27 inventory, corrected from an initial miscount of 8)); prior — 2026-09-15 (session — 1 new item added during EPIC-06/v9.4 sprint execution: `BLG-UX-05` (Arc 5 low-trade-volume advisory threshold/placement recommendation, surfaced ST-26 usability review)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4952,6 +4952,28 @@ A programmatic write to `.claude_current_state.json` during EPIC-01/v9.4 executi
 
 **Acceptance Criteria**
 - The query has been run at least once against a real or synthetic Postgres instance with confirmed-correct recent/baseline window boundaries, or a new test exists that executes the real (non-stubbed) `get_claude_endpoint_cost_windows()` and asserts its output shape/values
+
+---
+
+### BLG-QA-178 — `test_trade_plan_audit_log.py`'s unrestored `sys.modules["database"]` swap is a latent test-isolation hazard
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality
+**Source:** ST-23 (EPIC-05, v9.4, BLG-AI-06) CI investigation — 2026-09-15
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.5
+
+**Problem**
+`test_trade_plan_audit_log.py` loads the real `backend/database.py` module via a permanent, module-level `sys.modules.pop("database", None); import database` (no restore), overwriting `conftest.py`'s session-scoped stub for the rest of the pytest session. This was confirmed live to cause cross-file test breakage this cycle when a new, alphabetically-earlier-sorting test file (`test_ai_output_sampling_service.py`, since fixed to use an isolated-copy pattern instead) did the same thing and leaked a real Postgres connection attempt into `test_alerts_service.py`'s own tests. `test_trade_plan_audit_log.py` has the identical unrestored pattern and currently only avoids the same problem by sorting late enough alphabetically that nothing after it needs the stub back — it is not actually safe, just not yet triggered.
+
+**Scope**
+- Convert `test_trade_plan_audit_log.py` to the safer, already-established isolated-copy pattern (load the real module via `importlib.util.spec_from_file_location` under its own private `sys.modules` key, as `test_position_audit_log.py` and the fixed `test_ai_output_sampling_service.py` both do) instead of mutating the shared `sys.modules["database"]` slot
+- Grep the rest of `tests/` for the same `sys.modules.pop("database"...)` pattern with no matching restore fixture, and apply the same fix to any other file found
+
+**Acceptance Criteria**
+- `test_trade_plan_audit_log.py` no longer mutates the shared `sys.modules["database"]` entry
+- Full backend test suite (`backend/.venv/bin/python3 -m pytest tests/`) still passes, and a manual reordering check confirms no other order-dependent leakage remains from this specific pattern
+- Any other file found with the same unrestored pattern is fixed in the same commit
 
 ---
 
