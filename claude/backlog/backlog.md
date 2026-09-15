@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-15 (session — 1 new item added during EPIC-06/v9.4 sprint execution: `BLG-UX-05` (Arc 5 low-trade-volume advisory threshold/placement recommendation, surfaced ST-26 usability review)); prior — 2026-09-14 (session — 1 new item added, user-requested: `BLG-OPS-162` (provision read-only staging `DATABASE_URL` for sprint-execution sessions, following recurring RISK-01/RISK-03 disclosure pattern)); prior — 2026-09-14 (session — 1 new item added during EPIC-03/v9.4 PR #1665 review: `BLG-QA-177` (untested SQL in `get_claude_endpoint_cost_windows()`, surfaced by agent-mediated Director of Quality review, ST-09)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-15 (session — 1 new item added during EPIC-06/v9.4 sprint execution: `BLG-FE-176` (8 non-conforming toast-timing call sites, surfaced ST-27 inventory)); prior — 2026-09-15 (session — 1 new item added during EPIC-06/v9.4 sprint execution: `BLG-UX-05` (Arc 5 low-trade-volume advisory threshold/placement recommendation, surfaced ST-26 usability review)); prior — 2026-09-14 (session — 1 new item added, user-requested: `BLG-OPS-162` (provision read-only staging `DATABASE_URL` for sprint-execution sessions, following recurring RISK-01/RISK-03 disclosure pattern)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -3914,6 +3914,29 @@ The Arc 5 Signal Compliance low-trade-volume advisory banner (`docs/specs/fronte
 **Acceptance Criteria**
 - Placement and copy decision recorded (keep as-is, or specify the change)
 - If changed: `arc5_compliance_section.md` updated in the same commit as the implementation, existing Playwright coverage (`tests/e2e/arc5-compliance-section.spec.js`) still passes
+
+---
+
+### BLG-FE-176 — Bring 8 non-conforming toast call sites into line with the Toast Notification Timing standard
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** ST-27 (EPIC-06, v9.4, BLG-UX-04) non-conforming-screens inventory — 2026-09-15
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.5
+
+**Problem**
+`design_system.md`'s Toast Notification Timing standard (v1.15/v1.17, §Shared UI Components) defines severity-based durations, but ST-27's inventory found 8 non-conforming `toast.*()` call sites across 5 files: 7 `toast.error(...)` calls with no `duration` override (rendering at `sonner`'s 4s default instead of the standard's 8s-or-manual-dismiss for errors) in `Settings.js` (×2), `Signals.js` (×2), `Positions.js` (×1), `PositionCard.js` (×1), `useWatchlistModal.js` (×1); and 1 `toast.info(...)` call in `Layout.js` with an incorrect explicit duration (8000ms on a <80-char message that should use the 4s info default).
+
+**Scope**
+- Add `duration: 8000` (or manual-dismiss per the standard's error-with-required-next-action clause) to the 7 non-conforming `toast.error(...)` calls
+- Correct `Layout.js`'s `toast.info(...)` duration from 8000 to the 4s default (remove the override)
+- Also fix the pre-existing duplicate "Failed to mark position as reviewed" message noted during the inventory (identical string independently hardcoded in both `Positions.js` and `PositionCard.js`) while touching that call site, if low-risk to do so
+
+**Acceptance Criteria**
+- All 8 call sites named in the inventory conform to `design_system.md` v1.17's Toast Notification Timing table
+- `design_system.md`'s non-conforming-screens table updated to reflect the fix (or the table removed/marked historical if all sites now conform)
+- No visual regression beyond the timing change itself
 
 ---
 
