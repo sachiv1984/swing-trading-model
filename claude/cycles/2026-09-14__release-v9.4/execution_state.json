@@ -670,23 +670,29 @@
         "ST-24": {
           "title": "Audit Base44 components for orphaned props",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1657,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "c1981417d6b3bfe8ebcb7e95366e3e4d0de8c7b4",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-15T07:58:47Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/product/decisions/decisions--2026-09-14__release-v9.4--ST-24-base44-orphaned-props-audit.md"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "required_by": "Base44 Frontend Prompt Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-09-15T08:00:00Z"
+          },
+          "notes": "Case B (documentation-creation). 5 candidates found via delegation_log.md prompt-revision counts (3+ threshold): 3 are zero-prop page components, 2 (HeatGauge.js, PositionRiskTable.js) have every declared prop traced to use with no orphans. Valid negative result -- 0 props removed, nothing to regress. Agent-mediated sign-off Approved, no findings."
         },
         "ST-25": {
           "title": "Standardise the loading-skeleton pattern across screens",
