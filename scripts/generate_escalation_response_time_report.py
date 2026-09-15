@@ -32,6 +32,43 @@ FILE_GLOBS = [
 DATE_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
 
 
+def split_authorities(text):
+    """Split an 'Owning authority' field on ';' or ' and ' -- but only at
+    paren-depth 0, so a parenthetical qualifier's own prose (which may
+    itself contain 'and'/';', e.g. "Product Owner (co-consulted: X, per
+    Y's dual ownership and Z's note)") is never torn into fake extra
+    "roles". Trailing parenthetical qualifiers are then stripped from
+    each resulting piece."""
+    parts = []
+    depth = 0
+    buf = ""
+    i = 0
+    while i < len(text):
+        ch = text[i]
+        if ch == "(":
+            depth += 1
+            buf += ch
+        elif ch == ")":
+            depth = max(0, depth - 1)
+            buf += ch
+        elif depth == 0 and ch == ";":
+            parts.append(buf)
+            buf = ""
+        elif depth == 0 and text[i:i + 5] == " and ":
+            parts.append(buf)
+            buf = ""
+            i += 4  # skip the matched " and " (minus the char consumed by the loop's own increment)
+        else:
+            buf += ch
+        i += 1
+    parts.append(buf)
+    # [^)]* (not .*?) so this only ever strips ONE self-contained trailing
+    # parenthetical, never backtracks across an intervening ")...(" to eat
+    # a second, unrelated paren group (and whatever un-parenthesised text,
+    # e.g. a second role name, sits between them) along with it.
+    return [re.sub(r"\s*\([^)]*\)\s*$", "", p).strip().rstrip(".") for p in parts if p.strip()]
+
+
 def extract_rows(files):
     rows = []
     for path in files:
@@ -55,10 +92,7 @@ def extract_rows(files):
             search_text = res_section.group(1) if res_section else after_disp
             d = DATE_RE.search(search_text[:400])
             resolved_date = d.group(1) if (disposition == "Resolved" and d) else None
-            authorities = [
-                re.sub(r"\s*\(.*?\)\s*$", "", a).strip().rstrip(".")
-                for a in re.split(r";| and ", auth_m.group(1))
-            ]
+            authorities = split_authorities(auth_m.group(1))
             rows.append({
                 "file": path, "id": esc_id, "raised": raised_dt,
                 "authorities": authorities, "disposition": disposition,
