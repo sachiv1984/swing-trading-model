@@ -204,9 +204,9 @@ For each gate tracked in this document:
 
 ## 11. Sign-Off (§10 Addendum)
 
-- Signed off by: <fill in — pending §5.3 agent-mediated review>
-- Date: <fill in — must be non-blank>
-- Comments:
+- Signed off by: Sprint Execution Engine (agent-mediated, PMO Lead role — §5.3)
+- Date: 2026-09-15
+- Comments: Reviewer independently confirmed all three cited factual claims (PT-04 sub-gate shipped v6.1; SI-02's PO-set 2026-11-09/milestone trigger; BLG-BE-91 shipped v8.6) against their sources, and confirmed the 3-release-cycle backstop-unit choice is a reasoned deviation from the AC's illustrative unit, grounded in the documented 9-consecutive-wasted-reading precedent — not an arbitrary substitution.
 
 ---
 
