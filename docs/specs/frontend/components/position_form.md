@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.5
-**Last Updated:** 2026-09-15 (v9.4 sprint execution — ST-28/BLG-FEAT-95: Trade Plan Linkage Advisory implementation confirmed in TradeEntry.js, required Playwright coverage added); prior — 2026-09-14 (v9.4 design gate — ST-28/BLG-FEAT-95: new Trade Plan Linkage Advisory section — non-blocking soft nudge when no trade plan is linked); prior — 2026-03-18 (initial canonical spec)
+**Version:** 1.6
+**Last Updated:** 2026-09-15 (v9.4 sprint execution — ST-28/BLG-FEAT-95: swapped the advisory's icon from AlertTriangle to Info after CI found it collided with an unrelated test's icon-absence assertion); prior — 2026-09-15 (v9.4 sprint execution — ST-28/BLG-FEAT-95: Trade Plan Linkage Advisory implementation confirmed in TradeEntry.js, required Playwright coverage added); prior — 2026-09-14 (v9.4 design gate — ST-28/BLG-FEAT-95: new Trade Plan Linkage Advisory section — non-blocking soft nudge when no trade plan is linked); prior history retained — see prior entries in version control
 **Design Source (v1.4):** docs/design/2026-09-14__release-v9.4/trade-plan-required-nudge/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -221,7 +221,7 @@ A non-blocking inline advisory banner, shown above the submit button, when no `t
 
 **Copy:** "No trade plan linked to this position. Consider creating one before entering — or continue without."
 
-**Treatment:** advisory (amber) tone, not error/destructive — `bg-amber-50 dark:bg-amber-950/30` + amber icon, matching `strategy_rules.md` §4.2's existing pre-entry advisory panel convention, not a red/blocking warning.
+**Treatment:** advisory (amber) tone, not error/destructive — `bg-amber-50 dark:bg-amber-950/30` + amber icon, matching `strategy_rules.md` §4.2's existing pre-entry advisory panel convention, not a red/blocking warning. **Icon note (found live, CI):** use `Info` (lucide-react), not `AlertTriangle` — `PositionSizingWidget.js`'s concentration-reason note already renders an `AlertTriangle` unconditionally-absent-when-clean, asserted via `svg.lucide-triangle-alert` having count 0 in `tests/e2e/position-sizing-concentration.spec.js#V-SIZE-02`; this banner renders on the same page whenever no plan is linked (the common case), so using the same icon class breaks that unrelated test's absence assertion. `Info` avoids the collision and is the same icon already used for the Arc 5 low-trade-volume advisory's informational tone.
 
 **Actions (both non-blocking):**
 - **"Create Trade Plan"** — secondary-button link to the Trade Plan creation flow; does not discard in-progress form state.

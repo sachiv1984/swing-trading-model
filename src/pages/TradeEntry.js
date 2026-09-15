@@ -11,7 +11,7 @@ import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
-import { ArrowLeft, Calculator, Loader2, CheckCircle2, X, Rocket, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Calculator, Loader2, CheckCircle2, X, Rocket, Info } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
 import PositionSizingWidget from '../components/trades/PositionSizingWidget';
@@ -607,7 +607,7 @@ export default function TradeEntry() {
           data-testid="trade-plan-linkage-advisory"
           className="flex items-start gap-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3"
         >
-          <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+          <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0 space-y-2">
             <p className="text-sm text-amber-800 dark:text-amber-200">
               No trade plan linked to this position. Consider creating one before entering — or continue without.
