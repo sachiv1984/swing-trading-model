@@ -1,8 +1,8 @@
 **Owner:** Financial Reporting & Records Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-07-20
+**Version:** 1.1
+**Last Updated:** 2026-09-15 (v9.4 ST-16/BLG-FR-02: added §8 Journal-Derived P&L vs Broker-Statement Import Reconciliation — spec/dependency-mapping only, blocked on BLG-QA-122)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -66,8 +66,48 @@ This is a one-time audit deliverable per BLG-FEAT-79's acceptance criteria, not 
 
 ---
 
+## 8. Journal-Derived P&L vs Broker-Statement Import Reconciliation (Spec/Dependency-Mapping Only — Blocked)
+
+**Added:** ST-16 (EPIC-04, v9.4, BLG-FR-02)
+
+**Status: not implementable this cycle.** This section defines the reconciliation calculation and tolerance so the spec is ready the moment its dependency clears — it does not itself add a runnable check. See §8.4.
+
+### 8.1 Purpose
+
+`BLG-FR-02` identified a gap distinct from §1–§7 above: there is no check comparing the system's own journal-derived realised P&L total (the same figure the tax-year P&L export at `GET /reports/tax-year` is sourced from — see §1) against the total reported on an imported broker statement for the same period. Today any discrepancy between the two is caught only if a user notices it manually.
+
+### 8.2 Reconciliation Calculation
+
+For a given reconciliation period (a tax year, to match the export this figure is compared against):
+
+```
+journal_total   = SUM(trade_history.pnl WHERE exit_date IN period)   # existing GET /reports/tax-year source data, see §1
+broker_total    = <broker-statement-imported realised P&L for the same period>   # not yet obtainable — see §8.4
+delta           = journal_total - broker_total
+within_tolerance = abs(delta) <= max(tolerance_abs, tolerance_pct * abs(broker_total))
+```
+
+### 8.3 Acceptable Tolerance
+
+`tolerance_abs = £1.00`, `tolerance_pct = 0.5%` (whichever is larger). Rationale: the two totals are expected to diverge by small, explainable amounts even when both are correct — FX-rate rounding on US-market trades (journal uses `fx_rate_used` at trade time, §Consistency Rules → GBP-Basis FX-Conversion Display Pattern in `design_system.md`; a broker statement uses its own settlement-date rate), and commission/fee timing differences (a broker statement may net fees into the same line the journal records separately). A tolerance tighter than this would flag routine, non-error divergence as a mismatch; a looser one risks masking a real data-entry or import error. This mirrors the tolerance-definition pattern already used for `trailing_stop_action_rate` (`metrics_definitions.md` — numeric Validation Tolerances subsection, ST-03/EPIC-01/v8.9) rather than inventing a new convention.
+
+A discrepancy outside tolerance would surface the same way `mismatches` are reported in §5 above (a structured result the caller inspects) — no new UI surface is specified here, since none is implementable until §8.4 clears.
+
+### 8.4 Dependency on BLG-QA-122 (Blocked)
+
+This reconciliation cannot be implemented or run — not even as a one-time audit — because **no broker-statement import mechanism exists**. `BLG-QA-122` (Broker statement reconciliation) is gate-conditional on exactly this: "A broker statement import mechanism exists," and per `current_roadmap.md` §2 Product Scope Exclusions, broker API integration (execution) is a deferred, not strategically excluded, product boundary with no import path today.
+
+`broker_total` in §8.2 has no data source until `BLG-QA-122`'s gate clears (a broker API import or a manual statement-upload path, whichever ships first). This document fixes the calculation and tolerance in advance precisely so that, once an import mechanism exists, implementation can proceed directly against this spec rather than re-deriving the reconciliation logic at that time.
+
+### 8.5 Follow-Up
+
+No implementation backlog item is filed by this story — implementation remains correctly scoped under `BLG-QA-122` itself, which already tracks the blocking dependency. Re-visit this section when `BLG-QA-122`'s gate criteria are met.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-09-15 | ST-16 (EPIC-04, v9.4, BLG-FR-02): Added §8 — journal-derived P&L vs broker-statement import reconciliation calculation and tolerance (`£1.00` or `0.5%`, whichever larger), with an explicit dependency note against `BLG-QA-122`'s blocked status. Spec/dependency-mapping only this cycle — not implementable until the `BLG-QA-122` gate clears (no broker-statement import mechanism exists). |
 | 1.0 | 2026-07-20 | ST-03 (EPIC-03, v7.6, BLG-FEAT-79): Initial version. Specifies the two-way closure-state reconciliation between `trade_history` and `trade_plans`, the explicit non-goal of numeric P&L comparison (no financial columns on `trade_plans`), and the implementation location. |
