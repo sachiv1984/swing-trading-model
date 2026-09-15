@@ -2490,11 +2490,13 @@ def create_claude_audit_entry(
 # ---------------------------------------------------------------------------
 # ai_output_boundary_samples — §13.2 boundary-language compliance sampling
 #
-# ST-23 (BLG-AI-06, EPIC-05, v9.4): unlike gemini_audit_log/claude_audit_log
-# above (which deliberately store only hashes of prompt/response text, per
-# claude_api_log_hygiene_policy.md's "never INFO in production" restriction
-# on full prompt/response text), this table stores the actual generated
-# output TEXT -- required so scripts/run_ai_output_boundary_sample_audit.py
+# ST-23 (BLG-AI-06, EPIC-05, v9.4): unlike gemini_audit_log above (which
+# deliberately stores only hashes of prompt/response text) or claude_audit_log
+# above (which stores no prompt/response representation at all, hash or
+# text) -- both per claude_api_log_hygiene_policy.md's "never INFO in
+# production" restriction on full prompt/response text -- this table stores
+# the actual generated output TEXT -- required so
+# scripts/run_ai_output_boundary_sample_audit.py
 # can scan it for prescriptive/prediction-language drift. This is a
 # deliberate, narrow exception to that policy's general text-avoidance
 # principle, not a silent broadening of it -- see

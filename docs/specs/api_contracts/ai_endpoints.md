@@ -743,7 +743,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 **Gating (AC 1–2):** default **off** — sampling only happens when `AI_OUTPUT_SAMPLING_ENABLED` is explicitly truthy. Even when enabled, only a bounded fraction (`AI_OUTPUT_SAMPLING_RATE`, default `0.1` = 10%, clamped to `[0, 1]`) of calls are actually written — this is not full-content logging of every response.
 
-**Storage:** a new `ai_output_boundary_samples` table (`docs/specs/data_model.md`) stores the actual generated text — unlike `gemini_audit_log`/`claude_audit_log`, which deliberately store only hashes. This is a disclosed, narrow exception to `docs/ops/claude_api_log_hygiene_policy.md`'s general text-avoidance principle — see that document’s §2.4 for the exception's own governance (90-day retention, opt-in, rate-bounded).
+**Storage:** a new `ai_output_boundary_samples` table (`docs/specs/data_model.md`) stores the actual generated text — unlike `gemini_audit_log` (hashes only) or `claude_audit_log` (no prompt/response representation at all, hash or text). This is a disclosed, narrow exception to `docs/ops/claude_api_log_hygiene_policy.md`'s general text-avoidance principle — see that document's §2.4 for the exception's own governance (90-day retention, opt-in, rate-bounded).
 
 **Consumer path (AC 3):** `scripts/run_ai_output_boundary_sample_audit.py::load_real_samples_from_store()` reads up to 10 rows and `main()` prefers them over the illustrative fallback SAMPLE whenever the store returns at least one row.
 

@@ -2231,7 +2231,7 @@ A subsequent duplicate `INSERT` (same `portfolio_id`/`ticker`/`entry_date`, `sta
 
 **Story:** ST-23 (EPIC-05, v9.4) — BLG-AI-06, generation-time opt-in sampling hook for AI-output boundary-language audits
 
-New table storing sampled real AI-generation output text, so `scripts/run_ai_output_boundary_sample_audit.py` can scan genuine (non-illustrative) output for §13.2 boundary-language drift. Unlike `gemini_audit_log`/`claude_audit_log` (DS above, hashes only — per `docs/ops/claude_api_log_hygiene_policy.md`'s general text-avoidance principle), this table deliberately stores the actual text; that is a disclosed, narrow exception, not a broadening of what every other AI-call table retains — see `claude_api_log_hygiene_policy.md` §2.4 for the exception's own governance (opt-in, sampling-rate-bounded, 90-day retention). No FK to any other table — a sample outlives the request that produced it and has no meaningful cascade relationship.
+New table storing sampled real AI-generation output text, so `scripts/run_ai_output_boundary_sample_audit.py` can scan genuine (non-illustrative) output for §13.2 boundary-language drift. Unlike `gemini_audit_log` above (hashes only) or `claude_audit_log` above (no prompt/response representation at all, hash or text) — both per `docs/ops/claude_api_log_hygiene_policy.md`'s general text-avoidance principle — this table deliberately stores the actual text; that is a disclosed, narrow exception, not a broadening of what every other AI-call table retains — see `claude_api_log_hygiene_policy.md` §2.4 for the exception's own governance (opt-in, sampling-rate-bounded, 90-day retention). No FK to any other table — a sample outlives the request that produced it and has no meaningful cascade relationship.
 
 ```sql
 BEGIN;
