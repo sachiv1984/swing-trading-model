@@ -697,23 +697,34 @@
         "ST-25": {
           "title": "Standardise the loading-skeleton pattern across screens",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1658,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "216210c15e837dae53ff8d2335a354576f78ff72",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-15T08:09:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/screener_results.md#10. Progressive Loading Pattern (Skeleton UI)",
+            "docs/specs/frontend/pages/red_flag_journal.md#8. Loading and Error States",
+            "tests/e2e/screener.spec.js#SC-SCR-09",
+            "tests/e2e/red-flag-journal.spec.js#SC-RFJ-06"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "required_by": "Head of UX & Design",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-09-15T08:14:00Z"
+          },
+          "notes": "Dashboard pre-conformant (confirmed at design gate, no change). Screener.js and RedFlagJournal.js SkeletonRow refactored from page-local bg-*/animate-pulse divs to compose from the shared Skeleton primitive, with className colour overrides preserving exact visual output -- verified by the reviewer via actual Tailwind CSS build output ordering, not just precedent. Existing SC-SCR-09 passes unchanged; new SC-RFJ-06 added (Journal had no prior skeleton coverage). Agent-mediated sign-off Approved, no blocking findings (one non-blocking cosmetic note: rounded vs rounded-md corner-radius, imperceptible)."
         },
         "ST-26": {
           "title": "Usability pass on the Arc 5 compliance advisory banner",
