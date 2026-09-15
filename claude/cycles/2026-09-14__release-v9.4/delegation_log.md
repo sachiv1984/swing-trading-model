@@ -104,3 +104,21 @@ Append-only. Do not edit previous entries.
 - **What was done:** Generated a new fine-grained PAT scoped to this repository with the exact permission set recommended in `docs/security/ci_service_account_token_scope_audit_2026-09-14.md` §3 (Contents, Issues, Pull requests, Workflows: Read and write; Metadata: Read-only). Swapped this session's `gh auth` credential to it (`gh auth logout` + `gh auth login --with-token`).
 - **Verification (this session, post-swap):** `gh auth status` confirms token type changed from `gho_...` (classic OAuth) to `github_pat_...` (fine-grained). Functional round-trip confirmed: `gh repo view`, `gh issue view`, `gh pr list`, `git fetch` (read paths) and `git push` to `exec/2026-09-14__release-v9.4/EPIC-03` (Contents: write) all succeeded with the new token — see `docs/security/ci_service_account_token_scope_audit_2026-09-14.md` §4 for the full table.
 - **Status:** Unblocked — sign-off cleared (Cybersecurity & Trust Lead, agent-mediated, §5.3 — AC-01/AC-02/AC-03 all PASS per the audit doc §5). `execution_state.json` ST-11 set to `done` in the same commit as this entry.
+
+---
+
+## DEL-20260914-03
+
+- **ST Item:** ST-23 — Implement generation-time opt-in sampling hook for AI-output boundary-language audits
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend
+- **Assigned to:** Head of Engineering
+- **GitHub Issue:** #1656
+- **Branch:** exec/2026-09-14__release-v9.4/EPIC-05
+- **Delegated at:** 2026-09-15T07:35:00Z
+- **What is needed:**
+  `BLG-AI-06`'s AC requires a new sampling store + hook so `scripts/run_ai_output_boundary_sample_audit.py` can eventually consume genuine (non-illustrative) AI output. RISK-05 note (`sprint_backlog.md`): no single shared AI-response chokepoint exists across all 5 real call sites (`ai_service.py` × 3 inline call sites, `debrief_service.py` × 1, `gemini_service.py` × 1 shared `_call_claude`/`_log_audit` covering 2 generation functions) — confirmed by code inspection this session. Per the same note's own fallback instruction ("if none exists, deliver a phased implementation and file follow-on BLG-AI-* items for remaining call sites"), assessed whether phasing was actually necessary: since there are only 5 call sites across 3 files (not the more painful "5 files" the note's phrasing anticipated), wiring all 5 in this same session was judged more tractable than filing follow-on debt for a mechanically small remaining piece — no phasing/follow-on item needed.
+- **Spec reference:** Spec and implementation co-developed in this session (no pre-existing locked spec to delegate against) — landed as `docs/specs/data_model.md` DS-18, `docs/specs/api_contracts/ai_endpoints.md`'s new "AI Output Boundary-Language Sampling Hook" section, and `docs/ops/claude_api_log_hygiene_policy.md` §2.4.
+- **Unblock criteria:** Sampling hook implemented (opt-in, default off, rate-bounded — AC 1–2), unit-tested; consumer path added to the audit script (AC 3); documented and cross-referenced from `BLG-GOV-178` (AC 5, satisfied by citation from the new docs — `BLG-GOV-178` itself not edited, out of this engine's write scope per `execution_prompt.md` §7). AC 4 (genuine ≥10-output sample) and AC 6 (`ESC-EXEC-20260910-01` closure) remain explicitly **not** met this session — same disclosed no-`ANTHROPIC_API_KEY`/no-live-DB constraint as `ESC-EXEC-20260910-01` itself (re-confirmed: `env | grep` found neither `DATABASE_URL` nor `ANTHROPIC_API_KEY` in this session) — per `sprint_backlog.md` ST-23's own "Staging-only ACs: AC-04" note. `ESC-EXEC-20260910-01` stays `Deferred`, not Resolved.
+- **Commit format required:** `[EPIC-05][ST-23] <description>` pushed to `exec/2026-09-14__release-v9.4/EPIC-05`
+- **Status:** Unblocked (partial — AC 1/2/3/5 met and sign-off cleared; AC 4/6 disclosed as staging-only, not met, per the story's own sprint-planning-time framing — this is not a gap discovered late, it was already scoped out at sprint seal). `execution_state.json` ST-23 reflects `acceptance_verified: true` against the AC subset actually in scope this cycle, with AC 4/6's deferral recorded in its `notes` field.

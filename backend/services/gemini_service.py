@@ -280,6 +280,17 @@ def generate_full_plan(
 
     _log_audit(plan_id, input_hash, output_hash, usage, endpoint="POST /trade-plans/generate-plan")
 
+    if isinstance(fields, dict):
+        from ai_output_sampling_service import maybe_sample_output
+        for field_name in ("setup_thesis", "entry_rationale", "early_exit_conditions"):
+            field_text = fields.get(field_name)
+            if field_text:
+                maybe_sample_output(
+                    f"generate-plan {field_name} (POST /trade-plans/generate-plan)",
+                    field_text,
+                    MODEL_VERSION,
+                )
+
     return {
         "available": True,
         "fields": fields,
@@ -338,6 +349,10 @@ def generate_setup_thesis(
 
     output_hash = hashlib.sha256(thesis.encode()).hexdigest()[:16]
     _log_audit(plan_id, input_hash, output_hash, usage, endpoint="POST /trade-plans/{plan_id}/generate-thesis")
+
+    if thesis:
+        from ai_output_sampling_service import maybe_sample_output
+        maybe_sample_output("generate-thesis (POST /trade-plans/{plan_id}/generate-thesis)", thesis, MODEL_VERSION)
 
     return {
         "thesis": thesis,

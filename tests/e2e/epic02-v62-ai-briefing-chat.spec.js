@@ -7,6 +7,7 @@
  *   SC-AB-02  Card body shows summary and action list after API response (ST-07/AC-02)
  *   SC-AB-03  Card shows generation timestamp and Regenerate button (ST-07/AC-03)
  *   SC-AB-04  Regenerate button triggers a new POST /ai/daily-briefing and updates card (ST-07/AC-05)
+ *   SC-AB-05  "AI Advisory" badge visible on the card, non-dismissible (ST-22/EPIC-05/v9.4, BLG-AI-05)
  *
  *   SC-AC-01  AI chat widget "Ask Advisor" button is visible on the Positions page (ST-09/AC-01)
  *   SC-AC-02  AI chat widget "Ask Advisor" button is visible on the Signals page (ST-09/AC-01)
@@ -239,6 +240,34 @@ test.describe('ST-07 — AI Daily Briefing Card', () => {
     // Second click — content updates
     await regenBtn.click();
     await expect(page.getByText('Second briefing: NVDA near stop.')).toBeVisible({ timeout: 8000 });
+  });
+
+  test('SC-AB-05: "AI Advisory" badge is visible on the Daily Briefing card (ST-22/EPIC-05/v9.4, BLG-AI-05, AdvisoryBadge design_system.md §Shared UI Components)', async ({ page }) => {
+    // AdvisoryBadge's documented first-applied instance is this card's
+    // pre-existing badge (AiDisclaimer variant="badge") — design_system.md
+    // v1.14 explicitly notes "no code change" to this instance. This test
+    // is the Playwright coverage the CLAUDE.md frontend-visible-change
+    // standard requires for that observable AC bullet (design-gate note,
+    // stage4_backlog_slice.md#ST-22) — "documented in a canonical frontend
+    // spec" alone does not satisfy it.
+    await stubDashboardRoutes(page, {
+      summary: null,
+      actions: [],
+      generated_at: '2026-06-25T08:30:00Z',
+      advisory: true,
+      model: null,
+    });
+    await page.goto('/#/');
+    await expect(page.getByTestId('ai-daily-briefing-card')).toBeVisible({ timeout: 8000 });
+
+    const badge = page.getByTestId('ai-daily-briefing-card').getByText('AI Advisory', { exact: true });
+    await expect(badge).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('ai-daily-briefing-card').getByText('All actions require your confirmation')).toBeVisible({ timeout: 3000 });
+
+    // Non-dismissible per design_system.md's AdvisoryBadge spec — no
+    // close/dismiss control anywhere near the badge.
+    const card = page.getByTestId('ai-daily-briefing-card');
+    await expect(card.getByRole('button', { name: /dismiss|close/i })).toHaveCount(0);
   });
 });
 

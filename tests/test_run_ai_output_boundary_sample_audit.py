@@ -71,3 +71,47 @@ def test_main_returns_zero_when_clean(capsys):
     assert rc == 0
     captured = capsys.readouterr()
     assert "Violations found: 0" in captured.out
+
+
+# ---------------------------------------------------------------------------
+# ST-23 (BLG-AI-06, EPIC-05, v9.4): real-sample consumer path
+# ---------------------------------------------------------------------------
+
+def test_load_real_samples_from_store_returns_empty_list_when_db_unreachable():
+    """No backend/database importable in this test's own sys.path setup
+    (the module patches sys.path itself, but there is no live DB behind
+    it) -- must fall back to [] rather than raise."""
+    assert audit.load_real_samples_from_store() == []
+
+
+def test_load_real_samples_from_store_uses_get_ai_output_boundary_samples(monkeypatch):
+    fake_database = type(sys)("database")
+    fake_database.get_ai_output_boundary_samples = lambda limit=10: [
+        {"feature": "chat (POST /ai/chat)", "output_text": "Buy now before the breakout continues.",
+         "model_version": "claude-haiku-4-5", "sampled_at": "2026-09-15T10:00:00Z"},
+    ]
+    monkeypatch.setitem(sys.modules, "database", fake_database)
+
+    samples = audit.load_real_samples_from_store(limit=1)
+
+    assert len(samples) == 1
+    source, text = samples[0]
+    assert "chat (POST /ai/chat)" in source
+    assert "[real sample," in source
+    assert text == "Buy now before the breakout continues."
+
+
+def test_main_prefers_real_samples_when_available(monkeypatch, capsys):
+    fake_database = type(sys)("database")
+    fake_database.get_ai_output_boundary_samples = lambda limit=10: [
+        {"feature": "chat", "output_text": "Buy now before the breakout continues.",
+         "model_version": "v1", "sampled_at": "2026-09-15T10:00:00Z"},
+    ]
+    monkeypatch.setitem(sys.modules, "database", fake_database)
+
+    rc = audit.main()
+
+    captured = capsys.readouterr()
+    assert "1 samples scanned (real" in captured.out
+    assert "Violations found: 1" in captured.out  # "Buy now" is a deliberate prescriptive-language fixture
+    assert rc == 1

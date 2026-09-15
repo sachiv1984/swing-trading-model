@@ -1,7 +1,8 @@
 **Owner:** Product Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-05-31
+**Version:** 1.1
+**Last Updated:** 2026-09-15 (ST-20, EPIC-05, v9.4, BLG-GOV-304: added §10 recurring re-estimate cadence + first re-estimate)
 **Backlog ref:** BLG-GOV-34
 **Cycle:** 2026-05-30__release-v4.6 (ST-16 audit trigger)
 
@@ -174,9 +175,45 @@ All gate thresholds are retained at their documented values. No revisions requir
 
 ---
 
+## 10. Recurring Re-Estimate Cadence (ST-20, EPIC-05, v9.4, BLG-GOV-304)
+
+**Problem this closes:** §8's original action list assumed one-off "check at v4.8/v4.9/v5.0 planning" dates. Those dates passed; no re-estimate followed the original one-time assessment for over 3 months, and the gate table below (§10.2) had drifted well past what §3–§7 recorded.
+
+### 10.1 Cadence Rule
+
+For each gate tracked in this document:
+
+1. **If the gate has its own PO-set, milestone- or date-based re-check trigger** (as SI-02 already does — see §10.2), re-estimate when that trigger fires. This is the preferred form: it re-checks only when the underlying blocker has had a realistic chance to move, rather than on a fixed schedule regardless of whether anything could plausibly have changed.
+2. **If a gate has no bespoke trigger**, apply a backstop cadence of **every 3 release cycles** (not every scheduled roadmap rebalance — see rationale below), mirroring the existing 3-cycle cadence already used for `run audit` and the roadmap engine's STEP 11.4 meta-review, so the convention is consistent rather than inventing a new interval.
+3. Whichever of (1)/(2) fires first for a given gate, PMO Lead re-runs §3–§7's calculation with current figures and appends the result to §10.2 below, dated.
+
+**Why release cycles, not scheduled rebalances, for the backstop (rejected alternative):** the AC's own phrasing suggests "every N scheduled rebalances" as an example unit. This document does not use that unit for the backstop, because this system's own history already ran that exact experiment and found it wasteful: `claude/backlog/backlog.md`'s SI-02 gate entry records "9 consecutive NOT MET readings 2026-07-12→2026-07-21, zero movement, each one a wasted live-query cycle" from re-checking on every scheduled rebalance (which recur roughly every 1–2 days in this system's actual cadence) — followed by the Product Owner explicitly resetting that gate to a milestone/90-day trigger instead (2026-08-17, recorded in the same backlog entry). Using release cycles (which recur roughly weekly, per `docs/product/changelog.md`) as the backstop unit avoids repeating the same over-checking mistake for gates that don't yet have their own bespoke trigger.
+
+### 10.2 First Re-Estimate (2026-09-15)
+
+**Live-access disclosure:** this session has no `DATABASE_URL`/`RENDER_API_KEY`/`ANTHROPIC_API_KEY` (same constraint disclosed elsewhere this cycle — `ESC-EXEC-20260910-01`, ST-10/EPIC-03, ST-23/EPIC-05). This re-estimate is therefore built from the most recent *live* readings already on record in `claude/roadmap/decision_log.md` and `claude/backlog/backlog.md`, not a fresh query — each figure below is dated to its actual source, not restated as current.
+
+| Gate | Status at last live check | Change since §3–§7 | Next check |
+|------|---------------------------|---------------------|------------|
+| PT-04 sub-gate (≥20 closed trades, any) | **Gate condition satisfied — feature shipped.** `current_roadmap.md` records PT-04 (Setup Quality Score) shipped v6.1 (2026-06-23), cleared at sprint planning on a 15-trade reading. No longer a tracked future gate. | Shipped since this document's v1.0 — remove from the active gate list below. | N/A — closed. |
+| SI-02 EPIC-02 frontend (≥20 closed **+ linked** trade_plans) | **NOT MET**, last live-checked 2026-07-17: 20 closed trades total, but 0/11 `trade_plans` linked (`position_id` still null on all rows) — the historical backlog predates `BLG-BE-91`. | `BLG-BE-91` (enforce trade-plan linkage at position entry) shipped v8.6, 2026-08-11 — fixes linkage *going forward* for new positions only; does not retroactively link the pre-existing 20. | Per its own PO-set trigger (`claude/backlog/backlog.md`, 2026-08-17 disposition): **no earlier than 2026-11-09** (90 days post-`BLG-BE-91` ship) **or** when 10 new `trade_plans` rows with `position_id` populated post-2026-08-11 are confirmed, whichever comes first. Neither condition is checkable from this session (no live DB) — correctly not re-triggered this cycle. |
+| PT-04 full gate (≥50 closed + linked trade_plans) | **NOT MET.** Same 0-linked blocker as SI-02, at a higher volume threshold (50 vs 20). | Same as SI-02 — `BLG-BE-91` addresses the mechanism, not yet the volume. | No bespoke trigger recorded for this specific gate yet. Backstop applies: next check due after 3 further release cycles from this one (v9.4), i.e. at or after the cycle that ships 3 releases from now — PMO Lead to action. Given it shares SI-02's root blocker, in practice re-check it alongside SI-02's 2026-11-09 trigger rather than waiting for the backstop to fire independently. |
+| PO-02 (≥6 months live AI-summarised journal entries, `BLG-FEAT-16`) | **Unconfirmed this session** — original assessment (§3, 2026-05-31) recorded 0 AI journal entries and no confirmation that `BLG-FEAT-16` was yet live/actively used. This session found no roadmap entry confirming `BLG-FEAT-16` has since shipped. | Unknown — requires PMO Lead/Product Owner confirmation of `BLG-FEAT-16`'s live status, not re-derivable from this session's available artefacts. | No bespoke trigger exists. Backstop applies (3 release cycles from v9.4) **once `BLG-FEAT-16`'s live status is confirmed** — until then, the 6-month clock cannot even be said to have started, so a fixed re-check date would be meaningless. Flagged to PMO Lead as an open confirmation item rather than guessed. |
+
+**Net effect of this first run:** one gate (PT-04 sub-gate) is retired as already-cleared; two gates (SI-02, PT-04 full) correctly defer to an already-reasoned, not-yet-due trigger rather than re-running a check that cannot move; one gate (PO-02) surfaces a genuine open question (is `BLG-FEAT-16` live yet?) that a blind date-based cadence would have silently skipped. This is the cadence rule (§10.1) working as intended on its first application, not merely a formality.
+
+## 11. Sign-Off (§10 Addendum)
+
+- Signed off by: Sprint Execution Engine (agent-mediated, PMO Lead role — §5.3)
+- Date: 2026-09-15
+- Comments: Reviewer independently confirmed all three cited factual claims (PT-04 sub-gate shipped v6.1; SI-02's PO-set 2026-11-09/milestone trigger; BLG-BE-91 shipped v8.6) against their sources, and confirmed the 3-release-cycle backstop-unit choice is a reasoned deviation from the AC's illustrative unit, grounded in the documented 9-consecutive-wasted-reading precedent — not an arbitrary substitution.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
 | 0.1 | 2026-05-31 | Initial draft — engine-authored from ST-16 audit data. |
 | 1.0 | 2026-05-31 | Finalised — PO metric inputs confirmed, projections computed, Option A selected, sign-off recorded. |
+| 1.1 | 2026-09-15 | ST-20 (EPIC-05, v9.4, BLG-GOV-304): Added §10 recurring re-estimate cadence rule (per-gate bespoke trigger preferred; 3-release-cycle backstop otherwise) and its first application — PT-04 sub-gate retired as shipped, SI-02/PT-04-full correctly deferred to already-set triggers, PO-02 flagged as needing a live-status confirmation before its clock can start. |

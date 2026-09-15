@@ -387,6 +387,10 @@ def generate_trade_debrief(trade_id: str) -> dict:
             compliance_check_result=compliance_check_result,
         )
 
+    if focus_area_text:
+        from ai_output_sampling_service import maybe_sample_output
+        maybe_sample_output("debrief focus_area_text (POST /trades/{id}/debrief)", focus_area_text, MODEL_VERSION)
+
     record = create_trade_debrief(trade_id, str(portfolio_id), {
         "summary_text": summary_text,
         "focus_area_text": focus_area_text,
