@@ -611,23 +611,38 @@
         "ST-23": {
           "title": "Implement generation-time opt-in sampling hook for AI-output boundary-language audits",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1656,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-05",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "4d02f9ed66d55feaa7bf7e799a70c7e8f7623394",
+          "delegation_record_id": "DEL-20260914-03",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-15T07:41:57Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-18 — ai_output_boundary_samples table (v2.34, 2026-09-15)",
+            "docs/specs/api_contracts/ai_endpoints.md#AI Output Boundary-Language Sampling Hook (ST-23, BLG-AI-06, v9.4)",
+            "docs/ops/claude_api_log_hygiene_policy.md#2.4 Sampling-Store Exception (ST-23, BLG-AI-06, EPIC-05, v9.4)",
+            "tests/test_ai_output_sampling_service.py",
+            "tests/test_run_ai_output_boundary_sample_audit.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "required_by": "Data Model & Domain Schema Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "1st pass Blocked: DS-18 and log-hygiene §2.4 wrongly claimed claude_audit_log stores 'hashes only' -- it has no hash columns at all (no prompt/response representation whatsoever), contradicting this doc's own accurate §1 description. Fixed in 4 locations (data_model.md, claude_api_log_hygiene_policy.md §2.4, ai_endpoints.md, database.py comment).",
+              "2nd pass Blocked: re-review found one remaining uncorrected instance of the identical claim in claude_api_log_hygiene_policy.md §3.3. Fixed."
+            ],
+            "cleared_utc": "2026-09-15T07:41:00Z"
+          },
+          "notes": "AC in scope this session (1/2/3/5) fully met and sign-off cleared after 2 Blocked retries (max per §5.3), both catching the same factual-accuracy defect class -- 3rd pass Approved. AC 4 (genuine >=10-output live sample) and AC 6 (ESC-EXEC-20260910-01 closure) are explicitly staging-only per sprint_backlog.md's own note -- no ANTHROPIC_API_KEY/DATABASE_URL in this session (re-confirmed via env check). ESC-EXEC-20260910-01 remains Deferred, not Resolved -- disclosed, not fabricated. See DEL-20260914-03 in delegation_log.md."
         }
       }
     },
