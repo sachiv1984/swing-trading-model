@@ -416,23 +416,32 @@
         "ST-15": {
           "title": "Review placement of Appendix D governance metrics in metrics_definitions.md",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1648,
           "branch": "exec/2026-09-14__release-v9.4/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "ec38517aec86b8d7e000a1658b9915bb5753b12e",
           "delegation_record_id": "ESC-EXEC-20260915-01",
           "blocked_since_utc": "2026-09-15T07:03:02Z",
           "unblock_criteria": "Product Owner and Metrics Definitions & Analytics Canonical Owner record an explicit placement decision for Appendix D (keep vs. relocate to docs/governance/); if relocation is chosen, the move itself must also complete.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-15T12:10:13Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/decisions--2026-09-14__release-v9.4--ST-15-appendix-f-governance-metrics-placement.md",
+            "docs/specs/metrics_definitions.md#Appendix F — Governance Metrics (Cross-Reference Only)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Escalated per STEP 3.1.D — see execution_escalations.md#ESC-EXEC-20260915-01."
+          "sign_off_record": {
+            "required_by": "Product Owner; Metrics Definitions & Analytics Canonical Owner",
+            "method": "human",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-09-15T12:10:00Z"
+          },
+          "notes": "Escalated per STEP 3.1.D — see execution_escalations.md#ESC-EXEC-20260915-01. Resolved on explicit user direction to act as Product Owner + Metrics Definitions & Analytics Canonical Owner: decision recorded (keep Appendix F content in metrics_definitions.md, no relocation), cross-referenced from the appendix itself. AC's second bullet (relocate if moving) not triggered -- decision was to keep. No deviation from AC intent."
         },
         "ST-16": {
           "title": "Reconciliation check: journal-derived P&L vs broker-statement import totals",
