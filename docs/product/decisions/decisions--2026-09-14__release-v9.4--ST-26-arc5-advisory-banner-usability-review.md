@@ -56,9 +56,9 @@ This review does not select between A and B — that decision belongs to `BLG-UX
 
 ## 6. Sign-Off
 
-- Signed off by: <fill in — pending §5.3 agent-mediated review>
-- Date: <fill in — must be non-blank>
-- Comments:
+- Signed off by: Sprint Execution Engine (agent-mediated, Head of UX & Design role — §5.3)
+- Date: 2026-09-15
+- Comments: Independently re-verified the "1 revision, not 3" correction against arc5_compliance_section.md's own Changelog, and both usability findings against the shipped JSX. Confirmed BLG-UX-05 filed correctly and no src/ file touched by this review.
 
 ---
 
