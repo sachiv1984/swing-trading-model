@@ -3,8 +3,8 @@
 **Owner:** Head of Specs Team  
 **Scope:** All governed documentation across the entire product  
 **Status:** Canonical  
-**Version:** 2.7
-**Last Updated:** 2026-05-09  
+**Version:** 2.8
+**Last Updated:** 2026-09-15  
 
 ---
 
@@ -12,6 +12,7 @@
 
 | Version | Change |
 |--------:|--------|
+| 2.8 | Section 9 (Known Deviation Documentation Standard) gains a required **Deviation ID** field (`DEV-<id>`, assigned at point of filing) and a "Deviation ID assignment" subsection explaining why — the ID is the join key the Cross-EPIC Deviation Consolidation Review and `quality_trend_index.md` use to find and track a deviation, and an entry missing it is invisible to that review's scan regardless of how complete its other fields are. Resolves post-ship closure `2026-09-14__release-v9.4` Outstanding Action #2 (found live: `BLG-FE-172`'s and `BLG-BE-112`'s Known Deviations entries were field-complete but unassigned an ID; both retroactively assigned `DEV-v9.1-ST13-01`/`DEV-v9.3-ST03-01`/`DEV-v9.3-ST03-02` in the same session). |
 | 2.7 | Added Class 6 sub-types: (1) **Shared governance reference modules** under `claude/system/shared/` — Class 6 supporting infrastructure, carry standard Class 6 header (Owner, Status: Active, Version, Last Updated), not standalone routines; (2) **Governance changelog files** under `claude/system/changelogs/` — append-only historical records of prompt changes, no version field required, header: Owner + Status: Active only. Both artefact types introduced by the modular prompt refactor 2026-05-09. |
 | 2.6 | Added Class 4 sub-type 3 — Release Plan (`release_plan.md`). The Release Planning Engine now consolidates all intermediate reasoning artefacts (readiness, scope, execution plan, capacity check, integrity validation) into a single `release_plan.md` per cycle. Final outputs (scope document, decisions record, backlog slice) remain separate. |
 | 2.5 | Added Class 8 — Proof of Gate. New document class for hard gate clearance evidence. Immutable once issued; status field only may change to Superseded; permanent governance record stored in `claude/evidence/gates/`. Required when any governed routine records a hard gate condition that must be cleared before an item advances. Added Class 8 to Section 2, Section 3 (lifecycle states), Section 4 (universal header block), and Section 5 (versioning — Class 8 does not use version numbers). |
@@ -431,12 +432,17 @@ Every deviation documented in a canonical spec — whether in a "Known Limitatio
 
 | Field | Description |
 |-------|-------------|
+| **Deviation ID** | A `DEV-<id>` identifier, assigned at the point of filing (e.g. `DEV-EPIC01-ST05-01`) — see "Deviation ID assignment" below |
 | **Deviation description** | What the current behaviour is and how it differs from canonical |
 | **Canonical requirement** | What the spec says should happen |
 | **Priority** | P0 / P1 / P2 / P3 using the standard backlog priority definitions |
 | **Target resolution release** | The specific version by which this must be resolved (not "TBD") |
 | **Owner** | The named role responsible for the fix |
 | **Backlog reference** | The backlog item ID (e.g. BLG-TECH-01) — must be created at the time the deviation is documented |
+
+### Deviation ID assignment (added — post-ship closure `2026-09-14__release-v9.4`, `LL-v9.4-Closure-01`)
+
+Every deviation entry — whether structured as a `### DEV-<id>` heading or a table row — must carry a `DEV-<id>` identifier from the moment it is filed, regardless of format. The ID is the join key the periodic Cross-EPIC Deviation Consolidation Review (`post_ship_closure.md` STEP 5.1) and `quality_trend_index.md` use to find and track a deviation across cycles; an entry with all other required fields present but no assigned ID is invisible to that review's scan, not merely incomplete. Found live: two entries filed between `2026-09-03__release-v9.1` and `2026-09-09__release-v9.3` (`BLG-FE-172`'s Arc5ComplianceSection divergence, `BLG-BE-112`'s structured-logging deviations) were fully field-complete but carried no `DEV-<id>`, and were found only by the 5th consolidation review's full-text search for their backlog references — not its primary heading-based scan. A deviation entry missing its `DEV-<id>` is non-compliant under this standard on the same basis as one missing a priority, target release, or owner.
 
 ### Priority-based resolution rules
 
@@ -450,7 +456,7 @@ Every deviation documented in a canonical spec — whether in a "Known Limitatio
 ### Enforcement
 
 - The Head of Specs Team is responsible for ensuring deviations are documented with all required fields
-- A deviation documented without a priority, target release, or owner is non-compliant and must be remediated before the document is merged
+- A deviation documented without a `DEV-<id>`, priority, target release, or owner is non-compliant and must be remediated before the document is merged
 - At each governance review trigger point (§8), any deviation notes in canonical specs are checked for compliance with this standard
 
 ### Roles outside the Specs Team

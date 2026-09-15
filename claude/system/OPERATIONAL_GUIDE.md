@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.189
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8 — 3 source prompts bumped: release_planning_prompt.md v2.51, shared_standards.md v3.33, qa_evidence_template.md v1.15; §6B source-prompt line and 3 §14 table rows updated); prior — 2026-09-14 (STEP 11.4 meta-review, roadmap rebalance 2026-09-14__scheduled — roadmap_prompt.md v9.19→v9.20: §14 Roadmap Engine Source row, §6 source-prompt header line updated); prior — 2026-09-14 (governance-drift follow-up — 2 untracked Class 6 docs added to §14: agent_onboarding_runbook.md v1.0 and governance_role_onboarding_checklist.md v1.0, both created at ST-32/BLG-GOV-271/v9.2 (2026-09-08) but never added to the governance table or logged; found by the same `governance-drift` skill re-run that verified the AUD-2026-09-14 patches); prior history retained — see prior entries in version control.
+**Version:** 4.190
+**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 outstanding-actions resolution, user-directed — 5 source prompts/charter files bumped: roadmap_prompt.md v9.21, release_planning_prompt.md v2.52, execution_prompt.md v3.76, shared_standards.md v3.34, document_lifecycle_guide.md v2.8; §6/§6B/§8 source-prompt lines and 4 §14 table rows updated); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8 — 3 source prompts bumped: release_planning_prompt.md v2.51, shared_standards.md v3.33, qa_evidence_template.md v1.15; §6B source-prompt line and 3 §14 table rows updated); prior — 2026-09-14 (STEP 11.4 meta-review, roadmap rebalance 2026-09-14__scheduled — roadmap_prompt.md v9.19→v9.20: §14 Roadmap Engine Source row, §6 source-prompt header line updated); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.20)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.21)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.51)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.52)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.75)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.76)
 
 ### 8.1 Invocation
 
@@ -1363,7 +1363,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.189 |
+| Version | 4.190 |
 | Last Updated | 2026-09-15 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
@@ -1372,23 +1372,23 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.17 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.10 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.20 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.51 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.21 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.52 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.18 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.75 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.76 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.15 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.11 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.33 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.33 |
+| Shared Standards | `claude/system/shared_standards.md` v3.34 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.14 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | GitHub Issue Template | `claude/system/gh_issue_template.md` v1.0 |
 | PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.3 |
-| Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.7 |
+| Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.8 |
 | Team Charter | `claude/charter/team_charter.md` v1.8 |
 | Agent Onboarding Runbook | `claude/system/agent_onboarding_runbook.md` v1.0 |
 | Governance Role Onboarding Checklist | `claude/charter/governance_role_onboarding_checklist.md` v1.0 |
@@ -1499,6 +1499,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.190 | 2026-09-15 | **Post-ship closure `2026-09-14__release-v9.4` outstanding-actions resolution (user-directed, "fix the 5 outstanding actions") — 5 source prompts/charter files bumped, resolving all 5 of the closure's own Outstanding Actions.** §14 table updated: `roadmap_prompt.md` v9.20→v9.21 (new §7.3 Ready-Pool Capacity Gap Trend, resolving OA#1 — mandatory Product Owner/Head of Specs Team decision point after 3 consecutive widening ready-pool-vs-capacity readings; current reading 2 consecutive, no action yet); `claude/charter/document_lifecycle_guide.md` v2.7→v2.8 (§9 gains a required `DEV-<id>` field on every Known Deviation entry, resolving OA#2 — plus retroactive `DEV-<id>` assignment to the 2 non-compliant entries found by the 5th consolidation review); `release_planning_prompt.md` v2.51→v2.52 (new §1.4c Canonical Over-Capacity Ready-Pool Selection Method, resolving OA#3); `execution_prompt.md` v3.75→v3.76 + `shared_standards.md` v3.33→v3.34 (new STEP -1.2A / §16.4.1 Non-Blocking SLA-Breach Advisory Surfacing, resolving OA#4). OA#5 resolved by filing `BLG-GOV-332` directly (backlog item, no governance-prompt edit required). §6 source prompt header v9.20→v9.21 (line 399); §6B source prompt header v2.51→v2.52 (line 623); §8 source prompt header v3.75→v3.76 (line 887). §14 table: Roadmap Engine Source, Release Engine Source, Execution Engine Source, Shared Standards, Lifecycle Guide (5 rows). §14 self-row Version/Last Updated 4.189/2026-09-15→4.190/2026-09-15. Authority: Head of Specs Team (OA#2/#3/#4/#5), Head of Specs Team + PMO Lead (OA#1) — Sprint Execution Engine, agent-mediated, per explicit user direction, 2026-09-15. |
 | 4.189 | 2026-09-15 | **Post-ship closure `2026-09-14__release-v9.4` STEP 8 — 3 source prompts bumped, same-cycle application pattern.** §14 table updated: `release_planning_prompt.md` v2.50→v2.51 (LL-v9.4-Release-02: STEP 4.1's design-gate scan now also checks each candidate's `Scope` text for UI-shipping verbs, not `Acceptance Criteria` text alone — closes a self-caught undercount, `BLG-AI-05` missed on first pass); `shared_standards.md` v3.32→v3.33 (LL-v9.4-P3-01: new §18 subsection requiring the isolated-copy `database` stub-isolation pattern for any pytest file reimporting `database`, citing `test_position_audit_log.py` — closes a cross-file test-isolation leak found live this cycle, `test_ai_output_sampling_service.py`→`test_alerts_service.py`); `qa_evidence_template.md` v1.14→v1.15 (LL-v9.4-P4-01: disambiguation note restricting `Pass, escalation open` to a named open `ESC-*` record only, distinct from an incidental backlog-item finding — closes a misapplication found this cycle, `qa_evidence_EPIC-01.md` ST-05). §6B source prompt header v2.50→v2.51 (line 623). §14 self-row Version/Last Updated 4.188/2026-09-14→4.189/2026-09-15. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, post-ship closure STEP 8, 2026-09-15). |
 | 4.188 | 2026-09-14 | **STEP 11.4 meta-review, roadmap rebalance `2026-09-14__scheduled` — roadmap_prompt.md v9.19→v9.20: §2.3 Horizon Review gains a standing operating-mode note.** §14 Roadmap Engine Source v9.19→v9.20. §6 source prompt header v9.19→v9.20 (line 399). §14 self-row Version/Last Updated 4.187/2026-09-14→4.188/2026-09-14. Change: resolves the Six-Arc-model-vs-backlog-driven-delivery divergence deferred patch (carried since `2026-07-28__scheduled`, independently re-raised this cycle by 2 fresh Challenger idea-intake submissions) — when Now/Next horizons stay empty and every Later/Gated pre-condition is independently confirmed still unmet, this is now documented as the project's expected backlog-driven-debt-clearance operating mode rather than a fresh friction item each cycle (confirmed at 12 consecutive 0-active-initiative cycles, 5 consecutive entirely-backlog-driven releases v8.9–v9.3). Horizon Review's substantive gate-checking obligation is unchanged. Authority: Head of Specs Team (roadmap rebalance `2026-09-14__scheduled`, STEP 11.4 meta-review, agent-mediated). |
 | 4.187 | 2026-09-14 | **Governance-drift follow-up — 2 untracked Class 6 docs added to §14.** `agent_onboarding_runbook.md` (v1.0) and `claude/charter/governance_role_onboarding_checklist.md` (v1.0) were both created at ST-32/EPIC-04/v9.2/BLG-GOV-271 (2026-09-08) — both carry compliant Class 6 headers (Owner: Director of HR, Status: Active, Version: 1.0) but neither was ever added to this table or logged in `prompt_change_log.md`, a full Governance File Edit Checklist miss at creation time. Found by re-running the `governance-drift` skill after applying `AUD-2026-09-14-001` through `-004`, whose untracked-file scan is normally limited to `claude/system/` — broadened this pass to also cover `claude/charter/`, which caught the second file. §14 table gains 2 rows (both appended after Team Charter). No dedicated phase-section header to sync — neither file is a "Source prompt" for a regular phase engine (§5–§10/§6B/§6B.8/§6M); both are ad hoc reference runbooks invoked only when onboarding a new governance role. §14 self-row Version/Last Updated 4.186/2026-09-14→4.187/2026-09-14. Authority: Head of Specs Team (governance-drift follow-up, user-directed, 2026-09-14). |

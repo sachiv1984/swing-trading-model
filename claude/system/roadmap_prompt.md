@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.20
-**Last Updated:** 2026-09-14 (STEP 11.4 meta-review, roadmap rebalance 2026-09-14__scheduled — STEP 2.3 gains a standing operating-mode note resolving the Six-Arc-model-vs-backlog-driven-delivery deferred patch carried since 2026-07-28__scheduled); prior — 2026-09-08 (ST-38, EPIC-04, v9.2, BLG-GOV-247 — Step 0.C condensed-tier table gains a formal threshold review; decision: retain single "no new FTE required" test as-is, no additional thresholds); prior — 2026-09-08 (ST-19 + ST-24 + ST-27 + ST-37, EPIC-04, v9.2 — STEP 1.1 Meta-Review Countdown field; §7.1 workload-composition framing note; §7.2 formal threshold review; new STEP 8.1.5 §13-Adjacent Initiative Expiry Review); prior history retained — see prior entries in version control.
+**Version:** 9.21
+**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #1 resolution — new §7.3 Ready-Pool Capacity Gap Trend, codifying a mandatory Product Owner/Head of Specs Team decision point after 3 consecutive widening ready-pool-vs-capacity readings; current reading recorded at 2 consecutive, no action taken yet); prior — 2026-09-14 (STEP 11.4 meta-review, roadmap rebalance 2026-09-14__scheduled — STEP 2.3 gains a standing operating-mode note resolving the Six-Arc-model-vs-backlog-driven-delivery deferred patch carried since 2026-07-28__scheduled); prior — 2026-09-08 (ST-38, EPIC-04, v9.2, BLG-GOV-247 — Step 0.C condensed-tier table gains a formal threshold review; decision: retain single "no new FTE required" test as-is, no additional thresholds); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -602,6 +602,20 @@ Distinct from §7.1's Skill-Silo Alert, which classifies story *shape* (governan
 Write: same target as §7.1 (`claude/roadmap/workforce_capacity.md` and/or `claude/economics/workforce_economics.md`).
 
 **Sign-off:** Director of HR (this check's definition, not each individual reading — readings are advisory and self-surfacing at each rebalance). Formal threshold review (ST-37) also sign-off cleared: Director of HR — Approved. Confirms the advisory-only design was a deliberate choice examined here, not an oversight, and correctly distinguishes this check's role-concentration lens from §7.1's product-value lens rather than mechanically copying that section's escalation tier. Sprint Execution Engine (agent-mediated, Director of HR role — §5.3), 2026-09-08.
+
+#### 7.3 Ready-Pool Capacity Gap Trend (added — post-ship closure `2026-09-14__release-v9.4`, `LL-v9.4-Release-Carry-03`, resolving Outstanding Action #1)
+
+Distinct from §7.1/§7.2 (which measure story *shape* and *role concentration*) — this check tracks whether the ungated/ready backlog pool is growing faster than sprint capacity can consume it, a trend first flagged as a standing watch-item at `2026-09-14__release-v9.4` release planning (ready pool more than doubled in one cycle, 61→74 items / 41.0→65.05 days, purely from one idea-intake window landing almost entirely ungated).
+
+**Method:**
+1. At each rebalance, read the most recent Release Planning `run_manifest.md`'s recorded ready-pool size (items/days) and the confirmed capacity band's upper bound (days).
+2. Compute the gap: ready-pool days minus capacity-band upper bound. A positive, growing gap across consecutive releases indicates the ready pool is outpacing what any single release can select.
+3. **Mandatory review trigger:** if the gap has grown (not merely stayed positive, but increased release-over-release) for **3 or more consecutive releases**, this is no longer an advisory watch-item — it becomes a mandatory decision point: the Product Owner and Head of Specs Team must jointly decide, at that rebalance, between (a) raising the confirmed capacity band, or (b) introducing a secondary prioritisation pass within the P3 tier (sub-tiering), or (c) an explicit documented decision that the growing gap is acceptable and no action is needed. Record the decision and rationale in `decision_log.md`.
+4. Below the 3-consecutive-release threshold: advisory only — note the gap and trend in `## STEP 8` output, no mandatory action.
+
+**Current reading (recorded at `2026-09-14__release-v9.4` post-ship closure, resolving that cycle's own Outstanding Action #1):** 2 consecutive releases of widening gap (v9.3: 34 items/~13.1 days unselected; v9.4: 46 items/~37.5 days unselected) — below the 3-consecutive threshold. **Decision (Head of Specs Team + PMO Lead, 2026-09-15, per explicit user direction resolving the outstanding action):** no capacity-band or sub-tiering change made now — one more consecutive widening reading would cross the mandatory-review threshold this section defines. This is deliberately a lower bar than §7.1's Skill-Silo mandatory-pull-forward (which requires 3 consecutive *unresolved* readings before forcing a decision) because a ready-pool gap that keeps widening for 3 straight releases is a purely mechanical trend, not a judgment call the Product Owner might reasonably resolve without new information — codifying the trigger now avoids re-deriving this threshold ad hoc at whichever future rebalance happens to notice a 3rd widening reading.
+
+**Sign-off:** Head of Specs Team + PMO Lead — Approved. Sprint Execution Engine (agent-mediated, per explicit user direction resolving post-ship closure `2026-09-14__release-v9.4`'s Outstanding Action #1), 2026-09-15.
 
 ---
 

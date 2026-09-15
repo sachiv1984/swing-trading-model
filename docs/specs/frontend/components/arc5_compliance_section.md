@@ -2,7 +2,7 @@
 **Class:** Supporting Document (Class 2)
 **Status:** Active
 **Version:** 1.3.0
-**Last Updated:** 2026-09-07 (ST-04, EPIC-02, v9.2 — Card 3 Format/Null display row corrected to match shipped `fmtText` behaviour, resolving the Known Deviations entry, BLG-FE-172); prior — 2026-09-07 (ST-01, EPIC-01, v9.2 — added Low-Trade-Volume Advisory subsection, BLG-FEAT-44); prior — 2026-09-04 (v9.1 ST-13 — Known Deviations: Card 3 text-format/null-display divergence documented, BLG-FE-172)
+**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 remediation, `LL-v9.4-Closure-01` — Known Deviations entry retroactively assigned `DEV-v9.1-ST13-01`, closing a DEV-ID assignment gap; no normative change); prior — 2026-09-07 (ST-04, EPIC-02, v9.2 — Card 3 Format/Null display row corrected to match shipped `fmtText` behaviour, resolving the Known Deviations entry, BLG-FE-172); prior — 2026-09-07 (ST-01, EPIC-01, v9.2 — added Low-Trade-Volume Advisory subsection, BLG-FEAT-44); prior history retained — see prior entries in version control.
 **Story:** ST-10 (EPIC-03, v4.1) — BLG-FE-48
 **§13 Compliance:** Confirmed — display-only component. No automated recommendation generated.
 **API contract:** docs/specs/api_contracts/arc5_compliance_analytics.md
@@ -173,6 +173,8 @@ This component is **§13 compliant — display-only**:
 ---
 
 ## Known Deviations
+
+### DEV-v9.1-ST13-01 (added retroactively, `LL-v9.4-Closure-01` DEV-ID assignment remediation)
 
 **Resolved — v9.2, ST-04 (EPIC-02), BLG-FE-172:** Card 3's Format/Null display row above previously read "Plain text rule type slug (e.g. `"regime_gate"`)" / `"None"`, diverging from the component's actual (already user-visible, tested) `fmtText` behaviour — underscores replaced by spaces, `"—"` on null. Resolved by updating this section's table to document the implementation as-shipped, rather than changing the component: the shipped behaviour already matches Cards 1/2/4's established null-display convention (`"—"`), and both `tests/e2e/arc5-compliance-section.spec.js` scenarios below already assert it, so no functional or test change was needed — only this document's own requirement text was out of date.
 

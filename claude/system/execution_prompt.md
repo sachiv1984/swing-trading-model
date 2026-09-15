@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.75
-**Last Updated:** 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 STEP 8 immediate action, Head of Specs Team direct action — §5.3 gains a pre-merge sign-off format lint requiring the `Signed off by:` line be validated against the recognised-format list before an EPIC's PR opens, LL-v9.3-P4-01); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, Head of Specs Team direct action — STEP 4 step 3a gains a same-step self-verification read-back (LL-v9.2-P3-01), mirroring step 10a's existing fix; STEP 3.1.A's never-amend-a-pushed-commit guardrail (LL-v9.1-P3-02) extended to explicitly cover the failed-intermediate-commit trigger path (LL-v9.2-P3-02)); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding-actions resolution, Head of Specs Team direct action — STEP 3.1.A step 3 gains a confirming note that no dedicated STEP 3.2.C is needed for the PR-already-merged precondition); prior history retained — see prior entries in version control.
+**Version:** 3.76
+**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #4 resolution — new STEP -1.2A Non-Blocking SLA-Breach Advisory Surfacing, surfacing (not halting on) any open, SLA-breached, non-blocking escalation at every `run sprint` invocation, per shared_standards.md §16.4.1); prior — 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 STEP 8 immediate action, Head of Specs Team direct action — §5.3 gains a pre-merge sign-off format lint requiring the `Signed off by:` line be validated against the recognised-format list before an EPIC's PR opens, LL-v9.3-P4-01); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, Head of Specs Team direct action — STEP 4 step 3a gains a same-step self-verification read-back (LL-v9.2-P3-01), mirroring step 10a's existing fix; STEP 3.1.A's never-amend-a-pushed-commit guardrail (LL-v9.1-P3-02) extended to explicitly cover the failed-intermediate-commit trigger path (LL-v9.2-P3-02)); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -390,6 +390,19 @@ Read `.claude_current_state.json`:
 - `sprint_sealed` must be `true`.
 - If `status` is `Blocked`: halt — the cycle has unresolved escalations. Resolve them before executing.
 - If `status` is anything other than `Sprint_Planning_Complete` or `Executing`: halt — Sprint Planning has not completed or the cycle is in an unexpected state. Check that `plan sprint` has been completed and sealed before invoking `run sprint`.
+
+### -1.2A Non-Blocking SLA-Breach Advisory Surfacing (Advisory — not a hard gate)
+
+**Origin:** Post-ship closure `2026-09-14__release-v9.4` STEP 8 (`LL-v9.4-Release-Carry-02`, resolving the deferred patch first recorded at `2026-09-09__release-v9.3`'s own closure Phase 3 friction item). `shared_standards.md §16.4`'s SLA Breach Tracking halt applies once an escalation has been open 72h+ — but that check only runs *within* an active Sprint Execution invocation, and a non-blocking escalation (`blocks_execution: false`) correctly does not gate anything even after its own SLA breaches, so nothing surfaces the breach to a human until whatever session happens to touch the escalation next. `ESC-EXEC-20260910-01` sat ~26h past its own SLA due-by, crossing an entire Delivery Verification and Post-Ship Closure unhalted, before this gap was found.
+
+At every `run sprint` invocation (fresh or resuming), regardless of reason: read `.claude_current_state.json.open_escalations`. For any entry with `disposition: Open` and a `sla_due_utc` earlier than the current time:
+- Output an advisory notice (not a halt): `⚠ SLA-BREACHED ESCALATION (non-blocking) — <ESC-ID>: <summary> — breached <sla_due_utc>, owner <owning_authority>. Does not block this run; surfaced per shared_standards.md §16.4.1.`
+- List every such entry found — do not stop at the first.
+- Continue to STEP -1.3 regardless — this is advisory only.
+
+If no such entries found: no output, continue silently.
+
+This complements, and does not replace, `shared_standards.md §16.4`'s existing hard halt for an escalation whose own disposition requires blocking (`blocks_execution: true`) — that check still applies at every re-invocation per §16.4's own text.
 
 ### -1.3 Sprint Backlog Sealed (Hard Gate)
 

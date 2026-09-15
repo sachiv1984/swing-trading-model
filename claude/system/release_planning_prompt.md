@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.51
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-Release-02 — STEP 4.1's design-gate scan now also checks each candidate's `Scope` text for UI-shipping verbs, not `Acceptance Criteria` text alone); prior — 2026-09-14 (AUD-2026-09-14-001: STEP -1.6 gains an SLA-breach carry-forward hard gate — a prior cycle's breached, unresolved escalation now blocks opening a new release cycle); prior — 2026-08-10 (BLG-GOV-288, ST-23 — root `sprint_sealed` reset on new-cycle publish)
+**Version:** 2.52
+**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #3 resolution — new §1.4c Canonical Over-Capacity Ready-Pool Selection Method, codifying the category-balanced/P2-first/oldest-first method already in ad hoc use since v8.5); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-Release-02 — STEP 4.1's design-gate scan now also checks each candidate's `Scope` text for UI-shipping verbs, not `Acceptance Criteria` text alone); prior — 2026-09-14 (AUD-2026-09-14-001: STEP -1.6 gains an SLA-breach carry-forward hard gate — a prior cycle's breached, unresolved escalation now blocks opening a new release cycle); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -596,6 +596,24 @@ Before finalising sprint capacity and scope classification, identify any candida
 **Rationale (why mandatory):** This rule was filed as advisory (LL-P3-03-v55, v5.5 post-ship) and elevated to mandatory after the pattern recurred across five consecutive releases: v5.4 ST-03, v5.5 ST-11–14, v5.6 ST-03, v5.7 ST-09/ST-12–14, v5.8 ST-01/ST-02 — all returned to backlog at sprint close because a within-sprint date gate was not met. Items classified as firm with a within-sprint date gate predictably return to backlog. This rule eliminates the source of that return pattern. Applied action-now: rebalance 2026-06-17__scheduled (LL-P3-03-v55/LL-P4-01-v55 overdue).
 
 **Violation:** A firm-classified item returned to backlog at sprint close due to a within-sprint date gate is a P2 process deviation and must be filed as a BLG-GOV deviation record for the next delivery verification cycle. Recurrence across two sprints escalates to Head of Specs Team.
+
+---
+
+### 1.4c Canonical Over-Capacity Ready-Pool Selection Method (Mandatory when the ready pool exceeds the confirmed capacity band)
+
+**Origin:** Post-ship closure `2026-09-14__release-v9.4` STEP 8 (`LL-v9.4-Release-Carry-01`, resolving the deferred patch first recorded at `2026-09-09__release-v9.3`'s own closure). Every release since `v8.5` (11 consecutive cycles as of `v9.4`) has faced a ready/ungated backlog pool larger than the confirmed ~24–28 day capacity band, and each has independently re-derived the same informal selection method — codified here so it is a documented rule, not an ad hoc per-session choice.
+
+**When this applies:** The ungated/ready pool (per §1.3a's Gate-Detection Procedure output) totals more estimated days than the confirmed capacity band's upper bound for this cycle.
+
+**Selection method (canonical):**
+1. **P2-first:** Select all ready P2 items before any P3 item, in ascending backlog-ID order within P2.
+2. **Category-balanced round-robin:** Among remaining ready items (after any P2 items are placed), round-robin across the backlog's type categories (Backend, QA, Ops/Security, Spec/Documentation, Governance/Process, Frontend/UX/Product, etc.) so no single category dominates the cycle's scope — one item per category per pass, cycling until capacity is filled or the pool is exhausted.
+3. **Oldest-first within a category:** Within each category's round-robin turn, select the oldest-filed ready item first (by `Source`/filing date), not by backlog-ID numeric order — this surfaces the longest-waiting debt first.
+4. **Stop at capacity:** Stop selecting once the cumulative estimated days reaches the top of the confirmed capacity band (per the standing "use full capacity" instruction) or the pool is exhausted, whichever comes first.
+
+**Record in `run_manifest.md`:** the ready-pool size (items/days), the capacity band used, and a one-line statement that this method was applied (e.g. "category-balanced, oldest-first, P2-first selection from a 74-item/~65.05-day ready pool"). This is the same statement pattern already used in `v8.5`–`v9.4`'s own release plans — this section makes that pattern a named, citable rule rather than an unstated convention.
+
+**Not a hard gate.** This method may be overridden by explicit Product Owner instruction for a specific cycle (e.g. a named anchor item pulled forward ahead of its round-robin turn per a Skill-Silo mandatory-pull-forward clause) — record any override and its rationale in `run_manifest.md`.
 
 ---
 

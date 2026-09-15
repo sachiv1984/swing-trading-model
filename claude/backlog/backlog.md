@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-15 (post-ship closure `2026-09-14__release-v9.4` STEP 3 + STEP 12 — 28 shipped ST items marked ✅ COMPLETE then archived to `backlog_archive.md`; `groom backlog` pass: 6 Field-Completeness Gaps filled (`**Provisional-Target:** TBD` added to `BLG-OPS-154/155/156`, `BLG-QA-170`, `BLG-SPEC-141`, `BLG-GOV-320`), ephemeral `## Release Slice — v9.4` section removed); prior — 2026-09-15 (session — 1 new item added during EPIC-05/v9.4 CI investigation for ST-23: `BLG-QA-178` (unrestored sys.modules["database"] swap latent test-isolation hazard)); prior — 2026-09-15 (session — 1 new item added during EPIC-06/v9.4 sprint execution: `BLG-FE-176` (9 non-conforming toast-timing call sites, surfaced ST-27 inventory, corrected from an initial miscount of 8)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-15 (session — 1 new item added resolving post-ship closure `2026-09-14__release-v9.4` Outstanding Action #5: `BLG-GOV-332` (resolving-commit-must-update-canonical-spec deviation discipline)); prior — 2026-09-15 (post-ship closure `2026-09-14__release-v9.4` STEP 3 + STEP 12 — 28 shipped ST items marked ✅ COMPLETE then archived to `backlog_archive.md`; `groom backlog` pass: 6 Field-Completeness Gaps filled, ephemeral `## Release Slice — v9.4` section removed); prior — 2026-09-15 (session — 1 new item added during EPIC-05/v9.4 CI investigation for ST-23: `BLG-QA-178`); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4353,6 +4353,29 @@ The interactive Claude Code sprint-execution session has no `DATABASE_URL` confi
 - A read-only staging DB credential exists and is scoped so it cannot mutate any table
 - The credential is injected into sprint-execution sessions via environment configuration, never appearing as chat text or in git history
 - A sprint-execution session can successfully run a real read-only query against staging data end-to-end as a smoke test
+
+---
+
+### BLG-GOV-332 — Require resolving commits to update the canonical spec's own Known Deviation fields when closing a deviation
+
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Cross-EPIC Deviation Consolidation Review, 4th run (`docs/governance/deviation_consolidation_review_2026-09-03.md`, Recommendation 1) and 5th run (`docs/governance/deviation_consolidation_review_2026-09-15.md`, Finding 3) — recommended in 2 of 5 review runs with no backlog item filed until now; raised as Outstanding Action #5 in post-ship closure `2026-09-14__release-v9.4`'s `closure_record.md` §6 — 2026-09-15
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+When a story or engine action fixes the root cause of a pre-existing, already-filed deviation, nothing currently requires that same commit to also update the deviation's own labeled Known Deviation fields (`Target resolution release`, `Status`, resolution narrative) in the canonical spec where it was originally filed. This produces a recurring resolution-status drift pattern: the fix lands and is documented elsewhere (a QA evidence log, a test-scenario doc, an operational record), but the deviation's own canonical-spec entry is left reading as still-open or still-targeting a future release. The Cross-EPIC Deviation Consolidation Review has independently found and corrected this same drift class 3 times across its first 4 runs (`DEV-ST14-01`, `DEV-v8.6-ST02-01`, `DEV-EPIC03-ST09-01`), spanning 3 different documents — confirming it is a structural gap, not a one-off oversight.
+
+**Scope**
+- Add a rule (likely to `execution_prompt.md` §3.1.A, alongside the existing `deviations_filed` atomic-write discipline for *filing* a deviation) requiring that any commit which resolves a pre-existing deviation's root cause also updates that deviation's own labeled fields in the same commit
+- Cross-reference from `claude/charter/document_lifecycle_guide.md §9` (Known Deviation Documentation Standard)
+
+**Acceptance Criteria**
+- A named governed-routine step requires resolving-commit-updates-canonical-entry discipline, mirroring the existing filing-time discipline
+- Next Cross-EPIC Deviation Consolidation Review confirms 0 new resolution-status-drift instances found after this rule lands
+- Head of Specs Team sign-off
 
 ---
 

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.33
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-P3-01 — §18 gains the backend `database` stub-isolation pattern requirement, closing a cross-file pytest test-isolation hazard found live this cycle); prior — 2026-09-08 (ST-18 + ST-25, EPIC-04, v9.2, BLG-GOV-244 + BLG-GOV-210 — new §21 Deprecation Header Convention for Retiring API Endpoints and §22 Governance-Cycle Wall-Clock Cost Logging Convention); prior — 2026-09-07 (ST-20, EPIC-04, v9.1, BLG-GOV-310 — new §16.17 "Signed off by: PENDING" placeholder convention); prior history retained — see prior entries in version control.
+**Version:** 3.34
+**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #4 resolution — new §16.4.1 Non-Blocking SLA-Breach Advisory Surfacing, cross-referencing execution_prompt.md's new STEP -1.2A); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-P3-01 — §18 gains the backend `database` stub-isolation pattern requirement, closing a cross-file pytest test-isolation hazard found live this cycle); prior — 2026-09-08 (ST-18 + ST-25, EPIC-04, v9.2, BLG-GOV-244 + BLG-GOV-210 — new §21 Deprecation Header Convention for Retiring API Endpoints and §22 Governance-Cycle Wall-Clock Cost Logging Convention); prior history retained — see prior entries in version control.
 
 # Shared Standards — All Governed Routines
 
@@ -614,6 +614,12 @@ On each re-invocation of the execution engine, check all open escalation timesta
 3. Halt — no step may proceed until the breach is resolved by the owning authority.
 
 Reference: `execution_prompt.md` STEP 3.1.D (delegated_decision items) and STEP 5.1 (Sprint_Complete state write).
+
+### 16.4.1 Non-Blocking SLA-Breach Advisory Surfacing (Added v3.34, LL-v9.4-Release-Carry-02)
+
+§16.4 above applies once an escalation's own disposition requires it to block execution. A **non-blocking** escalation (`blocks_execution: false`) correctly never triggers that halt, even after its own `sla_due_utc` has passed — but nothing else in a governed routine's normal flow surfaces that breach to a human until whatever session happens to touch the escalation next. This can let a breached, non-blocking escalation cross an entire Delivery Verification and Post-Ship Closure cycle unnoticed (confirmed live: `ESC-EXEC-20260910-01`, `2026-09-09__release-v9.3`).
+
+**Rule:** at every `run sprint` invocation (fresh or resuming), `execution_prompt.md` STEP -1.2A reads `.claude_current_state.json.open_escalations` and surfaces an advisory (not a halt) for any entry with `disposition: Open` past its `sla_due_utc`, regardless of `blocks_execution`. This is the canonical mid-sprint surfacing point — Sprint Execution is invoked far more frequently than Delivery Verification or Post-Ship Closure, so it catches a breach sooner without adding a new check to every governed routine's own preflight.
 
 ### 16.5 ideas_register.md Schema
 
