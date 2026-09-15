@@ -2262,7 +2262,7 @@ Reversible: `DROP TABLE IF EXISTS ai_output_boundary_samples;`
 **Retention:** `purge_ai_output_boundary_samples_older_than_90_days()` exists and is unit-tested, matching `purge_gemini_audit_log_older_than_90_days`'s window, but is not yet wired to a scheduled job — out of this story's scope; wiring it up later is mechanical.
 
 **Sign-off:**
-- Data Model & Domain Schema Owner: <fill in — pending §5.3 agent-mediated review>
+- Data Model & Domain Schema Owner: Accepted — 2026-09-15 (agent-mediated, §5.3, 3rd pass after 2 Blocked retries). Both prior passes correctly caught the same factual-accuracy defect class (this document and `claude_api_log_hygiene_policy.md` claiming `claude_audit_log` stores "hashes" when it actually stores no prompt/response representation at all — 4 locations fixed on the 1st retry, 1 further missed instance fixed on the 2nd). Schema, DDL/documentation parity, header/footer version bump, and all four call-site/consumer ACs (1/2/3/5) confirmed sound throughout; the underlying migration content was never in question, only this cross-reference's accuracy.
 
 ---
 
