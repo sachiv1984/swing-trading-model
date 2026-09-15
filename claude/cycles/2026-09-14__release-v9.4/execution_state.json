@@ -795,7 +795,9 @@
     ],
     "all_merged": false
   },
-  "process_notes": [],
+  "process_notes": [
+    "2026-09-15T07:42:30Z: A commit-msg hook rejection (missing ST tag on a QA-evidence-consolidation commit for EPIC-05) left a failed attempt on top of already-pushed commit 7b4866e7. The recovery reached for `git commit --amend` instead of a fresh commit, which amended 7b4866e7 (already on origin) into a new commit 93bf92ff -- caught before push via `git log --oneline` comparison against origin, per LL-v9.1-P3-02/LL-v9.2-P3-02's guardrail. Recovered with `git reset --soft 7b4866e7` (restoring the original pushed commit, re-staging only the new changes) + a fresh commit (b8cc78b4), then a clean fast-forward push -- no force-push, no origin history rewrite."
+  ],
   "sealed": false,
   "sealed_utc": null
 }
