@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.4
-**Last Updated:** 2026-09-14 (v9.4 design gate — ST-28/BLG-FEAT-95: new Trade Plan Linkage Advisory section — non-blocking soft nudge when no trade plan is linked); prior — 2026-03-18 (initial canonical spec)
+**Version:** 1.5
+**Last Updated:** 2026-09-15 (v9.4 sprint execution — ST-28/BLG-FEAT-95: Trade Plan Linkage Advisory implementation confirmed in TradeEntry.js, required Playwright coverage added); prior — 2026-09-14 (v9.4 design gate — ST-28/BLG-FEAT-95: new Trade Plan Linkage Advisory section — non-blocking soft nudge when no trade plan is linked); prior — 2026-03-18 (initial canonical spec)
 **Design Source (v1.4):** docs/design/2026-09-14__release-v9.4/trade-plan-required-nudge/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -232,6 +232,8 @@ A non-blocking inline advisory banner, shown above the submit button, when no `t
 **§13 compliance:** surfaces an existing fact (plan-linkage absence); does not compute a recommendation or force a default action. Generalises `strategy_rules.md` §4.2's already-cleared advisory pattern — no new §13 review required.
 
 **Test coverage required (CLAUDE.md frontend-visible-change standard):** Playwright coverage confirming (1) banner renders when `trade_plan_id` is absent, (2) does not render when present, (3) submission succeeds with the banner visible.
+
+**Implementation confirmed (v1.5, ST-28, EPIC-06, v9.4):** `TradeEntry.js` renders the banner (`data-testid="trade-plan-linkage-advisory"`) immediately above the Submit section, gated on `!linkedPlanId`. All 3 required Playwright scenarios added in `tests/e2e/trade-plan-linkage-advisory.spec.js` (`SC-TPA-01`/`02`/`03`) and pass, including confirming the pre-existing `trade-plan-linked-banner` (ST-01, v7.3) and this new advisory are mutually exclusive.
 
 Design source: `docs/design/2026-09-14__release-v9.4/trade-plan-required-nudge/decision_record.md`.
 
