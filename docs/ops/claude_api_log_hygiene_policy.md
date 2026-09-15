@@ -1,8 +1,8 @@
 Owner: Infrastructure & Operations Owner
 Class: Operational Policy (Class 2)
 Status: Active
-Version: 1.0
-Last Updated: 2026-05-28
+Version: 1.1
+Last Updated: 2026-09-15 (ST-23, EPIC-05, v9.4, BLG-AI-06 — added §2.4 Sampling-Store Exception, disclosing ai_output_boundary_samples' deliberate full-text storage); prior — 2026-05-28 (initial version)
 Lifecycle Guide: claude/charter/document_lifecycle_guide.md
 
 ---
@@ -63,6 +63,18 @@ The following data items must NEVER appear at INFO level in production logs. The
 ### 2.3 Production Log Level Requirement
 
 Production deployments (Render staging and production environments) must be configured with log level `INFO` or higher. The `DEBUG` log level must never be the active log level in a production or staging environment.
+
+### 2.4 Sampling-Store Exception (ST-23, BLG-AI-06, EPIC-05, v9.4)
+
+§2.2 above restricts full prompt/response text to DEBUG-only log *streams*. The new `ai_output_boundary_samples` database table (`docs/specs/data_model.md` DS-18) is a **deliberate, narrow, disclosed exception** to that principle — not a loosening of it:
+
+- **It is DB storage, not a log stream.** §2.2's restriction governs what appears in platform log output; it does not by itself forbid a database table from storing full text. This exception exists so the restriction's *purpose* (avoid casually exposing full AI response text) is still honoured even though the letter of §2.2 doesn't directly reach a DB table.
+- **Scope is intentionally narrow:** every other AI-call audit table in this document (`gemini_audit_log`, `claude_audit_log`) stores only hashes, precisely because of this policy's text-avoidance principle. `ai_output_boundary_samples` is the one deliberate exception, made only because §13.2 boundary-language compliance auditing genuinely requires scanning the actual text — a hash cannot be scanned for prescriptive/prediction-language drift.
+- **The exception is bounded on three axes**, so it never becomes the same thing as unconditionally logging every response:
+  1. **Opt-in, default off** — `AI_OUTPUT_SAMPLING_ENABLED` must be explicitly set truthy; nothing is captured otherwise.
+  2. **Sampling-rate-bounded** — even when enabled, only `AI_OUTPUT_SAMPLING_RATE` (default 10%) of calls are captured, never every response.
+  3. **Retention-limited** — `purge_ai_output_boundary_samples_older_than_90_days()` follows the same 90-day window as the existing `purge_gemini_audit_log_older_than_90_days()` precedent, rather than retaining sampled text indefinitely.
+- **Who should know this exists:** AI Compliance & Governance Officer (the audit's own consumer) and Infrastructure & Operations Owner (this policy's own owner) — both should be aware that, when explicitly enabled, this table is genuine full-text storage of AI output, distinct from every other AI-related table in this system.
 
 ---
 

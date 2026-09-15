@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.33
-**Last Updated:** 2026-09-14 (ST-01, EPIC-01, v9.4, BLG-BE-115 — DS-17 added: unique index on positions(portfolio_id, ticker, entry_date) for open positions; header/footer version brought back in sync); prior — 2026-09-14 (ST-02, EPIC-01, v9.4, BLG-BE-116 — added "Migration approach: forward-only, no backfill" subsection under Trade Plan to Position Linkage; no schema change); prior — 2026-09-10 (ST-19, EPIC-04, v9.3, BLG-SPEC-75 — Migration History reviewed in ascending version order; content unchanged); prior history retained — see prior entries in version control
+**Version:** 2.34
+**Last Updated:** 2026-09-15 (ST-23, EPIC-05, v9.4, BLG-AI-06 — DS-18 added: ai_output_boundary_samples table; header/footer version kept in sync); prior — 2026-09-14 (ST-01, EPIC-01, v9.4, BLG-BE-115 — DS-17 added: unique index on positions(portfolio_id, ticker, entry_date) for open positions; header/footer version brought back in sync); prior — 2026-09-14 (ST-02, EPIC-01, v9.4, BLG-BE-116 — added "Migration approach: forward-only, no backfill" subsection under Trade Plan to Position Linkage; no schema change); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -2227,6 +2227,45 @@ A subsequent duplicate `INSERT` (same `portfolio_id`/`ticker`/`entry_date`, `sta
 
 ---
 
-**Document Version:** 2.33
+## DS-18 — ai_output_boundary_samples table (v2.34, 2026-09-15)
+
+**Story:** ST-23 (EPIC-05, v9.4) — BLG-AI-06, generation-time opt-in sampling hook for AI-output boundary-language audits
+
+New table storing sampled real AI-generation output text, so `scripts/run_ai_output_boundary_sample_audit.py` can scan genuine (non-illustrative) output for §13.2 boundary-language drift. Unlike `gemini_audit_log`/`claude_audit_log` (DS above, hashes only — per `docs/ops/claude_api_log_hygiene_policy.md`'s general text-avoidance principle), this table deliberately stores the actual text; that is a disclosed, narrow exception, not a broadening of what every other AI-call table retains — see `claude_api_log_hygiene_policy.md` §2.4 for the exception's own governance (opt-in, sampling-rate-bounded, 90-day retention). No FK to any other table — a sample outlives the request that produced it and has no meaningful cascade relationship.
+
+```sql
+BEGIN;
+CREATE TABLE IF NOT EXISTS ai_output_boundary_samples (
+    id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    feature        TEXT NOT NULL,
+    output_text    TEXT NOT NULL,
+    model_version  TEXT,
+    sampled_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_aobs_sampled_at ON ai_output_boundary_samples (sampled_at DESC);
+COMMIT;
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|--------------|
+| `feature` | TEXT | NO | Human-readable feature + endpoint tag, e.g. `"chat (POST /ai/chat)"` — matches the `source` labelling convention already used in `docs/ops/ai_output_boundary_sample_audit_20260910.md`'s sample table. |
+| `output_text` | TEXT | NO | The actual generated AI output text — see the exception note above. |
+| `model_version` | TEXT | YES | AI model + version string, when known at sample time. |
+| `sampled_at` | TIMESTAMPTZ | NO | Sample timestamp, default `NOW()`. |
+
+Reversible: `DROP TABLE IF EXISTS ai_output_boundary_samples;`
+
+**Gating (not a schema concern, noted here for completeness):** writes only ever happen via `backend/services/ai_output_sampling_service.py::maybe_sample_output()` — opt-in (`AI_OUTPUT_SAMPLING_ENABLED`, default off) and rate-bounded (`AI_OUTPUT_SAMPLING_RATE`, default `0.1`, clamped `[0, 1]`). `create_ai_output_boundary_sample()`/`ensure_ai_output_boundary_samples_table()` do not themselves enforce this gate — same division of responsibility as `create_gemini_audit_entry()` vs. its callers. Wired into all 6 real AI-generation call sites — see `docs/specs/api_contracts/ai_endpoints.md`'s "AI Output Boundary-Language Sampling Hook" section for the full call-site table.
+
+**Retention:** `purge_ai_output_boundary_samples_older_than_90_days()` exists and is unit-tested, matching `purge_gemini_audit_log_older_than_90_days`'s window, but is not yet wired to a scheduled job — out of this story's scope; wiring it up later is mechanical.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: <fill in — pending §5.3 agent-mediated review>
+
+---
+
+**Document Version:** 2.34
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-09-10 (ST-19, EPIC-04, v9.3, BLG-SPEC-75 — Migration History ascending-order review; footer version confirmed to match highest migration block, DS-16 v2.31)
+**Last Review:** 2026-09-15 (ST-23, EPIC-05, v9.4, BLG-AI-06 — DS-18 added: ai_output_boundary_samples table; header/footer version kept in sync)

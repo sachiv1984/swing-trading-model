@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.10
-**Last Updated:** 2026-09-14 (ST-09, BLG-OPS-151, v9.4 — added POST /ai/check-endpoint-anomalies); prior — 2026-09-10 (ST-14, BLG-OPS-96, v9.3 — added GET /ai/monthly-cost-by-feature); prior — 2026-07-27 (ST-06, EPIC-06, v7.8 — added GET /ai/spend-trend)
+**Version:** 1.11
+**Last Updated:** 2026-09-15 (ST-23, BLG-AI-06, v9.4 — documented the generation-time AI output boundary-language sampling hook, not a new endpoint); prior — 2026-09-14 (ST-09, BLG-OPS-151, v9.4 — added POST /ai/check-endpoint-anomalies); prior — 2026-09-10 (ST-14, BLG-OPS-96, v9.3 — added GET /ai/monthly-cost-by-feature); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -724,6 +724,33 @@ No parameters.
 
 ---
 
+## AI Output Boundary-Language Sampling Hook (ST-23, BLG-AI-06, v9.4)
+
+Not a new endpoint — this is internal instrumentation, not part of this contract's API surface. Documented here per this story's AC (5), which requires the mechanism to be documented in the AI-endpoint contract docs.
+
+**Purpose:** lets `scripts/run_ai_output_boundary_sample_audit.py` draw a genuine, non-illustrative sample of real AI-generated output text for §13.2 boundary-language auditing (`claude/strategy/strategy_rules.md`), rather than the hand-authored illustrative examples used for the Q3 2026 audit (`BLG-GOV-178`, `docs/ops/ai_output_boundary_sample_audit_20260910.md`).
+
+**Mechanism:** `backend/services/ai_output_sampling_service.py::maybe_sample_output(feature, output_text, model_version)` is called immediately after every successful generation call across all 5 real call sites this contract governs plus the two trade-plan generation endpoints (`gemini_service.py`):
+
+| Feature | Call site |
+|---------|-----------|
+| `POST /ai/journal-summary` | `ai_service.py::summarise_journal_notes()` |
+| `POST /ai/daily-briefing` | `ai_service.py::generate_daily_briefing()` |
+| `POST /ai/chat` | `ai_service.py::ai_chat()` |
+| `POST /trades/{id}/debrief` (`focus_area_text` only — `summary_text` is template-built, not AI-generated) | `debrief_service.py::generate_trade_debrief()` |
+| `POST /trade-plans/generate-plan` (`setup_thesis`/`entry_rationale`/`early_exit_conditions`) | `gemini_service.py::generate_full_plan()` |
+| `POST /trade-plans/{plan_id}/generate-thesis` (legacy) | `gemini_service.py::generate_setup_thesis()` |
+
+**Gating (AC 1–2):** default **off** — sampling only happens when `AI_OUTPUT_SAMPLING_ENABLED` is explicitly truthy. Even when enabled, only a bounded fraction (`AI_OUTPUT_SAMPLING_RATE`, default `0.1` = 10%, clamped to `[0, 1]`) of calls are actually written — this is not full-content logging of every response.
+
+**Storage:** a new `ai_output_boundary_samples` table (`docs/specs/data_model.md`) stores the actual generated text — unlike `gemini_audit_log`/`claude_audit_log`, which deliberately store only hashes. This is a disclosed, narrow exception to `docs/ops/claude_api_log_hygiene_policy.md`'s general text-avoidance principle — see that document’s §2.4 for the exception's own governance (90-day retention, opt-in, rate-bounded).
+
+**Consumer path (AC 3):** `scripts/run_ai_output_boundary_sample_audit.py::load_real_samples_from_store()` reads up to 10 rows and `main()` prefers them over the illustrative fallback SAMPLE whenever the store returns at least one row.
+
+**Genuine live sample (AC 4/AC-04) and escalation closure (AC 6) — staging-only, not completed this cycle:** per `sprint_backlog.md` ST-23's own note, drawing and scanning a genuine ≥10-output sample requires production credentials (`ANTHROPIC_API_KEY`, live DB) that this execution environment does not have — the same disclosed constraint as `ESC-EXEC-20260910-01`. This mechanism is built and unit-tested (`tests/test_ai_output_sampling_service.py`, `tests/test_run_ai_output_boundary_sample_audit.py`) so it is ready the moment a staging/production session runs it; `ESC-EXEC-20260910-01` remains **Deferred**, not Resolved, until that actually happens — closing it now would misrepresent AC 4 as met when it is only mechanically capable of being met.
+
+---
+
 ## Known Deviations
 
 None at v1.10.
@@ -734,6 +761,7 @@ None at v1.10.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.11 | 2026-09-15 | ST-23 (EPIC-05, v9.4, BLG-AI-06): Documented the generation-time AI output boundary-language sampling hook (`ai_output_sampling_service.py`, opt-in via `AI_OUTPUT_SAMPLING_ENABLED`, rate-bounded via `AI_OUTPUT_SAMPLING_RATE`) — new `ai_output_boundary_samples` table, wired into all 6 real AI-generation call sites, consumed by `scripts/run_ai_output_boundary_sample_audit.py`. Not a new endpoint; no `openapi.yaml` change. Genuine live sample (AC 4) and `ESC-EXEC-20260910-01` closure (AC 6) remain staging-only — no production credentials in this session. |
 | 1.10 | 2026-09-14 | ST-09 (EPIC-03, v9.4, BLG-OPS-151): Added `POST /ai/check-endpoint-anomalies` — wires the existing pure cost/latency anomaly detector (`services/ai_endpoint_anomaly_service.py`, ST-54/v9.2) into a scheduled job (`.github/workflows/ai-endpoint-anomaly-check.yml`, daily) and Telegram alert. Cost checked against real `claude_audit_log` data; latency has no real data source (`claude_audit_log` has no latency column — BLG-OPS-161 filed as the prerequisite gap) and is disclosed as pending via `latency_data_source`, not fabricated. `openapi.yaml` and `docs/ops/api_performance_baseline.md` §44 updated in the same commit. |
 | 1.9 | 2026-09-10 | ST-14 (EPIC-03, v9.3, BLG-OPS-96): Added `GET /ai/monthly-cost-by-feature` — current calendar month's Claude API spend broken down by the existing `claude_audit_log.endpoint` feature tag (5 tags documented in the endpoint section's taxonomy table). Reuses existing tagging, no new data collection. `openapi.yaml` updated in the same commit. |
 | 1.8 | 2026-07-27 | ST-06 (EPIC-06, v7.8, BLG-FEAT-82): Added `GET /ai/spend-trend` — Claude API spend for the last 6 release cycles, bucketed by date windows parsed from `docs/product/changelog.md` version headings (documented alternative to the UX spec's `claude/cycles/*/state.json` suggestion — see endpoint section for rationale). `openapi.yaml` updated in the same commit. |

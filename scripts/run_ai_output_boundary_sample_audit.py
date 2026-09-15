@@ -30,6 +30,7 @@ Usage: python3 scripts/run_ai_output_boundary_sample_audit.py
 """
 import re
 import sys
+from pathlib import Path
 
 # Mirrors backend/services/debrief_service.py::_PRESCRIPTIVE_PATTERNS,
 # generalised (not debrief-specific wording) for cross-feature use.
@@ -92,6 +93,24 @@ SAMPLE = [
 ]
 
 
+def load_real_samples_from_store(limit: int = 10):
+    """ST-23 (BLG-AI-06, EPIC-05, v9.4): return up to `limit` genuine,
+    non-illustrative (source, text) tuples from the ai_output_boundary_samples
+    store, newest first -- or [] if the store is empty, unreachable, or the
+    backend package is not importable from this invocation context (e.g. run
+    outside the backend/ virtualenv). Never raises: a store-access failure
+    here means main() falls back to the illustrative SAMPLE, the same
+    disclosed behaviour this script already had before this store existed.
+    """
+    try:
+        sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
+        from database import get_ai_output_boundary_samples
+        rows = get_ai_output_boundary_samples(limit=limit)
+        return [(f"{r['feature']} [real sample, {r['sampled_at']}]", r["output_text"]) for r in rows]
+    except Exception:
+        return []
+
+
 def run_audit(sample=None):
     sample = sample if sample is not None else SAMPLE
     results = []
@@ -106,9 +125,15 @@ def run_audit(sample=None):
 
 
 def main():
-    results = run_audit()
+    real_samples = load_real_samples_from_store(limit=10)
+    if real_samples:
+        results = run_audit(real_samples)
+        sample_type = f"real (from ai_output_boundary_samples, {len(real_samples)} rows)"
+    else:
+        results = run_audit()
+        sample_type = "illustrative (no real samples available -- see docs/ops/ai_output_boundary_sample_audit_20260910.md's disclosed environment constraint)"
     violations = [r for r in results if r["prescriptive_violation"] or r["prediction_violation"]]
-    print(f"AI Output Boundary Sample Audit — {len(results)} samples scanned")
+    print(f"AI Output Boundary Sample Audit — {len(results)} samples scanned ({sample_type})")
     print(f"Violations found: {len(violations)}")
     for r in results:
         flag = ""

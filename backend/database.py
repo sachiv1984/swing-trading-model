@@ -2488,6 +2488,107 @@ def create_claude_audit_entry(
 
 
 # ---------------------------------------------------------------------------
+# ai_output_boundary_samples — §13.2 boundary-language compliance sampling
+#
+# ST-23 (BLG-AI-06, EPIC-05, v9.4): unlike gemini_audit_log/claude_audit_log
+# above (which deliberately store only hashes of prompt/response text, per
+# claude_api_log_hygiene_policy.md's "never INFO in production" restriction
+# on full prompt/response text), this table stores the actual generated
+# output TEXT -- required so scripts/run_ai_output_boundary_sample_audit.py
+# can scan it for prescriptive/prediction-language drift. This is a
+# deliberate, narrow exception to that policy's general text-avoidance
+# principle, not a silent broadening of it -- see
+# docs/ops/claude_api_log_hygiene_policy.md §2.4 for the exception's own
+# governance (opt-in, sampling-rate-bounded, 90-day retention matching the
+# gemini_audit_log precedent). Writing here is always gated by
+# ai_output_sampling_service.maybe_sample_output() -- this module's own
+# functions do not themselves enforce the opt-in/rate gate, the same
+# division of responsibility as create_gemini_audit_entry() (unconditional
+# writer) vs. its callers (which decide whether to call it at all).
+# ---------------------------------------------------------------------------
+
+def ensure_ai_output_boundary_samples_table() -> None:
+    """Create ai_output_boundary_samples table if it does not exist (ST-23)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS ai_output_boundary_samples (
+                    id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    feature        TEXT NOT NULL,
+                    output_text    TEXT NOT NULL,
+                    model_version  TEXT,
+                    sampled_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_aobs_sampled_at ON ai_output_boundary_samples (sampled_at DESC)"
+            )
+        conn.commit()
+
+
+def create_ai_output_boundary_sample(
+    feature: str,
+    output_text: str,
+    model_version: str | None = None,
+) -> None:
+    """Insert one sampled AI output row. Non-blocking on failure -- same
+    fail-safe convention as create_gemini_audit_entry/create_claude_audit_entry
+    above: sampling instrumentation must never break the caller's actual
+    AI-response request."""
+    try:
+        ensure_ai_output_boundary_samples_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """INSERT INTO ai_output_boundary_samples (feature, output_text, model_version)
+                       VALUES (%s, %s, %s)""",
+                    (feature, output_text, model_version),
+                )
+            conn.commit()
+    except Exception:
+        pass
+
+
+def get_ai_output_boundary_samples(limit: int = 10) -> list[dict]:
+    """Return up to `limit` most recent sampled rows, newest first. Used by
+    scripts/run_ai_output_boundary_sample_audit.py's real-sample consumer
+    path (AC-03)."""
+    try:
+        ensure_ai_output_boundary_samples_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """SELECT feature, output_text, model_version, sampled_at
+                       FROM ai_output_boundary_samples
+                       ORDER BY sampled_at DESC
+                       LIMIT %s""",
+                    (limit,),
+                )
+                rows = cur.fetchall()
+                return [dict(r) for r in rows]
+    except Exception:
+        return []
+
+
+def purge_ai_output_boundary_samples_older_than_90_days() -> int:
+    """Delete ai_output_boundary_samples rows older than 90 days. Returns
+    rows deleted -- same 90-day retention window as
+    purge_gemini_audit_log_older_than_90_days, per
+    claude_api_log_hygiene_policy.md §2.4."""
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "DELETE FROM ai_output_boundary_samples WHERE sampled_at < NOW() - INTERVAL '90 days'"
+                )
+                deleted = cur.rowcount
+            conn.commit()
+        return deleted
+    except Exception:
+        return 0
+
+
+# ---------------------------------------------------------------------------
 # api_call_log — generic external-API call-count instrumentation
 #
 # ST-11 (BLG-OPS-17, EPIC-03, v9.3): reference instrumentation pattern for
