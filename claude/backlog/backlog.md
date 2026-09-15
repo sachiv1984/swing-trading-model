@@ -3917,7 +3917,7 @@ The Arc 5 Signal Compliance low-trade-volume advisory banner (`docs/specs/fronte
 
 ---
 
-### BLG-FE-176 — Bring 8 non-conforming toast call sites into line with the Toast Notification Timing standard
+### BLG-FE-176 — Bring 9 non-conforming toast call sites into line with the Toast Notification Timing standard
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
 **Owner:** Base44 Frontend Prompt Owner
@@ -3926,15 +3926,15 @@ The Arc 5 Signal Compliance low-trade-volume advisory banner (`docs/specs/fronte
 **Provisional-Target:** v9.5
 
 **Problem**
-`design_system.md`'s Toast Notification Timing standard (v1.15/v1.17, §Shared UI Components) defines severity-based durations, but ST-27's inventory found 8 non-conforming `toast.*()` call sites across 5 files: 7 `toast.error(...)` calls with no `duration` override (rendering at `sonner`'s 4s default instead of the standard's 8s-or-manual-dismiss for errors) in `Settings.js` (×2), `Signals.js` (×2), `Positions.js` (×1), `PositionCard.js` (×1), `useWatchlistModal.js` (×1); and 1 `toast.info(...)` call in `Layout.js` with an incorrect explicit duration (8000ms on a <80-char message that should use the 4s info default).
+`design_system.md`'s Toast Notification Timing standard (v1.15/v1.17, §Shared UI Components) defines severity-based durations, but ST-27's inventory found 9 non-conforming `toast.*()` call sites across 6 files: 8 `toast.error(...)` calls with no `duration` override (rendering at `sonner`'s 4s default instead of the standard's 8s-or-manual-dismiss for errors) in `Settings.js` (×2), `Signals.js` (×2), `Positions.js` (×2 — stop-update failure and mark-reviewed failure), `PositionCard.js` (×1 — its own copy of the mark-reviewed-failure message), `useWatchlistModal.js` (×1); and 1 `toast.info(...)` call in `Layout.js` with an incorrect explicit duration (8000ms on a <80-char message that should use the 4s info default).
 
 **Scope**
-- Add `duration: 8000` (or manual-dismiss per the standard's error-with-required-next-action clause) to the 7 non-conforming `toast.error(...)` calls
+- Add `duration: 8000` (or manual-dismiss per the standard's error-with-required-next-action clause) to the 8 non-conforming `toast.error(...)` calls
 - Correct `Layout.js`'s `toast.info(...)` duration from 8000 to the 4s default (remove the override)
 - Also fix the pre-existing duplicate "Failed to mark position as reviewed" message noted during the inventory (identical string independently hardcoded in both `Positions.js` and `PositionCard.js`) while touching that call site, if low-risk to do so
 
 **Acceptance Criteria**
-- All 8 call sites named in the inventory conform to `design_system.md` v1.17's Toast Notification Timing table
+- All 9 call sites named in the inventory conform to `design_system.md` v1.17's Toast Notification Timing table
 - `design_system.md`'s non-conforming-screens table updated to reflect the fix (or the table removed/marked historical if all sites now conform)
 - No visual regression beyond the timing change itself
 
