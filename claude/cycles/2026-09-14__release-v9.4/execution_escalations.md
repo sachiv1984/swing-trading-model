@@ -20,3 +20,13 @@ Last Updated: 2026-09-15
 - **Blocks execution:** No
 - **Disposition:** Open
 - **Resolution summary:** _(complete when closing)_
+
+---
+
+## ESC-EXEC-20260915-01 — Resolution
+
+- **Resolves:** ESC-EXEC-20260915-01 (ST-15 — Review placement of Appendix D governance metrics in `metrics_definitions.md`, EPIC-04). Appended as a new entry rather than editing the original (append-only per this file's header) — original entry above is left unmodified.
+- **Resolved by:** Product Owner + Metrics Definitions & Analytics Canonical Owner (acting, explicit user direction to resolve in these roles' capacity)
+- **Resolved at:** 2026-09-15T09:00:00Z
+- **What was decided:** Governance-process metrics content (PVR rolling-window handling, Skill-Silo taxonomy) stays in `metrics_definitions.md` Appendix F — no relocation to `docs/governance/`. Full reasoning: `docs/product/decisions/decisions--2026-09-14__release-v9.4--ST-15-appendix-f-governance-metrics-placement.md`. Cross-referenced from Appendix F's own scope note in the same commit.
+- **Status:** Resolved — `execution_state.json` ST-15 set to `done` in the same commit as this entry.
