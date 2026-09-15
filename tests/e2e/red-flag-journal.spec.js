@@ -7,6 +7,7 @@
  *   SC-RFJ-02: Empty state renders when API returns 0 events
  *   SC-RFJ-03: Filter by event_type narrows results in mocked response
  *   SC-RFJ-05: Event type colour palette (ST-03, EPIC-01, v8.2, BLG-FE-67)
+ *   SC-RFJ-06: Skeleton rows visible during initial load, resolve to real content (ST-25, EPIC-06, v9.4, BLG-FE-174)
  *
  * Infrastructure:
  * - Playwright page.route() network interception — no live backend required.
@@ -234,6 +235,36 @@ test.describe('Red Flag Journal', () => {
     // from stop_prompt_dismissed's red-400 under the light-daltonized theme.
     await expect(labels.nth(3)).toHaveClass(/text-red-500/);
     await expect(labels.nth(3)).not.toHaveClass(/text-rose-400/);
+  });
+
+  // SC-RFJ-06 — Skeleton rows shown while loading (ST-25, EPIC-06, v9.4,
+  // BLG-FE-174): confirms the canonical loading-skeleton pattern refactor
+  // (page-local bg-*/animate-pulse divs -> shared Skeleton primitive) did
+  // not regress the loading state — same delayed-response technique as
+  // screener.spec.js's SC-SCR-09, plus a direct assertion on the shared
+  // primitive's own shimmer class (design_system.md §Shared UI Components
+  // -> Data States).
+  test('SC-RFJ-06: Skeleton rows visible during initial load, resolve to real content', async ({ page }) => {
+    await mockFallback(page);
+    await page.route(new RegExp(`${API}/portfolio/red-flag-journal`), async (route) => {
+      await new Promise((r) => setTimeout(r, 600));
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(makeJournalResponse(MOCK_EVENTS)),
+      });
+    });
+
+    await page.goto(PAGE_URL);
+    await page.getByRole('heading', { name: 'Red Flag Journal' }).waitFor({ timeout: 8000 });
+
+    // During the delay window, skeleton rows render with the shared
+    // Skeleton primitive's shimmer class.
+    await expect(page.locator('div.animate-pulse').first()).toBeVisible({ timeout: 2000 });
+
+    // Delayed response eventually resolves to real content — skeleton
+    // never gets stuck, no regression from the refactor.
+    await expect(page.getByTestId('event-row').first()).toBeVisible({ timeout: 5000 });
   });
 
 });

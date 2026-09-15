@@ -5,6 +5,7 @@ import { useEarnings } from "../hooks/useEarnings";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
+import { Skeleton } from "../components/ui/skeleton";
 import { cn } from "../lib/utils";
 import {
   RefreshCw,
@@ -231,12 +232,18 @@ function EarningsBadge({ ticker, market }) {
   return <span className={`text-xs ${cls}`}>{days}d</span>;
 }
 
+// Canonical loading-skeleton pattern (v9.4, ST-25, BLG-FE-174): composed
+// from the shared Skeleton primitive (design_system.md §Shared UI
+// Components -> Data States) rather than a page-local bg-*/animate-pulse
+// div. bg-slate-700/50 override preserves this row's exact pre-existing
+// colour -- same override convention DataState.js already uses for its
+// own skeleton.
 function SkeletonRow() {
   return (
     <tr className="border-b border-slate-800/50">
       {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
         <td key={i} className="px-3 py-3">
-          <div className="h-4 bg-slate-700/50 rounded animate-pulse" style={{ width: `${50 + (i * 13) % 40}%` }} />
+          <Skeleton className="h-4 bg-slate-700/50" style={{ width: `${50 + (i * 13) % 40}%` }} />
         </td>
       ))}
     </tr>

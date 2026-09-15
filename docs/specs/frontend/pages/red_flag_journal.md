@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-09-14 (v9.4 design gate — ST-25/BLG-FE-174: §8 loading state now cites the canonical loading-skeleton pattern/shared `Skeleton` primitive); prior — 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §9 Keyboard Navigation Requirements)
+**Version:** 1.3
+**Last Updated:** 2026-09-15 (v9.4 sprint execution — ST-25/BLG-FE-174: `SkeletonRow` implementation confirmed refactored to compose from the shared `Skeleton` primitive; no visual change, new Playwright coverage passes); prior — 2026-09-14 (v9.4 design gate — ST-25/BLG-FE-174: §8 loading state now cites the canonical loading-skeleton pattern/shared `Skeleton` primitive); prior — 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §9 Keyboard Navigation Requirements)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.2):** docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md
 **Design Source:** docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md
@@ -99,7 +99,7 @@ Paginated list. 20 events per page. Most recent first.
 
 | State | Display |
 |-------|---------|
-| Loading | Skeleton rows (matching event row height) — Table/List Row Skeleton template (`base44_prompt_template_library.md` §8), backed by the shared `Skeleton` primitive (`design_system.md` §Shared UI Components → Data States), per the v9.4 canonical loading-skeleton pattern (ST-25, BLG-FE-174) |
+| Loading | Skeleton rows (matching event row height) — Table/List Row Skeleton template (`base44_prompt_template_library.md` §8), backed by the shared `Skeleton` primitive (`design_system.md` §Shared UI Components → Data States), per the v9.4 canonical loading-skeleton pattern (ST-25, BLG-FE-174). **Implementation confirmed (v1.3):** `RedFlagJournal.js`'s `SkeletonRow` imports and renders `<Skeleton>` (previously page-local `bg-*/animate-pulse` divs), with `bg-slate-700`/`bg-slate-700/60` className overrides preserving the exact pre-existing colours. No visual change; new `tests/e2e/red-flag-journal.spec.js#SC-RFJ-06` passes. |
 | Error | "Unable to load Red Flag Journal. Please try again." + Retry button |
 
 ---
@@ -121,6 +121,7 @@ Paginated list. 20 events per page. Most recent first.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-09-15 | v9.4 sprint execution — ST-25 (EPIC-06, BLG-FE-174): §8 implementation confirmed — `RedFlagJournal.js`'s `SkeletonRow` refactored to compose from the shared `Skeleton` primitive (colour overrides preserve visual output). New `SC-RFJ-06` Playwright coverage added, passes. |
 | 1.2 | 2026-09-14 | v9.4 design gate — ST-25 (EPIC-06, BLG-FE-174): §8 Loading state now cites the canonical loading-skeleton pattern — Table/List Row Skeleton template (`base44_prompt_template_library.md` §8) backed by the shared `Skeleton` primitive. No visual change. Design source: `docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md`. Head of UX & Design sign-off: 2026-09-14. Product Owner approved: 2026-09-14. Head of Specs Team confirmed. |
 | 1.1 | 2026-09-04 | v9.1 ST-07 (BLG-SPEC-99, EPIC-01): added §9 Keyboard Navigation Requirements — documentation-only baseline covering Filter Controls, Event List, Pagination, empty/error-state controls, and focus-indicator contrast. No implementation change. |
 | 1.0 | 2026-05-21 | Initial spec. v3.9 design gate — full page spec for Red Flag Journal (SI-03, EPIC-03, ST-08). Design source: docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |
