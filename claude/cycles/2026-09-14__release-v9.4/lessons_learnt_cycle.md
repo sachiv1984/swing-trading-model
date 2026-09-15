@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-09-15
+Last Updated: 2026-09-15 (delivery verification — Phase 4 section added)
 Cycle: 2026-09-14__release-v9.4
 
 ---
@@ -21,3 +21,21 @@ Cycle: 2026-09-14__release-v9.4
 
 **Recurrence Notes:**
 None — the test-isolation friction item above did not appear in `2026-09-09__release-v9.3`'s Phase 3 record (it is a new failure mode, first observed this cycle). Separately, two mechanisms were re-confirmed working exactly as designed this cycle, not requiring any new fix: (1) both EPIC-05 (PR #1666) and EPIC-06 (PR #1667) were merged directly by the human via GitHub rather than through the engine's own STEP 4 flow — in both cases the mid-session re-sync rule (`AUD-2026-08-21-010`) correctly detected the stale `pr_status`/`merge_gate` state on the next turn, found zero orphaned post-merge commits on either branch, and reconciled cleanly; (2) the always-human merge gate (`execution_prompt.md §5.3` / CLAUDE.md §2) held throughout — both PRs reached 100% green CI and a correctly-labeled agent-mediated advisory review before the actual human merge decision, and the engine never attempted to self-approve either merge.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-09-14__release-v9.4
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-09-15
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-09-09__release-v9.3 (`lessons_learnt_cycle.md` `## Phase 4`) — 1 friction item filed: `qa_evidence_EPIC-05.md`'s ST-22 used a free-text label (`Pass, with open escalation`) not in `delivery_verification_prompt.md` STEP 2.1's enumerated Result set, deferred to a prompt revision adding a formal value. Checked and confirmed applied: `delivery_verification_prompt.md` v3.10→v3.11 (2026-09-14, post-ship closure of `2026-09-09__release-v9.3`) added `Pass, escalation open` to STEP 2.1's enumerated values with defined semantics (requires the Comments field to name the open escalation ID). Treated as applied, not a recurrence of the *same* gap — but see this cycle's own new friction item below, a distinct misapplication of the newly-added value.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| `qa_evidence_EPIC-01.md`'s ST-05 row uses the newly-formalised `Pass, escalation open` Result value (v3.11), but its Deviations column names `BLG-OPS-160` — a **backlog item ID**, not an open escalation ID (`ESC-*`). STEP 2.1/2.3's definition of this value requires the Comments field to name an *open escalation*; no escalation was actually raised for ST-05 (its own AC is independently fully met — this is an incidental out-of-scope finding surfaced during the story's own inventory work, structurally identical to a routine "AC met, secondary finding filed separately" case that other rows this same cycle correctly recorded as plain `Pass` with the backlog item noted in Deviations, e.g. EPIC-06's ST-24/ST-26). The v3.11 enumeration closed the *label-shape* gap from v9.3's Phase 4 finding but did not add guidance distinguishing "AC met, adjacent open escalation" from "AC met, incidental backlog-item finding filed" — the latter should use plain `Pass`, not `Pass, escalation open`. | Phase 4 | B | defer | Add a disambiguation note to `qa_evidence_template.md` (and/or `delivery_verification_prompt.md` STEP 2.1) clarifying that `Pass, escalation open` is reserved for a named, open `ESC-*` record only — an AC-met story that merely surfaces a new backlog item during its own work should use plain `Pass` (or `Pass with notes`) with the backlog item cited in Deviations/Comments, not the escalation-specific value. | Head of Specs Team | next `delivery_verification_prompt.md`/`qa_evidence_template.md` revision touching §2.1 |
+
+**Recurrence Notes:**
+Related to, but distinct from, `2026-09-09__release-v9.3`'s Phase 4 friction item (see "Prior cycle checked" above) — that item's fix (adding the enumerated value) shipped and is confirmed working as intended for its own originating case (ST-22/`ESC-EXEC-20260910-01`, a genuine open escalation, unaffected this cycle). This cycle's finding is a second-order gap in the same enumeration: the newly-added value's own definition was clear enough to close the original label-shape problem but not to prevent a second author from applying it to a different, non-escalation shape. No verification-status impact — flagged in `verification_report.md §3`, not a blocker.
