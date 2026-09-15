@@ -101,7 +101,7 @@ The following rules are mandatory and non-negotiable:
 - Full AI response text must not appear at INFO level in any log stream.
 - Permitted: The first 100 characters of the response text may be logged at INFO for operational diagnostics.
 - Permitted: `output_hash` (SHA-256 truncated to 16 hex chars) may appear at INFO level.
-- Permanent record: The full response text is not stored in `gemini_audit_log` or `claude_audit_log` — only hashes and token counts are persisted. This is the correct design.
+- Permanent record: The full response text is not stored in `gemini_audit_log` (only hashes and token counts are persisted there) or in `claude_audit_log` (which persists no prompt/response representation at all, hash or text — token counts and cost only). This is the correct design.
 
 ### 3.4 Journal Note Content
 
