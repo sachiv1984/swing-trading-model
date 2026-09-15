@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 — §43 Test Coverage Gaps v9.3 section added, 0 new gaps, TSG sweep 0 Open; see Changelog table for full history)
+**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 — §44 Test Coverage Gaps v9.4 section added, 0 new gaps, TSG sweep 0 Open; see Changelog table for full history)
 
 ---
 
@@ -1154,6 +1154,16 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ---
 
+## 44. Test Coverage Gaps — v9.4 (2026-09-14__release-v9.4)
+
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — every EPIC's `test_scenarios` array was cross-referenced against its `qa_evidence_EPIC-xx.md` "Scenarios run" field and confirmed executed; EPIC-04 correctly recorded `not_applicable` (empty `test_scenarios`, no frontend-visible AC — all 5 stories were documentation/decision-record work). Table is N/A per §6.
+
+**Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** One new backend route was introduced this cycle — `POST /ai/check-endpoint-anomalies` (ST-09, BLG-OPS-151) — and was registered in the same commit (`952ac326`) across `docs/reference/openapi.yaml`, `docs/ops/api_performance_baseline.md` §44, `backend/routers/test.py`, and `src/pages/SystemStatus.js`'s endpoint-count fallback (122→123), per CLAUDE.md §2. No coverage drift found. No new top-level path prefix introduced (`/ai/` already an existing `categorizeEndpoint()` category).
+
+**TSG backlog reconciliation (§7.3 — full-document sweep, per `post_ship_closure.md`'s no-fixed-section-number scan rule):** Scanned all 26 `### N.N TSG-*` entries (§9–§40) for literal `**Status:** Open`. 0 Open entries found — every existing TSG entry already carries a `RESOLVED`/`not_applicable`/confirmed-still-open disposition (most recently reconciled at v8.6/§39, v9.0/§40, v9.1/§41, v9.2/§42, and v9.3/§43 closures). 0 Open TSG entries checked, 0 resolved.
+
+---
+
 ## 12. Guiding Principle
 
 > Specs explain decisions.
@@ -1167,6 +1177,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-09-15 | Post-ship closure `2026-09-14__release-v9.4` — §44 Test Coverage Gaps (v9.4) added, 0 new gaps this cycle; endpoint coverage drift check found 0 gaps (new `POST /ai/check-endpoint-anomalies` route registered same-commit across all required files); full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-14 | Post-ship closure `2026-09-09__release-v9.3` — §43 Test Coverage Gaps (v9.3) added, 0 new gaps this cycle; endpoint coverage drift check found 1 genuine gap (`GET /positions/{id}` missing from `api_performance_baseline.md`, `BLG-OPS-156` filed); full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-10 | ST-24 (EPIC-05, v9.3, BLG-GOV-180): new `frontend/base44_prompt_changelog.md` registered on creation — indexes the 2 pre-existing Base44 prompt changelogs (`base44_frontend_prompt_owner.md` §3, `base44_prompt_template_library.md`), each cross-linked back to it. |
 | 2026-09-10 | ST-17 (EPIC-04, v9.3, BLG-SPEC-70): new `orphaned_spec_scan_20260910.md` (§8) registered on creation — canonical spec cross-reference linter run, 0 orphans found. |

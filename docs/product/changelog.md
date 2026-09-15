@@ -3,11 +3,64 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 — v9.3 entry added); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 — v9.2 entry added); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 — v9.1 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 — v9.4 entry added); prior — 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 — v9.3 entry added); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 — v9.2 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.4 — Full-Capacity Debt Clearance II — 2026-09-15
+Cycle: 2026-09-14__release-v9.4
+Verified: Verified
+Verification report: claude/cycles/2026-09-14__release-v9.4/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Backend & platform engineering debt — DB-level uniqueness constraint on open positions, nullable trade_plan_id FK migration path, inverse OpenAPI-drift CI check, deprecated-endpoint removal-follow-through scan, scheduled-job-runner consolidation investigation | — | `docs/specs/data_model.md#DS-17`, `#Migration approach`; `tests/test_openapi_drift_inverse_case.py`; `docs/specs/api_contracts/deprecated_endpoint_sunset_tracker.md` |
+| EPIC-02 | QA & test coverage debt — boundary-condition Playwright coverage for the Arc 5 low-trade-volume advisory, backend pytest coverage for `total_closed_trades`, pinned regression assertions for Settings heading order and TradePlan/Settings `aria-labelledby` | — | `tests/e2e/arc5-compliance-section.spec.js`; `tests/test_arc5_total_closed_trades_null_vs_zero.py`; `tests/e2e/settings-heading-order-and-aria-labelledby-regression.spec.js` |
+| EPIC-03 | Operations & security debt — AI endpoint cost/latency anomaly check wired into a scheduled job and alert channel, real Q3 2026 AI cost-trend query, CI credential rotation and scope narrowing, automated secret-scanning pre-commit hook | — | `docs/specs/api_contracts/ai_endpoints.md#POST /ai/check-endpoint-anomalies`; `docs/ops/ai_feature_cost_trend_2026_q3.md`; `docs/security/ci_service_account_token_scope_audit_2026-09-14.md`; `.githooks/README.md` |
+| EPIC-04 | Spec, documentation & financial reporting debt — motion-vs-contrast accessibility guideline fix, GBP-basis FX-conversion display pattern documentation, governance metrics placement review, journal-vs-broker P&L reconciliation spec, carried-forward-loss statement field (design-only) | — | `docs/specs/frontend/design_system.md#Accessibility`, `#Currency-Basis Correctness Pattern`; `docs/specs/metrics_definitions.md#Appendix F`; `docs/specs/pnl_export_reconciliation.md#8`; `docs/specs/frontend/pages/reports.md#Tax Year Summary Bar` |
+| EPIC-05 | Governance process & AI compliance debt — cross-role escalation response-time tracker, governance session cost attribution, data-density gate re-estimate cadence, quarterly AI-copy boundary-language re-scan cadence, in-app AI-output disclosure test coverage, generation-time opt-in sampling hook for AI-output boundary-language audits | — | `docs/governance/escalation_response_time_tracker.md`; `docs/ops/governance_session_cost_attribution.md`; `docs/product/decisions/arc4_data_density_trajectory_v4.6.md#10`; `docs/ops/quarterly_ai_copy_boundary_scan_cadence.md`; `docs/specs/data_model.md#DS-18`; `docs/specs/api_contracts/ai_endpoints.md#AI Output Boundary-Language Sampling Hook` |
+| EPIC-06 | Frontend, UX & product debt — Base44 orphaned-prop audit, loading-skeleton pattern standardisation on Screener and Red Flag Journal, Arc 5 advisory banner usability pass, toast-notification timing standard, and a new non-blocking "trade plan required before entry" advisory banner | When you open a new position without a linked trade plan, you'll now see a gentle, non-blocking reminder suggesting you link one before entering — it's informational only and never stops you from submitting. | `docs/specs/frontend/pages/screener_results.md#10`; `docs/specs/frontend/pages/red_flag_journal.md#8`; `docs/specs/frontend/design_system.md#Toast Notification Timing`; `docs/specs/frontend/components/position_form.md#Trade Plan Linkage Advisory` |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] [D] DB-level unique constraint on (ticker, entry_date) for open positions — closes a data-integrity gap allowing duplicate open positions
+- [ST-02] [D] Nullable trade_plan_id FK migration path — forward-only migration approach documented and applied
+- [ST-03] [D] CI check for the inverse OpenAPI drift case — regression guard for the openapi.yaml/contracts drift direction
+- [ST-04] [D] Deprecated-endpoint removal-follow-through scan — confirmed 0 outstanding deprecated endpoints
+- [ST-05] [D] Investigated consolidating the 3 scheduled-job runners into one orchestrator — recommendation: defer, documented
+- [ST-06] [D] Boundary-condition Playwright coverage for the Arc5ComplianceSection low-trade-volume advisory
+- [ST-07] [D] Backend pytest coverage for GET /analytics/arc5-compliance total_closed_trades field
+- [ST-08] [D] Pinned regression assertion for Settings heading order and TradePlan/Settings aria-labelledby swap
+- [ST-09] [D] Wired the AI endpoint cost/latency anomaly check into a scheduled job and Telegram alert channel
+- [ST-10] [D] Ran the real Q3 2026 AI cost-trend query against production data (partially disclosed — no live DB in this environment)
+- [ST-11] [D] Rotated and scope-narrowed the CI service account credential
+- [ST-12] [D] Documented the secret-scanning false-positive override procedure
+- [ST-13] [D] Named delay-based stagger explicitly in the motion-vs-contrast accessibility guideline; remediation targeted at v9.5
+- [ST-14] [D] Named the GBP-basis FX-conversion display pattern in design_system.md
+- [ST-15] [G] Resolved the Appendix D/F governance metrics placement question — kept in metrics_definitions.md
+- [ST-16] [D] Specified the journal-derived P&L vs broker-statement import reconciliation check (spec/dependency-mapping only)
+- [ST-17] [P] Designed the carried-forward-loss field for the tax-year P&L statement (design only, implementation pending)
+- [ST-18] [G] Added a cross-role escalation response-time tracker
+- [ST-19] [G] Added idea-intake / roadmap-session compute cost attribution
+- [ST-20] [G] Defined a recurring data-density gate trajectory re-estimate cadence
+- [ST-21] [G] Formalised a quarterly automated re-scan cadence for AI-generated-copy boundary-language drift
+- [ST-22] [G] Added Playwright coverage for the existing advisory-vs-deterministic AI-output disclosure badge
+- [ST-23] [G] Implemented the generation-time opt-in sampling hook for AI-output boundary-language audits
+- [ST-24] [D] Audited Base44 components for orphaned props — 0 found
+- [ST-25] [D] Standardised the loading-skeleton pattern on Screener and Red Flag Journal
+- [ST-26] [D] Usability pass on the Arc 5 compliance advisory banner — 2 findings filed for follow-up
+- [ST-27] [D] Documented a standard interaction-timing rule for toast notifications and inventoried non-conforming call sites
+- [ST-28] [U] Added a minimal "trade plan required before entry" UI soft-nudge
+
+Sign-off: Product Owner — 2026-09-15
+QA sign-off: Director of Quality — 2026-09-15
 
 ---
 

@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.4
 Cycle: 2026-09-14__release-v9.4
-Last Updated: 2026-09-14
+Last Updated: 2026-09-15
+
+Superseded by: v9.4 ship — 2026-09-15
+Changelog: docs/product/changelog.md#v9.4
+Verification report: claude/cycles/2026-09-14__release-v9.4/verification_report.md
+Cycle: 2026-09-14__release-v9.4
 
 ## Release Scope — v9.4 Full-Capacity Debt Clearance II
 

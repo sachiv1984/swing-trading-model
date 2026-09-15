@@ -1,11 +1,11 @@
 # Product Backlog — Momentum Trading Assistant
 
-<!-- last-spec-debt-deep-review: 2026-09-07__release-v9.2 -->
+<!-- last-spec-debt-deep-review: 2026-09-14__release-v9.4 -->
 
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-15 (session — 1 new item added during EPIC-05/v9.4 CI investigation for ST-23: `BLG-QA-178` (unrestored sys.modules["database"] swap latent test-isolation hazard)); prior — 2026-09-15 (session — 1 new item added during EPIC-06/v9.4 sprint execution: `BLG-FE-176` (9 non-conforming toast-timing call sites, surfaced ST-27 inventory, corrected from an initial miscount of 8)); prior — 2026-09-15 (session — 1 new item added during EPIC-06/v9.4 sprint execution: `BLG-UX-05` (Arc 5 low-trade-volume advisory threshold/placement recommendation, surfaced ST-26 usability review)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-15 (post-ship closure `2026-09-14__release-v9.4` STEP 3 + STEP 12 — 28 shipped ST items marked ✅ COMPLETE then archived to `backlog_archive.md`; `groom backlog` pass: 6 Field-Completeness Gaps filled (`**Provisional-Target:** TBD` added to `BLG-OPS-154/155/156`, `BLG-QA-170`, `BLG-SPEC-141`, `BLG-GOV-320`), ephemeral `## Release Slice — v9.4` section removed); prior — 2026-09-15 (session — 1 new item added during EPIC-05/v9.4 CI investigation for ST-23: `BLG-QA-178` (unrestored sys.modules["database"] swap latent test-isolation hazard)); prior — 2026-09-15 (session — 1 new item added during EPIC-06/v9.4 sprint execution: `BLG-FE-176` (9 non-conforming toast-timing call sites, surfaced ST-27 inventory, corrected from an initial miscount of 8)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -755,10 +755,6 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 
 ---
 
-
-
----
-
 ### BLG-BE-14 — Trade plan schema versioning
 **Priority:** P3 (Low)
 **Type:** Backend Engineering
@@ -1091,9 +1087,6 @@ No per-request trace ID propagation exists across routers/services. No incident 
 
 ---
 
-
----
-
 ### BLG-OPS-18 — Data pipeline cost baseline
 **Priority:** P3 (Low)
 **Type:** Operations / Cost Monitoring
@@ -1141,9 +1134,6 @@ External API calls are not attributed to the feature or workflow that triggered 
 - Each external API call tagged with triggering feature
 - Attribution report computable
 - Gate condition (BLG-OPS-17 complete) verified before sprint planning
-
----
-
 
 ---
 
@@ -2069,9 +2059,6 @@ Agent role charter files (`claude/agents/*.md`) define role responsibilities and
 
 ---
 
-
----
-
 ### BLG-QA-63 — Automated accessibility testing (axe-core) in Playwright CI
 **Priority:** P3 (Low)
 **Type:** QA / Accessibility
@@ -2585,9 +2572,6 @@ This audit would directly inform Arc 4 PO-02/PO-03 design, but running it ahead 
 
 ---
 
-
----
-
 ### BLG-GOV-176 — Facilitator workload note
 **Priority:** P3 (Low)
 **Type:** Governance / HR
@@ -2748,9 +2732,6 @@ No test failures have been attributed to stale fixtures since v6.4's signal/secu
 
 ---
 
-
----
-
 ### BLG-GOV-178 — Quarterly AI output sampling audit (consolidated)
 **Priority:** P3 (Low)
 **Type:** Governance / AI Compliance
@@ -2771,37 +2752,6 @@ AI output (thesis generation, chat, daily briefing) has no recurring compliance 
 
 **Acceptance Criteria**
 - First quarterly sample conducted and findings (if any) filed as backlog items
-
----
-
-
----
-
-
----
-
-
----
-
-
----
-
-
----
-
-
----
-
-
-
----
-
-
----
-
-
----
-
 
 ---
 
@@ -2885,12 +2835,6 @@ Sprint velocity trend (delivered stories per sprint, U/G/D/P breakdown, delivery
 
 ---
 
-
----
-
-
----
-
 ### BLG-GOV-189 — Governance overhead audit (PMO/spec time per shipped story)
 **Priority:** P3 (Low)
 **Type:** Governance / Process
@@ -2962,9 +2906,6 @@ Construct a deliberate dry-run (e.g. a synthetic escalation with a backdated tim
 
 ---
 
-
----
-
 ### BLG-GOV-194 — §13 boundary language clarity pass — AI journal summarisation
 **Priority:** P3 (Low)
 **Type:** Governance / Strategy
@@ -3016,9 +2957,6 @@ Product Owner reviews each Priority 3 item and confirms it is still deliberately
 
 ---
 
-
----
-
 ### BLG-GOV-198 — Base44 prompt versioning convention
 **Priority:** P3 (Low)
 **Type:** Governance / Process
@@ -3033,12 +2971,6 @@ There is no convention tracking which Base44 prompt draft shipped with which ST-
 
 **Proposed solution**
 Adopt a lightweight convention (e.g. a comment header or delegation log field) recording the ST-id alongside each Base44 prompt draft.
-
----
-
-
----
-
 
 ---
 
@@ -3076,9 +3008,6 @@ Profile CI runtime by file and identify the slowest contributors as candidates f
 
 ---
 
-
----
-
 ### BLG-GOV-200 — Skill-Silo rolling-average automation
 **Priority:** P3 (Low)
 **Type:** Governance Tooling
@@ -3096,9 +3025,6 @@ Compute the rolling average from a structured source (e.g. a small per-cycle met
 
 ---
 
-
----
-
 ### BLG-GOV-201 — QA evidence log template consolidation
 **Priority:** P3 (Low)
 **Type:** Governance / QA Process
@@ -3113,9 +3039,6 @@ Per-EPIC `qa_evidence_EPIC-*.md` files currently duplicate a substantial amount 
 
 **Proposed solution**
 Consolidate shared boilerplate into a referenced template section, reducing duplication across EPIC evidence files.
-
----
-
 
 ---
 
@@ -3168,30 +3091,6 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 
 ---
 
-### BLG-GOV-301 — Cross-role escalation response-time tracker
-**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Director of HR; PMO Lead | **Source:** IDEA-director-of-hr-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** Escalations to named roles (e.g. Head of Specs Team 72-hour SLAs) are tracked individually but there is no aggregate view of response-time trends across roles.
-**Scope:** Add a tracker aggregating escalation response times by role across cycles.
-**Acceptance Criteria:** Tracker added; PMO Lead sign-off.
-
----
-
-### BLG-GOV-302 — Idea-intake / roadmap-session compute cost attribution
-**Priority:** P3 (Low) | **Type:** Governance / FinOps | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** Governance overhead (idea intake, roadmap rebalance sessions) consumes compute/session cost that is not separately attributed from delivery spend, making it hard to assess the true cost-of-governance ratio.
-**Scope:** Add a lightweight cost-attribution note distinguishing governance-overhead sessions from delivery sessions.
-**Acceptance Criteria:** Attribution method documented and applied to at least one cycle retrospectively; FinOps & Resource Architect sign-off.
-
----
-
-### BLG-GOV-304 — Recurring data-density gate trajectory re-estimate cadence
-**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** PMO Lead | **Source:** IDEA-pmo-lead-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** `BLG-GOV-34` (v4.6) was a one-time assessment of data-density gate clearance trajectories (e.g. "at current rate, gate X clears in ~N weeks"); it has never been re-run and is now 3+ months stale.
-**Scope:** Define a recurring cadence for re-estimating data-density gate trajectories (e.g. every N scheduled rebalances) rather than a one-time assessment.
-**Acceptance Criteria:** Cadence defined; first re-estimate run; PMO Lead sign-off.
-
----
-
 ### BLG-FEAT-92 — Screener-to-trade conversion funnel view
 **Priority:** P2 (Medium)
 **Type:** Product Feature / Analytics
@@ -3235,121 +3134,6 @@ Purely an illustrative-example inconsistency (not test-enforced, no functional i
 **Acceptance Criteria**
 - Example JSON block in `docs/specs/api_contracts/position_endpoints.md` is internally consistent (`current_trailing_stop × live_fx_rate == current_trailing_stop_native`, within rounding)
 - API Contracts & Documentation Owner sign-off (or Head of Specs Team, per standard doc-fix delegation)
-
----
-
-### BLG-QA-162 — Add boundary-condition Playwright coverage for Arc5ComplianceSection low-trade-volume advisory
-
-**Priority:** P3 (Low)
-**Type:** QA / Test Coverage
-**Owner:** QA Testing Owner
-**Source:** Agent-mediated QA review of PR #1596 (EPIC-01/ST-01, cycle 2026-09-07__release-v9.2) — 2026-09-07
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.3
-
-**Problem**
-`tests/e2e/arc5-compliance-section.spec.js` covers `total_closed_trades = 12` (advisory shown) and `34` (hidden), but never the exact threshold the AC/design record anchor on ("sub-20 trades"): `total_closed_trades === 20` (must hide) and `=== 19` (must show) are untested, as is the singular/plural copy branch at `=== 1` and the `=== 0` case.
-
-**Scope**
-- Add SC-ARC5 scenarios for `total_closed_trades` = 19, 20, 1, and 0
-
-**Acceptance Criteria**
-- Advisory shown at 19, hidden at 20 (strict `< 20` boundary verified)
-- Copy reads "1 closed trade" (singular) at count 1, "0 closed trades" at count 0
-- All added scenarios pass in CI
-
----
-
-
----
-
-### BLG-QA-163 — Add backend pytest coverage for GET /analytics/arc5-compliance total_closed_trades field
-
-**Priority:** P3 (Low)
-**Type:** QA / Test Coverage
-**Owner:** QA Testing Owner
-**Source:** Agent-mediated QA review of PR #1596 (EPIC-01/ST-01, cycle 2026-09-07__release-v9.2) — 2026-09-07
-**Effort:** XS (<1h)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-No backend pytest asserts `total_closed_trades` appears in `GET /analytics/arc5-compliance`'s response, or exercises `get_arc5_trade_plan_adherence_rate`'s dict-shape return directly (success, zero-trades, and `UndefinedTable` paths). Matches this file's pre-existing pattern (no sibling `get_arc5_*` function has dedicated unit tests) rather than a new regression, but worth closing.
-
-**Scope**
-- Add unit test(s) for `get_arc5_trade_plan_adherence_rate` covering its three return paths
-- Add an integration assertion that `total_closed_trades` is present in the endpoint's response
-
-**Acceptance Criteria**
-- New tests pass in CI
-- All three code paths of `get_arc5_trade_plan_adherence_rate` are covered
-
----
-
-### BLG-SPEC-136 — Framer Motion stagger-delay entrance animations on text elements can exceed the 500ms motion-vs-contrast guideline ceiling
-
-**Priority:** P3 (Low)
-**Type:** Spec Debt / Accessibility Guideline
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** Agent-mediated Head of UX & Design review of ST-05 (EPIC-02, cycle 2026-09-07__release-v9.2) — 2026-09-07
-**Effort:** XS (<1h)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-`design_system.md`'s motion-vs-contrast guideline (v1.12, ST-05, BLG-SPEC-134) caps the *duration* of an opacity-animated text element's entrance fade at 500ms, but several shipped components stagger a list of text elements via framer-motion `delay` (not `duration`) rather than bounding it: `src/pages/SystemStatus.js` (`delay: index * 0.02` / `index * 0.05`), `src/pages/Reports.js` (`delay: 0.05` to `0.2`), `src/pages/Signals.js` (`delay: 0.1` to `0.3`, plus `index * 0.05`), `src/components/dashboard/widgets/RecentTradesWidget.js` (`delay: idx * 0.05`). For a sufficiently long list, the last item's total time-to-full-opacity (delay + duration) exceeds the guideline's 500ms ceiling, which only ever regulated `duration`, not delay-based stagger. Found during agent-mediated Head of UX & Design sign-off review of ST-05's guideline text — not fixed as part of ST-05 itself (that story's own scope was authoring the guideline, not auditing every shipped animation against it).
-
-**Scope**
-- Either (a) extend `design_system.md`'s guideline to state total time-to-full-opacity (delay + duration combined) as the bound rather than duration alone, with an explicit stagger-list exception/cap if unbounded stagger is intentionally allowed, or (b) confirm current stagger values are acceptable in practice (e.g. cap total list stagger window) and document why
-- Bring the 4 listed components into line with whichever rule is adopted, or file them as a documented "Known non-compliant instances" list (same pattern as `design_system.md`'s Modal/Dialog Theming section) if fixing is deferred
-
-**Acceptance Criteria**
-- `design_system.md`'s motion-vs-contrast guideline explicitly addresses delay-based stagger, not duration alone
-- The 4 listed components are either brought into compliance or explicitly listed as known non-compliant instances with a target release
-
----
-
-### BLG-QA-164 — No pinned regression assertion for Settings heading-order fix or TradePlan/Settings aria-labelledby swap
-
-**Priority:** P3 (Low)
-**Type:** QA / Test Coverage
-**Owner:** QA Testing Owner
-**Source:** Agent-mediated Director of Quality review of PR #1597 (EPIC-02, cycle 2026-09-07__release-v9.2) — 2026-09-08
-**Effort:** XS (<1h)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-ST-02 (Settings `h3`→`h2` heading-order fix, BLG-FE-170) and ST-03 (`aria-label`→`aria-labelledby` swap on 5 controls, BLG-FE-171) rely entirely on the pre-existing general `accessibility-axe-scan.spec.js` run for regression protection. `heading-order` is a **moderate** (non-blocking) impact rule in that scan — its own pass/fail threshold only fails on serious/critical violations — so if either fix regressed, nothing would fail CI; it would only reappear in the scan's console log for someone to notice.
-
-**Scope**
-- Add a dedicated, explicit assertion that the Settings page's heading sequence has no skipped levels (e.g. a direct DOM check, not just relying on axe's moderate-severity, non-blocking finding)
-- Add a dedicated assertion (or extend an existing test) confirming the 5 controls' accessible names are still correctly associated via `aria-labelledby`
-
-**Acceptance Criteria**
-- A CI-blocking test fails if the Settings heading-order regresses (h1→h3 skip reintroduced)
-- A CI-blocking test fails if any of the 5 controls' `aria-labelledby` association is removed or broken
-
----
-
-### BLG-SPEC-137 — Name the GBP-basis FX-conversion display pattern in design_system.md (currency-basis bug recurrence)
-
-**Priority:** P3 (Low)
-**Type:** Spec / Documentation Debt
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** ST-13 (EPIC-03, v9.2, BLG-QA-141) — DEV-* root-cause pattern report, Class A — 2026-09-08
-**Effort:** XS (<1h)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-Two independent deviations in the same release (`v8.9`) hit the identical root cause — a GBP-basis financial figure displayed without applying `fx_rate_used` conversion for US-market positions (`DEV-EPIC01-ST02-01`, Trail Stop tile; `DEV-v8.9-ST05-02`, "R at Risk" in `trade_plan.md`). The second instance's own fix explicitly names it "the same class of currency-basis bug already fixed once this cycle" — both fixes independently converged on the same correct pattern (read `fx_rate_used` from the sizing/portfolio response, divide the raw figure by it for US-market plans, matching `TradeEntry.js`'s `costs.totalRisk` convention), but the pattern itself is not documented anywhere a future story author would find before introducing a third instance.
-
-**Scope**
-- Add a short, explicitly-named pattern entry to `design_system.md` (or an equivalent shared frontend-patterns reference) stating: any GBP-basis financial figure derived from a form that can represent a US-market position must read `fx_rate_used` off the relevant sizing/portfolio response and divide by it before display — do not assume a figure is already GBP-basis just because its label says so
-- Cross-reference both existing fixed instances (`positions.md`'s Trail Stop tile, `trade_plan.md`'s R at Risk / `WhatIfSizingPreview.js`) as precedent
-
-**Acceptance Criteria**
-- Pattern documented in `design_system.md` (or equivalent) with both precedent instances cross-referenced
-- Frontend Specifications & UX Documentation Owner sign-off
-
-**Reference:** `docs/governance/deviation_root_cause_pattern_report_2026-09-08.md` (Class A, Finding A1)
 
 ---
 
@@ -3398,30 +3182,6 @@ Two independent deviations in the same release (`v8.9`) hit the identical root c
 
 ---
 
-### BLG-SPEC-138 — Review placement of Appendix D governance metrics in metrics_definitions.md
-
-**Priority:** P3 (Low)
-**Type:** Spec / Documentation Debt
-**Owner:** Metrics Definitions & Analytics Canonical Owner
-**Source:** Agent-mediated DoQ + Product Owner review of PR #1599 (EPIC-04, v9.2) — 2026-09-08
-**Effort:** XS (<1h)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-ST-35/ST-40 (EPIC-04, v9.2) added governance metrics (Skill-Silo skill-category taxonomy, PVR rolling-window boundary-trade handling) to `docs/specs/metrics_definitions.md` — a Class 1 canonical **API-facing** spec governing `GET /analytics/metrics` — as a self-disclosed exception to that document's own Completeness Guarantee, rather than alongside this same EPIC's other 8 new `docs/governance/*.md` documents.
-
-**Scope**
-- Product Owner + Metrics Definitions & Analytics Canonical Owner confirm the intended long-term home for governance-process metrics documentation
-- Relocate Appendix D to `docs/governance/` if confirmed as the wrong placement
-
-**Acceptance Criteria**
-- Explicit placement decision recorded
-- Content relocated if the decision is to move it
-
-**Note (added 2026-09-08, ST-48/EPIC-05):** while resolving this same document's separate heading-collision defect (the "Appendix D" title was reused by two different sections — see `metrics_definitions.md` Appendix D's own Change Log v1.20.0 entry), the duplicate-heading symptom this item might otherwise have been half-describing is already fixed (relabelled to "Appendix F"). This item's actual AC — a Product Owner placement decision on whether governance-metrics content belongs in `docs/governance/` at all — is a separate, still-open question and is unaffected by that fix. Left open, not resolved, by this note.
-
----
-
 ### BLG-SPEC-139 — Triage contract example-payload freshness check findings
 
 **Priority:** P3 (Low)
@@ -3467,52 +3227,6 @@ ST-44 added `scripts/check_contract_example_freshness.py`, a structural drift de
 - Detector distinguishes path-qualified references to same-named files in different directories
 - A duplicate-basename pair with only one member referenced (unambiguous path-qualified reference) correctly flags the other as orphaned
 - Existing 10 unit tests in `tests/test_check_orphaned_specs.py` still pass; new tests added for path-aware resolution and the ambiguity-flagging fallback
-
----
-
-### BLG-OPS-151 — Wire the AI endpoint cost/latency anomaly check into a scheduled job and alert channel
-
-**Priority:** P3 (Low)
-**Type:** Operational / Infrastructure
-**Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
-**Source:** ST-54 (EPIC-05, v9.2, BLG-OPS-112) — 2026-09-08
-**Effort:** S (~0.5d)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-ST-54 added `backend/services/ai_endpoint_anomaly_service.py`, a pure cost/latency spike-detection function covering all 6 current AI-invoking endpoints, verified via simulated spikes in `tests/test_ai_endpoint_anomaly_service.py`. It is not yet wired to a live scheduled job or an alert-delivery channel — this environment has no production database access to source real recent-window/baseline figures (same constraint documented in `docs/ops/ai_feature_cost_trend_2026_q3.md` §3), so the check exists but never actually runs against live data today.
-
-**Scope**
-- Wire `check_cost_anomaly`/`check_latency_anomaly` into a scheduled job (e.g. alongside the existing `POST /ai/check-daily-cost` daily check, or a new dedicated scheduled endpoint/workflow) that sources real recent-window and baseline figures from `claude_audit_log`
-- Deliver a firing anomaly to an existing alert channel (Telegram, matching the SI-05/`BLG-OPS-57` precedent) rather than only logging it
-
-**Acceptance Criteria**
-- A scheduled job invokes the anomaly check against real production data on a defined cadence
-- A firing anomaly reaches a real alert channel (not log-only)
-- Infrastructure & Operations Owner sign-off
-
----
-
-### BLG-OPS-152 — Run real Q3 2026 AI cost-trend query against production data
-
-**Priority:** P3 (Low)
-**Type:** Operational / Infrastructure
-**Owner:** FinOps & Resource Architect
-**Source:** ST-56 (EPIC-05, v9.2, BLG-OPS-150) — 2026-09-08
-**Effort:** XS (<1h)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-ST-56 required "real query data obtained for at least the current quarter" for `docs/ops/ai_feature_cost_trend_2026_q3.md`. This environment has no production database access (`DATABASE_URL` not set, same constraint documented in `anthropic_api_cost_trend_2026.md` §3) — the document's §3 carries the recorded SQL query and a carried-forward estimate instead of a real result.
-
-**Scope**
-- From an environment with production DB access, run the query recorded in `docs/ops/ai_feature_cost_trend_2026_q3.md` §3 against `claude_audit_log` for Q3 2026 (2026-07-01 to 2026-09-30)
-- Confirm whether `claude_audit_log` carries a column identifying which of the 6 AI-invoking endpoints produced each row; if not, note that as its own prerequisite gap
-- Update the document's §3 with the real result, replacing the carried-forward estimate
-
-**Acceptance Criteria**
-- `docs/ops/ai_feature_cost_trend_2026_q3.md` §3 contains an actual query result for Q3 2026, not an estimate
-- FinOps & Resource Architect sign-off
 
 ---
 
@@ -3726,6 +3440,7 @@ ST-05's acceptance criteria include "suite runtime reduced" following the consol
 **Owner:** Infrastructure & Operations Owner
 **Source:** Agent-mediated Director of Quality review of PR #1631 (EPIC-03, `2026-09-09__release-v9.3`) — 2026-09-10
 **Effort:** S (~0.5d)
+**Provisional-Target:** TBD
 
 **Problem**
 ST-13 (this same EPIC) defines and wires retention/purge policies for `gemini_audit_log` and `claude_audit_log`, but ST-11/ST-12 (also this EPIC) introduce a new `api_call_log` table (`backend/database.py`) with no retention window, purge function, or scheduled cleanup of its own. Left as-is, it will grow unbounded indefinitely — the exact problem this EPIC exists to fix for the other two tables.
@@ -3747,6 +3462,7 @@ ST-13 (this same EPIC) defines and wires retention/purge policies for `gemini_au
 **Owner:** QA & Testing Owner
 **Source:** Agent-mediated Director of Quality review of PR #1631 (EPIC-03, `2026-09-09__release-v9.3`) — 2026-09-10
 **Effort:** XS (<1h)
+**Provisional-Target:** TBD
 
 **Problem**
 `qa_evidence_EPIC-03.md` and PR #1631's description both state `tests/test_cost_monitoring.py` contains "30 tests" / "30/30 pass". Independently counting `def test_*` functions in the file at the PR head commit finds 28, all passing. Coverage itself is solid (every new DB function, both instrumentation call sites, and all 4 new endpoints have direct tests) — this is a factual inaccuracy in the self-reported count, not a coverage gap, but the QA evidence document is exactly the artifact the STEP 4 merge gate relies on being accurate.
@@ -3767,6 +3483,7 @@ ST-13 (this same EPIC) defines and wires retention/purge policies for `gemini_au
 **Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
 **Source:** Agent-mediated Director of Quality review of PR #1631 (EPIC-03, `2026-09-09__release-v9.3`) — 2026-09-10
 **Effort:** S (~0.5d)
+**Provisional-Target:** TBD
 
 **Problem**
 `backend/database.py::get_api_session_report()`'s "&gt;2x baseline" anomaly check (ST-12) computes its baseline as the mean of all sessions' call counts, including any anomalous session(s) themselves — a large outlier inflates the very baseline it is compared against, and two similarly-sized outliers can mask each other (e.g. sessions `[1, 10, 10]` → mean 7, threshold 14, neither 10 flags). This meets the story's literal AC ("&gt;2x baseline" is implemented correctly for the tested case) but is a real methodological limitation for a signal intended to catch genuine cost anomalies.
@@ -3788,6 +3505,7 @@ ST-13 (this same EPIC) defines and wires retention/purge policies for `gemini_au
 **Owner:** API Contracts & Documentation Owner
 **Source:** Agent-mediated Director of Quality review of PR #1632 (EPIC-04, `2026-09-09__release-v9.3`) — 2026-09-10
 **Effort:** XS (<1h)
+**Provisional-Target:** TBD
 
 **Problem**
 `scripts/generate_spec_debt_dashboard.py`'s sort key uses `-(r["age_days"] or -1)`. Because `0` is falsy in Python, an item filed the same day the dashboard is generated (`age_days == 0`) evaluates identically to the `None` (undated) case, so it would silently sort as if undated rather than as the newest item in its priority tier. Verified via direct interpreter check. No current dashboard row triggers it (no live BLG-SPEC item has age 0 today), and it is not covered by the script's 14-test suite.
@@ -3809,6 +3527,7 @@ ST-13 (this same EPIC) defines and wires retention/purge policies for `gemini_au
 **Owner:** Product Owner; Head of Specs Team
 **Source:** Agent-mediated Product Owner review of PR #1632 (EPIC-04, `2026-09-09__release-v9.3`) — 2026-09-10
 **Effort:** XS (<1h)
+**Provisional-Target:** TBD
 
 **Problem**
 ST-20's AC reads "canonical allowed-tag taxonomy... documented," which a literal reading suggests a closed vocabulary. The story instead correctly determined (and independently verified as accurate) that `trade_plans.trade_tags` is intentionally free-text/format-constrained by design, and documented that instead of inventing a fake enum. This codebase has an established pattern for exactly this kind of "AC assumed X, accepting Y instead" call — a dedicated `docs/product/decisions/*.md` record (precedent: `setup-type-other-conflation-decision--2026-08-21.md`) — but no equivalent record was filed for ST-20; the reasoning is only documented inline in the new spec doc's Purpose section.
@@ -3830,6 +3549,7 @@ ST-20's AC reads "canonical allowed-tag taxonomy... documented," which a literal
 **Owner:** Infrastructure & Operations Owner
 **Source:** Post-ship closure `2026-09-09__release-v9.3` STEP 6 Endpoint Coverage Drift Check
 **Effort:** XS (<1h, plus a live measurement re-run)
+**Provisional-Target:** TBD
 
 **Problem**
 Comparing `docs/reference/openapi.yaml` (144 normalised method+path endpoints) against `docs/ops/api_performance_baseline.md` (250 normalised entries) after path-parameter and Markdown-formatting normalisation finds 1 genuine gap: `GET /positions/{id}` (the single-position fetch) has no baseline measurement row. The baseline's existing `positions`-prefixed rows cover the list endpoint (`GET /positions`) and several `/positions/{id}/...` sub-resource actions, but not the bare single-position `GET`.
@@ -3841,33 +3561,6 @@ Comparing `docs/reference/openapi.yaml` (144 normalised method+path endpoints) a
 **Acceptance Criteria**
 - `api_performance_baseline.md` has a row for `GET /positions/{id}`
 - Infrastructure & Operations Owner sign-off
-
----
-
-### BLG-AI-06 — Implement generation-time opt-in sampling hook for AI-output boundary-language audits
-**Priority:** P2 (Medium)
-**Type:** Governance / AI Compliance
-**Owner:** AI Compliance & Governance Officer
-**Source:** AI Compliance & Governance Officer resolution of `ESC-EXEC-20260910-01` (ST-22/EPIC-05, cycle `2026-09-09__release-v9.3`) — filed as the concrete mitigation path when deferring that escalation (Strategy-boundary trigger type; Accepted Risk is not a permitted disposition per `shared_standards.md` §4) — 2026-09-14
-**Effort:** M (~1–2d)
-**Provisional-Target:** TBD
-**Depends on:** none; complements `BLG-GOV-178` (quarterly audit item) and `BLG-AI-04` (calendar-driven re-scan cadence — that item schedules *when* to sample, this item is what makes a *genuine* sample possible at all)
-
-**Problem**
-Every environment this project has run governed routines in across `2026-09-09__release-v9.3` (ST-13 AI audit log retention, ST-21 DB connection pool review, ST-22 quarterly boundary-language sample) has disclosed the same constraint: no live production DB connection and no configured `ANTHROPIC_API_KEY`, so no genuine live AI-generated text is retrievable for compliance sampling. ST-22's own audit doc further discloses that even with DB access, `claude_audit_log`/`gemini_audit_log` do not store the generated text itself (only cost/token metadata) — so DB access alone would not fully solve this either. As a result the quarterly §13.2 boundary-language sampling audit (`BLG-GOV-178`) has only ever been able to run against hand-authored illustrative examples from spec docs, which the audit's own author disclosed is a materially weaker evidentiary bar than genuine model output (hand-authored examples are more likely to already read as compliant). `ESC-EXEC-20260910-01` (owned by this role) has been carried Deferred rather than Resolved specifically because this gap has no remediation path yet — this item is that path.
-
-**Scope**
-- Add a lightweight, opt-in sampling hook at AI-output generation time (e.g. in the shared AI-response path used by journal-summary, daily-briefing, chat, debrief, and trade-plan generation) that, when enabled, persists a small random sample of generated text (with appropriate scoping/redaction) to a queryable store
-- Hook must be opt-in / sampling-rate-bounded (not full-content logging of every AI response) to bound storage and privacy exposure
-- Wire `scripts/run_ai_output_boundary_sample_audit.py` to optionally read from this new store instead of only its hardcoded illustrative `SAMPLE` list
-- Update `docs/ops/ai_output_boundary_sample_audit_20260910.md`'s methodology (or its successor quarterly report) once this ships, so the next quarterly sample can be genuine rather than illustrative
-
-**Acceptance Criteria**
-- Sampling hook implemented and gated behind an explicit opt-in flag (env var or settings toggle), default off
-- Scanner script can consume real sampled records from the new store when available
-- A genuine (non-illustrative) sample of at least 10 AI outputs can be drawn and scanned using this mechanism
-- Documented in the AI-endpoint contract docs and cross-referenced from `BLG-GOV-178`
-- `ESC-EXEC-20260910-01` closed as `Resolved` (superseding its interim `Deferred` disposition) once a genuine sample has actually been run using this mechanism, findings filed as backlog items if any
 
 ---
 
@@ -3944,89 +3637,6 @@ The Arc 5 Signal Compliance low-trade-volume advisory banner (`docs/specs/fronte
 
 *40 of the window's 44 submissions promoted directly to backlog per STEP 4 "📋 Backlog (gate-conditional)" disposition — no hard gate on any item, all ungated and ready. 2 Challenger submissions resolved as process patches feeding this cycle's STEP 11.4 meta-review (see `lessons_learnt.md`/`meta_review.md`), not filed here. All items carry `**Provisional-Target:** TBD` (Now/Next horizons both empty — §16.6 fallback) and no day-range effort (§16.12 n/a, target not release-specific).*
 
-### BLG-AI-04 — Quarterly automated re-scan of AI-generated copy for boundary-language drift
-**Priority:** P3 (Low)
-**Type:** Governance / AI Compliance
-**Owner:** AI Compliance & Governance Officer
-**Source:** IDEA-ai-compliance-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** S
-**Provisional-Target:** TBD
-
-**Problem**
-Post-ship spot-checks confirm AI-generated copy against boundary-language rules only when a story happens to touch that copy. There is no recurring, calendar-driven re-scan that would catch drift introduced incidentally (e.g. a prompt-template edit made for an unrelated reason).
-
-**Scope**
-- Define a quarterly cadence and scope (which templates/screens/AI-surfaced copy are in scope)
-- Produce a lightweight checklist re-usable each quarter
-
-**Acceptance Criteria**
-- Cadence and scope documented
-- First scan scheduled with an owner and date
-
----
-
-### BLG-AI-05 — In-app disclosure block: advisory-only AI outputs vs deterministic outputs
-**Priority:** P3 (Low)
-**Type:** Governance / AI Compliance
-**Owner:** AI Compliance & Governance Officer
-**Source:** IDEA-ai-compliance-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** M
-**Provisional-Target:** TBD
-
-**Problem**
-Users have no in-app way to distinguish which surfaced outputs are AI-generated/advisory-only (e.g. debrief narrative, chat) from deterministic system outputs (e.g. ATR stops, screener scores). This is a clarity gap, not a §13 boundary violation — all current AI features are already advisory-only per canonical spec.
-
-**Scope**
-- Design a small, reusable disclosure/badge component
-- Apply to the existing AI-surfaced screens (daily briefing, chat, debrief) per canonical spec sign-off
-
-**Acceptance Criteria**
-- Disclosure component exists and is documented in a canonical frontend spec
-- Applied to at least the daily-briefing surface as a first instance
-
----
-
-### BLG-API-02 — CI check for the inverse OpenAPI drift case
-**Priority:** P3 (Low)
-**Type:** Governance / CI Tooling
-**Owner:** API Contracts & Documentation Owner
-**Source:** IDEA-api-contracts-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** M
-**Provisional-Target:** TBD
-
-**Problem**
-The existing OpenAPI Drift Detection gate catches a contract heading with no `openapi.yaml` entry, but not the inverse: an `openapi.yaml` path with no corresponding `## METHOD /path` heading in `docs/specs/api_contracts/`. Both directions of drift are equally real spec debt.
-
-**Scope**
-- Extend (or add a companion to) the existing drift-detection script/workflow to check the inverse direction
-- Run once against the current `openapi.yaml` to baseline any existing gaps
-
-**Acceptance Criteria**
-- New check runs in CI alongside the existing gate
-- Any pre-existing inverse-drift gap found is filed as its own BLG-SPEC item, not silently fixed inline
-
----
-
-### BLG-API-03 — Deprecated-endpoint removal-follow-through scan
-**Priority:** P3 (Low)
-**Type:** Governance / API Contracts
-**Owner:** API Contracts & Documentation Owner
-**Source:** IDEA-api-contracts-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** S
-**Provisional-Target:** TBD
-
-**Problem**
-The §21 Deprecation Header convention marks endpoints as deprecated but nothing currently checks whether a deprecated endpoint has sat unremoved for an unreasonable number of releases.
-
-**Scope**
-- Grep `docs/reference/openapi.yaml` / contract files for deprecation headers with a release/date field
-- Flag any endpoint deprecated > 2 releases ago with no removal follow-up filed
-
-**Acceptance Criteria**
-- Scan method documented (manual grep acceptable at current scale)
-- Any qualifying stale-deprecated endpoint found this run is filed as its own item
-
----
 
 ### BLG-BE-114 — Consolidate duplicated ATR trailing-stop recalculation logic
 **Priority:** P3 (Low)
@@ -4046,132 +3656,6 @@ ATR trailing-stop recalculation logic is duplicated across 3 call sites (nightly
 **Acceptance Criteria**
 - Single shared implementation exists; all 3 call sites use it
 - Existing trailing-stop tests still pass unchanged
-
----
-
-### BLG-BE-115 — DB-level unique constraint on (ticker, entry_date) for open positions
-**Priority:** P2 (Medium)
-**Type:** Backend / Data Integrity
-**Owner:** Backend Engineering Patterns Owner
-**Source:** IDEA-backend-engineering-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** S
-**Provisional-Target:** TBD
-
-**Problem**
-No DB-level constraint currently prevents two open-position rows with the same ticker and entry date, relying entirely on application-level checks (which can be bypassed by a direct write or a race).
-
-**Scope**
-- Add a migration introducing a unique constraint (or partial unique index scoped to open positions) on (ticker, entry_date)
-- Confirm no existing duplicate rows would violate the constraint before applying
-
-**Acceptance Criteria**
-- Migration applies cleanly against production-shaped data
-- A duplicate insert attempt is rejected at the DB layer with a clear error surfaced to the caller
-
----
-
-### BLG-FE-173 — Audit Base44 components for orphaned props
-**Priority:** P3 (Low)
-**Type:** Frontend / Tech Debt
-**Owner:** Base44 Frontend Prompt Owner
-**Source:** IDEA-base44-frontend-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** S
-**Provisional-Target:** TBD
-
-**Problem**
-Components regenerated across successive Base44 prompt revisions can accumulate props that are no longer read anywhere, adding noise and confusing future prompt edits.
-
-**Scope**
-- Audit components with 3+ recorded prompt revisions (per the Base44 prompt versioning changelog) for unused props
-- Remove confirmed-orphaned props
-
-**Acceptance Criteria**
-- Audit list produced
-- Confirmed-orphaned props removed with no visual/behavioural regression (existing Playwright coverage passes)
-
----
-
-### BLG-FE-174 — Standardise the loading-skeleton pattern across screens
-**Priority:** P3 (Low)
-**Type:** Frontend / Consistency
-**Owner:** Base44 Frontend Prompt Owner
-**Source:** IDEA-base44-frontend-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** M
-**Provisional-Target:** TBD
-
-**Problem**
-3 divergent loading-skeleton implementations exist across screens (Dashboard, Screener, Journal), each with slightly different shape/animation, with no single documented pattern to regenerate against.
-
-**Scope**
-- Document one canonical loading-skeleton pattern in the relevant frontend spec
-- Apply to the 3 divergent screens
-
-**Acceptance Criteria**
-- Canonical pattern documented
-- All 3 screens use the same pattern (Playwright visual check or staging sign-off per the frontend-visible-change standard)
-
----
-
-### BLG-SEC-35 — Rotate and scope-narrow the CI service account token
-**Priority:** P2 (Medium)
-**Type:** Security
-**Owner:** Cybersecurity & Trust Lead
-**Source:** IDEA-cybersecurity-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** S
-**Provisional-Target:** TBD
-
-**Problem**
-The CI service account token is broad-scope and has not been rotated in 6+ months, an unnecessarily large blast radius if it were ever compromised.
-
-**Scope**
-- Confirm the minimum scopes CI workflows actually require
-- Rotate the token and narrow its scope to that minimum
-
-**Acceptance Criteria**
-- New token in place with confirmed-minimal scope
-- All CI workflows still pass with the new token
-
----
-
-### BLG-SEC-36 — Automated secret-scanning pre-commit hook
-**Priority:** P2 (Medium)
-**Type:** Security
-**Owner:** Cybersecurity & Trust Lead
-**Source:** IDEA-cybersecurity-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** S
-**Provisional-Target:** TBD
-
-**Problem**
-Nothing currently catches an accidental commit of `.env`-shaped secret content before it lands in git history — the only safeguard today is the `.gitignore` entry, which does not stop a forced-add or a pasted value in a tracked file.
-
-**Scope**
-- Add a pre-commit hook (or CI check) using a standard secret-pattern scanner
-- Document the bypass/override procedure for confirmed false positives
-
-**Acceptance Criteria**
-- Hook/check runs and blocks a deliberately-introduced test secret pattern
-- False-positive override procedure documented
-
----
-
-### BLG-BE-116 — Nullable trade_plan_id FK migration path
-**Priority:** P2 (Medium)
-**Type:** Backend / Data Model
-**Owner:** Data Model & Domain Schema Owner
-**Source:** IDEA-data-model-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** M
-**Provisional-Target:** TBD
-
-**Problem**
-`BLG-BE-91` (shipped v8.6) enforces trade-plan linkage for new positions going forward, but there is no explicit migration path documented for backfilling or safely relating existing unlinked rows if a future feature needs to reason about them (e.g. `BLG-FEAT-73`'s gate condition explicitly relies on new-forward-only linkage).
-
-**Scope**
-- Document (not necessarily execute) a migration approach for a nullable `trade_plan_id` FK path, distinguishing "backfill" from "forward-only" options
-- Confirm which approach `BLG-BE-91`'s existing enforcement already assumes
-
-**Acceptance Criteria**
-- Migration approach documented in `data_model.md`
-- Explicit statement of whether backfill is in scope (expected: no, per `BLG-BE-52`'s existing decision not to backfill) — this item only needs to formalise/cross-reference that decision, not reopen it
 
 ---
 
@@ -4276,48 +3760,6 @@ When a test is found flaky, the DoQ sign-off process has no documented decision 
 **Acceptance Criteria**
 - Addendum added to the DoQ checklist
 - Cross-reference confirmed correct against the existing quarantine item
-
----
-
-### BLG-FR-02 — Reconciliation check: journal-derived P&L vs broker-statement import totals
-**Priority:** P3 (Low)
-**Type:** Financial Reporting
-**Owner:** Financial Reporting & Records Owner
-**Source:** IDEA-financial-reporting-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** M
-**Provisional-Target:** TBD
-
-**Problem**
-There is no automated check comparing journal-derived realised P&L totals against broker-statement import totals — any discrepancy is currently only caught if a user notices it manually.
-
-**Scope**
-- Define the reconciliation calculation and acceptable tolerance
-- Surface any discrepancy beyond tolerance somewhere the user will see it (existing note: `BLG-QA-122` broker-statement reconciliation is currently blocked on no broker-import mechanism — confirm this item's dependency on that before scoping further)
-
-**Acceptance Criteria**
-- Reconciliation logic documented, with explicit dependency note against `BLG-QA-122`'s blocked status
-- Not blocked on implementation this cycle — spec/dependency-mapping only until `BLG-QA-122` clears
-
----
-
-### BLG-FR-03 — Carried-forward-loss field on the tax-year P&L statement
-**Priority:** P3 (Low)
-**Type:** Financial Reporting
-**Owner:** Financial Reporting & Records Owner
-**Source:** IDEA-financial-reporting-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** M
-**Provisional-Target:** TBD
-
-**Problem**
-The tax-year P&L statement (v2.0, `4.1b`) has no field for a loss carried forward from a prior tax year, limiting its usefulness for multi-year continuity.
-
-**Scope**
-- Add a carried-forward-loss input/field to the statement
-- Confirm the calculation this feeds into (if any) or document it as informational-only for this iteration
-
-**Acceptance Criteria**
-- Field present on the statement
-- Calculation behaviour (or explicit informational-only status) documented
 
 ---
 
@@ -4426,27 +3868,6 @@ Cross-cutting backend architecture decisions currently live scattered across ind
 
 ---
 
-### BLG-TECH-20 — Investigate consolidating the 3 scheduled-job runners into one orchestrator
-**Priority:** P3 (Low)
-**Type:** Backend / Architecture
-**Owner:** Head of Engineering
-**Source:** IDEA-head-of-engineering-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** M
-**Provisional-Target:** TBD
-
-**Problem**
-3 separate scheduled-job runners exist (nightly backtest rebalance, screener refresh / risk-off alerts, and a third minor job runner), each with its own registration/wiring, increasing the surface area for the kind of job-registration wiring gaps already found and fixed in `v8.9` (`ST-12`).
-
-**Scope**
-- Inventory the 3 runners and their trigger mechanisms
-- Investigate (spec-only this cycle) whether consolidating onto one orchestrator is worth the migration cost
-
-**Acceptance Criteria**
-- Inventory produced
-- Recommendation documented (consolidate now / defer / not worth it) with rationale
-
----
-
 ### BLG-GOV-324 — Formalise the STEP 8.0.5 / STEP 8.2 candidate-verification pattern as one subroutine
 **Priority:** P3 (Low)
 **Type:** Governance / Prompt Engineering
@@ -4486,48 +3907,6 @@ The `governance-drift` skill catches §14 version-table mismatches when invoked,
 **Acceptance Criteria**
 - Cadence defined and wired into a governed routine's mandatory steps
 - First mandatory-cadence run completed with results recorded
-
----
-
-### BLG-UX-03 — Usability pass on the Arc 5 compliance advisory banner
-**Priority:** P3 (Low)
-**Type:** Frontend / UX Review
-**Owner:** Head of UX & Design
-**Source:** IDEA-head-of-ux-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** S
-**Provisional-Target:** TBD
-
-**Problem**
-The Arc 5 compliance advisory banner has been through 3 UI revisions since its original ship; no usability pass has confirmed the text hierarchy still reads correctly after cumulative changes.
-
-**Scope**
-- Review current banner against its original intent and the 3 subsequent revisions
-- Recommend any adjustment needed
-
-**Acceptance Criteria**
-- Review completed and documented
-- Any recommended change filed as its own item (not fixed inline as part of this review)
-
----
-
-### BLG-UX-04 — Standard interaction-timing rule for toast notifications
-**Priority:** P3 (Low)
-**Type:** Frontend Spec
-**Owner:** Head of UX & Design
-**Source:** IDEA-head-of-ux-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** S
-**Provisional-Target:** TBD
-
-**Problem**
-Toast notification duration is inconsistent (2s/3s/4s) across screens with no documented standard governing which duration applies when.
-
-**Scope**
-- Document a standard timing rule (e.g. by message length or severity) in the relevant frontend spec
-- Note existing screens that would need to change to conform (documentation only this cycle)
-
-**Acceptance Criteria**
-- Standard documented
-- List of non-conforming screens produced for future remediation
 
 ---
 
@@ -4700,29 +4079,6 @@ Given the sustained scheduled-rebalance cadence and heavily governance/debt-weig
 **Acceptance Criteria**
 - Metric defined in a canonical spec (likely `metrics_definitions.md`)
 - First baseline reading recorded
-
----
-
-### BLG-FEAT-95 — Minimal "trade plan required before entry" UI soft-nudge
-**Priority:** P2 (Medium) — corrected from P3 at `plan release v9.4` (2026-09-14), per the STEP 7.1 note below
-**Type:** Product Feature / Frontend
-**Owner:** Product Owner
-**Source:** IDEA-product-owner-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** S
-**Provisional-Target:** v9.4
-
-> **STEP 7.1 note (roadmap rebalance 2026-09-14__scheduled):** Named as this cycle's sole genuinely ungated, build-and-ship-shaped U-item pull-forward candidate (Skill-Silo mandatory-pull-forward clause — see `run_manifest.md`/decision log `DL-079`). Escalated P3→P2 at STEP 8 alongside that finding; corrected P3→P2 above at `plan release v9.4` (2026-09-14), per the same escalation-recording pattern used for `BLG-FEAT-32` at `2026-08-11__scheduled` (DL-078). Selected into `2026-09-14__release-v9.4` scope as ST-28/EPIC-06 — see `claude/cycles/2026-09-14__release-v9.4/stage4_backlog_slice.md`.
-
-**Problem**
-`BLG-BE-91` (shipped v8.6) enforces trade-plan linkage at the data layer going forward, but there is no lighter-weight UI-level nudge encouraging the user to create a trade plan *before* opening a position in the first place — the DB-level enforcement only catches the case after the fact.
-
-**Scope**
-- A non-blocking UI nudge (e.g. a soft warning/confirmation) when a position entry flow is started with no linked trade plan
-- Explicitly non-blocking — this is a nudge, not a new hard gate; does not conflict with §13 (no automation of the entry decision itself)
-
-**Acceptance Criteria**
-- Nudge appears on the position-entry flow when no trade plan is linked
-- User can proceed without one (non-blocking) — Playwright coverage confirming the nudge does not block entry
 
 ---
 
@@ -4997,47 +4353,6 @@ The interactive Claude Code sprint-execution session has no `DATABASE_URL` confi
 - A read-only staging DB credential exists and is scoped so it cannot mutate any table
 - The credential is injected into sprint-execution sessions via environment configuration, never appearing as chat text or in git history
 - A sprint-execution session can successfully run a real read-only query against staging data end-to-end as a smoke test
-
----
-
-## Release Slice — v9.4 (ephemeral — remove at next `groom backlog` per Placement Rule)
-
-<!-- release-plan-marker: RP:v9.4:2026-09-14__release-v9.4 -->
-
-28 items selected into `2026-09-14__release-v9.4` scope (27.55 estimated days, full capacity). Full acceptance criteria: `claude/cycles/2026-09-14__release-v9.4/stage4_backlog_slice.md`. Round-robin, category-balanced, P2-first-then-oldest-first selection from a 74-item / ~65.05-day ungated ready pool.
-
-| ST-ID | Item | EPIC |
-|-------|------|------|
-| ST-01 | BLG-BE-115 | EPIC-01 |
-| ST-02 | BLG-BE-116 | EPIC-01 |
-| ST-03 | BLG-API-02 | EPIC-01 |
-| ST-04 | BLG-API-03 | EPIC-01 |
-| ST-05 | BLG-TECH-20 | EPIC-01 |
-| ST-06 | BLG-QA-162 | EPIC-02 |
-| ST-07 | BLG-QA-163 | EPIC-02 |
-| ST-08 | BLG-QA-164 | EPIC-02 |
-| ST-09 | BLG-OPS-151 | EPIC-03 |
-| ST-10 | BLG-OPS-152 | EPIC-03 |
-| ST-11 | BLG-SEC-35 | EPIC-03 |
-| ST-12 | BLG-SEC-36 | EPIC-03 |
-| ST-13 | BLG-SPEC-136 | EPIC-04 |
-| ST-14 | BLG-SPEC-137 | EPIC-04 |
-| ST-15 | BLG-SPEC-138 | EPIC-04 |
-| ST-16 | BLG-FR-02 | EPIC-04 |
-| ST-17 | BLG-FR-03 | EPIC-04 |
-| ST-18 | BLG-GOV-301 | EPIC-05 |
-| ST-19 | BLG-GOV-302 | EPIC-05 |
-| ST-20 | BLG-GOV-304 | EPIC-05 |
-| ST-21 | BLG-AI-04 | EPIC-05 |
-| ST-22 | BLG-AI-05 | EPIC-05 |
-| ST-23 | BLG-AI-06 | EPIC-05 |
-| ST-24 | BLG-FE-173 | EPIC-06 |
-| ST-25 | BLG-FE-174 | EPIC-06 |
-| ST-26 | BLG-UX-03 | EPIC-06 |
-| ST-27 | BLG-UX-04 | EPIC-06 |
-| ST-28 | BLG-FEAT-95 | EPIC-06 |
-
-Not re-selected: `BLG-GOV-178` (already substantively fulfilled, escalation-tracking only). Design-gate-triggering: `BLG-FE-174`, `BLG-FEAT-95`, `BLG-AI-05` (observable UI ACs) — `run design-gate --cycle 2026-09-14__release-v9.4` required before `plan sprint` seals.
 
 ---
 

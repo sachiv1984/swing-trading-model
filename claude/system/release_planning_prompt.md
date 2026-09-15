@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.50
-**Last Updated:** 2026-09-14 (AUD-2026-09-14-001: STEP -1.6 gains an SLA-breach carry-forward hard gate — a prior cycle's breached, unresolved escalation now blocks opening a new release cycle); prior — 2026-08-10 (BLG-GOV-288, ST-23 — root `sprint_sealed` reset on new-cycle publish)
+**Version:** 2.51
+**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-Release-02 — STEP 4.1's design-gate scan now also checks each candidate's `Scope` text for UI-shipping verbs, not `Acceptance Criteria` text alone); prior — 2026-09-14 (AUD-2026-09-14-001: STEP -1.6 gains an SLA-breach carry-forward hard gate — a prior cycle's breached, unresolved escalation now blocks opening a new release cycle); prior — 2026-08-10 (BLG-GOV-288, ST-23 — root `sprint_sealed` reset on new-cycle publish)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -862,6 +862,8 @@ After writing `stage4_backlog_slice.md`, scan all ST items for UI-facing scope:
 **Classification rule:**
 - `design_gate_required = true` if ANY item has delegation class `delegated_frontend` OR is `autonomous` with at least one observable UI acceptance criterion (visible rendering, element presence/absence, colour, interaction, timing)
 - `design_gate_required = false` if all items are backend, spec/documentation, CI/infrastructure, or autonomous with no observable UI ACs
+
+**Scan both `Acceptance Criteria` and `Scope` text (v2.51, LL-v9.4-Release-02):** Do not classify from `Acceptance Criteria` text alone. An item can ship a visible UI element while phrasing its own AC in spec-only terms (e.g. "documented in a canonical frontend spec") — the AC's *type* label can read as spec/governance work even when the item's `Scope` text describes shipping a new component. Also scan each candidate's `Scope` text for UI-shipping verbs/nouns ("apply to," "add to the," "component," "badge," "banner") and classify `design_gate_required = true` if found there, even when the AC text alone would not have triggered it. (Found live at `2026-09-14__release-v9.4`: `BLG-AI-05`'s first-pass scan missed this on AC text alone; caught before publication on close re-read of its `Scope` text.)
 
 **Required output:**
 - If `design_gate_required = true`: output `⚠ DESIGN GATE REQUIRED before plan sprint — N items classified as UI-facing. Run: run design-gate --cycle <cycle_id>`
