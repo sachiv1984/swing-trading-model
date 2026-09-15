@@ -11,7 +11,7 @@ import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
-import { ArrowLeft, Calculator, Loader2, CheckCircle2, X, Rocket } from "lucide-react";
+import { ArrowLeft, Calculator, Loader2, CheckCircle2, X, Rocket, Info } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
 import PositionSizingWidget from '../components/trades/PositionSizingWidget';
@@ -595,6 +595,36 @@ export default function TradeEntry() {
             )}
           </div>
         </motion.div>
+      )}
+
+      {/* Trade Plan Linkage Advisory (ST-28, EPIC-06, v9.4, BLG-FEAT-95) —
+          non-blocking, condition-driven, no dismiss control per
+          position_form.md §Trade Plan Linkage Advisory. Surfaces an
+          existing fact (plan-linkage absence); does not compute a
+          recommendation or force a default action — §13 compliant. */}
+      {!linkedPlanId && (
+        <div
+          data-testid="trade-plan-linkage-advisory"
+          className="flex items-start gap-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3"
+        >
+          <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0 space-y-2">
+            <p className="text-sm text-amber-800 dark:text-amber-200">
+              No trade plan linked to this position. Consider creating one before entering — or continue without.
+            </p>
+            <Link
+              to={`${createPageUrl("TradePlan")}${formData.ticker ? `?ticker=${encodeURIComponent(formData.ticker)}` : ""}`}
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/40"
+              >
+                Create Trade Plan
+              </Button>
+            </Link>
+          </div>
+        </div>
       )}
 
       {/* Submit */}

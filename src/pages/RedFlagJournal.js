@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
+import { Skeleton } from "../components/ui/skeleton";
 import { cn } from "../lib/utils";
 import {
   AlertTriangle,
@@ -152,15 +153,21 @@ function EventRow({ event }) {
   );
 }
 
+// Canonical loading-skeleton pattern (v9.4, ST-25, BLG-FE-174): composed
+// from the shared Skeleton primitive (design_system.md §Shared UI
+// Components -> Data States) rather than page-local bg-*/animate-pulse
+// divs. bg-slate-700 overrides preserve this row's exact pre-existing
+// colour -- same override convention DataState.js already uses for its
+// own skeleton (bg-slate-300/60 dark:bg-slate-700/60).
 function SkeletonRow() {
   return (
     <div className="flex items-start gap-4 px-4 py-3 border border-slate-700/30 rounded-lg bg-slate-800/20">
-      <div className="w-4 h-4 mt-0.5 bg-slate-700 rounded animate-pulse shrink-0" />
+      <Skeleton className="w-4 h-4 mt-0.5 bg-slate-700 shrink-0" />
       <div className="flex-1 space-y-2">
-        <div className="h-3 bg-slate-700 rounded w-40 animate-pulse" />
-        <div className="h-3 bg-slate-700/60 rounded w-64 animate-pulse" />
+        <Skeleton className="h-3 w-40 bg-slate-700" />
+        <Skeleton className="h-3 w-64 bg-slate-700/60" />
       </div>
-      <div className="w-20 h-3 bg-slate-700 rounded animate-pulse" />
+      <Skeleton className="w-20 h-3 bg-slate-700" />
     </div>
   );
 }
