@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.20.0
-**Last Updated:** 2026-09-08 (ST-48, EPIC-05, v9.2, BLG-SPEC-128 — new Gate-Metric Naming glossary section, SI-02 Data-Sufficiency Gate canonical term + surface-name mapping); prior — 2026-09-08 (ST-35 + ST-40, EPIC-04, v9.2, BLG-GOV-277 + BLG-GOV-276 — new Governance Metrics cross-reference appendix, later relabelled Appendix F by ST-48 to resolve a duplicate-heading collision: PVR rolling-window boundary-trade handling and the Skill-Silo skill-category taxonomy); prior — 2026-09-07 (ST-37, EPIC-05, v9.1, BLG-SPEC-100 — Win Rate section gains a Terminology Note confirming "hit rate" is not used anywhere in this system)
+**Version:** 1.20.1
+**Last Updated:** 2026-09-15 (ST-15, EPIC-04, v9.4, BLG-SPEC-138 — Appendix F gains an explicit placement-decision cross-reference; content unchanged, no relocation); prior — 2026-09-08 (ST-48, EPIC-05, v9.2, BLG-SPEC-128 — new Gate-Metric Naming glossary section, SI-02 Data-Sufficiency Gate canonical term + surface-name mapping); prior — 2026-09-08 (ST-35 + ST-40, EPIC-04, v9.2, BLG-GOV-277 + BLG-GOV-276 — new Governance Metrics cross-reference appendix, later relabelled Appendix F by ST-48 to resolve a duplicate-heading collision: PVR rolling-window boundary-trade handling and the Skill-Silo skill-category taxonomy); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1382,6 +1382,8 @@ When any required input field is unavailable from the API (e.g. null `override_r
 **Heading correction (ST-48, EPIC-05, v9.2):** this section was originally titled "Appendix D", duplicating the existing Appendix D (Change Log) heading above — a labelling collision from the original EPIC-04 commit, corrected here to the next free letter (Appendix E is already in use for Known Deviations & Backlog Items).
 
 **Scope note:** the metrics in this appendix are **not** returned by `GET /analytics/metrics` and are exempt from this document's Completeness Guarantee (§Purpose) — they are governance-process metrics (roadmap/backlog composition), not product analytics. They are documented here, in the file owned by the Metrics Definitions & Analytics Canonical Owner, because that role is this system's single accountable owner of metric-definition rigor generally, governance metrics included — not because they belong to the API surface this document otherwise governs. The authoritative computation for each metric below lives in its cited governance prompt; this appendix is a definitional cross-reference, not a second source of truth.
+
+**Placement decision (ST-15, EPIC-04, v9.4, BLG-SPEC-138):** whether this content should instead live in `docs/governance/` was raised as an open Product Owner question (this scope note's own rationale had never been put to that question explicitly). Decided: **stays here** — see `docs/product/decisions/decisions--2026-09-14__release-v9.4--ST-15-appendix-f-governance-metrics-placement.md` for the full reasoning (Product Owner + Metrics Definitions & Analytics Canonical Owner, 2026-09-15). No relocation.
 
 ### Product Value Ratio (PVR) — Rolling-Window Boundary-Trade Handling (ST-40, EPIC-04, v9.2, BLG-GOV-276)
 
