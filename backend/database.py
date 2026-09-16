@@ -2459,6 +2459,22 @@ def ensure_claude_audit_log_compliance_check_column() -> None:
         conn.commit()
 
 
+def ensure_claude_audit_log_latency_column() -> None:
+    """Add latency_ms to claude_audit_log (idempotent). ST-13 (BLG-OPS-161,
+    EPIC-02, v9.5): claude_audit_log previously carried no latency column,
+    so POST /ai/check-endpoint-anomalies's latency-anomaly check had no
+    real-data source and ran against a simulated feed only
+    (services/ai_endpoint_anomaly_service.py's `latency_data_source:
+    "not_available_pending_BLG-OPS-161"`). Nullable; all pre-existing rows
+    and any caller that does not yet pass latency_ms are unaffected."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE claude_audit_log ADD COLUMN IF NOT EXISTS latency_ms INTEGER"
+            )
+        conn.commit()
+
+
 def create_claude_audit_entry(
     endpoint: str,
     model_id: str,
@@ -2467,20 +2483,22 @@ def create_claude_audit_entry(
     output_tokens: int | None = None,
     cost_usd: float | None = None,
     compliance_check_result: str | None = None,
+    latency_ms: int | None = None,
 ) -> None:
     """Insert one row into claude_audit_log. Non-blocking on failure."""
     try:
         ensure_claude_audit_log_table()
         ensure_claude_audit_log_compliance_check_column()
+        ensure_claude_audit_log_latency_column()
         with get_db() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
                     INSERT INTO claude_audit_log
-                        (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, compliance_check_result)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                        (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, compliance_check_result, latency_ms)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                     """,
-                    (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, compliance_check_result),
+                    (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, compliance_check_result, latency_ms),
                 )
             conn.commit()
     except Exception:
@@ -2953,6 +2971,76 @@ def get_claude_spend_between_by_feature(start_date: str, end_date: str | None = 
                 rows = cur.fetchall()
                 return [
                     {"endpoint": r["endpoint"], "spend_usd": round(float(r["total_cost"]), 2)}
+                    for r in rows
+                ]
+    except Exception:
+        return []
+
+
+def get_claude_endpoint_latency_windows(recent_hours: int = 24, baseline_days: int = 7) -> list[dict]:
+    """Per-endpoint recent-window vs baseline-window p95 latency from
+    `claude_audit_log.latency_ms`, for the AI endpoint latency anomaly check
+    (ST-13, BLG-OPS-161, EPIC-02, v9.5) -- the real-data counterpart
+    get_claude_endpoint_cost_windows()'s docstring flagged as missing.
+
+    Same recent/baseline window shape as get_claude_endpoint_cost_windows()
+    (recent window excludes the baseline window -- a spike must not inflate
+    its own baseline). Uses PostgreSQL's `percentile_cont` for a true p95
+    rather than an average, matching how latency is actually reported
+    everywhere else in this codebase (e.g. api_performance_baseline.md).
+    Only rows with a non-null `latency_ms` contribute -- older rows written
+    before this column existed are silently excluded, not treated as 0ms.
+    """
+    try:
+        ensure_claude_audit_log_table()
+        ensure_claude_audit_log_latency_column()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT
+                        endpoint,
+                        COALESCE(
+                            percentile_cont(0.95) WITHIN GROUP (ORDER BY latency_ms) FILTER (
+                                WHERE generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                                  AND latency_ms IS NOT NULL
+                            ), 0.0
+                        ) AS recent_p95_latency,
+                        COUNT(*) FILTER (
+                            WHERE generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                              AND latency_ms IS NOT NULL
+                        ) AS recent_count,
+                        COALESCE(
+                            percentile_cont(0.95) WITHIN GROUP (ORDER BY latency_ms) FILTER (
+                                WHERE generated_at < NOW() - (%(recent_hours)s || ' hours')::interval
+                                  AND generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                                        - (%(baseline_days)s || ' days')::interval
+                                  AND latency_ms IS NOT NULL
+                            ), 0.0
+                        ) AS baseline_p95_latency,
+                        COUNT(*) FILTER (
+                            WHERE generated_at < NOW() - (%(recent_hours)s || ' hours')::interval
+                              AND generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                                    - (%(baseline_days)s || ' days')::interval
+                              AND latency_ms IS NOT NULL
+                        ) AS baseline_count
+                    FROM claude_audit_log
+                    WHERE generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                                - (%(baseline_days)s || ' days')::interval
+                    GROUP BY endpoint
+                    ORDER BY endpoint
+                    """,
+                    {"recent_hours": recent_hours, "baseline_days": baseline_days},
+                )
+                rows = cur.fetchall()
+                return [
+                    {
+                        "endpoint": r["endpoint"],
+                        "recent_p95_latency_ms": float(r["recent_p95_latency"]),
+                        "recent_count": int(r["recent_count"]),
+                        "baseline_p95_latency_ms": float(r["baseline_p95_latency"]),
+                        "baseline_count": int(r["baseline_count"]),
+                    }
                     for r in rows
                 ]
     except Exception:

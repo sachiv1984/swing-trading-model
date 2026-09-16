@@ -150,11 +150,11 @@ def check_endpoint_anomalies():
     Intended to be called by a daily scheduler (GitHub Actions cron —
     .github/workflows/ai-endpoint-anomaly-check.yml).
 
-    Cost is checked against real claude_audit_log data (recent 24h vs
-    trailing 7-day baseline, per endpoint). Latency has no real data source
-    yet (claude_audit_log carries no latency column — BLG-OPS-161) and is
-    not checked here; `latency_data_source` in the response discloses this
-    as pending rather than a silent pass. ST-09 (BLG-OPS-151, EPIC-03, v9.4).
+    Cost and latency are both checked against real claude_audit_log data
+    (recent 24h vs trailing 7-day baseline, per endpoint) — latency via the
+    latency_ms column added in ST-13 (BLG-OPS-161, EPIC-02, v9.5);
+    `latency_data_source` in the response reports which source was actually
+    used. ST-09 (BLG-OPS-151, EPIC-03, v9.4).
     """
     from services.ai_endpoint_anomaly_service import run_scheduled_anomaly_check
     return run_scheduled_anomaly_check()

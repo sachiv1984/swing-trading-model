@@ -13,10 +13,18 @@ verified via a simulated spike in tests/test_ai_endpoint_anomaly_service.py.
 Wiring update (ST-09, BLG-OPS-151, EPIC-03, v9.4): `run_scheduled_anomaly_check()`
 below wires these into POST /ai/check-endpoint-anomalies, triggered by
 .github/workflows/ai-endpoint-anomaly-check.yml on a daily cadence, with a
-Telegram alert on any firing anomaly (not log-only) -- see that function's
-docstring for the real-vs-simulated data source split (cost: real
-claude_audit_log data; latency: no latency column exists yet, so verified
-against a simulated feed only, per RISK-03 -- disclosed, not fabricated).
+Telegram alert on any firing anomaly (not log-only).
+
+Latency real-data wiring (ST-13, BLG-OPS-161, EPIC-02, v9.5):
+`claude_audit_log` now carries a `latency_ms` column (populated for new
+rows going forward by every `create_claude_audit_entry()` call site --
+pre-existing rows remain NULL and are excluded from latency windows, not
+treated as 0ms), and `database.get_claude_endpoint_latency_windows()`
+provides the same recent-vs-baseline-window shape as
+`get_claude_endpoint_cost_windows()`. `run_scheduled_anomaly_check()` now
+sources latency from there by default -- `simulated_latency_feed` remains
+supported (e.g. for tests or a deliberate dry-run) and takes priority when
+explicitly passed, but is no longer the only source.
 
 Covers all 6 current AI-invoking endpoints (per the same inventory used in
 docs/ops/ai_feature_cost_trend_2026_q3.md):
@@ -146,23 +154,25 @@ def run_scheduled_anomaly_check(
     `database.get_claude_endpoint_cost_windows()` (recent 24h vs trailing
     7-day baseline, per endpoint).
 
-    Latency: `claude_audit_log` has no latency column (confirmed — see
-    `database.get_claude_endpoint_cost_windows` docstring; BLG-OPS-161 filed
-    as the prerequisite gap), so there is no real-data source to check
-    against in this execution environment or in production today. Per
-    RISK-03, this sub-criterion is delivered and verified against a
-    simulated feed only: pass `simulated_latency_feed` as
-    `{endpoint: {"recent_p95_ms": x, "baseline_p95_ms": y}}` to exercise it
-    (e.g. from a scheduler dry-run or this module's tests). When omitted,
-    latency checks are skipped and explicitly disclosed as pending via
-    `latency_data_source` in the return value — not silently passed.
+    Latency: real data by default, sourced from `claude_audit_log.latency_ms`
+    via `database.get_claude_endpoint_latency_windows()` (ST-13, BLG-OPS-161
+    — see that function's docstring). Endpoints with no `latency_ms` data
+    yet in the current window (either because no calls occurred, or because
+    all matching rows predate this column and are still NULL) are simply
+    absent from the real-data results, not fabricated as 0ms.
 
-    On any firing anomaly (cost or, when simulated, latency), sends a
-    Telegram alert reusing the delivery pattern already used by
+    `simulated_latency_feed` remains supported as `{endpoint:
+    {"recent_p95_ms": x, "baseline_p95_ms": y}}` for tests or a deliberate
+    dry-run — when passed, it is used *instead of* the real-data source
+    (not merged with it), and `latency_data_source` reports which one was
+    actually used.
+
+    On any firing anomaly (cost or latency), sends a Telegram alert reusing
+    the delivery pattern already used by
     `services.gemini_service.check_and_alert_daily_cost` (SI-05/BLG-OPS-57
     precedent) — not log-only, per this story's AC.
     """
-    from database import get_claude_endpoint_cost_windows
+    from database import get_claude_endpoint_cost_windows, get_claude_endpoint_latency_windows
 
     cost_results = []
     for window in get_claude_endpoint_cost_windows():
@@ -184,6 +194,17 @@ def run_scheduled_anomaly_check(
                     baseline_p95_latency_ms=values["baseline_p95_ms"],
                 )
             )
+        latency_data_source = "simulated_feed"
+    else:
+        for window in get_claude_endpoint_latency_windows():
+            latency_results.append(
+                check_latency_anomaly(
+                    endpoint=window["endpoint"],
+                    recent_p95_latency_ms=window["recent_p95_latency_ms"],
+                    baseline_p95_latency_ms=window["baseline_p95_latency_ms"],
+                )
+            )
+        latency_data_source = "claude_audit_log"
 
     firing = [r for r in cost_results + latency_results if r.is_anomaly]
     alert_sent = False
@@ -196,9 +217,7 @@ def run_scheduled_anomaly_check(
         "latency_anomalies": [_result_dict(r) for r in latency_results],
         "firing_count": len(firing),
         "alert_sent": alert_sent,
-        "latency_data_source": (
-            "simulated_feed" if simulated_latency_feed else "not_available_pending_BLG-OPS-161"
-        ),
+        "latency_data_source": latency_data_source,
     }
 
 
