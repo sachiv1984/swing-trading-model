@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-09-09 (sprint planning `2026-09-09__release-v9.3` — trend row appended); prior — 2026-09-08 (created — ST-14, v9.2 EPIC-03, BLG-QA-103)
+**Last Updated:** 2026-09-16 (sprint planning `2026-09-15__release-v9.5` — trend row appended); prior — 2026-09-09 (sprint planning `2026-09-09__release-v9.3` — trend row appended); prior — 2026-09-08 (created — ST-14, v9.2 EPIC-03, BLG-QA-103); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -32,6 +32,7 @@ A recurring `Unavailable` reading (the same environment gap appearing 2+ consecu
 
 | Cycle | Date | Dependencies scanned | Result | Resolution status | Notes |
 |-------|------|----------------------|--------|--------------------|-------|
+| `2026-09-15__release-v9.5` | 2026-09-16 | 58 | Clean | — | — |
 | `2026-09-14__release-v9.4` | 2026-09-14 | 58 | Clean | — | — |
 | `2026-09-09__release-v9.3` | 2026-09-09 | 57 | Clean | — | — |
 | `2026-09-07__release-v9.2` | 2026-09-07 | 58 | Clean | — | — |
