@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-16 (session — 1 new item added: `BLG-GOV-333` (reconcile sprint_planning_prompt.md STEP -1 status-vocabulary wording)); prior — 2026-09-15 (Release Planning `2026-09-15__release-v9.5` STEP 4 — 43-item / 27.99-day release slice appended, marker `RP:v9.5:2026-09-15__release-v9.5`); prior — 2026-09-15 (session — 1 new item added: `BLG-FE-177` (trade plan link display shows raw snake_case on trade entry)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-16 (session — 2 new items added: `BLG-BE-120`, `BLG-QA-179` (PR #1712 review findings — JsonLinesFormatter message-truncation gap and missing end-to-end JSON-log test)); prior — 2026-09-16 (session — 1 new item added: `BLG-BE-119` (calculate_trailing_stop's entry-price floor diverges from strategy_rules.md §7.2/§7.3 and the backtest tool)); prior — 2026-09-16 (session — 1 new item added: `BLG-BE-118` (list_backtest_rule_runs has no negative-limit validation and no offset param)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4421,6 +4421,94 @@ On trade entry, when linking to a trade plan, the linked plan's identifier/name 
 - STEP -1 Hard Gates 1–2 no longer contain a literal status enum independent of `shared_standards.md §10.1`
 - Next `plan sprint` invocation's preflight reads cleanly with no drift advisory needed
 - Head of Specs Team sign-off
+
+---
+
+### BLG-BE-118 — list_backtest_rule_runs has no negative-limit validation and no offset param
+**Priority:** P3 (Low)
+**Type:** Bug
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-03/EPIC-01/2026-09-15__release-v9.5 (BLG-BE-113) — discovered while implementing that story's screener limit/offset negative-value fix, out of scope for it — 2026-09-16
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.6
+
+**Problem**
+`GET /backtest-rule-changes/runs` (`backend/routers/backtest_rule_change.py::list_backtest_rule_runs`) accepts `limit: int = 20` with no lower-bound validation and has no `offset` param at all. A negative `limit` falls through to `get_backtest_rule_runs(limit=limit)`, and the endpoint's broad `except Exception` handler returns HTTP 500 with the raw exception message rather than a clean 400, the same class of gap BLG-BE-113 fixed on the screener endpoints.
+
+**Scope**
+- Validate `limit` is non-negative (and apply a sane upper bound, matching the screener endpoints' pattern) before calling `get_backtest_rule_runs`
+- Return HTTP 400 `INVALID_PARAMS` for a negative `limit` instead of relying on the generic exception handler
+- Decide whether an `offset` param is actually needed for this endpoint's use case (add if so; document why not if not)
+
+**Acceptance Criteria**
+- A negative `limit` on `GET /backtest-rule-changes/runs` returns HTTP 400 `INVALID_PARAMS`, not a 500
+- Existing passing behaviour for valid `limit` values is unchanged
+
+---
+
+### BLG-BE-119 — calculate_trailing_stop's entry-price floor for profitable positions diverges from strategy_rules.md §7.2/§7.3 and from the backtest tool
+**Priority:** P2 (Medium-High)
+**Type:** Backend / Strategy Correctness
+**Owner:** Strategy Rules & System Intent Owner; Backend Engineering Patterns Owner
+**Source:** ST-04/EPIC-01/2026-09-15__release-v9.5 (BLG-BE-114) — discovered while diffing the 3 named ATR trailing-stop implementations before attempting consolidation, per that story's own Notes ("file any unclear divergence as its own item rather than guess") — 2026-09-16
+**Effort:** S (~0.5–1d — mostly decision + documentation; code change scope depends on which side is chosen)
+**Provisional-Target:** v9.6
+**Depends on:** BLG-BE-114 (ST-04's consolidation cannot safely complete until this is ratified)
+
+**Problem**
+`backend/utils/calculations.py::calculate_trailing_stop` — the production function used by both call sites in `backend/services/position_service.py` (the nightly stop-update job and the position-analysis path) — computes `trailing_stop = max(current_stop, new_stop, entry_price)` for profitable positions, i.e. it floors the stop at `entry_price` ("protect gains", per its own inline comment). The canonical strategy spec `claude/strategy/strategy_rules.md` §7.2/§7.3 defines the formula with only two terms — `Stop = CurrentPrice - (ProfitATRMultiplier * ATR)` then `UpdatedStop = max(CurrentStop, NewlyCalculatedStop)` — with no entry-price floor at all. `backend/position_manager.py` (the standalone backtest tool)'s `analyze_positions()` and `tests/test_stop_reconciliation.py`'s `spec_stop`/`spec_updated_stop` helpers both correctly implement the two-term spec formula and reconcile against each other and against `golden_outputs.json` — but none of the existing golden vectors (SL-01 through SL-07) supply both an `entry_price` and a profitable `new_stop` below it, so this divergence between production and the documented spec has never been caught by any test. Backtest results are therefore not a faithful simulation of live behaviour for profitable positions, and no one has formally decided which formula is actually correct.
+
+**Scope**
+- Strategy Rules & System Intent Owner decides: (a) ratify the entry-price floor as intentional, add it to `strategy_rules.md` §7.2 as a normative rule (removing the now-stale two-term-only wording), and bring `position_manager.py`'s backtest formula into line with it — this will change backtest results for profitable positions; or (b) treat production's floor as an unintended deviation and decide whether to remove it from `calculate_trailing_stop` — this is a live trading behaviour change on real capital and needs explicit sign-off before any code change
+- Add a golden-output test case that actually exercises the entry-price-floor-binding scenario (profitable position, `new_stop` computed below `entry_price`) regardless of which side is chosen, so this class of gap cannot recur silently
+- Once ratified, resume `BLG-BE-114`/ST-04's shared-function consolidation using the now-single, decided formula
+
+**Acceptance Criteria**
+- A formal decision is recorded (either updates `strategy_rules.md` §7.2 to include the floor, or removes it from `calculate_trailing_stop` — not both, not neither)
+- `position_manager.py`, `calculate_trailing_stop`, and the spec formula all agree after the decision is implemented
+- A new golden-output case exercises the previously-untested entry-price-floor-binding scenario
+- `BLG-BE-114`/ST-04 unblocked and able to proceed to a single shared implementation
+
+---
+
+### BLG-BE-120 — JsonLinesFormatter does not truncate `message` to the spec's 500-char max
+**Priority:** P3 (Low)
+**Type:** Backend / Spec Conformance
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1712 review (Director of Quality agent-mediated review), EPIC-01/v9.5 (BLG-BE-112) — 2026-09-16
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.6
+
+**Problem**
+`backend/utils/json_log_formatter.py::JsonLinesFormatter` (added by `BLG-BE-112`/ST-02) does not truncate the `message` field to the 500-character max that `docs/specs/structured_logging_standards.md`'s §Structured Log Format table documents ("message | string | Free text (max 500 chars)"). An unbounded log message (e.g. a long exception string or a runaway f-string) could produce oversized JSON log lines, which is worth bounding given this repo already tracks log/AI-audit storage cost elsewhere (EPIC-02's cost-monitoring items).
+
+**Scope**
+- Truncate `message` to 500 characters in `JsonLinesFormatter.format()`, with a clear marker (e.g. trailing `"…[truncated]"`) when truncation occurs
+- Add a unit test confirming a message over 500 characters is truncated and one at/under the limit is untouched
+
+**Acceptance Criteria**
+- A log message longer than 500 characters is truncated to the spec's limit in the emitted JSON
+- Existing `tests/test_json_log_formatter.py` cases still pass unchanged
+
+---
+
+### BLG-QA-179 — No end-to-end test confirms backend/main.py's wired root logger actually emits JSON in situ
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** PR #1712 review (Director of Quality agent-mediated review), EPIC-01/v9.5 (BLG-BE-112) — 2026-09-16
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.6
+
+**Problem**
+`BLG-BE-112`/ST-02 added `tests/test_json_log_formatter.py` (unit coverage of `JsonLinesFormatter` in isolation) and relies on the pre-existing `tests/test_root_logging_config.py` (structural coverage of root logger handler count/level). Neither test connects the two: there is no test that actually runs application code through `backend/main.py`'s wired root logger handler and confirms the captured output is valid JSON Lines end-to-end. A future change that reintroduces a plain-text formatter, or wires a second handler with a different formatter, would not be caught by either existing suite.
+
+**Scope**
+- Add a subprocess-isolated test (following the existing pattern in `tests/test_root_logging_config.py`'s `_run_isolated()` helper) that imports `main`, emits a log line through a real application logger, captures stdout, and asserts it parses as JSON with the required fields
+
+**Acceptance Criteria**
+- A new test fails if `backend/main.py`'s root handler formatter is reverted to plain text or replaced with a non-JSON formatter
+- Test passes against the current implementation
 
 ---
 

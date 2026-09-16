@@ -2,8 +2,8 @@
 
 **Owner:** Strategy Rules & System Intent Owner  
 **Status:** Canonical  
-**Version:** 1.9
-**Last Updated:** 2026-09-08
+**Version:** 1.10
+**Last Updated:** 2026-09-16 (§7.2 formalises the profitable-position breakeven floor into the canonical formula — documentation-only, no live behaviour change); prior — 2026-09-08 (§12.2/§13.6/§15/§16 additions — documentation/process-only).
 **Applies to:** Production backtests, live system, and documentation  
 
 ---
@@ -12,6 +12,7 @@
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.10 | 16 September 2026 | §7.2's profitable-position formula gains an explicit `max(..., EntryPrice)` breakeven floor (ST-04, EPIC-01, v9.5, `BLG-BE-114`/`BLG-BE-119`) — Documentation-only: no change to live logic. Rationale: this has been live production behaviour since `BLG-BE-102` (v8.9) fixed a P0 bug where a profitable position's stop could stay frozen below entry; it was never back-ported into this formula, so `ST-04`'s attempted consolidation of the 3 "duplicate" trailing-stop implementations surfaced production diverging from this spec's literal text. Impact: documentation only — live logic (`calculate_trailing_stop`) is unchanged; the backtest tool (`position_manager.py`) is explicitly and intentionally exempted from this floor per the new §7.2 note, consistent with the `BLG-BE-102` precedent, so no backtest-comparability loss is introduced by this entry. No §13 boundary is touched. |
 | 1.9 | 8 September 2026 | New §12.2 data-volume threshold trigger (100 closed trades since last review), §13.6 SI-02 gate-history-tied periodic boundary review cadence, §15 version cross-reference consistency check (first run: 0 actionable findings), §16 change-justification template (ST-30/ST-39/ST-41/ST-42, EPIC-04, v9.2, BLG-GOV-255/BLG-GOV-262/BLG-GOV-282/BLG-GOV-306) — Documentation/process-only: no change to §4, §12.1, or §13.1/§13.2 canonical behaviour. Rationale: closes 4 independently-scoped governance gaps (calibration-review triggering, event-driven boundary re-check, citation-drift detection, changelog-quality standardisation) surfaced as separate backlog items this cycle. Impact: documentation only — no backtest, live-logic, or comparability impact; §12.3's comparability-acknowledgement requirement does not apply since no listed §12.1/§12.2 parameter value changed. §13 reference: §13.6 extends (does not alter) the existing §13.5 semi-annual cadence; no existing §13 clearance is reopened by this entry itself — SI-02's boundary is only re-reviewed if and when §13.6's own 2-breach trigger condition is later met. This entry is written per the new §16 template itself (first real application). |
 | 1.8 | 7 September 2026 | Added §4.1.8 worked numerical example of the low-ATR sizing edge case (ST-34, EPIC-05, v9.1, BLG-SPEC-101) — documents the existing interaction between §4.1's canonical risk-based sizing and §4.1.6's cash-constraint gate for low-volatility instruments. No functional/behavioural change — documentation only. Version chosen as 1.8, not 1.7, to avoid a collision with EPIC-04's independently in-flight (not yet merged) 1.6→1.7 bump (ST-21, §13.5 roster row, commit `5a65aadf`) — same precedent applied earlier this cycle to `OPERATIONAL_GUIDE.md` (v4.174) and `backlog.md` (BLG-QA-159). |
 | 1.7 | 7 September 2026 | Added ST-06 — Automated AI Post-Trade Debrief (BLG-FEAT-90) to §13.5's semi-annual re-attestation roster (ST-21, EPIC-04, v9.1, BLG-GOV-311) — `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`, CONDITIONAL determination, v8.9, 9 binding conditions remain in force. Reviewed against the review document's own reasoning before adding, not a mechanical copy: this feature is the highest-condition-count (9) and highest-risk free-text surface reviewed under §13 to date (per-trade, numeric-claim-bearing), making it a genuinely warranted — arguably higher-priority — addition to the re-attestation roster, not just a mechanical registration. No behavioural rules changed. |
@@ -350,10 +351,13 @@ Stop = CurrentPrice - (InitialATRMultiplier * ATR)
 
 **Profitable positions**
 ```text
-Stop = CurrentPrice - (ProfitATRMultiplier * ATR)
+Stop = max(CurrentPrice - (ProfitATRMultiplier * ATR), EntryPrice)
 ```
-- Tight trailing stop intended to lock in gains.  
+- Tight trailing stop intended to lock in gains.
 - Reduces drawdowns on winning positions.
+- **Breakeven floor (added v1.10, ST-04/BLG-BE-114/BLG-BE-119, EPIC-01, v9.5):** a profitable position's stop must never sit below its own entry price — otherwise the "tight, gain-locking" stop could paradoxically land below breakeven, defeating §12.1's stable "profits are defended once momentum is confirmed" element. This has been the live production behaviour (`backend/utils/calculations.py::calculate_trailing_stop`) since `BLG-BE-102` (v8.9) fixed a P0 bug where a profitable position's stop could stay frozen at its stale, wide entry-time value; this entry formalises that already-shipped behaviour into the canonical formula rather than leaving it undocumented here. No live behaviour changes as a result of this documentation update.
+- **§12.3 "applied consistently across backtests, live logic, and documentation" — explicit exception, per the BLG-BE-102 precedent:** `backend/position_manager.py` (the standalone backtest tool) deliberately does **not** implement this floor. `tests/test_stop_reconciliation.py` exists specifically to reconcile the *shared base formula* (the un-floored ATR trail) between the backtest tool and this spec, not to require full live-parity in an offline historical-simulation tool — see that test module's own docstring and `tests/test_trailing_stop_breakeven_floor.py`'s `TestPositionManagerNotOnLiveStopPath` for the confirmed, tested code-path separation. Backtest results are therefore not directly comparable to live stop levels for a profitable position that would have hit this floor; this has been true, tested, and accepted since v8.9 and is not a new comparability loss introduced here.
+- **Sign-off:** Strategy Rules & System Intent Owner — Approved. Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role — §5.3, on explicit user direction), 2026-09-16.
 
 ### 7.3 Stop movement rule (hard constraint)
 

@@ -16,10 +16,19 @@ import logging
 # (docs/ops/api_performance_baseline.md §36.5). basicConfig() must run
 # before any other module logs anything, so it's the first statement in
 # this file, ahead of every other import.
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s [%(correlation_id)s]: %(message)s",
-)
+#
+# ST-02 (EPIC-01, v9.5, BLG-BE-112): output is JSON Lines (NDJSON) per
+# docs/specs/structured_logging_standards.md §Structured Log Format,
+# replacing the plain-text format string this previously used (that gap
+# was documented as DEV-v9.3-ST03-01 in that spec's Known Deviations
+# section). Passing `handlers=` rather than `format=` preserves
+# basicConfig()'s existing no-op-if-a-handler-already-exists behaviour
+# (tests/test_root_logging_config.py::test_basicconfig_is_a_no_op_if_root_already_has_a_handler).
+from utils.json_log_formatter import JsonLinesFormatter  # noqa: E402
+
+_root_handler = logging.StreamHandler()
+_root_handler.setFormatter(JsonLinesFormatter())
+logging.basicConfig(level=logging.INFO, handlers=[_root_handler])
 
 # ST-03 (EPIC-01, v9.3, BLG-BE-48): install the correlation-ID log record
 # factory so every log line emitted anywhere in the backend (any

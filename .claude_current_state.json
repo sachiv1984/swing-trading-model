@@ -1,9 +1,9 @@
 {
   "active_cycle": "2026-09-15__release-v9.5",
   "cycle_name": "v9.5 \u2014 Full-Capacity Debt Clearance III",
-  "status": "Sprint_Planning_Complete",
-  "prior_status": "Closed",
-  "engine": "Sprint Planning",
+  "status": "Executing",
+  "prior_status": "Sprint_Planning_Complete",
+  "engine": "Sprint Execution",
   "execution_state_path": "claude/cycles/2026-09-15__release-v9.5/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-09-15__release-v9.5/stage4_backlog_slice.md",
   "design_gate_required": true,

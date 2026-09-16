@@ -116,6 +116,26 @@ class TestScreenerEnvelope:
         resp = CLIENT.get("/screener/results", params={"limit": 500})
         _assert_canonical_error(resp, 400)
 
+    def test_screener_results_400_on_negative_limit(self):
+        """ST-03, EPIC-01, v9.5, BLG-BE-113."""
+        resp = CLIENT.get("/screener/results", params={"limit": -1})
+        _assert_canonical_error(resp, 400)
+
+    def test_screener_results_400_on_negative_offset(self):
+        """ST-03, EPIC-01, v9.5, BLG-BE-113."""
+        resp = CLIENT.get("/screener/results", params={"offset": -1})
+        _assert_canonical_error(resp, 400)
+
+    def test_screener_history_400_on_negative_limit(self):
+        """ST-03, EPIC-01, v9.5, BLG-BE-113."""
+        resp = CLIENT.get("/screener/history", params={"limit": -1})
+        _assert_canonical_error(resp, 400)
+
+    def test_screener_history_400_on_negative_offset(self):
+        """ST-03, EPIC-01, v9.5, BLG-BE-113."""
+        resp = CLIENT.get("/screener/history", params={"offset": -1})
+        _assert_canonical_error(resp, 400)
+
 
 class TestStrategyBenchmarkEnvelope:
     @patch("routers.strategy_benchmark.database.ensure_backtest_tables", side_effect=RuntimeError("db down"))

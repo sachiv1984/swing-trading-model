@@ -1,8 +1,8 @@
 **Owner:** Head of Engineering
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.1
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 remediation, `LL-v9.4-Closure-01` — both Known Deviations entries retroactively assigned `DEV-v9.3-ST03-01`/`DEV-v9.3-ST03-02`, closing a DEV-ID assignment gap; no normative change); prior — 2026-09-09 (ST-03, EPIC-01, v9.3 — Known Deviations section added; no normative change); prior — 2026-03-02 (initial draft)
+**Version:** 0.2.0
+**Last Updated:** 2026-09-16 (ST-02, EPIC-01, v9.5, BLG-BE-112 — backend log output now conforms to this document's JSON Lines format, closing DEV-v9.3-ST03-01; `service` field revised from a fixed 5-value enum to the originating module's dotted logger name, matching actual practice); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 remediation, `LL-v9.4-Closure-01` — DEV-ID assignment, no normative change); prior — 2026-09-09 (ST-03, EPIC-01, v9.3 — Known Deviations section added; no normative change); prior history retained — see prior entries in version control.
 
 
 > **Lifecycle Sign-off:** Head of Specs Team — Class 1 (Canonical Specification) assigned 2026-03-02 (Delegated Authority). This document is the authoritative source of truth for structured logging standards. All backend implementations must conform. v2.0 hard gate (structured logging / observability) cleared.
@@ -59,7 +59,7 @@ Every log record **MUST** include all of the following fields:
 | `timestamp` | string | ISO-8601 UTC (`YYYY-MM-DDTHH:MM:SS.ffffffZ`) | Time the event occurred. Always UTC. Never local time. |
 | `level` | string | `"ERROR"`, `"WARNING"`, `"INFO"`, `"DEBUG"` | Log level. Always uppercase. |
 | `correlation_id` | string | UUID v4 or `"none"` | Request or job correlation ID. `"none"` only for startup events with no request context. |
-| `service` | string | `"api"`, `"validation"`, `"analytics"`, `"signals"`, `"scheduler"` | Originating service component. |
+| `service` | string | Dotted logger name of the originating module, e.g. `"main"`, `"services.position_service"`, `"routers.screener"` (added ST-02, EPIC-01, v9.5, BLG-BE-112 — see Changelog) | Originating service component. |
 | `message` | string | Free text (max 500 chars) | Human-readable description of the event. Must not contain PII or secrets. |
 
 ### Optional Domain Fields
@@ -85,7 +85,7 @@ These fields may be added when relevant. All are optional.
   "timestamp": "2026-03-02T10:15:30.123456Z",
   "level": "ERROR",
   "correlation_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-  "service": "api",
+  "service": "services.portfolio_service",
   "message": "Database write failed for portfolio snapshot",
   "endpoint": "POST /portfolio/snapshot",
   "status_code": 500,
@@ -203,13 +203,13 @@ The following must **never** appear in any log record, regardless of level:
 
 Per `claude/charter/document_lifecycle_guide.md` §9 (Known Deviation Documentation Standard).
 
-**DEV-v9.3-ST03-01 (added retroactively, `LL-v9.4-Closure-01` DEV-ID assignment remediation)**
+**DEV-v9.3-ST03-01 — RESOLVED (ST-02, EPIC-01, `2026-09-15__release-v9.5`, BLG-BE-112)**
 
 **Deviation 1 — Backend log output is plain text, not JSON Lines**
-- **Deviation description:** `backend/main.py`'s `logging.basicConfig` emits plain-text formatted log lines (`"%(asctime)s %(levelname)s %(name)s [%(correlation_id)s]: %(message)s"`), not the JSON Lines (NDJSON) format this document's §Structured Log Format mandates.
+- **Deviation description:** `backend/main.py`'s `logging.basicConfig` emitted plain-text formatted log lines (`"%(asctime)s %(levelname)s %(name)s [%(correlation_id)s]: %(message)s"`), not the JSON Lines (NDJSON) format this document's §Structured Log Format mandates.
 - **Canonical requirement:** All log output MUST be valid JSON, one object per line, with the required fields listed in §Structured Log Format.
 - **Priority:** P3
-- **Target resolution release:** Backlog (reviewed at next quarterly audit per the P3 resolution rule)
+- **Resolution:** `backend/main.py` now installs `backend/utils/json_log_formatter.JsonLinesFormatter` on the root logger's handler, emitting one JSON object per line with all required fields. `service` is populated from the record's dotted logger name (e.g. `"services.position_service"`) rather than the originally-illustrated 5-value enum — see the revised `service` row above and the Changelog entry below. No existing log-based monitoring/alerting was found to depend on the prior plain-text layout (confirmed: no workflow or script parses backend log lines by format; `render-si05-log-query.yml`'s `text=si05` substring search still matches within the JSON `message` field). Covered by `tests/test_json_log_formatter.py`; full backend suite (1495 tests) re-run clean.
 - **Owner:** Backend Engineering Patterns Owner; Head of Engineering
 - **Backlog reference:** `BLG-BE-112`
 - **Found:** ST-03 (EPIC-01, `2026-09-09__release-v9.3`, BLG-BE-48) — discovered while implementing correlation-ID propagation; pre-existing, not introduced by that story.
@@ -231,5 +231,6 @@ Per `claude/charter/document_lifecycle_guide.md` §9 (Known Deviation Documentat
 
 | Version | Date | Change | Author |
 |---------|------|--------|--------|
+| 0.2.0 | 2026-09-16 | ST-02 (EPIC-01, v9.5, BLG-BE-112): Backend log output now conforms to §Structured Log Format's JSON Lines requirement (`backend/main.py` + new `backend/utils/json_log_formatter.py`), resolving `DEV-v9.3-ST03-01`. `service` field's row revised from a fixed 5-value enum to the originating module's dotted logger name — the enum never matched the ~35 distinct `backend/services/`+`backend/routers/` modules in practice. No regression: no existing log-based monitoring/alerting was found to parse the prior plain-text layout. | Sprint Execution Engine (autonomous) |
 | 0.1.1 | 2026-09-09 | ST-03 (EPIC-01, v9.3, BLG-BE-48): Added §Known Deviations documenting (1) backend log output remains plain-text, not the JSON Lines this spec mandates (pre-existing gap, `BLG-BE-112` filed), and (2) the correlation-ID propagation mechanism actually implemented (`backend/utils/correlation_id.py`, contextvars-based) differs from this document's `request.state`-based sample, because service/database-layer log lines have no access to the `Request` object. No change to this document's normative requirements. | Sprint Execution Engine (autonomous) |
 | 0.1.0 | 2026-03-02 | Initial draft — TASK-11/12/13/14/15 complete. TASK-16: Class 1 (Canonical Specification) assigned by Head of Specs Team (Delegated Authority). Document status set to Active. v2.0 hard gate cleared. | Head of Engineering + Head of Specs Team |
