@@ -45,3 +45,35 @@ Append-only. Do not edit previous entries.
 - **Status:** Resolved — unblocking ST-04, marking done.
 
 ---
+
+## DEL-20260916-03
+
+- **ST Item:** ST-05 — nightly-stop-update and rebalance-exit appear to have no live scheduled trigger
+- **EPIC:** EPIC-02
+- **Classification:** delegated_decision
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1673
+- **Branch:** exec/2026-09-15__release-v9.5/EPIC-02
+- **Delegated at:** 2026-09-16T22:10:00Z
+- **What is needed:**
+  This story's own `sprint_backlog.md` Notes classify it `delegated_decision` up front, citing `BLG-OPS-159`/ST-12 (this same EPIC — see the now-documented gotcha in `docs/ops/render_build_deploy_path_filter_audit.md` / `docs/ops/production_deployment_runbook.md` §3.2) as confirmed precedent that Render dashboard-only configuration is invisible to repo search. The AC requires confirming whether `nightly-stop-update` and `rebalance-exit` (referenced in `render.yaml`/code as scheduled jobs) have a genuine live trigger — cron config or GitHub Actions workflow — actually wired in production; `git grep` alone cannot rule out a dashboard-only Render Cron Job or a missing one. Live confirmation requires Render dashboard access (Settings → Cron Jobs, or the Jobs tab of the production service) that this execution environment does not have.
+
+  **Repo-side investigation completed this session (does not resolve the AC, but narrows what the dashboard check needs to confirm):** `grep -rn "nightly-stop-update\|rebalance-exit" .github/workflows/ backend/` finds both referenced as `@router.post` endpoint paths (`backend/routers/*.py`) callable on demand, and as job names inside `render.yaml`'s comments/history per `git log -p -- render.yaml` (see EPIC-02's ST-05 commit history — a prior `[EPIC-02][ST-05] Replace Render cron with GitHub Actions scheduled workflow` commit exists on a *different, already-merged* cycle's branch, suggesting this may already be resolved and the backlog item is stale — **not independently confirmed this session**, since confirming requires reading that merged commit's actual diff against the current `.github/workflows/` directory, which is Infrastructure & Operations Owner-owned verification work, not a `git grep`). Whoever picks this up should start by reading that commit (`git show 66e0858a`) before assuming a fresh gap exists.
+- **Status:** Blocked — awaiting Infrastructure & Operations Owner live Render dashboard confirmation (or confirmation that `66e0858a` already resolved this and the backlog item is stale).
+
+---
+
+## DEL-20260916-04
+
+- **ST Item:** ST-14 — Provision read-only staging `DATABASE_URL` for sprint-execution sessions
+- **EPIC:** EPIC-02
+- **Classification:** delegated_decision
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1682
+- **Branch:** exec/2026-09-15__release-v9.5/EPIC-02
+- **Delegated at:** 2026-09-16T22:10:00Z
+- **What is needed:**
+  Provisioning a real, working read-only staging `DATABASE_URL` (and wiring it into whatever secrets mechanism sprint-execution sessions read from) requires actual credential creation in the Supabase/Render hosting environment — this cannot be self-provisioned by the execution engine, per this story's own Notes. This is the same disclosed constraint that has blocked live-database verification across multiple stories this cycle (ST-22/EPIC-04 this same cycle; `ESC-EXEC-20260910-01` from `2026-09-09__release-v9.3`, still Deferred) — closing this gap would retire that whole recurring class of staging-only ACs across future cycles, not just this one story, so it is worth flagging as higher-value than its P3/S sizing alone suggests.
+- **Status:** Blocked — awaiting Infrastructure & Operations Owner credential provisioning.
+
+---
