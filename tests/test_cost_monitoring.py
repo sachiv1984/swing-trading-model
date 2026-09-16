@@ -427,16 +427,71 @@ def test_purge_claude_audit_log_db_failure_returns_zero_not_exception():
 
 
 # ---------------------------------------------------------------------------
-# routers/cost_monitoring.py — POST /ops/purge-audit-logs (ST-13)
+# purge_api_call_log_older_than_90_days / count_*_older_than (ST-07, ST-06 sub-item 3)
 # ---------------------------------------------------------------------------
 
-def test_purge_audit_logs_endpoint_returns_both_counts():
+def test_purge_api_call_log_returns_deleted_count():
+    mock_conn, mock_cursor = _mock_conn()
+    mock_cursor.rowcount = 4
+    with patch.object(database, "get_db", return_value=mock_conn):
+        with patch.object(database, "ensure_api_call_log_table"):
+            result = database.purge_api_call_log_older_than_90_days()
+    assert result == 4
+    executed_sql = mock_cursor.execute.call_args[0][0]
+    assert "api_call_log" in executed_sql
+    assert "INTERVAL '90 days'" in executed_sql
+
+
+def test_purge_api_call_log_db_failure_returns_zero_not_exception():
+    with patch.object(database, "get_db", side_effect=Exception("connection refused")):
+        result = database.purge_api_call_log_older_than_90_days()
+    assert result == 0
+
+
+def test_count_api_call_log_older_than_90_days_returns_count():
+    mock_conn, mock_cursor = _mock_conn(fetchone_row={"c": 12})
+    with patch.object(database, "get_db", return_value=mock_conn):
+        with patch.object(database, "ensure_api_call_log_table"):
+            result = database.count_api_call_log_older_than_90_days()
+    assert result == 12
+
+
+def test_count_claude_audit_log_older_than_730_days_returns_count():
+    mock_conn, mock_cursor = _mock_conn(fetchone_row={"c": 3})
+    with patch.object(database, "get_db", return_value=mock_conn):
+        result = database.count_claude_audit_log_older_than_730_days()
+    assert result == 3
+
+
+def test_count_gemini_audit_log_older_than_90_days_returns_count():
+    mock_conn, mock_cursor = _mock_conn(fetchone_row={"c": 0})
+    with patch.object(database, "get_db", return_value=mock_conn):
+        result = database.count_gemini_audit_log_older_than_90_days()
+    assert result == 0
+
+
+def test_count_functions_db_failure_returns_zero_not_exception():
+    with patch.object(database, "get_db", side_effect=Exception("boom")):
+        assert database.count_api_call_log_older_than_90_days() == 0
+        assert database.count_claude_audit_log_older_than_730_days() == 0
+        assert database.count_gemini_audit_log_older_than_90_days() == 0
+
+
+# ---------------------------------------------------------------------------
+# routers/cost_monitoring.py — POST /ops/purge-audit-logs (ST-13, ST-07, ST-06)
+# ---------------------------------------------------------------------------
+
+def test_purge_audit_logs_endpoint_returns_all_three_counts():
     from fastapi.testclient import TestClient
     from main import app
 
     client = TestClient(app, raise_server_exceptions=False)
     with patch("database.purge_gemini_audit_log_older_than_90_days", return_value=3), \
-         patch("database.purge_claude_audit_log_older_than_730_days", return_value=5):
+         patch("database.purge_claude_audit_log_older_than_730_days", return_value=5), \
+         patch("database.purge_api_call_log_older_than_90_days", return_value=2), \
+         patch("database.count_gemini_audit_log_older_than_90_days", return_value=0), \
+         patch("database.count_claude_audit_log_older_than_730_days", return_value=0), \
+         patch("database.count_api_call_log_older_than_90_days", return_value=0):
         r = client.post("/ops/purge-audit-logs")
     assert r.status_code == 200
     body = r.json()
@@ -444,18 +499,58 @@ def test_purge_audit_logs_endpoint_returns_both_counts():
     assert body["data"] == {
         "gemini_audit_log_rows_deleted": 3,
         "claude_audit_log_rows_deleted": 5,
+        "api_call_log_rows_deleted": 2,
+        "possible_silent_failure": [],
     }
 
 
-def test_purge_audit_logs_endpoint_calls_both_purge_functions_even_when_idempotent():
-    """Both tables are always attempted, regardless of how many rows qualify."""
+def test_purge_audit_logs_endpoint_calls_all_three_purge_functions_even_when_idempotent():
+    """All three tables are always attempted, regardless of how many rows qualify."""
     from fastapi.testclient import TestClient
     from main import app
 
     client = TestClient(app, raise_server_exceptions=False)
     with patch("database.purge_gemini_audit_log_older_than_90_days", return_value=0) as mock_gemini, \
-         patch("database.purge_claude_audit_log_older_than_730_days", return_value=0) as mock_claude:
+         patch("database.purge_claude_audit_log_older_than_730_days", return_value=0) as mock_claude, \
+         patch("database.purge_api_call_log_older_than_90_days", return_value=0) as mock_api_call, \
+         patch("database.count_gemini_audit_log_older_than_90_days", return_value=0), \
+         patch("database.count_claude_audit_log_older_than_730_days", return_value=0), \
+         patch("database.count_api_call_log_older_than_90_days", return_value=0):
         r = client.post("/ops/purge-audit-logs")
     assert r.status_code == 200
     mock_gemini.assert_called_once()
     mock_claude.assert_called_once()
+    mock_api_call.assert_called_once()
+
+
+def test_purge_audit_logs_endpoint_flags_possible_silent_failure():
+    """ST-06 sub-item 3: 0 deleted + stale rows still present -> flagged, not silent."""
+    from fastapi.testclient import TestClient
+    from main import app
+
+    client = TestClient(app, raise_server_exceptions=False)
+    with patch("database.purge_gemini_audit_log_older_than_90_days", return_value=0), \
+         patch("database.purge_claude_audit_log_older_than_730_days", return_value=0), \
+         patch("database.purge_api_call_log_older_than_90_days", return_value=0), \
+         patch("database.count_gemini_audit_log_older_than_90_days", return_value=0), \
+         patch("database.count_claude_audit_log_older_than_730_days", return_value=9), \
+         patch("database.count_api_call_log_older_than_90_days", return_value=0):
+        r = client.post("/ops/purge-audit-logs")
+    assert r.status_code == 200
+    assert r.json()["data"]["possible_silent_failure"] == ["claude_audit_log"]
+
+
+def test_purge_audit_logs_endpoint_zero_deleted_and_zero_stale_is_healthy_not_flagged():
+    """0 deleted + 0 stale rows remaining is the normal healthy case (nothing to do)."""
+    from fastapi.testclient import TestClient
+    from main import app
+
+    client = TestClient(app, raise_server_exceptions=False)
+    with patch("database.purge_gemini_audit_log_older_than_90_days", return_value=0), \
+         patch("database.purge_claude_audit_log_older_than_730_days", return_value=0), \
+         patch("database.purge_api_call_log_older_than_90_days", return_value=0), \
+         patch("database.count_gemini_audit_log_older_than_90_days", return_value=0), \
+         patch("database.count_claude_audit_log_older_than_730_days", return_value=0), \
+         patch("database.count_api_call_log_older_than_90_days", return_value=0):
+        r = client.post("/ops/purge-audit-logs")
+    assert r.json()["data"]["possible_silent_failure"] == []

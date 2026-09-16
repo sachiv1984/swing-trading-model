@@ -2674,6 +2674,80 @@ def get_api_call_report(service: str, window: str = "daily") -> dict:
         return {"service": service, "window": window, "total_calls": 0, "success_count": 0, "failure_count": 0}
 
 
+def purge_api_call_log_older_than_90_days() -> int:
+    """Delete api_call_log rows older than 90 days. Returns rows deleted.
+    ST-07 (BLG-OPS-154, EPIC-02, v9.5) — mirrors purge_claude_audit_log_older_than_730_days()'s
+    fail-safe shape. Retention window rationale:
+    docs/ops/ai_audit_log_retention_policy.md §api_call_log — 90 days matches
+    gemini_audit_log's window; api_call_log is short-lived rate-limit/quota
+    instrumentation (call counts only, no cost/compliance value), not a
+    long-range audit trail like claude_audit_log."""
+    try:
+        ensure_api_call_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "DELETE FROM api_call_log WHERE called_at < NOW() - INTERVAL '90 days'"
+                )
+                deleted = cur.rowcount
+            conn.commit()
+        return deleted
+    except Exception:
+        return 0
+
+
+def count_api_call_log_older_than_90_days() -> int:
+    """Read-only count of api_call_log rows past the 90-day retention
+    window, independent of purge_api_call_log_older_than_90_days()'s DELETE
+    -- used to detect a silently-broken purge (BLG-OPS-153 sub-item 3, ST-06):
+    if this is > 0 immediately after a purge run reported 0 rows deleted,
+    the purge itself is malfunctioning, not merely "nothing to delete"."""
+    try:
+        ensure_api_call_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT COUNT(*) AS c FROM api_call_log WHERE called_at < NOW() - INTERVAL '90 days'"
+                )
+                return int(cur.fetchone()["c"])
+    except Exception:
+        return 0
+
+
+def count_gemini_audit_log_older_than_90_days() -> int:
+    """Read-only count of gemini_audit_log rows past its 90-day retention
+    window -- silent-purge-failure counterpart to count_api_call_log_older_than_90_days()
+    / count_claude_audit_log_older_than_730_days() (BLG-OPS-153 sub-item 3, ST-06)."""
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT COUNT(*) AS c FROM gemini_audit_log WHERE generated_at < NOW() - INTERVAL '90 days'"
+                )
+                return int(cur.fetchone()["c"])
+    except Exception:
+        return 0
+
+
+def count_claude_audit_log_older_than_730_days() -> int:
+    """Read-only count of claude_audit_log rows past its 730-day retention
+    window -- silent-purge-failure counterpart to
+    purge_claude_audit_log_older_than_730_days() (BLG-OPS-153 sub-item 3, ST-06):
+    if this is > 0 immediately after a purge run reported 0 rows deleted,
+    the purge itself is malfunctioning (e.g. a permissions issue that blocks
+    DELETE but not SELECT), not merely "nothing to delete"."""
+    try:
+        ensure_claude_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT COUNT(*) AS c FROM claude_audit_log WHERE generated_at < NOW() - INTERVAL '730 days'"
+                )
+                return int(cur.fetchone()["c"])
+    except Exception:
+        return 0
+
+
 def get_api_session_report(service: str, anomaly_multiplier: float = 2.0) -> dict:
     """Per-session call counts for `service` over the last 7 days, with an
     overall baseline (mean calls/session, reported for context) and sessions

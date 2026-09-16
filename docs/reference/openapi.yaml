@@ -3514,12 +3514,15 @@ paths:
       tags: [Cost Monitoring]
       summary: Delete AI audit log rows past their retention window
       description: |
-        Deletes gemini_audit_log rows older than 90 days and claude_audit_log
-        rows older than 730 days (24 months), enforcing the retention windows
-        in docs/ops/ai_audit_log_retention_policy.md. Idempotent -- safe to
+        Deletes gemini_audit_log rows older than 90 days, claude_audit_log
+        rows older than 730 days (24 months), and api_call_log rows older
+        than 90 days, enforcing the retention windows in
+        docs/ops/ai_audit_log_retention_policy.md. Idempotent -- safe to
         call repeatedly (e.g. from a daily scheduled workflow); deletes
-        nothing when no rows qualify.
-        Canonical contract: docs/specs/api_contracts/ops_endpoints.md v1.1 §POST /ops/purge-audit-logs
+        nothing when no rows qualify. Also returns possible_silent_failure,
+        flagging any table where 0 rows were deleted despite an independent
+        count finding stale rows still present.
+        Canonical contract: docs/specs/api_contracts/ops_endpoints.md v1.2 §POST /ops/purge-audit-logs
       responses:
         "200":
           description: Purge completed (possibly deleting 0 rows)
@@ -3537,6 +3540,12 @@ paths:
                             type: integer
                           claude_audit_log_rows_deleted:
                             type: integer
+                          api_call_log_rows_deleted:
+                            type: integer
+                          possible_silent_failure:
+                            type: array
+                            items:
+                              type: string
         "401":
           $ref: "#/components/responses/Unauthorized"
         "500":
