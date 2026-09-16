@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-09-09 (ST-05, BLG-QA-82, v9.3 — SignalCard rows consolidated to signal-card.spec.js); prior — 2026-08-08 (ST-26, BLG-QA-116, v8.4, full backfill); prior history retained — see prior entries in version control
-**Source:** refreshed v9.3 ST-05 (BLG-QA-82, SignalCard consolidation); refreshed v8.4 ST-26 (BLG-QA-116, full backfill); refreshed v7.6 ST-02 (BLG-QA-112); refreshed v5.9 ST-10 — prior history retained, see prior entries in version control
+**Last Updated:** 2026-09-16 (ST-20, BLG-QA-169, v9.5 — added real before/after runtime evidence for the v9.3 SignalCard consolidation); prior — 2026-09-09 (ST-05, BLG-QA-82, v9.3 — SignalCard rows consolidated to signal-card.spec.js); prior — 2026-08-08 (ST-26, BLG-QA-116, v8.4, full backfill); prior history retained — see prior entries in version control
+**Source:** refreshed v9.5 ST-20 (BLG-QA-169, SignalCard runtime evidence); refreshed v9.3 ST-05 (BLG-QA-82, SignalCard consolidation); refreshed v8.4 ST-26 (BLG-QA-116, full backfill) — prior history retained, see prior entries in version control
 
 ---
 
@@ -168,7 +168,7 @@ Source directory: `tests/e2e/`
 | si01-si03-integration.spec.js | 10 | SI-01/SI-03 integration | v3.9 |
 | si04-version-comparison.spec.js | 5 | SI-04 strategy-version performance comparison | v7.7 |
 | sidebar-nav-groups.spec.js | 8 | Sidebar navigation groups | v3.3 |
-| signal-card.spec.js | 12 | SignalCard: watchlist add, cash balance, allocation-insufficient badge (consolidated v9.3, BLG-QA-82; was 3 files: signals-add-to-watchlist v5.3, signals-allocation-insufficient v5.0, signals-cash-balance v5.0) | v9.3 |
+| signal-card.spec.js | 12 | SignalCard: watchlist add, cash balance, allocation-insufficient badge (consolidated v9.3, BLG-QA-82; was 3 files: signals-add-to-watchlist v5.3, signals-allocation-insufficient v5.0, signals-cash-balance v5.0). Runtime evidence: §"SignalCard Consolidation Runtime Evidence" below (v9.5, BLG-QA-169). | v9.3 |
 | slippage-tracking.spec.js | 8 | Slippage tracking | v3.6 |
 | smoke-critical-paths.spec.js | 3 | Smoke — critical paths | v2.0 |
 | staleness-indicator.spec.js | 5 | Data staleness indicator | v3.2 |
@@ -239,6 +239,27 @@ Gap tracking: BLG-QA-50 (source backlog item for this document). New gap items s
 
 ---
 
+## SignalCard Consolidation Runtime Evidence (ST-20, BLG-QA-169, EPIC-03, v9.5)
+
+ST-05 (v9.3, BLG-QA-82)'s acceptance criteria claimed "suite runtime reduced" from consolidating 3 SignalCard Playwright spec files into `signal-card.spec.js`, but no before/after timing number was ever captured anywhere (PR #1630, `qa_evidence_EPIC-02.md`, or this document). This section records a real measurement, per this story's own AC, which **partially corrects rather than simply substantiates** the original claim.
+
+**Method:** `time npx playwright test <files> --project=chromium --reporter=list`, against the current `signal-card.spec.js` ("after") and the 3 pre-consolidation files restored via `git show e474655c:tests/e2e/signals-{add-to-watchlist,cash-balance,allocation-insufficient}.spec.js` ("before", `e474655c` = parent of the consolidation commit `e06cfa94`), run locally in this session (CI=true build+serve webServer path, matching CI's own methodology).
+
+| Run | Config | Wall-clock | Sum of individual test durations |
+|-----|--------|------------|-----------------------------------|
+| Before (3 files) | default workers (3, one per file) | 84.1s | — |
+| Before (3 files) | `--workers=1` (controlled, serial) | 89.0s | ~17.7s |
+| After (1 file) | default workers (1 — single file) | 86.6s | ~16.3s |
+
+**Finding — nuanced, not a clean "reduced":**
+- **Isolated test-execution time** (excluding the ~70s webServer build/boot overhead common to every run, unaffected by which spec files run): ~17.7s → ~16.3s, **≈8% faster**, under a controlled equal-worker (`--workers=1`) comparison. This is real and consistent with the claimed mechanism (shared setup, fewer browser-context spins) — but the absolute saving is small (~1.4s).
+- **Total wall-clock time**, which is what CI actually experiences: consolidation did **not** meaningfully reduce it (86.6s after vs. 84.1s before, under each configuration's own *default* worker count) — because Playwright's default worker allocation is roughly one worker per spec *file*, the 3 original files got "free" cross-file parallelism (3 workers) that merging them into 1 file removed (1 worker). The per-test setup saving from consolidation is real but small enough to be roughly offset by the lost file-level parallelism under default settings.
+- **Conclusion:** the original "suite runtime reduced" claim is **not fabricated but is imprecise** — true for isolated per-test execution time under an equal-worker comparison, not true (or at best a wash) for the wall-clock time that actually matters for CI duration under Playwright's default sharding-by-file behaviour. ST-05's actual value was coverage-neutral consolidation (all 12 scenarios retained, confirmed at the time) and maintainability (1 file vs. 3, shared helpers), not a meaningful runtime win — this should be the framing used if this consolidation is cited as precedent for future spec-file merges.
+
+**Cleanup:** the 3 restored pre-consolidation files were used only for this timing run and removed immediately after (`git status --short` confirmed clean before proceeding) — they are not reintroduced to `tests/e2e/`.
+
+---
+
 ## Change History
 
 | Version | Date | Change | Author |
@@ -247,6 +268,7 @@ Gap tracking: BLG-QA-50 (source backlog item for this document). New gap items s
 | 1.1 | 2026-06-17 | v5.9 refresh: scenario counts corrected (391 total; 3 spec files gained scenarios since v5.5 — si01-si03-integration +2, arc5-compliance-section +1, red-flag-journal +1); header count corrected; pending: v5.9 ST-11 spec to add 42nd file | Sprint Execution Engine (v5.9 ST-10) |
 | 1.2 | 2026-07-20 | ST-02 (EPIC-02, v7.6, BLG-QA-112): Added 5 spec file entries covering `BLG-FE-115`–`BLG-FE-119` interaction surfaces (command-palette, custom-price-alerts, bulk-actions-toolbar, saved-filters-calendar-view, print-export-pdf; 50 scenarios total) per this item's acceptance criteria. Totals updated to 46 files / 441 scenarios. Flagged (not fixed, out of this item's scope) a broader cataloguing gap: 24 further spec files added v6.0–v7.3 remain undocumented — filed as `BLG-QA-116`. | Sprint Execution Engine (autonomous class) |
 | 1.3 | 2026-08-08 | ST-26 (EPIC-06, v8.4, BLG-QA-116): Full backfill. Added 41 previously-uncatalogued spec files (267 scenarios); removed 1 entry for a deleted file (`si05-digest-delivery.spec.js`); corrected 7 stale scenario counts on already-catalogued rows (`entry-checklist`, `epic03-v34-frontend`, `keyboard-shortcuts`, `red-flag-journal`, `system-status`, `trade-plan`, `visual-snapshots`); Part 3 Arc coverage table extended to reference every newly-added file. Totals updated to 86 files / 732 scenarios, matching `tests/e2e/` exactly at time of execution. `BLG-QA-116` closed. | Sprint Execution Engine (autonomous class) |
+| 1.4 | 2026-09-16 | ST-20 (EPIC-03, v9.5, BLG-QA-169): Added "SignalCard Consolidation Runtime Evidence" section with a real before/after `time npx playwright test` measurement for ST-05's "suite runtime reduced" claim — finding is nuanced (real ~8% isolated-test-execution improvement under equal workers, but roughly a wash on total wall-clock under default per-file worker allocation), not a clean confirmation. `BLG-QA-169` closed. | Sprint Execution Engine (autonomous class) |
 
 ---
 
@@ -271,3 +293,11 @@ Gap tracking: BLG-QA-50 (source backlog item for this document). New gap items s
 - Signed off by: Sprint Execution Engine (autonomous class)
 - Date: 2026-08-08
 - Comments: v1.3 reviewed. All 86 files in `tests/e2e/` present in Part 2, verified programmatically (set-difference against `ls tests/e2e/*.spec.js`, zero files missing either direction). Scenario counts re-derived from each file's `test(`/`test.only(`/`test.skip(` occurrences, matching the counting convention already established by this document's existing rows (spot-checked against 3 unmodified rows before use). Total row count (86) and total scenario count (732) verified by summation, not asserted. `si05-digest-delivery.spec.js` confirmed deleted via `git log --diff-filter=D` (BLG-QA-64, v6.8) before removal from the table. Part 3 Arc coverage table extended to reference every one of the 41 newly-added files — verified by cross-check, no newly-added file omitted. `BLG-QA-116` closed. No sealed artefacts modified; documentation-only change. **Caveat carried forward (not blocking):** "Introduced" version for newly-added rows without a direct `execution_state.json` commit-SHA match uses date-based inference against `changelog.md`, which is approximate at same-day release-boundary collisions (4 such collisions found and hand-corrected against `execution_state.json` during this pass; remaining un-corroborated rows are not individually audited to the same standard — see Part 2 backfill note).
+
+---
+
+## Director of Quality Sign-Off (ST-20, EPIC-03, v9.5)
+
+- Signed off by: Sprint Execution Engine (autonomous class)
+- Date: 2026-09-16
+- Comments: v1.4 reviewed. Real `time npx playwright test` measurements captured this session (not estimated) for both the pre-consolidation 3-file state (restored from `git show` against commit `e474655c`, the parent of consolidation commit `e06cfa94`) and the current consolidated `signal-card.spec.js`, under both default and controlled (`--workers=1`) worker configurations — see "SignalCard Consolidation Runtime Evidence" above for the full table and methodology. All 12 scenarios passed in every run (no coverage regression re-confirmed as a side effect). The 3 restored files were temporary and removed after measurement (`git status --short` confirmed clean). Finding is reported as a nuanced correction, not a simple confirmation, of ST-05's original "suite runtime reduced" claim — judged the honest reading of the data rather than forcing it to match the pre-existing claim. `BLG-QA-169` closed. No sealed artefacts modified; documentation-only change.
