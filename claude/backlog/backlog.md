@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-16 (session — 1 new item added: `BLG-BE-118` (list_backtest_rule_runs has no negative-limit validation and no offset param)); prior — 2026-09-16 (session — 1 new item added: `BLG-GOV-333` (reconcile sprint_planning_prompt.md STEP -1 status-vocabulary wording)); prior — 2026-09-15 (Release Planning `2026-09-15__release-v9.5` STEP 4 — 43-item / 27.99-day release slice appended, marker `RP:v9.5:2026-09-15__release-v9.5`); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-16 (session — 1 new item added: `BLG-BE-119` (calculate_trailing_stop's entry-price floor diverges from strategy_rules.md §7.2/§7.3 and the backtest tool)); prior — 2026-09-16 (session — 1 new item added: `BLG-BE-118` (list_backtest_rule_runs has no negative-limit validation and no offset param)); prior — 2026-09-16 (session — 1 new item added: `BLG-GOV-333` (reconcile sprint_planning_prompt.md STEP -1 status-vocabulary wording)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4443,6 +4443,31 @@ On trade entry, when linking to a trade plan, the linked plan's identifier/name 
 **Acceptance Criteria**
 - A negative `limit` on `GET /backtest-rule-changes/runs` returns HTTP 400 `INVALID_PARAMS`, not a 500
 - Existing passing behaviour for valid `limit` values is unchanged
+
+---
+
+### BLG-BE-119 — calculate_trailing_stop's entry-price floor for profitable positions diverges from strategy_rules.md §7.2/§7.3 and from the backtest tool
+**Priority:** P2 (Medium-High)
+**Type:** Backend / Strategy Correctness
+**Owner:** Strategy Rules & System Intent Owner; Backend Engineering Patterns Owner
+**Source:** ST-04/EPIC-01/2026-09-15__release-v9.5 (BLG-BE-114) — discovered while diffing the 3 named ATR trailing-stop implementations before attempting consolidation, per that story's own Notes ("file any unclear divergence as its own item rather than guess") — 2026-09-16
+**Effort:** S (~0.5–1d — mostly decision + documentation; code change scope depends on which side is chosen)
+**Provisional-Target:** v9.6
+**Depends on:** BLG-BE-114 (ST-04's consolidation cannot safely complete until this is ratified)
+
+**Problem**
+`backend/utils/calculations.py::calculate_trailing_stop` — the production function used by both call sites in `backend/services/position_service.py` (the nightly stop-update job and the position-analysis path) — computes `trailing_stop = max(current_stop, new_stop, entry_price)` for profitable positions, i.e. it floors the stop at `entry_price` ("protect gains", per its own inline comment). The canonical strategy spec `claude/strategy/strategy_rules.md` §7.2/§7.3 defines the formula with only two terms — `Stop = CurrentPrice - (ProfitATRMultiplier * ATR)` then `UpdatedStop = max(CurrentStop, NewlyCalculatedStop)` — with no entry-price floor at all. `backend/position_manager.py` (the standalone backtest tool)'s `analyze_positions()` and `tests/test_stop_reconciliation.py`'s `spec_stop`/`spec_updated_stop` helpers both correctly implement the two-term spec formula and reconcile against each other and against `golden_outputs.json` — but none of the existing golden vectors (SL-01 through SL-07) supply both an `entry_price` and a profitable `new_stop` below it, so this divergence between production and the documented spec has never been caught by any test. Backtest results are therefore not a faithful simulation of live behaviour for profitable positions, and no one has formally decided which formula is actually correct.
+
+**Scope**
+- Strategy Rules & System Intent Owner decides: (a) ratify the entry-price floor as intentional, add it to `strategy_rules.md` §7.2 as a normative rule (removing the now-stale two-term-only wording), and bring `position_manager.py`'s backtest formula into line with it — this will change backtest results for profitable positions; or (b) treat production's floor as an unintended deviation and decide whether to remove it from `calculate_trailing_stop` — this is a live trading behaviour change on real capital and needs explicit sign-off before any code change
+- Add a golden-output test case that actually exercises the entry-price-floor-binding scenario (profitable position, `new_stop` computed below `entry_price`) regardless of which side is chosen, so this class of gap cannot recur silently
+- Once ratified, resume `BLG-BE-114`/ST-04's shared-function consolidation using the now-single, decided formula
+
+**Acceptance Criteria**
+- A formal decision is recorded (either updates `strategy_rules.md` §7.2 to include the floor, or removes it from `calculate_trailing_stop` — not both, not neither)
+- `position_manager.py`, `calculate_trailing_stop`, and the spec formula all agree after the decision is implemented
+- A new golden-output case exercises the previously-untested entry-price-floor-binding scenario
+- `BLG-BE-114`/ST-04 unblocked and able to proceed to a single shared implementation
 
 ---
 
