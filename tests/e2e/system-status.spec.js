@@ -175,7 +175,7 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     await expect(page.getByRole('button', { name: /run tests/i })).toBeVisible({ timeout: 8000 });
   });
 
-  test('SC-SS-01b: Pre-run state shows "123 endpoints" placeholder', async ({ page }) => {
+  test('SC-SS-01b: Pre-run state shows "124 endpoints" placeholder', async ({ page }) => {
     // Before running tests, the page shows: "Tests 118 endpoints"
     // (totalTests || '115' → '115' before any test run). Baseline corrected v7.7
     // EPIC-11 ST-11 (BLG-QA-102): an AST-verified count of backend/routers/test.py's
@@ -223,7 +223,9 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     // POST /ops/purge-audit-logs.
     // +1 (122 -> 123) from v9.4 EPIC-03 ST-09 (BLG-OPS-151), which added
     // POST /ai/check-endpoint-anomalies.
-    await expect(page.getByText(/tests 123 endpoints/i)).toBeVisible({ timeout: 8000 });
+    // +1 (123 -> 124) from v9.5 EPIC-02 ST-06 (BLG-OPS-153), which added
+    // GET /ai/spend-trend-by-feature.
+    await expect(page.getByText(/tests 124 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {

@@ -2917,6 +2917,48 @@ def get_claude_endpoint_cost_windows(recent_hours: int = 24, baseline_days: int 
         return []
 
 
+def get_claude_spend_between_by_feature(start_date: str, end_date: str | None = None) -> list[dict]:
+    """Per-feature (endpoint-tagged) Claude API spend for [start_date, end_date)
+    -- or [start_date, NOW()) when end_date is None. Combines
+    get_claude_spend_between()'s date-window bucketing with
+    get_monthly_claude_cost_by_feature()'s per-feature GROUP BY (ST-06 sub-item
+    2, BLG-OPS-153, EPIC-02, v9.5) -- backs get_ai_spend_trend_by_feature()'s
+    per-cycle, per-feature breakdown."""
+    try:
+        ensure_claude_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                if end_date is not None:
+                    cur.execute(
+                        """
+                        SELECT endpoint, COALESCE(SUM(cost_usd), 0.0) AS total_cost
+                        FROM claude_audit_log
+                        WHERE generated_at >= %s AND generated_at < %s
+                        GROUP BY endpoint
+                        ORDER BY total_cost DESC
+                        """,
+                        (start_date, end_date),
+                    )
+                else:
+                    cur.execute(
+                        """
+                        SELECT endpoint, COALESCE(SUM(cost_usd), 0.0) AS total_cost
+                        FROM claude_audit_log
+                        WHERE generated_at >= %s
+                        GROUP BY endpoint
+                        ORDER BY total_cost DESC
+                        """,
+                        (start_date,),
+                    )
+                rows = cur.fetchall()
+                return [
+                    {"endpoint": r["endpoint"], "spend_usd": round(float(r["total_cost"]), 2)}
+                    for r in rows
+                ]
+    except Exception:
+        return []
+
+
 def purge_claude_audit_log_older_than_730_days() -> int:
     """Delete claude_audit_log rows older than 730 days (24 months). Returns
     rows deleted. ST-13 (BLG-OPS-94, EPIC-03, v9.3) — mirrors

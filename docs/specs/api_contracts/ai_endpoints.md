@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.11
-**Last Updated:** 2026-09-15 (ST-23, BLG-AI-06, v9.4 — documented the generation-time AI output boundary-language sampling hook, not a new endpoint); prior — 2026-09-14 (ST-09, BLG-OPS-151, v9.4 — added POST /ai/check-endpoint-anomalies); prior — 2026-09-10 (ST-14, BLG-OPS-96, v9.3 — added GET /ai/monthly-cost-by-feature); prior history retained — see prior entries in version control
+**Version:** 1.12
+**Last Updated:** 2026-09-16 (ST-06, BLG-OPS-153, v9.5 — added GET /ai/spend-trend-by-feature); prior — 2026-09-15 (ST-23, BLG-AI-06, v9.4 — documented the generation-time AI output boundary-language sampling hook, not a new endpoint); prior — 2026-09-14 (ST-09, BLG-OPS-151, v9.4 — added POST /ai/check-endpoint-anomalies); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -724,6 +724,70 @@ No parameters.
 
 ---
 
+## GET /ai/spend-trend-by-feature
+
+Returns Claude API spend for the last 6 release cycles (oldest to newest), broken down by feature within each cycle — combines `GET /ai/monthly-cost-by-feature`'s per-feature grouping with `GET /ai/spend-trend`'s multi-cycle window, so "is feature X's spend trending up over recent cycles" is answerable without manually cross-referencing both endpoints across cycles.
+
+Added for ST-06 (BLG-OPS-153, EPIC-02, v9.5), sub-item 2 of 3 (storage projection and silent-purge-failure visibility are the other 2 — see `docs/ops/ai_audit_log_retention_policy.md`). Sourced from the same `claude_audit_log` data as `GET /ai/spend-trend` (no new data collection), same cycle-boundary parsing (`docs/product/changelog.md`).
+
+**§13 Status:** N/A — read-only cost aggregate; no AI output generated.
+
+**Alert-threshold tie-in (considered, not implemented):** `docs/ops/gemini_cost_tracking.md`'s existing $5/month alert threshold applies to current-month *total* spend, a different metric/cadence than this per-cycle, per-feature breakdown — not wired together here.
+
+### Request
+
+```
+GET /ai/spend-trend-by-feature
+```
+
+No parameters.
+
+### Response — 200 OK
+
+```json
+{
+  "status": "ok",
+  "data": [
+    {
+      "version": "v9.4",
+      "features": [
+        { "endpoint": "POST /ai/daily-briefing", "spend_usd": 2.10 },
+        { "endpoint": "POST /ai/chat", "spend_usd": 1.05 }
+      ]
+    },
+    {
+      "version": "v9.5",
+      "features": [
+        { "endpoint": "POST /ai/daily-briefing", "spend_usd": 2.40 }
+      ]
+    }
+  ]
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data` | array | One entry per release cycle, oldest to newest. Fewer than 6 entries if fewer cycles exist in `changelog.md` — no zero-padding. Empty array if `changelog.md` is missing or unparseable. |
+| `data[].version` | string | Bare version number of the release cycle, e.g. `"v9.5"`. |
+| `data[].features` | array | Per-feature spend within this cycle's date window, descending by spend. Only features with at least one `claude_audit_log` row in the window appear — no zero-filling for features with no activity that cycle. |
+| `data[].features[].endpoint` | string | Feature tag (`claude_audit_log.endpoint`) — same taxonomy as `GET /ai/monthly-cost-by-feature`. |
+| `data[].features[].spend_usd` | float | Sum of `cost_usd` for this feature in this cycle's window. Rounded to 2 d.p. |
+
+### Error responses
+
+| Status | Condition |
+|--------|-----------|
+| 401 | Missing or invalid API key. |
+| 500 | Not expected under normal operation — internal failures in the DB aggregation step return `[]` per cycle's `features` (matches `GET /ai/spend-trend`'s fail-safe convention) rather than propagating an error. |
+
+### Implementation constraints
+
+- Read-only endpoint: no writes to any table.
+- Same same-day-release tie handling and date-only cycle boundaries as `GET /ai/spend-trend`.
+- Does not send any alert or notification.
+
+---
+
 ## AI Output Boundary-Language Sampling Hook (ST-23, BLG-AI-06, v9.4)
 
 Not a new endpoint — this is internal instrumentation, not part of this contract's API surface. Documented here per this story's AC (5), which requires the mechanism to be documented in the AI-endpoint contract docs.
@@ -761,6 +825,7 @@ None at v1.10.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.12 | 2026-09-16 | ST-06 (EPIC-02, v9.5, BLG-OPS-153): Added `GET /ai/spend-trend-by-feature` (per-feature, per-cycle spend breakdown — sub-item 2 of 3; the other 2 land in `docs/ops/ai_audit_log_retention_policy.md`). `openapi.yaml` and `backend/routers/test.py` updated in the same commit. FinOps & Resource Architect sign-off. |
 | 1.11 | 2026-09-15 | ST-23 (EPIC-05, v9.4, BLG-AI-06): Documented the generation-time AI output boundary-language sampling hook (`ai_output_sampling_service.py`, opt-in via `AI_OUTPUT_SAMPLING_ENABLED`, rate-bounded via `AI_OUTPUT_SAMPLING_RATE`) — new `ai_output_boundary_samples` table, wired into all 6 real AI-generation call sites, consumed by `scripts/run_ai_output_boundary_sample_audit.py`. Not a new endpoint; no `openapi.yaml` change. Genuine live sample (AC 4) and `ESC-EXEC-20260910-01` closure (AC 6) remain staging-only — no production credentials in this session. |
 | 1.10 | 2026-09-14 | ST-09 (EPIC-03, v9.4, BLG-OPS-151): Added `POST /ai/check-endpoint-anomalies` — wires the existing pure cost/latency anomaly detector (`services/ai_endpoint_anomaly_service.py`, ST-54/v9.2) into a scheduled job (`.github/workflows/ai-endpoint-anomaly-check.yml`, daily) and Telegram alert. Cost checked against real `claude_audit_log` data; latency has no real data source (`claude_audit_log` has no latency column — BLG-OPS-161 filed as the prerequisite gap) and is disclosed as pending via `latency_data_source`, not fabricated. `openapi.yaml` and `docs/ops/api_performance_baseline.md` §44 updated in the same commit. |
 | 1.9 | 2026-09-10 | ST-14 (EPIC-03, v9.3, BLG-OPS-96): Added `GET /ai/monthly-cost-by-feature` — current calendar month's Claude API spend broken down by the existing `claude_audit_log.endpoint` feature tag (5 tags documented in the endpoint section's taxonomy table). Reuses existing tagging, no new data collection. `openapi.yaml` updated in the same commit. |

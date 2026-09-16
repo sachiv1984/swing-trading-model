@@ -297,3 +297,22 @@ def get_spend_trend():
     """
     from services.ai_spend_trend_service import get_ai_spend_trend
     return {"status": "ok", "data": get_ai_spend_trend()}
+
+
+@router.get("/spend-trend-by-feature")
+def get_spend_trend_by_feature():
+    """
+    Return Claude API spend for the last 6 release cycles, oldest to
+    newest, broken down by feature within each cycle -- combines
+    GET /ai/monthly-cost-by-feature's per-feature grouping with
+    GET /ai/spend-trend's multi-cycle window, so "is feature X's spend
+    trending up" is answerable without manually cross-referencing both.
+
+    Read-only. Same data source and cycle-boundary parsing as
+    GET /ai/spend-trend (claude_audit_log, docs/product/changelog.md).
+
+    ST-06 (BLG-OPS-153, EPIC-02, v9.5).
+    Contract: docs/specs/api_contracts/ai_endpoints.md#GET /ai/spend-trend-by-feature
+    """
+    from services.ai_spend_trend_service import get_ai_spend_trend_by_feature
+    return {"status": "ok", "data": get_ai_spend_trend_by_feature()}
