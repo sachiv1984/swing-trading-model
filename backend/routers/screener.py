@@ -32,6 +32,8 @@ def screener_results(
     Returns screener result records from the latest completed run.
     Contract: screener_api_contract.md
     """
+    if limit < 0 or offset < 0:
+        return JSONResponse(status_code=400, content={"status": "error", "message": "INVALID_PARAMS: limit and offset must be non-negative"})
     if limit > 200:
         return JSONResponse(status_code=400, content={"status": "error", "message": "INVALID_PARAMS: limit must be ≤ 200"})
     if market and market not in ("US", "UK", "all"):
@@ -60,6 +62,8 @@ def screener_history(limit: int = 50, offset: int = 0):
     total_tickers, pass_count, regime_distribution per run).
     Contract: screener_api_contract.md. ST-01 (BLG-BE-13, EPIC-01, v9.3).
     """
+    if limit < 0 or offset < 0:
+        return JSONResponse(status_code=400, content={"status": "error", "message": "INVALID_PARAMS: limit and offset must be non-negative"})
     if limit > 200:
         return JSONResponse(status_code=400, content={"status": "error", "message": "INVALID_PARAMS: limit must be ≤ 200"})
     data = get_screener_run_history(limit=limit, offset=offset)
