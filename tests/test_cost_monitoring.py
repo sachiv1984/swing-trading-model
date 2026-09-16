@@ -119,6 +119,39 @@ def test_get_api_session_report_computes_baseline_and_flags_anomalies():
     assert by_id["s2"]["anomalous"] is False
 
 
+def test_get_api_session_report_leave_one_out_baseline_catches_previously_masked_anomaly():
+    # ST-08 (BLG-OPS-155) regression: 2 sessions, counts [1, 100]. The old
+    # self-inclusive baseline (mean of both = 50.5, threshold 101.0) never
+    # fired for the 100-call session -- masking a real anomaly. Leave-one-out
+    # baseline for the 100-call session is 1.0 (the other session alone),
+    # threshold 2.0 -> correctly fires.
+    rows = [
+        {"session_id": "big", "call_count": 100},
+        {"session_id": "small", "call_count": 1},
+    ]
+    mock_conn, mock_cursor = _mock_conn(fetchall_rows=rows)
+    with patch.object(database, "get_db", return_value=mock_conn):
+        with patch.object(database, "ensure_api_call_log_table"):
+            result = database.get_api_session_report("research", anomaly_multiplier=2.0)
+
+    by_id = {s["session_id"]: s for s in result["sessions"]}
+    assert by_id["big"]["anomalous"] is True
+    assert by_id["small"]["anomalous"] is False
+    # Overall descriptive baseline is still the self-inclusive mean (context only).
+    assert result["baseline_calls_per_session"] == 50.5
+
+
+def test_get_api_session_report_single_session_no_leave_one_out_baseline():
+    # n=1: no "other sessions" exist to form a leave-one-out baseline, so
+    # nothing can be flagged anomalous relative to peers (not a division error).
+    rows = [{"session_id": "only", "call_count": 50}]
+    mock_conn, mock_cursor = _mock_conn(fetchall_rows=rows)
+    with patch.object(database, "get_db", return_value=mock_conn):
+        with patch.object(database, "ensure_api_call_log_table"):
+            result = database.get_api_session_report("research", anomaly_multiplier=2.0)
+    assert result["sessions"][0]["anomalous"] is False
+
+
 def test_get_api_session_report_zero_sessions_no_anomalies_no_division_error():
     mock_conn, mock_cursor = _mock_conn(fetchall_rows=[])
     with patch.object(database, "get_db", return_value=mock_conn):

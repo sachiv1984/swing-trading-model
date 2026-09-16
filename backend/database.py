@@ -2675,9 +2675,19 @@ def get_api_call_report(service: str, window: str = "daily") -> dict:
 
 
 def get_api_session_report(service: str, anomaly_multiplier: float = 2.0) -> dict:
-    """Per-session call counts for `service` over the last 7 days, with a
-    baseline (mean calls/session) and sessions flagged as anomalous when
-    their call count exceeds `anomaly_multiplier` × baseline. ST-12
+    """Per-session call counts for `service` over the last 7 days, with an
+    overall baseline (mean calls/session, reported for context) and sessions
+    flagged as anomalous when their call count exceeds `anomaly_multiplier` ×
+    a **leave-one-out** baseline (mean of all *other* sessions) — ST-08
+    (BLG-OPS-155, EPIC-02, v9.5) fix. The original per-session anomaly
+    decision compared each session against the mean of *all* sessions
+    including itself, so a genuinely anomalous session inflated the very
+    baseline used to judge it (worst case: 2 sessions [1, 100] -> self-
+    inclusive baseline 50.5, threshold 101.0, the 100-call session never
+    fires). Leave-one-out for that same case: baseline 1.0 (the other
+    session alone), threshold 2.0, 100 correctly fires. `baseline_calls_per_session`
+    (top-level, still self-inclusive) is retained as a descriptive summary
+    stat only — it no longer drives any anomaly decision. ST-12
     (BLG-OPS-20, EPIC-03, v9.3) — reuses ST-11's api_call_log rather than a
     separate logging mechanism (RISK-03). `anomaly_multiplier` default (2.0)
     matches sprint_backlog.md's documented ">2x baseline" threshold — see
@@ -2701,22 +2711,28 @@ def get_api_session_report(service: str, anomaly_multiplier: float = 2.0) -> dic
                 )
                 sessions = cur.fetchall()
                 counts = [int(s["call_count"]) for s in sessions]
-                baseline = (sum(counts) / len(counts)) if counts else 0.0
-                threshold = baseline * anomaly_multiplier
+                n = len(counts)
+                total = sum(counts)
+                overall_baseline = (total / n) if n else 0.0
+
+                session_rows = []
+                for s in sessions:
+                    c = int(s["call_count"])
+                    leave_one_out_baseline = ((total - c) / (n - 1)) if n > 1 else 0.0
+                    threshold = leave_one_out_baseline * anomaly_multiplier
+                    session_rows.append({
+                        "session_id": s["session_id"],
+                        "call_count": c,
+                        "anomalous": leave_one_out_baseline > 0 and c > threshold,
+                    })
+
                 return {
                     "service": service,
                     "period_days": 7,
-                    "session_count": len(sessions),
-                    "baseline_calls_per_session": round(baseline, 2),
+                    "session_count": n,
+                    "baseline_calls_per_session": round(overall_baseline, 2),
                     "anomaly_multiplier": anomaly_multiplier,
-                    "sessions": [
-                        {
-                            "session_id": s["session_id"],
-                            "call_count": int(s["call_count"]),
-                            "anomalous": baseline > 0 and int(s["call_count"]) > threshold,
-                        }
-                        for s in sessions
-                    ],
+                    "sessions": session_rows,
                 }
     except Exception:
         return {
