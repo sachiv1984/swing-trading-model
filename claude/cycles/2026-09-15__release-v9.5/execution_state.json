@@ -1,11 +1,11 @@
 {
   "cycle_id": "2026-09-15__release-v9.5",
-  "sprint_goal": "Clear the full v9.5 debt-reduction scope — 43 items across 6 EPICs — at the top of confirmed sprint capacity, resolving the cycle's two genuine ungated P1 items first.",
+  "sprint_goal": "Clear the full v9.5 debt-reduction scope \u2014 43 items across 6 EPICs \u2014 at the top of confirmed sprint capacity, resolving the cycle's two genuine ungated P1 items first.",
   "backlog_slice_source": "claude/cycles/2026-09-15__release-v9.5/stage4_backlog_slice.md",
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-16T21:30:00Z",
+  "last_updated_utc": "2026-09-16T23:15:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -35,11 +35,11 @@
           "acceptance_verified": true,
           "spec_references": [],
           "spec_reference_not_applicable": true,
-          "spec_reference_not_applicable_reason": "Root cause already fixed by commit 58a8d53c (2026-09-14, prior to this cycle's planning) — no new artefact produced this story, verification only.",
+          "spec_reference_not_applicable_reason": "Root cause already fixed by commit 58a8d53c (2026-09-14, prior to this cycle's planning) \u2014 no new artefact produced this story, verification only.",
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "BLG-BE-117/ST-01 was already resolved by commit 58a8d53c ([GOVERNANCE] Fix CI-blocking content assumption in test_changelog_service.py, 2026-09-14) before this cycle's Release Planning even ran — the backlog item was carried into v9.5 scope as a stale duplicate. Re-verified this session: `backend/.venv/bin/python3 -m pytest tests/test_changelog_service.py -v` — 6/6 passed including test_real_changelog_is_parseable; last 10 `CI Pytest Suite` / `Backend Test Coverage Report` runs on main are green (confirmed via `gh run list`). Both ACs satisfied with no code change required this story. Closing as done with evidence rather than fabricating new work against an already-fixed defect, per the ESC-EXEC-20260910-01 honest-disclosure precedent."
+          "notes": "BLG-BE-117/ST-01 was already resolved by commit 58a8d53c ([GOVERNANCE] Fix CI-blocking content assumption in test_changelog_service.py, 2026-09-14) before this cycle's Release Planning even ran \u2014 the backlog item was carried into v9.5 scope as a stale duplicate. Re-verified this session: `backend/.venv/bin/python3 -m pytest tests/test_changelog_service.py -v` \u2014 6/6 passed including test_real_changelog_is_parseable; last 10 `CI Pytest Suite` / `Backend Test Coverage Report` runs on main are green (confirmed via `gh run list`). Both ACs satisfied with no code change required this story. Closing as done with evidence rather than fabricating new work against an already-fixed defect, per the ESC-EXEC-20260910-01 honest-disclosure precedent."
         },
         "ST-02": {
           "title": "Backend logging output does not conform to structured_logging_standards.md's mandatory JSON Lines format",
@@ -62,7 +62,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Chose path (a) conform code to spec: backend/main.py now installs backend/utils/json_log_formatter.JsonLinesFormatter on the root logger. Confirmed no existing log-based monitoring/alerting depends on the prior plain-text format (no workflow/script parses backend log lines by format; render-si05-log-query.yml's text=si05 substring match still works against the JSON message field). service field revised from its original 5-value enum to the dotted logger name (actual practice — ~35 distinct services/routers modules) via a version bump + changelog entry on structured_logging_standards.md (0.1.1->0.2.0), which also resolves DEV-v9.3-ST03-01. New tests/test_json_log_formatter.py (9 tests) added; full backend suite re-run clean (1495 passed, 10 skipped, 0 failed)."
+          "notes": "Chose path (a) conform code to spec: backend/main.py now installs backend/utils/json_log_formatter.JsonLinesFormatter on the root logger. Confirmed no existing log-based monitoring/alerting depends on the prior plain-text format (no workflow/script parses backend log lines by format; render-si05-log-query.yml's text=si05 substring match still works against the JSON message field). service field revised from its original 5-value enum to the dotted logger name (actual practice \u2014 ~35 distinct services/routers modules) via a version bump + changelog entry on structured_logging_standards.md (0.1.1->0.2.0), which also resolves DEV-v9.3-ST03-01. New tests/test_json_log_formatter.py (9 tests) added; full backend suite re-run clean (1495 passed, 10 skipped, 0 failed)."
         },
         "ST-03": {
           "title": "Validate limit/offset are non-negative on screener endpoints",
@@ -79,11 +79,11 @@
           "acceptance_verified": true,
           "spec_references": [],
           "spec_reference_not_applicable": true,
-          "spec_reference_not_applicable_reason": "Bug/correctness fix (Case E) — no governing spec beyond the existing screener_api_contract.md, which already defines limit/offset as pagination params without normatively excluding negative values; no new artefact produced.",
+          "spec_reference_not_applicable_reason": "Bug/correctness fix (Case E) \u2014 no governing spec beyond the existing screener_api_contract.md, which already defines limit/offset as pagination params without normatively excluding negative values; no new artefact produced.",
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Fixed backend/routers/screener.py GET /screener/results and GET /screener/history: negative limit or offset now returns HTTP 400 INVALID_PARAMS (checked before the existing >200 upper-bound check). Swept all other routers for the same limit/offset param pattern (grep 'limit: int\\|offset: int' across backend/routers/): ai.py and news.py already use FastAPI Query(ge=1, le=...) validation (no gap); backtest_rule_change.py's list_backtest_rule_runs has the same gap (negative limit -> 500 via its broad except-Exception handler) but is out of scope for this story's endpoints — filed as BLG-BE-118 per AC2's 'filed as a follow-up item' option. New tests in tests/test_router_error_envelope_conformance.py (4 cases: negative limit/offset x 2 endpoints). Full backend suite re-run clean: 1499 passed, 10 skipped."
+          "notes": "Fixed backend/routers/screener.py GET /screener/results and GET /screener/history: negative limit or offset now returns HTTP 400 INVALID_PARAMS (checked before the existing >200 upper-bound check). Swept all other routers for the same limit/offset param pattern (grep 'limit: int\\|offset: int' across backend/routers/): ai.py and news.py already use FastAPI Query(ge=1, le=...) validation (no gap); backtest_rule_change.py's list_backtest_rule_runs has the same gap (negative limit -> 500 via its broad except-Exception handler) but is out of scope for this story's endpoints \u2014 filed as BLG-BE-118 per AC2's 'filed as a follow-up item' option. New tests in tests/test_router_error_envelope_conformance.py (4 cases: negative limit/offset x 2 endpoints). Full backend suite re-run clean: 1499 passed, 10 skipped."
         },
         "ST-04": {
           "title": "Consolidate duplicated ATR trailing-stop recalculation logic",
@@ -115,7 +115,7 @@
             "date": "2026-09-16",
             "findings": "None blocking. See DEL-20260916-02 for full resolution reasoning."
           },
-          "notes": "RESOLVED on explicit user direction ('act as relevant agent and resolve'). Re-investigation before deciding found BLG-BE-102 (archived, P0, shipped v8.9) had already fully investigated and resolved this exact question: the entry-price floor is intentional live behaviour, and position_manager.py's simpler backtest formula is a deliberate, tested exception (tests/test_trailing_stop_breakeven_floor.py::TestPositionManagerNotOnLiveStopPath). BLG-BE-119's framing as a fresh open decision was inaccurate -- the only real gap was strategy_rules.md §7.2 never documenting the already-shipped floor. Acting as Strategy Rules & System Intent Owner (agent-mediated, §5.3, on explicit user direction): ratified the floor, added to strategy_rules.md §7.2 (v1.9->v1.10) with a §12.3 comparability exception citing BLG-BE-102. No live code changed -- production already behaved this way. Full backend suite for the affected tests re-run clean: tests/test_trailing_stop_breakeven_floor.py + tests/test_stop_reconciliation.py, 20/20 passed. ST-04/BLG-BE-114 scope resolved as complete: production call sites already share calculate_trailing_stop; the test_stop_reconciliation.py spec-formula helper is intentionally not consolidated (same reasoning as position_manager.py at v8.9) since merging it would defeat its purpose as an independent reconciliation oracle."
+          "notes": "RESOLVED on explicit user direction ('act as relevant agent and resolve'). Re-investigation before deciding found BLG-BE-102 (archived, P0, shipped v8.9) had already fully investigated and resolved this exact question: the entry-price floor is intentional live behaviour, and position_manager.py's simpler backtest formula is a deliberate, tested exception (tests/test_trailing_stop_breakeven_floor.py::TestPositionManagerNotOnLiveStopPath). BLG-BE-119's framing as a fresh open decision was inaccurate -- the only real gap was strategy_rules.md \u00a77.2 never documenting the already-shipped floor. Acting as Strategy Rules & System Intent Owner (agent-mediated, \u00a75.3, on explicit user direction): ratified the floor, added to strategy_rules.md \u00a77.2 (v1.9->v1.10) with a \u00a712.3 comparability exception citing BLG-BE-102. No live code changed -- production already behaved this way. Full backend suite for the affected tests re-run clean: tests/test_trailing_stop_breakeven_floor.py + tests/test_stop_reconciliation.py, 20/20 passed. ST-04/BLG-BE-114 scope resolved as complete: production call sites already share calculate_trailing_stop; the test_stop_reconciliation.py spec-formula helper is intentionally not consolidated (same reasoning as position_manager.py at v8.9) since merging it would defeat its purpose as an independent reconciliation oracle."
         }
       }
     },
@@ -336,165 +336,180 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Requires actual credential provisioning in hosting/secrets environment — cannot be self-provisioned by the engine."
+          "notes": "Requires actual credential provisioning in hosting/secrets environment \u2014 cannot be self-provisioned by the engine."
         }
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-15__release-v9.5/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_check_contract_example_freshness.py"
+      ],
       "stories": {
         "ST-15": {
           "title": "Arc 4 E2E test strategy pre-design (PO-02/03/04)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1683,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "c5112c2e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-16T23:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/qa/arc4_e2e_test_strategy_po02_03_04.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Pre-design test strategy doc for PO-02/03/04, none of which have any UI/endpoint yet (all gate-blocked). Extends BLG-QA-37's approved Claude mock strategy without deviation. DoQ agent-mediated sign-off recorded in-doc."
         },
         "ST-16": {
           "title": "Extract governance_sync.yml's embedded bash logic into a shared, sourced script",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1684,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "07f7e617",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-16T22:55:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/governance_sync_lib.sh",
+            ".github/workflows/governance_sync.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Extracted detect_newly_done_st_ids()/is_story_done() into scripts/governance_sync_lib.sh, sourced by governance_sync.yml and both regression test scripts. All assertions re-verified against the real extracted functions."
         },
         "ST-17": {
           "title": "Add unit test coverage for check_contract_example_freshness.py",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1685,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "9e0822b1",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-16T22:40:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_check_contract_example_freshness.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "45 new unit tests for scripts/check_contract_example_freshness.py (pure logic, no DB/network dep). All pass; script re-run against real repo data unaffected."
         },
         "ST-18": {
           "title": "Playwright coverage matrix file-inventory count is stale (39 vs actual ~100+ spec files)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1686,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "2dc24811",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-16T22:35:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/qa/playwright_coverage_matrix.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Fully re-derived \u00a72 Spec File Index against tests/e2e/ directly: 39 (stale) -> 104 files, 874 total scenarios. Descriptions sourced from regression_test_suite_baseline.md Part 2 where present, freshly derived from file header comments for 20 files present in neither source."
         },
         "ST-19": {
           "title": "ST-09 cross-browser evaluation cites stale pre-sharding CI baseline",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1687,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "e993ec36",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-16T22:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/qa/cross_browser_playwright_matrix_evaluation_20260909.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Corrected stale ~133s pre-sharding CI baseline citation to the current 163.0s (8-way shard, ci_pipeline_baseline.md \u00a79) figure. ~3x multiplier and Defer recommendation unchanged (explicitly noted as strengthened, not weakened, by the correction)."
         },
         "ST-20": {
           "title": "ST-05 SignalCard spec consolidation lacks before/after runtime evidence",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1688,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "e2461dc5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-16T22:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/qa/regression_test_suite_baseline.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Real time npx playwright test before/after measurement captured this session (not estimated): pre-consolidation 3 files vs current signal-card.spec.js, both default and controlled (--workers=1) configs. Finding is a nuanced correction (isolated test-exec time ~8% faster; total wall-clock roughly a wash under default per-file worker allocation), not a clean confirmation of the original claim."
         },
         "ST-21": {
           "title": "qa_evidence_EPIC-03.md test-count claim inaccurate (30 vs. actual 28)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "blocked_delegated",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1689,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260916-03-EPIC03",
+          "blocked_since_utc": "2026-09-16T23:00:00Z",
+          "unblock_criteria": "Head of Specs Team ruling on correction mechanism for a sealed prior-cycle qa_evidence log (cross-cycle deviation consolidation at next run post-ship, or an addendum exception)",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "delegated.parked",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Verified fact (28 tests, not 30) confirmed via grep -c on main; blocked only on the mechanism for recording it against a sealed 2026-09-09__release-v9.3 artefact, which is outside this routine's write scope and CLAUDE.md's sealed-artefact rule. See DEL-20260916-03-EPIC03 in delegation_log.md for full reasoning."
         }
       }
     },
@@ -526,7 +541,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "DATABASE_URL unset in this execution environment — staging-only AC blocked."
+          "notes": "DATABASE_URL unset in this execution environment \u2014 staging-only AC blocked."
         },
         "ST-23": {
           "title": "Arc 4 API contract pre-authoring (PO-02/03/04)",
@@ -571,7 +586,7 @@
           "notes": ""
         },
         "ST-25": {
-          "title": "position_endpoints.md example JSON: current_trailing_stop_native doesn't reconcile with current_trailing_stop × live_fx_rate",
+          "title": "position_endpoints.md example JSON: current_trailing_stop_native doesn't reconcile with current_trailing_stop \u00d7 live_fx_rate",
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
@@ -729,7 +744,7 @@
           "notes": ""
         },
         "ST-32": {
-          "title": "Wire the wall-clock cost logging convention (§22) into an engine's STEP list",
+          "title": "Wire the wall-clock cost logging convention (\u00a722) into an engine's STEP list",
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
@@ -810,7 +825,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Genuine open product decision requiring an actual Product Owner ruling — attempt agent-mediated sign-off per §5.3 first."
+          "notes": "Genuine open product decision requiring an actual Product Owner ruling \u2014 attempt agent-mediated sign-off per \u00a75.3 first."
         },
         "ST-36": {
           "title": "Lightweight role-retirement process for inactive agent charters",
@@ -852,7 +867,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Sequence before ST-38 — both edit workforce_capacity.md (RISK-05)."
+          "notes": "Sequence before ST-38 \u2014 both edit workforce_capacity.md (RISK-05)."
         },
         "ST-38": {
           "title": "Cost-per-cycle wall-clock rollup in workforce_capacity.md",
@@ -873,7 +888,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Sequence after ST-37 — both edit workforce_capacity.md (RISK-05)."
+          "notes": "Sequence after ST-37 \u2014 both edit workforce_capacity.md (RISK-05)."
         },
         "ST-39": {
           "title": "Formalise the STEP 8.0.5 / STEP 8.2 candidate-verification pattern as one subroutine",
@@ -947,7 +962,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Sequence before ST-42 — both edit design_system.md."
+          "notes": "Sequence before ST-42 \u2014 both edit design_system.md."
         },
         "ST-42": {
           "title": "Bring 9 non-conforming toast call sites into line with the Toast Notification Timing standard",
@@ -968,7 +983,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Sequence after ST-41 — both edit design_system.md."
+          "notes": "Sequence after ST-41 \u2014 both edit design_system.md."
         },
         "ST-43": {
           "title": "Arc 5 low-trade-volume advisory: surface the 20-trade threshold and remaining-trades count, reconsider placement above the stat grid",
@@ -994,7 +1009,9 @@
       }
     }
   },
-  "blocked_items": [],
+  "blocked_items": [
+    "ST-21"
+  ],
   "delegated_items": [
     "ST-04",
     "ST-05",
@@ -1006,7 +1023,13 @@
     "ST-01",
     "ST-02",
     "ST-03",
-    "ST-04"
+    "ST-04",
+    "ST-15",
+    "ST-16",
+    "ST-17",
+    "ST-18",
+    "ST-19",
+    "ST-20"
   ],
   "open_escalations": [],
   "merge_gate": {

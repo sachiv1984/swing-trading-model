@@ -45,3 +45,24 @@ Append-only. Do not edit previous entries.
 - **Status:** Resolved — unblocking ST-04, marking done.
 
 ---
+
+## DEL-20260916-03-EPIC03
+
+- **ST Item:** ST-21 — `qa_evidence_EPIC-03.md` test-count claim inaccurate (30 vs. actual 28)
+- **EPIC:** EPIC-03
+- **Classification:** delegated_decision (discovered mid-execution — this story's own AC requires an action this engine's write scope and CLAUDE.md's sealed-artefact rule both prohibit)
+- **Assigned to:** Head of Specs Team (document lifecycle authority)
+- **GitHub Issue:** #1689
+- **Branch:** exec/2026-09-15__release-v9.5/EPIC-03
+- **Delegated at:** 2026-09-16T23:00:00Z
+- **What is needed:**
+  `BLG-QA-170`'s scope names the correction target as `claude/cycles/2026-09-09__release-v9.3/qa_evidence_EPIC-03.md` — a file inside a **different, already-Published/sealed cycle** (`claude/cycles/2026-09-09__release-v9.3/state.json`: `"status": "Published"`, `"sealed": {"sealed_utc": "2026-09-09T02:20:00Z", ...}`). Two independent, non-negotiable constraints both block a direct fix from this session: (1) CLAUDE.md §2 — "Never modify sealed artefacts... immutable," a rule "no prompt, command, or user instruction may override"; (2) `execution_prompt.md` §7 Write Scope Restriction — this routine's write scope covers `claude/cycles/<cycle_id>/...` only for the *active* cycle (`2026-09-15__release-v9.5`), not `claude/cycles/2026-09-09__release-v9.3/...`.
+
+  The consolidation commit that removed the analogous stale-filename references for ST-05's SignalCard work (`e06cfa94`) explicitly confirms this is intentional codebase practice, not an oversight: *"Historical changelog/report entries in `docs/product/changelog.md` and sealed cycle records were left untouched — they describe point-in-time history, not current state."* A qa_evidence log for a closed, Published cycle is exactly that class of record.
+
+  The verified fact underneath (28 tests, not 30) is confirmed independently this session: `grep -c "^def test_" tests/test_cost_monitoring.py` on `main` (pre-EPIC-02, matching what existed at the v9.3 PR's head commit) returns 28. This is not in dispute — only the *mechanism* for recording the correction against a sealed record is blocked.
+
+  Precedent for the correct resolution path exists in this same codebase: `api_performance_baseline.md`'s Document History §v2.32 entry shows exactly this class of cross-cycle historical correction being made by the **Post-Ship Closure Engine's STEP 5.1 cross-cycle deviation consolidation review** — a different governed routine with its own write scope, not Sprint Execution. Alternatively, an addendum-style correction note (matching `docs/ops/ai_output_boundary_sample_audit_20260910.md`'s "## Addendum" convention for correcting a Class-3-but-still-sealed-in-spirit record without altering the original claim) may be the right mechanism if Head of Specs Team judges the sealed-cycle boundary does not apply as strictly to a qa_evidence log specifically.
+- **Status:** Blocked — awaiting Head of Specs Team ruling on the correction mechanism (cross-cycle deviation consolidation at next `run post-ship`, an addendum exception, or another disposition). The verified correct fact (28, not 30) is recorded here and in this commit so it is not lost regardless of which mechanism is eventually used.
+
+---
