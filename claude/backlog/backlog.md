@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-16 (session — 1 new item added: `BLG-BE-119` (calculate_trailing_stop's entry-price floor diverges from strategy_rules.md §7.2/§7.3 and the backtest tool)); prior — 2026-09-16 (session — 1 new item added: `BLG-BE-118` (list_backtest_rule_runs has no negative-limit validation and no offset param)); prior — 2026-09-16 (session — 1 new item added: `BLG-GOV-333` (reconcile sprint_planning_prompt.md STEP -1 status-vocabulary wording)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-16 (session — 2 new items added: `BLG-BE-120`, `BLG-QA-179` (PR #1712 review findings — JsonLinesFormatter message-truncation gap and missing end-to-end JSON-log test)); prior — 2026-09-16 (session — 1 new item added: `BLG-BE-119` (calculate_trailing_stop's entry-price floor diverges from strategy_rules.md §7.2/§7.3 and the backtest tool)); prior — 2026-09-16 (session — 1 new item added: `BLG-BE-118` (list_backtest_rule_runs has no negative-limit validation and no offset param)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4468,6 +4468,47 @@ On trade entry, when linking to a trade plan, the linked plan's identifier/name 
 - `position_manager.py`, `calculate_trailing_stop`, and the spec formula all agree after the decision is implemented
 - A new golden-output case exercises the previously-untested entry-price-floor-binding scenario
 - `BLG-BE-114`/ST-04 unblocked and able to proceed to a single shared implementation
+
+---
+
+### BLG-BE-120 — JsonLinesFormatter does not truncate `message` to the spec's 500-char max
+**Priority:** P3 (Low)
+**Type:** Backend / Spec Conformance
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1712 review (Director of Quality agent-mediated review), EPIC-01/v9.5 (BLG-BE-112) — 2026-09-16
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.6
+
+**Problem**
+`backend/utils/json_log_formatter.py::JsonLinesFormatter` (added by `BLG-BE-112`/ST-02) does not truncate the `message` field to the 500-character max that `docs/specs/structured_logging_standards.md`'s §Structured Log Format table documents ("message | string | Free text (max 500 chars)"). An unbounded log message (e.g. a long exception string or a runaway f-string) could produce oversized JSON log lines, which is worth bounding given this repo already tracks log/AI-audit storage cost elsewhere (EPIC-02's cost-monitoring items).
+
+**Scope**
+- Truncate `message` to 500 characters in `JsonLinesFormatter.format()`, with a clear marker (e.g. trailing `"…[truncated]"`) when truncation occurs
+- Add a unit test confirming a message over 500 characters is truncated and one at/under the limit is untouched
+
+**Acceptance Criteria**
+- A log message longer than 500 characters is truncated to the spec's limit in the emitted JSON
+- Existing `tests/test_json_log_formatter.py` cases still pass unchanged
+
+---
+
+### BLG-QA-179 — No end-to-end test confirms backend/main.py's wired root logger actually emits JSON in situ
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** PR #1712 review (Director of Quality agent-mediated review), EPIC-01/v9.5 (BLG-BE-112) — 2026-09-16
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.6
+
+**Problem**
+`BLG-BE-112`/ST-02 added `tests/test_json_log_formatter.py` (unit coverage of `JsonLinesFormatter` in isolation) and relies on the pre-existing `tests/test_root_logging_config.py` (structural coverage of root logger handler count/level). Neither test connects the two: there is no test that actually runs application code through `backend/main.py`'s wired root logger handler and confirms the captured output is valid JSON Lines end-to-end. A future change that reintroduces a plain-text formatter, or wires a second handler with a different formatter, would not be caught by either existing suite.
+
+**Scope**
+- Add a subprocess-isolated test (following the existing pattern in `tests/test_root_logging_config.py`'s `_run_isolated()` helper) that imports `main`, emits a log line through a real application logger, captures stdout, and asserts it parses as JSON with the required fields
+
+**Acceptance Criteria**
+- A new test fails if `backend/main.py`'s root handler formatter is reverted to plain text or replaced with a non-JSON formatter
+- Test passes against the current implementation
 
 ---
 
