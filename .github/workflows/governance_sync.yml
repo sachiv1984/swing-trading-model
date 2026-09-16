@@ -21,6 +21,12 @@ jobs:
       - name: Parse Commits for Governance
         id: parse
         run: |
+          # ST-16 (BLG-QA-165, EPIC-03, v9.5): detect_newly_done_st_ids() now
+          # lives in scripts/governance_sync_lib.sh, sourced here — see that
+          # file's header for why (previously inlined here and separately
+          # hand-copied into scripts/test_governance_sync_diff_logic.sh).
+          source scripts/governance_sync_lib.sh
+
           # Extract all [EPIC-XX][ST-XX] patterns from all commits in the push range
           # Uses $BEFORE..$AFTER to cover every commit in a batch push (not just the last)
           BEFORE="${{ github.event.before }}"
@@ -45,34 +51,7 @@ jobs:
           # execution_state file (per-EPIC and legacy) in this push range and detect
           # any story whose status newly became done/merged — independent of commit
           # message content — then union with the message-derived set above.
-          DIFF_ST_IDS=""
-          CHANGED_STATE_FILES=$(git diff --name-only "$RANGE_BASE" "$AFTER" -- 'claude/cycles/*/execution_state/EPIC-*.json' 'claude/cycles/*/execution_state.json' 2>/dev/null || true)
-          for f in $CHANGED_STATE_FILES; do
-            AFTER_JSON=$(git show "$AFTER:$f" 2>/dev/null || echo '{}')
-            BEFORE_JSON=$(git show "$RANGE_BASE:$f" 2>/dev/null || echo '{}')
-            # Normalise both per-EPIC (.stories) and legacy (.epics.*.stories) shapes to a flat {st_id: status} map
-            AFTER_MAP=$(echo "$AFTER_JSON" | jq -c '
-              if has("stories") then .stories
-              elif has("epics") then ([.epics[].stories] | add // {})
-              else {} end
-              | with_entries(.value = .value.status)
-            ' 2>/dev/null || echo '{}')
-            BEFORE_MAP=$(echo "$BEFORE_JSON" | jq -c '
-              if has("stories") then .stories
-              elif has("epics") then ([.epics[].stories] | add // {})
-              else {} end
-              | with_entries(.value = .value.status)
-            ' 2>/dev/null || echo '{}')
-            NEWLY_DONE=$(jq -n --argjson after "$AFTER_MAP" --argjson before "$BEFORE_MAP" '
-              $after
-              | to_entries[]
-              | select(.value == "done" or .value == "merged")
-              | select(($before[.key] // "") != "done" and ($before[.key] // "") != "merged")
-              | .key
-            ' 2>/dev/null | tr -d '"')
-            DIFF_ST_IDS="$DIFF_ST_IDS $NEWLY_DONE"
-          done
-          DIFF_ST_IDS=$(echo "$DIFF_ST_IDS" | tr ' ' '\n' | sed '/^$/d' | sort -u)
+          DIFF_ST_IDS=$(detect_newly_done_st_ids "$RANGE_BASE" "$AFTER")
 
           ST_IDS=$(printf '%s\n%s\n' "$MSG_ST_IDS" "$DIFF_ST_IDS" | sed '/^$/d' | sort -u | tr '\n' ' ')
           if [ -n "$ST_IDS" ]; then
@@ -99,40 +78,18 @@ jobs:
           # rather than trusting the commit message alone. Tries the current
           # per-EPIC mechanism (shared_standards.md §12.1) first, falls back to the
           # legacy single execution_state.json for cycles that predate it.
+          #
+          # ST-16 (BLG-QA-165, EPIC-03, v9.5): is_story_done() now lives in
+          # scripts/governance_sync_lib.sh, sourced here (parameterised on
+          # CYCLES_BASE so the same function is also used, unmodified, by
+          # scripts/test_governance_sync_close_gate_logic.sh against a
+          # disposable fixture directory).
+          source scripts/governance_sync_lib.sh
           ACTIVE_CYCLE=$(jq -r '.active_cycle // empty' .claude_current_state.json 2>/dev/null || echo "")
-
-          is_story_done() {
-            local st_id="$1"
-            if [ -z "$ACTIVE_CYCLE" ]; then
-              echo "unknown"; return
-            fi
-            local state_dir="claude/cycles/${ACTIVE_CYCLE}/execution_state"
-            local status=""
-            if [ -d "$state_dir" ]; then
-              for epic_file in "$state_dir"/EPIC-*.json; do
-                [ -f "$epic_file" ] || continue
-                status=$(jq -r --arg st "$st_id" '.stories[$st].status // empty' "$epic_file" 2>/dev/null)
-                [ -n "$status" ] && break
-              done
-            fi
-            if [ -z "$status" ]; then
-              local legacy_file="claude/cycles/${ACTIVE_CYCLE}/execution_state.json"
-              if [ -f "$legacy_file" ]; then
-                status=$(jq -r --arg st "$st_id" '(.epics // {}) | to_entries[] | .value.stories[$st].status? // empty' "$legacy_file" 2>/dev/null | head -1)
-              fi
-            fi
-            if [ -z "$status" ]; then
-              echo "unknown"
-            elif [ "$status" = "done" ] || [ "$status" = "merged" ]; then
-              echo "yes"
-            else
-              echo "no"
-            fi
-          }
 
           # Close all issues referenced in the push range (handles batch pushes)
           for ST_ID in ${{ steps.parse.outputs.st_ids }}; do
-            DONE=$(is_story_done "$ST_ID")
+            DONE=$(is_story_done "claude/cycles" "$ACTIVE_CYCLE" "$ST_ID")
             if [ "$DONE" = "no" ]; then
               echo "Skipping close for ${ST_ID} — execution_state status is not done/merged (likely a delegation-record-only commit)"
               continue
