@@ -136,7 +136,7 @@
         "ST-05": {
           "title": "nightly-stop-update and rebalance-exit appear to have no live scheduled trigger",
           "classification": "delegated_decision",
-          "status": "blocked_delegated",
+          "status": "blocked_decision",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1673,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-02",
@@ -344,7 +344,7 @@
         "ST-14": {
           "title": "Provision read-only staging DATABASE_URL for sprint-execution sessions",
           "classification": "delegated_decision",
-          "status": "blocked_delegated",
+          "status": "blocked_decision",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1682,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-02",
