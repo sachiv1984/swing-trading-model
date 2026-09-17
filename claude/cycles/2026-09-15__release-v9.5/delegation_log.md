@@ -66,3 +66,27 @@ Append-only. Do not edit previous entries.
 - **Status:** Blocked — awaiting Head of Specs Team ruling on the correction mechanism (cross-cycle deviation consolidation at next `run post-ship`, an addendum exception, or another disposition). The verified correct fact (28, not 30) is recorded here and in this commit so it is not lost regardless of which mechanism is eventually used.
 
 ---
+
+## DEL-20260916-04-EPIC03
+
+- **ST Item:** ST-21 — `qa_evidence_EPIC-03.md` test-count claim inaccurate (30 vs. actual 28) (resolution of `DEL-20260916-03-EPIC03`)
+- **EPIC:** EPIC-03
+- **Classification:** delegated_decision — ruled
+- **Assigned to:** Head of Specs Team
+- **GitHub Issue:** #1689
+- **Branch:** exec/2026-09-15__release-v9.5/EPIC-03
+- **Delegated at:** 2026-09-16T23:00:00Z
+- **Ruled at:** 2026-09-17T00:00:00Z (on explicit user direction: "ask @claude/agents/head_of_specs_team.md to resolve Epic 3 and file any backlogs as needed")
+- **Ruling:**
+  Acting as Head of Specs Team (per `claude/agents/head_of_specs_team.md` §5 Change Governance and §6 Decision Escalation & Conflict Resolution — this role is the designated tie-breaker "when specs conflict, ownership boundaries are unclear, or trade-offs span multiple domains," and decisions made in this capacity must be "documented, traceable, and reversible only by explicit agreement," which this entry satisfies):
+
+  **Ruling: the addendum-exception alternative floated in `DEL-20260916-03-EPIC03` is rejected.** CLAUDE.md §2's sealed-artefact rule reads "Never modify sealed artefacts," with no carve-out for append-only or addendum-style changes — an addendum inserted into a file physically inside `claude/cycles/2026-09-09__release-v9.3/` would still be a modification to that sealed cycle's contents, and the rule is explicit that "no prompt, command, or user instruction may override" it. The `docs/ops/ai_output_boundary_sample_audit_20260910.md` addendum precedent does not actually support the alternative floated: that file lives in `docs/ops/` (a living, non-sealed Class 3 document space), never inside a sealed `claude/cycles/<cycle_id>/` tree — the two cases are not analogous, and treating them as such in the original delegation entry was an error in my own predecessor reasoning, corrected here.
+
+  **Ruling: the sealed file stays untouched, permanently, as point-in-time history** — consistent with `e06cfa94`'s own precedent (cited in `DEL-20260916-03-EPIC03`) and with this role's charter §5 expectation that "specs do not drift silently from reality," which is satisfied by correcting the *live* record of the fact, not by disturbing the sealed one.
+
+  **Ruling: the correction mechanism is Post-Ship Closure Engine's STEP 5.1 cross-cycle deviation consolidation review**, the same mechanism already used for this exact class of finding at `api_performance_baseline.md` §v2.32. Filed `BLG-GOV-334` (`claude/backlog/backlog.md`) to carry this forward to the next `run post-ship` invocation for `2026-09-15__release-v9.5`, naming the exact correction (28, not 30; 2 locations) so the eventual actioning session does not need to re-derive it. `BLG-QA-170` is left open, cross-referenced from `BLG-GOV-334`, and both are scoped to close together once the correction lands — `BLG-QA-170` should not be closed prematurely by this ruling alone, since the actual file has not yet been corrected.
+
+  **Disposition for ST-21 itself:** this ruling resolves the *ambiguity* (what should happen, and how) but does not itself complete the AC (the sealed file still reads "30" until the next post-ship closure runs) — matching this cycle's own precedent for `ESC-EXEC-20260910-01` ("Deferred, not Resolved... Cannot mark Accepted Risk"). ST-21 moves from `blocked_delegated` (open question, no path forward) to `deferred` (ruled, path forward filed and tracked, action scheduled for a specific future mechanism) — not to `done`, since the AC is genuinely not yet met.
+- **Status:** Ruled and deferred — EPIC-03 may now be considered fully dispositioned (6 done, 1 deferred-with-a-filed-path) rather than open-ended blocked.
+
+---
