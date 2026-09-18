@@ -256,7 +256,7 @@ function TaxYearReport() {
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 }}
+              transition={{ delay: 0.05, duration: 0.3 }}
               className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4"
             >
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Gross Profit</p>
@@ -267,7 +267,7 @@ function TaxYearReport() {
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
+              transition={{ delay: 0.1, duration: 0.3 }}
               className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4"
             >
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Gross Loss</p>
@@ -278,7 +278,7 @@ function TaxYearReport() {
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
+              transition={{ delay: 0.15, duration: 0.3 }}
               className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4"
             >
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Win Rate</p>
@@ -289,7 +289,7 @@ function TaxYearReport() {
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.2, duration: 0.3 }}
               className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4"
             >
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Trades</p>
