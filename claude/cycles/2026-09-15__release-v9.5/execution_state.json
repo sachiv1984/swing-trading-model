@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T15:05:00Z",
+  "last_updated_utc": "2026-09-18T15:12:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -372,10 +372,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
       "pr_number": 1714,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-15__release-v9.5/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -385,7 +385,7 @@
         "ST-15": {
           "title": "Arc 4 E2E test strategy pre-design (PO-02/03/04)",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1683,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
@@ -408,7 +408,7 @@
         "ST-16": {
           "title": "Extract governance_sync.yml's embedded bash logic into a shared, sourced script",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1684,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
@@ -432,7 +432,7 @@
         "ST-17": {
           "title": "Add unit test coverage for check_contract_example_freshness.py",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1685,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
@@ -455,7 +455,7 @@
         "ST-18": {
           "title": "Playwright coverage matrix file-inventory count is stale (39 vs actual ~100+ spec files)",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1686,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
@@ -478,7 +478,7 @@
         "ST-19": {
           "title": "ST-09 cross-browser evaluation cites stale pre-sharding CI baseline",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1687,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
@@ -501,7 +501,7 @@
         "ST-20": {
           "title": "ST-05 SignalCard spec consolidation lacks before/after runtime evidence",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1688,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
@@ -524,7 +524,7 @@
         "ST-21": {
           "title": "qa_evidence_EPIC-03.md test-count claim inaccurate (30 vs. actual 28)",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1689,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
@@ -1077,18 +1077,16 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
-      "EPIC-02"
+      "EPIC-02",
+      "EPIC-03"
     ],
     "epics_pending": [
-      "EPIC-03",
       "EPIC-04",
       "EPIC-05",
       "EPIC-06"
     ],
     "all_merged": false,
-    "epics_open_pr": [
-      "EPIC-03"
-    ]
+    "epics_open_pr": []
   },
   "sealed": false,
   "sealed_utc": null
