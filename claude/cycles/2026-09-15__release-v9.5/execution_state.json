@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T18:08:00Z",
+  "last_updated_utc": "2026-09-18T18:09:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -865,23 +865,31 @@
         "ST-33": {
           "title": "Codify whether opportunistic in-file fixes found mid-story need their own backlog entry",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1701,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "76296fde",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T18:08:37Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/execution_prompt.md#7. Write Scope Restriction (Hard Gate)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Product Owner",
+            "date": "2026-09-18",
+            "findings": "Approved. Threshold correctly preserves the existing exception's scope decision while removing ambiguity for the common opportunistic-fix case."
+          },
+          "notes": "Defined a size/risk-based threshold (per the backlog item's own 3 candidate options) rather than always-required or always-sufficient -- placed directly in execution_prompt.md S7, adjacent to the existing out-of-scope-finding exception it complements, per BLG-GOV-318's own placement suggestion."
         },
         "ST-34": {
           "title": "record-visual-qa skill's documented output format has drifted ~5 months from actual staging sign-off practice",
@@ -1138,7 +1146,8 @@
     "ST-20",
     "ST-21",
     "ST-31",
-    "ST-32"
+    "ST-32",
+    "ST-33"
   ],
   "open_escalations": [],
   "merge_gate": {
