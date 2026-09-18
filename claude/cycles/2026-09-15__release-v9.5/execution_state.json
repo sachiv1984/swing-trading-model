@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T22:30:00Z",
+  "last_updated_utc": "2026-09-18T22:35:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -154,10 +154,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Live Render dashboard check (user-performed) confirmed no Cron Jobs resource type exists on the free-tier plan -- conclusively ruling out a dashboard-only job. Added nightly-stop-update.yml (22:30 UTC weekdays) and rebalance-exit.yml (22:45 UTC weekdays) following the risk-off-alerts.yml template. No backend change needed -- GET /health/scheduler job registry already expected these jobs. 4 new job-registration regression tests added. BLG-OPS-160 closed. See DEL-20260917-01 in delegation_log.md for the full investigation trail."
+          "notes": "Live Render dashboard check (user-performed) confirmed no Cron Jobs resource type exists on the free-tier plan -- conclusively ruling out a dashboard-only job. Added nightly-stop-update.yml (22:30 UTC weekdays) and rebalance-exit.yml (22:45 UTC weekdays) following the risk-off-alerts.yml template. No backend change needed -- GET /health/scheduler job registry already expected these jobs. 4 new job-registration regression tests added. BLG-OPS-160 closed. See DEL-20260917-01 in delegation_log.md for the full investigation trail. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-06": {
           "title": "AI audit log cost-monitoring follow-ons: storage projection, per-feature trend, silent-purge-failure visibility",
@@ -178,10 +178,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "New GET /ai/spend-trend-by-feature endpoint (sub-item 2/3 of BLG-OPS-153; sub-items 1 and 3 landed in the ST-07 commit on this branch, same purge endpoint/policy doc). Full new-endpoint governance chain satisfied: contract doc, openapi.yaml, test.py registration, SystemStatus.js fallback (124, AST-verified), system-status.spec.js SC-SS-01b."
+          "notes": "New GET /ai/spend-trend-by-feature endpoint (sub-item 2/3 of BLG-OPS-153; sub-items 1 and 3 landed in the ST-07 commit on this branch, same purge endpoint/policy doc). Full new-endpoint governance chain satisfied: contract doc, openapi.yaml, test.py registration, SystemStatus.js fallback (124, AST-verified), system-status.spec.js SC-SS-01b. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-07": {
           "title": "New api_call_log table has no retention/purge policy",
@@ -202,10 +202,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "purge_api_call_log_older_than_90_days() added, wired into POST /ops/purge-audit-logs. Landed alongside BLG-OPS-153 sub-items 1 (storage projection) and 3 (silent-purge-failure visibility) since they touch the same endpoint/doc."
+          "notes": "purge_api_call_log_older_than_90_days() added, wired into POST /ops/purge-audit-logs. Landed alongside BLG-OPS-153 sub-items 1 (storage projection) and 3 (silent-purge-failure visibility) since they touch the same endpoint/doc. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-08": {
           "title": "get_api_session_report() anomaly baseline is self-inclusive",
@@ -225,10 +225,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Leave-one-out baseline fix for get_api_session_report(); 2 new regression tests added (2-session extreme-skew case that was previously masked, and n=1 no-division-error case). 38/38 cost_monitoring tests passed."
+          "notes": "Leave-one-out baseline fix for get_api_session_report(); 2 new regression tests added (2-session extreme-skew case that was previously masked, and n=1 no-division-error case). 38/38 cost_monitoring tests passed. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-09": {
           "title": "Add 1 new endpoint to api_performance_baseline.md re-run",
@@ -248,10 +248,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Closed the GET /positions/{id} KNOWN_GAPS grandfathered entry (check_api_performance_baseline_drift.py) with an estimated pending-live- timing-run row (no DATABASE_URL/staging access this session). Also registered GET /ai/spend-trend-by-feature (added by ST-06 same branch) in the same section."
+          "notes": "Closed the GET /positions/{id} KNOWN_GAPS grandfathered entry (check_api_performance_baseline_drift.py) with an estimated pending-live- timing-run row (no DATABASE_URL/staging access this session). Also registered GET /ai/spend-trend-by-feature (added by ST-06 same branch) in the same section. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-10": {
           "title": "Recurring quarterly hosting-cost trend review",
@@ -271,10 +271,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "New docs/ops/quarterly_hosting_cost_trend_review_cadence.md formalises the cadence; first pass recorded (endpoint count 138->145, render.yaml confirmed unchanged). Extends the existing v9.0 dashboard doc's trend table."
+          "notes": "New docs/ops/quarterly_hosting_cost_trend_review_cadence.md formalises the cadence; first pass recorded (endpoint count 138->145, render.yaml confirmed unchanged). Extends the existing v9.0 dashboard doc's trend table. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-11": {
           "title": "Synthetic uptime monitor for /health independent of hosting dashboard",
@@ -294,10 +294,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "AC-1 'Monitor configured' fully met (pre-existing health-check-alert.yml, independent of Render dashboard). AC-1 'confirmed firing on deliberate test failure' and AC-2 'notification path confirmed working' blocked this session by gh PAT scope (HTTP 403 on workflow_dispatch and secret list) -- documented in docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md §4-6 with a concrete follow-up path, not fabricated. Judged acceptable disposition per this story's own staging-only-evidence allowance."
+          "notes": "AC-1 'Monitor configured' fully met (pre-existing health-check-alert.yml, independent of Render dashboard). AC-1 'confirmed firing on deliberate test failure' and AC-2 'notification path confirmed working' blocked this session by gh PAT scope (HTTP 403 on workflow_dispatch and secret list) -- documented in docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md §4-6 with a concrete follow-up path, not fabricated. Judged acceptable disposition per this story's own staging-only-evidence allowance. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-12": {
           "title": "Document the dashboard-only deploy path-filter gotcha in the ops runbook",
@@ -318,10 +318,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Bidirectional cross-reference added between production_deployment_runbook.md §3.2 and the existing render_build_deploy_path_filter_audit.md (no new incident content -- the gotcha was already fully documented there, just not linked from the ops runbook)."
+          "notes": "Bidirectional cross-reference added between production_deployment_runbook.md §3.2 and the existing render_build_deploy_path_filter_audit.md (no new incident content -- the gotcha was already fully documented there, just not linked from the ops runbook). No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-13": {
           "title": "claude_audit_log has no latency column; no real-data source for AI endpoint latency anomaly checks",
@@ -341,10 +341,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Added claude_audit_log.latency_ms (idempotent ALTER), wired through all create_claude_audit_entry() call sites (ai_service.py x2, debrief_service.py, gemini_service.py x2), added get_claude_endpoint_latency_windows(). run_scheduled_anomaly_check() now real-data by default; latency_data_source reports 'claude_audit_log'. Full backend suite: 1515 passed, 10 skipped."
+          "notes": "Added claude_audit_log.latency_ms (idempotent ALTER), wired through all create_claude_audit_entry() call sites (ai_service.py x2, debrief_service.py, gemini_service.py x2), added get_claude_endpoint_latency_windows(). run_scheduled_anomaly_check() now real-data by default; latency_data_source reports 'claude_audit_log'. Full backend suite: 1515 passed, 10 skipped. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-14": {
           "title": "Provision read-only staging DATABASE_URL for sprint-execution sessions",
@@ -364,10 +364,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.complete",
           "sign_off_record": null,
-          "notes": "Live end-to-end smoke test passed: connects as readonly_staging; SELECT count(*) FROM portfolios returned real data; UPDATE against a real column correctly rejected with 'permission denied for table portfolios'. Resolved several real infra snags along the way (a tool-use leak this session caused and disclosed, a collision with the pre-existing STAGING_DATABASE_URL secret, stale-process/duplicate-bashrc-line env propagation issues, and an unescaped @ breaking URI parsing) -- all documented in DEL-20260918-02 and docs/infrastructure/staging_setup.md §8. BLG-OPS-162 closed."
+          "notes": "Live end-to-end smoke test passed: connects as readonly_staging; SELECT count(*) FROM portfolios returned real data; UPDATE against a real column correctly rejected with 'permission denied for table portfolios'. Resolved several real infra snags along the way (a tool-use leak this session caused and disclosed, a collision with the pre-existing STAGING_DATABASE_URL secret, stale-process/duplicate-bashrc-line env propagation issues, and an unescaped @ breaking URI parsing) -- all documented in DEL-20260918-02 and docs/infrastructure/staging_setup.md §8. BLG-OPS-162 closed. No spec deviation found — deviations_filed corrected at sprint close"
         }
       }
     },
@@ -400,10 +400,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Pre-design test strategy doc for PO-02/03/04, none of which have any UI/endpoint yet (all gate-blocked). Extends BLG-QA-37's approved Claude mock strategy without deviation. DoQ agent-mediated sign-off recorded in-doc."
+          "notes": "Pre-design test strategy doc for PO-02/03/04, none of which have any UI/endpoint yet (all gate-blocked). Extends BLG-QA-37's approved Claude mock strategy without deviation. DoQ agent-mediated sign-off recorded in-doc. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-16": {
           "title": "Extract governance_sync.yml's embedded bash logic into a shared, sourced script",
@@ -424,10 +424,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Extracted detect_newly_done_st_ids()/is_story_done() into scripts/governance_sync_lib.sh, sourced by governance_sync.yml and both regression test scripts. All assertions re-verified against the real extracted functions."
+          "notes": "Extracted detect_newly_done_st_ids()/is_story_done() into scripts/governance_sync_lib.sh, sourced by governance_sync.yml and both regression test scripts. All assertions re-verified against the real extracted functions. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-17": {
           "title": "Add unit test coverage for check_contract_example_freshness.py",
@@ -447,10 +447,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "45 new unit tests for scripts/check_contract_example_freshness.py (pure logic, no DB/network dep). All pass; script re-run against real repo data unaffected."
+          "notes": "45 new unit tests for scripts/check_contract_example_freshness.py (pure logic, no DB/network dep). All pass; script re-run against real repo data unaffected. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-18": {
           "title": "Playwright coverage matrix file-inventory count is stale (39 vs actual ~100+ spec files)",
@@ -470,10 +470,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Fully re-derived §2 Spec File Index against tests/e2e/ directly: 39 (stale) -> 104 files, 874 total scenarios. Descriptions sourced from regression_test_suite_baseline.md Part 2 where present, freshly derived from file header comments for 20 files present in neither source."
+          "notes": "Fully re-derived §2 Spec File Index against tests/e2e/ directly: 39 (stale) -> 104 files, 874 total scenarios. Descriptions sourced from regression_test_suite_baseline.md Part 2 where present, freshly derived from file header comments for 20 files present in neither source. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-19": {
           "title": "ST-09 cross-browser evaluation cites stale pre-sharding CI baseline",
@@ -493,10 +493,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Corrected stale ~133s pre-sharding CI baseline citation to the current 163.0s (8-way shard, ci_pipeline_baseline.md §9) figure. ~3x multiplier and Defer recommendation unchanged (explicitly noted as strengthened, not weakened, by the correction)."
+          "notes": "Corrected stale ~133s pre-sharding CI baseline citation to the current 163.0s (8-way shard, ci_pipeline_baseline.md §9) figure. ~3x multiplier and Defer recommendation unchanged (explicitly noted as strengthened, not weakened, by the correction). No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-20": {
           "title": "ST-05 SignalCard spec consolidation lacks before/after runtime evidence",
@@ -516,10 +516,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Real time npx playwright test before/after measurement captured this session (not estimated): pre-consolidation 3 files vs current signal-card.spec.js, both default and controlled (--workers=1) configs. Finding is a nuanced correction (isolated test-exec time ~8% faster; total wall-clock roughly a wash under default per-file worker allocation), not a clean confirmation of the original claim."
+          "notes": "Real time npx playwright test before/after measurement captured this session (not estimated): pre-consolidation 3 files vs current signal-card.spec.js, both default and controlled (--workers=1) configs. Finding is a nuanced correction (isolated test-exec time ~8% faster; total wall-clock roughly a wash under default per-file worker allocation), not a clean confirmation of the original claim. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-21": {
           "title": "qa_evidence_EPIC-03.md test-count claim inaccurate (30 vs. actual 28)",
@@ -577,7 +577,7 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": {
             "status": "cleared",
@@ -586,7 +586,7 @@
             "date": "2026-09-18",
             "findings": "Approved. Verification note well-supported and appropriately hedged; filing vs fixing inline matches the AC pre-specified path; backlog items correctly scoped/prioritised; version/header mechanics correct. No factual errors or process deviations found."
           },
-          "notes": "DATABASE_URL (readonly staging) available this session for the first time in several cycles -- RISK-04 note in sprint_backlog.md is now stale for this cycle. Live schema confirmation found 4 discrepancies, filed as BLG-SPEC-148/149/150/151 per the AC follow-on path. Verification note added to data_model.md (v2.34 -> v2.35)."
+          "notes": "DATABASE_URL (readonly staging) available this session for the first time in several cycles -- RISK-04 note in sprint_backlog.md is now stale for this cycle. Live schema confirmation found 4 discrepancies, filed as BLG-SPEC-148/149/150/151 per the AC follow-on path. Verification note added to data_model.md (v2.34 -> v2.35). No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-23": {
           "title": "Arc 4 API contract pre-authoring (PO-02/03/04)",
@@ -608,7 +608,7 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": {
             "status": "cleared",
@@ -617,7 +617,7 @@
             "date": "2026-09-18",
             "findings": "Approved after correcting a first-pass finding: sign-off tables initially mis-attributed acceptance to API Contracts & Documentation Owner alone, omitting the AC-named Head of Specs Team. Corrected; gate scripts (lint + drift sweep) independently re-verified clean by the reviewer."
           },
-          "notes": "3 stub contract files, non-canonical heading form to avoid false-tripping the OpenAPI Drift Detection gate. No implementation."
+          "notes": "3 stub contract files, non-canonical heading form to avoid false-tripping the OpenAPI Drift Detection gate. No implementation. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-24": {
           "title": "Data model v3 pre-definition for Arc 4 journal intelligence",
@@ -637,7 +637,7 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": {
             "status": "cleared",
@@ -646,7 +646,7 @@
             "date": "2026-09-18",
             "findings": "Approved after correcting a first-pass finding: sign-off table initially named Data Model & Domain Schema Owner (the authoring/self role) instead of the AC-named Head of Specs Team + Infrastructure & Operations Owner. Corrected."
           },
-          "notes": "No migration SQL, schema design only per BLG-SPEC-57 scope. Closes 4/5 outstanding arc4_data_requirements.md capture-point gaps; proposes 2 new tables for PO-02/03, none for PO-04."
+          "notes": "No migration SQL, schema design only per BLG-SPEC-57 scope. Closes 4/5 outstanding arc4_data_requirements.md capture-point gaps; proposes 2 new tables for PO-02/03, none for PO-04. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-25": {
           "title": "position_endpoints.md example JSON: current_trailing_stop_native doesn't reconcile with current_trailing_stop × live_fx_rate",
@@ -666,10 +666,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Fixed current_trailing_stop_native example value (764.00 -> 765.08) to reconcile with current_trailing_stop x live_fx_rate. Change Log entry added, version bumped 2.6.0 -> 2.6.1."
+          "notes": "Fixed current_trailing_stop_native example value (764.00 -> 765.08) to reconcile with current_trailing_stop x live_fx_rate. Change Log entry added, version bumped 2.6.0 -> 2.6.1. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-26": {
           "title": "Triage contract example-payload freshness check findings",
@@ -690,10 +690,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "40 baseline findings triaged. Fixed 3 real script bugs (regression-tested) + 3 genuine openapi.yaml gaps (GET /health, GET /trades, POST /cash/transaction) -- 18 of 40 resolved. Remaining 20+2 filed as BLG-SPEC-152/153 (systemic generic-data-payload pattern, not individually diagnosed)."
+          "notes": "40 baseline findings triaged. Fixed 3 real script bugs (regression-tested) + 3 genuine openapi.yaml gaps (GET /health, GET /trades, POST /cash/transaction) -- 18 of 40 resolved. Remaining 20+2 filed as BLG-SPEC-152/153 (systemic generic-data-payload pattern, not individually diagnosed). No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-27": {
           "title": "Make check_orphaned_specs.py path-aware to resolve duplicate-basename blind spots",
@@ -714,10 +714,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Path-aware duplicate-basename resolution added, with an ambiguity-flagging fallback. All 10 pre-existing tests pass unchanged; 6 new tests added (16/16). Re-run against live repo: 0 orphaned, 0 ambiguous for both real duplicate-basename pairs."
+          "notes": "Path-aware duplicate-basename resolution added, with an ambiguity-flagging fallback. All 10 pre-existing tests pass unchanged; 6 new tests added (16/16). Re-run against live repo: 0 orphaned, 0 ambiguous for both real duplicate-basename pairs. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-28": {
           "title": "Spec debt dashboard sort key mishandles same-day-filed items",
@@ -738,10 +738,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "age_days==0 (same-day filed) collided with the None/undated -1 sentinel via a falsy  fallback. Switched to explicit is-not-None check. New regression test added; full suite for this file re-run clean (15/15 passed)."
+          "notes": "age_days==0 (same-day filed) collided with the None/undated -1 sentinel via a falsy  fallback. Switched to explicit is-not-None check. New regression test added; full suite for this file re-run clean (15/15 passed). No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-29": {
           "title": "Canonical position/trade lifecycle state diagram",
@@ -761,10 +761,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Added lifecycle diagram to data_model.md; all 3 source files (trade_plan_endpoints.md, position_endpoints.md, frontend trade_plan.md) cross-reference it. Surfaced a real gap: trade_plans_status_check live constraint has 7 values but data_model.md only documented 3 -- filed BLG-SPEC-154."
+          "notes": "Added lifecycle diagram to data_model.md; all 3 source files (trade_plan_endpoints.md, position_endpoints.md, frontend trade_plan.md) cross-reference it. Surfaced a real gap: trade_plans_status_check live constraint has 7 values but data_model.md only documented 3 -- filed BLG-SPEC-154. No spec deviation found — deviations_filed corrected at sprint close"
         },
         "ST-30": {
           "title": "Consolidate divergent empty-state copy patterns",
@@ -784,10 +784,10 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Re-confirmed v9.1 ST-29 consolidation holds. Found and fixed 3 spec-only stale trailing-period headings; filed BLG-FE-178/179 for 2 genuine shipped-code violations (no code change made, per design_gate.md ST-30 scoping to confirm-and-document only)."
+          "notes": "Re-confirmed v9.1 ST-29 consolidation holds. Found and fixed 3 spec-only stale trailing-period headings; filed BLG-FE-178/179 for 2 genuine shipped-code violations (no code change made, per design_gate.md ST-30 scoping to confirm-and-document only). No spec deviation found — deviations_filed corrected at sprint close"
         }
       }
     },
