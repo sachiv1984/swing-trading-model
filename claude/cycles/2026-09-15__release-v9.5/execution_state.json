@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T15:00:00Z",
+  "last_updated_utc": "2026-09-18T15:05:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -372,160 +372,177 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1714,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-15__release-v9.5/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_check_contract_example_freshness.py"
+      ],
       "stories": {
         "ST-15": {
           "title": "Arc 4 E2E test strategy pre-design (PO-02/03/04)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1683,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "c5112c2e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-16T23:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/qa/arc4_e2e_test_strategy_po02_03_04.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Pre-design test strategy doc for PO-02/03/04, none of which have any UI/endpoint yet (all gate-blocked). Extends BLG-QA-37's approved Claude mock strategy without deviation. DoQ agent-mediated sign-off recorded in-doc."
         },
         "ST-16": {
           "title": "Extract governance_sync.yml's embedded bash logic into a shared, sourced script",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1684,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "07f7e617",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-16T22:55:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/governance_sync_lib.sh",
+            ".github/workflows/governance_sync.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Extracted detect_newly_done_st_ids()/is_story_done() into scripts/governance_sync_lib.sh, sourced by governance_sync.yml and both regression test scripts. All assertions re-verified against the real extracted functions."
         },
         "ST-17": {
           "title": "Add unit test coverage for check_contract_example_freshness.py",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1685,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "9e0822b1",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-16T22:40:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_check_contract_example_freshness.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "45 new unit tests for scripts/check_contract_example_freshness.py (pure logic, no DB/network dep). All pass; script re-run against real repo data unaffected."
         },
         "ST-18": {
           "title": "Playwright coverage matrix file-inventory count is stale (39 vs actual ~100+ spec files)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1686,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "2dc24811",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-16T22:35:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/qa/playwright_coverage_matrix.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Fully re-derived \u00a72 Spec File Index against tests/e2e/ directly: 39 (stale) -> 104 files, 874 total scenarios. Descriptions sourced from regression_test_suite_baseline.md Part 2 where present, freshly derived from file header comments for 20 files present in neither source."
         },
         "ST-19": {
           "title": "ST-09 cross-browser evaluation cites stale pre-sharding CI baseline",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1687,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "e993ec36",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-16T22:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/qa/cross_browser_playwright_matrix_evaluation_20260909.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Corrected stale ~133s pre-sharding CI baseline citation to the current 163.0s (8-way shard, ci_pipeline_baseline.md \u00a79) figure. ~3x multiplier and Defer recommendation unchanged (explicitly noted as strengthened, not weakened, by the correction)."
         },
         "ST-20": {
           "title": "ST-05 SignalCard spec consolidation lacks before/after runtime evidence",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1688,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "e2461dc5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-16T22:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/qa/regression_test_suite_baseline.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Real time npx playwright test before/after measurement captured this session (not estimated): pre-consolidation 3 files vs current signal-card.spec.js, both default and controlled (--workers=1) configs. Finding is a nuanced correction (isolated test-exec time ~8% faster; total wall-clock roughly a wash under default per-file worker allocation), not a clean confirmation of the original claim."
         },
         "ST-21": {
           "title": "qa_evidence_EPIC-03.md test-count claim inaccurate (30 vs. actual 28)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1689,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "3c3f4184",
+          "delegation_record_id": "DEL-20260916-04-EPIC03",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T04:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/backlog/backlog.md#BLG-GOV-334"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "RESOLVED (final) 2026-09-18. Prior 'defer to next run post-ship' plan (DEL-20260916-04-EPIC03) was found to rely on a mechanism (STEP 5.1) that does not actually edit sealed cycle content -- corrected. Head of Specs Team ruled the sealed v9.3 qa_evidence file stays untouched permanently; Product Owner accepted the true fact (28, not 30) being permanently recorded via BLG-GOV-334 itself as satisfying ST-21's intent, since the literal AC wording could never be met once the sealed-artefact constraint was discovered. BLG-QA-170/BLG-GOV-334 both closed. See DEL-20260918-03-EPIC03 in delegation_log.md for full reasoning."
         }
       }
     },
@@ -1038,6 +1055,7 @@
     "ST-02",
     "ST-03",
     "ST-04",
+    "ST-05",
     "ST-06",
     "ST-07",
     "ST-08",
@@ -1046,8 +1064,14 @@
     "ST-11",
     "ST-12",
     "ST-13",
-    "ST-05",
-    "ST-14"
+    "ST-14",
+    "ST-15",
+    "ST-16",
+    "ST-17",
+    "ST-18",
+    "ST-19",
+    "ST-20",
+    "ST-21"
   ],
   "open_escalations": [],
   "merge_gate": {
@@ -1062,7 +1086,9 @@
       "EPIC-06"
     ],
     "all_merged": false,
-    "epics_open_pr": []
+    "epics_open_pr": [
+      "EPIC-03"
+    ]
   },
   "sealed": false,
   "sealed_utc": null

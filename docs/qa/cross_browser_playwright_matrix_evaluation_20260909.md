@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-09-09
-**Source:** ST-09 (BLG-QA-91, EPIC-02, v9.3 sprint execution)
+**Last Updated:** 2026-09-16 (ST-19, BLG-QA-168, v9.5 — corrected stale pre-sharding CI baseline citation); prior — 2026-09-09 (ST-09, BLG-QA-91, v9.3, initial evaluation).
+**Source:** ST-19 (BLG-QA-168, EPIC-03, v9.5 sprint execution — correction); ST-09 (BLG-QA-91, EPIC-02, v9.3 sprint execution — original)
 
 ---
 
@@ -33,7 +33,7 @@ ST-09's acceptance criteria: evaluate the cost/benefit of adding Firefox/WebKit 
 
 **Cost:**
 - Per-browser wall-clock time for this 18-test sample is comparable across all 3 engines (~50-60s each) — no browser is dramatically slower.
-- Extrapolated to the full suite (102 spec files as of this review — see `BLG-QA-167` for the exact current count vs. the stale count in `playwright_coverage_matrix.md`): `docs/ops/ci_pipeline_baseline.md` §3.1 records the Playwright E2E Acceptance Tests workflow as the CI critical path at ~133s (Chromium only, 4 parallel workers on GitHub-hosted `ubuntu-latest` runners — `workers: process.env.CI ? 4 : undefined` in `playwright.config.js`). Adding 2 more browsers without adding proportional runner parallelism would scale this critical-path workflow toward **~3×** its current duration, since GitHub-hosted public-repo runners are already at the 4-vCPU ceiling this repo's worker count is tuned to.
+- Extrapolated to the full suite (102 spec files as of this review — see `BLG-QA-167` for the exact current count vs. the stale count in `playwright_coverage_matrix.md`): **corrected (ST-19, BLG-QA-168, v9.5)** — the current CI critical path is `docs/ops/ci_pipeline_baseline.md` §9's 163.0s (8-way shard, 2-run sample, 2026-09-10), not §3.1's ~133s single-sample figure (2026-05-29, *before* sharding existed at all — the "4 parallel workers" framing originally attached to that number described `playwright.config.js`'s per-shard `workers` setting, which wasn't yet in effect for a pre-sharding measurement). Adding 2 more browsers without adding proportional runner parallelism would scale this critical-path workflow toward **~3×** its current duration (163.0s → ~489s, ≈8.2 min), since GitHub-hosted public-repo runners are already at the shard/worker configuration (8-way shard × 4 workers/shard) this repo is tuned to.
 - Browser binaries (Firefox + WebKit, ~200MB combined) must be installed in every CI run (`npx playwright install`), adding fixed per-run setup time on top of the multiplied test time.
 
 **Benefit:**
@@ -44,7 +44,7 @@ ST-09's acceptance criteria: evaluate the cost/benefit of adding Firefox/WebKit 
 
 ## Recommendation: **Defer**
 
-Adding Firefox/WebKit to the CI matrix is not recommended at this time. Rationale: the demonstrated cost (~3× the CI critical path, a workflow already identified in `ci_pipeline_baseline.md` as the pipeline's bottleneck) is not justified by demonstrated risk — this evaluation's own direct test run found zero cross-browser-specific failures, there is no historical precedent of a cross-browser bug in this app, and the suite's assertion style is already inherently more portable than a pixel-based suite would be.
+Adding Firefox/WebKit to the CI matrix is not recommended at this time. Rationale: the demonstrated cost (~3× the CI critical path — 163.0s → ~489s against the current 8-way-shard baseline, corrected ST-19 — a workflow already identified in `ci_pipeline_baseline.md` as the pipeline's bottleneck) is not justified by demonstrated risk — this evaluation's own direct test run found zero cross-browser-specific failures, there is no historical precedent of a cross-browser bug in this app, and the suite's assertion style is already inherently more portable than a pixel-based suite would be. **This recommendation is unchanged by the ST-19 correction** — a higher current baseline strengthens, not weakens, the case against adding 2 more unsharded browsers.
 
 **Revisit if:**
 - A real user-reported bug is ever traced to non-Chromium rendering/behaviour (the single highest-signal trigger — direct evidence beats this evaluation's necessarily-small sample).
@@ -55,3 +55,9 @@ Adding Firefox/WebKit to the CI matrix is not recommended at this time. Rational
 
 - Evaluated by: Sprint Execution Engine (autonomous class, per BLG-GOV-19 — a cost/benefit evaluation deliverable, no observable UI behaviour change)
 - Date: 2026-09-09
+
+## Correction (ST-19, BLG-QA-168, EPIC-03, v9.5)
+
+- Corrected by: Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3)
+- Date: 2026-09-16
+- Comments: The Cost/Benefit and Recommendation sections cited `ci_pipeline_baseline.md` §3.1's pre-sharding 2026-05-29 single-sample figure (~133s), paired with a "4 parallel workers" framing that was not actually in effect for that pre-sharding measurement. Corrected to cite §9's current 163.0s (8-way shard, 2026-09-10) baseline — the most recent measurement in that document, superseding even §8.5's intermediate 198.5–210.6s (4-way shard) figure. The ~3× multiplier and the "Defer" recommendation are unchanged: a higher, correct current baseline strengthens rather than weakens the case against adding 2 more unsharded browsers. `BLG-QA-168` closed.

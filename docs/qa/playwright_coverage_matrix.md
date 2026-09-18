@@ -1,9 +1,9 @@
 **Owner:** Director of Quality
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-09-09 (ST-05, BLG-QA-82, v9.3 — SignalCard rows consolidated to signal-card.spec.js; stale total-count gap filed as BLG-QA-167); prior — 2026-07-20 (ST-06, BLG-QA-39, v4.8)
-**Cycle:** 2026-06-01__release-v4.8 (ST-06 — BLG-QA-39); 2026-09-09__release-v9.3 (ST-05 — BLG-QA-82)
+**Version:** 1.5
+**Last Updated:** 2026-09-16 (ST-18, BLG-QA-167, v9.5 — §2 Spec File Index fully re-derived, 39→104 files corrected); prior — 2026-09-09 (ST-05, BLG-QA-82, v9.3 — SignalCard rows consolidated to signal-card.spec.js; stale total-count gap filed as BLG-QA-167); prior history retained — see prior entries in version control.
+**Cycle:** 2026-06-01__release-v4.8 (ST-06 — BLG-QA-39); 2026-09-09__release-v9.3 (ST-05 — BLG-QA-82); 2026-09-15__release-v9.5 (ST-18 — BLG-QA-167)
 
 ---
 
@@ -19,46 +19,112 @@ This matrix maps delivered features and stories (v3.7–v4.2) to their Playwrigh
 
 | Spec File | Scenarios | Primary Features Covered |
 |-----------|----------|--------------------------|
-| `alert-nav-badge.spec.js` | 8 | Alert notification badge in nav |
-| `alert-thresholds-empty-state.spec.js` | 13 | Alert threshold empty state rendering |
-| `arc5-compliance-section.spec.js` | 4 | Arc5ComplianceSection heading, stat cards, loading, error |
-| `chart-interactivity.spec.js` | 21 | Chart interaction behaviours (zoom, hover, pan) |
-| `compliance-panel.spec.js` | 7 | Compliance panel rendering and state |
-| `earnings-calendar.spec.js` | 9 | Earnings calendar display |
-| `entry-checklist.spec.js` | 7 | Entry checklist rendering and interaction |
-| `epic01-v34-lifecycle.spec.js` | 10 | v3.4 EPIC-01 lifecycle (risk prompt framework) |
+| `accessibility-axe-scan.spec.js` | 4 | Standalone axe-core WCAG accessibility CI scan (ST-21, BLG-QA-83, v9.0) — 4 representative pages, serious/critical violations block |
+| `ai-briefing-progressive-disclosure.spec.js` | 7 | AI daily briefing card expand/collapse progressive disclosure |
+| `ai-usage-costs.spec.js` | 9 | AI cost view (single-provider Claude total) |
+| `alert-nav-badge.spec.js` | 8 | Alert navigation badge |
+| `alert-thresholds-empty-state.spec.js` | 13 | Alert thresholds empty state |
+| `analytics-mobile-responsive.spec.js` | 7 | PerformanceAnalytics mobile responsive audit (ST-12, BLG-FE-94, v8.5) — against analytics.md §Responsive Behavior |
+| `arc5-compliance-section.spec.js` | 16 | Arc 5 compliance UI section |
+| `backtest-rule-change.spec.js` | 5 | Backtest Rule Change tab (ST-07, BLG-FEAT-89, v8.9) — in-app backtesting engine for strategy rule changes |
+| `bulk-actions-toolbar.spec.js` | 12 | Bulk actions on list/table views (`BLG-FE-117`) |
+| `chart-interactivity.spec.js` | 21 | Chart interaction behaviours |
+| `command-palette.spec.js` | 16 | Global command palette / cross-page search (`BLG-FE-115`) |
+| `compliance-panel.spec.js` | 7 | Compliance panel |
+| `compliance-recheck.spec.js` | 11 | On-demand SI-01 compliance recheck for open positions |
+| `custom-price-alerts.spec.js` | 11 | User-defined custom price alerts (`BLG-FE-116`) |
+| `dialog-classname-override-fixes.spec.js` | 6 | Dialog className-override collision fixes |
+| `earnings-calendar.spec.js` | 9 | Earnings calendar UI |
+| `entry-checklist.spec.js` | 11 | Pre-entry checklist |
+| `epic01-v34-lifecycle.spec.js` | 10 | v3.4 EPIC-01 lifecycle scenarios |
+| `epic01-v62-stops-alerts.spec.js` | 16 | SignalCard exit_rebalance status / stops & alerts |
+| `epic01-v70-grid-badge-parity.spec.js` | 9 | Grid View badge parity |
 | `epic02-v34-risk-prompts.spec.js` | 10 | v3.4 EPIC-02 risk prompts |
-| `epic03-v34-frontend.spec.js` | 16 | v3.4 EPIC-03 frontend (research view, chart) |
-| `fee-drag-trade-history.spec.js` | 7 | Fee drag calculation in trade history |
-| `keyboard-shortcuts.spec.js` | 11 | Keyboard shortcut interactions |
-| `loading-states.spec.js` | 13 | Loading state rendering across pages |
+| `epic02-v62-ai-briefing-chat.spec.js` | 11 | AI Daily Briefing card & AI Chat widget |
+| `epic03-v34-frontend.spec.js` | 21 | v3.4 EPIC-03 frontend |
+| `fee-drag-trade-history.spec.js` | 7 | Fee drag in trade history |
+| `form-validation-error-color-fixes.spec.js` | 6 | Form-validation error text dark-token contrast fixes |
+| `gap-risk-flag.spec.js` | 8 | Overnight/weekend gap risk flag |
+| `gate-progress.spec.js` | 4 | Gate proximity indicator |
+| `heading-light-theme-contrast.spec.js` | 4 | Dashboard/StrategyBenchmark heading contrast |
+| `keyboard-shortcuts.spec.js` | 13 | Keyboard shortcuts |
+| `loading-states.spec.js` | 13 | Loading state indicators |
 | `market-correlation.spec.js` | 8 | Market correlation panel |
-| `notifications.spec.js` | 9 | Notifications panel rendering |
-| `paper-account.spec.js` | 5 | Paper trading account display |
-| `plan-vs-reality.spec.js` | 12 | Plan vs reality comparison view |
-| `positions-pnl-columns.spec.js` | 4 | P&L column rendering in positions |
-| `pre-trade-research.spec.js` | 16 | Pre-trade research view (IT-01/02/03) |
-| `red-flag-journal.spec.js` | 3 | Red Flag Journal page (SC-RFJ-01/02/03) |
-| `reports-performance-tab.spec.js` | 13 | Reports performance tab, Arc 5 compliance section (v4.3 ST-18) |
-| `research-typography.spec.js` | 5 | Research view typography rendering |
-| `research-view-signal-type.spec.js` | 4 | Research view signal type display |
-| `risk-dashboard.spec.js` | 17 | Risk dashboard page (PO-01 Arc 4) |
+| `modal-theming-token-conversion.spec.js` | 6 | Modal theming token conversion (ST-06, BLG-FE-156, v8.7) — WatchlistModal/ExportModal/WidgetLibrary shadcn tokens |
+| `monthly-pnl-avg-per-trade.spec.js` | 5 | Avg P&L/Trade column, Monthly P&L report |
+| `monthly-pnl-csv-export.spec.js` | 5 | Monthly CSV export (alongside tax-year export) |
+| `monthly-pnl-realized-unrealized.spec.js` | 5 | Unrealised P&L Card & Combined Total |
+| `morning-briefing.spec.js` | 11 | Trader's Morning Briefing dashboard |
+| `nav-notification-digest-consolidation.spec.js` | 7 | Nav duplication removal / digest-notification unification |
+| `net-r-trade-history.spec.js` | 5 | Net-of-costs performance tracking |
+| `notification-badge-contrast.spec.js` | 2 | Nav alert-badge contrast fix |
+| `notifications.spec.js` | 12 | Notifications UI |
+| `page-header-dark-gradient-contrast.spec.js` | 2 | PageHeader dark-mode gradient contrast fix |
+| `paper-account.spec.js` | 5 | Paper trading account |
+| `plan-vs-reality.spec.js` | 12 | Plan vs reality comparison |
+| `position-review-cadence-nudge.spec.js` | 8 | Position review cadence nudge |
+| `position-sizing-concentration.spec.js` | 3 | Concentration-aware position sizing display (ST-04, BLG-BE-104, v8.9) — correlation/sector-concentration-aware sizing |
+| `position-stop-currency-basis.spec.js` | 4 | Trailing stop currency basis, card & table view (ST-02, BLG-BE-103, v8.9) — US-market position currency fix |
+| `positions-pnl-columns.spec.js` | 4 | Positions P&L column display |
+| `pre-entry-panel-badge.spec.js` | 3 | Pre-entry panel badge |
+| `pre-trade-research.spec.js` | 16 | Pre-trade research view |
+| `price-alert-trade-plan-linkage.spec.js` | 2 | Price-alert-to-trade-plan linkage round trip (ST-09, BLG-BE-84, v8.8) |
+| `print-export-pdf.spec.js` | 6 | Print/PDF export — WeeklyDigest, TradePlan (`BLG-FE-119`) |
+| `r-multiple-reflection.spec.js` | 5 | R-multiple display fix, Reflection page |
+| `red-flag-journal-filter-persistence.spec.js` | 2 | Red Flag Journal filter-state persistence |
+| `red-flag-journal.spec.js` | 6 | Red flag journal |
+| `reports-performance-tab.spec.js` | 13 | Reports performance tab |
+| `reports-realised-pnl-zero-colour-convention.spec.js` | 5 | Realised P&L exact-zero colour convention (ST-08, BLG-FE-144, v8.5) — Tax Year Trades Table |
+| `reports-reconciliation.spec.js` | 5 | P&L / tax record reconciliation report |
+| `reports-si02-gate-status.spec.js` | 11 | SI-02 gate visibility indicator, Reports page |
+| `reports-theme-fix-si02-unrealised-pnl.spec.js` | 4 | SI-02 gate status section + unrealised P&L card light/dark theme fix (ST-04/ST-05, BLG-FE-151/152, v8.7) |
+| `research-trade-plan-status-badge.spec.js` | 2 | Research page Trade Plan Status Badge (ST-14, BLG-FE-162, v8.8) — Trade Plan Panel |
+| `research-typography.spec.js` | 5 | Research view typography |
+| `research-view-signal-type.spec.js` | 4 | Research view signal type |
+| `risk-dashboard.spec.js` | 17 | Risk dashboard |
+| `saved-filters-calendar-view.spec.js` | 10 | Saved filter views and calendar view (`BLG-FE-118`) |
+| `screener-quality.spec.js` | 5 | Screener data quality telemetry |
 | `screener-uk-suffix.spec.js` | 4 | Screener UK suffix handling |
-| `screener.spec.js` | 20 | Screener core functionality |
-| `si01-si03-integration.spec.js` | 8 | SI-01→SI-03 integration path |
-| `sidebar-nav-groups.spec.js` | 8 | Sidebar navigation grouping |
-| `signal-card.spec.js` | 12 | SignalCard: add-to-watchlist, cash balance, allocation_insufficient badge (consolidated v9.3 ST-05, BLG-QA-82 — was 3 files: signals-add-to-watchlist.spec.js, signals-cash-balance.spec.js, signals-allocation-insufficient.spec.js) |
-| `slippage-tracking.spec.js` | — | Slippage tracking (count uncertain) |
-| `smoke-critical-paths.spec.js` | 3 | Critical path smoke tests |
+| `screener.spec.js` | 24 | Screener full suite |
+| `secondary-text-contrast.spec.js` | 4 | Dark-theme secondary-text contrast fix |
+| `sector-heatmap.spec.js` | 4 | Sector heat-map |
+| `sector-regime-exposure-trend.spec.js` | 3 | Historical sector/regime exposure trend, Risk Dashboard |
+| `settings-heading-order-and-aria-labelledby-regression.spec.js` | 4 | Settings heading-order and TradePlan/Settings aria-labelledby pinned regression tests (ST-08, BLG-QA-164, v9.4) |
+| `setup-quality-score.spec.js` | 9 | Setup Quality Score display (Research/TradePlan) |
+| `setup-thesis-digest.spec.js` | 4 | SetupThesisDigestPanel (ST-02, BLG-FEAT-56, v8.6) |
+| `shadcn-token-remaining-families.spec.js` | 5 | Remaining shadcn token call-site families (ST-08/ST-17, BLG-FE-157/160, v8.7/v8.8) — coverage left untested by v8.6/ST-04 |
+| `si01-si03-integration.spec.js` | 10 | SI-01/SI-03 integration |
+| `si04-version-comparison.spec.js` | 5 | SI-04 strategy-version performance comparison |
+| `sidebar-nav-groups.spec.js` | 8 | Sidebar navigation groups |
+| `signal-card.spec.js` | 12 | SignalCard: watchlist add, cash balance, allocation-insufficient badge (consolidated v9.3, BLG-QA-82; was 3 files: signals-add-to-watchlist v5.3, signals-allocation-insufficient v5.0, signals-cash-balance v5.0). Runtime evidence: §"SignalCard Consolidation Runtime Evidence" below (v9.5, BLG-QA-169). |
+| `slippage-tracking.spec.js` | 8 | Slippage tracking |
+| `smoke-critical-paths.spec.js` | 3 | Smoke — critical paths |
 | `staleness-indicator.spec.js` | 5 | Data staleness indicator |
-| `system-status.spec.js` | — | System status page (SC-SS-*) |
-| `ticker-universe.spec.js` | — | Ticker universe management |
-| `trade-plan-signal-context.spec.js` | — | Trade plan signal context |
-| `trade-plan.spec.js` | 23 | Trade plan page (full lifecycle, pre-entry, override, AI thesis) |
-| `visual-snapshots.spec.js` | 14 | Visual snapshot regression tests |
-| `weekly-digest.spec.js` | 5 | Weekly digest rendering |
+| `standing-alert.spec.js` | 6 | Shared "standing alert" component |
+| `strategy-benchmark.spec.js` | 18 | Strategy Benchmark page |
+| `system-status.spec.js` | 21 | System status page |
+| `tax-year-csv-export.spec.js` | 5 | Tax-year CSV export (Download CSV button order) |
+| `theme-persistence.spec.js` | 4 | Theme-toggle persistence across sessions (ST-11, BLG-FE-93, v8.5) — audit-only story verifying already-correct behaviour |
+| `ticker-universe.spec.js` | 31 | Ticker universe management |
+| `trade-debrief.spec.js` | 6 | Automated AI post-trade debrief (ST-06, BLG-FEAT-90, v8.9) — §13 conditional review |
+| `trade-history-ai-journal-summary.spec.js` | 3 | AI journal summary error states |
+| `trade-plan-completion-rate.spec.js` | 9 | TradePlanCompletionRateSection (ST-01, BLG-FEAT-32, v8.6) |
+| `trade-plan-invalidation-link-toast-ai-badge.spec.js` | 6 | Invalidation condition field, link-confirmation toast, AI-draft badge (ST-01/ST-02/ST-03, BLG-FEAT-84/BLG-FE-158/BLG-BE-95, v8.7) |
+| `trade-plan-linkage-advisory.spec.js` | 3 | Trade Plan Linkage Advisory (ST-28, BLG-FEAT-95, v9.4) — per position_form.md §Trade Plan Linkage Advisory |
+| `trade-plan-signal-context.spec.js` | 4 | Trade plan signal context |
+| `trade-plan-tag-filter.spec.js` | 5 | Trade plan tagging & tag-based performance filtering |
+| `trade-plan.spec.js` | 41 | Trade plan full suite |
+| `trailing-stop-explainer-tooltip.spec.js` | 5 | "Why is my stop moving" explainer tooltip |
+| `v7.2-dashboard-tradeplan-ux-hardening.spec.js` | 15 | Dashboard/trade-plan UX hardening |
+| `visual-regression-baselines.spec.js` | 5 | First pixel-level toHaveScreenshot() baselines in this app (ST-18, BLG-QA-81, v9.0) |
+| `visual-snapshots.spec.js` | 15 | Visual snapshot regression |
+| `watchlist-staleness-review.spec.js` | 5 | Watchlist staleness tracking & Keep/Remove action |
+| `watchlist.spec.js` | 6 | Watchlist.js baseline coverage |
+| `weekly-digest.spec.js` | 5 | Weekly digest |
+| `what-if-sizing-preview.spec.js` | 8 | What-If sizing preview (ST-05, BLG-FEAT-91, v8.9) — pre-commit what-if sizing/risk simulator on trade-plan form |
+| `whats-new-panel.spec.js` | 6 | In-app "what's new" panel |
 
-**Total: 39 spec files, ~325+ test scenarios** *(this file-inventory count was already stale relative to the actual `tests/e2e/` directory as of the 2026-07-20 Last Updated date — see BLG-QA-167, filed v9.3 ST-05. The SignalCard consolidation above (v9.3 ST-05, BLG-QA-82) reduces the actual spec-file count by 2 net; this document's own running total is not corrected here as a full re-inventory is out of scope for ST-05.)*
+**Total: 104 spec files, 874 test scenarios** (re-derived 2026-09-16, ST-18, BLG-QA-167, v9.5 — full re-inventory against `tests/e2e/` directly, `test(`/`test.only(`/`test.skip(` occurrence counting convention matching `regression_test_suite_baseline.md`'s established method)
 
 ---
 
@@ -180,6 +246,27 @@ Rationale: prior to this item, every spec file inlined its own ad hoc mock objec
 ## 6. Review Sign-Off
 
 ```
+Director of Quality (agent-mediated, QA & Testing Owner role — §5.3)
+Date: 2026-09-16
+
+ST-18 (BLG-QA-167, EPIC-03, v9.5): §2 Spec File Index fully re-derived against
+tests/e2e/ directly (ls tests/e2e/*.spec.js, 104 files — the stale table
+claimed 39). Scenario counts re-counted per file (test(/test.only(/test.skip(
+occurrences, same convention as regression_test_suite_baseline.md) — total
+874 scenarios. Descriptions sourced from regression_test_suite_baseline.md's
+own Part 2 where already present (most files), this document's own
+pre-existing descriptions where regression_test_suite_baseline.md lacked an
+entry, and freshly derived from each file's own header comment for the 20
+files present in neither source (accessibility-axe-scan, analytics-mobile-
+responsive, backtest-rule-change, and 17 others — see §2 for the full list).
+Running total corrected from 39 to 104. Version bumped 1.4->1.5.
+
+Signed: Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3) — 2026-09-16
+```
+
+---
+
+```
 Director of Quality
 Date: 2026-06-09
 
@@ -231,6 +318,7 @@ Signed: Sprint Execution Engine (autonomous class) — 2026-06-09
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 1.5 | 2026-09-16 | Sprint Execution Engine (agent-mediated, QA & Testing Owner role — §5.3) | ST-18 (EPIC-03, v9.5, BLG-QA-167): §2 Spec File Index fully re-derived against `tests/e2e/` directly — corrected from the stale 39-file claim to the actual 104 files, 874 total scenarios. See §6 sign-off for sourcing methodology. |
 | 1.3 | 2026-07-20 | Sprint Execution Engine | ST-05 (EPIC-05, v7.6, BLG-QA-114): Added §3A documenting `tests/e2e/fixtures/api-mocks.js`, the new shared OpenAPI-derived mock fixture library, as the preferred pattern for new Playwright tests. Covers the 9 endpoints touched by `BLG-SPEC-95`'s v7.4 UI-heavy release readiness bundle. `custom-price-alerts.spec.js` refactored as the working example (byte-identical mock output verified, all 11 scenarios still passing). |
 | 1.2 | 2026-06-09 | Sprint Execution Engine | v5.3 ST-20 (BLG-QA-54): v5.2+v5.3 coverage sections added. SI-05 digest delivery spec (ST-19, 4 scenarios) + tax year P&L unit tests (ST-18, 6 scenarios) + system-status SC-SS-01b updated ('62'→'65'). Total: 41 spec files. Coverage gaps identified. Director of Quality sign-off. |
 | 1.1 | 2026-06-01 | Sprint Execution Engine | v4.8 ST-06 (BLG-QA-39): Added v4.3–v4.7 feature coverage sections. Added compliance_summary field (v4.7 ST-03, SC-REP-05 reference). Confirmed GET /reports/monthly-pnl v0.6 contract present in reports_endpoints.md. No contract gaps found. |
