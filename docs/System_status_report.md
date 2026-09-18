@@ -1,9 +1,37 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.43
-**Last Updated:** 2026-09-15 (delivery verification 2026-09-14__release-v9.4 — status line updated Sprint_Complete → Verified); prior — 2026-09-15 (sprint close 2026-09-14__release-v9.4 — new Sprint section added); prior — 2026-09-14 (delivery verification 2026-09-09__release-v9.3 — status line updated Sprint_Complete → Verified_with_deviations); prior history retained — see prior entries in version control.
+**Version:** 4.44
+**Last Updated:** 2026-09-18 (sprint close 2026-09-15__release-v9.5 — new Sprint section added); prior — 2026-09-15 (delivery verification 2026-09-14__release-v9.4 — status line updated Sprint_Complete → Verified); prior — 2026-09-15 (sprint close 2026-09-14__release-v9.4 — new Sprint section added); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-09-15__release-v9.5
+**Date:** 2026-09-18
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | CI-blocking test fix confirmed (ST-01); structured JSON Lines logging wired into root logger (ST-02); negative limit/offset validation on screener endpoints (ST-03); ATR trailing-stop entry-price floor ratified in strategy_rules.md §7.2 (ST-04) | `structured_logging_standards.md#Structured Log Format`; `strategy_rules.md#7.2` | None |
+| EPIC-02 | Nightly-stop-update/rebalance-exit GitHub Actions triggers added, closing a live scheduling gap (ST-05); AI audit-log cost-monitoring storage projection + per-feature trend endpoint (ST-06); api_call_log retention/purge policy (ST-07); anomaly baseline self-inclusion bug fixed (ST-08); api_performance_baseline.md endpoint registration (ST-09); quarterly hosting-cost review cadence (ST-10); synthetic uptime monitor confirmed (ST-11); deploy path-filter gotcha documented in ops runbook (ST-12); claude_audit_log latency column + real-data anomaly checks (ST-13); read-only staging DATABASE_URL provisioned and verified end-to-end (ST-14) | `ai_endpoints.md#GET /ai/spend-trend-by-feature`; `ops_endpoints.md#POST /ops/purge-audit-logs`; `ai_endpoints.md#POST /ai/check-endpoint-anomalies`; `docs/infrastructure/staging_setup.md#8` | None |
+| EPIC-03 | Arc 4 E2E test strategy pre-design (ST-15); governance_sync.yml bash logic extracted to shared script (ST-16); check_contract_example_freshness.py unit coverage (ST-17); Playwright coverage matrix re-derived, 39→104 files (ST-18); cross-browser CI baseline corrected (ST-19); SignalCard consolidation before/after evidence captured (ST-20); qa_evidence_EPIC-03.md test-count correction ruled and closed (ST-21) | `playwright_coverage_matrix.md`; `regression_test_suite_baseline.md` | None |
+| EPIC-04 | data_model.md positions table live-schema-verified, 4 discrepancies filed as follow-ons (ST-22); Arc 4 API contract + data model v3 pre-authoring (ST-23/ST-24); position_endpoints.md example reconciliation fix (ST-25); 40 contract freshness findings triaged (ST-26); check_orphaned_specs.py made path-aware (ST-27); spec debt dashboard sort-key bug fixed (ST-28); canonical position/trade lifecycle state diagram (ST-29); empty-state copy pattern re-confirmed (ST-30) | `data_model.md#2. Positions Table`; `data_model.md#Position & Trade Plan Lifecycle State Diagram`; `design_system.md#Data States` | None |
+| EPIC-05 | Resolving-commit deviation-closure discipline extended to delegated paths (ST-31); wall-clock cost logging convention wired into roadmap_prompt.md (ST-32); opportunistic in-file fix disclosure threshold codified (ST-33); record-visual-qa skill reconciled with actual practice (ST-34); trade-tagging taxonomy decision record filed (ST-35); lightweight role-retirement process (ST-36); cross-role pairing rotation note (ST-37); cost-per-cycle wall-clock rollup (ST-38); STEP 8.0.5/8.2 verification logic consolidated (ST-39) | `execution_prompt.md#3.1.B/3.1.D`; `roadmap_prompt.md#1.1`; `team_charter.md#11`; `workforce_capacity.md` | None |
+| EPIC-06 | Trade plan link display fixed to formatted text (ST-40); 4 motion-timing components brought under 500ms ceiling (ST-41); 9 toast call sites brought into timing-standard compliance (ST-42); Arc 5 low-trade-volume advisory extended with threshold/remaining-count copy, moved above stat grid (ST-43) | `trade_plan.md#9. Status Badge Scheme`; `design_system.md#Motion-vs-contrast guideline`; `design_system.md#Toast Notification Timing`; `arc5_compliance_section.md#Low-Trade-Volume Advisory` | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| None | All 43 scoped items delivered within the sprint | — |
+
+### Verification inputs ready
+- QA evidence logs: `qa_evidence_EPIC-01.md`, `qa_evidence_EPIC-02.md`, `qa_evidence_EPIC-03.md`, `qa_evidence_EPIC-04.md`, `qa_evidence_EPIC-05.md`, `qa_evidence_EPIC-06.md`
+- Deviations filed: None
+- Test scenarios referenced: `tests/test_json_log_formatter.py`, `tests/test_router_error_envelope_conformance.py`, `tests/test_job_registration_screener_risk_off.py`, `tests/test_cost_monitoring.py`, `tests/test_check_contract_example_freshness.py`, `tests/test_check_orphaned_specs.py`, `tests/test_generate_spec_debt_dashboard.py`, `tests/e2e/arc5-compliance-section.spec.js`, `tests/e2e/system-status.spec.js`, `tests/e2e/reports-performance-tab.spec.js`, `tests/e2e/v7.2-dashboard-tradeplan-ux-hardening.spec.js`, `tests/e2e/watchlist.spec.js`, `tests/e2e/settings-heading-order-and-aria-labelledby-regression.spec.js`
 
 ---
 
