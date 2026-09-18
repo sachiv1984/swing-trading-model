@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T18:18:00Z",
+  "last_updated_utc": "2026-09-18T18:19:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -1041,23 +1041,33 @@
         "ST-39": {
           "title": "Formalise the STEP 8.0.5 / STEP 8.2 candidate-verification pattern as one subroutine",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1707,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "dbd7a9df",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T18:18:52Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/roadmap_prompt.md#Candidate/Item Backlog-Status Verification Subroutine",
+            "claude/system/roadmap_prompt.md#8.0.5 Candidate List Pre-Clean",
+            "claude/system/roadmap_prompt.md#8.2 Now Horizon Item Verification"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "date": "2026-09-18",
+            "findings": "Approved. Pure consolidation -- re-read both steps' post-edit text against pre-edit behaviour and confirmed every exclusion outcome, trigger point, and escalation path is identical."
+          },
+          "notes": "STEP 8.2 already partially cross-referenced STEP 8.0.5 for its marker-check sub-step before this story; the remaining duplicated procedure shape (active-backlog/archive-check pattern) is now fully consolidated into one named, callable subroutine both steps reference."
         }
       }
     },
@@ -1194,7 +1204,8 @@
     "ST-35",
     "ST-36",
     "ST-37",
-    "ST-38"
+    "ST-38",
+    "ST-39"
   ],
   "open_escalations": [],
   "merge_gate": {
