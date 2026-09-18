@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.23
-**Last Updated:** 2026-09-18 (ST-37/BLG-GOV-322, sprint execution `2026-09-15__release-v9.5` — §7.1 gains a "Cross-role pairing rotation note" cross-reference to `workforce_capacity.md`'s new advisory rotation-guidance section, read whenever a pull-forward candidate is named); prior — 2026-09-18 (ST-32/BLG-GOV-316 — wires shared_standards.md §22's Wall-Clock Cost Logging Convention into STEP 1.1/STEP 12.1); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #1 resolution — new §7.3 Ready-Pool Capacity Gap Trend); prior history retained — see prior entries in version control.
+**Version:** 9.24
+**Last Updated:** 2026-09-18 (ST-39/BLG-GOV-324, sprint execution `2026-09-15__release-v9.5` — STEP 8.0.5 and STEP 8.2's near-duplicated "check this BLG-ID against backlog.md, exclude if shipped/absent" logic extracted into one new "Candidate/Item Backlog-Status Verification Subroutine," both steps now call it, no behavioural change to either); prior — 2026-09-18 (ST-37/BLG-GOV-322 — §7.1 gains a Cross-role pairing rotation note cross-reference to workforce_capacity.md's new advisory section); prior — 2026-09-18 (ST-32/BLG-GOV-316 — wires shared_standards.md §22's Wall-Clock Cost Logging Convention into STEP 1.1/STEP 12.1); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -651,11 +651,29 @@ Record findings in `run_manifest.md` under `## Production Correctness Fast-Track
 
 ---
 
+### Candidate/Item Backlog-Status Verification Subroutine (Callable — ST-39, EPIC-05, v9.5, BLG-GOV-324)
+
+Extracted from STEP 8.0.5 and STEP 8.2, which independently defined near-identical "check this BLG-ID against `backlog.md`, exclude if shipped/absent" logic at two different trigger points. This subroutine is the single canonical definition both steps now call — no behavioural change to either step's own trigger points, scope, or exclusion outcomes; only the duplicated procedure text is consolidated.
+
+**Input:** one `BLG-<ID>`.
+
+**Procedure:**
+1. **Active backlog check:** `grep "BLG-<ID>" claude/backlog/backlog.md` — item must appear as a current row in the active backlog.
+2. **If NOT found in active backlog:**
+   - Check `claude/backlog/backlog_archive.md` — if found → item is archived/shipped → **exclude**; record `[caller] exclusion: [BLG-ID] — archived/shipped (found in backlog_archive.md)`.
+   - If not found in either file → escalate to Head of Specs Team before proceeding.
+3. **If found in active backlog AND carries `✅ COMPLETE` or an `RA:` roadmap annotation marker (already shipped):** **exclude**; record `[caller] exclusion: [BLG-ID] — already shipped (✅ COMPLETE / RA: marker)`.
+4. **Otherwise:** item passes verification — include as a valid candidate.
+
+`[caller]` is the invoking step's own name (`STEP 8.0.5` or `STEP 8.2`), substituted into the `run_manifest.md` record so the two call sites remain distinguishable in the output, exactly as they were before extraction.
+
+---
+
 ### STEP 8.0.5 — Candidate List Pre-Clean (Mandatory)
 
 **Fire at two points: (1) STEP 3 — when compiling the v5.x horizon candidate list from backlog items; (2) STEP 8.1 — immediately before presenting the candidate list to the PO for the Now horizon section.**
 
-For each BLG-ID in the candidate list, grep `claude/backlog/backlog.md`. Remove any item that has `✅ COMPLETE` or an `RA:` roadmap annotation marker (already shipped). Record removed items in `run_manifest.md` as "Already shipped — excluded from candidates."
+For each `BLG-<ID>` in the candidate list, run the Candidate/Item Backlog-Status Verification Subroutine above. Record removed items in `run_manifest.md` as "Already shipped — excluded from candidates." (Since these candidates were compiled directly from the active backlog at STEP 3, subroutine step 1's active-backlog check will always pass for them at this call site — the effective behaviour here is unchanged from the pre-extraction grep-and-marker-check.)
 
 This is **not advisory** — presenting complete items to the PO wastes debate time and inflates apparent scope. Two consecutive cycles (v5.4 LL-RP-01; v5.5 LL-RP-02) saw complete items appear in candidate lists despite STEP 8.0.5 existing. Root cause: candidate lists were compiled without running the grep. Compile-time execution (STEP 3) is the permanent fix. (Added AUD-2026-06-10-003 v5.4; strengthened to Mandatory at STEP 3 + STEP 8.1 v7.1 LL-RP-02.)
 
@@ -706,13 +724,7 @@ Write: `run_manifest.md` (advisory output), same location as §7.1/§7.2.
 
 **Scope:** Every item (firm or conditional) proposed for inclusion in a Now horizon section — whether introduced via the formal STEP 3 candidate list or via prose references in run_manifest text, sprint history citations, or prior-cycle records.
 
-For each BLG-ID proposed for Now horizon inclusion:
-
-1. **Active backlog check:** `grep "BLG-<ID>" claude/backlog/backlog.md` — item must appear as a current row in the active backlog.
-2. **If NOT found in active backlog:**
-   - Check `claude/backlog/backlog_archive.md` — if found → item is archived/shipped → **exclude from scope**; record as `STEP 8.2 exclusion: [BLG-ID] — archived/shipped (found in backlog_archive.md)`.
-   - If not found in either file → escalate to Head of Specs Team before proceeding.
-3. **If found in active backlog AND carries `✅ COMPLETE` or `RA:` annotation:** exclude per STEP 8.0.5 rules.
+For each `BLG-<ID>` proposed for Now horizon inclusion, run the Candidate/Item Backlog-Status Verification Subroutine above (identical procedure: active-backlog check → archive check if absent → shipped-marker check if present → escalate to Head of Specs Team if found in neither file).
 
 **Why this step is distinct from STEP 8.0.5:** STEP 8.0.5 pre-cleans the *formal candidate list compiled at STEP 3*. STEP 8.2 catches items introduced at STEP 8 scope composition time via prose references — run_manifest entries, sprint history text, or prior-cycle conditional cluster notes — that did not go through the STEP 3 candidate list. Root cause: `2026-06-19__scheduled` included BLG-GOV-113 (archived since v5.3) in the v6.0 Now conditional scope because it was cited in a context-window run_manifest entry; the error propagated to `cycle_summary.md` and `DL-048` before correction at STEP 9 write verification. This step prevents that class of error. (Added v7.6, deferred patch from `2026-06-19__scheduled` lessons_learnt, Head of Specs Team sign-off.)
 

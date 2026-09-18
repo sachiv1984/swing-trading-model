@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.195
-**Last Updated:** 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-37/BLG-GOV-322 — roadmap_prompt.md v9.22→v9.23: §7.1 gains a Cross-role pairing rotation note cross-reference to workforce_capacity.md's new advisory section; §6 source-prompt line and 1 §14 table row updated); prior — 2026-09-18 (ST-36/BLG-GOV-321 — team_charter.md v1.8→v1.9: new §11 Lightweight Role-Retirement Process); prior — 2026-09-18 (ST-33/BLG-GOV-318 — execution_prompt.md v3.77→v3.78: §7 gains an Opportunistic In-File Fix Disclosure Threshold); prior history retained — see prior entries in version control.
+**Version:** 4.196
+**Last Updated:** 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-39/BLG-GOV-324 — roadmap_prompt.md v9.23→v9.24: STEP 8.0.5/STEP 8.2's near-duplicated verification logic extracted into one shared subroutine, no behavioural change; §6 source-prompt line and 1 §14 table row updated); prior — 2026-09-18 (ST-37/BLG-GOV-322 — roadmap_prompt.md v9.22→v9.23: §7.1 gains a Cross-role pairing rotation note cross-reference); prior — 2026-09-18 (ST-36/BLG-GOV-321 — team_charter.md v1.8→v1.9: new §11 Lightweight Role-Retirement Process); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.23)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.24)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1363,7 +1363,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.195 |
+| Version | 4.196 |
 | Last Updated | 2026-09-15 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
@@ -1372,7 +1372,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.17 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.10 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.23 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.24 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.52 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.18 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1499,6 +1499,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.196 | 2026-09-18 | **Sprint execution `2026-09-15__release-v9.5` ST-39/`BLG-GOV-324` — roadmap_prompt.md v9.23→v9.24.** STEP 8.0.5 and STEP 8.2's independently-defined, near-identical "check this BLG-ID against `backlog.md`, exclude if shipped/absent" logic extracted into one new callable "Candidate/Item Backlog-Status Verification Subroutine." Both steps now reference it; each step's own trigger points, scope, and exclusion outcomes are unchanged — a pure consolidation, no behavioural change. §6 source prompt header v9.23→v9.24 (line 399). §14 table: Roadmap Engine Source v9.23→v9.24. §14 self-row Version/Last Updated 4.195/2026-09-18→4.196/2026-09-18. Authority: Head of Specs Team (agent-mediated, §5.3, ST-39). |
 | 4.195 | 2026-09-18 | **Sprint execution `2026-09-15__release-v9.5` ST-37/`BLG-GOV-322` — roadmap_prompt.md v9.22→v9.23.** §7.1 Skill-Silo Alert gains a "Cross-role pairing rotation note" cross-reference: when naming a pull-forward candidate, also read `workforce_capacity.md`'s new advisory rotation-guidance section (§14 companion change — see `workforce_capacity.md`'s own non-governance-prompt update, not tracked in this table). §6 source prompt header v9.22→v9.23 (line 399). §14 table: Roadmap Engine Source v9.22→v9.23. §14 self-row Version/Last Updated 4.194/2026-09-18→4.195/2026-09-18. Authority: Director of HR (agent-mediated, §5.3, ST-37). |
 | 4.194 | 2026-09-18 | **Sprint execution `2026-09-15__release-v9.5` ST-36/`BLG-GOV-321` — team_charter.md v1.8→v1.9.** New §11 Lightweight Role-Retirement Process: a 6-month, AND-conditioned (no idea-intake submission AND no owned story) qualifying threshold for `claude/agents/` charter review, checked at each `run ideas housekeeping` invocation or annual review, with defined outcomes (keep/merge/retire) and a review log. Applied once this session: 0 of 23 roles qualified (22 submitted in the most recent idea window; the 23rd, Facilitator, has 0 submissions ever but owned a story ~4 months ago, short of the 6-month bar). §14 table: Team Charter v1.8→v1.9. §14 self-row Version/Last Updated 4.193/2026-09-18→4.194/2026-09-18. Authority: Director of HR (agent-mediated, §5.3, ST-36). |
 | 4.193 | 2026-09-18 | **Sprint execution `2026-09-15__release-v9.5` ST-33/`BLG-GOV-318` — execution_prompt.md v3.77→v3.78.** §7 Write Scope Restriction gains an "Opportunistic in-file fix disclosure threshold": distinguishes the existing out-of-scope-finding backlog exception (a fix in a file not already open for the story) from a narrower case — an incidental, small, low-risk defect found in a file already being edited for the current story, where commit-message disclosure under a distinctly labelled sub-section is now documented as sufficient. Resolves an ambiguity found live at PR #1600 (`2026-09-08__release-v9.2`, EPIC-05). §8 source prompt header v3.77→v3.78 (line 887). §14 table: Execution Engine Source v3.77→v3.78. §14 self-row Version/Last Updated 4.192/2026-09-18→4.193/2026-09-18. Authority: Product Owner (agent-mediated, §5.3, ST-33). |
