@@ -5,6 +5,14 @@ name: Nightly Backtest
 # imports results into the live API via import_backtest.py.
 # This mirrors the daily-snapshot.yml pattern: heavy compute runs in CI,
 # results are pushed to the API, data persists in the DB.
+#
+# ST-14 (BLG-OPS-162, EPIC-02, v9.5): DATABASE_URL below now reads from the
+# secrets.PROD_DATABASE_URL repo secret explicitly (was secrets.DATABASE_URL
+# — the bare-named secret, this workflow's sole consumer, was repointed at a
+# new read-only staging credential for a separate story and can no longer
+# serve this workflow's write requirement). Using PROD_DATABASE_URL directly
+# avoids depending on the bare secret's value at all — GitHub secrets are
+# write-only and cannot be read back to confirm/recover what they held.
 
 on:
   schedule:
@@ -41,7 +49,7 @@ jobs:
 
       - name: Run backtest
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
         run: python production_strategy.py
 
       - name: Wake up API
@@ -75,7 +83,7 @@ jobs:
       - name: Data-integrity smoke test
         id: integrity_smoke_test
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
         run: |
           set +e
           python scripts/backtest_data_integrity_smoke_test.py
