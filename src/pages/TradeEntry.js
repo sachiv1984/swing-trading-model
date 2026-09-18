@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
 import PositionSizingWidget from '../components/trades/PositionSizingWidget';
 import SetupThesisDigestPanel from '../components/trades/SetupThesisDigestPanel';
-import { isStartTradeEligible } from "./TradePlans";
+import { isStartTradeEligible, STATUS_CONFIG } from "./TradePlans";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -304,7 +304,7 @@ export default function TradeEntry() {
                   <SelectItem value="none">No plan — manual entry</SelectItem>
                   {linkablePlans.map((plan) => (
                     <SelectItem key={plan.id} value={plan.id}>
-                      {plan.ticker} ({plan.market || "US"}) — {plan.status}
+                      {plan.ticker} ({plan.market || "US"}) — {STATUS_CONFIG[plan.status]?.label || plan.status}
                     </SelectItem>
                   ))}
                 </SelectContent>
