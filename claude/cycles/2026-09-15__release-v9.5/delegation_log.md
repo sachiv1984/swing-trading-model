@@ -106,3 +106,26 @@ Append-only. Do not edit previous entries.
 - **Status:** Still blocked on live Render dashboard access, but narrowed to one specific check with a precedented, low-effort fix path already identified if the check comes back negative (which the `risk_off_exit` history suggests is the more likely outcome).
 
 ---
+
+## DEL-20260918-01
+
+- **ST Item:** ST-05 — nightly-stop-update and rebalance-exit appear to have no live scheduled trigger (resolution of `DEL-20260916-03`/`DEL-20260917-01`)
+- **EPIC:** EPIC-02
+- **Classification:** delegated_decision — resolved
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1673
+- **Branch:** exec/2026-09-15__release-v9.5/EPIC-02
+- **Resolved at:** 2026-09-18T00:30:00Z (user performed the live Render dashboard check requested in `DEL-20260917-01` step 1)
+- **Resolution:**
+  User checked the Render dashboard directly and reported the available Settings tabs: General, Build, Deploy, Custom Domains, PR Previews, Networking, Edge Caching, Notifications, Health Checks, Maintenance Mode, Delete or suspend — on the project's free tier. **No Cron Jobs tab or resource type exists at all.** This conclusively closes the one remaining unknown `DEL-20260917-01` had narrowed the blocker to: there is no dashboard-only Render Cron Job for either endpoint, because Render Cron Jobs (a distinct resource type, not a Web Service setting) require a paid plan this project does not have — consistent with `render.yaml`'s own pre-existing comment ("Alert Evaluation Cron — NOT defined here (Render cron requires paid tier)").
+
+  Implemented the precedented fix identified in `DEL-20260917-01` step 3: `.github/workflows/nightly-stop-update.yml` (22:30 UTC weekdays) and `.github/workflows/rebalance-exit.yml` (22:45 UTC weekdays), both following the `risk-off-alerts.yml` template exactly (same secrets, same thin `curl -X POST` shape, `workflow_dispatch` for manual testing) — the identical fix shape already used for the `risk_off_exit` gap at v8.8. Sequenced after the existing nightly chain (`alert-evaluation` 21:30 → `screener-refresh` 22:00 → `risk-off-alerts` 22:15 → `nightly-stop-update` 22:30 → `rebalance-exit` 22:45). No backend code change was required — both endpoints already recorded into `GET /health/scheduler`'s job registry (`_NIGHTLY_JOB_NAMES` already listed `trailing_stop`/`rebalance_exit`/`inv_vol_sizing`); only the missing trigger was the actual gap.
+
+  Also closed a related test-coverage gap found while fixing this: `tests/test_job_registration_screener_risk_off.py` (BLG-QA-149's existing job-registration regression pattern) covered `screener_refresh`/`risk_off_alerts` but not `trailing_stop`/`rebalance_exit`/`inv_vol_sizing` — added 4 equivalent tests. Full backend suite: 1519 passed, 10 skipped.
+
+  Updated `docs/ops/scheduled_job_runner_consolidation_investigation.md` (new inventory rows #4/#5, "related finding" note marked resolved) and `docs/specs/qa/scheduler_architecture_review_v6.3.md` (corrected its stale trigger-mechanism table) so both canonical references reflect current reality rather than the historical gap.
+
+  `BLG-OPS-160` closed.
+- **Status:** Resolved — unblocking ST-05, marking done.
+
+---

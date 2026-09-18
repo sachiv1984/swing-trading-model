@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-16T22:40:00Z",
+  "last_updated_utc": "2026-09-18T00:35:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -136,23 +136,28 @@
         "ST-05": {
           "title": "nightly-stop-update and rebalance-exit appear to have no live scheduled trigger",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1673,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "96c9aece",
           "delegation_record_id": "DEL-20260916-03",
-          "blocked_since_utc": "2026-09-16T22:10:00Z",
-          "unblock_criteria": "Infrastructure & Operations Owner live Render dashboard confirmation (or staleness confirmation)",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-18T00:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/nightly-stop-update.yml",
+            ".github/workflows/rebalance-exit.yml",
+            "docs/ops/scheduled_job_runner_consolidation_investigation.md#2. Inventory",
+            "docs/specs/qa/scheduler_architecture_review_v6.3.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": "delegated.parked",
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Requires live Render dashboard access (dashboard-only settings invisible to repo search per BLG-OPS-159/ST-12 gotcha)."
+          "notes": "Live Render dashboard check (user-performed) confirmed no Cron Jobs resource type exists on the free-tier plan -- conclusively ruling out a dashboard-only job. Added nightly-stop-update.yml (22:30 UTC weekdays) and rebalance-exit.yml (22:45 UTC weekdays) following the risk-off-alerts.yml template. No backend change needed -- GET /health/scheduler job registry already expected these jobs. 4 new job-registration regression tests added. BLG-OPS-160 closed. See DEL-20260917-01 in delegation_log.md for the full investigation trail."
         },
         "ST-06": {
           "title": "AI audit log cost-monitoring follow-ons: storage projection, per-feature trend, silent-purge-failure visibility",
@@ -1019,7 +1024,6 @@
     }
   },
   "blocked_items": [
-    "ST-05",
     "ST-14"
   ],
   "delegated_items": [
@@ -1041,7 +1045,8 @@
     "ST-10",
     "ST-11",
     "ST-12",
-    "ST-13"
+    "ST-13",
+    "ST-05"
   ],
   "open_escalations": [],
   "merge_gate": {
