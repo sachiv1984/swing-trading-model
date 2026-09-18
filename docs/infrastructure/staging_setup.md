@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Reference Document (Class 3)
 **Status:** Active
-**Last Updated:** 2026-03-16
-**Cycle:** 2026-03-15__release-v1.10 (ST-01)
+**Last Updated:** 2026-09-18 (ST-14, BLG-OPS-162, EPIC-02, v9.5 — added §8, read-only staging DB role for sprint-execution sessions); prior — 2026-03-16 (ST-01, v1.10, initial runbook).
+**Cycle:** 2026-03-15__release-v1.10 (ST-01); 2026-09-15__release-v9.5 (ST-14)
 
 ---
 
@@ -197,6 +197,30 @@ The staging URLs are public (no authentication on the Render services themselves
 - **Staging frontend:** `https://trading-assistant-staging.onrender.com`
 - **Staging API health:** `https://trading-assistant-api-staging.onrender.com/health`
 - **Note:** API may take 30–60 seconds to respond on first access (free tier spin-up). Refresh once if the frontend shows a loading error.
+
+---
+
+## Section 8 — Read-Only Access for Sprint-Execution Sessions (ST-14, BLG-OPS-162, EPIC-02, v9.5)
+
+Interactive Claude Code sprint-execution sessions previously had no `DATABASE_URL` configured at all — every story whose AC called for verification against real/live-shaped staging data had to be delivered against synthetic fixtures, disclosed as pending real-data verification (a recurring pattern across v9.2–v9.4). Fixed by provisioning a dedicated, read-only Postgres role on the staging Supabase project, scoped so it cannot mutate any table.
+
+**Provisioning (one-time, Supabase SQL Editor on the staging project):**
+```sql
+CREATE ROLE readonly_staging WITH LOGIN PASSWORD '<a-strong-password>';
+GRANT USAGE ON SCHEMA public TO readonly_staging;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO readonly_staging;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO readonly_staging;
+```
+The last line ensures the grant also applies to any tables added after this role is created, not just what existed at provisioning time.
+
+**Delivery mechanism:** the connection string (`postgresql://readonly_staging:<password>@<staging-host>:5432/postgres`) is set as a `DATABASE_URL` environment variable in the shell that launches the Claude Code session — never as a GitHub Actions repo secret (those are never readable by an interactive session, only by workflow runs) and never pasted as chat text or committed to the repo. A Claude Code session must be freshly started (not merely resumed in an already-running process, and not just a new terminal tab) after the environment variable changes, since env vars are fixed at process start.
+
+**Verified 2026-09-18 (live end-to-end smoke test, this story's own AC-03):**
+- Connects successfully: `current_user = readonly_staging`, `current_database = postgres`.
+- Real read confirmed: `SELECT count(*) FROM portfolios` returned real data (not a stub/fixture).
+- Write correctly rejected: `UPDATE portfolios SET last_updated = now()` → `ERROR: permission denied for table portfolios` (confirmed against a real column — an earlier attempt against a nonexistent column was discarded as an invalid test, since a column-does-not-exist error doesn't prove permission enforcement).
+
+**Operational notes for future rotation:** if this password is ever rotated, the connection string must not contain an unescaped `@`, `:`, `/`, `?`, or `#` in the password itself (these are URI-reserved characters and will break `postgresql://user:pass@host` parsing if not percent-encoded) — simplest is to avoid them entirely when choosing a new password.
 
 ---
 

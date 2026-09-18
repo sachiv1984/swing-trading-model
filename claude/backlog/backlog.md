@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-18 (session — `BLG-QA-170`/`BLG-GOV-334` resolved and closed: Head of Specs Team ruling + Product Owner acceptance that the true fact (28, not 30 tests) stands permanently recorded via `BLG-GOV-334` itself, sealed source file intentionally never edited); prior — 2026-09-17 (session — 1 new item added: `BLG-GOV-334`); prior — 2026-09-16 (session — 2 new items added: `BLG-BE-120`, `BLG-QA-179` (PR #1712 review findings)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-18 (session — `BLG-QA-170`/`BLG-GOV-334` resolved and closed: Head of Specs Team ruling + Product Owner acceptance that the true fact (28, not 30 tests) stands permanently recorded via `BLG-GOV-334` itself, sealed source file intentionally never edited; also, separately this same day, 2 new items added: `BLG-OPS-163`, `BLG-OPS-164` (PR #1713 review findings — secrets ownership map, and ST-11's uptime-monitor live-fire confirmation follow-up)); prior — 2026-09-17 (session — 1 new item added: `BLG-GOV-334`); prior — 2026-09-16 (session — 2 new items added: `BLG-BE-120`, `BLG-QA-179` (PR #1712 review findings)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4532,6 +4532,53 @@ On trade entry, when linking to a trade plan, the linked plan's identifier/name 
 - [x] True count (28, not 30) permanently and discoverably recorded — this item
 - [x] Sealed source file confirmed untouched, by design, not by omission
 - [x] `BLG-QA-170` and `BLG-GOV-334` both closed on this same disposition
+
+---
+
+### BLG-OPS-163 — Document GitHub Actions secrets ownership map
+
+**Priority:** P3 (Low)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** Agent-mediated Director of Quality / Product Owner review of PR #1713 (EPIC-02, `2026-09-15__release-v9.5`) — 2026-09-18
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+During ST-14's staging DB credential provisioning, the bare `DATABASE_URL` GitHub Actions repo secret was repointed at a new read-only staging role — but it was also `backtest.yml`'s sole consumer, which needs write access (`production_strategy.py` upserts backtest results directly), breaking that nightly workflow until caught and fixed (`[EPIC-02][ST-14]` commit `26d5b2b1`). The same session came within one message of doing the same thing to `STAGING_DATABASE_URL`, which `reset-and-seed-staging.yml`, `seed-preview.yml`, and `scripts/reset_staging_db.sh` all depend on for write access. Both incidents happened because nothing in the repo documents which secret is used by which workflow(s), what access level each needs, or which secrets are safe to rotate independently. This is a real, now-twice-demonstrated risk class, not a hypothetical.
+
+**Scope**
+- Add a short reference doc (or a new section in an existing ops runbook) inventorying every GitHub Actions repo secret currently in use: name, consuming workflow(s), required access level (read-only / read-write, staging / production), and any known aliasing relationships (e.g. `DATABASE_URL` and `PROD_DATABASE_URL` are treated as interchangeable by `scripts/check_si05_digest_staleness.py` and `si05-digest-staleness-check.yml`)
+- Cross-reference from `docs/infrastructure/staging_setup.md` §8 (the read-only staging role section added by ST-14) and from `docs/ops/production_deployment_runbook.md`
+
+**Acceptance Criteria**
+- Every secret referenced in `.github/workflows/*.yml` via `secrets.*` appears in the inventory with its consuming workflow(s) and required access level
+- Document is discoverable from the two cross-references named above
+- Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-OPS-164 — Confirm synthetic uptime monitor live-fire and notification delivery (ST-11 follow-up)
+
+**Priority:** P3 (Low)
+**Type:** Operations
+**Owner:** Infrastructure & Operations Owner
+**Source:** Agent-mediated Product Owner review of PR #1713 (EPIC-02, `2026-09-15__release-v9.5`) — 2026-09-18; follow-up to ST-11 (BLG-OPS-158)
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-11 (`BLG-OPS-158`) found `.github/workflows/health-check-alert.yml` already satisfies "monitor configured, independent of hosting dashboard" — but could not complete the "confirmed firing on a deliberate test failure" or "notification path confirmed working" halves of its own AC: both `gh workflow run health-check-alert.yml -f test_url=...` and `gh secret list` returned `HTTP 403` (insufficient token scope) in that execution session. Concrete follow-up steps are already written down in `docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md` §6, but nothing outside that document tracks or surfaces the gap — it was flagged in review (PR #1713) as needing its own visible item rather than staying buried in a confirmation doc.
+
+**Scope**
+- Run `gh workflow run health-check-alert.yml --ref main -f test_url=https://httpstat.us/500` (or trigger the equivalent via the Actions tab UI) with a token/session that has Actions-write access
+- Confirm the run's "Send alert on sustained 5xx" step executes (not the `::warning::` fallback branch) and a real Telegram message is received
+- Append the confirmed result to `docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md` §7 (already scaffolded, currently "Not yet performed")
+
+**Acceptance Criteria**
+- A real live-fire test run is confirmed to have triggered the alert path (run URL/ID recorded)
+- A real Telegram notification is confirmed received (not just that the workflow step executed)
+- `docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md` §7 and §8 updated to reflect the confirmed result; `BLG-OPS-158`'s (ST-11's) original disclosed gap closed
 
 ---
 

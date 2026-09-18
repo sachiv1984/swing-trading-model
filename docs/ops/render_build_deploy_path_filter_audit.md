@@ -1,9 +1,9 @@
 **Owner:** FinOps & Resource Architect
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-08-21 (ST-14, EPIC-03, v9.0, BLG-OPS-90 — automated drift detection built: `scripts/check_deploy_path_filter_drift.py`, wired into `quality_gate.yml`, checks this doc's Runtime File-Read Inventory against staging's filter (parsed live from `staging-deploy.yml`) and a new checked-in production filter snapshot, `docs/ops/render_production_build_filter_snapshot.json`); prior — 2026-08-13 (ST-16, EPIC-06, v8.7, BLG-OPS-140 — onboarding note added, runtime-read inventory re-verified current); prior — 2026-07-31 (ST-16, EPIC-04, v8.0, BLG-OPS-124 — production filter conclusively confirmed via deploy trigger-source label)
-**Story:** ST-14 (BLG-OPS-90, EPIC-03, v9.0); prior — ST-16 (BLG-OPS-140, EPIC-06, v8.7); originated ST-16 (BLG-OPS-124, EPIC-04, v8.0)
+**Version:** 1.4
+**Last Updated:** 2026-09-16 (ST-12, EPIC-02, v9.5, BLG-OPS-159 — added cross-reference to the new gotcha note in production_deployment_runbook.md §3.2); prior — 2026-08-21 (ST-14, EPIC-03, v9.0, BLG-OPS-90 — automated drift detection built: `scripts/check_deploy_path_filter_drift.py`, wired into `quality_gate.yml`, checks this doc's Runtime File-Read Inventory against staging's filter (parsed live from `staging-deploy.yml`) and a new checked-in production filter snapshot, `docs/ops/render_production_build_filter_snapshot.json`); prior — 2026-08-13 (ST-16, EPIC-06, v8.7, BLG-OPS-140 — onboarding note added, runtime-read inventory re-verified current); prior history retained — see prior entries in version control.
+**Story:** ST-12 (BLG-OPS-159, EPIC-02, v9.5); prior — ST-14 (BLG-OPS-90, EPIC-03, v9.0); prior — ST-16 (BLG-OPS-140, EPIC-06, v8.7); originated ST-16 (BLG-OPS-124, EPIC-04, v8.0)
 
 ---
 
@@ -12,6 +12,8 @@
 ## ⚠️ Read this before assuming a deploy will pick up a non-code file change
 
 **If you are adding or changing a file the running app reads at runtime that is *not* `.py`/`.js` source (a markdown file, CSV, JSON config, etc.) — stop and check this document's Runtime File-Read Inventory below, and confirm the file is covered by *both* deploy-trigger mechanisms, before assuming a normal push will redeploy it.** This has silently bitten this project twice already (`BLG-OPS-82`, then `BLG-OPS-90`/commit `e9c73f58`) — a docs-only change to a file the app reads at request time didn't trigger a redeploy, and the staleness wasn't visible anywhere in the repo. See "Two Distinct Path-Filter Mechanisms" immediately below for why a repo-only search cannot catch this on its own.
+
+**Cross-reference (ST-12, BLG-OPS-159, EPIC-02, v9.5):** this same gotcha is now also flagged with a shorter pointer back to this document in `docs/ops/production_deployment_runbook.md` §3.2 ("Deploy Backend") — the ops runbook step where a stale deploy would actually be noticed mid-procedure.
 
 ## Purpose
 
@@ -112,3 +114,4 @@ Re-ran the Runtime File-Read Inventory scan against the current codebase (`json.
 |------|----------|------|
 | FinOps & Resource Architect | **BLOCKED** (initial pass) — the "no gap found" conclusion rested on one deploy event that could not distinguish an automatic push-triggered deploy from a manual dashboard click. Required the deploy trigger-source label as a conclusive check. | 2026-07-31 |
 | FinOps & Resource Architect | **APPROVED** — the required trigger-source label was checked directly: the `95b2e6bf` deploy is confirmed "New commit via Auto-Deploy," ruling out the manual-trigger alternative and confirming Render's push-triggered auto-deploy correctly fires for `backend/**` changes under the Root-Directory-as-default-scope model. No gap found; no dashboard change needed. | 2026-07-31 |
+| Infrastructure & Operations Owner (agent-mediated, §5.3) | **APPROVED** — ST-12 (BLG-OPS-159, EPIC-02, v9.5): cross-reference added in both directions between this document and `production_deployment_runbook.md` §3.2, so an operator following the runbook mid-deploy sees the gotcha at the point they'd actually hit it, not only if they already know to look here. No change to the audit findings or filter configuration themselves. | 2026-09-16 |

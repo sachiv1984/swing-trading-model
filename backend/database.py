@@ -2459,6 +2459,22 @@ def ensure_claude_audit_log_compliance_check_column() -> None:
         conn.commit()
 
 
+def ensure_claude_audit_log_latency_column() -> None:
+    """Add latency_ms to claude_audit_log (idempotent). ST-13 (BLG-OPS-161,
+    EPIC-02, v9.5): claude_audit_log previously carried no latency column,
+    so POST /ai/check-endpoint-anomalies's latency-anomaly check had no
+    real-data source and ran against a simulated feed only
+    (services/ai_endpoint_anomaly_service.py's `latency_data_source:
+    "not_available_pending_BLG-OPS-161"`). Nullable; all pre-existing rows
+    and any caller that does not yet pass latency_ms are unaffected."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE claude_audit_log ADD COLUMN IF NOT EXISTS latency_ms INTEGER"
+            )
+        conn.commit()
+
+
 def create_claude_audit_entry(
     endpoint: str,
     model_id: str,
@@ -2467,20 +2483,22 @@ def create_claude_audit_entry(
     output_tokens: int | None = None,
     cost_usd: float | None = None,
     compliance_check_result: str | None = None,
+    latency_ms: int | None = None,
 ) -> None:
     """Insert one row into claude_audit_log. Non-blocking on failure."""
     try:
         ensure_claude_audit_log_table()
         ensure_claude_audit_log_compliance_check_column()
+        ensure_claude_audit_log_latency_column()
         with get_db() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
                     INSERT INTO claude_audit_log
-                        (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, compliance_check_result)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                        (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, compliance_check_result, latency_ms)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                     """,
-                    (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, compliance_check_result),
+                    (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, compliance_check_result, latency_ms),
                 )
             conn.commit()
     except Exception:
@@ -2674,10 +2692,94 @@ def get_api_call_report(service: str, window: str = "daily") -> dict:
         return {"service": service, "window": window, "total_calls": 0, "success_count": 0, "failure_count": 0}
 
 
+def purge_api_call_log_older_than_90_days() -> int:
+    """Delete api_call_log rows older than 90 days. Returns rows deleted.
+    ST-07 (BLG-OPS-154, EPIC-02, v9.5) — mirrors purge_claude_audit_log_older_than_730_days()'s
+    fail-safe shape. Retention window rationale:
+    docs/ops/ai_audit_log_retention_policy.md §api_call_log — 90 days matches
+    gemini_audit_log's window; api_call_log is short-lived rate-limit/quota
+    instrumentation (call counts only, no cost/compliance value), not a
+    long-range audit trail like claude_audit_log."""
+    try:
+        ensure_api_call_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "DELETE FROM api_call_log WHERE called_at < NOW() - INTERVAL '90 days'"
+                )
+                deleted = cur.rowcount
+            conn.commit()
+        return deleted
+    except Exception:
+        return 0
+
+
+def count_api_call_log_older_than_90_days() -> int:
+    """Read-only count of api_call_log rows past the 90-day retention
+    window, independent of purge_api_call_log_older_than_90_days()'s DELETE
+    -- used to detect a silently-broken purge (BLG-OPS-153 sub-item 3, ST-06):
+    if this is > 0 immediately after a purge run reported 0 rows deleted,
+    the purge itself is malfunctioning, not merely "nothing to delete"."""
+    try:
+        ensure_api_call_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT COUNT(*) AS c FROM api_call_log WHERE called_at < NOW() - INTERVAL '90 days'"
+                )
+                return int(cur.fetchone()["c"])
+    except Exception:
+        return 0
+
+
+def count_gemini_audit_log_older_than_90_days() -> int:
+    """Read-only count of gemini_audit_log rows past its 90-day retention
+    window -- silent-purge-failure counterpart to count_api_call_log_older_than_90_days()
+    / count_claude_audit_log_older_than_730_days() (BLG-OPS-153 sub-item 3, ST-06)."""
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT COUNT(*) AS c FROM gemini_audit_log WHERE generated_at < NOW() - INTERVAL '90 days'"
+                )
+                return int(cur.fetchone()["c"])
+    except Exception:
+        return 0
+
+
+def count_claude_audit_log_older_than_730_days() -> int:
+    """Read-only count of claude_audit_log rows past its 730-day retention
+    window -- silent-purge-failure counterpart to
+    purge_claude_audit_log_older_than_730_days() (BLG-OPS-153 sub-item 3, ST-06):
+    if this is > 0 immediately after a purge run reported 0 rows deleted,
+    the purge itself is malfunctioning (e.g. a permissions issue that blocks
+    DELETE but not SELECT), not merely "nothing to delete"."""
+    try:
+        ensure_claude_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT COUNT(*) AS c FROM claude_audit_log WHERE generated_at < NOW() - INTERVAL '730 days'"
+                )
+                return int(cur.fetchone()["c"])
+    except Exception:
+        return 0
+
+
 def get_api_session_report(service: str, anomaly_multiplier: float = 2.0) -> dict:
-    """Per-session call counts for `service` over the last 7 days, with a
-    baseline (mean calls/session) and sessions flagged as anomalous when
-    their call count exceeds `anomaly_multiplier` × baseline. ST-12
+    """Per-session call counts for `service` over the last 7 days, with an
+    overall baseline (mean calls/session, reported for context) and sessions
+    flagged as anomalous when their call count exceeds `anomaly_multiplier` ×
+    a **leave-one-out** baseline (mean of all *other* sessions) — ST-08
+    (BLG-OPS-155, EPIC-02, v9.5) fix. The original per-session anomaly
+    decision compared each session against the mean of *all* sessions
+    including itself, so a genuinely anomalous session inflated the very
+    baseline used to judge it (worst case: 2 sessions [1, 100] -> self-
+    inclusive baseline 50.5, threshold 101.0, the 100-call session never
+    fires). Leave-one-out for that same case: baseline 1.0 (the other
+    session alone), threshold 2.0, 100 correctly fires. `baseline_calls_per_session`
+    (top-level, still self-inclusive) is retained as a descriptive summary
+    stat only — it no longer drives any anomaly decision. ST-12
     (BLG-OPS-20, EPIC-03, v9.3) — reuses ST-11's api_call_log rather than a
     separate logging mechanism (RISK-03). `anomaly_multiplier` default (2.0)
     matches sprint_backlog.md's documented ">2x baseline" threshold — see
@@ -2701,22 +2803,28 @@ def get_api_session_report(service: str, anomaly_multiplier: float = 2.0) -> dic
                 )
                 sessions = cur.fetchall()
                 counts = [int(s["call_count"]) for s in sessions]
-                baseline = (sum(counts) / len(counts)) if counts else 0.0
-                threshold = baseline * anomaly_multiplier
+                n = len(counts)
+                total = sum(counts)
+                overall_baseline = (total / n) if n else 0.0
+
+                session_rows = []
+                for s in sessions:
+                    c = int(s["call_count"])
+                    leave_one_out_baseline = ((total - c) / (n - 1)) if n > 1 else 0.0
+                    threshold = leave_one_out_baseline * anomaly_multiplier
+                    session_rows.append({
+                        "session_id": s["session_id"],
+                        "call_count": c,
+                        "anomalous": leave_one_out_baseline > 0 and c > threshold,
+                    })
+
                 return {
                     "service": service,
                     "period_days": 7,
-                    "session_count": len(sessions),
-                    "baseline_calls_per_session": round(baseline, 2),
+                    "session_count": n,
+                    "baseline_calls_per_session": round(overall_baseline, 2),
                     "anomaly_multiplier": anomaly_multiplier,
-                    "sessions": [
-                        {
-                            "session_id": s["session_id"],
-                            "call_count": int(s["call_count"]),
-                            "anomalous": baseline > 0 and int(s["call_count"]) > threshold,
-                        }
-                        for s in sessions
-                    ],
+                    "sessions": session_rows,
                 }
     except Exception:
         return {
@@ -2819,6 +2927,118 @@ def get_claude_endpoint_cost_windows(recent_hours: int = 24, baseline_days: int 
                         "recent_avg_cost_usd": float(r["recent_avg_cost"]),
                         "recent_count": int(r["recent_count"]),
                         "baseline_avg_cost_usd": float(r["baseline_avg_cost"]),
+                        "baseline_count": int(r["baseline_count"]),
+                    }
+                    for r in rows
+                ]
+    except Exception:
+        return []
+
+
+def get_claude_spend_between_by_feature(start_date: str, end_date: str | None = None) -> list[dict]:
+    """Per-feature (endpoint-tagged) Claude API spend for [start_date, end_date)
+    -- or [start_date, NOW()) when end_date is None. Combines
+    get_claude_spend_between()'s date-window bucketing with
+    get_monthly_claude_cost_by_feature()'s per-feature GROUP BY (ST-06 sub-item
+    2, BLG-OPS-153, EPIC-02, v9.5) -- backs get_ai_spend_trend_by_feature()'s
+    per-cycle, per-feature breakdown."""
+    try:
+        ensure_claude_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                if end_date is not None:
+                    cur.execute(
+                        """
+                        SELECT endpoint, COALESCE(SUM(cost_usd), 0.0) AS total_cost
+                        FROM claude_audit_log
+                        WHERE generated_at >= %s AND generated_at < %s
+                        GROUP BY endpoint
+                        ORDER BY total_cost DESC
+                        """,
+                        (start_date, end_date),
+                    )
+                else:
+                    cur.execute(
+                        """
+                        SELECT endpoint, COALESCE(SUM(cost_usd), 0.0) AS total_cost
+                        FROM claude_audit_log
+                        WHERE generated_at >= %s
+                        GROUP BY endpoint
+                        ORDER BY total_cost DESC
+                        """,
+                        (start_date,),
+                    )
+                rows = cur.fetchall()
+                return [
+                    {"endpoint": r["endpoint"], "spend_usd": round(float(r["total_cost"]), 2)}
+                    for r in rows
+                ]
+    except Exception:
+        return []
+
+
+def get_claude_endpoint_latency_windows(recent_hours: int = 24, baseline_days: int = 7) -> list[dict]:
+    """Per-endpoint recent-window vs baseline-window p95 latency from
+    `claude_audit_log.latency_ms`, for the AI endpoint latency anomaly check
+    (ST-13, BLG-OPS-161, EPIC-02, v9.5) -- the real-data counterpart
+    get_claude_endpoint_cost_windows()'s docstring flagged as missing.
+
+    Same recent/baseline window shape as get_claude_endpoint_cost_windows()
+    (recent window excludes the baseline window -- a spike must not inflate
+    its own baseline). Uses PostgreSQL's `percentile_cont` for a true p95
+    rather than an average, matching how latency is actually reported
+    everywhere else in this codebase (e.g. api_performance_baseline.md).
+    Only rows with a non-null `latency_ms` contribute -- older rows written
+    before this column existed are silently excluded, not treated as 0ms.
+    """
+    try:
+        ensure_claude_audit_log_table()
+        ensure_claude_audit_log_latency_column()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT
+                        endpoint,
+                        COALESCE(
+                            percentile_cont(0.95) WITHIN GROUP (ORDER BY latency_ms) FILTER (
+                                WHERE generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                                  AND latency_ms IS NOT NULL
+                            ), 0.0
+                        ) AS recent_p95_latency,
+                        COUNT(*) FILTER (
+                            WHERE generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                              AND latency_ms IS NOT NULL
+                        ) AS recent_count,
+                        COALESCE(
+                            percentile_cont(0.95) WITHIN GROUP (ORDER BY latency_ms) FILTER (
+                                WHERE generated_at < NOW() - (%(recent_hours)s || ' hours')::interval
+                                  AND generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                                        - (%(baseline_days)s || ' days')::interval
+                                  AND latency_ms IS NOT NULL
+                            ), 0.0
+                        ) AS baseline_p95_latency,
+                        COUNT(*) FILTER (
+                            WHERE generated_at < NOW() - (%(recent_hours)s || ' hours')::interval
+                              AND generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                                    - (%(baseline_days)s || ' days')::interval
+                              AND latency_ms IS NOT NULL
+                        ) AS baseline_count
+                    FROM claude_audit_log
+                    WHERE generated_at >= NOW() - (%(recent_hours)s || ' hours')::interval
+                                - (%(baseline_days)s || ' days')::interval
+                    GROUP BY endpoint
+                    ORDER BY endpoint
+                    """,
+                    {"recent_hours": recent_hours, "baseline_days": baseline_days},
+                )
+                rows = cur.fetchall()
+                return [
+                    {
+                        "endpoint": r["endpoint"],
+                        "recent_p95_latency_ms": float(r["recent_p95_latency"]),
+                        "recent_count": int(r["recent_count"]),
+                        "baseline_p95_latency_ms": float(r["baseline_p95_latency"]),
                         "baseline_count": int(r["baseline_count"]),
                     }
                     for r in rows

@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner; API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-09-10 (ST-13, BLG-OPS-94 — added POST /ops/purge-audit-logs)
+**Version:** 1.2
+**Last Updated:** 2026-09-16 (ST-07/ST-06, BLG-OPS-154/BLG-OPS-153 — purge-audit-logs extended to api_call_log, added possible_silent_failure signal); prior — 2026-09-10 (ST-13, BLG-OPS-94 — added POST /ops/purge-audit-logs).
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -136,9 +136,11 @@ No parameters.
 
 ## POST /ops/purge-audit-logs
 
-Deletes `gemini_audit_log` rows older than 90 days and `claude_audit_log` rows older than 730 days (24 months) — enforcing the retention windows documented in `docs/ops/ai_audit_log_retention_policy.md`.
+Deletes `gemini_audit_log` rows older than 90 days, `claude_audit_log` rows older than 730 days (24 months), and `api_call_log` rows older than 90 days — enforcing the retention windows documented in `docs/ops/ai_audit_log_retention_policy.md`.
 
-Added for ST-13 (BLG-OPS-94, EPIC-03, v9.3). Idempotent — safe to call repeatedly (e.g. from a daily scheduled workflow, matching this codebase's other maintenance endpoints like `POST /portfolio/snapshot`); deletes nothing when no rows qualify. Protected by the app-wide `X-API-Key` middleware (`backend/main.py::api_key_middleware`), same as every other non-GET endpoint when `API_KEY` is configured — no route-local auth dependency.
+Added for ST-13 (BLG-OPS-94, EPIC-03, v9.3). `api_call_log` added ST-07 (BLG-OPS-154, EPIC-02, v9.5). Idempotent — safe to call repeatedly (e.g. from a daily scheduled workflow, matching this codebase's other maintenance endpoints like `POST /portfolio/snapshot`); deletes nothing when no rows qualify. Protected by the app-wide `X-API-Key` middleware (`backend/main.py::api_key_middleware`), same as every other non-GET endpoint when `API_KEY` is configured — no route-local auth dependency.
+
+**Silent-purge-failure visibility (ST-06 sub-item 3, BLG-OPS-153, EPIC-02, v9.5):** each purge function fails safe (returns `0` on any DB error), so a `0`-deleted result is ambiguous between "nothing qualified" and "the purge is broken." After each table's purge, an independent read-only row count against the same retention cutoff disambiguates: `0` deleted + `0` rows still past the cutoff is healthy; `0` deleted + rows still past the cutoff means the purge itself likely failed. Any table matching the latter is both logged as a `WARNING` and listed in the new `possible_silent_failure` response field.
 
 **§13 Status:** N/A — no AI output; a maintenance/deletion operation on audit metadata only (no AI-generated content is itself stored in either table — see each table's schema in `docs/ops/gemini_cost_tracking.md` / `render_log_retention_policy.md` §3.1).
 
@@ -157,7 +159,9 @@ No parameters, no request body.
   "status": "ok",
   "data": {
     "gemini_audit_log_rows_deleted": 0,
-    "claude_audit_log_rows_deleted": 0
+    "claude_audit_log_rows_deleted": 0,
+    "api_call_log_rows_deleted": 0,
+    "possible_silent_failure": []
   }
 }
 ```
@@ -166,19 +170,21 @@ No parameters, no request body.
 |-------|------|--------------|
 | `gemini_audit_log_rows_deleted` | integer | Rows deleted from `gemini_audit_log` (older than 90 days). `0` if none qualified, or on internal failure (fail-safe — see below). |
 | `claude_audit_log_rows_deleted` | integer | Rows deleted from `claude_audit_log` (older than 730 days). `0` if none qualified, or on internal failure. |
+| `api_call_log_rows_deleted` | integer | Rows deleted from `api_call_log` (older than 90 days). `0` if none qualified, or on internal failure. |
+| `possible_silent_failure` | array of string | Table names (subset of `gemini_audit_log`, `claude_audit_log`, `api_call_log`) where `0` rows were deleted but an independent count found rows still past that table's retention window — signals a likely broken purge rather than nothing-to-delete. Empty in the normal case. |
 
 ### Error responses
 
 | Status | Condition |
 |--------|-----------|
 | 401 | Missing or invalid `X-API-Key` header (when `API_KEY` is configured in the deployment environment). |
-| 500 | Not expected under normal operation — each underlying purge function (`purge_gemini_audit_log_older_than_90_days`, `purge_claude_audit_log_older_than_730_days`) fails safe internally (returns `0` rather than propagating an exception), matching this table's sibling functions' existing convention. |
+| 500 | Not expected under normal operation — each underlying purge function (`purge_gemini_audit_log_older_than_90_days`, `purge_claude_audit_log_older_than_730_days`, `purge_api_call_log_older_than_90_days`) fails safe internally (returns `0` rather than propagating an exception), matching this table's sibling functions' existing convention. |
 
 ### Implementation constraints
 
 - Hard `DELETE`, not a soft-delete/archive flag — per `docs/ops/ai_audit_log_retention_policy.md`'s "delete" procedure choice (no archival store configured for this codebase; see that document's rationale).
-- Each table's purge runs independently — a failure purging one table does not prevent the other from being attempted (both purge functions are always called; each fails safe on its own).
-- No response field distinguishes "0 rows deleted because none qualified" from "0 rows deleted because of an internal failure" — both currently produce the same `0` value, matching the pre-existing `purge_gemini_audit_log_older_than_90_days()` fail-safe convention this endpoint extends to `claude_audit_log`. A future story could add an explicit `error` field per table if this ambiguity becomes operationally significant.
+- Each table's purge runs independently — a failure purging one table does not prevent the others from being attempted (all three purge functions are always called; each fails safe on its own).
+- No response field distinguishes "0 rows deleted because none qualified" from "0 rows deleted because of an internal failure" for the purge count itself — both currently produce the same `0` value, matching the pre-existing `purge_gemini_audit_log_older_than_90_days()` fail-safe convention this endpoint extends to `claude_audit_log`/`api_call_log`. `possible_silent_failure` narrows this ambiguity (a read-only count check, not a purge-function-internal distinction) but does not eliminate it: a purge that fails *and* whose independent count check also fails (e.g. same broken credential) still reports a clean `0`/not-flagged result — this is a best-effort signal, not a guarantee.
 
 ---
 
@@ -186,5 +192,6 @@ No parameters, no request body.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-09-16 | ST-07/ST-06 (EPIC-02, v9.5, BLG-OPS-154/BLG-OPS-153): `POST /ops/purge-audit-logs` now also purges `api_call_log` (>90 days) and returns a `possible_silent_failure` field flagging any table where 0 rows were deleted despite stale rows still being present. `openapi.yaml` updated in the same commit. Infrastructure & Operations Owner sign-off. |
 | 1.1 | 2026-09-10 | ST-13 (EPIC-03, v9.3, BLG-OPS-94): Added `POST /ops/purge-audit-logs` — deletes gemini_audit_log (>90 days) and claude_audit_log (>730 days) rows per the new retention policy (`docs/ops/ai_audit_log_retention_policy.md`). `openapi.yaml` updated in the same commit. Infrastructure & Operations Owner sign-off. |
 | 1.0 | 2026-09-10 | ST-11/ST-12 (EPIC-03, v9.3, BLG-OPS-17/BLG-OPS-20): Initial specification. Added `GET /ops/alpaca-call-report` and `GET /ops/research-session-report`. `openapi.yaml` updated in the same commit. Infrastructure & Operations Owner sign-off (per sprint_backlog.md AC). |

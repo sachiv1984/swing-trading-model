@@ -256,6 +256,7 @@ def generate_daily_briefing() -> dict:
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
                 cost_usd=cost_usd,
+                latency_ms=elapsed_ms,
             )
         except Exception:
             pass
@@ -418,6 +419,7 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
                 cost_usd=cost_usd,
+                latency_ms=elapsed_ms,
             )
         except Exception:
             pass

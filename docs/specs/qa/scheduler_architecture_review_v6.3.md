@@ -1,9 +1,9 @@
 **Owner:** Infrastructure & Operations Owner; Backend Engineering Patterns Owner
 **Class:** Reference Document (Class 2)
 **Status:** Published
-**Version:** 1.0
-**Last Updated:** 2026-06-29
-**Story:** ST-13 (BLG-OPS-79, EPIC-03, v6.3)
+**Version:** 1.1
+**Last Updated:** 2026-09-18 (ST-05, EPIC-02, v9.5, BLG-OPS-160 — corrected the Trigger Mechanism table: nightly-stop-update/rebalance-exit now have scheduled workflows, closing the gap this document originally flagged); prior — 2026-06-29 (ST-13, BLG-OPS-79, EPIC-03, v6.3, initial review).
+**Story:** ST-13 (BLG-OPS-79, EPIC-03, v6.3); ST-05 (BLG-OPS-160, EPIC-02, v9.5)
 
 ---
 
@@ -27,10 +27,10 @@ The v6.2 nightly computation jobs are **not** driven by an in-process background
 |-----|-------------|-----------------|----------|
 | Daily alert evaluation | `alert-evaluation.yml` | `POST /alerts/evaluate` | 21:30 UTC Mon–Fri (16:30 ET) |
 | Portfolio maintenance | `daily-snapshot.yml` | Various (portfolio snapshot, signals generate, etc.) | 16:00 UTC Mon–Fri |
-| Trailing stop update | GitHub Actions (external call) | `POST /positions/nightly-stop-update` | Called as part of daily maintenance |
-| Rebalance exit | GitHub Actions (external call) | `POST /signals/rebalance-exit` | Called as part of daily maintenance |
+| Trailing stop update | `nightly-stop-update.yml` (added ST-05, BLG-OPS-160, EPIC-02, v9.5) | `POST /positions/nightly-stop-update` | 22:30 UTC Mon–Fri |
+| Rebalance exit | `rebalance-exit.yml` (added ST-05, BLG-OPS-160, EPIC-02, v9.5) | `POST /signals/rebalance-exit` | 22:45 UTC Mon–Fri (self-gates to last trading day of month) |
 
-**Note:** The nightly-stop-update and rebalance-exit calls are currently absent from `daily-snapshot.yml` — they must be invoked externally via `POST /positions/nightly-stop-update` and `POST /signals/rebalance-exit`. This is a pre-existing configuration gap; not introduced by v6.3.
+**Note (resolved v9.5, `BLG-OPS-160`):** at the time of this document's original v6.3 review, the nightly-stop-update and rebalance-exit calls had no scheduled trigger at all — neither `daily-snapshot.yml` nor any other workflow invoked them, a gap this document flagged but did not action (out of ST-13's scope). This was confirmed still true as of `2026-09-14__release-v9.4` (re-flagged as `BLG-OPS-160`) and fixed at `2026-09-15__release-v9.5`/ST-05: dedicated GitHub Actions workflows now trigger both, following the same thin-trigger template already used for `risk-off-alerts.yml`. See `docs/ops/scheduled_job_runner_consolidation_investigation.md` §2 (rows #4/#5) for the current full inventory.
 
 ### Available data for health endpoint
 

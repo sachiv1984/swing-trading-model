@@ -104,11 +104,12 @@ def test_custom_spike_multiplier_respected():
 
 # ---------------------------------------------------------------------------
 # run_scheduled_anomaly_check — ST-09 (BLG-OPS-151, EPIC-03, v9.4) scheduled-
-# job wiring. Cost is exercised against a mocked claude_audit_log feed
-# (no live DATABASE_URL in this environment, disclosed per RISK-03); latency
-# is exercised via the simulated_latency_feed parameter for the same reason
-# (no latency column exists in claude_audit_log at all — see
-# database.get_claude_endpoint_cost_windows docstring, BLG-OPS-161).
+# job wiring. Cost and (as of ST-13, BLG-OPS-161, EPIC-02, v9.5) latency are
+# both real-data by default, exercised here against mocked
+# database.get_claude_endpoint_cost_windows/get_claude_endpoint_latency_windows
+# feeds (no live DATABASE_URL in this environment, disclosed per RISK-03).
+# simulated_latency_feed remains supported and still exercised below for
+# the deliberate-dry-run/priority-over-real-data path.
 # ---------------------------------------------------------------------------
 
 def test_scheduled_check_fires_and_alerts_on_simulated_cost_spike(monkeypatch):
@@ -163,10 +164,35 @@ def test_scheduled_check_no_alert_on_normal_variance(monkeypatch):
     assert called["count"] == 0
 
 
-def test_scheduled_check_latency_pending_when_no_feed_supplied():
+def test_scheduled_check_latency_sourced_from_claude_audit_log_when_no_feed_supplied(monkeypatch):
+    # ST-13 (BLG-OPS-161, EPIC-02, v9.5): latency is now real-data by
+    # default, sourced from database.get_claude_endpoint_latency_windows()
+    # (claude_audit_log.latency_ms), not simulated-only.
+    import database
+    monkeypatch.setattr(database, "get_claude_endpoint_latency_windows", lambda: [])
+
     result = run_scheduled_anomaly_check(send_alert=False)
     assert result["latency_anomalies"] == []
-    assert result["latency_data_source"] == "not_available_pending_BLG-OPS-161"
+    assert result["latency_data_source"] == "claude_audit_log"
+
+
+def test_scheduled_check_latency_fires_on_real_data_spike(monkeypatch):
+    import database
+    monkeypatch.setattr(database, "get_claude_endpoint_cost_windows", lambda: [])
+    monkeypatch.setattr(
+        database,
+        "get_claude_endpoint_latency_windows",
+        lambda: [
+            {"endpoint": "POST /ai/chat", "recent_p95_latency_ms": 6000.0,
+             "recent_count": 5, "baseline_p95_latency_ms": 1200.0, "baseline_count": 40},
+        ],
+    )
+
+    result = run_scheduled_anomaly_check(send_alert=False)
+
+    assert result["latency_data_source"] == "claude_audit_log"
+    assert result["latency_anomalies"][0]["is_anomaly"] is True
+    assert result["firing_count"] == 1
 
 
 def test_scheduled_check_latency_fires_on_simulated_feed(monkeypatch):

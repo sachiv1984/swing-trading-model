@@ -22,6 +22,7 @@ import os
 import hashlib
 import json
 import re
+import time
 from typing import Optional
 
 from utils.retry import retry_with_backoff
@@ -159,7 +160,7 @@ def _call_claude(prompt: str, max_tokens: int = 256, system: Optional[str] = Non
     return response.content[0].text.strip(), response.usage
 
 
-def _log_audit(plan_id, input_hash, output_hash, usage, endpoint: str = ""):
+def _log_audit(plan_id, input_hash, output_hash, usage, endpoint: str = "", latency_ms: int | None = None):
     try:
         prompt_tokens = getattr(usage, "input_tokens", None)
         completion_tokens = getattr(usage, "output_tokens", None)
@@ -191,6 +192,7 @@ def _log_audit(plan_id, input_hash, output_hash, usage, endpoint: str = ""):
             input_tokens=prompt_tokens,
             output_tokens=completion_tokens,
             cost_usd=estimated_cost_usd,
+            latency_ms=latency_ms,
         )
     except Exception:
         pass
@@ -264,10 +266,12 @@ def generate_full_plan(
     )
     input_hash = hashlib.sha256(input_payload.encode()).hexdigest()[:16]
 
+    t0 = time.time()
     try:
         text, usage = _call_claude(prompt, max_tokens=1024, system=_FULL_PLAN_SYSTEM)
     except Exception as exc:
         return {"available": False, "error": f"Claude API error: {str(exc)[:120]}"}
+    latency_ms = int((time.time() - t0) * 1000)
 
     output_hash = hashlib.sha256(text.encode()).hexdigest()[:16]
 
@@ -278,7 +282,7 @@ def generate_full_plan(
     except Exception:
         return {"available": False, "error": "Claude returned non-JSON response"}
 
-    _log_audit(plan_id, input_hash, output_hash, usage, endpoint="POST /trade-plans/generate-plan")
+    _log_audit(plan_id, input_hash, output_hash, usage, endpoint="POST /trade-plans/generate-plan", latency_ms=latency_ms)
 
     if isinstance(fields, dict):
         from ai_output_sampling_service import maybe_sample_output
@@ -342,13 +346,15 @@ def generate_setup_thesis(
     )
     input_hash = hashlib.sha256(input_payload.encode()).hexdigest()[:16]
 
+    t0 = time.time()
     try:
         thesis, usage = _call_claude(prompt, max_tokens=256, system=_THESIS_SYSTEM)
     except Exception as exc:
         return {"available": False, "error": f"Claude API error: {str(exc)[:120]}"}
+    latency_ms = int((time.time() - t0) * 1000)
 
     output_hash = hashlib.sha256(thesis.encode()).hexdigest()[:16]
-    _log_audit(plan_id, input_hash, output_hash, usage, endpoint="POST /trade-plans/{plan_id}/generate-thesis")
+    _log_audit(plan_id, input_hash, output_hash, usage, endpoint="POST /trade-plans/{plan_id}/generate-thesis", latency_ms=latency_ms)
 
     if thesis:
         from ai_output_sampling_service import maybe_sample_output

@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.3
-**Last Updated:** 2026-06-17
+**Version:** 0.4
+**Last Updated:** 2026-09-16 (ST-12, BLG-OPS-159, v9.5 — added §3.2 dashboard-only Build Filters gotcha note and §7 cross-reference to render_build_deploy_path_filter_audit.md); prior — 2026-06-17 (ST-03, v5.8 post-ship OA — added FRONTEND_URL to §6.1).
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -77,6 +77,8 @@ The backend is a FastAPI application deployed via the hosting platform (e.g. Ren
 1. Confirm `main` branch is at the correct commit (`git log --oneline -3`)
 2. Trigger deployment via the hosting platform dashboard or CLI
 3. Monitor deployment logs until "Deploy succeeded" or equivalent message
+
+**⚠️ Dashboard-only Build Filters gotcha (ST-12, BLG-OPS-159, EPIC-02, v9.5):** Render's per-service Build Filters (Settings → Build & Deploy → Build Filters — Included/Ignored Paths) are configured in the Render dashboard itself, separate from `render.yaml` and any GitHub Actions workflow, and leave **no trace anywhere in this repo** — a repo-only search cannot detect them. If a deploy doesn't seem to pick up a change to a non-code file the app reads at runtime (a markdown file, CSV, JSON config, etc.), do not stop at reading `.github/workflows/*.yml` or `render.yaml` — check the target Render service's Settings → Build Filters in the dashboard directly. This has silently bitten this project more than once (see `docs/ops/render_build_deploy_path_filter_audit.md` for the full incident history, the current known-good filter configuration for both staging and production, and the automated drift-detection script that partially guards against it going forward).
 
 **Option B — Manual deploy:**
 ```bash
@@ -243,6 +245,7 @@ For interim health checks before BLG-BE-33 ships, use Render logs (Option B) or 
 - Health endpoint spec: `docs/specs/api_contracts/health_endpoints.md`
 - SI-05 health check procedure: `docs/ops/si05_health_check_procedure.md`
 - System status report: `docs/System_status_report.md`
+- Dashboard-only Build Filters gotcha / deploy path-filter audit: `docs/ops/render_build_deploy_path_filter_audit.md` (ST-12, BLG-OPS-159, v9.5 — see §3.2 above)
 
 ---
 
@@ -250,6 +253,7 @@ For interim health checks before BLG-BE-33 ships, use Render logs (Option B) or 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4 | 2026-09-16 | Added §3.2 dashboard-only Build Filters gotcha note (⚠️ callout) and §7 cross-reference to `docs/ops/render_build_deploy_path_filter_audit.md` (ST-12, BLG-OPS-159, v9.5). Infrastructure & Operations Owner sign-off. |
 | 0.3 | 2026-06-17 | Added `FRONTEND_URL` to §6.1 environment variables table (ST-03, v5.8 post-ship OA). Infrastructure & Operations Owner sign-off. |
 | 0.2 | 2026-06-08 | Added §6 SI-05 Phase 1 Operational Requirements (ST-07, BLG-OPS-55, v5.2). Infrastructure & Operations Owner. |
 | 0.1 | 2026-03-17 | Initial version. ST-14 — EPIC-05 (Documentation & Standards Pack). v2.0 sprint cycle 2026-03-17__release-v2.0. Infrastructure & Operations Owner. Reviewed by Head of Engineering. |

@@ -1,10 +1,10 @@
 **Owner:** Head of Engineering
 **Class:** Reference Document (Class 2)
 **Status:** Published
-**Version:** 1.0
-**Last Updated:** 2026-09-14 (ST-05, EPIC-01, v9.4, BLG-TECH-20 — investigation created)
+**Version:** 1.1
+**Last Updated:** 2026-09-18 (ST-05, EPIC-02, v9.5, BLG-OPS-160 — added rows #4/#5 for the newly-scheduled nightly-stop-update.yml/rebalance-exit.yml workflows, resolving the gap flagged as a related finding at v1.0); prior — 2026-09-14 (ST-05, EPIC-01, v9.4, BLG-TECH-20 — investigation created).
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Story:** ST-05 (EPIC-01, v9.4) — `BLG-TECH-20`
+**Story:** ST-05 (EPIC-01, v9.4) — `BLG-TECH-20`; ST-05 (EPIC-02, v9.5) — `BLG-OPS-160`
 
 ---
 
@@ -25,10 +25,12 @@ Scope note: this repo has ~15 cron-scheduled GitHub Actions workflows in total (
 | 1 | Nightly Backtest | `backtest.yml` | `0 1 * * *` (daily) | Heavy compute **in CI**: runs `production_strategy.py` on the runner, then pushes results via `import_backtest.py` against the live API. Has its own data-integrity smoke test and Telegram failure alert built in. | No — not registered via `record_nightly_job`/`GET /health/scheduler`; has its own independent alerting instead |
 | 2 | Screener Refresh | `screener-refresh.yml` | `0 22 * * 1-5` (weekdays) | Thin trigger: `curl -X POST ${API_URL}/screener/run`. All compute happens API-side. | Yes — `record_nightly_job("screener_refresh", ...)` in `backend/routers/screener.py` |
 | 3 | Risk-Off Alerts | `risk-off-alerts.yml` | `15 22 * * 1-5` (weekdays, 15 min after #2) | Thin trigger: `curl -X POST ${API_URL}/positions/risk-off-alerts`. All compute happens API-side. | Yes — `record_nightly_job("risk_off_alerts", ...)` in `backend/main.py` |
+| 4 | Nightly Trailing Stop Update | `nightly-stop-update.yml` | `30 22 * * 1-5` (weekdays, 15 min after #3) | Thin trigger: `curl -X POST ${API_URL}/positions/nightly-stop-update`. All compute happens API-side. **Added ST-05, BLG-OPS-160, EPIC-02, v9.5 — see note below; was not in scope for this investigation's original inventory.** | Yes — `record_nightly_job("trailing_stop", ...)` in `backend/main.py` |
+| 5 | Rebalance Exit Signals | `rebalance-exit.yml` | `45 22 * * 1-5` (weekdays, 15 min after #4) | Thin trigger: `curl -X POST ${API_URL}/signals/rebalance-exit`. All compute happens API-side; the endpoint self-gates to the last trading day of the month, so the daily weekday schedule is safe (no-ops most days). **Added ST-05, BLG-OPS-160, EPIC-02, v9.5 — see note below; was not in scope for this investigation's original inventory.** | Yes — `record_nightly_job("rebalance_exit", ...)` + `record_nightly_job("inv_vol_sizing", ...)` in `backend/main.py` |
 
-Adjacent but explicitly out of this inventory's scope (not named in `BLG-TECH-20`'s title, and structurally different — general portfolio maintenance / alerting rather than one of the "3" named runners): `alert-evaluation.yml` (`POST /alerts/evaluate`), `daily-snapshot.yml` (position analyze / portfolio snapshot / signal generation / audit-log purge, 4 steps in one workflow).
+Adjacent but explicitly out of this inventory's scope (not named in `BLG-TECH-20`'s title, and structurally different — general portfolio maintenance / alerting rather than one of the named runners): `alert-evaluation.yml` (`POST /alerts/evaluate`), `daily-snapshot.yml` (position analyze / portfolio snapshot / signal generation / audit-log purge, 4 steps in one workflow).
 
-**Related finding, filed separately (`BLG-OPS-160`, not this story's scope):** while tracing runner #1's trigger mechanism, `docs/specs/qa/scheduler_architecture_review_v6.3.md` was found to already document, as of v6.3 (2026-06-29), that two other job endpoints — `POST /positions/nightly-stop-update` and `POST /signals/rebalance-exit` — have **no live scheduled trigger at all**. Re-confirmed still true today via repo-wide search. This is a correctness gap, not a consolidation question, and is out of scope for this investigation; see `BLG-OPS-160` for the full finding and its Render-dashboard-config caveat.
+**Related finding, now resolved (`BLG-OPS-160`, ST-05, EPIC-02, v9.5):** while tracing runner #1's trigger mechanism at the time of this investigation's original v9.4 pass, `docs/specs/qa/scheduler_architecture_review_v6.3.md` was found to already document, as of v6.3 (2026-06-29), that two other job endpoints — `POST /positions/nightly-stop-update` and `POST /signals/rebalance-exit` — had **no live scheduled trigger at all**. That gap was out of this investigation's original scope and tracked separately as `BLG-OPS-160`. It has since been fixed: rows #4 and #5 above (`nightly-stop-update.yml`, `rebalance-exit.yml`), added following the exact runner #3 (`risk-off-alerts.yml`) template — the same fix shape already used for the identical `risk_off_exit` gap at v8.8. Live confirmation (a genuine Render dashboard check) found **no dashboard-only Render Cron Job for either endpoint either** — the free-tier Render plan in use for this project has no Cron Jobs resource type available at all (confirmed directly: the dashboard's Settings tabs are General/Build/Deploy/Custom Domains/PR Previews/Networking/Edge Caching/Notifications/Health Checks/Maintenance Mode/Delete-or-suspend — no job-scheduling tab of any kind), so this was never a dashboard-only job hiding from repo search; it simply had no trigger anywhere until now.
 
 ## 3. Trigger Mechanism Detail
 
@@ -60,3 +62,5 @@ All 3 runners in scope use the same base architecture: an external GitHub Action
 ## 6. Sign-Off
 
 **Head of Engineering:** Confirmed — inventory accurate against current `.github/workflows/*.yml` and `backend/` job-registration call sites; recommendation (defer full consolidation) and rationale reviewed. 2026-09-14 (agent-mediated, Head of Engineering role — §5.3).
+
+**Infrastructure & Operations Owner (ST-05, BLG-OPS-160, EPIC-02, v9.5):** Confirmed — 2026-09-18. Live Render dashboard check (user-performed, this session) found no Cron Jobs resource type available on the project's free-tier plan — only General/Build/Deploy/Custom Domains/PR Previews/Networking/Edge Caching/Notifications/Health Checks/Maintenance Mode/Delete-or-suspend tabs — conclusively ruling out a dashboard-only job for either `nightly-stop-update` or `rebalance-exit`. Fix applied: `nightly-stop-update.yml` (22:30 UTC weekdays) and `rebalance-exit.yml` (22:45 UTC weekdays), both following the `risk-off-alerts.yml` template exactly, sequenced after the existing chain (`alert-evaluation.yml` 21:30 → `screener-refresh.yml` 22:00 → `risk-off-alerts.yml` 22:15 → `nightly-stop-update.yml` 22:30 → `rebalance-exit.yml` 22:45). Both endpoints already wrote to `GET /health/scheduler`'s job registry (`_NIGHTLY_JOB_NAMES` already included `trailing_stop`/`rebalance_exit`/`inv_vol_sizing`) — no backend code change was needed, only the missing trigger. `BLG-OPS-160` closed.
