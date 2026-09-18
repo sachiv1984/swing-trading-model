@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T18:39:00Z",
+  "last_updated_utc": "2026-09-18T18:40:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -992,11 +992,11 @@
       }
     },
     "EPIC-06": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-09-15__release-v9.5/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-15__release-v9.5/qa_evidence_EPIC-06.md",
       "test_scenarios": [
         "tests/e2e/arc5-compliance-section.spec.js",
