@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T00:35:00Z",
+  "last_updated_utc": "2026-09-18T02:05:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -120,7 +120,7 @@
       }
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-09-15__release-v9.5/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
@@ -349,23 +349,25 @@
         "ST-14": {
           "title": "Provision read-only staging DATABASE_URL for sprint-execution sessions",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1682,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "9cd212d1",
           "delegation_record_id": "DEL-20260916-04",
-          "blocked_since_utc": "2026-09-16T22:10:00Z",
-          "unblock_criteria": "Infrastructure & Operations Owner provisions a real read-only staging DATABASE_URL",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-18T02:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/infrastructure/staging_setup.md#Section 8 \u2014 Read-Only Access for Sprint-Execution Sessions"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": "delegated.parked",
+          "last_completed_substep": "3.1.A.complete",
           "sign_off_record": null,
-          "notes": "Requires actual credential provisioning in hosting/secrets environment \u2014 cannot be self-provisioned by the engine."
+          "notes": "Live end-to-end smoke test passed: connects as readonly_staging; SELECT count(*) FROM portfolios returned real data; UPDATE against a real column correctly rejected with 'permission denied for table portfolios'. Resolved several real infra snags along the way (a tool-use leak this session caused and disclosed, a collision with the pre-existing STAGING_DATABASE_URL secret, stale-process/duplicate-bashrc-line env propagation issues, and an unescaped @ breaking URI parsing) -- all documented in DEL-20260918-02 and docs/infrastructure/staging_setup.md \u00a78. BLG-OPS-162 closed."
         }
       }
     },
@@ -1023,9 +1025,7 @@
       }
     }
   },
-  "blocked_items": [
-    "ST-14"
-  ],
+  "blocked_items": [],
   "delegated_items": [
     "ST-04",
     "ST-05",
@@ -1046,7 +1046,8 @@
     "ST-11",
     "ST-12",
     "ST-13",
-    "ST-05"
+    "ST-05",
+    "ST-14"
   ],
   "open_escalations": [],
   "merge_gate": {

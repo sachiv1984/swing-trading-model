@@ -129,3 +129,26 @@ Append-only. Do not edit previous entries.
 - **Status:** Resolved — unblocking ST-05, marking done.
 
 ---
+
+## DEL-20260918-02
+
+- **ST Item:** ST-14 — Provision read-only staging `DATABASE_URL` for sprint-execution sessions (resolution of `DEL-20260916-04`)
+- **EPIC:** EPIC-02
+- **Classification:** delegated_decision — resolved
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1682
+- **Branch:** exec/2026-09-15__release-v9.5/EPIC-02
+- **Resolved at:** 2026-09-18T02:00:00Z (user provisioned the credential and worked through several real infrastructure issues interactively to get it connecting)
+- **Resolution:**
+  User created a `readonly_staging` Postgres role on the staging Supabase project (`GRANT SELECT` only, `ALTER DEFAULT PRIVILEGES` for future tables too) and worked through delivering it into this session's environment. Several genuine issues surfaced and were resolved along the way, each worth recording since they'll recur for any future credential handoff of this kind:
+  1. **A tool-use mistake on this session's part leaked the connection string into the transcript** (`${DATABASE_URL:-no}` substitutes the actual value when set, not a fallback "no" — a scripting error, not the user's). Password was rotated in response; flagged immediately and transparently.
+  2. **`STAGING_DATABASE_URL` (a different, pre-existing GitHub secret) was also briefly overwritten with a read-only value**, which would have broken `reset-and-seed-staging.yml`, `seed-preview.yml`, and `scripts/reset_staging_db.sh` (all three need write access). Resolved by leaving `STAGING_DATABASE_URL` alone and using the bare `DATABASE_URL` secret name (freed up by repointing `backtest.yml` at `PROD_DATABASE_URL` instead — see the `[EPIC-02][ST-14]` commit `26d5b2b1`) for the read-only staging credential, with no new secret name needed.
+  3. **Environment variables only take effect for genuinely new processes** — multiple rounds of "still not picked up" traced back to: (a) duplicate `export DATABASE_URL=` lines accumulating in `~/.bashrc` from repeated `>>` appends, and (b) this Claude Code session itself needing to be fully restarted (`claude --continue` from the corrected terminal), not just a new terminal tab opened alongside the same still-running process. Verified at each step via a safe length/sha256-fingerprint check (never printing the value) to confirm whether the environment had actually changed before retrying.
+  4. **An unescaped `@` in the password broke `postgresql://` URI parsing** (`psql` tried to resolve part of the password as a hostname). Fixed by choosing a new password without URI-reserved characters (`@`, `:`, `/`, `?`, `#`).
+
+  Once correctly delivered, verified live end-to-end (this story's own AC-03): connects as `readonly_staging`; `SELECT count(*) FROM portfolios` returned real data; `UPDATE portfolios SET last_updated = now()` correctly rejected with `permission denied for table portfolios` (retried against a real column after an initial attempt against a nonexistent column, which wasn't a valid permission test). Documented in `docs/infrastructure/staging_setup.md` §8.
+
+  `BLG-OPS-162` closed. This also retires the recurring "no live DB access" disclosure pattern that has appeared across v9.2–v9.5 sprint execution — future stories with a staging-data-verification AC can now run a real query instead of disclosing a synthetic-fixture substitute.
+- **Status:** Resolved — unblocking ST-14, marking done. EPIC-02 is now 10/10 done.
+
+---
