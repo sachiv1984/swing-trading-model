@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-09-18
+Last Updated: 2026-09-18 (delivery verification — Phase 4 section appended); prior — 2026-09-18 (sprint close — Phase 3 section added)
 Cycle: 2026-09-15__release-v9.5
 
 ---
@@ -23,3 +23,21 @@ Cycle: 2026-09-15__release-v9.5
 
 **Recurrence Notes:**
 The cross-EPIC-branch `execution_state.json`/`backlog.md` merge-conflict pattern recurred twice this cycle (EPIC-04→`main`, and `main`→EPIC-06 after EPIC-05 merged) — both resolved cleanly using the already-established CLAUDE.md §8 union/main-authoritative rules with no new gap found; not logged as a fresh friction item since the existing mitigation worked as designed both times. This is the 3rd+ consecutive cycle this exact pattern has occurred and been handled correctly — worth noting as a stable, working control rather than a recurring problem.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-09-15__release-v9.5
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-09-18
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-09-14__release-v9.4 (`lessons_learnt_cycle.md` `## Phase 4`) — 1 friction item filed: `Pass, escalation open` misapplied to an incidental backlog-item finding rather than a genuine open escalation (ST-05/EPIC-01). Checked and confirmed not recurring this cycle — no `qa_evidence_EPIC-xx.md` row this cycle uses `Pass, escalation open` at all (the value did not arise; not applicable to assess recurrence either way).
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| `qa_evidence_EPIC-04.md`'s own autonomous-class eligibility check (ST-22) disclosed a genuine self-graded ambiguity in BLG-GOV-19 Criterion 1 and explicitly stated its own sign-off "should not be treated as final" without human Director of Quality confirmation — but PR #1715 merged, and this delivery verification run (also an autonomous engine run) reached this same EPIC's evidence without that confirmation having occurred. `BLG-GOV-335` was filed to obtain the ruling, but STEP -1.3's Tier 2 gate has no defined behaviour for the case where the *reviewing* engine (delivery verification) is itself the same class of self-certifying agent as the one that raised the doubt — there is currently no mechanism in this framework that forces a genuinely human decision point when both the authoring and the verifying steps are agent-mediated. | Phase 4 | Type E — Authority Gap: A decision was needed and no role was clearly empowered to make it | decision | Recorded as an open, non-blocking compliance advisory in `verification_report.md §1`/§3`; `BLG-GOV-335` remains the ruling vehicle (Owner: Head of Specs Team). Flagged here as a systemic gap for consideration: should `delivery_verification_prompt.md` STEP -1.3's Tier 2 treatment require an *actual* human signature (not an agent-mediated one) whenever the underlying EPIC's own evidence discloses self-doubt about its own gate eligibility, as distinct from routine agent-mediated sign-off? | Head of Specs Team | `BLG-GOV-335` |
+
+**Recurrence Notes:**
+No other Phase 4-relevant recurrence this cycle. Gate sequencing, deviation severity calls (none filed this cycle — zero `DEV-*` records), test scenario coverage (no gaps), and sign-off coordination all proceeded cleanly across all 6 EPICs.
