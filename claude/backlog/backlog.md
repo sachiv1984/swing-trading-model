@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-18 (session — `BLG-QA-170`/`BLG-GOV-334` resolved and closed: Head of Specs Team ruling + Product Owner acceptance that the true fact (28, not 30 tests) stands permanently recorded via `BLG-GOV-334` itself, sealed source file intentionally never edited; also, separately this same day, 2 new items added: `BLG-OPS-163`, `BLG-OPS-164` (PR #1713 review findings — secrets ownership map, and ST-11's uptime-monitor live-fire confirmation follow-up)); prior — 2026-09-17 (session — 1 new item added: `BLG-GOV-334`); prior — 2026-09-16 (session — 2 new items added: `BLG-BE-120`, `BLG-QA-179` (PR #1712 review findings)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-18 (session — 3 new items added: `BLG-SPEC-155`, `BLG-SPEC-156`, `BLG-GOV-335` (PR #1715 review findings — Director of Quality + Product Owner agent-mediated review)); prior — 2026-09-18 (session — `BLG-QA-170`/`BLG-GOV-334` resolved and closed); prior — 2026-09-17 (session — 1 new item added: `BLG-GOV-334`); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4041,6 +4041,45 @@ The SI-02 gate's "linked trade plan" count is well-specified as a query (`curren
 
 ---
 
+### BLG-SPEC-155 — openapi.yaml's OperationalHealthResponse.ai_journal doesn't model its either/or shape with oneOf
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / API Contracts
+**Owner:** API Contracts & Documentation Owner
+**Source:** Agent-mediated Director of Quality review, PR #1715 (EPIC-04, 2026-09-15__release-v9.5) — 2026-09-18
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.6
+
+**Problem**
+`docs/reference/openapi.yaml`'s `OperationalHealthResponse.ai_journal` schema (added PR #1715, ST-26/BLG-SPEC-139) lists `status` (enum `[unavailable]`) as a sibling property alongside `usage_rate`/`error_rate`/`p95_latency_ms`, rather than modelling the real "either the 3 metric fields, or `{status: unavailable}`" either/or shape via `oneOf`. The description text correctly explains the real behaviour, but the schema itself currently permits (and doesn't forbid) a response carrying all 4 keys at once, which the real endpoint never returns. Low-severity — a pre-existing style pattern elsewhere in this file, not a regression introduced by PR #1715.
+
+**Scope**
+- Model `ai_journal` as a `oneOf` of the two real shapes (3-metric object, or `{status: unavailable}`)
+
+**Acceptance Criteria**
+- `ai_journal`'s schema forbids a response carrying both the metric fields and `status: unavailable` simultaneously
+
+---
+
+### BLG-SPEC-156 — PO-04 (Reflection ↔ Outcome Correlation) needs its own §13 boundary review, not just a stub-file note
+**Priority:** P3 (Low)
+**Type:** Governance / §13 Compliance
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** Agent-mediated Product Owner review, PR #1715 (EPIC-04, 2026-09-15__release-v9.5, ST-23) — 2026-09-18
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** Unscheduled (pre-work before PO-04 gate)
+
+**Problem**
+`docs/specs/api_contracts/reflection_outcome_correlation_stub.md` (ST-23) flags that "correlation" language reads closer to a predictive claim than PO-02/PO-03's pattern-recognition/classification framing, and suggests PO-04 may need its own §13 boundary check rather than inheriting `BLG-SPEC-35`'s PO-02 clearance if that lands first. That suggestion currently exists only as prose inside a pre-authoring stub file — nothing tracks it as an actionable item, so it risks being silently dropped once `BLG-SPEC-35` closes and nobody re-reads the stub.
+
+**Scope**
+- File (or confirm covered by) a dedicated §13 pre-assessment for PO-04, distinct from `BLG-SPEC-35`'s PO-02 scope
+- Cross-reference from `reflection_outcome_correlation_stub.md`
+
+**Acceptance Criteria**
+- A trackable item (this one, or a successor) exists for PO-04's own §13 review — not just prose in a stub file
+
+---
+
 ### BLG-GOV-326 — Rolling wall-clock cost dashboard across the last 10 cycles
 **Priority:** P3 (Low)
 **Type:** Governance / Process
@@ -4532,6 +4571,28 @@ On trade entry, when linking to a trade plan, the linked plan's identifier/name 
 - [x] True count (28, not 30) permanently and discoverably recorded — this item
 - [x] Sealed source file confirmed untouched, by design, not by omission
 - [x] `BLG-QA-170` and `BLG-GOV-334` both closed on this same disposition
+
+---
+
+### BLG-GOV-335 — Clarify whether BLG-GOV-19/LL-v4.5-EX-01's "live system interaction" bar means AC-mandated or verification-method-used
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Agent-mediated Director of Quality review, PR #1715 (EPIC-04, 2026-09-15__release-v9.5) — 2026-09-18
+**Effort:** XS (~0.5–1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`execution_prompt.md` §3.2.A's LL-v4.5-EX-01 sub-criterion lets a `delegated_decision`-classified story satisfy BLG-GOV-19 Criterion 1 "provided... no observable UI behaviour, staging run, or live system interaction is required." EPIC-04's PR #1715 used this path for ST-22 (`delegated_decision`), whose own AC is written to be satisfiable either with or without live DB access ("Live schema confirmed to match spec, **or** discrepancies filed as follow-on items") — but `DATABASE_URL` happened to be available this session, and the story used it as its actual verification method, performing genuine read-only queries against a live staging database. Agent-mediated review flagged this as a defensible-but-arguable reading: the AC did not *require* live system interaction (the fallback path exists precisely for when it's unavailable), but the verification method *actually used* was live system interaction, and the sub-criterion's wording doesn't clearly distinguish "the AC mandates it" from "the session happened to use it." The engine's own autonomous-class self-sign-off resolved this ambiguity in its own favour, which is the kind of self-graded gate-eligibility call CLAUDE.md's "verify role ownership... flag the mismatch, ask for confirmation" principle is meant to catch rather than let ride.
+
+**Scope**
+- Head of Specs Team to rule: does LL-v4.5-EX-01's "no ... live system interaction is required" bar on (a) the AC's own literal requirement, or (b) whichever verification method was actually used this session?
+- Update `execution_prompt.md` §3.2.A's wording to remove the ambiguity, per CLAUDE.md §6's Governance File Edit Checklist if a change is made
+
+**Acceptance Criteria**
+- Ruling recorded
+- If (b): PR #1715's EPIC-04 autonomous-class sign-off should be reconsidered by an actual Director of Quality, not just the engine's own self-check — flag for the human developer's attention on that PR
+- `execution_prompt.md` wording updated if the ruling requires a clarification, per the standing Governance File Edit Checklist
 
 ---
 
