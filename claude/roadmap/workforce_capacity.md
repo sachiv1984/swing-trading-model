@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-37/BLG-GOV-322 — new "Cross-Role Pairing Rotation Note" section added, informed by the §7.1/§7.2 historical readings through `2026-09-14__scheduled`: advisory guidance to favour execution-heavy roles over further Head of Specs Team governance/process scope while the Skill-Silo Alert remains elevated; cross-referenced from `roadmap_prompt.md` §7.1); prior — 2026-09-14 (rebalance 2026-09-14__scheduled — Standard tier, no FTE changes; Skill-Silo Alert rolling-3-cycle avg 94.1%, 4th consecutive worsening/unresolved reading, mandatory pull-forward not fully satisfiable; STEP 7.2 Cross-Role Workload Balance recomputed — Head of Specs Team highest at ~24%; Product Value Ratio 0.092 🔴 Alert, 2nd consecutive); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution — new "Canonical Effort Band → Days Conversion Table" section added, LL-v9.2-P-01); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-38/BLG-GOV-323 — new "Cost-Per-Cycle Wall-Clock Rollup" section added (empty — §22 not yet exercised by a real `run roadmap` invocation), refresh cadence documented, merge decision recorded for `BLG-GOV-326`); prior — 2026-09-18 (ST-37/BLG-GOV-322 — new "Cross-Role Pairing Rotation Note" section added, advisory guidance to favour execution-heavy roles while the Skill-Silo Alert remains elevated); prior — 2026-09-14 (rebalance 2026-09-14__scheduled — Standard tier, no FTE changes; Skill-Silo Alert rolling-3-cycle avg 94.1%, 4th consecutive worsening/unresolved reading; STEP 7.2 Cross-Role Workload Balance recomputed — Head of Specs Team highest at ~24%; Product Value Ratio 0.092 🔴 Alert); prior history retained — see prior entries in version control.
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -56,6 +56,20 @@ Release Planning and Sprint Planning have each independently inferred day-equiva
 These midpoints reflect the values already in de facto use across recent `sprint_capacity.md` templates (backed out from those cycles' own total-days-vs-item-count arithmetic) rather than a fresh estimate — this table formalises existing practice, it does not change it. Individual items may still cite their own more specific day range in their `**Effort:**` field where known (e.g. "M (~2d)" vs. "M (~2.5d)"); the canonical midpoint above is the fallback used only when a cycle-level total-days estimate is needed and an item's own field gives just the bare letter or a range without a clear single-point estimate.
 
 **Maintenance:** If a future cycle's actual effort-vs-estimate retrospective (see `docs/governance/effort_band_accuracy_retrospective_*.md` where filed) finds these midpoints systematically miscalibrated, update this table directly — it is a lightweight reference table, not a governance prompt, and does not require the `CLAUDE.md §6` version-bump checklist. Record any revision in this document's own `**Last Updated:**` header.
+
+---
+
+## Cost-Per-Cycle Wall-Clock Rollup (added 2026-09-18, ST-38/BLG-GOV-323)
+
+**Purpose:** `shared_standards.md` §22 (Governance-Cycle Wall-Clock Cost Logging Convention, added v9.2/ST-25) defines per-cycle `Session start (UTC)`/`Session end (UTC)` capture, but until this session no governed routine's own STEP list actually instructed capturing them (closed this same cycle by ST-32, `roadmap_prompt.md` v9.22 STEP 1.1/STEP 12.1) — so no routine has yet produced a real reading to roll up. This table aggregates those readings, once they start accumulating, into a trend view across the last 10 cycles, for both FinOps capacity-planning use (`BLG-GOV-323`) and PMO trend-visibility use (`BLG-GOV-326` — see merge decision below).
+
+**Merge decision (`BLG-GOV-326`):** `BLG-GOV-326` (PMO Lead, same idea-intake window) asked whether its "rolling wall-clock cost dashboard" request should be merged into this item's implementation rather than built twice, since both ask for a rollup of the same §22 figures. **Decision: yes, merged — one rollup table serves both consumers.** This table is that rollup; `BLG-GOV-326` requires no separate implementation. Recorded here to satisfy `BLG-GOV-326`'s own acceptance criterion ("merge decision recorded... before either enters sprint planning").
+
+| Cycle ID | Session start (UTC) | Session end (UTC) | Elapsed | Notes |
+|----------|---------------------|--------------------|---------|-------|
+| *(none yet)* | — | — | — | §22 was wired into `roadmap_prompt.md`'s own STEP list only this session (ST-32, `2026-09-15__release-v9.5`) and has not yet been exercised by a real `run roadmap` invocation. Per §22's own "Applied from: the next cycle onward" clause, prior cycles are never retroactively backfilled — no reliable source exists for their actual start/end time, and a fabricated figure would be worse than an honestly empty table. The first real row lands at the next `run roadmap` invocation's own STEP 12.1. |
+
+**Refresh cadence:** Updated at each `run roadmap` invocation (scheduled or completion-triggered) — append that cycle's `Session start (UTC)`/`Session end (UTC)`/computed elapsed from its own `run_manifest.md` (§22) as a new row. Retain the last 10 rows; drop the oldest when adding an 11th (mirrors this document's own header-history retention convention, §16.14). This is a lightweight reference table, not a governance prompt — updating it does not require the `CLAUDE.md §6` version-bump checklist, matching the Canonical Effort Band table's maintenance convention above.
 
 ---
 
