@@ -77,3 +77,32 @@ Append-only. Do not edit previous entries.
 - **Status:** Blocked — awaiting Infrastructure & Operations Owner credential provisioning.
 
 ---
+
+## DEL-20260917-01
+
+- **ST Item:** ST-05 — nightly-stop-update and rebalance-exit appear to have no live scheduled trigger (investigation update to `DEL-20260916-03`)
+- **EPIC:** EPIC-02
+- **Classification:** delegated_decision — investigation narrowed, still blocked
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1673
+- **Branch:** exec/2026-09-15__release-v9.5/EPIC-02
+- **Investigated at:** 2026-09-18T00:00:00Z
+- **Finding:**
+  `DEL-20260916-03` flagged commit `66e0858a` ("Replace Render cron with GitHub Actions scheduled workflow") as possibly having already resolved this gap, unconfirmed. Read directly this session: **it did not** — `66e0858a` added `.github/workflows/alert-evaluation.yml` for `POST /alerts/evaluate`, a different endpoint entirely, unrelated to `nightly-stop-update`/`rebalance-exit`. That earlier note was a false lead; corrected here rather than left standing.
+
+  Confirmed definitively from the repo (no dashboard access needed for this part):
+  - `POST /positions/nightly-stop-update` and `POST /signals/rebalance-exit` are real, existing endpoints (`backend/main.py:683`, `:729`), each calling `record_nightly_job(...)` to log into the `GET /health/scheduler` job registry (`backend/main.py:1325`) — so the app-side wiring is real, not a stub.
+  - `grep -rln "nightly-stop-update|trailing_stop|rebalance_exit|inv_vol_sizing" .github/workflows/*.yml` returns **nothing** — no GitHub Actions scheduled workflow triggers either endpoint.
+  - `render.yaml` has no cron entry for either job (only a comment about the unrelated alert-evaluation cron having been moved off Render at v8.8-era work).
+  - By contrast, a sibling nightly job (`risk_off_exit`) *does* have a dedicated scheduled workflow (`.github/workflows/risk-off-alerts.yml`, added ST-02/BLG-OPS-145/v8.8, cron `15 22 * * 1-5`), added specifically because that job "had no scheduled trigger at all" — direct precedent for exactly the gap this story is asking about, confirming this is a known, previously-real failure mode in this codebase, not a hypothetical.
+
+  **This means the "AC cannot be resolved without Render dashboard access" framing needs one correction:** it's no longer an open question of *whether* a GitHub Actions workflow already covers these two jobs (confirmed: no) — the only remaining unknown is narrower: whether Render has a **dashboard-only** Cron Job for either endpoint that isn't tracked in `render.yaml` at all (the exact `BLG-OPS-159`/ST-12 gotcha class). That single check is still genuinely dashboard-only and still blocked this session (no Render access, and `gh workflow run`/`gh secret list` both separately confirmed 403 this cycle — insufficient token scope, see `docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md` §4 for that same constraint hit on a different story).
+
+  **What Infrastructure & Operations Owner needs to do, concretely, when picking this up:**
+  1. Log into the Render dashboard, open the production service's Settings → Cron Jobs / Jobs tab.
+  2. Check specifically for any job hitting `/positions/nightly-stop-update` or `/signals/rebalance-exit`. Given the `risk_off_exit` precedent (a real prior gap, fixed via GitHub Actions, not Render Cron), the likely finding is that neither has *any* trigger — dashboard or otherwise — but this must be confirmed, not assumed.
+  3. If neither exists: add a GitHub Actions scheduled workflow for each, following the exact `risk-off-alerts.yml` template (same `API_URL`/`API_KEY` secrets, `curl -X POST`, `workflow_dispatch` for manual testing) — this is a small, low-risk, precedented fix, not new design work.
+  4. Confirm via `GET /health/scheduler` (once triggered at least once) that `trailing_stop`, `rebalance_exit`, and `inv_vol_sizing` all show a recent `last_run` — this is the story's own AC-02, satisfiable in minutes once step 3 lands.
+- **Status:** Still blocked on live Render dashboard access, but narrowed to one specific check with a precedented, low-effort fix path already identified if the check comes back negative (which the `risk_off_exit` history suggests is the more likely outcome).
+
+---
