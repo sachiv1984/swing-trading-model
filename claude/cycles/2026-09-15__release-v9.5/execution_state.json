@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T02:55:00Z",
+  "last_updated_utc": "2026-09-18T04:05:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -341,11 +341,11 @@
       }
     },
     "EPIC-03": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
       "pr_number": 1714,
       "pr_status": "open",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-15__release-v9.5/qa_evidence_EPIC-03.md",
       "test_scenarios": [
         "tests/test_check_contract_example_freshness.py"
@@ -493,23 +493,25 @@
         "ST-21": {
           "title": "qa_evidence_EPIC-03.md test-count claim inaccurate (30 vs. actual 28)",
           "classification": "autonomous",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1689,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260916-04-EPIC03",
-          "blocked_since_utc": "2026-09-16T23:00:00Z",
-          "unblock_criteria": "Post-Ship Closure Engine STEP 5.1 cross-cycle deviation consolidation review actions BLG-GOV-334 at next run post-ship for 2026-09-15__release-v9.5",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-18T04:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/backlog/backlog.md#BLG-GOV-334"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "delegated.parked",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
           "sign_off_record": null,
-          "notes": "RULED by Head of Specs Team 2026-09-17 (on explicit user direction): sealed claude/cycles/2026-09-09__release-v9.3/qa_evidence_EPIC-03.md must not be touched in any form (CLAUDE.md \u00a72, no addendum exception applies -- the earlier-considered addendum precedent, ai_output_boundary_sample_audit_20260910.md, lives in docs/ops/, a non-sealed space, and does not actually support the exception). Correction mechanism is Post-Ship Closure Engine STEP 5.1 cross-cycle deviation consolidation review, same as api_performance_baseline.md \u00a7v2.32's precedent. Filed BLG-GOV-334 to carry the exact correction (28, not 30) forward. AC genuinely not yet met (file still reads 30) -- disposition is ruled-and-deferred, not done, matching the ESC-EXEC-20260910-01 precedent for this class of outcome. See DEL-20260916-04-EPIC03 in delegation_log.md for full reasoning."
+          "notes": "RESOLVED (final) 2026-09-18. Prior 'defer to next run post-ship' plan (DEL-20260916-04-EPIC03) was found to rely on a mechanism (STEP 5.1) that does not actually edit sealed cycle content -- corrected. Head of Specs Team ruled the sealed v9.3 qa_evidence file stays untouched permanently; Product Owner accepted the true fact (28, not 30) being permanently recorded via BLG-GOV-334 itself as satisfying ST-21's intent, since the literal AC wording could never be met once the sealed-artefact constraint was discovered. BLG-QA-170/BLG-GOV-334 both closed. See DEL-20260918-03-EPIC03 in delegation_log.md for full reasoning."
         }
       }
     },
@@ -1009,9 +1011,7 @@
       }
     }
   },
-  "blocked_items": [
-    "ST-21"
-  ],
+  "blocked_items": [],
   "delegated_items": [
     "ST-04",
     "ST-05",
@@ -1029,7 +1029,8 @@
     "ST-17",
     "ST-18",
     "ST-19",
-    "ST-20"
+    "ST-20",
+    "ST-21"
   ],
   "open_escalations": [],
   "merge_gate": {

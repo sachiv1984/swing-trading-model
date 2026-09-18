@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-17 (session — 1 new item added: `BLG-GOV-334` (correction mechanism for qa_evidence_EPIC-03.md's stale test-count claim, filed per Head of Specs Team ruling resolving ST-21/EPIC-03's sealed-artefact block)); prior — 2026-09-16 (session — 2 new items added: `BLG-BE-120`, `BLG-QA-179` (PR #1712 review findings — JsonLinesFormatter message-truncation gap and missing end-to-end JSON-log test)); prior — 2026-09-16 (session — 1 new item added: `BLG-BE-119` (calculate_trailing_stop's entry-price floor diverges from strategy_rules.md §7.2/§7.3 and the backtest tool)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-18 (session — `BLG-QA-170`/`BLG-GOV-334` resolved and closed: Head of Specs Team ruling + Product Owner acceptance that the true fact (28, not 30 tests) stands permanently recorded via `BLG-GOV-334` itself, sealed source file intentionally never edited); prior — 2026-09-17 (session — 1 new item added: `BLG-GOV-334`); prior — 2026-09-16 (session — 2 new items added: `BLG-BE-120`, `BLG-QA-179` (PR #1712 review findings)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -3459,20 +3459,19 @@ ST-13 (this same EPIC) defines and wires retention/purge policies for `gemini_au
 
 **Priority:** P3 (Low)
 **Type:** QA / Test Automation
+**Status:** **Resolved 2026-09-18** — see Resolution below. Retained here (not archived) pending next `groom backlog` pass.
 **Owner:** QA & Testing Owner
 **Source:** Agent-mediated Director of Quality review of PR #1631 (EPIC-03, `2026-09-09__release-v9.3`) — 2026-09-10
 **Effort:** XS (<1h)
-**Provisional-Target:** TBD
 
 **Problem**
 `qa_evidence_EPIC-03.md` and PR #1631's description both state `tests/test_cost_monitoring.py` contains "30 tests" / "30/30 pass". Independently counting `def test_*` functions in the file at the PR head commit finds 28, all passing. Coverage itself is solid (every new DB function, both instrumentation call sites, and all 4 new endpoints have direct tests) — this is a factual inaccuracy in the self-reported count, not a coverage gap, but the QA evidence document is exactly the artifact the STEP 4 merge gate relies on being accurate.
 
-**Scope**
-- Correct the test count in `qa_evidence_EPIC-03.md` and, if still editable, the PR description
+**Resolution:** The target file (`claude/cycles/2026-09-09__release-v9.3/qa_evidence_EPIC-03.md`) turned out to be a sealed, Published cycle artefact — no mechanism in this governance framework can edit it (see `BLG-GOV-334` for the full investigation, including a dead-end initially proposed and then corrected). Resolved by Head of Specs Team ruling + Product Owner acceptance (2026-09-18): the sealed file stays untouched permanently; the true count (28, not 30) is permanently recorded via `BLG-GOV-334` instead. Closed on that disposition, not on the original AC's literal wording.
 
-**Acceptance Criteria**
-- Test count in `qa_evidence_EPIC-03.md` matches the actual number of tests in `tests/test_cost_monitoring.py`
-- QA & Testing Owner sign-off
+**Acceptance Criteria (original, superseded — see Resolution)**
+- ~~Test count in `qa_evidence_EPIC-03.md` matches the actual number of tests in `tests/test_cost_monitoring.py`~~ — cannot be met (sealed source); superseded by `BLG-GOV-334`'s permanent-record disposition
+- QA & Testing Owner sign-off — n/a, closed via Head of Specs Team / Product Owner disposition instead
 
 ---
 
@@ -4516,27 +4515,23 @@ On trade entry, when linking to a trade plan, the linked plan's identifier/name 
 
 **Priority:** P3 (Low)
 **Type:** Governance Process
-**Owner:** Director of Quality (executes via Post-Ship Closure Engine STEP 5.1); Head of Specs Team (ruling authority, document lifecycle)
-**Source:** ST-21 (BLG-QA-170, EPIC-03, `2026-09-15__release-v9.5` sprint execution) — Head of Specs Team ruling on the correction mechanism, 2026-09-17
+**Status:** **Resolved 2026-09-18** — see Resolution below. Retained here (not archived) pending next `groom backlog` pass.
+**Owner:** Head of Specs Team (ruling authority, document lifecycle); Product Owner (acceptance of final disposition)
+**Source:** ST-21 (BLG-QA-170, EPIC-03, `2026-09-15__release-v9.5` sprint execution) — Head of Specs Team ruling on the correction mechanism, 2026-09-17; superseded 2026-09-18 (see Resolution)
 **Effort:** XS (<1h)
-**Provisional-Target:** Next `run post-ship` for `2026-09-15__release-v9.5`
-**Depends on:** BLG-QA-170 (superseded by this item's correction mechanism, not closed by it directly)
+**Depends on:** BLG-QA-170 (both closed together, same disposition)
 
 **Problem**
 `BLG-QA-170` found `claude/cycles/2026-09-09__release-v9.3/qa_evidence_EPIC-03.md` claims `tests/test_cost_monitoring.py` contains "30 tests" / "30/30 pass"; the actual count at that PR's head commit was 28 (re-confirmed independently this session via `grep -c "^def test_" tests/test_cost_monitoring.py` against `main`). `BLG-QA-170`'s own scope named the qa_evidence file itself as the correction target, but that file lives inside `claude/cycles/2026-09-09__release-v9.3/`, a cycle whose `state.json` reads `"status": "Published"` with a `"sealed"` block (`sealed_utc: 2026-09-09T02:20:00Z`) — CLAUDE.md §2's "Never modify sealed artefacts... immutable" rule applies, and no prompt, role, or user instruction may override it (CLAUDE.md's own text). `execution_prompt.md` §7's write-scope restriction independently confirms Sprint Execution may only write within the *active* cycle's `claude/cycles/<cycle_id>/` tree, not a prior cycle's.
 
-Ruled by Head of Specs Team (2026-09-17, acting on explicit user direction, `claude/agents/head_of_specs_team.md` §5/§6 — Change Governance and Decision Escalation & Conflict Resolution): the sealed file must not be touched, in any form (including an addendum appended within the sealed cycle folder) — consistent with existing codebase precedent (`e06cfa94`'s commit message: "Historical changelog/report entries in `docs/product/changelog.md` and sealed cycle records were left untouched — they describe point-in-time history, not current state"). The correct mechanism for this class of correction already exists and has been used once before in this exact codebase: `docs/ops/api_performance_baseline.md`'s Document History §v2.32 entry, made by the **Post-Ship Closure Engine's STEP 5.1 cross-cycle deviation consolidation review** — a routine explicitly designed to correct stale/inaccurate claims discovered in prior-cycle artefacts, operating under its own write scope rather than Sprint Execution's.
+**Superseded finding (2026-09-18):** this item originally proposed deferring the correction to Post-Ship Closure's STEP 5.1 cross-cycle deviation consolidation review, citing `api_performance_baseline.md` §v2.32 as precedent. On closer re-read of `post_ship_closure.md`'s actual STEP 5.1 definition, that precedent does not transfer: STEP 5.1 corrects drift in **living canonical documents' own Known-Deviations status fields** — it has no mechanism for editing content inside a sealed `claude/cycles/<cycle_id>/` folder, and none exists anywhere in this governance framework (the sealed-artefact rule has no override path at all, by design). Waiting for "the next post-ship" was also circular in practice: `2026-09-15__release-v9.5`'s own post-ship cannot run until all its EPICs (including EPIC-03, blocked on this very item) are merged.
 
-**Scope**
-- At the next `run post-ship` invocation for `2026-09-15__release-v9.5` (or any later cycle, if this item ages before then), action this correction via STEP 5.1's cross-cycle deviation consolidation review, following the exact resolution mechanism `api_performance_baseline.md` §v2.32 already demonstrates for this class of finding
-- The correction target remains `claude/cycles/2026-09-09__release-v9.3/qa_evidence_EPIC-03.md`'s "30 tests" / "30/30 pass" claims (2 locations: the `Test scenarios used` header line and the `Scenarios run` bullet in its DoQ sign-off block) — correct to 28, sourced from the verified `grep -c` count above, not re-derived from scratch
-- Record the correction in whatever mechanism STEP 5.1 uses for its own audit trail (mirroring `api_performance_baseline.md`'s Document History table entry)
-- Close `BLG-QA-170` and this item together once the correction lands
+**Resolution:** Head of Specs Team ruled (2026-09-18) that the sealed record is never edited, in any form, permanently — consistent with this codebase's own established practice for historical records (`e06cfa94`'s precedent: "Historical changelog/report entries... and sealed cycle records were left untouched — they describe point-in-time history, not current state"). The correction lives **only** as this backlog item's own permanent record: the v9.3 log claims 30, the verified true count is 28, the source cannot and will not be edited. This is the complete and final correction — no further action edits the sealed file, ever. Product Owner accepted this as satisfying `ST-21`'s intent (2026-09-18): the AC's literal wording ("test count in qa_evidence_EPIC-03.md matches the actual number") could never be met once the sealed-artefact constraint was discovered, and the underlying goal — the true fact permanently and discoverably recorded, not silently lost — is met by this item standing as that record.
 
-**Acceptance Criteria**
-- `claude/cycles/2026-09-09__release-v9.3/qa_evidence_EPIC-03.md`'s test-count claims read 28, not 30, in both locations named above
-- The correction is recorded via Post-Ship Closure Engine's own audit-trail mechanism, not a direct out-of-scope edit from a different governed routine
-- `BLG-QA-170` and `BLG-GOV-334` both closed in the same action
+**Acceptance Criteria (final, as resolved)**
+- [x] True count (28, not 30) permanently and discoverably recorded — this item
+- [x] Sealed source file confirmed untouched, by design, not by omission
+- [x] `BLG-QA-170` and `BLG-GOV-334` both closed on this same disposition
 
 ---
 

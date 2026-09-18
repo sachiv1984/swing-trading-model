@@ -90,3 +90,24 @@ Append-only. Do not edit previous entries.
 - **Status:** Ruled and deferred — EPIC-03 may now be considered fully dispositioned (6 done, 1 deferred-with-a-filed-path) rather than open-ended blocked.
 
 ---
+
+## DEL-20260918-03-EPIC03
+
+- **ST Item:** ST-21 — `qa_evidence_EPIC-03.md` test-count claim inaccurate (30 vs. actual 28) (final resolution, superseding `DEL-20260916-04-EPIC03`'s "defer to next `run post-ship`" ruling)
+- **EPIC:** EPIC-03
+- **Classification:** delegated_decision — resolved (final)
+- **Assigned to:** Head of Specs Team (ruling); Product Owner (acceptance)
+- **GitHub Issue:** #1689
+- **Branch:** exec/2026-09-15__release-v9.5/EPIC-03
+- **Resolved at:** 2026-09-18T04:00:00Z (on explicit user direction: "confer with Head of Specs Team" for the best path forward, then "act as PO yourself" to finalize)
+- **Resolution:**
+  **The prior ruling's mechanism was wrong, and this entry corrects it rather than building on it.** `DEL-20260916-04-EPIC03` proposed deferring the correction to Post-Ship Closure Engine's STEP 5.1 cross-cycle deviation consolidation review, citing `api_performance_baseline.md` §v2.32 as precedent. On direct re-read of `post_ship_closure.md`'s actual STEP 5.1 definition (prompted by the user asking how EPIC-03 should actually move forward, surfacing that "wait for post-ship" was circular — v9.5's own post-ship cannot run until all its EPICs, including this one, are merged): STEP 5.1 corrects **living canonical documents'** own Known-Deviations status fields when they drift from a separately-tracked resolution — it has no mechanism for, and was never used for, editing content inside a sealed `claude/cycles/<cycle_id>/` folder. The `api_performance_baseline.md` precedent corrected a live, non-sealed operational document; it does not transfer to this case. No routine anywhere in this governance framework can edit a sealed artefact — CLAUDE.md §2's rule has no override path, full stop, and this was correctly identified in `DEL-20260916-03-EPIC03`'s original investigation but then undermined by proposing a mechanism that turned out not to exist.
+
+  **Acting as Head of Specs Team** (per `claude/agents/head_of_specs_team.md` §5/§6, on explicit user direction): ruled that the sealed `claude/cycles/2026-09-09__release-v9.3/qa_evidence_EPIC-03.md` is never edited, in any form, permanently. The correction is not "pending" — it is **complete now**, in the form of a permanent, discoverable record: `BLG-GOV-334` itself, rewritten from "action pending at next post-ship" to "Resolved — true fact recorded here, sealed source intentionally untouched." This mirrors the audit/erratum pattern already established elsewhere in this codebase (`e06cfa94`'s precedent for historical records) rather than treating the sealed-artefact constraint as a problem still waiting to be solved.
+
+  **Acting as Product Owner** (per `claude/agents/product_owner.md` §6 "accepts or rejects outcomes based on spec-defined behaviour," on explicit user direction: "act as PO yourself"): accepted this disposition as satisfying `ST-21`'s underlying intent. The AC's literal wording ("test count in `qa_evidence_EPIC-03.md`... matches the actual number") can never be met once the sealed-artefact constraint is factored in — no future action, however patient, makes that literally true. The AC's actual purpose — don't let a known-wrong number stand permanently uncorrected with nothing pointing at the truth — is fully served by `BLG-GOV-334` standing as that permanent correction. This is a reinterpretation of AC completion under discovered constraints, not a waiver of the AC's intent; the reinterpretation itself is documented, traceable, and reversible only by explicit agreement (per Head of Specs Team's own charter §6), same as the interpretation itself.
+
+  Both `BLG-QA-170` and `BLG-GOV-334` closed on this disposition (`claude/backlog/backlog.md`, this same session). `qa_evidence_EPIC-03.md` updated: ST-21 row changed from "Deferred" to "Pass (accepted disposition)," sign-off block changed from partial (ST-15–20 only) to full (all 7 stories), Product Owner sign-off line added.
+- **Status:** Resolved (final) — unblocking ST-21, marking done. EPIC-03 is now 7/7 done, satisfying `execution_prompt.md` §3.2 in full.
+
+---
