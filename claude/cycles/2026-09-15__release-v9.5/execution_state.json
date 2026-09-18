@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T18:21:00Z",
+  "last_updated_utc": "2026-09-18T18:22:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -1220,7 +1220,9 @@
       "EPIC-06"
     ],
     "all_merged": false,
-    "epics_open_pr": []
+    "epics_open_pr": [
+      "EPIC-05"
+    ]
   },
   "sealed": false,
   "sealed_utc": null,
