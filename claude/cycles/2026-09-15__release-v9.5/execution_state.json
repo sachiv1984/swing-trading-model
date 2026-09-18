@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T18:35:00Z",
+  "last_updated_utc": "2026-09-18T18:39:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -998,7 +998,14 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-15__release-v9.5/qa_evidence_EPIC-06.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/arc5-compliance-section.spec.js",
+        "tests/e2e/system-status.spec.js",
+        "tests/e2e/reports-performance-tab.spec.js",
+        "tests/e2e/v7.2-dashboard-tradeplan-ux-hardening.spec.js",
+        "tests/e2e/watchlist.spec.js",
+        "tests/e2e/settings-heading-order-and-aria-labelledby-regression.spec.js"
+      ],
       "stories": {
         "ST-40": {
           "title": "Fix trade plan link display to use formatted text instead of snake_case",
@@ -1075,23 +1082,27 @@
         "ST-43": {
           "title": "Arc 5 low-trade-volume advisory: surface the 20-trade threshold and remaining-trades count, reconsider placement above the stat grid",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1711,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "5af007d5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T18:38:35Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/components/arc5_compliance_section.md#Low-Trade-Volume Advisory",
+            "docs/design/2026-09-15__release-v9.5/arc5-low-volume-advisory-placement/decision_record.md",
+            "tests/e2e/arc5-compliance-section.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "New Playwright coverage added (SC-ARC5-13a/b) rather than deferred -- could be added directly within this story, so it was. Full suite 18/18 passed. Spec (arc5_compliance_section.md v1.4.0) was already updated at design-gate time; verified my implementation matches it exactly."
         }
       }
     }
@@ -1126,7 +1137,10 @@
     "ST-19",
     "ST-20",
     "ST-21",
-    "ST-40"
+    "ST-40",
+    "ST-41",
+    "ST-42",
+    "ST-43"
   ],
   "open_escalations": [],
   "merge_gate": {
