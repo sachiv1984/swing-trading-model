@@ -1134,5 +1134,8 @@
     "epics_open_pr": []
   },
   "sealed": false,
-  "sealed_utc": null
+  "sealed_utc": null,
+  "process_notes": [
+    "2026-09-18: Resolved backlog.md merge conflict between exec/EPIC-04 and main (main had independently gained BLG-SPEC-155/156, BLG-GOV-335 from PR #1715 agent-mediated review, filed after EPIC-04 branch diverged). Took union of both sides new items + combined header chain, per CLAUDE.md SS8."
+  ]
 }
