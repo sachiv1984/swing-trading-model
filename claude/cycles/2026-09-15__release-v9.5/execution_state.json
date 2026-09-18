@@ -549,8 +549,8 @@
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-09-15__release-v9.5/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1715,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-15__release-v9.5/qa_evidence_EPIC-04.md",
       "test_scenarios": [
