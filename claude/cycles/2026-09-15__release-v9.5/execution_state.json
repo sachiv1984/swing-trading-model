@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T18:09:00Z",
+  "last_updated_utc": "2026-09-18T18:11:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -894,23 +894,31 @@
         "ST-34": {
           "title": "record-visual-qa skill's documented output format has drifted ~5 months from actual staging sign-off practice",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1702,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "caa650ef",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T18:10:09Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".claude/skills/record-visual-qa/SKILL.md#Step 0.5"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Director of Quality",
+            "date": "2026-09-18",
+            "findings": "Approved. Additive reconciliation -- full workflow preserved for stories with a dedicated visual test script; lightweight path's wording drawn verbatim from CLAUDE.md S2 rather than invented."
+          },
+          "notes": "Sampled qa_evidence_EPIC-05.md/EPIC-06.md (v9.4) and v9.0 closure_record.md TSG-v23-01 to confirm actual practice: this repo's E2E suite runs against a local Playwright build, not a distinct staging deployment, so Playwright coverage is now the primary evidence path and human staging sign-off is the named fallback (rare). Added Step 0.5 routing: full V-xxx workflow only when a dedicated visual test script file exists; otherwise a single-line DoQ record matching CLAUDE.md S2's own fallback wording."
         },
         "ST-35": {
           "title": "File a Product Owner decision record for ST-20's trade-tagging \"no closed taxonomy\" call",
@@ -1147,7 +1155,8 @@
     "ST-21",
     "ST-31",
     "ST-32",
-    "ST-33"
+    "ST-33",
+    "ST-34"
   ],
   "open_escalations": [],
   "merge_gate": {
