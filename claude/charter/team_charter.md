@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Canonical  
-**Version:** 1.8
-**Last Updated:** 2026-09-07  
+**Version:** 1.9
+**Last Updated:** 2026-09-18  
 
 ---
 
@@ -11,6 +11,7 @@
 
 | Version | Date       | Change |
 |--------:|------------|--------|
+| 1.9     | 2026-09-18 | ST-36, EPIC-05, v9.5, BLG-GOV-321: New §11 Lightweight Role-Retirement Process — defines a 6-month, AND-conditioned (no idea-intake submission AND no owned story) qualifying threshold for `claude/agents/` charter review, checked at each `run ideas housekeeping` invocation or annual review. Applied once this session (§11.5 review log): 0 of 23 roles qualified; Facilitator flagged as the nearest future candidate (0 idea submissions ever, but a story owned ~4 months ago). Director of HR sign-off (agent-mediated, §5.3). |
 | 1.8     | 2026-09-07 | ST-35, EPIC-05, v9.1, BLG-GOV-208: Added scheduled rebalance cadence guideline to Director of HR's §3.1 entry (no same-day double `run roadmap --reason "scheduled"` invocation absent explicit cause) and a corresponding §6 Hard Constraint (item 8) making it binding. Complements the already-shipped technical safeguards (`BLG-GOV-207` cycle_id auto-suffix, `BLG-GOV-216` STEP -1 recency advisory) with an explicit policy position. Director of HR + Head of Specs Team sign-off (agent-mediated, explicit user/Product Owner direction — §5.3). |
 | 1.6     | 2026-03-16 | AUD-2026-03-13-006: §6 forward reference note added — `claude/system/invariants.md` is the consolidated cross-reference derived from this section; engine prompts reference `invariants.md` rather than duplicating inline. Charter content unchanged. |
 | 1.5     | 2026-03-11 | IMP-30: Head of UX & Design entry — design gate bypass authority paragraph added. Bypass requires co-confirmation by Head of UX & Design (primary) + Product Owner; both recorded in `design_gate_bypass_authority` field. |
@@ -665,3 +666,36 @@ An escalation marked "Accepted Risk" must include a link to the decision record,
 - If any of the above blocks apply, the "Accepted Risk" disposition is invalid and must be reverted to Open/Deferred
 
 - Decision records in Release Planning are permitted only to close an Accepted Risk escalation (Workforce or Schedule/Delivery only), or to document a Strategy Rules Boundary confirmation. All other decision record creation in Release Planning is non-compliant.
+
+---
+
+## 11. Lightweight Role-Retirement Process (ST-36, EPIC-05, v9.5, BLG-GOV-321)
+
+### 11.1 Purpose
+`claude/agents/` accumulates role charters over time with no corresponding process for retiring one that has genuinely gone quiet — leaving stale charters in the directory indefinitely, or forcing an ad hoc judgment call each time the question comes up. This section defines a lightweight, mechanically-checkable review.
+
+### 11.2 Review Trigger
+Checked at each `run ideas housekeeping` invocation (a natural existing touchpoint — it already processes the idea register this check reads) or at an annual review, whichever comes first. Not a standalone scheduled routine of its own.
+
+### 11.3 Qualifying Condition (Hard Threshold)
+A role charter in `claude/agents/` qualifies for review when **both** of the following hold for **6 consecutive months** (from the most recent qualifying evidence to the review date):
+- **No idea-intake submission:** the role's display name does not appear as `Submitter` in `claude/ideas/ideas_register.md` or `claude/ideas/ideas_register_archive.md` for any window in the period.
+- **No owned story:** the role's display name does not appear as an `Owner:` (sole or co-owner) on any `ST-xx` item in any `claude/cycles/<cycle_id>/sprint_backlog.md` for any cycle in the period.
+
+Both conditions are AND, not OR — a role that submits ideas regularly but hasn't owned a story in years is still active; a role that owns stories only rarely but keeps submitting ideas every window is still active.
+
+### 11.4 Outcomes
+For each qualifying role, the Director of HR determines one of:
+- **Keep as-is** — the role remains chartered despite the quiet window (e.g. a role whose domain is inherently episodic); record the rationale.
+- **Merge into another role** — the role's scope is folded into an existing, active role's charter entry (§3); the charter file is removed and a redirect note left in its place referencing the surviving role.
+- **Formally retire** — the charter file is removed from `claude/agents/`, with rationale recorded in this section's own review log (§11.5) and cross-referenced from `agent_onboarding_runbook.md` if that runbook lists the role.
+
+A review finding **0 qualifying roles** is a valid, expected outcome, not a null result — most cycles will find none, since idea-intake submission alone (a low-effort action, exercised broadly at each intake window) keeps almost every role's 6-month window continuously reset.
+
+### 11.5 Review Log
+
+| Date | Trigger | Roles reviewed | Qualifying roles | Outcome |
+|------|---------|-----------------|-------------------|---------|
+| 2026-09-18 | ST-36 first application (process creation) | All 23 roles in `claude/agents/` (excluding `README.md`, `_role_charter_template.md`) | 0 | No role met both conditions for 6 consecutive months. 22 of 23 roles submitted an idea in the most recent window (`IW-20260914-01`, 2026-09-14). The one exception, **Facilitator**, has never submitted an idea-intake entry (0 submissions across the full register/archive history) but owned a story as recently as `2026-05-18__release-v3.7` (~4 months prior to this review) — short of the 6-month bar on the story-ownership axis, so it does not yet qualify. Facilitator is the nearest candidate for a future review and worth a specific re-check at the next trigger. |
+
+---

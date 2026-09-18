@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team; API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-09-10
+**Version:** 1.1
+**Last Updated:** 2026-09-18 (ST-35/BLG-GOV-320 — cross-referenced the formal Product Owner decision record ratifying the open-taxonomy scope reframing)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -18,6 +18,8 @@ ST-20 (BLG-SPEC-76, EPIC-04, v9.3): single canonical source for the trade-plan t
 **There is no fixed enum of canonical tag names.** `trade_plans.trade_tags` is free-text tagging, constrained only by the format rules below — not a closed taxonomy of specific permitted tag strings (e.g. there is no fixed list like `["breakout", "earnings-play", "momentum", ...]` that the system validates against). This was a deliberate design decision, confirmed in the original UX spec (`docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md` §1): "tagging the plan (e.g. 'breakout', 'earnings-play') lets a user classify a setup at the point of decision" — the examples given there are illustrative, not an exhaustive canonical list, and no component of the implementation (backend validator, frontend input, autocomplete source) ever enforces a closed set.
 
 This section exists because ST-20's own acceptance criteria ("canonical allowed-tag taxonomy... documented") could be read as assuming a closed taxonomy exists or should be introduced. It doesn't, and this document does not introduce one — inventing a fixed tag vocabulary now would be a genuine, larger design change (affecting UX, existing user-entered tags, and the autocomplete/reporting model) well beyond this `S`-effort documentation story's scope. What follows documents the taxonomy as it actually exists: a **format-constrained free-text namespace**, which is itself the canonical, referenceable ruleset both the UI and reporting logic already implement identically.
+
+This scope reframing is formally ratified as a Product Owner decision record: `docs/product/decisions/trade-tagging-taxonomy-scope-reframing-decision--2026-09-18.md` (`BLG-GOV-320`, ST-35, `2026-09-15__release-v9.5`).
 
 ## Canonical Format Rules
 
