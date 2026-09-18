@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.6
-**Last Updated:** 2026-07-27
+**Version:** 0.7
+**Last Updated:** 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "Your watchlist is empty." heading to drop the trailing period, matching already-shipped `Watchlist.js` (`emptyHeading="Your watchlist is empty"`) and the v1.8 empty-state microcopy pattern in `design_system.md`; documentation-only, no code change)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/watchlist/ux_spec.md
 **Design Source (v0.3 research indicator):** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §F
@@ -148,7 +148,7 @@ Skeleton table rows (3–5 rows) while the watchlist loads from the API.
 
 ### Empty State
 Displayed when no watchlist entries exist:
-- Heading: **"Your watchlist is empty."**
+- Heading: **"Your watchlist is empty"**
 - Body: `"Add tickers you're monitoring for entry opportunities."`
 - **"+ Add Ticker"** button shown in the empty state body (in addition to the page header)
 

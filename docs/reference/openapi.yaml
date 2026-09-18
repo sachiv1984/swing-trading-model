@@ -6400,6 +6400,18 @@ components:
                 type: number
                 nullable: true
                 description: "Planned entry price snapshotted from linked signal at trade close. null for trades without a linked trade plan or pre-Arc4 trades."
+              commission_gbp:
+                type: number
+                nullable: true
+                description: "Commission paid at entry and exit (GBP). null until recorded via PATCH /trades/{id}/costs. Found missing from this schema, ST-26/BLG-SPEC-139, v9.5."
+              spread_cost_gbp:
+                type: number
+                nullable: true
+                description: "Bid-ask spread cost estimate (GBP). null until recorded via PATCH /trades/{id}/costs."
+              net_r_multiple:
+                type: number
+                nullable: true
+                description: "Net-of-costs R-multiple. null when commission_gbp or spread_cost_gbp is absent, or stop_price_at_entry is unavailable. Rounded to 3 decimal places."
 
     CashTransactionRequest:
       type: object
@@ -6422,8 +6434,16 @@ components:
 
     CashTransactionResponse:
       type: object
+      description: >-
+        Was a stub ({id only}) despite CashTransaction already declaring the
+        full transaction shape immediately above it in this file -- corrected
+        to match the real documented response (cash_endpoints.md), ST-26/BLG-SPEC-139, v9.5.
       properties:
-        id: { type: string, format: uuid }
+        transaction:
+          $ref: "#/components/schemas/CashTransaction"
+        new_balance:
+          type: number
+          description: "Portfolio cash balance after this transaction (GBP)."
 
     CashSummary:
       type: object
@@ -6529,8 +6549,10 @@ components:
     OperationalHealthResponse:
       type: object
       description: |
-        Operational health response for GET /health (v2.2, ST-08).
-        Returns DB status and last operation timestamps.
+        Operational health response for GET /health (v2.2, ST-08; external_apis/ai_journal
+        added ST-08/ST-09, documented in health_endpoints.md v1.5, 2026-08-07 -- this schema
+        was not updated to match at that time, found and fixed ST-26/BLG-SPEC-139, v9.5).
+        Returns DB status, last operation timestamps, and external dependency health.
       required: [status, db]
       properties:
         status:
@@ -6547,6 +6569,40 @@ components:
           type: string
           format: date-time
           nullable: true
+        external_apis:
+          type: object
+          description: >-
+            Keyed by external API name (currently alpaca, yahoo_finance).
+            additionalProperties used since the key set is not fixed -- see
+            docs/specs/api_contracts/health_endpoints.md for the current set.
+          additionalProperties:
+            type: object
+            properties:
+              last_successful_call:
+                type: string
+                format: date-time
+                nullable: true
+              error_rate:
+                type: number
+              p95_latency_ms:
+                type: integer
+                nullable: true
+        ai_journal:
+          type: object
+          description: >-
+            Either the 3 metric fields below, or {"status": "unavailable"} if no AI
+            journal activity in the relevant window or the underlying query fails.
+          properties:
+            status:
+              type: string
+              enum: [unavailable]
+            usage_rate:
+              type: number
+            error_rate:
+              type: number
+            p95_latency_ms:
+              type: integer
+              nullable: true
 
     DatabaseSizeResponse:
       type: object

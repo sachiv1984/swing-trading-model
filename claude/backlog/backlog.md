@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-18 (session — 3 new items added: `BLG-SPEC-155`, `BLG-SPEC-156`, `BLG-GOV-335` (PR #1715 review findings — Director of Quality + Product Owner agent-mediated review)); prior — 2026-09-18 (session — `BLG-QA-170`/`BLG-GOV-334` resolved and closed); prior — 2026-09-17 (session — 1 new item added: `BLG-GOV-334`); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-18 (session — 3 new items added: `BLG-SPEC-155`, `BLG-SPEC-156`, `BLG-GOV-335` (PR #1715 review findings — Director of Quality + Product Owner agent-mediated review, filed on `main` after EPIC-04's own 9 stories completed)); prior — 2026-09-18 (session — 1 new item added: `BLG-SPEC-154` (ST-29/EPIC-04, v9.5 — trade_plans CHECK constraint documentation gap)); prior — 2026-09-18 (session — 2 new items added: `BLG-SPEC-152`, `BLG-SPEC-153` (ST-26/EPIC-04, v9.5)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4041,6 +4041,150 @@ The SI-02 gate's "linked trade plan" count is well-specified as a query (`curren
 
 ---
 
+### BLG-SPEC-148 — DS-17 unique index migration not yet applied to live positions table
+**Priority:** P2 (Medium)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner; Infrastructure & Operations Owner
+**Source:** ST-22/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
+**Effort:** XS
+**Provisional-Target:** v9.6
+
+**Problem**
+DS-17 (`docs/specs/data_model.md`, v2.33, 2026-09-14) adds a partial unique index `idx_positions_open_ticker_entry_date_unique` on `positions(portfolio_id, ticker, entry_date) WHERE status = 'open'`, authored and tested against a synthetic SQLite fixture only (`DATABASE_URL` was unavailable that cycle — AC-03 explicitly disclosed as pending). `DATABASE_URL` (readonly staging) was available this session for the first time in several cycles: confirmed live via `\d positions` that the index does not exist (only the pre-existing 5 indexes are present). Re-ran the migration's own duplicate pre-check live — 0 duplicate `(portfolio_id, ticker, entry_date)` groups among open positions — so the migration is safe to apply as-is.
+
+**Scope**
+- Apply the DS-17 up-migration to the live database (requires write access this session's readonly credential does not have)
+- Confirm the index exists post-apply and re-run the duplicate pre-check as a final safety net immediately before applying
+
+**Acceptance Criteria**
+- `idx_positions_open_ticker_entry_date_unique` exists on the live `positions` table
+- DS-17's AC-03 "pending" disclosure in `data_model.md` is updated to confirmed-applied, with date
+
+---
+
+### BLG-SPEC-149 — positions.exit_note documented in data_model.md does not exist on live table
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-22/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
+**Effort:** XS
+**Provisional-Target:** v9.6
+
+**Problem**
+`data_model.md`'s Positions Table field list documents an `exit_note` TEXT column. Live schema query against the (readonly staging) database confirmed this column does not exist on `positions` (`ERROR: column "exit_note" does not exist`). Journal notes at exit are actually stored on `trade_history.exit_note` (confirmed present there via `\d trade_history`) — closed-position exit notes live on the trade history record, not on the position row itself.
+
+**Scope**
+- Remove or correct the `exit_note` row in `data_model.md`'s Positions Table field list
+- Add a note cross-referencing `trade_history.exit_note` as the actual storage location, if not already clear from that table's own docs
+
+**Acceptance Criteria**
+- `data_model.md`'s Positions Table section no longer claims a live `exit_note` column that doesn't exist
+
+---
+
+### BLG-SPEC-150 — 4 orphaned, always-NULL, undocumented columns on live positions table
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-22/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
+**Effort:** S
+**Provisional-Target:** v9.6
+
+**Problem**
+Live `positions` table (confirmed via readonly staging access) has 4 columns not referenced anywhere in `data_model.md`: `atr_value`, `stop_price`, `fees`, `pnl_percent` (all nullable numeric). Queried both live open-position rows — all 4 columns are NULL on every row, while their apparent same-purpose counterparts already documented in spec (`atr`, `current_stop`, `fees_paid`, `pnl_pct`) are populated and match the spec exactly. These read as leftover columns from an old naming convention or an aborted rename, never backfilled, populated, or dropped.
+
+**Scope**
+- Data Model & Domain Schema Owner to confirm whether any live code path still reads or writes these 4 columns
+- If genuinely unused: file a follow-on migration to drop them
+- If still meaningfully used somewhere: document them properly in `data_model.md`
+
+**Acceptance Criteria**
+- Disposition recorded (drop vs document) with supporting evidence
+- `data_model.md` and the live schema agree on every `positions` column, one way or the other
+
+---
+
+### BLG-SPEC-151 — positions.fees_paid documented as NOT NULL but live column is nullable
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-22/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
+**Effort:** XS
+**Provisional-Target:** v9.6
+
+**Problem**
+`data_model.md`'s Positions Table field notes state `fees_paid | DECIMAL(10,2) | NO | Total fees. NOT NULL as of v1.6`. Live schema query (readonly staging, `\d positions`) shows `fees_paid` with no `NOT NULL` constraint.
+
+**Scope**
+- Reconcile: either add the missing `NOT NULL` constraint live, or correct the spec's claim to reflect actual (nullable) live behaviour
+
+**Acceptance Criteria**
+- `data_model.md` and the live schema agree on `fees_paid` nullability
+
+---
+
+### BLG-SPEC-152 — Full field-level openapi.yaml authoring pass for 20 generic/thin `data` payload schemas
+**Priority:** P3 (Low)
+**Type:** Spec Debt / API Contracts
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-26/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v9.6
+
+**Problem**
+`docs/ops/contract_example_freshness_triage_2026-09-18.md` §5 found 20 endpoints where `openapi.yaml`'s declared schema leaves the response `data` payload as a generic `type: object` with little or no declared properties, while the markdown contract in `docs/specs/api_contracts/` carries the real field-level detail. Some of these carry an explicit "Intentionally broad to avoid drift" description (a deliberate, established convention); others (e.g. `GET /watchlist`, `GET /reports/tax-year`'s `trades[]`/`summary`) are bare `{type: object}` with no description at all, and it isn't yet confirmed case-by-case which category each falls into.
+
+**Scope**
+- For each of the 20 endpoints listed in the triage doc §5: confirm whether the schema is intentionally broad (add the standard description if missing, no functional change) or genuinely under-authored (fill in real properties matching the markdown contract, types included)
+- Re-run `scripts/check_contract_example_freshness.py` after each fix to confirm it drops off the POSSIBLE DRIFT list (or is deliberately left, once labelled intentional)
+
+**Acceptance Criteria**
+- All 20 endpoints from the triage doc's §5 have a case-by-case disposition recorded
+- `scripts/check_contract_example_freshness.py`'s POSSIBLE DRIFT count reflects only genuinely-remaining intentional gaps, each carrying the standard description
+
+---
+
+### BLG-SPEC-153 — POST /trade-plans and DELETE /trade-plans/{id} declare no response schema in openapi.yaml
+**Priority:** P3 (Low)
+**Type:** Spec Debt / API Contracts
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-26/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.6
+
+**Problem**
+`docs/ops/contract_example_freshness_triage_2026-09-18.md` §6 found `POST /trade-plans` (201) and `DELETE /trade-plans/{id}` (200) declare only a bare `description` in `openapi.yaml`, no `content`/`schema` at all — confirmed as a genuine spec gap, not a freshness-check script limitation (both response codes are ones the script already checks). Both have real, documented JSON examples in `docs/specs/api_contracts/trade_plan_endpoints.md`.
+
+**Scope**
+- Author `content`/`schema` entries for both responses in `openapi.yaml`, matching `trade_plan_endpoints.md`'s documented examples
+
+**Acceptance Criteria**
+- Both endpoints have a real response schema in `openapi.yaml`
+- `scripts/check_contract_example_freshness.py` no longer reports either as SKIPPED
+
+---
+
+### BLG-SPEC-154 — trade_plans CREATE TABLE / DS-04 CHECK constraint undocumented since ensure_trade_plans_extended_status() shipped
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-29/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
+**Effort:** XS
+**Provisional-Target:** v9.6
+
+**Problem**
+`data_model.md`'s `trade_plans` `CREATE TABLE` block (§Trade Plan Object, DS-04) still declares `status VARCHAR(20) ... CHECK (status IN ('draft', 'active', 'closed'))` — 3 values. `backend/database.py::ensure_trade_plans_extended_status()` extends this to 7 (`draft`, `research_pending`, `research_complete`, `entry_conditions_set`, `active`, `closed`, `abandoned`) and has clearly already shipped: confirmed live via `DATABASE_URL` (readonly staging) this session — `pg_get_constraintdef` on `trade_plans_status_check` returns exactly the 7-value list — and `docs/specs/frontend/pages/trade_plan.md` §9's Status Badge Scheme (v3.3) has correctly documented and styled all 7 statuses for a long time. Only `data_model.md`'s own DDL/CHECK-constraint documentation was never updated with a DS-xx entry for this migration.
+
+**Scope**
+- Add a DS-xx entry documenting `ensure_trade_plans_extended_status()`'s migration (7-value CHECK constraint), following the existing DS-xx entry format
+- Update the `trade_plans` `CREATE TABLE` block's CHECK constraint and field notes to show all 7 values
+
+**Acceptance Criteria**
+- `data_model.md`'s `trade_plans` CHECK constraint and field notes match the live 7-value constraint
+- A DS-xx entry exists documenting the migration, matching this doc's own established format
+
+---
+
 ### BLG-SPEC-155 — openapi.yaml's OperationalHealthResponse.ai_journal doesn't model its either/or shape with oneOf
 **Priority:** P4 (Trivial)
 **Type:** Spec Debt / API Contracts
@@ -4437,6 +4581,46 @@ On trade entry, when linking to a trade plan, the linked plan's identifier/name 
 - Trade plan link/reference on trade entry displays human-readable formatted text, not snake_case
 - No underscores visible in the rendered trade plan link text
 - Existing trade plan linkage functionality (click-through/navigation) unaffected
+
+---
+
+### BLG-FE-178 — AlertThresholdsSection.js empty-state heading has a trailing period, violating the empty-state microcopy pattern
+**Priority:** P4 (Trivial)
+**Type:** Frontend / UX Bug
+**Owner:** Base44 Frontend Prompt Owner; Frontend Specifications & UX Documentation Owner
+**Source:** ST-30/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.6
+
+**Problem**
+`src/components/notifications/AlertThresholdsSection.js`'s empty-state heading renders `"No alert rules configured."` with a trailing period, violating `design_system.md`'s v1.8 empty-state microcopy pattern ("no trailing period — it's a label, not a sentence"). This is the same class of generation mistake already caught and fixed elsewhere in the app for `TradePlans.js`/`CalendarView.js` (`base44_prompt_template_library.md` v1.7 changelog) and confirmed still-correct for `Notifications.js`/`Watchlist.js`/`TradePlans.js` during this cycle's ST-30 review — this component was missed by that prior sweep. `docs/specs/frontend/pages/notifications.md`'s own spec for this heading already correctly omits the period (matches the canonical pattern, not this component).
+
+**Scope**
+- Remove the trailing period from `AlertThresholdsSection.js`'s empty-state heading string
+
+**Acceptance Criteria**
+- Empty-state heading renders `"No alert rules configured"` (no trailing period)
+- Playwright coverage or a recorded staging run confirms the rendered heading, per CLAUDE.md's frontend-visible-change rule (wording-only — code review may substitute per the FI-P3-02 exception if genuinely no visual/layout change results)
+
+---
+
+### BLG-FE-179 — NotificationsHistory.js empty-state heading has a trailing period, violating the empty-state microcopy pattern
+**Priority:** P4 (Trivial)
+**Type:** Frontend / UX Bug
+**Owner:** Base44 Frontend Prompt Owner; Frontend Specifications & UX Documentation Owner
+**Source:** ST-30/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.6
+
+**Problem**
+`src/pages/NotificationsHistory.js`'s empty-state heading renders `"No alert history yet."` with a trailing period, violating `design_system.md`'s v1.8 empty-state microcopy pattern ("no trailing period — it's a label, not a sentence"). Same defect class as `BLG-FE-178`, found in the same ST-30 review sweep. `docs/specs/frontend/pages/notifications.md`'s own spec for this heading already correctly omits the period (matches the canonical pattern, not this component).
+
+**Scope**
+- Remove the trailing period from `NotificationsHistory.js`'s empty-state heading string
+
+**Acceptance Criteria**
+- Empty-state heading renders `"No alert history yet"` (no trailing period)
+- Playwright coverage or a recorded staging run confirms the rendered heading, per CLAUDE.md's frontend-visible-change rule (wording-only — code review may substitute per the FI-P3-02 exception if genuinely no visual/layout change results)
 
 ---
 

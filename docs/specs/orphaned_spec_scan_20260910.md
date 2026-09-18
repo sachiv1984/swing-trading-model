@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-09-10
+**Last Updated:** 2026-09-18 (ST-27, EPIC-04, v9.5, BLG-SPEC-140 — added Resolution note under Known Limitation; detector is now path-aware for duplicate basenames, re-confirmed 0 orphaned/0 ambiguous); prior — 2026-09-10 (initial scan, ST-17)
 **Source:** ST-17 (BLG-SPEC-70, EPIC-04, v9.3 sprint execution)
 
 ---
@@ -32,6 +32,8 @@ The detector matches by **basename only**, not full path. 2 basename pairs are d
 | `red_flag_journal.md` | `docs/specs/frontend/pages/red_flag_journal.md`, `docs/specs/api_contracts/red_flag_journal.md` |
 
 For a duplicated basename, a reference to *either* file clears *both* from being flagged — the detector cannot currently distinguish "spec A of this name is referenced" from "spec B of this name is referenced" when they share a filename. This is a genuine blind spot, not fixed in this story: full path-aware matching would need to handle the common real-world pattern of specs being cross-referenced by bare filename without a directory prefix (observed throughout this codebase, e.g. `` `research_endpoint.md` `` cited without `docs/specs/api_contracts/`), which is a larger disambiguation problem than this `M`-effort (~2 day) story's scope. Manually spot-checked: both `README.md` files are directory-index files (a low-risk category — directory READMEs are conventionally discovered via their containing directory, not required to be individually cross-referenced), and both `red_flag_journal.md` files are independently live, actively-referenced specs (frontend page spec and API contract respectively) — neither pair shows any sign of being a genuine orphan masked by its duplicate. Filed as **BLG-SPEC-140** for a future path-aware iteration of the linter, not treated as a live finding requiring triage now.
+
+**Resolution (ST-27, BLG-SPEC-140, EPIC-04, v9.5, 2026-09-18):** `scripts/check_orphaned_specs.py` is now path-aware for duplicate-basename groups — see the script's own module docstring for the full disambiguation rules (path-qualified reference wins; a sibling's confirmed path-qualified reference flags an unreferenced member as orphaned rather than clearing it off a shared bare mention; a group with only bare-basename mentions and no path-qualified reference for any member is reported as a distinct AMBIGUOUS category rather than silently cleared or guessed). Re-run against the live repo this same session with the fix in place: both duplicate pairs above (`README.md`, `red_flag_journal.md`) now resolve via genuine path-qualified references found for every member — 0 orphaned, 0 ambiguous — confirming the 2026-09-10 manual spot-check's conclusion was correct, not merely unverified.
 
 ## Acceptance
 

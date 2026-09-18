@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.15
-**Last Updated:** 2026-09-10 (ST-20, EPIC-04, v9.3, BLG-SPEC-76 — trade_tags row cross-references new canonical docs/specs/trade_tagging_taxonomy.md); prior — 2026-08-21 (ST-07, EPIC-02, v9.0, BLG-FEAT-93 — document that PUT /trade-plans/{id} does NOT apply POST's null→"Other" setup_type default, per Product Owner accept-as-is decision); prior — 2026-08-18 (ST-13, EPIC-04, v8.9, BLG-QA-150 — document server-side setup_type default to "Other" on POST /trade-plans); prior history retained — see prior entries in version control.
+**Version:** 0.16
+**Last Updated:** 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added lifecycle diagram cross-reference); prior — 2026-09-10 (ST-20, EPIC-04, v9.3, BLG-SPEC-76 — trade_tags row cross-references new canonical docs/specs/trade_tagging_taxonomy.md); prior — 2026-08-21 (ST-07, EPIC-02, v9.0, BLG-FEAT-93 — document that PUT /trade-plans/{id} does NOT apply POST's null→"Other" setup_type default); prior history retained — see prior entries in version control.
 **Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07); 2026-08-12__release-v8.7 (ST-01/ST-03); 2026-08-14__release-v8.8 (ST-09); 2026-08-18__release-v8.9 (ST-13); 2026-08-21__release-v9.0 (ST-07)
 
 ---
@@ -14,6 +14,8 @@
 Documents the Trade Plan CRUD endpoints. Trade Plans capture pre-trade reasoning: setup thesis, entry rationale, regime context, R-target, and a structured checklist. They may be linked to a position after entry or created before entry.
 
 **Data model reference:** `docs/specs/data_model.md §DS-04`
+
+**Lifecycle diagram:** `docs/specs/data_model.md §Position & Trade Plan Lifecycle State Diagram` (ST-29, BLG-SPEC-142, v9.5) is canonical for `status` transitions — do not restate the state machine here.
 
 ---
 
@@ -515,6 +517,7 @@ score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.16 | 2026-09-18 | ST-29 (EPIC-04, v9.5, BLG-SPEC-142): Added a "Lifecycle diagram" cross-reference to `docs/specs/data_model.md §Position & Trade Plan Lifecycle State Diagram`, canonical for `status` transitions. No functional change — documentation only. |
 | 0.15 | 2026-09-10 | ST-20 (EPIC-04, v9.3, BLG-SPEC-76): `trade_tags` row now cross-references the new canonical `docs/specs/trade_tagging_taxonomy.md` — confirms trade tagging is intentionally free-text (not a closed taxonomy) and consolidates the format rules this row already stated with the same rules documented in `journal_components.md` and now referenced from `analytics_endpoints.md`'s reporting side. No schema/behaviour change. |
 | 0.14 | 2026-08-21 | ST-07 (EPIC-02, v9.0, BLG-FEAT-93): Documented that `PUT /trade-plans/{id}` does NOT apply `POST`'s null→`"Other"` `setup_type` default — `null`/omitted leaves the existing value unchanged, per every other field's semantics. Product Owner accept-as-is decision: `docs/product/decisions/setup-type-other-conflation-decision--2026-08-21.md`. No schema/behaviour change to the endpoint itself, documentation only. |
 | 0.11 | 2026-08-12 | ST-01/ST-03 (EPIC-01, v8.7, BLG-FEAT-84/BLG-BE-95): Add `invalidation_condition` (optional manual textarea) and `is_ai_draft` (AI-origin flag, default false) to POST/PUT /trade-plans request schema. `trade_plan.md` §5.1, §10.5. |

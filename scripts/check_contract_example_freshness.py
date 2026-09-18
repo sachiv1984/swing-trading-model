@@ -65,9 +65,32 @@ def resolve_ref(node, root):
     return node
 
 
+def _is_object_like(node):
+    """True for a plain `type: object` schema OR one composed via
+    allOf/oneOf/anyOf with no sibling `type` key (this codebase's own
+    convention for extending a base schema, e.g. `Position` = `PositionSummary`
+    allOf plus extra properties — see docs/reference/openapi.yaml). Without
+    this, the nested-descent checks below (which only tested `type ==
+    "object"`) silently failed to descend into any allOf-composed nested
+    schema or array-of-allOf-composed-items, undercounting real schema
+    properties. Found live at GET /positions/search/tags (ST-26,
+    BLG-SPEC-139): its response is `data: Position[]`, and `Position` is
+    allOf-composed, so every one of `Position`'s real properties was
+    invisible to this script before this fix."""
+    return isinstance(node, dict) and (
+        node.get("type") == "object"
+        or "allOf" in node
+        or "oneOf" in node
+        or "anyOf" in node
+    )
+
+
 def schema_top_keys(schema, root, depth=3):
     """Flatten a resolved schema's property names, descending into nested
-    objects up to `depth` levels, producing dotted keys (e.g. 'data.transaction.id')."""
+    objects up to `depth` levels, producing dotted keys (e.g. 'data.transaction.id').
+
+    A schema counts as "object-like" for descent purposes if it declares
+    `type: object` OR is composed via allOf/oneOf/anyOf (see `_is_object_like`)."""
     schema = resolve_ref(schema, root)
     keys = set()
     if not isinstance(schema, dict):
@@ -81,12 +104,12 @@ def schema_top_keys(schema, root, depth=3):
         keys.add(name)
         if depth > 1:
             sub_r = resolve_ref(sub, root)
-            if isinstance(sub_r, dict) and sub_r.get("type") == "object":
+            if _is_object_like(sub_r):
                 for nested in schema_top_keys(sub_r, root, depth - 1):
                     keys.add(f"{name}.{nested}")
             if isinstance(sub_r, dict) and sub_r.get("type") == "array":
                 items = resolve_ref(sub_r.get("items", {}), root)
-                if isinstance(items, dict) and items.get("type") == "object":
+                if _is_object_like(items):
                     for nested in schema_top_keys(items, root, depth - 1):
                         keys.add(f"{name}[].{nested}")
     return keys
@@ -121,7 +144,10 @@ def response_schema_for(root, method, path):
     if op is None:
         return None
     responses = op.get("responses", {})
-    for code in ("200", "201"):
+    # 202 covers async-accepted endpoints (e.g. POST /screener/run) -- found
+    # missing here, ST-26/BLG-SPEC-139, v9.5: it was silently treated as
+    # SKIPPED (no schema to compare) even where openapi.yaml does declare one.
+    for code in ("200", "201", "202"):
         if code in responses:
             resp = resolve_ref(responses[code], root)
             content = resp.get("content", {}).get("application/json", {})
@@ -130,19 +156,44 @@ def response_schema_for(root, method, path):
     return None
 
 
+ERROR_MARKER_RE = re.compile(
+    r"error|HTTP/1\.1 4\d\d|HTTP/1\.1 5\d\d", re.I
+)
+
+
 def find_examples(text):
     """Yield (method, path, example_dict) for each METHOD/path heading whose
-    section contains a JSON fence near a 'response'/'schema' marker."""
+    section contains a JSON fence near a 'response'/'schema' marker.
+
+    Picks the FIRST such fence (nearest to the heading), preferring one whose
+    preceding text does not itself look like an error-response marker
+    (e.g. "### Error responses", "HTTP/1.1 429 Too Many Requests"). Every
+    contract file in this directory documents its primary 2xx response
+    before any error-response block (confirmed by inspection, ST-26,
+    BLG-SPEC-139) — picking the LAST matching fence in the section (the
+    pre-fix behaviour) instead picked up whichever error-response example
+    happened to appear last, which both contain the word "response" and so
+    both matched RESPONSE_MARKER_RE. That produced most of this script's
+    "POSSIBLE DRIFT" false positives (e.g. ai_endpoints.md's 429 rate-limit
+    example, `{"status": "error", "message": "..."}`, compared against the
+    200 schema instead of the actual 200 example)."""
     headings = list(HEADING_RE.finditer(text))
     for i, m in enumerate(headings):
         method, path = m.group(1), m.group(2)
         section_end = headings[i + 1].start() if i + 1 < len(headings) else len(text)
         section = text[m.end():section_end]
         best = None
+        fallback = None
         for fence in JSON_FENCE_RE.finditer(section):
             preceding = section[max(0, fence.start() - 200):fence.start()]
             if RESPONSE_MARKER_RE.search(preceding):
-                best = fence.group(1)
+                if fallback is None:
+                    fallback = fence.group(1)
+                if not ERROR_MARKER_RE.search(preceding):
+                    best = fence.group(1)
+                    break
+        if best is None:
+            best = fallback
         if best is None:
             continue
         try:

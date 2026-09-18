@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.6.0
-**Last Updated:** 2026-08-17
+**Version:** 2.6.2
+**Last Updated:** 2026-09-18 (ST-29, BLG-SPEC-142, EPIC-04, v9.5: added lifecycle diagram cross-reference); prior — 2026-09-18 (ST-25, BLG-SPEC-133, EPIC-04, v9.5: corrected `current_trailing_stop_native` example value)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -20,12 +20,16 @@ This document defines **Position** domain endpoints:
 
 Global response envelopes, error shape, defaults, and multi-currency/stop rules are defined in **conventions.md** and apply unless explicitly stated otherwise.
 
+**Lifecycle diagram:** `docs/specs/data_model.md §Position & Trade Plan Lifecycle State Diagram` (ST-29, BLG-SPEC-142, v9.5) is canonical for `status`/`position_state` transitions — do not restate the state machine here.
+
 ---
 
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.6.2 | 2026-09-18 | ST-29 (BLG-SPEC-142, EPIC-04, v9.5): Added a "Lifecycle diagram" cross-reference to `docs/specs/data_model.md §Position & Trade Plan Lifecycle State Diagram`, canonical for `status`/`position_state` transitions. No functional change — documentation only. |
+| 2.6.1 | 2026-09-18 | ST-25 (BLG-SPEC-133, EPIC-04, v9.5): `GET /positions` example JSON's `current_trailing_stop_native` (764.00) did not reconcile with `current_trailing_stop × live_fx_rate` (560.50 × 1.3650 = 765.08, within the rounding tolerance already used by the other native-currency example fields). Corrected to 765.08. No functional change — example-payload fix only. |
 | 2.6.0 | 2026-08-17 | ST-02 (BLG-BE-103, EPIC-01, v8.9): Added `current_trailing_stop_native` field to `GET /positions` response — the native-currency counterpart of `current_trailing_stop` (which is GBP-converted for US-market positions). Fixes a currency-basis defect where the frontend rendered the GBP-converted value next to the native currency symbol. `initial_stop` and `stop_price_native` were already native; this closes the gap for the third stop field. |
 | 2.5.2 | 2026-08-07 | ST-04 (BLG-SPEC-113, EPIC-02, v8.4): `GET /positions` example was missing 5 live fields returned by `position_service.py`'s `positions_list.append({...})` — `total_cost`, `sector`, `industry`, `exit_reason`, `stop_reason`. Added to example and field notes, cross-checked against the live dict. No functional change. |
 | 2.5.1 | 2026-07-29 | v7.10 ST-13 (BLG-SPEC-102) + ST-14 (BLG-SPEC-103): Corrected `GET /positions` response documentation to match live behaviour — the endpoint returns the raw `data` array directly, not the standard `{ status, data }` envelope. Added undocumented lifecycle fields `position_state`, `state_entered_at`, `days_in_state` to the response schema and field notes. No functional change. |
@@ -103,7 +107,7 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
     "fx_rate": 1.3642,
     "live_fx_rate": 1.3650,
     "current_trailing_stop": 560.50,
-    "current_trailing_stop_native": 764.00,
+    "current_trailing_stop_native": 765.08,
     "risk_off_exit": false,
     "entry_note": "Breakout above $800 resistance",
     "exit_note": null,

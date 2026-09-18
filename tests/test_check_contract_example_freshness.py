@@ -106,6 +106,53 @@ class TestSchemaTopKeys:
         schema = {"oneOf": [{"type": "object", "properties": {"a": {}}}, {"type": "object", "properties": {"b": {}}}]}
         assert freshness.schema_top_keys(schema, {}) == {"a", "b"}
 
+    def test_descends_into_allof_composed_nested_object(self):
+        # ST-26 (BLG-SPEC-139): a nested property whose schema is itself
+        # allOf-composed (this codebase's own convention for extending a
+        # base schema, e.g. `Position` = `PositionSummary` allOf + extra
+        # properties) has no sibling `type: object` key -- the pre-fix
+        # descent check (`sub_r.get("type") == "object"`) silently skipped
+        # it, undercounting real properties.
+        root = {
+            "components": {
+                "schemas": {
+                    "Base": {"type": "object", "properties": {"id": {}}},
+                    "Extended": {
+                        "allOf": [
+                            {"$ref": "#/components/schemas/Base"},
+                            {"type": "object", "properties": {"ticker": {}}},
+                        ]
+                    },
+                }
+            }
+        }
+        schema = {"type": "object", "properties": {"item": {"$ref": "#/components/schemas/Extended"}}}
+        keys = freshness.schema_top_keys(schema, root)
+        assert keys == {"item", "item.id", "item.ticker"}
+
+    def test_descends_into_array_of_allof_composed_items(self):
+        # Same bug, array form -- the real-world shape found at
+        # GET /positions/search/tags (`data: Position[]`, `Position` allOf-composed).
+        root = {
+            "components": {
+                "schemas": {
+                    "Base": {"type": "object", "properties": {"id": {}}},
+                    "Extended": {
+                        "allOf": [
+                            {"$ref": "#/components/schemas/Base"},
+                            {"type": "object", "properties": {"ticker": {}}},
+                        ]
+                    },
+                }
+            }
+        }
+        schema = {
+            "type": "object",
+            "properties": {"data": {"type": "array", "items": {"$ref": "#/components/schemas/Extended"}}},
+        }
+        keys = freshness.schema_top_keys(schema, root)
+        assert keys == {"data", "data[].id", "data[].ticker"}
+
     def test_depth_limits_nesting(self):
         schema = {
             "type": "object",
@@ -215,6 +262,31 @@ class TestResponseSchemaFor:
         keys = freshness.response_schema_for(self._root(), "POST", "/orders")
         assert keys == {"order_id"}
 
+    def test_202_response_code_used_for_async_accepted(self):
+        # ST-26 (BLG-SPEC-139): async-accepted endpoints (e.g. POST /screener/run)
+        # only declare a 202 response -- pre-fix, only 200/201 were checked, so
+        # these were silently reported SKIPPED even when openapi.yaml did declare
+        # a real schema.
+        root = {
+            "paths": {
+                "/jobs": {
+                    "post": {
+                        "responses": {
+                            "202": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {"type": "object", "properties": {"job_id": {}}}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        keys = freshness.response_schema_for(root, "POST", "/jobs")
+        assert keys == {"job_id"}
+
     def test_no_matching_path_returns_none(self):
         assert freshness.response_schema_for(self._root(), "GET", "/nonexistent") is None
 
@@ -259,7 +331,12 @@ class TestFindExamples:
         )
         assert list(freshness.find_examples(text)) == []
 
-    def test_picks_last_response_fence_in_section(self):
+    def test_picks_first_response_fence_in_section(self):
+        # ST-26 (BLG-SPEC-139): picking the LAST matching fence (the
+        # pre-fix behaviour, once asserted by this test) meant a later
+        # schema-variant or error example silently overrode the primary
+        # response example. The primary/nearest-to-heading example is the
+        # correct one to check.
         text = (
             "## POST /widgets\n\n"
             "### Response — 200 OK\n\n"
@@ -268,7 +345,26 @@ class TestFindExamples:
             '```json\n{"b": 2}\n```\n'
         )
         found = list(freshness.find_examples(text))
-        assert found == [("POST", "/widgets", {"b": 2})]
+        assert found == [("POST", "/widgets", {"a": 1})]
+
+    def test_skips_error_example_even_when_it_appears_last(self):
+        # Real-world shape found in ai_endpoints.md's POST /ai/daily-briefing:
+        # a 200 success example followed by a 429 rate-limit error example.
+        # Both fences sit under text matching "response" (the RESPONSE_MARKER_RE
+        # regex also matches "Errors" section headers mentioning "response"),
+        # so the fix must specifically prefer the non-error one, not just the
+        # first fence with any marker match.
+        text = (
+            "## POST /ai/daily-briefing\n\n"
+            "### Response — 200 OK\n\n"
+            '```json\n{"summary": "ok"}\n```\n\n'
+            "### Error Responses\n\n"
+            "Returned when the per-IP rate limit is exceeded.\n\n"
+            "```\nHTTP/1.1 429 Too Many Requests\n```\n\n"
+            '```json\n{"status": "error", "message": "Rate limit exceeded."}\n```\n'
+        )
+        found = list(freshness.find_examples(text))
+        assert found == [("POST", "/ai/daily-briefing", {"summary": "ok"})]
 
     def test_multiple_headings_scoped_correctly(self):
         text = (

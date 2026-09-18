@@ -115,7 +115,13 @@ def main() -> int:
         if filed is None:
             undated.append(item["id"])
 
-    rows.sort(key=lambda r: (priority_sort_key(r["priority"]), -(r["age_days"] or -1)))
+    # A same-day-filed item has age_days == 0, which is falsy in Python — an
+    # `or -1` fallback (used pre-fix here) collapses it onto the same sentinel
+    # as a genuinely undated item (age_days is None), sorting it to the end of
+    # its tier as if unaged instead of as the newest dated item. Use an
+    # explicit `is not None` check so 0 is treated as a real age. (ST-28,
+    # BLG-SPEC-141)
+    rows.sort(key=lambda r: (priority_sort_key(r["priority"]), -(r["age_days"] if r["age_days"] is not None else -1)))
 
     lines = []
     lines.append("**Owner:** Head of Specs Team")

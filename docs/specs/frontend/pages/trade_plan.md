@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.12
-**Last Updated:** 2026-09-07 (ST-25, EPIC-04, v9.1, BLG-SPEC-132 — new §10.6a Position Sizing Widget Baseline: fields, debounce behaviour, POST /portfolio/size contract, resolving §10.7's own "filed as spec debt" forward reference); prior — 2026-09-07 (ST-24, EPIC-04, v9.1, BLG-SPEC-131 — §5.1/§4.2/§5a.3 stale "Risk/Reward Notes" references corrected); prior — 2026-08-21 (ST-10, EPIC-02, v9.0, BLG-FE-164 — §5d.2 adds a panel-local FX Rate override input); prior history retained — see prior entries in version control.
+**Version:** 1.14
+**Last Updated:** 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added lifecycle diagram cross-reference to §9 Status Badge Scheme); prior — 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "No trade plans yet." heading to drop the trailing period); prior — 2026-09-07 (ST-25, EPIC-04, v9.1, BLG-SPEC-132 — new §10.6a Position Sizing Widget Baseline); prior history retained — see prior entries in version control.
 **Design Source (v1.7 what-if sizing preview):** docs/design/2026-08-17__release-v8.9/what-if-sizing-risk-simulator/ux_spec.md
 **Design Source (v1.7 concentration-aware sizing display):** docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md
 **Design Source (v1.5 invalidation condition):** docs/design/2026-08-12__release-v8.7/thesis-invalidation-condition/decision_record.md
@@ -98,7 +98,7 @@ One card or row per trade plan. Default sort: most recently updated first. Aband
 
 ### 4.3 Empty State
 
-- Heading: **"No trade plans yet."**
+- Heading: **"No trade plans yet"**
 - Body: "Create a trade plan before opening your next position."
 - **"+ New Trade Plan"** button
 
@@ -439,6 +439,8 @@ Applied in Trade Plan List and Trade Plan Detail View:
 | `abandoned` | Abandoned | Red | `#DC2626` |
 
 All badges: filled pill, white text. Contrast ≥ 4.5:1 (WCAG AA) for all combinations.
+
+**Lifecycle diagram:** `docs/specs/data_model.md §Position & Trade Plan Lifecycle State Diagram` (ST-29, BLG-SPEC-142, v9.5) is canonical for the `status` state machine these badges display — do not restate the transition rules here.
 
 ---
 

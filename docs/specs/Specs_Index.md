@@ -396,12 +396,15 @@ Populated by the ST-49 freshness-check remediation (`scripts/check_specs_index_f
 | `docs/specs/api_contracts/ai_thesis_generation.md` | AI Thesis Generation API Contract | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
 | `docs/specs/api_contracts/arc5_compliance_analytics.md` | Arc 5 Compliance Analytics API Contract | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
 | `docs/specs/api_contracts/backend_engineering_patterns.md` | Backend Engineering Patterns | Backend Engineering Patterns Owner | Canonical Specification (Class 1) |
+| `docs/specs/api_contracts/behavioural_error_taxonomy_stub.md` | Behavioural Error Taxonomy — Arc 4 PO-03 (Pre-Authoring Stub) | Head of Specs Team | Not applicable — pre-authoring stub, no canonical contract yet |
 | `docs/specs/api_contracts/cash_endpoints.md` | cash_endpoints.md | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
 | `docs/specs/api_contracts/changelog_endpoints.md` | changelog_endpoints.md | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
 | `docs/specs/api_contracts/gemini_thesis_generation.md` | AI Thesis Generation API Contract | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
 | `docs/specs/api_contracts/grace_period_alert_endpoint.md` | Grace Period Alert Endpoint Contract | — | — |
+| `docs/specs/api_contracts/journal_pattern_recognition_stub.md` | Journal Pattern Recognition — Arc 4 PO-02 (Pre-Authoring Stub) | Head of Specs Team | Not applicable — pre-authoring stub, no canonical contract yet |
 | `docs/specs/api_contracts/pre_entry_validation.md` | pre_entry_validation.md | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
 | `docs/specs/api_contracts/red_flag_journal.md` | red_flag_journal.md | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
+| `docs/specs/api_contracts/reflection_outcome_correlation_stub.md` | Reflection ↔ Outcome Correlation — Arc 4 PO-04 (Pre-Authoring Stub) | Head of Specs Team | Not applicable — pre-authoring stub, no canonical contract yet |
 | `docs/specs/api_contracts/research_endpoint.md` | API Contract — Research Endpoint | API Contracts & Documentation Owner | Supporting Document (Class 2) |
 | `docs/specs/api_contracts/stop_trail_endpoint.md` | Stop Trail Endpoint Contract | — | — |
 | `docs/specs/api_contracts/strategy_benchmark_endpoints.md` | Strategy Benchmark API Contract | Backend Engineering Patterns Owner; Product Owner | API Contract (Class 2) |
