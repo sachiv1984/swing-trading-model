@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-18 (session — 3 new items added: `BLG-SPEC-155`, `BLG-SPEC-156`, `BLG-GOV-335` (PR #1715 review findings — Director of Quality + Product Owner agent-mediated review, filed on `main` after EPIC-04's own 9 stories completed)); prior — 2026-09-18 (session — 1 new item added: `BLG-SPEC-154` (ST-29/EPIC-04, v9.5 — trade_plans CHECK constraint documentation gap)); prior — 2026-09-18 (session — 2 new items added: `BLG-SPEC-152`, `BLG-SPEC-153` (ST-26/EPIC-04, v9.5)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-18 (session — 1 new item added: `BLG-QA-180` (ST-42/EPIC-06, v9.5 — Playwright duration-assertion coverage gap for the 9 toast call sites fixed this story)); prior — 2026-09-18 (session — 3 new items added: `BLG-SPEC-155`, `BLG-SPEC-156`, `BLG-GOV-335` (PR #1715 review findings — Director of Quality + Product Owner agent-mediated review, filed on `main` after EPIC-04's own 9 stories completed)); prior — 2026-09-18 (session — 1 new item added: `BLG-SPEC-154` (ST-29/EPIC-04, v9.5 — trade_plans CHECK constraint documentation gap)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4824,6 +4824,27 @@ ST-11 (`BLG-OPS-158`) found `.github/workflows/health-check-alert.yml` already s
 - A real live-fire test run is confirmed to have triggered the alert path (run URL/ID recorded)
 - A real Telegram notification is confirmed received (not just that the workflow step executed)
 - `docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md` §7 and §8 updated to reflect the confirmed result; `BLG-OPS-158`'s (ST-11's) original disclosed gap closed
+
+---
+
+### BLG-QA-180 — Add Playwright duration-assertion coverage for the 9 toast call sites fixed in ST-42 (Toast Notification Timing standard)
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Sprint execution `2026-09-15__release-v9.5`, ST-42/`BLG-FE-176`, discovered mid-story — 2026-09-18
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.6
+
+**Problem**
+ST-42 fixed all 9 non-conforming toast call sites (`Layout.js`, `Settings.js` ×2, `Signals.js` ×2, `Positions.js` ×2, `PositionCard.js`, `useWatchlistModal.js`) to carry the correct `duration` per `design_system.md`'s Toast Notification Timing standard — `Layout.js`'s incorrect `duration: 8000` on an info toast was removed (reverting to the 4s default), and the 8 `toast.error(...)` sites each gained an explicit `duration: 8000`. No existing Playwright test asserts on toast duration/dismissal timing for any of these 9 sites (confirmed via grep across `tests/e2e/` for each site's exact message text — zero matches). The fix was verified by code review plus re-running unrelated-but-adjacent Playwright suites (`watchlist.spec.js`, `settings-heading-order-and-aria-labelledby-regression.spec.js`, `v7.2-dashboard-tradeplan-ux-hardening.spec.js`) confirming no runtime regression, but none of those assert the new duration values themselves.
+
+**Scope**
+- Add Playwright assertions for the 9 call sites confirming each toast's configured duration matches the standard (8s for error, 4s default for the `Layout.js` info toast) — e.g. asserting the toast remains visible past the old 4s default before disappearing, or reading the rendered duration where `sonner` exposes it
+
+**Acceptance Criteria**
+- A regression test exists per call site (or a consolidated test covering all 9) that would fail if a future change silently reverted any site's `duration` back to a non-conforming value
+- Tests pass against the current (ST-42) implementation
 
 ---
 
