@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.7
-**Last Updated:** 2026-07-26
+**Version:** 0.8
+**Last Updated:** 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "No notifications yet." heading to drop the trailing period, matching already-shipped `Notifications.js` (`emptyHeading="No notifications yet"`) and the v1.8 empty-state microcopy pattern in `design_system.md`; documentation-only, no code change)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md | docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md | docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md
 
@@ -95,7 +95,7 @@ Skeleton rows (3–4 rows at standard notification height) while the feed loads.
 #### Empty State
 Displayed when no notifications exist:
 - Bell outline icon (centred)
-- Heading: **"No notifications yet."**
+- Heading: **"No notifications yet"**
 - Body: `"Alert notifications will appear here when triggered."`
 
 #### All-Read State
