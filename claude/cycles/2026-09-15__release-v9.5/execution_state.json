@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T18:25:00Z",
+  "last_updated_utc": "2026-09-18T18:31:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -1027,23 +1027,26 @@
         "ST-41": {
           "title": "Bring the 4 known motion-timing non-compliant components under the 500ms ceiling",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1709,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "04b5c271",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T18:30:09Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Motion-vs-contrast guideline",
+            "docs/design/2026-09-14__release-v9.4/motion-timing-target-release/decision_record.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Sequence before ST-42 — both edit design_system.md."
+          "notes": "Timing-behaviour change (LL-v8.3-P3-02 environment-parity sub-clause applies): sandboxed local Playwright runs confirmed clean (34/34 system-status + reports-performance-tab; 15/15 dashboard/tradeplan at ST-40) but a real GitHub Actions CI run has not yet been observed for this specific commit (PR not yet open). Must be re-confirmed against the real CI run once the EPIC-06 PR is open, per the sub-clause's own requirement, before DoQ sign-off is finalised."
         },
         "ST-42": {
           "title": "Bring 9 non-conforming toast call sites into line with the Toast Notification Timing standard",
