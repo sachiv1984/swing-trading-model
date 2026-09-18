@@ -99,14 +99,15 @@ export default function Settings() {
           }
         });
         setFieldErrors(errors);
-        toast.error("Please fix the errors below before saving");
+        toast.error("Please fix the errors below before saving", { duration: 8000 });
       } else {
         // Fallback for non-Pydantic errors
         setFieldErrors({});
         toast.error(
           typeof detail === "string"
             ? detail
-            : "Failed to save settings — please check your values and try again"
+            : "Failed to save settings — please check your values and try again",
+          { duration: 8000 }
         );
       }
     },

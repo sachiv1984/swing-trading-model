@@ -286,7 +286,6 @@ export default function Layout({ children, currentPageName }) {
     };
     const timer = setTimeout(() => {
       toast.info("Press ⌘K (or Ctrl K) to search pages, tickers, and trade plans.", {
-        duration: 8000,
         onDismiss: markSeen,
         onAutoClose: markSeen,
       });

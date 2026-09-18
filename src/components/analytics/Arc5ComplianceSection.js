@@ -92,6 +92,18 @@ export default function Arc5ComplianceSection() {
   return (
     <div>
       <h2 className="text-lg font-semibold text-white mb-4">Arc 5 Signal Compliance</h2>
+      {showLowVolumeAdvisory && (
+        <div
+          role="status"
+          data-testid="arc5-low-volume-advisory"
+          className="mb-4 flex items-start gap-3 w-full rounded-lg border px-4 py-3 text-sm bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-200"
+        >
+          <Info className="w-4 h-4 shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            Based on {metrics.total_closed_trades} closed trade{metrics.total_closed_trades === 1 ? "" : "s"} — treat these figures as indicative until more trade history accumulates. Reliability improves at {LOW_VOLUME_THRESHOLD}+ closed trades ({LOW_VOLUME_THRESHOLD - metrics.total_closed_trades} more needed).
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((card) => (
           <ComplianceCard
@@ -106,18 +118,6 @@ export default function Arc5ComplianceSection() {
           />
         ))}
       </div>
-      {showLowVolumeAdvisory && (
-        <div
-          role="status"
-          data-testid="arc5-low-volume-advisory"
-          className="mt-4 flex items-start gap-3 w-full rounded-lg border px-4 py-3 text-sm bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-200"
-        >
-          <Info className="w-4 h-4 shrink-0 mt-0.5" />
-          <div className="flex-1 min-w-0">
-            Based on {metrics.total_closed_trades} closed trade{metrics.total_closed_trades === 1 ? "" : "s"} — treat these figures as indicative until more trade history accumulates.
-          </div>
-        </div>
-      )}
     </div>
   );
 }

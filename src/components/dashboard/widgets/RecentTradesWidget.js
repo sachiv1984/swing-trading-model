@@ -26,7 +26,7 @@ export default function RecentTradesWidget({ positions }) {
               key={trade.id}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: idx * 0.05 }}
+              transition={{ delay: idx * 0.05, duration: 0.3 }}
               className="flex items-center justify-between p-3 rounded-xl bg-slate-800/50 dark:bg-slate-800/50 border border-slate-700/30"
             >
               <div className="flex items-center gap-3">

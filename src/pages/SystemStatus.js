@@ -580,7 +580,7 @@ export default function SystemStatus() {
                                 key={index}
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.02 }}
+                                transition={{ delay: Math.min(index, 9) * 0.02, duration: 0.3 }}
                                 className={cn(
                                   "p-3 rounded-lg border flex items-center justify-between",
                                   testConfig.bg,
@@ -698,7 +698,7 @@ export default function SystemStatus() {
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
+                  transition={{ delay: Math.min(index, 3) * 0.05, duration: 0.3 }}
                   className={cn(
                     "p-4 rounded-xl border backdrop-blur-sm",
                     config.bg,

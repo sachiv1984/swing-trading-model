@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T20:05:00Z",
+  "last_updated_utc": "2026-09-18T20:10:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -1072,97 +1072,117 @@
       }
     },
     "EPIC-06": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-15__release-v9.5/EPIC-06",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1717,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-15__release-v9.5/qa_evidence_EPIC-06.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/arc5-compliance-section.spec.js",
+        "tests/e2e/system-status.spec.js",
+        "tests/e2e/reports-performance-tab.spec.js",
+        "tests/e2e/v7.2-dashboard-tradeplan-ux-hardening.spec.js",
+        "tests/e2e/watchlist.spec.js",
+        "tests/e2e/settings-heading-order-and-aria-labelledby-regression.spec.js"
+      ],
       "stories": {
         "ST-40": {
           "title": "Fix trade plan link display to use formatted text instead of snake_case",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1708,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "ccb73db6",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T18:24:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#9. Status Badge Scheme",
+            "src/pages/TradePlans.js#STATUS_CONFIG"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Wording-only fix (FI-P3-02 exception) -- imported the canonical STATUS_CONFIG (v8.8, ST-14/BLG-FE-162) into TradeEntry.js's own select dropdown, the one call site that had its own raw plan.status display. Re-ran tests/e2e/v7.2-dashboard-tradeplan-ux-hardening.spec.js locally: 15/15 passed, confirming linkage functionality unaffected."
         },
         "ST-41": {
           "title": "Bring the 4 known motion-timing non-compliant components under the 500ms ceiling",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1709,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "04b5c271",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T18:30:09Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Motion-vs-contrast guideline",
+            "docs/design/2026-09-14__release-v9.4/motion-timing-target-release/decision_record.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Sequence before ST-42 — both edit design_system.md."
+          "notes": "Timing-behaviour change (LL-v8.3-P3-02 environment-parity sub-clause applies): sandboxed local Playwright runs confirmed clean (34/34 system-status + reports-performance-tab; 15/15 dashboard/tradeplan at ST-40) but a real GitHub Actions CI run has not yet been observed for this specific commit (PR not yet open). Must be re-confirmed against the real CI run once the EPIC-06 PR is open, per the sub-clause's own requirement, before DoQ sign-off is finalised."
         },
         "ST-42": {
           "title": "Bring 9 non-conforming toast call sites into line with the Toast Notification Timing standard",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1710,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "59513008",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T18:34:35Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Toast Notification Timing",
+            "docs/design/2026-09-14__release-v9.4/toast-timing-standard/decision_record.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Sequence after ST-41 — both edit design_system.md."
+          "notes": "Timing-behaviour change. No existing Playwright test asserts these specific 9 call sites' duration -- filed BLG-QA-180 before commit per CLAUDE.md S2's hard gate rather than deferring silently. Re-ran adjacent suites (watchlist, settings) for runtime-regression confidence: 10/10 passed. Real CI confirmation still pending (PR not yet open), same as ST-41's outstanding note."
         },
         "ST-43": {
           "title": "Arc 5 low-trade-volume advisory: surface the 20-trade threshold and remaining-trades count, reconsider placement above the stat grid",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1711,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "5af007d5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T18:38:35Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/components/arc5_compliance_section.md#Low-Trade-Volume Advisory",
+            "docs/design/2026-09-15__release-v9.5/arc5-low-volume-advisory-placement/decision_record.md",
+            "tests/e2e/arc5-compliance-section.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "New Playwright coverage added (SC-ARC5-13a/b) rather than deferred -- could be added directly within this story, so it was. Full suite 18/18 passed. Spec (arc5_compliance_section.md v1.4.0) was already updated at design-gate time; verified my implementation matches it exactly."
         }
       }
     }
@@ -1205,7 +1225,11 @@
     "ST-36",
     "ST-37",
     "ST-38",
-    "ST-39"
+    "ST-39",
+    "ST-40",
+    "ST-41",
+    "ST-42",
+    "ST-43"
   ],
   "open_escalations": [],
   "merge_gate": {
@@ -1220,11 +1244,14 @@
       "EPIC-06"
     ],
     "all_merged": false,
-    "epics_open_pr": []
+    "epics_open_pr": [
+      "EPIC-06"
+    ]
   },
   "sealed": false,
   "sealed_utc": null,
   "process_notes": [
-    "2026-09-18: Resolved backlog.md merge conflict between exec/EPIC-04 and main (main had independently gained BLG-SPEC-155/156, BLG-GOV-335 from PR #1715 agent-mediated review, filed after EPIC-04 branch diverged). Took union of both sides new items + combined header chain, per CLAUDE.md SS8."
+    "2026-09-18: Resolved backlog.md merge conflict between exec/EPIC-04 and main (main had independently gained BLG-SPEC-155/156, BLG-GOV-335 from PR #1715 agent-mediated review, filed after EPIC-04 branch diverged). Took union of both sides new items + combined header chain, per CLAUDE.md SS8.",
+    "2026-09-18: Resolved execution_state.json + backlog.md merge conflicts merging main (EPIC-05 merged, PR #1716) into exec/EPIC-06. EPIC-01-05 entries taken from main (post-merge authoritative); EPIC-06 entry taken from branch (real in-progress work, not yet on main). completed_items/merge_gate.epics_merged: union/main-authoritative per CLAUDE.md §8. backlog.md: took union of BLG-QA-180 (branch) + BLG-GOV-336/BLG-QA-181/BLG-GOV-337 (main, filed from PR review) as 4 distinct non-colliding items; header Last-Updated chain combined (current=main's entry, prior=branch's BLG-QA-180 entry, prior=shared BLG-SPEC-155/156/GOV-335 entry, 3-entry cap per CLAUDE.md §16.14)."
   ]
 }

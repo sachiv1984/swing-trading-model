@@ -31,7 +31,7 @@ async function keepWatchlistEntry(entry, onUpdated) {
     onUpdated(json.data);
     toast.success(`${entry.ticker} kept on watchlist.`);
   } catch {
-    toast.error(`Failed to keep ${entry.ticker}. Please try again.`);
+    toast.error(`Failed to keep ${entry.ticker}. Please try again.`, { duration: 8000 });
   }
 }
 

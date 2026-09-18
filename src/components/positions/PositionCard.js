@@ -110,7 +110,7 @@ function useMarkReviewedMutation() {
       queryClient.invalidateQueries({ queryKey: ["positions"] });
     },
     onError: () => {
-      toast.error("Failed to mark position as reviewed. Please try again.");
+      toast.error("Failed to mark position as reviewed. Please try again.", { duration: 8000 });
     },
   });
 }
