@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.11
-**Last Updated:** 2026-09-15 (ST-23, BLG-AI-06, v9.4 — documented the generation-time AI output boundary-language sampling hook, not a new endpoint); prior — 2026-09-14 (ST-09, BLG-OPS-151, v9.4 — added POST /ai/check-endpoint-anomalies); prior — 2026-09-10 (ST-14, BLG-OPS-96, v9.3 — added GET /ai/monthly-cost-by-feature); prior history retained — see prior entries in version control
+**Version:** 1.13
+**Last Updated:** 2026-09-16 (ST-13, BLG-OPS-161, v9.5 — POST /ai/check-endpoint-anomalies latency now real-data (claude_audit_log.latency_ms), not simulated-only); prior — 2026-09-16 (ST-06, BLG-OPS-153, v9.5 — added GET /ai/spend-trend-by-feature); prior — 2026-09-15 (ST-23, BLG-AI-06, v9.4 — documented the generation-time AI output boundary-language sampling hook, not a new endpoint); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -393,7 +393,7 @@ No request body required.
   "latency_anomalies": [],
   "firing_count": 0,
   "alert_sent": false,
-  "latency_data_source": "not_available_pending_BLG-OPS-161"
+  "latency_data_source": "claude_audit_log"
 }
 ```
 
@@ -401,10 +401,10 @@ No request body required.
 |-------|------|-------------|
 | `checked_utc` | string | UTC timestamp the check ran, ISO 8601. |
 | `cost_anomalies` | array | One entry per endpoint with `>=1` request in the combined recent+baseline window, from `check_cost_anomaly` (recent 24h avg cost vs trailing 7-day baseline avg cost, per `endpoint` tag in `claude_audit_log`). |
-| `latency_anomalies` | array | Entries from `check_latency_anomaly`. Empty unless a simulated feed is injected (see Implementation constraints) — no real data source exists yet. |
+| `latency_anomalies` | array | Entries from `check_latency_anomaly`, sourced from `claude_audit_log.latency_ms` (recent 24h p95 vs trailing 7-day baseline p95, per endpoint — ST-13, BLG-OPS-161, v9.5). One entry per endpoint with `>=1` row carrying a non-null `latency_ms` in the combined window; rows written before this column existed (NULL) are excluded, not treated as 0ms. |
 | `firing_count` | integer | Count of entries across both arrays with `is_anomaly: true`. |
 | `alert_sent` | boolean | `true` when `firing_count > 0` AND Telegram credentials (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`) are configured and delivery succeeded. |
-| `latency_data_source` | string | `"not_available_pending_BLG-OPS-161"` in production today (no `latency_ms` column exists in `claude_audit_log`) or `"simulated_feed"` when a test/dry-run supplies one. Never silently omitted — this discloses the gap rather than implying latency was checked against real data. |
+| `latency_data_source` | string | `"claude_audit_log"` — real data via this endpoint (as of v9.5; a caller-supplied `simulated_latency_feed` is not part of this endpoint's public request/response shape — that parameter exists on the underlying service function for tests/dry-runs only, where it would report `"simulated_feed"`). Never silently omitted. |
 
 ### Error responses
 
@@ -415,7 +415,7 @@ No request body required.
 ### Implementation constraints
 
 - Cost data source: `database.get_claude_endpoint_cost_windows()` — real `claude_audit_log` data, recent 24h vs trailing 7-day baseline, per endpoint. Below `MIN_COST_BASELINE_USD` the ratio is suppressed as noise (see `services/ai_endpoint_anomaly_service.py`).
-- Latency data source: none in production — `claude_audit_log` has no latency column (BLG-OPS-161, prerequisite gap for a future story). This endpoint's public request/response shape never accepts a caller-supplied `simulated_latency_feed` (that parameter exists on the underlying service function for tests/dry-runs only); via this endpoint, `latency_anomalies` is always `[]` and `latency_data_source` is always `"not_available_pending_BLG-OPS-161"` until BLG-OPS-161 ships.
+- Latency data source: `database.get_claude_endpoint_latency_windows()` — real `claude_audit_log.latency_ms` data (ST-13, BLG-OPS-161, v9.5), recent 24h p95 vs trailing 7-day baseline p95, per endpoint. Below `MIN_LATENCY_BASELINE_MS` the ratio is suppressed as noise, same as cost. `latency_ms` is populated by every `create_claude_audit_entry()` call site going forward; historical rows predating this column remain NULL and are excluded from both windows rather than counted as 0ms.
 - On any firing anomaly, sends one Telegram message summarising all firing entries (not one message per entry).
 - If Telegram delivery fails (network error) or credentials are absent, `alert_sent: false`; endpoint still returns 200.
 - No write operations: `claude_audit_log` is read-only for this endpoint.
@@ -724,6 +724,70 @@ No parameters.
 
 ---
 
+## GET /ai/spend-trend-by-feature
+
+Returns Claude API spend for the last 6 release cycles (oldest to newest), broken down by feature within each cycle — combines `GET /ai/monthly-cost-by-feature`'s per-feature grouping with `GET /ai/spend-trend`'s multi-cycle window, so "is feature X's spend trending up over recent cycles" is answerable without manually cross-referencing both endpoints across cycles.
+
+Added for ST-06 (BLG-OPS-153, EPIC-02, v9.5), sub-item 2 of 3 (storage projection and silent-purge-failure visibility are the other 2 — see `docs/ops/ai_audit_log_retention_policy.md`). Sourced from the same `claude_audit_log` data as `GET /ai/spend-trend` (no new data collection), same cycle-boundary parsing (`docs/product/changelog.md`).
+
+**§13 Status:** N/A — read-only cost aggregate; no AI output generated.
+
+**Alert-threshold tie-in (considered, not implemented):** `docs/ops/gemini_cost_tracking.md`'s existing $5/month alert threshold applies to current-month *total* spend, a different metric/cadence than this per-cycle, per-feature breakdown — not wired together here.
+
+### Request
+
+```
+GET /ai/spend-trend-by-feature
+```
+
+No parameters.
+
+### Response — 200 OK
+
+```json
+{
+  "status": "ok",
+  "data": [
+    {
+      "version": "v9.4",
+      "features": [
+        { "endpoint": "POST /ai/daily-briefing", "spend_usd": 2.10 },
+        { "endpoint": "POST /ai/chat", "spend_usd": 1.05 }
+      ]
+    },
+    {
+      "version": "v9.5",
+      "features": [
+        { "endpoint": "POST /ai/daily-briefing", "spend_usd": 2.40 }
+      ]
+    }
+  ]
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data` | array | One entry per release cycle, oldest to newest. Fewer than 6 entries if fewer cycles exist in `changelog.md` — no zero-padding. Empty array if `changelog.md` is missing or unparseable. |
+| `data[].version` | string | Bare version number of the release cycle, e.g. `"v9.5"`. |
+| `data[].features` | array | Per-feature spend within this cycle's date window, descending by spend. Only features with at least one `claude_audit_log` row in the window appear — no zero-filling for features with no activity that cycle. |
+| `data[].features[].endpoint` | string | Feature tag (`claude_audit_log.endpoint`) — same taxonomy as `GET /ai/monthly-cost-by-feature`. |
+| `data[].features[].spend_usd` | float | Sum of `cost_usd` for this feature in this cycle's window. Rounded to 2 d.p. |
+
+### Error responses
+
+| Status | Condition |
+|--------|-----------|
+| 401 | Missing or invalid API key. |
+| 500 | Not expected under normal operation — internal failures in the DB aggregation step return `[]` per cycle's `features` (matches `GET /ai/spend-trend`'s fail-safe convention) rather than propagating an error. |
+
+### Implementation constraints
+
+- Read-only endpoint: no writes to any table.
+- Same same-day-release tie handling and date-only cycle boundaries as `GET /ai/spend-trend`.
+- Does not send any alert or notification.
+
+---
+
 ## AI Output Boundary-Language Sampling Hook (ST-23, BLG-AI-06, v9.4)
 
 Not a new endpoint — this is internal instrumentation, not part of this contract's API surface. Documented here per this story's AC (5), which requires the mechanism to be documented in the AI-endpoint contract docs.
@@ -761,6 +825,8 @@ None at v1.10.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.13 | 2026-09-16 | ST-13 (EPIC-02, v9.5, BLG-OPS-161): `POST /ai/check-endpoint-anomalies` latency is now real-data — `claude_audit_log` gained a `latency_ms` column (populated by every `create_claude_audit_entry()` call site going forward), `latency_data_source` now reports `"claude_audit_log"` instead of `"not_available_pending_BLG-OPS-161"`. No `openapi.yaml` schema change (response shape unchanged, only field-value semantics). Infrastructure & Operations Owner sign-off. |
+| 1.12 | 2026-09-16 | ST-06 (EPIC-02, v9.5, BLG-OPS-153): Added `GET /ai/spend-trend-by-feature` (per-feature, per-cycle spend breakdown — sub-item 2 of 3; the other 2 land in `docs/ops/ai_audit_log_retention_policy.md`). `openapi.yaml` and `backend/routers/test.py` updated in the same commit. FinOps & Resource Architect sign-off. |
 | 1.11 | 2026-09-15 | ST-23 (EPIC-05, v9.4, BLG-AI-06): Documented the generation-time AI output boundary-language sampling hook (`ai_output_sampling_service.py`, opt-in via `AI_OUTPUT_SAMPLING_ENABLED`, rate-bounded via `AI_OUTPUT_SAMPLING_RATE`) — new `ai_output_boundary_samples` table, wired into all 6 real AI-generation call sites, consumed by `scripts/run_ai_output_boundary_sample_audit.py`. Not a new endpoint; no `openapi.yaml` change. Genuine live sample (AC 4) and `ESC-EXEC-20260910-01` closure (AC 6) remain staging-only — no production credentials in this session. |
 | 1.10 | 2026-09-14 | ST-09 (EPIC-03, v9.4, BLG-OPS-151): Added `POST /ai/check-endpoint-anomalies` — wires the existing pure cost/latency anomaly detector (`services/ai_endpoint_anomaly_service.py`, ST-54/v9.2) into a scheduled job (`.github/workflows/ai-endpoint-anomaly-check.yml`, daily) and Telegram alert. Cost checked against real `claude_audit_log` data; latency has no real data source (`claude_audit_log` has no latency column — BLG-OPS-161 filed as the prerequisite gap) and is disclosed as pending via `latency_data_source`, not fabricated. `openapi.yaml` and `docs/ops/api_performance_baseline.md` §44 updated in the same commit. |
 | 1.9 | 2026-09-10 | ST-14 (EPIC-03, v9.3, BLG-OPS-96): Added `GET /ai/monthly-cost-by-feature` — current calendar month's Claude API spend broken down by the existing `claude_audit_log.endpoint` feature tag (5 tags documented in the endpoint section's taxonomy table). Reuses existing tagging, no new data collection. `openapi.yaml` updated in the same commit. |

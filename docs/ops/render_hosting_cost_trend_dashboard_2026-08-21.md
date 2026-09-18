@@ -1,9 +1,9 @@
 **Owner:** FinOps & Resource Architect
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-08-21
-**Story:** ST-26 (BLG-OPS-95, EPIC-05, v9.0)
+**Version:** 1.1
+**Last Updated:** 2026-09-16 (ST-10, BLG-OPS-157, EPIC-02, v9.5 — first pass under the new recurring quarterly cadence, `docs/ops/quarterly_hosting_cost_trend_review_cadence.md`, appended a new trend-table row); prior — 2026-08-21 (initial dashboard build, ST-26, BLG-OPS-95, EPIC-05, v9.0).
+**Story:** ST-10 (BLG-OPS-157, EPIC-02, v9.5); originated ST-26 (BLG-OPS-95, EPIC-05, v9.0)
 
 ---
 
@@ -32,11 +32,13 @@ Endpoint count (`@router.*` in `backend/routers/*.py` + `@app.*` in `backend/mai
 | 2026-05-23 | `ac30e1fa` | 50 | 37 | **87** |
 | 2026-06-22 | `cb0bb33f` | 57 | 38 | **95** |
 | 2026-07-21 | `68082191` | 81 | 46 | **127** |
-| 2026-08-21 | `5f066b11` (today) | 92 | 46 | **138** |
+| 2026-08-21 | `5f066b11` | 92 | 46 | **138** |
+| 2026-09-16 | `431f6321` (first pass under the new quarterly cadence — see `docs/ops/quarterly_hosting_cost_trend_review_cadence.md`) | 99 | 46 | **145** |
 
 ```
 Endpoint count trend (proxy for feature/load footprint)
 
+150 |                                                                 ● 145
 140 |                                                    ● 138
 130 |                                          ● 127
 120 |
@@ -44,8 +46,8 @@ Endpoint count trend (proxy for feature/load footprint)
 100 |
  90 |                        ● 95
  80 |         ● 87
-    +---------+--------------+--------------+--------------+
-      05-23         06-22          07-21          08-21
+    +---------+--------------+--------------+--------------+--------------+
+      05-23         06-22          07-21          08-21          09-16
 ```
 
 Growth is +58.6% over ~90 days (87 → 138), but — per `render_starter_tier_headroom_reassessment_2026-08-13.md` §4, reconfirmed 8 days later by this cycle's own ST-25 (`render_hosting_tier_review_2026-08-21.md`) — every added endpoint is a stateless, synchronous, on-demand handler, not new background compute. Endpoint *count* growing is not the same signal as *load* growing proportionally; a single-user system's realistic concurrent request volume does not scale 1:1 with how many distinct routes exist.
@@ -63,3 +65,5 @@ Cost: flat (no tier change). Load-proxy: +58.6% endpoint count over ~90 days, bu
 ## 6. Sign-off
 
 **FinOps & Resource Architect (agent-mediated, §5.3):** Approved — 2026-08-21. Endpoint-count trend table (87/95/127/138) independently re-derived and matched exactly; no recurring Render $-cost review series confirmed absent; render.yaml/changelog checks re-verified independently. Reframe (load-proxy trend + flat-cost fact, in place of an unavailable dollar-figure trend) judged honest and appropriately labelled throughout, not presented as a cost figure.
+
+**FinOps & Resource Architect (agent-mediated, §5.3):** Approved — 2026-09-16 (ST-10, BLG-OPS-157, EPIC-02, v9.5). New row (145 endpoints, 2026-09-16) independently re-derived and matched. §5's recommendation ("append one row per quarter... extending this into a trend over time") is now formalised as a standing cadence in `docs/ops/quarterly_hosting_cost_trend_review_cadence.md`, not left as an informal ask. See that document for this pass's full detail (§3 first-pass writeup, §4 Pass Log).

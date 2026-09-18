@@ -200,6 +200,7 @@ async def test_all_endpoints(request: Request):
         # Claude API Monthly Cost (v7.6 / EPIC-07 ST-07)
         {"name": "GET /ai/monthly-cost", "method": "GET", "url": f"{base_url}/ai/monthly-cost", "critical": False},
         {"name": "GET /ai/spend-trend", "method": "GET", "url": f"{base_url}/ai/spend-trend", "critical": False},
+        {"name": "GET /ai/spend-trend-by-feature", "method": "GET", "url": f"{base_url}/ai/spend-trend-by-feature", "critical": False},
 
         # Cost Monitoring (v9.3 / EPIC-03 ST-11/ST-12/ST-13/ST-14)
         {"name": "GET /ops/alpaca-call-report", "method": "GET", "url": f"{base_url}/ops/alpaca-call-report", "critical": False},

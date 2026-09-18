@@ -65,7 +65,6 @@ KNOWN_GAPS = {
     "GET /positions/analyze",
     "GET /positions/grace-period-alerts",
     "GET /positions/tags",
-    "GET /positions/{id}",
     "GET /positions/{id}/stop-trail",
     "PATCH /watchlist/{id}",
     "POST /alerts/rules",

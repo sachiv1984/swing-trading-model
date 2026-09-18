@@ -3167,7 +3167,7 @@ paths:
         endpoints. Sends a Telegram alert if any endpoint's cost or latency fires.
         Intended for daily scheduler invocation (GitHub Actions cron —
         .github/workflows/ai-endpoint-anomaly-check.yml).
-        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.10 §POST /ai/check-endpoint-anomalies
+        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.13 §POST /ai/check-endpoint-anomalies
       responses:
         "200":
           description: Anomaly check result
@@ -3196,7 +3196,7 @@ paths:
                     type: array
                     items:
                       type: object
-                    description: Always empty via this endpoint — no real latency data source exists yet (see latency_data_source).
+                    description: One entry per endpoint with real latency data in claude_audit_log.latency_ms (ST-13, BLG-OPS-161) — see latency_data_source.
                   firing_count:
                     type: integer
                     description: Count of entries across both arrays with is_anomaly true.
@@ -3205,7 +3205,7 @@ paths:
                     description: true when firing_count > 0 and Telegram alert was delivered.
                   latency_data_source:
                     type: string
-                    description: "\"not_available_pending_BLG-OPS-161\" via this endpoint — no latency column exists in claude_audit_log yet."
+                    description: "\"claude_audit_log\" via this endpoint (real data, ST-13, BLG-OPS-161)."
         "401":
           $ref: "#/components/responses/Unauthorized"
         "500":
@@ -3413,6 +3413,54 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /ai/spend-trend-by-feature:
+    get:
+      tags: [AI]
+      summary: Per-feature Claude API spend for the last 6 release cycles (ST-06, EPIC-02, v9.5)
+      description: |
+        Returns Claude API spend bucketed by release-cycle date window and
+        broken down by feature within each cycle -- combines
+        /ai/monthly-cost-by-feature's per-feature grouping with
+        /ai/spend-trend's multi-cycle window. Sourced from existing
+        claude_audit_log data (no new data collection). Returns fewer than
+        6 entries if fewer release cycles exist; no zero-padding, and no
+        zero-filling for features with no activity in a given cycle.
+        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.12 §GET /ai/spend-trend-by-feature
+      responses:
+        "200":
+          description: Per-release-cycle, per-feature Claude API spend array
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            version:
+                              type: string
+                              example: v9.5
+                            features:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  endpoint:
+                                    type: string
+                                    example: "POST /ai/daily-briefing"
+                                  spend_usd:
+                                    type: number
+                                    format: float
+                                    example: 2.40
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /ops/alpaca-call-report:
     get:
       tags: [Cost Monitoring]
@@ -3514,12 +3562,15 @@ paths:
       tags: [Cost Monitoring]
       summary: Delete AI audit log rows past their retention window
       description: |
-        Deletes gemini_audit_log rows older than 90 days and claude_audit_log
-        rows older than 730 days (24 months), enforcing the retention windows
-        in docs/ops/ai_audit_log_retention_policy.md. Idempotent -- safe to
+        Deletes gemini_audit_log rows older than 90 days, claude_audit_log
+        rows older than 730 days (24 months), and api_call_log rows older
+        than 90 days, enforcing the retention windows in
+        docs/ops/ai_audit_log_retention_policy.md. Idempotent -- safe to
         call repeatedly (e.g. from a daily scheduled workflow); deletes
-        nothing when no rows qualify.
-        Canonical contract: docs/specs/api_contracts/ops_endpoints.md v1.1 §POST /ops/purge-audit-logs
+        nothing when no rows qualify. Also returns possible_silent_failure,
+        flagging any table where 0 rows were deleted despite an independent
+        count finding stale rows still present.
+        Canonical contract: docs/specs/api_contracts/ops_endpoints.md v1.2 §POST /ops/purge-audit-logs
       responses:
         "200":
           description: Purge completed (possibly deleting 0 rows)
@@ -3537,6 +3588,12 @@ paths:
                             type: integer
                           claude_audit_log_rows_deleted:
                             type: integer
+                          api_call_log_rows_deleted:
+                            type: integer
+                          possible_silent_failure:
+                            type: array
+                            items:
+                              type: string
         "401":
           $ref: "#/components/responses/Unauthorized"
         "500":

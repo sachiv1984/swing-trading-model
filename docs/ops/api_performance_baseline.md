@@ -2,9 +2,9 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.35
-**Date:** 2026-09-14
-**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration; ST-09 (v9.4 EPIC-03, BLG-OPS-151) — POST /ai/check-endpoint-anomalies registration
+**Version:** 2.36
+**Date:** 2026-09-16
+**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration; ST-09 (v9.4 EPIC-03, BLG-OPS-151) — POST /ai/check-endpoint-anomalies registration; ST-09/ST-06 (v9.5 EPIC-02, BLG-OPS-156/BLG-OPS-153) — GET /positions/{id}, GET /ai/spend-trend-by-feature registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 ---
@@ -2043,10 +2043,45 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 45. GET /positions/{id} (ST-09, v9.5) and GET /ai/spend-trend-by-feature (ST-06, v9.5)
+
+**Date:** 2026-09-16
+**Stories:** ST-09 (EPIC-02, v9.5, BLG-OPS-156) — closes the `GET /positions/{id}` gap grandfathered in `scripts/check_api_performance_baseline_drift.py`'s `KNOWN_GAPS` since v6.8; ST-06 (EPIC-02, v9.5, BLG-OPS-153) — registers `GET /ai/spend-trend-by-feature`, added same-EPIC same-cycle, required by the same drift gate before this EPIC's PR opens.
+
+### 45.1 Endpoint Profiles
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /positions/{id} | Pre-v2.4 (undated — genuinely pre-existing endpoint, not a new addition; only the baseline row was missing) | Single-position lookup, no path-param-required GET run possible without a live database (this execution environment has no `DATABASE_URL` — see §11/§43 for the same disclosed constraint) — estimated | 230–280ms (est.) | 480–560ms (est.) | Pending live timing run |
+| GET /ai/spend-trend-by-feature | v9.5 | Read — up to 6 sequential `GROUP BY endpoint` windowed queries against `claude_audit_log` (one per release cycle in the trend, same query shape as `GET /ai/monthly-cost-by-feature`, §43) | 250–450ms (est., 6x the single-query cost) | 550–900ms (est.) | Pending live timing run |
+
+**`GET /positions/{id}` estimation methodology:** single-row `SELECT ... WHERE id = %s` against the `positions` table, structurally identical to `GET /positions/{id}/gap-risk` and `GET /positions/{id}/compliance-recheck` (both still pending their own live measurement per §2.2) and comparable to `GET /positions/{id}/stop-trail`'s measured 2,277–2,288ms **pre-Supavisor** run (§35.1, dummy UUID, 404 but timing still valid). Post-Supavisor (§10 established a 226–280ms p50 range for comparable single-query DB endpoints, e.g. `GET /positions` at p50=244ms), a single indexed-primary-key lookup is expected at the low end of that range, not above it — hence the 230–280ms estimate, materially lower than the pre-pooling §35.1 figure it superficially resembles.
+
+**`GET /ai/spend-trend-by-feature` estimation methodology:** the endpoint issues one `get_claude_spend_between_by_feature()` call per release cycle in the trend (up to `MAX_CYCLES` = 6, same cycle-bucketing as `GET /ai/spend-trend`, §31), each a single `GROUP BY endpoint` aggregate query of the same shape as `GET /ai/monthly-cost-by-feature` (§43, no live measurement yet either — same estimation chain). Six sequential single-connection-reused queries (one `get_db()` context per call inside the loop, not six separate connections) at ~40–70ms/query on Supavisor is consistent with the 250–450ms p50 estimate; p95 widens for the case where fewer than 6 cycles exist yet (shorter changelog) executing faster, vs. the full 6-cycle steady-state case.
+
+### 45.2 Infrastructure & Operations Owner / FinOps & Resource Architect Sign-Off
+
+```
+ST-09 (v9.5 EPIC-02, BLG-OPS-156) / ST-06 (v9.5 EPIC-02, BLG-OPS-153) — Baseline Registration Sign-Off
+
+AC (ST-09): api_performance_baseline.md has a row for GET /positions/{id}. ✅ PASS (§45.1)
+AC (ST-06, sub-item 2 traceability): new endpoint registered before PR open,
+       per the API Performance Baseline Drift Detection CI gate. ✅ PASS (§45.1)
+Estimation methodology documented per endpoint, consistent with §43/§44
+       precedent (no live database in this execution environment). ✅ PASS
+Entry format consistent with existing baseline rows. ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-09-16
+Signed: [x] FinOps & Resource Architect (agent-mediated, §5.3) — 2026-09-16
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.36 | 2026-09-16 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner + FinOps & Resource Architect roles — §5.3) | ST-09 (v9.5 EPIC-02, BLG-OPS-156) / ST-06 (v9.5 EPIC-02, BLG-OPS-153): §45 added — `GET /positions/{id}` registered (closes the `KNOWN_GAPS`-grandfathered gap open since v6.8; removed from `scripts/check_api_performance_baseline_drift.py`'s `KNOWN_GAPS` in the same commit) and `GET /ai/spend-trend-by-feature` registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the latter path in the same PR. |
 | 2.35 | 2026-09-14 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-09 (v9.4 EPIC-03, BLG-OPS-151): §44 added — POST /ai/check-endpoint-anomalies registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained this path in the same PR. |
 | 2.34 | 2026-09-10 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-11/ST-12/ST-13/ST-14 (v9.3 EPIC-03, BLG-OPS-17/BLG-OPS-20/BLG-OPS-94/BLG-OPS-96): §43 added — GET /ops/alpaca-call-report, GET /ops/research-session-report, GET /ai/monthly-cost-by-feature, POST /ops/purge-audit-logs registered pending live timing runs. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained these 4 paths across this EPIC's stories. |
 | 2.33 | 2026-09-09 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-01 (v9.3 EPIC-01, BLG-BE-13): §42 added — GET /screener/history registered pending live timing run. Same table/index shape as GET /screener/regime-distribution. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/screener/history` path in the same PR. |

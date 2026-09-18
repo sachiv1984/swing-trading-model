@@ -1,0 +1,47 @@
+# .github/workflows/rebalance-exit.yml
+# Nightly rebalance-exit signal generation — ST-05 (BLG-OPS-160, EPIC-02, v9.5).
+# Confirmed live P1 gap (same failure mode risk-off-alerts.yml, ST-02/BLG-OPS-145/v8.8,
+# fixed for risk_off_exit): POST /signals/rebalance-exit existed and wired into
+# GET /health/scheduler's job registry ("rebalance_exit"/"inv_vol_sizing"), but nothing
+# scheduled it — no GitHub Actions workflow, no render.yaml cron entry. Confirmed via
+# the Render dashboard (free tier: no Cron Jobs resource type available at all — only
+# General/Build/Deploy/Custom Domains/PR Previews/Networking/Edge Caching/
+# Notifications/Health Checks/Maintenance Mode/Delete-or-suspend tabs, none of which
+# is a job scheduler), so this was never a dashboard-only job hiding from repo search
+# either — it simply never had any trigger.
+#
+# Safe to run daily despite the "last trading day of month" scope:
+# generate_rebalance_exit_signals() (backend/services/signal_service.py) self-gates —
+# it checks internally whether today is the last trading day of the month and returns
+# a no-op summary otherwise, so a daily weekday schedule (matching every other nightly
+# job in this file set) is correct, not redundant or unsafe; no month-end-only cron
+# expression is needed.
+#
+# Sequenced after screener-refresh.yml (22:00 UTC, refreshes the top-5 momentum
+# signal tickers this job reads) and nightly-stop-update.yml (22:30 UTC), since
+# stops should be current before exit signals are generated against them.
+# Uses GitHub Actions schedule (free tier) instead of Render cron (paid —
+# unavailable on this plan), consistent with alert-evaluation.yml/
+# screener-refresh.yml/risk-off-alerts.yml/nightly-stop-update.yml.
+# Required secrets: API_URL, API_KEY (same as daily-snapshot.yml).
+name: Nightly Rebalance Exit Signals
+
+on:
+  schedule:
+    - cron: '45 22 * * 1-5'  # 22:45 UTC weekdays (after nightly-stop-update.yml)
+  workflow_dispatch:            # Allow manual trigger for testing
+
+jobs:
+  generate-rebalance-exit-signals:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger rebalance-exit signal generation
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          echo "Triggering rebalance-exit signal generation at $(date -u)..."
+          curl -f --max-time 120 -X POST "${API_URL}/signals/rebalance-exit" \
+            -H "X-API-Key: ${API_KEY}" \
+            -H "Content-Type: application/json"
+          echo "Rebalance-exit signal generation complete."

@@ -137,3 +137,86 @@ def test_spend_trend_endpoint_returns_ok_envelope(monkeypatch):
     body = response.json()
     assert body["status"] == "ok"
     assert body["data"] == [{"version": "v7.8", "spend_usd": 1.23}]
+
+
+# ---------------------------------------------------------------------------
+# get_ai_spend_trend_by_feature (ST-06 sub-item 2, BLG-OPS-153, EPIC-02, v9.5)
+# ---------------------------------------------------------------------------
+
+def test_get_ai_spend_trend_by_feature_takes_last_6_cycles_oldest_to_newest(monkeypatch, tmp_path):
+    changelog_file = tmp_path / "changelog.md"
+    changelog_file.write_text(SAMPLE_CHANGELOG)
+    monkeypatch.setattr(trend_service, "CHANGELOG_PATH", changelog_file)
+
+    calls = []
+
+    def fake_spend_between_by_feature(start, end):
+        calls.append((start, end))
+        return [{"endpoint": "POST /ai/chat", "spend_usd": 1.0}]
+
+    import database
+    monkeypatch.setattr(
+        database, "get_claude_spend_between_by_feature", fake_spend_between_by_feature, raising=False
+    )
+
+    trend = trend_service.get_ai_spend_trend_by_feature()
+
+    versions = [t["version"] for t in trend]
+    assert versions == ["v7.3", "v7.4", "v7.5", "v7.6", "v7.7", "v7.8"]
+    assert all(t["features"] == [{"endpoint": "POST /ai/chat", "spend_usd": 1.0}] for t in trend)
+    assert calls[0] == ("2026-07-16", "2026-07-17")  # v7.3 -> v7.4
+    assert calls[-1] == ("2026-08-01", None)  # v7.8, open-ended
+
+
+def test_get_ai_spend_trend_by_feature_empty_for_missing_changelog(monkeypatch, tmp_path):
+    monkeypatch.setattr(trend_service, "CHANGELOG_PATH", tmp_path / "does_not_exist.md")
+    assert trend_service.get_ai_spend_trend_by_feature() == []
+
+
+def test_get_ai_spend_trend_by_feature_no_zero_filling_for_inactive_features(monkeypatch, tmp_path):
+    short_changelog = """## v7.8 — Test — 2026-08-01
+## v7.7 — Test — 2026-07-24
+"""
+    changelog_file = tmp_path / "changelog.md"
+    changelog_file.write_text(short_changelog)
+    monkeypatch.setattr(trend_service, "CHANGELOG_PATH", changelog_file)
+
+    import database
+    # v7.7 window has no activity -> [] ; v7.8 window has one feature.
+    monkeypatch.setattr(
+        database, "get_claude_spend_between_by_feature",
+        lambda start, end: [] if end else [{"endpoint": "POST /ai/chat", "spend_usd": 2.5}],
+        raising=False,
+    )
+
+    trend = trend_service.get_ai_spend_trend_by_feature()
+    by_version = {t["version"]: t["features"] for t in trend}
+    assert by_version["v7.7"] == []
+    assert by_version["v7.8"] == [{"endpoint": "POST /ai/chat", "spend_usd": 2.5}]
+
+
+def test_real_changelog_produces_a_feature_trend():
+    # Integration sanity check against the actual repo changelog.
+    trend = trend_service.get_ai_spend_trend_by_feature()
+    assert isinstance(trend, list)
+    assert len(trend) <= 6
+    if trend:
+        assert all("version" in t and "features" in t for t in trend)
+
+
+def test_spend_trend_by_feature_endpoint_returns_ok_envelope(monkeypatch):
+    from fastapi.testclient import TestClient
+    from main import app
+
+    monkeypatch.setattr(
+        trend_service, "get_ai_spend_trend_by_feature",
+        lambda: [{"version": "v9.5", "features": [{"endpoint": "POST /ai/chat", "spend_usd": 1.23}]}],
+    )
+    client = TestClient(app)
+    response = client.get("/ai/spend-trend-by-feature")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "ok"
+    assert body["data"] == [
+        {"version": "v9.5", "features": [{"endpoint": "POST /ai/chat", "spend_usd": 1.23}]}
+    ]

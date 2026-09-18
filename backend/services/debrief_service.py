@@ -35,6 +35,7 @@ than threading debrief generation into the live trade-close call chain.
 """
 import os
 import re
+import time
 from typing import Optional
 
 from database import (
@@ -340,6 +341,7 @@ def generate_trade_debrief(trade_id: str) -> dict:
     generation_status = "ok"
     compliance_check_result = None
     usage_for_audit = None
+    t0 = time.time()
 
     for attempt in (1, 2):
         try:
@@ -385,6 +387,7 @@ def generate_trade_debrief(trade_id: str) -> dict:
             output_tokens=completion_tokens,
             cost_usd=cost_usd,
             compliance_check_result=compliance_check_result,
+            latency_ms=int((time.time() - t0) * 1000),
         )
 
     if focus_area_text:
