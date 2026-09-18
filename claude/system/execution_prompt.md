@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.76
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #4 resolution — new STEP -1.2A Non-Blocking SLA-Breach Advisory Surfacing, surfacing (not halting on) any open, SLA-breached, non-blocking escalation at every `run sprint` invocation, per shared_standards.md §16.4.1); prior — 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 STEP 8 immediate action, Head of Specs Team direct action — §5.3 gains a pre-merge sign-off format lint requiring the `Signed off by:` line be validated against the recognised-format list before an EPIC's PR opens, LL-v9.3-P4-01); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, Head of Specs Team direct action — STEP 4 step 3a gains a same-step self-verification read-back (LL-v9.2-P3-01), mirroring step 10a's existing fix; STEP 3.1.A's never-amend-a-pushed-commit guardrail (LL-v9.1-P3-02) extended to explicitly cover the failed-intermediate-commit trigger path (LL-v9.2-P3-02)); prior history retained — see prior entries in version control.
+**Version:** 3.77
+**Last Updated:** 2026-09-18 (ST-31/BLG-GOV-332, sprint execution `2026-09-15__release-v9.5` — the existing Resolving-commit deviation-closure discipline, step 10a, `LL-v9.0-P4-01`, was scoped only to §3.1.A's own numbered steps; §3.1.B and §3.1.D now explicitly cross-reference it so delegated-path commits are not silently exempt); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #4 resolution — new STEP -1.2A Non-Blocking SLA-Breach Advisory Surfacing, per shared_standards.md §16.4.1); prior — 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 STEP 8 immediate action — §5.3 gains a pre-merge sign-off format lint, LL-v9.3-P4-01); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -648,6 +648,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 - If yes: transition item to `done`, verify acceptance criteria, update state.
   - Confirm `spec_references` is populated (fill now if missing — ask the assignee which spec section was implemented).
   - Check for deviations: if implementation diverges from the spec, file the deviation in the canonical spec before setting `deviations_filed = true`.
+  - **Resolving-commit deviation-closure discipline applies here too (BLG-GOV-332):** if the assignee's commit closes the root cause of a *pre-existing*, already-filed deviation, the same commit must also update that deviation's own labelled Known Deviation fields in its canonical spec entry, per the rule at STEP 3.1.A step 10a (`LL-v9.0-P4-01`) — this delegated path is not exempt from that discipline merely because the commit was authored by the assignee rather than the engine.
   - **HARD GATE: Update the delegation log entry** (per `shared_standards.md §16.3`) — two-phase write: **(a) sign-off step:** set DEL record `status = "sign_off_cleared"` when sign-off is confirmed; **(b) push step:** set DEL record `commit_sha` when the commit SHA is recorded. Both sub-steps must complete before setting the DEL entry to terminal state `Unblocked`. Set item `status = done` in `execution_state.json` atomically with the `Unblocked` write. Do not advance to the next ST item until the delegation log entry is at terminal state `Unblocked` and execution_state item is `done`.
 - If no: keep blocked and report status to user.
 
@@ -655,7 +656,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 
 1. Complete all autonomous work for the item.
 2. Confirm `spec_references` is populated. Populate now if missing.
-3. Commit and push per 3.1.A steps 3–9 (deviation check applies here too).
+3. Commit and push per 3.1.A steps 3–9 (deviation check applies here too, including the Resolving-commit deviation-closure discipline at step 10a — BLG-GOV-332).
 4. Set item status to `blocked_qa`.
 5. Create `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` if it does not already exist (use the header and structure defined in Section 3.2.A). Then append an entry for this ST item:
    - ST item ID and title
@@ -687,7 +688,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 
 **SLA breach tracking:** Per `claude/system/shared_standards.md §16.4`.
 
-**Unblock detection:** Check escalation record for Resolved or Accepted Risk disposition. If resolved: re-classify item and resume. **HARD GATE: Update the delegation log entry** (per `shared_standards.md §16.3`) — two-phase write: **(a) sign-off step:** set DEL record `status = "sign_off_cleared"` when the escalation disposition is resolved; **(b) push step:** set DEL record `commit_sha` when the commit SHA is recorded. Set item `status = done` in `execution_state.json` atomically with the terminal `Unblocked` write. Do not advance to the next ST item until both are recorded.
+**Unblock detection:** Check escalation record for Resolved or Accepted Risk disposition. If resolved: re-classify item and resume — the re-classified item then inherits whichever of §3.1.A/§3.1.C actually applies, including the Resolving-commit deviation-closure discipline (step 10a, `LL-v9.0-P4-01`/`BLG-GOV-332`) if its resolving commit closes a pre-existing deviation. **HARD GATE: Update the delegation log entry** (per `shared_standards.md §16.3`) — two-phase write: **(a) sign-off step:** set DEL record `status = "sign_off_cleared"` when the escalation disposition is resolved; **(b) push step:** set DEL record `commit_sha` when the commit SHA is recorded. Set item `status = done` in `execution_state.json` atomically with the terminal `Unblocked` write. Do not advance to the next ST item until both are recorded.
 
 ### 3.2 EPIC Completion
 
