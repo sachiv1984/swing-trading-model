@@ -470,3 +470,39 @@ test.describe('SC-ARC5-12 — Low-trade-volume advisory singular/plural copy', (
     await expect(advisory).toContainText('Based on 0 closed trades');
   });
 });
+
+// ---------------------------------------------------------------------------
+// SC-ARC5-13 — Reliability/remaining-count clause + above-grid placement
+// (ST-43, EPIC-06, v9.5, BLG-UX-05)
+// ---------------------------------------------------------------------------
+
+test.describe('SC-ARC5-13 — Low-trade-volume advisory reliability clause and placement', () => {
+  test('SC-ARC5-13a: advisory copy includes the reliability/remaining-count clause', async ({ page }) => {
+    await mockFallback(page);
+    await mockArc5Compliance(page, ARC5_LOW_VOLUME);
+    await gotoAnalytics(page);
+
+    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+    const advisory = page.getByTestId('arc5-low-volume-advisory');
+    await expect(advisory).toBeVisible({ timeout: 8000 });
+    // ARC5_LOW_VOLUME.total_closed_trades = 12 -> 20 - 12 = 8 more needed.
+    await expect(advisory).toContainText('Reliability improves at 20+ closed trades (8 more needed).');
+  });
+
+  test('SC-ARC5-13b: advisory banner renders above the 4-card stat grid, not below', async ({ page }) => {
+    await mockFallback(page);
+    await mockArc5Compliance(page, ARC5_LOW_VOLUME);
+    await gotoAnalytics(page);
+
+    const advisory = page.getByTestId('arc5-low-volume-advisory');
+    await expect(advisory).toBeVisible({ timeout: 8000 });
+    const firstCardTitle = page.getByText('Red Flag Events/Week');
+    await expect(firstCardTitle).toBeVisible({ timeout: 8000 });
+
+    const advisoryBox = await advisory.boundingBox();
+    const cardBox = await firstCardTitle.boundingBox();
+    expect(advisoryBox).not.toBeNull();
+    expect(cardBox).not.toBeNull();
+    expect(advisoryBox.y).toBeLessThan(cardBox.y);
+  });
+});
