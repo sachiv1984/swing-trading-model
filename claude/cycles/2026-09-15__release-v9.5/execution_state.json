@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T18:31:00Z",
+  "last_updated_utc": "2026-09-18T18:35:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -1051,23 +1051,26 @@
         "ST-42": {
           "title": "Bring 9 non-conforming toast call sites into line with the Toast Notification Timing standard",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1710,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "59513008",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T18:34:35Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Toast Notification Timing",
+            "docs/design/2026-09-14__release-v9.4/toast-timing-standard/decision_record.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Sequence after ST-41 — both edit design_system.md."
+          "notes": "Timing-behaviour change. No existing Playwright test asserts these specific 9 call sites' duration -- filed BLG-QA-180 before commit per CLAUDE.md S2's hard gate rather than deferring silently. Re-ran adjacent suites (watchlist, settings) for runtime-regression confidence: 10/10 passed. Real CI confirmation still pending (PR not yet open), same as ST-41's outstanding note."
         },
         "ST-43": {
           "title": "Arc 5 low-trade-volume advisory: surface the 20-trade threshold and remaining-trades count, reconsider placement above the stat grid",
