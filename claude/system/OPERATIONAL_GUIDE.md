@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.192
-**Last Updated:** 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-32/BLG-GOV-316 — roadmap_prompt.md v9.21→v9.22: wires shared_standards.md §22's Wall-Clock Cost Logging Convention into STEP 1.1/STEP 12.1; §6 source-prompt line and 1 §14 table row updated); prior — 2026-09-18 (ST-31/BLG-GOV-332 — execution_prompt.md v3.76→v3.77 + document_lifecycle_guide.md v2.8→v2.9: Resolving-commit deviation-closure discipline cross-referenced into §3.1.B/§3.1.D; §8 source-prompt line and 2 §14 table rows updated); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 outstanding-actions resolution, user-directed — 5 source prompts/charter files bumped; §6/§6B/§8 source-prompt lines and 4 §14 table rows updated); prior history retained — see prior entries in version control.
+**Version:** 4.193
+**Last Updated:** 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-33/BLG-GOV-318 — execution_prompt.md v3.77→v3.78: §7 Write Scope Restriction gains an Opportunistic In-File Fix Disclosure Threshold; §8 source-prompt line and 1 §14 table row updated); prior — 2026-09-18 (ST-32/BLG-GOV-316 — roadmap_prompt.md v9.21→v9.22: wires shared_standards.md §22's Wall-Clock Cost Logging Convention into STEP 1.1/STEP 12.1); prior — 2026-09-18 (ST-31/BLG-GOV-332 — execution_prompt.md v3.76→v3.77 + document_lifecycle_guide.md v2.8→v2.9: Resolving-commit deviation-closure discipline cross-referenced into §3.1.B/§3.1.D); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.77)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.78)
 
 ### 8.1 Invocation
 
@@ -1363,7 +1363,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.192 |
+| Version | 4.193 |
 | Last Updated | 2026-09-15 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
@@ -1376,7 +1376,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.52 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.18 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.77 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.78 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.15 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.11 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
@@ -1499,6 +1499,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.193 | 2026-09-18 | **Sprint execution `2026-09-15__release-v9.5` ST-33/`BLG-GOV-318` — execution_prompt.md v3.77→v3.78.** §7 Write Scope Restriction gains an "Opportunistic in-file fix disclosure threshold": distinguishes the existing out-of-scope-finding backlog exception (a fix in a file not already open for the story) from a narrower case — an incidental, small, low-risk defect found in a file already being edited for the current story, where commit-message disclosure under a distinctly labelled sub-section is now documented as sufficient. Resolves an ambiguity found live at PR #1600 (`2026-09-08__release-v9.2`, EPIC-05). §8 source prompt header v3.77→v3.78 (line 887). §14 table: Execution Engine Source v3.77→v3.78. §14 self-row Version/Last Updated 4.192/2026-09-18→4.193/2026-09-18. Authority: Product Owner (agent-mediated, §5.3, ST-33). |
 | 4.192 | 2026-09-18 | **Sprint execution `2026-09-15__release-v9.5` ST-32/`BLG-GOV-316` — roadmap_prompt.md v9.21→v9.22.** Wires `shared_standards.md` §22's Governance-Cycle Wall-Clock Cost Logging Convention into this engine's own STEP list: STEP 1.1 (run_manifest.md creation) now explicitly instructs capturing `Session start (UTC)`; STEP 12.1 (immediately before commit) instructs capturing `Session end (UTC)` and the computed elapsed duration, with a halt-path note. The convention previously existed only as a standalone shared-standards entry with no engine STEP explicitly citing it. §6 source prompt header v9.21→v9.22 (line 399). §14 table: Roadmap Engine Source v9.21→v9.22. §14 self-row Version/Last Updated 4.191/2026-09-18→4.192/2026-09-18. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, §5.3, ST-32). |
 | 4.191 | 2026-09-18 | **Sprint execution `2026-09-15__release-v9.5` ST-31/`BLG-GOV-332` — execution_prompt.md v3.76→v3.77.** The existing Resolving-commit deviation-closure discipline (§3.1.A step 10a, `LL-v9.0-P4-01`) was scoped only to §3.1.A's own numbered steps; §3.1.C already inherited it via its "steps 3–9 (deviation check applies here too)" wording, but §3.1.B (`delegated_backend`/`delegated_frontend`) and §3.1.D (`delegated_decision`) unblock-detection paths did not — leaving delegated-path resolving commits silently exempt. Added explicit cross-references in both. Companion change: `claude/charter/document_lifecycle_guide.md` v2.8→v2.9, new §9 "Resolving-commit closure discipline" subsection cross-referencing the same mechanics. §8 source prompt header v3.76→v3.77 (line 887). §14 table: Execution Engine Source v3.76→v3.77; Lifecycle Guide v2.8→v2.9 (2 rows). §14 self-row Version/Last Updated 4.190/2026-09-15→4.191/2026-09-18. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, §5.3, ST-31, 2026-09-18). |
 | 4.190 | 2026-09-15 | **Post-ship closure `2026-09-14__release-v9.4` outstanding-actions resolution (user-directed, "fix the 5 outstanding actions") — 5 source prompts/charter files bumped, resolving all 5 of the closure's own Outstanding Actions.** §14 table updated: `roadmap_prompt.md` v9.20→v9.21 (new §7.3 Ready-Pool Capacity Gap Trend, resolving OA#1 — mandatory Product Owner/Head of Specs Team decision point after 3 consecutive widening ready-pool-vs-capacity readings; current reading 2 consecutive, no action yet); `claude/charter/document_lifecycle_guide.md` v2.7→v2.8 (§9 gains a required `DEV-<id>` field on every Known Deviation entry, resolving OA#2 — plus retroactive `DEV-<id>` assignment to the 2 non-compliant entries found by the 5th consolidation review); `release_planning_prompt.md` v2.51→v2.52 (new §1.4c Canonical Over-Capacity Ready-Pool Selection Method, resolving OA#3); `execution_prompt.md` v3.75→v3.76 + `shared_standards.md` v3.33→v3.34 (new STEP -1.2A / §16.4.1 Non-Blocking SLA-Breach Advisory Surfacing, resolving OA#4). OA#5 resolved by filing `BLG-GOV-332` directly (backlog item, no governance-prompt edit required). §6 source prompt header v9.20→v9.21 (line 399); §6B source prompt header v2.51→v2.52 (line 623); §8 source prompt header v3.75→v3.76 (line 887). §14 table: Roadmap Engine Source, Release Engine Source, Execution Engine Source, Shared Standards, Lifecycle Guide (5 rows). §14 self-row Version/Last Updated 4.189/2026-09-15→4.190/2026-09-15. Authority: Head of Specs Team (OA#2/#3/#4/#5), Head of Specs Team + PMO Lead (OA#1) — Sprint Execution Engine, agent-mediated, per explicit user direction, 2026-09-15. |
