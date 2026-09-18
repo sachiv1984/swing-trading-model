@@ -1,12 +1,12 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.5
 Cycle: 2026-09-15__release-v9.5
-Last Updated: 2026-09-15
+Last Updated: 2026-09-18
 
-Superseded by: [TBD]
-Changelog: [TBD]
+Superseded by: v9.5 ship — 2026-09-18
+Changelog: docs/product/changelog.md#v95
 Cycle: 2026-09-15__release-v9.5
 
 ## Planning Decisions — v9.5 Full-Capacity Debt Clearance III
@@ -32,8 +32,7 @@ Cycle: 2026-09-15__release-v9.5
 | None | — | No escalations raised during this release-planning session | — | — |
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
+Superseded by: v9.5 ship — 2026-09-18
+Changelog: docs/product/changelog.md#v95
 Cycle: 2026-09-15__release-v9.5

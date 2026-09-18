@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 — §44 Test Coverage Gaps v9.4 section added, 0 new gaps, TSG sweep 0 Open; see Changelog table for full history)
+**Last Updated:** 2026-09-18 (post-ship closure 2026-09-15__release-v9.5 — §45 Test Coverage Gaps v9.5 section added, 0 new gaps, TSG sweep 0 Open; see Changelog table for full history)
 
 ---
 
@@ -1164,6 +1164,16 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 **Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** One new backend route was introduced this cycle — `POST /ai/check-endpoint-anomalies` (ST-09, BLG-OPS-151) — and was registered in the same commit (`952ac326`) across `docs/reference/openapi.yaml`, `docs/ops/api_performance_baseline.md` §44, `backend/routers/test.py`, and `src/pages/SystemStatus.js`'s endpoint-count fallback (122→123), per CLAUDE.md §2. No coverage drift found. No new top-level path prefix introduced (`/ai/` already an existing `categorizeEndpoint()` category).
 
 **TSG backlog reconciliation (§7.3 — full-document sweep, per `post_ship_closure.md`'s no-fixed-section-number scan rule):** Scanned all 26 `### N.N TSG-*` entries (§9–§40) for literal `**Status:** Open`. 0 Open entries found — every existing TSG entry already carries a `RESOLVED`/`not_applicable`/confirmed-still-open disposition (most recently reconciled at v8.6/§39, v9.0/§40, v9.1/§41, v9.2/§42, and v9.3/§43 closures). 0 Open TSG entries checked, 0 resolved.
+
+---
+
+## 45. Test Coverage Gaps — v9.5 (2026-09-15__release-v9.5)
+
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — all 6 EPICs' `test_scenarios` arrays were cross-referenced against their `qa_evidence_EPIC-xx.md` "Scenarios run" fields and confirmed executed; EPIC-05 correctly recorded `not_applicable` (empty `test_scenarios`, entirely governance/process/documentation scope, no frontend-visible AC). Table is N/A per §6.
+
+**Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** Post-ship closure re-ran the normalised `openapi.yaml`-vs-`api_performance_baseline.md` diff (path-parameter and Markdown-formatting normalisation applied per v2.33). 146 normalised endpoints in `openapi.yaml`, all present in `api_performance_baseline.md` — 0 gap. New routes this cycle (`GET /ai/spend-trend-by-feature` ST-06, `POST /ops/purge-audit-logs` ST-07, `POST /ai/check-endpoint-anomalies` latency-column wiring ST-13) all fall under existing `categorizeEndpoint()` prefixes (`/ai`, `/ops` — the latter pre-dating this cycle via `BLG-OPS-17`/`BLG-OPS-20`, v9.3). No new top-level path prefix introduced.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep, per `post_ship_closure.md`'s no-fixed-section-number scan rule):** Scanned all `### N.N TSG-*` entries (§9–§40) for literal `**Status:** Open`. 0 Open entries found — every existing TSG entry already carries a `RESOLVED`/`not_applicable`/confirmed-still-open disposition. 0 Open TSG entries checked, 0 resolved.
 
 ---
 

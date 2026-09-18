@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.196
-**Last Updated:** 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-39/BLG-GOV-324 — roadmap_prompt.md v9.23→v9.24: STEP 8.0.5/STEP 8.2's near-duplicated verification logic extracted into one shared subroutine, no behavioural change; §6 source-prompt line and 1 §14 table row updated); prior — 2026-09-18 (ST-37/BLG-GOV-322 — roadmap_prompt.md v9.22→v9.23: §7.1 gains a Cross-role pairing rotation note cross-reference); prior — 2026-09-18 (ST-36/BLG-GOV-321 — team_charter.md v1.8→v1.9: new §11 Lightweight Role-Retirement Process); prior history retained — see prior entries in version control.
+**Version:** 4.197
+**Last Updated:** 2026-09-18 (post-ship closure `2026-09-15__release-v9.5` STEP 8, LL-v9.5-Release-01/02 — release_planning_prompt.md v2.52→v2.53: §1.3a gains a data-quality-warning-is-not-exclusionary note, §1.4c step 1 renamed "P1-then-P2-first"; §6B source-prompt line and 1 §14 table row updated); prior — 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-39/BLG-GOV-324 — roadmap_prompt.md v9.23→v9.24: STEP 8.0.5/STEP 8.2's near-duplicated verification logic extracted into one shared subroutine, no behavioural change; §6 source-prompt line and 1 §14 table row updated); prior — 2026-09-18 (ST-37/BLG-GOV-322 — roadmap_prompt.md v9.22→v9.23: §7.1 gains a Cross-role pairing rotation note cross-reference); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.52)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.53)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1373,7 +1373,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.10 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.24 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.52 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.53 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.18 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.78 |
@@ -1499,6 +1499,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.197 | 2026-09-18 | **Post-ship closure `2026-09-15__release-v9.5` STEP 8 (LL-v9.5-Release-01/LL-v9.5-Release-02) — release_planning_prompt.md v2.52→v2.53.** §1.3a Gate-Detection Procedure gains an explicit note that a data-quality warning is not itself exclusionary — each flagged item's own body text and `Type` field must still be read individually before deciding ready/not-ready, closing a gap that cost `BLG-SPEC-56`/`BLG-SPEC-57`/`BLG-QA-59` two consecutive cycles' (`v9.3`, `v9.4`) worth of legitimately-doable pre-work before being correctly re-included at `v9.5`. §1.4c step 1 renamed "P2-first" → "P1-then-P2-first" — `v9.5` was the first cycle with genuine ready P1 items (`BLG-BE-117`, `BLG-OPS-160`), and the step's wording now matches the P1-ahead-of-P2 ordering already applied by evident intent. §6B source prompt header v2.52→v2.53 (line 623). §14 table: Release Engine Source v2.52→v2.53. §14 self-row Version/Last Updated 4.196/2026-09-18→4.197/2026-09-18. Authority: Head of Specs Team (post-ship closure STEP 8 immediate-action rule, 2026-09-18). |
 | 4.196 | 2026-09-18 | **Sprint execution `2026-09-15__release-v9.5` ST-39/`BLG-GOV-324` — roadmap_prompt.md v9.23→v9.24.** STEP 8.0.5 and STEP 8.2's independently-defined, near-identical "check this BLG-ID against `backlog.md`, exclude if shipped/absent" logic extracted into one new callable "Candidate/Item Backlog-Status Verification Subroutine." Both steps now reference it; each step's own trigger points, scope, and exclusion outcomes are unchanged — a pure consolidation, no behavioural change. §6 source prompt header v9.23→v9.24 (line 399). §14 table: Roadmap Engine Source v9.23→v9.24. §14 self-row Version/Last Updated 4.195/2026-09-18→4.196/2026-09-18. Authority: Head of Specs Team (agent-mediated, §5.3, ST-39). |
 | 4.195 | 2026-09-18 | **Sprint execution `2026-09-15__release-v9.5` ST-37/`BLG-GOV-322` — roadmap_prompt.md v9.22→v9.23.** §7.1 Skill-Silo Alert gains a "Cross-role pairing rotation note" cross-reference: when naming a pull-forward candidate, also read `workforce_capacity.md`'s new advisory rotation-guidance section (§14 companion change — see `workforce_capacity.md`'s own non-governance-prompt update, not tracked in this table). §6 source prompt header v9.22→v9.23 (line 399). §14 table: Roadmap Engine Source v9.22→v9.23. §14 self-row Version/Last Updated 4.194/2026-09-18→4.195/2026-09-18. Authority: Director of HR (agent-mediated, §5.3, ST-37). |
 | 4.194 | 2026-09-18 | **Sprint execution `2026-09-15__release-v9.5` ST-36/`BLG-GOV-321` — team_charter.md v1.8→v1.9.** New §11 Lightweight Role-Retirement Process: a 6-month, AND-conditioned (no idea-intake submission AND no owned story) qualifying threshold for `claude/agents/` charter review, checked at each `run ideas housekeeping` invocation or annual review, with defined outcomes (keep/merge/retire) and a review log. Applied once this session: 0 of 23 roles qualified (22 submitted in the most recent idea window; the 23rd, Facilitator, has 0 submissions ever but owned a story ~4 months ago, short of the 6-month bar). §14 table: Team Charter v1.8→v1.9. §14 self-row Version/Last Updated 4.193/2026-09-18→4.194/2026-09-18. Authority: Director of HR (agent-mediated, §5.3, ST-36). |

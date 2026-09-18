@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.52
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #3 resolution — new §1.4c Canonical Over-Capacity Ready-Pool Selection Method, codifying the category-balanced/P2-first/oldest-first method already in ad hoc use since v8.5); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-Release-02 — STEP 4.1's design-gate scan now also checks each candidate's `Scope` text for UI-shipping verbs, not `Acceptance Criteria` text alone); prior — 2026-09-14 (AUD-2026-09-14-001: STEP -1.6 gains an SLA-breach carry-forward hard gate — a prior cycle's breached, unresolved escalation now blocks opening a new release cycle); prior history retained — see prior entries in version control.
+**Version:** 2.53
+**Last Updated:** 2026-09-18 (post-ship closure 2026-09-15__release-v9.5 STEP 8, LL-v9.5-Release-01/02 — §1.3a gains an explicit note that a data-quality warning is not itself exclusionary; §1.4c step 1 renamed "P1-then-P2-first" to match its evident intent now that a cycle has held genuine ready P1 items); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #3 resolution — new §1.4c Canonical Over-Capacity Ready-Pool Selection Method, codifying the category-balanced/P2-first/oldest-first method already in ad hoc use since v8.5); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-Release-02 — STEP 4.1's design-gate scan now also checks each candidate's `Scope` text for UI-shipping verbs, not `Acceptance Criteria` text alone); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -554,6 +554,8 @@ This replaces ad hoc reading of each candidate's fields, which produced 3 self-c
 
 **Not a hard gate:** the script always exits 0 — it is a scan/report tool, not a CI gate. A data-quality warning does not block release planning; it is a flag for a future `groom backlog` pass to correct the source item's fields.
 
+**A data-quality warning is not itself exclusionary (LL-v9.5-Release-01, `2026-09-15__release-v9.5` closure).** Do not treat the full list of data-quality-warned items as a single disposition ("all not-ready"). Each flagged item's own body text and `Type` field must still be read individually before deciding ready/not-ready — a warning only means the item's `Provisional-Target` free text resembles gate language with no formal `Gate` field backing it; it does not mean the item is actually gated. In particular, items describing pre-work meant to happen *ahead of* a future gate (e.g. "pre-authoring before the PO-02 gate") are the functional opposite of items that state they may not enter sprint planning *until* a gate clears, even though both surface under the same scripted warning. Confirmed real: `BLG-SPEC-56`/`BLG-SPEC-57`/`BLG-QA-59` were excluded from the ready pool for two consecutive cycles (`v9.3`, `v9.4`) on this basis before being correctly re-included at `v9.5`.
+
 ### 1.4a Perennial-Return Check (Advisory — triggers PO active disposition)
 
 Before finalising the scope candidate list, check each conditional or gate-blocked candidate item (per §1.3a's scripted scan output):
@@ -606,7 +608,7 @@ Before finalising sprint capacity and scope classification, identify any candida
 **When this applies:** The ungated/ready pool (per §1.3a's Gate-Detection Procedure output) totals more estimated days than the confirmed capacity band's upper bound for this cycle.
 
 **Selection method (canonical):**
-1. **P2-first:** Select all ready P2 items before any P3 item, in ascending backlog-ID order within P2.
+1. **P1-then-P2-first (LL-v9.5-Release-02, `2026-09-15__release-v9.5` closure):** Select all ready P1 items first (ascending backlog-ID order within P1), then all ready P2 items (ascending backlog-ID order within P2), before any P3 item. Every cycle from `v8.5` through `v9.3` held 0 ready P1 items, so this step's original wording ("P2-first") never had to say so explicitly; `v9.5` was the first cycle with genuine ready P1 items (`BLG-BE-117`, `BLG-OPS-160`) and applied the evidently-intended P1-ahead-of-P2 ordering as a reading of the rule's purpose rather than its then-literal text. This step's wording now matches that intent directly.
 2. **Category-balanced round-robin:** Among remaining ready items (after any P2 items are placed), round-robin across the backlog's type categories (Backend, QA, Ops/Security, Spec/Documentation, Governance/Process, Frontend/UX/Product, etc.) so no single category dominates the cycle's scope — one item per category per pass, cycling until capacity is filled or the pool is exhausted.
 3. **Oldest-first within a category:** Within each category's round-robin turn, select the oldest-filed ready item first (by `Source`/filing date), not by backlog-ID numeric order — this surfaces the longest-waiting debt first.
 4. **Stop at capacity:** Stop selecting once the cumulative estimated days reaches the top of the confirmed capacity band (per the standing "use full capacity" instruction) or the pool is exhausted, whichever comes first.

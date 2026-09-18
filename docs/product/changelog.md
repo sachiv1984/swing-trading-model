@@ -3,11 +3,79 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 — v9.4 entry added); prior — 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 — v9.3 entry added); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 — v9.2 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-09-18 (post-ship closure 2026-09-15__release-v9.5 — v9.5 entry added); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 — v9.4 entry added); prior — 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 — v9.3 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.5 — Full-Capacity Debt Clearance III — 2026-09-18
+Cycle: 2026-09-15__release-v9.5
+Verified: Verified
+Verification report: claude/cycles/2026-09-15__release-v9.5/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Backend & Platform Engineering Debt — CI-blocking changelog-parser test fix, structured-logging JSON Lines conformance, non-negative pagination validation on screener endpoints, ATR trailing-stop recalculation logic consolidated to a single implementation | — | `docs/specs/structured_logging_standards.md#Structured Log Format`; `claude/strategy/strategy_rules.md#7.2 Profit-aware stop logic` |
+| EPIC-02 | Operations & Security Debt — nightly-stop-update/rebalance-exit live scheduled trigger, AI audit-log cost-monitoring follow-ons, `api_call_log` retention/purge policy, anomaly-baseline self-inclusion fix, `api_performance_baseline.md` endpoint registration, quarterly hosting-cost trend review cadence, synthetic uptime monitor for `/health`, deploy path-filter gotcha documented in the ops runbook, `claude_audit_log` latency column, read-only staging DB credential for sprint-execution sessions | — | `.github/workflows/nightly-stop-update.yml`; `docs/specs/api_contracts/ai_endpoints.md#GET /ai/spend-trend-by-feature`, `#POST /ai/check-endpoint-anomalies`; `docs/specs/api_contracts/ops_endpoints.md#POST /ops/purge-audit-logs`; `docs/ops/api_performance_baseline.md#45. GET /positions/{id}`; `docs/ops/production_deployment_runbook.md#3.2 Deploy Backend`; `docs/infrastructure/staging_setup.md#8. Read-Only Access for Sprint-Execution Sessions` |
+| EPIC-03 | QA & Test Coverage Debt — Arc 4 E2E test strategy pre-design, `governance_sync.yml` bash-logic extraction, contract-freshness-checker unit test coverage, Playwright coverage matrix file-inventory re-derivation, stale cross-browser CI baseline citation fix, SignalCard consolidation before/after runtime evidence, `qa_evidence_EPIC-03.md` test-count claim correction | — | `docs/qa/arc4_e2e_test_strategy_po02_03_04.md`; `scripts/governance_sync_lib.sh`; `tests/test_check_contract_example_freshness.py`; `docs/qa/playwright_coverage_matrix.md`; `docs/qa/cross_browser_playwright_matrix_evaluation_20260909.md`; `docs/qa/regression_test_suite_baseline.md` |
+| EPIC-04 | Spec & Documentation Debt — `positions` table live-schema confirmation, Arc 4 API contract pre-authoring, Arc 4 journal-intelligence data-model pre-definition, `position_endpoints.md` example JSON reconciliation, contract example-payload freshness triage, `check_orphaned_specs.py` path-aware resolution fix, spec-debt-dashboard sort-key fix, canonical position/trade lifecycle state diagram, empty-state copy pattern consolidation | — | `docs/specs/data_model.md#2. Positions Table`, `#Position & Trade Plan Lifecycle State Diagram`; `docs/specs/api_contracts/journal_pattern_recognition_stub.md`; `docs/product/arc4_data_model_pre_definition_po02_03_04.md`; `docs/specs/api_contracts/position_endpoints.md#GET /positions`; `docs/specs/frontend/design_system.md#Data States` |
+| EPIC-05 | Governance Process Debt — resolving-commit Known Deviation update discipline, wall-clock cost-logging convention wiring, opportunistic in-file fix disclosure threshold, `record-visual-qa` skill reconciliation, trade-tagging taxonomy decision record, lightweight role-retirement process, cross-role pairing rotation note, cost-per-cycle wall-clock rollup, sprint-planning subroutine consolidation | — | `claude/system/execution_prompt.md#3.1.B/3.1.D`, `#7. Write Scope Restriction`; `claude/system/roadmap_prompt.md#1.1 Run Manifest`; `.claude/skills/record-visual-qa/SKILL.md#Step 0.5`; `docs/product/decisions/trade-tagging-taxonomy-scope-reframing-decision--2026-09-18.md`; `claude/charter/team_charter.md#11. Lightweight Role-Retirement Process`; `claude/roadmap/workforce_capacity.md` |
+| EPIC-06 | Frontend & UX Debt — trade plan link display formatting fix, motion-timing 500ms ceiling compliance across 4 components, toast-notification timing standard compliance, Arc 5 low-trade-volume advisory copy/placement pass | Trade plan links, on-screen motion, and toast notifications now behave more consistently across the app, and the Arc 5 low-trade-volume advisory message has clearer wording and placement. | `docs/specs/frontend/pages/trade_plan.md#9. Status Badge Scheme`; `docs/specs/frontend/design_system.md#Motion-vs-contrast guideline`, `#Toast Notification Timing`; `docs/specs/frontend/components/arc5_compliance_section.md#Low-Trade-Volume Advisory` |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] [D] CI-blocking `test_changelog_service.py` failure fix — confirmed already resolved by a prior-cycle commit; re-verified 6/6 passing
+- [ST-02] [D] Backend logging brought into JSON Lines conformance with `structured_logging_standards.md`
+- [ST-03] [D] Non-negative `limit`/`offset` validation added on screener endpoints
+- [ST-04] [D] Consolidated 3 divergent ATR trailing-stop recalculation implementations into one, ratified by the Strategy Rules & System Intent Owner
+- [ST-05] [D] Live scheduled trigger added for nightly-stop-update/rebalance-exit via GitHub Actions
+- [ST-06] [D] AI audit-log cost-monitoring follow-ons — spend-trend-by-feature endpoint
+- [ST-07] [D] `api_call_log` retention/purge policy implemented
+- [ST-08] [D] Fixed anomaly-baseline self-inclusion bug in `get_api_session_report()`
+- [ST-09] [D] Registered missing endpoint in `api_performance_baseline.md`
+- [ST-10] [D] Established a recurring quarterly hosting-cost trend review cadence
+- [ST-11] [D] Added a synthetic uptime monitor for `/health`
+- [ST-12] [D] Documented the deploy path-filter gotcha in the production deployment runbook
+- [ST-13] [D] Added `claude_audit_log` latency column and wired a real-data anomaly source
+- [ST-14] [D] Provisioned read-only staging `DATABASE_URL` for sprint-execution sessions
+- [ST-15] [P] Arc 4 E2E test strategy pre-design (PO-02/03/04)
+- [ST-16] [G] Extracted `governance_sync.yml` bash logic into a shared, independently-testable library
+- [ST-17] [D] Added unit test coverage for `check_contract_example_freshness.py`
+- [ST-18] [D] Re-derived the Playwright coverage matrix from the current file inventory
+- [ST-19] [D] Corrected a stale cross-browser CI baseline citation
+- [ST-20] [D] Captured SignalCard consolidation before/after runtime evidence
+- [ST-21] [D] Corrected a test-count claim in `qa_evidence_EPIC-03.md` under Head of Specs Team + Product Owner ruling
+- [ST-22] [D] Confirmed `positions` table live-deployment schema against `data_model.md`
+- [ST-23] [P] Arc 4 API contract pre-authoring (PO-02/03/04)
+- [ST-24] [P] Arc 4 journal-intelligence data-model pre-definition
+- [ST-25] [D] Fixed example JSON reconciliation in `position_endpoints.md`
+- [ST-26] [D] Contract example-payload freshness triage
+- [ST-27] [D] Made `check_orphaned_specs.py` path-aware
+- [ST-28] [D] Fixed a same-day-filed sort-key bug in the spec-debt dashboard
+- [ST-29] [D] Authored the canonical position/trade plan lifecycle state diagram
+- [ST-30] [D] Consolidated divergent empty-state copy patterns in the design system
+- [ST-31] [G] Formalised resolving-commit Known Deviation update discipline
+- [ST-32] [G] Wired the wall-clock cost-logging convention into governance engines
+- [ST-33] [G] Set the opportunistic in-file fix disclosure threshold
+- [ST-34] [G] Reconciled the `record-visual-qa` skill documentation
+- [ST-35] [G] Filed the trade-tagging taxonomy scope-reframing decision record
+- [ST-36] [G] Established a lightweight role-retirement process
+- [ST-37] [G] Added a cross-role pairing rotation note
+- [ST-38] [G] Added a cost-per-cycle wall-clock rollup
+- [ST-39] [G] Consolidated STEP 8.0.5/8.2 sprint-planning subroutines
+- [ST-40] [D] Fixed trade plan link display formatting
+- [ST-41] [D] Brought 4 components into 500ms motion-timing ceiling compliance
+- [ST-42] [D] Brought 9 call sites into toast-notification timing standard compliance
+- [ST-43] [D] Arc 5 low-trade-volume advisory copy/placement pass
+
+Sign-off: Product Owner — 2026-09-18
+QA sign-off: Director of Quality — 2026-09-18
 
 ---
 
