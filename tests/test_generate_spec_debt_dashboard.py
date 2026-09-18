@@ -161,3 +161,32 @@ def test_main_missing_backlog_file_returns_error(tmp_path, monkeypatch):
     monkeypatch.setattr(gsdd, "BACKLOG_PATH", tmp_path / "does_not_exist.md")
     rc = gsdd.main()
     assert rc == 1
+
+
+def test_main_same_day_item_sorts_as_newest_not_undated(tmp_path, monkeypatch):
+    """ST-28 (BLG-SPEC-141): a same-day-filed item (age_days == 0) must sort
+    ahead of a genuinely undated item in its priority tier, not fall through
+    the truthiness-based `or -1` fallback and tie with it. The genuinely
+    undated item is listed first in the source file, on purpose: under the
+    pre-fix code both items compute the same sort key (a tie), and Python's
+    stable sort would then preserve that file order — masking the bug unless
+    the undated item starts out ahead of the same-day item."""
+    today_str = gsdd.date.today().isoformat()
+    backlog = tmp_path / "backlog.md"
+    backlog.write_text(
+        "### BLG-SPEC-1 — Genuinely undated item\n**Priority:** P2 (Medium)\n**Source:** no date here\n\n"
+        f"### BLG-SPEC-2 — Filed today\n**Priority:** P2 (Medium)\n**Source:** y {today_str}\n\n"
+        "### BLG-SPEC-3 — Old item\n**Priority:** P2 (Medium)\n**Source:** x 2020-01-01\n"
+    )
+    output = tmp_path / "spec_debt_dashboard.md"
+    monkeypatch.setattr(gsdd, "BACKLOG_PATH", backlog)
+    monkeypatch.setattr(gsdd, "OUTPUT_PATH", output)
+
+    rc = gsdd.main()
+
+    assert rc == 0
+    content = output.read_text()
+    table_lines = [l for l in content.splitlines() if l.startswith("| BLG-SPEC-")]
+    ids_in_order = [l.split("|")[1].strip() for l in table_lines]
+    # Oldest first, then the same-day item (newest dated), then the undated item last.
+    assert ids_in_order == ["BLG-SPEC-3", "BLG-SPEC-2", "BLG-SPEC-1"]
