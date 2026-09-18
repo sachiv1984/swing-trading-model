@@ -1,0 +1,37 @@
+# .github/workflows/nightly-stop-update.yml
+# Nightly trailing-stop recompute — ST-05 (BLG-OPS-160, EPIC-02, v9.5).
+# Confirmed live P1 gap (same failure mode risk-off-alerts.yml, ST-02/BLG-OPS-145/v8.8,
+# fixed for risk_off_exit): POST /positions/nightly-stop-update existed and wired into
+# GET /health/scheduler's job registry ("trailing_stop"), but nothing scheduled it —
+# no GitHub Actions workflow, no render.yaml cron entry. Confirmed via the Render
+# dashboard (free tier: no Cron Jobs resource type available at all — only General/
+# Build/Deploy/Custom Domains/PR Previews/Networking/Edge Caching/Notifications/
+# Health Checks/Maintenance Mode/Delete-or-suspend tabs, none of which is a job
+# scheduler), so this was never a dashboard-only job hiding from repo search either —
+# it simply never had any trigger. Runs after US market close so the day's price/ATR
+# data is final, sequenced after risk-off-alerts.yml (22:15 UTC) since both are
+# per-position nightly recomputations. Uses GitHub Actions schedule (free tier)
+# instead of Render cron (paid — unavailable on this plan), consistent with
+# alert-evaluation.yml/screener-refresh.yml/risk-off-alerts.yml.
+# Required secrets: API_URL, API_KEY (same as daily-snapshot.yml).
+name: Nightly Trailing Stop Update
+
+on:
+  schedule:
+    - cron: '30 22 * * 1-5'  # 22:30 UTC weekdays (after risk-off-alerts.yml)
+  workflow_dispatch:            # Allow manual trigger for testing
+
+jobs:
+  update-trailing-stops:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger nightly trailing stop update
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          echo "Triggering nightly trailing stop update at $(date -u)..."
+          curl -f --max-time 120 -X POST "${API_URL}/positions/nightly-stop-update" \
+            -H "X-API-Key: ${API_KEY}" \
+            -H "Content-Type: application/json"
+          echo "Nightly trailing stop update complete."
