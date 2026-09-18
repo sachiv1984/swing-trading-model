@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T18:17:00Z",
+  "last_updated_utc": "2026-09-18T18:18:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -1012,23 +1012,31 @@
         "ST-38": {
           "title": "Cost-per-cycle wall-clock rollup in workforce_capacity.md",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1706,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "a787033d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T18:17:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/roadmap/workforce_capacity.md#Cost-Per-Cycle Wall-Clock Rollup"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Sequence after ST-37 — both edit workforce_capacity.md (RISK-05)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "FinOps & Resource Architect",
+            "date": "2026-09-18",
+            "findings": "Approved. Declining to backfill is the correct call -- consistent with S22's own sign-off note making the identical judgment for the convention itself."
+          },
+          "notes": "Table populated with 0 real rows -- honest disclosure that no S22 figures exist yet (wired into roadmap_prompt.md only this session, ST-32, and S22 itself bars retroactive backfill). Also recorded the BLG-GOV-326 merge decision (PMO Lead's overlapping request) inline, satisfying that item's own AC without a separate implementation."
         },
         "ST-39": {
           "title": "Formalise the STEP 8.0.5 / STEP 8.2 candidate-verification pattern as one subroutine",
@@ -1185,7 +1193,8 @@
     "ST-34",
     "ST-35",
     "ST-36",
-    "ST-37"
+    "ST-37",
+    "ST-38"
   ],
   "open_escalations": [],
   "merge_gate": {
