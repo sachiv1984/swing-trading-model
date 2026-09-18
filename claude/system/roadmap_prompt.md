@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.21
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #1 resolution — new §7.3 Ready-Pool Capacity Gap Trend, codifying a mandatory Product Owner/Head of Specs Team decision point after 3 consecutive widening ready-pool-vs-capacity readings; current reading recorded at 2 consecutive, no action taken yet); prior — 2026-09-14 (STEP 11.4 meta-review, roadmap rebalance 2026-09-14__scheduled — STEP 2.3 gains a standing operating-mode note resolving the Six-Arc-model-vs-backlog-driven-delivery deferred patch carried since 2026-07-28__scheduled); prior — 2026-09-08 (ST-38, EPIC-04, v9.2, BLG-GOV-247 — Step 0.C condensed-tier table gains a formal threshold review; decision: retain single "no new FTE required" test as-is, no additional thresholds); prior history retained — see prior entries in version control.
+**Version:** 9.22
+**Last Updated:** 2026-09-18 (ST-32/BLG-GOV-316, sprint execution `2026-09-15__release-v9.5` — wires shared_standards.md §22's Governance-Cycle Wall-Clock Cost Logging Convention into this engine's STEP list: STEP 1.1 now explicitly instructs capturing `Session start (UTC)` at run_manifest.md creation, STEP 12.1 instructs capturing `Session end (UTC)` before commit); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #1 resolution — new §7.3 Ready-Pool Capacity Gap Trend); prior — 2026-09-14 (STEP 11.4 meta-review, roadmap rebalance 2026-09-14__scheduled — STEP 2.3 gains a standing operating-mode note resolving the Six-Arc-model-vs-backlog-driven-delivery deferred patch carried since 2026-07-28__scheduled); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -257,6 +257,7 @@ Authorities: PMO Lead + FinOps & Resource Architect
 #### 1.1 Run Manifest (Hard Requirement)
 
 Create `claude/cycles/<cycle_id>/run_manifest.md` (Class 3, Owner: Infrastructure & Operations Owner) **before any other file is written**. Record:
+- **Session start (UTC)** — captured via a real shell timestamp command (`date -u +%Y-%m-%dT%H:%M:%SZ`) at this file's creation, never estimated. Per `shared_standards.md §22`'s Governance-Cycle Wall-Clock Cost Logging Convention.
 - Run type; completion event details or "N/A — scheduled run"
 - Canonical inputs used; decision authorities and non-decision roles activated
 - **Prior Cycle Outstanding Actions** — outcome for each
@@ -909,6 +910,8 @@ Update `.claude_current_state.json` (rebalance keys only — do not overwrite `a
 If `.claude_current_state.json` does not exist: create it with rebalance keys only.
 
 **Scheduled-run recency marker (v9.8, BLG-GOV-216):** If this run's `--reason` is `"scheduled"`, also set `last_scheduled_rebalance_utc` = this run's `last_rebalance_utc` value in the same write. This field is read by STEP -1.5.5's recency advisory and by the Extended-tier "> 90 days since `last_scheduled_rebalance_utc`" check (§2.4) — without this write, both checks would read a stale or never-set value. Do not set this field for `--item-id` completion-triggered runs (it is scoped to scheduled invocations only).
+
+**Session end (UTC) (ST-32, EPIC-05, v9.5, BLG-GOV-316):** Immediately before STEP 12.2's commit, capture `Session end (UTC)` in `run_manifest.md` via a real shell timestamp command (`date -u +%Y-%m-%dT%H:%M:%SZ`), and record the computed elapsed duration (`end - start`, not re-typed by hand) against the `Session start (UTC)` recorded at STEP 1.1. Per `shared_standards.md §22`. If this session halts at a hard gate before reaching STEP 12: record the halt point's timestamp as Session end instead, noted `(halted, not completed)`, per §22's own halt-path guidance.
 
 #### 12.2 Commit
 
