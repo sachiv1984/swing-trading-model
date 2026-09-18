@@ -218,3 +218,18 @@ Append-only. Do not edit previous entries.
 - **Status:** Resolved — unblocking ST-14, marking done. EPIC-02 is now 10/10 done.
 
 ---
+## DEL-20260918-04
+
+- **ST Item:** ST-35 — File a Product Owner decision record for ST-20's trade-tagging "no closed taxonomy" call
+- **EPIC:** EPIC-05
+- **Classification:** delegated_decision — resolved
+- **Assigned to:** Product Owner
+- **GitHub Issue:** #1703
+- **Branch:** exec/2026-09-15__release-v9.5/EPIC-05
+- **Resolved at:** 2026-09-18T18:11:06Z (agent-mediated Product Owner sign-off, §5.3 — a genuine open product decision, but one where the correct answer was fully determined by re-checking ST-20's own already-shipped, independently-verified implementation review against the codebase, not a fresh judgment call requiring new information)
+- **Resolution:**
+  Re-read `docs/specs/trade_tagging_taxonomy.md`'s existing Purpose section (ST-20, EPIC-04, v9.3) — it already documents, with a specific citation to the original UX spec and a confirmed backend/frontend constant match, that `trade_plans.trade_tags` was always intentionally free-text/format-constrained, never a closed taxonomy. Filed `docs/product/decisions/trade-tagging-taxonomy-scope-reframing-decision--2026-09-18.md` ratifying that finding as a formal decision record, following this codebase's established precedent pattern (`setup-type-other-conflation-decision--2026-08-21.md`), and cross-referenced it from the spec (`trade_tagging_taxonomy.md` v1.0→v1.1).
+  `BLG-GOV-320` closed.
+- **Status:** Resolved — unblocking ST-35, marking done.
+
+---
