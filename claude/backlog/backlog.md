@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-18 (session — 3 new items added: `BLG-SPEC-155`, `BLG-SPEC-156`, `BLG-GOV-335` (PR #1715 review findings — Director of Quality + Product Owner agent-mediated review, filed on `main` after EPIC-04's own 9 stories completed)); prior — 2026-09-18 (session — 1 new item added: `BLG-SPEC-154` (ST-29/EPIC-04, v9.5 — trade_plans CHECK constraint documentation gap)); prior — 2026-09-18 (session — 2 new items added: `BLG-SPEC-152`, `BLG-SPEC-153` (ST-26/EPIC-04, v9.5)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-18 (session — 3 new items added: `BLG-GOV-336`, `BLG-QA-181`, `BLG-GOV-337` (PR #1716/#1717 review findings — Director of Quality + Product Owner agent-mediated review, filed on `main` after EPIC-05/EPIC-06's own 13 stories completed)); prior — 2026-09-18 (session — 3 new items added: `BLG-SPEC-155`, `BLG-SPEC-156`, `BLG-GOV-335` (PR #1715 review findings — Director of Quality + Product Owner agent-mediated review, filed on `main` after EPIC-04's own 9 stories completed)); prior — 2026-09-18 (session — 1 new item added: `BLG-SPEC-154` (ST-29/EPIC-04, v9.5 — trade_plans CHECK constraint documentation gap)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4824,6 +4824,73 @@ ST-11 (`BLG-OPS-158`) found `.github/workflows/health-check-alert.yml` already s
 - A real live-fire test run is confirmed to have triggered the alert path (run URL/ID recorded)
 - A real Telegram notification is confirmed received (not just that the workflow step executed)
 - `docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md` §7 and §8 updated to reflect the confirmed result; `BLG-OPS-158`'s (ST-11's) original disclosed gap closed
+
+---
+
+### BLG-GOV-336 — OPERATIONAL_GUIDE.md §14 quick-reference table's own "Last Updated" cell desyncs from its "Version" cell across multi-bump sessions
+
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Agent-mediated Director of Quality review of PR #1716 (EPIC-05, `2026-09-15__release-v9.5`) — 2026-09-18
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`OPERATIONAL_GUIDE.md` §14's "Playbook Governance" quick-reference table has two adjacent cells: `Version` and `Last Updated`. Across PR #1716's 6 consecutive governance-prompt version bumps (v4.190→v4.196, ST-31/32/33/36/37/39), every commit message claimed "§14 self-row Version/Last Updated 4.19X/2026-09-18→4.19Y/2026-09-18" — but only the `Version` cell was actually edited each time; the `Last Updated` cell was never touched and still reads its pre-session value (`2026-09-15`) despite `Version` reading `4.196`. This is exactly the class of self-inconsistency the `governance-drift` skill's Step 1b check exists to catch (header / §14 self-row / Change Log top row), but that check's own definition of "§14 self-row" apparently covers only the `Version` cell, not its sibling `Last Updated` cell in the same quick-reference table — so it did not fire across 6 consecutive misses in one session.
+
+**Scope**
+- Fix the current `Last Updated` cell value in the §14 quick-reference table to match the document's own top-header `Last Updated` date
+- Extend the `governance-drift` skill's self-consistency check (or the equivalent instruction in `execution_prompt.md` §3.2.A) to explicitly include this `Last Updated` cell as a 4th checked field, not just `Version`
+
+**Acceptance Criteria**
+- §14 quick-reference table's `Last Updated` cell matches the document's top-header `Last Updated` date
+- `governance-drift` skill (or equivalent) documented to check this cell going forward; re-run confirms no drift
+
+---
+
+### BLG-QA-181 — Add regression coverage for the motion-timing values fixed in ST-41 (500ms ceiling components)
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated Director of Quality review of PR #1717 (EPIC-06, `2026-09-15__release-v9.5`) — 2026-09-18
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.6
+
+**Problem**
+ST-42 (same EPIC) correctly filed `BLG-QA-180` when it found no Playwright test asserts the specific `duration` values its 9 toast fixes introduced. ST-41 has the identical gap and none was filed for it: no Playwright test asserts `SystemStatus.js`/`Signals.js`/`Reports.js`/`RecentTradesWidget.js`'s actual `delay`/`duration` transition-prop values (Playwright cannot easily read a React `transition` prop directly — coverage would need a timing-based or prop-inspection approach). Two of the fixed values now sit at exactly the 500ms ceiling with zero margin (`Reports.js`: `0.2s` max delay + `0.3s` duration = `0.5s`; `RecentTradesWidget.js`: same), meaning a future, unrelated change to either component's animation (e.g. bumping `duration` for a different visual reason) could silently push it back over the ceiling with nothing in CI to catch it.
+
+**Scope**
+- Add regression coverage for the 4 components' motion-timing values fixed in ST-41 — e.g. a lightweight source-inspection test (grep/AST-based, checking the literal `delay`/`duration` values in each file) or a timing-based Playwright assertion, whichever is more practical for framer-motion transition props
+- Cover both fixed-value components (exact-ceiling risk) and the capped/staggered components (regression risk if the cap constant is later removed)
+
+**Acceptance Criteria**
+- A regression test/check exists that would fail if any of the 4 components' `max(delay) + duration` were pushed back over 500ms by a future change
+- Test/check passes against the current (ST-41) implementation
+
+---
+
+### BLG-GOV-337 — Decide whether `claude/roadmap/workforce_capacity.md` needs an explicit Sprint Execution write-scope exception
+
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Product Owner
+**Source:** Agent-mediated Product Owner review of PR #1716 (EPIC-05, `2026-09-15__release-v9.5`) — 2026-09-18
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`execution_prompt.md` §7 (Write Scope Restriction) lists `claude/roadmap/*` under "Must not modify" with no carve-out — yet ST-37/ST-38 (this same PR) both edit `claude/roadmap/workforce_capacity.md` directly, per their own sealed `sprint_backlog.md` acceptance criteria. The engine's own disclosure treated the sealed sprint plan's "Within-EPIC only: workforce_capacity.md (EPIC-05 — ST-37 lands before ST-38)" sequencing note as implicit authorization for this specific file, but §7's own text carries no such exception — unlike `claude/backlog/backlog.md`, which already has a narrow, explicitly-documented new-item-addition exception for exactly this kind of situation. Leaving the question inferred rather than decided risks a different session reading the same hard-gate text more strictly (and incorrectly halting a similarly-scoped future story) or more loosely (and writing to a genuinely out-of-scope roadmap file without sealed-plan cover).
+
+**Scope**
+- Product Owner + Head of Specs Team rule on whether Sprint Execution should have a standing, narrow write-scope exception for `workforce_capacity.md` specifically (mirroring the existing `backlog.md` new-item-only exception's shape — i.e. still barred from `current_roadmap.md`, `scored_initiatives.md`, and other roadmap-planning content)
+- If yes: add the exception to `execution_prompt.md` §7 with the same Governance File Edit Checklist rigor as any other prompt change
+- If no: document why ST-37/ST-38's write was accepted as sealed-plan-authorized this one time without generalising it, so the next similar case isn't decided ad hoc again
+
+**Acceptance Criteria**
+- A recorded Product Owner + Head of Specs Team decision exists (either a §7 prompt change, or a documented one-off ruling)
+- The decision is cross-referenced from `execution_prompt.md` §7 (as a change, or as a note pointing to the ruling) so a future session reading §7 sees the resolved position rather than re-deriving it
 
 ---
 
