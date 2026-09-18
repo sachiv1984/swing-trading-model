@@ -497,7 +497,7 @@
           "assigned_to": "engine",
           "github_issue": 1689,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "3c3f4184",
           "delegation_record_id": "DEL-20260916-04-EPIC03",
           "blocked_since_utc": null,
           "unblock_criteria": null,
