@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-18 (session — 2 new items added: `BLG-FE-178`, `BLG-FE-179` (ST-30/EPIC-04, v9.5 — empty-state trailing-period microcopy defects found in shipped code)); prior — 2026-09-18 (session — 4 new items added: `BLG-SPEC-148`, `BLG-SPEC-149`, `BLG-SPEC-150`, `BLG-SPEC-151` (ST-22/EPIC-04, v9.5 — live schema confirmation findings against `data_model.md`'s positions table)); prior — 2026-09-18 (session — `BLG-QA-170`/`BLG-GOV-334` resolved and closed); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-18 (session — 2 new items added: `BLG-SPEC-152`, `BLG-SPEC-153` (ST-26/EPIC-04, v9.5 — contract example-payload freshness triage follow-ups)); prior — 2026-09-18 (session — 2 new items added: `BLG-FE-178`, `BLG-FE-179` (ST-30/EPIC-04, v9.5 — empty-state trailing-period microcopy defects found in shipped code)); prior — 2026-09-18 (session — 4 new items added: `BLG-SPEC-148`–`151` (ST-22/EPIC-04, v9.5)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -4120,6 +4120,47 @@ Live `positions` table (confirmed via readonly staging access) has 4 columns not
 
 **Acceptance Criteria**
 - `data_model.md` and the live schema agree on `fees_paid` nullability
+
+---
+
+### BLG-SPEC-152 — Full field-level openapi.yaml authoring pass for 20 generic/thin `data` payload schemas
+**Priority:** P3 (Low)
+**Type:** Spec Debt / API Contracts
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-26/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v9.6
+
+**Problem**
+`docs/ops/contract_example_freshness_triage_2026-09-18.md` §5 found 20 endpoints where `openapi.yaml`'s declared schema leaves the response `data` payload as a generic `type: object` with little or no declared properties, while the markdown contract in `docs/specs/api_contracts/` carries the real field-level detail. Some of these carry an explicit "Intentionally broad to avoid drift" description (a deliberate, established convention); others (e.g. `GET /watchlist`, `GET /reports/tax-year`'s `trades[]`/`summary`) are bare `{type: object}` with no description at all, and it isn't yet confirmed case-by-case which category each falls into.
+
+**Scope**
+- For each of the 20 endpoints listed in the triage doc §5: confirm whether the schema is intentionally broad (add the standard description if missing, no functional change) or genuinely under-authored (fill in real properties matching the markdown contract, types included)
+- Re-run `scripts/check_contract_example_freshness.py` after each fix to confirm it drops off the POSSIBLE DRIFT list (or is deliberately left, once labelled intentional)
+
+**Acceptance Criteria**
+- All 20 endpoints from the triage doc's §5 have a case-by-case disposition recorded
+- `scripts/check_contract_example_freshness.py`'s POSSIBLE DRIFT count reflects only genuinely-remaining intentional gaps, each carrying the standard description
+
+---
+
+### BLG-SPEC-153 — POST /trade-plans and DELETE /trade-plans/{id} declare no response schema in openapi.yaml
+**Priority:** P3 (Low)
+**Type:** Spec Debt / API Contracts
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-26/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.6
+
+**Problem**
+`docs/ops/contract_example_freshness_triage_2026-09-18.md` §6 found `POST /trade-plans` (201) and `DELETE /trade-plans/{id}` (200) declare only a bare `description` in `openapi.yaml`, no `content`/`schema` at all — confirmed as a genuine spec gap, not a freshness-check script limitation (both response codes are ones the script already checks). Both have real, documented JSON examples in `docs/specs/api_contracts/trade_plan_endpoints.md`.
+
+**Scope**
+- Author `content`/`schema` entries for both responses in `openapi.yaml`, matching `trade_plan_endpoints.md`'s documented examples
+
+**Acceptance Criteria**
+- Both endpoints have a real response schema in `openapi.yaml`
+- `scripts/check_contract_example_freshness.py` no longer reports either as SKIPPED
 
 ---
 
