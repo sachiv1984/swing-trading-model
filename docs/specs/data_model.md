@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.34
-**Last Updated:** 2026-09-15 (ST-23, EPIC-05, v9.4, BLG-AI-06 — DS-18 added: ai_output_boundary_samples table; header/footer version kept in sync); prior — 2026-09-14 (ST-01, EPIC-01, v9.4, BLG-BE-115 — DS-17 added: unique index on positions(portfolio_id, ticker, entry_date) for open positions; header/footer version brought back in sync); prior — 2026-09-14 (ST-02, EPIC-01, v9.4, BLG-BE-116 — added "Migration approach: forward-only, no backfill" subsection under Trade Plan to Position Linkage; no schema change); prior history retained — see prior entries in version control
+**Version:** 2.35
+**Last Updated:** 2026-09-18 (ST-22, EPIC-04, v9.5, BLG-SPEC-D18 — added live schema verification note to Positions Table section; 4 discrepancies found and filed as BLG-SPEC-148/149/150/151; no schema change); prior — 2026-09-15 (ST-23, EPIC-05, v9.4, BLG-AI-06 — DS-18 added: ai_output_boundary_samples table; header/footer version kept in sync); prior — 2026-09-14 (ST-01, EPIC-01, v9.4, BLG-BE-115 — DS-17 added: unique index on positions(portfolio_id, ticker, entry_date) for open positions; header/footer version brought back in sync); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -54,6 +54,8 @@ CREATE TABLE public.portfolios (
 ## 2. Positions Table
 
 > **Lifecycle note:** This table serves both open and closed positions. All `exit_*` fields are `null` while `status = 'open'`. Queries must always filter by `status` unless intentionally spanning both lifecycle states — failure to do so is a common source of incorrect P&L aggregations.
+
+> **Live schema verification (ST-22, BLG-SPEC-D18, EPIC-04, v9.5, 2026-09-18):** `DATABASE_URL` (readonly staging) was available this session — the first cycle since v9.2 with live DB access. Ran `\d positions` plus targeted column/row queries against it. Findings: (1) the DS-17 unique index below is **not yet applied live** — no matching index exists, though the migration's own duplicate pre-check re-run live found 0 blocking rows, so it remains safe to apply (`BLG-SPEC-148`); (2) `exit_note` is documented below but **does not exist** as a live `positions` column — exit journal notes live on `trade_history.exit_note` instead (`BLG-SPEC-149`); (3) 4 live columns not documented anywhere here (`atr_value`, `stop_price`, `fees`, `pnl_percent`) are present and always NULL — apparent orphaned leftovers from an old naming convention (`BLG-SPEC-150`); (4) `fees_paid` is documented as `NOT NULL as of v1.6` but the live column is nullable (`BLG-SPEC-151`). Every other documented column, type, and constraint below was confirmed to match live. Per the `ESC-EXEC-20260910-01` honest-disclosure precedent: findings filed as their own follow-on items rather than silently fixed inline, since 3 of the 4 require an owner disposition (drop vs. document; apply-migration scheduling) this read-only session cannot make unilaterally.
 
 ```sql
 CREATE TABLE positions (
@@ -2266,6 +2268,6 @@ Reversible: `DROP TABLE IF EXISTS ai_output_boundary_samples;`
 
 ---
 
-**Document Version:** 2.34
+**Document Version:** 2.35
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-09-15 (ST-23, EPIC-05, v9.4, BLG-AI-06 — DS-18 added: ai_output_boundary_samples table; header/footer version kept in sync)
+**Last Review:** 2026-09-18 (ST-22, EPIC-04, v9.5, BLG-SPEC-D18 — added live schema verification note to Positions Table section; header/footer version kept in sync)
