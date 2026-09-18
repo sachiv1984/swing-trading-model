@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T18:05:00Z",
+  "last_updated_utc": "2026-09-18T18:08:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -834,23 +834,33 @@
         "ST-32": {
           "title": "Wire the wall-clock cost logging convention (§22) into an engine's STEP list",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1700,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "181c8cad",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T18:07:07Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/roadmap_prompt.md#1.1 Run Manifest (Hard Requirement)",
+            "claude/system/roadmap_prompt.md#12.1 Global State Update",
+            "docs/ops/wall_clock_logging_convention_demonstration_2026-09-18.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "date": "2026-09-18",
+            "findings": "Approved. Wiring is minimal and correctly placed at the engine's own clean session boundaries (STEP 1.1/12.1). AC2 demonstrated with genuine, shell-captured timestamps from this session rather than deferred or fabricated."
+          },
+          "notes": "Chose roadmap_prompt.md as the wiring target (already creates run_manifest.md at a clean STEP 0-equivalent boundary and closes at a clean final step). AC2 demonstrated via docs/ops/wall_clock_logging_convention_demonstration_2026-09-18.md using this session's own real captured timestamps (git commit authored ts for start, live date -u for end) since roadmap_prompt.md's own STEP list is not re-exercised until the next run roadmap invocation."
         },
         "ST-33": {
           "title": "Codify whether opportunistic in-file fixes found mid-story need their own backlog entry",
@@ -1127,7 +1137,8 @@
     "ST-19",
     "ST-20",
     "ST-21",
-    "ST-31"
+    "ST-31",
+    "ST-32"
   ],
   "open_escalations": [],
   "merge_gate": {
