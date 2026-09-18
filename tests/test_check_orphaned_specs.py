@@ -140,6 +140,117 @@ def test_missing_backlog_file_does_not_crash(tmp_path):
     assert orphaned == ["docs/specs/some_spec.md"]
 
 
+def test_duplicate_basename_unambiguous_path_reference_clears_only_that_file(tmp_path):
+    """ST-27 (BLG-SPEC-140): two files share a basename in different
+    directories. One is referenced by a path-qualified mention (its parent
+    directory + basename); the other is never mentioned at all. The
+    path-qualified one must be cleared and the other flagged orphaned —
+    not both cleared by the shared bare basename (the pre-fix blind spot)."""
+    specs_dir, repo_root, backlog_files = _make_tree(tmp_path)
+    frontend = specs_dir / "frontend"
+    frontend.mkdir()
+    api = specs_dir / "api_contracts"
+    api.mkdir()
+    (frontend / "README.md").write_text("# Frontend spec index")
+    (api / "README.md").write_text("# API contracts spec index")
+    backlog_files[0].write_text("See `frontend/README.md` for the frontend spec index.")
+
+    orphaned, ambiguous = cos.find_orphaned_and_ambiguous_specs(specs_dir, repo_root, backlog_files)
+
+    assert orphaned == ["docs/specs/api_contracts/README.md"]
+    assert ambiguous == []
+
+
+def test_duplicate_basename_both_path_referenced_clears_both(tmp_path):
+    specs_dir, repo_root, backlog_files = _make_tree(tmp_path)
+    frontend = specs_dir / "frontend"
+    frontend.mkdir()
+    api = specs_dir / "api_contracts"
+    api.mkdir()
+    (frontend / "README.md").write_text("# Frontend spec index")
+    (api / "README.md").write_text("# API contracts spec index")
+    backlog_files[0].write_text(
+        "See `frontend/README.md` and `api_contracts/README.md` for the spec indexes."
+    )
+
+    orphaned, ambiguous = cos.find_orphaned_and_ambiguous_specs(specs_dir, repo_root, backlog_files)
+
+    assert orphaned == []
+    assert ambiguous == []
+
+
+def test_duplicate_basename_only_bare_mention_is_ambiguous_not_cleared_or_orphaned(tmp_path):
+    """Neither duplicate has a path-qualified reference, but the bare
+    basename appears somewhere (e.g. a generic mention) -- this must be
+    reported as ambiguous, not silently cleared (the pre-fix behaviour)
+    and not silently guessed as orphaned either."""
+    specs_dir, repo_root, backlog_files = _make_tree(tmp_path)
+    frontend = specs_dir / "frontend"
+    frontend.mkdir()
+    api = specs_dir / "api_contracts"
+    api.mkdir()
+    (frontend / "README.md").write_text("# Frontend spec index")
+    (api / "README.md").write_text("# API contracts spec index")
+    backlog_files[0].write_text("See the README.md for an overview.")
+
+    orphaned, ambiguous = cos.find_orphaned_and_ambiguous_specs(specs_dir, repo_root, backlog_files)
+
+    assert orphaned == []
+    paths = {a["path"] for a in ambiguous}
+    assert paths == {"docs/specs/frontend/README.md", "docs/specs/api_contracts/README.md"}
+    for item in ambiguous:
+        assert item["basename"] == "README.md"
+
+
+def test_duplicate_basename_neither_referenced_at_all_is_orphaned_not_ambiguous(tmp_path):
+    """No reference at all (qualified or bare) for either duplicate --
+    there is no ambiguity, both are genuinely orphaned."""
+    specs_dir, repo_root, backlog_files = _make_tree(tmp_path)
+    frontend = specs_dir / "frontend"
+    frontend.mkdir()
+    api = specs_dir / "api_contracts"
+    api.mkdir()
+    (frontend / "README.md").write_text("# Frontend spec index")
+    (api / "README.md").write_text("# API contracts spec index")
+
+    orphaned, ambiguous = cos.find_orphaned_and_ambiguous_specs(specs_dir, repo_root, backlog_files)
+
+    assert set(orphaned) == {"docs/specs/frontend/README.md", "docs/specs/api_contracts/README.md"}
+    assert ambiguous == []
+
+
+def test_unique_basename_unaffected_by_duplicate_resolution_path(tmp_path):
+    """A file with no basename collision continues to use plain bare-basename
+    matching (no regression from the ST-27 duplicate-group code path)."""
+    specs_dir, repo_root, backlog_files = _make_tree(tmp_path)
+    (specs_dir / "unique_spec.md").write_text("# Unique")
+    backlog_files[0].write_text("See unique_spec.md for details.")
+
+    orphaned, ambiguous = cos.find_orphaned_and_ambiguous_specs(specs_dir, repo_root, backlog_files)
+
+    assert orphaned == []
+    assert ambiguous == []
+
+
+def test_find_orphaned_specs_wrapper_omits_ambiguous_entries(tmp_path):
+    """The pre-ST-27 find_orphaned_specs() entry point is a thin wrapper --
+    it must keep returning only the orphaned list (backward compatible with
+    existing callers), never surfacing ambiguous entries as if they were
+    confirmed orphans."""
+    specs_dir, repo_root, backlog_files = _make_tree(tmp_path)
+    frontend = specs_dir / "frontend"
+    frontend.mkdir()
+    api = specs_dir / "api_contracts"
+    api.mkdir()
+    (frontend / "README.md").write_text("# Frontend spec index")
+    (api / "README.md").write_text("# API contracts spec index")
+    backlog_files[0].write_text("See the README.md for an overview.")
+
+    orphaned = cos.find_orphaned_specs(specs_dir, repo_root, backlog_files)
+
+    assert orphaned == []
+
+
 def test_main_json_output(tmp_path, monkeypatch, capsys):
     specs_dir, repo_root, backlog_files = _make_tree(tmp_path)
     (specs_dir / "orphan.md").write_text("# orphan")
