@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-16T19:40:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-18T18:11:00Z",
+  "last_updated_utc": "2026-09-18T18:12:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -923,23 +923,32 @@
         "ST-35": {
           "title": "File a Product Owner decision record for ST-20's trade-tagging \"no closed taxonomy\" call",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Product Owner",
           "github_issue": 1703,
           "branch": "exec/2026-09-15__release-v9.5/EPIC-05",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "739775cc",
+          "delegation_record_id": "DEL-20260918-04",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-18T18:11:06Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/trade-tagging-taxonomy-scope-reframing-decision--2026-09-18.md",
+            "docs/specs/trade_tagging_taxonomy.md#The Taxonomy Is Intentionally Open, Not a Closed Value List"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Genuine open product decision requiring an actual Product Owner ruling — attempt agent-mediated sign-off per §5.3 first."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Product Owner",
+            "date": "2026-09-18",
+            "findings": "Approved. The reframing is fully determined by ST-20's own already-verified finding (no closed-set enforcement anywhere in the implementation) -- this record ratifies it formally per established precedent."
+          },
+          "notes": "Resolved in-session per DEL-20260918-04. Filed the decision record and cross-referenced it from trade_tagging_taxonomy.md (v1.0->v1.1), following the setup-type-other-conflation precedent pattern exactly."
         },
         "ST-36": {
           "title": "Lightweight role-retirement process for inactive agent charters",
@@ -1156,7 +1165,8 @@
     "ST-31",
     "ST-32",
     "ST-33",
-    "ST-34"
+    "ST-34",
+    "ST-35"
   ],
   "open_escalations": [],
   "merge_gate": {
