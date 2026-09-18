@@ -3,8 +3,8 @@
 **Owner:** Head of Specs Team  
 **Scope:** All governed documentation across the entire product  
 **Status:** Canonical  
-**Version:** 2.8
-**Last Updated:** 2026-09-15  
+**Version:** 2.9
+**Last Updated:** 2026-09-18  
 
 ---
 
@@ -12,6 +12,7 @@
 
 | Version | Change |
 |--------:|--------|
+| 2.9 | Section 9 gains a "Resolving-commit closure discipline" subsection: a commit that closes the root cause of a pre-existing, already-filed deviation must also update that deviation's own labelled fields (Target resolution release / Status) in its canonical spec entry, not just record the fix elsewhere. Cross-references the governed-routine mechanics in `execution_prompt.md` §3.1.A step 10a / §3.1.B / §3.1.D. Resolves `BLG-GOV-332` (ST-31, sprint execution `2026-09-15__release-v9.5`). |
 | 2.8 | Section 9 (Known Deviation Documentation Standard) gains a required **Deviation ID** field (`DEV-<id>`, assigned at point of filing) and a "Deviation ID assignment" subsection explaining why — the ID is the join key the Cross-EPIC Deviation Consolidation Review and `quality_trend_index.md` use to find and track a deviation, and an entry missing it is invisible to that review's scan regardless of how complete its other fields are. Resolves post-ship closure `2026-09-14__release-v9.4` Outstanding Action #2 (found live: `BLG-FE-172`'s and `BLG-BE-112`'s Known Deviations entries were field-complete but unassigned an ID; both retroactively assigned `DEV-v9.1-ST13-01`/`DEV-v9.3-ST03-01`/`DEV-v9.3-ST03-02` in the same session). |
 | 2.7 | Added Class 6 sub-types: (1) **Shared governance reference modules** under `claude/system/shared/` — Class 6 supporting infrastructure, carry standard Class 6 header (Owner, Status: Active, Version, Last Updated), not standalone routines; (2) **Governance changelog files** under `claude/system/changelogs/` — append-only historical records of prompt changes, no version field required, header: Owner + Status: Active only. Both artefact types introduced by the modular prompt refactor 2026-05-09. |
 | 2.6 | Added Class 4 sub-type 3 — Release Plan (`release_plan.md`). The Release Planning Engine now consolidates all intermediate reasoning artefacts (readiness, scope, execution plan, capacity check, integrity validation) into a single `release_plan.md` per cycle. Final outputs (scope document, decisions record, backlog slice) remain separate. |
@@ -462,6 +463,12 @@ Every deviation entry — whether structured as a `### DEV-<id>` heading or a ta
 ### Roles outside the Specs Team
 
 This standard applies to all canonical documents, regardless of which function their owner reports into. Engineering-owned operational documentation that records deviations from canonical behaviour must follow the same standard and escalate to the relevant canonical spec owner.
+
+### Resolving-commit closure discipline (added — sprint execution `2026-09-15__release-v9.5`, ST-31/`BLG-GOV-332`)
+
+Filing a deviation (above) is only half of this standard's lifecycle. When a commit closes the root cause of a pre-existing, already-filed deviation, that same commit must also update the deviation's own labelled fields above (at minimum: **Target resolution release** / a resolved **Status**) in the canonical spec where it was originally filed — not merely record the fix elsewhere (a QA evidence log, a test-scenario doc, an operational record). A deviation resolved in practice but left reading as still-open in its own canonical-spec entry is non-compliant under this standard on the same basis as one filed without a required field.
+
+The governed-routine mechanics for this discipline live in `claude/system/execution_prompt.md` §3.1.A step 10a (`LL-v9.0-P4-01`), cross-referenced from §3.1.B and §3.1.D (`BLG-GOV-332`) so delegated-path resolving commits are not exempt. The Cross-EPIC Deviation Consolidation Review (`post_ship_closure.md` STEP 5.1) is the periodic backstop that checks for resolution-status drift against this discipline.
 
 ---
 

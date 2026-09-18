@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.21
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #1 resolution — new §7.3 Ready-Pool Capacity Gap Trend, codifying a mandatory Product Owner/Head of Specs Team decision point after 3 consecutive widening ready-pool-vs-capacity readings; current reading recorded at 2 consecutive, no action taken yet); prior — 2026-09-14 (STEP 11.4 meta-review, roadmap rebalance 2026-09-14__scheduled — STEP 2.3 gains a standing operating-mode note resolving the Six-Arc-model-vs-backlog-driven-delivery deferred patch carried since 2026-07-28__scheduled); prior — 2026-09-08 (ST-38, EPIC-04, v9.2, BLG-GOV-247 — Step 0.C condensed-tier table gains a formal threshold review; decision: retain single "no new FTE required" test as-is, no additional thresholds); prior history retained — see prior entries in version control.
+**Version:** 9.24
+**Last Updated:** 2026-09-18 (ST-39/BLG-GOV-324, sprint execution `2026-09-15__release-v9.5` — STEP 8.0.5 and STEP 8.2's near-duplicated "check this BLG-ID against backlog.md, exclude if shipped/absent" logic extracted into one new "Candidate/Item Backlog-Status Verification Subroutine," both steps now call it, no behavioural change to either); prior — 2026-09-18 (ST-37/BLG-GOV-322 — §7.1 gains a Cross-role pairing rotation note cross-reference to workforce_capacity.md's new advisory section); prior — 2026-09-18 (ST-32/BLG-GOV-316 — wires shared_standards.md §22's Wall-Clock Cost Logging Convention into STEP 1.1/STEP 12.1); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -257,6 +257,7 @@ Authorities: PMO Lead + FinOps & Resource Architect
 #### 1.1 Run Manifest (Hard Requirement)
 
 Create `claude/cycles/<cycle_id>/run_manifest.md` (Class 3, Owner: Infrastructure & Operations Owner) **before any other file is written**. Record:
+- **Session start (UTC)** — captured via a real shell timestamp command (`date -u +%Y-%m-%dT%H:%M:%SZ`) at this file's creation, never estimated. Per `shared_standards.md §22`'s Governance-Cycle Wall-Clock Cost Logging Convention.
 - Run type; completion event details or "N/A — scheduled run"
 - Canonical inputs used; decision authorities and non-decision roles activated
 - **Prior Cycle Outstanding Actions** — outcome for each
@@ -583,6 +584,8 @@ Governance story % = (G + D + P stories from STEP 2.4) ÷ total stories delivere
 
 **Mandatory pull-forward on sustained failure (v8.3 — closes the story-shape gap identified at `2026-07-04__release-v6.6` closure and confirmed a 2nd time at `2026-07-06__scheduled`):** If the rolling 3-cycle Skill-Silo average has worsened or remained unresolved (i.e. not shown a net improvement) for 3 or more consecutive readings, the pull-forward recommendation is no longer advisory — it becomes a mandatory scope requirement: the Product Owner must commit **at least 2 build-and-ship-shaped U-items** at the next release. A build-and-ship-shaped story is one whose acceptance criteria require a shipped, user-visible change; an audit/investigation-shaped story (AC requires only findings, a decision, or a document) does not count toward this minimum, even if nominally labelled user-facing at scoping time — classify using the same content-based test as STEP 2.4. This closes the gap where v6.5 and v6.6 each bundled 2 nominal U-items but only 1 resolved to genuine `U` at ship in both cases (the other was audit-shaped and correctly reclassified `D`), so the "2-item correction" was never actually tested as designed.
 
+**Cross-role pairing rotation note (ST-37, EPIC-05, v9.5, BLG-GOV-322):** When naming a pull-forward candidate under either the advisory (>40% ceiling) or mandatory (3+ consecutive unresolved readings) path above, also read `claude/roadmap/workforce_capacity.md`'s "Cross-Role Pairing Rotation Note" section — an advisory, not a hard rule, informed by the accumulated §7.1/§7.2 historical pattern, recommending which roles to favour or rotate away from when a candidate's ownership is discretionary. It does not override candidate selection by priority/gate-status (LP-05 and the live-status cross-check above still govern that) — it is additional context for the Product Owner alongside the named candidate(s).
+
 **< 20% Floor:** Verify PO has sufficient sign-off capacity. If unconfirmable: record governance capacity risk in `## STEP 8`. Does not halt — must appear in lessons learnt.
 
 Write: `claude/roadmap/workforce_capacity.md` and/or `claude/economics/workforce_economics.md`
@@ -648,11 +651,29 @@ Record findings in `run_manifest.md` under `## Production Correctness Fast-Track
 
 ---
 
+### Candidate/Item Backlog-Status Verification Subroutine (Callable — ST-39, EPIC-05, v9.5, BLG-GOV-324)
+
+Extracted from STEP 8.0.5 and STEP 8.2, which independently defined near-identical "check this BLG-ID against `backlog.md`, exclude if shipped/absent" logic at two different trigger points. This subroutine is the single canonical definition both steps now call — no behavioural change to either step's own trigger points, scope, or exclusion outcomes; only the duplicated procedure text is consolidated.
+
+**Input:** one `BLG-<ID>`.
+
+**Procedure:**
+1. **Active backlog check:** `grep "BLG-<ID>" claude/backlog/backlog.md` — item must appear as a current row in the active backlog.
+2. **If NOT found in active backlog:**
+   - Check `claude/backlog/backlog_archive.md` — if found → item is archived/shipped → **exclude**; record `[caller] exclusion: [BLG-ID] — archived/shipped (found in backlog_archive.md)`.
+   - If not found in either file → escalate to Head of Specs Team before proceeding.
+3. **If found in active backlog AND carries `✅ COMPLETE` or an `RA:` roadmap annotation marker (already shipped):** **exclude**; record `[caller] exclusion: [BLG-ID] — already shipped (✅ COMPLETE / RA: marker)`.
+4. **Otherwise:** item passes verification — include as a valid candidate.
+
+`[caller]` is the invoking step's own name (`STEP 8.0.5` or `STEP 8.2`), substituted into the `run_manifest.md` record so the two call sites remain distinguishable in the output, exactly as they were before extraction.
+
+---
+
 ### STEP 8.0.5 — Candidate List Pre-Clean (Mandatory)
 
 **Fire at two points: (1) STEP 3 — when compiling the v5.x horizon candidate list from backlog items; (2) STEP 8.1 — immediately before presenting the candidate list to the PO for the Now horizon section.**
 
-For each BLG-ID in the candidate list, grep `claude/backlog/backlog.md`. Remove any item that has `✅ COMPLETE` or an `RA:` roadmap annotation marker (already shipped). Record removed items in `run_manifest.md` as "Already shipped — excluded from candidates."
+For each `BLG-<ID>` in the candidate list, run the Candidate/Item Backlog-Status Verification Subroutine above. Record removed items in `run_manifest.md` as "Already shipped — excluded from candidates." (Since these candidates were compiled directly from the active backlog at STEP 3, subroutine step 1's active-backlog check will always pass for them at this call site — the effective behaviour here is unchanged from the pre-extraction grep-and-marker-check.)
 
 This is **not advisory** — presenting complete items to the PO wastes debate time and inflates apparent scope. Two consecutive cycles (v5.4 LL-RP-01; v5.5 LL-RP-02) saw complete items appear in candidate lists despite STEP 8.0.5 existing. Root cause: candidate lists were compiled without running the grep. Compile-time execution (STEP 3) is the permanent fix. (Added AUD-2026-06-10-003 v5.4; strengthened to Mandatory at STEP 3 + STEP 8.1 v7.1 LL-RP-02.)
 
@@ -703,13 +724,7 @@ Write: `run_manifest.md` (advisory output), same location as §7.1/§7.2.
 
 **Scope:** Every item (firm or conditional) proposed for inclusion in a Now horizon section — whether introduced via the formal STEP 3 candidate list or via prose references in run_manifest text, sprint history citations, or prior-cycle records.
 
-For each BLG-ID proposed for Now horizon inclusion:
-
-1. **Active backlog check:** `grep "BLG-<ID>" claude/backlog/backlog.md` — item must appear as a current row in the active backlog.
-2. **If NOT found in active backlog:**
-   - Check `claude/backlog/backlog_archive.md` — if found → item is archived/shipped → **exclude from scope**; record as `STEP 8.2 exclusion: [BLG-ID] — archived/shipped (found in backlog_archive.md)`.
-   - If not found in either file → escalate to Head of Specs Team before proceeding.
-3. **If found in active backlog AND carries `✅ COMPLETE` or `RA:` annotation:** exclude per STEP 8.0.5 rules.
+For each `BLG-<ID>` proposed for Now horizon inclusion, run the Candidate/Item Backlog-Status Verification Subroutine above (identical procedure: active-backlog check → archive check if absent → shipped-marker check if present → escalate to Head of Specs Team if found in neither file).
 
 **Why this step is distinct from STEP 8.0.5:** STEP 8.0.5 pre-cleans the *formal candidate list compiled at STEP 3*. STEP 8.2 catches items introduced at STEP 8 scope composition time via prose references — run_manifest entries, sprint history text, or prior-cycle conditional cluster notes — that did not go through the STEP 3 candidate list. Root cause: `2026-06-19__scheduled` included BLG-GOV-113 (archived since v5.3) in the v6.0 Now conditional scope because it was cited in a context-window run_manifest entry; the error propagated to `cycle_summary.md` and `DL-048` before correction at STEP 9 write verification. This step prevents that class of error. (Added v7.6, deferred patch from `2026-06-19__scheduled` lessons_learnt, Head of Specs Team sign-off.)
 
@@ -909,6 +924,8 @@ Update `.claude_current_state.json` (rebalance keys only — do not overwrite `a
 If `.claude_current_state.json` does not exist: create it with rebalance keys only.
 
 **Scheduled-run recency marker (v9.8, BLG-GOV-216):** If this run's `--reason` is `"scheduled"`, also set `last_scheduled_rebalance_utc` = this run's `last_rebalance_utc` value in the same write. This field is read by STEP -1.5.5's recency advisory and by the Extended-tier "> 90 days since `last_scheduled_rebalance_utc`" check (§2.4) — without this write, both checks would read a stale or never-set value. Do not set this field for `--item-id` completion-triggered runs (it is scoped to scheduled invocations only).
+
+**Session end (UTC) (ST-32, EPIC-05, v9.5, BLG-GOV-316):** Immediately before STEP 12.2's commit, capture `Session end (UTC)` in `run_manifest.md` via a real shell timestamp command (`date -u +%Y-%m-%dT%H:%M:%SZ`), and record the computed elapsed duration (`end - start`, not re-typed by hand) against the `Session start (UTC)` recorded at STEP 1.1. Per `shared_standards.md §22`. If this session halts at a hard gate before reaching STEP 12: record the halt point's timestamp as Session end instead, noted `(halted, not completed)`, per §22's own halt-path guidance.
 
 #### 12.2 Commit
 

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.76
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #4 resolution — new STEP -1.2A Non-Blocking SLA-Breach Advisory Surfacing, surfacing (not halting on) any open, SLA-breached, non-blocking escalation at every `run sprint` invocation, per shared_standards.md §16.4.1); prior — 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 STEP 8 immediate action, Head of Specs Team direct action — §5.3 gains a pre-merge sign-off format lint requiring the `Signed off by:` line be validated against the recognised-format list before an EPIC's PR opens, LL-v9.3-P4-01); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, Head of Specs Team direct action — STEP 4 step 3a gains a same-step self-verification read-back (LL-v9.2-P3-01), mirroring step 10a's existing fix; STEP 3.1.A's never-amend-a-pushed-commit guardrail (LL-v9.1-P3-02) extended to explicitly cover the failed-intermediate-commit trigger path (LL-v9.2-P3-02)); prior history retained — see prior entries in version control.
+**Version:** 3.78
+**Last Updated:** 2026-09-18 (ST-33/BLG-GOV-318, sprint execution `2026-09-15__release-v9.5` — §7 Write Scope Restriction gains an Opportunistic In-File Fix Disclosure Threshold: commit-message disclosure is sufficient for a small, low-risk incidental fix confined to a file already open for the current story; otherwise it needs its own backlog entry per the existing out-of-scope-finding exception); prior — 2026-09-18 (ST-31/BLG-GOV-332 — the existing Resolving-commit deviation-closure discipline, step 10a, was scoped only to §3.1.A's own numbered steps; §3.1.B and §3.1.D now explicitly cross-reference it); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #4 resolution — new STEP -1.2A Non-Blocking SLA-Breach Advisory Surfacing); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -220,6 +220,11 @@ Phase-specific note: `head_of_specs_team.md` uses `**Role:** Head of Specs Team`
 - Canonical spec files (deviation documentation only — §9 Known Deviation Standard; no other spec edits permitted)
 - `.claude_current_state.json` (status updates only)
 - `claude/backlog/backlog.md` — **new-item addition only**, and only for a genuinely out-of-scope finding surfaced mid-sprint (a defect, gap, or follow-up discovered while working an ST item that is not itself in the current sprint's scope). Permitted: appending a new `### BLG-xx` item under its correct §1–§8 type section, per the Placement Rule at the top of `backlog.md`. Not permitted: editing any existing item's content, priority, status, or `Provisional-Target`; touching the Release Slice / capacity tables; anything that amounts to a scope or re-prioritisation decision. Every item added this way must carry a `**Source:**` line naming the discovering ST/EPIC and today's date, so post-ship closure and `groom backlog` can trace it back to this cycle. This exception formalises a practice already in continuous use across `v8.1`–`v8.3` (see `prompt_change_log.md` this entry) — it does not expand what may be *decided*, only where a *finding* may be recorded.
+
+**Opportunistic in-file fix disclosure threshold (ST-33, EPIC-05, v9.5, BLG-GOV-318):** The exception above covers a finding that is out of the current story's scope *and* discovered in a file the story is not already editing. A distinct, narrower case is an incidental defect discovered **in a file the engine is already editing for the current story's own work** (e.g. a duplicate heading, a stale unrelated field, a typo, a dead cross-reference). For that narrower case:
+- **Commit-message disclosure is sufficient — no separate backlog entry required** — when **all** of the following hold: (a) the fix is confined to file(s) already being edited for the current story; (b) it is small and low-risk (a formatting, wording, dead-reference, or stale-value correction — not a behavioural change, not a schema/contract change, not touching acceptance-criteria-governed logic); (c) it is explicitly disclosed in the commit message under a distinctly labelled sub-section (e.g. `Also fixed (opportunistic, in-file):`), not silently folded into the story's own description.
+- **Otherwise** — the fix touches a file not already open for the story, or is larger/riskier than the bar above — it must go through the existing out-of-scope-finding exception (a new `BLG-xx` backlog entry) rather than land silently in the story's commit.
+- This threshold does not change what a story's *own* acceptance criteria require fixing — it governs only incidental, unrelated-to-AC findings surfaced along the way. Confirmed live at PR #1600 (`2026-09-08__release-v9.2`, EPIC-05): a duplicate "Appendix D" heading collision in `metrics_definitions.md` (found while executing ST-48) and a stale `execution_state.json` field from an unrelated, already-merged EPIC were both disclosed only via commit message with no documented rule on when that was sufficient — both would qualify under this threshold's commit-message-sufficient path.
 
 Must not modify: `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed), `claude/roadmap/*`, `claude/backlog/backlog.md` (beyond the narrow new-item-addition exception above), `claude/strategy/strategy_rules.md`, any governance document outside this routine's scope.
 
@@ -648,6 +653,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 - If yes: transition item to `done`, verify acceptance criteria, update state.
   - Confirm `spec_references` is populated (fill now if missing — ask the assignee which spec section was implemented).
   - Check for deviations: if implementation diverges from the spec, file the deviation in the canonical spec before setting `deviations_filed = true`.
+  - **Resolving-commit deviation-closure discipline applies here too (BLG-GOV-332):** if the assignee's commit closes the root cause of a *pre-existing*, already-filed deviation, the same commit must also update that deviation's own labelled Known Deviation fields in its canonical spec entry, per the rule at STEP 3.1.A step 10a (`LL-v9.0-P4-01`) — this delegated path is not exempt from that discipline merely because the commit was authored by the assignee rather than the engine.
   - **HARD GATE: Update the delegation log entry** (per `shared_standards.md §16.3`) — two-phase write: **(a) sign-off step:** set DEL record `status = "sign_off_cleared"` when sign-off is confirmed; **(b) push step:** set DEL record `commit_sha` when the commit SHA is recorded. Both sub-steps must complete before setting the DEL entry to terminal state `Unblocked`. Set item `status = done` in `execution_state.json` atomically with the `Unblocked` write. Do not advance to the next ST item until the delegation log entry is at terminal state `Unblocked` and execution_state item is `done`.
 - If no: keep blocked and report status to user.
 
@@ -655,7 +661,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 
 1. Complete all autonomous work for the item.
 2. Confirm `spec_references` is populated. Populate now if missing.
-3. Commit and push per 3.1.A steps 3–9 (deviation check applies here too).
+3. Commit and push per 3.1.A steps 3–9 (deviation check applies here too, including the Resolving-commit deviation-closure discipline at step 10a — BLG-GOV-332).
 4. Set item status to `blocked_qa`.
 5. Create `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` if it does not already exist (use the header and structure defined in Section 3.2.A). Then append an entry for this ST item:
    - ST item ID and title
@@ -687,7 +693,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 
 **SLA breach tracking:** Per `claude/system/shared_standards.md §16.4`.
 
-**Unblock detection:** Check escalation record for Resolved or Accepted Risk disposition. If resolved: re-classify item and resume. **HARD GATE: Update the delegation log entry** (per `shared_standards.md §16.3`) — two-phase write: **(a) sign-off step:** set DEL record `status = "sign_off_cleared"` when the escalation disposition is resolved; **(b) push step:** set DEL record `commit_sha` when the commit SHA is recorded. Set item `status = done` in `execution_state.json` atomically with the terminal `Unblocked` write. Do not advance to the next ST item until both are recorded.
+**Unblock detection:** Check escalation record for Resolved or Accepted Risk disposition. If resolved: re-classify item and resume — the re-classified item then inherits whichever of §3.1.A/§3.1.C actually applies, including the Resolving-commit deviation-closure discipline (step 10a, `LL-v9.0-P4-01`/`BLG-GOV-332`) if its resolving commit closes a pre-existing deviation. **HARD GATE: Update the delegation log entry** (per `shared_standards.md §16.3`) — two-phase write: **(a) sign-off step:** set DEL record `status = "sign_off_cleared"` when the escalation disposition is resolved; **(b) push step:** set DEL record `commit_sha` when the commit SHA is recorded. Set item `status = done` in `execution_state.json` atomically with the terminal `Unblocked` write. Do not advance to the next ST item until both are recorded.
 
 ### 3.2 EPIC Completion
 

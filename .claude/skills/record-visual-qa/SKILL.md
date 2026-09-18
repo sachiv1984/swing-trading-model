@@ -14,6 +14,35 @@ invokes /dev-file for any unfixed FAILs.
 Read `.claude/skills/lessons_learnt.md`. Look for entries tagged
 `[record-visual-qa]` and apply them. If the file doesn't exist, continue.
 
+## Step 0.5 — Which path applies (added ST-34, BLG-GOV-319, v9.5 — reconciles ~5 months' drift from actual practice)
+
+The full check-ID workflow below (Steps 1–7) assumes a dedicated
+`docs/testing/staging_visual_test_script_<ST-xx|EPIC-xx>.md` file with
+pre-defined `V-xxx` checks exists for the story. That has become the
+**minority** case: a sample of recent `qa_evidence_EPIC-*.md` entries
+(`2026-09-14__release-v9.4` EPIC-05/EPIC-06, `2026-08-21__release-v9.0`
+closure `TSG-v23-01`) shows this repo's whole E2E suite runs against a
+local Playwright build, not a distinct deployed staging environment — so
+Playwright coverage is now the primary, CI-verifiable evidence path for
+almost every observable AC, and a genuine human-run "staging" sign-off
+(this skill's actual purpose) is now the **named fallback** CLAUDE.md §2
+describes, exercised only for the few ACs Playwright cannot cover (e.g.
+timing/animation completion judged by eye, cross-device rendering).
+
+**Check first:** does a `docs/testing/staging_visual_test_script_*.md`
+file already exist for this story/EPIC?
+
+- **Yes** → use the full workflow, Steps 1–7 below, unchanged.
+- **No** (the common case now) → skip to **Step 4-lite**: record the
+  result directly in the story's DoQ sign-off block as a single line,
+  matching CLAUDE.md §2's own fallback wording exactly:
+  `**Staging sign-off:** {YYYY-MM-DD} — {one-line pass/fail result, e.g. "Pass — all 4 motion-timing components confirmed under 500ms" or "Fail — <what was observed>"}`
+  No `V-xxx` check IDs, no separate test script file, no results table.
+  If the result is a FAIL: still invoke `/dev-file` (Step 5, unchanged)
+  before committing. Then go straight to Step 6 (Commit) — skip Steps
+  2, 3, and 4's table/results-table mechanics entirely, since there is
+  no check-ID table or test script file to stamp.
+
 ## Step 1 — Establish context
 
 Read `.claude_current_state.json` → get `active_cycle`.
