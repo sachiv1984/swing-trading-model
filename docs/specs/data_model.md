@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.35
-**Last Updated:** 2026-09-18 (ST-22, EPIC-04, v9.5, BLG-SPEC-D18 — added live schema verification note to Positions Table section; 4 discrepancies found and filed as BLG-SPEC-148/149/150/151; no schema change); prior — 2026-09-15 (ST-23, EPIC-05, v9.4, BLG-AI-06 — DS-18 added: ai_output_boundary_samples table; header/footer version kept in sync); prior — 2026-09-14 (ST-01, EPIC-01, v9.4, BLG-BE-115 — DS-17 added: unique index on positions(portfolio_id, ticker, entry_date) for open positions; header/footer version brought back in sync); prior history retained — see prior entries in version control
+**Version:** 2.36
+**Last Updated:** 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added Position & Trade Plan Lifecycle State Diagram section; surfaced trade_plans CHECK constraint documentation gap, filed as BLG-SPEC-154; no schema change); prior — 2026-09-18 (ST-22, EPIC-04, v9.5, BLG-SPEC-D18 — added live schema verification note to Positions Table section; 4 discrepancies filed as BLG-SPEC-148/149/150/151); prior — 2026-09-15 (ST-23, EPIC-05, v9.4, BLG-AI-06 — DS-18 added: ai_output_boundary_samples table); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -584,6 +584,64 @@ CREATE INDEX idx_price_alerts_portfolio_active ON price_alerts(portfolio_id, act
 ### Constraints
 
 - Per-portfolio active-alert cap of 50 enforced at the API layer (not the DB) — see `docs/specs/api_contracts/alerts_endpoints.md §POST /price-alerts`.
+
+---
+
+## Position & Trade Plan Lifecycle State Diagram
+
+**Added ST-29 (BLG-SPEC-142, EPIC-04, v9.5).** Canonical state diagram for the two lifecycle state machines in this system: a `trade_plans` row's `status`, and a `positions` row's `status` + `position_state`. Cross-referenced by `docs/specs/api_contracts/trade_plan_endpoints.md`, `docs/specs/api_contracts/position_endpoints.md`, and `docs/specs/frontend/pages/trade_plan.md` (all 3 must link back here rather than restate the diagram — see each file's own cross-reference note).
+
+**Discovery note (relevant to why this diagram wasn't accurate before now):** researching this diagram surfaced that `backend/database.py::ensure_trade_plans_extended_status()` extends `trade_plans_status_check` to 7 statuses (`draft`, `research_pending`, `research_complete`, `entry_conditions_set`, `active`, `closed`, `abandoned`) — confirmed live via a direct query against this session's available `DATABASE_URL` (readonly staging): `pg_get_constraintdef` on `trade_plans_status_check` returns exactly this 7-value list. The `trade_plans` `CREATE TABLE` block above (§Trade Plan Object, DS-04) and its CHECK constraint still only document 3 (`draft`, `active`, `closed`) — this migration was applied live and is fully documented and used correctly in `docs/specs/frontend/pages/trade_plan.md` §9's Status Badge Scheme (all 7 statuses, v3.3), but was never given its own DS-xx entry here. Filed as `BLG-SPEC-154` for the DDL/CHECK-constraint correction — this diagram documents the real (7-status) lifecycle regardless, so it is not blocked on that correction landing first.
+
+### Trade Plan Lifecycle (`trade_plans.status`)
+
+```mermaid
+stateDiagram-v2
+    [*] --> draft: POST /trade-plans
+    draft --> research_pending: user-driven research workflow
+    research_pending --> research_complete
+    research_complete --> entry_conditions_set
+    entry_conditions_set --> active: position_service.add_position() auto-link (sets position_id in the same write)
+    draft --> active: auto-link (no research steps required)
+    research_pending --> active: auto-link
+    research_complete --> active: auto-link
+    active --> closed: linked position closes
+    draft --> abandoned: PUT /trade-plans/{id} {status: abandoned}
+    research_pending --> abandoned
+    research_complete --> abandoned
+    entry_conditions_set --> abandoned
+    abandoned --> [*]
+    closed --> [*]
+```
+
+Plain-text equivalent (for non-rendering contexts): `draft` → (optionally) `research_pending` → `research_complete` → `entry_conditions_set` → `active` → `closed`. Each of the 4 pre-`active` states may instead transition directly to `abandoned` (terminal). `active` requires a non-null `position_id`, enforced by `trade_plans_active_requires_position_check` (DS-12) — the only code path that sets `status = 'active'` is `position_service.py::add_position()`'s auto-link step, which always sets `position_id` in the same write. `active` → `closed` happens when the linked position closes (see Position Lifecycle below); `abandoned` requires `abandonment_reason` (enforced at the API layer, DS-06). Both `abandoned` and `closed` are terminal — no code path transitions out of either.
+
+### Position Lifecycle (`positions.status` + `positions.position_state`)
+
+```mermaid
+stateDiagram-v2
+    [*] --> open: POST /positions (via add_position(), optionally auto-linking a trade_plans row)
+    state open {
+        [*] --> GRACE: trading_days <= 10, price within +-0.5 ATR
+        GRACE --> PROFITABLE: price > entry + 0.5 x ATR
+        GRACE --> LOSING: price < entry - 0.5 x ATR
+        GRACE --> UNKNOWN: grace period elapsed, still ambiguous
+        PROFITABLE --> EXIT_ZONE: price >= entry + 2R (R = entry - initial_stop)
+        PROFITABLE --> LOSING
+        LOSING --> PROFITABLE
+        LOSING --> EXIT_ZONE
+        UNKNOWN --> PROFITABLE
+        UNKNOWN --> LOSING
+    }
+    open --> closed: POST /positions/{id}/exit (creates a trade_history row)
+    closed --> [*]
+```
+
+Plain-text equivalent: `positions.status` is `open` or `closed` — a position row is never deleted, just transitioned (the "Lifecycle note" at the top of the Positions Table section above). While `open`, `position_state` (DS-05) is recomputed on every `GET /positions` call by `PositionLifecycleService.compute_position_state()` (`backend/services/position_lifecycle_service.py`) in priority order `EXIT ZONE` → `PROFITABLE` → `LOSING` → `GRACE` → `UNKNOWN`; the diagram above shows the state-to-state transitions this priority order actually permits between consecutive recomputations (e.g. `GRACE` can resolve to any of `PROFITABLE`/`LOSING`/`UNKNOWN`, but never back to `GRACE` once the grace window elapses — trading days only increase). `state_history` (DS-05) is an append-only audit trail of every transition, never truncated. `EXIT ZONE` and `UNKNOWN` are both display-only — §13: no automated action is taken on any `position_state` value. On `open` → `closed`, `POST /positions/{id}/exit` creates the corresponding `trade_history` row (§3 above) — the position row itself is retained, not deleted, matching the Positions Table's own "serves both open and closed positions" convention.
+
+### How the two lifecycles connect
+
+A `trade_plans` row may link to a `positions` row via `position_id` (nullable — DS-12's note: "a plan may legitimately exist pre-entry, or be abandoned, with no position ever attached"). The link is set exactly once, at `active` transition time, by `position_service.py::add_position()`'s auto-link step — no code path re-links or un-links an existing `position_id`. See `docs/specs/data_model.md`'s own "Trade Plan to Position Linkage" section above for the full linkage field reference.
 
 ---
 
@@ -2268,6 +2326,6 @@ Reversible: `DROP TABLE IF EXISTS ai_output_boundary_samples;`
 
 ---
 
-**Document Version:** 2.35
+**Document Version:** 2.36
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-09-18 (ST-22, EPIC-04, v9.5, BLG-SPEC-D18 — added live schema verification note to Positions Table section; header/footer version kept in sync)
+**Last Review:** 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added Position & Trade Plan Lifecycle State Diagram section; header/footer version kept in sync)

@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.13
-**Last Updated:** 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "No trade plans yet." heading to drop the trailing period, matching already-shipped `TradePlans.js` (`emptyHeading="No trade plans yet"`) and the v1.8 empty-state microcopy pattern in `design_system.md`; documentation-only, no code change); prior — 2026-09-07 (ST-25, EPIC-04, v9.1, BLG-SPEC-132 — new §10.6a Position Sizing Widget Baseline); prior — 2026-09-07 (ST-24, EPIC-04, v9.1, BLG-SPEC-131 — §5.1/§4.2/§5a.3 stale "Risk/Reward Notes" references corrected); prior history retained — see prior entries in version control.
+**Version:** 1.14
+**Last Updated:** 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added lifecycle diagram cross-reference to §9 Status Badge Scheme); prior — 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "No trade plans yet." heading to drop the trailing period); prior — 2026-09-07 (ST-25, EPIC-04, v9.1, BLG-SPEC-132 — new §10.6a Position Sizing Widget Baseline); prior history retained — see prior entries in version control.
 **Design Source (v1.7 what-if sizing preview):** docs/design/2026-08-17__release-v8.9/what-if-sizing-risk-simulator/ux_spec.md
 **Design Source (v1.7 concentration-aware sizing display):** docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md
 **Design Source (v1.5 invalidation condition):** docs/design/2026-08-12__release-v8.7/thesis-invalidation-condition/decision_record.md
@@ -439,6 +439,8 @@ Applied in Trade Plan List and Trade Plan Detail View:
 | `abandoned` | Abandoned | Red | `#DC2626` |
 
 All badges: filled pill, white text. Contrast ≥ 4.5:1 (WCAG AA) for all combinations.
+
+**Lifecycle diagram:** `docs/specs/data_model.md §Position & Trade Plan Lifecycle State Diagram` (ST-29, BLG-SPEC-142, v9.5) is canonical for the `status` state machine these badges display — do not restate the transition rules here.
 
 ---
 
