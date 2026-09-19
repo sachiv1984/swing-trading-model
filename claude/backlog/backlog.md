@@ -5,8 +5,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-19 (`BLG-GOV-335` AC 2 closed — EPIC-04 autonomous-class sign-off reviewed and reclassified, see `docs/governance/doq_review_epic04_v9.5_autonomous_class_2026-09-19.md`); prior — 2026-09-19 (post-ship closure `2026-09-15__release-v9.5` follow-up — `BLG-GOV-335`/`BLG-GOV-336`/`BLG-GOV-337` resolved directly and marked ✅ COMPLETE, pending archive at next `groom backlog`; Effort day ranges added to `BLG-SPEC-148`/`149`/`150`/`151`/`154`); prior — 2026-09-18 (post-ship closure 2026-09-15__release-v9.5, STEP 12 groom backlog — 44 items archived: 43 shipped ST items + `BLG-GOV-334`; 1 ephemeral Release Slice section removed); prior history retained — see prior entries in version control.
-**Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
+**Last Updated:** 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` — idea intake `IW-20260919-01` dispositioned: 37 items filed (`BLG-AI-07`, `BLG-API-04/05`, `BLG-BE-121/122`, `BLG-FE-180–183`, `BLG-FEAT-96–98`, `BLG-FR-04/05`, `BLG-GOV-338–345`, `BLG-OPS-165–167`, `BLG-QA-182–187`, `BLG-SEC-37/38`, `BLG-SPEC-157–160`); `BLG-GOV-329` P3→P2); prior — 2026-09-19 (`BLG-GOV-335` AC 2 closed — EPIC-04 autonomous-class sign-off reviewed and reclassified); prior — 2026-09-19 (post-ship closure `2026-09-15__release-v9.5` follow-up — `BLG-GOV-335`/`336`/`337` resolved directly and marked ✅ COMPLETE, pending archive at next `groom backlog`); prior history retained — see prior entries in version control.
+**Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -3528,7 +3528,7 @@ The 3 newest routers shipped in v9.2/v9.3 have positive-path endpoint test cover
 ---
 
 ### BLG-GOV-329 — Re-confirm §13 boundary review cadence
-**Priority:** P3 (Low)
+**Priority:** P2 (Medium) — escalated from P3, 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` STEP 8.1.5: 2nd rebalance carried past the §13-adjacent expiry threshold and not selected at v9.5 at P3; raised so §1.4c's P2-first selection seats this decision-only story at v9.6)
 **Type:** Governance / Strategy
 **Owner:** Strategy Rules & System Intent Owner
 **Source:** IDEA-strategy-owner-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
@@ -3947,3 +3947,792 @@ ST-42 (same EPIC) correctly filed `BLG-QA-180` when it found no Playwright test 
 **Resolution (2026-09-19):** Head of Specs Team + Product Owner ruled (agent-mediated, §5.3) for a **narrow, plan-authorised standing exception**: `workforce_capacity.md` may be written only where the cycle's sealed `sprint_backlog.md` names it in an ST item's AC or sequencing note (so authority comes from a plan the Product Owner already signed at the Sprint Planning seal, not from the engine's inference). Not extended to any other `claude/roadmap/*` file or to any prioritisation decision. ST-37/ST-38 retroactively ratified. `execution_prompt.md` §7 updated (v3.78→v3.79), which is the cross-reference AC 2 requires.
 
 ---
+
+
+## Idea Intake IW-20260919-01 — Promoted-Backlog Disposition (roadmap rebalance `2026-09-19__scheduled`)
+
+*41 of the window's 44 submissions promoted to backlog per STEP 4 "📋 Backlog" disposition, filed as **36 items** after 4 consolidations (Idea Consolidation convention); 35 are ungated and 1 (`BLG-SEC-37`) is gate-conditional. 2 submissions parked (`Parked-cycle-1`), 1 rejected as already implemented. **Plus 1 item (`BLG-GOV-345`) filed from this rebalance's own lessons learnt, not an idea** — 37 items in all. All carry `**Provisional-Target:** TBD` (Now/Next horizons both empty — §16.6 fallback) and no release-specific effort day-range is required (§16.12 n/a). `BLG-FEAT-96`, `BLG-FEAT-97`, `BLG-SPEC-160`, `BLG-OPS-166` and `BLG-GOV-345` are P2 by explicit PO decision (see `claude/cycles/2026-09-19__scheduled/cycle_record.md` STEP 4). Window: `claude/ideas/window_summary_IW-20260919-01.md`.*
+
+### BLG-AI-07 — Golden-fixture CI regression for AI prompt templates — boundary-language drift caught at template-change time
+**Priority:** P3 (Low)
+**Type:** AI Compliance / QA Tooling
+**Owner:** AI Compliance & Governance Officer; QA & Testing Owner
+**Source:** IDEA-ai-compliance-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+Boundary-language sampling (`BLG-AI-04` quarterly re-scan, `BLG-AI-06` generation-time hook) inspects text after generation, so a prompt-template edit that reintroduces predictive or advice-crossing phrasing is caught only at the next sample (up to ~90 days). `claude_audit_log` already records `model_id` and `prompt_version` (confirmed in `backend/database.py`), so attribution exists — but nothing asserts that `prompt_version` actually changes when a template's text changes.
+
+**Scope**
+- Fixed rendered-prompt fixtures per AI endpoint (chat, briefing, debrief) checked against the `strategy_rules.md` §13.2 disallowed-phrase list — deterministic, template-level, no live API call
+- CI test asserting no disallowed phrase appears in any rendered template
+- CI test asserting `prompt_version` differs whenever a template's text hash differs
+
+**Acceptance Criteria**
+- CI fails when a disallowed phrase is introduced into any covered template
+- CI fails when template text changes without a `prompt_version` change
+- The suite runs without `ANTHROPIC_API_KEY`
+
+*Note: `IDEA-ai-compliance-20260919-02` (stamp model/prompt version on audit rows) was rejected as already implemented; its residual value — asserting the version actually moves — is folded into this item's third scope bullet.*
+
+---
+
+### BLG-API-04 — Document idempotency and double-submit behaviour for every mutating endpoint
+**Priority:** P3 (Low)
+**Type:** Spec Debt / API Contracts
+**Owner:** API Contracts & Documentation Owner
+**Source:** IDEA-api-contracts-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+No contract states what a retried `POST` does. `BLG-BE-115`/DS-17 (duplicate open positions) shows the risk is real, yet retry and double-submit semantics for `POST /trades`, `POST /trade-plans` and position entry are specified nowhere.
+
+**Scope**
+- Add an "Idempotency / retry behaviour" subsection to every mutating endpoint's contract in `docs/specs/api_contracts/`
+- Verify each statement against code and tests (for example the DS-17 unique index); where behaviour is undefined, record it as such and file a follow-up item
+
+**Acceptance Criteria**
+- Every `POST`/`PUT`/`PATCH`/`DELETE` heading in `docs/specs/api_contracts/` carries the subsection
+- Undefined behaviours are listed and each has a filed backlog item
+- Endpoint headings remain `## METHOD /path` (OpenAPI drift gate unaffected)
+
+---
+
+### BLG-API-05 — Error-payload (4xx/5xx) examples for the 10 most-called endpoints, covered by the example-freshness checker
+**Priority:** P3 (Low)
+**Type:** Spec Debt / API Contracts
+**Owner:** API Contracts & Documentation Owner
+**Source:** IDEA-api-contracts-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+Contracts carry success examples; the overlap scan found no backlog item covering error-response examples, so client-side error handling is specified by reading code. `BLG-SPEC-139` established freshness checking for example payloads; error payloads are outside what any item covers.
+
+**Scope**
+- Pick the 10 most-called endpoints (from `api_performance_baseline.md`) and add at least one 4xx example each
+- Extend the contract example-freshness checker to compare error examples against the canonical error envelope
+
+**Acceptance Criteria**
+- 10 endpoints carry ≥1 error example
+- The freshness checker fails when an error example diverges from the envelope
+
+---
+
+### BLG-BE-121 — Float-vs-Decimal money-arithmetic audit with rounding-boundary golden tests
+**Priority:** P3 (Low)
+**Type:** Backend / Correctness
+**Owner:** Backend Engineering Patterns Owner; Financial Reporting & Records Owner
+**Source:** IDEA-backend-engineering-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** M (~1.5–2d)
+**Provisional-Target:** TBD
+
+**Problem**
+Share-count, FX-conversion and P&L paths mix float operations across services; rounding-boundary behaviour (`strategy_rules.md` §4.1.3, §4.1.5) is asserted nowhere as a class, so a one-penny discrepancy would surface only in reconciliation.
+
+**Scope**
+- Inventory float-vs-Decimal use in sizing, FX conversion and P&L code paths
+- Add golden tests pinning rounding at the boundary cases in §4.1.3/§4.1.5
+- Where a path is unsafe, file a fix item rather than changing behaviour in this story
+
+**Acceptance Criteria**
+- Inventory recorded in the QA evidence file
+- Golden tests for each boundary case pass
+- 0 unexplained ≥£0.01 discrepancies across the sizing golden set
+
+---
+
+### BLG-BE-122 — Shared upstream-call helper: uniform timeout and bounded retry budget for yfinance, Alpaca and Anthropic
+**Priority:** P3 (Low)
+**Type:** Backend / Reliability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** IDEA-backend-engineering-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** M (~1.5–2d)
+**Provisional-Target:** TBD
+
+**Problem**
+`timeout=` is set ad hoc at ~25 call sites across at least 8 backend modules that call external APIs; a hung call in the nightly stop-update path would stall stop ratcheting (`strategy_rules.md` §7.3).
+
+**Scope**
+- Introduce one helper that applies a per-provider timeout and a bounded retry budget
+- Migrate the nightly stop-update and screener call paths first; list remaining call sites as follow-ups
+
+**Acceptance Criteria**
+- No unbounded upstream call remains in the nightly stop-update path
+- Timeout and retry values are configured in one place
+- Existing tests still pass; new tests cover timeout and retry-exhaustion
+
+---
+
+### BLG-FE-180 — Flag stale 'planned' trade plans on the Trade Plans list
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Enhancement
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-product-owner-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+Trade plans in `planned` status accumulate with no visual cue that they are old and unactioned.
+
+**Scope**
+- Show a display-only "Stale (N days)" marker on plans in `planned` status older than a fixed threshold (default 14 days)
+- No automated action — marker only (§3 human-in-the-loop)
+
+**Acceptance Criteria**
+- A `planned` plan older than the threshold shows the marker; a newer plan does not
+- Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)
+
+---
+
+### BLG-FE-181 — Name one primary next action in every empty state
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Enhancement
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+v9.5 consolidated empty-state copy (wording); the overlap scan found no backlog item requiring each empty state to name a next action, so a first-time or cleared view can be a dead end.
+
+**Scope**
+- Audit empty states across pages
+- Add one primary next-action link per empty state (for example "Run the screener", "Create a plan")
+
+**Acceptance Criteria**
+- 0 audited empty states without a next-action link
+- Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)
+
+---
+
+### BLG-FE-182 — Single number/currency formatting helper — audit and migrate the highest-traffic tables
+**Priority:** P3 (Low)
+**Type:** Frontend / Consistency
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-head-of-ux-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** M (~2d)
+**Provisional-Target:** TBD
+
+**Problem**
+`toFixed(` appears in 68 files under `src/` and `toLocaleString`/`Intl.NumberFormat` in 19, and no shared currency-format helper export was found — inviting inconsistent GBP/USD symbol, decimals and negative-number presentation (`strategy_rules.md` §4.1.5).
+
+**Scope**
+- Add one shared helper for currency, percentage and R-multiple formatting
+- Migrate Positions, TradeHistory and TradePlans first; list the rest as follow-ups
+
+**Acceptance Criteria**
+- The three tables use the helper with identical negative/decimal conventions
+- Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)
+
+---
+
+### BLG-FE-183 — CI lint of static UI copy for forbidden predictive or advice-crossing phrases
+**Priority:** P3 (Low)
+**Type:** Frontend / QA Tooling
+**Owner:** Base44 Frontend Prompt Owner; AI Compliance & Governance Officer
+**Source:** IDEA-base44-frontend-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+The overlap scan found no automated check of static UI copy (as distinct from AI output) for §13.2 language; review is the only control on record.
+
+**Scope**
+- Scan string literals in `src/` against the §13.2 disallowed-phrase list in CI
+- Allow-list mechanism with a required justification
+
+**Acceptance Criteria**
+- CI fails on a disallowed phrase in a new string literal
+- Allow-list entries require a justification
+
+---
+
+### BLG-FEAT-96 — 'Clone as new plan' action on the Trade Plans list
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Frontend
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-engineering-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+Creating a plan for a similar setup restarts from blank (`TradePlans.js`/`TradePlan.js` offer no clone), which adds friction to the pre-entry planning that `strategy_rules.md` §4 requires and that drives the linked-plan volume the SI-02 gate depends on. **Priority escalated P3→P2 at intake as a named `roadmap_prompt.md` §7.1 mandatory pull-forward candidate** (ungated, build-and-ship; same mechanism as `BLG-FEAT-95` at `2026-09-14__scheduled`).
+
+**Scope**
+- Add a Clone action to each plan row/detail that opens a new plan pre-populated with setup fields, thesis and checklist template
+- The clone starts in `planned` status with no position link — `position_id` must NOT be copied (would corrupt the SI-02 linked-plan count)
+
+**Acceptance Criteria**
+- Clicking Clone opens a new, unsaved plan pre-populated from the source
+- The cloned plan has status `planned`, fresh dates and no `position_id`
+- Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)
+
+---
+
+### BLG-FEAT-97 — CSV export for Screener results and Watchlist
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Frontend
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** IDEA-head-of-engineering-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+Reports and TradeHistory export CSV (`src/pages/Reports.js`, `TradeHistory.js`); Screener and Watchlist do not (confirmed by `src/` search), so ranked candidates cannot leave the app. **Priority escalated P3→P2 at intake as a named `roadmap_prompt.md` §7.1 mandatory pull-forward candidate** (ungated, build-and-ship).
+
+**Scope**
+- Add an Export CSV control to Screener results and Watchlist reusing the existing export pattern
+- Columns match the visible columns; UTF-8 with a header row; filename carries the date; client-side, nothing persisted
+
+**Acceptance Criteria**
+- Export downloads a file whose columns equal the visible columns on both pages
+- Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)
+
+---
+
+### BLG-FEAT-98 — In-app reminder to complete TradeReflection within 48 hours of a trade closing
+**Priority:** P3 (Low)
+**Type:** Product Feature / Frontend + Backend
+**Owner:** Product Owner; Head of Engineering
+**Source:** IDEA-product-owner-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** M (~1–2d)
+**Provisional-Target:** TBD
+
+**Problem**
+Reflection data feeds Arc 4 (PO-02/PO-04), which are gated on data volume; completion currently depends on the operator remembering. A reminder raises reflection completion and so accelerates the data-density gates without automating anything (`strategy_rules.md` §3 — prompt, never act).
+
+**Scope**
+- Create a dismissible in-app notification 48h after a trade closes with no reflection, using the existing Notifications infrastructure
+- At most one reminder per trade; respects `NotificationPreferences`
+
+**Acceptance Criteria**
+- A closed trade without a reflection produces exactly one reminder after 48h
+- Completing the reflection or dismissing suppresses it
+- Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)
+
+---
+
+### BLG-FR-04 — Audit whether closed-trade P&L is net of fees_paid; flag closed trades with NULL fees_paid in Monthly P&L
+**Priority:** P3 (Low)
+**Type:** Financial Reporting / Data Integrity
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+`fees_paid` is calculated at entry (`position_service.py`, `calculate_uk/us_entry_fees`) and `BLG-SPEC-151` records it as nullable on the live table, but `fees_paid` is not referenced in `analytics.py` or `trades_export.py` — so it is unclear whether reported P&L is gross or net of fees, and a NULL would silently differ.
+
+**Scope**
+- Determine and document whether Monthly P&L and the tax-year table are net or gross of fees
+- Surface a 'fees not recorded' count where NULL-fee closed trades exist
+
+**Acceptance Criteria**
+- The net/gross basis is documented in the canonical metrics spec
+- A NULL-fee closed trade is counted and visible in Monthly P&L
+
+---
+
+### BLG-FR-05 — Month-end immutable snapshot of Monthly P&L and the tax-year table, with a restatement diff
+**Priority:** P3 (Low)
+**Type:** Financial Reporting / Records Integrity
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** M (~2d)
+**Provisional-Target:** TBD
+
+**Problem**
+A later edit to a closed-trade row silently restates an already-reviewed month; nothing records what a month showed when it was reviewed.
+
+**Scope**
+- Persist a read-only snapshot per closed month
+- Show a diff when the live figures for a snapshotted month differ
+
+**Acceptance Criteria**
+- A snapshot exists per closed month
+- Editing a closed trade in a snapshotted month surfaces a restatement diff
+
+---
+
+### BLG-GOV-338 — Bake accessible-name and heading-order rules into the Base44 prompt template
+**Priority:** P3 (Low)
+**Type:** Governance / Base44
+**Owner:** Base44 Frontend Prompt Owner; Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-base44-frontend-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Accessible-name and heading-order defects were fixed page by page (`BLG-FE-170`/`171`) with nothing preventing the next regeneration reintroducing them.
+
+**Scope**
+- Add `aria-labelledby`-over-duplicated-`aria-label` and heading-order rules to the Base44 prompt template
+- Record the change in the prompt versioning changelog
+
+**Acceptance Criteria**
+- The template carries both rules
+- A regenerated page in a test run introduces no new axe-core `KNOWN_VIOLATIONS` entries
+
+---
+
+### BLG-GOV-339 — PVR / Skill-Silo measurement package — split debt into user-protective vs hygiene, add effort-weighted PVR, add a leading ungated-U-pool indicator
+**Priority:** P3 (Low)
+**Type:** Governance / Metrics
+**Owner:** Metrics Definitions & Analytics Owner; Head of Specs Team
+**Source:** IDEA-challenger-20260919-01, IDEA-challenger-20260919-02, IDEA-metrics-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled (consolidates 3 ideas — Idea Consolidation convention)
+**Effort:** M (~1.5–2d)
+**Provisional-Target:** TBD
+
+**Problem**
+Three consecutive PVR Alert readings (0.110 / 0.092 / 0.046) and a 99.0% Skill-Silo reading cannot drive a differentiated response: `D` is 122 of 195 stories in the current window, conflating user-protective debt (bug, security, data integrity) with hygiene; story counts weight a one-hour fix like a two-week build; and both mandatory clauses depend on a pool of ungated U-items that neither clause replenishes. Three submissions converge on this one problem (Idea Consolidation convention).
+
+**Scope**
+- Define a user-protective vs hygiene split of `D` and re-tag at ship time going forward
+- Report an effort-weighted PVR alongside the story-count PVR in `product_value_ratio_history.md`
+- Add a leading indicator: count of ungated, build-and-ship U-items in the backlog at each rebalance
+- **Proposal only** — any change to `roadmap_prompt.md` STEP 2.4/§7.1 needs Head of Specs Team + Product Owner sign-off and the CLAUDE.md §6 checklist
+
+**Acceptance Criteria**
+- Definitions documented in `metrics_definitions.md`
+- History file carries both readings for the last 5 windows
+- Leading indicator computed at the next rebalance
+
+---
+
+### BLG-GOV-340 — Delivery-flow metrics — lead time by priority band and ready-pool runway forecast
+**Priority:** P3 (Low)
+**Type:** Governance / Metrics
+**Owner:** Metrics Definitions & Analytics Owner; PMO Lead
+**Source:** IDEA-metrics-20260919-02, IDEA-pmo-lead-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled (consolidates 2 ideas — Idea Consolidation convention)
+**Effort:** S (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+No measure shows whether P1/P2 items ship faster than P3, and §7.3 measures the ready-pool gap retrospectively — nothing projects when the pool empties. Both are delivery-flow observability gaps (Idea Consolidation convention).
+
+**Scope**
+- Median filed→shipped days by priority band per cycle (from `backlog_archive.md` and the changelog)
+- One projected 'cycles until empty' number per rebalance, given intake and capacity
+
+**Acceptance Criteria**
+- Both metrics defined and computed for the last 5 cycles
+- The runway figure is cited in the next rebalance's STEP 7.3
+
+---
+
+### BLG-GOV-341 — Persist STEP 7.2 role-share tallies as a structured history file
+**Priority:** P3 (Low)
+**Type:** Governance / Workforce
+**Owner:** Director of HR; PMO Lead
+**Source:** IDEA-director-of-hr-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+STEP 7.2 re-tallies free-text `**Owner:**` fields each rebalance; at `2026-09-14__scheduled` raw counts exceeded story totals in 3 of 3 cycles, and at this rebalance again (v9.3: 35 raw vs 27 stories). Complements — does not replace — the deferred Owner-field canonicalisation patch.
+
+**Scope**
+- Create a history file (one row per cycle, primary-owner counts) analogous to `product_value_ratio_history.md`
+- Wire STEP 7.2 to read and append it
+
+**Acceptance Criteria**
+- History backfilled for the last 3 cycles
+- STEP 7.2 reads the file instead of re-parsing Owner fields
+
+---
+
+### BLG-GOV-342 — JSON Schema for `.claude_current_state.json`, including the `last_updated_utc` field the roadmap engine reads
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+`roadmap_prompt.md` STEP -1.6 reads `last_updated_utc`, which the state file does not carry, so the state-age advisory fires on every run (confirmed at `2026-09-19__scheduled`, with `last_sync_utc` fresh).
+
+**Scope**
+- Author a JSON Schema for the state file
+- Identify each engine that writes state and have it set `last_updated_utc`
+- Validate against the schema in preflight or the `governance-drift` skill
+
+**Acceptance Criteria**
+- The state file validates
+- The state-age advisory computes a real age instead of always firing
+
+---
+
+### BLG-GOV-343 — Split `roadmap_prompt.md` into a core plus an appendix so it fits a single read
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** M (~1.5–2d)
+**Provisional-Target:** TBD
+
+**Problem**
+`BLG-GOV-08` (retired 2026-05-13) fixed engine-prompt size once; `roadmap_prompt.md` has since regrown to 957 lines (~34,214 tokens), past the 25,000-token single-read cap — it could not be read in one pass at `2026-09-19__scheduled`. Re-opens that concern with new evidence.
+
+**Scope**
+- Move dated decision notes and long rationale blocks to an appendix with pointer stubs; keep every STEP's procedure in the core
+- Apply the CLAUDE.md §6 checklist
+
+**Acceptance Criteria**
+- Core ≤25,000 tokens
+- No procedural step lost (diff-verified)
+- §6 checklist complete
+
+---
+
+### BLG-GOV-344 — Parameter-change ledger for `strategy_rules.md` §11 production parameters
+**Priority:** P3 (Low)
+**Type:** Governance / Strategy
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Parameter history is recoverable only from git and the change log. Refines `BLG-GOV-95` (annual review schedule): that item schedules review; this adds the history ledger it would read.
+
+**Scope**
+- One row per §11 parameter change: date, old→new, justification, link
+
+**Acceptance Criteria**
+- Ledger backfilled from the strategy_rules change log
+- §12.3 change control references it
+
+---
+
+### BLG-GOV-345 — Release-planning gate scan treats lapsed date gates as permanently gated
+**Priority:** P2 (Medium)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team; Product Owner
+**Source:** Roadmap rebalance 2026-09-19__scheduled, Friction Item 1 (`lessons_learnt.md`) — not an idea submission
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+`scripts/scan_backlog_gate_conditions.py` and `release_planning_prompt.md` §1.3a classify by the presence of a `**Gate criteria:**` field, not by evaluating dates. At 2026-09-19, gates whose date has lapsed are still counted gated: `BLG-FEAT-59`, `BLG-FEAT-60`, `BLG-FEAT-63`, `BLG-FE-84` ("AI adoption window clears ~2026-07-25"), `BLG-GOV-90` (gate: first `BLG-GOV-74` review, due 2026-08-29; `BLG-GOV-74` shipped v9.1), and `BLG-GOV-188` ("None — … Met 2026-07-08"). Gates clearing 2026-09-24: `BLG-GOV-140`/`141`/`142`, `BLG-OPS-88`. Each is excluded from the ready pool at v9.3–v9.5 planning, which also hid `BLG-FEAT-59` (an ungated-once-verified build-and-ship U-item) from the §7.1 candidate search. Found at `2026-09-19__scheduled` (Friction Item 1).
+
+**Scope**
+- Extend the scan to parse ISO dates in gate text and emit a 'date-lapsed — verify' list
+- Update `release_planning_prompt.md` §1.3a to require that list be read before the ready pool is fixed
+- Individually verify and clear or re-gate the six items above
+
+**Acceptance Criteria**
+- Scan reports lapsed-date items separately
+- Each of the six items is verified and either cleared (gate line removed, dated note) or re-gated with a new dated condition
+- §6 checklist complete for any prompt change
+
+*Note: Source: this rebalance's own lessons learnt, not an idea.*
+
+---
+
+### BLG-OPS-165 — CI minutes and artifact-storage visibility; explicit retention on the 3 uploads that lack it
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** IDEA-finops-20260919-01, IDEA-finops-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled (consolidates 2 ideas — Idea Consolidation convention)
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Cost visibility covers AI and hosting spend but not CI minutes, which grew with the Playwright shard increase 4→8 (v9.3). Retention is explicit on `playwright-report` (14 days) and the DB backup (90 days) but not on `visual-snapshot-report`, `visual-regression-report` or `smoke-test-report` (Idea Consolidation: both ideas concern GitHub Actions consumption).
+
+**Scope**
+- Track minutes and artifact storage per workflow monthly
+- Set explicit `retention-days` on the three uploads without one
+
+**Acceptance Criteria**
+- A monthly per-workflow figure exists
+- All artifact uploads carry explicit retention
+
+---
+
+### BLG-OPS-166 — Dead-man's-switch alert when nightly-stop-update has not succeeded within 26 hours
+**Priority:** P2 (Medium)
+**Type:** Operations / Monitoring
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+A silently missed nightly run leaves stops stale on live positions until a human notices (`strategy_rules.md` §7.3). `BLG-OPS-160` (P1, v9.5) created the live trigger; `BLG-OPS-110` monitors the nightly backtest job; `BLG-OPS-164` confirms the uptime monitor — none alerts on absence of a successful stop-update run. P2 mirrors `BLG-OPS-160`'s rationale at the detection layer.
+
+**Scope**
+- Alert (existing Telegram channel) when no successful nightly-stop-update run is recorded within 26h
+- Include the last-success timestamp in the alert
+
+**Acceptance Criteria**
+- A simulated missed run raises the alert within the window
+- A successful run clears it
+
+---
+
+### BLG-OPS-167 — External-dependency failure-mode matrix (yfinance, Alpaca, Anthropic, Supabase, Render)
+**Priority:** P3 (Low)
+**Type:** Operations / Documentation
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Health checks detect failures (`BLG-OPS-76`); no document states what the operator sees or does when each dependency is down.
+
+**Scope**
+- One table: dependency → user-visible degradation → manual fallback → detection
+
+**Acceptance Criteria**
+- All 5 dependencies documented
+
+---
+
+### BLG-QA-182 — Escaped-defect and follow-on-ratio tracking per cycle
+**Priority:** P3 (Low)
+**Type:** QA / Metrics
+**Owner:** Director of Quality; PMO Lead
+**Source:** IDEA-director-of-quality-20260919-01, IDEA-pmo-lead-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled (consolidates 2 ideas — Idea Consolidation convention)
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+v9.5 filed 21 follow-on items during execution and two PR review rounds (~0.49 per shipped story), several found only by review — no measure separates defects escaping a story from planned debt (Idea Consolidation: both concern post-merge findings).
+
+**Scope**
+- Per cycle: defects first observed after merge, linked to the originating story; follow-ons filed per shipped story
+
+**Acceptance Criteria**
+- Baseline computed for v9.5
+- A per-cycle row is added at each post-ship closure
+
+---
+
+### BLG-QA-183 — DoQ checklist addendum for AI-touching stories
+**Priority:** P3 (Low)
+**Type:** QA / Governance
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+AI-touching stories (for example `BLG-AI-06`) reached sign-off with two ACs staging-only and no standard evidence shape.
+
+**Scope**
+- Addendum: record prompt-template version and a boundary-language sample in the evidence file
+
+**Acceptance Criteria**
+- The addendum exists in the DoQ template
+- The next AI-touching story uses it
+
+---
+
+### BLG-QA-184 — Mutation-testing pilot on the sizing calculator and stop ratchet
+**Priority:** P3 (Low)
+**Type:** QA / Test Quality
+**Owner:** QA Lead
+**Source:** IDEA-qa-lead-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** M (~2d)
+**Provisional-Target:** TBD
+
+**Problem**
+Passing tests do not show that the sizing (§4.1) and stop-ratchet (§7.3) tests would catch a mutated rule.
+
+**Scope**
+- Run a Python mutation tool over the two modules
+- Record the mutation score and survivors; file survivors as follow-ups
+
+**Acceptance Criteria**
+- Baseline mutation score recorded for both modules
+- Survivors triaged
+
+---
+
+### BLG-QA-185 — Strategy-rule → test traceability matrix for `strategy_rules.md` §4–§8
+**Priority:** P3 (Low)
+**Type:** QA / Traceability
+**Owner:** QA Lead; Strategy Rules & System Intent Owner
+**Source:** IDEA-qa-lead-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** M (~2d)
+**Provisional-Target:** TBD
+
+**Problem**
+`BLG-BE-119` found the entry-price-floor case exercised by no golden test; no artefact maps each normative clause to an asserting test.
+
+**Scope**
+- Matrix: each normative clause → asserting test (or 'none')
+- File a follow-up per clause with no test
+
+**Acceptance Criteria**
+- Matrix published
+- % of clauses with an asserting test reported
+
+---
+
+### BLG-QA-186 — Property-based tests for 'stop never decreases' and sizing validity rules
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+Example-based tests cover chosen cases; the §7.3 hard constraint (stops never decrease) and §4.1.4 validity rules are universal invariants.
+
+**Scope**
+- Add `hypothesis` property tests for both invariants
+
+**Acceptance Criteria**
+- Both properties pass over generated inputs in CI
+- A deliberately broken ratchet fails the property
+
+---
+
+### BLG-QA-187 — Enable Playwright trace and screenshot retain-on-failure
+**Priority:** P4 (Trivial)
+**Type:** QA / CI Tooling
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`playwright.yml` already retains the report artifact 14 days, but no `trace`/`screenshot` option is configured, so failure evidence is thin. Narrowed from the submitted idea after checking the workflow.
+
+**Scope**
+- Set `trace: 'retain-on-failure'` and `screenshot: 'only-on-failure'`
+
+**Acceptance Criteria**
+- A failing run's report includes a trace
+
+---
+
+### BLG-SEC-37 — Read-only production credential scoped to aggregate gate-check views for governed routines
+**Priority:** P3 (Low)
+**Type:** Security / Credentials
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** IDEA-cybersecurity-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+**Gate criteria:** Explicit Product Owner + Cybersecurity & Trust Lead approval of the credential's scope and storage channel — a governed routine must not create or store this credential itself.
+
+**Problem**
+The read-only credential available to sprint-execution sessions is for **staging** and cannot answer the production questions the SI-02 gate asks; SI-02 readings have been cited from a stale structured field at every rebalance since 2026-07-28. Refines `BLG-OPS-121` (staging) and `BLG-OPS-99` (X-API-Key).
+
+**Scope**
+- A database role limited to `SELECT` on aggregate views (linked-plan count, closed-trade count)
+- Injected via environment only; never committed; rotation per `api_key_rotation_policy.md`
+
+**Acceptance Criteria**
+- Role exists with no access beyond the named views
+- A governed routine can read the gate counts without any credential in git
+
+---
+
+### BLG-SEC-38 — CI guard rejecting non-registry dependency specifiers (git+ssh, git+https, file:)
+**Priority:** P4 (Trivial)
+**Type:** Security / Supply Chain
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`BLG-TECH-18`'s production-build regression came from a git+ssh dependency. `package.json` and `requirements` carry no non-registry specifier today (checked 2026-09-19), so this is preventive only — hence P4.
+
+**Scope**
+- CI step failing on non-registry specifiers with an allow-list requiring justification
+
+**Acceptance Criteria**
+- A test PR adding a `git+ssh` dependency fails CI
+
+---
+
+### BLG-SPEC-157 — Read-only live-schema vs `data_model.md` drift detector
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Tooling
+**Owner:** Data Model & Domain Schema Owner
+**Source:** IDEA-data-model-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** M (~2d)
+**Provisional-Target:** TBD
+
+**Problem**
+v9.5 found five live-vs-spec divergences by hand (`BLG-SPEC-148`/`149`/`150`/`151`/`154`: missing index, orphaned columns, nullable mismatch, undocumented CHECK).
+
+**Scope**
+- Script comparing live columns, indexes and constraints with `data_model.md`
+- Runs read-only wherever `DATABASE_URL` is available
+
+**Acceptance Criteria**
+- The five known divergences are reproduced by the tool
+- Output lists undocumented and missing objects
+
+---
+
+### BLG-SPEC-158 — Responsive-table behaviour spec for Positions, TradeHistory and TradePlans
+**Priority:** P3 (Low)
+**Type:** Frontend Spec
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** TBD
+
+**Problem**
+No spec states table behaviour below 768px (column priority, scroll vs card).
+
+**Scope**
+- Spec each table's narrow-width behaviour
+
+**Acceptance Criteria**
+- Three tables have stated behaviour in the frontend specs
+
+---
+
+### BLG-SPEC-159 — Canonical keyboard-shortcut inventory spec
+**Priority:** P4 (Trivial)
+**Type:** Frontend Spec
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Keyboard-event handling appears in `Layout`, `TradeEntry`, `TradePlan`, `RedFlagJournal` and `TickerUniverse`; the overlap scan found no single inventory (`BLG-FE-19` shipped the shortcuts).
+
+**Scope**
+- Inventory every shortcut; flag conflicts
+
+**Acceptance Criteria**
+- One inventory; conflicts resolved or filed
+
+---
+
+### BLG-SPEC-160 — PO-05 (Lightweight Replay Mode) §13 determinism pre-clearance review, standalone
+**Priority:** P2 (Medium)
+**Type:** Governance / §13 Compliance
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`BLG-FEAT-74` (P1, "highest-value long-term validation feature") is blocked only because its §13 determinism pre-clearance was never run — that review is small; the build is >2 weeks. Extracting it as its own item makes `BLG-FEAT-74` either genuinely ungated-ready or cleanly rejected, and is the only route to a further qualifying U-candidate for the Skill-Silo clause. Analogue of `BLG-SPEC-156` (PO-04).
+
+**Scope**
+- Confirm the feature is a deterministic replay of the operator's own history, not predictive simulation (precedent: PS-03 Monte Carlo framing; IT-06's four binding conditions)
+- Record the determination in a decisions document and update `BLG-FEAT-74`'s gate line
+
+**Acceptance Criteria**
+- A dated §13 determination exists
+- `BLG-FEAT-74`'s gate line reflects the outcome
+
+---
+

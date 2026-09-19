@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-38/BLG-GOV-323 — new "Cost-Per-Cycle Wall-Clock Rollup" section added (empty — §22 not yet exercised by a real `run roadmap` invocation), refresh cadence documented, merge decision recorded for `BLG-GOV-326`); prior — 2026-09-18 (ST-37/BLG-GOV-322 — new "Cross-Role Pairing Rotation Note" section added, advisory guidance to favour execution-heavy roles while the Skill-Silo Alert remains elevated); prior — 2026-09-14 (rebalance 2026-09-14__scheduled — Standard tier, no FTE changes; Skill-Silo Alert rolling-3-cycle avg 94.1%, 4th consecutive worsening/unresolved reading; STEP 7.2 Cross-Role Workload Balance recomputed — Head of Specs Team highest at ~24%; Product Value Ratio 0.092 🔴 Alert); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-19 (rebalance 2026-09-19__scheduled — Standard tier, no FTE changes; new "Rebalance 2026-09-19__scheduled" section; first real row added to the Cost-Per-Cycle Wall-Clock Rollup; Skill-Silo Alert 98.8%, 5th consecutive worsening reading — mandatory pull-forward satisfied; STEP 7.2 max role share 15.3%; Product Value Ratio 0.046 🔴 Alert); prior — 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-38/BLG-GOV-323 — new "Cost-Per-Cycle Wall-Clock Rollup" section added (empty — §22 not yet exercised by a real `run roadmap` invocation), refresh cadence documented, merge decision recorded for `BLG-GOV-326`); prior — 2026-09-18 (ST-37/BLG-GOV-322 — new "Cross-Role Pairing Rotation Note" section added, advisory guidance to favour execution-heavy roles while the Skill-Silo Alert remains elevated); prior history retained — see prior entries in version control.
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -67,7 +67,7 @@ These midpoints reflect the values already in de facto use across recent `sprint
 
 | Cycle ID | Session start (UTC) | Session end (UTC) | Elapsed | Notes |
 |----------|---------------------|--------------------|---------|-------|
-| *(none yet)* | — | — | — | §22 was wired into `roadmap_prompt.md`'s own STEP list only this session (ST-32, `2026-09-15__release-v9.5`) and has not yet been exercised by a real `run roadmap` invocation. Per §22's own "Applied from: the next cycle onward" clause, prior cycles are never retroactively backfilled — no reliable source exists for their actual start/end time, and a fabricated figure would be worse than an honestly empty table. The first real row lands at the next `run roadmap` invocation's own STEP 12.1. |
+| 2026-09-19__scheduled | 2026-09-19T08:58:41Z | 2026-09-19T09:34:42Z | 0h 36m 01s (36 min) | **First real reading** — §22 exercised for the first time by a real `run roadmap` (wired in v9.22/ST-32). Standard tier; includes an inline idea-intake window (44 submissions, 22 agents), a full STEP 4 classification with per-idea code fact-checks, and 4 STEP 11 action-now prompt patches with the CLAUDE.md §6 checklist — so this figure is an upper-end reading for a scheduled rebalance, not a typical one. |
 
 **Refresh cadence:** Updated at each `run roadmap` invocation (scheduled or completion-triggered) — append that cycle's `Session start (UTC)`/`Session end (UTC)`/computed elapsed from its own `run_manifest.md` (§22) as a new row. Retain the last 10 rows; drop the oldest when adding an 11th (mirrors this document's own header-history retention convention, §16.14). This is a lightweight reference table, not a governance prompt — updating it does not require the `CLAUDE.md §6` version-bump checklist, matching the Canonical Effort Band table's maintenance convention above.
 
@@ -701,5 +701,29 @@ Both approved candidates (`BLG-FEAT-52` ungated/descoped, new `BLG-FEAT-71`) are
 **v9.4+ capacity outlook:** Now horizon empty (STEP 8.1 Option (b) deferred, 5th consecutive firing). Next `plan release` should prioritise `BLG-FEAT-95` (P2, ungated, clean U-item) ahead of further governance/debt scope, continuing the same corrective intent set at `2026-08-11__scheduled` for `BLG-FEAT-32`/`BLG-BE-91`.
 
 **Sprint capacity:** Not re-evaluated this cycle directly — re-baseline question raised by this window's idea intake (`IDEA-product-owner-20260914-02`) filed as `BLG-GOV-328` for FinOps & Resource Architect review rather than decided ad hoc here. Held unchanged at ~24-28 working-day-equivalent units pending that review.
+
+**Workforce constraints:** None new.
+
+---
+
+## Rebalance 2026-09-19__scheduled
+
+**Tier:** Standard (0 active initiatives, CPS=N/A; not Extended — 4d 20h since `last_scheduled_rebalance_utc`, far under the 90-day threshold).
+
+**FTE changes:** None — 0 active initiatives (13th consecutive scheduled cycle at this count).
+
+**Idea intake:** `IW-20260919-01`, 44 submissions / 22 agents (register held 0 open ideas). 41 promoted (filed as 36 backlog items after 4 consolidations, all `Provisional-Target: TBD`, S/M effort; 36 S + 8 M across the 44 ideas), 2 parked, 1 rejected (already implemented). Plus 1 item filed from the rebalance's own lessons learnt (`BLG-GOV-345`). Rough sizing of the 37 new items: ~26–37 estimated days.
+
+**Skill-Silo Alert (STEP 7.1):** rolling-3-cycle avg **98.8%** (v9.3 100.0%, v9.4 96.4%, v9.5 100.0%) — >40% ceiling, **5th consecutive worsening/unresolved reading**. Mandatory ≥2 build-and-ship pull-forward **satisfied for the next release** by `BLG-FEAT-96` and `BLG-FEAT-97` (both ungated, escalated P3→P2); `BLG-FEAT-59` (date-lapsed gate, owner verification pending 2026-09-24) named secondary; `BLG-SPEC-160` filed P2 as the route to `BLG-FEAT-74`. Workload-composition caveat: the U/G/D/P "governance" label is a product-value lens; by primary owner the last 3 cycles are execution-heavy (QA & Testing 15.3%, Infra/Ops 14.3%, Base44 10.2%, Backend 9.2%).
+
+**Cross-Role Workload Balance (STEP 7.2):** Recomputed on primary-owner counts after best-match name consolidation (Owner-canonicalisation patch still not landed). Window v9.3–v9.5, 98 stories: QA & Testing Owner highest at **15.3%**, then Infrastructure & Operations Owner 14.3%, Base44 Frontend Prompt Owner 10.2%, Backend Engineering Patterns Owner 9.2%, API Contracts & Documentation Owner 8.2%, Head of Specs Team 7.1% — well below the 40% ceiling. **No advisory fires.** Not comparable with the prior reading's "Head of Specs Team ~24%" (different window and consolidation); `BLG-GOV-341` proposes a structured history to remove that ambiguity.
+
+**Ready-Pool Capacity Gap Trend (STEP 7.3):** band upper bound 28 d; recorded pools v9.3 41.0 d (+13.0), v9.4 65.05 d (+37.05), v9.5 43.79 d (+15.79 — widening streak broken). Pre-promotion pool ≈ 20–28 d; projected at v9.6 planning after this cycle's items ≈ 46–65 d (gap ≈ +18 to +37) — reading #1 of a possible new streak, below the 3-consecutive threshold, advisory only. Checkpoint: third consecutive widening triggers the mandatory (a)/(b)/(c) decision.
+
+**Product Value Ratio (STEP 2.4):** 0.046 🔴 Alert (window v9.1–v9.5, U=9/G=60/D=122/P=4/195) — 3rd consecutive Alert-tier reading, new low. PO response: **Modify** (commit the 2 U-items above). Expected to remain Alert for ≥3 readings by construction; see `product_value_ratio_history.md`.
+
+**v9.6 capacity outlook:** Now horizon empty (STEP 8.1 Option (b), 6th consecutive firing). Next `plan release`: (1) seat `BLG-FEAT-96`/`97` first; (2) read the date-lapse list (`BLG-FEAT-59`/`60`/`63`, `BLG-FE-84`, `BLG-GOV-90`, `BLG-GOV-188`) before fixing the ready pool — the presence-based scan will not show them; (3) 8 P2 items ready; (4) `design_gate_required` expected true (two frontend-visible U-items).
+
+**Sprint capacity:** Not re-evaluated this cycle (`BLG-GOV-328` remains the open review); held unchanged at ~24–28 working-day-equivalent units.
 
 **Workforce constraints:** None new.

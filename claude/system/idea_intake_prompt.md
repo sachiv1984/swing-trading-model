@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.8
-**Last Updated:** 2026-07-27
+**Version:** 2.9
+**Last Updated:** 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` STEP 11 Friction Item 2 — §2.0 step 6 codebase overlap check); prior — 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -300,6 +300,8 @@ This check prevents duplicate submissions that burden STEP 4 with unnecessary cl
    - **No overlap found:** proceed with the submission as planned.
    - **Overlap found with an active BLG-ID:** either drop the topic and submit a different net-new idea instead, or — only if the idea provides materially new scope or rationale not captured by the existing item — keep it and note the relationship in the submission's Purpose/Rationale field (e.g. "refines BLG-XX-nn, adds <specific new angle>").
    A submission that restates an existing backlog item with no materially new angle is not a valid net-new submission and does not count toward the agent's minimum. This closes a gap where the check existed as prose (pre-v2.8: "Advisory only... briefly scan") but was not actually performed at submission-generation time across 20+ consecutive idea-intake windows, so overlap was only ever caught later (if at all) by STEP 4's PO classification — by `2026-07-27__scheduled`, backlog saturation had pushed the undetected-overlap rate to 52% of a single window's submissions (23 of 44), a materially higher rejection cost than performing the check up front.
+
+6. **Codebase overlap check (mandatory act, non-blocking outcome — v2.9, `2026-09-19__scheduled` Friction Item 2):** step 5 greps only `claude/backlog/backlog.md`/`backlog_archive.md`, so a topic that names a *mechanism* — a column, endpoint, page, workflow or job — can already be implemented without any backlog entry mentioning it. For every such topic, also grep the code that would hold it (`backend/`, `src/`, `.github/workflows/`, `scripts/`) for the mechanism before finalising the submission, and record the result explicitly. **Already implemented:** drop the topic, or keep it only if it proposes something the existing implementation lacks (name the gap). Topics that are purely process or documentation are exempt. Confirmed at `2026-09-19__scheduled`: `IDEA-ai-compliance-20260919-02` proposed stamping `model_id`/`prompt_version` onto `claude_audit_log` rows; both columns already exist (`backend/database.py`) and were caught only at roadmap STEP 4, by a code check the Facilitator happened to run.
 
 ### 2.1 Per-Agent Process
 
