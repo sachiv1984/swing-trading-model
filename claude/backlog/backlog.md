@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-18 (post-ship closure 2026-09-15__release-v9.5, STEP 12 groom backlog — 44 items archived: 43 shipped ST items + `BLG-GOV-334`; 1 ephemeral Release Slice section removed); prior — 2026-09-18 (post-ship closure 2026-09-15__release-v9.5, STEP 3 — 43 shipped ST items marked ✅ COMPLETE against their source `BLG-*` entries); prior — 2026-09-18 (session — 3 new items added: `BLG-GOV-336`, `BLG-QA-181`, `BLG-GOV-337` (PR #1716/#1717 review findings — Director of Quality + Product Owner agent-mediated review, filed on `main` after EPIC-05/EPIC-06's own 13 stories completed)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-19 (post-ship closure `2026-09-15__release-v9.5` follow-up — `BLG-GOV-335`/`BLG-GOV-336`/`BLG-GOV-337` resolved directly and marked ✅ COMPLETE, pending archive at next `groom backlog`; Effort day ranges added to `BLG-SPEC-148`/`149`/`150`/`151`/`154`); prior — 2026-09-18 (post-ship closure 2026-09-15__release-v9.5, STEP 12 groom backlog — 44 items archived: 43 shipped ST items + `BLG-GOV-334`; 1 ephemeral Release Slice section removed); prior — 2026-09-18 (post-ship closure 2026-09-15__release-v9.5, STEP 3 — 43 shipped ST items marked ✅ COMPLETE against their source `BLG-*` entries); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -3204,7 +3204,7 @@ The SI-02 gate's "linked trade plan" count is well-specified as a query (`curren
 **Type:** Spec Debt / Data Model
 **Owner:** Data Model & Domain Schema Owner; Infrastructure & Operations Owner
 **Source:** ST-22/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
-**Effort:** XS
+**Effort:** XS (<1h)
 **Provisional-Target:** v9.6
 
 **Problem**
@@ -3225,7 +3225,7 @@ DS-17 (`docs/specs/data_model.md`, v2.33, 2026-09-14) adds a partial unique inde
 **Type:** Spec Debt / Data Model
 **Owner:** Data Model & Domain Schema Owner
 **Source:** ST-22/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
-**Effort:** XS
+**Effort:** XS (<1h)
 **Provisional-Target:** v9.6
 
 **Problem**
@@ -3245,7 +3245,7 @@ DS-17 (`docs/specs/data_model.md`, v2.33, 2026-09-14) adds a partial unique inde
 **Type:** Spec Debt / Data Model
 **Owner:** Data Model & Domain Schema Owner
 **Source:** ST-22/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
-**Effort:** S
+**Effort:** S (~0.5–1d)
 **Provisional-Target:** v9.6
 
 **Problem**
@@ -3267,7 +3267,7 @@ Live `positions` table (confirmed via readonly staging access) has 4 columns not
 **Type:** Spec Debt / Data Model
 **Owner:** Data Model & Domain Schema Owner
 **Source:** ST-22/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
-**Effort:** XS
+**Effort:** XS (<1h)
 **Provisional-Target:** v9.6
 
 **Problem**
@@ -3327,7 +3327,7 @@ Live `positions` table (confirmed via readonly staging access) has 4 columns not
 **Type:** Spec Debt / Data Model
 **Owner:** Data Model & Domain Schema Owner
 **Source:** ST-29/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
-**Effort:** XS
+**Effort:** XS (<1h)
 **Provisional-Target:** v9.6
 
 **Problem**
@@ -3780,6 +3780,7 @@ A programmatic write to `.claude_current_state.json` during EPIC-01/v9.4 executi
 ---
 
 ### BLG-GOV-335 — Clarify whether BLG-GOV-19/LL-v4.5-EX-01's "live system interaction" bar means AC-mandated or verification-method-used
+**✅ COMPLETE — 2026-09-19 — resolved directly in post-ship closure `2026-09-15__release-v9.5` follow-up (not sprint-scoped) — `execution_prompt.md` v3.79 §3.2.A**
 **Priority:** P3 (Low)
 **Type:** Governance Process
 **Owner:** Head of Specs Team
@@ -3798,6 +3799,9 @@ A programmatic write to `.claude_current_state.json` during EPIC-01/v9.4 executi
 - Ruling recorded
 - If (b): PR #1715's EPIC-04 autonomous-class sign-off should be reconsidered by an actual Director of Quality, not just the engine's own self-check — flag for the human developer's attention on that PR
 - `execution_prompt.md` wording updated if the ruling requires a clarification, per the standing Governance File Edit Checklist
+
+
+**Resolution (2026-09-19):** Head of Specs Team ruled (agent-mediated, §5.3) for reading **(b)**: LL-v4.5-EX-01's "no ... live system interaction is required" bar is judged against the verification method actually used, not merely whether the AC permits a documentation-only fallback; the engine may not resolve a borderline eligibility call in its own favour. `execution_prompt.md` §3.2.A wording updated (v3.78→v3.79) with the full Governance File Edit Checklist. **Human action remaining (AC 2):** under this ruling PR #1715's EPIC-04 autonomous-class sign-off (ST-22 used live read-only staging-DB queries) is unconfirmed — a human Director of Quality should review it. Deliberately not re-signed here: this ruling was itself made by an agent, so the sign-off it puts in doubt cannot be cured by the same class of agent.
 
 ---
 
@@ -3870,6 +3874,7 @@ ST-42 fixed all 9 non-conforming toast call sites (`Layout.js`, `Settings.js` ×
 ---
 
 ### BLG-GOV-336 — OPERATIONAL_GUIDE.md §14 quick-reference table's own "Last Updated" cell desyncs from its "Version" cell across multi-bump sessions
+**✅ COMPLETE — 2026-09-19 — resolved directly in post-ship closure `2026-09-15__release-v9.5` follow-up (not sprint-scoped) — `governance-drift` skill Step 1b; `OPERATIONAL_GUIDE.md` v4.198**
 
 **Priority:** P2 (Medium)
 **Type:** Governance Process
@@ -3888,6 +3893,9 @@ ST-42 fixed all 9 non-conforming toast call sites (`Layout.js`, `Settings.js` ×
 **Acceptance Criteria**
 - §14 quick-reference table's `Last Updated` cell matches the document's top-header `Last Updated` date
 - `governance-drift` skill (or equivalent) documented to check this cell going forward; re-run confirms no drift
+
+
+**Resolution (2026-09-19):** §14 self-row corrected (`Version 4.196 / Last Updated 2026-09-15` → `4.198 / 2026-09-19`; the 4.197 bump earlier that day had missed it too — the same failure recurring). `.claude/skills/governance-drift/SKILL.md` Step 1b now compares all six readings (version and date at header, §14 self-row, Change Log top row) and reports `DATE-ONLY DRIFT`. Re-run confirmed PASS on all six readings.
 
 ---
 
@@ -3914,6 +3922,7 @@ ST-42 (same EPIC) correctly filed `BLG-QA-180` when it found no Playwright test 
 ---
 
 ### BLG-GOV-337 — Decide whether `claude/roadmap/workforce_capacity.md` needs an explicit Sprint Execution write-scope exception
+**✅ COMPLETE — 2026-09-19 — resolved directly in post-ship closure `2026-09-15__release-v9.5` follow-up (not sprint-scoped) — `execution_prompt.md` v3.79 §7**
 
 **Priority:** P2 (Medium)
 **Type:** Governance Process
@@ -3933,5 +3942,8 @@ ST-42 (same EPIC) correctly filed `BLG-QA-180` when it found no Playwright test 
 **Acceptance Criteria**
 - A recorded Product Owner + Head of Specs Team decision exists (either a §7 prompt change, or a documented one-off ruling)
 - The decision is cross-referenced from `execution_prompt.md` §7 (as a change, or as a note pointing to the ruling) so a future session reading §7 sees the resolved position rather than re-deriving it
+
+
+**Resolution (2026-09-19):** Head of Specs Team + Product Owner ruled (agent-mediated, §5.3) for a **narrow, plan-authorised standing exception**: `workforce_capacity.md` may be written only where the cycle's sealed `sprint_backlog.md` names it in an ST item's AC or sequencing note (so authority comes from a plan the Product Owner already signed at the Sprint Planning seal, not from the engine's inference). Not extended to any other `claude/roadmap/*` file or to any prioritisation decision. ST-37/ST-38 retroactively ratified. `execution_prompt.md` §7 updated (v3.78→v3.79), which is the cross-reference AC 2 requires.
 
 ---

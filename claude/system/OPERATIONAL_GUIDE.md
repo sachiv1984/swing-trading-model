@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.197
-**Last Updated:** 2026-09-18 (post-ship closure `2026-09-15__release-v9.5` STEP 8, LL-v9.5-Release-01/02 — release_planning_prompt.md v2.52→v2.53: §1.3a gains a data-quality-warning-is-not-exclusionary note, §1.4c step 1 renamed "P1-then-P2-first"; §6B source-prompt line and 1 §14 table row updated); prior — 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-39/BLG-GOV-324 — roadmap_prompt.md v9.23→v9.24: STEP 8.0.5/STEP 8.2's near-duplicated verification logic extracted into one shared subroutine, no behavioural change; §6 source-prompt line and 1 §14 table row updated); prior — 2026-09-18 (ST-37/BLG-GOV-322 — roadmap_prompt.md v9.22→v9.23: §7.1 gains a Cross-role pairing rotation note cross-reference); prior history retained — see prior entries in version control.
+**Version:** 4.198
+**Last Updated:** 2026-09-19 (post-ship closure `2026-09-15__release-v9.5` follow-up — execution_prompt.md v3.78→v3.79 (BLG-GOV-337/335), backlog_management_prompt.md v1.17→v1.18, post_ship_closure.md v2.33→v2.34; §14 self-row `Version`/`Last Updated` corrected after a 2-bump miss (BLG-GOV-336); §6M/§8/§10 source-prompt lines and 3 §14 table rows updated); prior — 2026-09-18 (post-ship closure `2026-09-15__release-v9.5` STEP 8, LL-v9.5-Release-01/02 — release_planning_prompt.md v2.52→v2.53: §1.3a gains a data-quality-warning-is-not-exclusionary note, §1.4c step 1 renamed "P1-then-P2-first"; §6B source-prompt line and 1 §14 table row updated); prior — 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-39/BLG-GOV-324 — roadmap_prompt.md v9.23→v9.24: STEP 8.0.5/STEP 8.2's near-duplicated verification logic extracted into one shared subroutine, no behavioural change; §6 source-prompt line and 1 §14 table row updated); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -475,7 +475,7 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.5), `claude/system/backlog_management_prompt.md` (v1.17), `claude/system/ideas_housekeeping_prompt.md` (v1.2)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.5), `claude/system/backlog_management_prompt.md` (v1.18), `claude/system/ideas_housekeeping_prompt.md` (v1.2)  
 **Owner:** PMO Lead / Product Owner  
 **Trigger:** Optional — strongly recommended at either of the following windows:
 
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.78)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.79)
 
 ### 8.1 Invocation
 
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.33)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.34)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1363,24 +1363,24 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.196 |
-| Last Updated | 2026-09-15 |
+| Version | 4.198 |
+| Last Updated | 2026-09-19 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.5 |
-| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.17 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.18 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.10 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.24 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.53 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.18 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.78 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.79 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.15 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.11 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.33 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.34 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.34 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1499,6 +1499,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.198 | 2026-09-19 | **Post-ship closure `2026-09-15__release-v9.5` follow-up — 3 source prompts bumped, plus the `governance-drift` skill and a §14 self-row correction.** `execution_prompt.md` v3.78→v3.79: (BLG-GOV-337) §7 gains a narrow, plan-authorised write exception for `claude/roadmap/workforce_capacity.md` — permitted only when the sealed `sprint_backlog.md` names the file in an ST item, never for any other `claude/roadmap/*` file or any prioritisation decision, retroactively ratifying ST-37/ST-38; (BLG-GOV-335) §3.2.A Criterion 1's "no live system interaction" bar is now judged against the verification method actually used, not the AC's own fallback wording, and the engine may not resolve a borderline eligibility call in its own favour. `backlog_management_prompt.md` v1.17→v1.18: STEP 1.5 Type 4 also matches `## Idea Intake <window> — Promoted-Backlog Disposition` staging sections (which persisted across 2 grooms unrelocated), and STEP 6.2 gains a section-heading-preservation check after a `## ` heading was swallowed by an adjacent archived item's block at this cycle's own closure. `post_ship_closure.md` v2.33→v2.34: STEP 0 Rebalance Cadence Check treats a `next_release` equal to the release being closed as unscoped (Release Planning STEP 9 stamps it at seal and nothing advances it, so it names the just-shipped release). (BLG-GOV-336) `.claude/skills/governance-drift/SKILL.md` Step 1b now compares every field — version *and* date — at all three locations and reports `DATE-ONLY DRIFT`; §14 self-row was found at `Version 4.196 / Last Updated 2026-09-15` (the 4.197 bump earlier the same day missed it too) and corrected. §6M source-prompt line (v1.17→v1.18), §8 (v3.78→v3.79), §10 (v2.33→v2.34). §14 table: Backlog Management Engine, Execution Engine Source, Post-Ship Closure Engine (3 rows). §14 self-row Version/Last Updated 4.196/2026-09-15→4.198/2026-09-19. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, post-ship closure `2026-09-15__release-v9.5` follow-up, user-directed "act as the relevant role and solve", 2026-09-19). |
 | 4.197 | 2026-09-18 | **Post-ship closure `2026-09-15__release-v9.5` STEP 8 (LL-v9.5-Release-01/LL-v9.5-Release-02) — release_planning_prompt.md v2.52→v2.53.** §1.3a Gate-Detection Procedure gains an explicit note that a data-quality warning is not itself exclusionary — each flagged item's own body text and `Type` field must still be read individually before deciding ready/not-ready, closing a gap that cost `BLG-SPEC-56`/`BLG-SPEC-57`/`BLG-QA-59` two consecutive cycles' (`v9.3`, `v9.4`) worth of legitimately-doable pre-work before being correctly re-included at `v9.5`. §1.4c step 1 renamed "P2-first" → "P1-then-P2-first" — `v9.5` was the first cycle with genuine ready P1 items (`BLG-BE-117`, `BLG-OPS-160`), and the step's wording now matches the P1-ahead-of-P2 ordering already applied by evident intent. §6B source prompt header v2.52→v2.53 (line 623). §14 table: Release Engine Source v2.52→v2.53. §14 self-row Version/Last Updated 4.196/2026-09-18→4.197/2026-09-18. Authority: Head of Specs Team (post-ship closure STEP 8 immediate-action rule, 2026-09-18). |
 | 4.196 | 2026-09-18 | **Sprint execution `2026-09-15__release-v9.5` ST-39/`BLG-GOV-324` — roadmap_prompt.md v9.23→v9.24.** STEP 8.0.5 and STEP 8.2's independently-defined, near-identical "check this BLG-ID against `backlog.md`, exclude if shipped/absent" logic extracted into one new callable "Candidate/Item Backlog-Status Verification Subroutine." Both steps now reference it; each step's own trigger points, scope, and exclusion outcomes are unchanged — a pure consolidation, no behavioural change. §6 source prompt header v9.23→v9.24 (line 399). §14 table: Roadmap Engine Source v9.23→v9.24. §14 self-row Version/Last Updated 4.195/2026-09-18→4.196/2026-09-18. Authority: Head of Specs Team (agent-mediated, §5.3, ST-39). |
 | 4.195 | 2026-09-18 | **Sprint execution `2026-09-15__release-v9.5` ST-37/`BLG-GOV-322` — roadmap_prompt.md v9.22→v9.23.** §7.1 Skill-Silo Alert gains a "Cross-role pairing rotation note" cross-reference: when naming a pull-forward candidate, also read `workforce_capacity.md`'s new advisory rotation-guidance section (§14 companion change — see `workforce_capacity.md`'s own non-governance-prompt update, not tracked in this table). §6 source prompt header v9.22→v9.23 (line 399). §14 table: Roadmap Engine Source v9.22→v9.23. §14 self-row Version/Last Updated 4.194/2026-09-18→4.195/2026-09-18. Authority: Director of HR (agent-mediated, §5.3, ST-37). |

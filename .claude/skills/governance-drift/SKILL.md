@@ -38,7 +38,9 @@ The metadata block is near the bottom of §14. Look for the pattern `| <label> |
 
 These three have drifted out of sync repeatedly across this project's history (7+ recorded recurrences — 4.79/80/81/84/85, AUD-2026-06-10, AUD-2026-07-10-002, AUD-2026-07-14-001) because nothing mechanically checks them; the only guard has been a prose note (`shared_standards.md` §9.1) asking whoever edits the file to remember. Do not rely on that note — check directly:
 
-Extract all three (version, date) pairs and compare pairwise. If all three match: `PASS — self-consistent`. If any pair differs, report `SELF-DRIFT` with the exact line number of each of the three locations and their values. Do not guess which one is correct — state that the Change Log top row is append-only and dated per-entry, so it is normally the most reliable source of truth, but flag it as a judgement call for the fixer to confirm (e.g. by checking `prompt_change_log.md`'s most recent `OPERATIONAL_GUIDE.md` row) rather than auto-selecting it.
+Extract all three (version, date) pairs and compare pairwise.
+
+**Compare every field, not just the version (BLG-GOV-336, 2026-09-19).** The three locations carry six readings: header `Version` and `Last Updated`, §14 self-row `Version` and `Last Updated`, Change Log top-row `Version` and `Date`. For the header, `Last Updated` is a chained history string — compare only its leading date. Check each reading independently: a location whose `Version` matches but whose date differs is still drift — report it as `DATE-ONLY DRIFT` with the line number. Confirmed live at `2026-09-15__release-v9.5` PR #1716: six consecutive bumps advanced only the §14 self-row `Version` cell while its `Last Updated` cell stayed at 2026-09-15, every commit message claiming both were updated — a version-only comparison reports PASS on exactly that state. Re-verified the same failure recurring at post-ship closure of that cycle (the self-row `Version` itself was left one bump behind). If all three match: `PASS — self-consistent`. If any pair differs, report `SELF-DRIFT` with the exact line number of each of the three locations and their values. Do not guess which one is correct — state that the Change Log top row is append-only and dated per-entry, so it is normally the most reliable source of truth, but flag it as a judgement call for the fixer to confirm (e.g. by checking `prompt_change_log.md`'s most recent `OPERATIONAL_GUIDE.md` row) rather than auto-selecting it.
 
 ## Step 2 — Extract actual versions from prompt files
 
@@ -81,6 +83,7 @@ OPERATIONAL_GUIDE.md SELF-CONSISTENCY (header vs §14 self-row vs Change Log top
      Header (line {n}):        v{x} / {date}
      §14 self-row (line {n}):  v{y} / {date}
      Change Log top row (line {n}): v{z} / {date}
+     (also report DATE-ONLY DRIFT when a location's version matches but its date differs)
      Action: reconcile all three to the same value — do not assume the Change Log
      row is correct without confirming against prompt_change_log.md's latest
      OPERATIONAL_GUIDE.md entry.
