@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-21T16:31:46Z",
+  "last_updated_utc": "2026-09-21T16:56:14Z",
   "epics": {
     "EPIC-01": {
       "status": "in_progress",
@@ -18,7 +18,9 @@
       "test_scenarios": [
         "tests/e2e/trade-plan-clone.spec.js",
         "tests/e2e/trade-plan-stale-marker.spec.js",
-        "tests/e2e/screener-watchlist-csv-export.spec.js"
+        "tests/e2e/screener-watchlist-csv-export.spec.js",
+        "tests/e2e/reflection-reminder.spec.js",
+        "tests/test_reflection_reminder.py"
       ],
       "stories": {
         "ST-01": {
@@ -100,23 +102,30 @@
         "ST-04": {
           "title": "In-app reminder to complete TradeReflection within 48 hours of a trade closing",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1721,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "55bf9532",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-21T16:56:13Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/alerts_endpoints.md#POST /alerts/evaluate",
+            "docs/specs/frontend/pages/notifications.md#Reflection Reminder Row",
+            "docs/specs/data_model.md#DS-19",
+            "docs/design/2026-09-21__release-v9.6/reflection-reminder/decision_record.md",
+            "tests/e2e/reflection-reminder.spec.js",
+            "tests/test_reflection_reminder.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (closed trade without reflection -> exactly one reminder after 48h) and AC2 (completing/dismissing suppresses it): server logic verified by tests/test_reflection_reminder.py (23 pass, mocked cursors - new SQL NOT executed against a real PostgreSQL; staging confirmation queries in data_model.md DS-19); UI by tests/e2e/reflection-reminder.spec.js SC-RR-01..06 (6/6). AC3 (Playwright passes in CI) to be confirmed from the EPIC-01 PR CI run. The 48h clock is server-side, so it is covered by backend tests, not Playwright (per the design record). Deviation check: none filed - judgement calls disclosed for PO/DoQ review: (1) 30-day look-back bound on the first run (record silent); (2) close timestamp = trade_history.created_at not exit_date; (3) the email preference governs Telegram delivery (DEV-ST04-01). 4-way route sync N/A - no new endpoint (contract+openapi+changelog+data_model updated)."
         },
         "ST-05": {
           "title": "Name one primary next action in every empty state",
@@ -794,7 +803,8 @@
   "completed_items": [
     "ST-01",
     "ST-02",
-    "ST-03"
+    "ST-03",
+    "ST-04"
   ],
   "open_escalations": [
     "ESC-EXEC-20260921-01",
