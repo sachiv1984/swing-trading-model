@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-21T16:56:14Z",
+  "last_updated_utc": "2026-09-21T17:24:13Z",
   "epics": {
     "EPIC-01": {
       "status": "in_progress",
@@ -20,7 +20,8 @@
         "tests/e2e/trade-plan-stale-marker.spec.js",
         "tests/e2e/screener-watchlist-csv-export.spec.js",
         "tests/e2e/reflection-reminder.spec.js",
-        "tests/test_reflection_reminder.py"
+        "tests/test_reflection_reminder.py",
+        "tests/e2e/empty-state-next-action.spec.js"
       ],
       "stories": {
         "ST-01": {
@@ -130,23 +131,28 @@
         "ST-05": {
           "title": "Name one primary next action in every empty state",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1722,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "1dce2b35",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-21T17:24:13Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Data States",
+            "docs/specs/frontend/pages/analytics.md#21",
+            "docs/design/2026-09-21__release-v9.6/empty-state-next-action/decision_record.md",
+            "tests/e2e/empty-state-next-action.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (0 audited empty states without a next-action link) verified by tests/e2e/empty-state-next-action.spec.js (8/8; SC-ESN-00 source-scans all 20 emptyHeading call sites so the audit is exhaustive; mutation-checked). AC2 (Playwright passes in CI) to be confirmed from the EPIC-01 PR CI run. Audit re-run at build time = 20 sites, matching the baseline. Deviation check: none filed - notes: 4 dashboard cards keep an existing  that differs from the record suggested destination (AC met; click-through change out of scope) - Head of UX may want to review; existing SC-TPCR-04 assertion updated for the heading fix."
         },
         "ST-06": {
           "title": "Single number/currency formatting helper — audit and migrate the highest-traffic tables",
@@ -804,7 +810,8 @@
     "ST-01",
     "ST-02",
     "ST-03",
-    "ST-04"
+    "ST-04",
+    "ST-05"
   ],
   "open_escalations": [
     "ESC-EXEC-20260921-01",
