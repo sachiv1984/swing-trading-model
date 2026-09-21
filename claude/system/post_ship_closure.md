@@ -1,10 +1,10 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.34
-**Last Updated:** 2026-09-19 (post-ship closure `2026-09-15__release-v9.5` follow-up, Head of Specs Team direct action — STEP 0 Rebalance Cadence Check treats a `next_release` equal to the release being closed as unscoped, not as a fresh unconsumed release); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, Head of Specs Team direct action — STEP 6 Endpoint Coverage Drift Check gains a Markdown-formatting normalisation note (backticks/query-string stripping), LL-v9.2-P-Closure-01); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2, STEP 8 immediate action — STEP 8 gains an explicit "same-cycle application pattern" formalisation, resolving 2026-09-03__release-v9.1 closure's own Carry-Forward item 2); prior history retained — see prior entries in version control.
+**Version:** 2.35
+**Last Updated:** 2026-09-21 (governance-drift fix, Head of Specs Team direct action — header `Process Reference` line pointed at a file deleted 2026-03-13 and is replaced by a retirement note; no procedural change); prior — 2026-09-19 (post-ship closure `2026-09-15__release-v9.5` follow-up, Head of Specs Team direct action — STEP 0 Rebalance Cadence Check treats a `next_release` equal to the release being closed as unscoped, not as a fresh unconsumed release); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, Head of Specs Team direct action — STEP 6 Endpoint Coverage Drift Check gains a Markdown-formatting normalisation note (backticks/query-string stripping), LL-v9.2-P-Closure-01); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
-**Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
+**Process Reference:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); this prompt is the sole authority for the Post-Ship Closure Engine.
 
 ---
 
