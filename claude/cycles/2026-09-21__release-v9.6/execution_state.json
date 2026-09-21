@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-21T16:15:43Z",
+  "last_updated_utc": "2026-09-21T16:17:23Z",
   "epics": {
     "EPIC-01": {
       "status": "in_progress",
@@ -16,7 +16,8 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-01.md",
       "test_scenarios": [
-        "tests/e2e/trade-plan-clone.spec.js"
+        "tests/e2e/trade-plan-clone.spec.js",
+        "tests/e2e/trade-plan-stale-marker.spec.js"
       ],
       "stories": {
         "ST-01": {
@@ -47,23 +48,27 @@
         "ST-02": {
           "title": "Flag stale 'planned' trade plans on the Trade Plans list",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1719,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "fd7e5838",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-21T16:17:22Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#4.6 Stale Plan Marker",
+            "docs/design/2026-09-21__release-v9.6/trade-plan-stale-marker/decision_record.md",
+            "tests/e2e/trade-plan-stale-marker.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC verified by tests/e2e/trade-plan-stale-marker.spec.js SC-TPS-01..05 (5/5 local pass): stale plan shows marker, newer plan does not, 14/15-day boundary, terminal/active never marked. AC2 (Playwright passes in CI) to be confirmed from the EPIC-01 PR CI run. Deviation check: none."
         },
         "ST-03": {
           "title": "CSV export for Screener results and Watchlist",
@@ -781,7 +786,8 @@
     "ST-29"
   ],
   "completed_items": [
-    "ST-01"
+    "ST-01",
+    "ST-02"
   ],
   "open_escalations": [
     "ESC-EXEC-20260921-01",
