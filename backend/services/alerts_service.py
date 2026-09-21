@@ -830,18 +830,27 @@ def _evaluate_reflection_reminders(cur, portfolio_id: str, prefs: Dict, enqueue_
             title = f"Reflection Reminder — {ticker}"
             message = f"{ticker} closed on {exit_str}. Take a few minutes to record what you learned."
             context = {"trade_id": str(trade["id"]), "ticker": ticker, "exit_date": exit_str}
+            email_on = bool(prefs.get(REFLECTION_REMINDER_TYPE, PREFERENCE_DEFAULTS[REFLECTION_REMINDER_TYPE]))
+            # When the preference is OFF the feed row is created already-settled
+            # (delivered = TRUE, delivery_error = 'email disabled'). Left as delivered = FALSE it
+            # would be picked up by evaluate_alerts()'s generic re-delivery loop (which only
+            # checks the preference, not read/reflected state) and every accumulated reminder —
+            # including read ones — would be sent the first time the operator turns the toggle
+            # ON: a repeat, and notification the operator did not ask for (record §2.4/§2.5).
             cur.execute("""
-                INSERT INTO notifications (portfolio_id, alert_type, title, message, context)
-                VALUES (%s, 'reflection_reminder', %s, %s, %s)
+                INSERT INTO notifications
+                    (portfolio_id, alert_type, title, message, context, delivered, delivery_error)
+                VALUES (%s, 'reflection_reminder', %s, %s, %s, %s, %s)
                 ON CONFLICT ((context->>'trade_id')) WHERE alert_type = 'reflection_reminder'
                 DO NOTHING
                 RETURNING id
-            """, (portfolio_id, title, message, json.dumps(context)))
+            """, (portfolio_id, title, message, json.dumps(context),
+                  not email_on, None if email_on else "email disabled"))
             created = cur.fetchone()
             if created is None:
                 continue  # a concurrent run already created this trade's reminder
             summary["notifications_created"] += 1
-            if prefs.get(REFLECTION_REMINDER_TYPE, PREFERENCE_DEFAULTS[REFLECTION_REMINDER_TYPE]):
+            if email_on:
                 enqueue_delivery(str(created["id"]))
                 summary["delivery_tasks_enqueued"] += 1
         cur.execute("RELEASE SAVEPOINT reflection_reminders")

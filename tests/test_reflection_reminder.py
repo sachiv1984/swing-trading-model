@@ -140,13 +140,39 @@ class TestEvaluateReflectionReminders(unittest.TestCase):
         cur = _cur([{"id": TRADE_A, "ticker": "NVDA", "exit_date": date(2026, 9, 17)}])
         _evaluate(cur, PORTFOLIO, {}, MagicMock())
         insert_sql, params = [c for c in _sql_calls(cur) if "INSERT INTO notifications" in c[0]][0]
-        portfolio, title, message, context_json = params
+        portfolio, title, message, context_json, delivered, delivery_error = params
         self.assertEqual(portfolio, PORTFOLIO)
         self.assertEqual(title, "Reflection Reminder — NVDA")
         self.assertEqual(message, "NVDA closed on 2026-09-17. Take a few minutes to record what you learned.")
         self.assertEqual(json.loads(context_json), {"trade_id": TRADE_A, "ticker": "NVDA", "exit_date": "2026-09-17"})
         self.assertIn("ON CONFLICT ((context->>'trade_id')) WHERE alert_type = 'reflection_reminder'", insert_sql)
         self.assertIn("DO NOTHING", insert_sql)
+
+    def test_preference_off_creates_the_row_already_settled_so_it_is_never_redelivered(self):
+        # Regression (DoQ review finding 1): a delivered=FALSE row created while the preference is
+        # OFF would be re-sent by the generic re-delivery loop the first time the toggle is turned ON.
+        cur = _cur([{"id": TRADE_A, "ticker": "NVDA", "exit_date": date(2026, 9, 17)}])
+        _evaluate(cur, PORTFOLIO, {"reflection_reminder": False}, MagicMock())
+        insert_sql, params = [c for c in _sql_calls(cur) if "INSERT INTO notifications" in c[0]][0]
+        self.assertIn("delivered, delivery_error", insert_sql)
+        self.assertEqual(params[-2:], (True, "email disabled"))
+
+    def test_default_preference_also_creates_the_row_settled(self):
+        cur = _cur([{"id": TRADE_A, "ticker": "NVDA", "exit_date": date(2026, 9, 17)}])
+        _evaluate(cur, PORTFOLIO, {}, MagicMock())  # key missing -> default OFF
+        _, params = [c for c in _sql_calls(cur) if "INSERT INTO notifications" in c[0]][0]
+        self.assertEqual(params[-2:], (True, "email disabled"))
+
+    def test_preference_on_creates_the_row_pending_delivery(self):
+        cur = _cur([{"id": TRADE_A, "ticker": "NVDA", "exit_date": date(2026, 9, 17)}], [{"id": "notif-9"}])
+        _evaluate(cur, PORTFOLIO, {"reflection_reminder": True}, MagicMock())
+        _, params = [c for c in _sql_calls(cur) if "INSERT INTO notifications" in c[0]][0]
+        self.assertEqual(params[-2:], (False, None))
+
+    def test_redelivery_loop_only_selects_undelivered_rows_so_settled_reminders_are_skipped(self):
+        import inspect
+        src = inspect.getsource(alerts_service.evaluate_alerts)
+        self.assertIn("AND delivered = FALSE", src)
 
     def test_one_reminder_per_candidate_trade(self):
         cur = _cur([
