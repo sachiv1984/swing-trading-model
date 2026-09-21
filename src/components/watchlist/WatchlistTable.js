@@ -2,11 +2,28 @@ import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import WatchlistRow from "./WatchlistRow";
 import { Checkbox } from "../ui/checkbox";
+import { signalLabel } from "./WatchlistBadges";
+import { getCachedEarningsDays } from "../../hooks/useEarnings";
 
-const TABLE_HEADERS = [
-  "Ticker", "Market", "Entry Signal", "Added", "Target Entry", "Stop (Initial)",
-  "Stop (Current)", "Earnings", "Research", "News", "Actions",
+// ST-03 (EPIC-01, v9.6, BLG-FEAT-97): single column definition consumed by the table header
+// below AND by the Watchlist CSV export (buildCsv), so the exported header row cannot drift
+// from the rendered one. `value` is the machine-readable export value (plain numbers, label
+// text for badge columns). The Actions column is deliberately not a data column.
+// Design: docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md §2.2
+export const WATCHLIST_COLUMNS = [
+  { header: "Ticker", value: (e) => e.ticker },
+  { header: "Market", value: (e) => e.market },
+  { header: "Entry Signal", value: (e) => (e.signal_status ? signalLabel(e.signal_status) : "") },
+  { header: "Added", value: (e) => e.days_on_watchlist },
+  { header: "Target Entry", value: (e) => e.target_entry_price },
+  { header: "Stop (Initial)", value: (e) => e.initial_stop_price },
+  { header: "Stop (Current)", value: (e) => e.current_stop_price },
+  { header: "Earnings", value: (e) => getCachedEarningsDays(e.ticker, e.market) },
+  { header: "Research", value: (e, ctx) => (ctx.screenerTickers.has(e.ticker?.toUpperCase()) ? "Yes" : "No") },
+  { header: "News", value: (e) => (e.market === "US" ? "Yes" : "No") },
 ];
+
+const TABLE_HEADERS = [...WATCHLIST_COLUMNS.map((c) => c.header), "Actions"];
 
 export default function WatchlistTable({ entries, screenerTickers, newsHook, modalHook, selectedIds, onToggleRow, onToggleAll, onKeep }) {
   const navigate = useNavigate();

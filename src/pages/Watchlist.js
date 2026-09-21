@@ -10,6 +10,9 @@ import { useWatchlistData } from "../hooks/useWatchlistData";
 import { useWatchlistNews } from "../hooks/useWatchlistNews";
 import { useWatchlistModal } from "../hooks/useWatchlistModal";
 import { apiFetch, API_BASE_URL } from "../api/base44Client";
+import DownloadCsvButton from "../components/shared/DownloadCsvButton";
+import { WATCHLIST_COLUMNS } from "../components/watchlist/WatchlistTable";
+import { buildCsv, csvFilename, downloadCsv } from "../utils/csvExport";
 
 export default function Watchlist() {
   const { entries, setEntries, loading, loadError, screenerTickers, fetchEntries } = useWatchlistData();
@@ -48,12 +51,27 @@ export default function Watchlist() {
     await fetchEntries();
   };
 
+  // ST-03 (EPIC-01, v9.6, BLG-FEAT-97): exports exactly the displayed rows; row selection
+  // has no effect. Client-side, no network call.
+  const handleDownloadCsv = () => {
+    downloadCsv(csvFilename("watchlist"), buildCsv(WATCHLIST_COLUMNS, entries, { screenerTickers }));
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Watchlist"
         description="Monitor tickers for entry opportunities."
-        actions={<AddTickerButton onClick={() => modalHook.setModal({ mode: "add" })} />}
+        actions={
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2">
+            <DownloadCsvButton
+              testId="watchlist-download-csv"
+              onDownload={handleDownloadCsv}
+              disabled={loading || !!loadError || entries.length === 0}
+            />
+            <AddTickerButton onClick={() => modalHook.setModal({ mode: "add" })} />
+          </div>
+        }
       />
 
       <BulkActionToolbar
