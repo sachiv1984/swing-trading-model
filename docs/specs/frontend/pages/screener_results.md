@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.6
-**Last Updated:** 2026-09-15 (v9.4 sprint execution — ST-25/BLG-FE-174: `SkeletonRow` implementation confirmed refactored to compose from the shared `Skeleton` primitive, closing the "must be composed" rule stated at v1.5; no visual change, existing Playwright coverage passes); prior — 2026-09-14 (v9.4 design gate — ST-25/BLG-FE-174: §10 skeleton UI now cites the canonical loading-skeleton pattern/shared `Skeleton` primitive); prior — 2026-08-08 (v8.5 design gate — regime distribution panel added)
+**Version:** 1.7
+**Last Updated:** 2026-09-21 (v9.6 design gate — ST-03/BLG-FEAT-97: new §5.3 CSV Export); prior — 2026-09-15 (v9.4 sprint execution — ST-25/BLG-FE-174: `SkeletonRow` implementation confirmed refactored to compose from the shared `Skeleton` primitive; no visual change); prior — 2026-09-14 (v9.4 design gate — ST-25/BLG-FE-174: §10 skeleton UI now cites the canonical loading-skeleton pattern/shared `Skeleton` primitive); prior history retained — see prior entries in version control.
+**Design Source (v1.7 CSV export):** docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md
 **Design Source (v1.5):** docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md
 **Design Source (v1.4):** docs/design/2026-08-08__release-v8.5/regime-distribution-panel/decision_record.md
 **Design Source (v1.3):** docs/design/2026-06-19__release-v6.0/screener-quality-telemetry/ux_spec.md
@@ -110,6 +111,18 @@ Sort state is not persisted across page refreshes.
 | Sector | Dropdown multiselect | All sectors + individual sector values from current result set |
 
 Filter state is not persisted across page refreshes.
+
+### 5.3 CSV Export (v1.7 — ST-03 BLG-FEAT-97)
+
+**Design source:** docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md
+
+A secondary (outline) **"Download CSV"** button with the download icon — same label and weight as the Reports page's button — at the right end of the filter bar, after the Sector filter. Narrow screens: drops below the filter row, full width.
+
+- **Rows:** exactly the rows currently displayed (after the Market/Regime/Sector filters and the current sort).
+- **Columns:** the full §4 column set in display order — Ticker, Market, Price, ATR, Regime, Signal, Sector, Entry Zone, News — **excluding Actions**. Viewport-independent: the mobile hiding of Sector/Entry Zone (§4) does not shrink the export. The column list is defined once and consumed by both the table and the CSV builder so the two cannot drift.
+- **Header row:** the displayed header labels. **Values** are machine-readable (plain numbers with no currency symbol/grouping/%, chip labels as text — `Risk On`/`Risk Off`; `Signal` as the raw 0.0–1.0 score).
+- **Format:** UTF-8, RFC 4180 quoting, no BOM, filename `screener-results-YYYY-MM-DD.csv` (local date). Client-side; nothing persisted. String cells starting with `=`, `+`, `-` or `@` are prefixed with `'` (formula-injection guard); numeric cells are unaffected.
+- **States:** disabled with tooltip `"Nothing to export"` when zero rows are displayed (loading, empty, or all filtered out). On failure: Error toast (8s) `"CSV download failed. Please try again."`. No success toast; no "Generating…" state (synchronous).
 
 ---
 
@@ -303,6 +316,7 @@ This spec covers all DS-02 interaction patterns:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7 | 2026-09-21 | v9.6 design gate — ST-03 (EPIC-01, BLG-FEAT-97): added §5.3 CSV Export — "Download CSV" button in the filter bar; exports displayed (filtered/sorted) rows and the full §4 columns except Actions; machine-readable values; UTF-8/RFC 4180, dated filename, formula-injection guard; disabled at zero rows. Design source: `docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md`. Authority: Head of Specs Team. |
 | 1.6 | 2026-09-15 | v9.4 sprint execution — ST-25 (EPIC-06, BLG-FE-174): §10 implementation confirmed — `Screener.js`'s `SkeletonRow` refactored to compose from the shared `Skeleton` primitive (`bg-slate-700/50` override preserves colour). No visual/row-count change. `SC-SCR-09` passes unchanged. |
 | 1.5 | 2026-09-14 | v9.4 design gate — ST-25 (EPIC-06, BLG-FE-174): §10 Progressive Loading Pattern now cites the canonical loading-skeleton pattern — Table/List Row Skeleton template (`base44_prompt_template_library.md` §8) backed by the shared `Skeleton` primitive, superseding the implicit assumption that `SkeletonRow` was a standalone pattern. No visual/row-count change. Design source: `docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md`. Head of UX & Design sign-off: 2026-09-14. Product Owner approved: 2026-09-14. Head of Specs Team confirmed. |
 | 1.4 | 2026-08-08 | v8.5 design gate — ST-21 (EPIC-06, BLG-FEAT-29): added §5.0 Regime History Panel — rolling 30d/60d/All window selector (Segmented button, reusing the Market filter pattern) and a two-segment percentage breakdown bar (risk-on/risk-off), reusing the per-row Regime column's chip colours. Design source: `regime-distribution-panel/decision_record.md`. Approved: Head of UX & Design + Product Owner 2026-08-08. Head of Specs Team confirmed. |

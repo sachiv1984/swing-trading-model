@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.8
-**Last Updated:** 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "No notifications yet." heading to drop the trailing period, matching already-shipped `Notifications.js` (`emptyHeading="No notifications yet"`) and the v1.8 empty-state microcopy pattern in `design_system.md`; documentation-only, no code change)
+**Version:** 0.9
+**Last Updated:** 2026-09-21 (v9.6 design gate — ST-04/BLG-FEAT-98: new `reflection_reminder` alert type — Reflection Reminder feed row and Email Preferences row); prior — 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "No notifications yet." heading to drop the trailing period, matching already-shipped `Notifications.js`; documentation-only); prior history retained — see prior entries in version control.
+**Design Source (v0.9 reflection reminder):** docs/design/2026-09-21__release-v9.6/reflection-reminder/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md | docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md | docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md
 
@@ -83,6 +84,22 @@ Ordered newest first. Each item:
 
 **Pagination:** 50 items per page. If more exist: **"Load more"** button at bottom of list (not infinite scroll).
 
+### Reflection Reminder Row (v0.9 — ST-04 BLG-FEAT-98)
+
+**Design source:** docs/design/2026-09-21__release-v9.6/reflection-reminder/decision_record.md
+
+A new alert type, **`reflection_reminder`**, produces an ordinary feed row using the layout above — no new row variant — with one addition, an inline text link beneath the message:
+
+| Element | Content |
+|---------|---------|
+| Title | `"Reflection Reminder — {TICKER}"` |
+| Message | `"{TICKER} closed on {exit date}. Take a few minutes to record what you learned."` |
+| Action link | **"Write reflection"** → `/TradeHistory?reflect={trade_id}` |
+
+**Re-entry:** Trade History reads the `reflect` param on load, opens the existing `TradeReflectionModal` (`trade_reflection.md`) for that trade — it pre-populates from any saved reflection and treats "none saved" as empty — then removes the param from the URL (replace, so Back does not reopen it). An unknown `trade_id` is ignored silently.
+
+**Rules:** created for a closed trade with no saved reflection once ≥ 48 h have passed, on the first evaluation run at or after that mark (no minute-level promise); **at most one per trade, ever** (never re-created after read, dismissal or completion). A reflection saved before the mark → no reminder; saved after the reminder exists → the reminder is auto-marked read. **"Mark as read"** is the dismiss action. A prompt only — nothing is created or submitted automatically (`strategy_rules.md` §3).
+
 ### Mark as Read Behaviour
 - Per-item: optimistic update (remove indicator immediately); revert on API error + inline message `"Failed to mark as read."` below the item.
 - Mark all: optimistic update (remove all indicators); revert all on API error + toast `"Failed to mark all as read. Please try again."`
@@ -130,6 +147,9 @@ A list of alert types with per-type email toggle. No Save button — each toggle
 | Grace Period Warning | Notify on days 8–9 of the grace period | On / Off |
 | Market Regime Change | Notify when market regime transitions to risk-off | On / Off |
 | Daily Portfolio Summary | Receive a daily digest of portfolio status | On / Off |
+| Reflection Reminder | Notify by email when a closed trade has no reflection after 48 hours | On / Off (**default Off**, v0.9) |
+
+**Reflection Reminder scope (v0.9):** like every type here, the toggle governs **email delivery only**; the in-app feed row (§Reflection Reminder Row) is always created. It defaults to Off so a newly introduced type does not start emailing the operator unasked.
 
 **Daily Portfolio Summary vs. Weekly Digest (v0.5, ST-02/EPIC-02/v7.7):** this row's helper text is extended to: `"Receive a daily digest of portfolio status. This is a daily notification — for a 7-day summary view, see the "` + inline link `"Weekly Digest"` (navigates to the Weekly Digest page) + `" page."` Differentiates the two easily-confused "portfolio summary" concepts (a daily push notification vs. a 7-day on-demand page) via copy and a cross-link, without merging or renaming either. See `docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md` §2 AC4.
 
@@ -416,6 +436,7 @@ When the System nav group is collapsed, the badge count propagates to the group 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.9 | 2026-09-21 | v9.6 design gate — ST-04 (EPIC-01, BLG-FEAT-98): added §Reflection Reminder Row — new `reflection_reminder` alert type reusing the standard feed row plus a "Write reflection" link to `/TradeHistory?reflect={trade_id}` (re-opens the existing reflection modal; needed because the modal has no route and is skippable), 48 h / one-per-trade / auto-read-on-completion rules; new "Reflection Reminder" row in §Email Preferences (email-only scope, default Off). **Note:** no row for 0.8 (the v9.5 ST-30 heading fix) was appended to this table — recoverable via version control. Authority: Head of Specs Team. |
 | 0.7 | 2026-07-26 | ST-03 (EPIC-03, v7.8, BLG-FE-127) accessibility audit execution finding: Nav Alert Badge's `bg-red-500` fill gave white-on-red contrast of 3.76:1, below the WCAG AA 4.5:1 normal-text threshold (badge text is 8-9px, below the "large text" exemption size). Fixed directly (trivial single-token swap) to `bg-red-600` (4.83:1). Applies to both the collapsed-group-header and item-level badge instances (`src/Layout.js`). Test coverage: `tests/e2e/alert-nav-badge.spec.js` selectors updated in the same commit; `docs/testing/alert_nav_badge_scenarios.md` SC-ANB-VIS-01 updated. |
 | 0.6 | 2026-07-24 | v7.8 design gate — ST-03 (EPIC-03, BLG-FE-127): fixed the accessibility-audit standard and scope for the v7.7 notification/digest consolidation surface (this page's nav badge + digest grouping) and the `StandingAlert` primitive it builds on — WCAG AA text contrast (existing token) plus a new ≥3:1 focus-indicator contrast threshold (`design_system.md` §Hover & Focus States v1.4). Audit itself runs during sprint execution; trivial findings fixed directly, non-trivial findings filed as follow-up backlog items. Design source: `docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |
 | 0.5 | 2026-07-21 | v7.7 design gate — ST-02 (EPIC-02, BLG-FE-114): added optional `since_days`/`read` filter query params to the Notification Feed (§Page 1) so Weekly Digest's alert-count values can deep-link here; extended the "Daily Portfolio Summary" preference row helper text to differentiate it from the Weekly Digest page, with a cross-link. §Nav Alert Badge integration point now the retained "Notifications" item (see `navigation.md` v1.4) — "Alerts" nav item removed as a duplicate. Design source: nav-notification-digest-consolidation/ux_spec.md. Approved: Product Owner 2026-07-21. Design gate: 2026-07-21__release-v7.7. Head of Specs Team confirmed. |

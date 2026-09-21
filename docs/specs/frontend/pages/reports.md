@@ -3,8 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.17
-**Last Updated:** 2026-09-14 — v9.4 design gate: Carried Forward Loss row added to the Tax Year Summary Bar (Design Only — Implementation Pending), ST-17/BLG-FR-03; prior — 2026-08-08 (v8.5 design gate: Tax Year Trades Table's exact-zero Realised P&L colour converged with the Monthly Financial Table, DEV-REPORTS-ST01-02/BLG-FE-144, ST-08); prior — 2026-08-07 (sprint execution: Monthly Financial Table's zero-P&L colour rule corrected to match live behaviour, ST-01); prior history retained — see prior entries in version control
+**Version:** 0.18
+**Last Updated:** 2026-09-21 — v9.6 design gate: Monthly P&L fees-not-recorded notice/indicator/basis caption (ST-07/BLG-FR-04) and month-end restatement marker/diff + Tax Year restated-months notice (ST-08/BLG-FR-05); prior — 2026-09-14 (v9.4 design gate: Carried Forward Loss row added to the Tax Year Summary Bar (Design Only — Implementation Pending), ST-17/BLG-FR-03); prior — 2026-08-08 (v8.5 design gate: Tax Year Trades Table's exact-zero Realised P&L colour converged with the Monthly Financial Table, ST-08/BLG-FE-144); prior history retained — see prior entries in version control
+**Design Source (v0.18 fees-not-recorded visibility):** docs/design/2026-09-21__release-v9.6/monthly-pnl-fees-not-recorded/decision_record.md
+**Design Source (v0.18 restatement diff):** docs/design/2026-09-21__release-v9.6/monthly-pnl-restatement-diff/decision_record.md
 **Design Source (v0.17 carried-forward loss field):** docs/design/2026-09-14__release-v9.4/carried-forward-loss-field/decision_record.md
 **Design Source (v0.11 monthly CSV export):** docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md
 **Design Source (v0.7 CSV export + monthly realised/unrealised split):** docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md, docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md
@@ -98,6 +100,8 @@ Displayed below the year selector. Sourced from the `summary` object in the API 
 | `total_closed_trades` | Trades | Integer count. |
 
 All values are sourced directly from the API response. The frontend must not calculate or derive these figures. (`carried_forward_loss_gbp` is Design Only — see row above — no API response contains it yet.)
+
+**Restated-months notice (v0.18, ST-08, BLG-FR-05):** a one-line muted notice below the Summary Bar — `"Includes {k} restated month(s) — see the Monthly tab for details."`, with a link to the Monthly tab — shown **only when** `summary.restated_month_count ≥ 1` for the selected tax year. The count is supplied by the API (a restated month is one whose live figures differ from its immutable month-end snapshot, §Monthly Restatement Marker); the frontend does not derive it. No tax-year-level snapshot is stored. `data-testid="taxyear-restated-notice"`. Design source: `docs/design/2026-09-21__release-v9.6/monthly-pnl-restatement-diff/decision_record.md`.
 
 ---
 
@@ -291,6 +295,28 @@ One row per calendar month (descending order). Sourced from `GET /reports/monthl
 
 Empty state (no closed trades in scope): "No monthly P&L data available yet."
 
+#### Fees-Not-Recorded Visibility (v0.18 — ST-07, BLG-FR-04)
+
+**Design source:** `docs/design/2026-09-21__release-v9.6/monthly-pnl-fees-not-recorded/decision_record.md`
+
+- **Aggregate notice** — directly under the "Monthly Realised P&L" heading, `StandingAlert` Info tone, non-dismissible, shown **only when** the range's total NULL-fee closed-trade count `fees_missing_total ≥ 1`: `"{N} closed trade(s) have no fees recorded, so these figures may not reflect their costs."` (`data-testid="monthly-fees-missing-notice"`). Hidden at N = 0, while loading and on error.
+- **Per-month indicator** — in the **Trades** cell, when a month's `fees_missing_count = k ≥ 1`: `"{trade_count} · {k} no fees"` (muted secondary text; `aria-label` `"{trade_count} trades, {k} without fees recorded"`; `data-testid="monthly-fees-missing-count"`). Months with `k = 0` render unchanged.
+- **Basis caption** — one muted line beneath the table: `"Realised P&L is {net|gross} of recorded fees."` The wording is set by the ST-07 audit and mirrors the basis documented in `metrics_definitions.md`; it states the *actual current* basis even if a discrepancy is found (a fix item is filed; reported figures are not changed by ST-07). Never omitted.
+- **API:** `GET /reports/monthly-pnl` gains `fees_missing_count` per month and a top-level `fees_missing_total` (additive).
+- **CSV unchanged:** the Monthly CSV keeps its four columns; the NULL-fee count is not exported (it would change the export's column contract and its reconciliation rule below).
+
+#### Monthly Restatement Marker (v0.18 — ST-08, BLG-FR-05)
+
+**Design source:** `docs/design/2026-09-21__release-v9.6/monthly-pnl-restatement-diff/decision_record.md`
+
+A closed month (calendar month ended, UK time) has an **immutable, read-only snapshot** of its Realised P&L and Trade count taken at month-end; months already closed when the feature ships are baselined once with their then-current figures (never retroactively "restated"). The in-progress month has no snapshot and never shows a marker. There is **no acknowledge / re-baseline action** in the UI.
+
+- **Marker:** when a month's live figures differ from its snapshot, the **Month** cell shows `"Restated"` with a history-style icon prefix in `text-amber-600 dark:text-amber-400` (plain text + icon, not red — information, not an error). It is a keyboard-operable button (`aria-expanded`) that expands an inline detail row; collapsed by default (`data-testid` `monthly-restated-marker` / `monthly-restatement-detail`).
+- **Detail row:** Metric | As reviewed (snapshot, {snapshot date}) | Now (live) | Change — for Realised P&L and Trades. Change values use the standard P&L tone rule and the canonical number format (`design_system.md` §Number and Currency Formatting). Unchanged metrics render muted. Existing expandable-row pattern; default animation only (≤ 200 ms).
+- **API:** each month gains an optional `restatement` object (`snapshot_date`, snapshot and live `realised_pnl_gbp` / `trade_count`), present only when they differ. Persisting snapshots needs a new table/migration and `data_model.md` entry, with the contract and `openapi.yaml` updated in the same commit (CLAUDE.md §2).
+- **Failure:** if snapshot data cannot be loaded the table renders normally without markers and a muted line `"Restatement check unavailable."` appears; P&L figures are never blocked.
+- **Exports:** Monthly and Tax Year CSVs export **live** figures with unchanged columns.
+
 ---
 
 ### Monthly CSV Export (v7.8 — ST-05, BLG-FEAT-81)
@@ -444,6 +470,7 @@ A new **"Reconciliation"** tab (4th tab in the page's tab navigation, alongside 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.18 | 2026-09-21 | v9.6 design gate — ST-07 (EPIC-02, BLG-FR-04): Monthly P&L gains §Fees-Not-Recorded Visibility — aggregate Info notice, per-month "k no fees" indicator in the Trades cell, and a mandatory net/gross basis caption; additive `fees_missing_count`/`fees_missing_total` API fields; CSV unchanged. ST-08 (EPIC-02, BLG-FR-05): §Monthly Restatement Marker — immutable month-end snapshot, amber "Restated" marker with expandable snapshot-vs-live detail, no acknowledge action, failure fallback line; Tax Year Summary Bar gains an API-supplied restated-months notice (no second snapshot store); exports stay live. Design sources under `docs/design/2026-09-21__release-v9.6/`. Authority: Head of Specs Team. |
 | 0.17 | 2026-09-14 | v9.4 design gate — ST-17 (EPIC-04, BLG-FR-03): Carried Forward Loss row added to the Summary Bar — **Design Only — Implementation Pending**, same convention as §Arc 5 Compliance Summary/§Gross vs Net Comparison (v0.8). Field mapping locked (`carried_forward_loss_gbp`, prior year's negative `total_realised_pnl`), no backend work this cycle. Design source: `docs/design/2026-09-14__release-v9.4/carried-forward-loss-field/decision_record.md`. Head of UX & Design sign-off: 2026-09-14. Financial Reporting & Records Owner: 2026-09-14. Product Owner approved: 2026-09-14. Head of Specs Team confirmed. |
 | 0.16 | 2026-08-08 | v8.5 design gate — ST-08 (EPIC-03, BLG-FE-144): resolved `DEV-REPORTS-ST01-02` — Tax Year Trades Table's `Realised P&L` column colour rule converged with the Monthly Financial Table's (green if positive, red if negative, grey/neutral if exactly zero; was binary red-for-zero on the Tax Year table). No change to non-zero colouring in either table. Design source: `docs/design/2026-08-08__release-v8.5/exact-zero-pnl-colour-convention/decision_record.md`. Head of UX & Design sign-off: 2026-08-08. Product Owner approved: 2026-08-08. Head of Specs Team confirmed. |
 | 0.15 | 2026-08-07 | Sprint execution — ST-01 (EPIC-01, BLG-FE-141) follow-up correction, agent-mediated on behalf of Frontend Specifications & UX Documentation Owner (Product Owner directed): Monthly Financial Table's Realised P&L and Avg P&L/Trade rows corrected from "red if negative or zero" to "red if negative, grey/neutral if exactly zero" — the prior wording never matched `MonthlyPnlTable`'s actual code (only the separate Tax Year Trades Table implements literal red-for-zero). Filed as `DEV-REPORTS-ST01-02`/`BLG-FE-144` rather than silently rewritten, since the two tables' now-documented behaviours still disagree with each other — that convergence decision is not made here. |

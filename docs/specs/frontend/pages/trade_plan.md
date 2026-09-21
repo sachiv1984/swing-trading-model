@@ -1,8 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.14
-**Last Updated:** 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added lifecycle diagram cross-reference to §9 Status Badge Scheme); prior — 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "No trade plans yet." heading to drop the trailing period); prior — 2026-09-07 (ST-25, EPIC-04, v9.1, BLG-SPEC-132 — new §10.6a Position Sizing Widget Baseline); prior history retained — see prior entries in version control.
+**Version:** 1.15
+**Last Updated:** 2026-09-21 (v9.6 design gate — ST-01/BLG-FEAT-96 new §4.5 Clone as New Plan, ST-02/BLG-FE-180 new §4.6 Stale Plan Marker); prior — 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added lifecycle diagram cross-reference to §9 Status Badge Scheme); prior — 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "No trade plans yet." heading to drop the trailing period); prior history retained — see prior entries in version control.
+**Design Source (v1.15 clone as new plan):** docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md
+**Design Source (v1.15 stale plan marker):** docs/design/2026-09-21__release-v9.6/trade-plan-stale-marker/decision_record.md
 **Design Source (v1.7 what-if sizing preview):** docs/design/2026-08-17__release-v8.9/what-if-sizing-risk-simulator/ux_spec.md
 **Design Source (v1.7 concentration-aware sizing display):** docs/design/2026-08-17__release-v8.9/correlation-sector-concentration-sizing/decision_record.md
 **Design Source (v1.5 invalidation condition):** docs/design/2026-08-12__release-v8.7/thesis-invalidation-condition/decision_record.md
@@ -52,6 +54,7 @@ Users should be able to:
 | `/trade-plans` | Trade plan list |
 | `/trade-plans/new` | Create new trade plan (form) |
 | `/trade-plans/new?ticker={ticker}` | Create new trade plan pre-populated with ticker |
+| `/trade-plans/new?clone_from={id}` | Create new trade plan pre-populated from an existing plan (v1.15 — §4.5) |
 | `/trade-plans/{id}` | Trade plan detail view |
 | `/trade-plans/{id}/edit` | Edit trade plan |
 
@@ -90,11 +93,11 @@ One card or row per trade plan. Default sort: most recently updated first. Aband
 | Column | Source | Notes |
 |--------|--------|-------|
 | Ticker | `ticker` | Uppercase |
-| Status | `status` | Badge per §9 Status Badge Scheme |
+| Status | `status` | Badge per §9 Status Badge Scheme. Un-actioned plans older than 14 days also show the stale marker beneath the badge (§4.6, v1.15) |
 | R Target | `r_target` | `{N}R` or `—` if null |
 | Notes | `setup_thesis` | Truncated to ~60 chars; `—` if empty |
 | Updated | `updated_at` | Relative timestamp |
-| Actions | — | "View" link + "Edit" link (Edit hidden for abandoned plans) |
+| Actions | — | "View" link + "Edit" link (Edit hidden for abandoned plans) + "Clone" link (v1.15 — shown for every status, see §4.5) |
 
 ### 4.3 Empty State
 
@@ -109,6 +112,46 @@ Per v3.1 design gate decision:
 - Watchlist: "Plan" button in Actions column
 - Research view: "Create Trade Plan" CTA (when no plan exists for the ticker)
 - Direct URL: `/trade-plans/new`
+
+### 4.5 Clone as New Plan (v1.15 — ST-01 BLG-FEAT-96)
+
+**Design source:** docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md
+
+**Entry points:** a **"Clone"** text link in each list row's Actions column, and a **"Clone"** secondary (outline) button in the detail view header (§7). Shown for **every** status, including `abandoned` and `closed`. `aria-label`: `"Clone {TICKER} plan"`.
+
+**Behaviour:** navigates to `/trade-plans/new?clone_from={plan_id}`; the creation form (§5) opens pre-populated from the source plan. **Nothing is persisted until "Save Trade Plan"** — "Cancel" discards. No new endpoint (the source is read via the existing detail read).
+
+**Banner:** above the form fields, `StandingAlert` Info tone, non-dismissible, `data-testid="clone-banner"`: `"Cloned from {TICKER} plan ({source created date}). Nothing is saved until you click Save Trade Plan."`
+
+| Copied | Reset / not copied |
+|--------|--------------------|
+| `ticker` (editable), `market` | `id`, `created_at`, `updated_at` — fresh on save |
+| `setup_thesis`, `invalidation_condition` | `status` → **`draft`** (the lifecycle's only entry state) |
+| `r_target` | **`position_id` — never copied** (would corrupt the SI-02 linked-plan count) |
+| Tags (§5c) | Price-level fields (stop level, planned entry/stop prices) |
+| Checklist **template** (items only) | Checklist completion state (all items reset unchecked); abandonment reason/timestamp; Setup Quality Score; AI thesis feedback state |
+
+**Failure:** if the source cannot be loaded, the form opens blank and a Warning toast (6s) shows `"Couldn't load that plan to clone. Starting a blank plan."`
+
+> **Status vocabulary note:** no `planned` status exists. `trade_plans.status` is `draft | research_pending | research_complete | entry_conditions_set | active | closed | abandoned` (§9; `data_model.md` §Position & Trade Plan Lifecycle State Diagram). Any reference to a "planned" plan in a backlog item means `draft`.
+
+### 4.6 Stale Plan Marker (v1.15 — ST-02 BLG-FE-180)
+
+**Design source:** docs/design/2026-09-21__release-v9.6/trade-plan-stale-marker/decision_record.md
+
+A **display-only** marker on list rows for plans that have not been acted on. Same visual language as the Watchlist staleness indicator (`watchlist.md` §Staleness Indicator).
+
+| Aspect | Spec |
+|--------|------|
+| Applies to | `status` ∈ `draft`, `research_pending`, `research_complete`, `entry_conditions_set` — never `active`, `closed`, `abandoned` |
+| Age | `N = floor((now − updated_at) / 24h)`; marker shown when **`N > 14`** (first appears at 15). Threshold is one named constant, `STALE_PLAN_THRESHOLD_DAYS = 14`; not user-editable |
+| Text | `"Stale ({N} days)"` with a `Clock` icon prefix |
+| Style | `text-amber-600 dark:text-amber-400`; plain text + icon, **not** a filled pill (stays distinct from the filled amber `research_pending` badge in §9) |
+| Placement | Status column, beneath (wide: beside) the status badge; the badge itself is unchanged |
+| `aria-label` / `title` | `"Last updated {N} days ago — plan is stale"` / `"Last updated {absolute date}. Display only — nothing happens automatically."` |
+| `data-testid` | `stale-plan-marker` |
+
+**No automatic action** (`strategy_rules.md` §3): no auto-abandon, no sweep, and no "Keep" button (unlike the Watchlist).
 
 ---
 
@@ -322,7 +365,7 @@ Checklist state stored as `checklist` array on the trade plan record. Submitted 
 - Tags shown as pill list below core fields, above Pre-Trade Checklist (§5c)
 - Pre-trade checklist shown in read-only state (§6.4)
 - Setup Quality Score shown (§7a) if EPIC-02 (PT-04) is in scope
-- Action buttons: **"Edit"** (primary) + **"Abandon"** (amber outlined — see §8) + **"Delete"** (destructive, with confirmation) + **"Print / Export PDF"** (see §7c)
+- Action buttons: **"Edit"** (primary) + **"Abandon"** (amber outlined — see §8) + **"Delete"** (destructive, with confirmation) + **"Print / Export PDF"** (see §7c) + **"Clone"** (secondary/outline, all statuses — see §4.5, v1.15)
 - **"Review research"** link present if ticker is set
 - When `status = 'abandoned'`: "Abandon" and "Edit" buttons hidden; abandonment reason shown (see §8.3)
 
@@ -620,6 +663,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.15 | 2026-09-21 | v9.6 design gate — ST-01 (EPIC-01, BLG-FEAT-96): new §4.5 Clone as New Plan (list-row link + detail-header button, `?clone_from=` route, copy/reset field table, banner, failure toast) and the §2 route row; corrects the sealed slice's non-existent `planned` status to `draft`. ST-02 (EPIC-01, BLG-FE-180): new §4.6 Stale Plan Marker (pre-entry statuses, `updated_at` age > 14 days, Clock + amber text matching the Watchlist staleness language, display-only). §4.2 Status/Actions columns and §7 action buttons updated. Design sources under `docs/design/2026-09-21__release-v9.6/`. **Note:** rows for 1.13 and 1.14 were not appended to this table by the v9.5 stories (only the header `Last Updated` was) — recoverable via version control. Authority: Head of Specs Team. |
 | 1.12 | 2026-09-07 | ST-25 (EPIC-04, v9.1, BLG-SPEC-132): new §10.6a Position Sizing Widget Baseline — fields (Risk %, Suggested Shares, session-persistence via `useSessionRiskPercent`), debounce behaviour (300ms, `checkBeforeDebounce: false` timing variant, shared with §5d via `usePositionSizingFetch.js` per ST-06/BLG-TECH-14), the `POST /portfolio/size` request body, auto-fill behaviour, and full status-derivation order. Resolves §10.7's own "baseline... filed as spec debt" forward reference, live since the `2026-08-17__release-v8.9` design gate. Authority: Frontend Specifications & UX Documentation Owner. |
 | 1.11 | 2026-09-07 | ST-24 (EPIC-04, v9.1, BLG-SPEC-131): §5.1's stale "Risk/Reward Notes" field row corrected to "R Target" (the live `r_target`-bound field, confirmed via `src/pages/TradePlan.js`) — no such field as `risk_reward_notes` has ever existed in the live form (matching the `1.6` entry's earlier finding for a different reference). §4.2's List Layout table corrected to match `src/pages/TradePlans.js`'s actual columns (`["Ticker", "Status", "R Target", "Notes", "Updated", "Actions"]`): "Notes" sourced from `setup_thesis` (not `risk_reward_notes`), a non-existent "Stop Level" column removed (no such column exists in the live list). §5a.3's pre-population claim corrected: pre-fills `setup_thesis` (via `buildSignalPrePopulation` in `SignalContextPanel.js`), not `risk_reward_notes`. Authority: Head of Specs Team. |
 | 1.10 | 2026-08-21 | ST-10 (EPIC-02, v9.0, BLG-FE-164): §5d.2 adds a panel-local FX Rate override input (US-market only); §5d.3's reproducibility claim corrected to depend on setting it. *(Backfilled into this table at v1.11 — was recorded in the header's own Last Updated field but not added here at the time.)* |

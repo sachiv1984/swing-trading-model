@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.20
-**Last Updated:** 2026-09-18 (ST-42, EPIC-06, v9.5, BLG-FE-176 — all 9 non-conforming toast call sites brought into line with the Toast Notification Timing standard; non-conforming-screens table marked historical); prior — 2026-09-18 (ST-41, EPIC-06, v9.5, BLG-FE-175 — all 4 motion-timing known-non-compliant components brought under the 500ms ceiling and removed from the known-non-compliant list); prior — 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — re-confirmed the v9.1 ST-29 empty-state-pattern consolidation still holds); prior history retained — see prior entries in version control
+**Version:** 1.21
+**Last Updated:** 2026-09-21 (v9.6 design gate — ST-05/BLG-FE-181 empty-state next-action rule added to §Data States; ST-06/BLG-FE-182 new §Number and Currency Formatting in §Consistency Rules); prior — 2026-09-18 (ST-42, EPIC-06, v9.5, BLG-FE-176 — all 9 non-conforming toast call sites brought into line with the Toast Notification Timing standard; non-conforming-screens table marked historical); prior — 2026-09-18 (ST-41, EPIC-06, v9.5, BLG-FE-175 — all 4 motion-timing known-non-compliant components brought under the 500ms ceiling); prior history retained — see prior entries in version control
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.21 (ST-05 + ST-06, EPIC-01, v9.6, BLG-FE-181 + BLG-FE-182):** (1) §Data States gains the **Next-action rule** — every user-facing empty state renders exactly one primary next-action link/button (`emptyAction`, or the enclosing `DashboardCard`'s `to` link), with a system-populated-only exclusion; the 20-site audit baseline lives in the design record. (2) §Consistency Rules gains **Number and Currency Formatting** — the canonical money/percentage/R-multiple/missing-value formats (typographic minus `−`, en-GB grouping, 2 dp money, signed P&L, `—` for missing) that the shared formatting helper implements; none existed in any spec before, so the story's "identical negative/decimal conventions" AC had nothing to be measured against. Design sources: `docs/design/2026-09-21__release-v9.6/empty-state-next-action/decision_record.md`, `docs/design/2026-09-21__release-v9.6/number-format-convention/decision_record.md`.
 **v1.18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143):** Confirm-and-document re-check of the v9.1 ST-29 empty-state consolidation (§Data States) — swept all 18 page specs currently referencing empty states; confirmed no page re-derives the shared `DataState` mechanism (each supplies page-specific copy following the v1.8 microcopy pattern, which is expected variety, not duplication). Found 5 stray-trailing-period headings; 3 were spec-only staleness (shipped code already matches the no-trailing-period rule, spec corrected: `notifications.md`, `trade_plan.md`, `watchlist.md`) and 2 are genuine shipped-code violations of the v1.8 pattern, filed as `BLG-FE-178`/`BLG-FE-179` rather than fixed inline — this story's design gate scoped it as confirm-and-document only, with any actual copy change requiring its own design-gate pass. No change to this document's own pattern definitions.
 **v1.17 (ST-27, EPIC-06, v9.4, BLG-UX-04):** Toast Notification Timing (§Shared UI Components) — completed the non-conforming-screens inventory deferred at v1.15's design gate. Read all 18 real toast-creation call sites across 8 files (17 match a `toast.(success|error|warning|info|message)(` grep; the 18th, `ConfirmationModal.js`'s undo-window toast, uses `toast.custom(...)` and was found by reading the file directly); found 9 non-conforming (8 missing a severity-appropriate `duration` override on `toast.error(...)` calls, 1 carrying an incorrect explicit duration on an info toast). Documentation only — no call-site fix in this cycle, per this story's own AC. **Correction (same-session, agent-mediated review):** the count first recorded here (17 sites, 8 non-conforming across 5 files) undercounted both the `toast.custom` call site and one `Positions.js` error toast; corrected to 18/9/6 after independent re-verification.
 **v1.16 (ST-14, EPIC-04, v9.4, BLG-SPEC-137):** added the Currency-Basis Correctness Pattern for US-Market Positions subsection (§Consistency Rules) — names two *opposite* currency-basis failure modes that both hit in the same release (v8.9): `DEV-EPIC01-ST02-01` (Trail Stop tile, `positions.md` — a value was already GBP-converted but displayed with a native-currency label; fixed by surfacing a dedicated native field, not by FX division) and `DEV-v8.9-ST05-02` (R at Risk, `trade_plan.md` — a value needed GBP conversion but had none applied; fixed by dividing by `fx_rate_used`). Documents both failure modes and their distinct fixes, keyed by which one applies, so a third instance is caught before shipping rather than after. No shipped UI change — pure spec debt.
@@ -171,6 +172,13 @@ A genuinely empty card (e.g. "no open positions") must render `DataState`'s `emp
 - **Icon:** contextual to the content type, per existing call sites.
 
 Design source: `docs/design/2026-08-08__release-v8.5/empty-state-microcopy-pattern/decision_record.md`.
+
+**Next-action rule (v1.21, ST-05, BLG-FE-181)** — the microcopy pattern above puts the next action in the *body text*; this rule additionally requires a clickable route to it. Every user-facing empty state renders **exactly one** primary next-action link or button, labelled `"<Verb> <object>"` (2–4 words, sentence case, no trailing period — e.g. "Run the screener", "Create a trade plan"), leading to the place that would populate the view. It is satisfied by either:
+
+- `DataState`'s `emptyAction` node inside the empty region (page- and section-level empty states); or
+- for `DashboardCard` empty states, the enclosing card's `to` link (the whole card is already a `<Link>` when `to` is set — a second inner CTA would compete with it, per the compact-variant note above). A card with no `to` gains one rather than an inner button.
+
+**Exclusion:** an empty state is exempt only when *no user action could populate it* (the view is filled exclusively by the system, e.g. the AI daily briefing, the What's New feed). Exemptions must be recorded with their reason in the audit table — never silently skipped. Design source: `docs/design/2026-09-21__release-v9.6/empty-state-next-action/decision_record.md` (holds the 20-site audit baseline; re-run `grep -rn emptyHeading src` at build time).
 
 **Gated variant (v1.10, ST-21, EPIC-07, v8.7, BLG-SPEC-124)** — for feature surfaces that exist but are not yet unlocked (roadmap-gated features — see `BLG-GOV-303`'s Roadmap Unlock Tracker for the current list), pass `gated`. Evaluated **before** `loading`/`error`/`empty`: `gated → loading → error → empty → children` — a gated feature never fires its underlying data fetch, so there is no loading/error/empty state to reach.
 
@@ -400,6 +408,28 @@ The application adheres to core accessibility principles:
 - **Fix pattern:** read `fx_rate_used` off the relevant sizing/portfolio response (e.g. `POST /portfolio/size`) and divide the raw native-currency figure by it before display, for US-market positions — matching `TradeEntry.js`'s existing `costs.totalRisk` convention. Applies when the spec calls for a GBP-basis display and the value in hand is still in native currency.
 
 **Rule of thumb:** before shipping any new currency display for a value that can represent a US-market position, identify (a) what the spec/label actually claims the currency basis is, and (b) what the underlying value's *actual* currency basis is (native, or already GBP-converted). If they already match, no fix is needed. If the label claims native but the value is GBP-converted, apply Mode 1's fix (surface/request a native field — never divide, that would double-convert). If the label claims GBP-basis but the value is still native, apply Mode 2's fix (divide by `fx_rate_used`). Do not assume either is true from the label alone — check the underlying field, as both shipped bugs did exactly that.
+
+### Number and Currency Formatting (v1.21, ST-06, BLG-FE-182)
+
+**Design source:** `docs/design/2026-09-21__release-v9.6/number-format-convention/decision_record.md`
+
+The canonical output formats, implemented by a single shared helper (one module, returning strings only — colour stays at the call site):
+
+| Kind | Format | Examples |
+|------|--------|----------|
+| Money, unsigned amount (prices, stops, cash, fees) | symbol + `en-GB` grouping + 2 dp | `£1,234.50`, `$48.20` |
+| Money, signed amount (P&L, differences) | sign, then symbol, 2 dp; zero is unsigned | `+£150.00`, `−£80.00`, `£0.00` |
+| Percentage (default) | 1 dp; signed when a change/return | `+4.2%`, `−1.8%`, `12.5%` |
+| Percentage (small-magnitude cost metrics — slippage, fee drag) | 2 dp | `+0.35%` |
+| R-multiple, computed/realised | signed, 2 dp, `R` suffix | `+1.25R`, `−0.50R` |
+| R-multiple, user-entered target | as entered, up to 2 dp, trailing zeros trimmed, unsigned | `2.5R`, `3R` |
+| Missing value (`null`/`undefined`/`NaN`) | em dash `—` (U+2014) | `—` |
+
+- **Negative sign:** the typographic minus `−` (U+2212), placed **before** the currency symbol. A negative value is never conveyed by colour alone.
+- **Zero** renders unsigned in the neutral tone (green > 0, red < 0, neutral = 0 — the Reports rule).
+- **Currency** is an argument (`GBP`/`USD`); the helper never converts. The display basis stays the caller's decision under `strategy_rules.md` §4.1.5 and the Currency-Basis Correctness Pattern above.
+- **Exports are exempt:** CSV exports write plain numeric values, never these presentation strings.
+- **Migration:** first applied to Positions, TradeHistory and TradePlans (v9.6); the remaining `toFixed`/`toLocaleString` call sites are follow-ups. Known discrepancy left for a follow-up: `trade_reflection.md` §4 specifies `"–"` (en dash) for a missing R-multiple.
 
 ---
 
