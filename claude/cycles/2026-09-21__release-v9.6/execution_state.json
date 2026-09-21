@@ -6,13 +6,13 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-21T18:04:58Z",
+  "last_updated_utc": "2026-09-21T19:23:17Z",
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
       "pr_number": 1750,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -29,7 +29,7 @@
         "ST-01": {
           "title": "'Clone as new plan' action on the Trade Plans list",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1718,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
@@ -54,7 +54,7 @@
         "ST-02": {
           "title": "Flag stale 'planned' trade plans on the Trade Plans list",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1719,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
@@ -79,7 +79,7 @@
         "ST-03": {
           "title": "CSV export for Screener results and Watchlist",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1720,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
@@ -105,7 +105,7 @@
         "ST-04": {
           "title": "In-app reminder to complete TradeReflection within 48 hours of a trade closing",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1721,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
@@ -133,7 +133,7 @@
         "ST-05": {
           "title": "Name one primary next action in every empty state",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1722,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
@@ -159,7 +159,7 @@
         "ST-06": {
           "title": "Single number/currency formatting helper — audit and migrate the highest-traffic tables",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1723,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
@@ -832,9 +832,10 @@
     "ESC-EXEC-20260921-08"
   ],
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": [
+      "EPIC-01"
+    ],
     "epics_pending": [
-      "EPIC-01",
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
@@ -852,6 +853,7 @@
     "STEP 1: GitHub issues #1718-#1749 (ST-01..ST-32, label v9.6) already exist from sync gh - recorded, none created.",
     "STEP 2: only exec/.../EPIC-01 branch created at sprint open. EPIC-02..07 branches are cut from post-merge main at their turn (merge order EPIC-01 -> EPIC-07 with rebase-after-merge per sprint_backlog.md Sprint Scope).",
     "EPIC-01 DoQ sign-off: agent-mediated (execution_prompt.md 5.3) independent review returned Approved with conditions; conditions met in the sign-off commit (finding 1 fixed in 00f98cdf; counts corrected; CI evidence recorded; files committed with qa_signed_off true). Signer format: Sprint Execution Engine (agent-mediated, Director of Quality role - 5.3). Merge gate remains always-human (QA sign-off + Product Owner acceptance).",
-    "Environment: DATABASE_URL in the execution environment points at the staging Supabase database (user-confirmed; credential believed read-only, unverified) and was never used; all backend test runs used a stub URL (BLG-QA-188). Two throwaway local Postgres/agent-review actions were confined to the DoQ reviewer scratchpad."
+    "Environment: DATABASE_URL in the execution environment points at the staging Supabase database (user-confirmed; credential believed read-only, unverified) and was never used; all backend test runs used a stub URL (BLG-QA-188). Two throwaway local Postgres/agent-review actions were confined to the DoQ reviewer scratchpad.",
+    "EPIC-01 merged by the human developer via PR #1750 at 2026-09-21T19:22:32Z (merge commit c90e44f1, includes 1884f100). Merge-gate resync: pr_status/status merged; orphaned post-merge commit check (origin/main..origin/exec/2026-09-21__release-v9.6/EPIC-01) found none. No sibling EPIC branches exist yet, so no sibling execution_state sync was needed (STEP 4 3c). Post-merge follow-up: Setup Type clone issue BLG-FE-186 and 2 backend items filed; staging verification of ST-04 SQL (BLG-OPS-168) still open."
   ]
 }
