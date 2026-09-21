@@ -10,8 +10,11 @@ import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/En
 import SignalContextPanel, { buildSignalPrePopulation } from "../components/trades/SignalContextPanel";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
 import WhatIfSizingPreview from "../components/trades/WhatIfSizingPreview";
-import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ShieldCheck, ThumbsUp, ThumbsDown, Tag as TagIcon, Rocket, Printer } from "lucide-react";
+import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ShieldCheck, ThumbsUp, ThumbsDown, Tag as TagIcon, Rocket, Printer, Copy } from "lucide-react";
 import { TradePlanStatusBadge, isStartTradeEligible } from "./TradePlans";
+import { StandingAlert } from "../components/ui/StandingAlert";
+import { toast } from "sonner";
+import { format } from "date-fns";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -354,6 +357,9 @@ export default function TradePlan() {
   const ticker = searchParams.get("ticker") || "";
   const market = searchParams.get("market") || "US";
   const editId = searchParams.get("edit");
+  // ST-01 (EPIC-01, v9.6, BLG-FEAT-96): pre-populate a NEW plan from an existing one.
+  // Ignored when ?edit= is present (editing takes precedence).
+  const cloneFromId = editId ? null : searchParams.get("clone_from");
   const priceAlertId = searchParams.get("price_alert_id"); // ST-09, BLG-BE-84, EPIC-02, v8.8
 
   const [form, setForm] = useState({
@@ -445,6 +451,53 @@ export default function TradePlan() {
       setIsClaudeDraft(!!existingPlan.is_ai_draft);
     }
   }, [existingPlan]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ST-01 (EPIC-01, v9.6, BLG-FEAT-96): clone-as-new-plan. Reads the source via the
+  // existing detail read (no new endpoint); nothing is persisted until the user
+  // saves. Copy/reset table: docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md §2.3
+  const { data: cloneSource, isError: cloneLoadFailed } = useQuery({
+    queryKey: ["tradePlanClone", cloneFromId],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/trade-plans/${cloneFromId}`);
+      if (!res.ok) throw new Error("clone source unavailable");
+      const json = await res.json();
+      if (!json?.data) throw new Error("clone source unavailable");
+      return json.data;
+    },
+    enabled: !!cloneFromId,
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (!cloneSource) return;
+    const srcItems = Array.isArray(cloneSource.checklist_items) ? cloneSource.checklist_items : [];
+    // Checklist TEMPLATE only: keep the items, reset every completion state to unchecked.
+    const checklistItems = srcItems.length > 0
+      ? srcItems.map((i) => ({ ...i, checked: false }))
+      : DEFAULT_CHECKLIST_ITEMS.map((i) => ({ ...i }));
+    // Deliberately NOT copied: id/created_at/updated_at, position_id (would corrupt the
+    // SI-02 linked-plan count), price-level fields, AI feedback/version state, abandonment
+    // data, Setup Quality Score. status resets to the lifecycle's only entry state, draft.
+    setForm({
+      ...EMPTY_FORM,
+      ticker: cloneSource.ticker || "",
+      market: cloneSource.market || "US",
+      setup_thesis: cloneSource.setup_thesis || "",
+      invalidation_condition: cloneSource.invalidation_condition || "",
+      r_target: cloneSource.r_target != null ? String(cloneSource.r_target) : "",
+      trade_tags: Array.isArray(cloneSource.trade_tags) ? cloneSource.trade_tags : [],
+      checklist_items: checklistItems,
+      checklist_completed: false,
+      status: "draft",
+      position_id: null,
+    });
+  }, [cloneSource]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (cloneLoadFailed) {
+      toast.warning("Couldn't load that plan to clone. Starting a blank plan.", { duration: 6000 });
+    }
+  }, [cloneLoadFailed]);
 
   // ST-05 (BLG-FEAT-52): trade-plan tag autocomplete source
   const [tagInput, setTagInput] = useState("");
@@ -681,6 +734,19 @@ export default function TradePlan() {
               <Button
                 variant="outline"
                 size="sm"
+                data-testid="clone-plan-btn"
+                aria-label={`Clone ${existingPlan.ticker} plan`}
+                onClick={() => navigate(`/TradePlan?clone_from=${existingPlan.id}`)}
+                className="border-slate-700 text-slate-300 hover:bg-slate-800"
+              >
+                <Copy className="w-4 h-4 mr-1" />
+                Clone
+              </Button>
+            )}
+            {editId && existingPlan && (
+              <Button
+                variant="outline"
+                size="sm"
                 data-testid="print-export-pdf-btn"
                 onClick={() => window.print()}
                 className="border-slate-700 text-slate-300 hover:bg-slate-800"
@@ -719,6 +785,20 @@ export default function TradePlan() {
       {saved && (
         <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-3 text-sm text-emerald-300">
           Trade plan saved successfully.
+        </div>
+      )}
+
+      {cloneSource && !saved && (
+        <div data-testid="clone-banner">
+          <StandingAlert
+            severity="info"
+            dismissible={false}
+            message={`Cloned from ${cloneSource.ticker} plan (${
+              cloneSource.created_at && !isNaN(new Date(cloneSource.created_at))
+                ? format(new Date(cloneSource.created_at), "d MMM yyyy")
+                : "date unknown"
+            }). Nothing is saved until you click Save Plan.`}
+          />
         </div>
       )}
 

@@ -285,6 +285,19 @@ export default function TradePlans() {
                             Start Trade
                           </Button>
                         )}
+                        {/* ST-01 (EPIC-01, v9.6, BLG-FEAT-96): shown for every status,
+                            including abandoned/closed — a dead plan's setup is a
+                            legitimate template. Design: docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          data-testid={`clone-plan-${plan.id}`}
+                          aria-label={`Clone ${plan.ticker} plan`}
+                          className="h-7 px-2 text-xs text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+                          onClick={() => navigate(`/TradePlan?clone_from=${plan.id}`)}
+                        >
+                          Clone
+                        </Button>
                         {plan.status !== "abandoned" && (
                           <Button
                             variant="ghost"
