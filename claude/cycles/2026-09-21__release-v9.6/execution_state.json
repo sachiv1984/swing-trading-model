@@ -152,7 +152,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "AC1 (0 audited empty states without a next-action link) verified by tests/e2e/empty-state-next-action.spec.js (8/8; SC-ESN-00 source-scans all 20 emptyHeading call sites so the audit is exhaustive; mutation-checked). AC2 (Playwright passes in CI) to be confirmed from the EPIC-01 PR CI run. Audit re-run at build time = 20 sites, matching the baseline. Deviation check: none filed - notes: 4 dashboard cards keep an existing  that differs from the record suggested destination (AC met; click-through change out of scope) - Head of UX may want to review; existing SC-TPCR-04 assertion updated for the heading fix."
+          "notes": "AC1 (0 audited empty states without a next-action link) verified by tests/e2e/empty-state-next-action.spec.js (8/8; SC-ESN-00 source-scans all 20 emptyHeading call sites so the audit is exhaustive; mutation-checked). AC2 (Playwright passes in CI) to be confirmed from the EPIC-01 PR CI run. Audit re-run at build time = 20 sites, matching the baseline. Deviation check: none filed - notes: 4 dashboard cards keep an existing `to` link that differs from the record suggested destination (AC met; click-through change out of scope) - Head of UX may want to review; existing SC-TPCR-04 assertion updated for the heading fix."
         },
         "ST-06": {
           "title": "Single number/currency formatting helper — audit and migrate the highest-traffic tables",
