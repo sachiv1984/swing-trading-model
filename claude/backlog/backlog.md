@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` — idea intake `IW-20260919-01` dispositioned: 37 items filed (`BLG-AI-07`, `BLG-API-04/05`, `BLG-BE-121/122`, `BLG-FE-180–183`, `BLG-FEAT-96–98`, `BLG-FR-04/05`, `BLG-GOV-338–345`, `BLG-OPS-165–167`, `BLG-QA-182–187`, `BLG-SEC-37/38`, `BLG-SPEC-157–160`); `BLG-GOV-329` P3→P2); prior — 2026-09-19 (`BLG-GOV-335` AC 2 closed — EPIC-04 autonomous-class sign-off reviewed and reclassified); prior — 2026-09-19 (post-ship closure `2026-09-15__release-v9.5` follow-up — `BLG-GOV-335`/`336`/`337` resolved directly and marked ✅ COMPLETE, pending archive at next `groom backlog`); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-21 (Release Planning `2026-09-21__release-v9.6` STEP 4 — 32-item / 28.00-day release slice appended, marker `RP:v9.6:2026-09-21__release-v9.6`); prior — 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` — idea intake `IW-20260919-01` dispositioned: 37 items filed (`BLG-AI-07`, `BLG-API-04/05`, `BLG-BE-121/122`, `BLG-FE-180–183`, `BLG-FEAT-96–98`, `BLG-FR-04/05`, `BLG-GOV-338–345`, `BLG-OPS-165–167`, `BLG-QA-182–187`, `BLG-SEC-37/38`, `BLG-SPEC-157–160`); `BLG-GOV-329` P3→P2); prior — 2026-09-19 (`BLG-GOV-335` AC 2 closed — EPIC-04 autonomous-class sign-off reviewed and reclassified); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4735,4 +4735,45 @@ Keyboard-event handling appears in `Layout`, `TradeEntry`, `TradePlan`, `RedFlag
 - `BLG-FEAT-74`'s gate line reflects the outcome
 
 ---
+
+## Release Slice — v9.6 (ephemeral — remove at next `groom backlog` per Placement Rule)
+
+<!-- release-plan-marker: RP:v9.6:2026-09-21__release-v9.6 -->
+
+32 items selected into `2026-09-21__release-v9.6` scope (28.00 estimated days, full capacity). Full acceptance criteria: `claude/cycles/2026-09-21__release-v9.6/stage4_backlog_slice.md`. Selection method: P1-then-P2-first (0 ready P1; all 8 ready P2), then category-balanced round-robin oldest-first for the remaining P3/P4, from a 76-item / 61.75-day ready pool — per `release_planning_prompt.md` §1.4c. Excluded as already complete or already satisfied: `BLG-GOV-335`, `BLG-GOV-336`, `BLG-GOV-337`, `BLG-GOV-326` (archive at next groom).
+
+| ST-ID | Item | EPIC |
+|-------|------|------|
+| ST-01 | BLG-FEAT-96 | EPIC-01 |
+| ST-02 | BLG-FE-180 | EPIC-01 |
+| ST-03 | BLG-FEAT-97 | EPIC-01 |
+| ST-04 | BLG-FEAT-98 | EPIC-01 |
+| ST-05 | BLG-FE-181 | EPIC-01 |
+| ST-06 | BLG-FE-182 | EPIC-01 |
+| ST-07 | BLG-FR-04 | EPIC-02 |
+| ST-08 | BLG-FR-05 | EPIC-02 |
+| ST-09 | BLG-BE-119 | EPIC-03 |
+| ST-10 | BLG-BE-118 | EPIC-03 |
+| ST-11 | BLG-BE-120 | EPIC-03 |
+| ST-12 | BLG-BE-121 | EPIC-03 |
+| ST-13 | BLG-BE-122 | EPIC-03 |
+| ST-14 | BLG-OPS-166 | EPIC-04 |
+| ST-15 | BLG-OPS-163 | EPIC-04 |
+| ST-16 | BLG-OPS-164 | EPIC-04 |
+| ST-17 | BLG-OPS-165 | EPIC-04 |
+| ST-18 | BLG-QA-171 | EPIC-05 |
+| ST-19 | BLG-QA-172 | EPIC-05 |
+| ST-20 | BLG-QA-173 | EPIC-05 |
+| ST-21 | BLG-QA-178 | EPIC-05 |
+| ST-22 | BLG-SPEC-148 | EPIC-06 |
+| ST-23 | BLG-SPEC-160 | EPIC-06 |
+| ST-24 | BLG-SPEC-144 | EPIC-06 |
+| ST-25 | BLG-SPEC-145 | EPIC-06 |
+| ST-26 | BLG-SPEC-146 | EPIC-06 |
+| ST-27 | BLG-GOV-345 | EPIC-07 |
+| ST-28 | BLG-GOV-329 | EPIC-07 |
+| ST-29 | BLG-GOV-328 | EPIC-07 |
+| ST-30 | BLG-GOV-325 | EPIC-07 |
+| ST-31 | BLG-GOV-90 | EPIC-07 |
+| ST-32 | BLG-GOV-188 | EPIC-07 |
 

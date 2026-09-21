@@ -1,0 +1,428 @@
+[
+  {
+    "st_id": "ST-01",
+    "epic_id": "EPIC-01",
+    "source": "BLG-FEAT-96",
+    "title": "'Clone as new plan' action on the Trade Plans list",
+    "priority": "P2",
+    "effort": "S (~0.5–1d)",
+    "acceptance_criteria": [
+      "Clicking Clone opens a new, unsaved plan pre-populated from the source",
+      "The cloned plan has status `planned`, fresh dates and no `position_id`",
+      "Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-02",
+    "epic_id": "EPIC-01",
+    "source": "BLG-FE-180",
+    "title": "Flag stale 'planned' trade plans on the Trade Plans list",
+    "priority": "P3",
+    "effort": "S (~0.5–1d)",
+    "acceptance_criteria": [
+      "A `planned` plan older than the threshold shows the marker; a newer plan does not",
+      "Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-03",
+    "epic_id": "EPIC-01",
+    "source": "BLG-FEAT-97",
+    "title": "CSV export for Screener results and Watchlist",
+    "priority": "P2",
+    "effort": "S (~0.5–1d)",
+    "acceptance_criteria": [
+      "Export downloads a file whose columns equal the visible columns on both pages",
+      "Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-04",
+    "epic_id": "EPIC-01",
+    "source": "BLG-FEAT-98",
+    "title": "In-app reminder to complete TradeReflection within 48 hours of a trade closing",
+    "priority": "P3",
+    "effort": "M (~1–2d)",
+    "acceptance_criteria": [
+      "A closed trade without a reflection produces exactly one reminder after 48h",
+      "Completing the reflection or dismissing suppresses it",
+      "Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-05",
+    "epic_id": "EPIC-01",
+    "source": "BLG-FE-181",
+    "title": "Name one primary next action in every empty state",
+    "priority": "P3",
+    "effort": "S (~1d)",
+    "acceptance_criteria": [
+      "0 audited empty states without a next-action link",
+      "Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-06",
+    "epic_id": "EPIC-01",
+    "source": "BLG-FE-182",
+    "title": "Single number/currency formatting helper — audit and migrate the highest-traffic tables",
+    "priority": "P3",
+    "effort": "M (~2d)",
+    "acceptance_criteria": [
+      "The three tables use the helper with identical negative/decimal conventions",
+      "Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-07",
+    "epic_id": "EPIC-02",
+    "source": "BLG-FR-04",
+    "title": "Audit whether closed-trade P&L is net of fees_paid; flag closed trades with NULL fees_paid in Monthly P&L",
+    "priority": "P3",
+    "effort": "S (~0.5–1d)",
+    "acceptance_criteria": [
+      "The net/gross basis is documented in the canonical metrics spec",
+      "A NULL-fee closed trade is counted and visible in Monthly P&L"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-08",
+    "epic_id": "EPIC-02",
+    "source": "BLG-FR-05",
+    "title": "Month-end immutable snapshot of Monthly P&L and the tax-year table, with a restatement diff",
+    "priority": "P3",
+    "effort": "M (~2d)",
+    "acceptance_criteria": [
+      "A snapshot exists per closed month",
+      "Editing a closed trade in a snapshotted month surfaces a restatement diff"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-09",
+    "epic_id": "EPIC-03",
+    "source": "BLG-BE-119",
+    "title": "calculate_trailing_stop's entry-price floor for profitable positions diverges from strategy_rules.md §7.2/§7.3 and from the backtest tool",
+    "priority": "P2",
+    "effort": "S (~0.5–1d — mostly decision + documentation; code change scope depends on which side is chosen)",
+    "acceptance_criteria": [
+      "A formal decision is recorded (either updates `strategy_rules.md` §7.2 to include the floor, or removes it from `calculate_trailing_stop` — not both, not neither)",
+      "`position_manager.py`, `calculate_trailing_stop`, and the spec formula all agree after the decision is implemented",
+      "A new golden-output case exercises the previously-untested entry-price-floor-binding scenario",
+      "`BLG-BE-114`/ST-04 unblocked and able to proceed to a single shared implementation"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-10",
+    "epic_id": "EPIC-03",
+    "source": "BLG-BE-118",
+    "title": "list_backtest_rule_runs has no negative-limit validation and no offset param",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "acceptance_criteria": [
+      "A negative `limit` on `GET /backtest-rule-changes/runs` returns HTTP 400 `INVALID_PARAMS`, not a 500",
+      "Existing passing behaviour for valid `limit` values is unchanged"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-11",
+    "epic_id": "EPIC-03",
+    "source": "BLG-BE-120",
+    "title": "JsonLinesFormatter does not truncate `message` to the spec's 500-char max",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "acceptance_criteria": [
+      "A log message longer than 500 characters is truncated to the spec's limit in the emitted JSON",
+      "Existing `tests/test_json_log_formatter.py` cases still pass unchanged"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-12",
+    "epic_id": "EPIC-03",
+    "source": "BLG-BE-121",
+    "title": "Float-vs-Decimal money-arithmetic audit with rounding-boundary golden tests",
+    "priority": "P3",
+    "effort": "M (~1.5–2d)",
+    "acceptance_criteria": [
+      "Inventory recorded in the QA evidence file",
+      "Golden tests for each boundary case pass",
+      "0 unexplained ≥£0.01 discrepancies across the sizing golden set"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-13",
+    "epic_id": "EPIC-03",
+    "source": "BLG-BE-122",
+    "title": "Shared upstream-call helper: uniform timeout and bounded retry budget for yfinance, Alpaca and Anthropic",
+    "priority": "P3",
+    "effort": "M (~1.5–2d)",
+    "acceptance_criteria": [
+      "No unbounded upstream call remains in the nightly stop-update path",
+      "Timeout and retry values are configured in one place",
+      "Existing tests still pass; new tests cover timeout and retry-exhaustion"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-14",
+    "epic_id": "EPIC-04",
+    "source": "BLG-OPS-166",
+    "title": "Dead-man's-switch alert when nightly-stop-update has not succeeded within 26 hours",
+    "priority": "P2",
+    "effort": "S (~0.5–1d)",
+    "acceptance_criteria": [
+      "A simulated missed run raises the alert within the window",
+      "A successful run clears it"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-15",
+    "epic_id": "EPIC-04",
+    "source": "BLG-OPS-163",
+    "title": "Document GitHub Actions secrets ownership map",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "acceptance_criteria": [
+      "Every secret referenced in `.github/workflows/*.yml` via `secrets.*` appears in the inventory with its consuming workflow(s) and required access level",
+      "Document is discoverable from the two cross-references named above",
+      "Infrastructure & Operations Owner sign-off"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-16",
+    "epic_id": "EPIC-04",
+    "source": "BLG-OPS-164",
+    "title": "Confirm synthetic uptime monitor live-fire and notification delivery (ST-11 follow-up)",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "acceptance_criteria": [
+      "A real live-fire test run is confirmed to have triggered the alert path (run URL/ID recorded)",
+      "A real Telegram notification is confirmed received (not just that the workflow step executed)",
+      "`docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md` §7 and §8 updated to reflect the confirmed result; `BLG-OPS-158`'s (ST-11's) original disclosed gap closed"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-17",
+    "epic_id": "EPIC-04",
+    "source": "BLG-OPS-165",
+    "title": "CI minutes and artifact-storage visibility; explicit retention on the 3 uploads that lack it",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "acceptance_criteria": [
+      "A monthly per-workflow figure exists",
+      "All artifact uploads carry explicit retention"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-18",
+    "epic_id": "EPIC-05",
+    "source": "BLG-QA-171",
+    "title": "Quarterly full-suite Playwright re-run against a fresh staging seed",
+    "priority": "P3",
+    "effort": "M",
+    "acceptance_criteria": [
+      "Cadence and seed procedure documented",
+      "First quarterly run completed with results recorded"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-19",
+    "epic_id": "EPIC-05",
+    "source": "BLG-QA-172",
+    "title": "DoQ checklist addendum for flaky-test disposition",
+    "priority": "P3",
+    "effort": "S",
+    "acceptance_criteria": [
+      "Addendum added to the DoQ checklist",
+      "Cross-reference confirmed correct against the existing quarantine item"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-20",
+    "epic_id": "EPIC-05",
+    "source": "BLG-QA-173",
+    "title": "Standing regression check for the OpenAPI Drift Detection gate itself",
+    "priority": "P3",
+    "effort": "S",
+    "acceptance_criteria": [
+      "Both fixtures exist and pass in CI",
+      "A deliberate revert of the gate's logic is confirmed to fail the fixture (proving the test actually tests something)"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-21",
+    "epic_id": "EPIC-05",
+    "source": "BLG-QA-178",
+    "title": "`test_trade_plan_audit_log.py`'s unrestored `sys.modules[\"database\"]` swap is a latent test-isolation hazard",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "acceptance_criteria": [
+      "`test_trade_plan_audit_log.py` no longer mutates the shared `sys.modules[\"database\"]` entry",
+      "Full backend test suite (`backend/.venv/bin/python3 -m pytest tests/`) still passes, and a manual reordering check confirms no other order-dependent leakage remains from this specific pattern",
+      "Any other file found with the same unrestored pattern is fixed in the same commit"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-22",
+    "epic_id": "EPIC-06",
+    "source": "BLG-SPEC-148",
+    "title": "DS-17 unique index migration not yet applied to live positions table",
+    "priority": "P2",
+    "effort": "XS (<1h)",
+    "acceptance_criteria": [
+      "`idx_positions_open_ticker_entry_date_unique` exists on the live `positions` table",
+      "DS-17's AC-03 \"pending\" disclosure in `data_model.md` is updated to confirmed-applied, with date"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-23",
+    "epic_id": "EPIC-06",
+    "source": "BLG-SPEC-160",
+    "title": "PO-05 (Lightweight Replay Mode) §13 determinism pre-clearance review, standalone",
+    "priority": "P2",
+    "effort": "XS (~0.5 day)",
+    "acceptance_criteria": [
+      "A dated §13 determination exists",
+      "`BLG-FEAT-74`'s gate line reflects the outcome"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-24",
+    "epic_id": "EPIC-06",
+    "source": "BLG-SPEC-144",
+    "title": "Canonical colour-blind-safe chart palette spec",
+    "priority": "P3",
+    "effort": "S",
+    "acceptance_criteria": [
+      "Palette documented with justification (e.g. a recognised colour-blind-safe source)",
+      "Cross-referenced from at least the design system spec"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-25",
+    "epic_id": "EPIC-06",
+    "source": "BLG-SPEC-145",
+    "title": "Lightweight ADR log for cross-cutting backend decisions",
+    "priority": "P3",
+    "effort": "M",
+    "acceptance_criteria": [
+      "File exists with template and at least 2 seeded entries",
+      "Referenced from a relevant onboarding/index document"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-26",
+    "epic_id": "EPIC-06",
+    "source": "BLG-SPEC-146",
+    "title": "Canonicalise the Sharpe-ratio lookback window",
+    "priority": "P3",
+    "effort": "S",
+    "acceptance_criteria": [
+      "Canonical window documented with rationale",
+      "Discrepancy noted explicitly for each of the 3 current call sites (fix itself may be a separate follow-on item)"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-27",
+    "epic_id": "EPIC-07",
+    "source": "BLG-GOV-345",
+    "title": "Release-planning gate scan treats lapsed date gates as permanently gated",
+    "priority": "P2",
+    "effort": "S (~0.5–1d)",
+    "acceptance_criteria": [
+      "Scan reports lapsed-date items separately",
+      "Each of the six items is verified and either cleared (gate line removed, dated note) or re-gated with a new dated condition",
+      "§6 checklist complete for any prompt change"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-28",
+    "epic_id": "EPIC-07",
+    "source": "BLG-GOV-329",
+    "title": "Re-confirm §13 boundary review cadence",
+    "priority": "P2",
+    "effort": "S",
+    "acceptance_criteria": [
+      "Explicit decision recorded (schedule now / defer with concrete trigger)",
+      "If deferred again, the new trigger must be more concrete than the prior one (per the STEP 8.1.5 finding)"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-29",
+    "epic_id": "EPIC-07",
+    "source": "BLG-GOV-328",
+    "title": "Revisit sprint capacity band given sustained ≥90% utilisation",
+    "priority": "P3",
+    "effort": "S",
+    "acceptance_criteria": [
+      "Review completed and documented in `workforce_capacity.md`",
+      "Explicit hold/raise decision recorded, not merely re-noted as \"revisit again next cycle\""
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-30",
+    "epic_id": "EPIC-07",
+    "source": "BLG-GOV-325",
+    "title": "Fixed-cadence audit of every governance prompt's §14 version-table entry",
+    "priority": "P3",
+    "effort": "S",
+    "acceptance_criteria": [
+      "Cadence defined and wired into a governed routine's mandatory steps",
+      "First mandatory-cadence run completed with results recorded"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-31",
+    "epic_id": "EPIC-07",
+    "source": "BLG-GOV-90",
+    "title": "Claude model deprecation monitoring procedure (consolidated)",
+    "priority": "P3",
+    "effort": "S (~0.5 day)",
+    "acceptance_criteria": [
+      "Deprecation monitoring procedure defined and documented",
+      "Procedure integrated with BLG-GOV-74 quarterly review cadence",
+      "Gate condition (BLG-GOV-74 first review complete) verified before sprint planning"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  },
+  {
+    "st_id": "ST-32",
+    "epic_id": "EPIC-07",
+    "source": "BLG-GOV-188",
+    "title": "Sprint Velocity Trend Chart",
+    "priority": "P3",
+    "effort": "S (~1–2 days)",
+    "acceptance_criteria": [
+      "Chart built, showing at least delivered-story-count and U/G/D/P split per cycle over the available history"
+    ],
+    "cycle_label": "cycle:2026-09-21__release-v9.6"
+  }
+]
