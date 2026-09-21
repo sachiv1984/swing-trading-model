@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-09-16 (sprint planning `2026-09-15__release-v9.5` — trend row appended); prior — 2026-09-09 (sprint planning `2026-09-09__release-v9.3` — trend row appended); prior — 2026-09-08 (created — ST-14, v9.2 EPIC-03, BLG-QA-103); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-21 (sprint planning `2026-09-21__release-v9.6` — trend row appended); prior — 2026-09-16 (sprint planning `2026-09-15__release-v9.5` — trend row appended); prior — 2026-09-09 (sprint planning `2026-09-09__release-v9.3` — trend row appended); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -32,6 +32,7 @@ A recurring `Unavailable` reading (the same environment gap appearing 2+ consecu
 
 | Cycle | Date | Dependencies scanned | Result | Resolution status | Notes |
 |-------|------|----------------------|--------|--------------------|-------|
+| `2026-09-21__release-v9.6` | 2026-09-21 | 58 | Clean | — | Run via the project virtualenv (`backend/.venv/bin/pip-audit`); the bare `pip-audit` command is not on the system `PATH` in this environment (CLAUDE.md §9 pattern), so this is not an `Unavailable` reading. |
 | `2026-09-15__release-v9.5` | 2026-09-16 | 58 | Clean | — | — |
 | `2026-09-14__release-v9.4` | 2026-09-14 | 58 | Clean | — | — |
 | `2026-09-09__release-v9.3` | 2026-09-09 | 57 | Clean | — | — |
