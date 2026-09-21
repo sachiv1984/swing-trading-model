@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.36
-**Last Updated:** 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added Position & Trade Plan Lifecycle State Diagram section; surfaced trade_plans CHECK constraint documentation gap, filed as BLG-SPEC-154; no schema change); prior — 2026-09-18 (ST-22, EPIC-04, v9.5, BLG-SPEC-D18 — added live schema verification note to Positions Table section; 4 discrepancies filed as BLG-SPEC-148/149/150/151); prior — 2026-09-15 (ST-23, EPIC-05, v9.4, BLG-AI-06 — DS-18 added: ai_output_boundary_samples table); prior history retained — see prior entries in version control
+**Version:** 2.37
+**Last Updated:** 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — DS-19: `reflection_reminder` added to the `notifications` and `notification_preferences` `alert_type` CHECK constraints, plus a partial unique index enforcing one reminder per trade; §9/§10 updated); prior — 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added Position & Trade Plan Lifecycle State Diagram section; surfaced trade_plans CHECK constraint documentation gap, filed as BLG-SPEC-154; no schema change); prior — 2026-09-18 (ST-22, EPIC-04, v9.5, BLG-SPEC-D18 — added live schema verification note to Positions Table section; 4 discrepancies filed as BLG-SPEC-148/149/150/151); prior — 2026-09-15 (ST-23, EPIC-05, v9.4, BLG-AI-06 — DS-18 added: ai_output_boundary_samples table); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -449,7 +449,9 @@ CREATE TABLE notifications (
         'stop_loss_approach',
         'grace_period_warning',
         'market_regime_change',
-        'daily_portfolio_summary'
+        'daily_portfolio_summary',
+        'custom_price_alert',
+        'reflection_reminder'
     )),
     title VARCHAR(255) NOT NULL,
     message TEXT NOT NULL,
@@ -466,6 +468,9 @@ CREATE TABLE notifications (
 CREATE INDEX idx_notifications_portfolio ON notifications(portfolio_id);
 CREATE INDEX idx_notifications_created ON notifications(created_at DESC);
 CREATE INDEX idx_notifications_read ON notifications(portfolio_id, read);
+-- DS-19 (v2.37): at most one reflection_reminder per trade, ever.
+CREATE UNIQUE INDEX uq_notifications_reflection_reminder_trade
+    ON notifications ((context->>'trade_id')) WHERE alert_type = 'reflection_reminder';
 ```
 
 ### Fields
@@ -500,12 +505,13 @@ CREATE INDEX idx_notifications_read ON notifications(portfolio_id, read);
 | `grace_period_warning` | `ticker`, `holding_days`, `grace_days_remaining` |
 | `market_regime_change` | `regime` (value: `"risk_off"`) |
 | `daily_portfolio_summary` | `portfolio_value_gbp`, `open_position_count`, `unrealised_pnl_gbp` |
+| `reflection_reminder` | `trade_id` (UUID string), `ticker`, `exit_date` (ISO date) — v2.37, DS-19 |
 
 ---
 
 ## 10. Notification Preferences Table
 
-Per-alert-type email delivery preferences. One row per alert type per portfolio. Seeded automatically on first `GET /notifications/preferences` call.
+Per-alert-type email delivery preferences. One row per alert type per portfolio. Seeded automatically on first `GET /notifications/preferences` call; a preference type introduced later (v2.37: `reflection_reminder`, seeded `email_enabled = FALSE` — every other type defaults TRUE) is backfilled for already-seeded portfolios on the next `GET`.
 
 ```sql
 CREATE TABLE notification_preferences (
@@ -515,7 +521,8 @@ CREATE TABLE notification_preferences (
         'stop_loss_approach',
         'grace_period_warning',
         'market_regime_change',
-        'daily_portfolio_summary'
+        'daily_portfolio_summary',
+        'reflection_reminder'
     )),
     email_enabled BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -2326,6 +2333,42 @@ Reversible: `DROP TABLE IF EXISTS ai_output_boundary_samples;`
 
 ---
 
-**Document Version:** 2.36
+## DS-19 — reflection_reminder alert type: CHECK extensions and one-per-trade index (v2.37, 2026-09-21)
+
+**Story:** ST-04 (EPIC-01, v9.6) — BLG-FEAT-98, in-app reminder to complete a TradeReflection 48 hours after a trade closes
+
+Additive, idempotent, applied by `ensure_alerts_tables()` at application startup (no manual step). No data is rewritten.
+
+```sql
+BEGIN;
+-- notifications.alert_type: add 'reflection_reminder' (keeps 'custom_price_alert', added at v2.13)
+ALTER TABLE notifications DROP CONSTRAINT IF EXISTS notifications_alert_type_check;
+ALTER TABLE notifications ADD CONSTRAINT notifications_alert_type_check CHECK (alert_type IN (
+    'stop_loss_approach', 'grace_period_warning', 'market_regime_change',
+    'daily_portfolio_summary', 'custom_price_alert', 'reflection_reminder'));
+
+-- notification_preferences.alert_type: add 'reflection_reminder'
+-- (the migration finds the existing alert_type CHECK by definition, not by an assumed name)
+ALTER TABLE notification_preferences DROP CONSTRAINT IF EXISTS notification_preferences_alert_type_check;
+ALTER TABLE notification_preferences ADD CONSTRAINT notification_preferences_alert_type_check CHECK (alert_type IN (
+    'stop_loss_approach', 'grace_period_warning', 'market_regime_change',
+    'daily_portfolio_summary', 'reflection_reminder'));
+
+-- at most one reminder per trade, ever (idempotent per trade_id, including after read / dismissal / completion)
+CREATE UNIQUE INDEX IF NOT EXISTS uq_notifications_reflection_reminder_trade
+    ON notifications ((context->>'trade_id'))
+    WHERE alert_type = 'reflection_reminder';
+COMMIT;
+```
+
+Reversible: `DROP INDEX IF EXISTS uq_notifications_reflection_reminder_trade;` then `DELETE FROM notifications WHERE alert_type = 'reflection_reminder'; DELETE FROM notification_preferences WHERE alert_type = 'reflection_reminder';` and restore the prior CHECK lists.
+
+**Reads/writes outside these tables:** the evaluation step reads `trade_history` (`created_at`, `exit_date`) and `trade_reflections`; saving a reflection (`upsert_trade_reflection`) marks that trade's unread `reflection_reminder` notification read (`UPDATE notifications SET read = TRUE ...`), isolated by a SAVEPOINT so it cannot fail the reflection save.
+
+**Verification status:** the DDL and SQL above are covered by mocked-cursor unit tests (`tests/test_reflection_reminder.py`) that assert structure and parameters; they have **not** been executed against a live PostgreSQL (no database access in the execution sandbox). Confirm on staging after deploy: `SELECT conname, pg_get_constraintdef(oid) FROM pg_constraint WHERE conrelid IN ('notifications'::regclass, 'notification_preferences'::regclass) AND contype = 'c';` and `SELECT indexdef FROM pg_indexes WHERE indexname = 'uq_notifications_reflection_reminder_trade';`.
+
+---
+
+**Document Version:** 2.37
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added Position & Trade Plan Lifecycle State Diagram section; header/footer version kept in sync)
+**Last Review:** 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — DS-19; header/footer version kept in sync); prior — 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added Position & Trade Plan Lifecycle State Diagram section; header/footer version kept in sync)

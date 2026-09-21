@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.1
-**Last Updated:** 2026-03-06
+**Version:** 0.2
+**Last Updated:** 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — §2 cross-reference to the Reflection Reminder and its `/TradeHistory?reflect=` re-entry); prior — 2026-03-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v1.9
 **EPIC:** EPIC-01
@@ -29,6 +29,8 @@ A structured post-trade reflection form presented when a position is closed. Pre
 The reflection modal opens automatically when a trade close is confirmed by the user (i.e., after the position exit is recorded server-side and the success response is received).
 
 **Trigger location:** Trade close confirmation response — anywhere in the application where a position can be exited (Trade History, Risk Dashboard, Positions page).
+
+**Re-entry after a skip (v0.2, ST-04 BLG-FEAT-98):** the modal remains route-less, but it can also be re-opened from Trade History via `/TradeHistory?reflect={trade_id}` — the target of the Reflection Reminder's "Write reflection" link (`notifications.md` §Reflection Reminder Row). Trade History reads the param on load, opens this modal for that trade, then removes the param (`replace`); an unknown `trade_id` is ignored silently. Saving a reflection after a reminder exists marks that reminder read.
 
 ---
 
@@ -136,4 +138,5 @@ Reflection responses require a storage table linked to the trade record. The Dat
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-09-21 | ST-04 (v9.6, EPIC-01, BLG-FEAT-98): §2 cross-reference to the Reflection Reminder re-entry (`/TradeHistory?reflect={trade_id}`) — the cross-reference the design gate left to this story's spec-sync commit. Documentation only; no behaviour change to the modal. |
 | 0.1 | 2026-03-06 | Initial spec — v1.9 EPIC-01 ST-02. |

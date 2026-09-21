@@ -8,6 +8,10 @@ Alert types:
   - grace_period_warning: fires on last 2 days of grace period (days 8+9 with default 10-day hold)
   - market_regime_change: fires on transition to risk_off (state change, not sustained state)
   - daily_portfolio_summary: fires once per portfolio per UTC calendar day
+  - reflection_reminder: fires once per closed trade with no saved reflection, on the first
+    evaluation run at or after 48h from the close (ST-04, EPIC-01, v9.6, BLG-FEAT-98).
+    Not a configurable rule — it has no alert_rules row; it is governed only by the
+    notification preference (email delivery, default OFF). The in-app feed row is always created.
 
 Delivery: FastAPI BackgroundTasks per ADR-003. Email delivery is a post-response background task.
 Re-delivery: on each evaluate call, notifications with delivered=false and delivery_attempts<3
@@ -38,6 +42,21 @@ ALERT_TYPES = [
 # Custom price alerts (ST-02, BLG-FE-116, EPIC-02, v7.5) — separate, many-rows-per-portfolio
 # table, distinct from the singleton-per-type alert_rules above. See
 # docs/specs/blg_fe_116_pre_implementation_readiness_pass.md AC-01/AC-03.
+# Reflection reminders (ST-04, BLG-FEAT-98, EPIC-01, v9.6). Design:
+# docs/design/2026-09-21__release-v9.6/reflection-reminder/decision_record.md
+# reflection_reminder is deliberately NOT in ALERT_TYPES: ALERT_TYPES is the set of *rule* types
+# accepted by POST /alerts/rules and seeded into alert_rules, and reflection_reminder has no rule.
+# It is a *preference* type only (PREFERENCE_TYPES), and — unlike the four rule types — its
+# delivery preference defaults to OFF: a newly introduced alert type must not start notifying
+# the operator unasked.
+REFLECTION_REMINDER_TYPE = "reflection_reminder"
+REFLECTION_REMINDER_DELAY_HOURS = 48
+# Bounded look-back so the first run after deploy does not flood the feed with reminders for
+# every historic closed trade that never had a reflection (record §2.5 "not-a-nag").
+REFLECTION_REMINDER_LOOKBACK_DAYS = 30
+PREFERENCE_TYPES = ALERT_TYPES + [REFLECTION_REMINDER_TYPE]
+PREFERENCE_DEFAULTS = {**{t: True for t in ALERT_TYPES}, REFLECTION_REMINDER_TYPE: False}
+
 PRICE_ALERT_TICKER_RE = re.compile(r'^[A-Z0-9.]{1,10}$')
 PRICE_ALERT_CAP = 50
 
@@ -156,8 +175,9 @@ def ensure_alerts_tables():
                     ON price_alerts(portfolio_id, active)
             """)
 
-            # Extend notifications.alert_type CHECK to permit 'custom_price_alert'
-            # (idempotent — only alters if not already extended; data_model.md v2.12->v2.13).
+            # Extend notifications.alert_type CHECK to permit 'custom_price_alert' and
+            # 'reflection_reminder' (idempotent — only alters if not already extended;
+            # data_model.md v2.12->v2.13, and v9.6 ST-04 for reflection_reminder).
             cur.execute("""
                 SELECT pg_get_constraintdef(oid) AS def
                 FROM pg_constraint
@@ -166,15 +186,52 @@ def ensure_alerts_tables():
                   AND conname = 'notifications_alert_type_check'
             """)
             existing_check = cur.fetchone()
-            if existing_check is None or 'custom_price_alert' not in existing_check["def"]:
+            if (existing_check is None
+                    or 'custom_price_alert' not in existing_check["def"]
+                    or REFLECTION_REMINDER_TYPE not in existing_check["def"]):
                 cur.execute("ALTER TABLE notifications DROP CONSTRAINT IF EXISTS notifications_alert_type_check")
                 cur.execute("""
                     ALTER TABLE notifications ADD CONSTRAINT notifications_alert_type_check CHECK (alert_type IN (
                         'stop_loss_approach', 'grace_period_warning',
                         'market_regime_change', 'daily_portfolio_summary',
-                        'custom_price_alert'
+                        'custom_price_alert', 'reflection_reminder'
                     ))
                 """)
+
+            # ST-04 (BLG-FEAT-98, v9.6): the same extension for notification_preferences so the
+            # 'reflection_reminder' email-preference row can be stored. Unlike the notifications
+            # block above this finds the alert_type CHECK by its DEFINITION, not by an assumed
+            # auto-generated name: if the live constraint were named differently, a name-based
+            # drop would be a no-op and the old four-type CHECK would keep rejecting the new row.
+            # Down migration: restore the four-type CHECK (after deleting reflection_reminder rows).
+            cur.execute("""
+                SELECT conname, pg_get_constraintdef(oid) AS def
+                FROM pg_constraint
+                WHERE conrelid = 'notification_preferences'::regclass
+                  AND contype = 'c'
+                  AND pg_get_constraintdef(oid) ILIKE '%alert_type%'
+            """)
+            pref_checks = cur.fetchall()
+            if not any(REFLECTION_REMINDER_TYPE in c["def"] for c in pref_checks):
+                for c in pref_checks:
+                    if re.fullmatch(r"[A-Za-z0-9_]+", c["conname"]):
+                        cur.execute(f'ALTER TABLE notification_preferences DROP CONSTRAINT IF EXISTS "{c["conname"]}"')
+                cur.execute("""
+                    ALTER TABLE notification_preferences ADD CONSTRAINT notification_preferences_alert_type_check CHECK (alert_type IN (
+                        'stop_loss_approach', 'grace_period_warning',
+                        'market_regime_change', 'daily_portfolio_summary',
+                        'reflection_reminder'
+                    ))
+                """)
+
+            # ST-04: database-enforced "at most one reminder per trade, ever" (idempotent per
+            # trade_id, including after read/dismissal/completion — the row is never deleted).
+            # Down migration: DROP INDEX IF EXISTS uq_notifications_reflection_reminder_trade;
+            cur.execute("""
+                CREATE UNIQUE INDEX IF NOT EXISTS uq_notifications_reflection_reminder_trade
+                    ON notifications ((context->>'trade_id'))
+                    WHERE alert_type = 'reflection_reminder'
+            """)
 
             # Down migration: DROP TABLE IF EXISTS alert_evaluations;
             cur.execute("""
@@ -532,9 +589,10 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
             )
             pref_rows = cur.fetchall()
             prefs = {r["alert_type"]: r["email_enabled"] for r in pref_rows}
-            # Default to email enabled if no preference row yet
-            for t in ALERT_TYPES:
-                prefs.setdefault(t, True)
+            # Default per PREFERENCE_DEFAULTS if no preference row yet (the four rule types
+            # default ON; reflection_reminder defaults OFF — ST-04).
+            for t in PREFERENCE_TYPES:
+                prefs.setdefault(t, PREFERENCE_DEFAULTS[t])
 
             notifications_created = 0
             delivery_tasks_enqueued = 0
@@ -691,6 +749,11 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
             notifications_created += price_alert_summary["notifications_created"]
             delivery_tasks_enqueued += price_alert_summary["delivery_tasks_enqueued"]
 
+            # --- reflection_reminder (ST-04, BLG-FEAT-98, EPIC-01, v9.6) ---
+            reflection_summary = _evaluate_reflection_reminders(cur, portfolio_id, prefs, enqueue_delivery)
+            notifications_created += reflection_summary["notifications_created"]
+            delivery_tasks_enqueued += reflection_summary["delivery_tasks_enqueued"]
+
             # --- Re-delivery for failed prior notifications ---
             redelivery_tasks_enqueued = 0
             cur.execute("""
@@ -713,7 +776,83 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
                 "redelivery_tasks_enqueued": redelivery_tasks_enqueued,
                 "evaluations_persisted": evaluations_persisted,
                 "custom_price_alerts": price_alert_summary,
+                "reflection_reminders": reflection_summary,
             }
+
+
+def _evaluate_reflection_reminders(cur, portfolio_id: str, prefs: Dict, enqueue_delivery) -> Dict:
+    """
+    Create one in-app reminder for each closed trade that has no saved reflection and closed
+    at least REFLECTION_REMINDER_DELAY_HOURS ago (ST-04, BLG-FEAT-98).
+
+    Rules (decision_record.md §2.3-§2.5):
+      - Appears on the first evaluation run at or after the 48h mark (no minute-level promise).
+      - At most one reminder per trade, ever: excluded here if any reminder row already exists
+        for the trade (read or unread), and enforced by the partial unique index
+        uq_notifications_reflection_reminder_trade with ON CONFLICT DO NOTHING.
+      - The in-app feed row is ALWAYS created; only delivery is governed by the preference
+        (email_enabled, default OFF).
+      - "Close timestamp" is trade_history.created_at (when the closure was recorded), falling
+        back to exit_date; exit_date alone can be back-dated by the user.
+      - Bounded to trades closed within REFLECTION_REMINDER_LOOKBACK_DAYS.
+
+    Failure isolation: runs inside evaluate_alerts()'s single transaction, so the query runs
+    under a SAVEPOINT — a failure here is logged and rolled back to the savepoint and never
+    aborts the other alert evaluations.
+    """
+    summary = {"candidates": 0, "notifications_created": 0, "delivery_tasks_enqueued": 0, "error": None}
+    try:
+        cur.execute("SAVEPOINT reflection_reminders")
+        cur.execute("""
+            SELECT th.id, th.ticker, th.exit_date
+            FROM trade_history th
+            WHERE th.portfolio_id = %s
+              AND COALESCE(th.created_at, th.exit_date::timestamp)
+                    <= NOW() - (%s * INTERVAL '1 hour')
+              AND COALESCE(th.created_at, th.exit_date::timestamp)
+                    >= NOW() - (%s * INTERVAL '1 day')
+              AND NOT EXISTS (
+                    SELECT 1 FROM trade_reflections tr WHERE tr.trade_id = th.id)
+              AND NOT EXISTS (
+                    SELECT 1 FROM notifications n
+                    WHERE n.alert_type = 'reflection_reminder'
+                      AND n.context->>'trade_id' = th.id::text)
+            ORDER BY th.exit_date
+        """, (portfolio_id, REFLECTION_REMINDER_DELAY_HOURS, REFLECTION_REMINDER_LOOKBACK_DAYS))
+        rows = cur.fetchall()
+        summary["candidates"] = len(rows)
+
+        import json
+        for trade in rows:
+            ticker = trade["ticker"]
+            exit_date = trade["exit_date"]
+            exit_str = exit_date.isoformat() if hasattr(exit_date, "isoformat") else str(exit_date)
+            title = f"Reflection Reminder — {ticker}"
+            message = f"{ticker} closed on {exit_str}. Take a few minutes to record what you learned."
+            context = {"trade_id": str(trade["id"]), "ticker": ticker, "exit_date": exit_str}
+            cur.execute("""
+                INSERT INTO notifications (portfolio_id, alert_type, title, message, context)
+                VALUES (%s, 'reflection_reminder', %s, %s, %s)
+                ON CONFLICT ((context->>'trade_id')) WHERE alert_type = 'reflection_reminder'
+                DO NOTHING
+                RETURNING id
+            """, (portfolio_id, title, message, json.dumps(context)))
+            created = cur.fetchone()
+            if created is None:
+                continue  # a concurrent run already created this trade's reminder
+            summary["notifications_created"] += 1
+            if prefs.get(REFLECTION_REMINDER_TYPE, PREFERENCE_DEFAULTS[REFLECTION_REMINDER_TYPE]):
+                enqueue_delivery(str(created["id"]))
+                summary["delivery_tasks_enqueued"] += 1
+        cur.execute("RELEASE SAVEPOINT reflection_reminders")
+    except Exception as e:
+        logger.warning("reflection_reminder evaluation failed (isolated, other alerts unaffected): %s", e)
+        summary["error"] = str(e)[:200]
+        try:
+            cur.execute("ROLLBACK TO SAVEPOINT reflection_reminders")
+        except Exception:
+            pass
+    return summary
 
 
 def _check_regime_change(portfolio_id: str) -> Optional[Dict]:
@@ -923,6 +1062,7 @@ def _build_email(notif) -> tuple:
         "grace_period_warning":    "Grace Period Warning",
         "market_regime_change":    "Market Regime Change",
         "daily_portfolio_summary": "Daily Portfolio Summary",
+        "reflection_reminder":     "Reflection Reminder",
     }
     type_label = type_labels.get(alert_type, alert_type)
 
@@ -1034,13 +1174,15 @@ def mark_all_notifications_read(portfolio_id: str) -> Dict:
 # ---------------------------------------------------------------------------
 
 def _seed_preferences(portfolio_id: str, cur) -> None:
-    """Insert default preferences (all email enabled) for all four types."""
-    for alert_type in ALERT_TYPES:
+    """Insert any missing default preference rows: the four rule types default ON, and
+    reflection_reminder defaults OFF (ST-04). Existing rows are never overwritten, so this is
+    also how portfolios seeded before v9.6 gain their reflection_reminder row."""
+    for alert_type in PREFERENCE_TYPES:
         cur.execute("""
             INSERT INTO notification_preferences (portfolio_id, alert_type, email_enabled)
-            VALUES (%s, %s, TRUE)
+            VALUES (%s, %s, %s)
             ON CONFLICT (portfolio_id, alert_type) DO NOTHING
-        """, (portfolio_id, alert_type))
+        """, (portfolio_id, alert_type, PREFERENCE_DEFAULTS[alert_type]))
 
 
 def get_preferences(portfolio_id: str) -> Dict:
@@ -1054,7 +1196,9 @@ def get_preferences(portfolio_id: str) -> Dict:
                 "SELECT COUNT(*) AS cnt FROM notification_preferences WHERE portfolio_id = %s",
                 (portfolio_id,)
             )
-            if cur.fetchone()["cnt"] == 0:
+            # Seed when empty (first use) OR when a preference type introduced later (v9.6
+            # reflection_reminder) has no row yet for an already-seeded portfolio.
+            if cur.fetchone()["cnt"] < len(PREFERENCE_TYPES):
                 _seed_preferences(portfolio_id, cur)
 
             cur.execute(
@@ -1071,7 +1215,7 @@ def update_preferences(portfolio_id: str, updates: Dict) -> Dict:
     updates: {alert_type: {"email_enabled": bool}, ...}
     """
     # ensure_alerts_tables() omitted — called at startup. ST-06 fix.
-    invalid = [k for k in updates if k not in ALERT_TYPES]
+    invalid = [k for k in updates if k not in PREFERENCE_TYPES]
     if invalid:
         raise ValueError(f"Unknown alert type key(s): {invalid}")
     if not updates:

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api, apiFetch } from "../api/base44Client";
 import { Loader2, Filter, TrendingUp, TrendingDown, Calendar, Tag, X, Download, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
@@ -11,6 +12,7 @@ import StatsCard from "../components/ui/StatsCard";
 import TradeHistoryTable from "../components/trades/TradeHistoryTable";
 import SavedFiltersControl from "../components/trades/SavedFiltersControl";
 import CalendarView from "../components/trades/CalendarView";
+import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import { motion } from "framer-motion";
 
 // ST-04 (BLG-FE-118, EPIC-04, v7.5): ephemeral, device-local active-filter
@@ -101,6 +103,24 @@ export default function TradeHistory() {
   });
 
   const trades = tradesData?.trades || [];
+
+  // ST-04 (EPIC-01, v9.6, BLG-FEAT-98): re-entry point for the Reflection Reminder's
+  // "Write reflection" link (/TradeHistory?reflect={trade_id}). Opens the EXISTING
+  // TradeReflectionModal (it pre-populates from any saved reflection and treats "none
+  // saved" as empty), then removes the param with `replace` so Back does not reopen it.
+  // An unknown/foreign trade_id is ignored silently (no modal, no toast).
+  const [searchParams, setSearchParams] = useSearchParams();
+  const reflectId = searchParams.get("reflect");
+  const [reflectionTrade, setReflectionTrade] = useState(null);
+  useEffect(() => {
+    if (!reflectId || isLoading) return;
+    const match = trades.find((t) => String(t.id) === reflectId);
+    if (match) setReflectionTrade(match);
+    const next = new URLSearchParams(searchParams);
+    next.delete("reflect");
+    setSearchParams(next, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reflectId, isLoading, tradesData]);
 
   // trades_for_charts: source for R-multiple join by trade id.
   // Safe-defaults to [] so TradeHistoryTable always receives a valid array.
@@ -560,6 +580,13 @@ export default function TradeHistory() {
           )}
         </>
       )}
+
+      {/* ST-04 (BLG-FEAT-98): opened via /TradeHistory?reflect={trade_id} */}
+      <TradeReflectionModal
+        trade={reflectionTrade}
+        open={!!reflectionTrade}
+        onClose={() => setReflectionTrade(null)}
+      />
     </div>
   );
 }

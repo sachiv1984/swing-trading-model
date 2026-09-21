@@ -1204,7 +1204,32 @@ def upsert_trade_reflection(trade_id: str, data: Dict) -> Dict:
                     data.get("key_takeaway"),
                 ),
             )
-            return dict(cur.fetchone())
+            reflection_row = dict(cur.fetchone())
+
+            # ST-04 (BLG-FEAT-98, EPIC-01, v9.6): completing the reflection after its reminder
+            # exists auto-marks that reminder read (decision_record.md §2.3). Best-effort and
+            # isolated by a SAVEPOINT so it can never fail or roll back the reflection save itself.
+            try:
+                cur.execute("SAVEPOINT reflection_reminder_read")
+                cur.execute(
+                    """
+                    UPDATE notifications
+                    SET read = TRUE
+                    WHERE alert_type = 'reflection_reminder'
+                      AND context->>'trade_id' = %s
+                      AND read = FALSE
+                    """,
+                    (str(trade_id),),
+                )
+                cur.execute("RELEASE SAVEPOINT reflection_reminder_read")
+            except Exception as e:  # pragma: no cover - defensive; notifications table missing etc.
+                logger.warning("reflection reminder auto-read skipped for trade %s: %s", trade_id, e)
+                try:
+                    cur.execute("ROLLBACK TO SAVEPOINT reflection_reminder_read")
+                except Exception:
+                    pass
+
+            return reflection_row
 
 
 # ---------------------------------------------------------------------------

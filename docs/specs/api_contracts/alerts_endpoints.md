@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.7
-**Last Updated:** 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — GET /notifications now exposes `context`; `alert_type` field description corrected to include `custom_price_alert`, missed since v0.5); prior — 2026-07-23
+**Version:** 0.8
+**Last Updated:** 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — new `reflection_reminder` alert type: a preference type with no rule, evaluated inside `POST /alerts/evaluate`; `GET/PATCH /notifications/preferences` now cover five types; `POST /alerts/evaluate` response gains `reflection_reminders`); prior — 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — GET /notifications now exposes `context`; `alert_type` field description corrected to include `custom_price_alert`, missed since v0.5); prior — 2026-07-23
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **ADR Reference:** `docs/adr/ADR-003-notification-delivery-architecture.md` — FastAPI BackgroundTasks delivery architecture
 **Design Gate:** `claude/cycles/2026-03-18__release-v2.1/` — EPIC-02
@@ -45,6 +45,7 @@ The FastAPI router must declare `/notifications/mark-all-read` **before** `/noti
 | `grace_period_warning` | Position entering final grace days | `holding_days ≥ min_hold_days − 2` AND `holding_days < min_hold_days` — fires on the last two days of the grace period regardless of the configured `min_hold_days` value |
 | `market_regime_change` | Market regime transitions to risk-off | `GET /market/status` regime changes to `risk_off` |
 | `daily_portfolio_summary` | Daily portfolio digest | Scheduled trigger (once per day per portfolio) |
+| `reflection_reminder` | Reminder to complete a trade reflection (v0.8, ST-04/BLG-FEAT-98) | A closed trade with **no saved reflection** whose close was recorded ≥ 48 h ago (bounded to the last 30 days), on the first `POST /alerts/evaluate` run at or after that mark. **Not a rule type:** it has no `alert_rules` row, is not accepted by `POST /alerts/rules`, and is governed only by its notification preference (`email_enabled`, **default `false`**). The in-app feed row is always created. |
 
 Global response envelopes, error shape, and conventions are defined in **conventions.md** and apply unless explicitly stated otherwise.
 
@@ -510,6 +511,7 @@ Re-delivery: on each evaluation, if a prior notification has `delivered = false`
 | `grace_period_warning` | For each open position: fire if `holding_days >= settings.min_hold_days − 2` AND `holding_days < settings.min_hold_days`. With default `min_hold_days = 10`: fires on days 8 and 9. **Calendar-day deduplication:** same (portfolio, type, ticker, date) key as `stop_loss_approach`. Duplicate dispatches are logged and skipped. |
 | `market_regime_change` | Fire when regime transitions to `risk_off` (state change only, not sustained state). Deduplication via in-process last-known regime state — cold start does not fire; only genuine transitions fire. |
 | `daily_portfolio_summary` | Fire once per calendar day (UTC) per portfolio. Deduplication: check for existing `daily_portfolio_summary` notification with `created_at::date = CURRENT_DATE` before inserting. |
+| `reflection_reminder` | (v0.8) For each `trade_history` row where the close timestamp (`created_at`, falling back to `exit_date`) is ≥ 48 h and ≤ 30 days ago and no `trade_reflections` row exists: insert one notification (`title` `"Reflection Reminder — {TICKER}"`, `context` `{trade_id, ticker, exit_date}`). **At most one per trade, ever** — skipped if any `reflection_reminder` notification (read or unread) already exists for the `trade_id`, and enforced by a partial unique index; never re-created after read, dismissal or completion. Delivery is enqueued only when the `reflection_reminder` preference is enabled (default off). Failures in this step are isolated (SAVEPOINT) and never abort the other evaluations. |
 
 #### Request
 
@@ -524,13 +526,20 @@ No body required.
     "rules_evaluated": 4,
     "notifications_created": 2,
     "delivery_tasks_enqueued": 2,
-    "redelivery_tasks_enqueued": 0
+    "redelivery_tasks_enqueued": 0,
+    "reflection_reminders": {
+      "candidates": 1,
+      "notifications_created": 1,
+      "delivery_tasks_enqueued": 0,
+      "error": null
+    }
   }
 }
 ```
 
 | Field | Type | Description |
 |-------|------|-------------|
+| `reflection_reminders` | object | (v0.8) Summary of the reflection-reminder step: `candidates` (trades eligible this run), `notifications_created`, `delivery_tasks_enqueued` (0 unless the preference is enabled), `error` (string, or `null`; non-null means the step failed in isolation and created nothing). Its counts are also included in the top-level `notifications_created` / `delivery_tasks_enqueued`. |
 | `rules_evaluated` | integer | Number of enabled rules evaluated |
 | `notifications_created` | integer | New notification records written this call |
 | `delivery_tasks_enqueued` | integer | Background tasks enqueued for new notifications (where email is enabled in preferences) |
@@ -628,7 +637,7 @@ Return the notification feed for the portfolio, newest first. Supports page-base
 | Field | Type | Nullable | Description |
 |-------|------|----------|-------------|
 | `id` | UUID | No | Notification identifier |
-| `alert_type` | string | No | `stop_loss_approach` \| `grace_period_warning` \| `market_regime_change` \| `daily_portfolio_summary` \| `custom_price_alert` (doc-currency correction, ST-09 EPIC-02 v8.8 — `custom_price_alert` has existed since v0.5/ST-02/v7.5/BLG-FE-116 but was missed here) |
+| `alert_type` | string | No | `stop_loss_approach` \| `grace_period_warning` \| `market_regime_change` \| `daily_portfolio_summary` \| `custom_price_alert` \| `reflection_reminder` (v0.8, ST-04/BLG-FEAT-98; `context` = `{trade_id, ticker, exit_date}`) (doc-currency correction, ST-09 EPIC-02 v8.8 — `custom_price_alert` has existed since v0.5/ST-02/v7.5/BLG-FE-116 but was missed here) |
 | `title` | string | No | Human-readable alert title (e.g. `"Stop Loss Approach — AAPL"`) |
 | `message` | string | No | One-line description of the event |
 | `read` | boolean | No | `false` for unread; `true` after mark-read |
@@ -735,7 +744,7 @@ No body required.
 
 **Purpose**
 
-Return notification preferences for all four alert types. If no preferences exist (first use), the backend seeds defaults (all email enabled) before returning.
+Return notification preferences for all five preference types (the four rule types plus `reflection_reminder`, v0.8). If any type has no row yet (first use, or a portfolio seeded before v0.8), the backend seeds the missing rows with their defaults — the four rule types email-enabled, `reflection_reminder` **disabled** — before returning.
 
 **Method & Path**
 
@@ -771,6 +780,10 @@ No parameters.
       {
         "alert_type": "daily_portfolio_summary",
         "email_enabled": true
+      },
+      {
+        "alert_type": "reflection_reminder",
+        "email_enabled": false
       }
     ]
   }
@@ -781,9 +794,9 @@ No parameters.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `preferences` | array | One entry per alert type. Always 4 items (one per type). |
+| `preferences` | array | One entry per preference type. Always 5 items (v0.8; previously 4). |
 | `alert_type` | string | Alert type key |
-| `email_enabled` | boolean | `true` = send email when this alert type triggers; `false` = suppress email |
+| `email_enabled` | boolean | `true` = send email when this alert type triggers; `false` = suppress email. Governs delivery only — the in-app feed row is always created. `reflection_reminder` defaults to `false`. |
 
 #### Error Responses
 
@@ -816,7 +829,7 @@ A JSON object where each key is an alert type and the value is a preferences upd
 
 #### Validation rules
 
-- All keys must be valid alert type keys.
+- All keys must be valid preference type keys: the four rule types plus `reflection_reminder` (v0.8). (`POST /alerts/rules` still accepts only the four rule types.)
 - At least one key must be present.
 - `email_enabled` must be a boolean.
 
@@ -832,7 +845,8 @@ Returns the full updated preferences list (same shape as `GET /notifications/pre
       { "alert_type": "stop_loss_approach", "email_enabled": false },
       { "alert_type": "grace_period_warning", "email_enabled": true },
       { "alert_type": "market_regime_change", "email_enabled": true },
-      { "alert_type": "daily_portfolio_summary", "email_enabled": true }
+      { "alert_type": "daily_portfolio_summary", "email_enabled": true },
+      { "alert_type": "reflection_reminder", "email_enabled": false }
     ]
   }
 }
@@ -928,6 +942,8 @@ All tables defined below are specified in full in `docs/specs/data_model.md §8`
 | `alert_evaluations` | Audit log of every rule evaluation (v0.3) |
 | `price_alerts` | User-defined, per-ticker threshold alerts (v0.5, ST-02/BLG-FE-116) |
 
+`notifications` and `notification_preferences` `alert_type` CHECK constraints, and a partial unique index enforcing one `reflection_reminder` per `trade_id`, were extended at v0.8 (DS-19, `data_model.md` v2.37). The reflection-reminder step also reads `trade_history` and `trade_reflections`, and `PUT/POST /trades/{id}/reflection` (`trades` contract) marks that trade's unread reminder read as a side effect.
+
 Delivery tracking columns on `notifications` (`delivered`, `delivery_attempted_at`, `delivery_attempts`, `delivery_error`) implement the retry model specified in ADR-003.
 
 ---
@@ -950,6 +966,8 @@ Delivery tracking columns on `notifications` (`delivered`, `delivery_attempted_a
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.8 | 2026-09-21 | ST-04 (v9.6, EPIC-01, BLG-FEAT-98): Added the `reflection_reminder` alert type — a preference type with no rule (not accepted by `POST /alerts/rules`), evaluated as an additional step of `POST /alerts/evaluate` (48 h after a closed trade with no saved reflection; at most one per trade, ever; feed row always created, delivery only when the preference is enabled, default off). `GET/PATCH /notifications/preferences` now cover five types and backfill the new row for already-seeded portfolios. `POST /alerts/evaluate` response gains `reflection_reminders`. `GET /notifications` `alert_type` gains `reflection_reminder` (`context` = `{trade_id, ticker, exit_date}`). No new endpoint. Opportunistic in-file fix: backfilled the missing v0.7 row below. |
+| 0.7 | 2026-08-14 | ST-09 (v8.8, EPIC-02, BLG-BE-84): `GET /notifications` now exposes `context`; `alert_type` description corrected to include `custom_price_alert` (missed since v0.5). (Row backfilled at v0.8 from this file's prior header text; the header had read v0.7 with no changelog row.) |
 | 0.6 | 2026-07-23 | ST-02 (v7.7, EPIC-02, BLG-FE-114): Added optional `since_days` / `read` query params to `GET /notifications` so `weekly_digest.md`'s `Alerts Fired (7d)` / `Alerts Dismissed (7d)` values can deep-link into the filtered Notification Feed. Both applied before pagination; absent params preserve prior unfiltered behaviour. |
 | 0.5 | 2026-07-17 | ST-02 (v7.5, EPIC-02, BLG-FE-116): Added `## Custom Price Alerts` domain — `GET/POST /price-alerts`, `DELETE /price-alerts/{id}`. New `price_alerts` table (many-rows-per-portfolio, distinct from singleton `alert_rules`). Evaluation folded into the existing `POST /alerts/evaluate` step (no new cron). `GET /health/scheduler` surfaces a `custom_price_alerts` job key. Readiness baseline: `docs/specs/blg_fe_116_pre_implementation_readiness_pass.md`. |
 | 0.4 | 2026-04-01 | ST-02 (v2.4): Trigger evaluation rules table updated — deduplication behaviour documented for all four alert types. `stop_loss_approach` and `grace_period_warning` dedup logging added (log and skip on second evaluation same UTC day). Calendar-day dedup key: (portfolio, type, ticker, date). |
