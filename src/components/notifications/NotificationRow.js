@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShieldAlert, Clock, TrendingDown, BarChart2, Bell } from "lucide-react";
+import { ShieldAlert, Clock, TrendingDown, BarChart2, Bell, NotebookPen } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { createPageUrl } from "../../utils";
 import { formatDistanceToNow } from "date-fns";
@@ -10,6 +10,8 @@ const ICON_MAP = {
   market_regime_change: { Icon: TrendingDown, color: "text-violet-400", bg: "bg-violet-500/10" },
   daily_portfolio_summary: { Icon: BarChart2, color: "text-cyan-400", bg: "bg-cyan-500/10" },
   custom_price_alert: { Icon: Bell, color: "text-amber-400", bg: "bg-amber-500/10" },
+  // ST-04 (EPIC-01, v9.6, BLG-FEAT-98): journal/pencil glyph in the existing icon slot.
+  reflection_reminder: { Icon: NotebookPen, color: "text-emerald-400", bg: "bg-emerald-500/10" },
 };
 
 function relativeTime(iso) {
@@ -85,6 +87,17 @@ export default function NotificationRow({ notification, onMarkRead }) {
                 Create Trade Plan
               </Link>
             )}
+          {/* ST-04 (EPIC-01, v9.6, BLG-FEAT-98): re-entry to the reflection modal. Trade
+              History opens the existing TradeReflectionModal for ?reflect={trade_id}.
+              Design: docs/design/2026-09-21__release-v9.6/reflection-reminder/decision_record.md §2.2 */}
+          {notification.alert_type === "reflection_reminder" && notification.context?.trade_id && (
+            <Link
+              to={`${createPageUrl("TradeHistory")}?reflect=${encodeURIComponent(notification.context.trade_id)}`}
+              className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+            >
+              Write reflection
+            </Link>
+          )}
           {notification._error && (
             <span className="text-xs text-rose-400">Failed to mark as read.</span>
           )}

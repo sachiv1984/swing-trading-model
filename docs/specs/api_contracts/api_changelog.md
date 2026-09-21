@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.10.0
-**Last Updated:** 2026-09-08 (ST-23, EPIC-04, v9.2, BLG-GOV-205 — new "Entry Template" section formalising the canonical structure; conformance check confirms all existing entries already match, no migration needed); prior — 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — v8.9.0 entry: 3 new Backtest Rule Change endpoints); prior — 2026-08-17 (ST-26, BLG-SPEC-118, EPIC-06, v8.8 — backfilled the v7.9–v8.4 gap); prior history retained — see prior entries in version control.
+**Version:** 1.11.0
+**Last Updated:** 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — v9.6.0 entry: alerts_endpoints.md v0.8 reflection_reminder alert type); prior — 2026-09-08 (ST-23, EPIC-04, v9.2, BLG-GOV-205 — new "Entry Template" section formalising the canonical structure; conformance check confirms all existing entries already match, no migration needed); prior — 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — v8.9.0 entry: 3 new Backtest Rule Change endpoints); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -35,6 +35,22 @@ Rules:
 **Conformance check (this story):** reviewed all existing entries in this file (`v8.9.0` down through the backfilled `v7.9.0`/`v8.2.0` entries) against the template above. **All existing entries already conform** — no migration note required. This is expected: the template above is a formalisation of the structure every entry already used ad hoc, not a new structure being retrofitted.
 
 **Sign-off:** Head of Specs Team — Approved. Formalising an already-consistently-used structure (rather than introducing a new one requiring migration) is the right scope for this story — the conformance check confirms there was nothing to migrate. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
+
+---
+
+## v9.6.0 (2026-09-21 — Release v9.6)
+
+### alerts_endpoints.md — v0.8 (UPDATED)
+
+**EPIC:** EPIC-01
+**ST:** ST-04
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: POST /alerts/evaluate | Evaluates a new `reflection_reminder` step (closed trade, no saved reflection, ≥ 48 h; at most one per trade). Response gains `reflection_reminders` (BLG-FEAT-98). |
+| Updated endpoint: GET /notifications/preferences | Now returns five preference types; `reflection_reminder` is backfilled for already-seeded portfolios and defaults to `email_enabled: false`. |
+| Updated endpoint: PATCH /notifications/preferences | Accepts the `reflection_reminder` key (a preference type, not a rule type). |
+| Updated endpoint: GET /notifications | `alert_type` gains `reflection_reminder`; `context` is `{trade_id, ticker, exit_date}` for that type. |
 
 ---
 

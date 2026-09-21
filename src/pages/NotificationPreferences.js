@@ -23,6 +23,12 @@ const ALERT_META = {
     label: "Market Regime Change",
     description: "Notify when market regime transitions to risk-off",
   },
+  // ST-04 (EPIC-01, v9.6, BLG-FEAT-98): governs email delivery only — the in-app feed row is
+  // always created. Defaults Off (server-side) so a new type never starts emailing unasked.
+  reflection_reminder: {
+    label: "Reflection Reminder",
+    description: "Notify by email when a closed trade has no reflection after 48 hours",
+  },
   daily_portfolio_summary: {
     label: "Daily Portfolio Summary",
     // v0.5, ST-02/EPIC-02/v7.7: differentiates this daily push notification

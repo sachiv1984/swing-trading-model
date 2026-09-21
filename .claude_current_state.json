@@ -1,9 +1,9 @@
 {
   "active_cycle": "2026-09-21__release-v9.6",
   "cycle_name": "v9.6 \u2014 Build-and-Ship Pull-Forward & Full-Capacity Debt Clearance",
-  "status": "Sprint_Planning_Complete",
+  "status": "Executing",
   "prior_status": "Closed",
-  "engine": "Sprint Planning",
+  "engine": "Sprint Execution",
   "execution_state_path": "claude/cycles/2026-09-21__release-v9.6/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-09-21__release-v9.6/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -37,7 +37,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-09-18T22:40:30Z",
-  "last_sync_utc": "2026-09-21T09:53:22Z",
+  "last_sync_utc": "2026-09-21T15:51:14Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-09-15T13:40:00Z",
   "deviation_consolidation_review_cycle_count": 1,
@@ -52,7 +52,88 @@
   "prior_cycle": "2026-09-15__release-v9.5",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
-  "open_escalations": {},
+  "open_escalations": {
+    "ESC-EXEC-20260921-01": {
+      "cycle": "2026-09-21__release-v9.6",
+      "summary": "ST-09/EPIC-03 - confirm BLG-BE-119 trailing-stop entry-floor decision (largely settled by v9.5 ST-04 / strategy_rules.md v1.10)",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-09-21T15:51:14Z",
+      "sla_due_utc": "2026-09-24T15:51:14Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20260921-02": {
+      "cycle": "2026-09-21__release-v9.6",
+      "summary": "ST-16/EPIC-04 - Actions-write token + real Telegram receipt needed for synthetic-monitor live-fire",
+      "trigger_type": "Human-Delegation",
+      "owning_authority": "Infrastructure & Operations Owner",
+      "raised_utc": "2026-09-21T15:51:14Z",
+      "sla_due_utc": "2026-09-24T15:51:14Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20260921-03": {
+      "cycle": "2026-09-21__release-v9.6",
+      "summary": "ST-18/EPIC-05 - live staging environment + fresh seed needed for first quarterly Playwright run",
+      "trigger_type": "Human-Delegation",
+      "owning_authority": "Director of Quality",
+      "raised_utc": "2026-09-21T15:51:14Z",
+      "sla_due_utc": "2026-09-24T15:51:14Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20260921-04": {
+      "cycle": "2026-09-21__release-v9.6",
+      "summary": "ST-22/EPIC-06 - live-DB write access needed to apply DS-17 unique-index migration",
+      "trigger_type": "Human-Delegation",
+      "owning_authority": "Data Model & Domain Schema Owner (with Infrastructure & Operations Owner)",
+      "raised_utc": "2026-09-21T15:51:14Z",
+      "sla_due_utc": "2026-09-24T15:51:14Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20260921-05": {
+      "cycle": "2026-09-21__release-v9.6",
+      "summary": "ST-23/EPIC-06 - PO-05 section 13 determinism determination",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-09-21T15:51:14Z",
+      "sla_due_utc": "2026-09-24T15:51:14Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20260921-06": {
+      "cycle": "2026-09-21__release-v9.6",
+      "summary": "ST-28/EPIC-07 - section 13 boundary review cadence decision (schedule vs defer with concrete trigger)",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-09-21T15:51:14Z",
+      "sla_due_utc": "2026-09-24T15:51:14Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20260921-07": {
+      "cycle": "2026-09-21__release-v9.6",
+      "summary": "ST-29/EPIC-07 - hold/raise decision on sprint capacity band",
+      "trigger_type": "Workforce",
+      "owning_authority": "Product Owner",
+      "raised_utc": "2026-09-21T15:51:14Z",
+      "sla_due_utc": "2026-09-24T15:51:14Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20260921-08": {
+      "cycle": "2026-09-21__release-v9.6",
+      "summary": "ST-23,ST-27/EPIC-06,07 - ruling on plan-authorised write exception for existing backlog.md item edits",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Head of Specs Team + Product Owner",
+      "raised_utc": "2026-09-21T15:51:14Z",
+      "sla_due_utc": "2026-09-24T15:51:14Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    }
+  },
   "deferred_escalations": {
     "ESC-EXEC-20260910-01": {
       "cycle": "2026-09-09__release-v9.3",

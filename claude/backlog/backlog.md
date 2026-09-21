@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-21 (Release Planning `2026-09-21__release-v9.6` STEP 4 — 32-item / 28.00-day release slice appended, marker `RP:v9.6:2026-09-21__release-v9.6`); prior — 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` — idea intake `IW-20260919-01` dispositioned: 37 items filed (`BLG-AI-07`, `BLG-API-04/05`, `BLG-BE-121/122`, `BLG-FE-180–183`, `BLG-FEAT-96–98`, `BLG-FR-04/05`, `BLG-GOV-338–345`, `BLG-OPS-165–167`, `BLG-QA-182–187`, `BLG-SEC-37/38`, `BLG-SPEC-157–160`); `BLG-GOV-329` P3→P2); prior — 2026-09-19 (`BLG-GOV-335` AC 2 closed — EPIC-04 autonomous-class sign-off reviewed and reclassified); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-21 (Sprint Execution `2026-09-21__release-v9.6` EPIC-01 — 10 new items filed from execution and PR-review findings: BLG-SPEC-161/162, BLG-FE-184/185/186, BLG-OPS-168, BLG-QA-188/189, BLG-BE-123/124; BLG-QA-188 wording corrected to name the staging database); prior — 2026-09-21 (Release Planning `2026-09-21__release-v9.6` STEP 4 — 32-item / 28.00-day release slice appended, marker `RP:v9.6:2026-09-21__release-v9.6`); prior — 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` — idea intake `IW-20260919-01` dispositioned: 37 items filed (`BLG-AI-07`, `BLG-API-04/05`, `BLG-BE-121/122`, `BLG-FE-180–183`, `BLG-FEAT-96–98`, `BLG-FR-04/05`, `BLG-GOV-338–345`, `BLG-OPS-165–167`, `BLG-QA-182–187`, `BLG-SEC-37/38`, `BLG-SPEC-157–160`); `BLG-GOV-329` P3→P2); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4733,6 +4733,221 @@ Keyboard-event handling appears in `Layout`, `TradeEntry`, `TradePlan`, `RedFlag
 **Acceptance Criteria**
 - A dated §13 determination exists
 - `BLG-FEAT-74`'s gate line reflects the outcome
+
+---
+
+### BLG-SPEC-161 — screener_results.md column list omits the Earnings column that the shipped table has
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-03/EPIC-01/2026-09-21__release-v9.6 (BLG-FEAT-97) — found while building the CSV export; `screener_results.md` §4/§5.3 list nine columns but the rendered table has ten — 2026-09-21
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.7
+
+**Problem**
+The Screener results table renders an "Earnings" column (`lg`-visible, days until next earnings), but `screener_results.md` §4 never documents it and the v1.7 §5.3 CSV column list ("Ticker, Market, Price, ATR, Regime, Signal, Sector, Entry Zone, News") omits it. ST-03 exported it anyway, following the AC "columns equal the visible columns", so the spec now disagrees with shipped behaviour.
+
+**Scope**
+- Document the Earnings column in §4 (source, format, responsive rule) and add it to the §5.3 export column list
+- Bump the spec version and changelog
+
+**Acceptance Criteria**
+- `screener_results.md` §4 and §5.3 name all ten columns in display order
+- The §5.3 list matches `SCREENER_COLUMNS` in `src/pages/Screener.js`
+
+---
+
+### BLG-SPEC-162 — trade_reflection.md §4 specifies an en dash for a missing R-multiple; the convention is an em dash
+**Priority:** P4 (Backlog)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-06/EPIC-01/2026-09-21__release-v9.6 (BLG-FE-182) — known discrepancy recorded in `number-format-convention/decision_record.md` §2.7 and left for a follow-up — 2026-09-21
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`design_system.md` v1.21 §Number and Currency Formatting defines a missing value as an em dash (U+2014). `trade_reflection.md` §4 (Canonical, v0.2) still specifies an en dash for a missing R-multiple, so the reflection modal cannot both conform to its own spec and to the shared convention.
+
+**Scope**
+- Decide which wins (expected: the shared convention), update `trade_reflection.md` §4, and align `TradeReflectionModal.js` to use `src/lib/format.js`
+
+**Acceptance Criteria**
+- Spec and modal agree on the missing-value glyph
+- The modal's R-multiple, P&L and price fields format via the shared helper
+
+---
+
+### BLG-FE-184 — Migrate the remaining toFixed / toLocaleString call sites to the shared formatting helper
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** ST-06/EPIC-01/2026-09-21__release-v9.6 (BLG-FE-182) — the design record scopes the migration to Positions, Trade History and Trade Plans and lists the rest as follow-ups — 2026-09-21
+**Effort:** L (~3-5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`src/lib/format.js` now implements the canonical formats, but ~60 other files under `src/` still format money, percentages and R-multiples ad hoc (`toFixed(`, `toLocaleString`, `Intl.NumberFormat`), so identical values still render differently across pages. Zero P&L also still takes the >= 0 (green) tone at existing call sites rather than the neutral tone the convention specifies.
+
+**Scope**
+- Inventory the remaining call sites (`grep -rn "toFixed(\|toLocaleString\|Intl.NumberFormat" src`) and migrate in page-sized batches, updating affected Playwright assertions in the same commit
+- Apply the neutral tone for zero P&L where P&L is coloured
+- Add a lint/CI check that fails on new ad hoc money formatting in components
+- Harden `src/lib/format.js` (DoQ review note): reject non-number inputs such as booleans (`formatCurrency(true)` currently returns `£1.00`) and treat an unknown currency code as an error rather than silently falling back to `£`
+
+**Acceptance Criteria**
+- 0 unmigrated money/percentage/R formatting call sites outside `src/lib/format.js` (or an explicit, reasoned allow-list)
+- Zero P&L renders unsigned in the neutral tone wherever P&L is coloured
+
+---
+
+### BLG-FE-185 — Drive Screener and Watchlist table body cells from the shared column definitions
+**Priority:** P4 (Backlog)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** ST-03/EPIC-01/2026-09-21__release-v9.6 (BLG-FEAT-97) — the design record asks for one `{header, value}` array consumed by both the table renderer and the CSV builder; the shipped arrays drive the header and the CSV but not the cell JSX — 2026-09-21
+**Effort:** M (~1-2d)
+**Provisional-Target:** TBD
+
+**Problem**
+`SCREENER_COLUMNS` and `WATCHLIST_COLUMNS` are the single source for the header row and the CSV, but each table's body cells are still hand-written JSX. A future column can therefore be added to the JSX and the header without a matching CSV `value` (or the reverse); only the header/CSV pairing is protected by construction today.
+
+**Scope**
+- Add a `cell` renderer to each column definition and render body rows from the array
+- Keep responsive hiding, badges and row actions unchanged
+- Consider extending the CSV formula-injection guard to a leading TAB or CR, which OWASP also lists (DoQ review note; the sealed ST-03 record specifies only `= + - @`, so this needs a design-record amendment)
+
+**Acceptance Criteria**
+- Header, cell and CSV value for every data column come from one definition
+- Existing Screener/Watchlist Playwright specs pass unchanged
+
+---
+
+### BLG-OPS-168 — Post-deploy staging verification of the reflection-reminder migration and SQL (never run against a live database)
+**Priority:** P2 (Medium)
+**Type:** Operations
+**Owner:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner; Product Owner
+**Source:** ST-04/EPIC-01/2026-09-21__release-v9.6 (BLG-FEAT-98) — the sandbox had no database access (SBX-NO-LIVE-DB), so the new SQL was only asserted with mocked cursors — 2026-09-21
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.6
+
+**Problem**
+The reflection-reminder work adds startup DDL (two `alert_type` CHECK extensions and a partial unique index) and an evaluation query using `ON CONFLICT ((context->>'trade_id')) WHERE ...`. It is covered by structural mocked-cursor tests only; no statement has been executed against PostgreSQL. A typo in any of it would surface at the first startup or evaluation run after deploy.
+
+**Scope**
+- After the v9.6 staging deploy, run the verification queries in `data_model.md` DS-19 and confirm the reminder step creates one row per eligible trade and none on a second `POST /alerts/evaluate`
+- Product Owner to confirm or change the 30-day look-back (`REFLECTION_REMINDER_LOOKBACK_DAYS`) and the `trade_history.created_at` close-timestamp choice, which the design record left open
+
+**Acceptance Criteria**
+- Both CHECK constraints and `uq_notifications_reflection_reminder_trade` are confirmed present on staging, with evidence recorded
+- A second evaluation run creates 0 duplicate reminders
+- The look-back and close-timestamp decisions are recorded
+
+---
+
+### BLG-QA-188 — The backend test suite can connect to a real database when DATABASE_URL is set to one
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Infrastructure & Operations Owner
+**Source:** ST-04/EPIC-01/2026-09-21__release-v9.6 — found when running the backend suite in a session whose environment had a `DATABASE_URL` for the staging Supabase database (user-confirmed; credential believed read-only, unverified) — 2026-09-21
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.7
+
+**Problem**
+`tests/conftest.py` only sets a dummy `DATABASE_URL` when none is set, and `tests/test_schema.py` skips only when the URL contains `stub`. With a real URL in the environment the suite opens real connections and attempts `CREATE TABLE IF NOT EXISTS` / `ALTER TABLE` statements against it (they would alter staging if the credential can write; if it is read-only the suite would instead fail noisily); `CLAUDE.md` §9 tells contributors to run pytest via the virtualenv without warning about this. The safe invocation (`DATABASE_URL=postgresql://stub:stub@localhost:5432/stub`) is nowhere documented.
+
+**Scope**
+- Make `conftest.py` refuse (or override to a stub) any non-stub `DATABASE_URL` unless an explicit opt-in variable is set for Phase B CI
+- Document the safe invocation next to `CLAUDE.md` §9 (governance file: route via Head of Specs Team)
+
+**Acceptance Criteria**
+- Running `backend/.venv/bin/python3 -m pytest tests/` with a real-looking `DATABASE_URL` and no opt-in makes zero real connections
+- Phase B CI still runs `tests/test_schema.py` against its real Postgres with the opt-in set
+
+---
+
+### BLG-QA-189 — Real-Postgres integration test for the reflection-reminder evaluation step
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Backend Engineering Patterns Owner
+**Source:** ST-04/EPIC-01/2026-09-21__release-v9.6 — DoQ agent-mediated review finding: the 48h trigger, one-reminder-ever rule and CHECK/index migration are covered in-repo by mocked-cursor tests only; the reviewer verified them once against a throwaway Postgres 18 by hand — 2026-09-21
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** v9.7
+
+**Problem**
+`tests/test_reflection_reminder.py` asserts SQL text and parameters but never executes them. The behaviour that matters (eligibility windows, `ON CONFLICT` on the partial unique index, savepoint isolation, the settled-when-preference-off rows) was checked only by a one-off manual run. CI Phase B already provides a real Postgres service, so this can be an ordinary test.
+
+**Scope**
+- Add a Phase-B-only test that runs `ensure_alerts_tables()` from a pre-v9.6 schema and then `_evaluate_reflection_reminders` against seeded trades (47h/49h/72h, 29/31 days, reflected, back-dated `exit_date`, other portfolio), asserting idempotence and that rows created with the preference off are not re-delivered when it is later turned on
+- Skip when `DATABASE_URL` contains `stub` (Phase A), matching `tests/test_schema.py`
+
+**Acceptance Criteria**
+- The test runs in Phase B CI and fails if the partial-index conflict target or an eligibility clause is broken
+- Phase A remains fully mocked
+
+---
+
+### BLG-FE-186 — Cloned trade plan can silently get the wrong Setup Type
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner; Product Owner
+**Source:** PR #1750 agent-mediated review (Director of Quality finding 1) on ST-01/EPIC-01/2026-09-21__release-v9.6 (BLG-FEAT-96) — reproduced with a throwaway Playwright probe — 2026-09-21
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** v9.7
+
+**Problem**
+Cloning a `Breakout` plan for a ticker that has a watchlisted signal opens the new plan with Setup Type "Momentum Continuation". The ST-01 design record's copy table omits `setup_type`, so the clone form starts with `setup_type: null`; the existing signal pre-population effect (`src/pages/TradePlan.js`, `!editId && linkedSignal`) then applies its `|| "Momentum Continuation"` default. The result is a wrong, unflagged value in a new plan that the user may not notice. No SC-TPC-* scenario mocks a watchlisted signal, so nothing catches it.
+
+**Scope**
+- Product Owner decides whether a clone copies `setup_type` (and whether it should also copy `entry_rationale`, `confirmation_criteria`, `early_exit_conditions` and `planned_quantity`, all omitted by the record); amend `docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md` and `trade_plan.md` §4.5 accordingly
+- Fix the clone so the signal pre-population cannot overwrite or invent a Setup Type for a cloned plan
+- Add a Playwright scenario with a watchlisted signal for the cloned ticker
+
+**Acceptance Criteria**
+- A clone of a plan with Setup Type X shows X, including when the ticker has a watchlisted signal
+- The design record and `trade_plan.md` state which fields a clone copies
+- The new Playwright scenario passes in CI
+
+---
+
+### BLG-BE-123 — Reflection reminder step: over-reported summary after a rollback, and NULL-portfolio trades never get a reminder
+**Priority:** P3 (Low)
+**Type:** Backend
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1750 agent-mediated review (Director of Quality finding 2) on ST-04/EPIC-01/2026-09-21__release-v9.6 (BLG-FEAT-98) — 2026-09-21
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.7
+
+**Problem**
+In `backend/services/alerts_service.py::_evaluate_reflection_reminders`, an exception part-way through the insert loop rolls back to the savepoint and undoes the earlier inserts, but `enqueue_delivery(...)` has already been called for them and `notifications_created` / `delivery_tasks_enqueued` still count them. Delivery then logs "notification not found", which is harmless, but the returned summary over-reports. Separately the query filters `th.portfolio_id = %s`, and `trade_history.portfolio_id` is nullable, so a trade with no portfolio can never receive a reminder — probably intended for a single-portfolio product, but undocumented and untested.
+
+**Scope**
+- Count and enqueue only after the savepoint is released, or reset the counters in the rollback branch
+- Decide and document the NULL-`portfolio_id` behaviour (skip, or include when the portfolio is the single default) and cover it with a test
+
+**Acceptance Criteria**
+- After a forced mid-loop failure the returned summary shows 0 created and 0 enqueued, and nothing was scheduled for rolled-back rows
+- The NULL-portfolio behaviour is stated in `alerts_endpoints.md` and asserted by a test
+
+---
+
+### BLG-BE-124 — Generic alert re-delivery ignores read state
+**Priority:** P3 (Low)
+**Type:** Backend
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1750 agent-mediated review (Director of Quality finding 3) on ST-04/EPIC-01/2026-09-21__release-v9.6 — behaviour predates the story and applies to all alert types — 2026-09-21
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.7
+
+**Problem**
+`evaluate_alerts()`'s re-delivery step selects every notification with `delivered = FALSE AND delivery_attempts < 3` and re-enqueues it if the type's preference is enabled. It does not look at `read`, so an alert the user has already read (or acted on) whose first delivery failed can still be sent again, up to three attempts. ST-04 stopped the worst case for `reflection_reminder` (rows created while the preference is off are now created settled), but the loop itself is unchanged.
+
+**Scope**
+- Exclude `read = TRUE` notifications from the re-delivery query, and consider also excluding those whose trigger condition no longer holds
+- Update the retry-model description in `alerts_endpoints.md` and `data_model.md` §9
+
+**Acceptance Criteria**
+- A read notification is never re-enqueued for delivery, asserted by a test
+- Unread, undelivered notifications are still retried up to 3 times (existing behaviour unchanged)
 
 ---
 

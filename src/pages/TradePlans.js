@@ -7,9 +7,10 @@ import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
 import { Checkbox } from "../components/ui/checkbox";
 import BulkActionToolbar from "../components/shared/BulkActionToolbar";
-import { Plus, FileText, Edit2, Trash2, AlertTriangle, Rocket } from "lucide-react";
+import { Plus, FileText, Edit2, Trash2, AlertTriangle, Rocket, Clock } from "lucide-react";
 import { cn } from "../lib/utils";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
+import { formatR } from "../lib/format";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -33,6 +34,21 @@ export const STATUS_CONFIG = {
 const NOT_STARTABLE_STATUSES = ["active", "closed", "abandoned"];
 export function isStartTradeEligible(plan) {
   return !plan.position_id && !NOT_STARTABLE_STATUSES.includes(plan.status);
+}
+
+// ST-02 (EPIC-01, v9.6, BLG-FE-180): display-only stale marker for plans not yet acted on.
+// "planned" in the backlog item means the four pre-entry statuses (no `planned` status
+// exists). Age = whole days since updated_at; marker shows when N > threshold.
+// Design: docs/design/2026-09-21__release-v9.6/trade-plan-stale-marker/decision_record.md
+export const STALE_PLAN_THRESHOLD_DAYS = 14;
+const STALE_ELIGIBLE_STATUSES = ["draft", "research_pending", "research_complete", "entry_conditions_set"];
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+export function getStalePlanAgeDays(plan, now = Date.now()) {
+  if (!plan || !STALE_ELIGIBLE_STATUSES.includes(plan.status) || !plan.updated_at) return null;
+  const updated = new Date(plan.updated_at).getTime();
+  if (Number.isNaN(updated)) return null;
+  const days = Math.floor((now - updated) / MS_PER_DAY);
+  return days > STALE_PLAN_THRESHOLD_DAYS ? days : null;
 }
 
 export function TradePlanStatusBadge({ status }) {
@@ -256,10 +272,28 @@ export default function TradePlans() {
                       )}
                     </td>
                     <td className="px-5 py-4">
-                      <TradePlanStatusBadge status={plan.status} />
+                      <div className="flex flex-col items-start gap-1">
+                        <TradePlanStatusBadge status={plan.status} />
+                        {(() => {
+                          const staleDays = getStalePlanAgeDays(plan);
+                          if (staleDays == null) return null;
+                          return (
+                            <span
+                              data-testid="stale-plan-marker"
+                              aria-label={`Last updated ${staleDays} days ago — plan is stale`}
+                              title={`Last updated ${format(new Date(plan.updated_at), "d MMM yyyy")}. Display only — nothing happens automatically.`}
+                              className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400"
+                            >
+                              <Clock className="w-3 h-3" aria-hidden="true" />
+                              Stale ({staleDays} days)
+                            </span>
+                          );
+                        })()}
+                      </div>
                     </td>
                     <td className="px-5 py-4 text-sm text-slate-300">
-                      {plan.r_target != null ? `${plan.r_target}R` : "—"}
+                      {/* ST-06 (BLG-FE-182): user-entered target — as entered, up to 2 dp, trimmed, unsigned */}
+                      {formatR(plan.r_target, { target: true })}
                     </td>
                     <td className="px-5 py-4 text-sm text-slate-600 dark:text-slate-400 max-w-xs truncate">
                       {plan.setup_thesis
@@ -285,6 +319,19 @@ export default function TradePlans() {
                             Start Trade
                           </Button>
                         )}
+                        {/* ST-01 (EPIC-01, v9.6, BLG-FEAT-96): shown for every status,
+                            including abandoned/closed — a dead plan's setup is a
+                            legitimate template. Design: docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          data-testid={`clone-plan-${plan.id}`}
+                          aria-label={`Clone ${plan.ticker} plan`}
+                          className="h-7 px-2 text-xs text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+                          onClick={() => navigate(`/TradePlan?clone_from=${plan.id}`)}
+                        >
+                          Clone
+                        </Button>
                         {plan.status !== "abandoned" && (
                           <Button
                             variant="ghost"

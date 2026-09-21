@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.1
-**Last Updated:** 2026-08-11 (ST-10, EPIC-03, v8.6 — DEV-EPIC02-ST03-01 marked Resolved: CohortAnalysis.js was already migrated to GET /analytics/cohort, commit af22ea6e, 2026-03-16 — tracking-only correction, no new code shipped by this story); prior — 2026-08-11 (v8.6 design gate — §21 Trade Plan Completion Rate added, ST-01/BLG-FEAT-32); prior — 2026-08-11 (Head of Specs Team direct action — DEV-EPIC02-ST03-01 re-triaged: stale v1.10 target and never-filed backlog reference corrected to BLG-FE-155, tracking-field correction only)
+**Version:** 2.2
+**Last Updated:** 2026-09-21 (ST-05, EPIC-01, v9.6, BLG-FE-181 — §21 empty-state heading drops its trailing period and names the "Create a trade plan" next action, matching the shipped component; documentation-only); prior — 2026-08-11 (ST-10, EPIC-03, v8.6 — DEV-EPIC02-ST03-01 marked Resolved: CohortAnalysis.js was already migrated to GET /analytics/cohort, commit af22ea6e, 2026-03-16 — tracking-only correction, no new code shipped by this story); prior — 2026-08-11 (v8.6 design gate — §21 Trade Plan Completion Rate added, ST-01/BLG-FEAT-32); prior history retained — see prior entries in version control.
 **Design Source (v2.1 additions):** docs/design/2026-08-11__release-v8.6/trade-plan-completion-rate-metric/decision_record.md
 **Design Source (v2.0 additions):** docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md
 **Design Source (v4.6 additions):** docs/specs/si02/si02_fe_component_predesign.md v1.0; docs/specs/si02/si02_fe_interaction_spec.md v1.0
@@ -750,7 +750,7 @@ A one-line summary beneath the cards: `"{plans_completed} of {plans_created} pla
 **States:**
 - Loading: skeleton cards
 - Loaded: cards + summary line (+ tier table if present)
-- Empty (`plans_created === 0`): `DataState` `empty` branch — "No trade plans created yet." (not a `0%` completion rate)
+- Empty (`plans_created === 0`): `DataState` `empty` branch — "No trade plans created yet" (no trailing period, v1.8 pattern; ST-05 BLG-FE-181) with the next action **"Create a trade plan"** (not a `0%` completion rate)
 - Error: section-level error card
 
 ---
@@ -790,6 +790,7 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.2 | 2026-09-21 | ST-05 (v9.6, EPIC-01, BLG-FE-181): §21 empty state — heading corrected to "No trade plans created yet" (no trailing period, v1.8 pattern) and the empty state now names its single next action, **"Create a trade plan"** (`design_system.md` v1.21 §Data States next-action rule). Documentation-only; the component change ships in the same story. |
 | 2.1 | 2026-08-11 | v8.6 design gate (ST-01, EPIC-01, BLG-FEAT-32): §21 Trade Plan Completion Rate added — 3 summary cards (plans_created, completion_rate, plans_abandoned) + optional PT-04 quality-tier breakdown table. API Dependency updated with `GET /analytics/trade-plan-completion-rate`. Component Rendering Order updated to 21 items. Design source: trade-plan-completion-rate-metric/decision_record.md. Approved: Product Owner 2026-08-11. Head of Specs Team confirmed. |
 | 2.0 | 2026-07-08 | v6.8 design gate — §14a Trade Plan Tag Filter added (ST-05, BLG-FEAT-52): multi-select filter on `trade_plans.trade_tags` (independent from §14's existing position/journal `tags` field), dismissible pills, OR logic; comparison row (win rate + avg R per selected tag) via new `GET /analytics/tag-performance?tags={csv}` endpoint; existing §14 table unaffected. API Dependency updated. Design source: trade-tagging/ux_spec.md. Approved: Product Owner 2026-07-08. Head of Specs Team confirmed. |
 | 1.9 | 2026-05-30 | v4.6 design gate (ST-06/ST-07, EPIC-02): §20 Behavioural Drift section added — 4 drift metric cards (entry timing, sizing adherence, post-loss sizing, regime adherence); Option B Percentage Deviation Display; 5 states (loading, insufficient_data, no_drift, drift_detected, error); collapse/expand with localStorage persistence; §13 advisory-only constraints enforced. API Dependency updated with `GET /analytics/behavioural-drift`. Component Rendering Order updated to 20 items. Purpose & User Goals updated. Design source: `docs/specs/si02/si02_fe_component_predesign.md` v1.0 + `docs/specs/si02/si02_fe_interaction_spec.md` v1.0. Approved: Head of UX & Design + Product Owner 2026-05-30. Head of Specs Team confirmed compliant. Nav decision: drift panel integrates as §20 section within PerformanceAnalytics (no new sidebar nav item; consistent with §19 Arc 5 Signal Compliance pattern; ST-11 Arc 5 nav cohesion review to validate in Sprint 2). |

@@ -11,6 +11,10 @@ const SIGNAL_BADGE_CONFIG = {
   no_signal: { label: "No Signal", cls: "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30" },
 };
 
+export function signalLabel(status) {
+  return (SIGNAL_BADGE_CONFIG[status] || { label: status }).label;
+}
+
 export function SignalBadge({ status }) {
   const cfg = SIGNAL_BADGE_CONFIG[status] || { label: status, cls: "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30" };
   return (

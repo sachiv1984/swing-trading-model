@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/base44Client";
-import { useEarnings } from "../hooks/useEarnings";
+import { useEarnings, getCachedEarningsDays } from "../hooks/useEarnings";
+import DownloadCsvButton from "../components/shared/DownloadCsvButton";
+import EmptyStateAction from "../components/ui/EmptyStateAction";
+import { buildCsv, csvFilename, downloadCsv } from "../utils/csvExport";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
@@ -126,7 +129,8 @@ function MarketBadge({ market }) {
 // (emerald / slate-grey) rather than the record's red assumption, which
 // most faithfully satisfies the record's own stated intent — visual
 // consistency with the existing per-row chips, not a new second convention.
-function RegimeHistoryPanel() {
+// `onRun`/`running` (ST-05, BLG-FE-181): the empty state's next action is the page's own run control.
+function RegimeHistoryPanel({ onRun, running }) {
   const [window_, setWindow_] = useState("30d");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -187,6 +191,13 @@ function RegimeHistoryPanel() {
         emptyIcon={<BarChart2 className="w-8 h-8 text-slate-600" />}
         emptyHeading="No regime history yet"
         emptyBody="Regime history accrues as screener runs complete over the selected window."
+        emptyAction={
+          onRun ? (
+            <EmptyStateAction variant="button" onClick={onRun} disabled={running}>
+              Run the screener
+            </EmptyStateAction>
+          ) : undefined
+        }
         compact
       >
         {hasData && (
@@ -411,6 +422,28 @@ function SortHeader({ label, field, current, dir, onSort, className }) {
     </th>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Results table columns (ST-03, EPIC-01, v9.6, BLG-FEAT-97)
+// ---------------------------------------------------------------------------
+// Single column definition consumed by the table header AND the CSV export (buildCsv), so the
+// exported header row cannot drift from the rendered one. `value` is the machine-readable
+// export value (plain numbers, label text for badge columns; Signal is the raw 0.0-1.0 score).
+// `sortField` marks sortable headers; `thClass`/`title` reproduce the existing responsive
+// hiding — export is viewport-independent and always includes the full desktop column set.
+// Design: docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md §2.2
+const SCREENER_COLUMNS = [
+  { header: "Ticker", value: (r) => (r.market === "UK" ? stripUkSuffix(r.ticker) : r.ticker) },
+  { header: "Market", value: (r) => r.market },
+  { header: "Price", sortField: "price", value: (r) => r.price },
+  { header: "ATR", sortField: "atr", value: (r) => r.atr },
+  { header: "Regime", value: (r) => (r.regime_status === "risk_on" ? "Risk On" : "Risk Off") },
+  { header: "Signal", sortField: "signal_score", value: (r) => r.signal_score },
+  { header: "Sector", thClass: "hidden md:table-cell", value: (r) => r.sector || "" },
+  { header: "Entry Zone", thClass: "hidden md:table-cell", value: (r) => { const l = entryZoneLabel(r.proximity_to_entry_zone); return l === "—" ? "" : l; } },
+  { header: "Earnings", thClass: "hidden lg:table-cell", title: "Days until next earnings", value: (r) => getCachedEarningsDays(r.ticker, r.market) },
+  { header: "News", value: (r) => (r.market === "US" && r.news_headline_count > 0 ? r.news_headline_count : null) },
+];
 
 // ---------------------------------------------------------------------------
 // Screener quality panel (ST-04, EPIC-03, v6.0 — replaces DegradedRunBanner)
@@ -730,6 +763,14 @@ export default function Screener() {
       return (av < bv ? -1 : av > bv ? 1 : 0) * mul;
     });
 
+  // ST-03 (EPIC-01, v9.6, BLG-FEAT-97): export exactly the displayed rows (after filters and
+  // sort). Client-side from already-loaded data; no network call.
+  const handleDownloadCsv = () => {
+    downloadCsv(csvFilename("screener-results"), buildCsv(SCREENER_COLUMNS, filtered));
+  };
+  const csvDisabled = loading || !!error || filtered.length === 0;
+  const filterBarVisible = !loading && !error && results.length > 0;
+
   // ---------------------------------------------------------------------------
   // Render helpers
   // ---------------------------------------------------------------------------
@@ -794,7 +835,7 @@ export default function Screener() {
         }
       />
 
-      <RegimeHistoryPanel />
+      <RegimeHistoryPanel onRun={triggerScan} running={scanning} />
 
       {runQuality && (
         <ScreenerQualityPanel
@@ -903,6 +944,18 @@ export default function Screener() {
               Clear filters
             </button>
           )}
+          <DownloadCsvButton
+            testId="screener-download-csv"
+            onDownload={handleDownloadCsv}
+            disabled={csvDisabled}
+            className="w-full sm:w-auto sm:ml-auto"
+          />
+        </div>
+      )}
+
+      {!filterBarVisible && (
+        <div className="flex justify-end mb-4">
+          <DownloadCsvButton testId="screener-download-csv" onDownload={handleDownloadCsv} disabled={csvDisabled} className="w-full sm:w-auto" />
         </div>
       )}
 
@@ -940,16 +993,19 @@ export default function Screener() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-800 bg-slate-900/50">
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">Ticker</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">Market</th>
-                  <SortHeader label="Price" field="price" current={sortField} dir={sortDir} onSort={handleSort} />
-                  <SortHeader label="ATR" field="atr" current={sortField} dir={sortDir} onSort={handleSort} />
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">Regime</th>
-                  <SortHeader label="Signal" field="signal_score" current={sortField} dir={sortDir} onSort={handleSort} />
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider hidden md:table-cell">Sector</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider hidden md:table-cell">Entry Zone</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider hidden lg:table-cell" title="Days until next earnings">Earnings</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">News</th>
+                  {SCREENER_COLUMNS.map((col) =>
+                    col.sortField ? (
+                      <SortHeader key={col.header} label={col.header} field={col.sortField} current={sortField} dir={sortDir} onSort={handleSort} />
+                    ) : (
+                      <th
+                        key={col.header}
+                        className={cn("px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider", col.thClass)}
+                        title={col.title}
+                      >
+                        {col.header}
+                      </th>
+                    )
+                  )}
                 </tr>
               </thead>
               <tbody>

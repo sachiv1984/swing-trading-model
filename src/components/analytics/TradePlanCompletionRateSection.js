@@ -3,6 +3,7 @@ import { ClipboardCheck, TrendingUp, XCircle, FileQuestion } from "lucide-react"
 import { cn } from "../../lib/utils";
 import { api } from "../../api/base44Client";
 import DataState from "../ui/DataState";
+import EmptyStateAction from "../ui/EmptyStateAction";
 
 const RATE_GREEN_THRESHOLD = 60;
 const RATE_AMBER_THRESHOLD = 40;
@@ -80,7 +81,8 @@ export default function TradePlanCompletionRateSection() {
         onRetry={refetch}
         empty={!isLoading && !error && plansCreated === 0}
         emptyIcon={<FileQuestion className="w-10 h-10 text-slate-500" />}
-        emptyHeading="No trade plans created yet."
+        emptyHeading="No trade plans created yet"
+        emptyAction={<EmptyStateAction variant="button" to="/TradePlan">Create a trade plan</EmptyStateAction>}
         loadingVariant="skeleton"
         loadingSkeleton={
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

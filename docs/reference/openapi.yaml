@@ -2,7 +2,11 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.15.0
+  version: 3.16.0
+  # v3.16.0 (2026-09-21, ST-04, EPIC-01, v9.6): reflection_reminder alert type
+  # (BLG-FEAT-98) — notification/preference alert_type enums gain `reflection_reminder`;
+  # AlertEvaluationResult gains `reflection_reminders`; NotificationItem gains `context`
+  # and the previously-missing `custom_price_alert` enum value. No new endpoint.
   # v3.15.0 (2026-08-10, ST-21, EPIC-06, v8.5): added GET /screener/regime-distribution
   # (BLG-FEAT-29) — aggregate risk-on/risk-off regime distribution over screener
   # run history for a rolling 30d/60d/all window.
@@ -5876,6 +5880,21 @@ components:
           type: integer
         evaluations_persisted:
           type: integer
+        reflection_reminders:
+          type: object
+          description: Summary of the reflection-reminder step (ST-04, BLG-FEAT-98, v9.6). Its counts are also included in the top-level notifications_created / delivery_tasks_enqueued.
+          properties:
+            candidates:
+              type: integer
+            notifications_created:
+              type: integer
+            delivery_tasks_enqueued:
+              type: integer
+              description: 0 unless the reflection_reminder email preference is enabled (default off).
+            error:
+              type: string
+              nullable: true
+              description: Non-null when the step failed in isolation (created nothing; other evaluations unaffected).
         custom_price_alerts:
           type: object
           description: Summary of the custom price alert evaluation step (ST-02, BLG-FE-116, v7.5).
@@ -5934,7 +5953,7 @@ components:
           format: uuid
         alert_type:
           type: string
-          enum: [stop_loss_approach, grace_period_warning, market_regime_change, daily_portfolio_summary]
+          enum: [stop_loss_approach, grace_period_warning, market_regime_change, daily_portfolio_summary, custom_price_alert, reflection_reminder]
         title:
           type: string
           example: "Stop Loss Approach — AAPL"
@@ -5945,6 +5964,11 @@ components:
         created_at:
           type: string
           format: date-time
+        context:
+          type: object
+          nullable: true
+          additionalProperties: true
+          description: Supplemental structured data; shape varies by alert_type. For reflection_reminder it is {trade_id, ticker, exit_date}.
 
     NotificationFeedResponse:
       type: object
@@ -5968,9 +5992,10 @@ components:
       properties:
         alert_type:
           type: string
-          enum: [stop_loss_approach, grace_period_warning, market_regime_change, daily_portfolio_summary]
+          enum: [stop_loss_approach, grace_period_warning, market_regime_change, daily_portfolio_summary, reflection_reminder]
         email_enabled:
           type: boolean
+          description: Governs delivery only; the in-app feed row is always created. reflection_reminder defaults to false.
 
     NotificationPreferencesResponse:
       type: object

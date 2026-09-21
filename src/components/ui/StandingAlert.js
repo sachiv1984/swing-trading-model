@@ -31,7 +31,7 @@ const SEVERITY_CONFIG = {
  * Single standing alert banner. Full-width, in document flow (not overlaid).
  * Manual dismissal only — no auto-dismiss timer.
  */
-export function StandingAlert({ id, severity = "info", message, actionLabel, onAction, onDismiss, className }) {
+export function StandingAlert({ id, severity = "info", message, actionLabel, onAction, onDismiss, className, dismissible = true }) {
   const config = SEVERITY_CONFIG[severity] || SEVERITY_CONFIG.info;
   const { Icon } = config;
 
@@ -58,15 +58,17 @@ export function StandingAlert({ id, severity = "info", message, actionLabel, onA
           {actionLabel}
         </button>
       )}
-      <button
-        type="button"
-        onClick={() => onDismiss?.(id)}
-        aria-label="Dismiss alert"
-        data-testid="standing-alert-dismiss"
-        className="shrink-0 opacity-70 hover:opacity-100 transition-opacity"
-      >
-        <X className="w-4 h-4" />
-      </button>
+      {dismissible && (
+        <button
+          type="button"
+          onClick={() => onDismiss?.(id)}
+          aria-label="Dismiss alert"
+          data-testid="standing-alert-dismiss"
+          className="shrink-0 opacity-70 hover:opacity-100 transition-opacity"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 }

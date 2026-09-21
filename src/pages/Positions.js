@@ -29,6 +29,7 @@ import PositionModal from "../components/positions/PositionModal";
 import ExitModal from "../components/positions/ExitModal";
 import JournalView from "../components/positions/JournalView";
 import TradeReflectionModal from "../components/trades/TradeReflectionModal";
+import { formatCurrency, formatPercent, formatR, currencyForMarket } from "../lib/format";
 import ComplianceRecheckModal from "../components/positions/ComplianceRecheckModal";
 import TrailingStopExplainerIcon from "../components/positions/TrailingStopExplainerIcon";
 import {
@@ -181,7 +182,7 @@ function TrailStopModal({ position, onClose }) {
   // currencySymbol (native); stop_price is GBP-converted and was the wrong basis here too.
   const stopValue = position?.current_stop ?? position?.stop_price_native ?? position?.stop_price;
 
-  const currencySymbol = position?.market === "UK" ? "£" : "$";
+  const modalCurrency = currencyForMarket(position?.market);
 
   const { data: trailData, isLoading, isError } = useQuery({
     queryKey: ["stopTrail", position?.id],
@@ -203,7 +204,7 @@ function TrailStopModal({ position, onClose }) {
       }).then((r) => r.json()),
     onSuccess: (_, vars) => {
       queryClient.invalidateQueries({ queryKey: ["positions"] });
-      toast.success(`Stop updated to ${currencySymbol}${vars.stop_price?.toFixed(2)}`);
+      toast.success(`Stop updated to ${formatCurrency(vars.stop_price, { currency: modalCurrency })}`);
       onClose();
     },
     onError: () => {
@@ -216,7 +217,7 @@ function TrailStopModal({ position, onClose }) {
   const trailR = trailData?.trail_r_terms;
   const isNegativeDiff = trailDiff != null && trailDiff < 0;
   const confirmLabel = atrTrailStop != null
-    ? (isNegativeDiff ? `Lower stop to ${currencySymbol}${Number(atrTrailStop).toFixed(2)}` : `Update stop to ${currencySymbol}${Number(atrTrailStop).toFixed(2)}`)
+    ? (isNegativeDiff ? `Lower stop to ${formatCurrency(atrTrailStop, { currency: modalCurrency })}` : `Update stop to ${formatCurrency(atrTrailStop, { currency: modalCurrency })}`)
     : "Update stop";
 
   return (
@@ -246,18 +247,18 @@ function TrailStopModal({ position, onClose }) {
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between">
               <dt className="text-slate-600 dark:text-slate-400">Current Stop</dt>
-              <dd className="text-white font-medium">{currencySymbol}{Number(trailData.current_stop ?? stopValue ?? 0).toFixed(2)}</dd>
+              <dd className="text-white font-medium">{formatCurrency(trailData.current_stop ?? stopValue ?? 0, { currency: modalCurrency })}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-slate-600 dark:text-slate-400">ATR Trail Stop</dt>
-              <dd className="text-white font-medium">{currencySymbol}{Number(atrTrailStop).toFixed(2)}</dd>
+              <dd className="text-white font-medium">{formatCurrency(atrTrailStop, { currency: modalCurrency })}</dd>
             </div>
             {trailDiff != null && (
               <div className="flex justify-between">
                 <dt className="text-slate-600 dark:text-slate-400">Trail Difference</dt>
                 <dd className={cn("font-medium", isNegativeDiff ? "text-amber-400" : "text-emerald-400")}>
-                  {trailDiff >= 0 ? "+" : "−"}{currencySymbol}{Math.abs(trailDiff).toFixed(2)}
-                  {trailR != null && <span className="text-slate-600 dark:text-slate-400 ml-1">({trailR >= 0 ? "+" : ""}{Number(trailR).toFixed(1)}R)</span>}
+                  {formatCurrency(trailDiff, { currency: modalCurrency, signed: true })}
+                  {trailR != null && <span className="text-slate-600 dark:text-slate-400 ml-1">({formatR(trailR)})</span>}
                 </dd>
               </div>
             )}
@@ -890,7 +891,8 @@ export default function Positions() {
                 new Date(position.entry_date)
               );
 
-              const currencySymbol = position.market === "UK" ? "£" : "$";
+              // ST-06 (BLG-FE-182): all cells below format via src/lib/format.js
+              const currency = currencyForMarket(position.market);
 
               // Use native prices for display
               const displayCurrentPrice =
@@ -922,24 +924,22 @@ export default function Positions() {
                   </TableCell>
 
                   <TableCell className="text-slate-300">
-                    {currencySymbol}
-                    {position.entry_price.toFixed(2)}
+                    {formatCurrency(position.entry_price, { currency })}
                   </TableCell>
 
                   <TableCell className="text-slate-300">
-                    {currencySymbol}
-                    {displayCurrentPrice?.toFixed(2) || "—"}
+                    {formatCurrency(displayCurrentPrice || null, { currency })}
                   </TableCell>
 
                   {/* ST-01 (BLG-FEAT-46): two-line stop cell — initial stop / trailing stop + breach badge */}
                   <TableCell className="text-rose-400 font-medium">
                     <div className="flex flex-col gap-0.5 leading-tight">
                       <span className="text-xs text-slate-600 dark:text-slate-400">
-                        Init: {position.initial_stop != null ? `${currencySymbol}${Number(position.initial_stop).toFixed(2)}` : "—"}
+                        Init: {formatCurrency(position.initial_stop, { currency })}
                       </span>
                       <div className="flex items-center gap-1.5">
                         <span>
-                          {trailStopNative > 0 ? `${currencySymbol}${trailStopNative.toFixed(2)}` : (displayStopPrice != null ? `${currencySymbol}${Number(displayStopPrice).toFixed(2)}` : "—")}
+                          {trailStopNative > 0 ? formatCurrency(trailStopNative, { currency }) : formatCurrency(displayStopPrice, { currency })}
                         </span>
                         {/* ST-09 (v7.0, BLG-FE-96): breach badge — visible when price <= trailing stop, spec colour/label */}
                         {trailBreached && (
@@ -972,7 +972,7 @@ export default function Positions() {
                       ) : (
                         <TrendingDown className="w-4 h-4" />
                       )}
-                      £{Math.abs(pnl).toFixed(2)}
+                      {formatCurrency(pnl, { currency: "GBP", signed: true })}
                     </div>
                   </TableCell>
 
@@ -983,7 +983,7 @@ export default function Positions() {
                         isProfit ? "text-emerald-400" : "text-rose-400"
                       )}
                     >
-                      {isProfit ? "+" : ""}{pnlPercent.toFixed(1)}%
+                      {formatPercent(pnlPercent, { signed: true })}
                     </span>
                   </TableCell>
 
