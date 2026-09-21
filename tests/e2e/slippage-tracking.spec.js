@@ -152,8 +152,9 @@ test.describe('SC-SLIP-02 — Slippage column colour-coded values', () => {
   });
 
   test('SC-SLIP-02b: Negative slippage renders with emerald (favourable) colour class', async ({ page }) => {
-    // LGEN has slippage_pct: -0.25 — formatSlippage → "-0.25%", slippageColour → text-emerald-400
-    const slippageCell = page.locator('.text-emerald-400').filter({ hasText: '-0.25%' });
+    // LGEN has slippage_pct: -0.25 — formatSlippage → "−0.25%" (typographic minus U+2212, ST-06/BLG-FE-182
+    // shared number-format convention; was an ASCII hyphen), slippageColour → text-emerald-400
+    const slippageCell = page.locator('.text-emerald-400').filter({ hasText: '\u22120.25%' });
     await expect(slippageCell).toBeVisible();
   });
 
@@ -225,7 +226,8 @@ test.describe('SC-SLIP-04 — Null fill price shows em dash', () => {
 
   test('SC-SLIP-04b: Other trades in same table still show their slippage values', async ({ page }) => {
     // Confirm LGEN and BARC slippage values are still visible alongside null VOD row
-    await expect(page.locator('text=-0.25%')).toBeVisible();
+    // typographic minus (U+2212) per the ST-06 shared number-format convention; was an ASCII hyphen
+    await expect(page.locator('text=\u22120.25%')).toBeVisible();
     await expect(page.locator('text=+0.50%')).toBeVisible();
   });
 });

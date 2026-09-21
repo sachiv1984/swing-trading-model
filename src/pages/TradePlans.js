@@ -10,6 +10,7 @@ import BulkActionToolbar from "../components/shared/BulkActionToolbar";
 import { Plus, FileText, Edit2, Trash2, AlertTriangle, Rocket, Clock } from "lucide-react";
 import { cn } from "../lib/utils";
 import { formatDistanceToNow, format } from "date-fns";
+import { formatR } from "../lib/format";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -291,7 +292,8 @@ export default function TradePlans() {
                       </div>
                     </td>
                     <td className="px-5 py-4 text-sm text-slate-300">
-                      {plan.r_target != null ? `${plan.r_target}R` : "—"}
+                      {/* ST-06 (BLG-FE-182): user-entered target — as entered, up to 2 dp, trimmed, unsigned */}
+                      {formatR(plan.r_target, { target: true })}
                     </td>
                     <td className="px-5 py-4 text-sm text-slate-600 dark:text-slate-400 max-w-xs truncate">
                       {plan.setup_thesis

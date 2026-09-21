@@ -5,6 +5,7 @@ import { DataTable, TableHeader, TableHead, TableBody, TableRow, TableCell } fro
 import { cn } from "../../lib/utils";
 import PlanVsReality from "./PlanVsReality";
 import TradeDebrief from "./TradeDebrief";
+import { formatCurrency, formatPercent, formatR as formatRShared } from "../../lib/format";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // R-multiple helpers
@@ -33,9 +34,8 @@ function calcR(t) {
  * @returns {string} e.g. "+2.31R" / "-0.87R" / "0.00R" / "—"
  */
 function formatR(r) {
-  if (r === null) return "—";
-  const sign = r > 0 ? "+" : "";
-  return `${sign}${r.toFixed(2)}R`;
+  // ST-06 (BLG-FE-182): delegates to the shared helper (typographic minus, signed, 2 dp).
+  return formatRShared(r);
 }
 
 /**
@@ -56,9 +56,8 @@ function rColour(r) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function formatSlippage(pct) {
-  if (pct === null || pct === undefined) return "—";
-  const sign = pct > 0 ? "+" : "";
-  return `${sign}${pct.toFixed(2)}%`;
+  // Small-magnitude cost metric: 2 dp, signed (design_system.md v1.21 §Number and Currency Formatting)
+  return formatPercent(pct, { signed: true, dp: 2 });
 }
 
 function slippageColour(pct) {
@@ -75,8 +74,7 @@ function slippageColour(pct) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function formatFeeDrag(pct) {
-  if (pct === null || pct === undefined) return "—";
-  return `+${pct.toFixed(2)}%`;
+  return formatPercent(pct, { signed: true, dp: 2 });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -442,14 +440,14 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                     isProfit ? "text-emerald-400" : "text-rose-400"
                   )}>
                     {isProfit ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                    £{Math.abs(trade.pnl).toFixed(2)}
+                    {formatCurrency(trade.pnl, { currency: "GBP", signed: true })}
                   </div>
                 </TableCell>
 
                 {/* % P&L */}
                 <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn("font-medium", isProfit ? "text-emerald-400" : "text-rose-400")}>
-                    {isProfit ? "+" : ""}{trade.pnl_pct.toFixed(2)}%
+                    {formatPercent(trade.pnl_pct, { signed: true })}
                   </span>
                 </TableCell>
 
@@ -498,7 +496,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 <TableCell className={cn(TD_CLASS, "text-right")}>
                   {trade.net_r_multiple != null ? (
                     <span className={cn("font-medium tabular-nums", trade.net_r_multiple > 0 ? "text-emerald-400" : trade.net_r_multiple < 0 ? "text-rose-400" : "text-slate-300")}>
-                      {(trade.net_r_multiple > 0 ? "+" : "") + trade.net_r_multiple.toFixed(2)}R
+                      {formatRShared(trade.net_r_multiple)}
                     </span>
                   ) : (
                     <span className="text-slate-600">—</span>

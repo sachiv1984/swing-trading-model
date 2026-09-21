@@ -10,6 +10,7 @@ import { useGapRisk } from "../../hooks/useGapRisk";
 import { apiFetch } from "../../api/base44Client";
 import { toast } from "sonner";
 import TrailingStopExplainerIcon from "./TrailingStopExplainerIcon";
+import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -150,7 +151,8 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
   const pnlPercent = position.pnl_percent || 0;
   const isProfit = pnl >= 0;
   const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
-  const currencySymbol = position.market === "UK" ? "£" : "$";
+  // ST-06 (BLG-FE-182): formatted via src/lib/format.js, same conventions as the Positions table
+  const currency = currencyForMarket(position.market);
 
   // Use native prices for display
   const displayCurrentPrice = position.current_price_native || position.current_price;
@@ -202,7 +204,7 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
             "text-sm font-semibold",
             isProfit ? "text-emerald-400" : "text-rose-400"
           )}>
-            {isProfit ? "+" : ""}{pnlPercent.toFixed(2)}%
+            {formatPercent(pnlPercent, { signed: true })}
           </span>
         </div>
       </div>
@@ -214,23 +216,23 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
         <div className="p-3 rounded-xl bg-slate-800/50">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Entry</p>
           <p className="text-sm font-semibold text-white">
-            {currencySymbol}{position.entry_price.toFixed(2)}
+            {formatCurrency(position.entry_price, { currency })}
           </p>
         </div>
         <div className="p-3 rounded-xl bg-slate-800/50">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current</p>
           <p className="text-sm font-semibold text-white">
-            {currencySymbol}{displayCurrentPrice?.toFixed(2) || "—"}
+            {formatCurrency(displayCurrentPrice || null, { currency })}
           </p>
         </div>
         {/* ST-03 (BLG-FE-97): Trail Stop tile — Initial Stop subtext + trailing stop value + breach icon */}
         <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1 flex items-center gap-1">
-            <span>Init: {position.initial_stop != null ? `${currencySymbol}${Number(position.initial_stop).toFixed(2)}` : "—"}</span>
+            <span>Init: {formatCurrency(position.initial_stop, { currency })}</span>
             <TrailingStopExplainerIcon />
           </p>
           <p className="text-sm font-semibold text-rose-400 flex items-center gap-1">
-            {displayTrailStop != null ? `${currencySymbol}${Number(displayTrailStop).toFixed(2)}` : "—"}
+            {formatCurrency(displayTrailStop, { currency })}
             {trailBreached && (
               <AlertTriangle
                 className="w-3.5 h-3.5 flex-shrink-0"

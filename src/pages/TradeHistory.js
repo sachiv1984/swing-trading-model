@@ -13,6 +13,7 @@ import TradeHistoryTable from "../components/trades/TradeHistoryTable";
 import SavedFiltersControl from "../components/trades/SavedFiltersControl";
 import CalendarView from "../components/trades/CalendarView";
 import TradeReflectionModal from "../components/trades/TradeReflectionModal";
+import { formatCurrency, formatPercent } from "../lib/format";
 import { motion } from "framer-motion";
 
 // ST-04 (BLG-FE-118, EPIC-04, v7.5): ephemeral, device-local active-filter
@@ -279,50 +280,42 @@ export default function TradeHistory() {
             />
             <StatsCard
               title="Win Rate"
-              value={`${winRate.toFixed(1)}%`}
+              value={formatPercent(winRate)}
               trend={winRate >= 50 ? "up" : "down"}
               icon={winRate >= 50 ? TrendingUp : TrendingDown}
               gradient={winRate >= 50 ? "emerald" : "rose"}
             />
             <StatsCard
               title="Total P&L"
-              value={`${totalPnL >= 0 ? "+" : ""}£${totalPnL.toFixed(2)}`}
+              value={formatCurrency(totalPnL, { currency: "GBP", signed: true })}
               trend={totalPnL >= 0 ? "up" : "down"}
               icon={totalPnL >= 0 ? TrendingUp : TrendingDown}
               gradient={totalPnL >= 0 ? "emerald" : "rose"}
             />
             <StatsCard
               title="Avg Winner"
-              value={`+£${avgWin.toFixed(2)}`}
+              value={formatCurrency(avgWin, { currency: "GBP", signed: true })}
               trend="up"
               icon={TrendingUp}
               gradient="emerald"
             />
             <StatsCard
               title="Avg Loser"
-              value={`-£${Math.abs(avgLoss).toFixed(2)}`}
+              value={formatCurrency(-Math.abs(avgLoss), { currency: "GBP", signed: true })}
               trend="down"
               icon={TrendingDown}
               gradient="rose"
             />
             <StatsCard
               title="Avg Entry Dev."
-              value={
-                tradesData?.avg_slippage_pct != null
-                  ? `${tradesData.avg_slippage_pct > 0 ? "+" : ""}${tradesData.avg_slippage_pct.toFixed(2)}%`
-                  : "—"
-              }
+              value={formatPercent(tradesData?.avg_slippage_pct, { signed: true, dp: 2 })}
               trend={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? "up" : "down") : "neutral"}
               icon={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? TrendingUp : TrendingDown) : TrendingUp}
               gradient={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? "emerald" : "rose") : "violet"}
             />
             <StatsCard
               title="Avg Fee Drag"
-              value={
-                tradesData?.avg_fee_drag_pct != null
-                  ? `+${tradesData.avg_fee_drag_pct.toFixed(2)}%`
-                  : "—"
-              }
+              value={formatPercent(tradesData?.avg_fee_drag_pct, { signed: true, dp: 2 })}
               icon={TrendingDown}
               gradient="amber"
               tooltip="Average Fee Drag = Total exit fees / Gross proceeds × 100. Higher % means a greater proportion of gross proceeds consumed by fees."
