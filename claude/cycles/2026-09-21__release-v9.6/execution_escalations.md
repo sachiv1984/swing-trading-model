@@ -1,0 +1,157 @@
+Owner: PMO Lead
+Class: Planning Document (Class 4)
+Status: Active
+Last Updated: 2026-09-21
+
+---
+
+# Execution Escalations - 2026-09-21__release-v9.6
+
+Append-only. Do not edit previous entries.
+
+---
+
+## ESC-EXEC-20260921-01
+
+- **Raised at:** 2026-09-21T15:51:14Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-21__release-v9.6
+- **Step:** Sprint open (raised per sprint_backlog.md Outstanding Actions at Planning Seal; STEP 3.1.D)
+- **ST/EPIC item:** ST-09 / EPIC-03
+- **Trigger type:** Strategy
+- **Blocking statement:** ST-09 (BLG-BE-119) is a decision-first story on live-capital stop logic (RISK-03, High). Since the backlog item was filed, v9.5 ST-04 resolved most of its scope: `strategy_rules.md` is now v1.10 and §7.2 contains the `max(..., EntryPrice)` breakeven floor (documentation-only; sign-off 'Strategy Rules & System Intent Owner - Approved, agent-mediated on explicit user direction, 2026-09-16'), and `backend/position_manager.py` was deliberately left un-floored as a documented, tested exception (`tests/test_trailing_stop_breakeven_floor.py::TestPositionManagerNotOnLiveStopPath`; `strategy_rules.md` §12.3 exception note). AC-1 (decision recorded) and AC-2 (implementations and spec agree) therefore read as substantially met, but whether an agent-mediated ruling is the 'formal decision' and whether a documented exception satisfies 'all three agree' is the owner's call, not the engine's. AC-3 (a new golden-output case for the floor-binding scenario) and AC-4 (BLG-BE-114 unblocked) still need confirming against `tests/golden_outputs.json`. The engine will not change `calculate_trailing_stop`. Options for the owner: (i) confirm the 2026-09-16 ruling as the formal decision and accept the documented backtest exception as satisfying AC-2 - engine then adds only the golden-output case; (ii) rule that AC-2 requires `position_manager.py` to adopt the floor (changes backtest results - needs its own sign-off); (iii) reverse the decision (removes the floor from live code - live-capital behaviour change).
+- **Owning authority:** Strategy Rules & System Intent Owner
+- **Unblock criteria:** Owner records a decision on options (i)/(ii)/(iii) in writing (PR comment, decision record or this file's resolution). Without one by the time EPIC-03 reaches ST-09, the engine ships only the golden-output case + this recorded state, leaves `calculate_trailing_stop` unchanged, and discloses (per sprint_backlog.md ST-09 Notes).
+- **SLA due-by:** 2026-09-24T15:51:14Z (72h)
+- **Blocks execution:** No (blocks only ST-09; sprint continues per STEP 3.1.D)
+- **Disposition:** Open
+- **Resolution summary:** 
+
+---
+
+## ESC-EXEC-20260921-02
+
+- **Raised at:** 2026-09-21T15:51:14Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-21__release-v9.6
+- **Step:** Sprint open (raised per sprint_backlog.md Outstanding Actions at Planning Seal; STEP 3.1.D)
+- **ST/EPIC item:** ST-16 / EPIC-04
+- **Trigger type:** Human-Delegation
+- **Blocking statement:** ST-16 (BLG-OPS-164) needs (1) a token or session with Actions-write access to dispatch the synthetic-uptime-monitor live-fire run (the prior session's `gh workflow run` returned HTTP 403) and (2) a human to confirm a real Telegram notification was received. Neither is available to the engine. AC-01 and AC-02 cannot be closed without them; AC-03 (docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md §7/§8) depends on both. The engine will not fabricate evidence (precedent ESC-EXEC-20260910-01; cite SBX-NO-LIVE-STAGING / SBX-NO-LIVE-EXTERNAL-API if it stays unavailable).
+- **Owning authority:** Infrastructure & Operations Owner
+- **Unblock criteria:** Owner either performs the live-fire run and confirms Telegram receipt (run URL/ID + confirmation supplied), or accepts a disclosed not-closeable outcome so the item can return to backlog.
+- **SLA due-by:** 2026-09-24T15:51:14Z (72h)
+- **Blocks execution:** No (blocks only ST-16; sprint continues per STEP 3.1.D)
+- **Disposition:** Open
+- **Resolution summary:** 
+
+---
+
+## ESC-EXEC-20260921-03
+
+- **Raised at:** 2026-09-21T15:51:14Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-21__release-v9.6
+- **Step:** Sprint open (raised per sprint_backlog.md Outstanding Actions at Planning Seal; STEP 3.1.D)
+- **ST/EPIC item:** ST-18 / EPIC-05
+- **Trigger type:** Human-Delegation
+- **Blocking statement:** ST-18 (BLG-QA-171) AC-02 needs a live staging environment and a fresh staging seed to complete the first quarterly full-suite Playwright run (RISK-05). The engine has no live staging access. AC-01 (cadence and seed procedure documented) is verifiable in CI and will be done autonomously; AC-02 is staging-only. Per CLAUDE.md §2 / sprint planning §7, if staging sign-off is post-merge the deferral backlog item must be filed before the EPIC-05 PR opens.
+- **Owning authority:** Director of Quality
+- **Unblock criteria:** Director of Quality supplies a live staging run with a fresh seed and recorded results, or agrees the disclosed-partial + deferral backlog item route.
+- **SLA due-by:** 2026-09-24T15:51:14Z (72h)
+- **Blocks execution:** No (blocks only ST-18; sprint continues per STEP 3.1.D)
+- **Disposition:** Open
+- **Resolution summary:** 
+
+---
+
+## ESC-EXEC-20260921-04
+
+- **Raised at:** 2026-09-21T15:51:14Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-21__release-v9.6
+- **Step:** Sprint open (raised per sprint_backlog.md Outstanding Actions at Planning Seal; STEP 3.1.D)
+- **ST/EPIC item:** ST-22 / EPIC-06
+- **Trigger type:** Human-Delegation
+- **Blocking statement:** ST-22 (BLG-SPEC-148) needs the DS-17 up-migration applied to the LIVE `positions` table (creating `idx_positions_open_ticker_entry_date_unique`). The staging credential is read-only and the engine has no live-DB write access; this is a human/delegated step. The duplicate pre-check (0 groups at 2026-09-18) must be re-run immediately before applying (RISK-06). The `data_model.md` 'confirmed-applied' text must not be written without a real confirmation (SBX-NO-LIVE-DB).
+- **Owning authority:** Data Model & Domain Schema Owner (with Infrastructure & Operations Owner)
+- **Unblock criteria:** Owner applies the migration and supplies confirmation (index present on the live table + date), or accepts a disclosed not-closeable outcome.
+- **SLA due-by:** 2026-09-24T15:51:14Z (72h)
+- **Blocks execution:** No (blocks only ST-22; sprint continues per STEP 3.1.D)
+- **Disposition:** Open
+- **Resolution summary:** 
+
+---
+
+## ESC-EXEC-20260921-05
+
+- **Raised at:** 2026-09-21T15:51:14Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-21__release-v9.6
+- **Step:** Sprint open (raised per sprint_backlog.md Outstanding Actions at Planning Seal; STEP 3.1.D)
+- **ST/EPIC item:** ST-23 / EPIC-06
+- **Trigger type:** Strategy
+- **Blocking statement:** ST-23 (BLG-SPEC-160) requires a dated §13 determinism pre-clearance determination for PO-05 (Lightweight Replay Mode). The determination belongs to the Strategy Rules & System Intent Owner (precedents: PS-03 Monte Carlo framing; IT-06's four binding conditions); the engine may draft the analysis but must not decide. AC-02 (BLG-FEAT-74's gate line reflects the outcome) is also subject to the write-scope question in ESC-EXEC-20260921-08.
+- **Owning authority:** Strategy Rules & System Intent Owner
+- **Unblock criteria:** Owner issues the dated §13 determination (cleared / conditions / not cleared).
+- **SLA due-by:** 2026-09-24T15:51:14Z (72h)
+- **Blocks execution:** No (blocks only ST-23; sprint continues per STEP 3.1.D)
+- **Disposition:** Open
+- **Resolution summary:** 
+
+---
+
+## ESC-EXEC-20260921-06
+
+- **Raised at:** 2026-09-21T15:51:14Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-21__release-v9.6
+- **Step:** Sprint open (raised per sprint_backlog.md Outstanding Actions at Planning Seal; STEP 3.1.D)
+- **ST/EPIC item:** ST-28 / EPIC-07
+- **Trigger type:** Strategy
+- **Blocking statement:** ST-28 (BLG-GOV-329) requires an explicit decision on the §13 boundary review cadence: schedule now, or defer with a trigger more concrete than the prior one (STEP 8.1.5 finding; the defer option has been taken 6 consecutive times). The engine may draft options but must not choose for the owner.
+- **Owning authority:** Strategy Rules & System Intent Owner
+- **Unblock criteria:** Owner records 'schedule now' or 'defer' with a concrete, testable trigger.
+- **SLA due-by:** 2026-09-24T15:51:14Z (72h)
+- **Blocks execution:** No (blocks only ST-28; sprint continues per STEP 3.1.D)
+- **Disposition:** Open
+- **Resolution summary:** 
+
+---
+
+## ESC-EXEC-20260921-07
+
+- **Raised at:** 2026-09-21T15:51:14Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-21__release-v9.6
+- **Step:** Sprint open (raised per sprint_backlog.md Outstanding Actions at Planning Seal; STEP 3.1.D)
+- **ST/EPIC item:** ST-29 / EPIC-07
+- **Trigger type:** Workforce
+- **Blocking statement:** ST-29 (BLG-GOV-328) requires the Product Owner's explicit hold/raise decision on the sprint capacity band given sustained >=90% utilisation (FinOps & Resource Architect reviews the history; the engine documents into `claude/roadmap/workforce_capacity.md` under the BLG-GOV-337 plan-authorised exception, citing sprint_backlog.md ST-29). The engine never decides the band. Any change applies from the next planning run, not this sealed sprint.
+- **Owning authority:** Product Owner
+- **Unblock criteria:** Product Owner supplies an explicit hold or raise decision (not 'revisit next cycle').
+- **SLA due-by:** 2026-09-24T15:51:14Z (next planning checkpoint (72h notional))
+- **Blocks execution:** No (blocks only ST-29; sprint continues per STEP 3.1.D)
+- **Disposition:** Open
+- **Resolution summary:** 
+
+---
+
+## ESC-EXEC-20260921-08
+
+- **Raised at:** 2026-09-21T15:51:14Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-21__release-v9.6
+- **Step:** Sprint open (raised per sprint_backlog.md Outstanding Actions at Planning Seal; STEP 3.1.D)
+- **ST/EPIC item:** ST-23 / ST-27 / EPIC-06 / EPIC-07
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-23 AC-02 (edit BLG-FEAT-74's gate line) and ST-27's clear/re-gate legs (edit the gate lines of BLG-FEAT-59/60/63 and BLG-FE-84) edit EXISTING `claude/backlog/backlog.md` items, which `execution_prompt.md` §7 does not permit (new-item addition only). The sealed plan asks for either a plan-authorised exception (as BLG-GOV-337 did for `workforce_capacity.md`) or acceptance of the disclosed-partial fallback. Until ruled, the engine will take the fallback: record the determination/verification in dated documents and hand over exact replacement gate-line text, and disclose those legs as partial.
+- **Owning authority:** Head of Specs Team + Product Owner
+- **Unblock criteria:** Head of Specs Team + Product Owner rule on a plan-authorised exception for these named backlog items (or confirm the fallback).
+- **SLA due-by:** 2026-09-24T15:51:14Z (72h)
+- **Blocks execution:** No (blocks only ST-23 / ST-27; sprint continues per STEP 3.1.D)
+- **Disposition:** Open
+- **Resolution summary:** 
+
+---
+
