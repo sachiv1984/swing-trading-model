@@ -6,37 +6,43 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-21T15:51:14Z",
+  "last_updated_utc": "2026-09-21T16:15:43Z",
   "epics": {
     "EPIC-01": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/trade-plan-clone.spec.js"
+      ],
       "stories": {
         "ST-01": {
           "title": "'Clone as new plan' action on the Trade Plans list",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1718,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "2af7413b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-21T16:15:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#4.5 Clone as New Plan",
+            "docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md",
+            "tests/e2e/trade-plan-clone.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1/AC2 verified by tests/e2e/trade-plan-clone.spec.js SC-TPC-02/03/04 (6/6 local pass; mutation check confirmed the tests fail if position_id/price levels are copied; 31 related specs / 281 tests green). AC2 read as status draft per addendum. AC3 (Playwright passes in CI) to be confirmed from the EPIC-01 PR CI run - Playwright CI is path-filtered on push. Deviation check: none - implementation notes only (page-name route /TradePlan?clone_from= instead of the spec route /trade-plans/new?clone_from=; banner says Save Plan to match the real button; no Cancel button - Back discards; StandingAlert gained opt-in dismissible prop, default unchanged)."
         },
         "ST-02": {
           "title": "Flag stale 'planned' trade plans on the Trade Plans list",
@@ -774,7 +780,9 @@
     "ST-28",
     "ST-29"
   ],
-  "completed_items": [],
+  "completed_items": [
+    "ST-01"
+  ],
   "open_escalations": [
     "ESC-EXEC-20260921-01",
     "ESC-EXEC-20260921-02",
