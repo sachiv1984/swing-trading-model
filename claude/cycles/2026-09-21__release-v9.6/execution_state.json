@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-21T17:24:13Z",
+  "last_updated_utc": "2026-09-21T17:45:37Z",
   "epics": {
     "EPIC-01": {
       "status": "in_progress",
@@ -21,7 +21,9 @@
         "tests/e2e/screener-watchlist-csv-export.spec.js",
         "tests/e2e/reflection-reminder.spec.js",
         "tests/test_reflection_reminder.py",
-        "tests/e2e/empty-state-next-action.spec.js"
+        "tests/e2e/empty-state-next-action.spec.js",
+        "tests/e2e/number-format-tables.spec.js",
+        "tests/e2e/number-format-helper.spec.js"
       ],
       "stories": {
         "ST-01": {
@@ -157,23 +159,28 @@
         "ST-06": {
           "title": "Single number/currency formatting helper — audit and migrate the highest-traffic tables",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1723,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "9d0e6d85",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-21T17:45:37Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Number and Currency Formatting",
+            "docs/design/2026-09-21__release-v9.6/number-format-convention/decision_record.md",
+            "tests/e2e/number-format-tables.spec.js",
+            "tests/e2e/number-format-helper.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (the three tables use the helper with identical negative/decimal conventions) verified by tests/e2e/number-format-tables.spec.js SC-NFT-01..06 (6/6, gain/loss/zero/>=1000 fixture per table; mutation-checked) and the helper output table by number-format-helper.spec.js SC-NF-01..07 (7/7). AC2 (Playwright passes in CI) to be confirmed from the EPIC-01 PR CI run. Existing assertions updated (record 2.6): slippage-tracking.spec.js SC-SLIP-02b and SC-SLIP-04b (ASCII hyphen to U+2212). Deviation check: none filed - notes: P&L % 2dp to 1dp on Trade History and the Positions card (default-percentage rule, not enumerated in record 2.6); zero P&L tone unchanged (call-site follow-up); price of exactly 0 now shows 0.00 not a dash; ~60 remaining toFixed files and trade_reflection.md 4 en-dash discrepancy are follow-ups; advisory pixel baseline for Positions not regenerated."
         }
       }
     },
@@ -811,7 +818,8 @@
     "ST-02",
     "ST-03",
     "ST-04",
-    "ST-05"
+    "ST-05",
+    "ST-06"
   ],
   "open_escalations": [
     "ESC-EXEC-20260921-01",
