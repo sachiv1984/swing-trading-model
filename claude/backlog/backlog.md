@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-21 (Sprint Execution `2026-09-21__release-v9.6` EPIC-01 — 7 new items filed from execution findings: BLG-SPEC-161/162, BLG-FE-184/185, BLG-OPS-168, BLG-QA-188/189; BLG-QA-188 wording corrected to name the staging database); prior — 2026-09-21 (Release Planning `2026-09-21__release-v9.6` STEP 4 — 32-item / 28.00-day release slice appended, marker `RP:v9.6:2026-09-21__release-v9.6`); prior — 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` — idea intake `IW-20260919-01` dispositioned: 37 items filed (`BLG-AI-07`, `BLG-API-04/05`, `BLG-BE-121/122`, `BLG-FE-180–183`, `BLG-FEAT-96–98`, `BLG-FR-04/05`, `BLG-GOV-338–345`, `BLG-OPS-165–167`, `BLG-QA-182–187`, `BLG-SEC-37/38`, `BLG-SPEC-157–160`); `BLG-GOV-329` P3→P2); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-21 (Sprint Execution `2026-09-21__release-v9.6` EPIC-01 — 10 new items filed from execution and PR-review findings: BLG-SPEC-161/162, BLG-FE-184/185/186, BLG-OPS-168, BLG-QA-188/189, BLG-BE-123/124; BLG-QA-188 wording corrected to name the staging database); prior — 2026-09-21 (Release Planning `2026-09-21__release-v9.6` STEP 4 — 32-item / 28.00-day release slice appended, marker `RP:v9.6:2026-09-21__release-v9.6`); prior — 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` — idea intake `IW-20260919-01` dispositioned: 37 items filed (`BLG-AI-07`, `BLG-API-04/05`, `BLG-BE-121/122`, `BLG-FE-180–183`, `BLG-FEAT-96–98`, `BLG-FR-04/05`, `BLG-GOV-338–345`, `BLG-OPS-165–167`, `BLG-QA-182–187`, `BLG-SEC-37/38`, `BLG-SPEC-157–160`); `BLG-GOV-329` P3→P2); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4883,6 +4883,71 @@ The reflection-reminder work adds startup DDL (two `alert_type` CHECK extensions
 **Acceptance Criteria**
 - The test runs in Phase B CI and fails if the partial-index conflict target or an eligibility clause is broken
 - Phase A remains fully mocked
+
+---
+
+### BLG-FE-186 — Cloned trade plan can silently get the wrong Setup Type
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner; Product Owner
+**Source:** PR #1750 agent-mediated review (Director of Quality finding 1) on ST-01/EPIC-01/2026-09-21__release-v9.6 (BLG-FEAT-96) — reproduced with a throwaway Playwright probe — 2026-09-21
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** v9.7
+
+**Problem**
+Cloning a `Breakout` plan for a ticker that has a watchlisted signal opens the new plan with Setup Type "Momentum Continuation". The ST-01 design record's copy table omits `setup_type`, so the clone form starts with `setup_type: null`; the existing signal pre-population effect (`src/pages/TradePlan.js`, `!editId && linkedSignal`) then applies its `|| "Momentum Continuation"` default. The result is a wrong, unflagged value in a new plan that the user may not notice. No SC-TPC-* scenario mocks a watchlisted signal, so nothing catches it.
+
+**Scope**
+- Product Owner decides whether a clone copies `setup_type` (and whether it should also copy `entry_rationale`, `confirmation_criteria`, `early_exit_conditions` and `planned_quantity`, all omitted by the record); amend `docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md` and `trade_plan.md` §4.5 accordingly
+- Fix the clone so the signal pre-population cannot overwrite or invent a Setup Type for a cloned plan
+- Add a Playwright scenario with a watchlisted signal for the cloned ticker
+
+**Acceptance Criteria**
+- A clone of a plan with Setup Type X shows X, including when the ticker has a watchlisted signal
+- The design record and `trade_plan.md` state which fields a clone copies
+- The new Playwright scenario passes in CI
+
+---
+
+### BLG-BE-123 — Reflection reminder step: over-reported summary after a rollback, and NULL-portfolio trades never get a reminder
+**Priority:** P3 (Low)
+**Type:** Backend
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1750 agent-mediated review (Director of Quality finding 2) on ST-04/EPIC-01/2026-09-21__release-v9.6 (BLG-FEAT-98) — 2026-09-21
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.7
+
+**Problem**
+In `backend/services/alerts_service.py::_evaluate_reflection_reminders`, an exception part-way through the insert loop rolls back to the savepoint and undoes the earlier inserts, but `enqueue_delivery(...)` has already been called for them and `notifications_created` / `delivery_tasks_enqueued` still count them. Delivery then logs "notification not found", which is harmless, but the returned summary over-reports. Separately the query filters `th.portfolio_id = %s`, and `trade_history.portfolio_id` is nullable, so a trade with no portfolio can never receive a reminder — probably intended for a single-portfolio product, but undocumented and untested.
+
+**Scope**
+- Count and enqueue only after the savepoint is released, or reset the counters in the rollback branch
+- Decide and document the NULL-`portfolio_id` behaviour (skip, or include when the portfolio is the single default) and cover it with a test
+
+**Acceptance Criteria**
+- After a forced mid-loop failure the returned summary shows 0 created and 0 enqueued, and nothing was scheduled for rolled-back rows
+- The NULL-portfolio behaviour is stated in `alerts_endpoints.md` and asserted by a test
+
+---
+
+### BLG-BE-124 — Generic alert re-delivery ignores read state
+**Priority:** P3 (Low)
+**Type:** Backend
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1750 agent-mediated review (Director of Quality finding 3) on ST-04/EPIC-01/2026-09-21__release-v9.6 — behaviour predates the story and applies to all alert types — 2026-09-21
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.7
+
+**Problem**
+`evaluate_alerts()`'s re-delivery step selects every notification with `delivered = FALSE AND delivery_attempts < 3` and re-enqueues it if the type's preference is enabled. It does not look at `read`, so an alert the user has already read (or acted on) whose first delivery failed can still be sent again, up to three attempts. ST-04 stopped the worst case for `reflection_reminder` (rows created while the preference is off are now created settled), but the loop itself is unchanged.
+
+**Scope**
+- Exclude `read = TRUE` notifications from the re-delivery query, and consider also excluding those whose trigger condition no longer holds
+- Update the retry-model description in `alerts_endpoints.md` and `data_model.md` §9
+
+**Acceptance Criteria**
+- A read notification is never re-enqueued for delivery, asserted by a test
+- Unread, undelivered notifications are still retried up to 3 times (existing behaviour unchanged)
 
 ---
 
