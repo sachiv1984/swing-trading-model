@@ -2,7 +2,7 @@
 **Class:** Class 2
 **Status:** Canonical
 **Version:** 1.11.0
-**Last Updated:** 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — v9.6.0 entry: alerts_endpoints.md v0.8 reflection_reminder alert type); prior — 2026-09-08 (ST-23, EPIC-04, v9.2, BLG-GOV-205 — new "Entry Template" section formalising the canonical structure; conformance check confirms all existing entries already match, no migration needed); prior — 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — v8.9.0 entry: 3 new Backtest Rule Change endpoints); prior — 2026-08-17 (ST-26, BLG-SPEC-118, EPIC-06, v8.8 — backfilled the v7.9–v8.4 gap); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — v9.6.0 entry: alerts_endpoints.md v0.8 reflection_reminder alert type); prior — 2026-09-08 (ST-23, EPIC-04, v9.2, BLG-GOV-205 — new "Entry Template" section formalising the canonical structure; conformance check confirms all existing entries already match, no migration needed); prior — 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — v8.9.0 entry: 3 new Backtest Rule Change endpoints); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
