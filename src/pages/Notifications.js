@@ -7,6 +7,7 @@ import NotificationRow from "../components/notifications/NotificationRow";
 import { useToast } from "../components/ui/use-toast";
 import { apiFetch } from "../api/base44Client";
 import DataState from "../components/ui/DataState";
+import EmptyStateAction from "../components/ui/EmptyStateAction";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
@@ -162,6 +163,7 @@ export default function Notifications() {
           emptyIcon={<Bell className="w-10 h-10 text-slate-600" />}
           emptyHeading="No notifications yet"
           emptyBody="Alert notifications will appear here when triggered."
+          emptyAction={<EmptyStateAction to="/notifications/preferences">Review alert settings</EmptyStateAction>}
         >
           <>
             {notifications.map((n) => (

@@ -9,7 +9,7 @@
  *   SC-TPCR-02  Three summary cards visible when data is loaded: "Plans
  *               Created", "Completion Rate", "Plans Abandoned"
  *   SC-TPCR-03  Loading skeleton shown when data is pending
- *   SC-TPCR-04  Empty state ("No trade plans created yet.") shown when
+ *   SC-TPCR-04  Empty state ("No trade plans created yet") shown when
  *               plans_created is 0 — not a 0% completion rate
  *   SC-TPCR-05  Error state shown when the API call fails
  *   SC-TPCR-06  Summary line "{plans_completed} of {plans_created} plans
@@ -180,14 +180,14 @@ test.describe('SC-TPCR-03 — Loading skeleton state', () => {
 // ---------------------------------------------------------------------------
 
 test.describe('SC-TPCR-04 — Empty state', () => {
-  test('SC-TPCR-04: "No trade plans created yet." shown when plans_created is 0, not a 0% rate', async ({ page }) => {
+  test('SC-TPCR-04: "No trade plans created yet" shown when plans_created is 0, not a 0% rate', async ({ page }) => {
     await mockFallback(page);
     await mockCompletionRate(page, COMPLETION_RATE_EMPTY);
     await gotoAnalytics(page);
 
     const section = page.getByTestId('trade-plan-completion-rate-section');
     await expect(section.getByText('Trade Plan Completion Rate')).toBeVisible({ timeout: 10000 });
-    await expect(section.getByText('No trade plans created yet.')).toBeVisible({ timeout: 8000 });
+    await expect(section.getByText('No trade plans created yet', { exact: true })).toBeVisible({ timeout: 8000 });
 
     // Must not render the summary cards or a misleading 0% in the empty state.
     // Scoped to this section: the wider page has unrelated cards that also

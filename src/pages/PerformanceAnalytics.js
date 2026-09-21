@@ -5,6 +5,7 @@ import PageHeader from "../components/ui/PageHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Download, BarChart2 } from "lucide-react";
 import DataState from "../components/ui/DataState";
+import EmptyStateAction from "../components/ui/EmptyStateAction";
 import { Button } from "../components/ui/button";
 import ExecutiveSummaryCards from "../components/analytics/ExecutiveSummaryCards";
 import KeyInsightsCard from "../components/analytics/KeyInsightsCard";
@@ -610,6 +611,7 @@ export default function PerformanceAnalytics() {
           emptyIcon={<BarChart2 className="w-10 h-10 text-slate-600" />}
           emptyHeading="Not enough trades"
           emptyBody={`Need at least ${settingsData.min_trades_for_analytics} closed trades to show analytics. You currently have ${filteredTrades.length} trade${filteredTrades.length !== 1 ? 's' : ''} in the selected period.`}
+          emptyAction={<EmptyStateAction variant="button" to="/TradeEntry">Log a trade</EmptyStateAction>}
           className="min-h-[400px]"
         />
       </div>

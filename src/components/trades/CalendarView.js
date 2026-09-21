@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-reac
 import { cn } from "../../lib/utils";
 import { apiFetch } from "../../api/base44Client";
 import DataState from "../ui/DataState";
+import EmptyStateAction from "../ui/EmptyStateAction";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -88,6 +89,7 @@ export default function CalendarView({ hasAnyClosedTrades, onDaySelect }) {
           emptyIcon={<CalendarIcon className="w-10 h-10 text-slate-600" />}
           emptyHeading="No closed trades yet"
           emptyBody="Your trading calendar will populate as you close trades."
+          emptyAction={<EmptyStateAction to="/Positions">View open positions</EmptyStateAction>}
         />
       </div>
     );

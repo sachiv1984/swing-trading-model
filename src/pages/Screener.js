@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/base44Client";
 import { useEarnings, getCachedEarningsDays } from "../hooks/useEarnings";
 import DownloadCsvButton from "../components/shared/DownloadCsvButton";
+import EmptyStateAction from "../components/ui/EmptyStateAction";
 import { buildCsv, csvFilename, downloadCsv } from "../utils/csvExport";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
@@ -128,7 +129,8 @@ function MarketBadge({ market }) {
 // (emerald / slate-grey) rather than the record's red assumption, which
 // most faithfully satisfies the record's own stated intent — visual
 // consistency with the existing per-row chips, not a new second convention.
-function RegimeHistoryPanel() {
+// `onRun`/`running` (ST-05, BLG-FE-181): the empty state's next action is the page's own run control.
+function RegimeHistoryPanel({ onRun, running }) {
   const [window_, setWindow_] = useState("30d");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -189,6 +191,13 @@ function RegimeHistoryPanel() {
         emptyIcon={<BarChart2 className="w-8 h-8 text-slate-600" />}
         emptyHeading="No regime history yet"
         emptyBody="Regime history accrues as screener runs complete over the selected window."
+        emptyAction={
+          onRun ? (
+            <EmptyStateAction variant="button" onClick={onRun} disabled={running}>
+              Run the screener
+            </EmptyStateAction>
+          ) : undefined
+        }
         compact
       >
         {hasData && (
@@ -826,7 +835,7 @@ export default function Screener() {
         }
       />
 
-      <RegimeHistoryPanel />
+      <RegimeHistoryPanel onRun={triggerScan} running={scanning} />
 
       {runQuality && (
         <ScreenerQualityPanel
