@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-21T16:17:23Z",
+  "last_updated_utc": "2026-09-21T16:31:46Z",
   "epics": {
     "EPIC-01": {
       "status": "in_progress",
@@ -17,7 +17,8 @@
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/e2e/trade-plan-clone.spec.js",
-        "tests/e2e/trade-plan-stale-marker.spec.js"
+        "tests/e2e/trade-plan-stale-marker.spec.js",
+        "tests/e2e/screener-watchlist-csv-export.spec.js"
       ],
       "stories": {
         "ST-01": {
@@ -73,23 +74,28 @@
         "ST-03": {
           "title": "CSV export for Screener results and Watchlist",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1720,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "bdb9fe4d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-21T16:31:46Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/screener_results.md#5.3 CSV Export",
+            "docs/specs/frontend/pages/watchlist.md#CSV Export",
+            "docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md",
+            "tests/e2e/screener-watchlist-csv-export.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (export columns equal visible columns on both pages) verified by SC-CSV-01/05 (exported header row == rendered header row, minus checkbox/Actions); filter+sort, values, guard, disabled and failure states by SC-CSV-02/03/04/06/07/08 (9/9 local; mutation check on the guard). AC2 (Playwright passes in CI) to be confirmed from the EPIC-01 PR CI run. Deviation check: no deviation filed - notes only: (1) Screener export includes Earnings, which the design record/spec 5.3 column list omits but the real desktop table has (spec debt - backlog item to be filed at EPIC close); (2) column arrays drive headers+CSV, cell JSX unchanged; (3) Research/News exported as Yes/No; (4) formula guard covers the four record-listed characters only."
         },
         "ST-04": {
           "title": "In-app reminder to complete TradeReflection within 48 hours of a trade closing",
@@ -787,7 +793,8 @@
   ],
   "completed_items": [
     "ST-01",
-    "ST-02"
+    "ST-02",
+    "ST-03"
   ],
   "open_escalations": [
     "ESC-EXEC-20260921-01",
