@@ -852,6 +852,6 @@
     "STEP 1: GitHub issues #1718-#1749 (ST-01..ST-32, label v9.6) already exist from sync gh - recorded, none created.",
     "STEP 2: only exec/.../EPIC-01 branch created at sprint open. EPIC-02..07 branches are cut from post-merge main at their turn (merge order EPIC-01 -> EPIC-07 with rebase-after-merge per sprint_backlog.md Sprint Scope).",
     "EPIC-01 DoQ sign-off: agent-mediated (execution_prompt.md 5.3) independent review returned Approved with conditions; conditions met in the sign-off commit (finding 1 fixed in 00f98cdf; counts corrected; CI evidence recorded; files committed with qa_signed_off true). Signer format: Sprint Execution Engine (agent-mediated, Director of Quality role - 5.3). Merge gate remains always-human (QA sign-off + Product Owner acceptance).",
-    "Environment: DATABASE_URL in the execution environment points at a live Supabase host and was never used; all backend test runs used a stub URL (BLG-QA-188). Two throwaway local Postgres/agent-review actions were confined to the DoQ reviewer scratchpad."
+    "Environment: DATABASE_URL in the execution environment points at the staging Supabase database (user-confirmed; credential believed read-only, unverified) and was never used; all backend test runs used a stub URL (BLG-QA-188). Two throwaway local Postgres/agent-review actions were confined to the DoQ reviewer scratchpad."
   ]
 }

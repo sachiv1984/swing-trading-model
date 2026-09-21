@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-21 (Sprint Execution `2026-09-21__release-v9.6` EPIC-01 — 7 new items filed from execution findings: BLG-SPEC-161/162, BLG-FE-184/185, BLG-OPS-168, BLG-QA-188/189); prior — 2026-09-21 (Release Planning `2026-09-21__release-v9.6` STEP 4 — 32-item / 28.00-day release slice appended, marker `RP:v9.6:2026-09-21__release-v9.6`); prior — 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` — idea intake `IW-20260919-01` dispositioned: 37 items filed (`BLG-AI-07`, `BLG-API-04/05`, `BLG-BE-121/122`, `BLG-FE-180–183`, `BLG-FEAT-96–98`, `BLG-FR-04/05`, `BLG-GOV-338–345`, `BLG-OPS-165–167`, `BLG-QA-182–187`, `BLG-SEC-37/38`, `BLG-SPEC-157–160`); `BLG-GOV-329` P3→P2); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-21 (Sprint Execution `2026-09-21__release-v9.6` EPIC-01 — 7 new items filed from execution findings: BLG-SPEC-161/162, BLG-FE-184/185, BLG-OPS-168, BLG-QA-188/189; BLG-QA-188 wording corrected to name the staging database); prior — 2026-09-21 (Release Planning `2026-09-21__release-v9.6` STEP 4 — 32-item / 28.00-day release slice appended, marker `RP:v9.6:2026-09-21__release-v9.6`); prior — 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` — idea intake `IW-20260919-01` dispositioned: 37 items filed (`BLG-AI-07`, `BLG-API-04/05`, `BLG-BE-121/122`, `BLG-FE-180–183`, `BLG-FEAT-96–98`, `BLG-FR-04/05`, `BLG-GOV-338–345`, `BLG-OPS-165–167`, `BLG-QA-182–187`, `BLG-SEC-37/38`, `BLG-SPEC-157–160`); `BLG-GOV-329` P3→P2); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4848,12 +4848,12 @@ The reflection-reminder work adds startup DDL (two `alert_type` CHECK extensions
 **Priority:** P2 (Medium)
 **Type:** QA / Test Automation
 **Owner:** QA & Testing Owner; Infrastructure & Operations Owner
-**Source:** ST-04/EPIC-01/2026-09-21__release-v9.6 — found when running the backend suite in a session whose environment had a live Supabase `DATABASE_URL` — 2026-09-21
+**Source:** ST-04/EPIC-01/2026-09-21__release-v9.6 — found when running the backend suite in a session whose environment had a `DATABASE_URL` for the staging Supabase database (user-confirmed; credential believed read-only, unverified) — 2026-09-21
 **Effort:** S (~0.5d)
 **Provisional-Target:** v9.7
 
 **Problem**
-`tests/conftest.py` only sets a dummy `DATABASE_URL` when none is set, and `tests/test_schema.py` skips only when the URL contains `stub`. With a real URL in the environment the suite opens real connections and runs `CREATE TABLE IF NOT EXISTS` / `ALTER TABLE` statements against it; `CLAUDE.md` §9 tells contributors to run pytest via the virtualenv without warning about this. The safe invocation (`DATABASE_URL=postgresql://stub:stub@localhost:5432/stub`) is nowhere documented.
+`tests/conftest.py` only sets a dummy `DATABASE_URL` when none is set, and `tests/test_schema.py` skips only when the URL contains `stub`. With a real URL in the environment the suite opens real connections and attempts `CREATE TABLE IF NOT EXISTS` / `ALTER TABLE` statements against it (they would alter staging if the credential can write; if it is read-only the suite would instead fail noisily); `CLAUDE.md` §9 tells contributors to run pytest via the virtualenv without warning about this. The safe invocation (`DATABASE_URL=postgresql://stub:stub@localhost:5432/stub`) is nowhere documented.
 
 **Scope**
 - Make `conftest.py` refuse (or override to a stub) any non-stub `DATABASE_URL` unless an explicit opt-in variable is set for Phase B CI

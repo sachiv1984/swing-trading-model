@@ -47,7 +47,7 @@ Last Updated: 2026-09-21
 ## Disclosures for the Director of Quality and Product Owner
 
 **Not verified — read before signing:**
-- **A. New SQL not executed against the real database (ST-04).** The engine's sandbox had no database access; its tests assert the SQL structurally with mocked cursors only (`SBX-NO-LIVE-DB`). Partial independent evidence exists: the reviewing agent ran the real `alerts_service.py` / `database.py` against a **throwaway PostgreSQL 18** (migration from a pre-v9.6 schema + idempotent re-run, the `ON CONFLICT` target against the partial index, eligibility windows, savepoint isolation, preference default), and CI Phase B ran the full suite against a real Postgres service. Neither is the real Supabase database, its version, timezone or data. Staging confirmation queries are in `data_model.md` DS-19; tracked as `BLG-OPS-168` (P2, target v9.6), and `BLG-QA-189` proposes a permanent real-Postgres integration test.
+- **A. New SQL not executed against the real database (ST-04).** The engine's own tests assert the SQL structurally with mocked cursors only. Its environment did carry a `DATABASE_URL` for the **staging** database (confirmed by the user after the review; credential believed read-only, not verified), but it was deliberately not used, so no v9.6 statement has been run on it — and staging does not yet carry the v9.6 schema changes, which are applied by `ensure_alerts_tables()` at startup after deploy. Partial independent evidence exists: the reviewing agent ran the real `alerts_service.py` / `database.py` against a **throwaway PostgreSQL 18** (migration from a pre-v9.6 schema + idempotent re-run, the `ON CONFLICT` target against the partial index, eligibility windows, savepoint isolation, preference default), and CI Phase B ran the full suite against a real Postgres service. Neither is the staging Supabase database, its version, timezone or data. Staging confirmation queries are in `data_model.md` DS-19; tracked as `BLG-OPS-168` (P2, target v9.6), and `BLG-QA-189` proposes a permanent real-Postgres integration test.
 - **B. CI confirmation.** Every story's final AC is "Playwright passes in CI"; the Playwright CI job is path-filtered on push. See CI evidence below.
 
 **Judgement calls made by the engine where the design record was silent or the code differed:**
@@ -77,7 +77,7 @@ Last Updated: 2026-09-21
 
 **Backlog items filed from this EPIC's findings:** `BLG-SPEC-161`, `BLG-SPEC-162`, `BLG-FE-184`, `BLG-FE-185`, `BLG-OPS-168`, `BLG-QA-188`, `BLG-QA-189`.
 
-**Environment finding (not a story defect):** the execution environment's `DATABASE_URL` points at a live Supabase host. It was **not** used. All backend test runs were made with a `stub` URL (which the suite's own Phase-A convention skips real-DB tests on) because `tests/conftest.py` would otherwise let `tests/test_schema.py` connect and run DDL. Filed as `BLG-QA-188`.
+**Environment finding (not a story defect):** the execution environment's `DATABASE_URL` points at the **staging** Supabase database (confirmed by the user after this evidence was first written; the credential is believed to be read-only but that is unverified). It was **not** used. All backend test runs were made with a `stub` URL (which the suite's own Phase-A convention skips real-DB tests on) because `tests/conftest.py` would otherwise let `tests/test_schema.py` connect to it and attempt DDL (which would alter staging if the credential can write, or fail noisily if it is read-only). Filed as `BLG-QA-188`.
 
 ## CI evidence
 
