@@ -720,7 +720,9 @@ paths:
         including closed trades, summary totals, and estimated unrealised P&L on open positions.
         Pass format=pdf to receive a PDF file download instead of JSON.
         Pass format=csv to receive a CSV file download instead of JSON.
-        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.3.
+        summary also carries restated_month_count/restated_months_notice (ST-08, v9.6),
+        derived from GET /reports/monthly-pnl's snapshot table for months in this tax year.
+        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.13.
       parameters:
         - in: query
           name: year
@@ -807,7 +809,9 @@ paths:
         Includes estimated_unrealised_pnl/unrealised_note (v7.0, ST-14) — current-snapshot
         unrealised P&L, same field/computation as GET /reports/tax-year's summary field.
         Pass format=csv to receive a CSV file download instead of JSON (ST-05, v7.8).
-        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.10. ST-03 (v4.7), ST-14 (v7.0), ST-05 (v7.8).
+        Each month object also includes null_fee_trade_count (ST-07, v9.6) — an
+        audit signal, not part of the CSV export.
+        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.13. ST-03 (v4.7), ST-14 (v7.0), ST-05 (v7.8), ST-07 (v9.6).
       parameters:
         - in: query
           name: format
@@ -844,6 +848,43 @@ paths:
                         trade_count:
                           type: integer
                           example: 3
+                        null_fee_trade_count:
+                          type: integer
+                          example: 0
+                          description: >
+                            v9.6 ST-07 (BLG-FR-04) — count of this month's closed
+                            trades with entry_fees or exit_fees NULL in
+                            trade_history. Audit signal only; does not change
+                            realised_pnl_gbp.
+                        snapshotted:
+                          type: boolean
+                          example: true
+                          description: >
+                            v9.6 ST-08 (BLG-FR-05) — true once this month is
+                            closed (strictly before the current calendar month)
+                            and baselined into monthly_pnl_snapshots. False for
+                            the current, in-progress month.
+                        restated:
+                          type: boolean
+                          example: false
+                          description: >
+                            v9.6 ST-08 — true if snapshotted and the live total
+                            now disagrees with the stored baseline. Always
+                            false when snapshotted is false.
+                        snapshot_realised_pnl_gbp:
+                          type: number
+                          nullable: true
+                          example: 340.50
+                          description: v9.6 ST-08 — stored baseline figure. null when snapshotted is false.
+                        restated_diff_gbp:
+                          type: number
+                          nullable: true
+                          example: 0.0
+                          description: >
+                            v9.6 ST-08 — realised_pnl_gbp minus
+                            snapshot_realised_pnl_gbp when restated; 0.0 when
+                            snapshotted but not restated; null when
+                            snapshotted is false.
                   estimated_unrealised_pnl:
                     type: number
                     nullable: true

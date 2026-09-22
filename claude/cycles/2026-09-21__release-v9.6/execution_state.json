@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-21T19:23:17Z",
+  "last_updated_utc": "2026-09-22T00:00:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -185,55 +185,67 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
-      "branch": null,
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "status": "done",
+      "branch": "exec/2026-09-21__release-v9.6/EPIC-02",
+      "pr_number": 1751,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_null_fee_trade_audit.py",
+        "tests/test_monthly_pnl_snapshot.py"
+      ],
       "stories": {
         "ST-07": {
           "title": "Audit whether closed-trade P&L is net of fees_paid; flag closed trades with NULL fees_paid in Monthly P&L",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1724,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-02",
+          "commit_sha": "f731dbaf",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Fee-Netting Basis",
+            "docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl",
+            "tests/test_null_fee_trade_audit.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (net/gross basis documented in canonical metrics spec) verified by metrics_definitions.md v1.22.0 Fee-Netting Basis subsection. AC2 (NULL-fee closed trade counted and visible in Monthly P&L) verified by null_fee_trade_count field, tests/test_null_fee_trade_audit.py (4/4 pass, includes a mutation check on the SQL FILTER clause's OR condition). Deviation check: none - audit-and-flag only, no stored pnl/total_cost/net_proceeds figure changed, per RISK-02."
         },
         "ST-08": {
           "title": "Month-end immutable snapshot of Monthly P&L and the tax-year table, with a restatement diff",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1725,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-02",
+          "commit_sha": "f731dbaf",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-20",
+            "docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl",
+            "docs/specs/api_contracts/reports_endpoints.md#GET /reports/tax-year",
+            "tests/test_monthly_pnl_snapshot.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (a snapshot exists per closed month) verified by insert_monthly_pnl_snapshot_if_absent baseline-once behaviour, tests/test_monthly_pnl_snapshot.py (15/15 pass, incl. mocked-cursor SQL-shape checks for the new monthly_pnl_snapshots table). AC2 (editing a closed trade in a snapshotted month surfaces a restatement diff): mechanism built and unit-tested against a simulated stored-vs-live mismatch; disclosed in qa_evidence_EPIC-02.md and data_model.md DS-20 that no live endpoint currently changes a closed trade's pnl/exit_date after creation, so this cannot be demonstrated end-to-end against any current live action (PATCH /trades/{id}/costs only affects commission_gbp/spread_cost_gbp, which feed net_r_multiple, not pnl). Also disclosed: an April calendar-month-vs-UK-tax-year boundary approximation in the tax-year restated-month count (RISK-02, not fixed this story since it cannot currently manifest). Deviation check: none filed - both are disclosed system-limitation notes, not gaps left by this story's own work."
         }
       }
     },

@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.11.0
-**Last Updated:** 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — v9.6.0 entry: alerts_endpoints.md v0.8 reflection_reminder alert type); prior — 2026-09-08 (ST-23, EPIC-04, v9.2, BLG-GOV-205 — new "Entry Template" section formalising the canonical structure; conformance check confirms all existing entries already match, no migration needed); prior — 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — v8.9.0 entry: 3 new Backtest Rule Change endpoints); prior history retained — see prior entries in version control.
+**Version:** 1.12.0
+**Last Updated:** 2026-09-22 (ST-07 + ST-08, EPIC-02, v9.6, BLG-FR-04 + BLG-FR-05 — v9.6.0 entry: reports_endpoints.md v0.13, null_fee_trade_count field plus month-end snapshot/restatement-diff fields); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — v9.6.0 entry: alerts_endpoints.md v0.8 reflection_reminder alert type); prior — 2026-09-08 (ST-23, EPIC-04, v9.2, BLG-GOV-205 — new "Entry Template" section formalising the canonical structure; conformance check confirms all existing entries already match, no migration needed); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -51,6 +51,19 @@ Rules:
 | Updated endpoint: GET /notifications/preferences | Now returns five preference types; `reflection_reminder` is backfilled for already-seeded portfolios and defaults to `email_enabled: false`. |
 | Updated endpoint: PATCH /notifications/preferences | Accepts the `reflection_reminder` key (a preference type, not a rule type). |
 | Updated endpoint: GET /notifications | `alert_type` gains `reflection_reminder`; `context` is `{trade_id, ticker, exit_date}` for that type. |
+
+### reports_endpoints.md — v0.13 (UPDATED)
+
+**EPIC:** EPIC-02
+**ST:** ST-07, ST-08
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /reports/monthly-pnl | Per-month `data[]` objects gain `null_fee_trade_count` — count of that month's closed trades with `entry_fees` or `exit_fees` NULL in `trade_history` (BLG-FR-04). Audit signal only; does not change `realised_pnl_gbp`. |
+| Updated endpoint: GET /reports/monthly-pnl | Per-month `data[]` objects gain `snapshotted`/`restated`/`snapshot_realised_pnl_gbp`/`restated_diff_gbp` — month-end immutable baseline + restatement diff, backed by new table `monthly_pnl_snapshots` (BLG-FR-05, `data_model.md` DS-20). |
+| Updated endpoint: GET /reports/tax-year | `summary` gains `restated_month_count`/`restated_months_notice`, derived from the same snapshot table for months overlapping the tax year (BLG-FR-05). No separate tax-year snapshot. |
+
+None of the above fields are added to either endpoint's `format=csv` export.
 
 ---
 
