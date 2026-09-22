@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-21 (Sprint Execution `2026-09-21__release-v9.6` EPIC-01 — 10 new items filed from execution and PR-review findings: BLG-SPEC-161/162, BLG-FE-184/185/186, BLG-OPS-168, BLG-QA-188/189, BLG-BE-123/124; BLG-QA-188 wording corrected to name the staging database); prior — 2026-09-21 (Release Planning `2026-09-21__release-v9.6` STEP 4 — 32-item / 28.00-day release slice appended, marker `RP:v9.6:2026-09-21__release-v9.6`); prior — 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` — idea intake `IW-20260919-01` dispositioned: 37 items filed (`BLG-AI-07`, `BLG-API-04/05`, `BLG-BE-121/122`, `BLG-FE-180–183`, `BLG-FEAT-96–98`, `BLG-FR-04/05`, `BLG-GOV-338–345`, `BLG-OPS-165–167`, `BLG-QA-182–187`, `BLG-SEC-37/38`, `BLG-SPEC-157–160`); `BLG-GOV-329` P3→P2); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-22 (session — 4 new item(s) added: BLG-FE-187, BLG-FE-188, BLG-BE-125, BLG-BE-126 — PR #1751 agent-mediated review findings on ST-07/ST-08/EPIC-02/2026-09-21__release-v9.6: two frontend-surfacing gaps and two backend Director-of-Quality findings); prior — 2026-09-21 (Sprint Execution `2026-09-21__release-v9.6` EPIC-01 — 10 new items filed from execution and PR-review findings: BLG-SPEC-161/162, BLG-FE-184/185/186, BLG-OPS-168, BLG-QA-188/189, BLG-BE-123/124; BLG-QA-188 wording corrected to name the staging database); prior — 2026-09-21 (Release Planning `2026-09-21__release-v9.6` STEP 4 — 32-item / 28.00-day release slice appended, marker `RP:v9.6:2026-09-21__release-v9.6`); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4948,6 +4948,88 @@ In `backend/services/alerts_service.py::_evaluate_reflection_reminders`, an exce
 **Acceptance Criteria**
 - A read notification is never re-enqueued for delivery, asserted by a test
 - Unread, undelivered notifications are still retried up to 3 times (existing behaviour unchanged)
+
+---
+
+### BLG-FE-187 — Monthly P&L's NULL-fee audit flag has no frontend surfacing
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Financial Reporting & Records Owner; Frontend Specifications & UX Documentation Owner
+**Source:** ST-07/EPIC-02/2026-09-21__release-v9.6 (BLG-FR-04) — PR #1751 agent-mediated review found `sprint_backlog.md`'s own Notes required "Playwright or recorded staging run required for the visible NULL-fee count," but no UI element was built — 2026-09-22
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** v9.7
+
+**Problem**
+`GET /reports/monthly-pnl` returns `null_fee_trade_count` per month (count of closed trades with a NULL `entry_fees`/`exit_fees`), but the field is not rendered anywhere on the Monthly P&L page — confirmed via `grep -rn "null_fee_trade_count" src/` returning nothing. The story's own acceptance criterion ("visible in Monthly P&L") is not met at the UI level, only at the API level.
+
+**Scope**
+- Add a visible indicator (badge/tooltip/column) on the Monthly P&L table for any month with `null_fee_trade_count > 0`
+- Add Playwright coverage for the indicator's presence/absence
+
+**Acceptance Criteria**
+- A month with `null_fee_trade_count > 0` shows a visible indicator on the Monthly P&L page; a month with `0` does not
+- Playwright test covering the above passes in CI
+
+---
+
+### BLG-FE-188 — Month-end P&L restatement diff has no frontend surfacing
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Financial Reporting & Records Owner; Frontend Specifications & UX Documentation Owner
+**Source:** ST-08/EPIC-02/2026-09-21__release-v9.6 (BLG-FR-05) — PR #1751 agent-mediated review found `stage4_backlog_slice.md`'s own Notes stated "Observable diff AC is frontend-visible (Playwright or recorded staging run)," and the addendum said the Tax Year summary bar should show the API-supplied notice, but no UI element was built — 2026-09-22
+**Effort:** S (~1d)
+**Provisional-Target:** v9.7
+
+**Problem**
+`GET /reports/monthly-pnl` returns `restated`/`restated_diff_gbp`/`snapshot_realised_pnl_gbp` per month, and `GET /reports/tax-year` returns `summary.restated_month_count`/`restated_months_notice` — none of these are rendered anywhere (confirmed via `grep -rn "restated" src/` returning nothing). The story's acceptance criterion ("surfaces a restatement diff") and the addendum's own framing ("Tax Year summary bar shows... notice") are unmet at the UI level.
+
+**Scope**
+- Add a restatement indicator to the Monthly P&L table for any month with `restated: true`, showing `snapshot_realised_pnl_gbp` and `restated_diff_gbp`
+- Render `restated_months_notice` on the Tax Year page's summary bar when non-null
+- Add Playwright coverage for both
+
+**Acceptance Criteria**
+- A restated month shows its diff on the Monthly P&L page
+- A tax year with `restated_month_count > 0` shows the notice on its summary bar
+- Playwright tests covering both pass in CI
+
+---
+
+### BLG-BE-125 — Month-closure check and Monthly P&L's own SQL window use different clock sources
+**Priority:** P3 (Low)
+**Type:** Backend
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1751 agent-mediated review (Director of Quality finding) on ST-08/EPIC-02/2026-09-21__release-v9.6 — 2026-09-22
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.7
+
+**Problem**
+`reports_service.py`'s `_is_closed_month()` determines the current month via `datetime.now(timezone.utc).date()`, while `database.py`'s `get_monthly_pnl()` windows its SQL by Postgres's `CURRENT_DATE` (server session timezone, not guaranteed UTC). Near a month boundary the two could disagree about which month is "current," which now also affects `monthly_pnl_snapshots` baselining correctness, not just display.
+
+**Scope**
+- Derive "current month" from a single source of truth (either pass the DB's `CURRENT_DATE` back to Python, or query with an explicit `AT TIME ZONE 'UTC'`)
+
+**Acceptance Criteria**
+- A test asserts the same (year, month) tuple is used for both the SQL window and the closed-month check regardless of server timezone setting
+
+---
+
+### BLG-BE-126 — Monthly P&L snapshot lookup opens one DB connection per closed month
+**Priority:** P3 (Low)
+**Type:** Backend
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1751 agent-mediated review (Director of Quality finding) on ST-08/EPIC-02/2026-09-21__release-v9.6 — 2026-09-22
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`_snapshot_month()` is called once per closed month inside `get_monthly_pnl_report()`'s loop, and each of `get_monthly_pnl_snapshot()`/`insert_monthly_pnl_snapshot_if_absent()` opens its own connection via `get_db()`. Over the ~24-month rolling window this is up to ~24 extra connections per report read. Not a correctness bug today, but worth addressing before this endpoint sees high traffic.
+
+**Scope**
+- Batch the snapshot read (and, where applicable, the baseline insert) into a single query/connection per report call instead of per month
+
+**Acceptance Criteria**
+- `GET /reports/monthly-pnl` opens at most one additional connection (beyond the existing `get_monthly_pnl` call) regardless of how many closed months are in the response
 
 ---
 
