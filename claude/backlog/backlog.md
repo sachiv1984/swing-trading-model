@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-22 (session — 1 new item added: BLG-FE-189, Cash Management deposit/withdraw unreachable from shipped UI after DashboardHome redesign — P1 live-blocking regression, filed resolved same-session via hotfix/cash-management-entry-point-and-silent-errors); prior — 2026-09-22 (session — 1 new item added: BLG-GOV-346, size "grep-and-fix-everywhere"/"verify against live environment" story classes a notch higher by default, per PR #1753/#1754 agent-mediated Product Owner review finding); prior — 2026-09-22 (EPIC-04/EPIC-05 merge reconciliation — 2 new items added independently on sibling branches, both retained, deliberately non-colliding IDs: BLG-QA-190, remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules["database"] swap pattern; BLG-QA-191, I/O-boundary test coverage gap in EPIC-04's staleness/CI-usage scripts); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-22 (session — 2 new items added: BLG-FE-190, doFetch error `detail` fallback assumes a string, breaks on FastAPI 422 validation-error arrays; BLG-QA-192, no regression test pins the Array.isArray guard that fixed PR #1755's global crash bug — both Director of Quality review follow-ups from PR #1755); prior — 2026-09-22 (session — 1 new item added: BLG-FE-189, Cash Management deposit/withdraw unreachable from shipped UI after DashboardHome redesign — P1 live-blocking regression, filed resolved same-session via hotfix/cash-management-entry-point-and-silent-errors); prior — 2026-09-22 (session — 1 new item added: BLG-GOV-346, size "grep-and-fix-everywhere"/"verify against live environment" story classes a notch higher by default, per PR #1753/#1754 agent-mediated Product Owner review finding); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -3073,6 +3073,46 @@ The full pipeline (screener hit → watchlist → research → trade plan → po
 - Playwright coverage exists and passes in CI for all of the above
 
 **Resolution (2026-09-22):** Fixed same-session on `hotfix/cash-management-entry-point-and-silent-errors`. Head of UX & Design decision: the trigger is mounted globally in `src/Layout.js` (desktop sidebar + mobile header icon), not as a DashboardHome card or a Trade-Entry-local button — an account-level action belongs in persistent global nav, not a page-scoped affordance, precisely because the triggering P1 showed the need can surface from any flow. `doFetch`, `TradeEntry.js`, and `CashManagementModal.js` fixed as scoped above. Both spec docs updated (`cash_management_modal.md` v1.1→v1.2, `api_dependencies.md` v1.2→v1.3). `tests/e2e/cash-management-global-trigger.spec.js` added — 6 new ACs (SC-CASH-01…06), all passing locally. Filed here for audit trail per this repo's established pattern of recording P1 findings even when resolved same-session (cf. `BLG-GOV-346`); left in the active backlog rather than the archive since retirement there is reserved for the `groom backlog` engine sweep, not ad hoc filing.
+
+---
+
+### BLG-FE-190 — doFetch's error `detail` fallback assumes a string, breaks on FastAPI 422 validation-error arrays
+**Priority:** P3 (Low)
+**Type:** Frontend / UX (API-boundary error handling)
+**Owner:** Frontend Specifications & UX Documentation Owner; Backend Engineering Patterns Owner (API contract shape)
+**Source:** Director of Quality review, PR #1755 — https://github.com/sachiv1984/swing-trading-model/pull/1755#issuecomment-5781827549 — 2026-09-22
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`src/api/base44Client.js`'s `doFetch` (fixed in PR #1755 to fall back from `json?.message` to `json?.detail` on error responses) assumes `detail` is always a string. FastAPI's automatic 422 Unprocessable Entity responses (Pydantic validation errors) shape `detail` as an **array** of `{loc, msg, type}` objects, not a string — a real, reachable path since `backend/models/requests.py`'s `AddPositionRequest` has non-Optional `shares`/`entry_price` fields, and a client-side `parseFloat` failure could plausibly send `null` for one of them. In that path, any caller doing `toast.error(error.message)` (e.g. `TradeEntry.js`, `CashManagementModal.js`, both touched by PR #1755) would render something like `[object Object]` instead of a useful message. Not a regression introduced by PR #1755 — previous behaviour (generic "Request failed") was equally unhelpful — but a real gap surfaced by that PR's own fix.
+
+**Scope**
+- `doFetch` (or its callers) should detect when `json.detail` is an array and format it into a readable string (e.g. join each item's `msg`, optionally prefixed by `loc`) rather than passing the raw array through to consumers expecting a string
+
+**Acceptance Criteria**
+- A 422 response with an array-shaped `detail` renders a readable error message via toast (not `[object Object]` or similar)
+- Covered by a Playwright test that mocks a 422 array-detail response on a `doFetch`-based call and asserts the toast text
+
+---
+
+### BLG-QA-192 — No regression test pins the Array.isArray guard that fixed the global crash bug in Layout.js/CashManagementModal.js
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA Testing Owner
+**Source:** Director of Quality review, PR #1755 — https://github.com/sachiv1984/swing-trading-model/pull/1755#issuecomment-5781827549 — 2026-09-22
+**Effort:** XS (<1h)
+**Provisional-Target:** Next release after v9.6
+
+**Problem**
+PR #1755's first commit crashed the entire app on every page (not just cash-management-related ones) because `Layout.js`'s `cashTransactionsForModal` query used `result || []`, which doesn't guard against a non-array-but-truthy response shape (e.g. `{}`). `CashManagementModal.js`'s `transactions?.slice(0, 5)` then threw a `TypeError`, caught by CI (7/8 Playwright shards failed across ~15 unrelated spec files) and fixed in commit `dee4e915` with an `Array.isArray()` guard in both files. The existing 6 tests in `tests/e2e/cash-management-global-trigger.spec.js` all use route mocks that already return correctly-shaped arrays, so none of them would catch a regression of this exact bug if the guard were accidentally removed or bypassed in a future change.
+
+**Scope**
+- Add a Playwright test (in `tests/e2e/cash-management-global-trigger.spec.js` or a new spec) that mocks `GET /cash/transactions` returning a non-array `data` shape (e.g. `{status:'ok', data: {}}`) and asserts the app still renders correctly on an unrelated page (e.g. the body/main content is visible, no crash) rather than throwing
+
+**Acceptance Criteria**
+- New Playwright test exists, fails against a reverted (pre-`dee4e915`) version of `Layout.js`/`CashManagementModal.js`'s guards, and passes against the current guarded version
+- Passes in CI
 
 ---
 
