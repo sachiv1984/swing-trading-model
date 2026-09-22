@@ -254,7 +254,7 @@
       "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-03.md",
       "test_scenarios": [
         "tests/test_backtest_rule_runs_pagination.py",
