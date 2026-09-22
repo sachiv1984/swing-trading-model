@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-22T12:02:29Z",
+  "last_updated_utc": "2026-09-22T12:15:29Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -498,71 +498,80 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-05.md",
       "test_scenarios": [
-        "tests/test_trade_plan_audit_log.py"
+        "tests/test_trade_plan_audit_log.py",
+        "tests/test_openapi_drift_gate.py"
       ],
       "stories": {
         "ST-18": {
           "title": "Quarterly full-suite Playwright re-run against a fresh staging seed",
           "classification": "delegated_qa",
-          "status": "not_started",
+          "status": "blocked_qa",
           "assigned_to": "qa",
           "github_issue": 1735,
-          "branch": null,
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-05",
+          "commit_sha": "542a87ca927618027f60b91fb6ff69f5c8acb6b7",
+          "delegation_record_id": "DEL-20260921-07",
+          "blocked_since_utc": "2026-09-22T12:15:04Z",
+          "unblock_criteria": "See DEL-20260921-07 / qa_evidence_EPIC-05.md ST-18 row",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/testing/quarterly_playwright_staging_reseed_procedure.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.C.qa_evidence_entry",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (cadence/procedure documented) done - docs/testing/quarterly_playwright_staging_reseed_procedure.md. Surfaces an architecture finding (Playwright suite is entirely mock-based, no live backend/DB dependency by design) requiring Director of Quality disposition on a proposed two-part redefinition rather than deciding unilaterally. AC2 (first quarterly run completed with results recorded) blocked: this sandbox cannot install Chromium (confirmed structural limitation, unrelated to credentials) for Part 1; Part 2's staging-reset step is destructive and needs an explicit human-observed decision. Filed DEL-20260921-07 and a qa_evidence_EPIC-05.md row (Pending DoQ) per STEP 3.1.C. Deviation check: this IS the deviation/blocker being tracked via DEL-20260921-07, not a separate DEV-* record (per the delegated_qa unblock pattern, not the autonomous deviation pattern)."
         },
         "ST-19": {
           "title": "DoQ checklist addendum for flaky-test disposition",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1736,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-05",
+          "commit_sha": "cf027027521e39e4a99e8c1dc3dd5d0a5f3290e1",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T12:05:48Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/templates/qa_evidence_template.md#Flaky-Test Disposition Addendum"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (addendum added to the DoQ checklist) verified: new Flaky-Test Disposition Addendum section in qa_evidence_template.md (v1.15->v1.16), a retry/quarantine/fix-now decision framework. AC2 (cross-reference confirmed correct against the existing quarantine item) verified: distinguished docs/testing/flaky_test_quarantine_process.md (BLG-QA-117, v7.8, Canonical - the actual shipped mechanism) from BLG-QA-75 (separate, still gate-conditional broader tracking item) - read both source documents directly rather than assuming which 'quarantine item' the story meant. Governance File Edit Checklist completed: qa_evidence_template.md version bumped, OPERATIONAL_GUIDE.md SS14 table/self-row/header/Change Log top row all updated together, 3-way self-consistency confirmed via the governance-drift skill, prompt_change_log.md appended (2 rows). Deviation check: none - matches AC exactly, this is a documentation-creation story (Case B)."
         },
         "ST-20": {
           "title": "Standing regression check for the OpenAPI Drift Detection gate itself",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1737,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-05",
+          "commit_sha": "75f6f7f6d6523cbf1524b442c5c8c3c687cb7d75",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T12:11:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_openapi_drift.py",
+            "tests/test_openapi_drift_gate.py",
+            ".github/workflows/openapi-drift.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (both fixtures exist and pass in CI) verified: extracted the gate's inline heredoc logic into scripts/check_openapi_drift.py (byte-for-byte behaviourally identical - confirmed via a direct run against the real repo tree before/after, 45 contract files/146/146 endpoints/no drift/exit 0 both times); tests/test_openapi_drift_gate.py adds a deliberate-drift fixture (2 directions) and a compliant-case fixture (plus a KNOWN_GAPS exemption case) - 9 tests total against real tmp_path files, not mocked. AC2 (deliberate revert confirmed to fail the fixture) verified via a real mutation on compute_drift() (reverted to always return no-drift), re-run showing 3 genuine failures (both deliberate-drift tests + the dedicated mutation-check test), then restored and re-confirmed all 9 green. Workflow updated to call the extracted script instead of carrying the logic inline - no behavioural change to the CI gate itself. Deviation check: none - matches AC exactly; Case D (CI/infrastructure) for spec_references."
         },
         "ST-21": {
           "title": "`test_trade_plan_audit_log.py`'s unrestored `sys.modules[\"database\"]` swap is a latent test-isolation hazard",
@@ -846,6 +855,7 @@
   },
   "blocked_items": [
     "ST-16",
+    "ST-18",
     "ST-22",
     "ST-23",
     "ST-28",
@@ -854,6 +864,7 @@
   "delegated_items": [
     "ST-09",
     "ST-16",
+    "ST-18",
     "ST-22",
     "ST-23",
     "ST-28",
@@ -873,6 +884,8 @@
     "ST-11",
     "ST-12",
     "ST-13",
+    "ST-19",
+    "ST-20",
     "ST-21"
   ],
   "open_escalations": [
@@ -916,6 +929,7 @@
     "ST-13 completed 2026-09-22, commit 8d4a7ad8. EPIC-03 now done (all 5 stories: ST-09..ST-13 complete) - not yet merged, qa_evidence_EPIC-03.md + PR still required before STEP 4 merge gate.",
     "EPIC-03 merged by the human developer via PR #1752 at 2026-09-22T09:52:17Z (merge commit accda04d). Merge-gate resync: pr_status/status merged; orphaned post-merge commit check (origin/main..origin/exec/2026-09-21__release-v9.6/EPIC-03) found none. No sibling EPIC branches exist yet (EPIC-04..EPIC-07 not yet cut), so no sibling execution_state sync was needed (STEP 4 3c). Product Owner reviewed the agent-mediated PR review's flagged question and directed BLG-BE-127 P3->P2 in the same session (claude/backlog/backlog.md).",
     "EPIC-04 opened 2026-09-22 (separate session segment, same day): branch exec/2026-09-21__release-v9.6/EPIC-04 cut from main. ST-14/ST-15/ST-17 completed and pushed; ST-16 remains blocked_decision (ESC-EXEC-20260921-02, unresolved - confirmed live via a 403 on a real Actions-write API call this session, not merely assumed). EPIC-04 not yet done (1 of 4 stories outstanding, non-blocking). Per execution_prompt.md STEP 3 ('work through EPICs in dependency order... do not block the entire sprint on one item'), moved on to EPIC-05 rather than stall on ST-16's external-credential blocker.",
-    "EPIC-05 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-05 cut from main (EPIC-04 not yet merged - this branch's local execution_state.json therefore does not yet reflect EPIC-04's ST-14/ST-15/ST-17 completions; this is the expected multi-branch divergence execution_prompt.md's 'execution_state.json Ownership' section and CLAUDE.md §8 anticipate - reconciled at merge time via the union-of-completed-items rule, not an error). ST-21 completed and pushed (commit 185636a4) - see its own notes for the AC-3 partial-shortfall deviation (DEV-EPIC05-ST21-01) and follow-up BLG-QA-190. Sequencing note: ST-20 (EPIC-05) shares .github/workflows/* with EPIC-04's ST-17 per sprint_backlog.md's own dependency note ('EPIC-05 rebases') - low actual collision risk (different files: ST-17 added nightly-stop-update-staleness-check.yml/ci-usage-report.yml; ST-20 will touch openapi-drift.yml/its own test) but flagged here so a rebase-and-recheck happens before EPIC-05's own PR opens, once EPIC-04 eventually merges."
+    "EPIC-05 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-05 cut from main (EPIC-04 not yet merged - this branch's local execution_state.json therefore does not yet reflect EPIC-04's ST-14/ST-15/ST-17 completions; this is the expected multi-branch divergence execution_prompt.md's 'execution_state.json Ownership' section and CLAUDE.md §8 anticipate - reconciled at merge time via the union-of-completed-items rule, not an error). ST-21 completed and pushed (commit 185636a4) - see its own notes for the AC-3 partial-shortfall deviation (DEV-EPIC05-ST21-01) and follow-up BLG-QA-190. Sequencing note: ST-20 (EPIC-05) shares .github/workflows/* with EPIC-04's ST-17 per sprint_backlog.md's own dependency note ('EPIC-05 rebases') - low actual collision risk (different files: ST-17 added nightly-stop-update-staleness-check.yml/ci-usage-report.yml; ST-20 will touch openapi-drift.yml/its own test) but flagged here so a rebase-and-recheck happens before EPIC-05's own PR opens, once EPIC-04 eventually merges.",
+    "ST-19 completed (commit cf027027, governance file edit - qa_evidence_template.md v1.15->v1.16, OPERATIONAL_GUIDE.md v4.200->v4.201, prompt_change_log.md appended - Governance File Edit Checklist completed and 3-way self-consistency confirmed via the governance-drift skill). ST-20 completed (commit 75f6f7f6 - extracted the OpenAPI Drift Detection gate's inline CI logic into scripts/check_openapi_drift.py, byte-for-byte behaviourally verified identical against the real repo tree; a real mutation check on compute_drift() confirmed the fixtures genuinely fail against broken logic, not just a tautology). ST-18 completed autonomous portion (commit 542a87ca - cadence/procedure documented, disclosing that the Playwright suite's mock-based architecture means 'staging seed' doesn't literally apply as worded; delegated the live-run portion to Director of Quality via DEL-20260921-07, blocked_qa - not fabricated given this sandbox cannot install Chromium and staging-reset is destructive). EPIC-05 now has 3 of 4 stories done (ST-19, ST-20, ST-21); ST-18 blocked_qa (non-blocking per STEP 3.1.C - do not stall the sprint). EPIC-05 not yet done (STEP 3.2 requires all stories done, including delegated_qa items reaching unblock)."
   ]
 }
