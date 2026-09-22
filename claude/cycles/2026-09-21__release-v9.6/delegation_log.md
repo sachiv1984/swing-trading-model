@@ -107,3 +107,17 @@ Append-only. Do not edit previous entries.
 
 ---
 
+
+## DEL-20260921-07
+
+- **ST Item:** ST-18 - Quarterly full-suite Playwright re-run against a fresh staging seed
+- **EPIC:** EPIC-05
+- **Classification:** delegated_qa
+- **Assigned to:** Director of Quality
+- **GitHub Issue:** #1735
+- **Branch:** exec/2026-09-21__release-v9.6/EPIC-05
+- **Delegated at:** 2026-09-22T12:15:00Z
+- **What is needed:** AC-01 (cadence and seed procedure documented) is complete - see `docs/testing/quarterly_playwright_staging_reseed_procedure.md`. That document also surfaces an architecture finding needing disposition: the existing Playwright suite is entirely mock-based (no live backend/DB dependency by design), so "a fresh staging seed" doesn't literally apply to it - a two-part redefinition (Part 1: Playwright re-run on a fresh CI build; Part 2: Phase-B backend suite against a freshly reset staging seed) is proposed as the recommended path. Needs: (a) Director of Quality disposition on the redefinition, (b) Part 1's run triggered via `gh workflow run playwright.yml` on a real GitHub-hosted runner (this sandbox cannot install Chromium - confirmed structural limitation), (c) Part 2's run triggered via `reset-and-seed-staging.yml` then a Phase-B test run against the freshly-seeded staging DB (destructive step, must not be triggered without explicit human-observed decision).
+- **Unblock criteria:** Director of Quality confirms the redefinition (or specifies an alternative) and either performs both first runs or authorises the engine to trigger them in a future session, with results recorded in `docs/testing/quarterly_playwright_staging_reseed_procedure.md`'s Run Log.
+- **Commit format required:** `[EPIC-05][ST-18] <description>` pushed to `exec/2026-09-21__release-v9.6/EPIC-05`
+- **Status:** Pending
