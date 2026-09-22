@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-22 (session — 4 new item(s) added: BLG-FE-187, BLG-FE-188, BLG-BE-125, BLG-BE-126 — PR #1751 agent-mediated review findings on ST-07/ST-08/EPIC-02/2026-09-21__release-v9.6: two frontend-surfacing gaps and two backend Director-of-Quality findings); prior — 2026-09-21 (Sprint Execution `2026-09-21__release-v9.6` EPIC-01 — 10 new items filed from execution and PR-review findings: BLG-SPEC-161/162, BLG-FE-184/185/186, BLG-OPS-168, BLG-QA-188/189, BLG-BE-123/124; BLG-QA-188 wording corrected to name the staging database); prior — 2026-09-21 (Release Planning `2026-09-21__release-v9.6` STEP 4 — 32-item / 28.00-day release slice appended, marker `RP:v9.6:2026-09-21__release-v9.6`); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-22 (Sprint Execution `2026-09-21__release-v9.6` EPIC-03/ST-12 — 1 new item added: BLG-BE-127, float-vs-Decimal fee-rounding discrepancy found by the ST-12 money-arithmetic audit); prior — 2026-09-22 (session — 4 new item(s) added: BLG-FE-187, BLG-FE-188, BLG-BE-125, BLG-BE-126 — PR #1751 agent-mediated review findings on ST-07/ST-08/EPIC-02/2026-09-21__release-v9.6: two frontend-surfacing gaps and two backend Director-of-Quality findings); prior — 2026-09-21 (Sprint Execution `2026-09-21__release-v9.6` EPIC-01 — 10 new items filed from execution and PR-review findings: BLG-SPEC-161/162, BLG-FE-184/185/186, BLG-OPS-168, BLG-QA-188/189, BLG-BE-123/124; BLG-QA-188 wording corrected to name the staging database); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -5030,6 +5030,28 @@ In `backend/services/alerts_service.py::_evaluate_reflection_reminders`, an exce
 
 **Acceptance Criteria**
 - `GET /reports/monthly-pnl` opens at most one additional connection (beyond the existing `get_monthly_pnl` call) regardless of how many closed months are in the response
+
+---
+
+### BLG-BE-127 — UK stamp duty / US FX fee rounding uses float `round()` instead of Decimal, under-rounding ~0.18%/0.02% of half-penny-boundary gross costs by £0.01
+**Priority:** P3 (Low)
+**Type:** Backend
+**Owner:** Backend Engineering Patterns Owner; Financial Reporting & Records Owner
+**Source:** ST-12/EPIC-03/2026-09-21__release-v9.6 (BLG-BE-121) — Float-vs-Decimal money-arithmetic audit — 2026-09-22
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/utils/calculations.py`'s `calculate_uk_entry_fees`/`calculate_us_entry_fees` compute `stamp_duty`/`fx_fee` as `gross_cost * rate` in native `float` and round only at the response-formatting boundary via Python's `round(x, 2)` (never inside these functions themselves — callers, e.g. `sizing_service.size_position`, apply the rounding). A brute-force scan of gross-cost values from £0.01 to £5000.00 in penny steps, comparing `round(gross_cost * rate, 2)` against a `Decimal`-based `ROUND_HALF_UP` calculation of the same figure, found 917/499999 (~0.18%) UK stamp-duty values and 90/499999 (~0.018%) US FX-fee values where the two disagree by exactly £0.01 — always in the direction of the float path under-charging by 1p. This occurs only where `gross_cost * rate` lands exactly on (or within float-representation error of) a half-penny boundary (e.g. UK gross_cost = £3.00 → raw stamp duty 0.015 → float `round()` gives £0.01, `Decimal`/`ROUND_HALF_UP` gives £0.02). No canonical spec (`strategy_rules.md` or an API contract) currently defines a required rounding mode for fee calculation, so this is not a deviation from a documented rule — it is a latent correctness gap the audit surfaces. Not fixed as part of ST-12 itself: the fix touches live-capital fee calculation on every future UK/US entry and exit, and deserves its own reviewed story with dedicated before/after golden-test coverage rather than folding a behaviour change into an audit story.
+
+**Scope**
+- Migrate `calculate_uk_entry_fees`/`calculate_us_entry_fees`/`calculate_uk_exit_fees`/`calculate_us_exit_fees` (and any other money-arithmetic call site the audit's inventory flags — see `docs/ops/money_arithmetic_audit_2026-09-22.md`) to compute the rate-multiplication step in `Decimal` and round with `ROUND_HALF_UP`, matching UK/US retail brokerage convention (round-half-up on currency, not Python's binary-float round-half-to-even-with-representation-error)
+- Golden tests already exist for the current (float) behaviour at `tests/test_money_arithmetic_golden.py::TestKnownFloatDecimalDiscrepancies` — extend/flip these once the fix lands so they assert the corrected `Decimal` output instead
+
+**Acceptance Criteria**
+- All four fee functions round via `Decimal`/`ROUND_HALF_UP` instead of float `round()`
+- The previously-documented discrepancy class (`tests/test_money_arithmetic_golden.py::TestKnownFloatDecimalDiscrepancies`) no longer reproduces — those tests are updated to assert the corrected value
+- Full existing fee/sizing test suite still passes unchanged elsewhere (no other rounding behaviour regresses)
 
 ---
 
