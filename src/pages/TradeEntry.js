@@ -119,6 +119,14 @@ export default function TradeEntry() {
         navigate(createPageUrl("Positions"));
       }
     },
+    // Bug fix (this session, P1): this mutation had no onError handler at all — a
+    // 400 from POST /portfolio/position (e.g. "Insufficient funds...") failed
+    // completely silently: no toast, no message, the button just re-enabled with
+    // no explanation. See also the doFetch fix in base44Client.js, which was
+    // dropping the backend's actual error text in favour of a generic message.
+    onError: (error) => {
+      toast.error(error?.message || "Failed to add position.");
+    },
   });
 
   const handleChange = (field, value) => {

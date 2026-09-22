@@ -3,13 +3,13 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-03-18
+**Version:** 1.2
+**Last Updated:** 2026-09-22 (P1 hotfix — entry point moved to a global nav/header trigger, present on every page; the old widget-based Dashboard.js "Cash Balance" tile this doc previously described was replaced by DashboardHome.js, EPIC-03/ST-05, without carrying an equivalent trigger forward, leaving this modal unreachable from the shipped UI); prior — 2026-03-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose & Usage Context
 The Cash Management Modal allows users to record **deposits and withdrawals** so that portfolio cash and P&L remain accurate over time.  
-It is typically opened from the Dashboard (by clicking cash balance) or any context where the user needs to adjust cash outside of trade entries and exits.
+It is opened from a persistent "Manage Cash" trigger in the global nav/header (`src/Layout.js`), present on every page — an account-level action, not a page-scoped one, per the "or any context where the user needs to adjust cash outside of trade entries and exits" intent already stated below. This also keeps it reachable mid-flow (e.g. from Trade Entry after an Insufficient Funds rejection) without losing in-progress form state.
 
 Users rely on this modal to:
 - Record cash **deposits** (adding funds)  

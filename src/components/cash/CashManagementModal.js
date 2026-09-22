@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { api } from "../../api/base44Client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
@@ -19,15 +20,28 @@ export default function CashManagementModal({ open, onClose, portfolio, transact
     mutationFn: async (data) => {
       return api.cash.createTransaction(data);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      // Bug fix (this session): this previously invalidated "portfolios" (plural),
+      // which matches no query key actually used anywhere in the app (Dashboard.js
+      // and Layout.js's global trigger both key their portfolio query "portfolioApi";
+      // Positions.js uses "portfolio"). The cash balance shown elsewhere never
+      // refreshed after a deposit/withdrawal as a result. Invalidate every key in
+      // use so this stays correct regardless of which page/component is mounted.
+      queryClient.invalidateQueries({ queryKey: ["portfolioApi"] });
+      queryClient.invalidateQueries({ queryKey: ["portfolio"] });
       queryClient.invalidateQueries({ queryKey: ["portfolios"] });
       queryClient.invalidateQueries({ queryKey: ["cashTransactions"] });
       setAmount("");
       setNote("");
+      toast.success(
+        type === "deposit"
+          ? `£${Number(response?.amount ?? amount).toLocaleString("en-GB", { minimumFractionDigits: 2 })} deposited.`
+          : `£${Number(response?.amount ?? amount).toLocaleString("en-GB", { minimumFractionDigits: 2 })} withdrawn.`
+      );
       onClose();
     },
     onError: (error) => {
-      alert(error.message || "Failed to create transaction");
+      toast.error(error?.data?.detail || error?.message || "Failed to create transaction");
     }
   });
 

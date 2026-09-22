@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-22 (session — 1 new item added: BLG-GOV-346, size "grep-and-fix-everywhere"/"verify against live environment" story classes a notch higher by default, per PR #1753/#1754 agent-mediated Product Owner review finding); prior — 2026-09-22 (EPIC-04/EPIC-05 merge reconciliation — 2 new items added independently on sibling branches, both retained, deliberately non-colliding IDs: BLG-QA-190, remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules["database"] swap pattern; BLG-QA-191, I/O-boundary test coverage gap in EPIC-04's staleness/CI-usage scripts); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-22 (session — 1 new item added: BLG-FE-189, Cash Management deposit/withdraw unreachable from shipped UI after DashboardHome redesign — P1 live-blocking regression, filed resolved same-session via hotfix/cash-management-entry-point-and-silent-errors); prior — 2026-09-22 (session — 1 new item added: BLG-GOV-346, size "grep-and-fix-everywhere"/"verify against live environment" story classes a notch higher by default, per PR #1753/#1754 agent-mediated Product Owner review finding); prior — 2026-09-22 (EPIC-04/EPIC-05 merge reconciliation — 2 new items added independently on sibling branches, both retained, deliberately non-colliding IDs: BLG-QA-190, remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules["database"] swap pattern; BLG-QA-191, I/O-boundary test coverage gap in EPIC-04's staleness/CI-usage scripts); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -3044,6 +3044,35 @@ The full pipeline (screener hit → watchlist → research → trade plan → po
 - Funnel view displays counts and conversion % for all 5 pipeline stages over a selectable date range
 - Reconciliation with `BLG-FEAT-30` completed and documented (merged, superseded, or confirmed distinct) before either item is scheduled
 - Product Owner sign-off
+
+---
+
+### BLG-FE-189 — Cash Management (deposit/withdraw) unreachable from shipped UI after DashboardHome redesign
+**Priority:** P1 (High)
+**Type:** Frontend / UX Regression
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** Live user report (P1) — user unable to complete a WDC trade (POST /portfolio/position → 400 Insufficient funds) with no way to add cash — 2026-09-22
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.6 (resolved ad hoc, out of cycle — see Resolution below)
+
+**Problem**
+`DashboardHome.js` (EPIC-03/ST-05, `dashboard.md` v2.0) replaced the old widget-based `Dashboard.js`, which had a "Cash Balance" tile opening `CashManagementModal` (deposit/withdraw, backed by working `POST /cash/transaction`). `DashboardHome.js` never carried an equivalent trigger forward. `CashManagementModal.js` and its backend endpoint kept working but became reachable from nowhere in the shipped UI. Compounding this, the same investigation found `TradeEntry.js`'s `createMutation` had no `onError` handler at all, so a 400 (e.g. this insufficient-funds rejection) failed completely silently — no toast, no message — and `base44Client.js`'s `doFetch` only read a `message` field from error bodies, dropping FastAPI's actual `{"detail": "..."}` error text even where errors were handled. Also found: `CashManagementModal.js`'s `onSuccess` invalidated query key `"portfolios"` (plural), which matches no key actually used anywhere in the app, so cash balance displays never refreshed after a deposit/withdrawal even when the modal was reachable.
+
+**Scope**
+- Add a persistent global "Manage Cash" trigger (not a DashboardHome card, not a Trade-Entry-local button — an account-level action reachable from every page, including mid Trade-Entry without losing in-progress form state)
+- Fix `doFetch` to surface `json?.detail` when `json?.message` is absent
+- Add `onError` toast handling to `TradeEntry.js`'s `createMutation`
+- Fix `CashManagementModal.js`'s stale `invalidateQueries` key and its silent `alert()`-based error handling
+- Update `docs/specs/frontend/components/cash_management_modal.md` and `docs/specs/frontend/patterns/api_dependencies.md` to reflect the corrected entry point
+- Playwright coverage for the above (no page.route-mocked AC left uncovered)
+
+**Acceptance Criteria**
+- Cash Management is reachable from every page via a persistent global trigger, including mid Trade-Entry without loss of form state
+- A 400 from `POST /portfolio/position` (or any `doFetch`-based call) surfaces the backend's actual `detail` message to the user via toast
+- A deposit/withdrawal refreshes the displayed cash balance everywhere it's shown
+- Playwright coverage exists and passes in CI for all of the above
+
+**Resolution (2026-09-22):** Fixed same-session on `hotfix/cash-management-entry-point-and-silent-errors`. Head of UX & Design decision: the trigger is mounted globally in `src/Layout.js` (desktop sidebar + mobile header icon), not as a DashboardHome card or a Trade-Entry-local button — an account-level action belongs in persistent global nav, not a page-scoped affordance, precisely because the triggering P1 showed the need can surface from any flow. `doFetch`, `TradeEntry.js`, and `CashManagementModal.js` fixed as scoped above. Both spec docs updated (`cash_management_modal.md` v1.1→v1.2, `api_dependencies.md` v1.2→v1.3). `tests/e2e/cash-management-global-trigger.spec.js` added — 6 new ACs (SC-CASH-01…06), all passing locally. Filed here for audit trail per this repo's established pattern of recording P1 findings even when resolved same-session (cf. `BLG-GOV-346`); left in the active backlog rather than the archive since retirement there is reserved for the `groom backlog` engine sweep, not ad hoc filing.
 
 ---
 

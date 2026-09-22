@@ -59,14 +59,19 @@ async function doFetch(path, { method = 'GET', headers = {}, body, raw = false }
   // If caller wants raw JSON (arrays, non-wrapped responses)
   if (raw) {
     if (!res.ok) {
-      throw { status: res.status, data: json, message: json?.message || 'Request failed' };
+      // Bug fix (this session, P1): FastAPI's HTTPException(detail=...) serialises
+      // errors as {"detail": "..."}, not {"message": "..."}. Only checking `message`
+      // silently dropped every backend-generated error string (e.g. "Insufficient
+      // funds. Need £1310.70, have £X.XX") in favour of a generic 'Request failed',
+      // with no caller able to recover the real reason.
+      throw { status: res.status, data: json, message: json?.message || json?.detail || 'Request failed' };
     }
     return json;
   }
 
   // "Base44-like" envelope: { status, data }
   if (!res.ok || json?.status === 'error') {
-    throw { status: res.status, data: json, message: json?.message || 'Request failed' };
+    throw { status: res.status, data: json, message: json?.message || json?.detail || 'Request failed' };
   }
 
   // If server uses {status, data}, return data; else return json
