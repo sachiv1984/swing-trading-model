@@ -493,8 +493,8 @@
     "EPIC-05": {
       "status": "done",
       "branch": "exec/2026-09-21__release-v9.6/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1754,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-05.md",
       "test_scenarios": [
