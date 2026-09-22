@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-09-21
+Last Updated: 2026-09-22 (ESC-EXEC-20260921-01 resolved — ST-09 trailing-stop entry-floor decision ratified, option (i)); prior — 2026-09-21 (cycle open, 8 escalations raised)
 
 ---
 
@@ -26,6 +26,14 @@ Append-only. Do not edit previous entries.
 - **Blocks execution:** No (blocks only ST-09; sprint continues per STEP 3.1.D)
 - **Disposition:** Open
 - **Resolution summary:** 
+
+---
+
+## ESC-EXEC-20260921-01 — Resolution (Addendum)
+
+- **Resolved at:** 2026-09-22T08:14:51Z (well within the 72h SLA due 2026-09-24T15:51:14Z)
+- **Disposition:** Resolved
+- **Resolution summary:** Strategy Rules & System Intent Owner ruling (agent-mediated, §5.3, on explicit user direction): **Option (i)**. The 2026-09-16 ruling (`strategy_rules.md` v1.10, ST-04/EPIC-01/v9.5) stands as the formal decision — the entry-price breakeven floor is intentional live behaviour (production behaviour since `BLG-BE-102`/v8.9's P0 fix), and `position_manager.py`'s documented, tested exception (`strategy_rules.md` §12.3 note; `tests/test_trailing_stop_breakeven_floor.py::TestPositionManagerNotOnLiveStopPath`) satisfies "all three agree" for a decision-first story — the decision itself defines what agreement means, and a deliberate, reasoned, tested divergence recorded in the spec is agreement, not drift. **Option (ii)** rejected: retrofitting the floor into the backtest tool would silently change historical backtest results across the whole strategy validation history — a materially bigger, separately-risked change than this story's scope, and not required by a literal reading of "agree" that the spec's own exception note already resolves. **Option (iii)** rejected: reversing the floor would reintroduce the `BLG-BE-102` P0 bug (a profitable position's stop staying frozen below entry) on live capital. AC-1/AC-2 therefore confirmed already met. The one genuinely outstanding item, AC-3 (a golden-output case exercising the floor-binding scenario), is closed: `tests/golden_outputs.json` gains `SL-08` (profitable position, unfloored ATR trail below entry_price — same worked example as `test_trailing_stop_breakeven_floor.py::test_profitable_stop_never_below_entry_price`), `spec_trailing_stop()` in `test_golden_outputs.py` gains the floor formula (was stale relative to the ratified §7.2 text), and a new implementation cross-check (`test_SL08_implementation_matches_spec`) confirms the real `calculate_trailing_stop()` against the same vector. No change made to `calculate_trailing_stop` or `position_manager.py` — both already match the ratified decision. AC-4 (`BLG-BE-114`/ST-04 unblocked): already resolved at v9.5's own closure (`delegation_log.md` `2026-09-15__release-v9.5:44`) — nothing further needed this cycle. Full stop-loss/sizing suite re-run: `tests/test_golden_outputs.py` + `tests/test_trailing_stop_breakeven_floor.py` + `tests/test_stop_reconciliation.py`, 45/45 passed. Commit `f771d5c9` (EPIC-03). ST-13 (`BLG-BE-122`), which was held pending this decision to avoid an uncoordinated second change on the same nightly stop-update call path, is now unblocked. See `execution_state.json` ST-09 for the full record.
 
 ---
 

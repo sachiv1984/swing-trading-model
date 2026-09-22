@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-22T08:05:38Z",
+  "last_updated_utc": "2026-09-22T08:14:51Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -265,23 +265,34 @@
         "ST-09": {
           "title": "calculate_trailing_stop's entry-price floor for profitable positions diverges from strategy_rules.md §7.2/§7.3 and from the backtest tool",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1726,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
+          "commit_sha": "f771d5c9aa6dfb47594c1c9ca8b1c9739c26e117",
           "delegation_record_id": "DEL-20260921-01",
           "blocked_since_utc": "2026-09-21T15:51:14Z",
           "unblock_criteria": "See ESC-EXEC-20260921-01",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T08:14:51Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#7.2 Profit-aware stop logic",
+            "tests/golden_outputs.json#SL-08",
+            "tests/test_golden_outputs.py",
+            "tests/test_trailing_stop_breakeven_floor.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent-mediated (execution_prompt.md §5.3, on explicit user direction)",
+            "status": "cleared",
+            "date": "2026-09-22",
+            "ruling": "Option (i) — 2026-09-16 ruling (strategy_rules.md v1.10) confirmed as the formal decision; position_manager.py's documented, tested exception satisfies AC-2. See ESC-EXEC-20260921-01 Resolution (Addendum) for full rationale."
+          },
+          "notes": "AC1 (formal decision recorded) and AC2 (position_manager.py, calculate_trailing_stop, and the spec formula all agree) were substantially met before this session (strategy_rules.md v1.10, agent-mediated ruling 2026-09-16, v9.5/ST-04) but needed the owner's explicit confirmation that a documented exception satisfies 'agree' for a decision-first story — obtained this session (ESC-EXEC-20260921-01 resolved, option i). AC3 (new golden-output case for the floor-binding scenario) was the one genuinely outstanding gap — closed via tests/golden_outputs.json SL-08 + test_golden_outputs.py's spec_trailing_stop() floor support + a new implementation cross-check (test_SL08_implementation_matches_spec), commit f771d5c9. AC4 (BLG-BE-114/ST-04 unblocked) was already resolved at v9.5 closure (delegation_log.md 2026-09-15__release-v9.5:44) — nothing further needed. No change to calculate_trailing_stop or position_manager.py — both already matched the ratified decision. Deviation check: none — this story's own work (the golden case + test helper fix) matches the already-canonical spec exactly; no new divergence introduced. ST-13 (BLG-BE-122), held pending this decision per its own sprint_backlog.md sequencing note, is now unblocked."
         },
         "ST-10": {
           "title": "list_backtest_rule_runs has no negative-limit validation and no offset param",
@@ -823,7 +834,6 @@
     }
   },
   "blocked_items": [
-    "ST-09",
     "ST-16",
     "ST-22",
     "ST-23",
@@ -847,12 +857,12 @@
     "ST-06",
     "ST-07",
     "ST-08",
+    "ST-09",
     "ST-10",
     "ST-11",
     "ST-12"
   ],
   "open_escalations": [
-    "ESC-EXEC-20260921-01",
     "ESC-EXEC-20260921-02",
     "ESC-EXEC-20260921-03",
     "ESC-EXEC-20260921-04",
@@ -888,6 +898,7 @@
     "Session-start divergence check (STEP -1) 2026-09-22: git fetch + rev-list confirmed local main == origin/main (0/0) before trusting this file. No SLA-breached open escalations at invocation (all 8 open ESC-EXEC-20260921-* raised 2026-09-21T15:51:14Z, sla_due_utc 2026-09-24T15:51:14Z, not yet due).",
     "EPIC-03 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-03 cut from main (post EPIC-01/EPIC-02 merge). ST-10/ST-11/ST-12 completed (autonomous, 3 commits, pushed). ST-09 remains blocked_decision (ESC-EXEC-20260921-01, unresolved) and ST-13 deliberately not started this session per its own sprint_backlog.md dependency note ('land after ST-09 so the two do not collide on the same call path') - starting it now would risk an uncoordinated second change on the same nightly stop-update call path ahead of ST-09's decision. EPIC-03 therefore not yet done (2 of 5 stories outstanding).",
     "ST-12 filed one out-of-scope-finding backlog item (BLG-BE-127, per CLAUDE.md SS7's new-item-addition exception) for a float-vs-Decimal fee-rounding discrepancy the audit found but did not fix in-story (live-capital behaviour change deferred to its own reviewed follow-up).",
-    "Opportunistic in-file fix disclosure (CLAUDE.md SS7 threshold, confined to this file, this session's own edit): completed_items array was missing ST-07/ST-08 (EPIC-02, already status=done/merged per their own story records) before this session's write - corrected in the same write that added ST-10/ST-11/ST-12, not filed as a separate backlog item (small, low-risk, data-completeness only, confined to a field this story's own commit already touches)."
+    "Opportunistic in-file fix disclosure (CLAUDE.md SS7 threshold, confined to this file, this session's own edit): completed_items array was missing ST-07/ST-08 (EPIC-02, already status=done/merged per their own story records) before this session's write - corrected in the same write that added ST-10/ST-11/ST-12, not filed as a separate backlog item (small, low-risk, data-completeness only, confined to a field this story's own commit already touches).",
+    "ST-09 resolved 2026-09-22 on explicit user direction ('act as Strategy Rules & System Intent Owner and resolve'). Role-ownership check (CLAUDE.md §2): ESC-EXEC-20260921-01's owning_authority field ('Strategy Rules & System Intent Owner') matched the invoked role exactly - no mismatch, proceeded. Ruling: Option (i) from the escalation's own recorded options - see execution_escalations.md ESC-EXEC-20260921-01 Resolution (Addendum) and execution_state.json ST-09 for full rationale. Commit f771d5c9 (EPIC-03). ST-13 now unblocked (was held pending this decision)."
   ]
 }
