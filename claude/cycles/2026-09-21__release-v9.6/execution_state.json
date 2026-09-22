@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-22T00:00:00Z",
+  "last_updated_utc": "2026-09-22T08:05:38Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -250,13 +250,17 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
-      "branch": null,
+      "status": "in_progress",
+      "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_backtest_rule_runs_pagination.py",
+        "tests/test_json_log_formatter.py",
+        "tests/test_money_arithmetic_golden.py"
+      ],
       "stories": {
         "ST-09": {
           "title": "calculate_trailing_stop's entry-price floor for profitable positions diverges from strategy_rules.md §7.2/§7.3 and from the backtest tool",
@@ -282,65 +286,74 @@
         "ST-10": {
           "title": "list_backtest_rule_runs has no negative-limit validation and no offset param",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1727,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
+          "commit_sha": "faf68d5d074ab1fdd519b2691285325f9da97f9e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T08:05:24Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/strategy_benchmark_endpoints.md#GET /strategy/backtest-rule-change/runs",
+            "tests/test_backtest_rule_runs_pagination.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (negative limit -> 400 INVALID_PARAMS, not 500) and AC2 (existing valid-limit behaviour unchanged) verified by tests/test_backtest_rule_runs_pagination.py (7/7 local pass): negative limit/offset both individually and together return 400; limit=0 (non-negative) still 200; default params and explicit offset forwarded correctly to database.get_backtest_rule_runs. Contract (strategy_benchmark_endpoints.md v1.3), openapi.yaml (offset param + 400 response), and api_changelog.md updated in the same commit per CLAUDE.md. Deviation check: none - straightforward bug fix matching the AC exactly, no spec ambiguity."
         },
         "ST-11": {
           "title": "JsonLinesFormatter does not truncate `message` to the spec's 500-char max",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1728,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
+          "commit_sha": "627e7d83ba45fc7b9a30e0e1cb5596f2e07db3d1",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T08:05:29Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/structured_logging_standards.md#Structured Log Format",
+            "tests/test_json_log_formatter.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (message >500 chars truncated to the spec limit) and AC2 (existing tests still pass unchanged) verified by tests/test_json_log_formatter.py's new TestMessageTruncation class (4/4 new cases) plus the full pre-existing test class run unchanged (9/9). Truncation is 485 chars of content + a 15-char '...[truncated]' suffix = 500 total. Deviation check: none - matches the spec's documented limit exactly."
         },
         "ST-12": {
           "title": "Float-vs-Decimal money-arithmetic audit with rounding-boundary golden tests",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1729,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
+          "commit_sha": "604132de1e815e67a896dbacc0ebbf7d46112074",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T08:05:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/money_arithmetic_audit_2026-09-22.md",
+            "tests/test_money_arithmetic_golden.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (inventory recorded in the QA evidence file) satisfied by docs/ops/money_arithmetic_audit_2026-09-22.md (referenced from qa_evidence_EPIC-03.md at EPIC close). AC2 (golden tests for each boundary case pass) verified by tests/test_money_arithmetic_golden.py (32/32 local pass, including a bounded regression scan of the discrepancy rate). AC3 (0 unexplained >=GBP0.01 discrepancies) - one discrepancy class was found (float round() vs Decimal ROUND_HALF_UP at exact half-penny gross-cost boundaries in UK stamp duty / US FX fee calculation, ~0.18%/0.018% of scanned values) and is fully explained in the audit doc's SS3, not left unexplained; filed as its own reviewed follow-up BLG-BE-127 rather than fixed silently within this audit story (live-capital fee calculation change). Deviation check: none - Case B (documentation-creation): the audit doc itself is the governing artefact for this story's own deliverable, per STEP 3.1.A spec_references policy. Test-infra note (disclosed, in-file per SS7 Opportunistic In-File Fix Disclosure Threshold): tests/test_money_arithmetic_golden.py's own direct `from utils.calculations import ...` at module scope initially picked up a MagicMock stub leaked by tests/test_alerts_service.py's collection-time sys.modules stubbing (alphabetically earlier) when run as part of the full suite; fixed in the same commit using the same sys.modules eviction pattern already established by tests/test_nightly_computations.py for the identical issue - confirmed by a full-suite rerun (1663 passed; the only remaining 7 failures are tests/test_schema*.py's pre-existing live-staging-DB permission errors, unrelated to this story, confirmed present on main before this branch's changes too)."
         },
         "ST-13": {
           "title": "Shared upstream-call helper: uniform timeout and bounded retry budget for yfinance, Alpaca and Anthropic",
@@ -361,7 +374,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Held per sprint_backlog.md#ST-13's own explicit sequencing note ('land after ST-09 so the two do not collide on the same call path') and stage4_backlog_slice.md's Dependencies field. ST-09 (BLG-BE-119) is blocked_decision (ESC-EXEC-20260921-01, Strategy Rules & System Intent Owner, SLA 2026-09-24) - not yet resolved. Not started this session to avoid landing a second, uncoordinated change on the nightly stop-update call path ahead of ST-09's decision."
         }
       }
     },
@@ -831,7 +844,12 @@
     "ST-03",
     "ST-04",
     "ST-05",
-    "ST-06"
+    "ST-06",
+    "ST-07",
+    "ST-08",
+    "ST-10",
+    "ST-11",
+    "ST-12"
   ],
   "open_escalations": [
     "ESC-EXEC-20260921-01",
@@ -866,6 +884,10 @@
     "STEP 2: only exec/.../EPIC-01 branch created at sprint open. EPIC-02..07 branches are cut from post-merge main at their turn (merge order EPIC-01 -> EPIC-07 with rebase-after-merge per sprint_backlog.md Sprint Scope).",
     "EPIC-01 DoQ sign-off: agent-mediated (execution_prompt.md 5.3) independent review returned Approved with conditions; conditions met in the sign-off commit (finding 1 fixed in 00f98cdf; counts corrected; CI evidence recorded; files committed with qa_signed_off true). Signer format: Sprint Execution Engine (agent-mediated, Director of Quality role - 5.3). Merge gate remains always-human (QA sign-off + Product Owner acceptance).",
     "Environment: DATABASE_URL in the execution environment points at the staging Supabase database (user-confirmed; credential believed read-only, unverified) and was never used; all backend test runs used a stub URL (BLG-QA-188). Two throwaway local Postgres/agent-review actions were confined to the DoQ reviewer scratchpad.",
-    "EPIC-01 merged by the human developer via PR #1750 at 2026-09-21T19:22:32Z (merge commit c90e44f1, includes 1884f100). Merge-gate resync: pr_status/status merged; orphaned post-merge commit check (origin/main..origin/exec/2026-09-21__release-v9.6/EPIC-01) found none. No sibling EPIC branches exist yet, so no sibling execution_state sync was needed (STEP 4 3c). Post-merge follow-up: Setup Type clone issue BLG-FE-186 and 2 backend items filed; staging verification of ST-04 SQL (BLG-OPS-168) still open."
+    "EPIC-01 merged by the human developer via PR #1750 at 2026-09-21T19:22:32Z (merge commit c90e44f1, includes 1884f100). Merge-gate resync: pr_status/status merged; orphaned post-merge commit check (origin/main..origin/exec/2026-09-21__release-v9.6/EPIC-01) found none. No sibling EPIC branches exist yet, so no sibling execution_state sync was needed (STEP 4 3c). Post-merge follow-up: Setup Type clone issue BLG-FE-186 and 2 backend items filed; staging verification of ST-04 SQL (BLG-OPS-168) still open.",
+    "Session-start divergence check (STEP -1) 2026-09-22: git fetch + rev-list confirmed local main == origin/main (0/0) before trusting this file. No SLA-breached open escalations at invocation (all 8 open ESC-EXEC-20260921-* raised 2026-09-21T15:51:14Z, sla_due_utc 2026-09-24T15:51:14Z, not yet due).",
+    "EPIC-03 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-03 cut from main (post EPIC-01/EPIC-02 merge). ST-10/ST-11/ST-12 completed (autonomous, 3 commits, pushed). ST-09 remains blocked_decision (ESC-EXEC-20260921-01, unresolved) and ST-13 deliberately not started this session per its own sprint_backlog.md dependency note ('land after ST-09 so the two do not collide on the same call path') - starting it now would risk an uncoordinated second change on the same nightly stop-update call path ahead of ST-09's decision. EPIC-03 therefore not yet done (2 of 5 stories outstanding).",
+    "ST-12 filed one out-of-scope-finding backlog item (BLG-BE-127, per CLAUDE.md SS7's new-item-addition exception) for a float-vs-Decimal fee-rounding discrepancy the audit found but did not fix in-story (live-capital behaviour change deferred to its own reviewed follow-up).",
+    "Opportunistic in-file fix disclosure (CLAUDE.md SS7 threshold, confined to this file, this session's own edit): completed_items array was missing ST-07/ST-08 (EPIC-02, already status=done/merged per their own story records) before this session's write - corrected in the same write that added ST-10/ST-11/ST-12, not filed as a separate backlog item (small, low-risk, data-completeness only, confined to a field this story's own commit already touches)."
   ]
 }
