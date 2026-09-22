@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-22T12:15:29Z",
+  "last_updated_utc": "2026-09-22T13:57:50Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -491,11 +491,11 @@
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-21__release-v9.6/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_trade_plan_audit_log.py",
@@ -505,25 +505,31 @@
         "ST-18": {
           "title": "Quarterly full-suite Playwright re-run against a fresh staging seed",
           "classification": "delegated_qa",
-          "status": "blocked_qa",
+          "status": "done",
           "assigned_to": "qa",
           "github_issue": 1735,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-05",
-          "commit_sha": "542a87ca927618027f60b91fb6ff69f5c8acb6b7",
+          "commit_sha": "7eef5f7eae4a654ede99e54da924fda29eb29505",
           "delegation_record_id": "DEL-20260921-07",
           "blocked_since_utc": "2026-09-22T12:15:04Z",
           "unblock_criteria": "See DEL-20260921-07 / qa_evidence_EPIC-05.md ST-18 row",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-22T13:56:53Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/testing/quarterly_playwright_staging_reseed_procedure.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.C.qa_evidence_entry",
-          "sign_off_record": null,
-          "notes": "AC1 (cadence/procedure documented) done - docs/testing/quarterly_playwright_staging_reseed_procedure.md. Surfaces an architecture finding (Playwright suite is entirely mock-based, no live backend/DB dependency by design) requiring Director of Quality disposition on a proposed two-part redefinition rather than deciding unilaterally. AC2 (first quarterly run completed with results recorded): **Part 1 completed 2026-09-22T12:50:27Z** - Director of Quality triggered playwright.yml directly (run 35729627868), all 8 E2E shards + Visual Snapshots green; triggering it is treated as implicit acceptance of the two-part redefinition. **Part 2 step 1 (reset-and-seed) completed 2026-09-22T13:23:18Z** - Director of Quality found and fixed a real infra bug along the way (STAGING_DATABASE_URL pointed at Supabase's direct IPv6-only host, unreachable from GitHub-hosted runners - corrected to the Transaction pooler URI matching this repo's own documented convention); first attempt (run 35730287893) failed on the stale secret, second attempt after the fix (run 35733092701) succeeded - fresh baseline, schema v2.0, QA data seeded. Recorded in docs/testing/quarterly_playwright_staging_reseed_procedure.md's Run Log (v1.2) and DEL-20260921-07's progress notes. Part 2 step 2 (run the Phase-B backend suite against the freshly-seeded database) still outstanding. Still blocked_qa overall pending that last step. Deviation check: this IS the deviation/blocker being tracked via DEL-20260921-07, not a separate DEV-* record (per the delegated_qa unblock pattern, not the autonomous deviation pattern)."
+          "last_completed_substep": "3.1.C.unblocked",
+          "sign_off_record": {
+            "role": "Director of Quality",
+            "method": "human, direct (Actions UI triggers + independent read-only verification queries authorised)",
+            "status": "cleared",
+            "date": "2026-09-22",
+            "ruling": "Director of Quality performed both parts directly: Part 1 (playwright.yml, run 35729627868, all shards green) and Part 2 step 1 (fixed STAGING_DATABASE_URL's wrong connection-string format, then reset-and-seed-staging.yml, run 35733092701, succeeded). Part 2 step 2 corrected mid-execution from 'run Phase-B suite against staging' (a naming conflation with ci-tests.yml's own unrelated ephemeral-Postgres job, which would have risked real schema/data damage via test_schema_rollback_verification.py) to independent read-only verification, authorised via explicit user direction ('do both'). 7/7 verification queries matched the reset workflow's own claimed summary exactly. See DEL-20260921-07 and docs/testing/quarterly_playwright_staging_reseed_procedure.md Run Log for full detail."
+          },
+          "notes": "AC1 (cadence/procedure documented) done - docs/testing/quarterly_playwright_staging_reseed_procedure.md. AC2 (first quarterly run completed with results recorded) done, both parts, with real evidence: Part 1 (playwright.yml, run 35729627868, all 8 E2E shards + Visual Snapshots green); Part 2 step 1 (reset-and-seed-staging.yml, run 35733092701 after fixing a real STAGING_DATABASE_URL connection-string bug - direct IPv6-only host corrected to the Transaction pooler URI); Part 2 step 2 (7 independent read-only SELECT COUNT(*)/spot-check queries against the freshly-seeded staging DB via the readonly_staging role, every value matching the reset workflow's own claimed summary exactly - positions, trade_history, watchlist, alert_rules, notifications+read-status, signals+status-breakdown, and the v2.0 migration columns). The original Part 2 step 2 design ('run the Phase-B backend suite against staging') was caught and corrected before execution, not after - it conflated ci-tests.yml's own unrelated ephemeral-Postgres Phase B job with staging, and the Phase A/B split is decided purely by \"stub\" in DATABASE_URL, so running it for real against shared staging risked exercising test_schema_rollback_verification.py's real migration rollback logic against the just-seeded environment. Deviation check: none - matches AC exactly once the corrected Part 2 design was executed; the scope correction itself is disclosed in the qa_evidence table's 'What was built' column, not a deviation against a signed-off AC."
         },
         "ST-19": {
           "title": "DoQ checklist addendum for flaky-test disposition",
@@ -855,7 +861,6 @@
   },
   "blocked_items": [
     "ST-16",
-    "ST-18",
     "ST-22",
     "ST-23",
     "ST-28",
@@ -884,13 +889,13 @@
     "ST-11",
     "ST-12",
     "ST-13",
+    "ST-18",
     "ST-19",
     "ST-20",
     "ST-21"
   ],
   "open_escalations": [
     "ESC-EXEC-20260921-02",
-    "ESC-EXEC-20260921-03",
     "ESC-EXEC-20260921-04",
     "ESC-EXEC-20260921-05",
     "ESC-EXEC-20260921-06",
@@ -930,6 +935,7 @@
     "EPIC-03 merged by the human developer via PR #1752 at 2026-09-22T09:52:17Z (merge commit accda04d). Merge-gate resync: pr_status/status merged; orphaned post-merge commit check (origin/main..origin/exec/2026-09-21__release-v9.6/EPIC-03) found none. No sibling EPIC branches exist yet (EPIC-04..EPIC-07 not yet cut), so no sibling execution_state sync was needed (STEP 4 3c). Product Owner reviewed the agent-mediated PR review's flagged question and directed BLG-BE-127 P3->P2 in the same session (claude/backlog/backlog.md).",
     "EPIC-04 opened 2026-09-22 (separate session segment, same day): branch exec/2026-09-21__release-v9.6/EPIC-04 cut from main. ST-14/ST-15/ST-17 completed and pushed; ST-16 remains blocked_decision (ESC-EXEC-20260921-02, unresolved - confirmed live via a 403 on a real Actions-write API call this session, not merely assumed). EPIC-04 not yet done (1 of 4 stories outstanding, non-blocking). Per execution_prompt.md STEP 3 ('work through EPICs in dependency order... do not block the entire sprint on one item'), moved on to EPIC-05 rather than stall on ST-16's external-credential blocker.",
     "EPIC-05 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-05 cut from main (EPIC-04 not yet merged - this branch's local execution_state.json therefore does not yet reflect EPIC-04's ST-14/ST-15/ST-17 completions; this is the expected multi-branch divergence execution_prompt.md's 'execution_state.json Ownership' section and CLAUDE.md §8 anticipate - reconciled at merge time via the union-of-completed-items rule, not an error). ST-21 completed and pushed (commit 185636a4) - see its own notes for the AC-3 partial-shortfall deviation (DEV-EPIC05-ST21-01) and follow-up BLG-QA-190. Sequencing note: ST-20 (EPIC-05) shares .github/workflows/* with EPIC-04's ST-17 per sprint_backlog.md's own dependency note ('EPIC-05 rebases') - low actual collision risk (different files: ST-17 added nightly-stop-update-staleness-check.yml/ci-usage-report.yml; ST-20 will touch openapi-drift.yml/its own test) but flagged here so a rebase-and-recheck happens before EPIC-05's own PR opens, once EPIC-04 eventually merges.",
-    "ST-19 completed (commit cf027027, governance file edit - qa_evidence_template.md v1.15->v1.16, OPERATIONAL_GUIDE.md v4.200->v4.201, prompt_change_log.md appended - Governance File Edit Checklist completed and 3-way self-consistency confirmed via the governance-drift skill). ST-20 completed (commit 75f6f7f6 - extracted the OpenAPI Drift Detection gate's inline CI logic into scripts/check_openapi_drift.py, byte-for-byte behaviourally verified identical against the real repo tree; a real mutation check on compute_drift() confirmed the fixtures genuinely fail against broken logic, not just a tautology). ST-18 completed autonomous portion (commit 542a87ca - cadence/procedure documented, disclosing that the Playwright suite's mock-based architecture means 'staging seed' doesn't literally apply as worded; delegated the live-run portion to Director of Quality via DEL-20260921-07, blocked_qa - not fabricated given this sandbox cannot install Chromium and staging-reset is destructive). EPIC-05 now has 3 of 4 stories done (ST-19, ST-20, ST-21); ST-18 blocked_qa (non-blocking per STEP 3.1.C - do not stall the sprint). EPIC-05 not yet done (STEP 3.2 requires all stories done, including delegated_qa items reaching unblock)."
+    "ST-19 completed (commit cf027027, governance file edit - qa_evidence_template.md v1.15->v1.16, OPERATIONAL_GUIDE.md v4.200->v4.201, prompt_change_log.md appended - Governance File Edit Checklist completed and 3-way self-consistency confirmed via the governance-drift skill). ST-20 completed (commit 75f6f7f6 - extracted the OpenAPI Drift Detection gate's inline CI logic into scripts/check_openapi_drift.py, byte-for-byte behaviourally verified identical against the real repo tree; a real mutation check on compute_drift() confirmed the fixtures genuinely fail against broken logic, not just a tautology). ST-18 completed autonomous portion (commit 542a87ca - cadence/procedure documented, disclosing that the Playwright suite's mock-based architecture means 'staging seed' doesn't literally apply as worded; delegated the live-run portion to Director of Quality via DEL-20260921-07, blocked_qa - not fabricated given this sandbox cannot install Chromium and staging-reset is destructive). EPIC-05 now has 3 of 4 stories done (ST-19, ST-20, ST-21); ST-18 blocked_qa (non-blocking per STEP 3.1.C - do not stall the sprint). EPIC-05 not yet done (STEP 3.2 requires all stories done, including delegated_qa items reaching unblock).",
+    "ST-18 Part 1 completed 2026-09-22T12:50:27Z: Director of Quality triggered playwright.yml directly (run 35729627868), all 8 E2E shards + Visual Snapshots green. ST-18 Part 2 step 1 completed 2026-09-22T13:23:18Z: Director of Quality found and fixed a real STAGING_DATABASE_URL connection-string bug (direct IPv6-only Supabase host, unreachable from GitHub runners - corrected to the Transaction pooler URI), then triggered reset-and-seed-staging.yml (run 35733092701, succeeded - fresh baseline, schema v2.0, QA data seeded). ST-18 Part 2 step 2 corrected mid-execution: 'run the Phase-B backend suite against staging' was found, before being executed, to conflate ci-tests.yml's own unrelated always-fresh ephemeral-Postgres Phase B job with the real staging project - the Phase A/B split is decided purely by 'stub' in DATABASE_URL, so running the real suite against shared staging would have exercised test_schema_rollback_verification.py's real migration rollback logic against the just-seeded environment. Replaced with 7 independent read-only SELECT COUNT(*)/spot-check queries against staging via the readonly_staging role (on explicit user direction, 'do both') - every value matched the reset workflow's own claimed summary exactly. ST-18 unblocked and marked done 2026-09-22T13:56:53Z (commit 7eef5f7e); ESC-EXEC-20260921-03 resolved, DEL-20260921-07 set Unblocked. EPIC-05 now fully done (all 4 stories: ST-18/19/20/21 complete). qa_evidence_EPIC-05.md's Standard Sign-Off Block completed in the same commit, qa_signed_off set true - not yet merged, PR still required before STEP 4 merge gate."
   ]
 }
