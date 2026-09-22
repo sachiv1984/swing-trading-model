@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-22T09:52:17Z",
+  "last_updated_utc": "2026-09-22T12:02:29Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -492,12 +492,14 @@
     },
     "EPIC-05": {
       "status": "not_started",
-      "branch": null,
+      "branch": "exec/2026-09-21__release-v9.6/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-05.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_trade_plan_audit_log.py"
+      ],
       "stories": {
         "ST-18": {
           "title": "Quarterly full-suite Playwright re-run against a fresh staging seed",
@@ -565,23 +567,26 @@
         "ST-21": {
           "title": "`test_trade_plan_audit_log.py`'s unrestored `sys.modules[\"database\"]` swap is a latent test-isolation hazard",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1738,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-05",
+          "commit_sha": "185636a4d56b32e16fefe36bc0d824e142f570ab",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T11:59:02Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_trade_plan_audit_log.py",
+            "tests/test_position_audit_log.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (file no longer mutates the shared sys.modules[\"database\"] entry) and AC2 (full suite still passes; manual reordering check confirms no leakage) verified: converted to the isolated-copy importlib.util.spec_from_file_location pattern test_position_audit_log.py already uses; full backend suite 1685 passed/3 skipped/7 pre-existing unrelated test_schema*.py failures (confirmed present on main before this change); a throwaway reordering canary (scratchpad only) confirmed sys.modules[\"database\"] remains the conftest stub after this file's tests run. AC3 (any other file with the same pattern fixed in the same commit) only partially met - a grep audit found ~29 other matching files but they are not structurally uniform (some TestClient/main.app-dependent, needing a different restore-based fix; one already has a documented per-test re-acquire design) - fixing all safely in one commit was materially larger than the XS estimate. Filed DEV-EPIC05-ST21-01 (P3, Pass_with_deviation) in qa_evidence_EPIC-05.md and BLG-QA-190 (P3) as the follow-up carrying the full categorised file list. Deviation check: this IS the deviation (see DEV-EPIC05-ST21-01) - deviations_filed=true reflects the check completed and the gap filed, not that no deviation was found."
         }
       }
     },
@@ -867,7 +872,8 @@
     "ST-10",
     "ST-11",
     "ST-12",
-    "ST-13"
+    "ST-13",
+    "ST-21"
   ],
   "open_escalations": [
     "ESC-EXEC-20260921-02",
@@ -908,6 +914,8 @@
     "Opportunistic in-file fix disclosure (CLAUDE.md SS7 threshold, confined to this file, this session's own edit): completed_items array was missing ST-07/ST-08 (EPIC-02, already status=done/merged per their own story records) before this session's write - corrected in the same write that added ST-10/ST-11/ST-12, not filed as a separate backlog item (small, low-risk, data-completeness only, confined to a field this story's own commit already touches).",
     "ST-09 resolved 2026-09-22 on explicit user direction ('act as Strategy Rules & System Intent Owner and resolve'). Role-ownership check (CLAUDE.md §2): ESC-EXEC-20260921-01's owning_authority field ('Strategy Rules & System Intent Owner') matched the invoked role exactly - no mismatch, proceeded. Ruling: Option (i) from the escalation's own recorded options - see execution_escalations.md ESC-EXEC-20260921-01 Resolution (Addendum) and execution_state.json ST-09 for full rationale. Commit f771d5c9 (EPIC-03). ST-13 now unblocked (was held pending this decision).",
     "ST-13 completed 2026-09-22, commit 8d4a7ad8. EPIC-03 now done (all 5 stories: ST-09..ST-13 complete) - not yet merged, qa_evidence_EPIC-03.md + PR still required before STEP 4 merge gate.",
-    "EPIC-03 merged by the human developer via PR #1752 at 2026-09-22T09:52:17Z (merge commit accda04d). Merge-gate resync: pr_status/status merged; orphaned post-merge commit check (origin/main..origin/exec/2026-09-21__release-v9.6/EPIC-03) found none. No sibling EPIC branches exist yet (EPIC-04..EPIC-07 not yet cut), so no sibling execution_state sync was needed (STEP 4 3c). Product Owner reviewed the agent-mediated PR review's flagged question and directed BLG-BE-127 P3->P2 in the same session (claude/backlog/backlog.md)."
+    "EPIC-03 merged by the human developer via PR #1752 at 2026-09-22T09:52:17Z (merge commit accda04d). Merge-gate resync: pr_status/status merged; orphaned post-merge commit check (origin/main..origin/exec/2026-09-21__release-v9.6/EPIC-03) found none. No sibling EPIC branches exist yet (EPIC-04..EPIC-07 not yet cut), so no sibling execution_state sync was needed (STEP 4 3c). Product Owner reviewed the agent-mediated PR review's flagged question and directed BLG-BE-127 P3->P2 in the same session (claude/backlog/backlog.md).",
+    "EPIC-04 opened 2026-09-22 (separate session segment, same day): branch exec/2026-09-21__release-v9.6/EPIC-04 cut from main. ST-14/ST-15/ST-17 completed and pushed; ST-16 remains blocked_decision (ESC-EXEC-20260921-02, unresolved - confirmed live via a 403 on a real Actions-write API call this session, not merely assumed). EPIC-04 not yet done (1 of 4 stories outstanding, non-blocking). Per execution_prompt.md STEP 3 ('work through EPICs in dependency order... do not block the entire sprint on one item'), moved on to EPIC-05 rather than stall on ST-16's external-credential blocker.",
+    "EPIC-05 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-05 cut from main (EPIC-04 not yet merged - this branch's local execution_state.json therefore does not yet reflect EPIC-04's ST-14/ST-15/ST-17 completions; this is the expected multi-branch divergence execution_prompt.md's 'execution_state.json Ownership' section and CLAUDE.md §8 anticipate - reconciled at merge time via the union-of-completed-items rule, not an error). ST-21 completed and pushed (commit 185636a4) - see its own notes for the AC-3 partial-shortfall deviation (DEV-EPIC05-ST21-01) and follow-up BLG-QA-190. Sequencing note: ST-20 (EPIC-05) shares .github/workflows/* with EPIC-04's ST-17 per sprint_backlog.md's own dependency note ('EPIC-05 rebases') - low actual collision risk (different files: ST-17 added nightly-stop-update-staleness-check.yml/ci-usage-report.yml; ST-20 will touch openapi-drift.yml/its own test) but flagged here so a rebase-and-recheck happens before EPIC-05's own PR opens, once EPIC-04 eventually merges."
   ]
 }
