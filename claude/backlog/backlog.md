@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-22 (PR #1752 agent-mediated review, EPIC-03/2026-09-21__release-v9.6 — 1 new item added: BLG-BE-129, latency measurement around retried Anthropic calls); prior — 2026-09-22 (Sprint Execution `2026-09-21__release-v9.6` EPIC-03/ST-13 — 1 new item added: BLG-BE-128, remaining ad hoc timeout/retry call sites not migrated to the ST-13 shared upstream-call helper); prior — 2026-09-22 (Sprint Execution `2026-09-21__release-v9.6` EPIC-03/ST-12 — 1 new item added: BLG-BE-127, float-vs-Decimal fee-rounding discrepancy found by the ST-12 money-arithmetic audit); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-22 (Product Owner direct decision, post-merge PR #1752 — BLG-BE-127 priority raised P3->P2); prior — 2026-09-22 (PR #1752 agent-mediated review, EPIC-03/2026-09-21__release-v9.6 — 1 new item added: BLG-BE-129, latency measurement around retried Anthropic calls); prior — 2026-09-22 (Sprint Execution `2026-09-21__release-v9.6` EPIC-03/ST-13 — 1 new item added: BLG-BE-128, remaining ad hoc timeout/retry call sites not migrated to the ST-13 shared upstream-call helper); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -5034,7 +5034,7 @@ In `backend/services/alerts_service.py::_evaluate_reflection_reminders`, an exce
 ---
 
 ### BLG-BE-127 — UK stamp duty / US FX fee rounding uses float `round()` instead of Decimal, under-rounding ~0.18%/0.02% of half-penny-boundary gross costs by £0.01
-**Priority:** P3 (Low)
+**Priority:** P2 (Medium) — raised from P3 by Product Owner direct decision, 2026-09-22, in response to the PR #1752 agent-mediated review's flagged question (a real, if narrow-impact, live-capital rounding gap rather than a reliability nice-to-have)
 **Type:** Backend
 **Owner:** Backend Engineering Patterns Owner; Financial Reporting & Records Owner
 **Source:** ST-12/EPIC-03/2026-09-21__release-v9.6 (BLG-BE-121) — Float-vs-Decimal money-arithmetic audit — 2026-09-22
