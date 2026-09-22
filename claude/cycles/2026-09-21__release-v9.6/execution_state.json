@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-22T08:14:51Z",
+  "last_updated_utc": "2026-09-22T08:33:58Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -250,7 +250,7 @@
       }
     },
     "EPIC-03": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
@@ -259,7 +259,10 @@
       "test_scenarios": [
         "tests/test_backtest_rule_runs_pagination.py",
         "tests/test_json_log_formatter.py",
-        "tests/test_money_arithmetic_golden.py"
+        "tests/test_money_arithmetic_golden.py",
+        "tests/golden_outputs.json#SL-08",
+        "tests/test_golden_outputs.py",
+        "tests/test_upstream_call_helper.py"
       ],
       "stories": {
         "ST-09": {
@@ -369,23 +372,26 @@
         "ST-13": {
           "title": "Shared upstream-call helper: uniform timeout and bounded retry budget for yfinance, Alpaca and Anthropic",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1730,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
+          "commit_sha": "8d4a7ad8a4dbccd2d0d9baef4013d2f21c38894b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T08:33:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/utils/upstream_call.py",
+            "tests/test_upstream_call_helper.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Held per sprint_backlog.md#ST-13's own explicit sequencing note ('land after ST-09 so the two do not collide on the same call path') and stage4_backlog_slice.md's Dependencies field. ST-09 (BLG-BE-119) is blocked_decision (ESC-EXEC-20260921-01, Strategy Rules & System Intent Owner, SLA 2026-09-24) - not yet resolved. Not started this session to avoid landing a second, uncoordinated change on the nightly stop-update call path ahead of ST-09's decision."
+          "notes": "Started only after ST-09 resolved (its own sprint_backlog.md sequencing note - land after ST-09 so the two do not collide on the same nightly stop-update call path). AC1 (no unbounded upstream call remains in the nightly stop-update path) verified: utils/pricing.py's get_live_fx_rate (the one genuinely unretried call on that path) now retries transient failures via a new _yahoo_fetch_fx_rate helper before falling back to DEFAULT_FX_RATE; _yahoo_fetch_price and alpaca_service.py::get_ohlcv_bars (both already on the path) now source their timeout from the shared config. AC2 (timeout and retry configured in one place) verified: new backend/utils/upstream_call.py is the single source for yfinance/alpaca/anthropic; migrated screener path timeouts (Yahoo-Finance-specific only; Stooq/Twelve Data deliberately deferred - BLG-BE-128) and all 5 Anthropic client-construction call sites (consolidated gemini_service.py/debrief_service.py's duplicated retry blocks; extended the same pattern to ai_service.py's 3 previously-unretried call sites). AC3 (existing tests pass; new tests cover timeout and retry-exhaustion) verified: tests/test_upstream_call_helper.py (20 new tests - config lookups, decorator retry/exhaustion/non-retryable-passthrough, real-call-site coverage for get_live_fx_rate and ai_chat); full backend suite 1685 passed/3 skipped, only the 7 pre-existing live-staging-DB-permission failures in test_schema*.py remain (confirmed present on main before this change). Anthropic retry budget deliberately not larger than yfinance/Alpaca's (a retry re-issues paid inference - AI cost gating note, sprint_backlog.md ST-13). Deviation check: none - matches AC exactly; filed BLG-BE-128 for the explicitly out-of-scope remaining call sites (Stooq, Twelve Data, and 8 other non-nightly-path modules) per this story's own 'list remaining call sites as follow-ups' scope instruction."
         }
       }
     },
@@ -860,7 +866,8 @@
     "ST-09",
     "ST-10",
     "ST-11",
-    "ST-12"
+    "ST-12",
+    "ST-13"
   ],
   "open_escalations": [
     "ESC-EXEC-20260921-02",
@@ -899,6 +906,7 @@
     "EPIC-03 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-03 cut from main (post EPIC-01/EPIC-02 merge). ST-10/ST-11/ST-12 completed (autonomous, 3 commits, pushed). ST-09 remains blocked_decision (ESC-EXEC-20260921-01, unresolved) and ST-13 deliberately not started this session per its own sprint_backlog.md dependency note ('land after ST-09 so the two do not collide on the same call path') - starting it now would risk an uncoordinated second change on the same nightly stop-update call path ahead of ST-09's decision. EPIC-03 therefore not yet done (2 of 5 stories outstanding).",
     "ST-12 filed one out-of-scope-finding backlog item (BLG-BE-127, per CLAUDE.md SS7's new-item-addition exception) for a float-vs-Decimal fee-rounding discrepancy the audit found but did not fix in-story (live-capital behaviour change deferred to its own reviewed follow-up).",
     "Opportunistic in-file fix disclosure (CLAUDE.md SS7 threshold, confined to this file, this session's own edit): completed_items array was missing ST-07/ST-08 (EPIC-02, already status=done/merged per their own story records) before this session's write - corrected in the same write that added ST-10/ST-11/ST-12, not filed as a separate backlog item (small, low-risk, data-completeness only, confined to a field this story's own commit already touches).",
-    "ST-09 resolved 2026-09-22 on explicit user direction ('act as Strategy Rules & System Intent Owner and resolve'). Role-ownership check (CLAUDE.md §2): ESC-EXEC-20260921-01's owning_authority field ('Strategy Rules & System Intent Owner') matched the invoked role exactly - no mismatch, proceeded. Ruling: Option (i) from the escalation's own recorded options - see execution_escalations.md ESC-EXEC-20260921-01 Resolution (Addendum) and execution_state.json ST-09 for full rationale. Commit f771d5c9 (EPIC-03). ST-13 now unblocked (was held pending this decision)."
+    "ST-09 resolved 2026-09-22 on explicit user direction ('act as Strategy Rules & System Intent Owner and resolve'). Role-ownership check (CLAUDE.md §2): ESC-EXEC-20260921-01's owning_authority field ('Strategy Rules & System Intent Owner') matched the invoked role exactly - no mismatch, proceeded. Ruling: Option (i) from the escalation's own recorded options - see execution_escalations.md ESC-EXEC-20260921-01 Resolution (Addendum) and execution_state.json ST-09 for full rationale. Commit f771d5c9 (EPIC-03). ST-13 now unblocked (was held pending this decision).",
+    "ST-13 completed 2026-09-22, commit 8d4a7ad8. EPIC-03 now done (all 5 stories: ST-09..ST-13 complete) - not yet merged, qa_evidence_EPIC-03.md + PR still required before STEP 4 merge gate."
   ]
 }
