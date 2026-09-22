@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-22 (Sprint Execution `2026-09-21__release-v9.6` EPIC-03/ST-13 — 1 new item added: BLG-BE-128, remaining ad hoc timeout/retry call sites not migrated to the ST-13 shared upstream-call helper); prior — 2026-09-22 (Sprint Execution `2026-09-21__release-v9.6` EPIC-03/ST-12 — 1 new item added: BLG-BE-127, float-vs-Decimal fee-rounding discrepancy found by the ST-12 money-arithmetic audit); prior — 2026-09-22 (session — 4 new item(s) added: BLG-FE-187, BLG-FE-188, BLG-BE-125, BLG-BE-126 — PR #1751 agent-mediated review findings on ST-07/ST-08/EPIC-02/2026-09-21__release-v9.6: two frontend-surfacing gaps and two backend Director-of-Quality findings); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-22 (PR #1752 agent-mediated review, EPIC-03/2026-09-21__release-v9.6 — 1 new item added: BLG-BE-129, latency measurement around retried Anthropic calls); prior — 2026-09-22 (Sprint Execution `2026-09-21__release-v9.6` EPIC-03/ST-13 — 1 new item added: BLG-BE-128, remaining ad hoc timeout/retry call sites not migrated to the ST-13 shared upstream-call helper); prior — 2026-09-22 (Sprint Execution `2026-09-21__release-v9.6` EPIC-03/ST-12 — 1 new item added: BLG-BE-127, float-vs-Decimal fee-rounding discrepancy found by the ST-12 money-arithmetic audit); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -5085,6 +5085,26 @@ None of these are on the live-capital nightly stop-update path, so there is no c
 **Acceptance Criteria**
 - Every call site listed above is either migrated to `utils.upstream_call` or has an explicit, documented reason it is not (e.g. Stooq/Twelve Data's rate-limit-interaction risk, or ticker_universe.py's different mechanism)
 - No behaviour change to any already-working fallback/rate-limit logic (Stooq/Twelve Data cooldown timers, `_TWELVE_DATA_RATE_LIMIT`) as a side effect of any migration performed
+
+---
+
+### BLG-BE-129 — `latency_ms`/`elapsed_ms` recorded around retried Anthropic calls includes backoff sleep time, not just the final call's duration
+**Priority:** P4 (Nice-to-have)
+**Type:** Backend / Observability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1752 agent-mediated review (Director of Quality finding) on ST-13/EPIC-03/2026-09-21__release-v9.6 (BLG-BE-122) — 2026-09-22
+**Effort:** XS (<1h) — or "won't fix, document as intentional" is also a valid disposition
+**Provisional-Target:** TBD
+
+**Problem**
+`services/ai_service.py`'s `generate_daily_briefing()` and `ai_chat()` (and, pre-existing since `BLG-BE-89`/v8.7, `services/gemini_service.py`'s `_call_claude()` call sites and `services/debrief_service.py`'s `_call_claude()`) capture `t0 = time.time()` before calling the now-retried Anthropic helper and compute `elapsed_ms`/`latency_ms` after it returns. Since ST-13 (`BLG-BE-122`) added bounded retry to these calls, a request that needed one or more retries now has its recorded latency include the `retry_with_backoff` exponential-backoff sleep time (up to ~1.5s across the current 3-attempt/1.0s-base-delay Anthropic budget), not just the final successful call's own duration. This was already true for `gemini_service.py`/`debrief_service.py` before this story (confirmed, not a regression) — ST-13 extended the same characteristic to a third file (`ai_service.py`) by adding retry there for the first time.
+
+**Scope**
+- Decide whether this is acceptable as-is (the metric already reflects this for 2 of 3 files and no one has raised it as a problem) or worth separating into two figures (e.g. `api_call_latency_ms` measured around only the final successful attempt, plus a separate `total_latency_ms` including retries) for any cost/performance dashboard that reads `latency_ms`
+- If separated: update `create_claude_audit_entry`'s schema/callers accordingly across all 3 files for consistency
+
+**Acceptance Criteria**
+- Either: a documented decision that the current combined-latency semantics are intentional and acceptable (no code change), or: `latency_ms` is split into a final-attempt-only figure and a total-including-retries figure, applied consistently across `ai_service.py`, `gemini_service.py`, and `debrief_service.py`
 
 ---
 
