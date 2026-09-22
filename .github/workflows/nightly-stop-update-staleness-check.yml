@@ -1,0 +1,81 @@
+# .github/workflows/nightly-stop-update-staleness-check.yml
+name: Nightly Trailing Stop Update Staleness Check
+
+# ST-14 (BLG-OPS-166, EPIC-04, v9.6): dead-man's-switch for the nightly
+# trailing-stop recompute (nightly-stop-update.yml). Runs GET
+# /health/scheduler only -- never calls POST /positions/nightly-stop-update
+# itself, so it cannot disturb live stops (RISK-04). Alerts if the
+# trailing_stop job has not succeeded within the last 26 hours (job cadence
+# is daily at 22:30 UTC; 26h gives a ~3.5h grace period).
+#
+# Alert pattern reused from si05-digest-staleness-check.yml / health-check-
+# alert.yml (curl/requests + Telegram + ::warning:: graceful fallback when
+# secrets aren't configured).
+#
+# The "simulated missed run" ACs for this story (AC-01/AC-02) are satisfied
+# by tests/test_nightly_stop_update_staleness.py (CI-reproducible pure-logic
+# unit tests), not by this workflow -- this workflow is the live wiring, not
+# the AC evidence itself. See scripts/check_nightly_stop_update_staleness.py
+# for the disclosed known limitation (in-memory job status resets on
+# process restart).
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # every 6h -- frequent enough to catch a missed run well within the 26h window
+  workflow_dispatch: {}
+
+concurrency:
+  group: nightly-stop-update-staleness-check
+  cancel-in-progress: true
+
+jobs:
+  staleness-check:
+    name: Check GET /health/scheduler for an overdue trailing_stop run
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Run staleness check
+        id: check
+        shell: bash
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          set -o pipefail
+          if [ -z "$API_URL" ] || [ -z "$API_KEY" ]; then
+            echo "::warning::API_URL/API_KEY not configured as repo secrets — staleness check skipped."
+            exit 0
+          fi
+          set +e
+          python3 scripts/check_nightly_stop_update_staleness.py | tee staleness_output.txt
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Send alert on overdue trailing_stop run
+        if: steps.check.outputs.exit_code == '1'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          REASON=$(grep '^\[OVERDUE\]' staleness_output.txt || true)
+          MESSAGE="Nightly trailing-stop update overdue: ${REASON} ${RUN_URL}"
+          echo "$MESSAGE"
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -sS --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+              --data-urlencode "text=${MESSAGE}"
+          else
+            echo "::warning::TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not configured as repo secrets — alert not sent. Message would have been: ${MESSAGE}"
+          fi

@@ -1,0 +1,69 @@
+# .github/workflows/ci-usage-report.yml
+name: CI Usage Report (Monthly)
+
+# ST-17 (BLG-OPS-165, EPIC-04, v9.6): generates the previous full UTC
+# calendar month's per-workflow CI run-minutes and artifact-storage
+# report (scripts/generate_ci_usage_report.py) and commits it to
+# docs/ops/ci_usage_reports/. Scheduled for the 1st of each month so the
+# report runs while short-retention artifacts (7/14 days) from the
+# just-closed month are still live -- see the script's own
+# artifact_undercount_caveat() for what happens if this is skipped and the
+# report is generated late.
+#
+# See the script's module docstring for why this tracks wall-clock "run
+# minutes" rather than "billable minutes": this repo is public, and GitHub
+# Actions does not meter/bill minutes on public repos.
+
+on:
+  schedule:
+    - cron: '0 6 1 * *'  # 06:00 UTC on the 1st of each month
+  workflow_dispatch:
+    inputs:
+      year_month:
+        description: 'YYYY-MM to report on (default: previous full UTC calendar month)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ci-usage-report
+  cancel-in-progress: true
+
+jobs:
+  generate-report:
+    name: Generate monthly CI usage report
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate report
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -n "${{ inputs.year_month }}" ]; then
+            python3 scripts/generate_ci_usage_report.py --year-month "${{ inputs.year_month }}"
+          else
+            python3 scripts/generate_ci_usage_report.py
+          fi
+
+      - name: Commit report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/ops/ci_usage_reports/
+          if git diff --cached --quiet; then
+            echo "No report changes to commit."
+          else
+            git commit -m "[GOVERNANCE] Add monthly CI usage report"
+            git push
+          fi

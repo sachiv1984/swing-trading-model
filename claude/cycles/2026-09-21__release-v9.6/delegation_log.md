@@ -39,7 +39,9 @@ Append-only. Do not edit previous entries.
 - **What is needed:** Perform/enable the Actions-write live-fire run and confirm real Telegram receipt (ESC-EXEC-20260921-02).
 - **Unblock criteria:** see ESC-EXEC-20260921-02
 - **Commit format required:** `[EPIC-04][ST-16] <description>` pushed to `exec/2026-09-21__release-v9.6/EPIC-04` (EPIC branch is cut from post-merge main at that EPIC's turn)
-- **Status:** Pending
+- **Sign-off:** cleared — user (Infrastructure & Operations Owner) triggered the live-fire run via the Actions UI directly, bypassing the engine's own Actions-write token blocker, and independently confirmed Telegram receipt. See ESC-EXEC-20260921-02 Resolution and `docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md` §7.
+- **Commit SHA:** `1f483d0a905498ce1b6d1e541b40425f5358a34b`
+- **Status:** Unblocked
 
 ---
 

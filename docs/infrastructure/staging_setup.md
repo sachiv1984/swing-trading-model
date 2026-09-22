@@ -1,7 +1,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Reference Document (Class 3)
 **Status:** Active
-**Last Updated:** 2026-09-18 (ST-14, BLG-OPS-162, EPIC-02, v9.5 — added §8, read-only staging DB role for sprint-execution sessions); prior — 2026-03-16 (ST-01, v1.10, initial runbook).
+**Last Updated:** 2026-09-22 (ST-15, BLG-OPS-163, EPIC-04, v9.6 — §8 cross-references `docs/ops/github_actions_secrets_ownership_map.md`); prior — 2026-09-18 (ST-14, BLG-OPS-162, EPIC-02, v9.5 — added §8, read-only staging DB role for sprint-execution sessions); prior — 2026-03-16 (ST-01, v1.10, initial runbook).
 **Cycle:** 2026-03-15__release-v1.10 (ST-01); 2026-09-15__release-v9.5 (ST-14)
 
 ---
@@ -220,7 +220,7 @@ The last line ensures the grant also applies to any tables added after this role
 - Real read confirmed: `SELECT count(*) FROM portfolios` returned real data (not a stub/fixture).
 - Write correctly rejected: `UPDATE portfolios SET last_updated = now()` → `ERROR: permission denied for table portfolios` (confirmed against a real column — an earlier attempt against a nonexistent column was discarded as an invalid test, since a column-does-not-exist error doesn't prove permission enforcement).
 
-**Operational notes for future rotation:** if this password is ever rotated, the connection string must not contain an unescaped `@`, `:`, `/`, `?`, or `#` in the password itself (these are URI-reserved characters and will break `postgresql://user:pass@host` parsing if not percent-encoded) — simplest is to avoid them entirely when choosing a new password.
+**Operational notes for future rotation:** if this password is ever rotated, the connection string must not contain an unescaped `@`, `:`, `/`, `?`, or `#` in the password itself (these are URI-reserved characters and will break `postgresql://user:pass@host` parsing if not percent-encoded) — simplest is to avoid them entirely when choosing a new password. **Before rotating any GitHub Actions repo secret referenced elsewhere in this document (e.g. `STAGING_DATABASE_URL`), check `docs/ops/github_actions_secrets_ownership_map.md` first** — it inventories every workflow that consumes each secret and the access level each one needs, so a rotation doesn't silently narrow a secret below what a consuming workflow requires (ST-15, BLG-OPS-163, EPIC-04, v9.6).
 
 ---
 

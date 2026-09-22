@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.4
-**Last Updated:** 2026-09-16 (ST-12, BLG-OPS-159, v9.5 — added §3.2 dashboard-only Build Filters gotcha note and §7 cross-reference to render_build_deploy_path_filter_audit.md); prior — 2026-06-17 (ST-03, v5.8 post-ship OA — added FRONTEND_URL to §6.1).
+**Version:** 0.5
+**Last Updated:** 2026-09-22 (ST-15, BLG-OPS-163, EPIC-04, v9.6 — §7 cross-reference to `docs/ops/github_actions_secrets_ownership_map.md`); prior — 2026-09-16 (ST-12, BLG-OPS-159, v9.5 — added §3.2 dashboard-only Build Filters gotcha note and §7 cross-reference to render_build_deploy_path_filter_audit.md); prior — 2026-06-17 (ST-03, v5.8 post-ship OA — added FRONTEND_URL to §6.1).
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -246,6 +246,7 @@ For interim health checks before BLG-BE-33 ships, use Render logs (Option B) or 
 - SI-05 health check procedure: `docs/ops/si05_health_check_procedure.md`
 - System status report: `docs/System_status_report.md`
 - Dashboard-only Build Filters gotcha / deploy path-filter audit: `docs/ops/render_build_deploy_path_filter_audit.md` (ST-12, BLG-OPS-159, v9.5 — see §3.2 above)
+- GitHub Actions secrets ownership map (which workflow consumes which repo secret, and its required access level): `docs/ops/github_actions_secrets_ownership_map.md` (ST-15, BLG-OPS-163, EPIC-04, v9.6)
 
 ---
 
@@ -253,6 +254,7 @@ For interim health checks before BLG-BE-33 ships, use Render logs (Option B) or 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.5 | 2026-09-22 | Added §7 cross-reference to `docs/ops/github_actions_secrets_ownership_map.md` (ST-15, BLG-OPS-163, EPIC-04, v9.6). Infrastructure & Operations Owner sign-off (agent-mediated, execution_prompt.md §5.3). |
 | 0.4 | 2026-09-16 | Added §3.2 dashboard-only Build Filters gotcha note (⚠️ callout) and §7 cross-reference to `docs/ops/render_build_deploy_path_filter_audit.md` (ST-12, BLG-OPS-159, v9.5). Infrastructure & Operations Owner sign-off. |
 | 0.3 | 2026-06-17 | Added `FRONTEND_URL` to §6.1 environment variables table (ST-03, v5.8 post-ship OA). Infrastructure & Operations Owner sign-off. |
 | 0.2 | 2026-06-08 | Added §6 SI-05 Phase 1 Operational Requirements (ST-07, BLG-OPS-55, v5.2). Infrastructure & Operations Owner. |
