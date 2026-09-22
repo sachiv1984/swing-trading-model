@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-22T10:18:32Z",
+  "last_updated_utc": "2026-09-22T12:30:38Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -396,7 +396,7 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-21__release-v9.6/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
@@ -464,23 +464,32 @@
         "ST-16": {
           "title": "Confirm synthetic uptime monitor live-fire and notification delivery (ST-11 follow-up)",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1733,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-04",
+          "commit_sha": "1f483d0a905498ce1b6d1e541b40425f5358a34b",
           "delegation_record_id": "DEL-20260921-02",
           "blocked_since_utc": "2026-09-21T15:51:14Z",
           "unblock_criteria": "See ESC-EXEC-20260921-02",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T12:27:08Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md",
+            ".github/workflows/health-check-alert.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "method": "human, direct (Actions UI trigger + Telegram receipt confirmation)",
+            "status": "cleared",
+            "date": "2026-09-22",
+            "ruling": "User triggered health-check-alert.yml directly via the GitHub Actions UI (bypassing the engine's own Actions-write token blocker, confirmed via two real 403s across two sessions), then confirmed real Telegram receipt. AC-01/AC-02 both confirmed with first-hand evidence, not inferred. See ESC-EXEC-20260921-02 Resolution and docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md §7."
+          },
+          "notes": "AC1/AC2 confirmed via real live-fire run: first attempt (test_url=httpstat.us/500) returned HTTP 404 not 500 - the documented test fixture had gone stale since 2026-09-16, disclosed and fixed (opportunistic in-file, CLAUDE.md SS7) rather than left broken for the next user. Second attempt (test_url=httpbin.org/status/500) confirmed 3/3 real HTTP 500s, a real Telegram API {\"ok\":true,...} response, and independent user confirmation of receipt. Run: https://github.com/sachiv1984/swing-trading-model/actions/runs/35727112554. AC3 (confirmation doc §7/§8 updated; BLG-OPS-158/ST-11's original disclosed gap closed) done in the same commit. Deviation check: none - matches AC exactly once unblocked; the stale test-URL finding is disclosed as an opportunistic in-file fix, not a deviation from this story's own AC."
         },
         "ST-17": {
           "title": "CI minutes and artifact-storage visibility; explicit retention on the 3 uploads that lack it",
@@ -860,7 +869,6 @@
     }
   },
   "blocked_items": [
-    "ST-16",
     "ST-22",
     "ST-23",
     "ST-28",
@@ -890,10 +898,10 @@
     "ST-13",
     "ST-14",
     "ST-15",
+    "ST-16",
     "ST-17"
   ],
   "open_escalations": [
-    "ESC-EXEC-20260921-02",
     "ESC-EXEC-20260921-03",
     "ESC-EXEC-20260921-04",
     "ESC-EXEC-20260921-05",
@@ -932,6 +940,7 @@
     "ST-09 resolved 2026-09-22 on explicit user direction ('act as Strategy Rules & System Intent Owner and resolve'). Role-ownership check (CLAUDE.md §2): ESC-EXEC-20260921-01's owning_authority field ('Strategy Rules & System Intent Owner') matched the invoked role exactly - no mismatch, proceeded. Ruling: Option (i) from the escalation's own recorded options - see execution_escalations.md ESC-EXEC-20260921-01 Resolution (Addendum) and execution_state.json ST-09 for full rationale. Commit f771d5c9 (EPIC-03). ST-13 now unblocked (was held pending this decision).",
     "ST-13 completed 2026-09-22, commit 8d4a7ad8. EPIC-03 now done (all 5 stories: ST-09..ST-13 complete) - not yet merged, qa_evidence_EPIC-03.md + PR still required before STEP 4 merge gate.",
     "EPIC-03 merged by the human developer via PR #1752 at 2026-09-22T09:52:17Z (merge commit accda04d). Merge-gate resync: pr_status/status merged; orphaned post-merge commit check (origin/main..origin/exec/2026-09-21__release-v9.6/EPIC-03) found none. No sibling EPIC branches exist yet (EPIC-04..EPIC-07 not yet cut), so no sibling execution_state sync was needed (STEP 4 3c). Product Owner reviewed the agent-mediated PR review's flagged question and directed BLG-BE-127 P3->P2 in the same session (claude/backlog/backlog.md).",
-    "EPIC-04 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-04 cut from main (post EPIC-03 merge). ST-14, ST-15, ST-17 completed (autonomous, 3 commits, pushed) - see each story's own notes for AC evidence. ST-16 remains blocked_decision (ESC-EXEC-20260921-02, unresolved - needs Actions-write token + real Telegram receipt for live-fire confirmation, per its own sprint_backlog.md notes; disclose-not-fabricate precedent ESC-EXEC-20260910-01 applies if it stays unavailable). EPIC-04 therefore not yet done (1 of 4 stories outstanding, non-blocking per STEP 3.1.D)."
+    "EPIC-04 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-04 cut from main (post EPIC-03 merge). ST-14, ST-15, ST-17 completed (autonomous, 3 commits, pushed) - see each story's own notes for AC evidence. ST-16 remains blocked_decision (ESC-EXEC-20260921-02, unresolved - needs Actions-write token + real Telegram receipt for live-fire confirmation, per its own sprint_backlog.md notes; disclose-not-fabricate precedent ESC-EXEC-20260910-01 applies if it stays unavailable). EPIC-04 therefore not yet done (1 of 4 stories outstanding, non-blocking per STEP 3.1.D).",
+    "ST-16 unblocked 2026-09-22T12:27:08Z: user (Infrastructure & Operations Owner) triggered health-check-alert.yml directly via the GitHub Actions UI, bypassing the engine's own Actions-write token blocker (confirmed via two real 403s across two sessions - this session re-confirmed the block before asking the user to use option (b), the Actions UI, per the delegation record). First live-fire attempt (test_url=httpstat.us/500) returned HTTP 404, not 500 - found and disclosed as a stale test fixture (opportunistic in-file fix, CLAUDE.md SS7), not fabricated as a pass. Second attempt (test_url=httpbin.org/status/500) confirmed 3/3 real HTTP 500s, a real Telegram API {\"ok\":true} response, and the user independently confirmed receiving the message. Commit 1f483d0a (EPIC-04). ESC-EXEC-20260921-02 resolved, DEL-20260921-02 set Unblocked. EPIC-04 now done (all 4 stories: ST-14/ST-15/ST-16/ST-17 complete) - not yet merged, qa_evidence_EPIC-04.md + PR still required before STEP 4 merge gate."
   ]
 }
