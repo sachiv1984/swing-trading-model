@@ -1,4 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -27,11 +28,13 @@ import {
   Flag,
   BarChart2,
   Search,
+  Wallet,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
-import { apiFetch } from "./api/base44Client";
+import { apiFetch, api } from "./api/base44Client";
 import CommandPalette, { OPEN_COMMAND_PALETTE_EVENT } from "./components/CommandPalette";
+import CashManagementModal from "./components/cash/CashManagementModal";
 import { toast } from "sonner";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
@@ -176,6 +179,51 @@ export default function Layout({ children, currentPageName }) {
     window.dispatchEvent(new CustomEvent(OPEN_COMMAND_PALETTE_EVENT));
   };
   const isMac = typeof navigator !== "undefined" && /Mac/i.test(navigator.platform || "");
+
+  // Head of UX & Design decision (P1 follow-up, this session): cash management
+  // (deposit/withdraw) was reachable only from the old widget-based Dashboard.js
+  // ("Cash Balance" tile), which DashboardHome.js (EPIC-03/ST-05, dashboard.md v2.0)
+  // replaced without carrying the feature forward — CashManagementModal and
+  // POST /cash/transaction were left fully working but unreachable from the shipped
+  // UI. Mounted globally here (not as a DashboardHome card or a Trade-Entry-local
+  // button) because it's an account-level action, not a page-scoped one: the
+  // triggering P1 was a user hitting "Insufficient funds" mid Trade Entry with no
+  // way to resolve it without abandoning the form. A header-triggered overlay stays
+  // reachable from every page, including mid-form, without navigating away.
+  const [cashModalOpen, setCashModalOpen] = useState(false);
+  const { data: portfolioForCashModal } = useQuery({
+    queryKey: ["portfolioApi"],
+    queryFn: async () => {
+      try {
+        const result = await api.portfolio.get();
+        return result || null;
+      } catch {
+        return null;
+      }
+    },
+    staleTime: 60 * 1000,
+  });
+  const { data: cashTransactionsForModal } = useQuery({
+    queryKey: ["cashTransactions"],
+    queryFn: async () => {
+      try {
+        // Bug fix (found via CI, this session): `|| []` only guards null/undefined,
+        // not "wrong shape". A response of {status:'ok', data: {}} (an object, not
+        // an array -- e.g. several existing test spec files' catch-all route mocks
+        // return exactly this shape for any unstubbed endpoint) is truthy, so `|| []`
+        // never fires, and CashManagementModal.js's `transactions?.slice(0, 5)` then
+        // throws "transactions.slice is not a function", crashing the whole React
+        // tree via the dev error overlay -- reproduced locally via arc5-compliance-
+        // section.spec.js failing in CI (unrelated page, broken because this query
+        // now fires globally on every page mount).
+        const result = await api.cash.getTransactions("DESC");
+        return Array.isArray(result) ? result : [];
+      } catch {
+        return [];
+      }
+    },
+    staleTime: 30 * 1000,
+  });
 
   const isActive = (pageName) =>
     pageName === "notifications"
@@ -466,6 +514,21 @@ export default function Layout({ children, currentPageName }) {
             <Button
               variant="ghost"
               size="icon"
+              data-testid="cash-management-trigger-mobile"
+              aria-label="Manage cash"
+              onClick={() => setCashModalOpen(true)}
+              className={cn(
+                "h-9 w-9",
+                isDark
+                  ? "text-slate-400 hover:text-white hover:bg-slate-800"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-200"
+              )}
+            >
+              <Wallet className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               data-testid="theme-toggle-mobile"
               aria-label="Toggle theme"
               onClick={toggleTheme}
@@ -623,6 +686,31 @@ export default function Layout({ children, currentPageName }) {
           </button>
         </div>
 
+        {/* Global cash management — account-level action, reachable from every
+            page (see Head of UX & Design note on cashModalOpen above) */}
+        <div className="px-4 pt-2">
+          <button
+            type="button"
+            onClick={() => setCashModalOpen(true)}
+            aria-label="Manage cash"
+            data-testid="cash-management-trigger-desktop"
+            className={cn(
+              "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border",
+              isDark
+                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20"
+                : "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
+            )}
+          >
+            <Wallet className="w-4 h-4 shrink-0" />
+            <span className="flex-1 text-left">Manage Cash</span>
+            {portfolioForCashModal?.cash_balance != null && (
+              <span className="text-xs opacity-80">
+                £{Number(portfolioForCashModal.cash_balance).toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+              </span>
+            )}
+          </button>
+        </div>
+
         {/* Navigation — scrollable */}
         <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
           {/* Dashboard — ungrouped home link */}
@@ -744,6 +832,15 @@ export default function Layout({ children, currentPageName }) {
 
       {/* ST-01 (EPIC-01, BLG-FE-115): global command palette — mounted once, present on every page */}
       <CommandPalette />
+
+      {/* Global cash management modal — mounted once, present on every page (see
+          Head of UX & Design note above cashModalOpen) */}
+      <CashManagementModal
+        open={cashModalOpen}
+        onClose={() => setCashModalOpen(false)}
+        portfolio={portfolioForCashModal}
+        transactions={cashTransactionsForModal}
+      />
     </div>
   );
 }

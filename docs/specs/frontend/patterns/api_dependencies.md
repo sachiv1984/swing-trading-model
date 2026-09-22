@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-03-18
+**Version:** 1.3
+**Last Updated:** 2026-09-22 (P1 hotfix — Cash Management Modal's reads corrected: sourced from Layout.js's global trigger, not the modal itself; GET /portfolio replaces GET /cash/summary, which was never actually wired here); prior — 2026-03-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose
@@ -131,12 +131,18 @@ Triggered continuously as the user types. Not form submissions — these calls a
 ---
 
 ### Cash Management Modal
-**Reads**
+**Reads** (fetched by the global nav/header trigger in `src/Layout.js` that mounts this
+modal on every page — see `docs/specs/frontend/components/cash_management_modal.md` v1.2;
+the modal itself makes no reads, it receives `portfolio`/`transactions` as props)
+- `GET /portfolio` (current cash balance)
 - `GET /cash/transactions` (transaction history)
-- `GET /cash/summary` (running totals / current cash)
 
 **Writes**
 - `POST /cash/transaction` (deposit/withdrawal)
+
+**Note:** `GET /cash/summary` was listed here previously but was never actually wired to
+this modal or its data source — pre-existing spec drift, left as-is beyond this correction
+since fixing it is out of scope for the P1 this update was made under.
 
 ---
 
