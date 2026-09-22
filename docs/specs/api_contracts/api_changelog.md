@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.12.0
-**Last Updated:** 2026-09-22 (ST-07 + ST-08, EPIC-02, v9.6, BLG-FR-04 + BLG-FR-05 — v9.6.0 entry: reports_endpoints.md v0.13, null_fee_trade_count field plus month-end snapshot/restatement-diff fields); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — v9.6.0 entry: alerts_endpoints.md v0.8 reflection_reminder alert type); prior — 2026-09-08 (ST-23, EPIC-04, v9.2, BLG-GOV-205 — new "Entry Template" section formalising the canonical structure; conformance check confirms all existing entries already match, no migration needed); prior history retained — see prior entries in version control.
+**Version:** 1.13.0
+**Last Updated:** 2026-09-22 (ST-10, EPIC-03, v9.6, BLG-BE-118 — v9.6.0 entry: strategy_benchmark_endpoints.md v1.3, `offset` param + 400 INVALID_PARAMS validation on GET /strategy/backtest-rule-change/runs); prior — 2026-09-22 (ST-07 + ST-08, EPIC-02, v9.6, BLG-FR-04 + BLG-FR-05 — v9.6.0 entry: reports_endpoints.md v0.13, null_fee_trade_count field plus month-end snapshot/restatement-diff fields); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — v9.6.0 entry: alerts_endpoints.md v0.8 reflection_reminder alert type); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -64,6 +64,15 @@ Rules:
 | Updated endpoint: GET /reports/tax-year | `summary` gains `restated_month_count`/`restated_months_notice`, derived from the same snapshot table for months overlapping the tax year (BLG-FR-05). No separate tax-year snapshot. |
 
 None of the above fields are added to either endpoint's `format=csv` export.
+
+### strategy_benchmark_endpoints.md — v1.3 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-10
+
+| Change | Details |
+|--------|---------|
+| Updated endpoint: GET /strategy/backtest-rule-change/runs | Gains `offset` query param for paging. A negative `limit` or `offset` now returns HTTP 400 `INVALID_PARAMS` instead of a 500 (BLG-BE-118). |
 
 ---
 

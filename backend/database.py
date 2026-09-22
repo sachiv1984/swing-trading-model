@@ -4738,9 +4738,13 @@ def create_backtest_rule_run(
     return dict(row)
 
 
-def get_backtest_rule_runs(limit: int = 20) -> List[Dict]:
+def get_backtest_rule_runs(limit: int = 20, offset: int = 0) -> List[Dict]:
     """Run History list — most recent first, summary fields only (no full
-    result payload, to keep the list endpoint light). AC-03."""
+    result payload, to keep the list endpoint light). AC-03.
+
+    `offset` added (ST-10, EPIC-03, v9.6, BLG-BE-118) to allow paging past
+    the first page of runs; caller (routers.backtest_rule_change) validates
+    both params are non-negative before this is called."""
     ensure_backtest_rule_run_tables()
     with get_db() as conn:
         with conn.cursor() as cur:
@@ -4751,9 +4755,9 @@ def get_backtest_rule_runs(limit: int = 20) -> List[Dict]:
                        candidate_result, live_result, created_at
                 FROM backtest_rule_runs
                 ORDER BY created_at DESC
-                LIMIT %s
+                LIMIT %s OFFSET %s
                 """,
-                (limit,),
+                (limit, offset),
             )
             return [dict(r) for r in cur.fetchall()]
 

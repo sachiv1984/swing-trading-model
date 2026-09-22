@@ -5716,10 +5716,17 @@ paths:
           in: query
           required: false
           schema: { type: integer, default: 20 }
-          description: Max runs to return
+          description: Max runs to return. Must be non-negative.
+        - name: offset
+          in: query
+          required: false
+          schema: { type: integer, default: 0 }
+          description: Number of most-recent runs to skip before the page starts. Must be non-negative. (ST-10, EPIC-03, v9.6, BLG-BE-118)
       responses:
         "200":
           $ref: "#/components/responses/OkBacktestRuleChangeRunList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/InternalError"
 

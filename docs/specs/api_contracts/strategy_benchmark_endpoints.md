@@ -1,9 +1,9 @@
 **Owner:** Backend Engineering Patterns Owner; Product Owner
 **Class:** API Contract (Class 2)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — added POST /strategy/backtest-rule-change/run, GET /strategy/backtest-rule-change/runs, GET /strategy/backtest-rule-change/runs/{run_id}); prior — 2026-07-02 (ST-08, EPIC-03, v6.4, BLG-FEAT-54 — open positions panel)
-**Story:** ST-07 (BLG-FEAT-89, EPIC-02, v8.9); ST-11 (BLG-FEAT-53, EPIC-03, v6.3); ST-08 (BLG-FEAT-54, EPIC-03, v6.4)
+**Version:** 1.3
+**Last Updated:** 2026-09-22 (ST-10, EPIC-03, v9.6, BLG-BE-118 — GET /strategy/backtest-rule-change/runs gains an `offset` param and 400 INVALID_PARAMS validation on negative limit/offset); prior — 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — added POST /strategy/backtest-rule-change/run, GET /strategy/backtest-rule-change/runs, GET /strategy/backtest-rule-change/runs/{run_id}); prior — 2026-07-02 (ST-08, EPIC-03, v6.4, BLG-FEAT-54 — open positions panel)
+**Story:** ST-10 (BLG-BE-118, EPIC-03, v9.6); ST-07 (BLG-FEAT-89, EPIC-02, v8.9); ST-11 (BLG-FEAT-53, EPIC-03, v6.3); ST-08 (BLG-FEAT-54, EPIC-03, v6.4)
 
 ---
 
@@ -340,7 +340,10 @@ ST-07. Run History — most recent first (AC-03). Summary fields only (no full `
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `limit` | integer | No | Max runs to return. Default 20. |
+| `limit` | integer | No | Max runs to return. Default 20. Must be non-negative. |
+| `offset` | integer | No | Number of most-recent runs to skip before the page starts. Default 0. Must be non-negative. (ST-10, EPIC-03, v9.6, BLG-BE-118) |
+
+A negative `limit` or `offset` returns HTTP 400 `INVALID_PARAMS` (ST-10, EPIC-03, v9.6, BLG-BE-118) instead of a 500.
 
 **Response (200):**
 
