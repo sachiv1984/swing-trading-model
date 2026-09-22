@@ -314,6 +314,13 @@ def get_monthly_pnl(portfolio_id: str) -> List[Dict]:
 
     Used by GET /reports/monthly-pnl.
     Spec: docs/specs/api_contracts/reports_endpoints.md §GET /reports/monthly-pnl
+
+    `null_fee_trade_count` (ST-07, EPIC-02, v9.6, BLG-FR-04): count of closed
+    trades in the month where `entry_fees` or `exit_fees` is NULL. `pnl` for
+    such a trade was computed with the missing fee leg treated as an
+    unrecorded cost rather than a genuinely-known zero -- see
+    metrics_definitions.md §Realized / Unrealized P&L Split, "Fee-Netting
+    Basis". Audit-only: this story does not change any stored pnl figure.
     """
     with get_db() as conn:
         with conn.cursor() as cur:
@@ -322,7 +329,8 @@ def get_monthly_pnl(portfolio_id: str) -> List[Dict]:
                    EXTRACT(YEAR FROM exit_date)::int AS year,
                    EXTRACT(MONTH FROM exit_date)::int AS month,
                    COALESCE(SUM(pnl), 0)::float AS realised_pnl_gbp,
-                   COUNT(*)::int AS trade_count
+                   COUNT(*)::int AS trade_count,
+                   COUNT(*) FILTER (WHERE entry_fees IS NULL OR exit_fees IS NULL)::int AS null_fee_trade_count
                    FROM trade_history
                    WHERE portfolio_id = %s
                    AND exit_date >= date_trunc('year', CURRENT_DATE - INTERVAL '1 year')
@@ -355,6 +363,90 @@ def get_daily_pnl(portfolio_id: str, year: int, month: int) -> List[Dict]:
                    GROUP BY day
                    ORDER BY day ASC""",
                 (portfolio_id, year, month)
+            )
+            return cur.fetchall()
+
+
+def ensure_monthly_pnl_snapshots_table() -> None:
+    """Create monthly_pnl_snapshots table if it does not exist (idempotent).
+
+    One row per closed calendar month per portfolio; never updated once
+    inserted (ST-08, EPIC-02, v9.6, BLG-FR-05).
+    Spec: docs/specs/data_model.md#DS-20
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS monthly_pnl_snapshots (
+                    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    portfolio_id        UUID NOT NULL,
+                    year                INTEGER NOT NULL,
+                    month               INTEGER NOT NULL,
+                    realised_pnl_gbp    NUMERIC(12, 2) NOT NULL,
+                    trade_count         INTEGER NOT NULL,
+                    snapshotted_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    UNIQUE (portfolio_id, year, month)
+                )
+            """)
+        conn.commit()
+
+
+def get_monthly_pnl_snapshot(portfolio_id: str, year: int, month: int) -> Optional[Dict]:
+    """Return the stored baseline for one (portfolio, year, month), or None
+    if that month has not been baselined yet.
+    """
+    ensure_monthly_pnl_snapshots_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT year, month, realised_pnl_gbp::float AS realised_pnl_gbp,
+                          trade_count, snapshotted_at
+                   FROM monthly_pnl_snapshots
+                   WHERE portfolio_id = %s AND year = %s AND month = %s""",
+                (portfolio_id, year, month)
+            )
+            return cur.fetchone()
+
+
+def insert_monthly_pnl_snapshot_if_absent(
+    portfolio_id: str, year: int, month: int, realised_pnl_gbp: float, trade_count: int
+) -> None:
+    """Baseline a closed month exactly once (insert-only, never update).
+
+    `ON CONFLICT ... DO NOTHING` is deliberate, not a race-safety nicety: a
+    second call after the underlying figures have since drifted must NOT
+    overwrite the original baseline -- that baseline is the very thing a
+    restatement diff is measured against (data_model.md DS-20).
+    """
+    ensure_monthly_pnl_snapshots_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """INSERT INTO monthly_pnl_snapshots
+                       (portfolio_id, year, month, realised_pnl_gbp, trade_count)
+                   VALUES (%s, %s, %s, %s, %s)
+                   ON CONFLICT (portfolio_id, year, month) DO NOTHING""",
+                (portfolio_id, year, month, realised_pnl_gbp, trade_count)
+            )
+        conn.commit()
+
+
+def get_monthly_pnl_snapshots_in_range(portfolio_id: str, start_date, end_date) -> List[Dict]:
+    """Return all stored snapshots whose (year, month) overlaps [start_date, end_date]
+    at all (calendar-month granularity -- see data_model.md DS-20's disclosed
+    April/tax-year boundary approximation). Used to derive the Tax Year
+    report's restated-month count.
+    """
+    ensure_monthly_pnl_snapshots_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT year, month, realised_pnl_gbp::float AS realised_pnl_gbp, trade_count
+                   FROM monthly_pnl_snapshots
+                   WHERE portfolio_id = %s
+                   AND make_date(year, month, 1) <= %s
+                   AND (make_date(year, month, 1) + INTERVAL '1 month - 1 day') >= %s""",
+                (portfolio_id, end_date, start_date)
             )
             return cur.fetchall()
 

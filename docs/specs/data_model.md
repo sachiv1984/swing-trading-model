@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.37
-**Last Updated:** 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — DS-19: `reflection_reminder` added to the `notifications` and `notification_preferences` `alert_type` CHECK constraints, plus a partial unique index enforcing one reminder per trade; §9/§10 updated); prior — 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added Position & Trade Plan Lifecycle State Diagram section; surfaced trade_plans CHECK constraint documentation gap, filed as BLG-SPEC-154; no schema change); prior — 2026-09-18 (ST-22, EPIC-04, v9.5, BLG-SPEC-D18 — added live schema verification note to Positions Table section; 4 discrepancies filed as BLG-SPEC-148/149/150/151); prior history retained — see prior entries in version control.
+**Version:** 2.38
+**Last Updated:** 2026-09-22 (ST-08, EPIC-02, v9.6, BLG-FR-05 — DS-20: new `monthly_pnl_snapshots` table, one row per closed month per portfolio, backing the Monthly P&L restatement diff); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — DS-19: `reflection_reminder` added to the `notifications` and `notification_preferences` `alert_type` CHECK constraints, plus a partial unique index enforcing one reminder per trade; §9/§10 updated); prior — 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added Position & Trade Plan Lifecycle State Diagram section; surfaced trade_plans CHECK constraint documentation gap, filed as BLG-SPEC-154; no schema change); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -2369,6 +2369,41 @@ Reversible: `DROP INDEX IF EXISTS uq_notifications_reflection_reminder_trade;` t
 
 ---
 
-**Document Version:** 2.37
+## DS-20 — monthly_pnl_snapshots table (v2.38, 2026-09-22)
+
+**Story:** ST-08 (EPIC-02, v9.6) — BLG-FR-05, month-end immutable snapshot of Monthly P&L (and the Tax Year table via a derived notice), with a restatement diff
+
+New table, one row per closed calendar month per portfolio (unique on `(portfolio_id, year, month)`). Additive, idempotent (`CREATE TABLE IF NOT EXISTS`), applied lazily by `ensure_monthly_pnl_snapshots_table()` — called both at application startup and defensively at the top of every function that reads/writes the table, matching the existing `trade_debriefs`/DS-16 convention.
+
+```sql
+CREATE TABLE IF NOT EXISTS monthly_pnl_snapshots (
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id        UUID NOT NULL,
+    year                INTEGER NOT NULL,
+    month               INTEGER NOT NULL,
+    realised_pnl_gbp    NUMERIC(12, 2) NOT NULL,
+    trade_count         INTEGER NOT NULL,
+    snapshotted_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (portfolio_id, year, month)
+);
+```
+
+**Baselining rule ("closed month"):** a month is "closed" once it is strictly before the current calendar month (`(year, month) < (current_year, current_month)`, server clock). `GET /reports/monthly-pnl` baselines a closed month the first time it is read with no existing snapshot row — inserting the month's *current* computed `realised_pnl_gbp`/`trade_count` as its permanent baseline (`INSERT ... ON CONFLICT (portfolio_id, year, month) DO NOTHING`). Per the addendum: **months already closed at ship are baselined once, not retroactively flagged** — the first post-ship read of a pre-existing closed month becomes its baseline, not some reconstructed original value. The current, in-progress month is never snapshotted.
+
+**Immutability:** once a `(portfolio_id, year, month)` row exists it is never updated or replaced — `ON CONFLICT DO NOTHING` is the only write path. This is what makes the restatement diff meaningful: the stored row is the figure as first observed, and a later live recomputation that disagrees with it is by definition a restatement, not a second baseline.
+
+**Restatement diff:** on every read, the live-computed total for an already-snapshotted month is compared to its stored snapshot. If they differ, the month is `restated: true` and the response carries both the current and snapshot figures plus the diff (see `reports_endpoints.md` §GET /reports/monthly-pnl). The Tax Year report (`GET /reports/tax-year`) does not get its own snapshot table per the addendum ("not a second snapshot") — its `summary.restated_month_count`/`restated_months_notice` fields are derived by re-checking, against this same table, whichever of its constituent calendar months already have a snapshot.
+
+**Known boundary approximation (disclosed, not fixed, this story):** UK tax years run 6 April–5 April, splitting the calendar month of April across two tax years by day, while this table snapshots by whole calendar month. `get_tax_year_report()`'s restated-month count therefore treats April as "in" both the outgoing and incoming tax year when computing overlap, which can double-count or misattribute a restatement discovered in April against the wrong tax year in the rare case where entry_fees/exit_fees/pnl on an April-dated row actually changes. No live write path can currently change a closed trade's `pnl`/`exit_date` at all (see below), so this cannot yet occur in practice; tracked as a documented limitation rather than a code fix inside this story (RISK-02).
+
+**Currently-unreachable in production (disclosed, per the `ESC-EXEC-20260910-01` honest-disclosure precedent):** as of this story, no live endpoint can alter a `trade_history` row's `pnl`, `total_cost`, `net_proceeds`, or `exit_date` after it is written at exit time — `trade_history` is written once and never updated by `exit_position()` (see `data_model.md` §3 header comment), and the only existing "edit a closed trade" endpoint, `PATCH /trades/{trade_id}/costs`, writes `commission_gbp`/`spread_cost_gbp` only, which feed `net_r_multiple` at query time, not `pnl`. AC2 ("editing a closed trade in a snapshotted month surfaces a restatement diff") is therefore built and unit-tested against a simulated stored-vs-live mismatch, not demonstrated end-to-end through any current live UI action — there is no live action today that would trigger one. The mechanism is real and will correctly detect a genuine drift (e.g. from a future correction endpoint, a manual DB fix, or a bug fix in the aggregation query itself) the moment one becomes possible.
+
+**Reversible:** `DROP TABLE IF EXISTS monthly_pnl_snapshots;` — no other table references it (no FK from any other table points at it).
+
+**Verification status:** DDL and read/write functions covered by mocked-cursor unit tests (`tests/test_monthly_pnl_snapshot.py`); not executed against a live PostgreSQL (no database access in the execution sandbox).
+
+---
+
+**Document Version:** 2.38
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — DS-19; header/footer version kept in sync); prior — 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added Position & Trade Plan Lifecycle State Diagram section; header/footer version kept in sync)
+**Last Review:** 2026-09-22 (ST-08, EPIC-02, v9.6, BLG-FR-05 — DS-20; header/footer version kept in sync); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — DS-19; header/footer version kept in sync)

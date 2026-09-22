@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.12
-**Last Updated:** 2026-08-07
+**Version:** 0.13
+**Last Updated:** 2026-09-22 (ST-07 + ST-08, EPIC-02, v9.6, BLG-FR-04 + BLG-FR-05 — added `null_fee_trade_count` and month-end snapshot/restatement fields to `GET /reports/monthly-pnl`'s per-month response objects, plus a derived restated-month notice on `GET /reports/tax-year`)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -138,6 +138,8 @@ Response uses the standard success envelope from **conventions.md**.
 | `win_rate` | float | `win_count / total_closed_trades × 100`. `0.0` when `total_closed_trades = 0`. |
 | `estimated_unrealised_pnl` | float | Sum of `pnl` from currently open positions (from `positions` table). GBP. See `unrealised_note`. |
 | `unrealised_note` | string | Fixed explanatory note on the provenance and limitations of `estimated_unrealised_pnl` |
+| `restated_month_count` | integer | *(v0.13 — ST-08, BLG-FR-05)* Count of this tax year's calendar months whose live-computed Monthly P&L total now disagrees with its stored `monthly_pnl_snapshots` baseline. `0` if no month in range has a snapshot yet, or none have drifted. Derived, not a stored figure — see `metrics_definitions.md` and `data_model.md` DS-20 for the disclosed April/tax-year boundary approximation (calendar-month overlap, not day-exact) and for why no live action can currently trigger a restatement. |
+| `restated_months_notice` | string \| null | `"Includes N restated month(s)"` when `restated_month_count > 0`, else `null`. Shown on the Tax Year summary bar. |
 
 #### Field definitions — `trades[]`
 
@@ -428,11 +430,16 @@ Array of monthly summary objects, sorted descending by year then month. Only mon
 
 ```json
 [
-  { "year": 2026, "month": 4, "realised_pnl_gbp": 340.50, "trade_count": 3 },
-  { "year": 2026, "month": 3, "realised_pnl_gbp": -120.00, "trade_count": 1 },
-  { "year": 2025, "month": 12, "realised_pnl_gbp": 875.25, "trade_count": 5 }
+  { "year": 2026, "month": 4, "realised_pnl_gbp": 340.50, "trade_count": 3, "null_fee_trade_count": 0,
+    "snapshotted": false, "restated": false, "snapshot_realised_pnl_gbp": null, "restated_diff_gbp": null },
+  { "year": 2026, "month": 3, "realised_pnl_gbp": -120.00, "trade_count": 1, "null_fee_trade_count": 1,
+    "snapshotted": true, "restated": false, "snapshot_realised_pnl_gbp": -120.00, "restated_diff_gbp": 0.0 },
+  { "year": 2025, "month": 12, "realised_pnl_gbp": 875.25, "trade_count": 5, "null_fee_trade_count": 0,
+    "snapshotted": true, "restated": true, "snapshot_realised_pnl_gbp": 850.00, "restated_diff_gbp": 25.25 }
 ]
 ```
+
+(This example assumes April 2026 is the current calendar month — only the two prior months are snapshotted.)
 
 #### Field definitions
 
@@ -442,6 +449,11 @@ Array of monthly summary objects, sorted descending by year then month. Only mon
 | `month` | integer | Calendar month (1=January, 12=December) |
 | `realised_pnl_gbp` | float | Sum of `pnl` for all closed trades with `exit_date` in this month. GBP. Fee-inclusive. Negative if net loss. |
 | `trade_count` | integer | Count of closed trades with `exit_date` in this month |
+| `null_fee_trade_count` | integer | *(v0.13 — ST-07, BLG-FR-04)* Count of this month's closed trades where `trade_history.entry_fees` or `exit_fees` is `NULL`. Audit signal only — a non-zero value means that trade's `pnl` treated the missing fee leg as zero rather than a known cost; it does not change `realised_pnl_gbp`. See `metrics_definitions.md` §Fee-Netting Basis. |
+| `snapshotted` | boolean | *(v0.13 — ST-08, BLG-FR-05)* `true` once this month is "closed" (strictly before the current calendar month) and has been baselined into `monthly_pnl_snapshots`. `false` for the current, in-progress month, which is never snapshotted. |
+| `restated` | boolean | *(v0.13 — ST-08)* `true` if this month is snapshotted and its live-computed `realised_pnl_gbp`/`trade_count` now disagree with the stored baseline. Always `false` when `snapshotted` is `false`. |
+| `snapshot_realised_pnl_gbp` | float \| null | *(v0.13 — ST-08)* The stored baseline figure for this month. `null` when `snapshotted` is `false`. |
+| `restated_diff_gbp` | float \| null | *(v0.13 — ST-08)* `realised_pnl_gbp − snapshot_realised_pnl_gbp` when `restated` is `true`; `0.0` when snapshotted but not restated; `null` when `snapshotted` is `false`. |
 
 **Scope:** Returns data for the current calendar year and the prior calendar year only (24 months maximum). Empty array if no closed trades exist in scope.
 
@@ -514,6 +526,8 @@ Year,Month,Realised P&L (GBP),Trades
 ```
 
 No client-side recalculation — values are identical to the `data` array's `realised_pnl_gbp`/`trade_count` fields, not re-derived.
+
+**Audit/snapshot fields excluded (v0.13 — ST-07/ST-08):** `null_fee_trade_count`, `snapshotted`, `restated`, `snapshot_realised_pnl_gbp`, and `restated_diff_gbp` are JSON-only — neither the main CSV table columns nor a trailing disclosure row (unlike the Cost Basis Method row above, which is a deliberate trailing-row addition). The CSV export's byte shape is unchanged by ST-07/ST-08.
 
 **Reconciliation note (QA verification, not a response contract item):** both this endpoint and `GET /reports/tax-year`'s CSV export sum the same `trade_history.pnl` column directly (see `get_monthly_pnl()` and the tax-year trade query in `backend/database.py`) — no separate computation path exists for either, so there is no double-counting or drift between them at the ledger level. A literal numeric match between a calendar-year total in this export and a UK-tax-year total in the Tax Year export is not expected for years where the two windows don't align (calendar Jan–Dec vs UK tax year Apr–Apr) — this is an inherent property of the two different groupings, not a defect.
 
@@ -680,6 +694,7 @@ GET /reports/reconciliation?year=2025
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.13 | 2026-09-22 | ST-07 + ST-08 (v9.6, EPIC-02, BLG-FR-04 + BLG-FR-05): **ST-07** added `null_fee_trade_count` to `GET /reports/monthly-pnl`'s per-month `data[]` objects — count of that month's closed trades with `entry_fees` or `exit_fees` NULL in `trade_history` (audit signal only; does not change `realised_pnl_gbp`). **ST-08** added month-end immutable snapshotting: per-month `snapshotted`/`restated`/`snapshot_realised_pnl_gbp`/`restated_diff_gbp` fields on `GET /reports/monthly-pnl`, and a derived `summary.restated_month_count`/`restated_months_notice` pair on `GET /reports/tax-year` (backed by the new `monthly_pnl_snapshots` table, `data_model.md` DS-20 — no live action currently triggers a restatement, see DS-20's disclosure). None of these fields are added to either endpoint's `format=csv` export — CSV byte shape unchanged. |
 | 0.12 | 2026-08-07 | ST-31 (v8.4, EPIC-01, BLG-FEAT-78): Added `trade_origin` field (`"Signal"` / `"Manual"`) to `GET /reports/tax-year`'s `trades[]` array and its CSV export (`Trade Origin`, 18th/last column — additive, no breaking-change bump per this doc's own analytics/convenience-export versioning note). Derived from `trade_plans.signal_id` via the two-hop `trade_history.position_id = positions.id = trade_plans.position_id` relationship (`data_model.md`). **Scope correction (`ESC-EXEC-20260807-01`, resolved):** the backlog item's original "trigger-source"/alert-triggered framing was found to have no underlying schema linkage — `price_alerts` (`BLG-FE-116`) never tags a resulting trade — so the AC was reinterpreted, with Product Owner approval, to the real, already-wired `signal_id` distinction (momentum-screener signals) rather than shipping a column that would misrepresent trade provenance in a tax-relevant export. Not added to the PDF export (CSV-only per AC). |
 | 0.11 | 2026-08-04 | ST-01 (v8.2, EPIC-01, BLG-FEAT-88): Added `## GET /reports/reconciliation` — P&L / tax record reconciliation report comparing the Tax Year report's system total against an independently re-derived export-side sum. Reuses `get_tax_year_report`'s `total_realised_pnl` for the system side; new `get_trade_history_pnl_sum_by_tax_year` DB function (server-side SQL SUM) for the export side, per the design gate's requirement for a genuinely separate query path. |
 | 0.10 | 2026-07-26 | ST-05 (v7.8, EPIC-05, BLG-FEAT-81): Added `format=csv` to `GET /reports/monthly-pnl`, mirroring the existing `GET /reports/tax-year?format=csv` handler. CSV export is a plain header row + one row per month (no metadata block, unlike the Tax Year CSV) — `Year,Month,Realised P&L (GBP),Trades`. Invalid `format` values return 400. Reconciliation note added: both CSV exports sum the same `trade_history.pnl` column directly, no double-counting risk, though a literal calendar-year-vs-tax-year numeric match isn't expected given the different window boundaries. |

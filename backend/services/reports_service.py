@@ -30,6 +30,9 @@ from database import (
     get_trade_history_pnl_sum_by_tax_year,
     get_monthly_pnl,
     get_daily_pnl,
+    get_monthly_pnl_snapshot,
+    insert_monthly_pnl_snapshot_if_absent,
+    get_monthly_pnl_snapshots_in_range,
 )
 from utils.formatting import decimal_to_float
 
@@ -155,6 +158,35 @@ def get_estimated_unrealised_pnl(portfolio_id: str) -> float:
     return round(sum(float(p.get('pnl', 0) or 0) for p in open_positions), 2)
 
 
+def _get_restated_month_count(portfolio_id: str, start_date: date, end_date: date) -> int:
+    """Count months overlapping [start_date, end_date] whose live-computed
+    total now disagrees with its stored `monthly_pnl_snapshots` baseline
+    (ST-08, EPIC-02, v9.6, BLG-FR-05). Feeds the Tax Year report's
+    `summary.restated_month_count`/`restated_months_notice` -- see
+    data_model.md DS-20 for the disclosed April/tax-year boundary
+    approximation this uses (calendar-month overlap, not day-exact).
+    """
+    snapshots = get_monthly_pnl_snapshots_in_range(portfolio_id, start_date, end_date)
+    if not snapshots:
+        return 0
+    live_by_month = {
+        (int(r["year"]), int(r["month"])): r for r in get_monthly_pnl(portfolio_id)
+    }
+    restated = 0
+    for snap in snapshots:
+        live = live_by_month.get((int(snap["year"]), int(snap["month"])))
+        if live is None:
+            # Aged out of get_monthly_pnl's rolling window -- cannot confirm
+            # either way; conservative: not counted rather than guessed.
+            continue
+        if (
+            round(float(live["realised_pnl_gbp"]), 2) != round(float(snap["realised_pnl_gbp"]), 2)
+            or int(live["trade_count"]) != int(snap["trade_count"])
+        ):
+            restated += 1
+    return restated
+
+
 def get_tax_year_report(year: int) -> Dict:
     """
     Build a UK tax-year P&L report for the given start year.
@@ -228,6 +260,15 @@ def get_tax_year_report(year: int) -> Dict:
     # --- Estimated unrealised P&L from currently open positions ---
     estimated_unrealised_pnl = get_estimated_unrealised_pnl(portfolio_id)
 
+    # --- Restated-month notice (ST-08, EPIC-02, v9.6, BLG-FR-05) ---
+    # Derived from monthly_pnl_snapshots -- no separate tax-year snapshot
+    # (addendum: "not a second snapshot").
+    restated_month_count = _get_restated_month_count(portfolio_id, tax_year_start, tax_year_end)
+    restated_months_notice = (
+        f"Includes {restated_month_count} restated month{'s' if restated_month_count != 1 else ''}"
+        if restated_month_count else None
+    )
+
     return {
         "tax_year_start": str(tax_year_start),
         "tax_year_end": str(tax_year_end),
@@ -243,6 +284,8 @@ def get_tax_year_report(year: int) -> Dict:
             "win_rate": win_rate,
             "estimated_unrealised_pnl": estimated_unrealised_pnl,
             "unrealised_note": UNREALISED_NOTE,
+            "restated_month_count": restated_month_count,
+            "restated_months_notice": restated_months_notice,
         },
         "trades": trades_out,
     }
@@ -295,6 +338,41 @@ def get_reconciliation_report(year: int) -> Dict:
     }
 
 
+def _is_closed_month(year: int, month: int, today: date) -> bool:
+    """A month is "closed" once it is strictly before the current calendar
+    month (server clock) -- the in-progress month is never snapshotted
+    (data_model.md DS-20)."""
+    return (year, month) < (today.year, today.month)
+
+
+def _snapshot_month(portfolio_id: str, year: int, month: int, realised_pnl_gbp: float, trade_count: int) -> dict:
+    """Baseline-once + restatement-diff for a single closed month
+    (ST-08, EPIC-02, v9.6, BLG-FR-05). Returns the snapshot-related fields
+    to merge into that month's response row.
+    """
+    snapshot = get_monthly_pnl_snapshot(portfolio_id, year, month)
+    if snapshot is None:
+        # First read of this closed month: baseline it at its current value.
+        insert_monthly_pnl_snapshot_if_absent(portfolio_id, year, month, realised_pnl_gbp, trade_count)
+        return {
+            "snapshotted": True,
+            "restated": False,
+            "snapshot_realised_pnl_gbp": realised_pnl_gbp,
+            "restated_diff_gbp": 0.0,
+        }
+    snapshot_pnl = round(float(snapshot["realised_pnl_gbp"]), 2)
+    restated = (
+        round(realised_pnl_gbp, 2) != snapshot_pnl
+        or trade_count != int(snapshot["trade_count"])
+    )
+    return {
+        "snapshotted": True,
+        "restated": restated,
+        "snapshot_realised_pnl_gbp": snapshot_pnl,
+        "restated_diff_gbp": round(realised_pnl_gbp - snapshot_pnl, 2) if restated else 0.0,
+    }
+
+
 def get_monthly_pnl_report() -> dict:
     """
     Return month-by-month realised P&L for the current and prior calendar year,
@@ -303,7 +381,10 @@ def get_monthly_pnl_report() -> dict:
     Returns:
         {
           "months": list of dicts matching reports_endpoints.md §GET /reports/monthly-pnl
-                    (unchanged per-row shape — year, month, realised_pnl_gbp, trade_count),
+                    (year, month, realised_pnl_gbp, trade_count, null_fee_trade_count,
+                    snapshotted, restated, snapshot_realised_pnl_gbp, restated_diff_gbp
+                    -- ST-08, EPIC-02, v9.6, BLG-FR-05: the current, in-progress month
+                    always has snapshotted=False and no snapshot/diff fields populated),
           "estimated_unrealised_pnl": float | None — None when there is no portfolio yet,
           "unrealised_note": str,
         }
@@ -313,15 +394,33 @@ def get_monthly_pnl_report() -> dict:
         return {"months": [], "estimated_unrealised_pnl": None, "unrealised_note": UNREALISED_NOTE}
     portfolio_id = str(portfolio['id'])
     rows = get_monthly_pnl(portfolio_id)
-    months = [
-        {
-            "year": int(r["year"]),
-            "month": int(r["month"]),
-            "realised_pnl_gbp": round(float(r["realised_pnl_gbp"]), 2),
-            "trade_count": int(r["trade_count"]),
+    today = datetime.now(timezone.utc).date()
+    months = []
+    for r in rows:
+        year = int(r["year"])
+        month = int(r["month"])
+        realised_pnl_gbp = round(float(r["realised_pnl_gbp"]), 2)
+        trade_count = int(r["trade_count"])
+        row = {
+            "year": year,
+            "month": month,
+            "realised_pnl_gbp": realised_pnl_gbp,
+            "trade_count": trade_count,
+            # ST-07 (EPIC-02, v9.6, BLG-FR-04): flag closed trades missing a
+            # fee leg -- see get_monthly_pnl()'s docstring. 0 for legacy row
+            # shapes (e.g. cached fixtures/tests) that predate this field.
+            "null_fee_trade_count": int(r.get("null_fee_trade_count", 0) or 0),
         }
-        for r in rows
-    ]
+        if _is_closed_month(year, month, today):
+            row.update(_snapshot_month(portfolio_id, year, month, realised_pnl_gbp, trade_count))
+        else:
+            row.update({
+                "snapshotted": False,
+                "restated": False,
+                "snapshot_realised_pnl_gbp": None,
+                "restated_diff_gbp": None,
+            })
+        months.append(row)
     return {
         "months": months,
         "estimated_unrealised_pnl": get_estimated_unrealised_pnl(portfolio_id),
