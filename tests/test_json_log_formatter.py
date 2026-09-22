@@ -101,3 +101,35 @@ class TestJsonLinesFormatter:
         )
         payload = json.loads(JsonLinesFormatter().format(record))
         assert payload["message"] == "value is 42"
+
+
+class TestMessageTruncation:
+    """ST-11, EPIC-03, v9.6, BLG-BE-120 — structured_logging_standards.md
+    §Structured Log Format: `message` is "Free text (max 500 chars)"."""
+
+    def test_message_at_500_chars_is_unchanged(self):
+        message = "x" * 500
+        record = _make_record(msg=message)
+        payload = json.loads(JsonLinesFormatter().format(record))
+        assert payload["message"] == message
+        assert len(payload["message"]) == 500
+
+    def test_message_under_500_chars_is_unchanged(self):
+        message = "short message"
+        record = _make_record(msg=message)
+        payload = json.loads(JsonLinesFormatter().format(record))
+        assert payload["message"] == message
+
+    def test_message_over_500_chars_is_truncated_to_500(self):
+        message = "y" * 600
+        record = _make_record(msg=message)
+        payload = json.loads(JsonLinesFormatter().format(record))
+        assert len(payload["message"]) == 500
+        assert payload["message"].endswith("...[truncated]")
+        assert payload["message"].startswith("y" * 100)
+
+    def test_truncated_message_is_still_valid_json(self):
+        record = _make_record(msg="z" * 10_000)
+        output = JsonLinesFormatter().format(record)
+        payload = json.loads(output)  # raises if not valid JSON
+        assert len(payload["message"]) == 500

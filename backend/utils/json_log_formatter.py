@@ -19,6 +19,14 @@ _OPTIONAL_FIELDS = (
     "position_id", "error_type", "error_detail", "job_id", "retry_count",
 )
 
+# structured_logging_standards.md §Structured Log Format: `message` is
+# "Free text (max 500 chars)". Truncated (ST-11, EPIC-03, v9.6, BLG-BE-120)
+# — previously unenforced, so a long message (e.g. an unsanitised exception
+# string landing in `message` instead of `error_detail`) could exceed the
+# spec's own limit in the emitted JSON.
+_MAX_MESSAGE_LENGTH = 500
+_TRUNCATION_SUFFIX = "...[truncated]"
+
 
 class JsonLinesFormatter(logging.Formatter):
     """Formats each LogRecord as a single-line JSON object (NDJSON)."""
@@ -39,6 +47,10 @@ class JsonLinesFormatter(logging.Formatter):
         if correlation_id in (None, "-"):
             correlation_id = "none"
 
+        message = record.getMessage()
+        if len(message) > _MAX_MESSAGE_LENGTH:
+            message = message[: _MAX_MESSAGE_LENGTH - len(_TRUNCATION_SUFFIX)] + _TRUNCATION_SUFFIX
+
         payload = {
             "timestamp": timestamp,
             "level": record.levelname,
@@ -49,7 +61,7 @@ class JsonLinesFormatter(logging.Formatter):
             # originally illustrated — see structured_logging_standards.md
             # §Structured Log Format Changelog entry for this story.
             "service": record.name,
-            "message": record.getMessage(),
+            "message": message,
         }
 
         for field in _OPTIONAL_FIELDS:
