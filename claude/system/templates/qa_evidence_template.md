@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.15
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-P4-01, same-cycle application — added a disambiguation note distinguishing `Pass, escalation open` (a named open ESC-* record) from a plain `Pass` with an incidental backlog-item finding); prior — 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 STEP 8 immediate action, Head of Specs Team direct action — added "Pass, escalation open" to the Result column's enumerated values with defined semantics, matching delivery_verification_prompt.md v3.11 §2.1, LL-v9.3-P4-02); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, Head of Specs Team direct action — added "Pass_with_deviation" to the Result column's enumerated values with defined semantics, matching delivery_verification_prompt.md v3.10 §2.1, LL-v9.2-P4-01); prior history retained — see prior entries in version control.
+**Version:** 1.16
+**Last Updated:** 2026-09-22 (Sprint execution 2026-09-21__release-v9.6 EPIC-05/ST-19, BLG-QA-172 — added a Flaky-Test Disposition Addendum: retry/quarantine/fix-now decision framework, cross-referenced against the existing quarantine mechanism and tracking item); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-P4-01, same-cycle application — added a disambiguation note distinguishing `Pass, escalation open` (a named open ESC-* record) from a plain `Pass` with an incidental backlog-item finding); prior — 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 STEP 8 immediate action, Head of Specs Team direct action — added "Pass, escalation open" to the Result column's enumerated values with defined semantics, matching delivery_verification_prompt.md v3.11 §2.1, LL-v9.3-P4-02); prior history retained — see prior entries in version control.
 
 # QA Evidence Template
 
@@ -82,6 +82,19 @@ Last Updated: <date>
 > - Date: YYYY-MM-DD
 >
 > Both variants are valid. The `Date:` field must be non-blank in both formats before the PR can be opened and before the merge gate runs. The EPIC-level DoQ block is always required even when per-story sign-offs have been collected — it represents the Director of Quality's acknowledgement of the aggregate evidence.
+
+---
+
+## Flaky-Test Disposition Addendum (ST-19, BLG-QA-172, EPIC-05, v9.6)
+
+When a test is found flaky during DoQ sign-off (or at any other point QA evidence is being assessed), use this decision framework rather than handling the occurrence ad hoc:
+
+1. **Single, unreproduced failure (not yet confirmed flaky):** retry once in the same CI run/PR before treating it as anything more than a possible one-off infra blip. Do not quarantine on a single occurrence — quarantining requires the confirmation step in (2).
+2. **Confirmed flaky (fails intermittently — same test, same code, same environment sometimes passes and sometimes fails — and the failure is confirmed unrelated to the PR's own diff, e.g. by re-running in isolation or on `main`):** quarantine immediately using the existing mechanism — see `docs/testing/flaky_test_quarantine_process.md` for the required `test.fixme('FLAKY-QUARANTINE: <reason> — tracked in BLG-QA-<id>')` tag format, and file (or reuse) a tracking backlog item in the same commit as the quarantine. Do not let a confirmed-flaky test block merge of unrelated work.
+3. **Deterministic failure, not actually flaky:** if the same test fails the same way every time, or the failure correlates with the PR's own diff, this is a real regression, not flakiness — fix the regression (or the test) now. Do not quarantine as a way to avoid investigating; `docs/testing/flaky_test_quarantine_process.md` explicitly excludes this case from the quarantine mechanism.
+4. **No quarantine without a tracked follow-up:** an untracked quarantine (a `test.fixme` with no `BLG-*` reference) is a process violation, enforced in CI by `tests/test_flaky_quarantine_format.py`.
+
+**Cross-reference (confirmed correct as of 2026-09-22, per this story's own AC-2):** the quarantine *mechanism* itself (the `test.fixme`/`FLAKY-QUARANTINE:` tag format, backlog cross-reference requirement, and CI enforcement) already shipped — `docs/testing/flaky_test_quarantine_process.md` (BLG-QA-117, EPIC-10, v7.8, Status: Canonical) — and is what step 2 above uses. `BLG-QA-75` (Playwright flake-rate tracking, consolidated) is a **separate, still gate-conditional** item: its lightweight quarantine-list/log scope is superseded by the mechanism above (a live per-test tag is a better source of truth than a separate hand-maintained log — see `docs/testing/flaky_test_quarantine_process.md` §Review Cadence for how quarantined tests are surfaced at each `groom backlog` pass), and its broader CI-pipeline-integrated flake-rate *tracking* scope remains gated on the first demonstrated flaky-test incident (not yet met — `docs/testing/flaky_test_quarantine_process.md` §Currently-Known Flaky Tests records none identified at time of writing). This decision framework governs an individual disposition call at sign-off time; it does not itself trigger `BLG-QA-75`'s gate — building the fuller CI-integrated tooling remains a separate question from disposing of one flaky test found during review.
 
 ---
 
