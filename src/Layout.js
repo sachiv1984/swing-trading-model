@@ -207,7 +207,17 @@ export default function Layout({ children, currentPageName }) {
     queryKey: ["cashTransactions"],
     queryFn: async () => {
       try {
-        return (await api.cash.getTransactions("DESC")) || [];
+        // Bug fix (found via CI, this session): `|| []` only guards null/undefined,
+        // not "wrong shape". A response of {status:'ok', data: {}} (an object, not
+        // an array -- e.g. several existing test spec files' catch-all route mocks
+        // return exactly this shape for any unstubbed endpoint) is truthy, so `|| []`
+        // never fires, and CashManagementModal.js's `transactions?.slice(0, 5)` then
+        // throws "transactions.slice is not a function", crashing the whole React
+        // tree via the dev error overlay -- reproduced locally via arc5-compliance-
+        // section.spec.js failing in CI (unrelated page, broken because this query
+        // now fires globally on every page mount).
+        const result = await api.cash.getTransactions("DESC");
+        return Array.isArray(result) ? result : [];
       } catch {
         return [];
       }

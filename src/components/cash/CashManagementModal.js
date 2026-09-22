@@ -57,7 +57,11 @@ export default function CashManagementModal({ open, onClose, portfolio, transact
     });
   };
 
-  const recentTransactions = transactions?.slice(0, 5) || [];
+  // Defensive: guard against a non-array `transactions` prop (e.g. an unstubbed
+  // test route or an unexpected API shape) rather than crashing the component —
+  // `Array.isArray` check added after this exact TypeError ("transactions.slice
+  // is not a function") crashed the whole app via Layout.js's now-global query.
+  const recentTransactions = Array.isArray(transactions) ? transactions.slice(0, 5) : [];
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
