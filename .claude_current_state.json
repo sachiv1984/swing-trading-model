@@ -53,16 +53,6 @@
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
   "open_escalations": {
-    "ESC-EXEC-20260921-01": {
-      "cycle": "2026-09-21__release-v9.6",
-      "summary": "ST-09/EPIC-03 - confirm BLG-BE-119 trailing-stop entry-floor decision (largely settled by v9.5 ST-04 / strategy_rules.md v1.10)",
-      "trigger_type": "Strategy",
-      "owning_authority": "Strategy Rules & System Intent Owner",
-      "raised_utc": "2026-09-21T15:51:14Z",
-      "sla_due_utc": "2026-09-24T15:51:14Z",
-      "blocks_execution": false,
-      "disposition": "Open"
-    },
     "ESC-EXEC-20260921-02": {
       "cycle": "2026-09-21__release-v9.6",
       "summary": "ST-16/EPIC-04 - Actions-write token + real Telegram receipt needed for synthetic-monitor live-fire",

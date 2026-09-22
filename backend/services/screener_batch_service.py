@@ -23,7 +23,7 @@ from database import get_db
 from services.ticker_universe_service import get_all_tickers
 from services.screener_data_service import fetch_ohlcv
 from services.screener_engine import compute_screener_result
-from utils.retry import retry_with_backoff
+from utils.upstream_call import bounded_upstream_call, get_timeout
 
 YF_MAX_CONCURRENT = int(os.environ.get("YF_MAX_CONCURRENT", "5"))
 
@@ -110,9 +110,8 @@ def ensure_screener_results_table() -> None:
 # Regime helpers
 # ---------------------------------------------------------------------------
 
-@retry_with_backoff(
-    max_attempts=3,
-    base_delay=0.5,
+@bounded_upstream_call(
+    "yfinance",
     retryable_exceptions=(requests.exceptions.RequestException,),
 )
 def _fetch_index_regime_raw(index_ticker: str) -> Dict:
@@ -126,7 +125,7 @@ def _fetch_index_regime_raw(index_ticker: str) -> Dict:
         _YAHOO_URL.format(ticker=index_ticker),
         params={"interval": "1d", "range": "1y"},
         headers=_YAHOO_HEADERS,
-        timeout=15,
+        timeout=get_timeout("yfinance_history"),
     )
     if resp.status_code != 200:
         raise ValueError(f"Yahoo Finance returned HTTP {resp.status_code} for {index_ticker}")

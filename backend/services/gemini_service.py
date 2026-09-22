@@ -17,6 +17,12 @@ ST-10 (BLG-BE-89, EPIC-04, v8.7): _call_claude() -- the single call site both
        Claude call site; the "Gemini" naming itself is unchanged, out of
        scope for this story (a rename would touch the DB table name and is
        a larger, separate piece of work).
+ST-13 (BLG-BE-122, EPIC-03, v9.6): retry budget and retryable-exception set
+       now sourced from utils.upstream_call (the shared "configured in one
+       place" module this story introduces) instead of being defined
+       locally -- same values as before (max_attempts=3, base_delay=1.0),
+       no behaviour change; consolidates what was previously duplicated
+       independently in this file and in services/debrief_service.py.
 """
 import os
 import hashlib
@@ -25,30 +31,17 @@ import re
 import time
 from typing import Optional
 
-from utils.retry import retry_with_backoff
+from utils.upstream_call import anthropic_retryable_exceptions, bounded_upstream_call, get_timeout
 
 CLAUDE_COST_PER_INPUT_TOKEN = 1.00 / 1_000_000
 CLAUDE_COST_PER_OUTPUT_TOKEN = 5.00 / 1_000_000
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
-# `anthropic` is a pinned hard dependency (backend/requirements.txt), but the
-# rest of this module deliberately imports it lazily inside each function so
-# the module still loads if it's ever absent (defensive, matches the
-# existing "anthropic package not installed" graceful-degradation checks
-# below). Mirror that here for the exception classes retry_with_backoff
-# needs at decoration time -- fall back to an empty tuple (retries nothing,
-# same as today's no-retry behaviour) rather than a hard import error.
-try:
-    import anthropic as _anthropic_for_retry
-    _RETRYABLE_CLAUDE_EXCEPTIONS = (
-        _anthropic_for_retry.APITimeoutError,
-        _anthropic_for_retry.APIConnectionError,
-        _anthropic_for_retry.RateLimitError,
-        _anthropic_for_retry.InternalServerError,
-    )
-except ImportError:
-    _RETRYABLE_CLAUDE_EXCEPTIONS = ()
+# Resolved once at import time -- see utils.upstream_call.anthropic_retryable_exceptions
+# for the lazy-import/graceful-degradation rationale (unchanged from this
+# module's own pre-ST-13 local copy of the same logic).
+_RETRYABLE_CLAUDE_EXCEPTIONS = anthropic_retryable_exceptions()
 MODEL_VERSION = "claude-haiku-4-5"
 PROMPT_VERSION = "v3.0"
 
@@ -127,11 +120,7 @@ def _build_signal_summary(signal_data: Optional[dict]) -> str:
     return ", ".join(parts) if parts else "provided"
 
 
-@retry_with_backoff(
-    max_attempts=3,
-    base_delay=1.0,
-    retryable_exceptions=_RETRYABLE_CLAUDE_EXCEPTIONS,
-)
+@bounded_upstream_call("anthropic", retryable_exceptions=_RETRYABLE_CLAUDE_EXCEPTIONS)
 def _call_claude(prompt: str, max_tokens: int = 256, system: Optional[str] = None) -> tuple:
     """Returns (text, usage) or raises.
 
@@ -148,7 +137,7 @@ def _call_claude(prompt: str, max_tokens: int = 256, system: Optional[str] = Non
     per-request trade parameters as the sole `user` message content.
     """
     import anthropic
-    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY, timeout=get_timeout("anthropic"))
     kwargs = {
         "model": MODEL_VERSION,
         "max_tokens": max_tokens,

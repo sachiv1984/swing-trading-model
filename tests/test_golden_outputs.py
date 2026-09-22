@@ -64,9 +64,22 @@ def spec_initial_stop(entry_price: float, atr: float, multiplier: float) -> floa
     return entry_price - (multiplier * atr)
 
 
-def spec_trailing_stop(current_price: float, atr: float, multiplier: float) -> float:
-    """§7.2: NewStop = CurrentPrice - (ATRMultiplier × ATR)"""
-    return current_price - (multiplier * atr)
+def spec_trailing_stop(current_price: float, atr: float, multiplier: float, entry_price=None) -> float:
+    """§7.2: NewStop = CurrentPrice - (ATRMultiplier × ATR)
+
+    §7.2 v1.10 (BLG-BE-119, ST-09, EPIC-03, v9.6) breakeven floor: for a
+    profitable position, the stop must never sit below entry_price —
+    NewStop = max(CurrentPrice - (ProfitATRMultiplier × ATR), EntryPrice).
+    `entry_price` is optional and, when omitted, this behaves exactly as
+    before (no floor applied) — existing callers (SL-02/SL-03, losing
+    positions generally) are unaffected. Only a caller that explicitly
+    passes entry_price (i.e. exercising the profitable-floor case, SL-08)
+    gets the floored formula.
+    """
+    raw = current_price - (multiplier * atr)
+    if entry_price is None:
+        return raw
+    return max(raw, entry_price)
 
 
 def spec_updated_stop(current_stop: float, new_calculated_stop: float) -> float:
@@ -315,6 +328,48 @@ class TestStopLossSpecFormulas(unittest.TestCase):
         self.assertGreaterEqual(result, inp["current_stop"],
                                 msg="SL-07: stop decreased — §7.3 hard constraint violated")
 
+    def test_SL08_profitable_floor_binds(self):
+        """§7.2 v1.10 (BLG-BE-119): profitable position, unfloored ATR trail
+        below entry_price — the breakeven floor must govern. Previously no
+        golden vector exercised this combination (AC, ST-09/EPIC-03/v9.6)."""
+        case = self._get("SL-08")
+        inp = case["inputs"]
+        result = spec_trailing_stop(
+            inp["current_price"], inp["atr"], inp["atr_multiplier"],
+            entry_price=inp["entry_price"],
+        )
+        self.assertAlmostEqual(result, case["expected"]["new_stop"], places=2,
+                               msg="SL-08: entry-price breakeven floor not applied — §7.2 v1.10 violation")
+        self.assertGreaterEqual(result, inp["entry_price"],
+                                msg="SL-08: profitable position's floored stop fell below entry_price")
+
+    def test_SL08_implementation_matches_spec(self):
+        """Cross-check the real implementation (utils.calculations.
+        calculate_trailing_stop) against the same SL-08 golden vector, not
+        just the spec-formula self-consistency check above — this is the
+        one stop_loss case where an implementation import is warranted,
+        since the floor is exactly the behaviour BLG-BE-119 was raised
+        about. sys.modules eviction matches the established pattern (see
+        tests/test_nightly_computations.py) — test_alerts_service.py
+        (collected alphabetically earlier) leaves a MagicMock stub in
+        sys.modules["utils.calculations"] otherwise."""
+        sys.modules.pop("utils.calculations", None)
+        sys.modules.pop("utils", None)
+        from utils.calculations import calculate_trailing_stop
+
+        case = self._get("SL-08")
+        inp = case["inputs"]
+        impl_result, _reason, _mult = calculate_trailing_stop(
+            current_price=inp["current_price"],
+            atr=inp["atr"],
+            is_profitable=inp["is_profitable"],
+            current_stop=0.0,  # below the floor either way; isolates the floor behaviour
+            entry_price=inp["entry_price"],
+            settings={"atr_multiplier_trailing": inp["atr_multiplier"]},
+        )
+        self.assertAlmostEqual(impl_result, case["expected"]["new_stop"], places=2,
+                               msg="SL-08: calculate_trailing_stop diverges from the golden vector")
+
 
 # ---------------------------------------------------------------------------
 # Metadata / sanity checks
@@ -329,7 +384,7 @@ class TestGoldenOutputsMetadata(unittest.TestCase):
 
     def test_expected_case_counts(self):
         self.assertEqual(len(GOLDEN["position_sizing"]), 5, "Expected 5 position sizing cases")
-        self.assertEqual(len(GOLDEN["stop_loss"]), 7, "Expected 7 stop-loss cases")
+        self.assertEqual(len(GOLDEN["stop_loss"]), 8, "Expected 8 stop-loss cases")
         self.assertEqual(len(GOLDEN["portfolio_fx_conversion"]), 5, "Expected 5 portfolio FX conversion cases")
 
     def test_canonical_parameters_present(self):

@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-09-21
+Last Updated: 2026-09-22 (DEL-20260921-01 Unblocked — ST-09 trailing-stop entry-floor decision ratified); prior — 2026-09-21 (cycle open, 6 delegation records created)
 
 ---
 
@@ -23,7 +23,7 @@ Append-only. Do not edit previous entries.
 - **What is needed:** Confirm/rule on the trailing-stop entry-price-floor decision (options i/ii/iii in ESC-EXEC-20260921-01); engine will add the golden-output case autonomously.
 - **Unblock criteria:** see ESC-EXEC-20260921-01
 - **Commit format required:** `[EPIC-03][ST-09] <description>` pushed to `exec/2026-09-21__release-v9.6/EPIC-03` (EPIC branch is cut from post-merge main at that EPIC's turn)
-- **Status:** Pending
+- **Status:** Unblocked — in-session credential/action provisioning not applicable (no external credential needed); Strategy Rules & System Intent Owner ruling obtained directly within this session (agent-mediated, §5.3, on explicit user direction) per execution_prompt.md §5.2. Ruling: Option (i) — see ESC-EXEC-20260921-01 Resolution (Addendum) for full rationale. Sign-off cleared 2026-09-22T08:14:51Z; commit `f771d5c9` pushed same timestamp (golden-output case + implementation cross-check). No multi-session parking occurred (LL-v8.2-P3-04 in-session completion pattern).
 
 ---
 

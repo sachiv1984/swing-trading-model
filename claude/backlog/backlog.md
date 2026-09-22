@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-22 (session — 4 new item(s) added: BLG-FE-187, BLG-FE-188, BLG-BE-125, BLG-BE-126 — PR #1751 agent-mediated review findings on ST-07/ST-08/EPIC-02/2026-09-21__release-v9.6: two frontend-surfacing gaps and two backend Director-of-Quality findings); prior — 2026-09-21 (Sprint Execution `2026-09-21__release-v9.6` EPIC-01 — 10 new items filed from execution and PR-review findings: BLG-SPEC-161/162, BLG-FE-184/185/186, BLG-OPS-168, BLG-QA-188/189, BLG-BE-123/124; BLG-QA-188 wording corrected to name the staging database); prior — 2026-09-21 (Release Planning `2026-09-21__release-v9.6` STEP 4 — 32-item / 28.00-day release slice appended, marker `RP:v9.6:2026-09-21__release-v9.6`); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-22 (PR #1752 agent-mediated review, EPIC-03/2026-09-21__release-v9.6 — 1 new item added: BLG-BE-129, latency measurement around retried Anthropic calls); prior — 2026-09-22 (Sprint Execution `2026-09-21__release-v9.6` EPIC-03/ST-13 — 1 new item added: BLG-BE-128, remaining ad hoc timeout/retry call sites not migrated to the ST-13 shared upstream-call helper); prior — 2026-09-22 (Sprint Execution `2026-09-21__release-v9.6` EPIC-03/ST-12 — 1 new item added: BLG-BE-127, float-vs-Decimal fee-rounding discrepancy found by the ST-12 money-arithmetic audit); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -5030,6 +5030,81 @@ In `backend/services/alerts_service.py::_evaluate_reflection_reminders`, an exce
 
 **Acceptance Criteria**
 - `GET /reports/monthly-pnl` opens at most one additional connection (beyond the existing `get_monthly_pnl` call) regardless of how many closed months are in the response
+
+---
+
+### BLG-BE-127 — UK stamp duty / US FX fee rounding uses float `round()` instead of Decimal, under-rounding ~0.18%/0.02% of half-penny-boundary gross costs by £0.01
+**Priority:** P3 (Low)
+**Type:** Backend
+**Owner:** Backend Engineering Patterns Owner; Financial Reporting & Records Owner
+**Source:** ST-12/EPIC-03/2026-09-21__release-v9.6 (BLG-BE-121) — Float-vs-Decimal money-arithmetic audit — 2026-09-22
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/utils/calculations.py`'s `calculate_uk_entry_fees`/`calculate_us_entry_fees` compute `stamp_duty`/`fx_fee` as `gross_cost * rate` in native `float` and round only at the response-formatting boundary via Python's `round(x, 2)` (never inside these functions themselves — callers, e.g. `sizing_service.size_position`, apply the rounding). A brute-force scan of gross-cost values from £0.01 to £5000.00 in penny steps, comparing `round(gross_cost * rate, 2)` against a `Decimal`-based `ROUND_HALF_UP` calculation of the same figure, found 917/499999 (~0.18%) UK stamp-duty values and 90/499999 (~0.018%) US FX-fee values where the two disagree by exactly £0.01 — always in the direction of the float path under-charging by 1p. This occurs only where `gross_cost * rate` lands exactly on (or within float-representation error of) a half-penny boundary (e.g. UK gross_cost = £3.00 → raw stamp duty 0.015 → float `round()` gives £0.01, `Decimal`/`ROUND_HALF_UP` gives £0.02). No canonical spec (`strategy_rules.md` or an API contract) currently defines a required rounding mode for fee calculation, so this is not a deviation from a documented rule — it is a latent correctness gap the audit surfaces. Not fixed as part of ST-12 itself: the fix touches live-capital fee calculation on every future UK/US entry and exit, and deserves its own reviewed story with dedicated before/after golden-test coverage rather than folding a behaviour change into an audit story.
+
+**Scope**
+- Migrate `calculate_uk_entry_fees`/`calculate_us_entry_fees`/`calculate_uk_exit_fees`/`calculate_us_exit_fees` (and any other money-arithmetic call site the audit's inventory flags — see `docs/ops/money_arithmetic_audit_2026-09-22.md`) to compute the rate-multiplication step in `Decimal` and round with `ROUND_HALF_UP`, matching UK/US retail brokerage convention (round-half-up on currency, not Python's binary-float round-half-to-even-with-representation-error)
+- Golden tests already exist for the current (float) behaviour at `tests/test_money_arithmetic_golden.py::TestKnownFloatDecimalDiscrepancies` — extend/flip these once the fix lands so they assert the corrected `Decimal` output instead
+
+**Acceptance Criteria**
+- All four fee functions round via `Decimal`/`ROUND_HALF_UP` instead of float `round()`
+- The previously-documented discrepancy class (`tests/test_money_arithmetic_golden.py::TestKnownFloatDecimalDiscrepancies`) no longer reproduces — those tests are updated to assert the corrected value
+- Full existing fee/sizing test suite still passes unchanged elsewhere (no other rounding behaviour regresses)
+
+---
+
+### BLG-BE-128 — Remaining ad hoc `timeout=`/retry call sites not yet on the shared upstream-call helper
+**Priority:** P3 (Low)
+**Type:** Backend / Reliability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-13/EPIC-03/2026-09-21__release-v9.6 (BLG-BE-122) — shared upstream-call helper, follow-up list per that story's own Scope ("Migrate the nightly stop-update and screener call paths first; list remaining call sites as follow-ups") — 2026-09-22
+**Effort:** S (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/utils/upstream_call.py` (ST-13, BLG-BE-122) centralises timeout/retry-budget config for `yfinance`, `alpaca`, and `anthropic`, and migrates the nightly stop-update path (`utils/pricing.py`, `services/alpaca_service.py::get_ohlcv_bars`), the screener path's Yahoo-Finance-specific timeouts (`services/screener_data_service.py`, `services/screener_batch_service.py::_fetch_index_regime_raw`), and all 5 Anthropic client-construction call sites (`services/ai_service.py` x3, `services/gemini_service.py`, `services/debrief_service.py`). The following call sites still use ad hoc, locally-hardcoded `timeout=` values (and, in most cases, no retry at all) and were deliberately not migrated this story:
+- `services/screener_data_service.py`'s Stooq and Twelve Data fallback tiers (`timeout=5`, `timeout=15`) — not one of the 3 providers this helper currently configures, and each has its own existing rate-limit/cooldown bookkeeping (Twelve Data's token-bucket lock in particular) that a blind retry wrap risks interacting with poorly without a dedicated review
+- `backend/live_trading_assistant.py` (`timeout=10`, `timeout=15`)
+- `backend/services/news_service.py` (`timeout=10`)
+- `backend/services/si05_digest_service.py` (`timeout=10`, via `urllib.request.urlopen`)
+- `backend/services/ai_endpoint_anomaly_service.py` (`timeout=10`, via `urllib.request.urlopen`)
+- `backend/routers/research.py` (`timeout=10`)
+- `backend/database.py` (`timeout=15`)
+- `backend/services/health_service.py` (`timeout=10`)
+- `backend/routers/ticker_universe.py` (`future.result(timeout=5.0)` — a different mechanism, thread-pool result wait rather than an HTTP call; may not fit this helper's shape at all)
+
+None of these are on the live-capital nightly stop-update path, so there is no correctness urgency; this is a consistency/maintainability follow-up.
+
+**Scope**
+- For each yfinance/Alpaca/Anthropic-provider call site above: replace the hardcoded `timeout=` literal with `utils.upstream_call.get_timeout(provider)`, and add `bounded_upstream_call(provider, ...)` retry coverage where none exists today
+- For Stooq/Twelve Data: either add new `"stooq"`/`"twelve_data"` provider entries to `UPSTREAM_TIMEOUTS`/`UPSTREAM_RETRY_BUDGETS` (config-only migration; leave retry-wrapping as a separate decision given the rate-limit-interaction risk noted above), or explicitly decide these providers are out of this helper's scope and document why
+- `backend/routers/ticker_universe.py`'s thread-pool `timeout=5.0` — assess separately whether it belongs in this helper at all before migrating it
+
+**Acceptance Criteria**
+- Every call site listed above is either migrated to `utils.upstream_call` or has an explicit, documented reason it is not (e.g. Stooq/Twelve Data's rate-limit-interaction risk, or ticker_universe.py's different mechanism)
+- No behaviour change to any already-working fallback/rate-limit logic (Stooq/Twelve Data cooldown timers, `_TWELVE_DATA_RATE_LIMIT`) as a side effect of any migration performed
+
+---
+
+### BLG-BE-129 — `latency_ms`/`elapsed_ms` recorded around retried Anthropic calls includes backoff sleep time, not just the final call's duration
+**Priority:** P4 (Nice-to-have)
+**Type:** Backend / Observability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1752 agent-mediated review (Director of Quality finding) on ST-13/EPIC-03/2026-09-21__release-v9.6 (BLG-BE-122) — 2026-09-22
+**Effort:** XS (<1h) — or "won't fix, document as intentional" is also a valid disposition
+**Provisional-Target:** TBD
+
+**Problem**
+`services/ai_service.py`'s `generate_daily_briefing()` and `ai_chat()` (and, pre-existing since `BLG-BE-89`/v8.7, `services/gemini_service.py`'s `_call_claude()` call sites and `services/debrief_service.py`'s `_call_claude()`) capture `t0 = time.time()` before calling the now-retried Anthropic helper and compute `elapsed_ms`/`latency_ms` after it returns. Since ST-13 (`BLG-BE-122`) added bounded retry to these calls, a request that needed one or more retries now has its recorded latency include the `retry_with_backoff` exponential-backoff sleep time (up to ~1.5s across the current 3-attempt/1.0s-base-delay Anthropic budget), not just the final successful call's own duration. This was already true for `gemini_service.py`/`debrief_service.py` before this story (confirmed, not a regression) — ST-13 extended the same characteristic to a third file (`ai_service.py`) by adding retry there for the first time.
+
+**Scope**
+- Decide whether this is acceptable as-is (the metric already reflects this for 2 of 3 files and no one has raised it as a problem) or worth separating into two figures (e.g. `api_call_latency_ms` measured around only the final successful attempt, plus a separate `total_latency_ms` including retries) for any cost/performance dashboard that reads `latency_ms`
+- If separated: update `create_claude_audit_entry`'s schema/callers accordingly across all 3 files for consistency
+
+**Acceptance Criteria**
+- Either: a documented decision that the current combined-latency semantics are intentional and acceptable (no code change), or: `latency_ms` is split into a final-attempt-only figure and a total-including-retries figure, applied consistently across `ai_service.py`, `gemini_service.py`, and `debrief_service.py`
 
 ---
 

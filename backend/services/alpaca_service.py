@@ -18,6 +18,8 @@ import logging
 import requests
 from typing import Optional, List, Dict
 
+from utils.upstream_call import get_timeout
+
 logger = logging.getLogger(__name__)
 
 
@@ -66,6 +68,10 @@ def get_ohlcv_bars(symbol: str, limit: int = 30, timeframe: str = "1Day") -> Opt
     Retry: 429 → exponential backoff, up to 5 attempts.
             5xx → up to 3 attempts.
             403 → no retry (credential issue).
+    (Status-code-aware retry shape kept as-is — ST-13/BLG-BE-122, EPIC-03,
+    v9.6 — already bounded and more granular than the generic
+    utils.upstream_call.bounded_upstream_call decorator; only the timeout
+    value below is sourced from that shared config.)
     """
     if not _credentials_configured():
         logger.warning("Alpaca credentials not configured — skipping Alpaca fetch for %s", symbol)
@@ -80,7 +86,7 @@ def get_ohlcv_bars(symbol: str, limit: int = 30, timeframe: str = "1Day") -> Opt
 
     for attempt in range(1, max_attempts + 1):
         try:
-            resp = requests.get(url, params=params, headers=headers, timeout=10)
+            resp = requests.get(url, params=params, headers=headers, timeout=get_timeout("alpaca"))
             if resp.status_code == 200:
                 data = resp.json()
                 bars = data.get("bars") or []

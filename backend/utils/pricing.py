@@ -17,7 +17,7 @@ import requests
 from datetime import datetime
 from typing import Optional, Dict
 
-from utils.retry import retry_with_backoff
+from utils.upstream_call import bounded_upstream_call, get_timeout
 
 logger = logging.getLogger(__name__)
 
@@ -34,9 +34,8 @@ def _is_us_ticker(ticker: str) -> bool:
     return not ticker.endswith(".L")
 
 
-@retry_with_backoff(
-    max_attempts=3,
-    base_delay=0.5,
+@bounded_upstream_call(
+    "yfinance",
     retryable_exceptions=(requests.exceptions.RequestException,),
 )
 def _yahoo_fetch_price(ticker: str) -> float:
@@ -53,7 +52,7 @@ def _yahoo_fetch_price(ticker: str) -> float:
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         'Accept': 'application/json',
     }
-    response = requests.get(url, params=params, headers=headers, timeout=10)
+    response = requests.get(url, params=params, headers=headers, timeout=get_timeout("yfinance"))
     data = response.json()
     if "chart" in data and "result" in data["chart"] and data["chart"]["result"]:
         result = data["chart"]["result"][0]
@@ -108,16 +107,45 @@ def get_current_price(ticker: str) -> Optional[float]:
     return None
 
 
+@bounded_upstream_call(
+    "yfinance",
+    retryable_exceptions=(requests.exceptions.RequestException,),
+)
+def _yahoo_fetch_fx_rate() -> Dict:
+    """Fetch the raw Yahoo Finance GBP/USD chart payload (internal).
+
+    Raises on any transient/network failure — retried by the decorator
+    (ST-13, EPIC-03, v9.6, BLG-BE-122). Prior to this story, get_live_fx_rate()
+    made a single, unretried request and fell back straight to
+    DEFAULT_FX_RATE on any failure, including a transient network blip a
+    retry would have recovered from — the one genuinely unretried call on
+    the nightly stop-update path (run_nightly_trailing_stop_update calls
+    this once per run, ahead of the per-position price/ATR loop)."""
+    url = "https://query1.finance.yahoo.com/v8/finance/chart/GBPUSD=X"
+    params = {
+        "interval": "1d",
+        "range": "1d"
+    }
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json',
+    }
+    response = requests.get(url, params=params, headers=headers, timeout=get_timeout("yfinance"))
+    return response.json()
+
+
 def get_live_fx_rate() -> float:  # noqa: C901
     """
     Fetch live GBP/USD exchange rate from Yahoo Finance
-    
+
     Returns:
         GBP/USD rate as float (e.g., 1.3684)
         Falls back to 1.27 if fetch fails
-        
+
     Notes:
         - Cached for 5 minutes (BLG-OPS-62 fix); falls back to DEFAULT_FX_RATE on error
+        - Fetch is retried on transient network failure (ST-13, BLG-BE-122)
+          before falling back to DEFAULT_FX_RATE — see _yahoo_fetch_fx_rate
         - Used for converting USD positions to GBP
     """
     now = time.monotonic()
@@ -125,20 +153,8 @@ def get_live_fx_rate() -> float:  # noqa: C901
         return _fx_cache["rate"]
 
     try:
-        
-        url = "https://query1.finance.yahoo.com/v8/finance/chart/GBPUSD=X"
-        params = {
-            "interval": "1d",
-            "range": "1d"
-        }
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Accept': 'application/json',
-        }
-        
-        response = requests.get(url, params=params, headers=headers, timeout=10)
-        data = response.json()
-        
+        data = _yahoo_fetch_fx_rate()
+
         if "chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0:
             result = data["chart"]["result"][0]
             
@@ -172,9 +188,8 @@ def get_live_fx_rate() -> float:  # noqa: C901
         return DEFAULT_FX_RATE
 
 
-@retry_with_backoff(
-    max_attempts=3,
-    base_delay=0.5,
+@bounded_upstream_call(
+    "yfinance",
     retryable_exceptions=(requests.exceptions.RequestException,),
 )
 def _yahoo_fetch_ma200_pair(ticker: str):
@@ -194,7 +209,7 @@ def _yahoo_fetch_ma200_pair(ticker: str):
         'Accept': 'application/json',
     }
 
-    response = requests.get(url, params=params, headers=headers, timeout=15)
+    response = requests.get(url, params=params, headers=headers, timeout=get_timeout("yfinance_history"))
     data = response.json()
 
     if not ("chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0):

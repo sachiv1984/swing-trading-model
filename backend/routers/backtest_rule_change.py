@@ -73,10 +73,17 @@ def run_backtest_rule_change(request: BacktestRuleChangeRequest):
 
 
 @router.get("/runs")
-def list_backtest_rule_runs(limit: int = 20):
-    """Run History — most recent first (AC-03). Summary fields only."""
+def list_backtest_rule_runs(limit: int = 20, offset: int = 0):
+    """Run History — most recent first (AC-03). Summary fields only.
+
+    Returns HTTP 400 INVALID_PARAMS for a negative `limit` or `offset`
+    (ST-10, EPIC-03, v9.6, BLG-BE-118) instead of the previous unguarded
+    500 (a negative LIMIT/OFFSET is rejected by PostgreSQL as a syntax/
+    value error, not caught anywhere upstream)."""
+    if limit < 0 or offset < 0:
+        return JSONResponse(status_code=400, content={"status": "error", "message": "INVALID_PARAMS: limit and offset must be non-negative"})
     try:
-        runs = get_backtest_rule_runs(limit=limit)
+        runs = get_backtest_rule_runs(limit=limit, offset=offset)
         for r in runs:
             r["id"] = str(r["id"])
             r["created_at"] = r["created_at"].isoformat()

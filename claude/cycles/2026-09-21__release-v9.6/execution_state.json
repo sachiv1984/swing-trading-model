@@ -6,7 +6,7 @@
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-22T00:00:00Z",
+  "last_updated_utc": "2026-09-22T08:33:58Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -250,118 +250,148 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
-      "branch": null,
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "status": "done",
+      "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
+      "pr_number": 1752,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_backtest_rule_runs_pagination.py",
+        "tests/test_json_log_formatter.py",
+        "tests/test_money_arithmetic_golden.py",
+        "tests/golden_outputs.json#SL-08",
+        "tests/test_golden_outputs.py",
+        "tests/test_upstream_call_helper.py"
+      ],
       "stories": {
         "ST-09": {
           "title": "calculate_trailing_stop's entry-price floor for profitable positions diverges from strategy_rules.md §7.2/§7.3 and from the backtest tool",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1726,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
+          "commit_sha": "f771d5c9aa6dfb47594c1c9ca8b1c9739c26e117",
           "delegation_record_id": "DEL-20260921-01",
           "blocked_since_utc": "2026-09-21T15:51:14Z",
           "unblock_criteria": "See ESC-EXEC-20260921-01",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T08:14:51Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#7.2 Profit-aware stop logic",
+            "tests/golden_outputs.json#SL-08",
+            "tests/test_golden_outputs.py",
+            "tests/test_trailing_stop_breakeven_floor.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent-mediated (execution_prompt.md §5.3, on explicit user direction)",
+            "status": "cleared",
+            "date": "2026-09-22",
+            "ruling": "Option (i) — 2026-09-16 ruling (strategy_rules.md v1.10) confirmed as the formal decision; position_manager.py's documented, tested exception satisfies AC-2. See ESC-EXEC-20260921-01 Resolution (Addendum) for full rationale."
+          },
+          "notes": "AC1 (formal decision recorded) and AC2 (position_manager.py, calculate_trailing_stop, and the spec formula all agree) were substantially met before this session (strategy_rules.md v1.10, agent-mediated ruling 2026-09-16, v9.5/ST-04) but needed the owner's explicit confirmation that a documented exception satisfies 'agree' for a decision-first story — obtained this session (ESC-EXEC-20260921-01 resolved, option i). AC3 (new golden-output case for the floor-binding scenario) was the one genuinely outstanding gap — closed via tests/golden_outputs.json SL-08 + test_golden_outputs.py's spec_trailing_stop() floor support + a new implementation cross-check (test_SL08_implementation_matches_spec), commit f771d5c9. AC4 (BLG-BE-114/ST-04 unblocked) was already resolved at v9.5 closure (delegation_log.md 2026-09-15__release-v9.5:44) — nothing further needed. No change to calculate_trailing_stop or position_manager.py — both already matched the ratified decision. Deviation check: none — this story's own work (the golden case + test helper fix) matches the already-canonical spec exactly; no new divergence introduced. ST-13 (BLG-BE-122), held pending this decision per its own sprint_backlog.md sequencing note, is now unblocked."
         },
         "ST-10": {
           "title": "list_backtest_rule_runs has no negative-limit validation and no offset param",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1727,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
+          "commit_sha": "faf68d5d074ab1fdd519b2691285325f9da97f9e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T08:05:24Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/strategy_benchmark_endpoints.md#GET /strategy/backtest-rule-change/runs",
+            "tests/test_backtest_rule_runs_pagination.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (negative limit -> 400 INVALID_PARAMS, not 500) and AC2 (existing valid-limit behaviour unchanged) verified by tests/test_backtest_rule_runs_pagination.py (7/7 local pass): negative limit/offset both individually and together return 400; limit=0 (non-negative) still 200; default params and explicit offset forwarded correctly to database.get_backtest_rule_runs. Contract (strategy_benchmark_endpoints.md v1.3), openapi.yaml (offset param + 400 response), and api_changelog.md updated in the same commit per CLAUDE.md. Deviation check: none - straightforward bug fix matching the AC exactly, no spec ambiguity."
         },
         "ST-11": {
           "title": "JsonLinesFormatter does not truncate `message` to the spec's 500-char max",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1728,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
+          "commit_sha": "627e7d83ba45fc7b9a30e0e1cb5596f2e07db3d1",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T08:05:29Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/structured_logging_standards.md#Structured Log Format",
+            "tests/test_json_log_formatter.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (message >500 chars truncated to the spec limit) and AC2 (existing tests still pass unchanged) verified by tests/test_json_log_formatter.py's new TestMessageTruncation class (4/4 new cases) plus the full pre-existing test class run unchanged (9/9). Truncation is 485 chars of content + a 15-char '...[truncated]' suffix = 500 total. Deviation check: none - matches the spec's documented limit exactly."
         },
         "ST-12": {
           "title": "Float-vs-Decimal money-arithmetic audit with rounding-boundary golden tests",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1729,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
+          "commit_sha": "604132de1e815e67a896dbacc0ebbf7d46112074",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T08:05:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/money_arithmetic_audit_2026-09-22.md",
+            "tests/test_money_arithmetic_golden.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (inventory recorded in the QA evidence file) satisfied by docs/ops/money_arithmetic_audit_2026-09-22.md (referenced from qa_evidence_EPIC-03.md at EPIC close). AC2 (golden tests for each boundary case pass) verified by tests/test_money_arithmetic_golden.py (32/32 local pass, including a bounded regression scan of the discrepancy rate). AC3 (0 unexplained >=GBP0.01 discrepancies) - one discrepancy class was found (float round() vs Decimal ROUND_HALF_UP at exact half-penny gross-cost boundaries in UK stamp duty / US FX fee calculation, ~0.18%/0.018% of scanned values) and is fully explained in the audit doc's SS3, not left unexplained; filed as its own reviewed follow-up BLG-BE-127 rather than fixed silently within this audit story (live-capital fee calculation change). Deviation check: none - Case B (documentation-creation): the audit doc itself is the governing artefact for this story's own deliverable, per STEP 3.1.A spec_references policy. Test-infra note (disclosed, in-file per SS7 Opportunistic In-File Fix Disclosure Threshold): tests/test_money_arithmetic_golden.py's own direct `from utils.calculations import ...` at module scope initially picked up a MagicMock stub leaked by tests/test_alerts_service.py's collection-time sys.modules stubbing (alphabetically earlier) when run as part of the full suite; fixed in the same commit using the same sys.modules eviction pattern already established by tests/test_nightly_computations.py for the identical issue - confirmed by a full-suite rerun (1663 passed; the only remaining 7 failures are tests/test_schema*.py's pre-existing live-staging-DB permission errors, unrelated to this story, confirmed present on main before this branch's changes too)."
         },
         "ST-13": {
           "title": "Shared upstream-call helper: uniform timeout and bounded retry budget for yfinance, Alpaca and Anthropic",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1730,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
+          "commit_sha": "8d4a7ad8a4dbccd2d0d9baef4013d2f21c38894b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-22T08:33:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/utils/upstream_call.py",
+            "tests/test_upstream_call_helper.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Started only after ST-09 resolved (its own sprint_backlog.md sequencing note - land after ST-09 so the two do not collide on the same nightly stop-update call path). AC1 (no unbounded upstream call remains in the nightly stop-update path) verified: utils/pricing.py's get_live_fx_rate (the one genuinely unretried call on that path) now retries transient failures via a new _yahoo_fetch_fx_rate helper before falling back to DEFAULT_FX_RATE; _yahoo_fetch_price and alpaca_service.py::get_ohlcv_bars (both already on the path) now source their timeout from the shared config. AC2 (timeout and retry configured in one place) verified: new backend/utils/upstream_call.py is the single source for yfinance/alpaca/anthropic; migrated screener path timeouts (Yahoo-Finance-specific only; Stooq/Twelve Data deliberately deferred - BLG-BE-128) and all 5 Anthropic client-construction call sites (consolidated gemini_service.py/debrief_service.py's duplicated retry blocks; extended the same pattern to ai_service.py's 3 previously-unretried call sites). AC3 (existing tests pass; new tests cover timeout and retry-exhaustion) verified: tests/test_upstream_call_helper.py (20 new tests - config lookups, decorator retry/exhaustion/non-retryable-passthrough, real-call-site coverage for get_live_fx_rate and ai_chat); full backend suite 1685 passed/3 skipped, only the 7 pre-existing live-staging-DB-permission failures in test_schema*.py remain (confirmed present on main before this change). Anthropic retry budget deliberately not larger than yfinance/Alpaca's (a retry re-issues paid inference - AI cost gating note, sprint_backlog.md ST-13). Deviation check: none - matches AC exactly; filed BLG-BE-128 for the explicitly out-of-scope remaining call sites (Stooq, Twelve Data, and 8 other non-nightly-path modules) per this story's own 'list remaining call sites as follow-ups' scope instruction."
         }
       }
     },
@@ -810,7 +840,6 @@
     }
   },
   "blocked_items": [
-    "ST-09",
     "ST-16",
     "ST-22",
     "ST-23",
@@ -831,10 +860,16 @@
     "ST-03",
     "ST-04",
     "ST-05",
-    "ST-06"
+    "ST-06",
+    "ST-07",
+    "ST-08",
+    "ST-09",
+    "ST-10",
+    "ST-11",
+    "ST-12",
+    "ST-13"
   ],
   "open_escalations": [
-    "ESC-EXEC-20260921-01",
     "ESC-EXEC-20260921-02",
     "ESC-EXEC-20260921-03",
     "ESC-EXEC-20260921-04",
@@ -866,6 +901,12 @@
     "STEP 2: only exec/.../EPIC-01 branch created at sprint open. EPIC-02..07 branches are cut from post-merge main at their turn (merge order EPIC-01 -> EPIC-07 with rebase-after-merge per sprint_backlog.md Sprint Scope).",
     "EPIC-01 DoQ sign-off: agent-mediated (execution_prompt.md 5.3) independent review returned Approved with conditions; conditions met in the sign-off commit (finding 1 fixed in 00f98cdf; counts corrected; CI evidence recorded; files committed with qa_signed_off true). Signer format: Sprint Execution Engine (agent-mediated, Director of Quality role - 5.3). Merge gate remains always-human (QA sign-off + Product Owner acceptance).",
     "Environment: DATABASE_URL in the execution environment points at the staging Supabase database (user-confirmed; credential believed read-only, unverified) and was never used; all backend test runs used a stub URL (BLG-QA-188). Two throwaway local Postgres/agent-review actions were confined to the DoQ reviewer scratchpad.",
-    "EPIC-01 merged by the human developer via PR #1750 at 2026-09-21T19:22:32Z (merge commit c90e44f1, includes 1884f100). Merge-gate resync: pr_status/status merged; orphaned post-merge commit check (origin/main..origin/exec/2026-09-21__release-v9.6/EPIC-01) found none. No sibling EPIC branches exist yet, so no sibling execution_state sync was needed (STEP 4 3c). Post-merge follow-up: Setup Type clone issue BLG-FE-186 and 2 backend items filed; staging verification of ST-04 SQL (BLG-OPS-168) still open."
+    "EPIC-01 merged by the human developer via PR #1750 at 2026-09-21T19:22:32Z (merge commit c90e44f1, includes 1884f100). Merge-gate resync: pr_status/status merged; orphaned post-merge commit check (origin/main..origin/exec/2026-09-21__release-v9.6/EPIC-01) found none. No sibling EPIC branches exist yet, so no sibling execution_state sync was needed (STEP 4 3c). Post-merge follow-up: Setup Type clone issue BLG-FE-186 and 2 backend items filed; staging verification of ST-04 SQL (BLG-OPS-168) still open.",
+    "Session-start divergence check (STEP -1) 2026-09-22: git fetch + rev-list confirmed local main == origin/main (0/0) before trusting this file. No SLA-breached open escalations at invocation (all 8 open ESC-EXEC-20260921-* raised 2026-09-21T15:51:14Z, sla_due_utc 2026-09-24T15:51:14Z, not yet due).",
+    "EPIC-03 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-03 cut from main (post EPIC-01/EPIC-02 merge). ST-10/ST-11/ST-12 completed (autonomous, 3 commits, pushed). ST-09 remains blocked_decision (ESC-EXEC-20260921-01, unresolved) and ST-13 deliberately not started this session per its own sprint_backlog.md dependency note ('land after ST-09 so the two do not collide on the same call path') - starting it now would risk an uncoordinated second change on the same nightly stop-update call path ahead of ST-09's decision. EPIC-03 therefore not yet done (2 of 5 stories outstanding).",
+    "ST-12 filed one out-of-scope-finding backlog item (BLG-BE-127, per CLAUDE.md SS7's new-item-addition exception) for a float-vs-Decimal fee-rounding discrepancy the audit found but did not fix in-story (live-capital behaviour change deferred to its own reviewed follow-up).",
+    "Opportunistic in-file fix disclosure (CLAUDE.md SS7 threshold, confined to this file, this session's own edit): completed_items array was missing ST-07/ST-08 (EPIC-02, already status=done/merged per their own story records) before this session's write - corrected in the same write that added ST-10/ST-11/ST-12, not filed as a separate backlog item (small, low-risk, data-completeness only, confined to a field this story's own commit already touches).",
+    "ST-09 resolved 2026-09-22 on explicit user direction ('act as Strategy Rules & System Intent Owner and resolve'). Role-ownership check (CLAUDE.md §2): ESC-EXEC-20260921-01's owning_authority field ('Strategy Rules & System Intent Owner') matched the invoked role exactly - no mismatch, proceeded. Ruling: Option (i) from the escalation's own recorded options - see execution_escalations.md ESC-EXEC-20260921-01 Resolution (Addendum) and execution_state.json ST-09 for full rationale. Commit f771d5c9 (EPIC-03). ST-13 now unblocked (was held pending this decision).",
+    "ST-13 completed 2026-09-22, commit 8d4a7ad8. EPIC-03 now done (all 5 stories: ST-09..ST-13 complete) - not yet merged, qa_evidence_EPIC-03.md + PR still required before STEP 4 merge gate."
   ]
 }

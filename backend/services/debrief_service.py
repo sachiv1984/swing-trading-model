@@ -48,7 +48,7 @@ from database import (
     create_claude_audit_entry,
 )
 from utils.formatting import decimal_to_float
-from utils.retry import retry_with_backoff
+from utils.upstream_call import anthropic_retryable_exceptions, bounded_upstream_call, get_timeout
 
 MODEL_VERSION = "claude-haiku-4-5"
 PROMPT_VERSION = "v1.0"
@@ -56,16 +56,12 @@ _ENDPOINT = "POST /trades/{trade_id}/debrief"
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
-try:
-    import anthropic as _anthropic_for_retry
-    _RETRYABLE_EXCEPTIONS = (
-        _anthropic_for_retry.APITimeoutError,
-        _anthropic_for_retry.APIConnectionError,
-        _anthropic_for_retry.RateLimitError,
-        _anthropic_for_retry.InternalServerError,
-    )
-except ImportError:
-    _RETRYABLE_EXCEPTIONS = ()
+# ST-13 (BLG-BE-122, EPIC-03, v9.6): retry budget and retryable-exception
+# set now sourced from utils.upstream_call instead of a local copy of the
+# same logic -- same values as before (max_attempts=3, base_delay=1.0), no
+# behaviour change; consolidates what was previously duplicated
+# independently in this file and in services/gemini_service.py.
+_RETRYABLE_EXCEPTIONS = anthropic_retryable_exceptions()
 
 # ─── Condition 1: prescriptive-language scan ──────────────────────────────
 # Deliberately broad and imperative-focused. False positives (blocking a
@@ -136,10 +132,10 @@ def numeric_cross_check(text: str, source_values: dict) -> bool:
     return True
 
 
-@retry_with_backoff(max_attempts=3, base_delay=1.0, retryable_exceptions=_RETRYABLE_EXCEPTIONS)
+@bounded_upstream_call("anthropic", retryable_exceptions=_RETRYABLE_EXCEPTIONS)
 def _call_claude(system: str, user: str, max_tokens: int = 200) -> tuple:
     import anthropic
-    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY, timeout=get_timeout("anthropic"))
     response = client.messages.create(
         model=MODEL_VERSION,
         max_tokens=max_tokens,

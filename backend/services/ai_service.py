@@ -19,7 +19,30 @@ from typing import Optional
 
 from fastapi import HTTPException
 
+from utils.upstream_call import anthropic_retryable_exceptions, bounded_upstream_call, get_timeout
+
 logger = logging.getLogger(__name__)
+
+# ST-13 (BLG-BE-122, EPIC-03, v9.6): this module's 3 Anthropic call sites
+# (summarise_journal_notes, generate_daily_briefing, ai_chat) previously
+# each made a single, unretried anthropic.Anthropic().messages.create()
+# call with no explicit timeout (SDK default). _create_message() below
+# centralises the fix -- same retry budget and exception set already
+# proven safe in services/gemini_service.py and services/debrief_service.py
+# (BLG-BE-89, v8.7), reused here via utils.upstream_call rather than
+# re-derived a third time.
+_RETRYABLE_ANTHROPIC_EXCEPTIONS = anthropic_retryable_exceptions()
+
+
+@bounded_upstream_call("anthropic", retryable_exceptions=_RETRYABLE_ANTHROPIC_EXCEPTIONS)
+def _create_message(api_key: str, **create_kwargs):
+    """Shared, retried Anthropic messages.create() call. Each call site's
+    own existing broad try/except still wraps this and returns its
+    graceful-degradation response once retries are exhausted -- unchanged
+    behaviour there; this only adds bounded retry + an explicit timeout
+    underneath it."""
+    client = anthropic.Anthropic(api_key=api_key, timeout=get_timeout("anthropic"))
+    return client.messages.create(**create_kwargs)
 
 
 MODEL_VERSION = "claude-haiku-4-5-20251001"
@@ -92,8 +115,8 @@ def summarise_journal_notes(
     )
 
     try:
-        client = anthropic.Anthropic(api_key=api_key)
-        response = client.messages.create(
+        response = _create_message(
+            api_key,
             model=model,
             max_tokens=512,
             messages=[{"role": "user", "content": prompt}],
@@ -231,8 +254,8 @@ def generate_daily_briefing() -> dict:
 
     try:
         t0 = time.time()
-        client = anthropic.Anthropic(api_key=api_key)
-        response = client.messages.create(
+        response = _create_message(
+            api_key,
             model=MODEL_BRIEFING,
             max_tokens=1024,
             system=system_prompt,
@@ -394,8 +417,8 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
 
     try:
         t0 = time.time()
-        client = anthropic.Anthropic(api_key=api_key)
-        response = client.messages.create(
+        response = _create_message(
+            api_key,
             model=MODEL_BRIEFING,
             max_tokens=512,
             system=system_prompt,
