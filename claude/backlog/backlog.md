@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-22 (Sprint Execution `2026-09-21__release-v9.6` EPIC-03/ST-12 — 1 new item added: BLG-BE-127, float-vs-Decimal fee-rounding discrepancy found by the ST-12 money-arithmetic audit); prior — 2026-09-22 (session — 4 new item(s) added: BLG-FE-187, BLG-FE-188, BLG-BE-125, BLG-BE-126 — PR #1751 agent-mediated review findings on ST-07/ST-08/EPIC-02/2026-09-21__release-v9.6: two frontend-surfacing gaps and two backend Director-of-Quality findings); prior — 2026-09-21 (Sprint Execution `2026-09-21__release-v9.6` EPIC-01 — 10 new items filed from execution and PR-review findings: BLG-SPEC-161/162, BLG-FE-184/185/186, BLG-OPS-168, BLG-QA-188/189, BLG-BE-123/124; BLG-QA-188 wording corrected to name the staging database); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-22 (Sprint Execution `2026-09-21__release-v9.6` EPIC-03/ST-13 — 1 new item added: BLG-BE-128, remaining ad hoc timeout/retry call sites not migrated to the ST-13 shared upstream-call helper); prior — 2026-09-22 (Sprint Execution `2026-09-21__release-v9.6` EPIC-03/ST-12 — 1 new item added: BLG-BE-127, float-vs-Decimal fee-rounding discrepancy found by the ST-12 money-arithmetic audit); prior — 2026-09-22 (session — 4 new item(s) added: BLG-FE-187, BLG-FE-188, BLG-BE-125, BLG-BE-126 — PR #1751 agent-mediated review findings on ST-07/ST-08/EPIC-02/2026-09-21__release-v9.6: two frontend-surfacing gaps and two backend Director-of-Quality findings); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -5052,6 +5052,39 @@ In `backend/services/alerts_service.py::_evaluate_reflection_reminders`, an exce
 - All four fee functions round via `Decimal`/`ROUND_HALF_UP` instead of float `round()`
 - The previously-documented discrepancy class (`tests/test_money_arithmetic_golden.py::TestKnownFloatDecimalDiscrepancies`) no longer reproduces — those tests are updated to assert the corrected value
 - Full existing fee/sizing test suite still passes unchanged elsewhere (no other rounding behaviour regresses)
+
+---
+
+### BLG-BE-128 — Remaining ad hoc `timeout=`/retry call sites not yet on the shared upstream-call helper
+**Priority:** P3 (Low)
+**Type:** Backend / Reliability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-13/EPIC-03/2026-09-21__release-v9.6 (BLG-BE-122) — shared upstream-call helper, follow-up list per that story's own Scope ("Migrate the nightly stop-update and screener call paths first; list remaining call sites as follow-ups") — 2026-09-22
+**Effort:** S (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/utils/upstream_call.py` (ST-13, BLG-BE-122) centralises timeout/retry-budget config for `yfinance`, `alpaca`, and `anthropic`, and migrates the nightly stop-update path (`utils/pricing.py`, `services/alpaca_service.py::get_ohlcv_bars`), the screener path's Yahoo-Finance-specific timeouts (`services/screener_data_service.py`, `services/screener_batch_service.py::_fetch_index_regime_raw`), and all 5 Anthropic client-construction call sites (`services/ai_service.py` x3, `services/gemini_service.py`, `services/debrief_service.py`). The following call sites still use ad hoc, locally-hardcoded `timeout=` values (and, in most cases, no retry at all) and were deliberately not migrated this story:
+- `services/screener_data_service.py`'s Stooq and Twelve Data fallback tiers (`timeout=5`, `timeout=15`) — not one of the 3 providers this helper currently configures, and each has its own existing rate-limit/cooldown bookkeeping (Twelve Data's token-bucket lock in particular) that a blind retry wrap risks interacting with poorly without a dedicated review
+- `backend/live_trading_assistant.py` (`timeout=10`, `timeout=15`)
+- `backend/services/news_service.py` (`timeout=10`)
+- `backend/services/si05_digest_service.py` (`timeout=10`, via `urllib.request.urlopen`)
+- `backend/services/ai_endpoint_anomaly_service.py` (`timeout=10`, via `urllib.request.urlopen`)
+- `backend/routers/research.py` (`timeout=10`)
+- `backend/database.py` (`timeout=15`)
+- `backend/services/health_service.py` (`timeout=10`)
+- `backend/routers/ticker_universe.py` (`future.result(timeout=5.0)` — a different mechanism, thread-pool result wait rather than an HTTP call; may not fit this helper's shape at all)
+
+None of these are on the live-capital nightly stop-update path, so there is no correctness urgency; this is a consistency/maintainability follow-up.
+
+**Scope**
+- For each yfinance/Alpaca/Anthropic-provider call site above: replace the hardcoded `timeout=` literal with `utils.upstream_call.get_timeout(provider)`, and add `bounded_upstream_call(provider, ...)` retry coverage where none exists today
+- For Stooq/Twelve Data: either add new `"stooq"`/`"twelve_data"` provider entries to `UPSTREAM_TIMEOUTS`/`UPSTREAM_RETRY_BUDGETS` (config-only migration; leave retry-wrapping as a separate decision given the rate-limit-interaction risk noted above), or explicitly decide these providers are out of this helper's scope and document why
+- `backend/routers/ticker_universe.py`'s thread-pool `timeout=5.0` — assess separately whether it belongs in this helper at all before migrating it
+
+**Acceptance Criteria**
+- Every call site listed above is either migrated to `utils.upstream_call` or has an explicit, documented reason it is not (e.g. Stooq/Twelve Data's rate-limit-interaction risk, or ticker_universe.py's different mechanism)
+- No behaviour change to any already-working fallback/rate-limit logic (Stooq/Twelve Data cooldown timers, `_TWELVE_DATA_RATE_LIMIT`) as a side effect of any migration performed
 
 ---
 

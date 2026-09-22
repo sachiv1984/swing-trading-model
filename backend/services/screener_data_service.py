@@ -23,6 +23,7 @@ from typing import Optional, List, Dict
 
 from services.alpaca_service import get_ohlcv_bars
 from services.health_service import record_external_api_call
+from utils.upstream_call import get_timeout
 
 logger = logging.getLogger(__name__)
 
@@ -71,8 +72,8 @@ def _refresh_yahoo_crumb() -> Optional[str]:
             return _yahoo_crumb
         sess = requests.Session()
         try:
-            sess.get(_YAHOO_CONSENT_URL, headers=_YAHOO_HEADERS, timeout=10)
-            resp = sess.get(_YAHOO_CRUMB_URL, headers=_YAHOO_HEADERS, timeout=10)
+            sess.get(_YAHOO_CONSENT_URL, headers=_YAHOO_HEADERS, timeout=get_timeout("yfinance"))
+            resp = sess.get(_YAHOO_CRUMB_URL, headers=_YAHOO_HEADERS, timeout=get_timeout("yfinance"))
             if resp.status_code == 200 and resp.text.strip():
                 _yahoo_session = sess
                 _yahoo_crumb = resp.text.strip()
@@ -143,7 +144,7 @@ def _yahoo_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
         params: Dict = {"interval": "1d", "range": range_param}
         if crumb:
             params["crumb"] = crumb
-        return sess.get(url, params=params, headers=_YAHOO_HEADERS, timeout=15)
+        return sess.get(url, params=params, headers=_YAHOO_HEADERS, timeout=get_timeout("yfinance_history"))
 
     t0 = _time.monotonic()
     try:
@@ -453,7 +454,7 @@ def _yahoo_fetch_ohlcv_simple(ticker: str, days: int) -> Optional[List[OHLCVReco
     }
     t0 = _time.monotonic()
     try:
-        resp = requests.get(url, params=params, headers=_YAHOO_SIMPLE_HEADERS, timeout=15)
+        resp = requests.get(url, params=params, headers=_YAHOO_SIMPLE_HEADERS, timeout=get_timeout("yfinance_history"))
         latency = (_time.monotonic() - t0) * 1000
 
         if resp.status_code != 200:
