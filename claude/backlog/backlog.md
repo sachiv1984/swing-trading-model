@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-22 (session — 1 new item added: BLG-QA-190, remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules["database"] swap pattern, per ST-21/EPIC-05 AC-3 audit); prior — 2026-09-22 (Product Owner direct decision, post-merge PR #1752 — BLG-BE-127 priority raised P3->P2); prior — 2026-09-22 (PR #1752 agent-mediated review, EPIC-03/2026-09-21__release-v9.6 — 1 new item added: BLG-BE-129, latency measurement around retried Anthropic calls); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-22 (EPIC-04/EPIC-05 merge reconciliation — 2 new items added independently on sibling branches, both retained, deliberately non-colliding IDs: BLG-QA-190, remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules["database"] swap pattern, per ST-21/EPIC-05 AC-3 audit; BLG-QA-191, I/O-boundary test coverage gap in EPIC-04's staleness/CI-usage scripts, per PR #1753 agent-mediated DoQ review finding — 191 was deliberately assigned instead of 190 on the EPIC-04 branch, having confirmed 190 was already claimed on the still-unmerged EPIC-05 branch, per CLAUDE.md §8's collision-avoidance guidance); prior — 2026-09-22 (Product Owner direct decision, post-merge PR #1752 — BLG-BE-127 priority raised P3->P2); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4907,6 +4907,27 @@ ST-21 fixed `test_trade_plan_audit_log.py`'s permanent, unrestored `sys.modules.
 - Every Category A file converted to the isolated-copy pattern; every Category B file given a restore-based fix; Category C files reviewed and either left as-is with rationale reconfirmed, or fixed if the review finds a live gap
 - Full backend test suite passes with no new failures (only the 7 pre-existing `test_schema*.py` live-staging-DB-permission failures remain)
 - A manual reordering check (run in a non-default order, or via a throwaway canary asserting `sys.modules["database"]` is unchanged after each fixed file) confirms no cross-file leakage remains from this pattern anywhere in `tests/`
+
+---
+
+### BLG-QA-191 — Add automated test coverage for the I/O-boundary functions in EPIC-04's staleness/CI-usage scripts
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality
+**Source:** PR #1753 (EPIC-04) agent-mediated Director of Quality review finding — 2026-09-22
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.7
+
+**Problem**
+`scripts/check_nightly_stop_update_staleness.py` and `scripts/generate_ci_usage_report.py` (ST-14/ST-17, EPIC-04, v9.6) both separate pure comparison/aggregation logic from I/O, and the pure logic is well unit-tested (7 and 14 tests respectively). But every I/O-boundary function in both scripts (`get_scheduler_health`, `fetch_workflows`, `fetch_workflow_run_count_and_sample`, `fetch_run_duration_ms`, `fetch_artifacts_in_window`, and the shared `_gh_api`/`_gh_api_paginated` helpers) has zero automated test coverage — they were verified only via live manual runs during the v9.6 sprint session, not CI-reproducible. A future regression in the pagination or response-parsing logic (e.g. the `gh api --paginate` NDJSON-concatenation gotcha `generate_ci_usage_report.py`'s own code comment documents having hit once already) would not be caught until the next scheduled/live run surfaces it.
+
+**Scope**
+- Add tests for the I/O-boundary functions in both scripts using mocked subprocess/requests calls (e.g. the `responses` library or `unittest.mock.patch` on `subprocess.run` / `requests.get`) so the pagination, error-handling, and response-parsing logic is exercised without live GitHub/API calls
+- Cover at minimum: the `gh api --paginate` manual-pagination loop (`_gh_api_paginated`), a multi-page response, and the `GET /health/scheduler` response-shape parsing in `check_nightly_stop_update_staleness.py`'s `main()`
+
+**Acceptance Criteria**
+- Both scripts' I/O-boundary functions have unit tests using mocked external calls (no live network/`gh` CLI dependency)
+- A deliberate regression in the pagination loop (e.g. an off-by-one in the page-continuation condition) is confirmed to fail the new tests
 
 ---
 

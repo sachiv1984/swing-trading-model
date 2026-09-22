@@ -50,8 +50,8 @@ Append-only. Do not edit previous entries.
 - **Unblock criteria:** Owner either performs the live-fire run and confirms Telegram receipt (run URL/ID + confirmation supplied), or accepts a disclosed not-closeable outcome so the item can return to backlog.
 - **SLA due-by:** 2026-09-24T15:51:14Z (72h)
 - **Blocks execution:** No (blocks only ST-16; sprint continues per STEP 3.1.D)
-- **Disposition:** Open
-- **Resolution summary:** 
+- **Disposition:** Resolved
+- **Resolution summary:** User (Infrastructure & Operations Owner) triggered `health-check-alert.yml` directly via the GitHub Actions UI, bypassing the engine's token-permission blocker entirely (option (b) of the unblock criteria). First attempt (`test_url=https://httpstat.us/500`) returned HTTP 404 not 500 — a stale test fixture, not a defect — so a second run used `https://httpbin.org/status/500` instead, confirmed 3/3 real HTTP 500s. Telegram API returned `{"ok":true,...}` and the user independently confirmed receiving the message. Run URL: `https://github.com/sachiv1984/swing-trading-model/actions/runs/35727112554`. Full detail in `docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md` §7 (resolved 2026-09-22T12:27:08Z, the run's own Telegram-send timestamp).
 
 ---
 

@@ -22,9 +22,12 @@ on:
       test_url:
         description: >-
           ST-13/ST-14 live-fire test only: override the polled URL directly
-          (e.g. https://httpstat.us/500 to simulate a sustained 5xx spike
-          without touching real infrastructure). Leave blank for normal use —
-          normal runs always poll the real production API's /health endpoint.
+          (e.g. https://httpbin.org/status/500 to simulate a sustained 5xx
+          spike without touching real infrastructure — httpstat.us/500 was
+          used here originally but confirmed 2026-09-22 (ST-16) to no longer
+          return a real 500, see docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md
+          §9). Leave blank for normal use — normal runs always poll the real
+          production API's /health endpoint.
         required: false
         type: string
 
