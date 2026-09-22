@@ -2,7 +2,7 @@
   "_metadata": {
     "version": "1.0.0",
     "spec_source": "claude/strategy/strategy_rules.md",
-    "spec_version": "1.3",
+    "spec_version": "1.10",
     "description": "Golden test vectors for stop-loss and position sizing calculations. All expected values are derived from strategy_rules.md canonical spec — NOT reverse-engineered from the implementation. If the implementation diverges from these values, it diverges from spec.",
     "precision": {
       "share_counts_decimal_places": 4,
@@ -314,6 +314,22 @@
       "derivation": "TrailingStop = max(120.00, 118.00) = 120.00 — §7.3: UpdatedStop = max(CurrentStop, NewlyCalculatedStop). No exception for state transitions.",
       "expected": {
         "trailing_stop": 120.00
+      }
+    },
+    {
+      "id": "SL-08",
+      "description": "Profitable position trailing stop — entry-price breakeven floor binds (§7.2 v1.10, BLG-BE-119)",
+      "spec_section": "§7.2 (profitable, breakeven floor)",
+      "inputs": {
+        "current_price": 105.00,
+        "atr": 20.00,
+        "is_profitable": true,
+        "atr_multiplier": 2,
+        "entry_price": 100.00
+      },
+      "derivation": "Stop = max(CurrentPrice - (ProfitATRMultiplier * ATR), EntryPrice) = max(105.00 - (2 * 20.00), 100.00) = max(65.00, 100.00) = 100.00 — the unfloored ATR trail (65.00) is well below entry_price, so the v1.10 breakeven floor governs, not the ATR trail. Same worked case as tests/test_trailing_stop_breakeven_floor.py::test_profitable_stop_never_below_entry_price, added here (BLG-BE-119/ST-09, v9.6) because no prior golden vector supplied both entry_price and a profitable new_stop below it.",
+      "expected": {
+        "new_stop": 100.00
       }
     }
   ]
