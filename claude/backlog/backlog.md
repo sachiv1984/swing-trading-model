@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-22 (session — 1 new item added: BLG-QA-191, I/O-boundary test coverage gap in EPIC-04's staleness/CI-usage scripts, per PR #1753 agent-mediated DoQ review finding — note: assigned 191, not 190, because BLG-QA-190 was already claimed on the still-unmerged exec/2026-09-21__release-v9.6/EPIC-05 branch, to avoid a same-ID collision when both branches reach main); prior — 2026-09-22 (Product Owner direct decision, post-merge PR #1752 — BLG-BE-127 priority raised P3->P2); prior — 2026-09-22 (PR #1752 agent-mediated review, EPIC-03/2026-09-21__release-v9.6 — 1 new item added: BLG-BE-129, latency measurement around retried Anthropic calls); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-22 (session — 1 new item added: BLG-GOV-346, size "grep-and-fix-everywhere"/"verify against live environment" story classes a notch higher by default, per PR #1753/#1754 agent-mediated Product Owner review finding); prior — 2026-09-22 (EPIC-04/EPIC-05 merge reconciliation — 2 new items added independently on sibling branches, both retained, deliberately non-colliding IDs: BLG-QA-190, remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules["database"] swap pattern; BLG-QA-191, I/O-boundary test coverage gap in EPIC-04's staleness/CI-usage scripts); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4433,6 +4433,27 @@ Parameter history is recoverable only from git and the change log. Refines `BLG-
 
 ---
 
+### BLG-GOV-346 — Size "grep-and-fix-everywhere" and "verify against live environment" story classes a notch higher by default
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Product Owner
+**Source:** PR #1753 and PR #1754 (EPIC-04/EPIC-05) agent-mediated Product Owner review finding — 2026-09-22
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.7
+
+**Problem**
+Three stories in the same v9.6 sprint needed a mid-execution scope correction or shortfall disclosure because their own effort estimate (XS/S) didn't anticipate what the work actually required once started: `ST-21` (EPIC-05, `BLG-QA-178`, XS) — its own AC-3 ("fix every file sharing this pattern") turned out to touch ~29 files needing two structurally different fix strategies, disclosed as `DEV-EPIC05-ST21-01` with a filed follow-up (`BLG-QA-190`); `ST-18` (EPIC-05, `BLG-QA-171`, M) — "run the Phase-B suite against a freshly-seeded staging DB" was found mid-execution to conflate an unrelated CI job with the real staging environment, requiring a scope correction before execution rather than after; `ST-17` (EPIC-04, `BLG-OPS-165`) — the new CI-usage-report script's I/O-boundary functions shipped with zero test coverage (`BLG-QA-191`), only caught by a later PR review pass. All three were handled correctly (disclosed transparently, not hidden or silently narrowed), but the pattern recurring three times in one sprint across two EPICs suggests the underlying story classes are systematically under-estimated, not that each occurrence was a one-off surprise.
+
+**Scope**
+- At sprint/release planning time, flag stories whose scope includes "grep across the codebase / fix every match" or "verify behaviour against a live/staging environment" phrasing
+- For that story class, default to one effort tier higher than the estimator's first instinct, or explicitly require the estimate to name the expected file/case count and confirm it against a quick grep/count before the estimate is finalized
+
+**Acceptance Criteria**
+- Either `sprint_planning_prompt.md` or `release_planning_prompt.md` gains a short check/note for this story class at estimate time
+- Applied retrospectively: none required — this is a forward-looking calibration note, not a fix to the three already-disclosed instances above
+
+---
+
 ### BLG-OPS-165 — CI minutes and artifact-storage visibility; explicit retention on the 3 uploads that lack it
 **Priority:** P3 (Low)
 **Type:** Operations / FinOps
@@ -4883,6 +4904,30 @@ The reflection-reminder work adds startup DDL (two `alert_type` CHECK extensions
 **Acceptance Criteria**
 - The test runs in Phase B CI and fails if the partial-index conflict target or an eligibility clause is broken
 - Phase A remains fully mocked
+
+---
+
+### BLG-QA-190 — Convert remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules["database"] swap pattern
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality
+**Source:** ST-21 (EPIC-05, v9.6, BLG-QA-178) AC-3 audit — DEV-EPIC05-ST21-01, `claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-05.md` — 2026-09-22
+**Effort:** M (~1-2d)
+**Provisional-Target:** v9.7
+
+**Problem**
+ST-21 fixed `test_trade_plan_audit_log.py`'s permanent, unrestored `sys.modules.pop("database", None); import database` (converted to the isolated-copy `importlib.util.spec_from_file_location` pattern `test_position_audit_log.py` already uses). Its own AC-3 required grepping `tests/` for the same pattern and fixing every match in the same commit. The audit found ~29 other files matching the literal text, but they are not structurally uniform, so the fix could not safely be mass-applied within that story's XS effort budget.
+
+**Scope**
+- Category A (convertible, low risk): files that just call `database.X()` directly with no FastAPI TestClient/main.app dependency — apply the same isolated-copy pattern. Includes (non-exhaustive, re-grep to confirm current list): `test_arc5_total_closed_trades_null_vs_zero.py`, `test_changelog_service.py`, `test_changelog_digest_service.py`, `test_monthly_ai_cost.py`, `test_rebalance_exit_signal_numpy_regression.py` (also pops `utils.formatting` — widen the audit to that module too), `test_signal_write_path_consolidation.py`, `test_service_layer_direct_coverage.py`, `test_signal_write_sanitization.py`, `test_strategy_benchmark_summary.py`, `test_strategy_version_at_entry.py`, `test_tax_year_boundary_completeness.py`, `test_trade_plan_tags.py`, `test_ticker_market_sanitization_regression.py`, `test_trade_origin_query.py`, `test_trade_plan_completion_rate.py`, `test_trade_plans_ticker_index.py`, `test_trade_plan_thesis_provenance.py`
+- Category B (needs a different fix): files importing FastAPI's TestClient/main.app, where router-level `from database import X` bindings resolve against `sys.modules["database"]` at import time — the isolated-copy pattern does not apply. Needs a restore-based fix instead (e.g. a module-scoped teardown/fixture that re-installs `conftest.py`'s stub after the module's tests run). Includes: `test_api_contracts.py`, `test_backtest_rule_runs_pagination.py`, `test_main_500_no_raw_exception_text.py`, `test_idempotency_endpoints.py`, `test_job_registration_screener_risk_off.py`, `test_rate_limit_endpoints.py`, `test_router_error_envelope_conformance.py`, `test_st04_implicit_200_error_paths_fixed.py`, `test_tag_performance_ensure_table_call.py`, `test_trade_plan_setup_type_default.py`, `test_cost_monitoring.py`
+- Category C (already deliberate, review only): `test_ensure_trade_plans_table_memoization.py`, `test_schema.py`, `test_schema_rollback_verification.py` — already re-acquire the module fresh per-test/function-scoped rather than at plain module level; confirm whether their own documented rationale still holds or whether they'd also benefit from the restore-based fix
+
+**Acceptance Criteria**
+- Re-run `grep -rln 'sys.modules.pop("database", None)' tests/*.py` to confirm the current file list (this list may have drifted since 2026-09-22)
+- Every Category A file converted to the isolated-copy pattern; every Category B file given a restore-based fix; Category C files reviewed and either left as-is with rationale reconfirmed, or fixed if the review finds a live gap
+- Full backend test suite passes with no new failures (only the 7 pre-existing `test_schema*.py` live-staging-DB-permission failures remain)
+- A manual reordering check (run in a non-default order, or via a throwaway canary asserting `sys.modules["database"]` is unchanged after each fixed file) confirms no cross-file leakage remains from this pattern anywhere in `tests/`
 
 ---
 

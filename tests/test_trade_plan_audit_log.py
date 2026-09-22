@@ -9,17 +9,32 @@ authoring and are not logged. Non-blocking: an audit-log write failure must
 never break the underlying edit it is recording.
 
 No live database required -- verifies behaviour via a mocked get_db()
-connection, following the pattern already used by
-test_trade_plans_ticker_index.py / test_trade_plan_thesis_provenance.py.
+connection.
+
+Import note (ST-21, BLG-QA-178, EPIC-05, v9.6): an earlier version of this
+file loaded the real backend/database.py via a permanent, module-level
+`sys.modules.pop("database", None); import database` with no restore --
+overwriting conftest.py's session-scoped stub for the rest of the pytest
+session and relying only on alphabetical sort order to avoid breaking a
+later file that needed the stub back (exactly the failure mode that hit
+test_ai_output_sampling_service.py/test_alerts_service.py, BLG-QA-178's own
+source incident). Fixed to load a private, independent copy of the real
+module instead -- the same isolated-copy pattern test_position_audit_log.py
+already uses -- which never touches the shared sys.modules["database"]
+slot at all, so there is nothing to restore.
 """
+import importlib.util
+import os
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
-sys.modules.pop("database", None)
-import database  # noqa: E402
+_db_path = os.path.join(os.path.dirname(__file__), '..', 'backend', 'database.py')
+_spec = importlib.util.spec_from_file_location('database_real_for_trade_plan_audit_log_test', _db_path)
+database = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(database)
 
 
 def _mock_conn():
