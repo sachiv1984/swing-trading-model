@@ -68,8 +68,8 @@ Append-only. Do not edit previous entries.
 - **Unblock criteria:** Director of Quality supplies a live staging run with a fresh seed and recorded results, or agrees the disclosed-partial + deferral backlog item route.
 - **SLA due-by:** 2026-09-24T15:51:14Z (72h)
 - **Blocks execution:** No (blocks only ST-18; sprint continues per STEP 3.1.D)
-- **Disposition:** Open
-- **Resolution summary:** 
+- **Disposition:** Resolved
+- **Resolution summary:** Director of Quality supplied both parts of the redefined procedure (`docs/testing/quarterly_playwright_staging_reseed_procedure.md`) with recorded results. Part 1: triggered `playwright.yml` directly, run `35729627868`, all 8 E2E shards + Visual Snapshots green. Part 2: fixed a real infra bug (`STAGING_DATABASE_URL` pointed at an IPv6-only Supabase host unreachable from GitHub runners) and triggered `reset-and-seed-staging.yml`, run `35733092701`, succeeded end to end. Part 2's original "run the Phase-B suite against staging" step was corrected mid-execution — found to conflate `ci-tests.yml`'s own unrelated ephemeral-Postgres Phase B job with staging, and running the real write-heavy suite against shared staging risked damaging the just-established schema/seed data. Replaced with independent read-only verification (7 `SELECT COUNT(*)`/spot-check queries via the `readonly_staging` role), every value matching the reset workflow's own claimed summary exactly. Resolved 2026-09-22, well within the 72h SLA.
 
 ---
 
