@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-09-22 (ST-18, BLG-QA-171, EPIC-05, v9.6 — Part 1's first run completed with real evidence; the Director of Quality triggering it is treated as implicit acceptance of the two-part redefinition, since they acted on it directly rather than specifying an alternative); prior — 2026-09-22 (initial version).
+**Version:** 1.2
+**Last Updated:** 2026-09-22 (ST-18, BLG-QA-171, EPIC-05, v9.6 — Part 2 step 1 (reset-and-seed) completed with real evidence; also fixed a duplicate section heading left by the previous edit); prior — 2026-09-22 (Part 1's first run completed with real evidence; the Director of Quality triggering it is treated as implicit acceptance of the two-part redefinition, since they acted on it directly rather than specifying an alternative); prior — 2026-09-22 (initial version).
 **Sprint Item:** ST-18 (BLG-QA-171, EPIC-05, v9.6)
 
 ---
@@ -69,9 +69,14 @@ No suite/dependency/environment drift found — the concern Part 1 exists to cat
 
 ### First run — Part 2 (Phase-B backend suite, freshly reset staging)
 
-### First run — Part 2 (Phase-B backend suite, freshly reset staging)
+**Status: 🟡 In progress — step 1 of 2 complete.**
 
-**Status: not yet executed.** Requires the Director of Quality (or a session with live staging write access) to run the reset-and-seed step, which is destructive and must not be triggered without an explicit human-observed decision to do so on the actual staging environment. See `qa_evidence_EPIC-05.md` for the open item.
+**Step 1 (reset-and-seed) — completed 2026-09-22.** Director of Quality updated the `STAGING_DATABASE_URL` secret (it had been pointed at Supabase's direct, IPv6-only host — `db.<ref>.supabase.co:5432` — which GitHub-hosted runners cannot reach; corrected to the Transaction pooler URI, `aws-0-<region>.pooler.supabase.com:6543`, matching this repo's own documented connection-string convention) and triggered `gh workflow run reset-and-seed-staging.yml --ref main` directly. First attempt (run [`35730287893`](https://github.com/sachiv1984/swing-trading-model/actions/runs/35730287893)) failed at the "Reset staging database to baseline" step with `Network is unreachable` — root-caused to the wrong connection-string format, not a permissions or code issue. Second attempt, after the secret fix — run [`35733092701`](https://github.com/sachiv1984/swing-trading-model/actions/runs/35733092701) — succeeded end to end:
+- Reset: all domain tables cleared, baseline inserted
+- Migrate: schema up to date (v2.0)
+- Seed: QA data inserted — 2 open positions (LGEN, BARC) + 2 closed trades; watchlist 4 entries; alerts 4 rules + 2 unread notifications; analytics 12 closed trades (Jan–Mar 2026); signals 2 active/new (LGEN, BARC) + 1 dismissed (HSBA) + 1 entered (TSCO)
+
+**Step 2 (Phase-B backend suite run against the freshly-seeded database) — not yet executed.** See `qa_evidence_EPIC-05.md` for the open item.
 
 ## Disposition of a future finding
 
