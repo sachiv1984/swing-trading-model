@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-22 (EPIC-04/EPIC-05 merge reconciliation — 2 new items added independently on sibling branches, both retained, deliberately non-colliding IDs: BLG-QA-190, remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules["database"] swap pattern, per ST-21/EPIC-05 AC-3 audit; BLG-QA-191, I/O-boundary test coverage gap in EPIC-04's staleness/CI-usage scripts, per PR #1753 agent-mediated DoQ review finding — 191 was deliberately assigned instead of 190 on the EPIC-04 branch, having confirmed 190 was already claimed on the still-unmerged EPIC-05 branch, per CLAUDE.md §8's collision-avoidance guidance); prior — 2026-09-22 (Product Owner direct decision, post-merge PR #1752 — BLG-BE-127 priority raised P3->P2); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-22 (session — 1 new item added: BLG-GOV-346, size "grep-and-fix-everywhere"/"verify against live environment" story classes a notch higher by default, per PR #1753/#1754 agent-mediated Product Owner review finding); prior — 2026-09-22 (EPIC-04/EPIC-05 merge reconciliation — 2 new items added independently on sibling branches, both retained, deliberately non-colliding IDs: BLG-QA-190, remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules["database"] swap pattern; BLG-QA-191, I/O-boundary test coverage gap in EPIC-04's staleness/CI-usage scripts); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4430,6 +4430,27 @@ Parameter history is recoverable only from git and the change log. Refines `BLG-
 - §6 checklist complete for any prompt change
 
 *Note: Source: this rebalance's own lessons learnt, not an idea.*
+
+---
+
+### BLG-GOV-346 — Size "grep-and-fix-everywhere" and "verify against live environment" story classes a notch higher by default
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Product Owner
+**Source:** PR #1753 and PR #1754 (EPIC-04/EPIC-05) agent-mediated Product Owner review finding — 2026-09-22
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.7
+
+**Problem**
+Three stories in the same v9.6 sprint needed a mid-execution scope correction or shortfall disclosure because their own effort estimate (XS/S) didn't anticipate what the work actually required once started: `ST-21` (EPIC-05, `BLG-QA-178`, XS) — its own AC-3 ("fix every file sharing this pattern") turned out to touch ~29 files needing two structurally different fix strategies, disclosed as `DEV-EPIC05-ST21-01` with a filed follow-up (`BLG-QA-190`); `ST-18` (EPIC-05, `BLG-QA-171`, M) — "run the Phase-B suite against a freshly-seeded staging DB" was found mid-execution to conflate an unrelated CI job with the real staging environment, requiring a scope correction before execution rather than after; `ST-17` (EPIC-04, `BLG-OPS-165`) — the new CI-usage-report script's I/O-boundary functions shipped with zero test coverage (`BLG-QA-191`), only caught by a later PR review pass. All three were handled correctly (disclosed transparently, not hidden or silently narrowed), but the pattern recurring three times in one sprint across two EPICs suggests the underlying story classes are systematically under-estimated, not that each occurrence was a one-off surprise.
+
+**Scope**
+- At sprint/release planning time, flag stories whose scope includes "grep across the codebase / fix every match" or "verify behaviour against a live/staging environment" phrasing
+- For that story class, default to one effort tier higher than the estimator's first instinct, or explicitly require the estimate to name the expected file/case count and confirm it against a quick grep/count before the estimate is finalized
+
+**Acceptance Criteria**
+- Either `sprint_planning_prompt.md` or `release_planning_prompt.md` gains a short check/note for this story class at estimate time
+- Applied retrospectively: none required — this is a forward-looking calibration note, not a fix to the three already-disclosed instances above
 
 ---
 
