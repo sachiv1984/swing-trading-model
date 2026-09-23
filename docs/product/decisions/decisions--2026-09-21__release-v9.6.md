@@ -3,7 +3,7 @@ Class: Planning Document (Class 4)
 Status: Active
 Release: v9.6
 Cycle: 2026-09-21__release-v9.6
-Last Updated: 2026-09-21
+Last Updated: 2026-09-23 (ST-23, EPIC-06, BLG-SPEC-160 — added the PO-05 §13 pre-assessment determination + exact gate-line replacement text); prior — 2026-09-21 (initial publication at Release Planning)
 
 ## Planning Decisions — v9.6 Build-and-Ship Pull-Forward & Full-Capacity Debt Clearance
 
@@ -33,6 +33,22 @@ Last Updated: 2026-09-21
 | ESC ID | Risk domain | Rationale | Accepted by | AR record |
 |--------|-------------|-----------|-------------|-----------|
 | None | — | No escalations raised during this release-planning session | — | — |
+
+### ST-23 execution-time determination — PO-05 §13 pre-assessment (2026-09-23)
+
+**Context:** `BLG-SPEC-160`/ST-23 (EPIC-06) requires a dated §13 determinism pre-clearance determination for PO-05 (Lightweight Replay Mode), and updating `BLG-FEAT-74`'s gate line to reflect the outcome.
+
+**Determination:** **PASS.** Full four-criterion assessment (Determinism, Own-Data Only, Non-Predictive Output, Decision-Support Only — the same template already used for PS-03/IT-06) recorded in `docs/product/decisions/po05_section13_preassessment.md`, agent-mediated per `execution_prompt.md` §5.3 (Strategy Rules & System Intent Owner role). PO-05's determinism case is stronger than PS-03's own: it replays already-known historical data through the already-fixed current rule set, with no pseudo-random sampling involved at all. 6 binding conditions carried forward for `BLG-FEAT-74`'s eventual implementation sprint (see that document's own §13 Conditions section) — most importantly, this PASS covers *replay under the current rule set only*; any future hypothetical/user-editable rule-set variation is a different feature requiring its own review.
+
+**Exact replacement text** (for whichever human/role applies it — `execution_prompt.md` §7 does not permit this engine to edit `backlog.md` directly; see Outstanding Actions):
+
+- `BLG-FEAT-74` — replace `**Provisional-Target:** Unscheduled (gated — §13 determinism pre-clearance not yet run)` with:
+  `**Provisional-Target:** Unscheduled — §13 pre-clearance PASS 2026-09-23 (see docs/product/decisions/po05_section13_preassessment.md), 6 binding conditions carry forward to implementation; gated only by normal Release Planning prioritisation given its VH (>2 weeks) effort size, not by §13`
+
+**Also needed (outside this engine's write scope — governance folder):** `claude/strategy/strategy_rules.md` §13.5's roster table should gain a new row for PO-05 (`docs/product/decisions/po05_section13_preassessment.md`, cleared v9.6), per that section's own maintenance rule that new clearances add themselves to the roster in the same commit. `claude/strategy/` is a governance folder `execution_prompt.md` §7/CLAUDE.md §2 does not permit this engine to write to — flagged for Head of Specs Team / Strategy Rules & System Intent Owner to apply alongside the `backlog.md` edit above.
+
+**Made by:** Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role — §5.3; §13 determination itself is complete and actionable — only the two write-scope-restricted follow-up edits above require a human/differently-scoped role to apply).
+**Date:** 2026-09-23
 
 ### Supersession note
 *To be completed at Post-Ship Closure — do not populate at planning time.*
