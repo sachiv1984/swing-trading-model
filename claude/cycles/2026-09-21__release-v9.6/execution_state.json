@@ -772,10 +772,10 @@
       }
     },
     "EPIC-07": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
       "pr_number": 1758,
-      "pr_status": "open_partial",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-07.md",
       "test_scenarios": [],
@@ -783,7 +783,7 @@
         "ST-27": {
           "title": "Release-planning gate scan treats lapsed date gates as permanently gated",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1744,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
@@ -807,7 +807,7 @@
         "ST-28": {
           "title": "Re-confirm \u00a713 boundary review cadence",
           "classification": "delegated_decision",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1745,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
@@ -836,7 +836,7 @@
         "ST-29": {
           "title": "Revisit sprint capacity band given sustained \u226590% utilisation",
           "classification": "delegated_decision",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Product Owner",
           "github_issue": 1746,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
@@ -864,7 +864,7 @@
         "ST-30": {
           "title": "Fixed-cadence audit of every governance prompt's \u00a714 version-table entry",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1747,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
@@ -887,7 +887,7 @@
         "ST-31": {
           "title": "Claude model deprecation monitoring procedure (consolidated)",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1748,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
@@ -910,7 +910,7 @@
         "ST-32": {
           "title": "Sprint Velocity Trend Chart",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1749,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
