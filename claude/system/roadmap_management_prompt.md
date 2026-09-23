@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.5
-**Last Updated:** 2026-08-18 (ST-22, EPIC-06, v8.9, BLG-GOV-260: STEP 5.2 gains a stale RA: marker pruning rule)
+**Version:** 1.6
+**Last Updated:** 2026-09-23 (ST-30, EPIC-07, v9.6, BLG-GOV-325 — new §5.5 Recurring Governance-Prompt Version-Table Audit Cadence, every 3rd invocation, wiring the governance-drift skill into a mandatory step); prior — 2026-08-18 (ST-22, EPIC-06, v8.9, BLG-GOV-260: STEP 5.2 gains a stale RA: marker pruning rule)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -322,6 +322,33 @@ RA: markers pruned: <n>   # ST-22, BLG-GOV-260, v8.9 — default 0 if none met t
 - No content changes beyond status and location: Yes
 - No backlog modifications: Yes
 ```
+
+If §5.5's audit cadence is due this run, the log also gains:
+
+```markdown
+## Governance Version-Table Audit
+
+Due: Yes (3rd invocation since <marked cycle_id>)
+Files checked: <n>
+Mismatches found: <n>
+Mismatches corrected: <n>
+Marker updated to: <cycle_id>
+```
+
+### 5.5 Recurring Governance-Prompt Version-Table Audit Cadence (ST-30, EPIC-07, v9.6, BLG-GOV-325)
+
+The `governance-drift` skill (`.claude/skills/governance-drift/SKILL.md`) checks whether every Class 6 governance prompt's own version header matches `OPERATIONAL_GUIDE.md` §14's governance table and the corresponding phase-section source-prompt line — but, before this subsection, it only ran when someone happened to invoke it manually ("check governance drift," or proactively after a multi-file governance session). Nothing wired it into a governed routine's own mandatory steps, so drift could accumulate silently across cycles where no one thought to ask. This subsection fixes that gap with a periodic **mandatory** run, on the same lower-frequency-cadence pattern already used for `backlog_management_prompt.md` §3.1's Recurring Spec-Debt Deep Review.
+
+**Cadence:** every 3rd `manage roadmap` invocation. Track via an HTML comment marker at the top of `claude/system/OPERATIONAL_GUIDE.md`: `<!-- last-governance-version-audit: <cycle_id> -->`. On each `manage roadmap` run, count invocations since the marked cycle; when the count reaches 3, perform the audit below and update the marker to the current cycle.
+
+**Audit method (when due):**
+1. Run the `governance-drift` skill's Steps 1–3 in full: §14-vs-file-header version comparison, OPERATIONAL_GUIDE.md's own 3-way self-consistency check (header / §14 self-row / Change Log top row — all three fields, not version alone, per the skill's own Step 1b), and the unreferenced-Class-6-file scan.
+2. For each mismatch found: apply the Governance File Edit Checklist (`CLAUDE.md` §6) to correct it in the same commit as this audit's own write — do not merely report a finding and leave it uncorrected, since the entire point of a mandatory (not advisory) cadence is that drift gets fixed when found, not queued.
+3. Record the audit's findings (files checked, mismatches found, mismatches corrected) in the run log (§5.3) under a new `## Governance Version-Table Audit` heading, distinct from the regular retire/stale/ambiguous sections.
+
+If not due this run: no action, no report section — the rest of `manage roadmap` runs unaffected by the audit cadence.
+
+**Sign-off:** Head of Specs Team — Approved. Cadence tracked via a document marker (same mechanism as `backlog_management_prompt.md` §3.1) rather than a new `.claude_current_state.json` field, keeping this self-contained to `manage roadmap`'s own write scope. Correcting drift inline (step 2) rather than only reporting it is deliberate — a mandatory cadence that finds drift and leaves it for a later session would reproduce the exact "nothing wired it in" gap this subsection exists to close, just one level down. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-23.
 
 ---
 
