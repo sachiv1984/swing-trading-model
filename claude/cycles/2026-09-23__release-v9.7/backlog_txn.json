@@ -1,0 +1,10 @@
+{
+  "cycle_id": "2026-09-23__release-v9.7",
+  "release": "v9.7",
+  "txn_id": "BLTX-20260923-01",
+  "state": "committed",
+  "prepared_utc": "2026-09-23T18:40:00Z",
+  "committed_utc": "2026-09-23T18:45:00Z",
+  "marker": "RP:v9.7:2026-09-23__release-v9.7",
+  "target_file": "claude/backlog/backlog.md"
+}

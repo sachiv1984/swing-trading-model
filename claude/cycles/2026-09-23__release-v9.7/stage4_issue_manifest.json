@@ -1,0 +1,382 @@
+[
+  {
+    "st_id": "ST-01",
+    "epic_id": "EPIC-01",
+    "source": "BLG-FEAT-74",
+    "title": "PO-05 Lightweight Replay Mode",
+    "priority": "P1",
+    "effort": "VH (>2 weeks)",
+    "acceptance_criteria": [
+      "User can select a historical date range or trade set and run it through paper-trading mechanics under current strategy rules",
+      "Output is clearly labelled as retrospective/deterministic, not predictive",
+      "§13 pre-clearance review completed and documented before sprint planning begins",
+      "Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-02",
+    "epic_id": "EPIC-02",
+    "source": "BLG-FE-186",
+    "title": "Cloned trade plan can silently get the wrong Setup Type",
+    "priority": "P2",
+    "effort": "S (~0.5-1d)",
+    "acceptance_criteria": [
+      "A clone of a plan with Setup Type X shows X, including when the ticker has a watchlisted signal",
+      "The design record and `trade_plan.md` state which fields a clone copies",
+      "The new Playwright scenario passes in CI",
+      "Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-03",
+    "epic_id": "EPIC-02",
+    "source": "BLG-FE-187",
+    "title": "Monthly P&L's NULL-fee audit flag has no frontend surfacing",
+    "priority": "P2",
+    "effort": "S (~0.5–1d)",
+    "acceptance_criteria": [
+      "A month with `null_fee_trade_count > 0` shows a visible indicator on the Monthly P&L page; a month with `0` does not",
+      "Playwright test covering the above passes in CI",
+      "Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-04",
+    "epic_id": "EPIC-02",
+    "source": "BLG-FE-188",
+    "title": "Month-end P&L restatement diff has no frontend surfacing",
+    "priority": "P2",
+    "effort": "S (~1d)",
+    "acceptance_criteria": [
+      "A restated month shows its diff on the Monthly P&L page",
+      "A tax year with `restated_month_count > 0` shows the notice on its summary bar",
+      "Playwright tests covering both pass in CI",
+      "Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-05",
+    "epic_id": "EPIC-02",
+    "source": "BLG-FE-178",
+    "title": "AlertThresholdsSection.js empty-state heading has a trailing period, violating the empty-state microcopy pattern",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "acceptance_criteria": [
+      "Empty-state heading renders `\"No alert rules configured\"` (no trailing period)",
+      "Playwright coverage or a recorded staging run confirms the rendered heading, per CLAUDE.md's frontend-visible-change rule (wording-only — code review may substitute per the FI-P3-02 exception if genuinely no visual/layout change results)",
+      "Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-06",
+    "epic_id": "EPIC-02",
+    "source": "BLG-FE-179",
+    "title": "NotificationsHistory.js empty-state heading has a trailing period, violating the empty-state microcopy pattern",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "acceptance_criteria": [
+      "Empty-state heading renders `\"No alert history yet\"` (no trailing period)",
+      "Playwright coverage or a recorded staging run confirms the rendered heading, per CLAUDE.md's frontend-visible-change rule (wording-only — code review may substitute per the FI-P3-02 exception if genuinely no visual/layout change results)",
+      "Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-07",
+    "epic_id": "EPIC-02",
+    "source": "BLG-FE-183",
+    "title": "CI lint of static UI copy for forbidden predictive or advice-crossing phrases",
+    "priority": "P3",
+    "effort": "S (~0.5–1d)",
+    "acceptance_criteria": [
+      "CI fails on a disallowed phrase in a new string literal",
+      "Allow-list entries require a justification",
+      "Playwright test covering the observable AC passes in CI (CLAUDE.md §2 frontend-visible-change rule)"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-08",
+    "epic_id": "EPIC-03",
+    "source": "BLG-BE-127",
+    "title": "UK stamp duty / US FX fee rounding uses float `round()` instead of Decimal, under-rounding ~0.18%/0.02% of half-penny-boundary gross costs by £0.01",
+    "priority": "P2",
+    "effort": "S (~0.5d)",
+    "acceptance_criteria": [
+      "All four fee functions round via `Decimal`/`ROUND_HALF_UP` instead of float `round()`",
+      "The previously-documented discrepancy class (`tests/test_money_arithmetic_golden.py::TestKnownFloatDecimalDiscrepancies`) no longer reproduces — those tests are updated to assert the corrected value",
+      "Full existing fee/sizing test suite still passes unchanged elsewhere (no other rounding behaviour regresses)"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-09",
+    "epic_id": "EPIC-03",
+    "source": "BLG-BE-123",
+    "title": "Reflection reminder step: over-reported summary after a rollback, and NULL-portfolio trades never get a reminder",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "acceptance_criteria": [
+      "After a forced mid-loop failure the returned summary shows 0 created and 0 enqueued, and nothing was scheduled for rolled-back rows",
+      "The NULL-portfolio behaviour is stated in `alerts_endpoints.md` and asserted by a test"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-10",
+    "epic_id": "EPIC-03",
+    "source": "BLG-BE-124",
+    "title": "Generic alert re-delivery ignores read state",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "acceptance_criteria": [
+      "A read notification is never re-enqueued for delivery, asserted by a test",
+      "Unread, undelivered notifications are still retried up to 3 times (existing behaviour unchanged)"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-11",
+    "epic_id": "EPIC-03",
+    "source": "BLG-BE-125",
+    "title": "Month-closure check and Monthly P&L's own SQL window use different clock sources",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "acceptance_criteria": [
+      "A test asserts the same (year, month) tuple is used for both the SQL window and the closed-month check regardless of server timezone setting"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-12",
+    "epic_id": "EPIC-03",
+    "source": "BLG-BE-126",
+    "title": "Monthly P&L snapshot lookup opens one DB connection per closed month",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "acceptance_criteria": [
+      "`GET /reports/monthly-pnl` opens at most one additional connection (beyond the existing `get_monthly_pnl` call) regardless of how many closed months are in the response"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-13",
+    "epic_id": "EPIC-03",
+    "source": "BLG-BE-129",
+    "title": "`latency_ms`/`elapsed_ms` recorded around retried Anthropic calls includes backoff sleep time, not just the final call's duration",
+    "priority": "P4",
+    "effort": "XS (<1h) — or \"won't fix, document as intentional\" is also a valid disposition",
+    "acceptance_criteria": [
+      "Either: a documented decision that the current combined-latency semantics are intentional and acceptable (no code change), or: `latency_ms` is split into a final-attempt-only figure and a total-including-retries figure, applied consistently across `ai_service.py`, `gemini_service.py`, and `debrief_service.py`"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-14",
+    "epic_id": "EPIC-04",
+    "source": "BLG-QA-188",
+    "title": "The backend test suite can connect to a real database when DATABASE_URL is set to one",
+    "priority": "P2",
+    "effort": "S (~0.5d)",
+    "acceptance_criteria": [
+      "Running `backend/.venv/bin/python3 -m pytest tests/` with a real-looking `DATABASE_URL` and no opt-in makes zero real connections",
+      "Phase B CI still runs `tests/test_schema.py` against its real Postgres with the opt-in set"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-15",
+    "epic_id": "EPIC-04",
+    "source": "BLG-QA-174",
+    "title": "CI check flagging merged `.skip()`/`.only()` Playwright specs",
+    "priority": "P3",
+    "effort": "S",
+    "acceptance_criteria": [
+      "CI check added and fires on a deliberately-introduced test case",
+      "Exception mechanism documented"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-16",
+    "epic_id": "EPIC-04",
+    "source": "BLG-QA-175",
+    "title": "Recurring pre-sprint endpoint test coverage audit",
+    "priority": "P3",
+    "effort": "S",
+    "acceptance_criteria": [
+      "Audit method documented",
+      "First run completed; any gap found filed as its own item (e.g. this cycle's own `BLG-OPS-156` is an example of the same class of gap, caught at post-ship instead — this item would catch it earlier)"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-17",
+    "epic_id": "EPIC-04",
+    "source": "BLG-QA-176",
+    "title": "Backfill negative-path tests for the 3 newest v9.2/v9.3 routers",
+    "priority": "P3",
+    "effort": "M",
+    "acceptance_criteria": [
+      "3 routers identified",
+      "Negative-path tests added and passing for each"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-18",
+    "epic_id": "EPIC-04",
+    "source": "BLG-QA-177",
+    "title": "Validate `get_claude_endpoint_cost_windows()` SQL against a real Postgres instance",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "acceptance_criteria": [
+      "The query has been run at least once against a real or synthetic Postgres instance with confirmed-correct recent/baseline window boundaries, or a new test exists that executes the real (non-stubbed) `get_claude_endpoint_cost_windows()` and asserts its output shape/values"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-19",
+    "epic_id": "EPIC-05",
+    "source": "BLG-GOV-327",
+    "title": "Quarterly \"governance overhead ratio\" metric",
+    "priority": "P3",
+    "effort": "M",
+    "acceptance_criteria": [
+      "Metric defined in a canonical spec (likely `metrics_definitions.md`)",
+      "First baseline reading recorded"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-20",
+    "epic_id": "EPIC-05",
+    "source": "BLG-GOV-330",
+    "title": "Review whether the SI-02 gate threshold should scale with observed trade cadence",
+    "priority": "P3",
+    "effort": "S",
+    "acceptance_criteria": [
+      "Disposition recorded: re-examine (with new analysis) or confirm-closed (citing `BLG-GOV-237`, no new information)"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-21",
+    "epic_id": "EPIC-05",
+    "source": "BLG-GOV-331",
+    "title": "Document ensure_ascii=False convention for governance JSON writes",
+    "priority": "P3",
+    "effort": "XS",
+    "acceptance_criteria": [
+      "Convention documented somewhere a future governance-JSON writer (agent or human) would see it before writing"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-22",
+    "epic_id": "EPIC-05",
+    "source": "BLG-GOV-333",
+    "title": "Reconcile sprint_planning_prompt.md STEP -1 status-vocabulary wording against shared_standards.md §10.1",
+    "priority": "P3",
+    "effort": "XS (~0.5–1h)",
+    "acceptance_criteria": [
+      "STEP -1 Hard Gates 1–2 no longer contain a literal status enum independent of `shared_standards.md §10.1`",
+      "Next `plan sprint` invocation's preflight reads cleanly with no drift advisory needed",
+      "Head of Specs Team sign-off"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-23",
+    "epic_id": "EPIC-06",
+    "source": "BLG-SPEC-147",
+    "title": "Formal definition of \"linked trade plan\" counting for the SI-02 gate",
+    "priority": "P3",
+    "effort": "S",
+    "acceptance_criteria": [
+      "Canonical definition exists",
+      "`current_roadmap.md` SI-02 field cross-references it"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-24",
+    "epic_id": "EPIC-06",
+    "source": "BLG-SPEC-149",
+    "title": "positions.exit_note documented in data_model.md does not exist on live table",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "acceptance_criteria": [
+      "`data_model.md`'s Positions Table section no longer claims a live `exit_note` column that doesn't exist"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-25",
+    "epic_id": "EPIC-06",
+    "source": "BLG-SPEC-150",
+    "title": "4 orphaned, always-NULL, undocumented columns on live positions table",
+    "priority": "P3",
+    "effort": "S (~0.5–1d)",
+    "acceptance_criteria": [
+      "Disposition recorded (drop vs document) with supporting evidence",
+      "`data_model.md` and the live schema agree on every `positions` column, one way or the other"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-26",
+    "epic_id": "EPIC-06",
+    "source": "BLG-SPEC-151",
+    "title": "positions.fees_paid documented as NOT NULL but live column is nullable",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "acceptance_criteria": [
+      "`data_model.md` and the live schema agree on `fees_paid` nullability"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-27",
+    "epic_id": "EPIC-07",
+    "source": "BLG-OPS-168",
+    "title": "Post-deploy staging verification of the reflection-reminder migration and SQL (never run against a live database)",
+    "priority": "P2",
+    "effort": "XS (<1h)",
+    "acceptance_criteria": [
+      "Both CHECK constraints and `uq_notifications_reflection_reminder_trade` are confirmed present on staging, with evidence recorded",
+      "A second evaluation run creates 0 duplicate reminders",
+      "The look-back and close-timestamp decisions are recorded"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-28",
+    "epic_id": "EPIC-07",
+    "source": "BLG-OPS-167",
+    "title": "External-dependency failure-mode matrix (yfinance, Alpaca, Anthropic, Supabase, Render)",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "acceptance_criteria": [
+      "All 5 dependencies documented"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  },
+  {
+    "st_id": "ST-29",
+    "epic_id": "EPIC-07",
+    "source": "BLG-SEC-38",
+    "title": "CI guard rejecting non-registry dependency specifiers (git+ssh, git+https, file:)",
+    "priority": "P4",
+    "effort": "S (~0.5d)",
+    "acceptance_criteria": [
+      "A test PR adding a `git+ssh` dependency fails CI"
+    ],
+    "cycle_label": "cycle:2026-09-23__release-v9.7"
+  }
+]

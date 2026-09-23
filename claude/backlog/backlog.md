@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-23 (groom backlog, post-ship closure 2026-09-21__release-v9.6 — 36 items archived (32 v9.6-shipped + BLG-GOV-335/336/337/326, already resolved but never archived); 3 ephemeral sections cleared — 2 Idea Intake staging sections (IW-20260914-01, IW-20260919-01), 65 open items relocated verbatim to §3; 1 Release Slice v9.6 table; see `backlog_health_20260923.md`); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — 32 shipped ST items marked ✅ COMPLETE; 0 Phase 4 additions needed, 0 test scenario gaps, 0 stale parked items); prior — 2026-09-23 (session — 3 new items added: BLG-GOV-347, BLG-GOV-348, BLG-SPEC-163 — findings from agent-mediated Director of Quality review of PR #1757/#1758, cycle 2026-09-21__release-v9.6); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-23 (release planning 2026-09-23__release-v9.7 — Release Slice v9.7 ephemeral section appended, 29 items, marker `RP:v9.7:2026-09-23__release-v9.7`; no other structural changes); prior — 2026-09-23 (groom backlog, post-ship closure 2026-09-21__release-v9.6 — 36 items archived (32 v9.6-shipped + BLG-GOV-335/336/337/326, already resolved but never archived); 3 ephemeral sections cleared — 2 Idea Intake staging sections (IW-20260914-01, IW-20260919-01), 65 open items relocated verbatim to §3; 1 Release Slice v9.6 table; see `backlog_health_20260923.md`); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — 32 shipped ST items marked ✅ COMPLETE; 0 Phase 4 additions needed, 0 test scenario gaps, 0 stale parked items); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4469,3 +4469,41 @@ None of these are on the live-capital nightly stop-update path, so there is no c
 
 ---
 
+
+## Release Slice — v9.7 (ephemeral — remove at next `groom backlog` per Placement Rule)
+
+<!-- release-plan-marker: RP:v9.7:2026-09-23__release-v9.7 -->
+
+29 items selected into `2026-09-23__release-v9.7` scope (28.00 estimated days, full capacity). Full acceptance criteria: `claude/cycles/2026-09-23__release-v9.7/stage4_backlog_slice.md`. Selection method: sole ready P1 item (`BLG-FEAT-74`, §13-cleared 2026-09-23) seated first per §1.4c, then all 6 ready P2 items, then category-balanced round-robin oldest-first for the remaining P3/P4, from a 68-item / 61.35-day ready pool. Excluded as gate-blocked: `BLG-FEAT-73`, `BLG-FEAT-76`. Excluded as already resolved same-session: `BLG-FE-189` (recommend archive at next groom).
+
+| ST-ID | Item | EPIC |
+|-------|------|------|
+| ST-01 | BLG-FEAT-74 | EPIC-01 |
+| ST-02 | BLG-FE-186 | EPIC-02 |
+| ST-03 | BLG-FE-187 | EPIC-02 |
+| ST-04 | BLG-FE-188 | EPIC-02 |
+| ST-05 | BLG-FE-178 | EPIC-02 |
+| ST-06 | BLG-FE-179 | EPIC-02 |
+| ST-07 | BLG-FE-183 | EPIC-02 |
+| ST-08 | BLG-BE-127 | EPIC-03 |
+| ST-09 | BLG-BE-123 | EPIC-03 |
+| ST-10 | BLG-BE-124 | EPIC-03 |
+| ST-11 | BLG-BE-125 | EPIC-03 |
+| ST-12 | BLG-BE-126 | EPIC-03 |
+| ST-13 | BLG-BE-129 | EPIC-03 |
+| ST-14 | BLG-QA-188 | EPIC-04 |
+| ST-15 | BLG-QA-174 | EPIC-04 |
+| ST-16 | BLG-QA-175 | EPIC-04 |
+| ST-17 | BLG-QA-176 | EPIC-04 |
+| ST-18 | BLG-QA-177 | EPIC-04 |
+| ST-19 | BLG-GOV-327 | EPIC-05 |
+| ST-20 | BLG-GOV-330 | EPIC-05 |
+| ST-21 | BLG-GOV-331 | EPIC-05 |
+| ST-22 | BLG-GOV-333 | EPIC-05 |
+| ST-23 | BLG-SPEC-147 | EPIC-06 |
+| ST-24 | BLG-SPEC-149 | EPIC-06 |
+| ST-25 | BLG-SPEC-150 | EPIC-06 |
+| ST-26 | BLG-SPEC-151 | EPIC-06 |
+| ST-27 | BLG-OPS-168 | EPIC-07 |
+| ST-28 | BLG-OPS-167 | EPIC-07 |
+| ST-29 | BLG-SEC-38 | EPIC-07 |
