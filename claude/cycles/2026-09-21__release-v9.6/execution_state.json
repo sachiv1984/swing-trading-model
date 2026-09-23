@@ -1,12 +1,12 @@
 {
   "cycle_id": "2026-09-21__release-v9.6",
-  "sprint_goal": "Ship the two build-and-ship product features committed at the 2026-09-19 rebalance — Clone-as-new-plan (BLG-FEAT-96) and CSV export for Screener and Watchlist (BLG-FEAT-97) — within the full 32-item, 7-EPIC v9.6 scope at the top of confirmed sprint capacity, landing the live-capital trailing-stop formula decision (BLG-BE-119) early so the nightly stop-update path can be hardened on a single agreed formula.",
+  "sprint_goal": "Ship the two build-and-ship product features committed at the 2026-09-19 rebalance \u2014 Clone-as-new-plan (BLG-FEAT-96) and CSV export for Screener and Watchlist (BLG-FEAT-97) \u2014 within the full 32-item, 7-EPIC v9.6 scope at the top of confirmed sprint capacity, landing the live-capital trailing-stop formula decision (BLG-BE-119) early so the nightly stop-update path can be hardened on a single agreed formula.",
   "backlog_slice_source": "claude/cycles/2026-09-21__release-v9.6/stage4_backlog_slice.md",
   "backlog_slice_addendum": "claude/cycles/2026-09-21__release-v9.6/stage4_backlog_slice_addendum.md",
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-22T13:57:50Z",
+  "last_updated_utc": "2026-09-23T00:00:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -157,7 +157,7 @@
           "notes": "AC1 (0 audited empty states without a next-action link) verified by tests/e2e/empty-state-next-action.spec.js (8/8; SC-ESN-00 source-scans all 20 emptyHeading call sites so the audit is exhaustive; mutation-checked). AC2 (Playwright passes in CI) to be confirmed from the EPIC-01 PR CI run. Audit re-run at build time = 20 sites, matching the baseline. Deviation check: none filed - notes: 4 dashboard cards keep an existing `to` link that differs from the record suggested destination (AC met; click-through change out of scope) - Head of UX may want to review; existing SC-TPCR-04 assertion updated for the heading fix."
         },
         "ST-06": {
-          "title": "Single number/currency formatting helper — audit and migrate the highest-traffic tables",
+          "title": "Single number/currency formatting helper \u2014 audit and migrate the highest-traffic tables",
           "classification": "autonomous",
           "status": "merged",
           "assigned_to": "engine",
@@ -266,7 +266,7 @@
       ],
       "stories": {
         "ST-09": {
-          "title": "calculate_trailing_stop's entry-price floor for profitable positions diverges from strategy_rules.md §7.2/§7.3 and from the backtest tool",
+          "title": "calculate_trailing_stop's entry-price floor for profitable positions diverges from strategy_rules.md \u00a77.2/\u00a77.3 and from the backtest tool",
           "classification": "delegated_decision",
           "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
@@ -290,12 +290,12 @@
           "last_completed_substep": "3.1.D.unblocked",
           "sign_off_record": {
             "role": "Strategy Rules & System Intent Owner",
-            "method": "agent-mediated (execution_prompt.md §5.3, on explicit user direction)",
+            "method": "agent-mediated (execution_prompt.md \u00a75.3, on explicit user direction)",
             "status": "cleared",
             "date": "2026-09-22",
-            "ruling": "Option (i) — 2026-09-16 ruling (strategy_rules.md v1.10) confirmed as the formal decision; position_manager.py's documented, tested exception satisfies AC-2. See ESC-EXEC-20260921-01 Resolution (Addendum) for full rationale."
+            "ruling": "Option (i) \u2014 2026-09-16 ruling (strategy_rules.md v1.10) confirmed as the formal decision; position_manager.py's documented, tested exception satisfies AC-2. See ESC-EXEC-20260921-01 Resolution (Addendum) for full rationale."
           },
-          "notes": "AC1 (formal decision recorded) and AC2 (position_manager.py, calculate_trailing_stop, and the spec formula all agree) were substantially met before this session (strategy_rules.md v1.10, agent-mediated ruling 2026-09-16, v9.5/ST-04) but needed the owner's explicit confirmation that a documented exception satisfies 'agree' for a decision-first story — obtained this session (ESC-EXEC-20260921-01 resolved, option i). AC3 (new golden-output case for the floor-binding scenario) was the one genuinely outstanding gap — closed via tests/golden_outputs.json SL-08 + test_golden_outputs.py's spec_trailing_stop() floor support + a new implementation cross-check (test_SL08_implementation_matches_spec), commit f771d5c9. AC4 (BLG-BE-114/ST-04 unblocked) was already resolved at v9.5 closure (delegation_log.md 2026-09-15__release-v9.5:44) — nothing further needed. No change to calculate_trailing_stop or position_manager.py — both already matched the ratified decision. Deviation check: none — this story's own work (the golden case + test helper fix) matches the already-canonical spec exactly; no new divergence introduced. ST-13 (BLG-BE-122), held pending this decision per its own sprint_backlog.md sequencing note, is now unblocked."
+          "notes": "AC1 (formal decision recorded) and AC2 (position_manager.py, calculate_trailing_stop, and the spec formula all agree) were substantially met before this session (strategy_rules.md v1.10, agent-mediated ruling 2026-09-16, v9.5/ST-04) but needed the owner's explicit confirmation that a documented exception satisfies 'agree' for a decision-first story \u2014 obtained this session (ESC-EXEC-20260921-01 resolved, option i). AC3 (new golden-output case for the floor-binding scenario) was the one genuinely outstanding gap \u2014 closed via tests/golden_outputs.json SL-08 + test_golden_outputs.py's spec_trailing_stop() floor support + a new implementation cross-check (test_SL08_implementation_matches_spec), commit f771d5c9. AC4 (BLG-BE-114/ST-04 unblocked) was already resolved at v9.5 closure (delegation_log.md 2026-09-15__release-v9.5:44) \u2014 nothing further needed. No change to calculate_trailing_stop or position_manager.py \u2014 both already matched the ratified decision. Deviation check: none \u2014 this story's own work (the golden case + test helper fix) matches the already-canonical spec exactly; no new divergence introduced. ST-13 (BLG-BE-122), held pending this decision per its own sprint_backlog.md sequencing note, is now unblocked."
         },
         "ST-10": {
           "title": "list_backtest_rule_runs has no negative-limit validation and no offset param",
@@ -454,12 +454,12 @@
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": {
             "role": "Infrastructure & Operations Owner",
-            "method": "agent-mediated (execution_prompt.md §5.3)",
+            "method": "agent-mediated (execution_prompt.md \u00a75.3)",
             "status": "cleared",
             "date": "2026-09-22",
             "ruling": "Approved - inventory verified against a fresh grep scan of .github/workflows/*.yml (14 distinct secret names) plus per-consumer usage reads (not name-inferred); PROD_DATABASE_URL's read-write requirement and DATABASE_URL's retired-alias status explicitly called out per BLG-OPS-163's own problem statement. Recorded in the document's own Sign-off section."
           },
-          "notes": "AC1 (every secret in the inventory with consuming workflow(s) and access level) and AC3 (Infrastructure & Operations Owner sign-off) verified per docs/ops/github_actions_secrets_ownership_map.md's own Sign-off section. AC2 (document discoverable from the two named cross-references) verified: docs/infrastructure/staging_setup.md §8 and docs/ops/production_deployment_runbook.md §7 both updated with a cross-reference in the same commit; both documents' Version/Last Updated headers bumped per CLAUDE.md's Last-Updated-field convention. Deviation check: none - Case B (documentation-creation), the new document itself is the governing artefact."
+          "notes": "AC1 (every secret in the inventory with consuming workflow(s) and access level) and AC3 (Infrastructure & Operations Owner sign-off) verified per docs/ops/github_actions_secrets_ownership_map.md's own Sign-off section. AC2 (document discoverable from the two named cross-references) verified: docs/infrastructure/staging_setup.md \u00a78 and docs/ops/production_deployment_runbook.md \u00a77 both updated with a cross-reference in the same commit; both documents' Version/Last Updated headers bumped per CLAUDE.md's Last-Updated-field convention. Deviation check: none - Case B (documentation-creation), the new document itself is the governing artefact."
         },
         "ST-16": {
           "title": "Confirm synthetic uptime monitor live-fire and notification delivery (ST-11 follow-up)",
@@ -487,9 +487,9 @@
             "method": "human, direct (Actions UI trigger + Telegram receipt confirmation)",
             "status": "cleared",
             "date": "2026-09-22",
-            "ruling": "User triggered health-check-alert.yml directly via the GitHub Actions UI (bypassing the engine's own Actions-write token blocker, confirmed via two real 403s across two sessions), then confirmed real Telegram receipt. AC-01/AC-02 both confirmed with first-hand evidence, not inferred. See ESC-EXEC-20260921-02 Resolution and docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md §7."
+            "ruling": "User triggered health-check-alert.yml directly via the GitHub Actions UI (bypassing the engine's own Actions-write token blocker, confirmed via two real 403s across two sessions), then confirmed real Telegram receipt. AC-01/AC-02 both confirmed with first-hand evidence, not inferred. See ESC-EXEC-20260921-02 Resolution and docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md \u00a77."
           },
-          "notes": "AC1/AC2 confirmed via real live-fire run: first attempt (test_url=httpstat.us/500) returned HTTP 404 not 500 - the documented test fixture had gone stale since 2026-09-16, disclosed and fixed (opportunistic in-file, CLAUDE.md SS7) rather than left broken for the next user. Second attempt (test_url=httpbin.org/status/500) confirmed 3/3 real HTTP 500s, a real Telegram API {\"ok\":true,...} response, and independent user confirmation of receipt. Run: https://github.com/sachiv1984/swing-trading-model/actions/runs/35727112554. AC3 (confirmation doc §7/§8 updated; BLG-OPS-158/ST-11's original disclosed gap closed) done in the same commit. Deviation check: none - matches AC exactly once unblocked; the stale test-URL finding is disclosed as an opportunistic in-file fix, not a deviation from this story's own AC."
+          "notes": "AC1/AC2 confirmed via real live-fire run: first attempt (test_url=httpstat.us/500) returned HTTP 404 not 500 - the documented test fixture had gone stale since 2026-09-16, disclosed and fixed (opportunistic in-file, CLAUDE.md SS7) rather than left broken for the next user. Second attempt (test_url=httpbin.org/status/500) confirmed 3/3 real HTTP 500s, a real Telegram API {\"ok\":true,...} response, and independent user confirmation of receipt. Run: https://github.com/sachiv1984/swing-trading-model/actions/runs/35727112554. AC3 (confirmation doc \u00a77/\u00a78 updated; BLG-OPS-158/ST-11's original disclosed gap closed) done in the same commit. Deviation check: none - matches AC exactly once unblocked; the stale test-URL finding is disclosed as an opportunistic in-file fix, not a deviation from this story's own AC."
         },
         "ST-17": {
           "title": "CI minutes and artifact-storage visibility; explicit retention on the 3 uploads that lack it",
@@ -635,11 +635,11 @@
       }
     },
     "EPIC-06": {
-      "status": "not_started",
-      "branch": null,
+      "status": "in_progress",
+      "branch": "exec/2026-09-21__release-v9.6/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": "partial",
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-06.md",
       "test_scenarios": [],
       "stories": {
@@ -665,7 +665,7 @@
           "notes": ""
         },
         "ST-23": {
-          "title": "PO-05 (Lightweight Replay Mode) §13 determinism pre-clearance review, standalone",
+          "title": "PO-05 (Lightweight Replay Mode) \u00a713 determinism pre-clearance review, standalone",
           "classification": "delegated_decision",
           "status": "blocked_decision",
           "assigned_to": "Strategy Rules & System Intent Owner",
@@ -688,65 +688,72 @@
         "ST-24": {
           "title": "Canonical colour-blind-safe chart palette spec",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1741,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-06",
+          "commit_sha": "77b85f37",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-23T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Canonical Chart Data Palette"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (palette documented with justification) met: Okabe-Ito (2008) 8-colour CVD-safe palette, source cited. AC2 (cross-referenced from design system spec) met: new subsection lives in design_system.md itself (v1.22), under the existing chart contrast checklist. Deviation check: none - spec-only per this story's own scope note (no chart component migrated; AllocationChart.js's current ad hoc palette flagged as a follow-up adoption item, not filed as a new backlog entry since BLG-SPEC-144 already covers spec+adoption as separate work)."
         },
         "ST-25": {
           "title": "Lightweight ADR log for cross-cutting backend decisions",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1742,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-06",
+          "commit_sha": "9a90a7ce",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-23T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/adr/decision_log.md",
+            "docs/specs/api_contracts/backend_engineering_patterns.md#Architectural Decision Index"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (file exists with template and >=2 seeded real entries) met: docs/adr/decision_log.md, LOG-001 (BLG-QA-73 AST-derived test stubs) and LOG-002 (cross-router lazy import pattern) - both real, already-implemented decisions, not placeholders. AC2 (referenced from onboarding/index doc) met: backend_engineering_patterns.md (v1.7) Architectural Decision Index cross-references it. Deviation check: none."
         },
         "ST-26": {
           "title": "Canonicalise the Sharpe-ratio lookback window",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1743,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-06",
+          "commit_sha": "dddcc310",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-23T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Lookback Window (CANONICAL)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 (canonical window documented with rationale) met: trailing 252 trading days, metrics_definitions.md v1.23.0. AC2 (discrepancy noted per call site) met: all 3 current call sites documented (analytics_service.py unbounded all_time; production_strategy.py conforming-by-coincidence 252-day window with a differing formula shape; PerformanceAnalytics.js frontend-only recomputation, page-selector window, population variance). Deviation check: none - documentation only, code fix explicitly out of scope per this story's own AC wording."
         }
       }
     },
@@ -781,7 +788,7 @@
           "notes": ""
         },
         "ST-28": {
-          "title": "Re-confirm §13 boundary review cadence",
+          "title": "Re-confirm \u00a713 boundary review cadence",
           "classification": "delegated_decision",
           "status": "blocked_decision",
           "assigned_to": "Strategy Rules & System Intent Owner",
@@ -802,7 +809,7 @@
           "notes": ""
         },
         "ST-29": {
-          "title": "Revisit sprint capacity band given sustained ≥90% utilisation",
+          "title": "Revisit sprint capacity band given sustained \u226590% utilisation",
           "classification": "delegated_decision",
           "status": "blocked_decision",
           "assigned_to": "Product Owner",
@@ -823,7 +830,7 @@
           "notes": ""
         },
         "ST-30": {
-          "title": "Fixed-cadence audit of every governance prompt's §14 version-table entry",
+          "title": "Fixed-cadence audit of every governance prompt's \u00a714 version-table entry",
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
@@ -961,15 +968,15 @@
     "EPIC-03 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-03 cut from main (post EPIC-01/EPIC-02 merge). ST-10/ST-11/ST-12 completed (autonomous, 3 commits, pushed). ST-09 remains blocked_decision (ESC-EXEC-20260921-01, unresolved) and ST-13 deliberately not started this session per its own sprint_backlog.md dependency note ('land after ST-09 so the two do not collide on the same call path') - starting it now would risk an uncoordinated second change on the same nightly stop-update call path ahead of ST-09's decision. EPIC-03 therefore not yet done (2 of 5 stories outstanding).",
     "ST-12 filed one out-of-scope-finding backlog item (BLG-BE-127, per CLAUDE.md SS7's new-item-addition exception) for a float-vs-Decimal fee-rounding discrepancy the audit found but did not fix in-story (live-capital behaviour change deferred to its own reviewed follow-up).",
     "Opportunistic in-file fix disclosure (CLAUDE.md SS7 threshold, confined to this file, this session's own edit): completed_items array was missing ST-07/ST-08 (EPIC-02, already status=done/merged per their own story records) before this session's write - corrected in the same write that added ST-10/ST-11/ST-12, not filed as a separate backlog item (small, low-risk, data-completeness only, confined to a field this story's own commit already touches).",
-    "ST-09 resolved 2026-09-22 on explicit user direction ('act as Strategy Rules & System Intent Owner and resolve'). Role-ownership check (CLAUDE.md §2): ESC-EXEC-20260921-01's owning_authority field ('Strategy Rules & System Intent Owner') matched the invoked role exactly - no mismatch, proceeded. Ruling: Option (i) from the escalation's own recorded options - see execution_escalations.md ESC-EXEC-20260921-01 Resolution (Addendum) and execution_state.json ST-09 for full rationale. Commit f771d5c9 (EPIC-03). ST-13 now unblocked (was held pending this decision).",
+    "ST-09 resolved 2026-09-22 on explicit user direction ('act as Strategy Rules & System Intent Owner and resolve'). Role-ownership check (CLAUDE.md \u00a72): ESC-EXEC-20260921-01's owning_authority field ('Strategy Rules & System Intent Owner') matched the invoked role exactly - no mismatch, proceeded. Ruling: Option (i) from the escalation's own recorded options - see execution_escalations.md ESC-EXEC-20260921-01 Resolution (Addendum) and execution_state.json ST-09 for full rationale. Commit f771d5c9 (EPIC-03). ST-13 now unblocked (was held pending this decision).",
     "ST-13 completed 2026-09-22, commit 8d4a7ad8. EPIC-03 now done (all 5 stories: ST-09..ST-13 complete) - not yet merged, qa_evidence_EPIC-03.md + PR still required before STEP 4 merge gate.",
     "EPIC-03 merged by the human developer via PR #1752 at 2026-09-22T09:52:17Z (merge commit accda04d). Merge-gate resync: pr_status/status merged; orphaned post-merge commit check (origin/main..origin/exec/2026-09-21__release-v9.6/EPIC-03) found none. No sibling EPIC branches exist yet (EPIC-04..EPIC-07 not yet cut), so no sibling execution_state sync was needed (STEP 4 3c). Product Owner reviewed the agent-mediated PR review's flagged question and directed BLG-BE-127 P3->P2 in the same session (claude/backlog/backlog.md).",
     "EPIC-04 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-04 cut from main (post EPIC-03 merge). ST-14, ST-15, ST-17 completed (autonomous, 3 commits, pushed) - see each story's own notes for AC evidence. ST-16 remains blocked_decision (ESC-EXEC-20260921-02, unresolved - needs Actions-write token + real Telegram receipt for live-fire confirmation, per its own sprint_backlog.md notes; disclose-not-fabricate precedent ESC-EXEC-20260910-01 applies if it stays unavailable). EPIC-04 therefore not yet done (1 of 4 stories outstanding, non-blocking per STEP 3.1.D).",
     "ST-16 unblocked 2026-09-22T12:27:08Z: user (Infrastructure & Operations Owner) triggered health-check-alert.yml directly via the GitHub Actions UI, bypassing the engine's own Actions-write token blocker (confirmed via two real 403s across two sessions - this session re-confirmed the block before asking the user to use option (b), the Actions UI, per the delegation record). First live-fire attempt (test_url=httpstat.us/500) returned HTTP 404, not 500 - found and disclosed as a stale test fixture (opportunistic in-file fix, CLAUDE.md SS7), not fabricated as a pass. Second attempt (test_url=httpbin.org/status/500) confirmed 3/3 real HTTP 500s, a real Telegram API {\"ok\":true} response, and the user independently confirmed receiving the message. Commit 1f483d0a (EPIC-04). ESC-EXEC-20260921-02 resolved, DEL-20260921-02 set Unblocked. EPIC-04 now done (all 4 stories: ST-14/ST-15/ST-16/ST-17 complete) - not yet merged, qa_evidence_EPIC-04.md + PR still required before STEP 4 merge gate.",
     "EPIC-04 qa_evidence_EPIC-04.md consolidated (commit 2e34c3da), qa_signed_off set true in the same commit. API performance baseline pre-PR check: N/A, confirmed via a diff against docs/reference/openapi.yaml and docs/specs/api_contracts/ - EPIC-04 touched neither (ops/CI/docs only). PR #1753 opened (exec/2026-09-21__release-v9.6/EPIC-04 -> main), state OPEN, mergeStateStatus BLOCKED (pending CI checks, expected). Merge remains always-human (QA sign-off + Product Owner acceptance) per STEP 4 - engine may not self-approve.",
-    "EPIC-05 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-05 cut from main (EPIC-04 not yet merged at that point - this branch's local execution_state.json therefore did not yet reflect EPIC-04's ST-14/ST-15/ST-17 completions; expected multi-branch divergence execution_prompt.md's 'execution_state.json Ownership' section and CLAUDE.md §8 anticipate). ST-21 completed and pushed (commit 185636a4) - see its own notes for the AC-3 partial-shortfall deviation (DEV-EPIC05-ST21-01) and follow-up BLG-QA-190. Sequencing note: ST-20 (EPIC-05) shares .github/workflows/* with EPIC-04's ST-17 per sprint_backlog.md's own dependency note ('EPIC-05 rebases').",
+    "EPIC-05 opened 2026-09-22: branch exec/2026-09-21__release-v9.6/EPIC-05 cut from main (EPIC-04 not yet merged at that point - this branch's local execution_state.json therefore did not yet reflect EPIC-04's ST-14/ST-15/ST-17 completions; expected multi-branch divergence execution_prompt.md's 'execution_state.json Ownership' section and CLAUDE.md \u00a78 anticipate). ST-21 completed and pushed (commit 185636a4) - see its own notes for the AC-3 partial-shortfall deviation (DEV-EPIC05-ST21-01) and follow-up BLG-QA-190. Sequencing note: ST-20 (EPIC-05) shares .github/workflows/* with EPIC-04's ST-17 per sprint_backlog.md's own dependency note ('EPIC-05 rebases').",
     "ST-19 completed (commit cf027027, governance file edit - qa_evidence_template.md v1.15->v1.16, OPERATIONAL_GUIDE.md v4.200->v4.201, prompt_change_log.md appended - Governance File Edit Checklist completed and 3-way self-consistency confirmed via the governance-drift skill). ST-20 completed (commit 75f6f7f6 - extracted the OpenAPI Drift Detection gate's inline CI logic into scripts/check_openapi_drift.py, byte-for-byte behaviourally verified identical against the real repo tree; a real mutation check on compute_drift() confirmed the fixtures genuinely fail against broken logic, not just a tautology). ST-18 completed autonomous portion (commit 542a87ca - cadence/procedure documented, disclosing that the Playwright suite's mock-based architecture means 'staging seed' doesn't literally apply as worded; delegated the live-run portion to Director of Quality via DEL-20260921-07).",
     "ST-18 Part 1 completed 2026-09-22T12:50:27Z: Director of Quality triggered playwright.yml directly (run 35729627868), all 8 E2E shards + Visual Snapshots green. ST-18 Part 2 step 1 completed 2026-09-22T13:23:18Z: Director of Quality found and fixed a real STAGING_DATABASE_URL connection-string bug (direct IPv6-only Supabase host, unreachable from GitHub runners - corrected to the Transaction pooler URI), then triggered reset-and-seed-staging.yml (run 35733092701, succeeded - fresh baseline, schema v2.0, QA data seeded). ST-18 Part 2 step 2 corrected mid-execution: 'run the Phase-B backend suite against staging' was found, before being executed, to conflate ci-tests.yml's own unrelated always-fresh ephemeral-Postgres Phase B job with the real staging project - the Phase A/B split is decided purely by 'stub' in DATABASE_URL, so running the real suite against shared staging would have exercised test_schema_rollback_verification.py's real migration rollback logic against the just-seeded environment. Replaced with 7 independent read-only SELECT COUNT(*)/spot-check queries against staging via the readonly_staging role (on explicit user direction, 'do both') - every value matched the reset workflow's own claimed summary exactly. ST-18 unblocked and marked done 2026-09-22T13:56:53Z (commit 7eef5f7e); ESC-EXEC-20260921-03 resolved, DEL-20260921-07 set Unblocked. EPIC-05 now fully done (all 4 stories: ST-18/19/20/21 complete). qa_evidence_EPIC-05.md's Standard Sign-Off Block completed in the same commit, qa_signed_off set true - not yet merged, PR #1754 opened, required before STEP 4 merge gate.",
-    "EPIC-04/EPIC-05 merge reconciliation 2026-09-22: user reported PR #1753 (EPIC-04) merged (merge commit 07df8978, merged_at 2026-09-22T13:59:19Z). Confirmed via gh pr view; git fetch + orphaned-post-merge-commit check (origin/main..origin/exec/.../EPIC-04) found none; execution_state.json resynced on main (EPIC-04 status/pr_status merged, merge_gate.epics_merged updated) and pushed (commit 86cf7b21). Proactive sibling-branch sync (STEP 4 3c): merged main into exec/.../EPIC-05, resolving 2 file conflicts - claude/backlog/backlog.md (BLG-QA-190 vs BLG-QA-191, both independently filed near the same anchor point on sibling branches - both retained, union, per CLAUDE.md §8; Last Updated header combined to announce both) and this file (last_updated_utc - took the later timestamp; completed_items/open_escalations - union per CLAUDE.md §8, both ESC-EXEC-20260921-02 and -03 correctly absent since both are now resolved; process_notes - union, both branches' narratives retained chronologically, no duplication). No schema-shape drift found (BLG-GOV-290 §8 2b check) - both sides used the same field shapes throughout."
+    "EPIC-04/EPIC-05 merge reconciliation 2026-09-22: user reported PR #1753 (EPIC-04) merged (merge commit 07df8978, merged_at 2026-09-22T13:59:19Z). Confirmed via gh pr view; git fetch + orphaned-post-merge-commit check (origin/main..origin/exec/.../EPIC-04) found none; execution_state.json resynced on main (EPIC-04 status/pr_status merged, merge_gate.epics_merged updated) and pushed (commit 86cf7b21). Proactive sibling-branch sync (STEP 4 3c): merged main into exec/.../EPIC-05, resolving 2 file conflicts - claude/backlog/backlog.md (BLG-QA-190 vs BLG-QA-191, both independently filed near the same anchor point on sibling branches - both retained, union, per CLAUDE.md \u00a78; Last Updated header combined to announce both) and this file (last_updated_utc - took the later timestamp; completed_items/open_escalations - union per CLAUDE.md \u00a78, both ESC-EXEC-20260921-02 and -03 correctly absent since both are now resolved; process_notes - union, both branches' narratives retained chronologically, no duplication). No schema-shape drift found (BLG-GOV-290 \u00a78 2b check) - both sides used the same field shapes throughout."
   ]
 }
