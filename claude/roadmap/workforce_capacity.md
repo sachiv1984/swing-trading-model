@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-19 (rebalance 2026-09-19__scheduled — Standard tier, no FTE changes; new "Rebalance 2026-09-19__scheduled" section; first real row added to the Cost-Per-Cycle Wall-Clock Rollup; Skill-Silo Alert 98.8%, 5th consecutive worsening reading — mandatory pull-forward satisfied; STEP 7.2 max role share 15.3%; Product Value Ratio 0.046 🔴 Alert); prior — 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-38/BLG-GOV-323 — new "Cost-Per-Cycle Wall-Clock Rollup" section added (empty — §22 not yet exercised by a real `run roadmap` invocation), refresh cadence documented, merge decision recorded for `BLG-GOV-326`); prior — 2026-09-18 (ST-37/BLG-GOV-322 — new "Cross-Role Pairing Rotation Note" section added, advisory guidance to favour execution-heavy roles while the Skill-Silo Alert remains elevated); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-23 (ST-29, EPIC-07, v9.6, BLG-GOV-328 — new "Sprint Capacity Band Utilisation Review" section: full utilisation history reconstructed, recommendation to reconfirm the band recorded, hold/raise/reconfirm disposition explicitly left to the Product Owner); prior — 2026-09-19 (rebalance 2026-09-19__scheduled — Standard tier, no FTE changes; new "Rebalance 2026-09-19__scheduled" section; first real row added to the Cost-Per-Cycle Wall-Clock Rollup; Skill-Silo Alert 98.8%, 5th consecutive worsening reading — mandatory pull-forward satisfied; STEP 7.2 max role share 15.3%; Product Value Ratio 0.046 🔴 Alert); prior — 2026-09-18 (sprint execution `2026-09-15__release-v9.5` ST-38/BLG-GOV-323 — new "Cost-Per-Cycle Wall-Clock Rollup" section added; refresh cadence documented, merge decision recorded for `BLG-GOV-326`); prior history retained — see prior entries in version control.
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -727,3 +727,51 @@ Both approved candidates (`BLG-FEAT-52` ungated/descoped, new `BLG-FEAT-71`) are
 **Sprint capacity:** Not re-evaluated this cycle (`BLG-GOV-328` remains the open review); held unchanged at ~24–28 working-day-equivalent units.
 
 **Workforce constraints:** None new.
+
+---
+
+## Sprint Capacity Band Utilisation Review (ST-29, EPIC-07, v9.6, BLG-GOV-328) — 2026-09-23
+
+**FinOps & Resource Architect review of the full utilisation history against the ~24–28 day band (effective 2026-07-17), reconstructed from each cycle's own `sprint_capacity.md`:**
+
+| Cycle | Estimated effort (days) | % of 28-day ceiling |
+|-------|--------------------------|----------------------|
+| v7.5 | ~11.0 | 39% |
+| v7.6 | ~14.0 | 50% |
+| v7.7 | ~19.5 | 70% |
+| v7.8 | ~19.0 | 68% |
+| v7.9 | ~26.5 | 95% |
+| v7.10 | ~26.15 | 93% |
+| v8.0 | ~26.25 | 94% |
+| v8.1 | ~25.75 | 92% |
+| v8.2 | ~24.7 | 88% |
+| v8.3 | ~24.25 | 87% |
+| v8.4 | ~27.75 | 99% |
+| v8.5 | ~27.15 | 97% |
+| v8.6 | 23.75 | 85% |
+| v8.7 | 25.25 | 90% |
+| v8.8 | 20.50 | 73% |
+| v8.9 | ~27.125 | 97% |
+| v9.0 | 27.15 | 97% |
+| v9.1 | 27.50 | 98% |
+| v9.2 | 27.55 | 98% |
+| v9.3 | 27.50 | 98% |
+| v9.4 | 27.55 | 98% |
+| v9.5 | 27.99 | 99.96% |
+| v9.6 | 28.00 | 100% |
+
+**Finding:** the sustained-≥90%-utilisation pattern is real, but the actual consecutive run at or above 90% ending at v9.6 is **8 cycles (v8.9–v9.6)**, not the "9+" figure cited in `BLG-GOV-328`'s own Problem statement — `v8.8` (73%) breaks any longer streak. This review's own re-count corrects that figure rather than repeating it uncritically; it does not change the substance of the finding (8 consecutive cycles at 97–100% is still a clear, sustained pattern, not noise). Before that run, utilisation is materially more variable (39–99%, including three cycles under 75%), consistent with the band still being "grown into" in the weeks immediately after the 2026-07-17 raise.
+
+**Assessment:** per this document's own §Sprint Capacity & Cadence Baseline (Effective 2026-07-17), prior raises were driven by evidence of *sustained actual delivery pace* (cycles closing same-day-to-next-day against the declared effort), not utilisation percentage alone. The current pattern is also fully explained by the standing "use full capacity" instruction already in force and cited at every recent cycle's own capacity check (`release_plan.md`, `cycle_summary.md`) — under that instruction, near-100% utilisation is close to definitional (the ready pool is deliberately filled to the band ceiling each cycle) and does not, by itself, distinguish "the band is too low" from "the band is correctly calibrated and the instruction is working as intended." `BLG-GOV-328`'s own Scope bullet anticipates exactly this: "sustained high utilization is not automatically evidence the band is wrong."
+
+**What this review cannot assess:** whether the underlying human capacity (a solo developer, evenings/weekends, per this document's own baseline framing) has *actually* increased since 2026-07-17 in a way that would sustainably support a higher ceiling — that is a judgement about real-world availability and pace this review has no data source for, and is exactly the kind of call reserved for the Product Owner rather than derived from cycle metadata.
+
+**Recommendation (not a decision — Product Owner's to make, per this document's own file-ownership note and `sprint_backlog.md`'s Outstanding Actions table):** **Reconfirm the current ~24–28 day band as correctly calibrated; do not raise mechanically off the utilisation reading alone.** The data most directly supports "the full-capacity operating pattern is working as designed," not "the band is undersized" — a genuine raise should be justified by the same evidence class used for the last two raises (observed sustained throughput exceeding the *current* ceiling, e.g. cycles now closing meaningfully faster than the ~1–2 day cadence already declared), which this review did not find. If the Product Owner's own assessment of actual sustainable pace differs, a raise remains a live option — the review here is a recommendation input, not a binding constraint.
+
+**Disposition: RECONFIRMED.** Product Owner has confirmed the ~24–28 working-day band as correctly calibrated — held unchanged, not raised. `ESC-EXEC-20260921-07` resolved.
+
+**Reviewed by:** FinOps & Resource Architect (agent-mediated, §5.3, per explicit user direction to act as the relevant agent and complete the action) — utilisation history and assessment above.
+**Confirmed by:** Product Owner (2026-09-23, direct user instruction).
+**Date:** 2026-09-23
+
+**Effective immediately, applies to the next planning run — not to this already-sealed sprint** (per this story's own sprint_backlog.md scope note).

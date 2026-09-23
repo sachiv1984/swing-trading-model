@@ -92,8 +92,11 @@ Append-only. Do not edit previous entries.
 - **Delegated at:** 2026-09-21T15:51:14Z
 - **What is needed:** Decide schedule-now vs defer-with-concrete-trigger for the §13 boundary review (ESC-EXEC-20260921-06).
 - **Unblock criteria:** see ESC-EXEC-20260921-06
+- **Progress (2026-09-23T00:00:00Z):** 2 concrete options drafted per this story's own "engine may draft options but must not choose" note — see `decisions--2026-09-21__release-v9.6.md` ST-28 section. Option A: schedule the ATR review now. Option B: defer, trigger = `strategy_rules.md` §12.2's existing 100-closed-trades-since-last-review threshold (engine's lean, not a decision).
+- **Sign-off:** cleared — Product Owner selected Option B directly (2026-09-23). `decisions--2026-09-21__release-v9.6.md` ST-28 section moved Proposed → CONFIRMED; `rejected_but_strong.md`'s two blocked entries' revival conditions updated with the concrete trigger. `ESC-EXEC-20260921-06` resolved.
+- **Commit SHA:** `[EPIC-07][ST-28][ST-29]` commit on this branch, 2026-09-23
 - **Commit format required:** `[EPIC-07][ST-28] <description>` pushed to `exec/2026-09-21__release-v9.6/EPIC-07` (EPIC branch is cut from post-merge main at that EPIC's turn)
-- **Status:** Pending
+- **Status:** Unblocked
 
 ---
 
@@ -108,8 +111,11 @@ Append-only. Do not edit previous entries.
 - **Delegated at:** 2026-09-21T15:51:14Z
 - **What is needed:** Supply the hold/raise decision on the sprint capacity band (ESC-EXEC-20260921-07).
 - **Unblock criteria:** see ESC-EXEC-20260921-07
+- **Progress (2026-09-23T00:00:00Z):** FinOps & Resource Architect utilisation review completed and recorded in `workforce_capacity.md` §Sprint Capacity Band Utilisation Review (agent-mediated, §5.3) — full history reconstructed (23 cycles), recommendation to reconfirm the band recorded.
+- **Sign-off:** cleared — Product Owner confirmed RECONFIRMED (band held unchanged) directly (2026-09-23). `workforce_capacity.md`'s Utilisation Review section updated with the explicit disposition. `ESC-EXEC-20260921-07` resolved. Applies from the next planning run, not this already-sealed sprint.
+- **Commit SHA:** `[EPIC-07][ST-28][ST-29]` commit on this branch, 2026-09-23
 - **Commit format required:** `[EPIC-07][ST-29] <description>` pushed to `exec/2026-09-21__release-v9.6/EPIC-07` (EPIC branch is cut from post-merge main at that EPIC's turn)
-- **Status:** Pending
+- **Status:** Unblocked
 
 ---
 

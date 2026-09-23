@@ -263,7 +263,7 @@ No schema exists for user-authored free-text annotations on individual trades, d
 **Source:** IDEA-financial-reporting-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** M (~1–2 days)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** AI adoption window clears ~2026-07-25 (same constraint as BLG-FEAT-55/56 — too early to layer additional AI-generated content onto financial reporting).
+**Gate criteria:** AI adoption window verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence) — Financial Reporting & Records Owner to confirm usage patterns have stabilised before this clears. A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; re-verify against the 2026-09-24 review's actual finding.
 
 **Problem**
 Monthly P&L (shipped v2.x) is a fixed-format report. An optional AI-generated narrative commentary could add interpretive value, but adding it before existing AI features (daily briefing, chat) are validated risks compounding unvalidated AI surface area onto a financial-reporting document specifically.
@@ -285,7 +285,7 @@ Monthly P&L (shipped v2.x) is a fixed-format report. An optional AI-generated na
 **Source:** IDEA-metrics-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** S (~0.5–1 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** AI adoption window clears ~2026-07-25 — usage patterns remain unestablished at current usage duration; metric definition would be premature.
+**Gate criteria:** AI adoption window verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence) — Metrics Definitions & Analytics Owner to confirm usage patterns have stabilised before this clears. A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; re-verify against the 2026-09-24 review's actual finding.
 
 **Problem**
 No metric tracks AI chat engagement (sessions per week, questions per session, response acceptance rate). Defining the metric before usage patterns stabilise risks needing early revision.
@@ -740,7 +740,7 @@ No formal assessment of current React bundle size or heavy dependencies has been
 **Source:** IDEA-head-of-ux-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** AI adoption window clears ~2026-07-25 — usage patterns must stabilise before a research protocol targeting them is designed.
+**Gate criteria:** AI adoption window verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence) — Head of UX & Design to confirm usage patterns have stabilised before this clears. A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; re-verify against the 2026-09-24 review's actual finding.
 
 **Problem**
 No structured protocol exists to study how the AI chat advisor is actually used. Designing one before interaction patterns stabilise risks studying patterns that later shift.
@@ -2530,7 +2530,7 @@ No signal currently indicates Facilitator workload is a bottleneck; formal track
 **Source:** IDEA-financial-reporting-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** Same AI-adoption gate as BLG-FEAT-59 (AI-assisted monthly P&L narrative) — clears ~2026-07-25.
+**Gate criteria:** Same AI-adoption gate as BLG-FEAT-59 — verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence). A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; track disposition on BLG-FEAT-59.
 
 **Problem**
 This cost estimate directly feeds BLG-FEAT-59, which is itself gated on the AI-adoption window; estimating cost ahead of that gate is premature.

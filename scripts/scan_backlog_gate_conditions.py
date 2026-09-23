@@ -39,20 +39,35 @@ Gate-field variants covered (failure modes 1-3):
         BLG-GOV-292, self-caught during v8.5 release planning and fixed
         at v8.5 post-ship closure)
 
+Date-lapsed detection (ST-27, EPIC-07, v9.6, BLG-GOV-345): a gated item's
+`gate_condition` text is also scanned for an embedded ISO date
+(`YYYY-MM-DD`, with or without a leading `~`). If found and that date is
+on or before the scan's as-of date, the item is additionally reported in
+a separate "date-lapsed — verify" list. This does NOT remove the item
+from the main gated list or change `gated`/`gate_condition` in any way —
+a lapsed date means the condition needs re-verification, not that it is
+automatically cleared (silently auto-clearing a gate the scan cannot
+itself verify would be worse than the permanently-gated bug this fixes).
+Consumed by `release_planning_prompt.md` §1.3a, which requires this list
+be read — and each item verified and either cleared or re-gated with a
+new dated condition — before the ready pool is fixed.
+
 Usage:
-    python3 scripts/scan_backlog_gate_conditions.py [--json]
+    python3 scripts/scan_backlog_gate_conditions.py [--json] [--as-of YYYY-MM-DD]
 
 Exit code is always 0 — this is a scan/report tool consumed by Release
 Planning's STEP 1, not a hard CI gate (backlog items are allowed to be
 gated; the goal is visibility, not blocking).
 """
 import argparse
+import datetime
 import json
 import re
 import sys
 from pathlib import Path
 
 BACKLOG_PATH = Path("claude/backlog/backlog.md")
+EMBEDDED_DATE_RE = re.compile(r"~?(\d{4}-\d{2}-\d{2})")
 
 HEADING_RE = re.compile(r"^### (BLG-[A-Z]+-[A-Za-z0-9]+|TEST-GAP-[A-Za-z0-9-]+) — (.+)$")
 GATE_CRITERIA_RE = re.compile(r"^\*\*Gate criteria:\*\*\s*(.+)$", re.MULTILINE)
@@ -98,7 +113,23 @@ def parse_items(text: str):
     return items
 
 
-def classify_item(item_id, title, body):
+def _lapsed_date(gate_condition, as_of):
+    """Return the first embedded ISO date in gate_condition if it is on or
+    before as_of, else None. Multiple dates (e.g. a 'due' date and an
+    unrelated year reference) are not disambiguated — the first match is
+    used, matching this scan's existing single-first-match convention for
+    every other field."""
+    m = EMBEDDED_DATE_RE.search(gate_condition)
+    if not m:
+        return None
+    try:
+        found = datetime.date.fromisoformat(m.group(1))
+    except ValueError:
+        return None
+    return found if found <= as_of else None
+
+
+def classify_item(item_id, title, body, as_of):
     result = {
         "id": item_id,
         "title": title,
@@ -106,6 +137,7 @@ def classify_item(item_id, title, body):
         "gate_source": None,
         "gate_condition": None,
         "data_quality_warning": None,
+        "date_lapsed": None,
     }
 
     m = GATE_CRITERIA_RE.search(body)
@@ -113,6 +145,7 @@ def classify_item(item_id, title, body):
         result["gated"] = True
         result["gate_source"] = "Gate criteria"
         result["gate_condition"] = m.group(1).strip()
+        result["date_lapsed"] = _lapsed_date(result["gate_condition"], as_of)
         return result
 
     m = GATE_SHORT_RE.search(body)
@@ -120,6 +153,7 @@ def classify_item(item_id, title, body):
         result["gated"] = True
         result["gate_source"] = "Gate"
         result["gate_condition"] = m.group(1).strip()
+        result["date_lapsed"] = _lapsed_date(result["gate_condition"], as_of)
         return result
 
     m = GATE_DATE_RE.search(body)
@@ -127,6 +161,7 @@ def classify_item(item_id, title, body):
         result["gated"] = True
         result["gate_source"] = "Gate date"
         result["gate_condition"] = m.group(1).strip()
+        result["date_lapsed"] = _lapsed_date(result["gate_condition"], as_of)
         return result
 
     # No formal gate field found — check for an embedded-gate signal inside
@@ -145,7 +180,10 @@ def classify_item(item_id, title, body):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--json", action="store_true", help="emit JSON instead of a text report")
+    parser.add_argument("--as-of", default=None, help="ISO date to evaluate lapsed gates against (default: today)")
     args = parser.parse_args()
+
+    as_of = datetime.date.fromisoformat(args.as_of) if args.as_of else datetime.date.today()
 
     if not BACKLOG_PATH.exists():
         print(f"ERROR: {BACKLOG_PATH} not found", file=sys.stderr)
@@ -153,19 +191,32 @@ def main():
 
     text = BACKLOG_PATH.read_text()
     items = parse_items(text)
-    results = [classify_item(item_id, title, body) for item_id, title, body in items]
+    results = [classify_item(item_id, title, body, as_of) for item_id, title, body in items]
 
     gated = [r for r in results if r["gated"]]
     warnings = [r for r in results if r["data_quality_warning"]]
+    date_lapsed = [r for r in gated if r["date_lapsed"]]
 
     if args.json:
-        print(json.dumps({"gated": gated, "data_quality_warnings": warnings, "total_items": len(results)}, indent=2))
+        print(json.dumps({
+            "as_of": as_of.isoformat(),
+            "gated": gated,
+            "date_lapsed": [{**r, "date_lapsed": r["date_lapsed"].isoformat()} for r in date_lapsed],
+            "data_quality_warnings": warnings,
+            "total_items": len(results),
+        }, indent=2, default=str))
         sys.exit(0)
 
-    print(f"Scanned {len(results)} backlog items ({BACKLOG_PATH}).")
+    print(f"Scanned {len(results)} backlog items ({BACKLOG_PATH}), as of {as_of.isoformat()}.")
     print(f"\n{len(gated)} gated/conditional item(s):")
     for r in gated:
-        print(f"  {r['id']} — [{r['gate_source']}] {r['gate_condition']}")
+        lapsed_note = f"  [DATE-LAPSED {r['date_lapsed'].isoformat()} — verify]" if r["date_lapsed"] else ""
+        print(f"  {r['id']} — [{r['gate_source']}] {r['gate_condition']}{lapsed_note}")
+
+    if date_lapsed:
+        print(f"\n{len(date_lapsed)} item(s) with a lapsed gate date — verify before treating as still gated (do not auto-clear):")
+        for r in date_lapsed:
+            print(f"  {r['id']} — gate date {r['date_lapsed'].isoformat()} — {r['gate_condition']}")
 
     if warnings:
         print(f"\n{len(warnings)} data-quality warning(s) (embedded gate language, no formal Gate field):")

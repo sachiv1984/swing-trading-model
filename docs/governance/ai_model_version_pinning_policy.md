@@ -1,8 +1,8 @@
 **Owner:** AI Compliance & Governance Officer; Head of Specs Team
 **Class:** Governance Document (Class 1)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-06-09
+**Version:** 1.2
+**Last Updated:** 2026-09-23 (v9.6 ST-31, EPIC-07, BLG-GOV-90 — new §9 Deprecation Monitoring Procedure (Consolidated), folding the standalone ai_model_deprecation_check_v52.md pattern into the existing BLG-GOV-63/74 quarterly review); prior — 2026-06-09 (v5.3 ST-14, BLG-GOV-108 — §7 Model Pin Update Process added)
 **Cycle:** 2026-05-27__release-v4.2 (ST-02, BLG-GOV-64)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -141,6 +141,7 @@ Both of the following must sign off before the model pin update is merged:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-09-23 | v9.6 ST-31 (BLG-GOV-90, EPIC-07): §9 Deprecation Monitoring Procedure (Consolidated) added — folds the standalone, one-off `ai_model_deprecation_check_v52.md` pattern into the existing BLG-GOV-63/BLG-GOV-74 quarterly AI feature usage review as a standing checklist item, rather than a separate ad hoc check with no wired-in recurrence. |
 | 1.1 | 2026-06-09 | v5.3 ST-14 (BLG-GOV-108, EPIC-03): §7 Model Pin Update Process added — trigger conditions, 6-step update process, required sign-offs, timeline enforcement (30-day deprecation SLA). AI Compliance & Governance Officer and Head of Engineering sign-off. |
 | 1.0 | 2026-05-28 | Initial version (BLG-GOV-64, v4.2 ST-02). |
 
@@ -154,3 +155,31 @@ Both of the following must sign off before the model pin update is merged:
 | Head of Specs Team | Approved (agent-mediated) | 2026-05-28 |
 | AI Compliance & Governance Officer (v1.1 ST-14) | Approved (agent-mediated) | 2026-06-09 |
 | Head of Engineering (v1.1 ST-14) | Approved (agent-mediated) | 2026-06-09 |
+| AI Compliance & Governance Officer (v1.2 ST-31) | Approved (agent-mediated) — consolidating onto the existing quarterly cadence rather than maintaining a second, independently-triggered recurrence is the correct fix; a monitoring procedure that exists only as an unscheduled document with no owning routine is exactly the gap `BLG-GOV-90` was filed to close | 2026-09-23 |
+
+---
+
+## 9. Deprecation Monitoring Procedure (Consolidated) (v1.2 — ST-31, EPIC-07, v9.6, BLG-GOV-90)
+
+§7 above defines the **response** process once a deprecation notice is known (30-day SLA, sign-offs, update steps). This section defines the **monitoring** mechanism that surfaces a deprecation notice in the first place — previously handled as a standalone, one-off dated document (`docs/governance/ai_model_deprecation_check_v52.md`, filed once against `BLG-GOV-97`, with no cadence wired into any governed routine to produce a second one). That pattern is retired in favour of the procedure below.
+
+### 9.1 Consolidated Cadence
+
+Deprecation status is checked as a **standing checklist item inside the existing BLG-GOV-63/BLG-GOV-74 quarterly AI feature usage review** (`docs/governance/ai_feature_usage_quarterly_review_<date>.md`), not as a separate document or separate cadence. One quarterly review already exists and is already mandated (`BLG-GOV-63`); adding a second, independently-cadenced deprecation check duplicated the recurrence machinery for no benefit — the two questions ("is anything mis-used or anomalous" and "is anything deprecated") are naturally checked together, against the same feature inventory, by the same owner.
+
+**Procedure:** each `ai_feature_usage_quarterly_review_<date>.md` must include a `## Model Deprecation Status` section (in addition to its existing Feature Inventory / Findings / Anomalies sections) that:
+1. Lists every currently pinned model ID from this policy's §3 Current Implementation Status table.
+2. States, for each, whether Anthropic has issued a deprecation notice as of the review date, and cites the source checked.
+3. If any pinned model is found deprecated: file a P0 sprint story immediately (per the existing `BLG-GOV-97` AC-02(b) precedent) and trigger §7's Change Management Procedure — do not wait for the next quarterly review.
+
+### 9.2 Out-of-Cycle Trigger (Unaffected)
+
+The quarterly cadence above is a floor, not a ceiling. §7.1's existing triggers — a new model release (14-day evaluation window) or an unprompted deprecation notice (30-day SLA) — apply immediately whenever they occur, independent of where the quarterly review cycle currently stands. Consolidation only removes the *separate scheduled check*; it does not weaken or delay the *reactive* path.
+
+### 9.3 Retirement of the Standalone Document Pattern
+
+`docs/governance/ai_model_deprecation_check_v52.md` is retained as a historical record (its 2026-06-08 finding — `claude-haiku-4-5-20251001` not deprecated — remains valid and is not retroactively altered) but is **not** superseded by a `v53`, `v54`, etc. Future deprecation checks are recorded as §9.1's checklist item within each quarterly review document instead.
+
+### 9.4 Gate Verification (Sprint Planning, this cycle)
+
+`BLG-GOV-74`'s first quarterly review requirement (source of this policy's original §7.4 mandate) is confirmed met: `docs/governance/ai_feature_usage_quarterly_review_2026-09-07.md` (filed 2026-09-07, corrected same-day for search-scope completeness — 6 AI-invoking endpoints across 3 audit tables). Re-cited here per this story's own AC-03 (verify the gate before sprint planning) — the retroactive Model Deprecation Status addendum applied to that same document is recorded in its own file per §9.1's procedure.

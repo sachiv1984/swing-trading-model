@@ -1,9 +1,11 @@
 # Sprint Planning Operational Playbook
 
+<!-- last-governance-version-audit: 2026-09-21__release-v9.6 -->
+
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.201
-**Last Updated:** 2026-09-22 (sprint execution `2026-09-21__release-v9.6` EPIC-05/ST-19, BLG-QA-172 — qa_evidence_template.md v1.15→v1.16, Flaky-Test Disposition Addendum; §14 QA Evidence Template row and §14 self-row `Version`/`Last Updated` and Change Log top row updated); prior — 2026-09-21 (governance-drift fix — post_ship_closure.md v2.34→v2.35; removed the stale Post-Ship Closure Process rows from §13 and §14 and replaced the §10 process-document line with a retirement note (file deleted 2026-03-13); §10 source-prompt line, §14 self-row `Version`/`Last Updated` and Change Log top row updated); prior — 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` STEP 11 — roadmap_prompt.md v9.24→v9.25 (3 action-now patches) and idea_intake_prompt.md v2.8→v2.9; document header, §5/§6 source-prompt lines, §13 Artefact Register row, two §14 table rows, §14 self-row `Version` and `Last Updated`, and Change Log top row updated); prior history retained — see prior entries in version control.
+**Version:** 4.203
+**Last Updated:** 2026-09-23 (sprint execution `2026-09-21__release-v9.6` EPIC-07/ST-30, BLG-GOV-325 — roadmap_management_prompt.md v1.5→v1.6, new §5.5 Recurring Governance-Prompt Version-Table Audit Cadence; §6M source-prompt line, §14 Roadmap Management Engine row, §14 self-row `Version`/`Last Updated` and Change Log top row updated — this same audit's first run caught and fixed the immediately-prior ST-27 commit's own missed §14 self-row bump); prior — 2026-09-23 (sprint execution `2026-09-21__release-v9.6` EPIC-07/ST-27, BLG-GOV-345 — release_planning_prompt.md v2.53→v2.54, §1.3a date-lapsed gate list; §6B source-prompt line, §14 Release Engine Source row updated); prior — 2026-09-22 (sprint execution `2026-09-21__release-v9.6` EPIC-05/ST-19, BLG-QA-172 — qa_evidence_template.md v1.15→v1.16, Flaky-Test Disposition Addendum; §14 QA Evidence Template row and §14 self-row `Version`/`Last Updated` and Change Log top row updated); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -475,7 +477,7 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.5), `claude/system/backlog_management_prompt.md` (v1.18), `claude/system/ideas_housekeeping_prompt.md` (v1.2)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.6), `claude/system/backlog_management_prompt.md` (v1.18), `claude/system/ideas_housekeeping_prompt.md` (v1.2)  
 **Owner:** PMO Lead / Product Owner  
 **Trigger:** Optional — strongly recommended at either of the following windows:
 
@@ -620,7 +622,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.53)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.54)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1362,17 +1364,17 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.201 |
-| Last Updated | 2026-09-22 |
+| Version | 4.203 |
+| Last Updated | 2026-09-23 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.9 |
 | Idea Template | `claude/system/idea_template.md` |
-| Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.5 |
+| Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.6 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.18 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.10 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.25 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.53 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.54 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.18 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.79 |
@@ -1497,6 +1499,8 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.203 | 2026-09-23 | **Sprint execution `2026-09-21__release-v9.6` EPIC-07/ST-30 (BLG-GOV-325) — roadmap_management_prompt.md v1.5→v1.6.** New §5.5 Recurring Governance-Prompt Version-Table Audit Cadence — every 3rd `manage roadmap` invocation (marker-tracked, same mechanism as `backlog_management_prompt.md` §3.1), running the `governance-drift` skill's Steps 1-3 and correcting any mismatch inline. §6M source prompt line v1.5→v1.6 (line 478). §14 table: Roadmap Management Engine v1.5→v1.6. §14 self-row `Version`/`Last Updated` 4.202/2026-09-23→4.203/2026-09-23. First mandatory-cadence run performed this session: 0 file/§14 version mismatches (23 files checked); 1 self-consistency drift found and fixed — this table's own self-row had not been bumped at the immediately-prior 4.202 commit (ST-27), caught by this same first run; 2 untracked Class-6-shaped templates (`decisions_record_template.md`, `scope_document_template.md`) disclosed as a finding, not auto-added. Full results: `qa_evidence_EPIC-07.md`. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-30, 2026-09-23). |
+| 4.202 | 2026-09-23 | **Sprint execution `2026-09-21__release-v9.6` EPIC-07/ST-27 (BLG-GOV-345) — release_planning_prompt.md v2.53→v2.54.** §1.3a Gate-Detection Procedure's script (`scripts/scan_backlog_gate_conditions.py`) now reports a "date-lapsed — verify" list alongside the existing gated-item list; §1.3a text requires it be read and each item cleared or re-gated with a new dated condition before the ready pool is fixed. §6B source prompt header v2.53→v2.54 (line 623). §14 table: Release Engine Source v2.53→v2.54. §14 self-row `Version`/`Last Updated` 4.201/2026-09-22→4.202/2026-09-23. Change: closes the gap found at `2026-09-19__scheduled` (Friction Item 1) that left `BLG-FEAT-59`/`60`/`63`/`BLG-FE-84`/`BLG-GOV-90`/`BLG-GOV-188` sitting excluded from the ready pool across `v9.3`–`v9.5` on stale gate text alone. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-27, 2026-09-23). |
 | 4.201 | 2026-09-22 | **Sprint execution `2026-09-21__release-v9.6` EPIC-05/ST-19 (BLG-QA-172) — qa_evidence_template.md v1.15→v1.16: Flaky-Test Disposition Addendum.** §14 QA Evidence Template v1.15→v1.16. §14 self-row `Version`/`Last Updated` 4.200/2026-09-21→4.201/2026-09-22. Change: new "Flaky-Test Disposition Addendum" section gives the DoQ sign-off process a documented retry/quarantine/fix-now decision framework (previously handled ad hoc per-occurrence), cross-referencing the already-shipped quarantine mechanism (`docs/testing/flaky_test_quarantine_process.md`, `BLG-QA-117`, v7.8) and distinguishing it from `BLG-QA-75`'s separate, still gate-conditional CI-pipeline flake-rate tracking scope (not yet met — no flaky test identified to date). No separate phase-section source-prompt header exists for this template (confirmed against every prior `qa_evidence_template.md` Change Log entry — none reference one), so none was touched. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-19, 2026-09-22). |
 | 4.200 | 2026-09-21 | **Governance-drift fix — post_ship_closure.md v2.34→v2.35, plus removal of a dangling process-document reference.** `governance-drift` (run at `2026-09-19__scheduled`) flagged the §14 row `Post-Ship Closure Process` → `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0) as MISSING: the file was deleted 2026-03-13 (commit `11db3666`, whole `processess/` directory) and never removed from the guide. §14 row and §13 Artefact Register row removed; §10 `Process document` line replaced with a retirement note naming `post_ship_closure.md` the sole authority; §10 source-prompt line and §14 Post-Ship Closure Engine row v2.34→v2.35; §14 self-row `Version` 4.199→4.200 and `Last Updated` 2026-09-19→2026-09-21 (both cells checked, per `BLG-GOV-336`). Authority: Head of Specs Team (governance-drift fix, user-directed, 2026-09-21). |
 | 4.199 | 2026-09-19 | **Roadmap rebalance `2026-09-19__scheduled` STEP 11 — roadmap_prompt.md v9.24→v9.25 and idea_intake_prompt.md v2.8→v2.9.** §5 source prompt header v2.8→v2.9; §6 source prompt header v9.24→v9.25. §13 Artefact Register Idea Intake Engine row v2.8→v2.9. §14 Idea Intake Engine v2.8→v2.9; §14 Roadmap Engine Source v9.24→v9.25; §14 self-row `Version` 4.198→4.199 and `Last Updated` 2026-09-19 (both cells checked, per `BLG-GOV-336`). Changes: `roadmap_prompt.md` STEP 3.1 date-lapse re-check (Friction Item 1); STEP 2.3 read-only staging-credential citation rule (Friction Item 3); §4.1 ungated-Backlog option (Friction Item 4). `idea_intake_prompt.md` §2.0 step 6 codebase overlap check (Friction Item 2). Authority: Head of Specs Team (roadmap rebalance `2026-09-19__scheduled`, STEP 11 action-now). |

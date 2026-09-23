@@ -1,8 +1,8 @@
 **Owner:** AI Compliance & Governance Officer
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-09-07 (correction — v9.1 ST-30/BLG-GOV-266's independent audit found this review's search scope was too narrow, missing a 6th AI touchpoint; see Correction note below); prior — 2026-09-07 (created — v9.1 ST-23, BLG-GOV-74, fulfilling the BLG-GOV-63 quarterly-review mandate)
+**Version:** 1.2
+**Last Updated:** 2026-09-23 (v9.6 ST-31, EPIC-07, BLG-GOV-90 — retroactive Model Deprecation Status addendum per the new consolidated monitoring procedure); prior — 2026-09-07 (correction — v9.1 ST-30/BLG-GOV-266's independent audit found this review's search scope was too narrow, missing a 6th AI touchpoint; see Correction note below); prior — 2026-09-07 (created — v9.1 ST-23, BLG-GOV-74, fulfilling the BLG-GOV-63 quarterly-review mandate)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -52,9 +52,23 @@ All 6 AI-invoking endpoints, verified via direct grep across all 3 audit-logging
 |-----------|----------|-------------|
 | `BLG-OPS-150` | P3 | Cost-trend tracking for AI features has not been updated since 2026-06-16 (`anthropic_api_cost_trend_2026.md`, v5.6) and does not cover `POST /ai/daily-briefing`/`POST /ai/chat`/`POST /journal-summary` (all shipped after, or missed by, that record). Update or supersede that document with the current 6-endpoint inventory (see `docs/governance/ai_feature_touchpoint_register.md`), ideally backed by a real query across all 3 audit tables once live DB access is available for a review session. |
 
+## Model Deprecation Status (retroactive addendum, 2026-09-23, ST-31/EPIC-07/v9.6/BLG-GOV-90)
+
+Added per `ai_model_version_pinning_policy.md` §9.1's new consolidated procedure — this review predates that procedure (filed 2026-09-07), so this section is appended retroactively rather than regenerated, establishing the pattern going forward for every subsequent `ai_feature_usage_quarterly_review_<date>.md`.
+
+| Pinned model ID | Service module | Deprecation notice as of 2026-09-23? | Source checked |
+|---|---|---|---|
+| `claude-haiku-4-5-20251001` | `backend/services/ai_service.py` | No | Consistent with `ai_model_deprecation_check_v52.md`'s 2026-06-08 finding (still the current Haiku 4.5 identifier); no deprecation notice found |
+| `claude-haiku-4-5` | `backend/services/gemini_service.py` | No | Same family as above; §3's existing note that this is a distinct-but-valid pinned ID (no date suffix) is unchanged by this check — not re-litigated here |
+| `claude-sonnet-4-6` | `backend/services/ai_service.py` (`POST /ai/daily-briefing`, `POST /ai/chat`) | No confirmed deprecation notice found, **but this is no longer the current Sonnet generation** (newer Sonnet releases exist) | Model-lifecycle awareness at check time; no live Anthropic deprecation-announcement feed is queried by this procedure (none is wired in — see Recommendation below) |
+
+**Finding:** no pinned model is deprecated. `claude-sonnet-4-6` being superseded by a newer Sonnet generation is **not** itself a deprecation notice and does not trigger §7's Change Management Procedure on its own — §7.1's 14-day new-model-evaluation trigger is a standing option (AI Compliance & Governance Officer may open an evaluation whenever a newer model appears) but is not mandatory absent a deprecation notice or a QA-verified improvement case. No P0 story filed.
+
+**Recommendation for the next review:** this check currently relies on the reviewer's own model-lifecycle knowledge at check time, not a live feed. If a future review has access to Anthropic's model deprecation announcements page or API, that should become the cited source instead — flagged here rather than acted on, since building such a feed is out of this story's own `S`-effort scope.
+
 ## Next Review
 
-**Next review due:** 2026-11-29 (quarterly cadence from the 2026-08-29 mandate date).
+**Next review due:** 2026-11-29 (quarterly cadence from the 2026-08-29 mandate date). Per `ai_model_version_pinning_policy.md` §9.1, that review must include this same `## Model Deprecation Status` section going forward.
 
 ## Recommendations for the Next Review
 
