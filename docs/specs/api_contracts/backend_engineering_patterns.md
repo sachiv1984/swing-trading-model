@@ -1,8 +1,8 @@
 **Owner:** Backend Engineering Patterns Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 1.6
-**Last Updated:** 2026-09-09
+**Version:** 1.7
+**Last Updated:** 2026-09-23 (ST-25, EPIC-06, v9.6, BLG-SPEC-145 — added cross-reference to the new lightweight Backend Decision Log); prior — 2026-09-09; prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -14,6 +14,8 @@ This document records canonical backend engineering decisions and patterns for t
 ---
 
 ## Architectural Decision Index
+
+**See also:** `docs/adr/decision_log.md` — a lightweight, append-only log for cross-cutting backend decisions too small to warrant a full stand-alone ADR (a pattern choice or convention, not a considered-alternatives architecture decision). The two entries currently there (test-stub auto-derivation, cross-router lazy imports) are exactly the kind of "why we did it this way" decision this index's own table is too heavyweight a format for.
 
 | ADR | Title | Decision | Status | Date |
 |-----|-------|----------|--------|------|
