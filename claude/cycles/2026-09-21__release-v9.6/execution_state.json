@@ -690,7 +690,7 @@
             "method": "agent_mediated_section_5_3",
             "date": "2026-09-23"
           },
-          "notes": "AC-01 (dated determination) met in full: PASS, po05_section13_preassessment.md, agent-mediated per user direction. AC-02 (BLG-FEAT-74 gate line reflects outcome) disclosed-partial: execution_prompt.md S7 does not permit editing backlog.md/strategy_rules.md directly; exact replacement text + roster-row follow-up recorded in decisions--2026-09-21__release-v9.6.md for Head of Specs Team/Product Owner to apply."
+          "notes": "AC-01 (dated determination) met in full: PASS, po05_section13_preassessment.md, agent-mediated per user direction. AC-02 (BLG-FEAT-74 gate line reflects outcome) now FULLY met: applied directly to backlog.md, authorised by ESC-EXEC-20260921-08 (Head of Specs Team + Product Owner ruling, agent-mediated, per explicit user direction). One remaining follow-up (strategy_rules.md S13.5 roster row) stays outside this engine's write scope (claude/strategy/ governance folder, no comparable exception granted) - left for Head of Specs Team."
         },
         "ST-24": {
           "title": "Canonical colour-blind-safe chart palette spec",
