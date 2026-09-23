@@ -667,23 +667,30 @@
         "ST-23": {
           "title": "PO-05 (Lightweight Replay Mode) \u00a713 determinism pre-clearance review, standalone",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1740,
-          "branch": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-06",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260921-04",
-          "blocked_since_utc": "2026-09-21T15:51:14Z",
+          "blocked_since_utc": null,
           "unblock_criteria": "See ESC-EXEC-20260921-05",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-23T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/po05_section13_preassessment.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated_section_5_3",
+            "date": "2026-09-23"
+          },
+          "notes": "AC-01 (dated determination) met in full: PASS, po05_section13_preassessment.md, agent-mediated per user direction. AC-02 (BLG-FEAT-74 gate line reflects outcome) disclosed-partial: execution_prompt.md S7 does not permit editing backlog.md/strategy_rules.md directly; exact replacement text + roster-row follow-up recorded in decisions--2026-09-21__release-v9.6.md for Head of Specs Team/Product Owner to apply."
         },
         "ST-24": {
           "title": "Canonical colour-blind-safe chart palette spec",

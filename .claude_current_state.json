@@ -91,7 +91,10 @@
       "raised_utc": "2026-09-21T15:51:14Z",
       "sla_due_utc": "2026-09-24T15:51:14Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-09-23T00:00:00Z",
+      "resolved_by": "Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role - S5.3, per explicit user direction to act as the relevant agent and complete the action)",
+      "resolution_summary": "PASS - docs/product/decisions/po05_section13_preassessment.md. 2 follow-on edits (backlog.md gate line, strategy_rules.md S13.5 roster row) remain outside this engine's write scope - see decisions--2026-09-21__release-v9.6.md ST-23 addendum."
     },
     "ESC-EXEC-20260921-06": {
       "cycle": "2026-09-21__release-v9.6",
