@@ -37,7 +37,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-09-23T15:30:00Z",
-  "last_sync_utc": "2026-09-23T16:00:00Z",
+  "last_sync_utc": "2026-09-23T17:00:00Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-09-15T13:40:00Z",
   "deviation_consolidation_review_cycle_count": 2,
@@ -143,16 +143,6 @@
       "resolved_utc": "2026-09-23T00:00:00Z",
       "resolved_by": "Sprint Execution Engine (agent-mediated, Head of Specs Team + Product Owner roles - S5.3, per explicit user direction to act as the relevant agents and complete the actions)",
       "resolution_summary": "Granted -- narrow, plan-authorised write exception (same class as BLG-GOV-337's workforce_capacity.md precedent), scoped ONLY to applying the already-determined, already-published replacement text for: BLG-FEAT-59/60/63/BLG-FE-84 Gate criteria lines (ST-27/BLG-GOV-345 determination) and BLG-FEAT-74 Provisional-Target line (ST-23/BLG-SPEC-160 determination). Does not extend to any other backlog.md edit, any claude/strategy/ file, or any future item -- each is its own one-time authorisation citing this ESC ID in its commit message. (Same ruling also recorded on the EPIC-07 branch for ST-27's own use.)"
-    },
-    "ESC-CLOSE-20260923-01": {
-      "summary": "release_planning_prompt.md #1.4c horizon-tag tiering decision needed",
-      "owner": "Product Owner (with Head of Specs Team)",
-      "sla_due_utc": "2026-09-26T16:00:00Z"
-    },
-    "ESC-CLOSE-20260923-02": {
-      "summary": "delivery_verification_prompt.md #7 LL-v9.1-P4-01 'or equivalent' clause scope ruling needed",
-      "owner": "Head of Specs Team",
-      "sla_due_utc": "2026-09-26T16:00:00Z"
     }
   },
   "deferred_escalations": {

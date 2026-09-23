@@ -64,8 +64,8 @@ Records reviewed: `lessons_learnt.md` (Release Planning, 4 friction items), `les
 
 | # | Description | Owner | Deadline | Escalation path | Resolution |
 |---|-------------|-------|----------|-----------------|------------|
-| 1 | §1.4c horizon-tag tiering decision needed | Product Owner / Head of Specs Team | 2026-09-26 | `ESC-CLOSE-20260923-01` | *(complete when resolved)* |
-| 2 | `LL-v9.1-P4-01` "or equivalent" clause scope ruling needed | Head of Specs Team | 2026-09-26 | `ESC-CLOSE-20260923-02` | *(complete when resolved)* |
+| 1 | §1.4c horizon-tag tiering decision needed | Product Owner / Head of Specs Team | 2026-09-26 | `ESC-CLOSE-20260923-01` | **Resolved 2026-09-23** — Option (b): tags carry no selection weight, documented expectation instead. `release_planning_prompt.md` v2.54→v2.55. |
+| 2 | `LL-v9.1-P4-01` "or equivalent" clause scope ruling needed | Head of Specs Team | 2026-09-26 | `ESC-CLOSE-20260923-02` | **Resolved 2026-09-23** — clause reworded to explicitly cover open deviations. `delivery_verification_prompt.md` v3.11→v3.12. |
 | 3 | `execution_prompt.md` STEP 3.1/§3.1.D broadening (escalation-array/summary-array sync on delegated-item resolution) not yet applied | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 3.1/3.1.D | Deferred patch, tracked in `lessons_learnt_closure.md` | *(complete when resolved)* |
 | 4 | `scan_backlog_gate_conditions.py` "banner says complete" scan extension not yet applied (`BLG-GOV-345`/ST-27 shipped only the date-lapsed half) | Head of Specs Team | Next Release Planning cycle | Deferred patch, tracked in `lessons_learnt_closure.md` | *(complete when resolved)* |
 | 5 | `execution_prompt.md §3.2.A` same-EPIC testing-gap consistency check not yet applied — 2nd cycle carried, next cycle crosses automatic-recurrence-escalation threshold | Head of Specs Team | Next `execution_prompt.md` revision touching §3.2.A | Deferred patch, tracked in `lessons_learnt_closure.md`; auto-escalates at next closure if still unapplied | *(complete when resolved)* |

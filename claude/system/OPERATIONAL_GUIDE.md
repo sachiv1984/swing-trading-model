@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.203
-**Last Updated:** 2026-09-23 (sprint execution `2026-09-21__release-v9.6` EPIC-07/ST-30, BLG-GOV-325 — roadmap_management_prompt.md v1.5→v1.6, new §5.5 Recurring Governance-Prompt Version-Table Audit Cadence; §6M source-prompt line, §14 Roadmap Management Engine row, §14 self-row `Version`/`Last Updated` and Change Log top row updated — this same audit's first run caught and fixed the immediately-prior ST-27 commit's own missed §14 self-row bump); prior — 2026-09-23 (sprint execution `2026-09-21__release-v9.6` EPIC-07/ST-27, BLG-GOV-345 — release_planning_prompt.md v2.53→v2.54, §1.3a date-lapsed gate list; §6B source-prompt line, §14 Release Engine Source row updated); prior — 2026-09-22 (sprint execution `2026-09-21__release-v9.6` EPIC-05/ST-19, BLG-QA-172 — qa_evidence_template.md v1.15→v1.16, Flaky-Test Disposition Addendum; §14 QA Evidence Template row and §14 self-row `Version`/`Last Updated` and Change Log top row updated); prior history retained — see prior entries in version control.
+**Version:** 4.204
+**Last Updated:** 2026-09-23 (post-ship closure `2026-09-21__release-v9.6` follow-up — 2 escalation rulings applied: `release_planning_prompt.md` v2.54→v2.55 (`ESC-CLOSE-20260923-01`, Product Owner — §1.4c same-release `Provisional-Target` tags carry no selection weight); `delivery_verification_prompt.md` v3.11→v3.12 (`ESC-CLOSE-20260923-02`, Head of Specs Team — §7 `LL-v9.1-P4-01` extended to open deviations); §6B/§9 source-prompt lines, §14 Release Engine Source and Verification Engine Source rows, §14 self-row `Version`/`Last Updated` and Change Log top row updated); prior — 2026-09-23 (sprint execution `2026-09-21__release-v9.6` EPIC-07/ST-30, BLG-GOV-325 — roadmap_management_prompt.md v1.5→v1.6, new §5.5 Recurring Governance-Prompt Version-Table Audit Cadence; §6M source-prompt line, §14 Roadmap Management Engine row, §14 self-row `Version`/`Last Updated` and Change Log top row updated — this same audit's first run caught and fixed the immediately-prior ST-27 commit's own missed §14 self-row bump); prior — 2026-09-23 (sprint execution `2026-09-21__release-v9.6` EPIC-07/ST-27, BLG-GOV-345 — release_planning_prompt.md v2.53→v2.54, §1.3a date-lapsed gate list; §6B source-prompt line, §14 Release Engine Source row updated); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -622,7 +622,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.54)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.55)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -975,7 +975,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.11)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.12)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1364,7 +1364,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.203 |
+| Version | 4.204 |
 | Last Updated | 2026-09-23 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.9 |
@@ -1374,12 +1374,12 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.10 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.25 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.54 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.55 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.18 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.79 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.16 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.11 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.12 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.35 |
 | Shared Standards | `claude/system/shared_standards.md` v3.34 |
@@ -1499,6 +1499,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.204 | 2026-09-23 | **Post-ship closure `2026-09-21__release-v9.6` follow-up — 2 escalation rulings applied.** `release_planning_prompt.md` v2.54→v2.55 (`ESC-CLOSE-20260923-01`, Product Owner ruling): §1.4c gains an explicit note that same-release `Provisional-Target` tags carry no selection weight — `groom backlog`'s own Deferral Age Validation found 15 open items with an already-shipped-release tag, showing the tag is filed optimistically and not a reliable priority signal; expectation documented that these clear at the next `groom backlog` run instead of biasing selection. `delivery_verification_prompt.md` v3.11→v3.12 (`ESC-CLOSE-20260923-02`, Head of Specs Team ruling): §7's `LL-v9.1-P4-01` "or equivalent" evidence clause — previously scoped only to the Resolved-deviation carve-out — extended to open P1–P3 deviations with no natural canonical-spec home (found live this cycle: `BLG-BE-127`/`BLG-BE-128`/`DEV-EPIC05-ST21-01`, an ops audit doc and code/test files respectively); the deviation's own `backlog.md` entry plus the referenced artefact plus the verification report's Deviation Register entry is now stated as sufficient equivalent evidence. §6B source prompt header v2.54→v2.55 (line 625); §9 source prompt header v3.11→v3.12 (line 978). §14 table: Release Engine Source v2.54→v2.55, Verification Engine Source v3.11→v3.12. §14 self-row `Version`/`Last Updated` 4.203/2026-09-23→4.204/2026-09-23. Authority: Product Owner (item 1), Head of Specs Team (item 2) — Sprint Execution Engine, agent-mediated per §5.3, explicit user direction on both rulings, 2026-09-23. |
 | 4.203 | 2026-09-23 | **Sprint execution `2026-09-21__release-v9.6` EPIC-07/ST-30 (BLG-GOV-325) — roadmap_management_prompt.md v1.5→v1.6.** New §5.5 Recurring Governance-Prompt Version-Table Audit Cadence — every 3rd `manage roadmap` invocation (marker-tracked, same mechanism as `backlog_management_prompt.md` §3.1), running the `governance-drift` skill's Steps 1-3 and correcting any mismatch inline. §6M source prompt line v1.5→v1.6 (line 478). §14 table: Roadmap Management Engine v1.5→v1.6. §14 self-row `Version`/`Last Updated` 4.202/2026-09-23→4.203/2026-09-23. First mandatory-cadence run performed this session: 0 file/§14 version mismatches (23 files checked); 1 self-consistency drift found and fixed — this table's own self-row had not been bumped at the immediately-prior 4.202 commit (ST-27), caught by this same first run; 2 untracked Class-6-shaped templates (`decisions_record_template.md`, `scope_document_template.md`) disclosed as a finding, not auto-added. Full results: `qa_evidence_EPIC-07.md`. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-30, 2026-09-23). |
 | 4.202 | 2026-09-23 | **Sprint execution `2026-09-21__release-v9.6` EPIC-07/ST-27 (BLG-GOV-345) — release_planning_prompt.md v2.53→v2.54.** §1.3a Gate-Detection Procedure's script (`scripts/scan_backlog_gate_conditions.py`) now reports a "date-lapsed — verify" list alongside the existing gated-item list; §1.3a text requires it be read and each item cleared or re-gated with a new dated condition before the ready pool is fixed. §6B source prompt header v2.53→v2.54 (line 623). §14 table: Release Engine Source v2.53→v2.54. §14 self-row `Version`/`Last Updated` 4.201/2026-09-22→4.202/2026-09-23. Change: closes the gap found at `2026-09-19__scheduled` (Friction Item 1) that left `BLG-FEAT-59`/`60`/`63`/`BLG-FE-84`/`BLG-GOV-90`/`BLG-GOV-188` sitting excluded from the ready pool across `v9.3`–`v9.5` on stale gate text alone. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-27, 2026-09-23). |
 | 4.201 | 2026-09-22 | **Sprint execution `2026-09-21__release-v9.6` EPIC-05/ST-19 (BLG-QA-172) — qa_evidence_template.md v1.15→v1.16: Flaky-Test Disposition Addendum.** §14 QA Evidence Template v1.15→v1.16. §14 self-row `Version`/`Last Updated` 4.200/2026-09-21→4.201/2026-09-22. Change: new "Flaky-Test Disposition Addendum" section gives the DoQ sign-off process a documented retry/quarantine/fix-now decision framework (previously handled ad hoc per-occurrence), cross-referencing the already-shipped quarantine mechanism (`docs/testing/flaky_test_quarantine_process.md`, `BLG-QA-117`, v7.8) and distinguishing it from `BLG-QA-75`'s separate, still gate-conditional CI-pipeline flake-rate tracking scope (not yet met — no flaky test identified to date). No separate phase-section source-prompt header exists for this template (confirmed against every prior `qa_evidence_template.md` Change Log entry — none reference one), so none was touched. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-19, 2026-09-22). |

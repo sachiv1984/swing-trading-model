@@ -18,8 +18,8 @@ Last Updated: 2026-09-23
 - **Unblock criteria:** A ruling on one of: (a) add an explicit horizon-tag tier to §1.4c (tagged-for-this-release items seated after P2, before round-robin), or (b) state explicitly that an unselected `v<current>` tag is expected to be cleared at post-ship groom instead.
 - **SLA due-by:** 2026-09-26T16:00:00Z
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:** *(complete when resolved)*
+- **Disposition:** Resolved
+- **Resolution summary:** Product Owner ruling (2026-09-23, agent-mediated per §5.3, explicit user direction): Option (b) — same-release `Provisional-Target` tags carry no selection weight in §1.4c; documented as an expectation that unselected tags clear/retarget at the next `groom backlog` run instead. Rationale: this closure's own Deferral Age Validation found 15 open items already carrying a tag for an already-shipped release, showing the signal is unreliable and would let self-tagging game the oldest-filed-first fairness model if weighted. Applied: `release_planning_prompt.md` v2.54→v2.55; `OPERATIONAL_GUIDE.md` v4.203→v4.204; `prompt_change_log.md` row appended.
 
 ---
 
@@ -36,5 +36,5 @@ Last Updated: 2026-09-23
 - **Unblock criteria:** A ruling on whether `LL-v9.1-P4-01`'s "or equivalent" clause should be reworded to state explicitly that it covers open (not only resolved) deviations with no natural canonical-spec home, or whether open deviations of this shape require a different evidence standard.
 - **SLA due-by:** 2026-09-26T16:00:00Z
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:** *(complete when resolved)*
+- **Disposition:** Resolved
+- **Resolution summary:** Head of Specs Team ruling (2026-09-23, agent-mediated per §5.3, explicit user direction): reword the clause to explicitly cover open deviations. The "or equivalent" evidence chain (ops/audit doc or code artefact + `backlog.md` entry + verification report's Deviation Register entry) is already checked every cycle at STEP 5 until resolution, making it at least as traceable for open deviations as for resolved ones — a new, stricter bar was not warranted. Applied: `delivery_verification_prompt.md` v3.11→v3.12 (§7 `LL-v9.1-P4-01` extension); `OPERATIONAL_GUIDE.md` v4.203→v4.204; `prompt_change_log.md` row appended.
