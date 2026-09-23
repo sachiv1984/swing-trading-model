@@ -124,7 +124,10 @@
       "raised_utc": "2026-09-21T15:51:14Z",
       "sla_due_utc": "2026-09-24T15:51:14Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-09-23T00:00:00Z",
+      "resolved_by": "Sprint Execution Engine (agent-mediated, Head of Specs Team + Product Owner roles - S5.3, per explicit user direction to act as the relevant agents and complete the actions)",
+      "resolution_summary": "Granted -- narrow, plan-authorised write exception (same class as BLG-GOV-337's workforce_capacity.md precedent), scoped ONLY to applying the already-determined, already-published replacement text for: BLG-FEAT-59/60/63/BLG-FE-84 Gate criteria lines (ST-27/BLG-GOV-345 determination) and BLG-FEAT-74 Provisional-Target line (ST-23/BLG-SPEC-160 determination). Does not extend to any other backlog.md edit, any claude/strategy/ file, or any future item -- each is its own one-time authorisation citing this ESC ID in its commit message. (Same ruling also recorded on the EPIC-07 branch for ST-27's own use.)"
     }
   },
   "deferred_escalations": {

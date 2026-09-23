@@ -334,7 +334,7 @@ The behavioural drift detection backend service shipped in v4.6 and computes dri
 **Owner:** Head of Engineering; Product Owner
 **Source:** Feature-gap review (current_roadmap.md §5 Arc 4, PO-05 — flagged as unbacklogged) — 2026-07-10
 **Effort:** VH (>2 weeks)
-**Provisional-Target:** Unscheduled (gated — §13 determinism pre-clearance not yet run)
+**Provisional-Target:** Unscheduled — §13 pre-clearance PASS 2026-09-23 (see docs/product/decisions/po05_section13_preassessment.md), 6 binding conditions carry forward to implementation; gated only by normal Release Planning prioritisation given its VH (>2 weeks) effort size, not by §13
 **Depends on:** IT-06 Alpaca Paper Trading Integration (shipped v3.5) — foundational infrastructure this feature reuses
 
 > PO re-deferral 2026-08-21: `Provisional-Target` corrected from the stale `v7.7` anchor (DL-074, named 2026-07-21, shipped 2026-07-24 without this item ever entering a sprint) to `Unscheduled (gated)`, matching the item's actual state — the real blocker is that nobody has run the §13 determinism pre-clearance review yet, not a scheduling gap per se. Priority remains P1 and the roadmap's "highest-value long-term validation feature" framing stands; this item should be re-targeted to a specific release once the §13 pre-clearance review (Strategy Rules & System Intent Owner) is scheduled and completed, not before.
