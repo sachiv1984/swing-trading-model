@@ -635,34 +635,41 @@
       }
     },
     "EPIC-06": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-09-21__release-v9.6/EPIC-06",
       "pr_number": 1757,
       "pr_status": "open_partial",
-      "qa_signed_off": "partial",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-06.md",
       "test_scenarios": [],
       "stories": {
         "ST-22": {
           "title": "DS-17 unique index migration not yet applied to live positions table",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Data Model & Domain Schema Owner + Infrastructure & Operations Owner",
           "github_issue": 1739,
-          "branch": null,
+          "branch": "exec/2026-09-21__release-v9.6/EPIC-06",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260921-03",
-          "blocked_since_utc": "2026-09-21T15:51:14Z",
+          "blocked_since_utc": null,
           "unblock_criteria": "See ESC-EXEC-20260921-04",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-23T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-17 Live Confirmation"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "role": "Data Model & Domain Schema Owner",
+            "method": "human_direct_action_verified_output",
+            "date": "2026-09-23"
+          },
+          "notes": "AC-01 (index exists on live positions table) met: migration run against production Supabase directly by the Data Model & Domain Schema Owner (this session never had production write access); verification query output pasted back, matches migration definition exactly. AC-02 (data_model.md AC-03 disclosure updated to confirmed-applied) met: data_model.md v2.38->v2.39. Deviation check: none - real human-run migration, not simulated."
         },
         "ST-23": {
           "title": "PO-05 (Lightweight Replay Mode) \u00a713 determinism pre-clearance review, standalone",

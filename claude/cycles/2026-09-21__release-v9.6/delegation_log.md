@@ -56,8 +56,10 @@ Append-only. Do not edit previous entries.
 - **Delegated at:** 2026-09-21T15:51:14Z
 - **What is needed:** Apply the DS-17 up-migration to the live positions table after re-running the duplicate pre-check, and confirm (ESC-EXEC-20260921-04).
 - **Unblock criteria:** see ESC-EXEC-20260921-04
+- **Sign-off:** cleared — user (Data Model & Domain Schema Owner) ran the up-migration and the verification query directly against production Supabase (this session never had production write access) and pasted the verification output back. No pre-check abort occurred; the returned index definition matches the migration exactly. See `data_model.md` DS-17 §Live Confirmation.
+- **Commit SHA:** `[EPIC-06][ST-22]` commit on this branch, 2026-09-23
 - **Commit format required:** `[EPIC-06][ST-22] <description>` pushed to `exec/2026-09-21__release-v9.6/EPIC-06` (EPIC branch is cut from post-merge main at that EPIC's turn)
-- **Status:** Pending
+- **Status:** Unblocked
 
 ---
 
