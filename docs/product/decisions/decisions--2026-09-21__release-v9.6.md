@@ -72,7 +72,8 @@ Last Updated: 2026-09-23 (ST-27, EPIC-07, BLG-GOV-345 — added the execution-ti
 
 **Standing-cadence question (BLG-GOV-329's second scope bullet):** whichever option is chosen above, a standing cadence beyond per-item expiry flagging is a separate, larger governance decision (would need its own scope/effort) — not drafted here as a concrete option, since `BLG-GOV-329`'s own AC treats it as "consider," not "decide."
 
-**Status: Proposed, awaiting Strategy Rules & System Intent Owner confirmation** — not recorded as the sprint's final disposition. `ESC-EXEC-20260921-06` left `Open` pending that confirmation.
+**Status: CONFIRMED — Option B.** Strategy Rules & System Intent Owner has selected Option B: **defer**, with the revival trigger set explicitly to `strategy_rules.md` §12.2's existing "100 closed trades accumulated since the last review of any listed element" threshold, counted from 2026-09-23 (no prior review of these specific elements is on record). `claude/ideas/rejected_but_strong.md`'s two entries (`IDEA-strategy-owner-20260304-02`, `IDEA-challenger-20260304-01`) have their `Revival condition` updated accordingly in the same commit. `ESC-EXEC-20260921-06` resolved.
+**Confirmed by:** Product Owner (2026-09-23, direct user instruction).
 
 ### Supersession note
 *To be completed at Post-Ship Closure — do not populate at planning time.*

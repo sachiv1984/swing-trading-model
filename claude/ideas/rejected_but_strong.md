@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-09 (Product Owner direct action — IDEA-cybersecurity-20260304-02 entry marked Resolved as superseded by BLG-OPS-71's threat_model.md §3; prior — PMO Lead direct action, post-ship closure 2026-07-08__release-v6.8 outstanding actions — IDEA-cybersecurity-20260304-01 entry marked Resolved, delivered as BLG-OPS-71/ST-17; entries retained per append-only write scope)
+**Last Updated:** 2026-09-23 (ST-28, EPIC-07, BLG-GOV-329, ESC-EXEC-20260921-06 resolution — IDEA-strategy-owner-20260304-02/IDEA-challenger-20260304-01 revival conditions updated with a concrete trigger (strategy_rules.md §12.2's 100-closed-trades threshold), Option B; entries retained per append-only write scope); prior — 2026-07-09 (Product Owner direct action — IDEA-cybersecurity-20260304-02 entry marked Resolved as superseded by BLG-OPS-71's threat_model.md §3); prior — 2026-07-08 (PMO Lead direct action, post-ship closure 2026-07-08__release-v6.8 outstanding actions — IDEA-cybersecurity-20260304-01 entry marked Resolved, delivered as BLG-OPS-71/ST-17); prior history retained — see prior entries in version control
 
 ---
 
@@ -21,7 +21,7 @@ This document captures ideas that were rejected from active roadmap/backlog cons
 
 **Why rejected:** Any formal analysis that could lead to ATR parameter changes requires a §13.2 boundary review (strategy is a versioned behavioural contract; parameter changes require formal versioning). No §13 review path is currently open. Cannot advance without a formal §13 gate clearance process.
 
-**Revival condition:** §13 review opened specifically for ATR parameter calibration; Strategy Rules & System Intent Owner proposes scope and evidence criteria; new §13.2 review documented.
+**Revival condition (updated 2026-09-23, ST-28/BLG-GOV-329, ESC-EXEC-20260921-06 resolution — Option B):** §13 review opened specifically for ATR parameter calibration; Strategy Rules & System Intent Owner proposes scope and evidence criteria; new §13.2 review documented. **Concrete trigger:** `strategy_rules.md` §12.2's existing "100 closed trades accumulated since the last review of any listed element" threshold, counted from 2026-09-23 — this review may be scheduled once that count is confirmed met, closing the prior open-ended "if §13 review is opened" framing. (Original condition, 2026-03-17, retained above for history.)
 
 ---
 
@@ -35,7 +35,7 @@ This document captures ideas that were rejected from active roadmap/backlog cons
 
 **Why rejected:** Companion to IDEA-strategy-owner-20260304-02 (above). Same §13 constraint applies: strategy parameters are a versioned behavioural contract; changing the review process for parameters requires the same §13 scope decision.
 
-**Revival condition:** Same as IDEA-strategy-owner-20260304-02. Both ideas should be considered together if §13 ATR review is opened.
+**Revival condition (updated 2026-09-23, ST-28/BLG-GOV-329, ESC-EXEC-20260921-06 resolution — Option B):** Same as `IDEA-strategy-owner-20260304-02` — concrete trigger is `strategy_rules.md` §12.2's 100-closed-trades-since-2026-09-23 threshold. Both ideas should be considered together once that count is confirmed met. (Original condition, 2026-03-17, retained above for history.)
 
 ---
 

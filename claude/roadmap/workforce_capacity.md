@@ -768,7 +768,10 @@ Both approved candidates (`BLG-FEAT-52` ungated/descoped, new `BLG-FEAT-71`) are
 
 **Recommendation (not a decision — Product Owner's to make, per this document's own file-ownership note and `sprint_backlog.md`'s Outstanding Actions table):** **Reconfirm the current ~24–28 day band as correctly calibrated; do not raise mechanically off the utilisation reading alone.** The data most directly supports "the full-capacity operating pattern is working as designed," not "the band is undersized" — a genuine raise should be justified by the same evidence class used for the last two raises (observed sustained throughput exceeding the *current* ceiling, e.g. cycles now closing meaningfully faster than the ~1–2 day cadence already declared), which this review did not find. If the Product Owner's own assessment of actual sustainable pace differs, a raise remains a live option — the review here is a recommendation input, not a binding constraint.
 
-**Disposition:** hold / raise / reconfirm — **awaiting explicit Product Owner decision.** `ESC-EXEC-20260921-07` left `Open` pending it.
+**Disposition: RECONFIRMED.** Product Owner has confirmed the ~24–28 working-day band as correctly calibrated — held unchanged, not raised. `ESC-EXEC-20260921-07` resolved.
 
-**Reviewed by:** FinOps & Resource Architect (agent-mediated, §5.3, per explicit user direction to act as the relevant agent and complete the action) — utilisation history and assessment above are complete and actionable; the hold/raise/reconfirm disposition itself is explicitly not made here.
+**Reviewed by:** FinOps & Resource Architect (agent-mediated, §5.3, per explicit user direction to act as the relevant agent and complete the action) — utilisation history and assessment above.
+**Confirmed by:** Product Owner (2026-09-23, direct user instruction).
 **Date:** 2026-09-23
+
+**Effective immediately, applies to the next planning run — not to this already-sealed sprint** (per this story's own sprint_backlog.md scope note).
