@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-18 (post-ship closure 2026-09-15__release-v9.5 — §45 Test Coverage Gaps v9.5 section added, 0 new gaps, TSG sweep 0 Open; see Changelog table for full history)
+**Last Updated:** 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — §46 Test Coverage Gaps v9.6 section added, 0 new gaps, TSG sweep 0 Open; see Changelog table for full history)
 
 ---
 
@@ -1177,6 +1177,16 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ---
 
+## 46. Test Coverage Gaps — v9.6 (2026-09-21__release-v9.6)
+
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — all 5 EPICs with populated `test_scenarios` (EPIC-01 through EPIC-05) were cross-referenced against their `qa_evidence_EPIC-xx.md` "Scenarios run" fields and confirmed fully executed; EPIC-06 and EPIC-07 correctly recorded `not_applicable` (empty `test_scenarios`, no frontend/backend-observable AC — documentation, direct migration, or governance-prompt scope only). Table is N/A per §6.
+
+**Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** Post-ship closure re-ran the normalised `openapi.yaml`-vs-`api_performance_baseline.md` diff (path-parameter and Markdown-formatting normalisation applied per v2.33). 146 normalised endpoints in `openapi.yaml`, all present in `api_performance_baseline.md` — 0 gap. No new backend routes were added this cycle (all 32 stories reused existing endpoints or shipped no new API surface); no new top-level path prefix introduced.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep, per `post_ship_closure.md`'s no-fixed-section-number scan rule):** Scanned all 26 `### N.N TSG-*` entries for literal `**Status:** Open`. 0 Open entries found — every existing TSG entry already carries a `RESOLVED`/`not_applicable`/confirmed-still-open disposition. 0 Open TSG entries checked, 0 resolved.
+
+---
+
 ## 12. Guiding Principle
 
 > Specs explain decisions.
@@ -1190,6 +1200,8 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-09-23 | Post-ship closure `2026-09-21__release-v9.6` — §46 Test Coverage Gaps (v9.6) added, 0 new gaps this cycle; endpoint coverage drift check found 0 gaps (146 normalised endpoints, no new routes this cycle); full-document TSG reconciliation sweep found 0 Open entries. |
+| 2026-09-18 | Post-ship closure `2026-09-15__release-v9.5` — §45 Test Coverage Gaps (v9.5) added, 0 new gaps this cycle; endpoint coverage drift check found 0 gaps; full-document TSG reconciliation sweep found 0 Open entries. **(Backfilled 2026-09-23 — this row was omitted at the time; the §45 section itself was added correctly, only this table row was missed.)** |
 | 2026-09-15 | Post-ship closure `2026-09-14__release-v9.4` — §44 Test Coverage Gaps (v9.4) added, 0 new gaps this cycle; endpoint coverage drift check found 0 gaps (new `POST /ai/check-endpoint-anomalies` route registered same-commit across all required files); full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-14 | Post-ship closure `2026-09-09__release-v9.3` — §43 Test Coverage Gaps (v9.3) added, 0 new gaps this cycle; endpoint coverage drift check found 1 genuine gap (`GET /positions/{id}` missing from `api_performance_baseline.md`, `BLG-OPS-156` filed); full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-10 | ST-24 (EPIC-05, v9.3, BLG-GOV-180): new `frontend/base44_prompt_changelog.md` registered on creation — indexes the 2 pre-existing Base44 prompt changelogs (`base44_frontend_prompt_owner.md` §3, `base44_prompt_template_library.md`), each cross-linked back to it. |

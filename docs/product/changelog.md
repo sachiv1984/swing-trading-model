@@ -3,11 +3,73 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-18 (post-ship closure 2026-09-15__release-v9.5 — v9.5 entry added); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 — v9.4 entry added); prior — 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 — v9.3 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — v9.6 entry added); prior — 2026-09-18 (post-ship closure 2026-09-15__release-v9.5 — v9.5 entry added); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 — v9.4 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.6 — Build-and-Ship Pull-Forward & Full-Capacity Debt Clearance — 2026-09-23
+Cycle: 2026-09-21__release-v9.6
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-09-21__release-v9.6/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Trade Plan & UX Build-and-Ship — "Clone as new plan" action on the Trade Plans list, stale-plan marker for aged `planned` plans, CSV export for Screener results and Watchlist, in-app 48h TradeReflection reminder, a named primary next action in every empty state, single number/currency formatting helper migrated to the three highest-traffic tables | You can now clone an existing trade plan into a fresh one instead of re-entering it by hand, see a marker on trade plans that have sat unstarted for a while, export Screener and Watchlist results to CSV, get an in-app nudge to complete your trade reflection within 48 hours of closing a trade, and find a clear next action on every empty page. Numbers and currency now display consistently across the Positions, Trade History and Trade Plans tables. | `docs/specs/frontend/pages/trade_plan.md#4.5 Clone as New Plan`, `#4.6 Stale Plan Marker`; `docs/specs/frontend/pages/screener_results.md#5.3 CSV Export`; `docs/specs/frontend/pages/watchlist.md#CSV Export`; `docs/specs/api_contracts/alerts_endpoints.md#POST /alerts/evaluate`; `docs/specs/frontend/pages/notifications.md#Reflection Reminder Row`; `docs/specs/data_model.md#DS-19`; `docs/specs/frontend/design_system.md#Data States`, `#Number and Currency Formatting`; `docs/specs/frontend/pages/analytics.md#21` |
+| EPIC-02 | Financial Reporting & Records Integrity — closed-trade P&L fee-netting audit with a NULL-fee count surfaced via the API, month-end immutable snapshot of Monthly P&L and the tax-year table with a restatement diff (API-level only this cycle — frontend surfacing filed as `BLG-FE-187`/`BLG-FE-188`, target v9.7) | — | `docs/specs/metrics_definitions.md#Fee-Netting Basis`; `docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl`, `#GET /reports/tax-year`; `docs/specs/data_model.md#DS-20` |
+| EPIC-03 | Backend & Strategy Correctness Debt — `calculate_trailing_stop` entry-price floor reconciled with `strategy_rules.md` §7.2/§7.3 and the backtest tool, negative-limit/offset validation added to `list_backtest_rule_runs`, `JsonLinesFormatter` message truncation brought into spec, float-vs-Decimal money-arithmetic audit with rounding-boundary golden tests (1 P2 deviation accepted — `BLG-BE-127`), shared upstream-call helper for yfinance/Alpaca/Anthropic with uniform timeout and bounded retry | — | `claude/strategy/strategy_rules.md#7.2 Profit-aware stop logic`; `docs/specs/api_contracts/strategy_benchmark_endpoints.md#GET /strategy/backtest-rule-change/runs`; `docs/specs/structured_logging_standards.md#Structured Log Format`; `docs/ops/money_arithmetic_audit_2026-09-22.md` |
+| EPIC-04 | Operations & Reliability Debt — dead-man's-switch alert for a missed nightly-stop-update, GitHub Actions secrets ownership map documented, synthetic uptime monitor live-fire and notification delivery confirmed, CI minutes/artifact-storage visibility with explicit retention on 3 previously-unset uploads | — | `scripts/check_nightly_stop_update_staleness.py`; `docs/ops/github_actions_secrets_ownership_map.md`; `docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md`; `docs/ops/ci_usage_reports/2026-08.md` |
+| EPIC-05 | QA & Test Infrastructure Debt — quarterly full-suite Playwright re-run against a fresh staging seed, DoQ checklist addendum for flaky-test disposition, standing regression check for the OpenAPI Drift Detection gate itself, `test_trade_plan_audit_log.py`'s unrestored `sys.modules["database"]` swap fixed (1 P3 deviation recorded — `DEV-EPIC05-ST21-01`, ~29 similarly-patterned files not mass-fixed within story scope) | — | `docs/testing/quarterly_playwright_staging_reseed_procedure.md`; `claude/system/templates/qa_evidence_template.md#Flaky-Test Disposition Addendum`; `scripts/check_openapi_drift.py`; `tests/test_trade_plan_audit_log.py` |
+| EPIC-06 | Spec & Data-Integrity Debt — DS-17 unique index migration applied and confirmed against the live positions table, PO-05 (Lightweight Replay Mode) §13 determinism pre-clearance review, canonical colour-blind-safe chart palette spec, lightweight ADR log for cross-cutting backend decisions, Sharpe-ratio lookback window canonicalised | — | `docs/specs/data_model.md#DS-17 Live Confirmation`; `docs/product/decisions/po05_section13_preassessment.md`; `docs/specs/frontend/design_system.md#Canonical Chart Data Palette`; `docs/adr/decision_log.md`; `docs/specs/metrics_definitions.md#Lookback Window (CANONICAL)` |
+| EPIC-07 | Governance Process Debt — release-planning gate-detection procedure fixed so lapsed date gates are no longer treated as permanently gated, §13 boundary review cadence re-confirmed (deferred with a concrete revival trigger), sprint capacity band re-confirmed unchanged, fixed-cadence audit added for every governance prompt's §14 version-table entry, consolidated Claude model deprecation monitoring procedure, sprint velocity trend chart added to the governance dashboard | — | `claude/system/release_planning_prompt.md#1.3a Gate-Detection Procedure`; `docs/product/decisions/decisions--2026-09-21__release-v9.6.md#ST-28`; `claude/roadmap/workforce_capacity.md#Sprint Capacity Band Utilisation Review`; `claude/system/roadmap_management_prompt.md#5.5 Recurring Governance-Prompt Version-Table Audit Cadence`; `docs/governance/ai_model_version_pinning_policy.md#9 Deprecation Monitoring Procedure (Consolidated)`; `claude/cycles/sprint_velocity_trend_chart.md` |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| (unlabelled, ST-12) | P2 | UK stamp duty / US FX fee rounding uses float `round()` instead of Decimal `ROUND_HALF_UP`; under-rounds a small fraction of half-penny-boundary gross costs by £0.01 — `BLG-BE-127` | DoQ + PO |
+
+*(2 P3 deviations also filed this cycle — see `verification_report.md §4` — summarised, not itemised here per §1.2.)*
+
+### Tech backlog items shipped
+- [ST-01] [U] "Clone as new plan" action on the Trade Plans list
+- [ST-02] [U] Stale-plan marker for aged `planned` trade plans
+- [ST-03] [U] CSV export for Screener results and Watchlist
+- [ST-04] [U] In-app 48h TradeReflection reminder
+- [ST-05] [U] Primary next action named in every empty state
+- [ST-06] [U] Single number/currency formatting helper migrated to Positions, Trade History and Trade Plans
+- [ST-07] [U] Closed-trade P&L fee-netting audit, NULL-fee count surfaced via API (frontend surfacing follow-up: `BLG-FE-187`)
+- [ST-08] [U] Month-end immutable Monthly P&L / tax-year snapshot with restatement diff, API-level (frontend surfacing follow-up: `BLG-FE-188`)
+- [ST-09] [D] `calculate_trailing_stop` entry-price floor reconciled with strategy_rules.md and the backtest tool
+- [ST-10] [D] Negative-limit/offset validation added to `list_backtest_rule_runs`
+- [ST-11] [D] `JsonLinesFormatter` message truncation brought into spec conformance
+- [ST-12] [D] Float-vs-Decimal money-arithmetic audit with rounding-boundary golden tests
+- [ST-13] [D] Shared upstream-call helper for yfinance/Alpaca/Anthropic — timeout + bounded retry
+- [ST-14] [D] Dead-man's-switch alert for a missed nightly-stop-update
+- [ST-15] [D] GitHub Actions secrets ownership map documented
+- [ST-16] [D] Synthetic uptime monitor live-fire and notification delivery confirmed
+- [ST-17] [D] CI minutes/artifact-storage visibility, explicit retention on 3 previously-unset uploads
+- [ST-18] [D] Quarterly full-suite Playwright re-run against a fresh staging seed
+- [ST-19] [D] DoQ checklist addendum for flaky-test disposition
+- [ST-20] [D] Standing regression check for the OpenAPI Drift Detection gate itself
+- [ST-21] [D] `test_trade_plan_audit_log.py` unrestored `sys.modules["database"]` swap fixed
+- [ST-22] [D] DS-17 unique index migration applied and confirmed against the live positions table
+- [ST-23] [D] PO-05 (Lightweight Replay Mode) §13 determinism pre-clearance review
+- [ST-24] [D] Canonical colour-blind-safe chart palette spec
+- [ST-25] [D] Lightweight ADR log for cross-cutting backend decisions
+- [ST-26] [D] Sharpe-ratio lookback window canonicalised
+- [ST-27] [G] Release-planning gate-detection procedure fixed for lapsed date gates
+- [ST-28] [G] §13 boundary review cadence re-confirmed — deferred, concrete revival trigger set
+- [ST-29] [G] Sprint capacity band re-confirmed unchanged
+- [ST-30] [G] Fixed-cadence audit added for governance prompt §14 version-table entries
+- [ST-31] [G] Claude model deprecation monitoring procedure consolidated
+- [ST-32] [G] Sprint velocity trend chart added to the governance dashboard
+
+Sign-off: Product Owner — 2026-09-23
+QA sign-off: Director of Quality — 2026-09-23
 
 ---
 

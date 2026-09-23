@@ -1,9 +1,13 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.6
 Cycle: 2026-09-21__release-v9.6
-Last Updated: 2026-09-23 (ST-28, EPIC-07, BLG-GOV-329 — added the §13 ATR review cadence options + CONFIRMED Option B disposition); prior — 2026-09-23 (ST-27, EPIC-07, BLG-GOV-345 — added the execution-time determination + exact gate-line replacement text for the 4 lapsed AI-adoption-window items; ST-23, EPIC-06, BLG-SPEC-160 — added the PO-05 §13 pre-assessment determination + exact gate-line replacement text, merged from EPIC-06 at PR #1757); prior — 2026-09-21 (initial publication at Release Planning)
+Last Updated: 2026-09-23 (post-ship closure — superseded on ship); prior — 2026-09-23 (ST-28, EPIC-07, BLG-GOV-329 — added the §13 ATR review cadence options + CONFIRMED Option B disposition); prior — 2026-09-23 (ST-27, EPIC-07, BLG-GOV-345 — added the execution-time determination + exact gate-line replacement text for the 4 lapsed AI-adoption-window items; ST-23, EPIC-06, BLG-SPEC-160 — added the PO-05 §13 pre-assessment determination + exact gate-line replacement text, merged from EPIC-06 at PR #1757); prior history retained — see prior entries in version control
+
+Superseded by: v9.6 ship — 2026-09-23
+Changelog reference: docs/product/changelog.md#v96
+Cycle: 2026-09-21__release-v9.6
 
 ## Planning Decisions — v9.6 Build-and-Ship Pull-Forward & Full-Capacity Debt Clearance
 

@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.6
 Cycle: 2026-09-21__release-v9.6
-Last Updated: 2026-09-21
+Last Updated: 2026-09-23 (post-ship closure — superseded on ship)
+
+Superseded by: v9.6 ship — 2026-09-23
+Changelog: docs/product/changelog.md#v96
+Verification report: claude/cycles/2026-09-21__release-v9.6/verification_report.md
+Cycle: 2026-09-21__release-v9.6
 
 ## Release Scope — v9.6 Build-and-Ship Pull-Forward & Full-Capacity Debt Clearance
 
