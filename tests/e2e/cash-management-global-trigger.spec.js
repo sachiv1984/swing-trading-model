@@ -126,6 +126,50 @@ test('SC-CASH-05: mobile "Manage Cash" icon trigger opens the modal', async ({ p
   await expect(page.getByText('Cash Management')).toBeVisible();
 });
 
+test('SC-CASH-07: the displayed cash balance updates after adding a position, without a page reload', async ({ page }) => {
+  // Bug fix (user-reported, live, this session): TradeEntry.js's createMutation
+  // never invalidated any portfolio/cash query, so the balance shown by the
+  // global "Manage Cash" trigger stayed stale after a successful add-position
+  // until a full reload. Simulates the real backend behaviour of debiting cash
+  // on a successful POST /portfolio/position by swapping GET /portfolio's mocked
+  // response after the mutation succeeds, then asserting the sidebar balance
+  // reflects it without any page.reload().
+  let cashBalance = 500.25;
+  await page.route(`${API}/portfolio`, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ok', data: { ...MOCK_PORTFOLIO, cash_balance: cashBalance } }),
+    })
+  );
+  await page.route(`${API}/portfolio/position`, (route) => {
+    cashBalance = 189.55; // simulates the backend debiting cash for this trade
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'ok',
+        data: { ticker: 'WDC', position_id: 'pos-new', remaining_cash: cashBalance, trade_plan_linked: false },
+      }),
+    });
+  });
+
+  await goto(page, '/#/TradeEntry');
+  await expect(page.getByTestId('cash-management-trigger-desktop').getByText('£500.25')).toBeVisible();
+
+  const tickerInput = page.getByPlaceholder('e.g., AAPL or VOD.L');
+  await expect(tickerInput).toBeVisible({ timeout: 10000 });
+  await tickerInput.fill('WDC');
+  await page.getByPlaceholder('0.00').first().fill('175.53'); // Fill Price
+  await page.getByPlaceholder('0', { exact: true }).fill('10'); // Number of Shares
+  await page.getByRole('button', { name: 'Create Position' }).click();
+
+  // TradeEntry navigates to Positions on success — the trigger persists across
+  // the navigation since it's mounted once, globally, in Layout.js.
+  await expect(page).toHaveURL(/#\/Positions/);
+  await expect(page.getByTestId('cash-management-trigger-desktop').getByText('£189.55')).toBeVisible();
+});
+
 test('SC-CASH-06: an Insufficient Funds rejection from POST /portfolio/position surfaces the real backend message as a toast', async ({ page }) => {
   await page.route(`${API}/portfolio/position`, (route) =>
     route.fulfill({

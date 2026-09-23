@@ -669,11 +669,18 @@ export default function Positions() {
       // Aggressive cache invalidation
       queryClient.invalidateQueries({ queryKey: ["positions"] });
       queryClient.invalidateQueries({ queryKey: ["portfolio"] });
+      // Bug fix (same class as TradeEntry.js's add-position handler, found in the
+      // same pass): "portfolio" is this file's own key, but Layout.js's global
+      // "Manage Cash" trigger and Dashboard.js both key their cash-balance query
+      // "portfolioApi" -- exiting a position (which credits cash back) never
+      // refreshed those displays without a full page reload.
+      queryClient.invalidateQueries({ queryKey: ["portfolioApi"] });
       queryClient.invalidateQueries({ queryKey: ["trades"] });
 
       // Optional refetch
       queryClient.refetchQueries({ queryKey: ["positions", "open"] });
       queryClient.refetchQueries({ queryKey: ["portfolio"] });
+      queryClient.refetchQueries({ queryKey: ["portfolioApi"] });
 
       setExitingPosition(null);
 
