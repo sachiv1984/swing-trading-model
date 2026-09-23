@@ -5,7 +5,7 @@
   "backlog_slice_addendum": "claude/cycles/2026-09-21__release-v9.6/stage4_backlog_slice_addendum.md",
   "invoked_utc": "2026-09-21T15:49:48Z",
   "mode": "standard",
-  "status": "Running",
+  "status": "Sealed",
   "last_updated_utc": "2026-09-23T00:00:00Z",
   "epics": {
     "EPIC-01": {
@@ -199,7 +199,7 @@
         "ST-07": {
           "title": "Audit whether closed-trade P&L is net of fees_paid; flag closed trades with NULL fees_paid in Monthly P&L",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1724,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-02",
@@ -224,7 +224,7 @@
         "ST-08": {
           "title": "Month-end immutable snapshot of Monthly P&L and the tax-year table, with a restatement diff",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1725,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-02",
@@ -268,7 +268,7 @@
         "ST-09": {
           "title": "calculate_trailing_stop's entry-price floor for profitable positions diverges from strategy_rules.md \u00a77.2/\u00a77.3 and from the backtest tool",
           "classification": "delegated_decision",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1726,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
@@ -300,7 +300,7 @@
         "ST-10": {
           "title": "list_backtest_rule_runs has no negative-limit validation and no offset param",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1727,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
@@ -324,7 +324,7 @@
         "ST-11": {
           "title": "JsonLinesFormatter does not truncate `message` to the spec's 500-char max",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1728,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
@@ -348,7 +348,7 @@
         "ST-12": {
           "title": "Float-vs-Decimal money-arithmetic audit with rounding-boundary golden tests",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1729,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
@@ -372,7 +372,7 @@
         "ST-13": {
           "title": "Shared upstream-call helper: uniform timeout and bounded retry budget for yfinance, Alpaca and Anthropic",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1730,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-03",
@@ -410,7 +410,7 @@
         "ST-14": {
           "title": "Dead-man's-switch alert when nightly-stop-update has not succeeded within 26 hours",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1731,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-04",
@@ -435,7 +435,7 @@
         "ST-15": {
           "title": "Document GitHub Actions secrets ownership map",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1732,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-04",
@@ -464,7 +464,7 @@
         "ST-16": {
           "title": "Confirm synthetic uptime monitor live-fire and notification delivery (ST-11 follow-up)",
           "classification": "delegated_decision",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1733,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-04",
@@ -494,7 +494,7 @@
         "ST-17": {
           "title": "CI minutes and artifact-storage visibility; explicit retention on the 3 uploads that lack it",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1734,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-04",
@@ -534,7 +534,7 @@
         "ST-18": {
           "title": "Quarterly full-suite Playwright re-run against a fresh staging seed",
           "classification": "delegated_qa",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "qa",
           "github_issue": 1735,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-05",
@@ -563,7 +563,7 @@
         "ST-19": {
           "title": "DoQ checklist addendum for flaky-test disposition",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1736,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-05",
@@ -586,7 +586,7 @@
         "ST-20": {
           "title": "Standing regression check for the OpenAPI Drift Detection gate itself",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1737,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-05",
@@ -611,7 +611,7 @@
         "ST-21": {
           "title": "`test_trade_plan_audit_log.py`'s unrestored `sys.modules[\"database\"]` swap is a latent test-isolation hazard",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1738,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-05",
@@ -772,10 +772,10 @@
       }
     },
     "EPIC-07": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
       "pr_number": 1758,
-      "pr_status": "open_partial",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-21__release-v9.6/qa_evidence_EPIC-07.md",
       "test_scenarios": [],
@@ -783,7 +783,7 @@
         "ST-27": {
           "title": "Release-planning gate scan treats lapsed date gates as permanently gated",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1744,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
@@ -807,7 +807,7 @@
         "ST-28": {
           "title": "Re-confirm \u00a713 boundary review cadence",
           "classification": "delegated_decision",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1745,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
@@ -836,7 +836,7 @@
         "ST-29": {
           "title": "Revisit sprint capacity band given sustained \u226590% utilisation",
           "classification": "delegated_decision",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Product Owner",
           "github_issue": 1746,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
@@ -864,7 +864,7 @@
         "ST-30": {
           "title": "Fixed-cadence audit of every governance prompt's \u00a714 version-table entry",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1747,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
@@ -887,7 +887,7 @@
         "ST-31": {
           "title": "Claude model deprecation monitoring procedure (consolidated)",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1748,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
@@ -910,7 +910,7 @@
         "ST-32": {
           "title": "Sprint Velocity Trend Chart",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1749,
           "branch": "exec/2026-09-21__release-v9.6/EPIC-07",
@@ -933,12 +933,7 @@
       }
     }
   },
-  "blocked_items": [
-    "ST-22",
-    "ST-23",
-    "ST-28",
-    "ST-29"
-  ],
+  "blocked_items": [],
   "delegated_items": [
     "ST-09",
     "ST-16",
@@ -969,7 +964,18 @@
     "ST-18",
     "ST-19",
     "ST-20",
-    "ST-21"
+    "ST-21",
+    "ST-22",
+    "ST-23",
+    "ST-24",
+    "ST-25",
+    "ST-26",
+    "ST-27",
+    "ST-28",
+    "ST-29",
+    "ST-30",
+    "ST-31",
+    "ST-32"
   ],
   "open_escalations": [
     "ESC-EXEC-20260921-04",
@@ -984,16 +990,15 @@
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
-      "EPIC-05"
-    ],
-    "epics_pending": [
+      "EPIC-05",
       "EPIC-06",
       "EPIC-07"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
-  "sealed": false,
-  "sealed_utc": null,
+  "sealed": true,
+  "sealed_utc": "2026-09-23T00:00:00Z",
   "process_notes": [
     "STEP -1 preflight passed 2026-09-21: local main == origin/main; all required files/roles present; write test ok; no SLA-breached open escalations (ESC-EXEC-20260910-01 is Deferred, non-blocking).",
     "Classification: sealed sprint_backlog.md classes adopted as written (backend stories autonomous, per v9.5 precedent of 38 autonomous / 5 delegated_decision). 6 delegated_decision (ST-09, ST-16, ST-22, ST-23, ST-28, ST-29) + 1 delegated_qa (ST-18).",
