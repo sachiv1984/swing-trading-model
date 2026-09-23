@@ -56,8 +56,10 @@ Append-only. Do not edit previous entries.
 - **Delegated at:** 2026-09-21T15:51:14Z
 - **What is needed:** Apply the DS-17 up-migration to the live positions table after re-running the duplicate pre-check, and confirm (ESC-EXEC-20260921-04).
 - **Unblock criteria:** see ESC-EXEC-20260921-04
+- **Sign-off:** cleared — user (Data Model & Domain Schema Owner) ran the up-migration and the verification query directly against production Supabase (this session never had production write access) and pasted the verification output back. No pre-check abort occurred; the returned index definition matches the migration exactly. See `data_model.md` DS-17 §Live Confirmation.
+- **Commit SHA:** `[EPIC-06][ST-22]` commit on this branch, 2026-09-23
 - **Commit format required:** `[EPIC-06][ST-22] <description>` pushed to `exec/2026-09-21__release-v9.6/EPIC-06` (EPIC branch is cut from post-merge main at that EPIC's turn)
-- **Status:** Pending
+- **Status:** Unblocked
 
 ---
 
@@ -72,8 +74,10 @@ Append-only. Do not edit previous entries.
 - **Delegated at:** 2026-09-21T15:51:14Z
 - **What is needed:** Issue the dated §13 determination for PO-05 (ESC-EXEC-20260921-05).
 - **Unblock criteria:** see ESC-EXEC-20260921-05
+- **Progress (2026-09-23T00:00:00Z):** Determination issued — PASS. Full four-criterion assessment in `docs/product/decisions/po05_section13_preassessment.md`, per user direction to act as the relevant agent (§5.3, Strategy Rules & System Intent Owner role) and complete the action. AC-01 (dated determination) met in full. AC-02 (BLG-FEAT-74's gate line reflects the outcome) remains disclosed-partial — `execution_prompt.md` §7 does not permit this engine to edit `backlog.md` or `strategy_rules.md` directly; exact replacement text recorded in `decisions--2026-09-21__release-v9.6.md` for Head of Specs Team / Product Owner to apply.
+- **Commit SHA:** `[EPIC-06][ST-23]` commit on this branch, 2026-09-23
 - **Commit format required:** `[EPIC-06][ST-23] <description>` pushed to `exec/2026-09-21__release-v9.6/EPIC-06` (EPIC branch is cut from post-merge main at that EPIC's turn)
-- **Status:** Pending
+- **Status:** Unblocked (determination complete; 2 follow-on edits — `backlog.md` gate line, `strategy_rules.md` §13.5 roster row — remain for a human/differently-scoped role to apply)
 
 ---
 

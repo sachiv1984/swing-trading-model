@@ -105,6 +105,17 @@ export default function TradeEntry() {
     mutationFn: (data) => base44.entities.Position.create(data),
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["positions"] });
+      // Bug fix (user-reported, live): adding a position deducts cash
+      // (position_service.py's add_position() debits portfolio.cash) but this
+      // handler never invalidated any portfolio/cash query, so the cash balance
+      // shown everywhere (the global "Manage Cash" trigger, this page's own
+      // PositionSizingWidget available-cash figure, etc.) stayed stale until a
+      // full page reload remounted everything fresh. "portfolioApi" is the key
+      // Layout.js's global trigger and Dashboard.js both use; "portfolio" is
+      // invalidated too for parity with Positions.js's exitMutation (the same
+      // class of bug, same fix, found and applied there in this pass as well).
+      queryClient.invalidateQueries({ queryKey: ["portfolioApi"] });
+      queryClient.invalidateQueries({ queryKey: ["portfolio"] });
       if (response?.trade_plan_linked) {
         toast.success(`Linked to trade plan for ${response.ticker}.`);
       } else {

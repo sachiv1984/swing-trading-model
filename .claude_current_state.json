@@ -81,7 +81,10 @@
       "raised_utc": "2026-09-21T15:51:14Z",
       "sla_due_utc": "2026-09-24T15:51:14Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-09-23T00:00:00Z",
+      "resolved_by": "Data Model & Domain Schema Owner (direct user action against production Supabase, verification output shared back, 2026-09-23)",
+      "resolution_summary": "Migration applied to production; index confirmed via pg_indexes query. data_model.md DS-17 Live Confirmation section records the full output."
     },
     "ESC-EXEC-20260921-05": {
       "cycle": "2026-09-21__release-v9.6",
@@ -91,7 +94,10 @@
       "raised_utc": "2026-09-21T15:51:14Z",
       "sla_due_utc": "2026-09-24T15:51:14Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-09-23T00:00:00Z",
+      "resolved_by": "Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role - S5.3, per explicit user direction to act as the relevant agent and complete the action)",
+      "resolution_summary": "PASS - docs/product/decisions/po05_section13_preassessment.md. 2 follow-on edits (backlog.md gate line, strategy_rules.md S13.5 roster row) remain outside this engine's write scope - see decisions--2026-09-21__release-v9.6.md ST-23 addendum."
     },
     "ESC-EXEC-20260921-06": {
       "cycle": "2026-09-21__release-v9.6",
@@ -130,7 +136,7 @@
       "disposition": "Resolved",
       "resolved_utc": "2026-09-23T00:00:00Z",
       "resolved_by": "Sprint Execution Engine (agent-mediated, Head of Specs Team + Product Owner roles - S5.3, per explicit user direction to act as the relevant agents and complete the actions)",
-      "resolution_summary": "Granted -- narrow, plan-authorised write exception (same class as BLG-GOV-337's workforce_capacity.md precedent), scoped ONLY to applying the already-determined, already-published replacement text for: BLG-FEAT-59/60/63/BLG-FE-84 Gate criteria lines (ST-27/BLG-GOV-345 determination) and BLG-FEAT-74 Provisional-Target line (ST-23/BLG-SPEC-160 determination). Does not extend to any other backlog.md edit, any claude/strategy/ file, or any future item -- each is its own one-time authorisation citing this ESC ID in its commit message."
+      "resolution_summary": "Granted -- narrow, plan-authorised write exception (same class as BLG-GOV-337's workforce_capacity.md precedent), scoped ONLY to applying the already-determined, already-published replacement text for: BLG-FEAT-59/60/63/BLG-FE-84 Gate criteria lines (ST-27/BLG-GOV-345 determination) and BLG-FEAT-74 Provisional-Target line (ST-23/BLG-SPEC-160 determination). Does not extend to any other backlog.md edit, any claude/strategy/ file, or any future item -- each is its own one-time authorisation citing this ESC ID in its commit message. (Same ruling also recorded on the EPIC-07 branch for ST-27's own use.)"
     }
   },
   "deferred_escalations": {
