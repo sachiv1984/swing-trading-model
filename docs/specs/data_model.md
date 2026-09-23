@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.38
-**Last Updated:** 2026-09-22 (ST-08, EPIC-02, v9.6, BLG-FR-05 — DS-20: new `monthly_pnl_snapshots` table, one row per closed month per portfolio, backing the Monthly P&L restatement diff); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — DS-19: `reflection_reminder` added to the `notifications` and `notification_preferences` `alert_type` CHECK constraints, plus a partial unique index enforcing one reminder per trade; §9/§10 updated); prior — 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added Position & Trade Plan Lifecycle State Diagram section; surfaced trade_plans CHECK constraint documentation gap, filed as BLG-SPEC-154; no schema change); prior history retained — see prior entries in version control.
+**Version:** 2.39
+**Last Updated:** 2026-09-23 (ST-22, EPIC-06, v9.6, BLG-SPEC-148 — DS-17's live-production confirmation recorded: the up-migration was applied to production Supabase directly by the Data Model & Domain Schema Owner and the resulting index verified; RISK-01's "pending" disclosure closed); prior — 2026-09-22 (ST-08, EPIC-02, v9.6, BLG-FR-05 — DS-20: new `monthly_pnl_snapshots` table, one row per closed month per portfolio, backing the Monthly P&L restatement diff); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — DS-19: `reflection_reminder` added to the `notifications` and `notification_preferences` `alert_type` CHECK constraints, plus a partial unique index enforcing one reminder per trade; §9/§10 updated); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -55,7 +55,7 @@ CREATE TABLE public.portfolios (
 
 > **Lifecycle note:** This table serves both open and closed positions. All `exit_*` fields are `null` while `status = 'open'`. Queries must always filter by `status` unless intentionally spanning both lifecycle states — failure to do so is a common source of incorrect P&L aggregations.
 
-> **Live schema verification (ST-22, BLG-SPEC-D18, EPIC-04, v9.5, 2026-09-18):** `DATABASE_URL` (readonly staging) was available this session — the first cycle since v9.2 with live DB access. Ran `\d positions` plus targeted column/row queries against it. Findings: (1) the DS-17 unique index below is **not yet applied live** — no matching index exists, though the migration's own duplicate pre-check re-run live found 0 blocking rows, so it remains safe to apply (`BLG-SPEC-148`); (2) `exit_note` is documented below but **does not exist** as a live `positions` column — exit journal notes live on `trade_history.exit_note` instead (`BLG-SPEC-149`); (3) 4 live columns not documented anywhere here (`atr_value`, `stop_price`, `fees`, `pnl_percent`) are present and always NULL — apparent orphaned leftovers from an old naming convention (`BLG-SPEC-150`); (4) `fees_paid` is documented as `NOT NULL as of v1.6` but the live column is nullable (`BLG-SPEC-151`). Every other documented column, type, and constraint below was confirmed to match live. Per the `ESC-EXEC-20260910-01` honest-disclosure precedent: findings filed as their own follow-on items rather than silently fixed inline, since 3 of the 4 require an owner disposition (drop vs. document; apply-migration scheduling) this read-only session cannot make unilaterally.
+> **Live schema verification (ST-22, BLG-SPEC-D18, EPIC-04, v9.5, 2026-09-18):** `DATABASE_URL` (readonly staging) was available this session — the first cycle since v9.2 with live DB access. Ran `\d positions` plus targeted column/row queries against it. Findings: (1) the DS-17 unique index below was **not yet applied live at that time** — no matching index existed, though the migration's own duplicate pre-check re-run live found 0 blocking rows, so it was safe to apply (`BLG-SPEC-148`) — **since applied, see DS-17's own §Live Confirmation below**; (2) `exit_note` is documented below but **does not exist** as a live `positions` column — exit journal notes live on `trade_history.exit_note` instead (`BLG-SPEC-149`); (3) 4 live columns not documented anywhere here (`atr_value`, `stop_price`, `fees`, `pnl_percent`) are present and always NULL — apparent orphaned leftovers from an old naming convention (`BLG-SPEC-150`); (4) `fees_paid` is documented as `NOT NULL as of v1.6` but the live column is nullable (`BLG-SPEC-151`). Every other documented column, type, and constraint below was confirmed to match live. Per the `ESC-EXEC-20260910-01` honest-disclosure precedent: findings filed as their own follow-on items rather than silently fixed inline, since 3 of the 4 require an owner disposition (drop vs. document; apply-migration scheduling) this read-only session cannot make unilaterally.
 
 ```sql
 CREATE TABLE positions (
@@ -2223,7 +2223,20 @@ DB-level safeguard against two open-position rows sharing the same ticker and en
 
 Partial index (`WHERE status = 'open'`) rather than a table-wide constraint — closed positions are historical records and are expected to legitimately share `(portfolio_id, ticker, entry_date)` with a later re-entry (e.g. a position closed and re-opened at the same ticker/date is not itself a data-integrity violation; only two simultaneously-*open* rows are).
 
-**RISK-01 (no live DB access in this execution environment):** the migration's own pre-check `DO` block fails loudly with a full offending-rows report rather than relying on a separate manual pre-check against a live database — per the story's staging-only AC-03, a live pre-check against production-shaped data could not be run here (`DATABASE_URL` unavailable). Verified instead against a synthetic, positions-shaped SQLite fixture (`tests/test_positions_open_ticker_entry_date_unique_migration.py`) — a faithful proxy for the partial-unique-index mechanism, not a substitute for the real run. **AC-03 remains disclosed as pending, not claimed complete:** the live pre-check against actual production data must still be run (by a session with `DATABASE_URL` access) before or during this migration's real application to production.
+**RISK-01 (no live DB access in this execution environment):** the migration's own pre-check `DO` block fails loudly with a full offending-rows report rather than relying on a separate manual pre-check against a live database — per the story's staging-only AC-03, a live pre-check against production-shaped data could not be run here (`DATABASE_URL` unavailable). Verified instead against a synthetic, positions-shaped SQLite fixture (`tests/test_positions_open_ticker_entry_date_unique_migration.py`) — a faithful proxy for the partial-unique-index mechanism, not a substitute for the real run. **AC-03 status: CONFIRMED APPLIED — see §Live Confirmation below.** The live pre-check and migration were run against actual production data by the Data Model & Domain Schema Owner directly (this execution environment never had production write access, per `RISK-01`'s own scope — the migration itself was applied outside this session, not by it).
+
+**Live Confirmation (ST-22, EPIC-06, v9.6, BLG-SPEC-148, 2026-09-23):** the up-migration above was run against **production** Supabase directly by the Data Model & Domain Schema Owner (not this execution session — no production write access exists here, per `RISK-01`). It completed without raising the pre-check's `DS-17 migration aborted` exception (i.e. 0 open-position duplicate groups existed at apply time, consistent with the 0-groups reading at the 2026-09-18 staging re-check). The verification query was run immediately after and returned:
+
+```json
+[
+  {
+    "indexname": "idx_positions_open_ticker_entry_date_unique",
+    "indexdef": "CREATE UNIQUE INDEX idx_positions_open_ticker_entry_date_unique ON public.positions USING btree (portfolio_id, ticker, entry_date) WHERE ((status)::text = 'open'::text)"
+  }
+]
+```
+
+This matches the migration's own definition exactly. **DS-17 is confirmed live in production as of 2026-09-23.**
 
 ### Up Migration (v2.32 → v2.33)
 
@@ -2286,11 +2299,12 @@ WHERE tablename = 'positions'
   AND indexname = 'idx_positions_open_ticker_entry_date_unique';
 ```
 
-A subsequent duplicate `INSERT` (same `portfolio_id`/`ticker`/`entry_date`, `status = 'open'`) must fail with a unique-violation error surfaced to the caller — per `BLG-BE-115`'s AC, this should be confirmed against staging/production data by whoever runs this migration live, since it could not be run live in this execution environment (RISK-01).
+A subsequent duplicate `INSERT` (same `portfolio_id`/`ticker`/`entry_date`, `status = 'open'`) must fail with a unique-violation error surfaced to the caller — the index shape itself (a standard partial unique btree index) guarantees this at the Postgres layer; not independently re-tested against a live duplicate insert in this confirmation pass (the pre-check already confirms 0 existing duplicates, and the SQLite fixture covers the enforcement mechanism).
 
 **Sign-off:**
 - Head of Engineering: Resolved the `portfolio_id` scoping question raised at delegation (DEL-20260914-01), finalised the migration, verified pre-check and index-enforcement logic against a synthetic SQLite fixture. 2026-09-14.
 - Data Model & Domain Schema Owner: Accepted — 2026-09-14 (agent-mediated, §5.3, 2nd pass after 1 Blocked retry). First pass flagged a prematurely-written sign-off and a missing `BLG-SPEC-D` filing (charter §8 — live-schema confirmation not possible here per RISK-01); both corrected (`BLG-SPEC-D18` filed; this line rewritten post-review). Second pass confirmed both fixes and the underlying migration content: `(portfolio_id, ticker, entry_date)` scoping, partial-index shape, Up/Down consistency, and RISK-01 disclosure all sound. Live production pre-check remains explicitly pending, not claimed run.
+- Data Model & Domain Schema Owner: **Confirmed applied** — 2026-09-23 (ST-22, EPIC-06, v9.6, `BLG-SPEC-148`). Migration run directly against production Supabase by the Data Model & Domain Schema Owner (outside this execution session — no production write access exists here); verification query output pasted back and matches the migration's own index definition exactly. See §Live Confirmation above. `ESC-EXEC-20260921-04` resolved.
 
 ---
 
