@@ -1,9 +1,13 @@
 **Owner:** AI Compliance & Governance Officer; Head of Engineering
 **Class:** Governance Document (Class 1)
-**Status:** Active
+**Status:** Retired (historical record — pattern superseded, findings below unchanged)
 **Version:** 1.0
 **Last Updated:** 2026-06-08
 **Cycle:** 2026-06-08__release-v5.2 (ST-09, BLG-GOV-97)
+
+---
+
+**Retirement note (2026-09-23, v9.6 ST-31/EPIC-07/BLG-GOV-90):** this standalone, one-off document pattern is retired — no `v53`/`v54`/etc. successor will be filed. Deprecation checks are now performed as a standing checklist item inside the existing quarterly `ai_feature_usage_quarterly_review_<date>.md` review, per `ai_model_version_pinning_policy.md` §9. This document is kept as the historical record of the 2026-06-08 check; its finding (`claude-haiku-4-5-20251001` not deprecated) is unchanged and was re-confirmed as part of the first check under the new procedure (see `ai_feature_usage_quarterly_review_2026-09-07.md` §Model Deprecation Status).
 
 ---
 
