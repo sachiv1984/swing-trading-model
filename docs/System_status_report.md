@@ -1,15 +1,15 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.46
-**Last Updated:** 2026-09-23 (sprint close 2026-09-21__release-v9.6 — new Sprint section added); prior — 2026-09-18 (delivery verification 2026-09-15__release-v9.5 — status line updated Sprint_Complete → Verified); prior — 2026-09-18 (sprint close 2026-09-15__release-v9.5 — new Sprint section added); prior history retained — see prior entries in version control.
+**Version:** 4.47
+**Last Updated:** 2026-09-23 (delivery verification 2026-09-21__release-v9.6 — status line updated Sprint_Complete → Verified_with_deviations; Deviations column and Verification-inputs Deviations/Test-scenarios lists corrected to reflect BLG-BE-127/BLG-BE-128/DEV-EPIC05-ST21-01 and the EPIC-03/EPIC-05 test files, STEP 6 reconciliation); prior — 2026-09-23 (sprint close 2026-09-21__release-v9.6 — new Sprint section added); prior — 2026-09-18 (delivery verification 2026-09-15__release-v9.5 — status line updated Sprint_Complete → Verified); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
 
 ## Sprint: 2026-09-21__release-v9.6
 **Date:** 2026-09-23
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified_with_deviations — 2026-09-23
 
 ### Capabilities now live (merged this sprint)
 
@@ -17,9 +17,9 @@
 |------|-----------|--------------------------|------------|
 | EPIC-01 | "Clone as new plan" action on the Trade Plans list (ST-01); stale-planned-plan marker (ST-02); CSV export for Screener and Watchlist (ST-03); in-app 48h TradeReflection reminder (ST-04); one primary next-action link in every empty state, 20-site audit (ST-05); shared number/currency formatting helper migrated onto Positions/TradeHistory/TradePlans (ST-06) | `trade_plan.md#4.5/#4.6`; `screener_results.md#5.3`; `watchlist.md#CSV Export`; `notifications.md#Reflection Reminder Row`; `design_system.md#Data States`/`#Consistency Rules` | None |
 | EPIC-02 | Fee-netting basis documented + `null_fee_trade_count` on Monthly P&L (ST-07); month-end immutable P&L/tax-year snapshots with restatement diff (ST-08) | `metrics_definitions.md#Fee-Netting Basis`; `data_model.md#DS-20`; `reports_endpoints.md` | None |
-| EPIC-03 | Trailing-stop entry-price-floor decision ratified (Option i) (ST-09); negative-limit/offset validation on `list_backtest_rule_runs` (ST-10); `JsonLinesFormatter` 500-char message truncation (ST-11); float→Decimal money-arithmetic audit + rounding-boundary golden tests (ST-12); shared upstream-call helper (uniform timeout/bounded retry) for yfinance/Alpaca/Anthropic (ST-13) | `strategy_rules.md#7.2/#7.3`; `structured_logging_standards.md`; `backend_engineering_patterns.md` | None |
+| EPIC-03 | Trailing-stop entry-price-floor decision ratified (Option i) (ST-09); negative-limit/offset validation on `list_backtest_rule_runs` (ST-10); `JsonLinesFormatter` 500-char message truncation (ST-11); float→Decimal money-arithmetic audit + rounding-boundary golden tests (ST-12); shared upstream-call helper (uniform timeout/bounded retry) for yfinance/Alpaca/Anthropic (ST-13) | `strategy_rules.md#7.2/#7.3`; `structured_logging_standards.md`; `backend_engineering_patterns.md` | `BLG-BE-127` (ST-12, P2 — fee-rounding, PO+DoQ accepted); `BLG-BE-128` (ST-13, P3 — remaining call sites) |
 | EPIC-04 | Nightly-stop-update dead-man's-switch alert, 26h window (ST-14); GitHub Actions secrets ownership map (ST-15); synthetic uptime monitor live-fire + Telegram receipt confirmed (ST-16); CI minutes/artifact-storage visibility report + retention on 3 uploads (ST-17) | `docs/ops/github_actions_secrets_ownership_map.md`; `docs/ops/synthetic_uptime_monitor_confirmation_2026-09-16.md`; `docs/ops/ci_usage_reports/2026-08.md` | None |
-| EPIC-05 | Quarterly full-suite Playwright re-run cadence + staging reseed procedure, first real run executed (ST-18); DoQ flaky-test disposition addendum (ST-19); standing regression check for the OpenAPI Drift Detection gate (ST-20); `test_trade_plan_audit_log.py`'s unrestored `sys.modules["database"]` swap fixed (ST-21) | `docs/testing/quarterly_playwright_staging_reseed_procedure.md`; `qa_evidence_template.md#Flaky-Test Disposition Addendum` | None |
+| EPIC-05 | Quarterly full-suite Playwright re-run cadence + staging reseed procedure, first real run executed (ST-18); DoQ flaky-test disposition addendum (ST-19); standing regression check for the OpenAPI Drift Detection gate (ST-20); `test_trade_plan_audit_log.py`'s unrestored `sys.modules["database"]` swap fixed (ST-21) | `docs/testing/quarterly_playwright_staging_reseed_procedure.md`; `qa_evidence_template.md#Flaky-Test Disposition Addendum` | `DEV-EPIC05-ST21-01` (ST-21, P3 — `BLG-QA-190`) |
 | EPIC-06 | DS-17 unique index applied to production `positions` table, live-verified (ST-22); PO-05 §13 determinism pre-clearance PASS, `BLG-FEAT-74` unblocked (ST-23); canonical colour-blind-safe chart palette spec (ST-24); lightweight backend ADR log (ST-25); canonical Sharpe-ratio lookback window (252 trading days) (ST-26) | `data_model.md#DS-17`; `po05_section13_preassessment.md`; `design_system.md#Canonical Chart Data Palette`; `docs/adr/decision_log.md`; `metrics_definitions.md#Lookback Window` | None |
 | EPIC-07 | Release-planning gate scan reports date-lapsed items separately, 6 named items cleared/re-gated (ST-27); §13 ATR review cadence deferred with a concrete 100-closed-trades trigger (ST-28); sprint capacity band reconfirmed unchanged (ST-29); mandatory governance-prompt version-table audit cadence, first run caught a real drift (ST-30); AI model deprecation monitoring consolidated into the BLG-GOV-63/74 quarterly review (ST-31); Sprint Velocity Trend Chart (ST-32) | `release_planning_prompt.md#1.3a`; `roadmap_management_prompt.md#5.5`; `ai_model_version_pinning_policy.md#9`; `claude/cycles/sprint_velocity_trend_chart.md`; `workforce_capacity.md` | None |
 
@@ -31,8 +31,8 @@
 
 ### Verification inputs ready
 - QA evidence logs: `qa_evidence_EPIC-01.md`, `qa_evidence_EPIC-02.md`, `qa_evidence_EPIC-03.md`, `qa_evidence_EPIC-04.md`, `qa_evidence_EPIC-05.md`, `qa_evidence_EPIC-06.md`, `qa_evidence_EPIC-07.md`
-- Deviations filed: None
-- Test scenarios referenced: `tests/e2e/trade-plan-clone.spec.js`, `tests/e2e/trade-plan-stale-marker.spec.js`, `tests/e2e/screener-watchlist-csv-export.spec.js`, `tests/e2e/reflection-reminder.spec.js`, `tests/test_reflection_reminder.py`, `tests/e2e/empty-state-next-action.spec.js`, `tests/e2e/number-format-tables.spec.js`, `tests/e2e/number-format-helper.spec.js`, `tests/test_null_fee_trade_audit.py`, `tests/test_monthly_pnl_snapshot.py`, `tests/test_nightly_stop_update_staleness.py`, `tests/test_ci_usage_report.py`
+- Deviations filed: `BLG-BE-127` (ST-12/EPIC-03, P2), `BLG-BE-128` (ST-13/EPIC-03, P3), `DEV-EPIC05-ST21-01` (ST-21/EPIC-05, P3, `BLG-QA-190`)
+- Test scenarios referenced: `tests/e2e/trade-plan-clone.spec.js`, `tests/e2e/trade-plan-stale-marker.spec.js`, `tests/e2e/screener-watchlist-csv-export.spec.js`, `tests/e2e/reflection-reminder.spec.js`, `tests/test_reflection_reminder.py`, `tests/e2e/empty-state-next-action.spec.js`, `tests/e2e/number-format-tables.spec.js`, `tests/e2e/number-format-helper.spec.js`, `tests/test_null_fee_trade_audit.py`, `tests/test_monthly_pnl_snapshot.py`, `tests/test_backtest_rule_runs_pagination.py`, `tests/test_json_log_formatter.py`, `tests/test_money_arithmetic_golden.py`, `tests/golden_outputs.json#SL-08`, `tests/test_golden_outputs.py`, `tests/test_upstream_call_helper.py`, `tests/test_nightly_stop_update_staleness.py`, `tests/test_ci_usage_report.py`, `tests/test_trade_plan_audit_log.py`, `tests/test_openapi_drift_gate.py`
 
 ---
 
