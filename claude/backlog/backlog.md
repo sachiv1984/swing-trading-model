@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-22 (session — 1 new item added: BLG-FE-189, Cash Management deposit/withdraw unreachable from shipped UI after DashboardHome redesign — P1 live-blocking regression, filed resolved same-session via hotfix/cash-management-entry-point-and-silent-errors); prior — 2026-09-22 (session — 1 new item added: BLG-GOV-346, size "grep-and-fix-everywhere"/"verify against live environment" story classes a notch higher by default, per PR #1753/#1754 agent-mediated Product Owner review finding); prior — 2026-09-22 (EPIC-04/EPIC-05 merge reconciliation — 2 new items added independently on sibling branches, both retained, deliberately non-colliding IDs: BLG-QA-190, remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules["database"] swap pattern; BLG-QA-191, I/O-boundary test coverage gap in EPIC-04's staleness/CI-usage scripts); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-23 (session — 3 new items added: BLG-GOV-347, BLG-GOV-348, BLG-SPEC-163 — findings from agent-mediated Director of Quality review of PR #1757/#1758, cycle 2026-09-21__release-v9.6); prior — 2026-09-22 (session — 1 new item added: BLG-FE-189, Cash Management deposit/withdraw unreachable from shipped UI after DashboardHome redesign — P1 live-blocking regression, filed resolved same-session via hotfix/cash-management-entry-point-and-silent-errors); prior — 2026-09-22 (session — 1 new item added: BLG-GOV-346, size "grep-and-fix-everywhere"/"verify against live environment" story classes a notch higher by default, per PR #1753/#1754 agent-mediated Product Owner review finding); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4483,6 +4483,46 @@ Three stories in the same v9.6 sprint needed a mid-execution scope correction or
 
 ---
 
+### BLG-GOV-347 — scan_backlog_gate_conditions.py date-disambiguation gap can produce false negatives
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Agent-mediated Director of Quality review, PR #1758, cycle 2026-09-21__release-v9.6 — 2026-09-23
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`scripts/scan_backlog_gate_conditions.py`'s `_lapsed_date()` (added ST-27, `BLG-GOV-345`) uses `EMBEDDED_DATE_RE` with `re.search`, which returns the FIRST ISO date found in a gate_condition string — not necessarily the date the gate actually clears on. The function's own docstring already discloses "Multiple dates... not disambiguated — the first match is used." On the live `backlog.md` this hasn't produced a wrong answer (verified: `BLG-FEAT-55`'s two dates, `2026-06-25` and `2026-07-25`, are both in the past, so the gate correctly reports lapsed regardless of which is picked). But the mechanism doesn't guarantee this: a gate-condition string mentioning an earlier, still-future date before a later, already-past clears-date would be silently reported as NOT lapsed (false negative) — the reverse ordering would produce a false positive. Since this script drives a real release-planning gate decision (`release_planning_prompt.md` §1.3a), an undetected false negative means a genuinely-clearable item stays hidden from the ready pool indefinitely.
+
+**Scope**
+- Either: prefer a date immediately following a keyword like "clears"/"due"/"completes"/"by" over a bare first-match, or explicitly flag (not silently resolve) any `gate_condition` containing more than one embedded date for manual disambiguation
+- Add a test file covering at least: single-date lapsed, single-date not-lapsed, multi-date-both-past, multi-date-both-future, and the specific false-negative/false-positive orderings described above
+
+**Acceptance Criteria**
+- A `gate_condition` with an early future date and a later past date is correctly flagged as lapsed (or explicitly flagged for manual disambiguation, not silently resolved wrong)
+- A test file exists and passes in CI covering the cases above
+
+---
+
+### BLG-GOV-348 — strategy_rules.md §13.5 roster missing PO-05 row after 2026-09-23 clearance
+**Priority:** P3 (Low)
+**Type:** Governance / Strategy
+**Owner:** Head of Specs Team; Strategy Rules & System Intent Owner
+**Source:** Agent-mediated Director of Quality review, PR #1757 (ST-23), cycle 2026-09-21__release-v9.6; also flagged in `decisions--2026-09-21__release-v9.6.md`'s ST-23 addendum and `qa_evidence_EPIC-06.md` note 1 — 2026-09-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+PO-05 (Lightweight Replay Mode)'s §13 pre-assessment (`docs/product/decisions/po05_section13_preassessment.md`) cleared PASS on 2026-09-23. Per `strategy_rules.md` §13.5's own maintenance rule, a newly-cleared feature should add itself to the semi-annual re-attestation roster table in the same commit as its clearance — but `claude/strategy/` is a governance folder outside `execution_prompt.md`'s write scope for the Sprint Execution engine, so the roster update could not be applied at clearance time and was disclosed instead.
+
+**Scope**
+- Add a row for PO-05 to `strategy_rules.md` §13.5's roster table, citing `po05_section13_preassessment.md` as the review record, cleared v9.6
+
+**Acceptance Criteria**
+- PO-05 appears in the §13.5 roster table with the correct review-record link and clearance release
+
+---
+
 ### BLG-OPS-165 — CI minutes and artifact-storage visibility; explicit retention on the 3 uploads that lack it
 **Priority:** P3 (Low)
 **Type:** Operations / FinOps
@@ -4824,6 +4864,25 @@ The Screener results table renders an "Earnings" column (`lg`-visible, days unti
 **Acceptance Criteria**
 - Spec and modal agree on the missing-value glyph
 - The modal's R-multiple, P&L and price fields format via the shared helper
+
+---
+
+### BLG-SPEC-163 — sprint_velocity_trend_chart.md trend sentence splices non-adjacent PVR readings
+**Priority:** P4 (Backlog)
+**Type:** Spec Debt
+**Owner:** PMO Lead
+**Source:** Agent-mediated Director of Quality review, PR #1758 (ST-32), cycle 2026-09-21__release-v9.6 — 2026-09-23
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`claude/cycles/sprint_velocity_trend_chart.md` §2 "Reading this table" states "D more than doubled (47→174→195 total items, D share 45%→63%→63%)", framed as describing "the most recent 3 readings." The `47`/`45%` figure is actually from the `2026-07-08__scheduled` row (`v6.3–v6.7` window) — an early/mid-`v6.x` reading — while `174`/`195` are the two most recent readings (`2026-09-14`, `2026-09-19`). The sentence skips 9 intervening rows without disclosing the gap, overstating the continuity of the trend it describes. The underlying table data itself is accurate; only this one summary sentence is misleading.
+
+**Scope**
+- Correct the sentence to either use 3 actually-consecutive recent readings, or explicitly label the `47`/`45%` figure by its own date/window rather than implying adjacency
+
+**Acceptance Criteria**
+- The trend-narrative sentence in §2 accurately reflects which readings it compares and their actual chronological relationship
 
 ---
 
