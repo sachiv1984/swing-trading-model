@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.15
-**Last Updated:** 2026-09-21 (v9.6 design gate — ST-01/BLG-FEAT-96 new §4.5 Clone as New Plan, ST-02/BLG-FE-180 new §4.6 Stale Plan Marker); prior — 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added lifecycle diagram cross-reference to §9 Status Badge Scheme); prior — 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "No trade plans yet." heading to drop the trailing period); prior history retained — see prior entries in version control.
+**Version:** 1.16
+**Last Updated:** 2026-09-23 (v9.7 design gate — ST-02/BLG-FE-186 §4.5 copy table adds `setup_type`); prior — 2026-09-21 (v9.6 design gate — ST-01/BLG-FEAT-96 new §4.5 Clone as New Plan, ST-02/BLG-FE-180 new §4.6 Stale Plan Marker); prior — 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added lifecycle diagram cross-reference to §9 Status Badge Scheme); prior history retained — see prior entries in version control.
+**Design Source (v1.16 setup_type copy fix):** docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md
 **Design Source (v1.15 clone as new plan):** docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md
 **Design Source (v1.15 stale plan marker):** docs/design/2026-09-21__release-v9.6/trade-plan-stale-marker/decision_record.md
 **Design Source (v1.7 what-if sizing preview):** docs/design/2026-08-17__release-v8.9/what-if-sizing-risk-simulator/ux_spec.md
@@ -128,8 +129,11 @@ Per v3.1 design gate decision:
 | `ticker` (editable), `market` | `id`, `created_at`, `updated_at` — fresh on save |
 | `setup_thesis`, `invalidation_condition` | `status` → **`draft`** (the lifecycle's only entry state) |
 | `r_target` | **`position_id` — never copied** (would corrupt the SI-02 linked-plan count) |
-| Tags (§5c) | Price-level fields (stop level, planned entry/stop prices) |
-| Checklist **template** (items only) | Checklist completion state (all items reset unchecked); abandonment reason/timestamp; Setup Quality Score; AI thesis feedback state |
+| `setup_type` (v1.16, ST-02, BLG-FE-186) — copied unchanged, including `null` | Price-level fields (stop level, planned entry/stop prices) |
+| Tags (§5c) | Checklist completion state (all items reset unchecked); abandonment reason/timestamp; Setup Quality Score; AI thesis feedback state |
+| Checklist **template** (items only) | |
+
+**`setup_type` ordering (v1.16):** the watchlisted-signal auto-fill pre-population (§5a) only fills `setup_type` when it is not already set (`prev.setup_type || "Momentum Continuation"`). Because clone copies the source's `setup_type` first, a copied value always wins over the auto-fill default — this ordering is intentional and must be preserved by any future refactor of either code path. Design source: `docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md`.
 
 **Failure:** if the source cannot be loaded, the form opens blank and a Warning toast (6s) shows `"Couldn't load that plan to clone. Starting a blank plan."`
 
@@ -663,6 +667,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.16 | 2026-09-23 | v9.7 design gate — ST-02 (EPIC-02, BLG-FE-186): §4.5's Copied/Reset table gains `setup_type` (copied unchanged, including `null`) and a footnote establishing that a copied value always wins over the watchlisted-signal auto-fill default. Fixes a bug where cloning a plan whose ticker also carries a live watchlisted signal silently overwrote the source's Setup Type. Design source: `docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md`. Authority: Head of Specs Team. |
 | 1.15 | 2026-09-21 | v9.6 design gate — ST-01 (EPIC-01, BLG-FEAT-96): new §4.5 Clone as New Plan (list-row link + detail-header button, `?clone_from=` route, copy/reset field table, banner, failure toast) and the §2 route row; corrects the sealed slice's non-existent `planned` status to `draft`. ST-02 (EPIC-01, BLG-FE-180): new §4.6 Stale Plan Marker (pre-entry statuses, `updated_at` age > 14 days, Clock + amber text matching the Watchlist staleness language, display-only). §4.2 Status/Actions columns and §7 action buttons updated. Design sources under `docs/design/2026-09-21__release-v9.6/`. **Note:** rows for 1.13 and 1.14 were not appended to this table by the v9.5 stories (only the header `Last Updated` was) — recoverable via version control. Authority: Head of Specs Team. |
 | 1.12 | 2026-09-07 | ST-25 (EPIC-04, v9.1, BLG-SPEC-132): new §10.6a Position Sizing Widget Baseline — fields (Risk %, Suggested Shares, session-persistence via `useSessionRiskPercent`), debounce behaviour (300ms, `checkBeforeDebounce: false` timing variant, shared with §5d via `usePositionSizingFetch.js` per ST-06/BLG-TECH-14), the `POST /portfolio/size` request body, auto-fill behaviour, and full status-derivation order. Resolves §10.7's own "baseline... filed as spec debt" forward reference, live since the `2026-08-17__release-v8.9` design gate. Authority: Frontend Specifications & UX Documentation Owner. |
 | 1.11 | 2026-09-07 | ST-24 (EPIC-04, v9.1, BLG-SPEC-131): §5.1's stale "Risk/Reward Notes" field row corrected to "R Target" (the live `r_target`-bound field, confirmed via `src/pages/TradePlan.js`) — no such field as `risk_reward_notes` has ever existed in the live form (matching the `1.6` entry's earlier finding for a different reference). §4.2's List Layout table corrected to match `src/pages/TradePlans.js`'s actual columns (`["Ticker", "Status", "R Target", "Notes", "Updated", "Actions"]`): "Notes" sourced from `setup_thesis` (not `risk_reward_notes`), a non-existent "Stop Level" column removed (no such column exists in the live list). §5a.3's pre-population claim corrected: pre-fills `setup_thesis` (via `buildSignalPrePopulation` in `SignalContextPanel.js`), not `risk_reward_notes`. Authority: Head of Specs Team. |
