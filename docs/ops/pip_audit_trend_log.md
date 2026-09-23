@@ -32,6 +32,7 @@ A recurring `Unavailable` reading (the same environment gap appearing 2+ consecu
 
 | Cycle | Date | Dependencies scanned | Result | Resolution status | Notes |
 |-------|------|----------------------|--------|--------------------|-------|
+| `2026-09-23__release-v9.7` | 2026-09-23 | 58 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/python3 -m pip_audit`); the bare `pip-audit` command is not on the system `PATH` in this environment (CLAUDE.md §9 pattern), so this is not an `Unavailable` reading. |
 | `2026-09-21__release-v9.6` | 2026-09-21 | 58 | Clean | — | Run via the project virtualenv (`backend/.venv/bin/pip-audit`); the bare `pip-audit` command is not on the system `PATH` in this environment (CLAUDE.md §9 pattern), so this is not an `Unavailable` reading. |
 | `2026-09-15__release-v9.5` | 2026-09-16 | 58 | Clean | — | — |
 | `2026-09-14__release-v9.4` | 2026-09-14 | 58 | Clean | — | — |
