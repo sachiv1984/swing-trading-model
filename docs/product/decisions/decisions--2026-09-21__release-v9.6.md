@@ -3,7 +3,7 @@ Class: Planning Document (Class 4)
 Status: Active
 Release: v9.6
 Cycle: 2026-09-21__release-v9.6
-Last Updated: 2026-09-21
+Last Updated: 2026-09-23 (ST-27, EPIC-07, BLG-GOV-345 — added the execution-time determination + exact gate-line replacement text for the 4 lapsed AI-adoption-window items); prior — 2026-09-21 (initial publication at Release Planning)
 
 ## Planning Decisions — v9.6 Build-and-Ship Pull-Forward & Full-Capacity Debt Clearance
 
@@ -33,6 +33,28 @@ Last Updated: 2026-09-21
 | ESC ID | Risk domain | Rationale | Accepted by | AR record |
 |--------|-------------|-----------|-------------|-----------|
 | None | — | No escalations raised during this release-planning session | — | — |
+
+### ST-27 execution-time determination — lapsed AI-adoption-window gates (2026-09-23)
+
+**Context:** `BLG-GOV-345`/ST-27 (EPIC-07) requires each of `BLG-FEAT-59`, `BLG-FEAT-60`, `BLG-FEAT-63`, `BLG-FE-84` be individually verified and either cleared or re-gated with a new dated condition. The 2026-09-24 AI review named at Release Planning (see the "not cleared" row above) has not yet run as of this determination — it is scheduled for tomorrow, one day after this sprint-execution session. There is therefore still no new evidence to clear these gates on today; re-gating with a concrete forward date (rather than leaving the stale "~2026-07-25" text) is the correct disposition, not clearing.
+
+**Determination:** Re-gate all 4 items — replace each item's `**Gate criteria:**` line with the text below, which anchors to the already-scheduled 2026-09-24 AI review instead of the lapsed 2026-07-25 date, and states explicitly that a lapsed date is not itself a clearance (closing the exact gap `BLG-GOV-345` was filed over, so the next scan of these same items doesn't reproduce it).
+
+**Exact replacement text** (for whichever human/role applies it — `execution_prompt.md` §7 does not permit this engine to edit `backlog.md` directly; see Outstanding Actions):
+
+- `BLG-FEAT-59` — replace `**Gate criteria:** AI adoption window clears ~2026-07-25 (same constraint as BLG-FEAT-55/56 — too early to layer additional AI-generated content onto financial reporting).` with:
+  `**Gate criteria:** AI adoption window verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence) — Financial Reporting & Records Owner to confirm usage patterns have stabilised before this clears. A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; re-verify against the 2026-09-24 review's actual finding.`
+- `BLG-FEAT-60` — replace `**Gate criteria:** AI adoption window clears ~2026-07-25 — usage patterns remain unestablished at current usage duration; metric definition would be premature.` with:
+  `**Gate criteria:** AI adoption window verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence) — Metrics Definitions & Analytics Owner to confirm usage patterns have stabilised before this clears. A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; re-verify against the 2026-09-24 review's actual finding.`
+- `BLG-FEAT-63` — replace `**Gate criteria:** Same AI-adoption gate as BLG-FEAT-59 (AI-assisted monthly P&L narrative) — clears ~2026-07-25.` with:
+  `**Gate criteria:** Same AI-adoption gate as BLG-FEAT-59 — verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence). A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; track disposition on BLG-FEAT-59.`
+- `BLG-FE-84` — replace `**Gate criteria:** AI adoption window clears ~2026-07-25 — usage patterns must stabilise before a research protocol targeting them is designed.` with:
+  `**Gate criteria:** AI adoption window verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence) — Head of UX & Design to confirm usage patterns have stabilised before this clears. A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; re-verify against the 2026-09-24 review's actual finding.`
+
+**Additional finding (not in this story's named 6, disclosed for awareness only):** re-running the extended scan (this story's own `scripts/scan_backlog_gate_conditions.py` change) at `--as-of 2026-09-23` surfaces 12 date-lapsed gated items, not 6 — `BLG-FEAT-55`, `BLG-OPS-53`, `BLG-GOV-121`, `BLG-SPEC-65`, `BLG-FEAT-62`, `BLG-FEAT-92` are also date-lapsed but were not named in `BLG-GOV-345`'s original 2026-09-19 finding. `BLG-FEAT-55` shares the identical AI-adoption-window gate as the 4 items above (same clears-~2026-07-25 text) and would benefit from the same replacement text if the Head of Specs Team wants to fold it in; the remaining 5 are unrelated gates and are left for a future `groom backlog` pass to individually verify, not decided here.
+
+**Made by:** Sprint Execution Engine (documented determination only — the four gate-line edits above require Head of Specs Team / Product Owner application, per the write-scope constraint recorded in `sprint_backlog.md`'s Outstanding Actions table).
+**Date:** 2026-09-23
 
 ### Supersession note
 *To be completed at Post-Ship Closure — do not populate at planning time.*
