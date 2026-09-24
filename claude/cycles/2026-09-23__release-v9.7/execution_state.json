@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-24T07:06:37Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-24T09:10:00Z",
+  "last_updated_utc": "2026-09-24T09:33:05Z",
   "epics": {
     "EPIC-01": {
       "status": "blocked",
@@ -339,16 +339,17 @@
       }
     },
     "EPIC-04": {
-      "status": "blocked",
+      "status": "done",
       "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
-      "qa_evidence_log": null,
+      "qa_evidence_log": "claude/cycles/2026-09-23__release-v9.7/qa_evidence_EPIC-04.md",
       "test_scenarios": [
+        "tests/test_claude_endpoint_cost_windows_live.py",
         "tests/test_conftest_database_url_guard.py",
-        "tests/test_playwright_skip_only_check.py",
-        "tests/test_negative_path_v92_v93_routers.py"
+        "tests/test_negative_path_v92_v93_routers.py",
+        "tests/test_playwright_skip_only_check.py"
       ],
       "stories": {
         "ST-14": {
@@ -443,26 +444,26 @@
         },
         "ST-18": {
           "title": "Validate get_claude_endpoint_cost_windows() SQL against real Postgres",
-          "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 1780,
           "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
-          "commit_sha": null,
-          "delegation_record_id": "DEL-20260924-01",
+          "commit_sha": "41e79e7729d20159cdba8dbb7165f0e761bcc74d",
+          "delegation_record_id": "DEL-20260924-01 (Unblocked -- see delegation_log.md)",
           "blocked_since_utc": "2026-09-24T07:46:54Z",
           "unblock_criteria": "Human runs the query against real/synthetic Postgres and shares output, or a synthetic-DB test is added -- see DEL-20260924-01",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T09:33:05Z",
+          "acceptance_verified": true,
           "spec_references": [
             "backend/database.py#get_claude_endpoint_cost_windows"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Requires either live/synthetic Postgres execution or a real (non-sqlite-stub) fixture matching Postgres INTERVAL/FILTER semantics. Routed per Infra/ops verification pattern (LL-v8.0-P3-01) — needs Infrastructure & Operations Owner or Data Model & Domain Schema Owner to run against a real/synthetic Postgres instance; sandbox has no safe DATABASE_URL to use for this (live DB is STAGING, not to be queried without explicit user approval)."
+          "notes": "Resolved via DEL-20260924-01 route (b): a real-Postgres Phase B test (tests/test_claude_endpoint_cost_windows_live.py) was added that executes the actual non-stubbed get_claude_endpoint_cost_windows() against the sandbox's local Postgres 18 instance (localhost:5432/ci_test -- the same DB CI's own pytest-phase-b job uses, NOT the staging Supabase DATABASE_URL), asserting recent/baseline window boundary correctness including the outside-both-windows exclusion case. Confirmed passing locally: `DATABASE_URL=postgresql://ci:ci@localhost:5432/ci_test backend/.venv/bin/python3 -m pytest tests/test_claude_endpoint_cost_windows_live.py -v` -> 2 passed. Confirmed it skips cleanly (not silently absent) under Phase A/stub DATABASE_URL, and that the full suite (1715 passed, 12 skipped) has no regressions. Test file itself landed in the immediately-preceding commit 41e79e77 (a [GOVERNANCE] conflict-resolution merge) as an untracked file swept in when staging the resolved execution_state.json -- disclosed here per the opportunistic in-file-fix threshold rather than re-committing it separately. Originally classified delegated_backend/DEL-20260924-01 (routed to a human for live/synthetic Postgres access); reclassified autonomous now that the synthetic-DB test route has actually been completed without needing human action."
         }
       }
     },
@@ -761,12 +762,6 @@
       "story": "ST-01",
       "status": "blocked_decision",
       "escalation": "ESC-EXEC-20260924-01"
-    },
-    {
-      "epic": "EPIC-04",
-      "story": "ST-18",
-      "status": "blocked_backend",
-      "delegation_record": "DEL-20260924-01"
     }
   ],
   "delegated_items": [
@@ -775,12 +770,6 @@
       "story": "ST-01",
       "classification": "delegated_decision",
       "escalation": "ESC-EXEC-20260924-01"
-    },
-    {
-      "epic": "EPIC-04",
-      "story": "ST-18",
-      "classification": "delegated_backend",
-      "delegation_record": "DEL-20260924-01"
     }
   ],
   "completed_items": [
@@ -823,6 +812,10 @@
     {
       "epic": "EPIC-04",
       "story": "ST-17"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-18"
     },
     {
       "epic": "EPIC-05",
