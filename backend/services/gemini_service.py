@@ -260,6 +260,7 @@ def generate_full_plan(
         text, usage = _call_claude(prompt, max_tokens=1024, system=_FULL_PLAN_SYSTEM)
     except Exception as exc:
         return {"available": False, "error": f"Claude API error: {str(exc)[:120]}"}
+    # ST-13 (BLG-BE-128, v9.7): includes _call_claude's retry backoff sleep time by design -- see ai_endpoints.md Implementation constraints
     latency_ms = int((time.time() - t0) * 1000)
 
     output_hash = hashlib.sha256(text.encode()).hexdigest()[:16]
@@ -340,6 +341,7 @@ def generate_setup_thesis(
         thesis, usage = _call_claude(prompt, max_tokens=256, system=_THESIS_SYSTEM)
     except Exception as exc:
         return {"available": False, "error": f"Claude API error: {str(exc)[:120]}"}
+    # ST-13 (BLG-BE-128, v9.7): includes _call_claude's retry backoff sleep time by design -- see ai_endpoints.md Implementation constraints
     latency_ms = int((time.time() - t0) * 1000)
 
     output_hash = hashlib.sha256(thesis.encode()).hexdigest()[:16]

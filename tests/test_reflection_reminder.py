@@ -102,6 +102,20 @@ class TestEvaluateReflectionReminders(unittest.TestCase):
         self.assertIn(">= NOW() - (%s * INTERVAL '1 day')", select_sql)
         self.assertEqual(alerts_service.REFLECTION_REMINDER_DELAY_HOURS, 48)
 
+    def test_null_portfolio_trades_are_structurally_excluded_by_design(self):
+        """BLG-BE-123 (ST-09, EPIC-03, v9.7): evaluation is portfolio-scoped — the query
+        filters th.portfolio_id = %s (a single, non-NULL bind parameter, no `IS NULL OR`
+        branch), so a trade_history row with a NULL portfolio_id can never match any
+        portfolio's run. Documented as expected behaviour in alerts_endpoints.md v0.9,
+        not a gap this function is expected to close."""
+        cur = _cur([])
+        _evaluate(cur, PORTFOLIO, {}, MagicMock())
+        select_sql, params = _sql_calls(cur)[1]
+        self.assertIn("WHERE th.portfolio_id = %s", select_sql)
+        self.assertNotIn("portfolio_id IS NULL", select_sql)
+        self.assertEqual(params[0], PORTFOLIO)
+        self.assertIsNotNone(params[0])
+
     def test_query_excludes_trades_with_a_reflection_or_an_existing_reminder(self):
         cur = _cur([])
         _evaluate(cur, PORTFOLIO, {}, MagicMock())
@@ -208,6 +222,66 @@ class TestEvaluateReflectionReminders(unittest.TestCase):
         self.assertEqual(out["notifications_created"], 0)
         statements = [c.args[0] for c in cur.execute.call_args_list]
         self.assertIn("ROLLBACK TO SAVEPOINT reflection_reminders", statements)
+
+    def test_forced_mid_loop_failure_reports_zero_created_and_enqueued_and_schedules_nothing(self):
+        """BLG-BE-123 (ST-09, EPIC-03, v9.7): a failure AFTER one candidate's INSERT has
+        already succeeded (but before RELEASE SAVEPOINT) must not leave the summary
+        over-reporting counts the SAVEPOINT rollback then undoes, and must not have
+        already scheduled delivery for the row that gets rolled back."""
+        cur = MagicMock()
+        state = {"n": 0}
+        insert_results = iter([{"id": "notif-1"}])
+
+        def execute(sql, params=None):
+            state["n"] += 1
+            stripped = sql.strip()
+            if stripped.startswith("INSERT INTO notifications") and state["n"] > 3:
+                raise RuntimeError("connection reset by peer")
+
+        def fetchall():
+            return [
+                {"id": TRADE_A, "ticker": "NVDA", "exit_date": date(2026, 9, 17)},
+                {"id": TRADE_B, "ticker": "AAPL", "exit_date": date(2026, 9, 18)},
+            ]
+
+        def fetchone():
+            return next(insert_results, None)
+
+        cur.execute.side_effect = execute
+        cur.fetchall.side_effect = fetchall
+        cur.fetchone.side_effect = fetchone
+
+        enqueue = MagicMock()
+        out = _evaluate(cur, PORTFOLIO, {"reflection_reminder": True}, enqueue)  # must not raise
+
+        self.assertIsNotNone(out["error"])
+        self.assertEqual(out["notifications_created"], 0)
+        self.assertEqual(out["delivery_tasks_enqueued"], 0)
+        enqueue.assert_not_called()  # nothing scheduled for the row that gets rolled back
+        statements = [c.args[0] for c in cur.execute.call_args_list]
+        self.assertIn("ROLLBACK TO SAVEPOINT reflection_reminders", statements)
+
+    def test_delivery_is_scheduled_only_after_release_savepoint_succeeds(self):
+        """enqueue_delivery must never be called before RELEASE SAVEPOINT — otherwise a
+        later failure in the same loop could roll back a row whose delivery was already
+        scheduled (BLG-BE-123)."""
+        cur = MagicMock()
+        call_order = []
+
+        def execute(sql, params=None):
+            if sql.strip().startswith("RELEASE SAVEPOINT"):
+                call_order.append("release")
+
+        cur.execute.side_effect = execute
+        cur.fetchall.return_value = [{"id": TRADE_A, "ticker": "NVDA", "exit_date": date(2026, 9, 17)}]
+        cur.fetchone.return_value = {"id": "notif-1"}
+
+        def enqueue(notif_id):
+            call_order.append(("enqueue", notif_id))
+
+        out = _evaluate(cur, PORTFOLIO, {"reflection_reminder": True}, enqueue)
+        self.assertEqual(out["delivery_tasks_enqueued"], 1)
+        self.assertEqual(call_order, ["release", ("enqueue", "notif-1")])
 
 
 class TestPreferenceModel(unittest.TestCase):
