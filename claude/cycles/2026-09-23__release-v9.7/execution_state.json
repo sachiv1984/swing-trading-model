@@ -586,26 +586,26 @@
         "ST-23": {
           "title": "Formal definition of \"linked trade plan\" counting for SI-02 gate",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1785,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-06",
+          "commit_sha": "d2c307bed1e22c38de8642f509e2c8cb04a515c5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T07:59:28Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/metrics/si02_drift_score.md",
             "claude/roadmap/current_roadmap.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "current_roadmap.md cross-reference deferred -- outside write scope; disclosed inline in si02_drift_score.md §2.4"
         },
         "ST-24": {
           "title": "positions.exit_note documented but not live",
@@ -839,6 +839,10 @@
     {
       "epic": "EPIC-05",
       "story": "ST-22"
+    },
+    {
+      "epic": "EPIC-06",
+      "story": "ST-23"
     }
   ],
   "open_escalations": [
