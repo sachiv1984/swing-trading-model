@@ -4114,6 +4114,27 @@ The Screener results table renders an "Earnings" column (`lg`-visible, days unti
 
 ---
 
+### BLG-SPEC-165 — Reconcile positions.fees_paid NOT NULL constraint (re-apply live, or confirm nullable is intentional)
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-26/EPIC-06, 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model.md` (v2.42) documented `fees_paid` as `NOT NULL as of v1.6`, citing the "Migration from v1.5 to v1.6" record (`ALTER TABLE positions ALTER COLUMN fees_paid SET NOT NULL`). A live schema query (readonly staging) confirmed the column is nullable today — the constraint was either later dropped (not documented anywhere in this file's migration history) or never durably applied in the environment queried. The documentation was reconciled to nullable (matching live reality) as the safe, non-destructive disposition; this item tracks the actual reconciliation decision.
+
+**Scope**
+- Determine why the v1.6 `NOT NULL` constraint is not present live (dropped, rolled back, or never applied) — check migration run history if available
+- Decide: re-apply the `NOT NULL` constraint live (if no existing row has a NULL `fees_paid`, and the original v1.6 intent should be re-enforced), or confirm nullable is now the intentional, permanent state and document why
+
+**Acceptance Criteria**
+- Disposition recorded (constraint re-applied, or nullable confirmed intentional with a stated reason)
+- `data_model.md` and the live schema agree, one way or the other, with the reasoning documented (not just the fact)
+
+---
+
 ### BLG-FE-184 — Migrate the remaining toFixed / toLocaleString call sites to the shared formatting helper
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
