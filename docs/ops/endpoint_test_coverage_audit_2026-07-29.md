@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-07-29
+**Version:** 1.1
+**Last Updated:** 2026-09-24 (ST-16, EPIC-04, v9.7, BLG-QA-175 — added a Recurring Cadence section cross-referencing the new pre-sprint audit run doc)
 **Cycle:** 2026-07-28__release-v7.10 (ST-11 — BLG-QA-133)
 
 ---
@@ -59,3 +59,9 @@ Verified via the same AST-parsing method the CI gate uses (`ast.parse` on `test_
 ## Sign-off
 
 **QA & Testing Owner:** Confirmed — full coverage audit against all 128 routes; 7 safe gaps fixed, 2 correctly excluded with documented rationale; fallback count kept in sync per the existing drift-detection convention. 2026-07-29.
+
+---
+
+## Recurring Cadence (ST-16, BLG-QA-175, EPIC-04, v9.7)
+
+This audit's own tooling (`scripts/audit_endpoint_test_coverage.py`) was a one-off deep pass at the time. Re-running it recurringly — at the start of every sprint's execution, before scope seals — is now established policy; see `docs/ops/endpoint_test_coverage_audit_2026-09-24.md` for the cadence definition and its first recurring run (0 undocumented gaps found).

@@ -1,0 +1,39 @@
+name: Playwright Skip/Only Check
+
+# [EPIC-04][ST-15] (BLG-QA-174) — Flag a merged Playwright spec left with a
+# declaration-time test.only(...)/test.describe.only(...)/test.describe.skip(...)
+# or test.skip('title', ...), which silently narrows a CI run to one test/suite
+# or disables it entirely. The existing runtime-conditional test.skip() pattern
+# (an environment-conditional early exit inside a test body) is not flagged --
+# see scripts/check_playwright_skip_only.py's own docstring for the exact
+# distinction and the ALLOW-SKIP-ONLY exception mechanism.
+#
+# Regression-tested by tests/test_playwright_skip_only_check.py (unit tests on
+# the detection logic plus a real-repo regression guard) — run as part of the
+# normal backend pytest suite (ci-tests.yml Phase A). This workflow is the
+# dedicated, explicit CI gate for the same check, following the existing
+# one-script-one-workflow pattern (see openapi-drift.yml, staging-deploy-drift-
+# check.yml).
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+jobs:
+  playwright-skip-only-check:
+    name: Playwright Skip/Only Check (ST-15)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run check
+        run: python3 scripts/check_playwright_skip_only.py

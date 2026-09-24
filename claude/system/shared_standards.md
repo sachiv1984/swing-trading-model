@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.34
-**Last Updated:** 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #4 resolution — new §16.4.1 Non-Blocking SLA-Breach Advisory Surfacing, cross-referencing execution_prompt.md's new STEP -1.2A); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-P3-01 — §18 gains the backend `database` stub-isolation pattern requirement, closing a cross-file pytest test-isolation hazard found live this cycle); prior — 2026-09-08 (ST-18 + ST-25, EPIC-04, v9.2, BLG-GOV-244 + BLG-GOV-210 — new §21 Deprecation Header Convention for Retiring API Endpoints and §22 Governance-Cycle Wall-Clock Cost Logging Convention); prior history retained — see prior entries in version control.
+**Version:** 3.35
+**Last Updated:** 2026-09-24 (sprint execution 2026-09-23__release-v9.7 EPIC-05/ST-21, BLG-GOV-331 — new §23 ensure_ascii=False Convention for Governance JSON Writes); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #4 resolution — new §16.4.1 Non-Blocking SLA-Breach Advisory Surfacing); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-P3-01 — §18 database stub-isolation pattern requirement); prior history retained — see prior entries in version control.
 
 # Shared Standards — All Governed Routines
 
@@ -1171,6 +1171,22 @@ This convention is referenced from `CLAUDE.md` §2's existing OpenAPI Drift Dete
 This is a logging convention only — it does not gate anything and has no pass/fail condition. Its value is purely as future input to workforce/economics review once enough readings accumulate to support a trend.
 
 **Sign-off:** Head of Specs Team — Approved. Explicitly declining to backfill prior cycles (§ "Applied from") is the correct call — fabricated timestamps presented as measured data would be worse than no data at all. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
+
+## 23. `ensure_ascii=False` Convention for Governance JSON Writes (ST-21, EPIC-05, v9.7, BLG-GOV-331)
+
+**Purpose:** a programmatic write to a governance JSON file (`.claude_current_state.json`, `execution_state.json`, and any other JSON file routinely carrying non-ASCII prose — em-dashes `—`, section markers `§`, curly quotes) must not silently re-escape every non-ASCII character into `\uXXXX` sequences on every write, which degrades diff quality and human readability far beyond the fields actually changed.
+
+**Root cause (found live, PR #1662, EPIC-01/v9.4):** Python's `json.dump(..., indent=2)` defaults to `ensure_ascii=True`, which escapes every non-ASCII character in the **entire** file, not just newly-written fields. A ~5-field semantic edit to a ~125-line file produced a 15-line diff, and every em-dash/`§` already present in the file (not touched by the edit) was rewritten to an escape sequence.
+
+**Convention:** any programmatic write to a governance JSON file must pass `ensure_ascii=False` explicitly:
+
+```python
+json.dump(data, f, indent=2, ensure_ascii=False)
+```
+
+This preserves non-ASCII characters literally, keeping diffs minimal (only the semantically-changed fields appear as changed lines) and the raw file human-readable without needing to mentally decode escape sequences. Applies to `.claude_current_state.json`, every cycle's `execution_state.json`, and any other JSON file a governed routine writes that carries prose fields (as opposed to a pure data/config JSON file with no free-text content, where the distinction is moot).
+
+**Sign-off:** Head of Specs Team — Approved. A one-line, mechanically-checkable convention is the right scope for this finding — it needs no engine STEP change, only a rule future writers (agent or human) see before writing. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-24.
 
 ---
 
