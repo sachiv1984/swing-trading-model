@@ -4583,10 +4583,10 @@ ST-23 (EPIC-06, `2026-09-23__release-v9.7`) shipped the canonical "linked trade 
 **Provisional-Target:** TBD
 
 **Problem**
-Schema changes in this application are applied by `ensure_*()` functions when the backend boots, not by a separate migration step. Staging was found on 2026-09-24 still running pre-v9.6 code: both `alert_type` CHECK constraints lacked `reflection_reminder` until the operator redeployed. Nothing in the delivery flow noticed, so a merged, "shipped" schema change silently did not exist on staging for an extended period, and the only thing that surfaced it was a manual verification story. Because the deploy path filters and hooks are configured partly outside the repo (see the Render Build Filters gotcha), a repo-only review could not have caught it.
+Schema changes in this application are applied by `ensure_*()` functions when the backend boots, not by a separate migration step. Staging was found on 2026-09-24 still running pre-v9.6 code: both `alert_type` CHECK constraints lacked `reflection_reminder` until the operator redeployed. Nothing in the delivery flow noticed, so a merged, "shipped" schema change silently did not exist on staging for an extended period, and the only thing that surfaced it was a manual verification story. Because the deploy path filters and hooks are configured partly outside the repo (see `docs/ops/render_build_deploy_path_filter_audit.md`), a repo-only review could not have caught it.
 
 **Scope**
-- Establish a post-merge check that the staging service is running the merged commit (for example comparing a deployed-version/commit indicator against `main`, or confirming the deploy hook fired), and surface a visible failure when they differ
+- Establish a post-merge check that the staging service is running the merged commit, and surface a visible failure when they differ. The backend currently exposes no deployed-version/commit indicator, so this likely needs one added (for example a build-commit field on an existing health/status endpoint, with the usual contract, `openapi.yaml` and `backend/routers/test.py` obligations) or an alternative such as confirming the Render deploy hook fired
 - Decide where it runs (existing `staging-smoke-test.yml`, a post-merge workflow, or a cycle-close verification step) and document it in `docs/ops/staging_deploy_notes.md`
 - State how it treats schema-bearing changes specifically, since those have no other application-level signal
 
