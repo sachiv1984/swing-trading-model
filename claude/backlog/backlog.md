@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-24 (session — 2 new items added: BLG-SPEC-169, BLG-SPEC-170, surfaced during ST-04/ST-05/ST-06 execution, EPIC-02, cycle 2026-09-23__release-v9.7); prior — 2026-09-24 (session — 3 new items added: BLG-SEC-39, BLG-QA-193, BLG-SPEC-168, surfaced during agent-mediated review of PR #1800/EPIC-07); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-167, BLG-OPS-169, surfaced during ST-27/EPIC-07 staging verification); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-24 (session — 1 new item added: BLG-QA-194, surfaced during agent-mediated DoQ review of ST-07/EPIC-02); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-169, BLG-SPEC-170, surfaced during ST-04/ST-05/ST-06 execution, EPIC-02, cycle 2026-09-23__release-v9.7); prior — 2026-09-24 (session — 3 new items added: BLG-SEC-39, BLG-QA-193, BLG-SPEC-168, surfaced during agent-mediated review of PR #1800/EPIC-07); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4702,6 +4702,29 @@ ST-29's acceptance criterion is "a test PR adding a `git+ssh` dependency fails C
 - `reports.md` and `reports_endpoints.md` agree on whether the detail row is dated and on how the unavailable state is signalled
 - The shipped UI matches the reconciled spec, or a follow-up is filed for the difference
 - DEV-v9.7-ST04-01 is marked resolved with this item's ID
+
+---
+
+### BLG-QA-194 — Harden the UI-copy boundary lint against obfuscation-grade and cross-node phrase splits
+**Priority:** P4 (Backlog)
+**Type:** QA / Test Tooling
+**Owner:** Frontend Specifications & UX Documentation Owner; QA & Testing Owner
+**Source:** ST-07/EPIC-02, cycle 2026-09-23__release-v9.7 — agent-mediated DoQ review (second pass) — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`scripts/check_ui_copy_forbidden_phrases.py` (BLG-FE-183, ST-07) is a dependency-free tokeniser, not a full JS parser. The DoQ review found residual ways a forbidden §13.2 phrase can evade it. None occurs in `src/` today (a `@babel/parser` differential over 12,010 literals agrees) and all need deliberate obfuscation or an unusual layout, so they were accepted as non-blocking, but the gate is a compliance control and the list should be closed or consciously documented.
+
+**Scope**
+- Decode `\uXXXX`/`\xXX` escapes and HTML numeric/named entities (`&#160;`, `&#32;`, `&ensp;`) to their characters, and fold invisible characters (zero-width space, soft hyphen, non-breaking hyphen) before matching
+- Extract JSX attribute strings that span lines
+- Decide on cross-node splits (`'you ' + 'should'`, `You{' '}should`, `<b>Buy</b> now`, `['you','should'].join(' ')`): join adjacent literals, or document them as accepted limits alongside the existing docstring list
+- Or replace the tokeniser with `@babel/parser` if a Node-based CI step is judged acceptable
+
+**Acceptance Criteria**
+- Each bypass above is either detected by a regression test or listed in the script docstring as an accepted limit with rationale
+- The `@babel/parser` differential still reports no missed phrase hit over `src/`
 
 ---
 
