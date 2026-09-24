@@ -633,22 +633,22 @@
         "ST-25": {
           "title": "4 orphaned always-NULL undocumented columns on live positions table",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1787,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-06",
+          "commit_sha": "e722a89053dfc5f1e758e6e857c9ffbea697e9fb",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T08:02:10Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/data_model.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -847,6 +847,10 @@
     {
       "epic": "EPIC-06",
       "story": "ST-24"
+    },
+    {
+      "epic": "EPIC-06",
+      "story": "ST-25"
     }
   ],
   "open_escalations": [
