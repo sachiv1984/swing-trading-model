@@ -199,7 +199,8 @@
       "test_scenarios": [
         "tests/test_money_arithmetic_golden.py",
         "tests/test_reflection_reminder.py",
-        "tests/test_alerts_service.py"
+        "tests/test_alerts_service.py",
+        "tests/test_month_closure_clock_source.py"
       ],
       "stories": {
         "ST-08": {
@@ -272,20 +273,20 @@
         "ST-11": {
           "title": "Month-closure check / Monthly P&L clock-source mismatch",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1773,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-03",
+          "commit_sha": "ac1189b2396308249740c4e7b7e19b46bc142d2a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T07:21:24Z",
+          "acceptance_verified": true,
           "spec_references": [],
           "spec_reference_not_applicable": true,
           "spec_reference_not_applicable_reason": "bug fix, no prior canonical spec — verified via a clock-source consistency test",
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -765,6 +766,10 @@
     {
       "epic": "EPIC-03",
       "story": "ST-10"
+    },
+    {
+      "epic": "EPIC-03",
+      "story": "ST-11"
     }
   ],
   "open_escalations": [
