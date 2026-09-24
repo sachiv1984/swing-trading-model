@@ -346,7 +346,8 @@
       "qa_signed_off": false,
       "qa_evidence_log": null,
       "test_scenarios": [
-        "tests/test_conftest_database_url_guard.py"
+        "tests/test_conftest_database_url_guard.py",
+        "tests/test_playwright_skip_only_check.py"
       ],
       "stories": {
         "ST-14": {
@@ -373,20 +374,22 @@
         "ST-15": {
           "title": "CI check flagging merged .skip()/.only() Playwright specs",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1777,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
+          "commit_sha": "c3754c5beb8f038c3d2a3af7008aee5cc057d4cf",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "spec_reference_not_applicable": true,
+          "completed_utc": "2026-09-24T07:40:26Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/playwright-skip-only-check.yml"
+          ],
+          "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": "CI/infrastructure story (Case D) — the CI workflow/script file is the de facto spec reference",
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -787,6 +790,10 @@
     {
       "epic": "EPIC-04",
       "story": "ST-14"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-15"
     }
   ],
   "open_escalations": [
