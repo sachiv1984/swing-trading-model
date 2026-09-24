@@ -1,0 +1,845 @@
+{
+  "cycle_id": "2026-09-23__release-v9.7",
+  "sprint_goal": "Ship PO-05 Lightweight Replay Mode end-to-end and clear the full-capacity, category-balanced debt-clearance slice across 7 EPICs, 29 stories.",
+  "backlog_slice_source": "claude/cycles/2026-09-23__release-v9.7/stage4_backlog_slice.md",
+  "invoked_utc": "2026-09-24T07:06:37Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-09-24T07:08:02Z",
+  "epics": {
+    "EPIC-01": {
+      "status": "blocked",
+      "branch": "exec/2026-09-23__release-v9.7/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "PO-05 Lightweight Replay Mode",
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "authority",
+          "github_issue": 1792,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": "2026-09-24T07:08:02Z",
+          "unblock_criteria": "Head of Specs Team locks the backend wire contract for PO-05 replay mechanics (scope-confirmation sub-story) — see ESC-EXEC-20260924-01",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "No lockable backend spec yet — replay_mode.md v0.1 is Design Only/Implementation Pending; exact wire contract deferred to this item's own scope-confirmation sub-story (Binding Condition 6, per docs/product/decisions/po05_section13_preassessment.md). Per §5.1 backend delegation note: no lockable spec => delegated_decision, not delegated_backend. Escalating to Head of Specs Team to run the scope-confirmation sub-story and lock the backend wire contract before this can be delegated to Head of Engineering."
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "not_started",
+      "branch": "exec/2026-09-23__release-v9.7/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": [],
+      "stories": {
+        "ST-02": {
+          "title": "Cloned trade plan can silently get the wrong Setup Type",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1764,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md#4.5",
+            "docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-03": {
+          "title": "Monthly P&L's NULL-fee audit flag has no frontend surfacing",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1765,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/reports.md#Fees-Not-Recorded Visibility",
+            "docs/design/2026-09-23__release-v9.7/monthly-pnl-fees-surfacing/decision_record.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-04": {
+          "title": "Month-end P&L restatement diff has no frontend surfacing",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1766,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/reports.md#Monthly Restatement Marker",
+            "docs/design/2026-09-23__release-v9.7/monthly-pnl-restatement-surfacing/decision_record.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-05": {
+          "title": "AlertThresholdsSection.js empty-state heading trailing period",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1767,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/design/design_system.md#Data States"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-06": {
+          "title": "NotificationsHistory.js empty-state heading trailing period",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1768,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/design/design_system.md#Data States"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-07": {
+          "title": "CI lint of static UI copy for forbidden predictive/advice-crossing phrases",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1769,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": true,
+          "spec_reference_not_applicable_reason": "CI/infrastructure story (Case D) — the lint script/workflow file itself is the de facto spec reference; populated once created.",
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "done",
+      "branch": "exec/2026-09-23__release-v9.7/EPIC-03",
+      "pr_number": 1793,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-09-23__release-v9.7/qa_evidence_EPIC-03.md",
+      "test_scenarios": [
+        "tests/test_money_arithmetic_golden.py",
+        "tests/test_reflection_reminder.py",
+        "tests/test_alerts_service.py",
+        "tests/test_month_closure_clock_source.py",
+        "tests/test_monthly_pnl_snapshot.py"
+      ],
+      "stories": {
+        "ST-08": {
+          "title": "UK stamp duty / US FX fee rounding float vs Decimal",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1770,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-03",
+          "commit_sha": "223630cb6daae6c793894bf14692f7b687b543ae",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-24T07:10:50Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "spec_reference_not_applicable": true,
+          "spec_reference_not_applicable_reason": "bug fix, no prior canonical spec — verified via tests/test_money_arithmetic_golden.py",
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-09": {
+          "title": "Reflection reminder over-reported summary / NULL-portfolio gap",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1771,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-03",
+          "commit_sha": "c94d326ffdc01c433db180d16d8fcd92e3772f3f",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-24T07:15:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/alerts_endpoints.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-10": {
+          "title": "Generic alert re-delivery ignores read state",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1772,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-03",
+          "commit_sha": "eb37f1b19c0e633228036c62e8b1210bffcc8129",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-24T07:17:33Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/alerts_endpoints.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-11": {
+          "title": "Month-closure check / Monthly P&L clock-source mismatch",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1773,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-03",
+          "commit_sha": "ac1189b2396308249740c4e7b7e19b46bc142d2a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-24T07:21:24Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "spec_reference_not_applicable": true,
+          "spec_reference_not_applicable_reason": "bug fix, no prior canonical spec — verified via a clock-source consistency test",
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-12": {
+          "title": "Monthly P&L snapshot lookup opens one DB connection per closed month",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1774,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-03",
+          "commit_sha": "a3d7adf3adef30e9f66a27bb6310c0c2154c99ac",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-24T07:26:41Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "spec_reference_not_applicable": true,
+          "spec_reference_not_applicable_reason": "performance fix, no prior canonical spec — verified via connection-count test",
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-13": {
+          "title": "latency_ms/elapsed_ms includes retry backoff time",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1775,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-03",
+          "commit_sha": "88886fc53009b5ffcf113a3e50aa86508956d324",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-24T07:29:40Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Effort note allows 'won't fix, document as intentional' as a valid disposition."
+        }
+      }
+    },
+    "EPIC-04": {
+      "status": "blocked",
+      "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": [
+        "tests/test_conftest_database_url_guard.py",
+        "tests/test_playwright_skip_only_check.py",
+        "tests/test_negative_path_v92_v93_routers.py"
+      ],
+      "stories": {
+        "ST-14": {
+          "title": "Backend test suite can connect to a real DATABASE_URL",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1776,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
+          "commit_sha": "4040c5755cddff84ed2c6884b59a6e5edaf59bf6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-24T07:37:41Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "spec_reference_not_applicable": true,
+          "spec_reference_not_applicable_reason": "test-isolation bug fix, no prior canonical spec — verified via tests/conftest.py behaviour",
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-15": {
+          "title": "CI check flagging merged .skip()/.only() Playwright specs",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1777,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
+          "commit_sha": "c3754c5beb8f038c3d2a3af7008aee5cc057d4cf",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-24T07:40:26Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/playwright-skip-only-check.yml"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": "CI/infrastructure story (Case D) — the CI workflow/script file is the de facto spec reference",
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-16": {
+          "title": "Recurring pre-sprint endpoint test coverage audit",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1778,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
+          "commit_sha": "a7b2f15d06da996ecc49337c683030b5183dfd79",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-24T07:42:07Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/endpoint_test_coverage_audit_2026-09-24.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-17": {
+          "title": "Backfill negative-path tests for 3 newest v9.2/v9.3 routers",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1779,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
+          "commit_sha": "6478b8345eb5e156404ed8bfc513d2780bb77d9a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-09-24T07:45:48Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_negative_path_v92_v93_routers.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": "test-authoring story (Case C) — the new test files are the traceable artefact",
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-18": {
+          "title": "Validate get_claude_endpoint_cost_windows() SQL against real Postgres",
+          "classification": "delegated_backend",
+          "status": "blocked_backend",
+          "assigned_to": "human",
+          "github_issue": 1780,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260924-01",
+          "blocked_since_utc": "2026-09-24T07:46:54Z",
+          "unblock_criteria": "Human runs the query against real/synthetic Postgres and shares output, or a synthetic-DB test is added -- see DEL-20260924-01",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "backend/database.py#get_claude_endpoint_cost_windows"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Requires either live/synthetic Postgres execution or a real (non-sqlite-stub) fixture matching Postgres INTERVAL/FILTER semantics. Routed per Infra/ops verification pattern (LL-v8.0-P3-01) — needs Infrastructure & Operations Owner or Data Model & Domain Schema Owner to run against a real/synthetic Postgres instance; sandbox has no safe DATABASE_URL to use for this (live DB is STAGING, not to be queried without explicit user approval)."
+        }
+      }
+    },
+    "EPIC-05": {
+      "status": "not_started",
+      "branch": "exec/2026-09-23__release-v9.7/EPIC-05",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": [],
+      "stories": {
+        "ST-19": {
+          "title": "Quarterly governance overhead ratio metric",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1781,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-20": {
+          "title": "SI-02 gate threshold scale-with-cadence review",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1782,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/roadmap/current_roadmap.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Disposition per acceptance criteria: confirm-closed citing BLG-GOV-237, no new information beyond accumulated NOT MET streak."
+        },
+        "ST-21": {
+          "title": "Document ensure_ascii=False convention for governance JSON writes",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1783,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/system/shared_standards.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-22": {
+          "title": "Reconcile sprint_planning_prompt.md STEP -1 wording vs shared_standards.md §10.1",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1784,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/system/sprint_planning_prompt.md",
+            "claude/system/shared_standards.md#10.1"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-06": {
+      "status": "not_started",
+      "branch": "exec/2026-09-23__release-v9.7/EPIC-06",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": [],
+      "stories": {
+        "ST-23": {
+          "title": "Formal definition of \"linked trade plan\" counting for SI-02 gate",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1785,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/metrics/si02_drift_score.md",
+            "claude/roadmap/current_roadmap.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-24": {
+          "title": "positions.exit_note documented but not live",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1786,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/data_model.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-25": {
+          "title": "4 orphaned always-NULL undocumented columns on live positions table",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1787,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/data_model.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-26": {
+          "title": "positions.fees_paid documented NOT NULL but live column nullable",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1788,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/data_model.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-07": {
+      "status": "not_started",
+      "branch": "exec/2026-09-23__release-v9.7/EPIC-07",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": [],
+      "stories": {
+        "ST-27": {
+          "title": "Post-deploy staging verification of reflection-reminder migration/SQL",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": "human",
+          "github_issue": 1789,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/alerts_endpoints.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Requires real (non-mocked) staging DB/SQL run per item's own Notes field and LL-v8.0-P3-01 infra/ops verification pattern. Routed to Infrastructure & Operations Owner."
+        },
+        "ST-28": {
+          "title": "External-dependency failure-mode matrix",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1790,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-29": {
+          "title": "CI guard rejecting non-registry dependency specifiers",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1791,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": true,
+          "spec_reference_not_applicable_reason": "CI/infrastructure story (Case D) — the CI workflow file is the de facto spec reference",
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    }
+  },
+  "blocked_items": [
+    {
+      "epic": "EPIC-01",
+      "story": "ST-01",
+      "status": "blocked_decision",
+      "escalation": "ESC-EXEC-20260924-01"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-18",
+      "status": "blocked_backend",
+      "delegation_record": "DEL-20260924-01"
+    }
+  ],
+  "delegated_items": [
+    {
+      "epic": "EPIC-01",
+      "story": "ST-01",
+      "classification": "delegated_decision",
+      "escalation": "ESC-EXEC-20260924-01"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-18",
+      "classification": "delegated_backend",
+      "delegation_record": "DEL-20260924-01"
+    }
+  ],
+  "completed_items": [
+    {
+      "epic": "EPIC-03",
+      "story": "ST-08"
+    },
+    {
+      "epic": "EPIC-03",
+      "story": "ST-09"
+    },
+    {
+      "epic": "EPIC-03",
+      "story": "ST-10"
+    },
+    {
+      "epic": "EPIC-03",
+      "story": "ST-11"
+    },
+    {
+      "epic": "EPIC-03",
+      "story": "ST-12"
+    },
+    {
+      "epic": "EPIC-03",
+      "story": "ST-13"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-14"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-15"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-16"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-17"
+    }
+  ],
+  "open_escalations": [
+    "ESC-EXEC-20260924-01"
+  ],
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": [
+      "EPIC-01",
+      "EPIC-02",
+      "EPIC-03",
+      "EPIC-04",
+      "EPIC-05",
+      "EPIC-06",
+      "EPIC-07"
+    ],
+    "all_merged": false
+  },
+  "sealed": false,
+  "sealed_utc": null,
+  "process_notes": [
+    "STEP 1: 28/29 GH issues pre-existed from sync gh at planning seal; ST-01 (#1792) was missing (process gap) and created now."
+  ]
+}
