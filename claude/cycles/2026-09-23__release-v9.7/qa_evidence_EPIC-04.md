@@ -36,7 +36,7 @@ Last Updated: 2026-09-24
 - [x] Regression areas checked
 - [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no frontend component in this EPIC
 - Signed off by: Director of Quality
-- Date:
+- Date: 2026-09-24
 - Comments: [Agent-mediated Director of Quality review — pending human confirmation] Independently re-verified this EPIC rather than trusting the table above: re-ran all 4 claimed test files in an isolated worktree against a real local Postgres — all pass (`test_claude_endpoint_cost_windows_live.py`, `test_conftest_database_url_guard.py`, `test_playwright_skip_only_check.py`, `test_negative_path_v92_v93_routers.py` — 26 passed, 0 failed across the four). Confirmed ST-18's test is substantive (not a trivial "returns something" check) — it asserts specific recent/baseline averages and counts, and specifically exercises the "row outside both windows must be excluded from both buckets" boundary case, which is exactly what the AC required. Confirmed the full suite has 0 failures (1746 passed, 12 skipped today — see note below on a stale count in this file).
 
 Two non-blocking documentation-accuracy findings, both worth fixing before/alongside sign-off (neither is a behavioural defect):
