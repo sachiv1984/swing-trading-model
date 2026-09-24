@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-09-15
+**Last Updated:** 2026-09-24
 
 # Prompt Change Log
 
@@ -13,6 +13,8 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-09-24 | `claude/system/OPERATIONAL_GUIDE.md` | v4.204→v4.205 | Sprint execution `2026-09-23__release-v9.7` EPIC-05/ST-21 (BLG-GOV-331): §14 Shared Standards row v3.34→v3.35; §14 self-row `Version`/`Last Updated` and Change Log top row updated. | Head of Specs Team (Sprint Execution Engine, agent-mediated, §5.3, 2026-09-24) |
+| 2026-09-24 | `claude/system/shared_standards.md` | v3.34→v3.35 | ST-21 (BLG-GOV-331, EPIC-05, v9.7): new §23 `ensure_ascii=False` Convention for Governance JSON Writes — any programmatic write to a governance JSON file must pass `ensure_ascii=False` to `json.dump`, preserving non-ASCII characters literally. Companion changelog `shared_standards_changelog.md` v3.35 row added. | Head of Specs Team (Sprint Execution Engine, agent-mediated, §5.3, 2026-09-24) |
 | 2026-09-21 | `claude/system/OPERATIONAL_GUIDE.md` | v4.199→v4.200 | Governance-drift fix: stale Post-Ship Closure Process rows removed from §13 and §14 (file deleted 2026-03-13, `11db3666`); §10 process-document line replaced with a retirement note; §10 source-prompt line and §14 Post-Ship Closure Engine row v2.34→v2.35; §14 self-row `Version` and `Last Updated` and Change Log top row updated. | Head of Specs Team (2026-09-21) |
 | 2026-09-21 | `claude/system/post_ship_closure.md` | v2.34→v2.35 | Governance-drift fix: header `Process Reference` line (pointed at a file deleted 2026-03-13) replaced with a retirement note; no procedural change. Companion changelog `post_ship_closure_changelog.md` v2.35 row added. | Head of Specs Team (2026-09-21) |
 | 2026-09-19 | `claude/system/OPERATIONAL_GUIDE.md` | v4.198→v4.199 | Roadmap rebalance `2026-09-19__scheduled` STEP 11: §5/§6 source-prompt headers, §13 Idea Intake row, two §14 table rows, §14 self-row (`Version` and `Last Updated`) and Change Log top row updated for roadmap_prompt.md v9.25 and idea_intake_prompt.md v2.9. | Head of Specs Team (2026-09-19) |
