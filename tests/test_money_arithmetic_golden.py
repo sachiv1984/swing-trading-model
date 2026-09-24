@@ -97,21 +97,19 @@ class TestSuggestedSharesFloorBoundaries:
 # ---------------------------------------------------------------------------
 # Fee-calculation golden set — confirmed float-vs-Decimal discrepancies
 # ---------------------------------------------------------------------------
-# BLG-BE-127 (filed by this story): calculate_uk_entry_fees /
+# BLG-BE-127 (ST-08, EPIC-03, v9.7, fixed this story): calculate_uk_entry_fees /
 # calculate_us_entry_fees (and the exit-fee equivalents, same arithmetic
-# shape) round stamp_duty/fx_fee via float round() at the call site, not
-# Decimal/ROUND_HALF_UP internally. These golden cases lock in and document
-# the *current* (known-imperfect) behaviour so a future fix (BLG-BE-127) has
-# a concrete before/after to flip, per docs/ops/money_arithmetic_audit_
-# 2026-09-22.md §3. This is a documented, explained discrepancy class, not
-# an unexplained one — see that audit file for the brute-force scan that
-# found it (917/499999 UK, 90/499999 US boundary values).
+# shape) now round stamp_duty/fx_fee/total via Decimal/ROUND_HALF_UP
+# internally (utils/calculations.py's _round_half_up helper) instead of
+# float round() at the call site. These golden cases previously locked in
+# and documented a known £0.01 under-charge at half-penny boundaries (see
+# docs/ops/money_arithmetic_audit_2026-09-22.md §3); they now assert parity
+# with the independent Decimal reference instead.
 
 class TestKnownFloatDecimalDiscrepancies:
-    """Confirmed £0.01 discrepancies between the current float/round() fee
-    path and a Decimal/ROUND_HALF_UP reference, at exact half-penny
-    boundaries. BLG-BE-127 tracks fixing this; until then these tests
-    document (not hide) the gap."""
+    """Former £0.01 discrepancies between the old float/round() fee path and
+    a Decimal/ROUND_HALF_UP reference, at exact half-penny boundaries.
+    BLG-BE-127 fixed this — these cases now assert equality, not a gap."""
 
     UK_STAMP_DUTY_DISCREPANCY_CASES = [3.00, 9.00, 15.00, 21.00, 25.00]
     US_FX_FEE_DISCREPANCY_CASES = [10.00, 30.00, 50.00, 70.00, 290.00]
@@ -125,13 +123,10 @@ class TestKnownFloatDecimalDiscrepancies:
             gross_cost * _SETTINGS["stamp_duty_rate"]
         )
 
-        # Documents the known £0.01 under-charge — BLG-BE-127.
-        assert float(expected_decimal) - float_stamp_duty == pytest.approx(0.01, abs=1e-9), (
-            f"gross_cost={gross_cost}: expected the documented £0.01 "
-            f"float-vs-Decimal gap (float={float_stamp_duty}, "
-            f"decimal={expected_decimal}) — if this now passes at parity, "
-            "BLG-BE-127 may already be fixed; update this test to assert "
-            "equality instead."
+        # BLG-BE-127 fixed: now at parity with the Decimal reference.
+        assert float_stamp_duty == pytest.approx(float(expected_decimal), abs=1e-9), (
+            f"gross_cost={gross_cost}: expected parity with the Decimal "
+            f"reference (float={float_stamp_duty}, decimal={expected_decimal})"
         )
 
     @pytest.mark.parametrize("gross_cost", US_FX_FEE_DISCREPANCY_CASES)
@@ -143,10 +138,9 @@ class TestKnownFloatDecimalDiscrepancies:
             gross_cost * _SETTINGS["fx_fee_rate"]
         )
 
-        assert float(expected_decimal) - float_fx_fee == pytest.approx(0.01, abs=1e-9), (
-            f"gross_cost={gross_cost}: expected the documented £0.01 "
-            f"float-vs-Decimal gap (float={float_fx_fee}, "
-            f"decimal={expected_decimal})"
+        assert float_fx_fee == pytest.approx(float(expected_decimal), abs=1e-9), (
+            f"gross_cost={gross_cost}: expected parity with the Decimal "
+            f"reference (float={float_fx_fee}, decimal={expected_decimal})"
         )
 
 
@@ -180,8 +174,10 @@ class TestFeeCalculationsAgreeElsewhere:
     def test_us_exit_fees_shares_the_same_fx_fee_shape_as_entry(self):
         fees = calculate_us_exit_fees(70.0, _SETTINGS)
         expected_decimal = _decimal_round_half_up(70.0 * _SETTINGS["fx_fee_rate"])
-        # Same boundary class as the entry-fee case at the same gross value.
-        assert round(fees["fx_fee"], 2) != float(expected_decimal)
+        # BLG-BE-127 fixed: exit fees share calculate_us_entry_fees's
+        # arithmetic shape and now use the same internal Decimal rounding,
+        # so this former boundary-class discrepancy is at parity too.
+        assert round(fees["fx_fee"], 2) == float(expected_decimal)
 
 
 # ---------------------------------------------------------------------------
