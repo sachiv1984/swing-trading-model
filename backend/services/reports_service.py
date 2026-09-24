@@ -15,6 +15,7 @@ so net_proceeds is the correct value.
 import csv
 import io
 import os
+from contextlib import nullcontext
 from datetime import date, datetime, timezone, timedelta
 from io import BytesIO
 from typing import Dict, Optional
@@ -24,6 +25,7 @@ from psycopg2.extras import RealDictCursor
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
 
 from database import (
+    get_db,
     get_portfolio,
     get_positions,
     get_trade_history_by_tax_year,
@@ -33,6 +35,7 @@ from database import (
     get_monthly_pnl_snapshot,
     insert_monthly_pnl_snapshot_if_absent,
     get_monthly_pnl_snapshots_in_range,
+    ensure_monthly_pnl_snapshots_table,
 )
 from utils.formatting import decimal_to_float
 
@@ -345,15 +348,19 @@ def _is_closed_month(year: int, month: int, today: date) -> bool:
     return (year, month) < (today.year, today.month)
 
 
-def _snapshot_month(portfolio_id: str, year: int, month: int, realised_pnl_gbp: float, trade_count: int) -> dict:
+def _snapshot_month(portfolio_id: str, year: int, month: int, realised_pnl_gbp: float, trade_count: int, conn=None) -> dict:
     """Baseline-once + restatement-diff for a single closed month
     (ST-08, EPIC-02, v9.6, BLG-FR-05). Returns the snapshot-related fields
     to merge into that month's response row.
+
+    Connection reuse (ST-12, EPIC-03, v9.7, BLG-BE-126): pass `conn` (an
+    open connection, already table-ensured) so a request evaluating several
+    closed months reuses one connection instead of opening one per month.
     """
-    snapshot = get_monthly_pnl_snapshot(portfolio_id, year, month)
+    snapshot = get_monthly_pnl_snapshot(portfolio_id, year, month, conn)
     if snapshot is None:
         # First read of this closed month: baseline it at its current value.
-        insert_monthly_pnl_snapshot_if_absent(portfolio_id, year, month, realised_pnl_gbp, trade_count)
+        insert_monthly_pnl_snapshot_if_absent(portfolio_id, year, month, realised_pnl_gbp, trade_count, conn)
         return {
             "snapshotted": True,
             "restated": False,
@@ -396,31 +403,44 @@ def get_monthly_pnl_report() -> dict:
     rows = get_monthly_pnl(portfolio_id)
     today = datetime.now(timezone.utc).date()
     months = []
-    for r in rows:
-        year = int(r["year"])
-        month = int(r["month"])
-        realised_pnl_gbp = round(float(r["realised_pnl_gbp"]), 2)
-        trade_count = int(r["trade_count"])
-        row = {
-            "year": year,
-            "month": month,
-            "realised_pnl_gbp": realised_pnl_gbp,
-            "trade_count": trade_count,
-            # ST-07 (EPIC-02, v9.6, BLG-FR-04): flag closed trades missing a
-            # fee leg -- see get_monthly_pnl()'s docstring. 0 for legacy row
-            # shapes (e.g. cached fixtures/tests) that predate this field.
-            "null_fee_trade_count": int(r.get("null_fee_trade_count", 0) or 0),
-        }
-        if _is_closed_month(year, month, today):
-            row.update(_snapshot_month(portfolio_id, year, month, realised_pnl_gbp, trade_count))
-        else:
-            row.update({
-                "snapshotted": False,
-                "restated": False,
-                "snapshot_realised_pnl_gbp": None,
-                "restated_diff_gbp": None,
-            })
-        months.append(row)
+
+    # ST-12 (EPIC-03, v9.7, BLG-BE-126): _snapshot_month previously opened its own
+    # connection (via get_monthly_pnl_snapshot/insert_monthly_pnl_snapshot_if_absent,
+    # each of which also separately ensured the table) for every closed month in the
+    # response -- N closed months meant N+ new connections in one request. Open at
+    # most one additional connection here (beyond get_monthly_pnl's own call above),
+    # table-ensured once, and reuse it for every closed month.
+    any_closed_month = any(
+        _is_closed_month(int(r["year"]), int(r["month"]), today) for r in rows
+    )
+    with (get_db() if any_closed_month else nullcontext(None)) as snapshot_conn:
+        if snapshot_conn is not None:
+            ensure_monthly_pnl_snapshots_table(snapshot_conn)
+        for r in rows:
+            year = int(r["year"])
+            month = int(r["month"])
+            realised_pnl_gbp = round(float(r["realised_pnl_gbp"]), 2)
+            trade_count = int(r["trade_count"])
+            row = {
+                "year": year,
+                "month": month,
+                "realised_pnl_gbp": realised_pnl_gbp,
+                "trade_count": trade_count,
+                # ST-07 (EPIC-02, v9.6, BLG-FR-04): flag closed trades missing a
+                # fee leg -- see get_monthly_pnl()'s docstring. 0 for legacy row
+                # shapes (e.g. cached fixtures/tests) that predate this field.
+                "null_fee_trade_count": int(r.get("null_fee_trade_count", 0) or 0),
+            }
+            if _is_closed_month(year, month, today):
+                row.update(_snapshot_month(portfolio_id, year, month, realised_pnl_gbp, trade_count, snapshot_conn))
+            else:
+                row.update({
+                    "snapshotted": False,
+                    "restated": False,
+                    "snapshot_realised_pnl_gbp": None,
+                    "restated_diff_gbp": None,
+                })
+            months.append(row)
     return {
         "months": months,
         "estimated_unrealised_pnl": get_estimated_unrealised_pnl(portfolio_id),
