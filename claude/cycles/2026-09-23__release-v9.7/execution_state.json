@@ -697,11 +697,11 @@
           "assigned_to": "human",
           "github_issue": 1789,
           "branch": "exec/2026-09-23__release-v9.7/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "62ac42e03b57e545603ac92921f68e3f5a175a49",
           "delegation_record_id": "DEL-20260924-02 (Unblocked -- see delegation_log.md)",
           "blocked_since_utc": "2026-09-24T08:06:09Z",
           "unblock_criteria": "Real staging DB verification + PO look-back decision -- see DEL-20260924-02",
-          "completed_utc": null,
+          "completed_utc": "2026-09-24T13:53:08Z",
           "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/alerts_endpoints.md"
@@ -711,7 +711,7 @@
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Completed in-session by a human running the staging steps (STAGING only). Found staging on pre-v9.6 code (stale deploy, not a code defect); after operator redeploy both CHECK constraints + uq_notifications_reflection_reminder_trade confirmed; two POST /alerts/evaluate runs created 14 then 0 reflection reminders, duplicate query returned no rows. PO decision: keep 30-day look-back and created_at close timestamp. Evidence: qa_evidence_EPIC-07.md. commit_sha set in follow-up commit."
+          "notes": "Completed in-session by a human running the staging steps (STAGING only). Found staging on pre-v9.6 code (stale deploy, not a code defect); after operator redeploy both CHECK constraints + uq_notifications_reflection_reminder_trade confirmed; two POST /alerts/evaluate runs created 14 then 0 reflection reminders, duplicate query returned no rows. PO decision: keep 30-day look-back and created_at close timestamp. Evidence: qa_evidence_EPIC-07.md. commit_sha = evidence commit."
         },
         "ST-28": {
           "title": "External-dependency failure-mode matrix",
