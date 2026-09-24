@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-24T07:06:37Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-24T15:00:00Z",
+  "last_updated_utc": "2026-09-24T15:09:14Z",
   "epics": {
     "EPIC-01": {
       "status": "blocked",
@@ -680,10 +680,10 @@
       }
     },
     "EPIC-07": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-23__release-v9.7/EPIC-07",
       "pr_number": 1800,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-23__release-v9.7/qa_evidence_EPIC-07.md",
       "test_scenarios": [
@@ -778,12 +778,6 @@
       "story": "ST-01",
       "status": "blocked_decision",
       "escalation": "ESC-EXEC-20260924-01"
-    },
-    {
-      "epic": "EPIC-04",
-      "story": "ST-18",
-      "status": "blocked_backend",
-      "delegation_record": "DEL-20260924-01"
     }
   ],
   "delegated_items": [
@@ -792,12 +786,6 @@
       "story": "ST-01",
       "classification": "delegated_decision",
       "escalation": "ESC-EXEC-20260924-01"
-    },
-    {
-      "epic": "EPIC-04",
-      "story": "ST-18",
-      "classification": "delegated_backend",
-      "delegation_record": "DEL-20260924-01"
     }
   ],
   "completed_items": [
@@ -898,12 +886,12 @@
       "EPIC-03",
       "EPIC-04",
       "EPIC-05",
-      "EPIC-06"
+      "EPIC-06",
+      "EPIC-07"
     ],
     "epics_pending": [
       "EPIC-01",
-      "EPIC-02",
-      "EPIC-07"
+      "EPIC-02"
     ],
     "all_merged": false
   },
@@ -914,6 +902,7 @@
     "[GOVERNANCE][conflict-resolution 2026-09-24] Merged origin/main into exec/2026-09-23__release-v9.7/EPIC-06 per CLAUDE.md §8 (execution_state.json add/add conflict, same root cause as the EPIC-05/PR #1794 conflict resolved moments earlier). EPIC-06 branch's copy was the superset and was taken as base. Applied STEP 4 resume-sync: PR #1793 (EPIC-03) confirmed merged via `gh pr view --json mergedAt` (mergedAt: 2026-09-24T08:30:08Z) but neither branch's copy reflected it — corrected EPIC-03.status/pr_status done/open -> merged/merged and moved EPIC-03 from merge_gate.epics_pending to epics_merged.",
     "[GOVERNANCE][conflict-resolution 2026-09-24] Merged origin/main into exec/2026-09-23__release-v9.7/EPIC-06 per CLAUDE.md §8 (execution_state.json content conflict, same root cause recurring: PR #1794/EPIC-05 merged on GitHub without this engine's STEP 4 post-merge state sync running). EPIC-06 branch's copy was the superset (has EPIC-06 done, absent from main) and was taken as base. Applied STEP 4 resume-sync: PR #1794 confirmed merged via `gh pr view --json mergedAt` (mergedAt: 2026-09-24T08:52:06Z) but neither copy reflected it — corrected EPIC-05.status/pr_status done/open -> merged/merged and moved EPIC-05 from merge_gate.epics_pending to epics_merged.",
     "[GOVERNANCE][conflict-resolution 2026-09-24] Merged origin/main into exec/2026-09-23__release-v9.7/EPIC-04 per CLAUDE.md §8 (execution_state.json add/add conflict). Neither side was a clean superset this time: took the higher-ranked (not_started < blocked < done < merged) side per EPIC (EPIC-03/05 from main [merged], EPIC-04 from branch [own in-progress work], others identical); unioned completed_items/blocked_items/delegated_items by (epic, story) key. Applied STEP 4 resume-sync in the same pass: PR #1795 (EPIC-06) confirmed merged via `gh pr view --json mergedAt` (mergedAt: 2026-09-24T08:54:37Z) but neither copy reflected it — corrected EPIC-06 status/pr_status done/open -> merged/merged and moved EPIC-06 from merge_gate.epics_pending to epics_merged.",
-    "[GOVERNANCE][conflict-resolution 2026-09-24] Merged origin/main into EPIC-07 per CLAUDE.md §8: rank-based per-EPIC merge (EPIC-03/04/05/06 from main, EPIC-07 from branch), arrays unioned by (epic, story). STEP 4 resume-sync: PR #1798 (EPIC-04) confirmed merged (mergedAt 2026-09-24T12:22:56Z) -- corrected EPIC-04 done/open -> merged/merged, moved to merge_gate.epics_merged. ST-27 closed in the same pass (see delegation_log.md DEL-20260924-02)."
+    "[GOVERNANCE][conflict-resolution 2026-09-24] Merged origin/main into EPIC-07 per CLAUDE.md §8: rank-based per-EPIC merge (EPIC-03/04/05/06 from main, EPIC-07 from branch), arrays unioned by (epic, story). STEP 4 resume-sync: PR #1798 (EPIC-04) confirmed merged (mergedAt 2026-09-24T12:22:56Z) -- corrected EPIC-04 done/open -> merged/merged, moved to merge_gate.epics_merged. ST-27 closed in the same pass (see delegation_log.md DEL-20260924-02).",
+    "[STEP 4 resume-sync 2026-09-24, run sprint session] PR #1800 (EPIC-07) confirmed merged via `gh pr view --json mergedAt` (mergedAt 2026-09-24T15:07:46Z) but execution_state.json still recorded pr_status=open / EPIC-07 in epics_pending -- corrected EPIC-07 status/pr_status done/open -> merged/merged and moved it to merge_gate.epics_merged. Also removed the stale EPIC-04/ST-18 entry from top-level blocked_items/delegated_items (story is done, DEL-20260924-01 Unblocked). Orphaned post-merge commit check (LL-v6.8-P3-01) run for EPIC-03/04/05/06/07 (`git log origin/main..origin/exec/<cycle>/<epic>`): 0 orphaned commits on any branch -- no reconciliation needed."
   ]
 }
