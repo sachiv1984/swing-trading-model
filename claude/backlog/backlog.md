@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-24 (session — 1 new item added: BLG-SPEC-166, surfaced during agent-mediated PR review of PR #1795); prior — 2026-09-23 (release planning 2026-09-23__release-v9.7 — Release Slice v9.7 ephemeral section appended, 29 items, marker `RP:v9.7:2026-09-23__release-v9.7`; no other structural changes); prior — 2026-09-23 (groom backlog, post-ship closure 2026-09-21__release-v9.6 — 36 items archived (32 v9.6-shipped + BLG-GOV-335/336/337/326, already resolved but never archived); 3 ephemeral sections cleared — 2 Idea Intake staging sections (IW-20260914-01, IW-20260919-01), 65 open items relocated verbatim to §3; 1 Release Slice v9.6 table; see `backlog_health_20260923.md`); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-24 (session — 2 new items added: BLG-SPEC-167, BLG-OPS-169, surfaced during ST-27/EPIC-07 staging verification); prior — 2026-09-24 (session — 1 new item added: BLG-SPEC-166, surfaced during agent-mediated PR review of PR #1795); prior — 2026-09-23 (release planning 2026-09-23__release-v9.7 — Release Slice v9.7 ephemeral section appended, 29 items, marker `RP:v9.7:2026-09-23__release-v9.7`; no other structural changes); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4549,6 +4549,50 @@ ST-23 (EPIC-06, `2026-09-23__release-v9.7`) shipped the canonical "linked trade 
 **Acceptance Criteria**
 - `current_roadmap.md`'s SI-02 field cross-references the canonical "linked trade plan" definition
 - ST-23's originally-scoped acceptance criteria are fully met
+
+---
+
+### BLG-SPEC-167 — data_model.md DS-19 "Verification status" still says the migration was never run against a live PostgreSQL
+**Priority:** P4 (Backlog)
+**Type:** Spec Debt
+**Owner:** Data Model & Domain Schema Owner; Head of Specs Team
+**Source:** ST-27/EPIC-07, cycle 2026-09-23__release-v9.7 — DEL-20260924-02 staging verification — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/data_model.md` DS-19's "Verification status" paragraph states the DDL and SQL are covered only by mocked-cursor tests and "have **not** been executed against a live PostgreSQL". That is no longer true: on 2026-09-24 a human operator confirmed on STAGING that both `alert_type` CHECK constraints include `reflection_reminder` and `uq_notifications_reflection_reminder_trade` exists with the DS-19 definition, and that two `POST /alerts/evaluate` runs created 14 then 0 reflection reminders with no duplicate rows. Sprint Execution may not edit canonical specs beyond deviation documentation, so the stale text was left in place rather than corrected in ST-27.
+
+**Scope**
+- Replace DS-19's "Verification status" paragraph with a live-confirmation note (dated, staging only) following the precedent of DS-17's "Live Confirmation" section
+- Cite `qa_evidence_EPIC-07.md` (cycle `2026-09-23__release-v9.7`) as the evidence source; record that this is staging, not production
+- Follow the Governance File Edit Checklist / version-sync rules for `data_model.md` (header, footer, changelog)
+
+**Acceptance Criteria**
+- DS-19 no longer claims the migration has never run against a live database, and states what was confirmed, where (staging) and when
+- `data_model.md` header/footer versions stay in sync
+
+---
+
+### BLG-OPS-169 — No check that the staging backend actually redeployed after a merge that changes startup-applied schema (DS-19 sat unapplied on staging)
+**Priority:** P3 (Low)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-27/EPIC-07, cycle 2026-09-23__release-v9.7 — DEL-20260924-02 staging verification found staging still on pre-v9.6 code — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Schema changes in this application are applied by `ensure_*()` functions when the backend boots, not by a separate migration step. Staging was found on 2026-09-24 still running pre-v9.6 code: both `alert_type` CHECK constraints lacked `reflection_reminder` until the operator redeployed. Nothing in the delivery flow noticed, so a merged, "shipped" schema change silently did not exist on staging for an extended period, and the only thing that surfaced it was a manual verification story. Because the deploy path filters and hooks are configured partly outside the repo (see `docs/ops/render_build_deploy_path_filter_audit.md`), a repo-only review could not have caught it.
+
+**Scope**
+- Establish a post-merge check that the staging service is running the merged commit, and surface a visible failure when they differ. The backend currently exposes no deployed-version/commit indicator, so this likely needs one added (for example a build-commit field on an existing health/status endpoint, with the usual contract, `openapi.yaml` and `backend/routers/test.py` obligations) or an alternative such as confirming the Render deploy hook fired
+- Decide where it runs (existing `staging-smoke-test.yml`, a post-merge workflow, or a cycle-close verification step) and document it in `docs/ops/staging_deploy_notes.md`
+- State how it treats schema-bearing changes specifically, since those have no other application-level signal
+
+**Acceptance Criteria**
+- A merge to `main` that should have redeployed staging but did not produces a visible failure or alert
+- The check and its trigger are documented, including the known limits of what can be verified from the repo alone
 
 ---
 
