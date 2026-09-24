@@ -407,7 +407,7 @@ Click again to collapse.
 - **Description:** §Section 2's empty-state heading is specified as **"No alert rules configured."** and §Alert History's as **"No alert history yet."**, each with a trailing period. `AlertThresholdsSection.js` and `NotificationsHistory.js` originally shipped with those periods, in violation of the canonical empty-state microcopy pattern (`design_system.md` §Data States, v1.8: no trailing period). ST-05/ST-06 (v9.7, BLG-FE-178/BLG-FE-179) corrected the shipped headings to **"No alert rules configured"** and **"No alert history yet"**, so this spec's wording is now stale relative to both the shipped code and the design system. The v9.5 ST-30 sweep did not correct these two headings because the code then still carried the period.
 - **Canonical requirement:** the two headings as worded in §Section 2 and §Alert History above. Intent check: the design system's pattern is the canonical rule and the spec wording predates it — the deviation is spec-text staleness, not a disagreement about intent.
 - **Priority:** P4 (wording-only, no behaviour or figure affected)
-- **Target resolution release:** TBD — not yet scheduled
+- **Target resolution release:** Backlog — reviewed at each `groom backlog` pass and the quarterly audit (no release scheduled; P4)
 - **Owner:** Frontend Specifications & UX Documentation Owner
 - **Backlog reference:** BLG-SPEC-169 (filed sprint execution 2026-09-24, cycle 2026-09-23__release-v9.7, ST-05/ST-06) — also covers `docs/testing/alert_thresholds_empty_state_scenarios.md` line 36.
 

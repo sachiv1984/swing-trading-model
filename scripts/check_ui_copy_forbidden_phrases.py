@@ -22,6 +22,10 @@ What is scanned
   except ~0.1%, all benign: JSX text that contains an HTML entity (`&amp;`) and JSX text
   split by a quote character, whose fragments are scanned separately (so a forbidden phrase
   that itself straddles a quote inside JSX text would not be seen).
+  Known limits: a phrase split across concatenated literals (`'you ' + 'should'`) is not
+  joined; only .js/.jsx are scanned (src/ has no .ts/.tsx today); every string literal is
+  treated as copy, including import paths and object keys, so a lexical match there needs an
+  allow-list entry; code such as `a > forecast && b < 3` can read as JSX text.
 
 Allow-list (scripts/ui_copy_lint_allowlist.json)
   A reviewed, legitimate use of a listed phrase (for example, copy that *negates* the
@@ -68,7 +72,17 @@ _REGEX_PRECEDING_KEYWORDS = ("return", "typeof", "case", "do", "else", "in", "of
 
 
 def _normalise(text):
-    return " ".join(text.split())
+    """Fold every run of whitespace (newlines from wrapped JSX text / multi-line templates,
+    tabs, double spaces, non-breaking spaces and the literal `&nbsp;` entity) to one space,
+    so a phrase cannot evade the single-space patterns by how the source was wrapped."""
+    return " ".join(text.replace("&nbsp;", " ").split())
+
+
+def _unescape(ch):
+    """The character an escape `\\<ch>` stands for, as far as phrase matching cares: the
+    whitespace escapes become a space (so 'you\\tshould' is seen as 'you should'); any other
+    escaped character stands for itself."""
+    return " " if ch in "ntr" else ch
 
 
 def _is_string_opener(source, i):
@@ -135,7 +149,7 @@ def extract_literals(source):
         while i < n:
             c = source[i]
             if c == "\\" and i + 1 < n:
-                buf.append(source[i + 1])
+                buf.append(_unescape(source[i + 1]))
                 if source[i + 1] == "\n":
                     line += 1
                 blank(c), blank(source[i + 1])
@@ -174,7 +188,7 @@ def extract_literals(source):
             continue
 
         # comments
-        if ch == "/" and nxt == "/":
+        if ch == "/" and nxt == "/" and last_sig != ":":  # `https://` in JSX text is not a comment
             while i < n and source[i] != "\n":
                 blank(source[i])
                 i += 1
@@ -205,7 +219,7 @@ def extract_literals(source):
             i += 1
             while i < n and source[i] != quote and source[i] != "\n":
                 if source[i] == "\\" and i + 1 < n:
-                    buf.append(source[i + 1])
+                    buf.append(_unescape(source[i + 1]))
                     blank(source[i]), blank(source[i + 1])
                     i += 2
                     continue
@@ -289,9 +303,10 @@ def scan_text(source):
     """Return [(line, matched_phrase, literal_text)] for every forbidden phrase found."""
     hits = []
     for line, text in extract_literals(source):
-        m = _PHRASE_RE.search(text)
+        normalised = _normalise(text)
+        m = _PHRASE_RE.search(normalised)
         if m:
-            hits.append((line, m.group(0), _normalise(text)))
+            hits.append((line, m.group(0), normalised))
     return hits
 
 

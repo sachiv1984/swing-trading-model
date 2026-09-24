@@ -212,11 +212,11 @@ test('SC-TPC-07: Clone keeps the source Setup Type when the ticker also has a wa
   await page.goto(`/#/TradePlan?clone_from=${SRC_ID}`);
   await expect(page.getByTestId('clone-banner')).toBeVisible({ timeout: 10000 });
   await expect(page.getByPlaceholder(/e\.g\. AAPL/i)).toHaveValue('NVDA');
-  // Wait until the auto-fill has demonstrably run: it fills the empty Entry Rationale-derived
-  // signal context panel for the linked ticker. Then assert the copied value was not overwritten.
-  await expect(page.getByTestId('setup-type-select')).toHaveValue('Breakout');
-  // Guard against a late overwrite (the auto-fill effect fires after the watchlist read resolves).
-  await page.waitForTimeout(1000);
+  // The watchlisted-signal auto-fill has demonstrably run once it fills Entry Rationale — the clone
+  // does not copy that field, so a non-empty value can only come from the auto-fill. Waiting on it
+  // (rather than a fixed delay) means the Setup Type assertion below is made AFTER the point where
+  // the pre-fix code would have overwritten it to "Momentum Continuation".
+  await expect(page.getByPlaceholder(/why enter now/i)).not.toHaveValue('', { timeout: 10000 });
   await expect(page.getByTestId('setup-type-select')).toHaveValue('Breakout');
 });
 

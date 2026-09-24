@@ -85,6 +85,31 @@ def test_phrase_inside_a_template_literal_expression_is_detected():
     assert "we recommend" in _phrases("const a = `x ${y ? `n ${z ? 'we recommend' : ''}` : ''}`;")
 
 
+@pytest.mark.parametrize("source", [
+    "<p>\n  You\n  should reduce\n</p>",           # Prettier-wrapped JSX text
+    "<p>We\n   recommend this</p>",
+    "const a = `you\nshould`;",                      # multi-line template literal
+    "const a = 'you  should';",                       # double space
+    "const a = 'you\\tshould';",                     # tab escape
+    "const a = <p>Buy&nbsp;now</p>;",                 # literal &nbsp; entity
+    "const a = <p>Buy\u00a0now</p>;",                 # non-breaking space character
+])
+def test_phrase_is_detected_however_its_whitespace_is_wrapped(source):
+    """A compliance gate must not be evadable by line-wrapping or irregular whitespace."""
+    assert lint.scan_text(source), source
+
+
+def test_url_in_jsx_text_is_not_mistaken_for_a_line_comment():
+    assert "you should" in _phrases("const a = <p>See https://example.com, then you should sell</p>;")
+    # ...but a real line comment right after code is still ignored.
+    assert lint.scan_text('const a = "ok"; // you should never be flagged\n') == []
+
+
+def test_reported_literal_text_is_whitespace_normalised():
+    (_, _, literal), = lint.scan_text("const a = `you\n   should sell`;")
+    assert literal == "you should sell"
+
+
 def test_benign_copy_is_not_flagged():
     src = """
     const a = "Realised P&L is net of recorded fees.";
