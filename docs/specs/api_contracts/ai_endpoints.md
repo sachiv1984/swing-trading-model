@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.13
-**Last Updated:** 2026-09-16 (ST-13, BLG-OPS-161, v9.5 — POST /ai/check-endpoint-anomalies latency now real-data (claude_audit_log.latency_ms), not simulated-only); prior — 2026-09-16 (ST-06, BLG-OPS-153, v9.5 — added GET /ai/spend-trend-by-feature); prior — 2026-09-15 (ST-23, BLG-AI-06, v9.4 — documented the generation-time AI output boundary-language sampling hook, not a new endpoint); prior history retained — see prior entries in version control
+**Version:** 1.14
+**Last Updated:** 2026-09-24 (ST-13, EPIC-03, v9.7, BLG-BE-128 — documented and confirmed as intentional that latency_ms includes retry backoff sleep time, not just the final attempt's duration; no code change); prior — 2026-09-16 (ST-13, BLG-OPS-161, v9.5 — POST /ai/check-endpoint-anomalies latency now real-data); prior — 2026-09-16 (ST-06, BLG-OPS-153, v9.5 — added GET /ai/spend-trend-by-feature); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -416,6 +416,7 @@ No request body required.
 
 - Cost data source: `database.get_claude_endpoint_cost_windows()` — real `claude_audit_log` data, recent 24h vs trailing 7-day baseline, per endpoint. Below `MIN_COST_BASELINE_USD` the ratio is suppressed as noise (see `services/ai_endpoint_anomaly_service.py`).
 - Latency data source: `database.get_claude_endpoint_latency_windows()` — real `claude_audit_log.latency_ms` data (ST-13, BLG-OPS-161, v9.5), recent 24h p95 vs trailing 7-day baseline p95, per endpoint. Below `MIN_LATENCY_BASELINE_MS` the ratio is suppressed as noise, same as cost. `latency_ms` is populated by every `create_claude_audit_entry()` call site going forward; historical rows predating this column remain NULL and are excluded from both windows rather than counted as 0ms.
+- **`latency_ms` composition decision (ST-13, EPIC-03, v9.7, BLG-BE-128 — reviewed, kept as-is):** at each of the three call sites (`ai_service.py`'s `_create_message`, `gemini_service.py`, `debrief_service.py`), `latency_ms` is measured as the full wall-clock duration of the retried call, from before the first attempt to after the final attempt — including any backoff sleep time between retries (`utils/upstream_call.py`'s `bounded_upstream_call`). This is intentional, not split into a final-attempt-only figure: for this endpoint's anomaly-detection purpose (a p95-vs-baseline ratio meant to catch a degraded/slow upstream), the combined figure is the more useful signal — a spike in retry-driven backoff time is itself a symptom of upstream degradation the anomaly check should catch, not noise to filter out. Splitting it into two figures was considered and rejected as added complexity with no clear consumer for the final-attempt-only variant.
 - On any firing anomaly, sends one Telegram message summarising all firing entries (not one message per entry).
 - If Telegram delivery fails (network error) or credentials are absent, `alert_sent: false`; endpoint still returns 200.
 - No write operations: `claude_audit_log` is read-only for this endpoint.
@@ -825,6 +826,7 @@ None at v1.10.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.14 | 2026-09-24 | ST-13 (EPIC-03, v9.7, BLG-BE-128): Reviewed whether `latency_ms` (recorded around retried Anthropic calls in `ai_service.py`, `gemini_service.py`, `debrief_service.py`) should exclude retry backoff sleep time. Disposition: **won't fix, documented as intentional** — the combined figure (full retried-call duration, including backoff) is the more useful signal for this endpoint's anomaly-detection purpose, since retry-driven backoff growth is itself a symptom of upstream degradation. No code change; no `openapi.yaml` change. |
 | 1.13 | 2026-09-16 | ST-13 (EPIC-02, v9.5, BLG-OPS-161): `POST /ai/check-endpoint-anomalies` latency is now real-data — `claude_audit_log` gained a `latency_ms` column (populated by every `create_claude_audit_entry()` call site going forward), `latency_data_source` now reports `"claude_audit_log"` instead of `"not_available_pending_BLG-OPS-161"`. No `openapi.yaml` schema change (response shape unchanged, only field-value semantics). Infrastructure & Operations Owner sign-off. |
 | 1.12 | 2026-09-16 | ST-06 (EPIC-02, v9.5, BLG-OPS-153): Added `GET /ai/spend-trend-by-feature` (per-feature, per-cycle spend breakdown — sub-item 2 of 3; the other 2 land in `docs/ops/ai_audit_log_retention_policy.md`). `openapi.yaml` and `backend/routers/test.py` updated in the same commit. FinOps & Resource Architect sign-off. |
 | 1.11 | 2026-09-15 | ST-23 (EPIC-05, v9.4, BLG-AI-06): Documented the generation-time AI output boundary-language sampling hook (`ai_output_sampling_service.py`, opt-in via `AI_OUTPUT_SAMPLING_ENABLED`, rate-bounded via `AI_OUTPUT_SAMPLING_RATE`) — new `ai_output_boundary_samples` table, wired into all 6 real AI-generation call sites, consumed by `scripts/run_ai_output_boundary_sample_audit.py`. Not a new endpoint; no `openapi.yaml` change. Genuine live sample (AC 4) and `ESC-EXEC-20260910-01` closure (AC 6) remain staging-only — no production credentials in this session. |

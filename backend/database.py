@@ -321,6 +321,15 @@ def get_monthly_pnl(portfolio_id: str) -> List[Dict]:
     unrecorded cost rather than a genuinely-known zero -- see
     metrics_definitions.md §Realized / Unrealized P&L Split, "Fee-Netting
     Basis". Audit-only: this story does not change any stored pnl figure.
+
+    Clock source (ST-11, EPIC-03, v9.7, BLG-BE-125): the 1-year window bound
+    derives "today" via `(NOW() AT TIME ZONE 'UTC')::date`, deliberately not
+    the session-timezone-dependent date keyword this used before -- that
+    keyword resolves against the Postgres session's configured timezone,
+    which need not be UTC, while reports_service._is_closed_month derives
+    "today" from Python's `datetime.now(timezone.utc).date()`. Using the same
+    explicit UTC clock source here keeps the two in agreement regardless of
+    the session/server timezone setting.
     """
     with get_db() as conn:
         with conn.cursor() as cur:
@@ -333,7 +342,7 @@ def get_monthly_pnl(portfolio_id: str) -> List[Dict]:
                    COUNT(*) FILTER (WHERE entry_fees IS NULL OR exit_fees IS NULL)::int AS null_fee_trade_count
                    FROM trade_history
                    WHERE portfolio_id = %s
-                   AND exit_date >= date_trunc('year', CURRENT_DATE - INTERVAL '1 year')
+                   AND exit_date >= date_trunc('year', (NOW() AT TIME ZONE 'UTC')::date - INTERVAL '1 year')
                    GROUP BY year, month
                    ORDER BY year DESC, month DESC""",
                 (portfolio_id,)
@@ -367,14 +376,19 @@ def get_daily_pnl(portfolio_id: str, year: int, month: int) -> List[Dict]:
             return cur.fetchall()
 
 
-def ensure_monthly_pnl_snapshots_table() -> None:
+def ensure_monthly_pnl_snapshots_table(conn=None) -> None:
     """Create monthly_pnl_snapshots table if it does not exist (idempotent).
 
     One row per closed calendar month per portfolio; never updated once
     inserted (ST-08, EPIC-02, v9.6, BLG-FR-05).
     Spec: docs/specs/data_model.md#DS-20
+
+    Connection reuse (ST-12, EPIC-03, v9.7, BLG-BE-126): pass an existing
+    `conn` (e.g. from get_db()) to run this on it instead of opening a new
+    connection; the caller is then responsible for committing. With no
+    `conn`, behaves as before (opens and commits its own connection).
     """
-    with get_db() as conn:
+    if conn is not None:
         with conn.cursor() as cur:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS monthly_pnl_snapshots (
@@ -388,15 +402,24 @@ def ensure_monthly_pnl_snapshots_table() -> None:
                     UNIQUE (portfolio_id, year, month)
                 )
             """)
+        return
+    with get_db() as conn:
+        ensure_monthly_pnl_snapshots_table(conn)
         conn.commit()
 
 
-def get_monthly_pnl_snapshot(portfolio_id: str, year: int, month: int) -> Optional[Dict]:
+def get_monthly_pnl_snapshot(portfolio_id: str, year: int, month: int, conn=None) -> Optional[Dict]:
     """Return the stored baseline for one (portfolio, year, month), or None
     if that month has not been baselined yet.
+
+    Connection reuse (ST-12, EPIC-03, v9.7, BLG-BE-126): pass an existing
+    `conn` to run this on it (and skip the table-ensure, which the caller
+    must already have run once on that same connection) instead of opening
+    a new connection per call -- callers evaluating multiple closed months
+    in one request (e.g. get_monthly_pnl_report) would otherwise open one
+    connection per month via this function alone.
     """
-    ensure_monthly_pnl_snapshots_table()
-    with get_db() as conn:
+    if conn is not None:
         with conn.cursor() as cur:
             cur.execute(
                 """SELECT year, month, realised_pnl_gbp::float AS realised_pnl_gbp,
@@ -406,10 +429,13 @@ def get_monthly_pnl_snapshot(portfolio_id: str, year: int, month: int) -> Option
                 (portfolio_id, year, month)
             )
             return cur.fetchone()
+    ensure_monthly_pnl_snapshots_table()
+    with get_db() as conn:
+        return get_monthly_pnl_snapshot(portfolio_id, year, month, conn)
 
 
 def insert_monthly_pnl_snapshot_if_absent(
-    portfolio_id: str, year: int, month: int, realised_pnl_gbp: float, trade_count: int
+    portfolio_id: str, year: int, month: int, realised_pnl_gbp: float, trade_count: int, conn=None
 ) -> None:
     """Baseline a closed month exactly once (insert-only, never update).
 
@@ -417,9 +443,12 @@ def insert_monthly_pnl_snapshot_if_absent(
     second call after the underlying figures have since drifted must NOT
     overwrite the original baseline -- that baseline is the very thing a
     restatement diff is measured against (data_model.md DS-20).
+
+    Connection reuse (ST-12, EPIC-03, v9.7, BLG-BE-126): see
+    get_monthly_pnl_snapshot's docstring -- same pattern, same rationale.
+    With a shared `conn` the caller is responsible for committing.
     """
-    ensure_monthly_pnl_snapshots_table()
-    with get_db() as conn:
+    if conn is not None:
         with conn.cursor() as cur:
             cur.execute(
                 """INSERT INTO monthly_pnl_snapshots
@@ -428,6 +457,10 @@ def insert_monthly_pnl_snapshot_if_absent(
                    ON CONFLICT (portfolio_id, year, month) DO NOTHING""",
                 (portfolio_id, year, month, realised_pnl_gbp, trade_count)
             )
+        return
+    ensure_monthly_pnl_snapshots_table()
+    with get_db() as conn:
+        insert_monthly_pnl_snapshot_if_absent(portfolio_id, year, month, realised_pnl_gbp, trade_count, conn)
         conn.commit()
 
 

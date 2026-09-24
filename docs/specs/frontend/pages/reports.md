@@ -4,7 +4,7 @@
 **Class:** Supporting Document (Class 2)
 **Status:** Active
 **Version:** 0.19
-**Last Updated:** 2026-09-23 — v9.7 design gate: Monthly P&L fees-not-recorded and restatement-diff field names corrected to match the live API/contract (ST-03/BLG-FE-187, ST-04/BLG-FE-188); prior — 2026-09-21 (v9.6 design gate: Monthly P&L fees-not-recorded notice/indicator/basis caption (ST-07/BLG-FR-04) and month-end restatement marker/diff + Tax Year restated-months notice (ST-08/BLG-FR-05)); prior — 2026-09-14 (v9.4 design gate: Carried Forward Loss row added to the Tax Year Summary Bar (Design Only — Implementation Pending), ST-17/BLG-FR-03); prior history retained — see prior entries in version control
+**Last Updated:** 2026-09-24 — ST-04, EPIC-02, v9.7 sprint execution: added Known Deviation DEV-v9.7-ST04-01 (detail row's `{snapshot_date}` and the "check unavailable" trigger are not backed by the live API); deviation documentation only, no spec wording changed; prior — 2026-09-23 (v9.7 design gate: Monthly P&L fees-not-recorded and restatement-diff field names corrected to match the live API/contract (ST-03/BLG-FE-187, ST-04/BLG-FE-188)); prior — 2026-09-21 (v9.6 design gate: Monthly P&L fees-not-recorded notice/indicator/basis caption (ST-07/BLG-FR-04) and month-end restatement marker/diff + Tax Year restated-months notice (ST-08/BLG-FR-05)); prior history retained — see prior entries in version control
 **Design Source (v0.19 fees-not-recorded field-name correction):** docs/design/2026-09-23__release-v9.7/monthly-pnl-fees-surfacing/decision_record.md
 **Design Source (v0.19 restatement field-name correction):** docs/design/2026-09-23__release-v9.7/monthly-pnl-restatement-surfacing/decision_record.md
 **Design Source (v0.18 fees-not-recorded visibility):** docs/design/2026-09-21__release-v9.6/monthly-pnl-fees-not-recorded/decision_record.md
@@ -470,6 +470,15 @@ A new **"Reconciliation"** tab (4th tab in the page's tab navigation, alongside 
 - **Priority:** P3 (colour-only, no figure is wrong or missing; exact-zero months/trades are visually rare and the underlying number is always correct regardless of colour)
 - **Owner:** Frontend Specifications & UX Documentation Owner
 - **Backlog reference:** BLG-FE-144 (filed sprint execution 2026-08-07, cycle 2026-08-07__release-v8.4, ST-01; resolved 2026-08-08, cycle 2026-08-08__release-v8.5, ST-08).
+
+### DEV-v9.7-ST04-01 — Restatement detail row specifies a snapshot date and an unavailable-state trigger the live API does not provide
+
+- **Description:** §Monthly Restatement Marker specifies that the detail row's "As reviewed" value is labelled with `{snapshot_date}`, but `GET /reports/monthly-pnl` (`reports_endpoints.md` v0.13) returns no snapshot date — only `snapshotted`, `restated`, `snapshot_realised_pnl_gbp` and `restated_diff_gbp` — so ST-04's implementation (BLG-FE-188) shows "As reviewed" without a date. The same section's Failure line ("if snapshot data cannot be loaded ... `Restatement check unavailable.`") names no API signal for that condition; the endpoint has no partial-failure field, so the implementation shows the line when no row in the response carries the snapshot fields at all (a response that cannot answer the restatement question), which is an implementation choice this spec did not make.
+- **Canonical requirement:** the dated "As reviewed" label and the unspecified failure trigger, as written in §Monthly Restatement Marker. Intent check: the v0.19 design record (`monthly-pnl-restatement-surfacing/decision_record.md` §2.1–2.2) corrected the data contract to the flat fields but did not carry the date through; a dated label cannot be built without a backend field, so this is a genuine spec/API gap rather than a wording difference.
+- **Priority:** P4 (informational label only; every P&L figure and the restatement diff itself are correct and shown)
+- **Target resolution release:** Backlog — reviewed at each `groom backlog` pass and the quarterly audit (no release scheduled; P4)
+- **Owner:** Frontend Specifications & UX Documentation Owner (with API Contracts & Documentation Owner if the API side moves)
+- **Backlog reference:** BLG-SPEC-170 (filed sprint execution 2026-09-24, cycle 2026-09-23__release-v9.7, ST-04) — candidate directions: drop `{snapshot_date}` from the spec, or add `snapshot_date` (the `monthly_pnl_snapshots.snapshotted_at` column already exists) to the response and contract; define the failure signal either way. Not decided here.
 
 ---
 

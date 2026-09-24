@@ -7,39 +7,55 @@ All calculations isolated for testability and reusability.
 
 from typing import Dict, Tuple, Optional
 from datetime import datetime
+from decimal import Decimal, ROUND_HALF_UP
 
 
 # ============================================================================
 # FEE CALCULATIONS
 # ============================================================================
 
+def _round_half_up(value: float, dp: int = 2) -> float:
+    """
+    Round a monetary value to `dp` decimal places using Decimal/ROUND_HALF_UP
+    (the standard UK/US retail-brokerage rounding convention), rather than
+    Python's float round() (banker's rounding, plus binary-float
+    representation error at exact half-penny boundaries).
+
+    BLG-BE-127 (ST-08, EPIC-03, v9.7): float round() under-charged ~0.18%
+    of UK stamp duty and ~0.02% of US FX fee values at half-penny
+    boundaries — see docs/ops/money_arithmetic_audit_2026-09-22.md §3.
+    """
+    quantum = Decimal("1").scaleb(-dp)
+    return float(Decimal(str(value)).quantize(quantum, rounding=ROUND_HALF_UP))
+
+
 def calculate_uk_entry_fees(gross_cost: float, settings: Dict) -> Dict[str, float]:
     """
     Calculate UK position entry fees
-    
+
     Args:
         gross_cost: Gross cost in GBP (shares × price)
         settings: Settings dict with uk_commission and stamp_duty_rate
-    
+
     Returns:
         Dictionary with:
             - commission: Fixed commission (£9.95)
             - stamp_duty: 0.5% of gross cost
             - total: Total fees
-    
+
     Example:
         >>> calculate_uk_entry_fees(1000, {'uk_commission': 9.95, 'stamp_duty_rate': 0.005})
         {'commission': 9.95, 'stamp_duty': 5.0, 'total': 14.95}
     """
     commission = float(settings.get('uk_commission', 9.95))
     stamp_duty_rate = float(settings.get('stamp_duty_rate', 0.005))
-    stamp_duty = gross_cost * stamp_duty_rate
-    
+    stamp_duty = _round_half_up(gross_cost * stamp_duty_rate)
+
     return {
         'commission': commission,
         'stamp_duty': stamp_duty,
         'fx_fee': 0,
-        'total': commission + stamp_duty
+        'total': _round_half_up(commission + stamp_duty)
     }
 
 
@@ -64,13 +80,13 @@ def calculate_us_entry_fees(gross_cost_usd: float, settings: Dict) -> Dict[str, 
     """
     commission = float(settings.get('us_commission', 0.00))
     fx_fee_rate = float(settings.get('fx_fee_rate', 0.0015))
-    fx_fee = gross_cost_usd * fx_fee_rate
-    
+    fx_fee = _round_half_up(gross_cost_usd * fx_fee_rate)
+
     return {
         'commission': commission,
         'stamp_duty': 0,
         'fx_fee': fx_fee,
-        'total': commission + fx_fee
+        'total': _round_half_up(commission + fx_fee)
     }
 
 
@@ -92,12 +108,12 @@ def calculate_uk_exit_fees(gross_proceeds: float, settings: Dict) -> Dict[str, f
         No stamp duty on sales, only on purchases
     """
     commission = float(settings.get('uk_commission', 9.95))
-    
+
     return {
         'commission': commission,
         'stamp_duty': 0,
         'fx_fee': 0,
-        'total': commission
+        'total': _round_half_up(commission)
     }
 
 
@@ -118,13 +134,13 @@ def calculate_us_exit_fees(gross_proceeds_usd: float, settings: Dict) -> Dict[st
     """
     commission = float(settings.get('us_commission', 0.00))
     fx_fee_rate = float(settings.get('fx_fee_rate', 0.0015))
-    fx_fee = gross_proceeds_usd * fx_fee_rate
-    
+    fx_fee = _round_half_up(gross_proceeds_usd * fx_fee_rate)
+
     return {
         'commission': commission,
         'stamp_duty': 0,
         'fx_fee': fx_fee,
-        'total': commission + fx_fee
+        'total': _round_half_up(commission + fx_fee)
     }
 
 

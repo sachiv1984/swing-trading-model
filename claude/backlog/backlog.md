@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-23 (release planning 2026-09-23__release-v9.7 — Release Slice v9.7 ephemeral section appended, 29 items, marker `RP:v9.7:2026-09-23__release-v9.7`; no other structural changes); prior — 2026-09-23 (groom backlog, post-ship closure 2026-09-21__release-v9.6 — 36 items archived (32 v9.6-shipped + BLG-GOV-335/336/337/326, already resolved but never archived); 3 ephemeral sections cleared — 2 Idea Intake staging sections (IW-20260914-01, IW-20260919-01), 65 open items relocated verbatim to §3; 1 Release Slice v9.6 table; see `backlog_health_20260923.md`); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — 32 shipped ST items marked ✅ COMPLETE; 0 Phase 4 additions needed, 0 test scenario gaps, 0 stale parked items); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-24 (session — 2 new items added: BLG-QA-195, BLG-FE-190, surfaced during agent-mediated review of PR #1802/EPIC-02); prior — 2026-09-24 (session — 1 new item added: BLG-QA-194, surfaced during agent-mediated DoQ review of ST-07/EPIC-02); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-169, BLG-SPEC-170, surfaced during ST-04/ST-05/ST-06 execution, EPIC-02, cycle 2026-09-23__release-v9.7); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4093,6 +4093,48 @@ The Screener results table renders an "Earnings" column (`lg`-visible, days unti
 
 ---
 
+### BLG-SPEC-164 — Drop 4 confirmed-orphaned, always-NULL columns from the live positions table
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-25/EPIC-06, 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model.md`'s Positions Table section (v2.41) documents 4 live `positions` columns — `atr_value`, `stop_price`, `fees`, `pnl_percent` — as confirmed orphaned (always NULL on every row, no read or write path anywhere in `backend/` references them; their documented same-purpose counterparts `atr`/`current_stop`/`fees_paid`/`pnl_pct` are the ones actually used) and recommends a drop. The documentation-only disposition was completed; the actual `DROP COLUMN` migration was not applied — that is a live production schema change requiring the Data Model & Domain Schema Owner's own migration process, not a documentation story.
+
+**Scope**
+- Apply a migration dropping `atr_value`, `stop_price`, `fees`, `pnl_percent` from the live `positions` table
+- Update `data_model.md`'s Migration History section with the down/drop migration record, and remove the now-resolved orphaned-column disclosure note once dropped
+
+**Acceptance Criteria**
+- All 4 columns no longer exist on the live `positions` table
+- `data_model.md` reflects the drop in its Migration History
+
+---
+
+### BLG-SPEC-165 — Reconcile positions.fees_paid NOT NULL constraint (re-apply live, or confirm nullable is intentional)
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-26/EPIC-06, 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model.md` (v2.42) documented `fees_paid` as `NOT NULL as of v1.6`, citing the "Migration from v1.5 to v1.6" record (`ALTER TABLE positions ALTER COLUMN fees_paid SET NOT NULL`). A live schema query (readonly staging) confirmed the column is nullable today — the constraint was either later dropped (not documented anywhere in this file's migration history) or never durably applied in the environment queried. The documentation was reconciled to nullable (matching live reality) as the safe, non-destructive disposition; this item tracks the actual reconciliation decision.
+
+**Scope**
+- Determine why the v1.6 `NOT NULL` constraint is not present live (dropped, rolled back, or never applied) — check migration run history if available
+- Decide: re-apply the `NOT NULL` constraint live (if no existing row has a NULL `fees_paid`, and the original v1.6 intent should be re-enforced), or confirm nullable is now the intentional, permanent state and document why
+
+**Acceptance Criteria**
+- Disposition recorded (constraint re-applied, or nullable confirmed intentional with a stated reason)
+- `data_model.md` and the live schema agree, one way or the other, with the reasoning documented (not just the fact)
+
+---
+
 ### BLG-FE-184 — Migrate the remaining toFixed / toLocaleString call sites to the shared formatting helper
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
@@ -4244,6 +4286,26 @@ ST-21 fixed `test_trade_plan_audit_log.py`'s permanent, unrestored `sys.modules.
 **Acceptance Criteria**
 - Both scripts' I/O-boundary functions have unit tests using mocked external calls (no live network/`gh` CLI dependency)
 - A deliberate regression in the pagination loop (e.g. an off-by-one in the page-continuation condition) is confirmed to fail the new tests
+
+---
+
+### BLG-QA-192 — test_null_fee_trade_audit.py's inspect.getsource() call fails against the database module stub
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-11/EPIC-03, 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_null_fee_trade_audit.py::test_get_monthly_pnl_sql_filters_on_either_fee_leg_null` does `from database import get_monthly_pnl` then `inspect.getsource(get_monthly_pnl)`. `tests/conftest.py` replaces `sys.modules["database"]` with a session-scoped `MagicMock` stub (BLG-QA-20/retired BLG-QA-73), so this import binds to the stub, not the real function, and `inspect.getsource()` on a `MagicMock` raises `TypeError`. Confirmed failing on `main` before this story's changes (reproduced in isolation, unrelated to ST-11's own fix) — found while writing `tests/test_month_closure_clock_source.py`'s sibling SQL-inspection test for `get_monthly_pnl`, which uses the correct pattern instead.
+
+**Scope**
+- Convert the test to use the private, isolated `backend/database.py` import pattern already used by `tests/test_reflection_reminder.py` / `tests/test_monthly_pnl_snapshot.py` / `tests/test_month_closure_clock_source.py` (`importlib.util.spec_from_file_location`, never touching `sys.modules["database"]`)
+
+**Acceptance Criteria**
+- The test passes when run both in isolation and as part of the full suite
+- No other test in the file is affected
 
 ---
 
@@ -4466,6 +4528,246 @@ None of these are on the live-capital nightly stop-update path, so there is no c
 
 **Acceptance Criteria**
 - Either: a documented decision that the current combined-latency semantics are intentional and acceptable (no code change), or: `latency_ms` is split into a final-attempt-only figure and a total-including-retries figure, applied consistently across `ai_service.py`, `gemini_service.py`, and `debrief_service.py`
+
+---
+
+### BLG-SPEC-166 — Cross-reference current_roadmap.md's SI-02 field to the canonical "linked trade plan" definition
+**Priority:** P4 (Backlog)
+**Type:** Spec Debt
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** ST-23/EPIC-06, cycle 2026-09-23__release-v9.7 — surfaced during agent-mediated Product Owner review of PR #1795 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-23 (EPIC-06, `2026-09-23__release-v9.7`) shipped the canonical "linked trade plan" definition for the SI-02 gate, but its acceptance criteria also required `current_roadmap.md`'s SI-02 field to cross-reference that definition. `claude/roadmap/*` is outside Sprint Execution's write scope (`execution_prompt.md` §7), so the cross-reference was correctly left undone by that engine rather than written out of scope — but no backlog item was filed to track the gap, unlike the two sibling out-of-scope findings from the same EPIC (`BLG-SPEC-164`/`165`), which were properly filed. Without this item, the half-completed AC has no tracked path to closure.
+
+**Scope**
+- Add a cross-reference in `current_roadmap.md`'s SI-02 field to the canonical "linked trade plan" definition shipped by ST-23
+- Action via Roadmap Rebalance or another engine with `claude/roadmap/*` write authority — not Sprint Execution
+
+**Acceptance Criteria**
+- `current_roadmap.md`'s SI-02 field cross-references the canonical "linked trade plan" definition
+- ST-23's originally-scoped acceptance criteria are fully met
+
+---
+
+### BLG-SPEC-167 — data_model.md DS-19 "Verification status" still says the migration was never run against a live PostgreSQL
+**Priority:** P4 (Backlog)
+**Type:** Spec Debt
+**Owner:** Data Model & Domain Schema Owner; Head of Specs Team
+**Source:** ST-27/EPIC-07, cycle 2026-09-23__release-v9.7 — DEL-20260924-02 staging verification — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/data_model.md` DS-19's "Verification status" paragraph states the DDL and SQL are covered only by mocked-cursor tests and "have **not** been executed against a live PostgreSQL". That is no longer true: on 2026-09-24 a human operator confirmed on STAGING that both `alert_type` CHECK constraints include `reflection_reminder` and `uq_notifications_reflection_reminder_trade` exists with the DS-19 definition, and that two `POST /alerts/evaluate` runs created 14 then 0 reflection reminders with no duplicate rows. Sprint Execution may not edit canonical specs beyond deviation documentation, so the stale text was left in place rather than corrected in ST-27.
+
+**Scope**
+- Replace DS-19's "Verification status" paragraph with a live-confirmation note (dated, staging only) following the precedent of DS-17's "Live Confirmation" section
+- Cite `qa_evidence_EPIC-07.md` (cycle `2026-09-23__release-v9.7`) as the evidence source; record that this is staging, not production
+- Follow the Governance File Edit Checklist / version-sync rules for `data_model.md` (header, footer, changelog)
+
+**Acceptance Criteria**
+- DS-19 no longer claims the migration has never run against a live database, and states what was confirmed, where (staging) and when
+- `data_model.md` header/footer versions stay in sync
+
+---
+
+### BLG-OPS-169 — No check that the staging backend actually redeployed after a merge that changes startup-applied schema (DS-19 sat unapplied on staging)
+**Priority:** P3 (Low)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-27/EPIC-07, cycle 2026-09-23__release-v9.7 — DEL-20260924-02 staging verification found staging still on pre-v9.6 code — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Schema changes in this application are applied by `ensure_*()` functions when the backend boots, not by a separate migration step. Staging was found on 2026-09-24 still running pre-v9.6 code: both `alert_type` CHECK constraints lacked `reflection_reminder` until the operator redeployed. Nothing in the delivery flow noticed, so a merged, "shipped" schema change silently did not exist on staging for an extended period, and the only thing that surfaced it was a manual verification story. Because the deploy path filters and hooks are configured partly outside the repo (see `docs/ops/render_build_deploy_path_filter_audit.md`), a repo-only review could not have caught it.
+
+**Scope**
+- Establish a post-merge check that the staging service is running the merged commit, and surface a visible failure when they differ. The backend currently exposes no deployed-version/commit indicator, so this likely needs one added (for example a build-commit field on an existing health/status endpoint, with the usual contract, `openapi.yaml` and `backend/routers/test.py` obligations) or an alternative such as confirming the Render deploy hook fired
+- Decide where it runs (existing `staging-smoke-test.yml`, a post-merge workflow, or a cycle-close verification step) and document it in `docs/ops/staging_deploy_notes.md`
+- State how it treats schema-bearing changes specifically, since those have no other application-level signal
+
+**Acceptance Criteria**
+- A merge to `main` that should have redeployed staging but did not produces a visible failure or alert
+- The check and its trigger are documented, including the known limits of what can be verified from the repo alone
+
+---
+
+### BLG-SEC-39 — Harden the non-registry dependency guard (missed specifier forms, trailing-comment false positive, no exit-code test)
+**Priority:** P3 (Low)
+**Type:** Security / Supply Chain
+**Owner:** Cybersecurity & Trust Lead; QA & Testing Owner
+**Source:** ST-29/EPIC-07 (BLG-SEC-38), cycle 2026-09-23__release-v9.7 — agent-mediated review of PR #1800 — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`scripts/check_non_registry_dependencies.py` (ST-29) rejects `git+ssh`, `git+https` and `file:` specifiers, but the review of PR #1800 found gaps: for pip it does not catch `git+http`, `hg+`/`svn+`, bare direct URLs, relative paths, upper-case schemes, or `-r` includes; for npm it does not catch `github:user/repo` or `user/repo` shorthand, tarball URLs, or `package-lock.json`. It also raises a false positive on a pinned line with a trailing comment (`fastapi==0.135.1  # pinned, not git+ssh` is flagged — reproduced 2026-09-24). No test exercises `main()`'s exit code, which is the behaviour CI actually depends on.
+
+**Scope**
+- Extend the pip and npm checks to the missed forms above, and strip trailing comments before matching
+- Add tests for each new form, for the trailing-comment case, and for `main()`'s exit code (0 on clean, non-zero on a violation)
+- Confirm the script still passes on the current tree (no new false positives)
+
+**Acceptance Criteria**
+- Each missed form above is rejected by a test, and the trailing-comment line is accepted
+- `main()` exits non-zero on a violation and zero on the current repo tree, asserted by a test
+
+---
+
+### BLG-QA-193 — Prove the non-registry dependency check fails a real PR, and confirm it is a required status check on main
+**Priority:** P4 (Backlog)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; Infrastructure & Operations Owner
+**Source:** ST-29/EPIC-07 (BLG-SEC-38), cycle 2026-09-23__release-v9.7 — ST-29 recorded as "Pass with notes" and flagged in the agent-mediated review of PR #1800 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-29's acceptance criterion is "a test PR adding a `git+ssh` dependency fails CI". The guard's logic is unit-tested, and the workflow runs on `pull_request`, but nobody has observed a real GitHub Actions run failing on a deliberately introduced non-registry dependency, and it has not been confirmed that `Non-Registry Dependency Check (ST-29)` is a required status check on `main` (if it is not, a failing run would not block a merge).
+
+**Scope**
+- Open a throwaway PR that adds a `git+ssh` dependency to `backend/requirements.txt`, record the failing run, then close the PR unmerged
+- Check the `main` branch protection settings and record whether this check is required; if not, raise that with the Infrastructure & Operations Owner
+
+**Acceptance Criteria**
+- A recorded failing CI run (run URL) for a PR adding a `git+ssh` dependency
+- The required-status-check state on `main` is recorded, either way
+
+---
+
+### BLG-SPEC-168 — Correct the BLG-BE-128 citation to BLG-BE-129 for the latency_ms composition decision
+**Priority:** P4 (Backlog)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner; Infrastructure & Operations Owner
+**Source:** ST-13/EPIC-03 and ST-28/EPIC-07, cycle 2026-09-23__release-v9.7 — agent-mediated review of PR #1800 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/api_contracts/ai_endpoints.md` attributes the `latency_ms` composition decision (ST-13, EPIC-03, v9.7) to `BLG-BE-128` at lines 5, 419 and 829. That decision is `BLG-BE-129`; `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites not yet on the shared upstream helper). The external-dependency register (`docs/ops/external_api_dependency_register.md`, entry CFM-03, ST-28) copied the wrong ID from the contract, so a reader following either citation lands on an unrelated item.
+
+**Scope**
+- Correct the three `BLG-BE-128` citations in `ai_endpoints.md` to `BLG-BE-129`, following the contract's version-history conventions
+- Correct the same citation in the dependency register's CFM-03 entry
+
+**Acceptance Criteria**
+- No reference to `BLG-BE-128` remains where `BLG-BE-129` is meant, in `ai_endpoints.md` or the dependency register
+- `BLG-BE-128`'s own legitimate references are untouched
+
+---
+
+### BLG-SPEC-169 — Correct notifications.md and the alert-thresholds empty-state scenario doc to the no-trailing-period empty-state headings now shipped
+**Priority:** P4 (Backlog)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-05/ST-06/EPIC-02, cycle 2026-09-23__release-v9.7 (Known Deviation DEV-v9.7-ST05-01, `notifications.md`) — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/frontend/pages/notifications.md` still specifies the empty-state headings with a trailing period — "No alert rules configured." (§Section 2) and "No alert history yet." (§Alert History) — and `docs/testing/alert_thresholds_empty_state_scenarios.md` (line 36) still describes the first as "No alert rules configured." ST-05/ST-06 (v9.7) brought the shipped code to the canonical no-trailing-period pattern in `design_system.md` §Data States, so the page spec and the scenario doc now disagree with both the shipped code and the design system. The v9.5 ST-30 sweep corrected the same staleness in three other specs but left these two headings alone because the code then violated the pattern; they were not revisited when the code was fixed.
+
+**Scope**
+- Drop the trailing period from the two headings in `notifications.md` and bump its version/changelog
+- Correct the heading text in `alert_thresholds_empty_state_scenarios.md`
+- Close Known Deviation DEV-v9.7-ST05-01 in `notifications.md` as resolved
+
+**Acceptance Criteria**
+- `notifications.md` and `alert_thresholds_empty_state_scenarios.md` state "No alert rules configured" and "No alert history yet" without a trailing period, matching shipped code and `design_system.md` §Data States
+- DEV-v9.7-ST05-01 is marked resolved with this item's ID
+
+---
+
+### BLG-SPEC-170 — Reconcile the Monthly Restatement Marker spec with what GET /reports/monthly-pnl actually returns (snapshot date, failure signal)
+**Priority:** P4 (Backlog)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner
+**Source:** ST-04/EPIC-02, cycle 2026-09-23__release-v9.7 (Known Deviation DEV-v9.7-ST04-01, `reports.md`) — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/frontend/pages/reports.md` §Monthly Restatement Marker (v0.19) specifies that the detail row's "As reviewed" value carries the snapshot date (`{snapshot_date}`), but `GET /reports/monthly-pnl` (`reports_endpoints.md` v0.13) returns no such field — only `snapshotted`, `restated`, `snapshot_realised_pnl_gbp` and `restated_diff_gbp` — so the shipped UI shows "As reviewed" undated. The same section's Failure line ("if snapshot data cannot be loaded ... Restatement check unavailable.") names no API signal for that condition; the endpoint has no partial-failure field, so the shipped UI treats "no row carries the snapshot fields at all" as the trigger, which is an implementation choice the spec never made.
+
+**Scope**
+- Decide which side moves: drop `{snapshot_date}` from the spec, or add `snapshot_date` to the response and contract (the `monthly_pnl_snapshots` table already stores when a snapshot was taken)
+- Define the failure signal for "Restatement check unavailable." in the spec and, if it needs an API field, the contract
+- Update `reports.md`, and `reports_endpoints.md`/`openapi.yaml` if the API side moves, then close DEV-v9.7-ST04-01
+
+**Acceptance Criteria**
+- `reports.md` and `reports_endpoints.md` agree on whether the detail row is dated and on how the unavailable state is signalled
+- The shipped UI matches the reconciled spec, or a follow-up is filed for the difference
+- DEV-v9.7-ST04-01 is marked resolved with this item's ID
+
+---
+
+### BLG-QA-194 — Harden the UI-copy boundary lint against obfuscation-grade and cross-node phrase splits
+**Priority:** P4 (Backlog)
+**Type:** QA / Test Tooling
+**Owner:** Frontend Specifications & UX Documentation Owner; QA & Testing Owner
+**Source:** ST-07/EPIC-02, cycle 2026-09-23__release-v9.7 — agent-mediated DoQ review (second pass) — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`scripts/check_ui_copy_forbidden_phrases.py` (BLG-FE-183, ST-07) is a dependency-free tokeniser, not a full JS parser. The DoQ review found residual ways a forbidden §13.2 phrase can evade it. None occurs in `src/` today (a `@babel/parser` differential over 12,010 literals agrees) and all need deliberate obfuscation or an unusual layout, so they were accepted as non-blocking, but the gate is a compliance control and the list should be closed or consciously documented.
+
+**Scope**
+- Decode `\uXXXX`/`\xXX` escapes and HTML numeric/named entities (`&#160;`, `&#32;`, `&ensp;`) to their characters, and fold invisible characters (zero-width space, soft hyphen, non-breaking hyphen) before matching
+- Extract JSX attribute strings that span lines
+- Decide on cross-node splits (`'you ' + 'should'`, `You{' '}should`, `<b>Buy</b> now`, `['you','should'].join(' ')`): join adjacent literals, or document them as accepted limits alongside the existing docstring list
+- Or replace the tokeniser with `@babel/parser` if a Node-based CI step is judged acceptable
+
+**Acceptance Criteria**
+- Each bypass above is either detected by a regression test or listed in the script docstring as an accepted limit with rationale
+- The `@babel/parser` differential still reports no missed phrase hit over `src/`
+
+---
+
+### BLG-QA-195 — Add the Reports and Notifications pages to the axe accessibility scan, with light-theme contrast coverage
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
+**Source:** PR #1802 review (agent-mediated DoQ), ST-03/ST-04/ST-05/ST-06/EPIC-02, cycle 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/e2e/accessibility-axe-scan.spec.js` scans only DashboardHome, Positions and TradePlan. EPIC-02 (v9.7) added new interactive markup to `Reports.js` — the "Restated" button (`aria-expanded`/`aria-controls`, whose target id does not exist while collapsed), an `aria-label` on a table cell, a `dl` detail row and amber/cyan text tones — and changed two Notifications headings. None of it has automated accessibility or light-theme contrast coverage, so the new elements' contrast and ARIA validity were reasoned about, not measured.
+
+**Scope**
+- Add the Reports page (Monthly tab with a restated month expanded, and the Tax Year tab with the restated-months notice) and the Notifications preferences/history pages to the axe scan
+- Run the new scans in both dark and light themes, evaluating the settled state per the design-system motion-vs-contrast guideline
+- Fix or file any findings
+
+**Acceptance Criteria**
+- The axe scan covers the Reports (both tabs, restated row expanded) and Notifications pages in dark and light themes
+- Any serious/critical finding is fixed or has its own filed item
+
+---
+
+### BLG-FE-190 — Make the Tax Year restated-months notice link to months the Monthly tab actually shows
+**Priority:** P4 (Backlog)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** PR #1802 review (agent-mediated DoQ), ST-04/EPIC-02, cycle 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The Tax Year summary notice ("Includes {k} restated month(s) — see the Monthly tab for details.", `reports.md` §Summary Bar) links to the Monthly tab, but `GET /reports/monthly-pnl` returns only the current and prior calendar year. Restatement snapshots only exist from the v9.6 baseline onward, so today every restated month is inside that window and the link is safe; as time passes, a user viewing an older tax year could follow the link to a tab that does not show the months the notice counts.
+
+**Scope**
+- Decide the treatment: a year-aware link or state, a note that the Monthly tab covers only two calendar years, or extending the Monthly window
+- Record the decision in a design record and update `reports.md`, then implement with Playwright coverage
+
+**Acceptance Criteria**
+- A restated-months notice never directs the user to a view that cannot show the months it counts
+- Playwright covers the older-tax-year case
 
 ---
 

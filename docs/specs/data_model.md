@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.39
-**Last Updated:** 2026-09-23 (ST-22, EPIC-06, v9.6, BLG-SPEC-148 — DS-17's live-production confirmation recorded: the up-migration was applied to production Supabase directly by the Data Model & Domain Schema Owner and the resulting index verified; RISK-01's "pending" disclosure closed); prior — 2026-09-22 (ST-08, EPIC-02, v9.6, BLG-FR-05 — DS-20: new `monthly_pnl_snapshots` table, one row per closed month per portfolio, backing the Monthly P&L restatement diff); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — DS-19: `reflection_reminder` added to the `notifications` and `notification_preferences` `alert_type` CHECK constraints, plus a partial unique index enforcing one reminder per trade; §9/§10 updated); prior history retained — see prior entries in version control.
+**Version:** 2.42
+**Last Updated:** 2026-09-24 (ST-26, EPIC-06, v9.7, BLG-SPEC-151 — reconciled positions.fees_paid nullability to nullable, matching live schema; constraint-reapplication decision filed as BLG-SPEC-165); prior — 2026-09-24 (ST-25, EPIC-06, v9.7, BLG-SPEC-150 — documented 4 confirmed-orphaned, always-NULL live positions columns; disposition recommend-drop, filed as BLG-SPEC-164); prior — 2026-09-24 (ST-24, EPIC-06, v9.7, BLG-SPEC-149 — removed the Positions Table's false claim of a live `exit_note` column); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -70,7 +70,7 @@ CREATE TABLE positions (
     fx_rate DECIMAL(10, 6),
     shares DECIMAL(10, 4) NOT NULL,
     total_cost DECIMAL(12, 2) NOT NULL,
-    fees_paid DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    fees_paid DECIMAL(10, 2) DEFAULT 0,
     fee_type VARCHAR(20),
     initial_stop DECIMAL(10, 4),
     current_stop DECIMAL(10, 4),
@@ -84,7 +84,6 @@ CREATE TABLE positions (
     exit_price DECIMAL(10, 4),
     exit_reason VARCHAR(50),
     entry_note TEXT,
-    exit_note TEXT,
     tags TEXT[],
     user_fill_price DECIMAL(10, 4),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -115,7 +114,7 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | fx_rate | DECIMAL(10,6) | YES | GBP/USD rate at time of entry (US stocks) |
 | shares | DECIMAL(10,4) | NO | Number of shares (fractional allowed) |
 | total_cost | DECIMAL(12,2) | NO | Total cost including fees in GBP |
-| fees_paid | DECIMAL(10,2) | NO | Total fees. NOT NULL as of v1.6 |
+| fees_paid | DECIMAL(10,2) | YES | Total fees. The "Migration from v1.5 to v1.6" record below shows a `NOT NULL` constraint once applied, but a live schema query (ST-26, EPIC-06, v9.7, BLG-SPEC-151) confirmed the column is nullable today — reconciled to nullable here rather than re-applying the constraint live (see note below). |
 | fee_type | VARCHAR(20) | YES | Fee calculation method applied |
 | initial_stop | DECIMAL(10,4) | YES | Stop price at entry |
 | current_stop | DECIMAL(10,4) | YES | Current trailing stop price |
@@ -129,7 +128,6 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | exit_price | DECIMAL(10,4) | YES | Exit price in native currency (null while open) |
 | exit_reason | VARCHAR(50) | YES | Reason for exit (null while open) |
 | entry_note | TEXT | YES | Journal note at entry |
-| exit_note | TEXT | YES | Journal note at exit |
 | tags | TEXT[] | YES | Strategy/classification tags |
 | user_fill_price | DECIMAL(10,4) | YES | User-provided actual broker fill price in native currency (optional). Used to compute slippage. Null when not provided (pre-v2.1 trades). |
 | created_at | TIMESTAMP | NO | Record creation timestamp |
@@ -137,6 +135,12 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | position_state | VARCHAR(20) | YES | Lifecycle state: `GRACE`, `LOSING`, `PROFITABLE`, `EXIT ZONE`, `UNKNOWN`. Null for closed positions. Computed by `PositionLifecycleService`. Added v2.6. |
 | state_entered_at | TIMESTAMP | YES | Timestamp when current `position_state` was assigned. Updated on each state transition. Null for closed positions. Added v2.6. |
 | state_history | JSONB | NO | Ordered array of `{state, entered_at}` objects recording all state transitions. Default `[]`. Never truncated — full audit trail. Added v2.6. |
+
+**No `exit_note` column (ST-24, EPIC-06, v9.7, BLG-SPEC-149):** this table has no live `exit_note` column, despite an earlier version of this document claiming one. A closed position's exit journal note is stored on `trade_history.exit_note` (§3 below), not here — confirmed via a live (readonly staging) schema query, per the §Live schema verification note above this table.
+
+**4 orphaned, always-NULL, undocumented live columns (ST-25, EPIC-06, v9.7, BLG-SPEC-150):** the live `positions` table (confirmed via readonly staging access, per the §Live schema verification note above) has 4 columns not listed anywhere in this document — `atr_value`, `stop_price`, `fees`, `pnl_percent` (all nullable numeric). Every row queried has all 4 columns NULL, while their apparent same-purpose counterparts already documented above (`atr`, `current_stop`, `fees_paid`, `pnl_pct` respectively) are populated and match this document exactly. **Disposition: genuinely unused, recommend drop.** Confirmed by a static grep of `backend/` for both direct SQL references and every `update_position()` call site's `updates` dict keys (the only two ways a write could target them): no read or write path anywhere in the codebase references `atr_value`, `stop_price`, `fees`, or `pnl_percent` as `positions` column names — `create_position()`'s `INSERT` explicitly lists only the documented column names, and all 7 `update_position()` call sites in `backend/services/position_service.py` pass only documented keys. These read as leftover columns from an old naming convention or an aborted rename, never backfilled, populated, or dropped. A follow-on migration to `DROP COLUMN` all 4 is recommended but not applied here — dropping a live production column is a data-model change requiring the Data Model & Domain Schema Owner's own migration process, not a documentation-only story.
+
+**`fees_paid` nullability reconciled to nullable (ST-26, EPIC-06, v9.7, BLG-SPEC-151):** this document previously claimed `fees_paid` is `NOT NULL as of v1.6`, citing the "Migration from v1.5 to v1.6" record below (`ALTER TABLE positions ALTER COLUMN fees_paid SET NOT NULL`). A live schema query (readonly staging) confirmed the column is nullable today — either the constraint was later dropped (undocumented elsewhere in this file's migration history) or never durably applied in the environment queried. Reconciled to nullable here rather than re-applying the constraint live, since restoring a `NOT NULL` constraint on a populated production column is a data-model decision (whether any existing row would violate it, and whether the original v1.6 intent should be re-enforced) for the Data Model & Domain Schema Owner, not assumable by a documentation-only story — filed as `BLG-SPEC-165`.
 
 ---
 

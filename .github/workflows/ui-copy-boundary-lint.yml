@@ -1,0 +1,39 @@
+name: UI Copy Boundary Lint
+
+# [EPIC-02][ST-07] (BLG-FE-183) — Fail CI when static UI copy in src/ uses a phrase from the
+# strategy_rules.md §13.2 disallowed list: prescriptive/advice-crossing ("you should",
+# "we recommend", "buy now" ...) or predictive ("will rise", "is expected to", "forecast" ...).
+# Until this gate existed, human review was the only control on static UI copy (AI-generated
+# output is separately sampled by scripts/run_ai_output_boundary_sample_audit.py, whose phrase
+# lists this lint imports rather than copies).
+#
+# A reviewed, legitimate use is recorded in scripts/ui_copy_lint_allowlist.json — every entry
+# needs a justification, and is keyed on the exact literal so it cannot cover new copy.
+#
+# Regression-tested by tests/test_ui_copy_forbidden_phrases.py (run as part of the normal
+# backend pytest suite, ci-tests.yml Phase A). This workflow is the dedicated, explicit CI
+# gate for the same check, following the existing one-script-one-workflow pattern
+# (openapi-drift.yml, playwright-skip-only-check.yml, non-registry-dependency-check.yml).
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+jobs:
+  ui-copy-boundary-lint:
+    name: UI Copy Boundary Lint (ST-07)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run lint
+        run: python3 scripts/check_ui_copy_forbidden_phrases.py
