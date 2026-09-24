@@ -152,7 +152,10 @@
       "raised_utc": "2026-09-24T07:07:54Z",
       "sla_due_utc": "2026-09-25T07:07:54Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-09-24T17:31:32Z",
+      "resolved_by": "Sprint Execution Engine (agent-mediated, Head of Specs Team role, on explicit user direction)",
+      "resolution_summary": "Scope note rev 3 locks the replay wire contract (docs/product/decisions/po05_replay_scope_confirmation.md); ST-01a done, ST-01b delegated (DEL-20260924-03) gated on the PO merge of the carrying PR."
     }
   },
   "deferred_escalations": {
