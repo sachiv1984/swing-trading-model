@@ -198,7 +198,8 @@
       "qa_evidence_log": null,
       "test_scenarios": [
         "tests/test_money_arithmetic_golden.py",
-        "tests/test_reflection_reminder.py"
+        "tests/test_reflection_reminder.py",
+        "tests/test_alerts_service.py"
       ],
       "stories": {
         "ST-08": {
@@ -248,20 +249,22 @@
         "ST-10": {
           "title": "Generic alert re-delivery ignores read state",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1772,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-03",
+          "commit_sha": "eb37f1b19c0e633228036c62e8b1210bffcc8129",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "spec_reference_not_applicable": true,
-          "spec_reference_not_applicable_reason": "bug fix, no prior canonical spec — verified via test asserting read notifications are never re-enqueued",
-          "deviations_filed": false,
+          "completed_utc": "2026-09-24T07:17:33Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/alerts_endpoints.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -758,6 +761,10 @@
     {
       "epic": "EPIC-03",
       "story": "ST-09"
+    },
+    {
+      "epic": "EPIC-03",
+      "story": "ST-10"
     }
   ],
   "open_escalations": [
