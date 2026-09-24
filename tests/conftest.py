@@ -20,7 +20,33 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 # that would otherwise fire at collection time for any test importing the
 # backend database module (directly or via services/__init__.py).
 # Tests that need a real DB use their own mock/stub strategy.
-if not os.getenv("DATABASE_URL"):
+#
+# ST-14 (BLG-QA-188, EPIC-04, v9.7): the guard used to read "if not already
+# set, use a stub" -- so an ambient DATABASE_URL already pointing at a real
+# database (e.g. a developer's sandbox configured with real, if read-only,
+# credentials for unrelated interactive use) passed straight through
+# unmodified into every test, including tests that load a private, isolated
+# copy of backend/database.py via importlib (bypassing the sys.modules
+# stub below entirely) and then execute real SQL. Confirmed live: with a
+# real-looking DATABASE_URL set, tests/test_schema_rollback_verification.py
+# attempted (and got InsufficientPrivilege from) a real Postgres connection.
+#
+# Fixed: outside CI, DATABASE_URL is now always forced to the safe stub,
+# regardless of what is already set, unless PYTEST_ALLOW_REAL_DB=1 is
+# explicitly set (a deliberate, local opt-in for a developer who has spun up
+# their own throwaway Postgres and wants to run integration-style tests
+# against it). Inside CI (GitHub Actions sets CI=true automatically for
+# every workflow, including Phase A and Phase B here), the workflow's own
+# deliberately-configured DATABASE_URL passes through unchanged -- no
+# workflow file needs to change for this fix, since Phase A's
+# postgresql://ci:ci@localhost:5432/ci_stub and Phase B's
+# postgresql://ci:ci@localhost:5432/ci_test are already each workflow's own
+# explicit, already-opted-in configuration.
+_RUNNING_IN_CI = os.getenv("CI", "").lower() in ("1", "true")
+_REAL_DB_OPT_IN = os.getenv("PYTEST_ALLOW_REAL_DB") == "1"
+if (_RUNNING_IN_CI or _REAL_DB_OPT_IN) and os.getenv("DATABASE_URL"):
+    pass  # deliberately configured (CI workflow env, or explicit local opt-in) -- leave as-is
+else:
     os.environ["DATABASE_URL"] = "postgresql://test:test@localhost:5432/test_stub"
 
 # ---------------------------------------------------------------------------
