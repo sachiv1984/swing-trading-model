@@ -18,5 +18,7 @@ Last Updated: 2026-09-24
 - **Unblock criteria:** Head of Specs Team runs the scope-confirmation sub-story (binding conditions from the §13 pre-assessment), locks the backend wire contract (API shape for the replay run endpoint, request/response schema, determinism guarantees), and publishes it as a canonical spec (e.g. `docs/specs/api_contracts/replay_endpoints.md` or an addendum to `replay_mode.md`). Once locked, ST-01 may be reclassified `delegated_backend` and handed to Head of Engineering with a full §3.1.B delegation record.
 - **SLA due-by:** 2026-09-25T07:07:54Z
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:**
+- **Disposition:** Resolved
+- **Resolved at:** 2026-09-24T17:30:59Z
+- **Resolved by:** Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), on the user's explicit direction ("option 1", 2026-09-24)
+- **Resolution summary:** `docs/product/decisions/po05_replay_scope_confirmation.md` (rev 3) answers the three deferred scope questions and locks the backend wire contract for the replay run (request shape, response fields, errors, determinism guarantee, data window). Three independent review passes (Blocked, Blocked, Approved). ST-01 reclassified: ST-01a done; ST-01b `delegated_backend` (DEL-20260924-03); ST-01c `delegated_frontend`, gated on ST-01b. The scope decision it records for the Product Owner (V1 replays exits of the user's own trades; no comparison with actual outcomes — scope note §7 item 1) is accepted by the Product Owner's merge of the carrying PR; **the backend story does not start before that merge.**
