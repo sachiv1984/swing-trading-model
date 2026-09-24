@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-24T07:06:37Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-24T14:30:00Z",
+  "last_updated_utc": "2026-09-24T15:00:00Z",
   "epics": {
     "EPIC-01": {
       "status": "blocked",
@@ -710,7 +710,17 @@
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner; Product Owner",
+            "method": "human",
+            "status": "cleared",
+            "findings_applied": [
+              "Stale staging deploy (pre-v9.6 code) found and resolved by operator redeploy before the constraints/index were confirmed",
+              "Idempotency re-run after the 14 seeded trades crossed the 48h mark (earlier 0-row run discarded as vacuous)",
+              "Product Owner decision recorded: keep 30-day look-back and created_at close timestamp"
+            ],
+            "cleared_utc": "2026-09-24T13:53:08Z"
+          },
           "notes": "Completed in-session by a human running the staging steps (STAGING only). Found staging on pre-v9.6 code (stale deploy, not a code defect); after operator redeploy both CHECK constraints + uq_notifications_reflection_reminder_trade confirmed; two POST /alerts/evaluate runs created 14 then 0 reflection reminders, duplicate query returned no rows. PO decision: keep 30-day look-back and created_at close timestamp. Evidence: qa_evidence_EPIC-07.md. commit_sha = evidence commit."
         },
         "ST-28": {
