@@ -40,5 +40,5 @@ Last Updated: 2026-09-24
 - [x] Regression areas checked
 - [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no frontend component in this EPIC
 - Signed off by: Director of Quality
-- Date:
+- Date: 2026-09-24
 - Comments: Pending human Director of Quality sign-off. Points to look at: the ST-29 note above (no live failing-PR run observed), and that ST-27's evidence is operator-reported (pasted query/API output), not independently re-executed by the engine.
