@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-07-26
+**Version:** 1.1
+**Last Updated:** 2026-09-24 (ST-15, EPIC-04, v9.7, BLG-QA-174 — added a Related section cross-referencing the new declaration-time skip/only lint check and its exception mechanism)
 **Sprint Item:** ST-10 (BLG-QA-117, EPIC-10, v7.8)
 
 ---
@@ -59,6 +59,12 @@ Quarantined tests are not a permanent state. At each `groom backlog` pass (`clau
 None. A repo-wide scan for existing `test.skip(` usage (`tests/e2e/visual-snapshots.spec.js`, `tests/e2e/keyboard-shortcuts.spec.js`) found only deterministic, environment-conditional skips (missing precondition elements) — not flakiness — so none qualify for migration to this new mechanism. This process is defined and ready for the next flaky test that is identified; per the story's own AC ("applied to any currently-known flaky test, if one exists at implementation time"), there is none to apply it to today.
 
 ---
+
+## Related: Skip/Only Lint (ST-15, BLG-QA-174, EPIC-04, v9.7)
+
+A distinct, narrower CI check — `scripts/check_playwright_skip_only.py`, wired as `.github/workflows/playwright-skip-only-check.yml` — flags a merged spec left with a **declaration-time** `test.only(...)`, `test.describe.only(...)`, `test.describe.skip(...)`, or `test.skip('title', ...)`. These silently narrow a CI run to one test/suite or disable it entirely, which is a different failure mode from flakiness (the test never runs at all, rather than running unreliably). It does **not** flag the runtime-conditional `test.skip()` / `test.skip(condition, reason)` pattern already used in this suite (`tests/e2e/keyboard-shortcuts.spec.js`, `tests/e2e/visual-snapshots.spec.js`) — that remains the correct, deterministic environment-conditional pattern this document's own "When to Quarantine" section distinguishes from flakiness.
+
+**Exception mechanism:** a same-line trailing comment `// ALLOW-SKIP-ONLY: <reason> — tracked in BLG-QA-<id>` suppresses the flag for a genuinely deliberate, reviewed case — mirroring this document's own `FLAKY-QUARANTINE:`/backlog-reference convention above. An exception comment with no `BLG-*` reference is itself flagged as a violation (an untracked exception is not an exception).
 
 ## Acceptance
 
