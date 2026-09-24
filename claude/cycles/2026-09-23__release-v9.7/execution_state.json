@@ -467,7 +467,7 @@
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-23__release-v9.7/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
@@ -547,25 +547,29 @@
         "ST-22": {
           "title": "Reconcile sprint_planning_prompt.md STEP -1 wording vs shared_standards.md §10.1",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1784,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-05",
+          "commit_sha": "2d31d41b8d6558d6f09b82970bc29b87c79e6600",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T07:56:55Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/system/sprint_planning_prompt.md",
             "claude/system/shared_standards.md#10.1"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team"
+          },
           "notes": ""
         }
       }
@@ -831,6 +835,10 @@
     {
       "epic": "EPIC-05",
       "story": "ST-21"
+    },
+    {
+      "epic": "EPIC-05",
+      "story": "ST-22"
     }
   ],
   "open_escalations": [
