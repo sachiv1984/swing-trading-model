@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-24T07:06:37Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-24T08:32:16Z",
+  "last_updated_utc": "2026-09-24T08:55:00Z",
   "epics": {
     "EPIC-01": {
       "status": "blocked",
@@ -467,10 +467,10 @@
       }
     },
     "EPIC-05": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-23__release-v9.7/EPIC-05",
       "pr_number": 1794,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-23__release-v9.7/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
@@ -862,13 +862,13 @@
   ],
   "merge_gate": {
     "epics_merged": [
-      "EPIC-03"
+      "EPIC-03",
+      "EPIC-05"
     ],
     "epics_pending": [
       "EPIC-01",
       "EPIC-02",
       "EPIC-04",
-      "EPIC-05",
       "EPIC-06",
       "EPIC-07"
     ],
@@ -878,6 +878,7 @@
   "sealed_utc": null,
   "process_notes": [
     "STEP 1: 28/29 GH issues pre-existed from sync gh at planning seal; ST-01 (#1792) was missing (process gap) and created now.",
-    "[GOVERNANCE][conflict-resolution 2026-09-24] Merged origin/main into exec/2026-09-23__release-v9.7/EPIC-06 per CLAUDE.md §8 (execution_state.json add/add conflict, same root cause as the EPIC-05/PR #1794 conflict resolved moments earlier). EPIC-06 branch's copy was the superset and was taken as base. Applied STEP 4 resume-sync: PR #1793 (EPIC-03) confirmed merged via `gh pr view --json mergedAt` (mergedAt: 2026-09-24T08:30:08Z) but neither branch's copy reflected it — corrected EPIC-03.status/pr_status done/open -> merged/merged and moved EPIC-03 from merge_gate.epics_pending to epics_merged."
+    "[GOVERNANCE][conflict-resolution 2026-09-24] Merged origin/main into exec/2026-09-23__release-v9.7/EPIC-06 per CLAUDE.md §8 (execution_state.json add/add conflict, same root cause as the EPIC-05/PR #1794 conflict resolved moments earlier). EPIC-06 branch's copy was the superset and was taken as base. Applied STEP 4 resume-sync: PR #1793 (EPIC-03) confirmed merged via `gh pr view --json mergedAt` (mergedAt: 2026-09-24T08:30:08Z) but neither branch's copy reflected it — corrected EPIC-03.status/pr_status done/open -> merged/merged and moved EPIC-03 from merge_gate.epics_pending to epics_merged.",
+    "[GOVERNANCE][conflict-resolution 2026-09-24] Merged origin/main into exec/2026-09-23__release-v9.7/EPIC-06 per CLAUDE.md §8 (execution_state.json content conflict, same root cause recurring: PR #1794/EPIC-05 merged on GitHub without this engine's STEP 4 post-merge state sync running). EPIC-06 branch's copy was the superset (has EPIC-06 done, absent from main) and was taken as base. Applied STEP 4 resume-sync: PR #1794 confirmed merged via `gh pr view --json mergedAt` (mergedAt: 2026-09-24T08:52:06Z) but neither copy reflected it — corrected EPIC-05.status/pr_status done/open -> merged/merged and moved EPIC-05 from merge_gate.epics_pending to epics_merged."
   ]
 }
