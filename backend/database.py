@@ -321,6 +321,15 @@ def get_monthly_pnl(portfolio_id: str) -> List[Dict]:
     unrecorded cost rather than a genuinely-known zero -- see
     metrics_definitions.md §Realized / Unrealized P&L Split, "Fee-Netting
     Basis". Audit-only: this story does not change any stored pnl figure.
+
+    Clock source (ST-11, EPIC-03, v9.7, BLG-BE-125): the 1-year window bound
+    derives "today" via `(NOW() AT TIME ZONE 'UTC')::date`, deliberately not
+    the session-timezone-dependent date keyword this used before -- that
+    keyword resolves against the Postgres session's configured timezone,
+    which need not be UTC, while reports_service._is_closed_month derives
+    "today" from Python's `datetime.now(timezone.utc).date()`. Using the same
+    explicit UTC clock source here keeps the two in agreement regardless of
+    the session/server timezone setting.
     """
     with get_db() as conn:
         with conn.cursor() as cur:
@@ -333,7 +342,7 @@ def get_monthly_pnl(portfolio_id: str) -> List[Dict]:
                    COUNT(*) FILTER (WHERE entry_fees IS NULL OR exit_fees IS NULL)::int AS null_fee_trade_count
                    FROM trade_history
                    WHERE portfolio_id = %s
-                   AND exit_date >= date_trunc('year', CURRENT_DATE - INTERVAL '1 year')
+                   AND exit_date >= date_trunc('year', (NOW() AT TIME ZONE 'UTC')::date - INTERVAL '1 year')
                    GROUP BY year, month
                    ORDER BY year DESC, month DESC""",
                 (portfolio_id,)
