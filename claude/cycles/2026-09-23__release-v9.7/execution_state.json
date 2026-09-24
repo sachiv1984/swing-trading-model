@@ -575,7 +575,7 @@
       }
     },
     "EPIC-06": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-23__release-v9.7/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
@@ -656,22 +656,22 @@
         "ST-26": {
           "title": "positions.fees_paid documented NOT NULL but live column nullable",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1788,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-06",
+          "commit_sha": "6e7babd6d713039801a764b6dd675c54e443a5a1",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T08:03:50Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/data_model.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -851,6 +851,10 @@
     {
       "epic": "EPIC-06",
       "story": "ST-25"
+    },
+    {
+      "epic": "EPIC-06",
+      "story": "ST-26"
     }
   ],
   "open_escalations": [
