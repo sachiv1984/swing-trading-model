@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-23 (release planning 2026-09-23__release-v9.7 — Release Slice v9.7 ephemeral section appended, 29 items, marker `RP:v9.7:2026-09-23__release-v9.7`; no other structural changes); prior — 2026-09-23 (groom backlog, post-ship closure 2026-09-21__release-v9.6 — 36 items archived (32 v9.6-shipped + BLG-GOV-335/336/337/326, already resolved but never archived); 3 ephemeral sections cleared — 2 Idea Intake staging sections (IW-20260914-01, IW-20260919-01), 65 open items relocated verbatim to §3; 1 Release Slice v9.6 table; see `backlog_health_20260923.md`); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — 32 shipped ST items marked ✅ COMPLETE; 0 Phase 4 additions needed, 0 test scenario gaps, 0 stale parked items); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-24 (session — 1 new item added: BLG-SPEC-166, surfaced during agent-mediated PR review of PR #1795); prior — 2026-09-23 (release planning 2026-09-23__release-v9.7 — Release Slice v9.7 ephemeral section appended, 29 items, marker `RP:v9.7:2026-09-23__release-v9.7`; no other structural changes); prior — 2026-09-23 (groom backlog, post-ship closure 2026-09-21__release-v9.6 — 36 items archived (32 v9.6-shipped + BLG-GOV-335/336/337/326, already resolved but never archived); 3 ephemeral sections cleared — 2 Idea Intake staging sections (IW-20260914-01, IW-20260919-01), 65 open items relocated verbatim to §3; 1 Release Slice v9.6 table; see `backlog_health_20260923.md`); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4093,6 +4093,48 @@ The Screener results table renders an "Earnings" column (`lg`-visible, days unti
 
 ---
 
+### BLG-SPEC-164 — Drop 4 confirmed-orphaned, always-NULL columns from the live positions table
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-25/EPIC-06, 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model.md`'s Positions Table section (v2.41) documents 4 live `positions` columns — `atr_value`, `stop_price`, `fees`, `pnl_percent` — as confirmed orphaned (always NULL on every row, no read or write path anywhere in `backend/` references them; their documented same-purpose counterparts `atr`/`current_stop`/`fees_paid`/`pnl_pct` are the ones actually used) and recommends a drop. The documentation-only disposition was completed; the actual `DROP COLUMN` migration was not applied — that is a live production schema change requiring the Data Model & Domain Schema Owner's own migration process, not a documentation story.
+
+**Scope**
+- Apply a migration dropping `atr_value`, `stop_price`, `fees`, `pnl_percent` from the live `positions` table
+- Update `data_model.md`'s Migration History section with the down/drop migration record, and remove the now-resolved orphaned-column disclosure note once dropped
+
+**Acceptance Criteria**
+- All 4 columns no longer exist on the live `positions` table
+- `data_model.md` reflects the drop in its Migration History
+
+---
+
+### BLG-SPEC-165 — Reconcile positions.fees_paid NOT NULL constraint (re-apply live, or confirm nullable is intentional)
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-26/EPIC-06, 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model.md` (v2.42) documented `fees_paid` as `NOT NULL as of v1.6`, citing the "Migration from v1.5 to v1.6" record (`ALTER TABLE positions ALTER COLUMN fees_paid SET NOT NULL`). A live schema query (readonly staging) confirmed the column is nullable today — the constraint was either later dropped (not documented anywhere in this file's migration history) or never durably applied in the environment queried. The documentation was reconciled to nullable (matching live reality) as the safe, non-destructive disposition; this item tracks the actual reconciliation decision.
+
+**Scope**
+- Determine why the v1.6 `NOT NULL` constraint is not present live (dropped, rolled back, or never applied) — check migration run history if available
+- Decide: re-apply the `NOT NULL` constraint live (if no existing row has a NULL `fees_paid`, and the original v1.6 intent should be re-enforced), or confirm nullable is now the intentional, permanent state and document why
+
+**Acceptance Criteria**
+- Disposition recorded (constraint re-applied, or nullable confirmed intentional with a stated reason)
+- `data_model.md` and the live schema agree, one way or the other, with the reasoning documented (not just the fact)
+
+---
+
 ### BLG-FE-184 — Migrate the remaining toFixed / toLocaleString call sites to the shared formatting helper
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
@@ -4244,6 +4286,26 @@ ST-21 fixed `test_trade_plan_audit_log.py`'s permanent, unrestored `sys.modules.
 **Acceptance Criteria**
 - Both scripts' I/O-boundary functions have unit tests using mocked external calls (no live network/`gh` CLI dependency)
 - A deliberate regression in the pagination loop (e.g. an off-by-one in the page-continuation condition) is confirmed to fail the new tests
+
+---
+
+### BLG-QA-192 — test_null_fee_trade_audit.py's inspect.getsource() call fails against the database module stub
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-11/EPIC-03, 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_null_fee_trade_audit.py::test_get_monthly_pnl_sql_filters_on_either_fee_leg_null` does `from database import get_monthly_pnl` then `inspect.getsource(get_monthly_pnl)`. `tests/conftest.py` replaces `sys.modules["database"]` with a session-scoped `MagicMock` stub (BLG-QA-20/retired BLG-QA-73), so this import binds to the stub, not the real function, and `inspect.getsource()` on a `MagicMock` raises `TypeError`. Confirmed failing on `main` before this story's changes (reproduced in isolation, unrelated to ST-11's own fix) — found while writing `tests/test_month_closure_clock_source.py`'s sibling SQL-inspection test for `get_monthly_pnl`, which uses the correct pattern instead.
+
+**Scope**
+- Convert the test to use the private, isolated `backend/database.py` import pattern already used by `tests/test_reflection_reminder.py` / `tests/test_monthly_pnl_snapshot.py` / `tests/test_month_closure_clock_source.py` (`importlib.util.spec_from_file_location`, never touching `sys.modules["database"]`)
+
+**Acceptance Criteria**
+- The test passes when run both in isolation and as part of the full suite
+- No other test in the file is affected
 
 ---
 
@@ -4466,6 +4528,27 @@ None of these are on the live-capital nightly stop-update path, so there is no c
 
 **Acceptance Criteria**
 - Either: a documented decision that the current combined-latency semantics are intentional and acceptable (no code change), or: `latency_ms` is split into a final-attempt-only figure and a total-including-retries figure, applied consistently across `ai_service.py`, `gemini_service.py`, and `debrief_service.py`
+
+---
+
+### BLG-SPEC-166 — Cross-reference current_roadmap.md's SI-02 field to the canonical "linked trade plan" definition
+**Priority:** P4 (Backlog)
+**Type:** Spec Debt
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** ST-23/EPIC-06, cycle 2026-09-23__release-v9.7 — surfaced during agent-mediated Product Owner review of PR #1795 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-23 (EPIC-06, `2026-09-23__release-v9.7`) shipped the canonical "linked trade plan" definition for the SI-02 gate, but its acceptance criteria also required `current_roadmap.md`'s SI-02 field to cross-reference that definition. `claude/roadmap/*` is outside Sprint Execution's write scope (`execution_prompt.md` §7), so the cross-reference was correctly left undone by that engine rather than written out of scope — but no backlog item was filed to track the gap, unlike the two sibling out-of-scope findings from the same EPIC (`BLG-SPEC-164`/`165`), which were properly filed. Without this item, the half-completed AC has no tracked path to closure.
+
+**Scope**
+- Add a cross-reference in `current_roadmap.md`'s SI-02 field to the canonical "linked trade plan" definition shipped by ST-23
+- Action via Roadmap Rebalance or another engine with `claude/roadmap/*` write authority — not Sprint Execution
+
+**Acceptance Criteria**
+- `current_roadmap.md`'s SI-02 field cross-references the canonical "linked trade plan" definition
+- ST-23's originally-scoped acceptance criteria are fully met
 
 ---
 

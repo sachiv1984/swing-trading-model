@@ -560,6 +560,41 @@ class TestEvaluateAlerts(unittest.TestCase):
         # At minimum rules_evaluated is an integer
         self.assertIsInstance(result["rules_evaluated"], int)
 
+    def test_redelivery_query_excludes_already_read_notifications(self):
+        """BLG-BE-124 (ST-10, EPIC-03, v9.7): a notification the operator has already
+        read in the feed must never be re-enqueued for delivery just because its email
+        delivery previously failed. Structural check on the query text since the mock
+        cursor in this suite returns canned rows rather than applying real SQL
+        filtering (unread, undelivered notifications are still retried up to 3 times,
+        unchanged -- that condition, delivery_attempts < 3, is untouched below)."""
+
+        with patch.object(alerts_service, "get_db") as mock_db, \
+             patch.object(alerts_service, "get_positions", return_value=[]):
+
+            mock_conn = MagicMock()
+            mock_db.return_value.__enter__.return_value = mock_conn
+
+            rules = [
+                {"type": "stop_loss_approach", "enabled": True, "threshold_percent": Decimal("5.0")},
+            ]
+            cur = self._make_cursor(
+                rules=rules,
+                positions=[],
+                prefs=[{"alert_type": t, "email_enabled": True} for t in ALERT_TYPES],
+                daily_exists=False,
+                stale_notifs=[],
+            )
+            mock_conn.cursor.return_value.__enter__.return_value = cur
+
+            evaluate_alerts("portfolio-1", lambda nid: None)
+
+        redelivery_sql = next(
+            c.args[0] for c in cur.execute.call_args_list
+            if "delivered = FALSE" in c.args[0] and "delivery_attempts < 3" in c.args[0]
+        )
+        self.assertIn("read = FALSE", redelivery_sql)
+        self.assertIn("delivery_attempts < 3", redelivery_sql)  # unread retry-up-to-3 unchanged
+
     def test_stop_loss_fires_for_position_within_threshold(self):
         """Verify stop_loss proximity formula via evaluate_alerts path."""
         # Direct formula test (no DB needed):

@@ -755,6 +755,12 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
             delivery_tasks_enqueued += reflection_summary["delivery_tasks_enqueued"]
 
             # --- Re-delivery for failed prior notifications ---
+            # BLG-BE-124 (ST-10, EPIC-03, v9.7): a notification the operator has already
+            # read in the feed must never be re-enqueued for delivery just because its
+            # email delivery previously failed -- the operator has already seen it via
+            # the in-app feed, so `read = TRUE` overrides retry regardless of
+            # `delivered`/`delivery_attempts`. Unread, undelivered notifications are
+            # still retried up to 3 times (unchanged).
             redelivery_tasks_enqueued = 0
             cur.execute("""
                 SELECT id, alert_type FROM notifications
@@ -762,6 +768,7 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
                   AND delivered = FALSE
                   AND delivery_attempts < 3
                   AND created_at < NOW() - INTERVAL '10 seconds'
+                  AND read = FALSE
             """, (portfolio_id,))
             stale = cur.fetchall()
             for row in stale:
@@ -822,6 +829,14 @@ def _evaluate_reflection_reminders(cur, portfolio_id: str, prefs: Dict, enqueue_
         rows = cur.fetchall()
         summary["candidates"] = len(rows)
 
+        # BLG-BE-123 (ST-09, EPIC-03, v9.7): enqueue_delivery() calls are deferred until
+        # after RELEASE SAVEPOINT succeeds, not made inline per-row. enqueue_delivery
+        # schedules a real (non-transactional) delivery task that cannot be undone by a
+        # SAVEPOINT rollback — calling it before the row's INSERT is durably committed
+        # risks scheduling delivery for a notification that a later failure in this same
+        # loop then rolls back. Collecting ids here and enqueueing only post-release keeps
+        # "notification exists" and "delivery scheduled" consistent with each other.
+        to_enqueue = []
         import json
         for trade in rows:
             ticker = trade["ticker"]
@@ -851,12 +866,21 @@ def _evaluate_reflection_reminders(cur, portfolio_id: str, prefs: Dict, enqueue_
                 continue  # a concurrent run already created this trade's reminder
             summary["notifications_created"] += 1
             if email_on:
-                enqueue_delivery(str(created["id"]))
+                to_enqueue.append(str(created["id"]))
                 summary["delivery_tasks_enqueued"] += 1
         cur.execute("RELEASE SAVEPOINT reflection_reminders")
+        for notif_id in to_enqueue:
+            enqueue_delivery(notif_id)
     except Exception as e:
         logger.warning("reflection_reminder evaluation failed (isolated, other alerts unaffected): %s", e)
         summary["error"] = str(e)[:200]
+        # BLG-BE-123: the SAVEPOINT rollback below undoes every INSERT made in the loop
+        # above for this call, so any counts already incremented in Python are now
+        # over-reported relative to the database's actual (fully-rolled-back) state.
+        # enqueue_delivery is never called before RELEASE succeeds (see to_enqueue above),
+        # so nothing is scheduled for a rolled-back row either. Reset both counters to 0.
+        summary["notifications_created"] = 0
+        summary["delivery_tasks_enqueued"] = 0
         try:
             cur.execute("ROLLBACK TO SAVEPOINT reflection_reminders")
         except Exception:

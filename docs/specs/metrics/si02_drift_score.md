@@ -1,8 +1,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner; Head of Specs Team
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-09-07 (ST-38, EPIC-05, v9.1, BLG-SPEC-127 — §2.1 gains exact window-boundary and timezone semantics)
+**Version:** 1.3
+**Last Updated:** 2026-09-24 (ST-23, EPIC-06, v9.7, BLG-SPEC-147 — new §2.4 formal canonical definition of "linked trade plan" counting for the SI-02 gate; current_roadmap.md cross-reference deferred, outside Sprint Execution's write scope); prior — 2026-09-07 (ST-38, EPIC-05, v9.1, BLG-SPEC-127 — §2.1 gains exact window-boundary and timezone semantics)
 **Cycle:** 2026-05-30__release-v4.5 (EPIC-03, ST-07, BLG-SPEC-41)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **§13 gate:** PASS — `docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md`
@@ -66,6 +66,26 @@ deviation_pct = ((measured_value - threshold_value) / threshold_value) × 100
 ```
 
 For `gte` metrics (higher is better), a positive deviation_pct is favourable; a negative deviation_pct indicates breach. The frontend displays the absolute magnitude with directional language ("below threshold" or "above threshold") rather than raw signed percentage.
+
+### 2.4 Canonical "Linked Trade Plan" Count (ST-23, EPIC-06, v9.7, BLG-SPEC-147)
+
+**Purpose:** the SI-02 sprint-planning gate's condition (1) — "≥20 closed trades with linked trade_plans in production database" — has been well-specified as a query in `claude/roadmap/current_roadmap.md` (§SI-02 gate confirmation status) since 2026-07-08, but had no formal canonical definition document of its own, unlike this file's own drift-score threshold definitions above. This section is that formal definition, for gate purposes specifically (distinct from — and narrower than — the drift metrics §3 below, which consume trade/plan data for a different purpose and do not themselves require the *linked* relationship).
+
+**Canonical definition:** a "linked trade plan" is a `trade_history` row whose `id` appears as `trade_plans.position_id` for some `trade_plans` row, and whose `pnl` is non-NULL (i.e. the trade has closed). The count for gate purposes is:
+
+```sql
+SELECT COUNT(*) FROM trade_history th
+JOIN trade_plans tp ON th.id = tp.position_id
+WHERE th.pnl IS NOT NULL
+```
+
+**Notes:**
+- The join direction is `trade_history.id = trade_plans.position_id` — a `trade_plans` row that links forward to the position/trade it produced, not a `trade_history` row linking backward to its originating plan. A `trade_plans` row with a NULL `position_id` (never converted into an actual trade) does not contribute to this count, by construction of the `JOIN`.
+- `WHERE th.pnl IS NOT NULL` is the closed-trade filter — an open position with a linked plan does not count toward the gate's "closed trades" requirement.
+- This count is intentionally **not** deduplicated further: if more than one `trade_plans` row somehow points at the same `trade_history.id` (not expected under normal use, since a position is opened from at most one plan), each would count separately under a bare `COUNT(*)`. No live case of this has been observed; flagged here rather than silently assumed impossible.
+- Historical readings of this count are recorded inline in `current_roadmap.md`'s SI-02 gate confirmation status field (not duplicated here) — this section defines *what* is counted, not the running history of readings.
+
+**Cross-reference (deferred, outside this story's write scope):** `current_roadmap.md`'s SI-02 structured field should cross-reference this section once written by a session with write access to `claude/roadmap/*` (Roadmap Rebalance engine, or Head of Specs Team out-of-band authority per `shared_standards.md` §17) — Sprint Execution's write scope does not extend to `claude/roadmap/*` beyond the narrow `workforce_capacity.md` exception (execution_prompt.md §7). Flagged here rather than silently left undone.
 
 ---
 

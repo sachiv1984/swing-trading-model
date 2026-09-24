@@ -3,7 +3,7 @@ Class: Planning Document (Class 4)
 Status: Active
 Release: v9.7
 Cycle: 2026-09-23__release-v9.7
-Last Updated: 2026-09-23
+Last Updated: 2026-09-24 (ST-20/EPIC-05 addendum — SI-02 gate threshold disposition)
 
 ## Planning Decisions — v9.7 PO-05 Replay Mode & Full-Capacity Debt Clearance
 
@@ -27,6 +27,16 @@ Last Updated: 2026-09-23
 ### Accepted risks
 
 None.
+
+### ST-20 addendum (Sprint Execution, EPIC-05, BLG-GOV-330) — SI-02 gate threshold scale-with-cadence disposition
+
+**Question:** whether `BLG-GOV-237`'s (v8.3) "still appropriate" conclusion on the SI-02 11-linked-trade-plan gate threshold should be formally re-examined given the extended NOT-MET data since, or confirmed closed as no new information.
+
+**Disposition: confirm-closed, citing `BLG-GOV-237`, no new information.**
+
+**Reasoning:** `BLG-GOV-237`'s own review scope was specifically to weigh the threshold against the linkage-UX root cause `BLG-FE-109` (shipped v7.3) was expected to fix, and its "still appropriate" conclusion (v8.3, i.e. already well after `BLG-FE-109` had been live for multiple cycles) was reached with that shipped fix already in evidence — not before it. The subsequent 9+ consecutive NOT MET readings (2026-09-19 rebalance still reads 0 linked `trade_plans`) are additional instances of the exact pattern `BLG-GOV-237` already accounted for (persistently low trade cadence, ~1-2 trades/month per multiple recent rebalance records, not a linkage-friction problem `BLG-FE-109` failed to fix) — more data confirming the same conclusion, not qualitatively new information that would change it. Re-examining now would re-litigate a question already answered on the correct evidentiary basis.
+
+Made by: Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role — §5.3), 2026-09-24.
 
 ### Supersession note
 *To be completed at Post-Ship Closure — do not populate at planning time.*
