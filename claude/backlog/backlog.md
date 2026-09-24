@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-24 (session — 1 new item added: BLG-QA-194, surfaced during agent-mediated DoQ review of ST-07/EPIC-02); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-169, BLG-SPEC-170, surfaced during ST-04/ST-05/ST-06 execution, EPIC-02, cycle 2026-09-23__release-v9.7); prior — 2026-09-24 (session — 3 new items added: BLG-SEC-39, BLG-QA-193, BLG-SPEC-168, surfaced during agent-mediated review of PR #1800/EPIC-07); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-24 (session — 2 new items added: BLG-QA-195, BLG-FE-190, surfaced during agent-mediated review of PR #1802/EPIC-02); prior — 2026-09-24 (session — 1 new item added: BLG-QA-194, surfaced during agent-mediated DoQ review of ST-07/EPIC-02); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-169, BLG-SPEC-170, surfaced during ST-04/ST-05/ST-06 execution, EPIC-02, cycle 2026-09-23__release-v9.7); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4725,6 +4725,49 @@ ST-29's acceptance criterion is "a test PR adding a `git+ssh` dependency fails C
 **Acceptance Criteria**
 - Each bypass above is either detected by a regression test or listed in the script docstring as an accepted limit with rationale
 - The `@babel/parser` differential still reports no missed phrase hit over `src/`
+
+---
+
+### BLG-QA-195 — Add the Reports and Notifications pages to the axe accessibility scan, with light-theme contrast coverage
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
+**Source:** PR #1802 review (agent-mediated DoQ), ST-03/ST-04/ST-05/ST-06/EPIC-02, cycle 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/e2e/accessibility-axe-scan.spec.js` scans only DashboardHome, Positions and TradePlan. EPIC-02 (v9.7) added new interactive markup to `Reports.js` — the "Restated" button (`aria-expanded`/`aria-controls`, whose target id does not exist while collapsed), an `aria-label` on a table cell, a `dl` detail row and amber/cyan text tones — and changed two Notifications headings. None of it has automated accessibility or light-theme contrast coverage, so the new elements' contrast and ARIA validity were reasoned about, not measured.
+
+**Scope**
+- Add the Reports page (Monthly tab with a restated month expanded, and the Tax Year tab with the restated-months notice) and the Notifications preferences/history pages to the axe scan
+- Run the new scans in both dark and light themes, evaluating the settled state per the design-system motion-vs-contrast guideline
+- Fix or file any findings
+
+**Acceptance Criteria**
+- The axe scan covers the Reports (both tabs, restated row expanded) and Notifications pages in dark and light themes
+- Any serious/critical finding is fixed or has its own filed item
+
+---
+
+### BLG-FE-190 — Make the Tax Year restated-months notice link to months the Monthly tab actually shows
+**Priority:** P4 (Backlog)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** PR #1802 review (agent-mediated DoQ), ST-04/EPIC-02, cycle 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The Tax Year summary notice ("Includes {k} restated month(s) — see the Monthly tab for details.", `reports.md` §Summary Bar) links to the Monthly tab, but `GET /reports/monthly-pnl` returns only the current and prior calendar year. Restatement snapshots only exist from the v9.6 baseline onward, so today every restated month is inside that window and the link is safe; as time passes, a user viewing an older tax year could follow the link to a tab that does not show the months the notice counts.
+
+**Scope**
+- Decide the treatment: a year-aware link or state, a note that the Monthly tab covers only two calendar years, or extending the Monthly window
+- Record the decision in a design record and update `reports.md`, then implement with Playwright coverage
+
+**Acceptance Criteria**
+- A restated-months notice never directs the user to a view that cannot show the months it counts
+- Playwright covers the older-tax-year case
 
 ---
 
