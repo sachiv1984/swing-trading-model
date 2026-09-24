@@ -679,7 +679,7 @@
       }
     },
     "EPIC-07": {
-      "status": "not_started",
+      "status": "blocked",
       "branch": "exec/2026-09-23__release-v9.7/EPIC-07",
       "pr_number": null,
       "pr_status": "none",
@@ -690,14 +690,14 @@
         "ST-27": {
           "title": "Post-deploy staging verification of reflection-reminder migration/SQL",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "human",
           "github_issue": 1789,
-          "branch": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-07",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260924-02",
+          "blocked_since_utc": "2026-09-24T08:06:09Z",
+          "unblock_criteria": "Real staging DB verification + PO look-back decision -- see DEL-20260924-02",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -767,6 +767,12 @@
       "story": "ST-18",
       "status": "blocked_backend",
       "delegation_record": "DEL-20260924-01"
+    },
+    {
+      "epic": "EPIC-07",
+      "story": "ST-27",
+      "status": "blocked_backend",
+      "delegation_record": "DEL-20260924-02"
     }
   ],
   "delegated_items": [
@@ -781,6 +787,12 @@
       "story": "ST-18",
       "classification": "delegated_backend",
       "delegation_record": "DEL-20260924-01"
+    },
+    {
+      "epic": "EPIC-07",
+      "story": "ST-27",
+      "classification": "delegated_backend",
+      "delegation_record": "DEL-20260924-02"
     }
   ],
   "completed_items": [
