@@ -339,7 +339,7 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "blocked",
       "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
@@ -444,14 +444,14 @@
         "ST-18": {
           "title": "Validate get_claude_endpoint_cost_windows() SQL against real Postgres",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "human",
           "github_issue": 1780,
-          "branch": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260924-01",
+          "blocked_since_utc": "2026-09-24T07:46:54Z",
+          "unblock_criteria": "Human runs the query against real/synthetic Postgres and shares output, or a synthetic-DB test is added -- see DEL-20260924-01",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -757,6 +757,12 @@
       "story": "ST-01",
       "status": "blocked_decision",
       "escalation": "ESC-EXEC-20260924-01"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-18",
+      "status": "blocked_backend",
+      "delegation_record": "DEL-20260924-01"
     }
   ],
   "delegated_items": [
@@ -765,6 +771,12 @@
       "story": "ST-01",
       "classification": "delegated_decision",
       "escalation": "ESC-EXEC-20260924-01"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-18",
+      "classification": "delegated_backend",
+      "delegation_record": "DEL-20260924-01"
     }
   ],
   "completed_items": [
