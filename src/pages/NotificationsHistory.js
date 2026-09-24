@@ -254,7 +254,7 @@ export default function NotificationsHistory() {
                     <td colSpan={6} className="px-5 py-16 text-center">
                       {filterType === "all" ? (
                         <div>
-                          <p className="text-base font-semibold text-white mb-1">No alert history yet.</p>
+                          <p className="text-base font-semibold text-white mb-1">No alert history yet</p>
                           <p className="text-sm text-slate-600 dark:text-slate-400">Alert evaluations will appear here once the system has run.</p>
                         </div>
                       ) : (

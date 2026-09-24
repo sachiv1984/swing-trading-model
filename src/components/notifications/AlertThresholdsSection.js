@@ -295,7 +295,7 @@ export default function AlertThresholdsSection() {
           <>
             <div className="flex flex-col items-center justify-center py-16 text-center px-6">
               <BellPlus className="w-10 h-10 text-slate-600 mb-3" />
-              <h3 className="text-base font-semibold text-white mb-1">No alert rules configured.</h3>
+              <h3 className="text-base font-semibold text-white mb-1">No alert rules configured</h3>
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-5">Add an alert rule to receive notifications.</p>
               {!showCreateForm && (
                 <Button

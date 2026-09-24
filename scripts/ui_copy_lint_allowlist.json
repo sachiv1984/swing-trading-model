@@ -1,0 +1,10 @@
+{
+  "_comment": "Allow-list for scripts/check_ui_copy_forbidden_phrases.py (ST-07, BLG-FE-183). Each entry suppresses ONE literal in ONE file, keyed on its exact text, and must carry a justification (>= 20 characters). A stale entry (matching no literal) fails the lint. See the script's docstring.",
+  "entries": [
+    {
+      "file": "src/pages/TradePlan.js",
+      "literal": "Why enter now? What specific trigger confirms the thesis?",
+      "justification": "Placeholder text for the Entry Rationale field: it asks the user a reflective question about their own reasoning and is not an instruction or recommendation to enter a trade. It matches the 'enter now' pattern lexically only."
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 **Class:** Supporting Document (Class 2)
 **Status:** Active
 **Version:** 0.9
-**Last Updated:** 2026-09-21 (v9.6 design gate — ST-04/BLG-FEAT-98: new `reflection_reminder` alert type — Reflection Reminder feed row and Email Preferences row); prior — 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "No notifications yet." heading to drop the trailing period, matching already-shipped `Notifications.js`; documentation-only); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-24 (ST-05/ST-06, EPIC-02, v9.7 sprint execution — added Known Deviation DEV-v9.7-ST05-01: this spec's two empty-state headings still carry a trailing period that shipped code no longer has; deviation documentation only, no spec wording changed); prior — 2026-09-21 (v9.6 design gate — ST-04/BLG-FEAT-98: new `reflection_reminder` alert type — Reflection Reminder feed row and Email Preferences row); prior — 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "No notifications yet." heading to drop the trailing period, matching already-shipped `Notifications.js`; documentation-only); prior history retained — see prior entries in version control.
 **Design Source (v0.9 reflection reminder):** docs/design/2026-09-21__release-v9.6/reflection-reminder/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md | docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md | docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md
@@ -401,6 +401,15 @@ Click again to collapse.
 - **Owner:** Base44 Frontend Prompt Owner
 - **Backlog reference:** BLG-FE-04 (filed delivery verification 2026-03-24, cycle 2026-03-21__release-v2.2)
 - **Resolution:** ✅ Resolved — ST-11 in cycle 2026-03-24__release-v2.3 delivered the CTA button (commit fe91153). BLG-FE-04 shipped. Closed 2026-03-30.
+
+### DEV-v9.7-ST05-01 — Empty-state headings specified with a trailing period; shipped code follows the design system's no-trailing-period pattern
+
+- **Description:** §Section 2's empty-state heading is specified as **"No alert rules configured."** and §Alert History's as **"No alert history yet."**, each with a trailing period. `AlertThresholdsSection.js` and `NotificationsHistory.js` originally shipped with those periods, in violation of the canonical empty-state microcopy pattern (`design_system.md` §Data States, v1.8: no trailing period). ST-05/ST-06 (v9.7, BLG-FE-178/BLG-FE-179) corrected the shipped headings to **"No alert rules configured"** and **"No alert history yet"**, so this spec's wording is now stale relative to both the shipped code and the design system. The v9.5 ST-30 sweep did not correct these two headings because the code then still carried the period.
+- **Canonical requirement:** the two headings as worded in §Section 2 and §Alert History above. Intent check: the design system's pattern is the canonical rule and the spec wording predates it — the deviation is spec-text staleness, not a disagreement about intent.
+- **Priority:** P4 (wording-only, no behaviour or figure affected)
+- **Target resolution release:** Backlog — reviewed at each `groom backlog` pass and the quarterly audit (no release scheduled; P4)
+- **Owner:** Frontend Specifications & UX Documentation Owner
+- **Backlog reference:** BLG-SPEC-169 (filed sprint execution 2026-09-24, cycle 2026-09-23__release-v9.7, ST-05/ST-06) — also covers `docs/testing/alert_thresholds_empty_state_scenarios.md` line 36.
 
 ---
 

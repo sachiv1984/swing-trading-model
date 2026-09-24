@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { Fragment, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44, apiFetch, api } from "../api/base44Client";
 import { useToast } from "../components/ui/use-toast";
@@ -16,11 +16,14 @@ import {
   AlertTriangle,
   ChevronUp,
   ChevronDown,
-  ChevronsUpDown
+  ChevronsUpDown,
+  History
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
+import { StandingAlert } from "../components/ui/StandingAlert";
+import { formatCurrency } from "../lib/format";
 import StatsCard from "../components/ui/StatsCard";
 import PerformanceSummary from "../components/reports/PerformanceSummary";
 import PortfolioGrowthChart from "../components/reports/PortfolioGrowthChart";
@@ -52,7 +55,7 @@ function formatPct(value) {
 
 // ─── Tax Year P&L View ─────────────────────────────────────────────────────────
 
-function TaxYearReport() {
+function TaxYearReport({ onViewMonthly }) {
   const currentTaxYear = getCurrentUKTaxYear();
   const [selectedYear, setSelectedYear] = useState(currentTaxYear);
   const [sortField, setSortField] = useState("exit_date");
@@ -298,6 +301,24 @@ function TaxYearReport() {
               </p>
             </motion.div>
           </div>
+
+          {/* ST-04 (EPIC-02, v9.7, BLG-FE-188): restated-months notice below the Summary Bar.
+              The count is API-supplied (summary.restated_month_count) — the frontend does not
+              derive it. reports.md v0.19 §Summary Bar. */}
+          {(reportData?.summary?.restated_month_count ?? 0) >= 1 && (
+            <p data-testid="taxyear-restated-notice" className="text-xs text-slate-600 dark:text-slate-400">
+              Includes {reportData.summary.restated_month_count} restated month
+              {reportData.summary.restated_month_count === 1 ? "" : "s"} — see the{" "}
+              <button
+                type="button"
+                onClick={onViewMonthly}
+                className="underline underline-offset-2 hover:no-underline text-cyan-600 dark:text-cyan-400"
+              >
+                Monthly tab
+              </button>{" "}
+              for details.
+            </p>
+          )}
 
           {/* Trades Table */}
           {sortedTrades.length === 0 ? (
@@ -681,6 +702,15 @@ const MONTH_NAMES = [
 
 function MonthlyPnlTable() {
   const [csvGenerating, setCsvGenerating] = useState(false);
+  // ST-04 (BLG-FE-188): months whose restatement detail row is expanded (collapsed by default).
+  const [expandedMonths, setExpandedMonths] = useState(() => new Set());
+  const toggleMonth = (key) =>
+    setExpandedMonths((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
   const { toast } = useToast();
 
   const { data: response, isLoading } = useQuery({
@@ -728,6 +758,15 @@ function MonthlyPnlTable() {
   const unrealisedNote = response?.unrealised_note;
   const totalRealisedPnl = rows.reduce((sum, row) => sum + (row.realised_pnl_gbp ?? 0), 0);
   const combinedTotal = totalRealisedPnl + (estimatedUnrealisedPnl ?? 0);
+  // ST-03 (EPIC-02, v9.7, BLG-FE-187): the API returns null_fee_trade_count per month and no
+  // top-level aggregate, so the notice's N is derived client-side from the loaded rows (same
+  // convention as the Avg P&L/Trade column). reports.md v0.19 §Fees-Not-Recorded Visibility.
+  const nullFeeTotal = rows.reduce((sum, row) => sum + (row.null_fee_trade_count ?? 0), 0);
+  // ST-04: the snapshot fields are always present on the live API's rows (reports_endpoints.md v0.13).
+  // If none of the rows carries them the restatement check could not be performed — render the table
+  // normally without markers and say so (reports.md §Monthly Restatement Marker → Failure).
+  const restatementCheckUnavailable =
+    rows.length > 0 && rows.every((row) => typeof row.restated !== "boolean");
 
   return (
     <div className="space-y-4">
@@ -762,6 +801,19 @@ function MonthlyPnlTable() {
           <h3 className="text-sm font-semibold text-white">Monthly Realised P&L</h3>
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Current and prior calendar year. Only months with closed trades shown.</p>
         </div>
+        {nullFeeTotal >= 1 && (
+          <div data-testid="monthly-fees-missing-notice" className="px-4 pt-4">
+            <StandingAlert
+              severity="info"
+              dismissible={false}
+              message={
+                nullFeeTotal === 1
+                  ? "1 closed trade has no fees recorded, so these figures may not reflect its costs."
+                  : `${nullFeeTotal} closed trades have no fees recorded, so these figures may not reflect their costs.`
+              }
+            />
+          </div>
+        )}
         {rows.length === 0 ? (
           <div className="px-6 py-10 text-center text-slate-600 dark:text-slate-400 text-sm">No closed trades in scope.</div>
         ) : (
@@ -783,25 +835,98 @@ function MonthlyPnlTable() {
                 // ST-01: derived from already-fetched row values, not a P&L recalculation.
                 // trade_count = 0 shows "—" (no colour) rather than a fabricated £0.00.
                 const avgPnl = row.trade_count > 0 ? pnl / row.trade_count : null;
+                const nullFeeCount = row.null_fee_trade_count ?? 0;
                 const avgPnlColor = avgPnl == null ? "text-slate-600 dark:text-slate-400" : avgPnl > 0 ? "text-emerald-400" : avgPnl < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400";
+                const monthKey = `${row.year}-${row.month}`;
+                const detailId = `monthly-restatement-detail-${monthKey}`;
+                const isRestated = row.restated === true;
+                const isExpanded = expandedMonths.has(monthKey);
+                const restatedDiff = row.restated_diff_gbp ?? 0;
+                const diffColor = restatedDiff > 0 ? "text-emerald-400" : restatedDiff < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400";
                 return (
-                  <tr key={`${row.year}-${row.month}`} className="hover:bg-slate-700/20 transition-colors">
+                  <Fragment key={monthKey}>
+                  <tr className="hover:bg-slate-700/20 transition-colors">
                     <td className="px-6 py-3 text-slate-200">
                       {MONTH_NAMES[row.month]} {row.year}
+                      {/* ST-04 (BLG-FE-188): "Restated" marker — information, not an error, so amber
+                          plain text + icon rather than red. Keyboard-operable, collapsed by default. */}
+                      {isRestated && (
+                        <button
+                          type="button"
+                          data-testid="monthly-restated-marker"
+                          aria-expanded={isExpanded}
+                          aria-controls={detailId}
+                          onClick={() => toggleMonth(monthKey)}
+                          className="ml-3 inline-flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded"
+                        >
+                          <History className="w-3.5 h-3.5" aria-hidden="true" />
+                          Restated
+                        </button>
+                      )}
                     </td>
                     <td data-testid="monthly-realised-pnl-cell" className={`px-6 py-3 text-right font-medium ${pnlColor}`}>
                       {formatGBP(pnl)}
                     </td>
-                    <td className="px-6 py-3 text-right text-slate-600 dark:text-slate-400">{row.trade_count}</td>
+                    {/* ST-03 (BLG-FE-187): per-month NULL-fee indicator, "{trade_count} · {k} no fees".
+                        Months with k = 0 render the bare trade count, unchanged. */}
+                    {nullFeeCount >= 1 ? (
+                      <td
+                        data-testid="monthly-fees-missing-count"
+                        aria-label={`${row.trade_count} trades, ${nullFeeCount} without fees recorded`}
+                        className="px-6 py-3 text-right text-slate-600 dark:text-slate-400"
+                      >
+                        {row.trade_count} · {nullFeeCount} no fees
+                      </td>
+                    ) : (
+                      <td className="px-6 py-3 text-right text-slate-600 dark:text-slate-400">{row.trade_count}</td>
+                    )}
                     <td data-testid="monthly-avg-pnl-cell" className={`px-6 py-3 text-right font-medium ${avgPnlColor}`}>
                       {formatGBP(avgPnl)}
                     </td>
                   </tr>
+                  {isRestated && isExpanded && (
+                    <tr id={detailId} data-testid="monthly-restatement-detail" className="bg-slate-900/40">
+                      <td colSpan={4} className="px-6 py-3">
+                        <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Realised P&L</p>
+                        <dl className="grid grid-cols-3 gap-4 text-sm">
+                          <div>
+                            <dt className="text-xs text-slate-600 dark:text-slate-400">As reviewed</dt>
+                            <dd data-testid="monthly-restatement-as-reviewed" className="text-slate-200">{formatCurrency(row.snapshot_realised_pnl_gbp)}</dd>
+                          </div>
+                          <div>
+                            <dt className="text-xs text-slate-600 dark:text-slate-400">Now</dt>
+                            <dd data-testid="monthly-restatement-now" className="text-slate-200">{formatCurrency(row.realised_pnl_gbp)}</dd>
+                          </div>
+                          <div>
+                            <dt className="text-xs text-slate-600 dark:text-slate-400">Change</dt>
+                            <dd data-testid="monthly-restatement-change" className={`font-medium ${diffColor}`}>{formatCurrency(row.restated_diff_gbp, { signed: true })}</dd>
+                          </div>
+                        </dl>
+                        {/* Trade-count-only restatement (§2.3): the month restated but the P&L total did not move. */}
+                        {restatedDiff === 0 && (
+                          <p data-testid="monthly-restatement-trade-count-note" className="text-xs text-slate-600 dark:text-slate-400 mt-2">
+                            Trade count for this month has also changed since it was reviewed.
+                          </p>
+                        )}
+                      </td>
+                    </tr>
+                  )}
+                  </Fragment>
                 );
               })}
             </tbody>
           </table>
         )}
+        {restatementCheckUnavailable && (
+          <p data-testid="monthly-restatement-unavailable" className="px-6 py-2 text-xs text-slate-600 dark:text-slate-400 border-t border-slate-700/30">
+            Restatement check unavailable.
+          </p>
+        )}
+        {/* ST-03 (BLG-FE-187): basis caption — never omitted (an undocumented basis is the defect
+            being fixed). "net" per the v9.6 ST-07 audit: metrics_definitions.md §Fee-Netting Basis. */}
+        <p data-testid="monthly-basis-caption" className="px-6 py-3 text-xs text-slate-600 dark:text-slate-400 border-t border-slate-700/30">
+          Realised P&L is net of recorded fees.
+        </p>
       </div>
 
       {/* ST-14 (BLG-FEAT-70, v7.0): Unrealised P&L Card — reuses the Tax Year tab's approved pattern verbatim */}
@@ -1047,7 +1172,7 @@ export default function Reports() {
       </div>
 
       {activeTab === "taxYear" ? (
-        <TaxYearReport />
+        <TaxYearReport onViewMonthly={() => setActiveTab("monthly")} />
       ) : activeTab === "monthly" ? (
         <MonthlyPnlTable />
       ) : activeTab === "reconciliation" ? (

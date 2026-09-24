@@ -2,7 +2,7 @@
  * Clone as New Plan — Trade Plans list + form (ST-01, EPIC-01, v9.6, BLG-FEAT-96)
  *
  * Design source: docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md §5
- * Spec: docs/specs/frontend/pages/trade_plan.md v1.15 §4.5
+ * Spec: docs/specs/frontend/pages/trade_plan.md v1.16 §4.5
  *
  * Covers observable AC (ST-01 AC-01, AC-02, AC-03):
  *   SC-TPC-01  Clone link is present on every list row regardless of status (incl. abandoned/closed)
@@ -11,6 +11,12 @@
  *   SC-TPC-04  Nothing is persisted until Save; the saved payload is a fresh `draft` with no id/position_id
  *   SC-TPC-05  Detail view (edit mode) header shows Clone, including for an abandoned plan
  *   SC-TPC-06  Source load failure opens a blank form and shows the warning toast
+ *
+ * v9.7 ST-02 (EPIC-02, BLG-FE-186) — Setup Type is Copied (trade_plan.md v1.16 §4.5); a copied
+ * value always wins over the watchlisted-signal auto-fill default:
+ *   SC-TPC-07  Clone of a plan with a Setup Type keeps it when the ticker also has a watchlisted signal
+ *   SC-TPC-08  Clone of a plan with no Setup Type still gets the watchlisted-signal auto-fill (nothing to protect)
+ *   SC-TPC-09  Clone keeps the source Setup Type when the ticker has no watchlisted signal
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/…').
@@ -175,4 +181,60 @@ test('SC-TPC-06: A source that cannot be loaded opens a blank form with a warnin
   await expect(page.getByTestId('clone-banner')).toHaveCount(0);
   await expect(page.getByPlaceholder(/describe the setup/i)).toHaveValue('');
   await expect(page.getByPlaceholder(/e\.g\. AAPL/i)).toHaveValue('');
+});
+
+// ---------------------------------------------------------------------------
+// v9.7 ST-02 (BLG-FE-186) — Setup Type on clone
+// Design source: docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md §5
+// ---------------------------------------------------------------------------
+
+const WATCHLISTED_NVDA_SIGNAL = {
+  ticker: 'NVDA',
+  market: 'US',
+  rank: 3,
+  regime: 'on',
+  momentum_percent: 12.5,
+  price_vs_50d_ma: 4.2,
+  current_price: 120,
+  atr_value: 2,
+  initial_stop: 110,
+};
+
+/** Registers the watchlisted-signals read the form's auto-fill (linkedSignal) depends on. */
+async function mockWatchlistedSignals(page, signals) {
+  await page.route(/\/signals\?status=watchlisted/, (route) => route.fulfill(json(signals)));
+}
+
+test('SC-TPC-07: Clone keeps the source Setup Type when the ticker also has a watchlisted signal', async ({ page }) => {
+  await mockFallback(page);
+  await mockApi(page, { detail: { ...SOURCE_PLAN, setup_type: 'Breakout' } });
+  await mockWatchlistedSignals(page, [WATCHLISTED_NVDA_SIGNAL]);
+  await page.goto(`/#/TradePlan?clone_from=${SRC_ID}`);
+  await expect(page.getByTestId('clone-banner')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByPlaceholder(/e\.g\. AAPL/i)).toHaveValue('NVDA');
+  // The watchlisted-signal auto-fill has demonstrably run once it fills Entry Rationale — the clone
+  // does not copy that field, so a non-empty value can only come from the auto-fill. Waiting on it
+  // (rather than a fixed delay) means the Setup Type assertion below is made AFTER the point where
+  // the pre-fix code would have overwritten it to "Momentum Continuation".
+  await expect(page.getByPlaceholder(/why enter now/i)).not.toHaveValue('', { timeout: 10000 });
+  await expect(page.getByTestId('setup-type-select')).toHaveValue('Breakout');
+});
+
+test('SC-TPC-08: Clone of a plan with no Setup Type still gets the watchlisted-signal auto-fill', async ({ page }) => {
+  await mockFallback(page);
+  await mockApi(page, { detail: { ...SOURCE_PLAN, setup_type: null } });
+  await mockWatchlistedSignals(page, [WATCHLISTED_NVDA_SIGNAL]);
+  await page.goto(`/#/TradePlan?clone_from=${SRC_ID}`);
+  await expect(page.getByTestId('clone-banner')).toBeVisible({ timeout: 10000 });
+  // No copied value to protect, so the existing auto-fill default applies (decision record §5, second case).
+  await expect(page.getByTestId('setup-type-select')).toHaveValue('Momentum Continuation', { timeout: 10000 });
+});
+
+test('SC-TPC-09: Clone keeps the source Setup Type when the ticker has no watchlisted signal', async ({ page }) => {
+  await mockFallback(page);
+  await mockApi(page, { detail: { ...SOURCE_PLAN, setup_type: 'Pullback to MA' } });
+  await mockWatchlistedSignals(page, []);
+  await page.goto(`/#/TradePlan?clone_from=${SRC_ID}`);
+  await expect(page.getByTestId('clone-banner')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId('setup-type-select')).toHaveValue('Pullback to MA');
 });

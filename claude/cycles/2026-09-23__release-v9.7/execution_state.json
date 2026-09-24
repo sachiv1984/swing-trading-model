@@ -40,34 +40,41 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-23__release-v9.7/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
-      "qa_evidence_log": null,
-      "test_scenarios": [],
+      "pr_number": 1802,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-09-23__release-v9.7/qa_evidence_EPIC-02.md",
+      "test_scenarios": [
+        "tests/e2e/alert-thresholds-empty-state.spec.js",
+        "tests/e2e/alert-history-empty-state.spec.js",
+        "tests/e2e/trade-plan-clone.spec.js",
+        "tests/e2e/monthly-pnl-fees-not-recorded.spec.js",
+        "tests/e2e/monthly-pnl-restatement.spec.js",
+        "tests/test_ui_copy_forbidden_phrases.py"
+      ],
       "stories": {
         "ST-02": {
           "title": "Cloned trade plan can silently get the wrong Setup Type",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1764,
           "branch": null,
-          "commit_sha": null,
+          "commit_sha": "02d7f2037e8e817572a05c7611ddb89f07283e04",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T15:14:22Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/trade_plan.md#4.5",
+            "docs/specs/frontend/pages/trade_plan.md#4.5 Clone as New Plan",
             "docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -75,23 +82,23 @@
         "ST-03": {
           "title": "Monthly P&L's NULL-fee audit flag has no frontend surfacing",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1765,
           "branch": null,
-          "commit_sha": null,
+          "commit_sha": "a05677651a45af6f166ca9ddbd165a58691324fb",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T15:18:05Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/reports.md#Fees-Not-Recorded Visibility",
             "docs/design/2026-09-23__release-v9.7/monthly-pnl-fees-surfacing/decision_record.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -99,90 +106,93 @@
         "ST-04": {
           "title": "Month-end P&L restatement diff has no frontend surfacing",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1766,
           "branch": null,
-          "commit_sha": null,
+          "commit_sha": "f35d8a5669e6a491fddaabedd9bf4cab0b5feb74",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T15:25:06Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/reports.md#Monthly Restatement Marker",
             "docs/design/2026-09-23__release-v9.7/monthly-pnl-restatement-surfacing/decision_record.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Deviation DEV-v9.7-ST04-01 filed in reports.md (BLG-SPEC-170): spec's {snapshot_date} and 'check unavailable' trigger not backed by the live API."
         },
         "ST-05": {
           "title": "AlertThresholdsSection.js empty-state heading trailing period",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1767,
           "branch": null,
-          "commit_sha": null,
+          "commit_sha": "e03a91ae54b9157abcd89f3f9233c00d5703c89e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T15:11:55Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/design/design_system.md#Data States"
+            "docs/specs/frontend/design_system.md#Data States"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Deviation DEV-v9.7-ST05-01 filed in notifications.md (BLG-SPEC-169): spec's empty-state headings still carry the trailing period."
         },
         "ST-06": {
           "title": "NotificationsHistory.js empty-state heading trailing period",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1768,
           "branch": null,
-          "commit_sha": null,
+          "commit_sha": "9b29914dede174e56e25ec5fd5899047c93e6ef3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T15:11:56Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/design/design_system.md#Data States"
+            "docs/specs/frontend/design_system.md#Data States"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Covered by DEV-v9.7-ST05-01 / BLG-SPEC-169 (same spec-text staleness in notifications.md)."
         },
         "ST-07": {
           "title": "CI lint of static UI copy for forbidden predictive/advice-crossing phrases",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1769,
           "branch": null,
-          "commit_sha": null,
+          "commit_sha": "b95cdcc8d7205b28953d7be1160d4a6eba885103",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-24T15:30:20Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_ui_copy_forbidden_phrases.py",
+            ".github/workflows/ui-copy-boundary-lint.yml"
+          ],
           "spec_reference_not_applicable": true,
           "spec_reference_not_applicable_reason": "CI/infrastructure story (Case D) — the lint script/workflow file itself is the de facto spec reference; populated once created.",
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -876,6 +886,30 @@
     {
       "epic": "EPIC-07",
       "story": "ST-29"
+    },
+    {
+      "epic": "EPIC-02",
+      "story": "ST-05"
+    },
+    {
+      "epic": "EPIC-02",
+      "story": "ST-06"
+    },
+    {
+      "epic": "EPIC-02",
+      "story": "ST-02"
+    },
+    {
+      "epic": "EPIC-02",
+      "story": "ST-03"
+    },
+    {
+      "epic": "EPIC-02",
+      "story": "ST-04"
+    },
+    {
+      "epic": "EPIC-02",
+      "story": "ST-07"
     }
   ],
   "open_escalations": [
@@ -903,6 +937,7 @@
     "[GOVERNANCE][conflict-resolution 2026-09-24] Merged origin/main into exec/2026-09-23__release-v9.7/EPIC-06 per CLAUDE.md §8 (execution_state.json content conflict, same root cause recurring: PR #1794/EPIC-05 merged on GitHub without this engine's STEP 4 post-merge state sync running). EPIC-06 branch's copy was the superset (has EPIC-06 done, absent from main) and was taken as base. Applied STEP 4 resume-sync: PR #1794 confirmed merged via `gh pr view --json mergedAt` (mergedAt: 2026-09-24T08:52:06Z) but neither copy reflected it — corrected EPIC-05.status/pr_status done/open -> merged/merged and moved EPIC-05 from merge_gate.epics_pending to epics_merged.",
     "[GOVERNANCE][conflict-resolution 2026-09-24] Merged origin/main into exec/2026-09-23__release-v9.7/EPIC-04 per CLAUDE.md §8 (execution_state.json add/add conflict). Neither side was a clean superset this time: took the higher-ranked (not_started < blocked < done < merged) side per EPIC (EPIC-03/05 from main [merged], EPIC-04 from branch [own in-progress work], others identical); unioned completed_items/blocked_items/delegated_items by (epic, story) key. Applied STEP 4 resume-sync in the same pass: PR #1795 (EPIC-06) confirmed merged via `gh pr view --json mergedAt` (mergedAt: 2026-09-24T08:54:37Z) but neither copy reflected it — corrected EPIC-06 status/pr_status done/open -> merged/merged and moved EPIC-06 from merge_gate.epics_pending to epics_merged.",
     "[GOVERNANCE][conflict-resolution 2026-09-24] Merged origin/main into EPIC-07 per CLAUDE.md §8: rank-based per-EPIC merge (EPIC-03/04/05/06 from main, EPIC-07 from branch), arrays unioned by (epic, story). STEP 4 resume-sync: PR #1798 (EPIC-04) confirmed merged (mergedAt 2026-09-24T12:22:56Z) -- corrected EPIC-04 done/open -> merged/merged, moved to merge_gate.epics_merged. ST-27 closed in the same pass (see delegation_log.md DEL-20260924-02).",
-    "[STEP 4 resume-sync 2026-09-24, run sprint session] PR #1800 (EPIC-07) confirmed merged via `gh pr view --json mergedAt` (mergedAt 2026-09-24T15:07:46Z) but execution_state.json still recorded pr_status=open / EPIC-07 in epics_pending -- corrected EPIC-07 status/pr_status done/open -> merged/merged and moved it to merge_gate.epics_merged. Also removed the stale EPIC-04/ST-18 entry from top-level blocked_items/delegated_items (story is done, DEL-20260924-01 Unblocked). Orphaned post-merge commit check (LL-v6.8-P3-01) run for EPIC-03/04/05/06/07 (`git log origin/main..origin/exec/<cycle>/<epic>`): 0 orphaned commits on any branch -- no reconciliation needed."
+    "[STEP 4 resume-sync 2026-09-24, run sprint session] PR #1800 (EPIC-07) confirmed merged via `gh pr view --json mergedAt` (mergedAt 2026-09-24T15:07:46Z) but execution_state.json still recorded pr_status=open / EPIC-07 in epics_pending -- corrected EPIC-07 status/pr_status done/open -> merged/merged and moved it to merge_gate.epics_merged. Also removed the stale EPIC-04/ST-18 entry from top-level blocked_items/delegated_items (story is done, DEL-20260924-01 Unblocked). Orphaned post-merge commit check (LL-v6.8-P3-01) run for EPIC-03/04/05/06/07 (`git log origin/main..origin/exec/<cycle>/<epic>`): 0 orphaned commits on any branch -- no reconciliation needed.",
+    "[STEP 3 ordering 2026-09-24] EPIC-02 executed after EPIC-03..07 had already merged: sprint_backlog.md's declared merge order is EPIC-01 -> EPIC-02 -> ..., but EPIC-01/ST-01 is blocked on ESC-EXEC-20260924-01 (delegated_decision) and EPIC-02 has no dependency on it, so EPIC-02 was worked once the earlier session had cleared its siblings. EPIC-02's branch was cut from main after EPIC-07's merge (0dd77bd2), so no cross-EPIC execution_state.json conflict is expected at its merge gate."
   ]
 }
