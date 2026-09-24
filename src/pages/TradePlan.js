@@ -482,6 +482,10 @@ export default function TradePlan() {
       ...EMPTY_FORM,
       ticker: cloneSource.ticker || "",
       market: cloneSource.market || "US",
+      // ST-02 (EPIC-02, v9.7, BLG-FE-186): setup_type is Copied (trade_plan.md §4.5, v1.16), including null.
+      // It must be set here, before the watchlisted-signal pre-population effect below runs, so its
+      // `prev.setup_type || "Momentum Continuation"` guard sees the copied value and does not overwrite it.
+      setup_type: cloneSource.setup_type || null,
       setup_thesis: cloneSource.setup_thesis || "",
       invalidation_condition: cloneSource.invalidation_condition || "",
       r_target: cloneSource.r_target != null ? String(cloneSource.r_target) : "",
