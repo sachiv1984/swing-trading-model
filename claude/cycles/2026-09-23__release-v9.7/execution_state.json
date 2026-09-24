@@ -347,7 +347,8 @@
       "qa_evidence_log": null,
       "test_scenarios": [
         "tests/test_conftest_database_url_guard.py",
-        "tests/test_playwright_skip_only_check.py"
+        "tests/test_playwright_skip_only_check.py",
+        "tests/test_negative_path_v92_v93_routers.py"
       ],
       "stories": {
         "ST-14": {
@@ -420,20 +421,22 @@
         "ST-17": {
           "title": "Backfill negative-path tests for 3 newest v9.2/v9.3 routers",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1779,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
+          "commit_sha": "6478b8345eb5e156404ed8bfc513d2780bb77d9a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "spec_reference_not_applicable": true,
+          "completed_utc": "2026-09-24T07:45:48Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_negative_path_v92_v93_routers.py"
+          ],
+          "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": "test-authoring story (Case C) — the new test files are the traceable artefact",
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -800,6 +803,10 @@
     {
       "epic": "EPIC-04",
       "story": "ST-16"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-17"
     }
   ],
   "open_escalations": [
