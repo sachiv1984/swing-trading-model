@@ -397,20 +397,22 @@
         "ST-16": {
           "title": "Recurring pre-sprint endpoint test coverage audit",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1778,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
+          "commit_sha": "a7b2f15d06da996ecc49337c683030b5183dfd79",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-24T07:42:07Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/endpoint_test_coverage_audit_2026-09-24.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -794,6 +796,10 @@
     {
       "epic": "EPIC-04",
       "story": "ST-15"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-16"
     }
   ],
   "open_escalations": [
