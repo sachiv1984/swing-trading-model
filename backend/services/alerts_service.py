@@ -755,6 +755,12 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
             delivery_tasks_enqueued += reflection_summary["delivery_tasks_enqueued"]
 
             # --- Re-delivery for failed prior notifications ---
+            # BLG-BE-124 (ST-10, EPIC-03, v9.7): a notification the operator has already
+            # read in the feed must never be re-enqueued for delivery just because its
+            # email delivery previously failed -- the operator has already seen it via
+            # the in-app feed, so `read = TRUE` overrides retry regardless of
+            # `delivered`/`delivery_attempts`. Unread, undelivered notifications are
+            # still retried up to 3 times (unchanged).
             redelivery_tasks_enqueued = 0
             cur.execute("""
                 SELECT id, alert_type FROM notifications
@@ -762,6 +768,7 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
                   AND delivered = FALSE
                   AND delivery_attempts < 3
                   AND created_at < NOW() - INTERVAL '10 seconds'
+                  AND read = FALSE
             """, (portfolio_id,))
             stale = cur.fetchall()
             for row in stale:

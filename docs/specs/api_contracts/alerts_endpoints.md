@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.9
-**Last Updated:** 2026-09-24 (ST-09, EPIC-03, v9.7, BLG-BE-123 — documented that `reflection_reminder` evaluation is portfolio-scoped so a NULL-`portfolio_id` `trade_history` row is permanently excluded; documented the rollback-consistency fix to `_evaluate_reflection_reminders`'s summary counts and delivery scheduling); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — new `reflection_reminder` alert type); prior — 2026-08-14 (ST-09, EPIC-02, v8.8, BLG-BE-84 — GET /notifications now exposes `context`); prior history retained — see prior entries in version control.
+**Version:** 0.10
+**Last Updated:** 2026-09-24 (ST-10, EPIC-03, v9.7, BLG-BE-124 — generic re-delivery now also requires `read = false`, so an already-read notification is never re-enqueued for delivery); prior — 2026-09-24 (ST-09, EPIC-03, v9.7, BLG-BE-123 — documented the `reflection_reminder` NULL-portfolio exclusion and rollback-consistency fix); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — new `reflection_reminder` alert type); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **ADR Reference:** `docs/adr/ADR-003-notification-delivery-architecture.md` — FastAPI BackgroundTasks delivery architecture
 **Design Gate:** `claude/cycles/2026-03-18__release-v2.1/` — EPIC-02
@@ -29,7 +29,7 @@ The domain covers five concerns:
 
 Notification delivery uses **FastAPI `BackgroundTasks`** (ADR-003, Option C). Email delivery is enqueued as a background task after the triggering API response is returned. No Redis, Celery, or external worker infrastructure is required.
 
-Delivery tracking fields (`delivered`, `delivery_attempted_at`, `delivery_attempts`, `delivery_error`) are stored on the `notifications` table. Re-delivery is attempted on the next evaluation cycle if `delivered = false` and `delivery_attempts < 3`.
+Delivery tracking fields (`delivered`, `delivery_attempted_at`, `delivery_attempts`, `delivery_error`) are stored on the `notifications` table. Re-delivery is attempted on the next evaluation cycle if `delivered = false`, `delivery_attempts < 3`, **and `read = false`** (v0.9, BLG-BE-124 — a notification the operator has already read in the feed is never re-enqueued for delivery, regardless of its delivery outcome).
 
 > **Note — table naming:** ADR-003's implementation contract sketch uses the name `alerts` for the delivery-tracking table. This spec supersedes that sketch. The canonical table name is `notifications`. The `deliver_notification` function signature and retry model from ADR-003 apply unchanged; only the table name differs.
 
@@ -492,7 +492,7 @@ Uses the standard DELETE envelope from **conventions.md §12**:
 
 Evaluate all enabled alert rules against the current portfolio state. For each triggered rule, a notification record is written and email delivery is enqueued as a FastAPI `BackgroundTask` (per ADR-003). The response is returned immediately — delivery happens after the response is sent.
 
-Re-delivery: on each evaluation, if a prior notification has `delivered = false` and `delivery_attempts < 3`, delivery is re-enqueued.
+Re-delivery: on each evaluation, if a prior notification has `delivered = false`, `delivery_attempts < 3`, and `read = false`, delivery is re-enqueued (v0.9 — a notification already read in the feed is never re-enqueued, BLG-BE-124).
 
 **Method & Path**
 
@@ -543,7 +543,7 @@ No body required.
 | `rules_evaluated` | integer | Number of enabled rules evaluated |
 | `notifications_created` | integer | New notification records written this call |
 | `delivery_tasks_enqueued` | integer | Background tasks enqueued for new notifications (where email is enabled in preferences) |
-| `redelivery_tasks_enqueued` | integer | Background tasks enqueued for prior notifications where `delivered = false` and `delivery_attempts < 3` |
+| `redelivery_tasks_enqueued` | integer | Background tasks enqueued for prior notifications where `delivered = false`, `delivery_attempts < 3`, and `read = false` (v0.9) |
 
 #### Error Responses
 
@@ -966,6 +966,7 @@ Delivery tracking columns on `notifications` (`delivered`, `delivery_attempted_a
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.10 | 2026-09-24 | ST-10 (v9.7, EPIC-03, BLG-BE-124): Generic alert re-delivery (`POST /alerts/evaluate`) now also requires `read = false`, in addition to the existing `delivered = false` and `delivery_attempts < 3` — a notification the operator has already read in the feed is never re-enqueued for delivery just because its earlier delivery attempt failed. Unread, undelivered notifications are still retried up to 3 times (unchanged). No new endpoint. |
 | 0.9 | 2026-09-24 | ST-09 (v9.7, EPIC-03, BLG-BE-123): Documented that `reflection_reminder` evaluation is portfolio-scoped, so a `trade_history` row with a `NULL` `portfolio_id` is permanently excluded from reflection reminders (expected behaviour, not a gap). Documented the `_evaluate_reflection_reminders` rollback-consistency fix: on a mid-loop failure the step's `SAVEPOINT` rollback now leaves `notifications_created`/`delivery_tasks_enqueued` reset to `0` (previously left at pre-failure partial counts), and delivery scheduling (`enqueue_delivery`) is deferred until after the `SAVEPOINT` releases so nothing is scheduled for a row that is subsequently rolled back. No new endpoint. |
 | 0.8 | 2026-09-21 | ST-04 (v9.6, EPIC-01, BLG-FEAT-98): Added the `reflection_reminder` alert type — a preference type with no rule (not accepted by `POST /alerts/rules`), evaluated as an additional step of `POST /alerts/evaluate` (48 h after a closed trade with no saved reflection; at most one per trade, ever; feed row always created, delivery only when the preference is enabled, default off). `GET/PATCH /notifications/preferences` now cover five types and backfill the new row for already-seeded portfolios. `POST /alerts/evaluate` response gains `reflection_reminders`. `GET /notifications` `alert_type` gains `reflection_reminder` (`context` = `{trade_id, ticker, exit_date}`). No new endpoint. Opportunistic in-file fix: backfilled the missing v0.7 row below. |
 | 0.7 | 2026-08-14 | ST-09 (v8.8, EPIC-02, BLG-BE-84): `GET /notifications` now exposes `context`; `alert_type` description corrected to include `custom_price_alert` (missed since v0.5). (Row backfilled at v0.8 from this file's prior header text; the header had read v0.7 with no changelog row.) |
