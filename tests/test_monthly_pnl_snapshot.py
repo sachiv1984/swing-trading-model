@@ -34,6 +34,12 @@ PATCH_GET_SNAPSHOT = "services.reports_service.get_monthly_pnl_snapshot"
 PATCH_INSERT_SNAPSHOT = "services.reports_service.insert_monthly_pnl_snapshot_if_absent"
 PATCH_SNAPSHOTS_IN_RANGE = "services.reports_service.get_monthly_pnl_snapshots_in_range"
 PATCH_GET_TAX_TRADES = "services.reports_service.get_trade_history_by_tax_year"
+# ST-12 (EPIC-03, v9.7, BLG-BE-126): get_monthly_pnl_report now opens (at most) one
+# connection itself, reused across every closed month, rather than relying solely on
+# get_monthly_pnl_snapshot/insert_monthly_pnl_snapshot_if_absent to each open their own --
+# must be mocked in every test below or it would attempt a real DB connection.
+PATCH_GET_DB = "services.reports_service.get_db"
+PATCH_ENSURE_SNAPSHOTS_TABLE = "services.reports_service.ensure_monthly_pnl_snapshots_table"
 
 
 # ─── _is_closed_month ──────────────────────────────────────────────────────
@@ -56,6 +62,8 @@ class TestIsClosedMonth(unittest.TestCase):
 
 class TestMonthlyPnlSnapshotting(unittest.TestCase):
 
+    @patch(PATCH_ENSURE_SNAPSHOTS_TABLE)
+    @patch(PATCH_GET_DB)
     @patch(PATCH_GET_POSITIONS, return_value=[])
     @patch(PATCH_INSERT_SNAPSHOT)
     @patch(PATCH_GET_SNAPSHOT, return_value=None)
@@ -74,6 +82,8 @@ class TestMonthlyPnlSnapshotting(unittest.TestCase):
         self.assertEqual(month["snapshot_realised_pnl_gbp"], 100.0)
         self.assertEqual(month["restated_diff_gbp"], 0.0)
 
+    @patch(PATCH_ENSURE_SNAPSHOTS_TABLE)
+    @patch(PATCH_GET_DB)
     @patch(PATCH_GET_POSITIONS, return_value=[])
     @patch(PATCH_INSERT_SNAPSHOT)
     @patch(PATCH_GET_SNAPSHOT, return_value={
@@ -92,6 +102,8 @@ class TestMonthlyPnlSnapshotting(unittest.TestCase):
         self.assertFalse(month["restated"])
         self.assertEqual(month["restated_diff_gbp"], 0.0)
 
+    @patch(PATCH_ENSURE_SNAPSHOTS_TABLE)
+    @patch(PATCH_GET_DB)
     @patch(PATCH_GET_POSITIONS, return_value=[])
     @patch(PATCH_INSERT_SNAPSHOT)
     @patch(PATCH_GET_SNAPSHOT, return_value={
@@ -134,6 +146,8 @@ class TestMonthlyPnlSnapshotting(unittest.TestCase):
         get_snapshot_mock.assert_not_called()
         insert_mock.assert_not_called()
 
+    @patch(PATCH_ENSURE_SNAPSHOTS_TABLE)
+    @patch(PATCH_GET_DB)
     @patch(PATCH_GET_POSITIONS, return_value=[])
     @patch(PATCH_INSERT_SNAPSHOT)
     @patch(PATCH_GET_SNAPSHOT, return_value=None)
@@ -143,14 +157,56 @@ class TestMonthlyPnlSnapshotting(unittest.TestCase):
     @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
     @patch("services.reports_service.datetime")
     def test_baselining_is_insert_if_absent_not_unconditional_write(
-        self, mock_dt, get_portfolio_mock, get_monthly_pnl_mock, get_snapshot_mock, insert_mock, positions_mock
+        self, mock_dt, get_portfolio_mock, get_monthly_pnl_mock, get_snapshot_mock, insert_mock, positions_mock,
+        get_db_mock, ensure_table_mock,
     ):
         """Baselining must go through the insert-if-absent path (immutability
         is enforced at the DB layer's ON CONFLICT DO NOTHING, not by this
         service re-checking) -- confirms the call, not a raw UPDATE."""
         mock_dt.now.return_value.date.return_value = date(2026, 9, 22)
+        snapshot_conn = get_db_mock.return_value.__enter__.return_value
         get_monthly_pnl_report()
-        insert_mock.assert_called_once_with("portfolio-test-001", 2026, 8, 100.0, 2)
+        # ST-12 (BLG-BE-126): insert_monthly_pnl_snapshot_if_absent now also receives the
+        # shared connection as a 6th positional argument.
+        insert_mock.assert_called_once_with("portfolio-test-001", 2026, 8, 100.0, 2, snapshot_conn)
+
+    @patch(PATCH_ENSURE_SNAPSHOTS_TABLE)
+    @patch(PATCH_GET_DB)
+    @patch(PATCH_GET_POSITIONS, return_value=[])
+    @patch(PATCH_INSERT_SNAPSHOT)
+    @patch(PATCH_GET_SNAPSHOT, return_value=None)
+    @patch(PATCH_GET_MONTHLY_PNL, return_value=[
+        {"year": 2025, "month": 1, "realised_pnl_gbp": 10.0, "trade_count": 1, "null_fee_trade_count": 0},
+        {"year": 2025, "month": 2, "realised_pnl_gbp": 20.0, "trade_count": 1, "null_fee_trade_count": 0},
+        {"year": 2025, "month": 3, "realised_pnl_gbp": 30.0, "trade_count": 1, "null_fee_trade_count": 0},
+        {"year": 2025, "month": 4, "realised_pnl_gbp": 40.0, "trade_count": 1, "null_fee_trade_count": 0},
+    ])
+    @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
+    @patch("services.reports_service.datetime")
+    def test_multiple_closed_months_open_at_most_one_additional_connection(
+        self, mock_dt, get_portfolio_mock, get_monthly_pnl_mock, get_snapshot_mock, insert_mock, positions_mock,
+        get_db_mock, ensure_table_mock,
+    ):
+        """BLG-BE-126 (ST-12, EPIC-03, v9.7): GET /reports/monthly-pnl must open at
+        most one additional connection (beyond get_monthly_pnl's own call), regardless
+        of how many closed months are in the response -- 4 closed months here must
+        still call get_db() (this function's connection source) exactly once, and
+        every get_monthly_pnl_snapshot/insert_monthly_pnl_snapshot_if_absent call must
+        reuse that same connection object rather than opening its own."""
+        mock_dt.now.return_value.date.return_value = date(2026, 9, 22)
+        report = get_monthly_pnl_report()
+        self.assertEqual(len(report["months"]), 4)
+
+        get_db_mock.assert_called_once()  # exactly one additional connection, not one per month
+        ensure_table_mock.assert_called_once()  # table-ensured once, not once per month
+
+        shared_conn = get_db_mock.return_value.__enter__.return_value
+        self.assertEqual(get_snapshot_mock.call_count, 4)
+        for call in get_snapshot_mock.call_args_list:
+            self.assertEqual(call.args[-1], shared_conn)
+        self.assertEqual(insert_mock.call_count, 4)
+        for call in insert_mock.call_args_list:
+            self.assertEqual(call.args[-1], shared_conn)
 
 
 # ─── get_tax_year_report: restated_month_count / restated_months_notice ───
