@@ -4247,6 +4247,26 @@ ST-21 fixed `test_trade_plan_audit_log.py`'s permanent, unrestored `sys.modules.
 
 ---
 
+### BLG-QA-192 — test_null_fee_trade_audit.py's inspect.getsource() call fails against the database module stub
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-11/EPIC-03, 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_null_fee_trade_audit.py::test_get_monthly_pnl_sql_filters_on_either_fee_leg_null` does `from database import get_monthly_pnl` then `inspect.getsource(get_monthly_pnl)`. `tests/conftest.py` replaces `sys.modules["database"]` with a session-scoped `MagicMock` stub (BLG-QA-20/retired BLG-QA-73), so this import binds to the stub, not the real function, and `inspect.getsource()` on a `MagicMock` raises `TypeError`. Confirmed failing on `main` before this story's changes (reproduced in isolation, unrelated to ST-11's own fix) — found while writing `tests/test_month_closure_clock_source.py`'s sibling SQL-inspection test for `get_monthly_pnl`, which uses the correct pattern instead.
+
+**Scope**
+- Convert the test to use the private, isolated `backend/database.py` import pattern already used by `tests/test_reflection_reminder.py` / `tests/test_monthly_pnl_snapshot.py` / `tests/test_month_closure_clock_source.py` (`importlib.util.spec_from_file_location`, never touching `sys.modules["database"]`)
+
+**Acceptance Criteria**
+- The test passes when run both in isolation and as part of the full suite
+- No other test in the file is affected
+
+---
+
 ### BLG-FE-186 — Cloned trade plan can silently get the wrong Setup Type
 **Priority:** P2 (Medium)
 **Type:** Frontend / UX

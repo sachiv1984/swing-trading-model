@@ -383,6 +383,8 @@ def generate_trade_debrief(trade_id: str) -> dict:
             output_tokens=completion_tokens,
             cost_usd=cost_usd,
             compliance_check_result=compliance_check_result,
+            # ST-13 (BLG-BE-128, v9.7): includes retry backoff sleep time by design -- see
+            # ai_endpoints.md Implementation constraints.
             latency_ms=int((time.time() - t0) * 1000),
         )
 
