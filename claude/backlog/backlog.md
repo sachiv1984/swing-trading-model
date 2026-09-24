@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-23 (release planning 2026-09-23__release-v9.7 — Release Slice v9.7 ephemeral section appended, 29 items, marker `RP:v9.7:2026-09-23__release-v9.7`; no other structural changes); prior — 2026-09-23 (groom backlog, post-ship closure 2026-09-21__release-v9.6 — 36 items archived (32 v9.6-shipped + BLG-GOV-335/336/337/326, already resolved but never archived); 3 ephemeral sections cleared — 2 Idea Intake staging sections (IW-20260914-01, IW-20260919-01), 65 open items relocated verbatim to §3; 1 Release Slice v9.6 table; see `backlog_health_20260923.md`); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — 32 shipped ST items marked ✅ COMPLETE; 0 Phase 4 additions needed, 0 test scenario gaps, 0 stale parked items); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-24 (session — 1 new item added: BLG-SPEC-166, surfaced during agent-mediated PR review of PR #1795); prior — 2026-09-23 (release planning 2026-09-23__release-v9.7 — Release Slice v9.7 ephemeral section appended, 29 items, marker `RP:v9.7:2026-09-23__release-v9.7`; no other structural changes); prior — 2026-09-23 (groom backlog, post-ship closure 2026-09-21__release-v9.6 — 36 items archived (32 v9.6-shipped + BLG-GOV-335/336/337/326, already resolved but never archived); 3 ephemeral sections cleared — 2 Idea Intake staging sections (IW-20260914-01, IW-20260919-01), 65 open items relocated verbatim to §3; 1 Release Slice v9.6 table; see `backlog_health_20260923.md`); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4528,6 +4528,27 @@ None of these are on the live-capital nightly stop-update path, so there is no c
 
 **Acceptance Criteria**
 - Either: a documented decision that the current combined-latency semantics are intentional and acceptable (no code change), or: `latency_ms` is split into a final-attempt-only figure and a total-including-retries figure, applied consistently across `ai_service.py`, `gemini_service.py`, and `debrief_service.py`
+
+---
+
+### BLG-SPEC-166 — Cross-reference current_roadmap.md's SI-02 field to the canonical "linked trade plan" definition
+**Priority:** P4 (Backlog)
+**Type:** Spec Debt
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** ST-23/EPIC-06, cycle 2026-09-23__release-v9.7 — surfaced during agent-mediated Product Owner review of PR #1795 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-23 (EPIC-06, `2026-09-23__release-v9.7`) shipped the canonical "linked trade plan" definition for the SI-02 gate, but its acceptance criteria also required `current_roadmap.md`'s SI-02 field to cross-reference that definition. `claude/roadmap/*` is outside Sprint Execution's write scope (`execution_prompt.md` §7), so the cross-reference was correctly left undone by that engine rather than written out of scope — but no backlog item was filed to track the gap, unlike the two sibling out-of-scope findings from the same EPIC (`BLG-SPEC-164`/`165`), which were properly filed. Without this item, the half-completed AC has no tracked path to closure.
+
+**Scope**
+- Add a cross-reference in `current_roadmap.md`'s SI-02 field to the canonical "linked trade plan" definition shipped by ST-23
+- Action via Roadmap Rebalance or another engine with `claude/roadmap/*` write authority — not Sprint Execution
+
+**Acceptance Criteria**
+- `current_roadmap.md`'s SI-02 field cross-references the canonical "linked trade plan" definition
+- ST-23's originally-scoped acceptance criteria are fully met
 
 ---
 
