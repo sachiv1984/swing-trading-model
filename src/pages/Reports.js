@@ -21,6 +21,7 @@ import {
 import { Button } from "../components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
+import { StandingAlert } from "../components/ui/StandingAlert";
 import StatsCard from "../components/ui/StatsCard";
 import PerformanceSummary from "../components/reports/PerformanceSummary";
 import PortfolioGrowthChart from "../components/reports/PortfolioGrowthChart";
@@ -728,6 +729,10 @@ function MonthlyPnlTable() {
   const unrealisedNote = response?.unrealised_note;
   const totalRealisedPnl = rows.reduce((sum, row) => sum + (row.realised_pnl_gbp ?? 0), 0);
   const combinedTotal = totalRealisedPnl + (estimatedUnrealisedPnl ?? 0);
+  // ST-03 (EPIC-02, v9.7, BLG-FE-187): the API returns null_fee_trade_count per month and no
+  // top-level aggregate, so the notice's N is derived client-side from the loaded rows (same
+  // convention as the Avg P&L/Trade column). reports.md v0.19 §Fees-Not-Recorded Visibility.
+  const nullFeeTotal = rows.reduce((sum, row) => sum + (row.null_fee_trade_count ?? 0), 0);
 
   return (
     <div className="space-y-4">
@@ -762,6 +767,19 @@ function MonthlyPnlTable() {
           <h3 className="text-sm font-semibold text-white">Monthly Realised P&L</h3>
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Current and prior calendar year. Only months with closed trades shown.</p>
         </div>
+        {nullFeeTotal >= 1 && (
+          <div data-testid="monthly-fees-missing-notice" className="px-4 pt-4">
+            <StandingAlert
+              severity="info"
+              dismissible={false}
+              message={
+                nullFeeTotal === 1
+                  ? "1 closed trade has no fees recorded, so these figures may not reflect its costs."
+                  : `${nullFeeTotal} closed trades have no fees recorded, so these figures may not reflect their costs.`
+              }
+            />
+          </div>
+        )}
         {rows.length === 0 ? (
           <div className="px-6 py-10 text-center text-slate-600 dark:text-slate-400 text-sm">No closed trades in scope.</div>
         ) : (
@@ -783,6 +801,7 @@ function MonthlyPnlTable() {
                 // ST-01: derived from already-fetched row values, not a P&L recalculation.
                 // trade_count = 0 shows "—" (no colour) rather than a fabricated £0.00.
                 const avgPnl = row.trade_count > 0 ? pnl / row.trade_count : null;
+                const nullFeeCount = row.null_fee_trade_count ?? 0;
                 const avgPnlColor = avgPnl == null ? "text-slate-600 dark:text-slate-400" : avgPnl > 0 ? "text-emerald-400" : avgPnl < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400";
                 return (
                   <tr key={`${row.year}-${row.month}`} className="hover:bg-slate-700/20 transition-colors">
@@ -792,7 +811,19 @@ function MonthlyPnlTable() {
                     <td data-testid="monthly-realised-pnl-cell" className={`px-6 py-3 text-right font-medium ${pnlColor}`}>
                       {formatGBP(pnl)}
                     </td>
-                    <td className="px-6 py-3 text-right text-slate-600 dark:text-slate-400">{row.trade_count}</td>
+                    {/* ST-03 (BLG-FE-187): per-month NULL-fee indicator, "{trade_count} · {k} no fees".
+                        Months with k = 0 render the bare trade count, unchanged. */}
+                    {nullFeeCount >= 1 ? (
+                      <td
+                        data-testid="monthly-fees-missing-count"
+                        aria-label={`${row.trade_count} trades, ${nullFeeCount} without fees recorded`}
+                        className="px-6 py-3 text-right text-slate-600 dark:text-slate-400"
+                      >
+                        {row.trade_count} · {nullFeeCount} no fees
+                      </td>
+                    ) : (
+                      <td className="px-6 py-3 text-right text-slate-600 dark:text-slate-400">{row.trade_count}</td>
+                    )}
                     <td data-testid="monthly-avg-pnl-cell" className={`px-6 py-3 text-right font-medium ${avgPnlColor}`}>
                       {formatGBP(avgPnl)}
                     </td>
@@ -802,6 +833,11 @@ function MonthlyPnlTable() {
             </tbody>
           </table>
         )}
+        {/* ST-03 (BLG-FE-187): basis caption — never omitted (an undocumented basis is the defect
+            being fixed). "net" per the v9.6 ST-07 audit: metrics_definitions.md §Fee-Netting Basis. */}
+        <p data-testid="monthly-basis-caption" className="px-6 py-3 text-xs text-slate-600 dark:text-slate-400 border-t border-slate-700/30">
+          Realised P&L is net of recorded fees.
+        </p>
       </div>
 
       {/* ST-14 (BLG-FEAT-70, v7.0): Unrealised P&L Card — reuses the Tax Year tab's approved pattern verbatim */}
