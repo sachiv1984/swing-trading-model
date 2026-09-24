@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-24 (session — 2 new items added: BLG-SPEC-167, BLG-OPS-169, surfaced during ST-27/EPIC-07 staging verification); prior — 2026-09-24 (session — 1 new item added: BLG-SPEC-166, surfaced during agent-mediated PR review of PR #1795); prior — 2026-09-23 (release planning 2026-09-23__release-v9.7 — Release Slice v9.7 ephemeral section appended, 29 items, marker `RP:v9.7:2026-09-23__release-v9.7`; no other structural changes); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-24 (session — 3 new items added: BLG-SEC-39, BLG-QA-193, BLG-SPEC-168, surfaced during agent-mediated review of PR #1800/EPIC-07); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-167, BLG-OPS-169, surfaced during ST-27/EPIC-07 staging verification); prior — 2026-09-24 (session — 1 new item added: BLG-SPEC-166, surfaced during agent-mediated PR review of PR #1795); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4593,6 +4593,70 @@ Schema changes in this application are applied by `ensure_*()` functions when th
 **Acceptance Criteria**
 - A merge to `main` that should have redeployed staging but did not produces a visible failure or alert
 - The check and its trigger are documented, including the known limits of what can be verified from the repo alone
+
+---
+
+### BLG-SEC-39 — Harden the non-registry dependency guard (missed specifier forms, trailing-comment false positive, no exit-code test)
+**Priority:** P3 (Low)
+**Type:** Security / Supply Chain
+**Owner:** Cybersecurity & Trust Lead; QA & Testing Owner
+**Source:** ST-29/EPIC-07 (BLG-SEC-38), cycle 2026-09-23__release-v9.7 — agent-mediated review of PR #1800 — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`scripts/check_non_registry_dependencies.py` (ST-29) rejects `git+ssh`, `git+https` and `file:` specifiers, but the review of PR #1800 found gaps: for pip it does not catch `git+http`, `hg+`/`svn+`, bare direct URLs, relative paths, upper-case schemes, or `-r` includes; for npm it does not catch `github:user/repo` or `user/repo` shorthand, tarball URLs, or `package-lock.json`. It also raises a false positive on a pinned line with a trailing comment (`fastapi==0.135.1  # pinned, not git+ssh` is flagged — reproduced 2026-09-24). No test exercises `main()`'s exit code, which is the behaviour CI actually depends on.
+
+**Scope**
+- Extend the pip and npm checks to the missed forms above, and strip trailing comments before matching
+- Add tests for each new form, for the trailing-comment case, and for `main()`'s exit code (0 on clean, non-zero on a violation)
+- Confirm the script still passes on the current tree (no new false positives)
+
+**Acceptance Criteria**
+- Each missed form above is rejected by a test, and the trailing-comment line is accepted
+- `main()` exits non-zero on a violation and zero on the current repo tree, asserted by a test
+
+---
+
+### BLG-QA-193 — Prove the non-registry dependency check fails a real PR, and confirm it is a required status check on main
+**Priority:** P4 (Backlog)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; Infrastructure & Operations Owner
+**Source:** ST-29/EPIC-07 (BLG-SEC-38), cycle 2026-09-23__release-v9.7 — ST-29 recorded as "Pass with notes" and flagged in the agent-mediated review of PR #1800 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-29's acceptance criterion is "a test PR adding a `git+ssh` dependency fails CI". The guard's logic is unit-tested, and the workflow runs on `pull_request`, but nobody has observed a real GitHub Actions run failing on a deliberately introduced non-registry dependency, and it has not been confirmed that `Non-Registry Dependency Check (ST-29)` is a required status check on `main` (if it is not, a failing run would not block a merge).
+
+**Scope**
+- Open a throwaway PR that adds a `git+ssh` dependency to `backend/requirements.txt`, record the failing run, then close the PR unmerged
+- Check the `main` branch protection settings and record whether this check is required; if not, raise that with the Infrastructure & Operations Owner
+
+**Acceptance Criteria**
+- A recorded failing CI run (run URL) for a PR adding a `git+ssh` dependency
+- The required-status-check state on `main` is recorded, either way
+
+---
+
+### BLG-SPEC-168 — Correct the BLG-BE-128 citation to BLG-BE-129 for the latency_ms composition decision
+**Priority:** P4 (Backlog)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner; Infrastructure & Operations Owner
+**Source:** ST-13/EPIC-03 and ST-28/EPIC-07, cycle 2026-09-23__release-v9.7 — agent-mediated review of PR #1800 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/api_contracts/ai_endpoints.md` attributes the `latency_ms` composition decision (ST-13, EPIC-03, v9.7) to `BLG-BE-128` at lines 5, 419 and 829. That decision is `BLG-BE-129`; `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites not yet on the shared upstream helper). The external-dependency register (`docs/ops/external_api_dependency_register.md`, entry CFM-03, ST-28) copied the wrong ID from the contract, so a reader following either citation lands on an unrelated item.
+
+**Scope**
+- Correct the three `BLG-BE-128` citations in `ai_endpoints.md` to `BLG-BE-129`, following the contract's version-history conventions
+- Correct the same citation in the dependency register's CFM-03 entry
+
+**Acceptance Criteria**
+- No reference to `BLG-BE-128` remains where `BLG-BE-129` is meant, in `ai_endpoints.md` or the dependency register
+- `BLG-BE-128`'s own legitimate references are untouched
 
 ---
 
