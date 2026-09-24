@@ -501,22 +501,22 @@
         "ST-20": {
           "title": "SI-02 gate threshold scale-with-cadence review",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1782,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-05",
+          "commit_sha": "3058eb9f2f5130dc1de73fd6958d630db98181d0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T07:50:38Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/roadmap/current_roadmap.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": "Disposition per acceptance criteria: confirm-closed citing BLG-GOV-237, no new information beyond accumulated NOT MET streak."
@@ -823,6 +823,10 @@
     {
       "epic": "EPIC-05",
       "story": "ST-19"
+    },
+    {
+      "epic": "EPIC-05",
+      "story": "ST-20"
     }
   ],
   "open_escalations": [
