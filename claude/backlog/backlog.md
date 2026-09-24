@@ -4093,6 +4093,48 @@ The Screener results table renders an "Earnings" column (`lg`-visible, days unti
 
 ---
 
+### BLG-SPEC-164 — Drop 4 confirmed-orphaned, always-NULL columns from the live positions table
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-25/EPIC-06, 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model.md`'s Positions Table section (v2.41) documents 4 live `positions` columns — `atr_value`, `stop_price`, `fees`, `pnl_percent` — as confirmed orphaned (always NULL on every row, no read or write path anywhere in `backend/` references them; their documented same-purpose counterparts `atr`/`current_stop`/`fees_paid`/`pnl_pct` are the ones actually used) and recommends a drop. The documentation-only disposition was completed; the actual `DROP COLUMN` migration was not applied — that is a live production schema change requiring the Data Model & Domain Schema Owner's own migration process, not a documentation story.
+
+**Scope**
+- Apply a migration dropping `atr_value`, `stop_price`, `fees`, `pnl_percent` from the live `positions` table
+- Update `data_model.md`'s Migration History section with the down/drop migration record, and remove the now-resolved orphaned-column disclosure note once dropped
+
+**Acceptance Criteria**
+- All 4 columns no longer exist on the live `positions` table
+- `data_model.md` reflects the drop in its Migration History
+
+---
+
+### BLG-SPEC-165 — Reconcile positions.fees_paid NOT NULL constraint (re-apply live, or confirm nullable is intentional)
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-26/EPIC-06, 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model.md` (v2.42) documented `fees_paid` as `NOT NULL as of v1.6`, citing the "Migration from v1.5 to v1.6" record (`ALTER TABLE positions ALTER COLUMN fees_paid SET NOT NULL`). A live schema query (readonly staging) confirmed the column is nullable today — the constraint was either later dropped (not documented anywhere in this file's migration history) or never durably applied in the environment queried. The documentation was reconciled to nullable (matching live reality) as the safe, non-destructive disposition; this item tracks the actual reconciliation decision.
+
+**Scope**
+- Determine why the v1.6 `NOT NULL` constraint is not present live (dropped, rolled back, or never applied) — check migration run history if available
+- Decide: re-apply the `NOT NULL` constraint live (if no existing row has a NULL `fees_paid`, and the original v1.6 intent should be re-enforced), or confirm nullable is now the intentional, permanent state and document why
+
+**Acceptance Criteria**
+- Disposition recorded (constraint re-applied, or nullable confirmed intentional with a stated reason)
+- `data_model.md` and the live schema agree, one way or the other, with the reasoning documented (not just the fact)
+
+---
+
 ### BLG-FE-184 — Migrate the remaining toFixed / toLocaleString call sites to the shared formatting helper
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
