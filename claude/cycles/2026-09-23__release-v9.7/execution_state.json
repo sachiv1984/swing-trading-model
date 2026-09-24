@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-24T07:06:37Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-24T07:08:02Z",
+  "last_updated_utc": "2026-09-24T08:32:16Z",
   "epics": {
     "EPIC-01": {
       "status": "blocked",
@@ -190,10 +190,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-23__release-v9.7/EPIC-03",
       "pr_number": 1793,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-23__release-v9.7/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -339,31 +339,35 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "blocked",
       "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": null,
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_conftest_database_url_guard.py",
+        "tests/test_playwright_skip_only_check.py",
+        "tests/test_negative_path_v92_v93_routers.py"
+      ],
       "stories": {
         "ST-14": {
           "title": "Backend test suite can connect to a real DATABASE_URL",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1776,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
+          "commit_sha": "4040c5755cddff84ed2c6884b59a6e5edaf59bf6",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T07:37:41Z",
+          "acceptance_verified": true,
           "spec_references": [],
           "spec_reference_not_applicable": true,
           "spec_reference_not_applicable_reason": "test-isolation bug fix, no prior canonical spec — verified via tests/conftest.py behaviour",
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -371,20 +375,22 @@
         "ST-15": {
           "title": "CI check flagging merged .skip()/.only() Playwright specs",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1777,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
+          "commit_sha": "c3754c5beb8f038c3d2a3af7008aee5cc057d4cf",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "spec_reference_not_applicable": true,
+          "completed_utc": "2026-09-24T07:40:26Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/playwright-skip-only-check.yml"
+          ],
+          "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": "CI/infrastructure story (Case D) — the CI workflow/script file is the de facto spec reference",
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -392,20 +398,22 @@
         "ST-16": {
           "title": "Recurring pre-sprint endpoint test coverage audit",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1778,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
+          "commit_sha": "a7b2f15d06da996ecc49337c683030b5183dfd79",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-24T07:42:07Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/endpoint_test_coverage_audit_2026-09-24.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -413,20 +421,22 @@
         "ST-17": {
           "title": "Backfill negative-path tests for 3 newest v9.2/v9.3 routers",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1779,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
+          "commit_sha": "6478b8345eb5e156404ed8bfc513d2780bb77d9a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "spec_reference_not_applicable": true,
+          "completed_utc": "2026-09-24T07:45:48Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_negative_path_v92_v93_routers.py"
+          ],
+          "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": "test-authoring story (Case C) — the new test files are the traceable artefact",
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -434,14 +444,14 @@
         "ST-18": {
           "title": "Validate get_claude_endpoint_cost_windows() SQL against real Postgres",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "human",
           "github_issue": 1780,
-          "branch": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260924-01",
+          "blocked_since_utc": "2026-09-24T07:46:54Z",
+          "unblock_criteria": "Human runs the query against real/synthetic Postgres and shares output, or a synthetic-DB test is added -- see DEL-20260924-01",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -457,33 +467,33 @@
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-23__release-v9.7/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
-      "qa_evidence_log": null,
+      "pr_number": 1794,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-09-23__release-v9.7/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
       "stories": {
         "ST-19": {
           "title": "Quarterly governance overhead ratio metric",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1781,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-05",
+          "commit_sha": "ac9320bf65553be5080568c32aff472b6d915026",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T07:49:20Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/metrics_definitions.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -491,22 +501,22 @@
         "ST-20": {
           "title": "SI-02 gate threshold scale-with-cadence review",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1782,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-05",
+          "commit_sha": "3058eb9f2f5130dc1de73fd6958d630db98181d0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T07:50:38Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/roadmap/current_roadmap.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": "Disposition per acceptance criteria: confirm-closed citing BLG-GOV-237, no new information beyond accumulated NOT MET streak."
@@ -514,22 +524,22 @@
         "ST-21": {
           "title": "Document ensure_ascii=False convention for governance JSON writes",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1783,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-05",
+          "commit_sha": "6a0b61430d880f85ea483ac81dede58c2fe7ca84",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T07:53:28Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/system/shared_standards.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
@@ -537,25 +547,29 @@
         "ST-22": {
           "title": "Reconcile sprint_planning_prompt.md STEP -1 wording vs shared_standards.md §10.1",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1784,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-09-23__release-v9.7/EPIC-05",
+          "commit_sha": "2d31d41b8d6558d6f09b82970bc29b87c79e6600",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-09-24T07:56:55Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/system/sprint_planning_prompt.md",
             "claude/system/shared_standards.md#10.1"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team"
+          },
           "notes": ""
         }
       }
@@ -747,6 +761,12 @@
       "story": "ST-01",
       "status": "blocked_decision",
       "escalation": "ESC-EXEC-20260924-01"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-18",
+      "status": "blocked_backend",
+      "delegation_record": "DEL-20260924-01"
     }
   ],
   "delegated_items": [
@@ -755,6 +775,12 @@
       "story": "ST-01",
       "classification": "delegated_decision",
       "escalation": "ESC-EXEC-20260924-01"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-18",
+      "classification": "delegated_backend",
+      "delegation_record": "DEL-20260924-01"
     }
   ],
   "completed_items": [
@@ -781,17 +807,50 @@
     {
       "epic": "EPIC-03",
       "story": "ST-13"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-14"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-15"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-16"
+    },
+    {
+      "epic": "EPIC-04",
+      "story": "ST-17"
+    },
+    {
+      "epic": "EPIC-05",
+      "story": "ST-19"
+    },
+    {
+      "epic": "EPIC-05",
+      "story": "ST-20"
+    },
+    {
+      "epic": "EPIC-05",
+      "story": "ST-21"
+    },
+    {
+      "epic": "EPIC-05",
+      "story": "ST-22"
     }
   ],
   "open_escalations": [
     "ESC-EXEC-20260924-01"
   ],
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": [
+      "EPIC-03"
+    ],
     "epics_pending": [
       "EPIC-01",
       "EPIC-02",
-      "EPIC-03",
       "EPIC-04",
       "EPIC-05",
       "EPIC-06",
@@ -802,6 +861,7 @@
   "sealed": false,
   "sealed_utc": null,
   "process_notes": [
-    "STEP 1: 28/29 GH issues pre-existed from sync gh at planning seal; ST-01 (#1792) was missing (process gap) and created now."
+    "STEP 1: 28/29 GH issues pre-existed from sync gh at planning seal; ST-01 (#1792) was missing (process gap) and created now.",
+    "[GOVERNANCE][conflict-resolution 2026-09-24] Merged origin/main into exec/2026-09-23__release-v9.7/EPIC-05 per CLAUDE.md §8 (execution_state.json add/add conflict). EPIC-05 branch's copy was the superset (also carried EPIC-04's own blocked_backend/DEL-20260924-01 state, absent from main's stale EPIC-03-era copy) and was taken as base. Applied STEP 4 resume-sync in the same pass: PR #1793 (EPIC-03) confirmed merged via `gh pr view --json mergedAt` (mergedAt: 2026-09-24T08:30:08Z) but neither branch's copy reflected it — corrected EPIC-03.status/pr_status done/open -> merged/merged and moved EPIC-03 from merge_gate.epics_pending to epics_merged. completed_items/blocked_items/delegated_items: EPIC-05 branch's arrays already fully contained main's (no union needed beyond the base itself)."
   ]
 }
