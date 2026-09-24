@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.18
-**Last Updated:** 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-03/ST-14, BLG-QA-103 — STEP -1 advisory 6 now also appends to docs/ops/pip_audit_trend_log.md); prior — 2026-08-21 (lifecycle audit AUD-2026-08-21, action-all-audit-points session — STEP 3.1 pre-seal stale-feature-target check, D1-tracked STALE since v8.7 Phase 3); prior history retained — see prior entries in version control.
+**Version:** 3.19
+**Last Updated:** 2026-09-24 (sprint execution 2026-09-23__release-v9.7 EPIC-05/ST-22, BLG-GOV-333 — STEP -1 Hard Gates 1-2 reconciled against shared_standards.md §10.1: Gate 1's stale Published/Validated/Committed enum replaced with a direct §10.1 Sprint Planning row citation; Gate 2 clarified as a distinct, uncovered-by-§10.1 check on state.json's own release-plan state machine, cross-referenced to release_planning_prompt.md STEP 8/9 instead of restated independently); prior — 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-03/ST-14, BLG-QA-103 — STEP -1 advisory 6 now also appends to docs/ops/pip_audit_trend_log.md); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -154,11 +154,11 @@ Fail fast before any planning work begins. All hard gates must pass before STEP 
 ### Hard Gates (halt immediately on failure)
 
 **1. Global state & amendment slice** — read `.claude_current_state.json`:
-- `status` must be `Published`, `Validated`, or `Committed`. Halt if `Sprint_Planning_Complete` (already planned — do not re-plan without explicit PO instruction), `Blocked` (resolve release planning escalations first), or any pre-`Committed` state (Phase 1B not complete).
+- Apply the Lifecycle Guard per `shared_standards.md` §10.1's Sprint Planning row directly, rather than an independently-restated status enum here: valid entry states are `Release_Planning_Complete` (design gate not applicable) or `Design_Gate_Passed`. Apply §10.2's full Guard Algorithm, including step 3's `Blocked`-with-valid-`prior_status` pass-through (if `status = Blocked` and `prior_status` is itself a valid entry state, proceed as if `status = prior_status`). Halt per §10.4 (write `status = Blocked`, `prior_status = <current>`, emit the halt report) if `status` is not a valid entry state and is not `Blocked`-with-valid-prior-status — this includes halting on `Sprint_Planning_Complete` (already planned — do not re-plan without explicit PO instruction), since that value does not appear in §10.1's Sprint Planning row.
 - `amended_backlog_slice_path`: if present and non-empty, note the path and verify the file exists (halt if missing) — this file is the authoritative backlog slice for the cycle (see §5). If absent or empty, use `stage4_backlog_slice.md`.
 
 **2. Release plan sealed** — read `claude/cycles/<cycle_id>/state.json`:
-- `status = Published`, `publish_eligible = true`, `open_escalations` empty.
+- `status = Published`, `publish_eligible = true`, `open_escalations` empty. **Not covered by `shared_standards.md` §10.1** — that table governs `.claude_current_state.json`'s engine-invocation lifecycle only, not this per-cycle release-plan artefact's own status field. The authoritative definition of this file's `Validated`/`Published` state machine is `release_planning_prompt.md`'s own STEP 8/9 (`Validated` = Stage 4.5/5.5/5.7 passed and publish-gate eligible, but not yet sealed; `Published` = sealed, cycle summary and lessons filed, publish gate passed — STEP 9 is the only step that sets `Published`). A `Validated`-but-not-yet-`Published` release plan is correctly **not** sufficient here: Sprint Planning must wait for the terminal, sealed state, not merely publish-gate-eligibility. Do not restate this vocabulary independently elsewhere in this file — cite this line instead.
 - `deferred_execution_blockers`: if non-empty — `strict` halt; `standard` record each in `sprint_escalations.md` as a named risk; PO must accept each explicitly before sprint seals.
 
 **3. Design gate** — read `design_gate_required` from `state.json` (`attributes.design_gate_required`) OR `.claude_current_state.json` (`design_gate_required`); fall back to checking `design_gate_status` if neither field is set (pre-v2.38 release planning artefact):
