@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.39
-**Last Updated:** 2026-09-23 (ST-22, EPIC-06, v9.6, BLG-SPEC-148 — DS-17's live-production confirmation recorded: the up-migration was applied to production Supabase directly by the Data Model & Domain Schema Owner and the resulting index verified; RISK-01's "pending" disclosure closed); prior — 2026-09-22 (ST-08, EPIC-02, v9.6, BLG-FR-05 — DS-20: new `monthly_pnl_snapshots` table, one row per closed month per portfolio, backing the Monthly P&L restatement diff); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — DS-19: `reflection_reminder` added to the `notifications` and `notification_preferences` `alert_type` CHECK constraints, plus a partial unique index enforcing one reminder per trade; §9/§10 updated); prior history retained — see prior entries in version control.
+**Version:** 2.40
+**Last Updated:** 2026-09-24 (ST-24, EPIC-06, v9.7, BLG-SPEC-149 — removed the Positions Table's false claim of a live `exit_note` column; cross-referenced `trade_history.exit_note` as the actual storage location); prior — 2026-09-23 (ST-22, EPIC-06, v9.6, BLG-SPEC-148 — DS-17's live-production confirmation recorded); prior — 2026-09-22 (ST-08, EPIC-02, v9.6, BLG-FR-05 — DS-20: new `monthly_pnl_snapshots` table); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -84,7 +84,6 @@ CREATE TABLE positions (
     exit_price DECIMAL(10, 4),
     exit_reason VARCHAR(50),
     entry_note TEXT,
-    exit_note TEXT,
     tags TEXT[],
     user_fill_price DECIMAL(10, 4),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -129,7 +128,6 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | exit_price | DECIMAL(10,4) | YES | Exit price in native currency (null while open) |
 | exit_reason | VARCHAR(50) | YES | Reason for exit (null while open) |
 | entry_note | TEXT | YES | Journal note at entry |
-| exit_note | TEXT | YES | Journal note at exit |
 | tags | TEXT[] | YES | Strategy/classification tags |
 | user_fill_price | DECIMAL(10,4) | YES | User-provided actual broker fill price in native currency (optional). Used to compute slippage. Null when not provided (pre-v2.1 trades). |
 | created_at | TIMESTAMP | NO | Record creation timestamp |
@@ -137,6 +135,8 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | position_state | VARCHAR(20) | YES | Lifecycle state: `GRACE`, `LOSING`, `PROFITABLE`, `EXIT ZONE`, `UNKNOWN`. Null for closed positions. Computed by `PositionLifecycleService`. Added v2.6. |
 | state_entered_at | TIMESTAMP | YES | Timestamp when current `position_state` was assigned. Updated on each state transition. Null for closed positions. Added v2.6. |
 | state_history | JSONB | NO | Ordered array of `{state, entered_at}` objects recording all state transitions. Default `[]`. Never truncated — full audit trail. Added v2.6. |
+
+**No `exit_note` column (ST-24, EPIC-06, v9.7, BLG-SPEC-149):** this table has no live `exit_note` column, despite an earlier version of this document claiming one. A closed position's exit journal note is stored on `trade_history.exit_note` (§3 below), not here — confirmed via a live (readonly staging) schema query, per the §Live schema verification note above this table.
 
 ---
 
