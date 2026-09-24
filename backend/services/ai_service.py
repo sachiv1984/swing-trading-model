@@ -261,6 +261,7 @@ def generate_daily_briefing() -> dict:
             system=system_prompt,
             messages=[{"role": "user", "content": context}],
         )
+        # ST-13 (BLG-BE-128, v9.7): includes retry backoff sleep time by design -- see ai_endpoints.md Implementation constraints
         elapsed_ms = int((time.time() - t0) * 1000)
 
         content = response.content[0].text if response.content else "{}"
@@ -424,6 +425,7 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
             system=system_prompt,
             messages=[{"role": "user", "content": question}],
         )
+        # ST-13 (BLG-BE-128, v9.7): includes retry backoff sleep time by design -- see ai_endpoints.md Implementation constraints
         elapsed_ms = int((time.time() - t0) * 1000)
 
         content = response.content[0].text if response.content else "I was unable to generate a response."
