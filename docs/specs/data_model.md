@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.40
-**Last Updated:** 2026-09-24 (ST-24, EPIC-06, v9.7, BLG-SPEC-149 — removed the Positions Table's false claim of a live `exit_note` column; cross-referenced `trade_history.exit_note` as the actual storage location); prior — 2026-09-23 (ST-22, EPIC-06, v9.6, BLG-SPEC-148 — DS-17's live-production confirmation recorded); prior — 2026-09-22 (ST-08, EPIC-02, v9.6, BLG-FR-05 — DS-20: new `monthly_pnl_snapshots` table); prior history retained — see prior entries in version control.
+**Version:** 2.41
+**Last Updated:** 2026-09-24 (ST-25, EPIC-06, v9.7, BLG-SPEC-150 — documented 4 confirmed-orphaned, always-NULL live positions columns not previously listed anywhere in this document; disposition recommend-drop, filed as BLG-SPEC-164); prior — 2026-09-24 (ST-24, EPIC-06, v9.7, BLG-SPEC-149 — removed the Positions Table's false claim of a live `exit_note` column); prior — 2026-09-23 (ST-22, EPIC-06, v9.6, BLG-SPEC-148 — DS-17's live-production confirmation recorded); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -137,6 +137,8 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | state_history | JSONB | NO | Ordered array of `{state, entered_at}` objects recording all state transitions. Default `[]`. Never truncated — full audit trail. Added v2.6. |
 
 **No `exit_note` column (ST-24, EPIC-06, v9.7, BLG-SPEC-149):** this table has no live `exit_note` column, despite an earlier version of this document claiming one. A closed position's exit journal note is stored on `trade_history.exit_note` (§3 below), not here — confirmed via a live (readonly staging) schema query, per the §Live schema verification note above this table.
+
+**4 orphaned, always-NULL, undocumented live columns (ST-25, EPIC-06, v9.7, BLG-SPEC-150):** the live `positions` table (confirmed via readonly staging access, per the §Live schema verification note above) has 4 columns not listed anywhere in this document — `atr_value`, `stop_price`, `fees`, `pnl_percent` (all nullable numeric). Every row queried has all 4 columns NULL, while their apparent same-purpose counterparts already documented above (`atr`, `current_stop`, `fees_paid`, `pnl_pct` respectively) are populated and match this document exactly. **Disposition: genuinely unused, recommend drop.** Confirmed by a static grep of `backend/` for both direct SQL references and every `update_position()` call site's `updates` dict keys (the only two ways a write could target them): no read or write path anywhere in the codebase references `atr_value`, `stop_price`, `fees`, or `pnl_percent` as `positions` column names — `create_position()`'s `INSERT` explicitly lists only the documented column names, and all 7 `update_position()` call sites in `backend/services/position_service.py` pass only documented keys. These read as leftover columns from an old naming convention or an aborted rename, never backfilled, populated, or dropped. A follow-on migration to `DROP COLUMN` all 4 is recommended but not applied here — dropping a live production column is a data-model change requiring the Data Model & Domain Schema Owner's own migration process, not a documentation-only story.
 
 ---
 

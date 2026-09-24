@@ -4093,6 +4093,27 @@ The Screener results table renders an "Earnings" column (`lg`-visible, days unti
 
 ---
 
+### BLG-SPEC-164 — Drop 4 confirmed-orphaned, always-NULL columns from the live positions table
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-25/EPIC-06, 2026-09-23__release-v9.7 — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model.md`'s Positions Table section (v2.41) documents 4 live `positions` columns — `atr_value`, `stop_price`, `fees`, `pnl_percent` — as confirmed orphaned (always NULL on every row, no read or write path anywhere in `backend/` references them; their documented same-purpose counterparts `atr`/`current_stop`/`fees_paid`/`pnl_pct` are the ones actually used) and recommends a drop. The documentation-only disposition was completed; the actual `DROP COLUMN` migration was not applied — that is a live production schema change requiring the Data Model & Domain Schema Owner's own migration process, not a documentation story.
+
+**Scope**
+- Apply a migration dropping `atr_value`, `stop_price`, `fees`, `pnl_percent` from the live `positions` table
+- Update `data_model.md`'s Migration History section with the down/drop migration record, and remove the now-resolved orphaned-column disclosure note once dropped
+
+**Acceptance Criteria**
+- All 4 columns no longer exist on the live `positions` table
+- `data_model.md` reflects the drop in its Migration History
+
+---
+
 ### BLG-FE-184 — Migrate the remaining toFixed / toLocaleString call sites to the shared formatting helper
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
