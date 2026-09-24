@@ -16,6 +16,7 @@
  *   SC-ATS-09  Create form: API error shows inline message
  *   SC-ATS-10  Create form: Cancel closes form, CTA button re-appears
  *   SC-ATS-11  Populated state: no regression — CTA button absent when rules exist
+ *   SC-ATS-12  Empty-state heading renders "No alert rules configured" with no trailing period (v9.7 ST-05, BLG-FE-178)
  *
  * Spec refs:
  *   docs/specs/frontend/pages/notifications.md §Section 2 v0.3
@@ -376,4 +377,21 @@ test('SC-ATS-11: populated state — "Add alert rule" CTA button absent', async 
 
   // CTA button must NOT be present in populated state
   await expect(page.getByRole('button', { name: 'Add alert rule' })).toHaveCount(0);
+});
+
+// ---------------------------------------------------------------------------
+// SC-ATS-12 — Empty-state heading has no trailing period (v9.7 ST-05, BLG-FE-178)
+// ---------------------------------------------------------------------------
+
+test('SC-ATS-12: empty-state heading reads "No alert rules configured" with no trailing period', async ({ page }) => {
+  await mockFeed(page);
+  await mockPrefs(page);
+  await mockRulesEmpty(page);
+
+  await gotoPreferences(page);
+
+  const heading = page.getByRole('heading', { name: 'No alert rules configured' });
+  await expect(heading).toBeVisible({ timeout: 5000 });
+  // Exact text match — a trailing period would fail this (design_system.md §Data States)
+  await expect(heading).toHaveText('No alert rules configured');
 });
