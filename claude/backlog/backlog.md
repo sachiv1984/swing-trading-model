@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-24 (session — 3 new items added: BLG-SEC-39, BLG-QA-193, BLG-SPEC-168, surfaced during agent-mediated review of PR #1800/EPIC-07); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-167, BLG-OPS-169, surfaced during ST-27/EPIC-07 staging verification); prior — 2026-09-24 (session — 1 new item added: BLG-SPEC-166, surfaced during agent-mediated PR review of PR #1795); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-24 (session — 2 new items added: BLG-SPEC-169, BLG-SPEC-170, surfaced during ST-04/ST-05/ST-06 execution, EPIC-02, cycle 2026-09-23__release-v9.7); prior — 2026-09-24 (session — 3 new items added: BLG-SEC-39, BLG-QA-193, BLG-SPEC-168, surfaced during agent-mediated review of PR #1800/EPIC-07); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-167, BLG-OPS-169, surfaced during ST-27/EPIC-07 staging verification); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4657,6 +4657,51 @@ ST-29's acceptance criterion is "a test PR adding a `git+ssh` dependency fails C
 **Acceptance Criteria**
 - No reference to `BLG-BE-128` remains where `BLG-BE-129` is meant, in `ai_endpoints.md` or the dependency register
 - `BLG-BE-128`'s own legitimate references are untouched
+
+---
+
+### BLG-SPEC-169 — Correct notifications.md and the alert-thresholds empty-state scenario doc to the no-trailing-period empty-state headings now shipped
+**Priority:** P4 (Backlog)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-05/ST-06/EPIC-02, cycle 2026-09-23__release-v9.7 (Known Deviation DEV-v9.7-ST05-01, `notifications.md`) — 2026-09-24
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/frontend/pages/notifications.md` still specifies the empty-state headings with a trailing period — "No alert rules configured." (§Section 2) and "No alert history yet." (§Alert History) — and `docs/testing/alert_thresholds_empty_state_scenarios.md` (line 36) still describes the first as "No alert rules configured." ST-05/ST-06 (v9.7) brought the shipped code to the canonical no-trailing-period pattern in `design_system.md` §Data States, so the page spec and the scenario doc now disagree with both the shipped code and the design system. The v9.5 ST-30 sweep corrected the same staleness in three other specs but left these two headings alone because the code then violated the pattern; they were not revisited when the code was fixed.
+
+**Scope**
+- Drop the trailing period from the two headings in `notifications.md` and bump its version/changelog
+- Correct the heading text in `alert_thresholds_empty_state_scenarios.md`
+- Close Known Deviation DEV-v9.7-ST05-01 in `notifications.md` as resolved
+
+**Acceptance Criteria**
+- `notifications.md` and `alert_thresholds_empty_state_scenarios.md` state "No alert rules configured" and "No alert history yet" without a trailing period, matching shipped code and `design_system.md` §Data States
+- DEV-v9.7-ST05-01 is marked resolved with this item's ID
+
+---
+
+### BLG-SPEC-170 — Reconcile the Monthly Restatement Marker spec with what GET /reports/monthly-pnl actually returns (snapshot date, failure signal)
+**Priority:** P4 (Backlog)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner
+**Source:** ST-04/EPIC-02, cycle 2026-09-23__release-v9.7 (Known Deviation DEV-v9.7-ST04-01, `reports.md`) — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/frontend/pages/reports.md` §Monthly Restatement Marker (v0.19) specifies that the detail row's "As reviewed" value carries the snapshot date (`{snapshot_date}`), but `GET /reports/monthly-pnl` (`reports_endpoints.md` v0.13) returns no such field — only `snapshotted`, `restated`, `snapshot_realised_pnl_gbp` and `restated_diff_gbp` — so the shipped UI shows "As reviewed" undated. The same section's Failure line ("if snapshot data cannot be loaded ... Restatement check unavailable.") names no API signal for that condition; the endpoint has no partial-failure field, so the shipped UI treats "no row carries the snapshot fields at all" as the trigger, which is an implementation choice the spec never made.
+
+**Scope**
+- Decide which side moves: drop `{snapshot_date}` from the spec, or add `snapshot_date` to the response and contract (the `monthly_pnl_snapshots` table already stores when a snapshot was taken)
+- Define the failure signal for "Restatement check unavailable." in the spec and, if it needs an API field, the contract
+- Update `reports.md`, and `reports_endpoints.md`/`openapi.yaml` if the API side moves, then close DEV-v9.7-ST04-01
+
+**Acceptance Criteria**
+- `reports.md` and `reports_endpoints.md` agree on whether the detail row is dated and on how the unavailable state is signalled
+- The shipped UI matches the reconciled spec, or a follow-up is filed for the difference
+- DEV-v9.7-ST04-01 is marked resolved with this item's ID
 
 ---
 
