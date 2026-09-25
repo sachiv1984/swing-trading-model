@@ -167,7 +167,10 @@ def _fetch_close_series(tickers: List[str], start: date, end_exclusive: date) ->
     close = _extract_close(data)
     if len(close.columns) == 1 and close.columns[0] not in tickers and len(tickers) == 1:
         close = close.rename(columns={close.columns[0]: tickers[0]})
-    return {t: (close[t].dropna() if t in close.columns else pd.Series(dtype=float)) for t in tickers}
+    # D6 "sorted" -- searchsorted() in _asof_position and the day-loop's forward walk
+    # both assume ascending order; sort defensively rather than trust yfinance's
+    # ordering, the same precedent backtest_rule_service.py's own fetch already sets.
+    return {t: (close[t].dropna().sort_index() if t in close.columns else pd.Series(dtype=float)) for t in tickers}
 
 
 def _fetch_regime_series(ticker_symbol: str, start: date, end_exclusive: date) -> pd.Series:
@@ -178,7 +181,7 @@ def _fetch_regime_series(ticker_symbol: str, start: date, end_exclusive: date) -
     close = _extract_close(data)
     if close.empty:
         return pd.Series(dtype=float)
-    return close.iloc[:, 0].dropna()
+    return close.iloc[:, 0].dropna().sort_index()
 
 
 def _asof_position(date_index: pd.DatetimeIndex, target: date):

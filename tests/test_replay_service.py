@@ -370,6 +370,36 @@ def test_no_portfolio_resolves_to_zero_trades_without_a_db_round_trip(monkeypatc
 
 # ── Latest-date-bar / fetch-end-exclusivity ─────────────────────────────────────────
 
+def test_fetch_close_series_sorts_ascending_even_if_yfinance_returns_descending_order(monkeypatch):
+    """D6 requires the fetch to be sorted -- _asof_position's searchsorted() and the
+    day-loop's forward walk both assume ascending order. Unit-test _fetch_close_series
+    directly against a hand-built, genuinely-descending yfinance-shaped response (NOT
+    routed through FakeYF.download, whose own pd.concat(axis=1) call would silently
+    re-sort a multi-panel mock before it ever reached the function under test)."""
+    dates = pd.bdate_range("2023-01-02", periods=20)  # ascending
+    descending_close = pd.Series([100.0 + i for i in range(20)], index=dates).iloc[::-1]
+    df = pd.concat({"Close": pd.DataFrame({"AAAA": descending_close})}, axis=1)
+    df.columns.names = ["Price", "Ticker"]
+    assert not df.index.is_monotonic_increasing  # confirms the mock genuinely arrives disordered
+
+    monkeypatch.setattr(replay_service.yf, "download", lambda *a, **k: df)
+    result = replay_service._fetch_close_series(["AAAA"], dates[0].date(), (dates[-1] + pd.Timedelta(days=1)).date())
+    assert result["AAAA"].index.is_monotonic_increasing
+
+
+def test_fetch_regime_series_sorts_ascending_even_if_yfinance_returns_descending_order(monkeypatch):
+    dates = pd.bdate_range("2023-01-02", periods=20)
+    descending_close = pd.Series([100.0 + i for i in range(20)], index=dates).iloc[::-1]
+    df = pd.concat({"Close": pd.DataFrame({"SPY": descending_close})}, axis=1)
+    df.columns.names = ["Price", "Ticker"]
+
+    monkeypatch.setattr(replay_service.yf, "download", lambda *a, **k: df)
+    result = replay_service._fetch_regime_series("SPY", dates[0].date(), (dates[-1] + pd.Timedelta(days=1)).date())
+    assert result.index.is_monotonic_increasing
+
+
+
+
 def test_trade_exiting_on_the_latest_date_uses_that_dates_bar(monkeypatch):
     """yfinance's `end` is exclusive (D6) -- fetching only up to (not including) the
     latest exit_date would silently drop that day's bar. This is the single trade in
