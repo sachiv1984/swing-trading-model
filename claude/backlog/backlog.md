@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-24 (session — 2 new items added: BLG-SPEC-171, BLG-SPEC-172, surfaced during ST-01a/EPIC-01 scope confirmation and its independent review, cycle 2026-09-23__release-v9.7); prior — 2026-09-24 (session — 2 new items added: BLG-QA-195, BLG-FE-190, surfaced during agent-mediated review of PR #1802/EPIC-02); prior — 2026-09-24 (session — 1 new item added: BLG-QA-194, surfaced during agent-mediated DoQ review of ST-07/EPIC-02); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-25 (session — 1 new item added: BLG-QA-196, surfaced during agent-mediated review of PR #1803/EPIC-01); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-171, BLG-SPEC-172, surfaced during ST-01a/EPIC-01 scope confirmation and its independent review, cycle 2026-09-23__release-v9.7); prior — 2026-09-24 (session — 2 new items added: BLG-QA-195, BLG-FE-190, surfaced during agent-mediated review of PR #1802/EPIC-02); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4810,6 +4810,28 @@ The Tax Year summary notice ("Includes {k} restated month(s) — see the Monthly
 
 **Acceptance Criteria**
 - The IT-06 §13 review and the shipped Alpaca sync agree on whether orders are placed, with the disposition recorded by the Strategy Rules & System Intent Owner
+
+---
+
+### BLG-QA-196 — Extend the axe accessibility scan to the new Replay page
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
+**Source:** PR #1803 review (agent-mediated DoQ + PO), ST-01c/EPIC-01, cycle 2026-09-23__release-v9.7 — 2026-09-25
+**Effort:** XS (<0.5d)
+**Depends on:** BLG-QA-195 (same underlying gap — `tests/e2e/accessibility-axe-scan.spec.js` scans only a small, fixed set of pages)
+
+**Problem**
+`tests/e2e/accessibility-axe-scan.spec.js` still scans only DashboardHome, Positions and TradePlan (BLG-QA-195 already tracks adding Reports and Notifications). EPIC-01 (v9.7) added a new page, `src/pages/Replay.js`, with a tab-switched selector, a checkbox list, and a results table — none of it has automated accessibility or light-theme contrast coverage. The selector tabs are plain `<button>` elements with no `role="tablist"`/`role="tab"`/`aria-selected` (the same pattern `StrategyBenchmark.js`'s own mode toggle already uses, so this is not a new inconsistency, but it means an axe scan is the only practical way to catch a real accessibility regression here without inventing a new interaction pattern).
+
+**Scope**
+- Add the Replay page to the axe scan (Date Range mode, Trade Set mode with the checkbox list visible, and a populated result view) in both dark and light themes
+- Fix or file any findings
+- Consider covering this and BLG-QA-195 together in one pass, since both are the same underlying "scan is a fixed, small page list" gap
+
+**Acceptance Criteria**
+- The axe scan covers the Replay page (both selector modes, populated result) in dark and light themes
+- Any serious/critical finding is fixed or has its own filed item
 
 ---
 
