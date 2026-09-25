@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-25 (session — 1 new item added: BLG-QA-196, surfaced during agent-mediated review of PR #1803/EPIC-01); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-171, BLG-SPEC-172, surfaced during ST-01a/EPIC-01 scope confirmation and its independent review, cycle 2026-09-23__release-v9.7); prior — 2026-09-24 (session — 2 new items added: BLG-QA-195, BLG-FE-190, surfaced during agent-mediated review of PR #1802/EPIC-02); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-25 (session — 1 new item added: BLG-GOV-349, surfaced when EPIC-01/PR #1803's merge did not auto-close issue #1792); prior — 2026-09-25 (session — 1 new item added: BLG-QA-196, surfaced during agent-mediated review of PR #1803/EPIC-01); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-171, BLG-SPEC-172, surfaced during ST-01a/EPIC-01 scope confirmation and its independent review, cycle 2026-09-23__release-v9.7); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4832,6 +4832,29 @@ The Tax Year summary notice ("Includes {k} restated month(s) — see the Monthly
 **Acceptance Criteria**
 - The axe scan covers the Replay page (both selector modes, populated result) in dark and light themes
 - Any serious/critical finding is fixed or has its own filed item
+
+---
+
+### BLG-GOV-349 — governance_sync.yml does not auto-close a phased story's GitHub issue (ST-XXa/b/c vs. the commit tag's bare ST-XX)
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Infrastructure & Operations Owner
+**Source:** EPIC-01/PR #1803 merge, cycle 2026-09-23__release-v9.7 — issue #1792 stayed open after merge, closed manually — 2026-09-25
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+When a sprint story is phased into sub-stories (`ST-01a`/`ST-01b`/`ST-01c` — a pattern the sealed `sprint_backlog.md` itself uses, e.g. this cycle's ST-01, and documented as RISK-01's own resolution mechanism), `.githooks/commit-msg` still requires the bare numeric tag (`[ST-01]`) on every commit, since it only accepts numeric story IDs. `execution_state.json` correctly stores each sub-story under its own key (`stories.ST-01a`, `.ST-01b`, `.ST-01c`) — there is no `stories.ST-01` entry at all. `scripts/governance_sync_lib.sh`'s `is_story_done()` looks up the commit tag's literal `ST-01` key, finds nothing, returns `unknown`, and the ST-19/BLG-GOV-314 safety fix deliberately treats `unknown` as skip-not-close (correctly, to avoid the opposite false-positive-close bug it was fixing). Net effect: a fully merged, fully `done` phased story's GitHub issue silently never auto-closes, with no error or warning — found only because a human asked why an issue was still open after a merge.
+
+**Scope**
+- Decide the fix shape: (a) `is_story_done()` also checks whether every `ST-XX{letter}` key sharing the bare `ST-XX` prefix is done/merged, treating the umbrella `ST-XX` as done only once all its lettered sub-stories are; or (b) the Sprint Execution Engine also writes a bare `stories.ST-XX` roll-up entry (mirroring the sub-stories' aggregate status) whenever it phases a story, purely for this automation's benefit; or (c) some other reconciliation
+- Apply the fix and add a regression test to `scripts/test_governance_sync_close_gate_logic.sh`'s fixture set covering a phased story
+- Retroactively confirm no other already-merged phased story in this repo's history has a similarly-stuck-open issue
+
+**Acceptance Criteria**
+- A fully-done phased story's GitHub issue auto-closes on merge without manual intervention
+- A partially-done phased story's issue is correctly NOT closed (no regression of the ST-19/BLG-GOV-314 fix this must coexist with)
+- Regression test added
 
 ---
 
