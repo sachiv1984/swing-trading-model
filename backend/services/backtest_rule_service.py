@@ -65,24 +65,15 @@ from services.strategy_engine import (
     transaction_fee,
     compute_rebalance_dates,
     backtest,
+    LIVE_PARAMS,
 )
 
-# strategy_rules.md's live parameters — mirrors production_strategy.py's
-# OPTIMAL_PARAMS exactly. This is the "live rule set" baseline every
-# candidate run is compared against.
-LIVE_PARAMS = {
-    "lookback": 252,
-    "top_n": 5,
-    "atr_mult": 2,
-    "rebalance_freq": "ME",
-    "min_position_pct": 0.05,
-    "max_position_pct": 0.20,
-    "min_hold_days": 10,
-    "risk_off_mode": "single",
-    "stop_loss_mode": "profit_lock",
-    "initial_atr_mult": 5,
-    "profit_atr_mult": 2,
-}
+# LIVE_PARAMS moved to services/strategy_engine.py (ST-01b, EPIC-01, v9.7,
+# BLG-FEAT-74) so replay_service.py can read it without importing this
+# module's create_backtest_rule_run write function. Re-exported here
+# (imported above) so `backtest_rule_service.LIVE_PARAMS` keeps working
+# unchanged for this file's own existing import in backtest_rule_change.py's
+# docstring and anywhere else that referenced it by this name.
 
 # Structured candidate input (design_record.md §2.1 — structured parameter
 # form, not free-form rule-diff text; deferred to implementation, resolved

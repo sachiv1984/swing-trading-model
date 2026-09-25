@@ -225,7 +225,9 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     // POST /ai/check-endpoint-anomalies.
     // +1 (123 -> 124) from v9.5 EPIC-02 ST-06 (BLG-OPS-153), which added
     // GET /ai/spend-trend-by-feature.
-    await expect(page.getByText(/tests 124 endpoints/i)).toBeVisible({ timeout: 8000 });
+    // +1 (124 -> 125) from v9.7 EPIC-01 ST-01b (BLG-FEAT-74), which added
+    // POST /replay/run.
+    await expect(page.getByText(/tests 125 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {

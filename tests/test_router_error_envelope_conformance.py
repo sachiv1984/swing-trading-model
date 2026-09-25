@@ -193,3 +193,21 @@ class TestNewsEnvelope:
     def test_news_500_on_exception(self, _):
         resp = CLIENT.get("/news/AAPL")
         _assert_canonical_error(resp, 500)
+
+
+class TestReplayEnvelope:
+    """ST-01b (EPIC-01, v9.7, BLG-FEAT-74). Not one of BLG-BE-69's 17 named routers --
+    added because /replay/run's error path is unusual (manual body parsing rather than
+    a pydantic model + the standard HTTPException translation this file otherwise
+    tests), so a spot-check here is worth its low cost. Full validation-surface and
+    error-code-mapping coverage lives in tests/test_replay_router.py."""
+    def test_replay_run_400_with_additive_code_on_validation_error(self):
+        resp = CLIENT.post("/replay/run", json={})
+        _assert_canonical_error(resp, 400)
+        assert resp.json()["code"] == "validation_error"
+
+    @patch("routers.replay.run_replay", side_effect=RuntimeError("boom"))
+    def test_replay_run_500_with_additive_code_on_exception(self, _):
+        resp = CLIENT.post("/replay/run", json={"trade_ids": ["00000000-0000-0000-0000-000000000000"]})
+        _assert_canonical_error(resp, 500)
+        assert resp.json()["code"] == "replay_failed"

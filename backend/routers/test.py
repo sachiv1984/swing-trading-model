@@ -244,6 +244,12 @@ async def test_all_endpoints(request: Request):
         # Strategy Benchmark Open Positions (v6.4 / EPIC-03 ST-08)
         {"name": "GET /strategy/benchmark/open-positions", "method": "GET", "url": f"{base_url}/strategy/benchmark/open-positions", "critical": False},
 
+        # Replay Mode (v9.7 / EPIC-01 ST-01b, BLG-FEAT-74)
+        # trade_ids body (not {}) -- a nil UUID resolves to trade_not_found with no
+        # network call, unlike the backtest-rule-change entry below which runs a real
+        # backtest on every System Status test (see po05_replay_scope_confirmation.md §5).
+        {"name": "POST /replay/run", "method": "POST", "url": f"{base_url}/replay/run", "body": {"trade_ids": ["00000000-0000-0000-0000-000000000000"]}, "critical": False},
+
         # Backtest Rule Change (v8.9 / EPIC-02 ST-07, BLG-FEAT-89)
         {"name": "POST /strategy/backtest-rule-change/run", "method": "POST", "url": f"{base_url}/strategy/backtest-rule-change/run", "body": {}, "critical": False},
         {"name": "GET /strategy/backtest-rule-change/runs", "method": "GET", "url": f"{base_url}/strategy/backtest-rule-change/runs", "critical": False},

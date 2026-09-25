@@ -405,6 +405,7 @@ Populated by the ST-49 freshness-check remediation (`scripts/check_specs_index_f
 | `docs/specs/api_contracts/pre_entry_validation.md` | pre_entry_validation.md | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
 | `docs/specs/api_contracts/red_flag_journal.md` | red_flag_journal.md | API Contracts & Documentation Owner | Canonical Specification (Class 1) |
 | `docs/specs/api_contracts/reflection_outcome_correlation_stub.md` | Reflection ↔ Outcome Correlation — Arc 4 PO-04 (Pre-Authoring Stub) | Head of Specs Team | Not applicable — pre-authoring stub, no canonical contract yet |
+| `docs/specs/api_contracts/replay_endpoints.md` | Replay API Contract | Backend Engineering Patterns Owner; Product Owner | API Contract (Class 2) |
 | `docs/specs/api_contracts/research_endpoint.md` | API Contract — Research Endpoint | API Contracts & Documentation Owner | Supporting Document (Class 2) |
 | `docs/specs/api_contracts/stop_trail_endpoint.md` | Stop Trail Endpoint Contract | — | — |
 | `docs/specs/api_contracts/strategy_benchmark_endpoints.md` | Strategy Benchmark API Contract | Backend Engineering Patterns Owner; Product Owner | API Contract (Class 2) |
@@ -419,6 +420,7 @@ Populated by the ST-49 freshness-check remediation (`scripts/check_specs_index_f
 | `docs/specs/frontend/pages/pre_trade_research.md` | pre_trade_research.md — Pre-Trade Research View | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
 | `docs/specs/frontend/pages/red_flag_journal.md` | red_flag_journal.md — Red Flag Journal | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
 | `docs/specs/frontend/pages/reflections.md` | Frontend Specification — Reflections Page | Frontend Specifications & UX Documentation Owner | Canonical Specification (Class 1) |
+| `docs/specs/frontend/pages/replay_mode.md` | replay_mode.md — PO-05 Lightweight Replay Mode | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
 | `docs/specs/frontend/pages/research_view.md` | research_view.md — Research View | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
 | `docs/specs/frontend/pages/risk_dashboard.md` | Frontend Specification — Risk Dashboard Page | Frontend Specifications & UX Documentation Owner | Canonical Specification (Class 1) |
 | `docs/specs/frontend/pages/screener_morning_routine.md` | Screener Morning Routine — UX Workflow Spec | Frontend Specifications & UX Documentation Owner | Supporting Document (Class 2) |
