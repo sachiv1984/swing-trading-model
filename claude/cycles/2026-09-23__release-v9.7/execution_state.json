@@ -106,8 +106,8 @@
           },
           "deviations_filed": true,
           "acceptance_verified": true,
-          "commit_sha": "cc284457c11d775d0364955a2b8f1550774a7fb4",
-          "completed_utc": "2026-09-25T08:14:50Z",
+          "commit_sha": "39595750655f46c77dccc0ac7d1bfad919f7dba7",
+          "completed_utc": "2026-09-25T08:33:18Z",
           "title": "PO-05: Frontend selector + output view",
           "classification": "autonomous",
           "status": "done",
@@ -120,7 +120,7 @@
             "docs/specs/frontend/pages/replay_mode.md",
             "docs/product/decisions/po05_replay_scope_confirmation.md"
           ],
-          "notes": "Built directly by the engine per the user's explicit instruction. replay_mode.md bumped to v0.2 correcting the v0.1 IT-06 premise, route, and results-table column label."
+          "notes": "Built directly by the engine per the user's explicit instruction. replay_mode.md bumped to v0.2 correcting the v0.1 IT-06 premise, route, and results-table column label. Corrected same-session (commit 39595750, PR #1803 fresh review pass): handleRunReplay used raw fetch() instead of apiFetch(), omitting the X-API-Key header every sibling page's POST call sends."
         }
       }
     },
