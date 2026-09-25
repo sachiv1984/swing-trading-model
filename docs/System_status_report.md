@@ -1,9 +1,38 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.47
-**Last Updated:** 2026-09-23 (delivery verification 2026-09-21__release-v9.6 — status line updated Sprint_Complete → Verified_with_deviations; Deviations column and Verification-inputs Deviations/Test-scenarios lists corrected to reflect BLG-BE-127/BLG-BE-128/DEV-EPIC05-ST21-01 and the EPIC-03/EPIC-05 test files, STEP 6 reconciliation); prior — 2026-09-23 (sprint close 2026-09-21__release-v9.6 — new Sprint section added); prior — 2026-09-18 (delivery verification 2026-09-15__release-v9.5 — status line updated Sprint_Complete → Verified); prior history retained — see prior entries in version control.
+**Version:** 4.48
+**Last Updated:** 2026-09-25 (sprint close 2026-09-23__release-v9.7 — new Sprint section added); prior — 2026-09-23 (delivery verification 2026-09-21__release-v9.6 — status line updated Sprint_Complete → Verified_with_deviations; Deviations column and Verification-inputs Deviations/Test-scenarios lists corrected to reflect BLG-BE-127/BLG-BE-128/DEV-EPIC05-ST21-01 and the EPIC-03/EPIC-05 test files, STEP 6 reconciliation); prior — 2026-09-23 (sprint close 2026-09-21__release-v9.6 — new Sprint section added); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-09-23__release-v9.7
+**Date:** 2026-09-25
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | PO-05 Lightweight Replay Mode end-to-end (`BLG-FEAT-74` unblocked): `POST /replay/run` deterministic per-trade retrospective exit simulation (date-range and Trade Set modes, F3-extracted stop/risk-off mechanics, FX conversion, determinism fingerprint); `Replay.js` selector + retrospective output view, nav registration | `po05_replay_scope_confirmation.md`; `docs/specs/api_contracts/replay_endpoints.md`; `docs/specs/frontend/pages/replay_mode.md` v0.2; `decision_record.md` | None |
+| EPIC-02 | Trade Plan clone Setup Type fix (ST-02); Monthly P&L NULL-fee audit flag frontend surfacing (ST-03); month-end restatement diff frontend surfacing (ST-04); empty-state heading trailing-period cleanup on Alert Thresholds/Notifications History (ST-05/ST-06); CI lint for forbidden predictive/advice-crossing UI copy (ST-07) | `trade_plan.md#4.5`; `reports.md#Fees-Not-Recorded Visibility`/`#Monthly Restatement Marker`; `design_system.md#Data States`; `scripts/check_ui_copy_forbidden_phrases.py` | `BLG-SPEC-169` (ST-05/06, P4); `BLG-SPEC-170` (ST-04, P4) |
+| EPIC-03 | UK stamp duty/US FX fee rounding moved to Decimal (ST-08); reflection-reminder over-report/NULL-portfolio fix (ST-09); alert re-delivery read-state fix (ST-10); month-closure clock-source mismatch fix (ST-11); Monthly P&L snapshot lookup connection-pooling fix (ST-12); AI latency_ms retry-backoff exclusion (ST-13) | `docs/specs/api_contracts/alerts_endpoints.md`; `docs/specs/api_contracts/ai_endpoints.md`; `tests/test_money_arithmetic_golden.py` | None |
+| EPIC-04 | Backend test suite real-`DATABASE_URL` isolation fix (ST-14); CI check for merged `.skip()`/`.only()` Playwright specs (ST-15); recurring pre-sprint endpoint test coverage audit (ST-16); negative-path test backfill for 3 v9.2/v9.3 routers (ST-17); real-Postgres validation of `get_claude_endpoint_cost_windows()` (ST-18) | `tests/conftest.py`; `.github/workflows/playwright-skip-only-check.yml`; `docs/ops/endpoint_test_coverage_audit_2026-09-24.md`; `backend/database.py#get_claude_endpoint_cost_windows` | None |
+| EPIC-05 | Quarterly governance overhead ratio metric (ST-19); SI-02 gate threshold scale-with-cadence review (ST-20); `ensure_ascii=False` governance JSON-write convention documented (ST-21); `sprint_planning_prompt.md` STEP -1 wording reconciled with `shared_standards.md` §10.1 (ST-22) | `docs/specs/metrics_definitions.md`; `claude/roadmap/current_roadmap.md`; `claude/system/shared_standards.md#10.1`; `claude/system/sprint_planning_prompt.md` | None |
+| EPIC-06 | Formal "linked trade plan" counting definition for the SI-02 gate (ST-23); `positions.exit_note` documented-vs-live reconciliation (ST-24); 4 orphaned always-NULL `positions` columns documented (ST-25); `positions.fees_paid` NOT NULL-vs-nullable reconciliation (ST-26) | `docs/specs/metrics/si02_drift_score.md`; `docs/specs/data_model.md` | None |
+| EPIC-07 | Post-deploy staging verification of the reflection-reminder migration/SQL, live-confirmed (ST-27); external-dependency failure-mode matrix (ST-28); CI guard rejecting non-registry dependency specifiers (ST-29) | `docs/specs/api_contracts/alerts_endpoints.md`; `docs/specs/data_model.md` DS-19; `docs/ops/external_api_dependency_register.md`; `.github/workflows/non-registry-dependency-check.yml` | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| None | All 29 scoped items (31 execution_state.json entries — ST-01 phased x3) delivered within the sprint | — |
+
+### Verification inputs ready
+- QA evidence logs: `qa_evidence_EPIC-01.md`, `qa_evidence_EPIC-02.md`, `qa_evidence_EPIC-03.md`, `qa_evidence_EPIC-04.md`, `qa_evidence_EPIC-05.md`, `qa_evidence_EPIC-06.md`, `qa_evidence_EPIC-07.md`
+- Deviations filed: `BLG-SPEC-169` (ST-05/06/EPIC-02, P4), `BLG-SPEC-170` (ST-04/EPIC-02, P4)
+- Test scenarios referenced: `tests/test_replay_service.py`, `tests/test_replay_router.py`, `tests/test_strategy_engine_backtest_regression.py`, `tests/e2e/replay-mode.spec.js`, `tests/e2e/trade-plan-clone.spec.js`, `tests/e2e/monthly-pnl-fees-not-recorded.spec.js`, `tests/e2e/monthly-pnl-restatement.spec.js`, `tests/e2e/alert-thresholds-empty-state.spec.js`, `tests/e2e/alert-history-empty-state.spec.js`, `tests/test_ui_copy_forbidden_phrases.py`, `tests/test_money_arithmetic_golden.py`, `tests/test_reflection_reminder.py`, `tests/test_alerts_service.py`, `tests/test_month_closure_clock_source.py`, `tests/test_monthly_pnl_snapshot.py`, `tests/test_conftest_database_url_guard.py`, `tests/test_playwright_skip_only_check.py`, `tests/test_negative_path_v92_v93_routers.py`, `tests/test_claude_endpoint_cost_windows_live.py`, `tests/test_non_registry_dependency_check.py`
 
 ---
 
