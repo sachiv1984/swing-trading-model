@@ -17,7 +17,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AlertTriangle, Calendar, Loader2 } from "lucide-react";
-import { api } from "../api/base44Client";
+import { api, apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Checkbox } from "../components/ui/checkbox";
@@ -104,7 +104,7 @@ export default function Replay() {
     setRunState("running");
     try {
       const body = mode === "date_range" ? { date_from: dateFrom, date_to: dateTo } : { trade_ids: Array.from(selectedTradeIds) };
-      const res = await fetch(`${API_BASE}/replay/run`, {
+      const res = await apiFetch(`${API_BASE}/replay/run`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
