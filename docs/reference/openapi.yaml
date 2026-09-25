@@ -74,6 +74,8 @@ tags:
     description: Strategy-rules stock screener (DS-01) and screener results
   - name: Changelog
     description: Release changelog summary, backing the in-app "What's New" panel (ST-01, EPIC-01, v7.8)
+  - name: Replay
+    description: "PO-05 Lightweight Replay Mode — replays the user's own closed trades through the current strategy engine's exit rules (BLG-FEAT-74, ST-01b, EPIC-01, v9.7). Contract: docs/specs/api_contracts/replay_endpoints.md"
   - name: External - Alpaca
     description: "External API calls to Alpaca Markets (https://data.alpaca.markets). These are outbound calls FROM this system TO Alpaca — documented here per CLAUDE.md §1 (ST-02, BLG-SPEC-22). Contract: docs/specs/api_contracts/alpaca_integration_contract.md"
 
@@ -5679,6 +5681,31 @@ paths:
                       count: { type: integer }
                       total_unrealized_pnl_gbp: { type: number, nullable: true }
 
+  /replay/run:
+    post:
+      summary: Replay the user's own closed trades through the current strategy engine's exit rules
+      description: |
+        ST-01b (BLG-FEAT-74, EPIC-01, v9.7). Replays a date range or an explicit set
+        of the user's own closed trades, independently, through the current
+        stop/risk-off exit rules -- a deterministic, retrospective simulation, not a
+        prediction. Read-only: makes no Alpaca call, persists nothing.
+        Canonical contract: docs/specs/api_contracts/replay_endpoints.md
+        Wire contract locked in: docs/product/decisions/po05_replay_scope_confirmation.md
+      tags: [Replay]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReplayRunRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkReplayRun"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /strategy/backtest-rule-change/run:
     post:
       summary: Run a candidate strategy_rules.md parameter change against a bounded historical window
@@ -6322,6 +6349,29 @@ components:
         docs/specs/api_contracts/portfolio_endpoints.md
       additionalProperties: true
 
+    ReplayRunRequest:
+      type: object
+      description: >-
+        Exactly one of the two shapes below (date range or trade_ids) -- any other
+        combination is a 400 validation_error. No rule/parameter field is accepted
+        (BLG-FEAT-74, ST-01b, EPIC-01, v9.7, po05_section13_preassessment.md Binding
+        Condition 4). See docs/specs/api_contracts/replay_endpoints.md for the full
+        validation surface.
+      properties:
+        date_from: { type: string, format: date, nullable: true }
+        date_to: { type: string, format: date, nullable: true }
+        trade_ids:
+          type: array
+          nullable: true
+          items: { type: string, format: uuid }
+
+    ReplayRunResult:
+      type: object
+      description: |
+        Intentionally broad to avoid drift. Canonical nested field definitions live in:
+        docs/specs/api_contracts/replay_endpoints.md
+      additionalProperties: true
+
     BacktestRuleChangeRequest:
       type: object
       description: >-
@@ -6812,6 +6862,18 @@ components:
                 properties:
                   data:
                     $ref: "#/components/schemas/PositionSizeResponse"
+
+    OkReplayRun:
+      description: Replay run result -- retrospective simulation of the requested trades under the current exit rules (BLG-FEAT-74, ST-01b, EPIC-01, v9.7)
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ApiOk"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ReplayRunResult"
 
     OkBacktestRuleChangeRun:
       description: Backtest rule-change run result (candidate vs. live, over an identical bounded universe/window)

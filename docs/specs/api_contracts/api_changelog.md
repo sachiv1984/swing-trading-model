@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.13.0
-**Last Updated:** 2026-09-22 (ST-10, EPIC-03, v9.6, BLG-BE-118 — v9.6.0 entry: strategy_benchmark_endpoints.md v1.3, `offset` param + 400 INVALID_PARAMS validation on GET /strategy/backtest-rule-change/runs); prior — 2026-09-22 (ST-07 + ST-08, EPIC-02, v9.6, BLG-FR-04 + BLG-FR-05 — v9.6.0 entry: reports_endpoints.md v0.13, null_fee_trade_count field plus month-end snapshot/restatement-diff fields); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — v9.6.0 entry: alerts_endpoints.md v0.8 reflection_reminder alert type); prior history retained — see prior entries in version control.
+**Version:** 1.14.0
+**Last Updated:** 2026-09-25 (ST-01b, EPIC-01, v9.7, BLG-FEAT-74 — v9.7.0 entry: new file replay_endpoints.md v1.0, POST /replay/run); prior — 2026-09-22 (ST-10, EPIC-03, v9.6, BLG-BE-118 — v9.6.0 entry: strategy_benchmark_endpoints.md v1.3, `offset` param + 400 INVALID_PARAMS validation on GET /strategy/backtest-rule-change/runs); prior — 2026-09-22 (ST-07 + ST-08, EPIC-02, v9.6, BLG-FR-04 + BLG-FR-05 — v9.6.0 entry: reports_endpoints.md v0.13, null_fee_trade_count field plus month-end snapshot/restatement-diff fields); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -37,6 +37,17 @@ Rules:
 **Sign-off:** Head of Specs Team — Approved. Formalising an already-consistently-used structure (rather than introducing a new one requiring migration) is the right scope for this story — the conformance check confirms there was nothing to migrate. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
 
 ---
+
+## v9.7.0 (2026-09-25 — Release v9.7)
+
+### replay_endpoints.md — v1.0 (NEW)
+
+**EPIC:** EPIC-01
+**ST:** ST-01b
+
+| Change | Details |
+|--------|---------|
+| New endpoint: POST /replay/run | Replays a date range or an explicit set of the user's own closed trades, independently, through the current strategy engine's stop/risk-off exit rules -- a deterministic, retrospective simulation (BLG-FEAT-74). Makes no Alpaca call, persists nothing. |
 
 ## v9.6.0 (2026-09-21 — Release v9.6)
 

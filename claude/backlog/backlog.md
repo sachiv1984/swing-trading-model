@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-24 (session — 2 new items added: BLG-QA-195, BLG-FE-190, surfaced during agent-mediated review of PR #1802/EPIC-02); prior — 2026-09-24 (session — 1 new item added: BLG-QA-194, surfaced during agent-mediated DoQ review of ST-07/EPIC-02); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-169, BLG-SPEC-170, surfaced during ST-04/ST-05/ST-06 execution, EPIC-02, cycle 2026-09-23__release-v9.7); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-25 (session — 1 new item added: BLG-QA-196, surfaced during agent-mediated review of PR #1803/EPIC-01); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-171, BLG-SPEC-172, surfaced during ST-01a/EPIC-01 scope confirmation and its independent review, cycle 2026-09-23__release-v9.7); prior — 2026-09-24 (session — 2 new items added: BLG-QA-195, BLG-FE-190, surfaced during agent-mediated review of PR #1802/EPIC-02); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -4768,6 +4768,70 @@ The Tax Year summary notice ("Includes {k} restated month(s) — see the Monthly
 **Acceptance Criteria**
 - A restated-months notice never directs the user to a view that cannot show the months it counts
 - Playwright covers the older-tax-year case
+
+---
+
+### BLG-SPEC-171 — Correct the PO-05 pre-assessment, roadmap and replay page spec: replay does not reuse IT-06's Alpaca mechanics, determinism wording, engine-versus-live rule divergences
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Strategy Rules & System Intent Owner; Frontend Specifications & UX Documentation Owner
+**Source:** ST-01a/EPIC-01, cycle 2026-09-23__release-v9.7 — `docs/product/decisions/po05_replay_scope_confirmation.md` §1 (F1, F2, F4) and its independent review — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`po05_section13_preassessment.md`, `current_roadmap.md` (PO-05), `docs/specs/frontend/pages/replay_mode.md` §13 item 5 and the sealed `sprint_backlog.md` (ST-01b) say the replay "reuses IT-06's paper-trading mechanics". In code IT-06 is a real-time Alpaca mirror of position events that cannot replay history; the replay is built on the deterministic `strategy_engine.py` and makes no Alpaca call. The pre-assessment also states byte-identical output unconditionally, which does not hold for a `yfinance`-fed float pipeline (the scope note restates it as a fingerprint-checkable guarantee), and it assumes the replay applies the live rule set, whereas the engine differs from `strategy_rules.md` §7.2 (no breakeven floor, close-only ATR, stop evaluated before risk-off, entry-fee treatment). The scope note takes precedence for the build, but the source documents still carry the inaccurate wording, and the approved banner says "the current rules".
+
+**Scope**
+- The Strategy Rules & System Intent Owner acknowledges F1, F2 and F4 and decides the results-view caption wording (for example "Simulated with the strategy backtest engine's exit rules.")
+- Correct the IT-06 reuse premise and the determinism wording in the pre-assessment and roadmap, and `replay_mode.md` §13 item 5 (the last in the frontend implementation change)
+
+**Acceptance Criteria**
+- No governed document other than sealed artefacts (which the scope note supersedes for the build) still states that PO-05 reuses IT-06's Alpaca paper-trading mechanics; the roadmap correction is routed through the Roadmap Rebalance Engine, which owns that file
+- The determinism guarantee and the engine-versus-live rule divergences are stated consistently across the pre-assessment, the roadmap and the replay page spec
+
+---
+
+### BLG-SPEC-172 — Reconcile the IT-06 §13 review (Alpaca sync recorded as GET-only, no orders placed) with a sync that POSTs orders and DELETEs positions
+**Priority:** P2 (Medium)
+**Type:** Spec Debt
+**Owner:** Strategy Rules & System Intent Owner; Head of Engineering
+**Source:** ST-01a/EPIC-01, cycle 2026-09-23__release-v9.7 — independent review of the PO-05 scope note (observation N8) — 2026-09-24
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md` records the Alpaca integration as compliant because "Backend sync is GET-only; no orders placed against Alpaca API" and "the system does not place, modify, or cancel any orders (paper or real); read-only sync only". `backend/services/alpaca_paper_sync_service.py` does the opposite: it POSTs to `/v2/orders` and DELETEs `/v2/positions/{ticker}` when the user opens or closes a position (hooked from `main.py`). The orders are mirrored user-initiated events on a paper account, so the §13.2 "not an automated trading bot" boundary is probably still met, but the recorded basis for the PASS does not match the shipped behaviour (the review's own text says it must be re-evaluated if the backend creates paper positions), and PO-05 (BLG-FEAT-74) explicitly declines to build on this mechanism.
+
+**Scope**
+- Confirm what the service actually does against the review's stated conditions
+- Either re-attest the IT-06 §13 review on the accurate description, or correct the service to match the review
+- Record the outcome and correct whichever document was wrong
+
+**Acceptance Criteria**
+- The IT-06 §13 review and the shipped Alpaca sync agree on whether orders are placed, with the disposition recorded by the Strategy Rules & System Intent Owner
+
+---
+
+### BLG-QA-196 — Extend the axe accessibility scan to the new Replay page
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
+**Source:** PR #1803 review (agent-mediated DoQ + PO), ST-01c/EPIC-01, cycle 2026-09-23__release-v9.7 — 2026-09-25
+**Effort:** XS (<0.5d)
+**Depends on:** BLG-QA-195 (same underlying gap — `tests/e2e/accessibility-axe-scan.spec.js` scans only a small, fixed set of pages)
+
+**Problem**
+`tests/e2e/accessibility-axe-scan.spec.js` still scans only DashboardHome, Positions and TradePlan (BLG-QA-195 already tracks adding Reports and Notifications). EPIC-01 (v9.7) added a new page, `src/pages/Replay.js`, with a tab-switched selector, a checkbox list, and a results table — none of it has automated accessibility or light-theme contrast coverage. The selector tabs are plain `<button>` elements with no `role="tablist"`/`role="tab"`/`aria-selected` (the same pattern `StrategyBenchmark.js`'s own mode toggle already uses, so this is not a new inconsistency, but it means an axe scan is the only practical way to catch a real accessibility regression here without inventing a new interaction pattern).
+
+**Scope**
+- Add the Replay page to the axe scan (Date Range mode, Trade Set mode with the checkbox list visible, and a populated result view) in both dark and light themes
+- Fix or file any findings
+- Consider covering this and BLG-QA-195 together in one pass, since both are the same underlying "scan is a fixed, small page list" gap
+
+**Acceptance Criteria**
+- The axe scan covers the Replay page (both selector modes, populated result) in dark and light themes
+- Any serious/critical finding is fixed or has its own filed item
 
 ---
 

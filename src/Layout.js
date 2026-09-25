@@ -29,6 +29,7 @@ import {
   BarChart2,
   Search,
   Wallet,
+  RotateCcw,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
@@ -73,6 +74,7 @@ const NAV_GROUPS = [
     items: [
       { name: "Analytics",           icon: TrendingUp,   page: "PerformanceAnalytics" },
       { name: "Strategy Benchmark",  icon: BarChart2,    page: "StrategyBenchmark" },
+      { name: "Replay",              icon: RotateCcw,    page: "Replay" },
       { name: "Risk Dashboard",      icon: ShieldAlert,  page: "RiskDashboard" },
       { name: "Signals",             icon: Zap,          page: "Signals" },
       { name: "Reports",             icon: FileBarChart,  page: "Reports" },

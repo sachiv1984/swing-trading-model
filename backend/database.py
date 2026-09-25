@@ -206,6 +206,39 @@ def get_trade_history(portfolio_id: str) -> List[Dict]:
             return cur.fetchall()
 
 
+def get_trade_history_by_ids(portfolio_id: str, trade_ids: List[str]) -> List[Dict]:
+    """Return trade_history rows matching `trade_ids` AND `portfolio_id` (own-data
+    scoping — a foreign-portfolio id, or one that does not exist, is simply absent from
+    the result, not an error). Used by POST /replay/run's "Trade Set" mode.
+
+    Spec: docs/product/decisions/po05_replay_scope_confirmation.md D2.
+    """
+    if not trade_ids:
+        return []
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT * FROM trade_history WHERE id = ANY(%s::uuid[]) AND portfolio_id = %s",
+                (trade_ids, portfolio_id)
+            )
+            return cur.fetchall()
+
+
+def get_trade_history_by_date_range(portfolio_id: str, date_from, date_to) -> List[Dict]:
+    """Return trade_history rows for `portfolio_id` whose `exit_date` falls within
+    [date_from, date_to] inclusive. Used by POST /replay/run's "Date Range" mode.
+
+    Spec: docs/product/decisions/po05_replay_scope_confirmation.md D2.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT * FROM trade_history WHERE portfolio_id = %s AND exit_date BETWEEN %s AND %s",
+                (portfolio_id, date_from, date_to)
+            )
+            return cur.fetchall()
+
+
 def fetch_journal_notes(trade_ids: Optional[List[int]] = None, date_from=None, date_to=None) -> List[Dict]:
     """Fetch entry_note/exit_note for closed trades, filtered by trade_ids OR a
     date_from/date_to range (mutually exclusive at the call site — trade_ids

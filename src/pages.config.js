@@ -67,6 +67,7 @@ import TradePlans from './pages/TradePlans';
 import TickerUniverse from './pages/TickerUniverse';
 import RedFlagJournal from './pages/RedFlagJournal';
 import StrategyBenchmark from './pages/StrategyBenchmark';
+import Replay from './pages/Replay';
 import __Layout from './Layout.js';
 
 
@@ -91,6 +92,7 @@ export const PAGES = {
     "TickerUniverse": TickerUniverse,
     "RedFlagJournal": RedFlagJournal,
     "StrategyBenchmark": StrategyBenchmark,
+    "Replay": Replay,
 }
 
 export const pagesConfig = {

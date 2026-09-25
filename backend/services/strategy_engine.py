@@ -56,6 +56,26 @@ import pandas as pd
 
 INITIAL_CAPITAL = 20000
 
+# strategy_rules.md's live parameters — mirrors production_strategy.py's OPTIMAL_PARAMS
+# exactly (tested by test_replay_service.py::test_live_params_matches_production_strategy).
+# Moved here from backend/services/backtest_rule_service.py (ST-01b, EPIC-01, v9.7,
+# BLG-FEAT-74) so replay_service.py can read it without importing
+# backtest_rule_service's create_backtest_rule_run write function; re-exported from
+# backtest_rule_service.py unchanged for its own existing import.
+LIVE_PARAMS = {
+    "lookback": 252,
+    "top_n": 5,
+    "atr_mult": 2,
+    "rebalance_freq": "ME",
+    "min_position_pct": 0.05,
+    "max_position_pct": 0.20,
+    "min_hold_days": 10,
+    "risk_off_mode": "single",
+    "stop_loss_mode": "profit_lock",
+    "initial_atr_mult": 5,
+    "profit_atr_mult": 2,
+}
+
 
 def compute_risk_on(price: pd.Series, ma_period: int = 200) -> pd.Series:
     """True where price is above its own ma_period-day moving average.
@@ -124,6 +144,60 @@ def transaction_fee(ticker: str, side: str) -> float:
     return 0.0015
 
 
+def is_risk_on(ticker: str, date, regime_us: pd.Series, regime_uk: pd.Series, risk_off_mode: str) -> bool:
+    """Extracted from backtest()'s inline closure (ST-01b, EPIC-01, v9.7, BLG-FEAT-74 —
+    F3, BLG-TECH-15) so backend/services/replay_service.py can reuse the exact same
+    market-regime rule as backtest() rather than re-deriving it. Behaviourally identical
+    to the closure it replaces: an exact `.at[date]` lookup against regime_us/regime_uk,
+    `False` if the date is absent from the index. replay_service.py gets exact-match
+    semantics against a ticker's own (non-SPY) calendar by pre-aligning regime_us/regime_uk
+    onto that ticker's date index (forward-filled) before calling this function — see its
+    module docstring."""
+    us_on = bool(regime_us.at[date]) if date in regime_us.index else False
+    uk_on = bool(regime_uk.at[date]) if date in regime_uk.index else False
+    if risk_off_mode == "single":
+        return uk_on if ticker.endswith(".L") else us_on
+    elif risk_off_mode == "dual":
+        return us_on or uk_on
+    elif risk_off_mode == "dual_strict":
+        return us_on and uk_on
+    return us_on
+
+
+def compute_active_atr_mult(stop_loss_mode: str, holding_days: int, min_hold_days: int,
+                             atr_mult: float, initial_atr_mult: float, profit_atr_mult: float,
+                             is_profitable: bool) -> float:
+    """Extracted from backtest()'s inline stop-loss block (ST-01b, EPIC-01, v9.7,
+    BLG-FEAT-74 — F3, BLG-TECH-15). `is_profitable` corresponds exactly to the inline
+    block's own `current_profit_pct > 0` test (a strict-positive check on the position's
+    current unrealised return, not its P&L in currency). Behaviourally identical to the
+    if/elif chain it replaces."""
+    if stop_loss_mode == "simple":
+        return atr_mult
+    elif stop_loss_mode == "tiered":
+        return initial_atr_mult if holding_days < min_hold_days * 2 else atr_mult
+    elif stop_loss_mode == "profit_lock":
+        return profit_atr_mult if is_profitable else initial_atr_mult
+    else:
+        return atr_mult
+
+
+def compute_initial_stop(entry_price: float, atr_at_entry: float, stop_loss_mode: str,
+                          atr_mult: float, initial_atr_mult: float) -> float:
+    """Extracted from backtest()'s inline entry block (ST-01b, EPIC-01, v9.7,
+    BLG-FEAT-74 — F3, BLG-TECH-15): the initial stop set the moment a position is
+    opened. Deliberately does not guard against a NaN `atr_at_entry` — backtest()'s
+    existing behaviour (an ATR-not-yet-warmed-up entry silently produces a NaN stop
+    that then never fires, since `max(nan, x)` is `nan`) is preserved unchanged by
+    this extraction, not fixed. replay_service.py does not inherit that behaviour: it
+    explicitly checks ATR/regime warm-up before ever calling this function (its own
+    module docstring), and skips a trade as `insufficient_history` instead."""
+    if stop_loss_mode == "simple":
+        return entry_price - atr_mult * atr_at_entry
+    else:
+        return entry_price - initial_atr_mult * atr_at_entry
+
+
 def compute_rebalance_dates(price_index: pd.DatetimeIndex, rebalance_freq: str,
                              as_of: pd.Timestamp = None) -> pd.DatetimeIndex:
     """Return the subset of price_index at which a rebalance occurs.
@@ -166,17 +240,6 @@ def backtest(signals, prices, volatility, atr, regime_us, regime_uk, rebalance_f
         initial_atr_mult = atr_mult * 1.5
     if profit_atr_mult is None:
         profit_atr_mult = atr_mult
-
-    def is_risk_on(ticker: str, date) -> bool:
-        us_on = bool(regime_us.at[date]) if date in regime_us.index else False
-        uk_on = bool(regime_uk.at[date]) if date in regime_uk.index else False
-        if risk_off_mode == "single":
-            return uk_on if ticker.endswith(".L") else us_on
-        elif risk_off_mode == "dual":
-            return us_on or uk_on
-        elif risk_off_mode == "dual_strict":
-            return us_on and uk_on
-        return us_on
 
     rebalance_dates = compute_rebalance_dates(prices.index, rebalance_freq, as_of=as_of)
     holdings = pd.Series(0.0, index=prices.columns)
@@ -233,15 +296,11 @@ def backtest(signals, prices, volatility, atr, regime_us, regime_uk, rebalance_f
             current_price = prices.loc[date, t]
             entry_price = entry_prices[t]
             current_profit_pct = (current_price - entry_price) / entry_price
-
-            if stop_loss_mode == "simple":
-                active_atr_mult = atr_mult
-            elif stop_loss_mode == "tiered":
-                active_atr_mult = initial_atr_mult if holding_days < min_hold_days * 2 else atr_mult
-            elif stop_loss_mode == "profit_lock":
-                active_atr_mult = profit_atr_mult if current_profit_pct > 0 else initial_atr_mult
-            else:
-                active_atr_mult = atr_mult
+            active_atr_mult = compute_active_atr_mult(
+                stop_loss_mode, holding_days, min_hold_days,
+                atr_mult, initial_atr_mult, profit_atr_mult,
+                is_profitable=current_profit_pct > 0,
+            )
 
             current_stop = stop_prices.get(t, -np.inf)
             new_stop = current_price - active_atr_mult * atr_val
@@ -258,7 +317,7 @@ def backtest(signals, prices, volatility, atr, regime_us, regime_uk, rebalance_f
         for t in current_positions:
             if holdings[t] == 0:
                 continue
-            if not is_risk_on(t, date):
+            if not is_risk_on(t, date, regime_us, regime_uk, risk_off_mode):
                 exit_adj = _record_exit(t, date, prices.loc[date, t], "Risk-Off")
                 cash += holdings[t] * exit_adj
                 holdings[t] = 0
@@ -268,7 +327,7 @@ def backtest(signals, prices, volatility, atr, regime_us, regime_uk, rebalance_f
         # Today's qualifying, risk-on candidates — used both for the monthly
         # rotation-out below and the daily slot fill-in that follows it.
         selected = signals.loc[date][signals.loc[date]].index.tolist()
-        selected = [t for t in selected if is_risk_on(t, date)]
+        selected = [t for t in selected if is_risk_on(t, date, regime_us, regime_uk, risk_off_mode)]
 
         # Monthly rebalance: rotate out any holding that has fallen out of
         # the current top-n qualifying set. Only evaluated on rebalance
@@ -320,10 +379,7 @@ def backtest(signals, prices, volatility, atr, regime_us, regime_uk, rebalance_f
                         entry_dates[t] = date
 
                         atr_val = atr.loc[date, t]
-                        if stop_loss_mode == "simple":
-                            initial_stop = price - atr_mult * atr_val
-                        else:
-                            initial_stop = price - initial_atr_mult * atr_val
+                        initial_stop = compute_initial_stop(price, atr_val, stop_loss_mode, atr_mult, initial_atr_mult)
                         stop_prices[t] = initial_stop
                         initial_stop_prices[t] = initial_stop
 
