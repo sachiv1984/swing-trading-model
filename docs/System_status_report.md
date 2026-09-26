@@ -1,15 +1,15 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.48
-**Last Updated:** 2026-09-25 (sprint close 2026-09-23__release-v9.7 — new Sprint section added); prior — 2026-09-23 (delivery verification 2026-09-21__release-v9.6 — status line updated Sprint_Complete → Verified_with_deviations; Deviations column and Verification-inputs Deviations/Test-scenarios lists corrected to reflect BLG-BE-127/BLG-BE-128/DEV-EPIC05-ST21-01 and the EPIC-03/EPIC-05 test files, STEP 6 reconciliation); prior — 2026-09-23 (sprint close 2026-09-21__release-v9.6 — new Sprint section added); prior history retained — see prior entries in version control.
+**Version:** 4.49
+**Last Updated:** 2026-09-25 (delivery verification 2026-09-23__release-v9.7 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation); prior — 2026-09-25 (sprint close 2026-09-23__release-v9.7 — new Sprint section added); prior — 2026-09-23 (delivery verification 2026-09-21__release-v9.6 — status line updated Sprint_Complete → Verified_with_deviations; Deviations column and Verification-inputs Deviations/Test-scenarios lists corrected to reflect BLG-BE-127/BLG-BE-128/DEV-EPIC05-ST21-01 and the EPIC-03/EPIC-05 test files, STEP 6 reconciliation); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
 
 ## Sprint: 2026-09-23__release-v9.7
 **Date:** 2026-09-25
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified_with_deviations — 2026-09-25
 
 ### Capabilities now live (merged this sprint)
 
