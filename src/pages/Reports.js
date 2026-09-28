@@ -8,6 +8,7 @@ import {
   Calendar,
   TrendingUp,
   TrendingDown,
+  Minus,
   BarChart3,
   PieChart,
   Loader2,
@@ -23,7 +24,7 @@ import { Button } from "../components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
 import { StandingAlert } from "../components/ui/StandingAlert";
-import { formatCurrency } from "../lib/format";
+import { formatCurrency, formatPercent } from "../lib/format";
 import StatsCard from "../components/ui/StatsCard";
 import PerformanceSummary from "../components/reports/PerformanceSummary";
 import PortfolioGrowthChart from "../components/reports/PortfolioGrowthChart";
@@ -41,16 +42,11 @@ function getCurrentUKTaxYear() {
 }
 
 function formatGBP(value) {
-  if (value == null) return "—";
-  return `£${Number(value).toLocaleString("en-GB", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
+  return formatCurrency(value);
 }
 
 function formatPct(value) {
-  if (value == null) return "—";
-  return `${Number(value).toFixed(1)}%`;
+  return formatPercent(value);
 }
 
 // ─── Tax Year P&L View ─────────────────────────────────────────────────────────
@@ -252,7 +248,7 @@ function TaxYearReport({ onViewMonthly }) {
               className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4"
             >
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Realised P&L</p>
-              <p className={`text-xl font-bold ${(reportData?.summary?.total_realised_pnl ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+              <p className={`text-xl font-bold ${(reportData?.summary?.total_realised_pnl ?? 0) > 0 ? "text-emerald-400" : (reportData?.summary?.total_realised_pnl ?? 0) < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"}`}>
                 {formatGBP(reportData?.summary?.total_realised_pnl)}
               </p>
             </motion.div>
@@ -372,9 +368,8 @@ function TaxYearReport({ onViewMonthly }) {
                     // touch P&L %..." -- kept on the original binary rule,
                     // deliberately NOT sharing pnlColor with the cell below,
                     // so this column's colour is unaffected by ST-08.
-                    const pnlPctColor = trade.pnl_pct > 0 ? "text-emerald-400" : "text-rose-400";
+                    const pnlPctColor = trade.pnl_pct > 0 ? "text-emerald-400" : trade.pnl_pct < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400";
                     const currency = trade.currency === "USD" ? "USD" : "GBP";
-                    const priceSymbol = currency === "USD" ? "$" : "£";
                     return (
                       <tr
                         key={trade.id ?? i}
@@ -390,11 +385,11 @@ function TaxYearReport({ onViewMonthly }) {
                         <td className="px-3 py-3 text-slate-300">{trade.exit_date}</td>
                         <td className="px-3 py-3 text-slate-300">{trade.holding_days}</td>
                         <td className="px-3 py-3 text-slate-300">
-                          {priceSymbol}{Number(trade.entry_price_native ?? 0).toFixed(2)}
+                          {formatCurrency(trade.entry_price_native ?? 0, { currency })}
                           <span className="text-xs text-slate-600 dark:text-slate-400 ml-1">{currency}</span>
                         </td>
                         <td className="px-3 py-3 text-slate-300">
-                          {priceSymbol}{Number(trade.exit_price_native ?? 0).toFixed(2)}
+                          {formatCurrency(trade.exit_price_native ?? 0, { currency })}
                           <span className="text-xs text-slate-600 dark:text-slate-400 ml-1">{currency}</span>
                         </td>
                         <td className="px-3 py-3 text-slate-300">{trade.shares}</td>
@@ -425,7 +420,7 @@ function TaxYearReport({ onViewMonthly }) {
               <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
                 Indicative Unrealised P&L (current positions)
               </h3>
-              <p className={`text-2xl font-bold mb-3 ${(reportData.estimated_unrealised_pnl ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+              <p className={`text-2xl font-bold mb-3 ${(reportData.estimated_unrealised_pnl ?? 0) > 0 ? "text-emerald-400" : (reportData.estimated_unrealised_pnl ?? 0) < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"}`}>
                 {formatGBP(reportData.estimated_unrealised_pnl)}
               </p>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -658,7 +653,7 @@ function ReconciliationReport() {
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">System-Computed Total</p>
                 <p
-                  className={`text-lg font-semibold ${data.system_total_pnl_gbp >= 0 ? "text-emerald-400" : "text-rose-400"}`}
+                  className={`text-lg font-semibold ${data.system_total_pnl_gbp > 0 ? "text-emerald-400" : data.system_total_pnl_gbp < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"}`}
                   data-testid="reconciliation-system-total"
                 >
                   {formatGBP(data.system_total_pnl_gbp)}
@@ -667,7 +662,7 @@ function ReconciliationReport() {
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Trade Export Total</p>
                 <p
-                  className={`text-lg font-semibold ${data.export_total_pnl_gbp >= 0 ? "text-emerald-400" : "text-rose-400"}`}
+                  className={`text-lg font-semibold ${data.export_total_pnl_gbp > 0 ? "text-emerald-400" : data.export_total_pnl_gbp < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"}`}
                   data-testid="reconciliation-export-total"
                 >
                   {formatGBP(data.export_total_pnl_gbp)}
@@ -935,7 +930,7 @@ function MonthlyPnlTable() {
           <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
             Indicative Unrealised P&L (current positions)
           </h3>
-          <p className={`text-2xl font-bold mb-3 ${(estimatedUnrealisedPnl ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+          <p className={`text-2xl font-bold mb-3 ${(estimatedUnrealisedPnl ?? 0) > 0 ? "text-emerald-400" : (estimatedUnrealisedPnl ?? 0) < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"}`}>
             {formatGBP(estimatedUnrealisedPnl)}
           </p>
           <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -963,9 +958,7 @@ function MonthlyPnlTable() {
             <div data-testid="compliance-pass-rate" className="bg-slate-800/50 px-5 py-4">
               <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Validation Pass Rate</p>
               <p className="text-lg font-semibold text-white">
-                {compliance.validation_pass_rate != null
-                  ? `${(compliance.validation_pass_rate * 100).toFixed(1)}%`
-                  : "—"}
+                {formatPercent(compliance.validation_pass_rate != null ? compliance.validation_pass_rate * 100 : null)}
               </p>
             </div>
             <div data-testid="compliance-override-count" className="bg-slate-800/50 px-5 py-4">
@@ -1187,14 +1180,14 @@ export default function Reports() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatsCard
               title="Total P&L"
-              value={`${metrics.totalPnL >= 0 ? "+" : ""}£${metrics.totalPnL.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+              value={formatCurrency(metrics.totalPnL, { signed: true })}
               subtitle={periodLabels[period]}
-              icon={metrics.totalPnL >= 0 ? TrendingUp : TrendingDown}
-              gradient={metrics.totalPnL >= 0 ? "emerald" : "rose"}
+              icon={metrics.totalPnL > 0 ? TrendingUp : metrics.totalPnL < 0 ? TrendingDown : Minus}
+              gradient={metrics.totalPnL > 0 ? "emerald" : metrics.totalPnL < 0 ? "rose" : "cyan"}
             />
             <StatsCard
               title="Win Rate"
-              value={`${metrics.winRate.toFixed(1)}%`}
+              value={formatPercent(metrics.winRate)}
               subtitle={`${metrics.winningTrades}W / ${metrics.losingTrades}L`}
               icon={PieChart}
               gradient="cyan"

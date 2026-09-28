@@ -1,4 +1,5 @@
 import { Lightbulb } from "lucide-react";
+import { formatCurrency } from "../../lib/format";
 
 export default function KeyInsightsCard({ metrics, winRate }) {
   const insights = [];
@@ -28,22 +29,22 @@ export default function KeyInsightsCard({ metrics, winRate }) {
   // 3. Profit factor assessment
   if (metrics.profitFactor > 0) {
     if (metrics.profitFactor > 2) {
-      insights.push(`Excellent profit factor of ${metrics.profitFactor.toFixed(2)} means earning £${metrics.profitFactor.toFixed(2)} for every £1 lost`);
+      insights.push(`Excellent profit factor of ${metrics.profitFactor.toFixed(2)} means earning ${formatCurrency(metrics.profitFactor)} for every £1 lost`);
     } else if (metrics.profitFactor > 1.5) {
-      insights.push(`Solid profit factor of ${metrics.profitFactor.toFixed(2)} - earning £${metrics.profitFactor.toFixed(2)} for every £1 lost`);
+      insights.push(`Solid profit factor of ${metrics.profitFactor.toFixed(2)} - earning ${formatCurrency(metrics.profitFactor)} for every £1 lost`);
     } else {
-      insights.push(`Profit factor of ${metrics.profitFactor.toFixed(2)} needs improvement - currently earning £${metrics.profitFactor.toFixed(2)} per £1 lost`);
+      insights.push(`Profit factor of ${metrics.profitFactor.toFixed(2)} needs improvement - currently earning ${formatCurrency(metrics.profitFactor)} per £1 lost`);
     }
   }
 
   // 4. Expectancy insight
   if (metrics.expectancy !== undefined) {
     if (metrics.expectancy > 50) {
-      insights.push(`Strong positive edge - expecting £${metrics.expectancy.toFixed(2)} profit per trade`);
+      insights.push(`Strong positive edge - expecting ${formatCurrency(metrics.expectancy, { signed: true })} profit per trade`);
     } else if (metrics.expectancy > 0) {
-      insights.push(`Positive expectancy of £${metrics.expectancy.toFixed(2)} per trade means your strategy has an edge`);
+      insights.push(`Positive expectancy of ${formatCurrency(metrics.expectancy, { signed: true })} per trade means your strategy has an edge`);
     } else {
-      insights.push(`Negative expectancy (£${metrics.expectancy.toFixed(2)} per trade) suggests strategy refinement needed`);
+      insights.push(`Negative expectancy (${formatCurrency(metrics.expectancy, { signed: true })} per trade) suggests strategy refinement needed`);
     }
   }
 

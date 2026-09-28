@@ -9,6 +9,7 @@ import { AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 import { cn } from "../../lib/utils";
+import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
 
 export default function ExitModal({ position, open, onClose, onConfirm }) {
   // Unconditional hooks
@@ -60,6 +61,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
   // Derived values (guarded)
   const currencySymbol = position && position.market === "UK" ? "£" : "$";
+  const exitCurrency = position ? currencyForMarket(position.market) : "GBP";
 
   const exitPrice = Number(exitData.exit_price) || 0;
   const exitShares = Number(exitData.shares) || 0;
@@ -170,7 +172,6 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
     entryCostForExitShares > 0
       ? (pnl / entryCostForExitShares) * 100
       : 0;
-  const isProfit = pnl >= 0;
 
   // Actions - FIX: Ensure proper number conversion and validation
   const handleConfirm = () => {
@@ -259,8 +260,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                 <div>
                   <div className="text-xs text-slate-600 dark:text-slate-400">Entry Price</div>
                   <div className="font-medium text-white">
-                    {currencySymbol}
-                    {Number(position.entry_price || 0).toFixed(2)}
+                    {formatCurrency(Number(position.entry_price || 0), { currency: exitCurrency })}
                   </div>
                 </div>
               </div>
@@ -401,31 +401,29 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                         Gross Value {position.market === "US" ? "(USD)" : ""}
                       </span>
                       <span className="text-white">
-                        {currencySymbol}
-                        {grossProceeds.toFixed(2)}
+                        {formatCurrency(grossProceeds, { currency: exitCurrency })}
                       </span>
                     </div>
-                    
+
                     {/* ALWAYS show commission (even if $0.00) */}
                     <div className="flex justify-between">
                       <span className="text-slate-600 dark:text-slate-400">Commission</span>
                       <span className={commission > 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"}>
                         {commission > 0 ? "-" : ""}
-                        {currencySymbol}
-                        {commission.toFixed(2)}
+                        {formatCurrency(commission, { currency: exitCurrency })}
                       </span>
                     </div>
-                    
+
                     {/* Show FX fee for US stocks */}
                     {position.market === "US" && (
                       <div className="flex justify-between">
                         <span className="text-slate-600 dark:text-slate-400">FX Fee (0.15%)</span>
                         <span className="text-rose-400">
-                          -${fxFee.toFixed(2)}
+                          -{formatCurrency(fxFee, { currency: "USD" })}
                         </span>
                       </div>
                     )}
-                    
+
                     {/* For US stocks, show USD net proceeds before conversion */}
                     {position.market === "US" && (
                       <>
@@ -434,7 +432,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                             Net Proceeds (USD)
                           </span>
                           <span className="text-white">
-                            ${netProceeds.toFixed(2)}
+                            {formatCurrency(netProceeds, { currency: "USD" })}
                           </span>
                         </div>
                         <div className="flex justify-between text-xs opacity-75">
@@ -451,7 +449,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                     <div className="flex justify-between pt-1.5 border-t border-slate-700 font-medium">
                       <span className="text-slate-300">Net Proceeds (GBP)</span>
                       <span className="text-white">
-                        £{netProceedsGBP.toFixed(2)}
+                        {formatCurrency(netProceedsGBP)}
                       </span>
                     </div>
                   </div>
@@ -460,17 +458,15 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                     <div className="flex justify-between">
                       <span className="text-slate-600 dark:text-slate-400">Entry Cost (incl. fees)</span>
                       <span className="text-white">
-                        £{entryCostForExitShares.toFixed(2)}
+                        {formatCurrency(entryCostForExitShares)}
                       </span>
                     </div>
                     <div className="flex justify-between font-bold pt-1.5 border-t border-slate-700">
-                      <span className={isProfit ? "text-emerald-400" : "text-rose-400"}>
+                      <span className={pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-300"}>
                         Realized P&L
                       </span>
-                      <span className={isProfit ? "text-emerald-400" : "text-rose-400"}>
-                        {isProfit ? "+" : ""}
-                        £{pnl.toFixed(2)} ({isProfit ? "+" : ""}
-                        {pnlPercent.toFixed(2)}%)
+                      <span className={pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-300"}>
+                        {formatCurrency(pnl, { signed: true })} ({formatPercent(pnlPercent, { signed: true })})
                       </span>
                     </div>
                   </div>
