@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-28 (session — 1 new item added: BLG-QA-197); prior — 2026-09-28 (session — 1 new item added: BLG-FE-192); prior — 2026-09-28 (release planning 2026-09-28__release-v9.8 — Release Slice v9.8 ephemeral section appended, 39 items, marker `RP:v9.8:2026-09-28__release-v9.8`; no other structural changes); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-28 (session — 1 new item added: BLG-BE-131); prior — 2026-09-28 (session — 1 new item added: BLG-QA-197); prior — 2026-09-28 (session — 1 new item added: BLG-FE-192); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4380,6 +4380,26 @@ v9.7 (ST-08) moved trade-fee rounding from float to Decimal, following the v9.6 
 
 **Acceptance Criteria**
 - Tax-year statement and carried-forward-loss calculations are confirmed Decimal-consistent at rounding boundaries, or a specific gap is filed with the same rigor as `BLG-BE-127`
+
+---
+
+### BLG-BE-131 — GET /reports/monthly-pnl's new `year` param has no bounds check, unlike its sibling GET /reports/tax-year
+**Priority:** P4 (Trivial)
+**Type:** Backend Debt
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1843 review (agent-mediated Director of Quality), EPIC-01/ST-03, cycle 2026-09-28__release-v9.8 — 2026-09-28
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /reports/monthly-pnl?year=<n>` (added ST-03, EPIC-01, v9.8, BLG-FE-190) passes `year` straight into `date(year, 4, 6)` inside `get_monthly_pnl_report()` with no numeric bounds check, unlike its sibling `GET /reports/tax-year`, whose handler explicitly validates `year < 1000 or year > 9999` before calling the service layer. Confirmed live: `GET /reports/monthly-pnl?year=0` returns `404 {"message": "year must be in 1..9999, not 0"}` — a raw Python `ValueError` from `date()` construction, caught by the endpoint's generic `except ValueError` branch and returned as an ambiguous 404 with a leaked internal message, instead of a clean `400` matching the sibling endpoint's convention. Not reachable via the current UI (the frontend's year dropdown is always bounded `2020..currentTaxYear`), so not user-facing today, but it is a defensive-validation gap and an inconsistency between two sibling endpoints that should be closed.
+
+**Scope**
+- Add the same `year < 1000 or year > 9999` (or equivalent) bounds check to `get_monthly_pnl_endpoint` in `backend/main.py`, returning `400` with a clear message, before calling `get_monthly_pnl_report(year=year)`
+
+**Acceptance Criteria**
+- `GET /reports/monthly-pnl?year=0` (and other out-of-range values) returns a clean `400` with a validation message, not a `404` with a raw Python error string
+- Regression test added confirming the bounds check, mirroring the existing `GET /reports/tax-year` bounds-check test pattern
 
 ---
 
