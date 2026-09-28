@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.4
-**Last Updated:** 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — v9.6 row added, rolling average window advanced to v9.1–v9.6); prior — 2026-09-18 (post-ship closure 2026-09-15__release-v9.5 — v9.5 row added, rolling average window advanced to v9.0–v9.5); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 — v9.4 row added, rolling average window advanced to v8.9–v9.4); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 — v9.7 row added, rolling average window advanced to v9.2–v9.7); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — v9.6 row added, rolling average window advanced to v9.1–v9.6); prior — 2026-09-18 (post-ship closure 2026-09-15__release-v9.5 — v9.5 row added, rolling average window advanced to v9.0–v9.5); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -110,7 +110,9 @@
 
 | v9.6  | 32      | 32        | 1.00     | All 32 stories done across 7 EPICs (product features & frontend build-and-ship, financial reporting & records integrity, backend & platform engineering debt, operations & reliability debt, QA & test-infrastructure debt, spec & data-integrity debt, governance process debt), sized to 28.00 days (top of capacity band); the 2026-09-19 rebalance's mandatory build-and-ship pull-forward seated first — "Clone as new plan" (`BLG-FEAT-96`) and CSV export for Screener/Watchlist (`BLG-FEAT-97`), plus the TradeReflection reminder (`BLG-FEAT-98`); 1 P2 deviation accepted (`BLG-BE-127`, ST-12 float/Decimal fee rounding) and 2 P3 deviations recorded (`BLG-BE-128`/ST-13, `DEV-EPIC05-ST21-01`/ST-21); 2 frontend-surfacing gaps found by PR review and filed transparently rather than folded into the deviation register (`BLG-FE-187`/`BLG-FE-188`, ST-07/ST-08, target v9.7); 7 delegated items (ST-09/16/18/22/23/28/29) all reached terminal resolution within the sprint, including a live production DB migration (DS-17) and 2 Product Owner/Strategy Rules Owner decisions; `ESC-EXEC-20260910-01` (prior-cycle, non-blocking) remains Deferred, not reopened; 0 blocked items; 0 returns at seal; Verified_with_deviations |
 
-**Rolling 6-cycle average (v9.1–v9.6):** 1.00
+| v9.7  | 31      | 31        | 1.00     | All 31 `execution_state.json` story entries done across 7 EPICs (ST-01 phased into ST-01a/b/c per RISK-01 mitigation, sealed `sprint_backlog.md`), sized to 28.00 days (top of capacity band); PO-05 Lightweight Replay Mode shipped end-to-end (`BLG-FEAT-74`, Arc 4 flagship item, §13-cleared this week) alongside the category-balanced debt-clearance slice across Frontend/UX, Backend financial reliability, QA coverage, Governance process, Spec/data-model, and Ops/security; 2 P4 deviations accepted (`BLG-SPEC-169`/ST-05,06, `BLG-SPEC-170`/ST-04) — no P0–P2 deviations; 3 delegation records all reached terminal state (2 Unblocked, 1 Cancelled/reclassified autonomous on explicit user direction); 0 blocked items; 0 returns at seal; Verified_with_deviations |
+
+**Rolling 6-cycle average (v9.2–v9.7):** 1.00
 
 ---
 

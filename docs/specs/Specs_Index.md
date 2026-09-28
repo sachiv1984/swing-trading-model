@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — §46 Test Coverage Gaps v9.6 section added, 0 new gaps, TSG sweep 0 Open; see Changelog table for full history)
+**Last Updated:** 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 — §47 Test Coverage Gaps v9.7 section added, 0 new gaps requiring a backlog item, TSG sweep 0 Open, endpoint coverage drift 0 gap; see Changelog table for full history)
 
 ---
 
@@ -1189,6 +1189,16 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ---
 
+## 47. Test Coverage Gaps — v9.7 (2026-09-23__release-v9.7)
+
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps requiring a backlog item this cycle** — all 5 EPICs with populated `test_scenarios` (EPIC-01 through EPIC-04, EPIC-07) were cross-referenced against their `qa_evidence_EPIC-xx.md` "Scenarios run" fields and confirmed fully executed (including independent reviewer re-verification for EPIC-01/EPIC-04/EPIC-07); EPIC-05 and EPIC-06 correctly recorded `not_applicable` (empty `test_scenarios`, governance/documentation-only scope, no frontend-visible or backend-behavioural AC). Structured register: `TSG-v9.7-01` (EPIC-05, not_applicable), `TSG-v9.7-02` (EPIC-06, not_applicable).
+
+**Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** Post-ship closure re-ran the normalised `openapi.yaml`-vs-`api_performance_baseline.md` comparison. 147 normalised endpoints in `openapi.yaml`; this cycle's sole new endpoint (`POST /replay/run`, ST-01b/EPIC-01/BLG-FEAT-74) was already registered in `api_performance_baseline.md` §46 during sprint execution (same PR as the `openapi.yaml` addition) — 0 gap. No new top-level path prefix drift found in `api_performance_baseline.md` itself, but `src/pages/SystemStatus.js`'s `categorizeEndpoint()` has no case for the new `/replay` prefix (falls into `'Other'`) — flagged and filed as `BLG-FE-191` (P4) at post-ship closure STEP 6.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep, per `post_ship_closure.md`'s no-fixed-section-number scan rule):** Scanned all 26 `### N.N TSG-*` entries for literal `**Status:** Open`. 0 Open entries found — every existing TSG entry already carries a `RESOLVED`/`not_applicable`/confirmed-still-open disposition. 0 Open TSG entries checked, 0 resolved.
+
+---
+
 ## 12. Guiding Principle
 
 > Specs explain decisions.
@@ -1202,6 +1212,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-09-28 | Post-ship closure `2026-09-23__release-v9.7` — §47 Test Coverage Gaps (v9.7) added, 0 new gaps requiring a backlog item this cycle (TSG-v9.7-01/02 both not_applicable); endpoint coverage drift check found 0 gaps (147 normalised endpoints; new `POST /replay/run` already registered in `api_performance_baseline.md` same-PR); `SystemStatus.js` `/replay` categorisation gap flagged and filed as `BLG-FE-191`; full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-23 | Post-ship closure `2026-09-21__release-v9.6` — §46 Test Coverage Gaps (v9.6) added, 0 new gaps this cycle; endpoint coverage drift check found 0 gaps (146 normalised endpoints, no new routes this cycle); full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-18 | Post-ship closure `2026-09-15__release-v9.5` — §45 Test Coverage Gaps (v9.5) added, 0 new gaps this cycle; endpoint coverage drift check found 0 gaps; full-document TSG reconciliation sweep found 0 Open entries. **(Backfilled 2026-09-23 — this row was omitted at the time; the §45 section itself was added correctly, only this table row was missed.)** |
 | 2026-09-15 | Post-ship closure `2026-09-14__release-v9.4` — §44 Test Coverage Gaps (v9.4) added, 0 new gaps this cycle; endpoint coverage drift check found 0 gaps (new `POST /ai/check-endpoint-anomalies` route registered same-commit across all required files); full-document TSG reconciliation sweep found 0 Open entries. |

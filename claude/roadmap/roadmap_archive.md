@@ -1,13 +1,32 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-27 (post-ship closure 2026-07-24__release-v7.8, manage roadmap STEP 11 — RA:Gated-carry-forward-2026-07-27 retired: BLG-FEAT-73/BLG-FEAT-74 removed from current_roadmap.md §3 per PO perennial-return disposition, Option (b); not shipped, not killed, remain open in backlog.md); prior — 2026-07-24 (post-ship closure 2026-07-21__release-v7.7 — RA:v7.7 retired, partial: 5/7 items shipped; 2 unblocked-but-still-gated items (`BLG-FEAT-73`, `BLG-FEAT-74`) re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-20 (post-ship closure 2026-07-20__release-v7.6 — RA:v7.6 retired, full: 8/8 items shipped; §3 Now horizon empty following retirement); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
+**Last Updated:** 2026-09-28 (post-ship closure 2026-09-23__release-v9.7, manage roadmap STEP 11 — PO-05 Lightweight Replay Mode retired: shipped v9.7, `BLG-FEAT-74`); prior — 2026-07-27 (post-ship closure 2026-07-24__release-v7.8, manage roadmap STEP 11 — RA:Gated-carry-forward-2026-07-27 retired: BLG-FEAT-73/BLG-FEAT-74 removed from current_roadmap.md §3 per PO perennial-return disposition, Option (b); not shipped, not killed, remain open in backlog.md); prior — 2026-07-24 (post-ship closure 2026-07-21__release-v7.7 — RA:v7.7 retired, partial: 5/7 items shipped; 2 unblocked-but-still-gated items (`BLG-FEAT-73`, `BLG-FEAT-74`) re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## PO-05 Lightweight Replay Mode (Arc 4 — Post-Trade Intelligence)
+
+**Original roadmap location:** §5 Priority 3 — Horizon: Later (Arcs 3–6), Arc 4 — Post-Trade Intelligence table
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-09-28
+**Shipped version:** v9.7
+**Cycle reference:** 2026-09-23__release-v9.7
+**Verification report:** claude/cycles/2026-09-23__release-v9.7/verification_report.md
+**Decision log reference:** N/A — shipped via normal backlog-driven release planning (`BLG-FEAT-74`, §13 pre-clearance PASS `docs/product/decisions/po05_section13_preassessment.md`), not a roadmap rebalance kill/defer decision
+**Retirement confirmed by:** Product Owner
+
+### Original Roadmap Entry
+
+|Feature                         |ID   |Effort|Gate / pre-condition                                                                           |
+|---------------------------------|-----|------|-----------------------------------------------------------------------------------------------|
+|Lightweight Replay Mode          |PO-05|VH    |Requires IT-06 (Alpaca paper trading) for US market; highest-value long-term validation feature|
 
 ---
 

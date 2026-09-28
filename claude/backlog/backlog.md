@@ -1,11 +1,11 @@
 # Product Backlog — Momentum Trading Assistant
 
-<!-- last-spec-debt-deep-review: 2026-09-14__release-v9.4 -->
+<!-- last-spec-debt-deep-review: 2026-09-23__release-v9.7 -->
 
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-25 (session — 1 new item added: BLG-GOV-349, surfaced when EPIC-01/PR #1803's merge did not auto-close issue #1792); prior — 2026-09-25 (session — 1 new item added: BLG-QA-196, surfaced during agent-mediated review of PR #1803/EPIC-01); prior — 2026-09-24 (session — 2 new items added: BLG-SPEC-171, BLG-SPEC-172, surfaced during ST-01a/EPIC-01 scope confirmation and its independent review, cycle 2026-09-23__release-v9.7); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-28 (groom backlog post-ship closure 2026-09-23__release-v9.7 — 30 items archived: 29 v9.7 shipped items + `BLG-FE-189` (already resolved, never archived); 1 ephemeral Release Slice section removed — v9.7; Spec-Debt Deep Review cadence due, ran, 0 new gaps found); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 STEP 6 — 1 new item added: BLG-FE-191, SystemStatus.js categorizeEndpoint() /replay gap, Endpoint Coverage Drift Check); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 STEP 3 — 29 items marked ✅ COMPLETE); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
 
 > ⚠️ Standing Notice
@@ -324,34 +324,6 @@ The behavioural drift detection backend service shipped in v4.6 and computes dri
 - User can see a historical trend of drift score over time
 - Each score is accompanied by plain-language explanation of contributing factors
 - Feature does not enter sprint planning until all 3 BLG-GOV-107 gate conditions are independently reconfirmed met: (1) ≥20 closed trades with **linked** trade_plans (`trade_plans.position_id` populated) — note this gate can only clear via new trade_plans created going forward, since BLG-BE-52 declined to backfill the 11 pre-existing unlinked rows; (2) `GET /analytics/behavioural-drift` p99 < 2s stable over a 7-day window; (3) drift scores show non-trivial variance across trades (not all 0 or 1.0)
-
----
-
-### BLG-FEAT-74 — PO-05 Lightweight Replay Mode
-**Priority:** P1 (High) — escalated from P2, 2026-07-27, session product review (see note below)
-> ⚠️ **Priority escalation (2026-07-27):** Raised P2→P1 during a session backlog review — the roadmap itself names this "the highest-value long-term validation feature" in Arc 4. Escalation reflects value judgment only; the §13 pre-clearance and effort-phasing conditions in this item's own scope note still apply before sprint entry.
-**Type:** Product Feature / Backend + Frontend, gated
-**Owner:** Head of Engineering; Product Owner
-**Source:** Feature-gap review (current_roadmap.md §5 Arc 4, PO-05 — flagged as unbacklogged) — 2026-07-10
-**Effort:** VH (>2 weeks)
-**Provisional-Target:** Unscheduled — §13 pre-clearance PASS 2026-09-23 (see docs/product/decisions/po05_section13_preassessment.md), 6 binding conditions carry forward to implementation; gated only by normal Release Planning prioritisation given its VH (>2 weeks) effort size, not by §13
-**Depends on:** IT-06 Alpaca Paper Trading Integration (shipped v3.5) — foundational infrastructure this feature reuses
-
-> PO re-deferral 2026-08-21: `Provisional-Target` corrected from the stale `v7.7` anchor (DL-074, named 2026-07-21, shipped 2026-07-24 without this item ever entering a sprint) to `Unscheduled (gated)`, matching the item's actual state — the real blocker is that nobody has run the §13 determinism pre-clearance review yet, not a scheduling gap per se. Priority remains P1 and the roadmap's "highest-value long-term validation feature" framing stands; this item should be re-targeted to a specific release once the §13 pre-clearance review (Strategy Rules & System Intent Owner) is scheduled and completed, not before.
-
-**Problem**
-The roadmap names this "the highest-value long-term validation feature" in Arc 4, but no backlog item exists for it at all. There is currently no way for the user to test how a candidate strategy-rule change would have performed historically, or to replay a specific past setup/period against the paper-trading infrastructure that already exists and is otherwise unused for this purpose.
-
-**Scope**
-- §13 compliance pre-clearance: confirm the feature is a deterministic replay of the user's own historical data, not a predictive simulation (precedent: PS-03 Monte Carlo's determinism framing; IT-06's four binding conditions as a template for the review)
-- Backend: replay a historical window of the user's own trade/candidate history through the existing paper-trading mechanics under the *current* rule set
-- Frontend: date range or trade-set selector, and a clearly-labelled retrospective/deterministic output view
-- Exact scope (single trade replay vs. full historical window, output format) to be confirmed by canonical spec before implementation, per the roadmap's Standing Notice
-
-**Acceptance Criteria**
-- User can select a historical date range or trade set and run it through paper-trading mechanics under current strategy rules
-- Output is clearly labelled as retrospective/deterministic, not predictive
-- §13 pre-clearance review completed and documented before sprint planning begins
 
 ---
 
@@ -3004,121 +2976,6 @@ The full pipeline (screener hit → watchlist → research → trade plan → po
 
 ---
 
-### BLG-FE-189 — Cash Management (deposit/withdraw) unreachable from shipped UI after DashboardHome redesign
-**Priority:** P1 (High)
-**Type:** Frontend / UX Regression
-**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
-**Source:** Live user report (P1) — user unable to complete a WDC trade (POST /portfolio/position → 400 Insufficient funds) with no way to add cash — 2026-09-22
-**Effort:** S (~0.5d)
-**Provisional-Target:** v9.6 (resolved ad hoc, out of cycle — see Resolution below)
-
-**Problem**
-`DashboardHome.js` (EPIC-03/ST-05, `dashboard.md` v2.0) replaced the old widget-based `Dashboard.js`, which had a "Cash Balance" tile opening `CashManagementModal` (deposit/withdraw, backed by working `POST /cash/transaction`). `DashboardHome.js` never carried an equivalent trigger forward. `CashManagementModal.js` and its backend endpoint kept working but became reachable from nowhere in the shipped UI. Compounding this, the same investigation found `TradeEntry.js`'s `createMutation` had no `onError` handler at all, so a 400 (e.g. this insufficient-funds rejection) failed completely silently — no toast, no message — and `base44Client.js`'s `doFetch` only read a `message` field from error bodies, dropping FastAPI's actual `{"detail": "..."}` error text even where errors were handled. Also found: `CashManagementModal.js`'s `onSuccess` invalidated query key `"portfolios"` (plural), which matches no key actually used anywhere in the app, so cash balance displays never refreshed after a deposit/withdrawal even when the modal was reachable.
-
-**Scope**
-- Add a persistent global "Manage Cash" trigger (not a DashboardHome card, not a Trade-Entry-local button — an account-level action reachable from every page, including mid Trade-Entry without losing in-progress form state)
-- Fix `doFetch` to surface `json?.detail` when `json?.message` is absent
-- Add `onError` toast handling to `TradeEntry.js`'s `createMutation`
-- Fix `CashManagementModal.js`'s stale `invalidateQueries` key and its silent `alert()`-based error handling
-- Update `docs/specs/frontend/components/cash_management_modal.md` and `docs/specs/frontend/patterns/api_dependencies.md` to reflect the corrected entry point
-- Playwright coverage for the above (no page.route-mocked AC left uncovered)
-
-**Acceptance Criteria**
-- Cash Management is reachable from every page via a persistent global trigger, including mid Trade-Entry without loss of form state
-- A 400 from `POST /portfolio/position` (or any `doFetch`-based call) surfaces the backend's actual `detail` message to the user via toast
-- A deposit/withdrawal refreshes the displayed cash balance everywhere it's shown
-- Playwright coverage exists and passes in CI for all of the above
-
-**Resolution (2026-09-22):** Fixed same-session on `hotfix/cash-management-entry-point-and-silent-errors`. Head of UX & Design decision: the trigger is mounted globally in `src/Layout.js` (desktop sidebar + mobile header icon), not as a DashboardHome card or a Trade-Entry-local button — an account-level action belongs in persistent global nav, not a page-scoped affordance, precisely because the triggering P1 showed the need can surface from any flow. `doFetch`, `TradeEntry.js`, and `CashManagementModal.js` fixed as scoped above. Both spec docs updated (`cash_management_modal.md` v1.1→v1.2, `api_dependencies.md` v1.2→v1.3). `tests/e2e/cash-management-global-trigger.spec.js` added — 6 new ACs (SC-CASH-01…06), all passing locally. Filed here for audit trail per this repo's established pattern of recording P1 findings even when resolved same-session (cf. `BLG-GOV-346`); left in the active backlog rather than the archive since retirement there is reserved for the `groom backlog` engine sweep, not ad hoc filing.
-
----
-
-*40 of the window's 44 submissions promoted directly to backlog per STEP 4 "📋 Backlog (gate-conditional)" disposition — no hard gate on any item, all ungated and ready. 2 Challenger submissions resolved as process patches feeding this cycle's STEP 11.4 meta-review (see `lessons_learnt.md`/`meta_review.md`), not filed here. All items carry `**Provisional-Target:** TBD` (Now/Next horizons both empty — §16.6 fallback) and no day-range effort (§16.12 n/a, target not release-specific).*
-
----
-
-### BLG-SPEC-147 — Formal definition of "linked trade plan" counting for the SI-02 gate
-**Priority:** P3 (Low)
-**Type:** Spec Debt / Metrics
-**Owner:** Metrics Definitions & Analytics Canonical Owner
-**Source:** IDEA-metrics-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** S
-**Provisional-Target:** TBD
-
-**Problem**
-The SI-02 gate's "linked trade plan" count is well-specified as a query (`current_roadmap.md` §5) but has no formal canonical definition document of its own, unlike the drift-score threshold which already has one (`docs/specs/metrics/si02_drift_score.md`).
-
-**Scope**
-- Create a companion canonical definition doc (or extend the existing drift-score one) formally defining "linked trade plan" for gate purposes
-- Cross-reference from `current_roadmap.md`'s SI-02 structured field
-
-**Acceptance Criteria**
-- Canonical definition exists
-- `current_roadmap.md` SI-02 field cross-references it
-
----
-
-### BLG-SPEC-149 — positions.exit_note documented in data_model.md does not exist on live table
-**Priority:** P3 (Low)
-**Type:** Spec Debt / Data Model
-**Owner:** Data Model & Domain Schema Owner
-**Source:** ST-22/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.6
-
-**Problem**
-`data_model.md`'s Positions Table field list documents an `exit_note` TEXT column. Live schema query against the (readonly staging) database confirmed this column does not exist on `positions` (`ERROR: column "exit_note" does not exist`). Journal notes at exit are actually stored on `trade_history.exit_note` (confirmed present there via `\d trade_history`) — closed-position exit notes live on the trade history record, not on the position row itself.
-
-**Scope**
-- Remove or correct the `exit_note` row in `data_model.md`'s Positions Table field list
-- Add a note cross-referencing `trade_history.exit_note` as the actual storage location, if not already clear from that table's own docs
-
-**Acceptance Criteria**
-- `data_model.md`'s Positions Table section no longer claims a live `exit_note` column that doesn't exist
-
----
-
-### BLG-SPEC-150 — 4 orphaned, always-NULL, undocumented columns on live positions table
-**Priority:** P3 (Low)
-**Type:** Spec Debt / Data Model
-**Owner:** Data Model & Domain Schema Owner
-**Source:** ST-22/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
-**Effort:** S (~0.5–1d)
-**Provisional-Target:** v9.6
-
-**Problem**
-Live `positions` table (confirmed via readonly staging access) has 4 columns not referenced anywhere in `data_model.md`: `atr_value`, `stop_price`, `fees`, `pnl_percent` (all nullable numeric). Queried both live open-position rows — all 4 columns are NULL on every row, while their apparent same-purpose counterparts already documented in spec (`atr`, `current_stop`, `fees_paid`, `pnl_pct`) are populated and match the spec exactly. These read as leftover columns from an old naming convention or an aborted rename, never backfilled, populated, or dropped.
-
-**Scope**
-- Data Model & Domain Schema Owner to confirm whether any live code path still reads or writes these 4 columns
-- If genuinely unused: file a follow-on migration to drop them
-- If still meaningfully used somewhere: document them properly in `data_model.md`
-
-**Acceptance Criteria**
-- Disposition recorded (drop vs document) with supporting evidence
-- `data_model.md` and the live schema agree on every `positions` column, one way or the other
-
----
-
-### BLG-SPEC-151 — positions.fees_paid documented as NOT NULL but live column is nullable
-**Priority:** P4 (Trivial)
-**Type:** Spec Debt / Data Model
-**Owner:** Data Model & Domain Schema Owner
-**Source:** ST-22/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.6
-
-**Problem**
-`data_model.md`'s Positions Table field notes state `fees_paid | DECIMAL(10,2) | NO | Total fees. NOT NULL as of v1.6`. Live schema query (readonly staging, `\d positions`) shows `fees_paid` with no `NOT NULL` constraint.
-
-**Scope**
-- Reconcile: either add the missing `NOT NULL` constraint live, or correct the spec's claim to reflect actual (nullable) live behaviour
-
-**Acceptance Criteria**
-- `data_model.md` and the live schema agree on `fees_paid` nullability
-
----
-
 ### BLG-SPEC-152 — Full field-level openapi.yaml authoring pass for 20 generic/thin `data` payload schemas
 **Priority:** P3 (Low)
 **Type:** Spec Debt / API Contracts
@@ -3217,211 +3074,6 @@ Live `positions` table (confirmed via readonly staging access) has 4 columns not
 
 **Acceptance Criteria**
 - A trackable item (this one, or a successor) exists for PO-04's own §13 review — not just prose in a stub file
-
----
-
-### BLG-GOV-327 — Quarterly "governance overhead ratio" metric
-**Priority:** P3 (Low)
-**Type:** Governance / Process
-**Owner:** PMO Lead
-**Source:** IDEA-pmo-lead-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** M
-**Provisional-Target:** TBD
-
-**Problem**
-Given the sustained scheduled-rebalance cadence and heavily governance/debt-weighted release composition (see this cycle's Product Value Ratio finding), there is no single metric tracking the ratio of process-cycle effort to shipped-cycle effort over time.
-
-**Scope**
-- Define the metric precisely (candidate: governance-tagged wall-clock time ÷ total wall-clock time, using §22 logging)
-- Compute a first historical baseline reading
-
-**Acceptance Criteria**
-- Metric defined in a canonical spec (likely `metrics_definitions.md`)
-- First baseline reading recorded
-
----
-
-### BLG-QA-174 — CI check flagging merged `.skip()`/`.only()` Playwright specs
-**Priority:** P3 (Low)
-**Type:** QA / CI Tooling
-**Owner:** QA Lead
-**Source:** IDEA-qa-lead-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** S
-**Provisional-Target:** TBD
-
-**Problem**
-A Playwright spec left with `.skip()` or `.only()` in a merged PR silently disables coverage (or narrows a full run to one spec) with no CI signal calling it out — this is a distinct gap from the existing flaky-test quarantine item, which addresses tests confirmed flaky, not specs left skipped/scoped for unrelated reasons.
-
-**Scope**
-- Add a CI grep/lint step scanning merged Playwright spec files for `.skip(`/`.only(` usage
-- Allow a documented, deliberate exception mechanism (e.g. a comment tag) for genuinely intentional long-term skips
-
-**Acceptance Criteria**
-- CI check added and fires on a deliberately-introduced test case
-- Exception mechanism documented
-
----
-
-### BLG-QA-175 — Recurring pre-sprint endpoint test coverage audit
-**Priority:** P3 (Low)
-**Type:** QA / Process
-**Owner:** QA & Testing Owner
-**Source:** IDEA-qa-testing-20260914-01 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** S
-**Provisional-Target:** TBD
-
-**Problem**
-Endpoint test coverage (the CLAUDE.md-mandated same-commit `backend/routers/test.py` requirement) is only checked at commit time. A drift that slipped through (e.g. an older endpoint predating the rule) is only caught reactively, not proactively before a sprint starts.
-
-**Scope**
-- Add a pre-sprint audit step (likely in `sprint_planning_prompt.md` STEP 0) scanning all `@router.*` decorators against `test.py` coverage
-- Report any gap found before sprint scope is sealed, not after
-
-**Acceptance Criteria**
-- Audit method documented
-- First run completed; any gap found filed as its own item (e.g. this cycle's own `BLG-OPS-156` is an example of the same class of gap, caught at post-ship instead — this item would catch it earlier)
-
----
-
-### BLG-QA-176 — Backfill negative-path tests for the 3 newest v9.2/v9.3 routers
-**Priority:** P3 (Low)
-**Type:** QA / Test Coverage
-**Owner:** QA & Testing Owner
-**Source:** IDEA-qa-testing-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** M
-**Provisional-Target:** TBD
-
-**Problem**
-The 3 newest routers shipped in v9.2/v9.3 have positive-path endpoint test coverage (satisfying the CLAUDE.md same-commit requirement) but no negative-path coverage (invalid input, missing auth, not-found) confirmed yet.
-
-**Scope**
-- Identify the 3 newest routers precisely
-- Add negative-path test cases for each
-
-**Acceptance Criteria**
-- 3 routers identified
-- Negative-path tests added and passing for each
-
----
-
-### BLG-GOV-330 — Review whether the SI-02 gate threshold should scale with observed trade cadence
-**Priority:** P3 (Low)
-**Type:** Governance / Strategy
-**Owner:** Strategy Rules & System Intent Owner
-**Source:** IDEA-strategy-owner-20260914-02 — Promoted-Backlog, idea intake IW-20260914-01, roadmap rebalance 2026-09-14__scheduled
-**Effort:** S
-**Provisional-Target:** TBD
-
-**Problem**
-This is the same substantive question `IDEA-challenger-20260809-02` raised and had rejected-strong as a duplicate of `BLG-GOV-237`'s "still appropriate" answer (v8.3). This submission restates it from the Strategy Rules & System Intent Owner's own perspective rather than the Challenger's — arguably not materially new, but filed rather than dropped since the submitting role differs and the underlying data (9+ consecutive NOT MET readings, now approaching a full year) has continued to accumulate since `BLG-GOV-237` last examined it.
-
-**Scope**
-- Confirm whether `BLG-GOV-237`'s "still appropriate" conclusion should be formally re-examined given the extended data since, or whether this is correctly closed as no-new-information
-
-**Acceptance Criteria**
-- Disposition recorded: re-examine (with new analysis) or confirm-closed (citing `BLG-GOV-237`, no new information)
-
----
-
-### BLG-GOV-331 — Document ensure_ascii=False convention for governance JSON writes
-**Priority:** P3 (Low)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** PR #1662 agent-mediated Director of Quality review, EPIC-01/v9.4 — 2026-09-14
-**Effort:** XS
-**Provisional-Target:** TBD
-
-**Problem**
-A programmatic write to `.claude_current_state.json` during EPIC-01/v9.4 execution used Python's `json.dump(..., indent=2)` with the default `ensure_ascii=True`, which re-escaped every non-ASCII character (em-dashes, `§`) across the *entire* ~125-line file into `\uXXXX` sequences — not just the ~5 fields that actually changed. Result: 15 of 125 lines showed as changed in the PR diff for a semantically ~5-field edit, and the file's raw readability degraded (literal `—`/`§` replaced by escape sequences). No existing convention documents the correct approach for future writers (agent or human) to this and other governance JSON files (`execution_state.json`, etc.) that routinely carry non-ASCII prose.
-
-**Scope**
-- Add a short note (e.g. `shared_standards.md` or a `CLAUDE.md` line) stating that any programmatic write to governance JSON files must preserve non-ASCII characters literally (e.g. Python's `json.dump(..., ensure_ascii=False)`) rather than escaping them, to keep diffs minimal and files human-readable
-
-**Acceptance Criteria**
-- Convention documented somewhere a future governance-JSON writer (agent or human) would see it before writing
-
----
-
-### BLG-QA-177 — Validate `get_claude_endpoint_cost_windows()` SQL against a real Postgres instance
-
-**Priority:** P3 (Low)
-**Type:** QA / Test Automation
-**Owner:** Data Model & Domain Schema Owner / QA Testing Owner
-**Source:** PR #1665 agent-mediated Director of Quality review, EPIC-03/ST-09, `2026-09-14__release-v9.4` — 2026-09-14
-**Effort:** S (~0.5d)
-**Provisional-Target:** v9.5
-
-**Problem**
-`backend/database.py`'s `get_claude_endpoint_cost_windows()` (added ST-09, `BLG-OPS-151`) uses `FILTER` clauses and `(param || ' hours')::interval` / `(param || ' days')::interval` string-concatenation arithmetic to compute recent-vs-baseline cost windows. No test in the repo actually executes this SQL: `tests/test_ai_endpoint_anomaly_service.py`'s new tests all go through `tests/conftest.py`'s session-scoped `database`-module stub (every `from database import (...)` anywhere in `backend/` is AST-discovered and replaced with a `MagicMock`), and since `ai_endpoint_anomaly_service.py` imports `get_claude_endpoint_cost_windows` locally inside the function body, even the "monkeypatched" tests only patch the stub's attribute, never the real function. No `DATABASE_URL` is available in the current execution environment to run it live either. The query is nontrivial (interval arithmetic via the `||` operator + cast) and has zero real or synthetic execution coverage.
-
-**Scope**
-- Run the query manually against a real (or synthetic/local) Postgres instance and confirm the recent/baseline window boundaries and `FILTER` aggregates behave as documented
-- Or add a synthetic-DB test (e.g. a local Postgres/sqlite-compatible fixture, following the pattern used for `tests/test_positions_open_ticker_entry_date_unique_migration.py` in EPIC-01/ST-01 this same cycle) that actually executes the real function rather than a stub
-
-**Acceptance Criteria**
-- The query has been run at least once against a real or synthetic Postgres instance with confirmed-correct recent/baseline window boundaries, or a new test exists that executes the real (non-stubbed) `get_claude_endpoint_cost_windows()` and asserts its output shape/values
-
----
-
-### BLG-FE-178 — AlertThresholdsSection.js empty-state heading has a trailing period, violating the empty-state microcopy pattern
-**Priority:** P4 (Trivial)
-**Type:** Frontend / UX Bug
-**Owner:** Base44 Frontend Prompt Owner; Frontend Specifications & UX Documentation Owner
-**Source:** ST-30/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.6
-
-**Problem**
-`src/components/notifications/AlertThresholdsSection.js`'s empty-state heading renders `"No alert rules configured."` with a trailing period, violating `design_system.md`'s v1.8 empty-state microcopy pattern ("no trailing period — it's a label, not a sentence"). This is the same class of generation mistake already caught and fixed elsewhere in the app for `TradePlans.js`/`CalendarView.js` (`base44_prompt_template_library.md` v1.7 changelog) and confirmed still-correct for `Notifications.js`/`Watchlist.js`/`TradePlans.js` during this cycle's ST-30 review — this component was missed by that prior sweep. `docs/specs/frontend/pages/notifications.md`'s own spec for this heading already correctly omits the period (matches the canonical pattern, not this component).
-
-**Scope**
-- Remove the trailing period from `AlertThresholdsSection.js`'s empty-state heading string
-
-**Acceptance Criteria**
-- Empty-state heading renders `"No alert rules configured"` (no trailing period)
-- Playwright coverage or a recorded staging run confirms the rendered heading, per CLAUDE.md's frontend-visible-change rule (wording-only — code review may substitute per the FI-P3-02 exception if genuinely no visual/layout change results)
-
----
-
-### BLG-FE-179 — NotificationsHistory.js empty-state heading has a trailing period, violating the empty-state microcopy pattern
-**Priority:** P4 (Trivial)
-**Type:** Frontend / UX Bug
-**Owner:** Base44 Frontend Prompt Owner; Frontend Specifications & UX Documentation Owner
-**Source:** ST-30/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.6
-
-**Problem**
-`src/pages/NotificationsHistory.js`'s empty-state heading renders `"No alert history yet."` with a trailing period, violating `design_system.md`'s v1.8 empty-state microcopy pattern ("no trailing period — it's a label, not a sentence"). Same defect class as `BLG-FE-178`, found in the same ST-30 review sweep. `docs/specs/frontend/pages/notifications.md`'s own spec for this heading already correctly omits the period (matches the canonical pattern, not this component).
-
-**Scope**
-- Remove the trailing period from `NotificationsHistory.js`'s empty-state heading string
-
-**Acceptance Criteria**
-- Empty-state heading renders `"No alert history yet"` (no trailing period)
-- Playwright coverage or a recorded staging run confirms the rendered heading, per CLAUDE.md's frontend-visible-change rule (wording-only — code review may substitute per the FI-P3-02 exception if genuinely no visual/layout change results)
-
----
-
-### BLG-GOV-333 — Reconcile sprint_planning_prompt.md STEP -1 status-vocabulary wording against shared_standards.md §10.1
-**Priority:** P3 (Low)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** Sprint Planning session, 2026-09-15__release-v9.5 (`sprint_planning_notes.md` Preflight Vocabulary Drift Advisory) — 2026-09-16
-**Effort:** XS (~0.5–1h)
-**Provisional-Target:** TBD
-
-**Problem**
-`sprint_planning_prompt.md` STEP -1 Hard Gates 1 and 2 restate their own literal status-value enums for `.claude_current_state.json.status` (`Published`/`Validated`/`Committed`) and cycle-level `state.json.status` (`Published`) rather than citing `shared_standards.md §10.1`'s Lifecycle Guard, which is the actual authoritative source (already correctly cited by this same prompt's own §2 Invocation Rule). Both enums are now stale: the current cycle's status was correctly `Design_Gate_Passed` (not in Gate 1's list) and `Validated` (not `Published`, per Gate 2). This has now been silently worked around at both `2026-09-14__release-v9.4` and `2026-09-15__release-v9.5` sprint planning without being fixed at the source.
-
-**Scope**
-- Update STEP -1 Hard Gates 1 and 2 to cite `shared_standards.md §10.1` directly instead of restating an independent status enum
-- Apply the full CLAUDE.md §6 Governance File Edit Checklist (version bump, `OPERATIONAL_GUIDE.md` §14 sync, `prompt_change_log.md` entry) in the same commit
-
-**Acceptance Criteria**
-- STEP -1 Hard Gates 1–2 no longer contain a literal status enum independent of `shared_standards.md §10.1`
-- Next `plan sprint` invocation's preflight reads cleanly with no drift advisory needed
-- Head of Specs Team sign-off
 
 ---
 
@@ -3557,27 +3209,6 @@ Contracts carry success examples; the overlap scan found no backlog item coverin
 **Acceptance Criteria**
 - 10 endpoints carry ≥1 error example
 - The freshness checker fails when an error example diverges from the envelope
-
----
-
-### BLG-FE-183 — CI lint of static UI copy for forbidden predictive or advice-crossing phrases
-**Priority:** P3 (Low)
-**Type:** Frontend / QA Tooling
-**Owner:** Base44 Frontend Prompt Owner; AI Compliance & Governance Officer
-**Source:** IDEA-base44-frontend-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** S (~0.5–1d)
-**Provisional-Target:** TBD
-
-**Problem**
-The overlap scan found no automated check of static UI copy (as distinct from AI output) for §13.2 language; review is the only control on record.
-
-**Scope**
-- Scan string literals in `src/` against the §13.2 disallowed-phrase list in CI
-- Allow-list mechanism with a required justification
-
-**Acceptance Criteria**
-- CI fails on a disallowed phrase in a new string literal
-- Allow-list entries require a justification
 
 ---
 
@@ -3793,25 +3424,6 @@ PO-05 (Lightweight Replay Mode)'s §13 pre-assessment (`docs/product/decisions/p
 
 ---
 
-### BLG-OPS-167 — External-dependency failure-mode matrix (yfinance, Alpaca, Anthropic, Supabase, Render)
-**Priority:** P3 (Low)
-**Type:** Operations / Documentation
-**Owner:** Infrastructure & Operations Owner
-**Source:** IDEA-infra-ops-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-Health checks detect failures (`BLG-OPS-76`); no document states what the operator sees or does when each dependency is down.
-
-**Scope**
-- One table: dependency → user-visible degradation → manual fallback → detection
-
-**Acceptance Criteria**
-- All 5 dependencies documented
-
----
-
 ### BLG-QA-182 — Escaped-defect and follow-on-ratio tracking per cycle
 **Priority:** P3 (Low)
 **Type:** QA / Metrics
@@ -3952,25 +3564,6 @@ The read-only credential available to sprint-execution sessions is for **staging
 **Acceptance Criteria**
 - Role exists with no access beyond the named views
 - A governed routine can read the gate counts without any credential in git
-
----
-
-### BLG-SEC-38 — CI guard rejecting non-registry dependency specifiers (git+ssh, git+https, file:)
-**Priority:** P4 (Trivial)
-**Type:** Security / Supply Chain
-**Owner:** Cybersecurity & Trust Lead
-**Source:** IDEA-cybersecurity-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`BLG-TECH-18`'s production-build regression came from a git+ssh dependency. `package.json` and `requirements` carry no non-registry specifier today (checked 2026-09-19), so this is preventive only — hence P4.
-
-**Scope**
-- CI step failing on non-registry specifiers with an allow-list requiring justification
-
-**Acceptance Criteria**
-- A test PR adding a `git+ssh` dependency fails CI
 
 ---
 
@@ -4180,49 +3773,6 @@ The Screener results table renders an "Earnings" column (`lg`-visible, days unti
 
 ---
 
-### BLG-OPS-168 — Post-deploy staging verification of the reflection-reminder migration and SQL (never run against a live database)
-**Priority:** P2 (Medium)
-**Type:** Operations
-**Owner:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner; Product Owner
-**Source:** ST-04/EPIC-01/2026-09-21__release-v9.6 (BLG-FEAT-98) — the sandbox had no database access (SBX-NO-LIVE-DB), so the new SQL was only asserted with mocked cursors — 2026-09-21
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.6
-
-**Problem**
-The reflection-reminder work adds startup DDL (two `alert_type` CHECK extensions and a partial unique index) and an evaluation query using `ON CONFLICT ((context->>'trade_id')) WHERE ...`. It is covered by structural mocked-cursor tests only; no statement has been executed against PostgreSQL. A typo in any of it would surface at the first startup or evaluation run after deploy.
-
-**Scope**
-- After the v9.6 staging deploy, run the verification queries in `data_model.md` DS-19 and confirm the reminder step creates one row per eligible trade and none on a second `POST /alerts/evaluate`
-- Product Owner to confirm or change the 30-day look-back (`REFLECTION_REMINDER_LOOKBACK_DAYS`) and the `trade_history.created_at` close-timestamp choice, which the design record left open
-
-**Acceptance Criteria**
-- Both CHECK constraints and `uq_notifications_reflection_reminder_trade` are confirmed present on staging, with evidence recorded
-- A second evaluation run creates 0 duplicate reminders
-- The look-back and close-timestamp decisions are recorded
-
----
-
-### BLG-QA-188 — The backend test suite can connect to a real database when DATABASE_URL is set to one
-**Priority:** P2 (Medium)
-**Type:** QA / Test Automation
-**Owner:** QA & Testing Owner; Infrastructure & Operations Owner
-**Source:** ST-04/EPIC-01/2026-09-21__release-v9.6 — found when running the backend suite in a session whose environment had a `DATABASE_URL` for the staging Supabase database (user-confirmed; credential believed read-only, unverified) — 2026-09-21
-**Effort:** S (~0.5d)
-**Provisional-Target:** v9.7
-
-**Problem**
-`tests/conftest.py` only sets a dummy `DATABASE_URL` when none is set, and `tests/test_schema.py` skips only when the URL contains `stub`. With a real URL in the environment the suite opens real connections and attempts `CREATE TABLE IF NOT EXISTS` / `ALTER TABLE` statements against it (they would alter staging if the credential can write; if it is read-only the suite would instead fail noisily); `CLAUDE.md` §9 tells contributors to run pytest via the virtualenv without warning about this. The safe invocation (`DATABASE_URL=postgresql://stub:stub@localhost:5432/stub`) is nowhere documented.
-
-**Scope**
-- Make `conftest.py` refuse (or override to a stub) any non-stub `DATABASE_URL` unless an explicit opt-in variable is set for Phase B CI
-- Document the safe invocation next to `CLAUDE.md` §9 (governance file: route via Head of Specs Team)
-
-**Acceptance Criteria**
-- Running `backend/.venv/bin/python3 -m pytest tests/` with a real-looking `DATABASE_URL` and no opt-in makes zero real connections
-- Phase B CI still runs `tests/test_schema.py` against its real Postgres with the opt-in set
-
----
-
 ### BLG-QA-189 — Real-Postgres integration test for the reflection-reminder evaluation step
 **Priority:** P3 (Low)
 **Type:** QA / Test Automation
@@ -4309,175 +3859,6 @@ ST-21 fixed `test_trade_plan_audit_log.py`'s permanent, unrestored `sys.modules.
 
 ---
 
-### BLG-FE-186 — Cloned trade plan can silently get the wrong Setup Type
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX
-**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner; Product Owner
-**Source:** PR #1750 agent-mediated review (Director of Quality finding 1) on ST-01/EPIC-01/2026-09-21__release-v9.6 (BLG-FEAT-96) — reproduced with a throwaway Playwright probe — 2026-09-21
-**Effort:** S (~0.5-1d)
-**Provisional-Target:** v9.7
-
-**Problem**
-Cloning a `Breakout` plan for a ticker that has a watchlisted signal opens the new plan with Setup Type "Momentum Continuation". The ST-01 design record's copy table omits `setup_type`, so the clone form starts with `setup_type: null`; the existing signal pre-population effect (`src/pages/TradePlan.js`, `!editId && linkedSignal`) then applies its `|| "Momentum Continuation"` default. The result is a wrong, unflagged value in a new plan that the user may not notice. No SC-TPC-* scenario mocks a watchlisted signal, so nothing catches it.
-
-**Scope**
-- Product Owner decides whether a clone copies `setup_type` (and whether it should also copy `entry_rationale`, `confirmation_criteria`, `early_exit_conditions` and `planned_quantity`, all omitted by the record); amend `docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md` and `trade_plan.md` §4.5 accordingly
-- Fix the clone so the signal pre-population cannot overwrite or invent a Setup Type for a cloned plan
-- Add a Playwright scenario with a watchlisted signal for the cloned ticker
-
-**Acceptance Criteria**
-- A clone of a plan with Setup Type X shows X, including when the ticker has a watchlisted signal
-- The design record and `trade_plan.md` state which fields a clone copies
-- The new Playwright scenario passes in CI
-
----
-
-### BLG-BE-123 — Reflection reminder step: over-reported summary after a rollback, and NULL-portfolio trades never get a reminder
-**Priority:** P3 (Low)
-**Type:** Backend
-**Owner:** Backend Engineering Patterns Owner
-**Source:** PR #1750 agent-mediated review (Director of Quality finding 2) on ST-04/EPIC-01/2026-09-21__release-v9.6 (BLG-FEAT-98) — 2026-09-21
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.7
-
-**Problem**
-In `backend/services/alerts_service.py::_evaluate_reflection_reminders`, an exception part-way through the insert loop rolls back to the savepoint and undoes the earlier inserts, but `enqueue_delivery(...)` has already been called for them and `notifications_created` / `delivery_tasks_enqueued` still count them. Delivery then logs "notification not found", which is harmless, but the returned summary over-reports. Separately the query filters `th.portfolio_id = %s`, and `trade_history.portfolio_id` is nullable, so a trade with no portfolio can never receive a reminder — probably intended for a single-portfolio product, but undocumented and untested.
-
-**Scope**
-- Count and enqueue only after the savepoint is released, or reset the counters in the rollback branch
-- Decide and document the NULL-`portfolio_id` behaviour (skip, or include when the portfolio is the single default) and cover it with a test
-
-**Acceptance Criteria**
-- After a forced mid-loop failure the returned summary shows 0 created and 0 enqueued, and nothing was scheduled for rolled-back rows
-- The NULL-portfolio behaviour is stated in `alerts_endpoints.md` and asserted by a test
-
----
-
-### BLG-BE-124 — Generic alert re-delivery ignores read state
-**Priority:** P3 (Low)
-**Type:** Backend
-**Owner:** Backend Engineering Patterns Owner
-**Source:** PR #1750 agent-mediated review (Director of Quality finding 3) on ST-04/EPIC-01/2026-09-21__release-v9.6 — behaviour predates the story and applies to all alert types — 2026-09-21
-**Effort:** S (~0.5d)
-**Provisional-Target:** v9.7
-
-**Problem**
-`evaluate_alerts()`'s re-delivery step selects every notification with `delivered = FALSE AND delivery_attempts < 3` and re-enqueues it if the type's preference is enabled. It does not look at `read`, so an alert the user has already read (or acted on) whose first delivery failed can still be sent again, up to three attempts. ST-04 stopped the worst case for `reflection_reminder` (rows created while the preference is off are now created settled), but the loop itself is unchanged.
-
-**Scope**
-- Exclude `read = TRUE` notifications from the re-delivery query, and consider also excluding those whose trigger condition no longer holds
-- Update the retry-model description in `alerts_endpoints.md` and `data_model.md` §9
-
-**Acceptance Criteria**
-- A read notification is never re-enqueued for delivery, asserted by a test
-- Unread, undelivered notifications are still retried up to 3 times (existing behaviour unchanged)
-
----
-
-### BLG-FE-187 — Monthly P&L's NULL-fee audit flag has no frontend surfacing
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX
-**Owner:** Financial Reporting & Records Owner; Frontend Specifications & UX Documentation Owner
-**Source:** ST-07/EPIC-02/2026-09-21__release-v9.6 (BLG-FR-04) — PR #1751 agent-mediated review found `sprint_backlog.md`'s own Notes required "Playwright or recorded staging run required for the visible NULL-fee count," but no UI element was built — 2026-09-22
-**Effort:** S (~0.5–1d)
-**Provisional-Target:** v9.7
-
-**Problem**
-`GET /reports/monthly-pnl` returns `null_fee_trade_count` per month (count of closed trades with a NULL `entry_fees`/`exit_fees`), but the field is not rendered anywhere on the Monthly P&L page — confirmed via `grep -rn "null_fee_trade_count" src/` returning nothing. The story's own acceptance criterion ("visible in Monthly P&L") is not met at the UI level, only at the API level.
-
-**Scope**
-- Add a visible indicator (badge/tooltip/column) on the Monthly P&L table for any month with `null_fee_trade_count > 0`
-- Add Playwright coverage for the indicator's presence/absence
-
-**Acceptance Criteria**
-- A month with `null_fee_trade_count > 0` shows a visible indicator on the Monthly P&L page; a month with `0` does not
-- Playwright test covering the above passes in CI
-
----
-
-### BLG-FE-188 — Month-end P&L restatement diff has no frontend surfacing
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX
-**Owner:** Financial Reporting & Records Owner; Frontend Specifications & UX Documentation Owner
-**Source:** ST-08/EPIC-02/2026-09-21__release-v9.6 (BLG-FR-05) — PR #1751 agent-mediated review found `stage4_backlog_slice.md`'s own Notes stated "Observable diff AC is frontend-visible (Playwright or recorded staging run)," and the addendum said the Tax Year summary bar should show the API-supplied notice, but no UI element was built — 2026-09-22
-**Effort:** S (~1d)
-**Provisional-Target:** v9.7
-
-**Problem**
-`GET /reports/monthly-pnl` returns `restated`/`restated_diff_gbp`/`snapshot_realised_pnl_gbp` per month, and `GET /reports/tax-year` returns `summary.restated_month_count`/`restated_months_notice` — none of these are rendered anywhere (confirmed via `grep -rn "restated" src/` returning nothing). The story's acceptance criterion ("surfaces a restatement diff") and the addendum's own framing ("Tax Year summary bar shows... notice") are unmet at the UI level.
-
-**Scope**
-- Add a restatement indicator to the Monthly P&L table for any month with `restated: true`, showing `snapshot_realised_pnl_gbp` and `restated_diff_gbp`
-- Render `restated_months_notice` on the Tax Year page's summary bar when non-null
-- Add Playwright coverage for both
-
-**Acceptance Criteria**
-- A restated month shows its diff on the Monthly P&L page
-- A tax year with `restated_month_count > 0` shows the notice on its summary bar
-- Playwright tests covering both pass in CI
-
----
-
-### BLG-BE-125 — Month-closure check and Monthly P&L's own SQL window use different clock sources
-**Priority:** P3 (Low)
-**Type:** Backend
-**Owner:** Backend Engineering Patterns Owner
-**Source:** PR #1751 agent-mediated review (Director of Quality finding) on ST-08/EPIC-02/2026-09-21__release-v9.6 — 2026-09-22
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.7
-
-**Problem**
-`reports_service.py`'s `_is_closed_month()` determines the current month via `datetime.now(timezone.utc).date()`, while `database.py`'s `get_monthly_pnl()` windows its SQL by Postgres's `CURRENT_DATE` (server session timezone, not guaranteed UTC). Near a month boundary the two could disagree about which month is "current," which now also affects `monthly_pnl_snapshots` baselining correctness, not just display.
-
-**Scope**
-- Derive "current month" from a single source of truth (either pass the DB's `CURRENT_DATE` back to Python, or query with an explicit `AT TIME ZONE 'UTC'`)
-
-**Acceptance Criteria**
-- A test asserts the same (year, month) tuple is used for both the SQL window and the closed-month check regardless of server timezone setting
-
----
-
-### BLG-BE-126 — Monthly P&L snapshot lookup opens one DB connection per closed month
-**Priority:** P3 (Low)
-**Type:** Backend
-**Owner:** Backend Engineering Patterns Owner
-**Source:** PR #1751 agent-mediated review (Director of Quality finding) on ST-08/EPIC-02/2026-09-21__release-v9.6 — 2026-09-22
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`_snapshot_month()` is called once per closed month inside `get_monthly_pnl_report()`'s loop, and each of `get_monthly_pnl_snapshot()`/`insert_monthly_pnl_snapshot_if_absent()` opens its own connection via `get_db()`. Over the ~24-month rolling window this is up to ~24 extra connections per report read. Not a correctness bug today, but worth addressing before this endpoint sees high traffic.
-
-**Scope**
-- Batch the snapshot read (and, where applicable, the baseline insert) into a single query/connection per report call instead of per month
-
-**Acceptance Criteria**
-- `GET /reports/monthly-pnl` opens at most one additional connection (beyond the existing `get_monthly_pnl` call) regardless of how many closed months are in the response
-
----
-
-### BLG-BE-127 — UK stamp duty / US FX fee rounding uses float `round()` instead of Decimal, under-rounding ~0.18%/0.02% of half-penny-boundary gross costs by £0.01
-**Priority:** P2 (Medium) — raised from P3 by Product Owner direct decision, 2026-09-22, in response to the PR #1752 agent-mediated review's flagged question (a real, if narrow-impact, live-capital rounding gap rather than a reliability nice-to-have)
-**Type:** Backend
-**Owner:** Backend Engineering Patterns Owner; Financial Reporting & Records Owner
-**Source:** ST-12/EPIC-03/2026-09-21__release-v9.6 (BLG-BE-121) — Float-vs-Decimal money-arithmetic audit — 2026-09-22
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`backend/utils/calculations.py`'s `calculate_uk_entry_fees`/`calculate_us_entry_fees` compute `stamp_duty`/`fx_fee` as `gross_cost * rate` in native `float` and round only at the response-formatting boundary via Python's `round(x, 2)` (never inside these functions themselves — callers, e.g. `sizing_service.size_position`, apply the rounding). A brute-force scan of gross-cost values from £0.01 to £5000.00 in penny steps, comparing `round(gross_cost * rate, 2)` against a `Decimal`-based `ROUND_HALF_UP` calculation of the same figure, found 917/499999 (~0.18%) UK stamp-duty values and 90/499999 (~0.018%) US FX-fee values where the two disagree by exactly £0.01 — always in the direction of the float path under-charging by 1p. This occurs only where `gross_cost * rate` lands exactly on (or within float-representation error of) a half-penny boundary (e.g. UK gross_cost = £3.00 → raw stamp duty 0.015 → float `round()` gives £0.01, `Decimal`/`ROUND_HALF_UP` gives £0.02). No canonical spec (`strategy_rules.md` or an API contract) currently defines a required rounding mode for fee calculation, so this is not a deviation from a documented rule — it is a latent correctness gap the audit surfaces. Not fixed as part of ST-12 itself: the fix touches live-capital fee calculation on every future UK/US entry and exit, and deserves its own reviewed story with dedicated before/after golden-test coverage rather than folding a behaviour change into an audit story.
-
-**Scope**
-- Migrate `calculate_uk_entry_fees`/`calculate_us_entry_fees`/`calculate_uk_exit_fees`/`calculate_us_exit_fees` (and any other money-arithmetic call site the audit's inventory flags — see `docs/ops/money_arithmetic_audit_2026-09-22.md`) to compute the rate-multiplication step in `Decimal` and round with `ROUND_HALF_UP`, matching UK/US retail brokerage convention (round-half-up on currency, not Python's binary-float round-half-to-even-with-representation-error)
-- Golden tests already exist for the current (float) behaviour at `tests/test_money_arithmetic_golden.py::TestKnownFloatDecimalDiscrepancies` — extend/flip these once the fix lands so they assert the corrected `Decimal` output instead
-
-**Acceptance Criteria**
-- All four fee functions round via `Decimal`/`ROUND_HALF_UP` instead of float `round()`
-- The previously-documented discrepancy class (`tests/test_money_arithmetic_golden.py::TestKnownFloatDecimalDiscrepancies`) no longer reproduces — those tests are updated to assert the corrected value
-- Full existing fee/sizing test suite still passes unchanged elsewhere (no other rounding behaviour regresses)
-
----
-
 ### BLG-BE-128 — Remaining ad hoc `timeout=`/retry call sites not yet on the shared upstream-call helper
 **Priority:** P3 (Low)
 **Type:** Backend / Reliability
@@ -4508,26 +3889,6 @@ None of these are on the live-capital nightly stop-update path, so there is no c
 **Acceptance Criteria**
 - Every call site listed above is either migrated to `utils.upstream_call` or has an explicit, documented reason it is not (e.g. Stooq/Twelve Data's rate-limit-interaction risk, or ticker_universe.py's different mechanism)
 - No behaviour change to any already-working fallback/rate-limit logic (Stooq/Twelve Data cooldown timers, `_TWELVE_DATA_RATE_LIMIT`) as a side effect of any migration performed
-
----
-
-### BLG-BE-129 — `latency_ms`/`elapsed_ms` recorded around retried Anthropic calls includes backoff sleep time, not just the final call's duration
-**Priority:** P4 (Nice-to-have)
-**Type:** Backend / Observability
-**Owner:** Backend Engineering Patterns Owner
-**Source:** PR #1752 agent-mediated review (Director of Quality finding) on ST-13/EPIC-03/2026-09-21__release-v9.6 (BLG-BE-122) — 2026-09-22
-**Effort:** XS (<1h) — or "won't fix, document as intentional" is also a valid disposition
-**Provisional-Target:** TBD
-
-**Problem**
-`services/ai_service.py`'s `generate_daily_briefing()` and `ai_chat()` (and, pre-existing since `BLG-BE-89`/v8.7, `services/gemini_service.py`'s `_call_claude()` call sites and `services/debrief_service.py`'s `_call_claude()`) capture `t0 = time.time()` before calling the now-retried Anthropic helper and compute `elapsed_ms`/`latency_ms` after it returns. Since ST-13 (`BLG-BE-122`) added bounded retry to these calls, a request that needed one or more retries now has its recorded latency include the `retry_with_backoff` exponential-backoff sleep time (up to ~1.5s across the current 3-attempt/1.0s-base-delay Anthropic budget), not just the final successful call's own duration. This was already true for `gemini_service.py`/`debrief_service.py` before this story (confirmed, not a regression) — ST-13 extended the same characteristic to a third file (`ai_service.py`) by adding retry there for the first time.
-
-**Scope**
-- Decide whether this is acceptable as-is (the metric already reflects this for 2 of 3 files and no one has raised it as a problem) or worth separating into two figures (e.g. `api_call_latency_ms` measured around only the final successful attempt, plus a separate `total_latency_ms` including retries) for any cost/performance dashboard that reads `latency_ms`
-- If separated: update `create_claude_audit_entry`'s schema/callers accordingly across all 3 files for consistency
-
-**Acceptance Criteria**
-- Either: a documented decision that the current combined-latency semantics are intentional and acceptable (no code change), or: `latency_ms` is split into a final-attempt-only figure and a total-including-retries figure, applied consistently across `ai_service.py`, `gemini_service.py`, and `debrief_service.py`
 
 ---
 
@@ -4858,41 +4219,22 @@ When a sprint story is phased into sub-stories (`ST-01a`/`ST-01b`/`ST-01c` — a
 
 ---
 
+### BLG-FE-191 — SystemStatus.js categorizeEndpoint() has no case for the new /replay prefix
+**Priority:** P4 (Low)
+**Type:** Frontend / QA tooling
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Post-ship closure STEP 6 Endpoint Coverage Drift Check, cycle 2026-09-23__release-v9.7 — EPIC-01/ST-01b added `POST /replay/run` (`docs/reference/openapi.yaml`, `docs/ops/api_performance_baseline.md` §46) — 2026-09-28
+**Effort:** XS (<1h)
+**Provisional-Target:** Backlog (no release scheduled; P4)
 
-## Release Slice — v9.7 (ephemeral — remove at next `groom backlog` per Placement Rule)
+**Problem**
+`src/pages/SystemStatus.js`'s `categorizeEndpoint()` (~line 47-62) checks `endpointName.includes(...)` against a fixed list of path-prefix patterns (`/analytics`, `/alerts`, `/notifications`, `/position`, `/trades`, `/ai`, etc.) to bucket each tested endpoint into a dashboard category. `POST /replay/run` does not match any existing pattern, so it silently falls into the catch-all `'Other'` category on the System Status dashboard instead of a meaningful category.
 
-<!-- release-plan-marker: RP:v9.7:2026-09-23__release-v9.7 -->
+**Scope**
+- Add an `endpointName.includes('/replay')` check to `categorizeEndpoint()`, returning a suitable category label (e.g. `'Replay'` or fold into `'Trading'`)
 
-29 items selected into `2026-09-23__release-v9.7` scope (28.00 estimated days, full capacity). Full acceptance criteria: `claude/cycles/2026-09-23__release-v9.7/stage4_backlog_slice.md`. Selection method: sole ready P1 item (`BLG-FEAT-74`, §13-cleared 2026-09-23) seated first per §1.4c, then all 6 ready P2 items, then category-balanced round-robin oldest-first for the remaining P3/P4, from a 68-item / 61.35-day ready pool. Excluded as gate-blocked: `BLG-FEAT-73`, `BLG-FEAT-76`. Excluded as already resolved same-session: `BLG-FE-189` (recommend archive at next groom).
+**Acceptance Criteria**
+- `POST /replay/run` is categorized under a meaningful label (not `'Other'`) on the System Status dashboard
+- No other endpoint's categorization changes
 
-| ST-ID | Item | EPIC |
-|-------|------|------|
-| ST-01 | BLG-FEAT-74 | EPIC-01 |
-| ST-02 | BLG-FE-186 | EPIC-02 |
-| ST-03 | BLG-FE-187 | EPIC-02 |
-| ST-04 | BLG-FE-188 | EPIC-02 |
-| ST-05 | BLG-FE-178 | EPIC-02 |
-| ST-06 | BLG-FE-179 | EPIC-02 |
-| ST-07 | BLG-FE-183 | EPIC-02 |
-| ST-08 | BLG-BE-127 | EPIC-03 |
-| ST-09 | BLG-BE-123 | EPIC-03 |
-| ST-10 | BLG-BE-124 | EPIC-03 |
-| ST-11 | BLG-BE-125 | EPIC-03 |
-| ST-12 | BLG-BE-126 | EPIC-03 |
-| ST-13 | BLG-BE-129 | EPIC-03 |
-| ST-14 | BLG-QA-188 | EPIC-04 |
-| ST-15 | BLG-QA-174 | EPIC-04 |
-| ST-16 | BLG-QA-175 | EPIC-04 |
-| ST-17 | BLG-QA-176 | EPIC-04 |
-| ST-18 | BLG-QA-177 | EPIC-04 |
-| ST-19 | BLG-GOV-327 | EPIC-05 |
-| ST-20 | BLG-GOV-330 | EPIC-05 |
-| ST-21 | BLG-GOV-331 | EPIC-05 |
-| ST-22 | BLG-GOV-333 | EPIC-05 |
-| ST-23 | BLG-SPEC-147 | EPIC-06 |
-| ST-24 | BLG-SPEC-149 | EPIC-06 |
-| ST-25 | BLG-SPEC-150 | EPIC-06 |
-| ST-26 | BLG-SPEC-151 | EPIC-06 |
-| ST-27 | BLG-OPS-168 | EPIC-07 |
-| ST-28 | BLG-OPS-167 | EPIC-07 |
-| ST-29 | BLG-SEC-38 | EPIC-07 |
+---

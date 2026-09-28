@@ -52,6 +52,21 @@ Consumed by `release_planning_prompt.md` §1.3a, which requires this list
 be read — and each item verified and either cleared or re-gated with a
 new dated condition — before the ready pool is fixed.
 
+Already-resolved-banner detection (Release Planning lessons_learnt.md
+Friction Item 1, `2026-09-23__release-v9.7`; widens `BLG-GOV-345`/ST-27's
+date-lapsed fix, which covered only the gate-language half of the same
+underlying problem). An item can be functionally already-done — carrying
+its own `**Resolution (...):**` or `**Resolved (...):**` block recording
+a same-session or prior fix — without the `✅ COMPLETE` banner the first
+version of this scan's sibling check (`v9.6` Friction Item 1) looked for.
+`BLG-FE-189` slipped through this way at `v9.7`: fixed and Playwright-
+covered same-session, but with no `✅ COMPLETE` banner, so a banner-only
+scan would still have missed it. Any item body containing `**Resolution
+(` or `**Resolved (` (either capitalisation, either heading or bold-field
+form) is reported in a separate "already-resolved — verify before
+seating" list, independent of gated/ungated status — a candidate is not
+truly a fresh selection opportunity if it already carries this marker.
+
 Usage:
     python3 scripts/scan_backlog_gate_conditions.py [--json] [--as-of YYYY-MM-DD]
 
@@ -91,6 +106,15 @@ EMBEDDED_GATE_SIGNAL_RE = re.compile(
     r"\(.*(gate|gated|no earlier than|conditional|pending).*\)"
     r"|"
     r"\[.*(gate|gated|no earlier than|conditional|pending|unmet|unverified).*\]",
+    re.IGNORECASE,
+)
+
+# Already-resolved-banner detection (Release Planning lessons_learnt.md
+# Friction Item 1, v9.7) — a `**Resolution (...):**` or `**Resolved (...):**`
+# block anywhere in the item body, independent of the `✅ COMPLETE` banner
+# convention the original v9.6 sibling check looked for.
+ALREADY_RESOLVED_RE = re.compile(
+    r"\*\*(Resolutions?|Resolved)\s*\(.*?\):\*\*",
     re.IGNORECASE,
 )
 
@@ -138,7 +162,12 @@ def classify_item(item_id, title, body, as_of):
         "gate_condition": None,
         "data_quality_warning": None,
         "date_lapsed": None,
+        "already_resolved": None,
     }
+
+    ar = ALREADY_RESOLVED_RE.search(body)
+    if ar:
+        result["already_resolved"] = ar.group(0)
 
     m = GATE_CRITERIA_RE.search(body)
     if m:
@@ -196,6 +225,7 @@ def main():
     gated = [r for r in results if r["gated"]]
     warnings = [r for r in results if r["data_quality_warning"]]
     date_lapsed = [r for r in gated if r["date_lapsed"]]
+    already_resolved = [r for r in results if r["already_resolved"]]
 
     if args.json:
         print(json.dumps({
@@ -203,6 +233,7 @@ def main():
             "gated": gated,
             "date_lapsed": [{**r, "date_lapsed": r["date_lapsed"].isoformat()} for r in date_lapsed],
             "data_quality_warnings": warnings,
+            "already_resolved": already_resolved,
             "total_items": len(results),
         }, indent=2, default=str))
         sys.exit(0)
@@ -222,6 +253,11 @@ def main():
         print(f"\n{len(warnings)} data-quality warning(s) (embedded gate language, no formal Gate field):")
         for r in warnings:
             print(f"  {r['id']} — {r['data_quality_warning']}")
+
+    if already_resolved:
+        print(f"\n{len(already_resolved)} item(s) with an already-resolved banner — verify before seating as a fresh selection:")
+        for r in already_resolved:
+            print(f"  {r['id']} — {r['already_resolved']}")
 
     print("\nExit code 0 (scan/report tool — not a hard CI gate).")
     sys.exit(0)

@@ -3,11 +3,68 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — v9.6 entry added); prior — 2026-09-18 (post-ship closure 2026-09-15__release-v9.5 — v9.5 entry added); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 — v9.4 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 — v9.7 entry added); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — v9.6 entry added); prior — 2026-09-18 (post-ship closure 2026-09-15__release-v9.5 — v9.5 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.7 — PO-05 Replay Mode & Full-Capacity Debt Clearance — 2026-09-25
+Cycle: 2026-09-23__release-v9.7
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-09-23__release-v9.7/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | PO-05 Lightweight Replay Mode — new `POST /replay/run` backend replay engine (reuses the F3 backtest extraction, ratio-space math, stop/risk-off ordering, ATR/regime warm-up and FX conversion) plus a new frontend Replay page with a strategy/date-range selector and a retrospective results table | You can now pick a past trade-plan strategy and a date range and replay it against historical price data to see how it would have performed, without touching your live positions or plans. | `docs/product/decisions/po05_replay_scope_confirmation.md`; `docs/specs/api_contracts/replay_endpoints.md`; `docs/specs/frontend/pages/replay_mode.md`; `docs/product/decisions/po05_section13_preassessment.md` |
+| EPIC-02 | Frontend & UX Correctness — cloned trade plans now carry over the correct Setup Type, Monthly P&L surfaces NULL-fee and month-end restatement information in the UI, empty-state headings in Alerts and Notifications no longer carry a stray trailing period, and a CI lint now blocks a defined list of forbidden UI copy phrases (2 P4 spec-staleness deviations accepted — `DEV-v9.7-ST05-01`, `DEV-v9.7-ST04-01`) | Cloning a trade plan no longer silently loses its Setup Type, the Reports page now tells you when a month's fees or P&L figure has been restated or is missing data, and empty-state messages in Alerts and Notifications read more cleanly. | `docs/specs/frontend/pages/trade_plan.md#4.5 Clone as New Plan`; `docs/specs/frontend/pages/reports.md#Fees-Not-Recorded Visibility`, `#Monthly Restatement Marker`; `docs/specs/frontend/design_system.md#Data States` |
+| EPIC-03 | Backend Reliability & Financial Correctness — trade fee rounding moved from float to Decimal, a reflection-reminder rollback/NULL-portfolio bug fixed, generic alert re-delivery read-state fixed, month-closure/Monthly P&L clock-source made consistent, Monthly P&L snapshot connection pooling fixed, `latency_ms` retry-backoff composition clarified in the AI endpoints contract | Trade fee totals, monthly P&L figures, and alert/reminder notifications are computed more accurately and reliably — no change to how you use the app. | `docs/specs/api_contracts/alerts_endpoints.md`; `docs/specs/api_contracts/ai_endpoints.md`; `tests/test_money_arithmetic_golden.py` |
+| EPIC-04 | QA & Test Coverage — backend test suite now isolates against a real `DATABASE_URL` rather than a stub, a CI guard blocks `.skip()`/`.only()` from landing in Playwright specs, a recurring endpoint test-coverage audit was run, negative-path tests backfilled for 3 routers, `get_claude_endpoint_cost_windows()` validated against real Postgres | — | `.github/workflows/playwright-skip-only-check.yml`; `docs/ops/endpoint_test_coverage_audit_2026-09-24.md`; `tests/test_negative_path_v92_v93_routers.py`; `backend/database.py#get_claude_endpoint_cost_windows` |
+| EPIC-05 | Governance & Process Debt — quarterly governance-overhead-ratio metric defined, SI-02 gate threshold cadence reviewed, the `ensure_ascii=False` JSON convention documented, a Sprint Planning STEP -1 wording ambiguity reconciled | — | `docs/specs/metrics_definitions.md`; `claude/roadmap/current_roadmap.md`; `claude/system/shared_standards.md`; `claude/system/sprint_planning_prompt.md` |
+| EPIC-06 | Spec & Data Model Debt — formal definition of "linked trade plan" for the SI-02 gate, `positions.exit_note` doc/live reconciliation, 4 orphaned `positions` columns documented, `positions.fees_paid` nullability reconciled with live schema | — | `docs/specs/metrics/si02_drift_score.md`; `docs/specs/data_model.md` |
+| EPIC-07 | Ops, Security & Verification — reflection-reminder behaviour re-verified live against STAGING, an external-API failure-mode matrix documented, a CI guard added against non-registry dependency specifiers | — | `docs/specs/api_contracts/alerts_endpoints.md`; `docs/ops/external_api_dependency_register.md`; `.github/workflows/non-registry-dependency-check.yml` |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-v9.7-ST05-01 | P4 | `notifications.md` still specifies a trailing period on two empty-state headings; shipped code now uses no trailing period (`design_system.md` v1.22) — spec-text staleness, not a behaviour defect | PO (P4 — recorded per the P3-floor treatment) |
+| DEV-v9.7-ST04-01 | P4 | `reports.md`'s Monthly Restatement Marker specifies a `{snapshot_date}` field and an "unavailable" trigger the live `GET /reports/monthly-pnl` API does not provide; implemented as an undated "As reviewed" marker and a structural absence check instead | PO (P4 — recorded per the P3-floor treatment) |
+
+### Tech backlog items shipped
+- [ST-02] [U] Cloned trade plan now carries over the correct Setup Type
+- [ST-03] [U] Monthly P&L NULL-fee frontend surfacing
+- [ST-04] [U] Month-end P&L restatement diff surfacing
+- [ST-05] [U] AlertThresholdsSection empty-state trailing-period fix
+- [ST-06] [U] NotificationsHistory empty-state trailing-period fix
+- [ST-07] [G] CI lint for forbidden UI copy phrases
+- [ST-08] [D] Fee rounding moved from float to Decimal
+- [ST-09] [D] Reflection reminder rollback/NULL-portfolio fix
+- [ST-10] [D] Generic alert re-delivery read-state fix
+- [ST-11] [D] Month-closure/Monthly P&L clock-source fix
+- [ST-12] [D] Monthly P&L snapshot connection pooling fix
+- [ST-13] [D] `latency_ms` retry-backoff disposition clarified
+- [ST-14] [D] Backend suite real-`DATABASE_URL` isolation
+- [ST-15] [G] CI `.skip()`/`.only()` Playwright guard
+- [ST-16] [D] Recurring endpoint test coverage audit
+- [ST-17] [D] Negative-path test backfill (3 routers)
+- [ST-18] [D] `get_claude_endpoint_cost_windows()` validated against real Postgres
+- [ST-19] [G] Quarterly governance overhead ratio metric
+- [ST-20] [G] SI-02 gate threshold cadence review
+- [ST-21] [G] `ensure_ascii=False` convention documented
+- [ST-22] [G] Sprint planning STEP -1 wording reconciliation
+- [ST-23] [G] "Linked trade plan" formal definition
+- [ST-24] [D] `positions.exit_note` doc/live reconciliation
+- [ST-25] [D] 4 orphaned `positions` columns documented
+- [ST-26] [D] `positions.fees_paid` nullability reconciliation
+- [ST-27] [D] Reflection-reminder staging verification
+- [ST-28] [D] External-dependency failure-mode matrix
+- [ST-29] [G] CI guard for non-registry dependency specifiers
+
+Sign-off: Product Owner (agent-mediated, §5.3) — 2026-09-25
+QA sign-off: Director of Quality (agent-mediated, §5.3) — 2026-09-25
 
 ---
 

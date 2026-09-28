@@ -2,7 +2,7 @@
 **Class:** Canonical (Class 1)
 **Status:** Canonical
 **Version:** 1.14
-**Last Updated:** 2026-09-24 (ST-13, EPIC-03, v9.7, BLG-BE-128 — documented and confirmed as intentional that latency_ms includes retry backoff sleep time, not just the final attempt's duration; no code change); prior — 2026-09-16 (ST-13, BLG-OPS-161, v9.5 — POST /ai/check-endpoint-anomalies latency now real-data); prior — 2026-09-16 (ST-06, BLG-OPS-153, v9.5 — added GET /ai/spend-trend-by-feature); prior history retained — see prior entries in version control
+**Last Updated:** 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 STEP 5.1 remediation — Known Deviations section corrected from stale "None at v1.10" to a proper `DEV-v9.7-ST13-01` entry for the already-disclosed BLG-BE-128 won't-fix; no normative change); prior — 2026-09-24 (ST-13, EPIC-03, v9.7, BLG-BE-128 — documented and confirmed as intentional that latency_ms includes retry backoff sleep time, not just the final attempt's duration; no code change); prior — 2026-09-16 (ST-13, BLG-OPS-161, v9.5 — POST /ai/check-endpoint-anomalies latency now real-data); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -818,7 +818,14 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 ## Known Deviations
 
-None at v1.10.
+### DEV-v9.7-ST13-01 — `latency_ms` includes retry backoff sleep time, not just the final attempt's duration (added retroactively — deviation consolidation review 2026-09-28, closing a gap where this section still read "None" despite the won't-fix disposition below)
+
+- **Description:** at each of the three call sites (`ai_service.py`'s `_create_message`, `gemini_service.py`, `debrief_service.py`), `latency_ms` is measured as the full wall-clock duration of the retried call, from before the first attempt to after the final attempt — including any backoff sleep time between retries (`utils/upstream_call.py`'s `bounded_upstream_call`). A reader could reasonably expect `latency_ms` to reflect only the final successful attempt's duration.
+- **Canonical requirement:** implicit — no section of this document specifies whether `latency_ms` should include or exclude retry backoff time; the deviation is against a reasonable reader expectation, not an explicit written requirement.
+- **Priority:** P3
+- **Target resolution release:** Won't fix — reviewed and kept as intentional (see Changelog v1.14)
+- **Owner:** Backend Engineering Patterns Owner
+- **Backlog reference:** `BLG-BE-128` (ST-13, EPIC-03, cycle `2026-09-21__release-v9.6`) — reviewed and disposed `2026-09-24` per the Implementation constraints note above and Changelog v1.14. No code change.
 
 ---
 

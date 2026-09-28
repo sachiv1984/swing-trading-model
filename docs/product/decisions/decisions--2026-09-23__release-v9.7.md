@@ -1,9 +1,14 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.7
 Cycle: 2026-09-23__release-v9.7
-Last Updated: 2026-09-24 (ST-20/EPIC-05 addendum — SI-02 gate threshold disposition)
+Last Updated: 2026-09-28 (post-ship closure — Superseded); prior — 2026-09-24 (ST-20/EPIC-05 addendum — SI-02 gate threshold disposition)
+
+Superseded by: v9.7 ship — 2026-09-25
+Changelog: docs/product/changelog.md#v9.7
+Verification report: claude/cycles/2026-09-23__release-v9.7/verification_report.md
+Cycle: 2026-09-23__release-v9.7
 
 ## Planning Decisions — v9.7 PO-05 Replay Mode & Full-Capacity Debt Clearance
 
@@ -39,8 +44,7 @@ None.
 Made by: Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role — §5.3), 2026-09-24.
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
+Superseded by: v9.7 ship — 2026-09-25
+Changelog: docs/product/changelog.md#v9.7
 Cycle: 2026-09-23__release-v9.7
