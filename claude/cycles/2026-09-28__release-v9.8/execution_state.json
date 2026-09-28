@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-28T15:27:35Z",
+  "last_updated_utc": "2026-09-28T15:28:09Z",
   "epics": {
     "EPIC-01": {
       "status": "done",
@@ -128,17 +128,17 @@
           "assigned_to": "engine",
           "github_issue": 1809,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "0534437aef88c7d71f7d2d16f663070ae356883a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-09-28T15:28:09Z",
           "acceptance_verified": true,
           "spec_references": ["docs/specs/frontend/pages/navigation.md#Canonical Inventory — All Keyboard-Handling Sites"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.step9_pre_push",
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
           "notes": "Documentation-creation story (Case B). Grepped Layout.js, CommandPalette.js, TradeEntry.js, TradePlan.js, RedFlagJournal.js and TickerUniverse.js for every onKeyDown/e.key handler (confirmed exhaustive via a second broader re-scan). Found: 4 global document-level shortcuts (Layout.js's n/w/r, CommandPalette.js's Cmd/Ctrl+K), already documented in navigation.md's existing Keyboard Shortcuts section, plus 4 page-local element-scoped Enter/Space handlers (tag-add in TradeEntry.js/TradePlan.js, filter-apply in RedFlagJournal.js, a custom role=button badge's keyboard-activation in TickerUniverse.js) that had no documented home anywhere -- exactly the gap BLG-SPEC-159 describes. Added both tables plus a conflict analysis to navigation.md v1.6->1.7: no conflicts found, and the reason is structural (global handlers are input-focus-suppressed by construction, so they and the page-local handlers are mutually exclusive by focus state; the 4 global shortcuts don't collide with each other since Cmd/Ctrl+K's own handler is gated behind the exact modifier check Layout.js's bare-key handler excludes). No conflicts required filing, satisfying the AC's 'conflicts resolved or filed' as 'none exist.' No code changed; no Playwright test required (AC is a documentation-completeness criterion, no new/changed observable behaviour)."
         }
