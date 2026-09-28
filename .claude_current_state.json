@@ -46,7 +46,7 @@
   "last_audit_id": "AUD-2026-09-28",
   "last_audit_utc": "2026-09-28T00:00:00Z",
   "last_audit_overall_score": 78,
-  "last_audit_open_items": 3,
+  "last_audit_open_items": 0,
   "last_audit_cycle_count": 84,
   "next_release": "v9.7",
   "prior_cycle": "2026-09-23__release-v9.7",
@@ -147,7 +147,11 @@
     "ESC-CLOSE-20260928-01": {
       "summary": "execution_prompt.md §3.2.A same-EPIC cross-story testing-gap disclosure consistency check — deferred 3 consecutive cycles (v9.5→v9.6→v9.7), no prompt_change_log.md entry; lessons_learnt_prompt.md §3.7 mandatory recurrence escalation",
       "owner": "Head of Specs Team",
-      "sla_due_utc": "2026-10-01T00:00:00Z"
+      "sla_due_utc": "2026-10-01T00:00:00Z",
+      "disposition": "Resolved",
+      "resolved_utc": "2026-09-28T00:00:00Z",
+      "resolved_by": "Sprint Execution Engine (agent-mediated, Head of Specs Team role, per explicit user direction to act as the relevant role and apply the lifecycle audit's filed improvements)",
+      "resolution_summary": "Closed by lifecycle audit AUD-2026-09-28's improvement AUD-2026-09-28-002: execution_prompt.md v3.79→v3.80 adds a same-EPIC cross-story testing-gap consistency check to §3.2.A's Frontend testing gate, giving the DoQ sign-off step concrete, structural wording rather than relying on independent PR review to catch a sibling story's identical unfiled gap. See claude/system/prompt_change_log.md 2026-09-28 entry and claude/system/changelogs/execution_prompt_changelog.md v3.80."
     },
     "ESC-CLOSE-20260928-02": {
       "summary": "release_planning_prompt.md §-1.2 Option(b) rebalance-equivalence precedent cited a 2nd time beyond the release its own rationale named — ruling needed on reuse limits",

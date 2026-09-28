@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.207
-**Last Updated:** 2026-09-28 (post-ship closure `2026-09-23__release-v9.7` STEP 8 — release_planning_prompt.md v2.55→v2.56, §1.3a gains the already-resolved-banner scan widening (Release Planning lessons_learnt.md Friction Item 1, same-cycle application); §6B source prompt header, §14 Release Engine Source row, §14 self-row `Version`/`Last Updated` and Change Log top row updated); prior — 2026-09-24 (sprint execution `2026-09-23__release-v9.7` EPIC-05/ST-22, BLG-GOV-333 — sprint_planning_prompt.md v3.18→v3.19, STEP -1 Hard Gates 1-2 reconciled against shared_standards.md §10.1; §7 source prompt header, §14 Sprint Planning Engine row, §14 self-row `Version`/`Last Updated` and Change Log top row updated); prior — 2026-09-24 (sprint execution `2026-09-23__release-v9.7` EPIC-05/ST-21, BLG-GOV-331 — shared_standards.md v3.34→v3.35, new §23 ensure_ascii=False Convention for Governance JSON Writes); prior history retained — see prior entries in version control.
+**Version:** 4.208
+**Last Updated:** 2026-09-28 (lifecycle audit `AUD-2026-09-28` ruling session, Head of Specs Team — `lessons_learnt_prompt.md` v1.14→v1.15 and `execution_prompt.md` v3.79→v3.80 applied per AUD-2026-09-28-001/-002; §13 gains an entry-point/meta-document scope note per AUD-2026-09-28-003); prior — 2026-09-28 (post-ship closure `2026-09-23__release-v9.7` STEP 8 — release_planning_prompt.md v2.55→v2.56, §1.3a gains the already-resolved-banner scan widening (Release Planning lessons_learnt.md Friction Item 1, same-cycle application); §6B source prompt header, §14 Release Engine Source row, §14 self-row `Version`/`Last Updated` and Change Log top row updated); prior — 2026-09-24 (sprint execution `2026-09-23__release-v9.7` EPIC-05/ST-22, BLG-GOV-333 — sprint_planning_prompt.md v3.18→v3.19, STEP -1 Hard Gates 1-2 reconciled against shared_standards.md §10.1; §7 source prompt header, §14 Sprint Planning Engine row, §14 self-row `Version`/`Last Updated` and Change Log top row updated); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -886,7 +886,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.79)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.80)
 
 ### 8.1 Invocation
 
@@ -1269,6 +1269,8 @@ If the decision record cannot be created, the escalation remains Open/Deferred a
 
 All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle_guide.md`.
 
+**Scope note (AUD-2026-09-28-003 ruling, Head of Specs Team):** `CLAUDE.md`, `claude/README.md`, and `claude/audit.py` are intentionally excluded from this register. Each is an entry-point/meta-document that describes or invokes the governed system (the session-start anchor, the engine directory overview, and this audit engine's own source, respectively) rather than an artefact produced or governed by a specific phase's routine. This is a deliberate scope boundary, not a gap — do not re-flag their absence in a future audit unless the boundary itself needs to change.
+
 | Artefact | Location | Class | Owner | Phase |
 |----------|----------|-------|-------|-------|
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
@@ -1364,7 +1366,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.207 |
+| Version | 4.208 |
 | Last Updated | 2026-09-28 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.9 |
@@ -1377,14 +1379,14 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.56 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.19 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.79 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.80 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.16 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.12 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.35 |
 | Shared Standards | `claude/system/shared_standards.md` v3.35 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
-| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.14 |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.15 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | GitHub Issue Template | `claude/system/gh_issue_template.md` v1.0 |
 | PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.3 |
@@ -1499,6 +1501,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.208 | 2026-09-28 | **Lifecycle audit `AUD-2026-09-28`, 3 filed improvements ruled on and applied (Head of Specs Team, per explicit user direction to act as the relevant role).** `lessons_learnt_prompt.md` v1.14→v1.15 (AUD-2026-09-28-001: §5 Scope line narrowed to Roadmap Rebalance and Post-Ship Closure only; Release Planning's stable 4-cycle "Friction Item N" lightweight format confirmed as its own intended variant, not a compliance gap). `execution_prompt.md` v3.79→v3.80 (AUD-2026-09-28-002: §3.2.A gains a same-EPIC cross-story testing-gap consistency check, resolving the 3-cycle-overdue `ESC-CLOSE-20260928-01`). §13 Artefact Register gains a scope note (AUD-2026-09-28-003): `CLAUDE.md`, `claude/README.md`, and `claude/audit.py` are intentionally excluded as entry-point/meta-documents, not a register gap. §8 source prompt header v3.79→v3.80 (line 889); §14 table: Execution Engine Source v3.79→v3.80, Lessons Learnt Prompt v1.14→v1.15. §14 self-row `Version`/`Last Updated` 4.207/2026-09-28→4.208/2026-09-28. Authority: Head of Specs Team (agent-mediated per §5.3, lifecycle audit `AUD-2026-09-28` ruling session, user-directed, 2026-09-28). |
 | 4.207 | 2026-09-28 | **Post-ship closure `2026-09-23__release-v9.7` STEP 8 (same-cycle application, Release Planning lessons_learnt.md Friction Item 1) — release_planning_prompt.md v2.55→v2.56.** §1.3a's scripted gate-detection scan (`scripts/scan_backlog_gate_conditions.py`) widened to also report an "already-resolved banner" list — any item body containing `**Resolution (...):**`/`**Resolved (...):**`, independent of gated status — alongside the existing gated/date-lapsed/data-quality-warning lists. Closes the gap where `BLG-FE-189` slipped through this cycle's own release-planning selection despite being fixed same-session: the prior (v9.6 Friction Item 1) fix only checked for a `✅ COMPLETE` banner, a different convention. §6B source prompt header v2.55→v2.56 (line 625); §14 table: Release Engine Source v2.55→v2.56. §14 self-row `Version`/`Last Updated` 4.206/2026-09-24→4.207/2026-09-28. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, §5.3, post-ship closure `2026-09-23__release-v9.7` STEP 8, 2026-09-28). |
 | 4.206 | 2026-09-24 | **Sprint execution `2026-09-23__release-v9.7` EPIC-05/ST-22 (BLG-GOV-333) — sprint_planning_prompt.md v3.18→v3.19: STEP -1 Hard Gates 1-2 reconciled against shared_standards.md §10.1.** Gate 1's stale `.claude_current_state.json.status` enum (`Published`/`Validated`/`Committed`) replaced with a direct §10.1 Sprint Planning row citation (valid entry: `Release_Planning_Complete`/`Design_Gate_Passed`) plus full §10.2 Guard Algorithm application. Gate 2 (`state.json.status = Published`) clarified as a distinct check not covered by §10.1, cross-referenced to `release_planning_prompt.md` STEP 8/9 instead of restated independently. Root cause: found live at `2026-09-14__release-v9.4` and `2026-09-15__release-v9.5` sprint planning, where the actual status values (`Design_Gate_Passed`/`Validated`) did not match either gate's stale literal enum. §7 source prompt header v3.18→v3.19 (line 768); §14 table: Sprint Planning Engine v3.18→v3.19. §14 self-row `Version`/`Last Updated` 4.205/2026-09-24→4.206/2026-09-24. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, §5.3, ST-22, 2026-09-24). |
 | 4.205 | 2026-09-24 | **Sprint execution `2026-09-23__release-v9.7` EPIC-05/ST-21 (BLG-GOV-331) — shared_standards.md v3.34→v3.35: new §23 `ensure_ascii=False` Convention for Governance JSON Writes.** Documents that any programmatic write to a governance JSON file (`.claude_current_state.json`, `execution_state.json`, etc.) must pass `ensure_ascii=False` to `json.dump`, preserving non-ASCII characters literally instead of escaping the entire file on every write — root cause was a PR #1662 (EPIC-01/v9.4) write that turned a ~5-field semantic edit into a 15-line diff. §14 table: Shared Standards v3.34→v3.35. §14 self-row `Version`/`Last Updated` 4.204/2026-09-23→4.205/2026-09-24. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, §5.3, ST-21, 2026-09-24). |

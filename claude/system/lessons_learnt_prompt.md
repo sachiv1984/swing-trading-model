@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.14
-**Last Updated:** 2026-09-14 (AUD-2026-09-14-003: §5 Type A–E classification gains a verbatim-requirement rule — the Classification line must reproduce the canonical description exactly, not a paraphrased per-cycle label); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding actions, Head of Specs Team direct action — §3.7 gains a re-verify-against-current-state rule for carried-forward deferred-patch claims, LL-v9.1-Closure-01); prior — 2026-09-07 (ST-22, EPIC-04, v9.1, BLG-GOV-312 — §3.7 gains a "read the named target file directly" step, a distinct failure mode from LL-v8.6-P4-01b)
+**Version:** 1.15
+**Last Updated:** 2026-09-28 (AUD-2026-09-28-001 ruling, Head of Specs Team — §5 scope line narrowed to Roadmap Rebalance and Post-Ship Closure only; Release Planning's lightweight "Friction Item N" format confirmed as its own intended variant); prior — 2026-09-14 (AUD-2026-09-14-003: §5 Type A–E classification gains a verbatim-requirement rule — the Classification line must reproduce the canonical description exactly, not a paraphrased per-cycle label); prior — 2026-09-07 (post-ship closure 2026-09-03__release-v9.1 outstanding actions, Head of Specs Team direct action — §3.7 gains a re-verify-against-current-state rule for carried-forward deferred-patch claims, LL-v9.1-Closure-01); prior history retained — see prior entries in version control.
 
 ---
 
@@ -285,7 +285,9 @@ This log is append-only. It is the canonical record of why every governed prompt
 
 ## 5. Record Structure (Must Use)
 
-**Scope:** This structure applies to standalone lessons learnt files only — Roadmap Rebalance, Release Planning, and Post-Ship Closure outputs. For Sprint Execution (Phase 3), Delivery Verification (Phase 4), and Amendment outputs, use the Structured Table Block Format (§4.2) and append to `lessons_learnt_cycle.md`.
+**Scope:** This structure applies to standalone lessons learnt files only — Roadmap Rebalance and Post-Ship Closure outputs. For Sprint Execution (Phase 3), Delivery Verification (Phase 4), and Amendment outputs, use the Structured Table Block Format (§4.2) and append to `lessons_learnt_cycle.md`. Release Planning uses its own lightweight variant — see the Release Planning format note immediately below.
+
+**Release Planning format note (confirmed, AUD-2026-09-28-001 ruling — Head of Specs Team):** Release Planning's own `lessons_learnt.md` uses a lighter "Friction Item N — <title>: <prose>" format rather than this section's full Classification/Recurrence/Root-cause/Blast-radius block, and has done so stably and functionally across at least 4 consecutive cycles (`v9.4`–`v9.7`). This is confirmed as the intended Release Planning variant, not a compliance gap — this section's structure governs Roadmap Rebalance and Post-Ship Closure only.
 
 The lessons learnt record MUST follow this structure exactly. Do not omit sections, do not merge sections, do not add free-form commentary outside the defined fields.
 

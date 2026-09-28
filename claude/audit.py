@@ -25,13 +25,18 @@ AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
 PRIOR_AUDIT_ID = "AUD-2026-09-28"
-PRIOR_AUDIT_OPEN_ITEMS = ["AUD-2026-09-28-001", "AUD-2026-09-28-002", "AUD-2026-09-28-003"]
-  # All 3 improvements filed at AUD-2026-09-28 remain open: 001 (Release Planning lessons_learnt.md
-  # format vs. lessons_learnt_prompt.md §5 scope) and 003 (CLAUDE.md/README.md/audit.py absent from
-  # OPERATIONAL_GUIDE.md §13 register) both need a Head of Specs Team ruling before either PATCH can
-  # be applied; 002 is an explicit draft PATCH for execution_prompt.md §3.2.A offered to accelerate
-  # the already-open ESC-CLOSE-20260928-01 ruling, not an authorised action-now change. None applied
-  # this session. See claude/cycles/2026-09-23__release-v9.7/audit_report_AUD-2026-09-28.md §5/§11.
+PRIOR_AUDIT_OPEN_ITEMS = []
+  # All 3 improvements filed at AUD-2026-09-28 were actioned post-publication, same session, per
+  # explicit user direction ("apply the 3 improvements") and a Head of Specs Team ruling on the 2
+  # items that needed one (agent-mediated per CLAUDE.md §5.3, user-directed to act as that role).
+  # 001: lessons_learnt_prompt.md v1.14->v1.15 (§5 scope narrowed to Roadmap Rebalance + Post-Ship
+  # Closure; Release Planning's lightweight format confirmed as its own intended variant). 002:
+  # execution_prompt.md v3.79->v3.80 (§3.2.A gains the same-EPIC cross-story testing-gap consistency
+  # check; also resolves ESC-CLOSE-20260928-01). 003: OPERATIONAL_GUIDE.md §13 gains a scope note
+  # ruling CLAUDE.md/README.md/audit.py intentionally excluded as entry-point/meta-documents.
+  # OPERATIONAL_GUIDE.md v4.207->v4.208 for the §8 header, §14 rows/self-row, and §13 note. Companion
+  # changelogs and 3 new prompt_change_log.md rows added. See claude/cycles/2026-09-23__release-v9.7/
+  # audit_report_AUD-2026-09-28.md §5 post-publication note.
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
