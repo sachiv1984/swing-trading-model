@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.56
-**Last Updated:** 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 STEP 8, same-cycle application of Release Planning lessons_learnt.md Friction Item 1 — §1.3a's scripted gate-detection scan widened to also report an "already-resolved banner" list (`**Resolution (...):**`/`**Resolved (...):**` anywhere in an item's body), independent of gated status; closes the gap where `BLG-FE-189` slipped through this cycle's own selection despite being fixed same-session, because the v9.6 fix only checked for a `✅ COMPLETE` banner); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 follow-up, Product Owner ruling on `ESC-CLOSE-20260923-01` — §1.4c gains an explicit note that same-release `Provisional-Target` tags carry no selection weight; expectation documented that they clear at the next `groom backlog` run instead); prior — 2026-09-23 (sprint execution 2026-09-21__release-v9.6 EPIC-07/ST-27, BLG-GOV-345 — §1.3a now requires the scan's new date-lapsed list be read and each item individually cleared or re-gated before the ready pool is fixed); prior history retained — see prior entries in version control.
+**Version:** 2.57
+**Last Updated:** 2026-09-28 (Sprint Planning STEP -1 Hard Gate 2 halt investigation, `2026-09-28__release-v9.8` — root-caused: the Publish Gate evaluation and Publish Sealing Checklist from `claude/system/shared/publish_gate.md` were never wired into the numbered STEP flow, only referenced in a disconnected trailing section after STEP 10; every `plan release` run correctly reached `status = Validated` but had no step instructing it to seal to `Published`, while STEP 10 unconditionally committed with a message claiming "Published" regardless. Fixed: new STEP 6 (Publish Gate Evaluation, sets `Validated`) and STEP 8.5 (Pre-Seal Revalidation & Publish Sealing, sets `Published`) added between STEP 5.5/7 and STEP 8/9 respectively; STEP 7 and STEP 9's stale cross-references to "STEP 9 sets Published" corrected; STEP 10's commit message made conditional on STEP 8.5 having actually sealed; trailing section trimmed to a non-duplicated reference); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 STEP 8, same-cycle application of Release Planning lessons_learnt.md Friction Item 1 — §1.3a's scripted gate-detection scan widened to also report an "already-resolved banner" list (`**Resolution (...):**`/`**Resolved (...):**` anywhere in an item's body), independent of gated status; closes the gap where `BLG-FE-189` slipped through this cycle's own selection despite being fixed same-session, because the v9.6 fix only checked for a `✅ COMPLETE` banner); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 follow-up, Product Owner ruling on `ESC-CLOSE-20260923-01` — §1.4c gains an explicit note that same-release `Provisional-Target` tags carry no selection weight; expectation documented that they clear at the next `groom backlog` run instead); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -1021,6 +1021,42 @@ attributes.decisions_validated: pass|fail|not_applicable|blocked
 
 ---
 
+## STEP 6 — Publish Gate Evaluation (Hard Gate)
+
+Purpose: Determine whether the release plan has earned publish-gate eligibility (`status = Validated`) — the necessary but not sufficient precondition for sealing to `Published` at STEP 8.5. Mechanics: `claude/system/shared/publish_gate.md` §"Publish Gate".
+
+**Engine-specific Publish Gate conditions (all must be true):**
+- `open_escalations` is empty
+- Every Deferred escalation has `Blocks execution: No`; `deferred_execution_blockers` is empty
+- `artifacts.stage4_5_capacity_check` is `pass` OR `warn` (`warn` allowed in `standard` mode only)
+- `artifacts.stage5_5_cross_stage_integrity` is `pass`
+- `artifacts.stage5_7_decision_record_integrity` is `pass` OR `not_applicable`
+- `artifacts.stage1_readiness`, `stage3_5_model_integrity` are `pass`
+- `attributes.plan_structured`, `plan_executable`, `backlog_committed` are `true`
+- `locks.backlog_lock.status = "released"`; `locks.roadmap_lock.status = "released"` OR `"not_checked"`
+
+If `deferred_execution_blockers` is non-empty:
+```yaml
+# state.json update (STEP 6 — blocked path):
+status: Blocked
+publish_eligible: false
+```
+HALT per `shared_standards.md §5` — do not proceed to STEP 7.
+
+If all conditions above pass:
+```yaml
+# state.json update (STEP 6 — gate passed):
+status: Validated
+publish_eligible: true
+last_transition_utc: <ISO-8601 UTC now>
+```
+
+If any other condition fails: `publish_eligible = false`; record the specific failing condition in `release_plan.md`; do not advance `status` past its current value; halt per `shared_standards.md §5`.
+
+**This is the only step that may set the cycle-level `state.json.status = Validated`.** No later step re-derives this gate from scratch — STEP 8.5's Pre-Seal Revalidation only re-confirms nothing has regressed since this evaluation.
+
+---
+
 ## STEP 7 — Cycle Summary
 
 Write: `cycle_summary.md`
@@ -1060,7 +1096,7 @@ sprint_sealed: false          # ST-23 fix, v2.49, BLG-GOV-288 — reset here, at
 last_sync_utc: <ISO-8601 UTC now>
 ```
 
-STEP 9 (Global State Synchronization) is the terminal sync and is the only step that sets status = `Published`. Do not set Published here.
+STEP 8.5 (Pre-Seal Revalidation & Publish Sealing) is the step that seals the cycle and sets the cycle-level `state.json.status = Published`. STEP 9 (Global State Synchronization) is the terminal sync for the distinct root-level `.claude_current_state.json` file and sets `status = Release_Planning_Complete` there (see STEP 9's own note). Do not set `Validated`, `Published`, or `Release_Planning_Complete` at this intermediate sync.
 
 **`cycle_summary.md` header must include `design_gate_required` status line (AC-05):** When writing `cycle_summary.md`, include the following line in its header metadata block:
 
@@ -1080,16 +1116,50 @@ The lessons learnt file must end with an `// ARTEFACT_STATUS` JSON terminal bloc
 
 ---
 
+## STEP 8.5 — Pre-Seal Revalidation & Publish Sealing (Hard Gate — Terminal Precondition)
+
+Purpose: Perform the actual sealing that STEP 9's terminal sync presumes has already happened. **This is the only step that may set the cycle-level `state.json.status = Published`.** Mechanics: `claude/system/shared/publish_gate.md` §"Pre-Seal Revalidation" and §"Publish Sealing Checklist".
+
+### 8.5.1 Pre-Seal Revalidation
+
+Re-run the STEP 6 Publish Gate condition list against the current state. If any condition that passed at STEP 6 no longer holds (e.g. a new escalation was raised while STEP 7/8 ran): invalidate the gate, set `publish_eligible = false`, and resume from STEP 6. HALT — sealing may not proceed on a stale gate evaluation.
+
+**Final Publish Preconditions (Hard Gate):**
+- `locks.backlog_lock.status` must be `"released"`
+- `locks.roadmap_lock.status` must be `"released"` OR `"not_checked"`
+- `locks.*.owned` must be `false`
+- `locks.*.txn_state` must be `"committed"` OR `"none"`
+
+If any lock remains acquired, prepared, or blocked: HALT.
+
+### 8.5.2 Publish Sealing Checklist (execute in order)
+
+1. **Verify artefacts** — `release_plan.md`, `stage4_backlog_slice.md`, `cycle_summary.md`, `lessons_learnt.md` must all exist (the latter two are this engine's own additions beyond `publish_gate.md`'s generic artefact pair, since sealing may not happen before STEP 7/8 produce them). If any missing: HALT; status remains `Validated`.
+2. **Seal assumptions** — write `assumptions.timebox` and `assumptions.capacity` into `state.sealed.sealed_assumptions`. These become immutable.
+3. **Record snapshot hash** — run `git rev-parse HEAD` and write the result into `state.sealed.state_snapshot_hash` (a lightweight tamper indicator, not the primary drift-detection method — see §11 Sealing Mechanism; `git diff main` remains authoritative for Published-cycle drift detection).
+4. **Finalize seal** — set `state.sealed.sealed_utc = <ISO-8601 UTC now>`, `drift_detected = false`, `drift_notes = []`.
+5. **Final transition** — forbidden before step 4 completes:
+```yaml
+# state.json update (STEP 8.5 — final transition):
+status: Published
+publish_eligible: true
+last_transition_utc: <ISO-8601 UTC now>
+```
+
+If sealing fails at any point: HALT; `status` remains `Validated`.
+
+---
+
 ## STEP 9 — Global State Synchronization (Hard Requirement — Terminal)
 
-Purpose: Final update of the root-level state pointer to reflect that this cycle's release plan is published and sealed. This is the only step that sets `status = Release_Planning_Complete` in `.claude_current_state.json`. STEP 7's intermediate sync must have run first.
+Purpose: Final update of the root-level state pointer to reflect that this cycle's release plan is published and sealed. This is the only step that sets `status = Release_Planning_Complete` in `.claude_current_state.json`. STEP 7's intermediate sync and STEP 8.5's sealing (cycle-level `state.json.status = Published`) must both have run first.
 
 Note: "Published" is the release plan's own cycle-level `state.json.status` value (see §6B.6 Publish Gate) — it is distinct from the root-level `.claude_current_state.json.status` field written here, which must use the canonical `lifecycle_schema.json` state-enum value `Release_Planning_Complete`, not `Published` or `Validated`. Per `shared_standards.md` §10.6, `lifecycle_schema.json` prevails on any conflict between the two vocabularies.
 
 **`next_release` ownership (OA-1, post-ship closure `2026-07-24__release-v7.8`):** This step is the sole authoritative writer of `.claude_current_state.json.next_release`. It was found 4 releases stale (stamped from a prior cycle) at the start of the v7.8 Release Planning session because no engine explicitly owned the field's upkeep — `roadmap_prompt.md` STEP 8 only ever writes it advisorily (best-effort pre-fill, skipped entirely on a no-change rebalance with no determinable next release label), and nothing else in the observed chain (`plan release`, post-ship closure) wrote it at all. STEP 9 below now writes it unconditionally, from this invocation's own `--version` argument, every time Release Planning seals — this is the authoritative source, not `roadmap_prompt.md`'s advisory pre-fill, which remains useful only as an early best-guess signal before this step next runs.
 
 Execution Rules:
-1. Verify STEP 7 intermediate sync has completed (backlog_slice_path and active_cycle are already set).
+1. Verify STEP 7 intermediate sync has completed (backlog_slice_path and active_cycle are already set) and STEP 8.5 sealing has completed (cycle-level `state.json.status = Published`).
 2. If `.claude_current_state.json` does not exist, create it using the standard schema.
 3. Terminal state update:
 
@@ -1138,27 +1208,16 @@ Execution Commands:
 3. `git add claude/backlog/backlog.md`
 4. `git add docs/product/scope/scope--{cycle_id}-{slug}.md`
 5. `git add docs/product/decisions/decisions--{cycle_id}.md`
-6. `git commit -m "[GOVERNANCE] Published Release Plan <cycle_id>"`
+6. `git commit -m "[GOVERNANCE] Published Release Plan <cycle_id>"` (only valid if STEP 8.5 has set cycle-level `state.json.status = Published` — if sealing did not complete, use `"[GOVERNANCE] Release plan validated (not yet sealed): <cycle_id>"` instead and do not claim Published in the message)
 7. `git push origin <current-branch>`
 
 ---
 
-# Publish Gate, Sealing, and Completion
+# Publish Gate, Sealing, and Completion (Reference)
 
-Full procedure: `claude/system/shared/publish_gate.md`.
+Full mechanics: `claude/system/shared/publish_gate.md`. The engine-specific Publish Gate conditions are evaluated at **STEP 6** (→ `status = Validated`); sealing to `Published` is performed at **STEP 8.5**. This section states only the engine-specific Completion Condition, additional to `publish_gate.md`'s own shared Completion Condition.
 
-**Engine-specific Publish Gate conditions (all must be true):**
-- `open_escalations` is empty
-- Every Deferred escalation has `Blocks execution: No`; `deferred_execution_blockers` is empty
-- `artifacts.stage4_5_capacity_check` is `pass` OR `warn` (warn allowed in `standard` mode only)
-- `artifacts.stage5_5_cross_stage_integrity` is `pass`
-- `artifacts.stage5_7_decision_record_integrity` is `pass` OR `not_applicable`
-- `artifacts.stage1_readiness`, `stage3_5_model_integrity` are `pass`
-- `attributes.plan_structured`, `plan_executable`, `backlog_committed` are `true`
-
-If gate passes: `status = Validated`, `publish_eligible = true`. If `deferred_execution_blockers` non-empty: `status = Blocked`, HALT.
-
-**Engine-specific Completion Condition** (all must be true in addition to shared publish gate completion):
+**Engine-specific additional Completion Condition** (all must be true, in addition to `publish_gate.md`'s shared conditions):
 - `docs/product/scope/scope--{cycle_id}-{slug}.md` exists
 - `docs/product/decisions/decisions--{cycle_id}.md` exists
 - `locks.backlog_lock.status = "released"`

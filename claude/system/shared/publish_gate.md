@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-14
+**Version:** 1.1
+**Last Updated:** 2026-09-28 (release_planning_prompt.md v2.57 fix — Pre-Seal Revalidation's step 1 corrected: it referenced the RESUME PRECHECK mutation-detection/invalidation-map machinery, which release_planning_prompt.md v2.47 (2026-08-06) removed as dead code; replaced with a reference to the calling engine's own Publish Gate condition re-check, matching the lightweight resume model that replaced it); prior — 2026-05-14 (initial extraction from release_planning_prompt.md v2.28 token-efficiency refactor)
 
 ---
 
@@ -27,7 +27,7 @@ Else:
 
 Before executing Publish Sealing:
 
-1. Re-run **RESUME PRECHECK — Mutation Detection & Invalidation**.
+1. Re-run the calling engine's own Publish Gate condition checks (§ above) against the current state — the former RESUME PRECHECK mutation-detection/invalidation-map machinery was removed (release_planning_prompt.md v2.47, 2026-08-06) in favour of this lightweight re-check.
 2. If any tracked artifact or assumption changed since Publish Gate evaluation:
    - Invalidate Publish Gate.
    - Set `publish_eligible = false`.
