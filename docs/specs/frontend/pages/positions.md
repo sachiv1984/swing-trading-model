@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.9
-**Last Updated:** 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §Keyboard Navigation Requirements)
+**Version:** 2.10
+**Last Updated:** 2026-09-28 (ST-05, EPIC-01, v9.8, BLG-SPEC-158 — §Responsive Behavior corrected to match actual implementation: the Table view does not collapse to cards, it scrolls horizontally); prior — 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §Keyboard Navigation Requirements)
 **Design Source (v8.2 additions):** docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md
 **Design Source (v7.9 additions):** docs/design/2026-07-27__release-v7.9/trailing-stop-explainer-tooltip/ux_spec.md
 **Design Source (v7.0 additions):** docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md, docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md
@@ -24,6 +24,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.10 | 2026-09-28 | ST-05 (BLG-SPEC-158, EPIC-01, v9.8): §Responsive Behavior corrected to match `src/components/ui/DataTable.js`'s actual implementation — Table view scrolls horizontally (no card collapse, no column-hiding); Grid view is the view that reflows to cards (CSS Grid breakpoints, unchanged). Documentation-only; no implementation change. |
 | 2.9 | 2026-09-04 | v9.1 ST-07 (BLG-SPEC-99, EPIC-01): added §Keyboard Navigation Requirements — documentation-only baseline covering View Switcher, Table View row/control tab order, Trail Stop Modal / Compliance Recheck Panel focus trap and restoration, Grid/Journal View tab order, Paper Account Panel, and focus-indicator contrast. No implementation change. |
 | 2.8 | 2026-08-17 | v8.9 ST-02 (BLG-BE-103, EPIC-01): §Trailing Stop Column — corrected currency-basis defect. `current_trailing_stop` (GBP-converted for US positions) was being rendered next to the native currency symbol alongside `initial_stop` (native), producing two numerically different values that were really the same stop. Table View and Grid View now render the new `current_trailing_stop_native` field, matching this section's pre-existing "Display format: Native currency" rule (which the implementation had not satisfied since v6.2). No column layout or design change — value-source correction only. |
 | 2.7 | 2026-08-04 | v8.2 design gate — ST-02 (EPIC-01, BLG-FE-105): §Compliance Recheck Panel (Modal) — all-rules-pass state specified explicitly. Adds an affirmation line ("All 5 checks passed — no action needed.", `text-emerald-400`, existing pass colour token) in the same layout slot as the warn/fail acknowledgement block, shown only when `overall_status === "pass"`. Closes the previously-undesigned asymmetry between the warn/fail path (explicit acknowledgement block) and the pass path (nothing). No new colour or interactive element introduced. Design source: `docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md`. Head of UX & Design sign-off: 2026-08-04. Product Owner approved: 2026-08-04. Head of Specs Team confirmed. |
@@ -629,12 +630,18 @@ For Journal View empty states, see the Journal View section above.
 
 ## Responsive Behavior
 
-- Table collapses to cards on smaller screens
-- Grid view reduces card width and stacks vertically
-- Journal cards expand to full width on mobile
+The page has three view modes (Grid, Table, Journal — toggle in the page header); each behaves differently below `md` (768px):
+
+| View | Narrow-width (<768px) behaviour | Column/content priority |
+|------|----------------------------------|--------------------------|
+| **Grid** (default) | `PositionCard`s reflow via CSS Grid: `grid-cols-1` below `md`, `grid-cols-2` at `md`, `grid-cols-3` at `lg` — 1 card per row on mobile, no card content is hidden | N/A — cards show all fields; no priority ordering |
+| **Table** | Does **not** collapse to cards. Uses the shared `DataTable` component (`overflow-x-auto` wrapper): all 13 data columns (Ticker, Entry Price, Current Price, Stop, Shares, P&L (GBP), P&L %, Days, State, Grace, Earnings, Alerts, Last Reviewed) plus Actions render unconditionally — the user scrolls horizontally to reach columns past the viewport width. No column-hiding/priority logic exists | None — no column is hidden at any width |
+| **Journal** | `JournalView` cards stack in a single column at all widths below `lg`; no separate mobile treatment beyond the existing card layout | N/A |
+
 - Filter bar stacks vertically on narrow screens; tag pills wrap
-- Action buttons move below card content on mobile
-- Tags wrap gracefully on narrow screens
+- Tags wrap gracefully on narrow screens (Grid/Journal card content)
+
+**Corrected v2.10 (ST-05, BLG-SPEC-158):** the prior "Table collapses to cards on smaller screens" bullet did not match `src/components/ui/DataTable.js`'s actual implementation (horizontal scroll only) — see the Table row above.
 
 ---
 
