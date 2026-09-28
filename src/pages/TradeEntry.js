@@ -14,6 +14,7 @@ import PageHeader from "../components/ui/PageHeader";
 import { ArrowLeft, Calculator, Loader2, CheckCircle2, X, Rocket, Info } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
+import { formatCurrency, currencyForMarket } from "../lib/format";
 import PositionSizingWidget from '../components/trades/PositionSizingWidget';
 import SetupThesisDigestPanel from '../components/trades/SetupThesisDigestPanel';
 import { isStartTradeEligible, STATUS_CONFIG } from "./TradePlans";
@@ -426,7 +427,7 @@ export default function TradeEntry() {
                 <p className="text-xs text-slate-600 dark:text-slate-400">
                   Suggested stop:{" "}
                   <span className="text-rose-400">
-                    {costs.currencySymbol}{costs.suggestedStop.toFixed(2)}
+                    {formatCurrency(costs.suggestedStop, { currency: currencyForMarket(formData.market) })}
                   </span>{" "}
                   ({currentSettings.atr_multiplier_initial}× ATR)
                 </p>
@@ -574,33 +575,33 @@ export default function TradeEntry() {
             <div className="flex justify-between text-sm">
               <span className="text-slate-600 dark:text-slate-400">Gross Value</span>
               <span className="text-white">
-                {costs.currencySymbol}{costs.grossValue.toFixed(2)}
+                {formatCurrency(costs.grossValue, { currency: currencyForMarket(formData.market) })}
                 {formData.market === "US" && (
-                  <span className="text-slate-600 dark:text-slate-400 ml-1">(£{costs.grossValueGBP.toFixed(2)})</span>
+                  <span className="text-slate-600 dark:text-slate-400 ml-1">({formatCurrency(costs.grossValueGBP)})</span>
                 )}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-slate-600 dark:text-slate-400">Commission</span>
-              <span className="text-white">£{costs.commission.toFixed(2)}</span>
+              <span className="text-white">{formatCurrency(costs.commission)}</span>
             </div>
             {costs.stampDuty > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-slate-600 dark:text-slate-400">Stamp Duty (0.5%)</span>
-                <span className="text-white">£{costs.stampDuty.toFixed(2)}</span>
+                <span className="text-white">{formatCurrency(costs.stampDuty)}</span>
               </div>
             )}
             {costs.fxFee > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-slate-600 dark:text-slate-400">FX Fee (0.15%)</span>
-                <span className="text-white">£{costs.fxFee.toFixed(2)}</span>
+                <span className="text-white">{formatCurrency(costs.fxFee)}</span>
               </div>
             )}
             <div className="pt-3 border-t border-slate-700">
               <div className="flex justify-between">
                 <span className="font-medium text-white">Est. Total Cost</span>
                 <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400">
-                  £{costs.totalCost.toFixed(2)}
+                  {formatCurrency(costs.totalCost)}
                 </span>
               </div>
             </div>
@@ -608,7 +609,7 @@ export default function TradeEntry() {
               <div className="pt-3 border-t border-slate-700">
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-600 dark:text-slate-400">Risk (to stop)</span>
-                  <span className="text-rose-400 font-medium">£{costs.totalRisk.toFixed(2)}</span>
+                  <span className="text-rose-400 font-medium">{formatCurrency(costs.totalRisk)}</span>
                 </div>
               </div>
             )}

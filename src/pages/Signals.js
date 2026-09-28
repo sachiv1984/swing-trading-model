@@ -10,6 +10,7 @@ import MarketStatusBar from "../components/signals/MarketStatusBar";
 import { Zap, RefreshCw, Filter, TrendingUp, DollarSign, Target } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
+import { formatCurrency, formatPercent } from "../lib/format";
 import AiChatWidget from "../components/AiChatWidget";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -282,7 +283,7 @@ export default function SignalsPage() {
             </div>
             <div>
               <p className="text-sm text-slate-600 dark:text-slate-400">Total Capital</p>
-              <p className="text-2xl font-bold text-white">£{totalCapital.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-white">{formatCurrency(totalCapital)}</p>
             </div>
           </div>
         </motion.div>
@@ -299,7 +300,7 @@ export default function SignalsPage() {
             </div>
             <div>
               <p className="text-sm text-slate-600 dark:text-slate-400">Avg Momentum</p>
-              <p className="text-2xl font-bold text-white">{avgMomentum.toFixed(1)}%</p>
+              <p className="text-2xl font-bold text-white">{formatPercent(avgMomentum)}</p>
             </div>
           </div>
         </motion.div>

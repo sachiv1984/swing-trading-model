@@ -14,12 +14,12 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-28__release-v9.8/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/e2e/st01-v98-formatting-migration.spec.js"],
       "stories": {
         "ST-01": {
           "title": "Migrate the remaining toFixed / toLocaleString call sites to the shared formatting helper",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1804,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-01",
@@ -28,14 +28,14 @@
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/frontend/design_system.md#Number and Currency Formatting", "docs/design/2026-09-28__release-v9.8/ST-01-formatting-migration-allowlist.md"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.partial_migration_7_of_70_files",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step9_pre_push",
           "sign_off_record": null,
-          "notes": "Formatting-helper migration in progress. 285 toFixed()/toLocaleString() call sites across 70 files identified (outside src/lib/format.js). 7 files fully processed (PerformanceAnalytics.js, KeyInsightsCard.js, ExportModal.js, ExitModal.js, StrategyBenchmark.js, Reports.js, Research.js) -- money/percent/R display sites migrated to formatCurrency/formatPercent/formatR; non-financial sites (dates, ratios, durations, chart-data, CSV exports per format.js own documented exemption, FX rates, abbreviated market-cap convention) left out of scope or allow-listed in docs/design/2026-09-28__release-v9.8/ST-01-formatting-migration-allowlist.md. Also found and fixed 6 pre-existing zero-P&L neutral-tone colour violations (AC bullet 2) in PerformanceAnalytics.js, ExportModal.js and Reports.js beyond the base migration. 63 files remain -- see /tmp scratchpad st01_remaining_files.txt (not committed) for the tracked list; resume from src/components/reports/PerformanceSummary.js onward, next by site-count descending."
+          "notes": "Formatting-helper migration complete. 285 toFixed()/toLocaleString() call sites across 70 files identified (outside src/lib/format.js). All 70 files processed across 2 sessions (7 in the first partial commit 9ee399b7, 63 in this session via 3 parallel batch passes): money/percent/R display sites migrated to formatCurrency/formatPercent/formatR; non-financial sites (dates, ratios without a design-system convention, durations, counts, fractional shares, chart-data props, CSV exports per format.js's own documented exemption, FX rates, abbreviated axis/gauge/peak-value notation, operational/infra cost amounts) left out of scope or allow-listed with reasoning in docs/design/2026-09-28__release-v9.8/ST-01-formatting-migration-allowlist.md. Also fixed 19 total pre-existing zero-P&L/zero-delta neutral-tone colour violations (AC bullet 2) opportunistically across the touched files (6 in the first partial commit; 13 more in this session's batches, e.g. MonthlyHeatmap.js, PlanVsReality.js, PositionModal.js, RMultipleDistribution.js, CohortAnalysis.js, JournalView.js, PerformanceSummary.js, MarketComparison.js x1, ExitReasonTable.js x2, PaperAccountPanel.js, TradeReflection.js x2, TagPerformance.js x2, TradeReflectionModal.js, BestWorstTrades.js, TradeBreakdown.js). One out-of-scope finding (RecentTradesWidget.js icon-badge colour, not a toFixed call site) filed as BLG-FE-192 rather than fixed in-line. New Playwright coverage: tests/e2e/st01-v98-formatting-migration.spec.js (SC-ST01-01/02), passes locally (2/2); representative sample per CLAUDE.md §2, not exhaustive per-file coverage."
         },
         "ST-02": {
           "title": "Drive Screener and Watchlist table body cells from the shared column definitions",

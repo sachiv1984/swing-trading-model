@@ -1,5 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, ReferenceLine } from "recharts";
 import { motion } from "framer-motion";
+import { formatCurrency } from "../../lib/format";
 
 export default function PnLBarChart({ trades }) {
   const data = trades?.slice(0, 10).map(t => ({
@@ -38,7 +39,7 @@ export default function PnLBarChart({ trades }) {
                 border: '1px solid #334155',
                 borderRadius: '12px'
               }}
-              formatter={(value) => [`£${value.toLocaleString()}`, 'P&L']}
+              formatter={(value) => [formatCurrency(value, { signed: true }), 'P&L']}
               cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }}
             />
             <ReferenceLine y={0} stroke="#475569" />

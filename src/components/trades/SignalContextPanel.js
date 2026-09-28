@@ -2,6 +2,7 @@
 
 import { TrendingUp, BarChart2 } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
 
 /**
  * Read-only Signal Context Panel shown in trade plan creation form (§5a, trade_plan.md v0.5).
@@ -11,8 +12,7 @@ import { cn } from "../../lib/utils";
 export default function SignalContextPanel({ signal, market }) {
   if (!signal) return null;
 
-  const isUS = (market || signal.market) === "US";
-  const currencySymbol = isUS ? "$" : "£";
+  const panelCurrency = currencyForMarket(market || signal.market);
 
   const suggestedStop = signal.initial_stop != null
     ? signal.initial_stop
@@ -49,7 +49,7 @@ export default function SignalContextPanel({ signal, market }) {
             signal.momentum_percent >= 0 ? "text-emerald-400" : "text-red-400"
           )}>
             <TrendingUp className="w-3.5 h-3.5" />
-            {signal.momentum_percent >= 0 ? "+" : ""}{signal.momentum_percent?.toFixed(1)}%
+            {formatPercent(signal.momentum_percent, { signed: true })}
           </p>
         </div>
 
@@ -60,7 +60,7 @@ export default function SignalContextPanel({ signal, market }) {
               "text-sm font-semibold",
               maPercent >= 0 ? "text-emerald-400" : "text-amber-400"
             )}>
-              {Math.abs(maPercent).toFixed(1)}% {maPercent >= 0 ? "above" : "below"}
+              {formatPercent(Math.abs(maPercent))} {maPercent >= 0 ? "above" : "below"}
             </p>
           </div>
         )}
@@ -83,7 +83,7 @@ export default function SignalContextPanel({ signal, market }) {
           <div>
             <p className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">ATR (14d)</p>
             <p className="text-sm font-semibold text-white">
-              {currencySymbol}{signal.atr_value.toFixed(2)}
+              {formatCurrency(signal.atr_value, { currency: panelCurrency })}
             </p>
           </div>
         )}
@@ -92,7 +92,7 @@ export default function SignalContextPanel({ signal, market }) {
           <div>
             <p className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">Suggested stop</p>
             <p className="text-sm font-semibold text-rose-400">
-              {currencySymbol}{suggestedStop.toFixed(2)}
+              {formatCurrency(suggestedStop, { currency: panelCurrency })}
             </p>
             <p className="text-xs text-slate-600">entry − 5×ATR</p>
           </div>
@@ -113,11 +113,11 @@ export function buildSignalPrePopulation(signal, market) {
   let maPart = "";
   if (maPercent != null) {
     const direction = maPercent >= 0 ? "above" : "below";
-    maPart = ` Price ${direction} 200-day MA by ${Math.abs(maPercent).toFixed(1)}%.`;
+    maPart = ` Price ${direction} 200-day MA by ${formatPercent(Math.abs(maPercent))}.`;
   }
 
   const momentumPart = signal.momentum_percent != null
-    ? ` ${signal.momentum_percent >= 0 ? "+" : ""}${signal.momentum_percent.toFixed(1)}% momentum.`
+    ? ` ${formatPercent(signal.momentum_percent, { signed: true })} momentum.`
     : "";
 
   const regimeLabel = signal.regime === "on" || signal.regime === true ? "on" : "off";

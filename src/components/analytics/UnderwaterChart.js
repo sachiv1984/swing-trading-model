@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Dot } from "recharts";
 import { TrendingDown, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { formatCurrency, formatPercent } from "../../lib/format";
 
 const MIN_POINTS = 4;
 
@@ -131,9 +132,9 @@ export default function UnderwaterChart({ trades }) {
       return (
         <div className="bg-slate-900 border border-slate-700 rounded-lg p-3 shadow-xl">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">{new Date(d.date).toLocaleDateString()}</p>
-          <p className="text-sm font-semibold text-rose-400">{d.drawdown.toFixed(2)}%</p>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Current: £{d.equity.toFixed(0)}</p>
-          <p className="text-xs text-slate-600 dark:text-slate-400">Peak: £{d.peak.toFixed(0)}</p>
+          <p className="text-sm font-semibold text-rose-400">{formatPercent(d.drawdown, { dp: 2 })}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Current: {formatCurrency(d.equity)}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Peak: {formatCurrency(d.peak)}</p>
         </div>
       );
     }
@@ -245,7 +246,7 @@ export default function UnderwaterChart({ trades }) {
                 <YAxis
                   stroke="#64748b"
                   tick={{ fill: "#94a3b8", fontSize: 12 }}
-                  tickFormatter={(value) => `${value.toFixed(0)}%`}
+                  tickFormatter={(value) => formatPercent(value, { dp: 0 })}
                   domain={["auto", 0]}
                 />
                 <Tooltip content={<CustomTooltip />} />

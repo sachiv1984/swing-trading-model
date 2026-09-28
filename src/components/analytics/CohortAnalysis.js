@@ -4,6 +4,7 @@ import { Loader2, CalendarRange } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { cn } from "../../lib/utils";
 import { api } from "../../api/base44Client";
+import { formatCurrency, formatPercent, formatR } from "../../lib/format";
 
 export default function CohortAnalysis() {
   const [period, setPeriod] = useState("month");
@@ -67,7 +68,6 @@ export default function CohortAnalysis() {
               </thead>
               <tbody className="divide-y divide-slate-700/30">
                 {(data?.cohorts ?? []).map((row, idx) => {
-                  const isProfit = row.total_pnl >= 0;
                   const rColor =
                     row.avg_r_multiple == null
                       ? "text-slate-600 dark:text-slate-400"
@@ -88,19 +88,19 @@ export default function CohortAnalysis() {
                             row.win_rate >= 50 ? "text-emerald-400" : "text-rose-400"
                           )}
                         >
-                          {row.win_rate.toFixed(1)}%
+                          {formatPercent(row.win_rate)}
                         </span>
                       </td>
                       <td className={cn("px-4 py-3 text-right text-sm font-medium", rColor)}>
-                        {row.avg_r_multiple != null ? `${row.avg_r_multiple >= 0 ? "+" : ""}${row.avg_r_multiple.toFixed(2)}R` : "—"}
+                        {row.avg_r_multiple != null ? formatR(row.avg_r_multiple) : "—"}
                       </td>
                       <td
                         className={cn(
                           "px-4 py-3 text-right text-sm font-semibold",
-                          isProfit ? "text-emerald-400" : "text-rose-400"
+                          row.total_pnl > 0 ? "text-emerald-400" : row.total_pnl < 0 ? "text-rose-400" : "text-slate-300"
                         )}
                       >
-                        {isProfit ? "+" : ""}£{row.total_pnl.toFixed(2)}
+                        {formatCurrency(row.total_pnl, { signed: true })}
                       </td>
                     </tr>
                   );

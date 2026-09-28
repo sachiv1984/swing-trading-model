@@ -1,5 +1,6 @@
 import { TrendingDown, TrendingUp, Calendar, Database } from "lucide-react";
 import PropTypes from 'prop-types';
+import { formatPercent } from "../../../lib/format";
 
 /**
  * CurrentDrawdownWidget
@@ -122,7 +123,7 @@ export default function CurrentDrawdownWidget(props) {
           <div className="text-3xl font-bold text-emerald-500">🎉 New Peak!</div>
         ) : (
           <div className={`text-3xl font-bold ${getDrawdownColor()}`}>
-            {currentDrawdownPercent.toFixed(1)}%
+            {formatPercent(currentDrawdownPercent)}
           </div>
         )}
       </div>
@@ -150,13 +151,13 @@ export default function CurrentDrawdownWidget(props) {
             <div
               className="absolute inset-y-0 left-0 bg-gradient-to-r from-emerald-500 via-amber-500 via-orange-500 to-rose-500 rounded-full transition-all duration-500"
               style={{ width: `${progressFill}%` }}
-              aria-label={`Current drawdown is ${progressFill.toFixed(0)}% of maximum historical drawdown`}
+              aria-label={`Current drawdown is ${formatPercent(progressFill, { dp: 0 })} of maximum historical drawdown`}
             />
           </div>
           {/* Hover tooltip */}
           <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
             <div className="bg-slate-900 text-slate-300 text-xs px-2 py-1 rounded whitespace-nowrap">
-              {progressFill.toFixed(0)}% of max DD
+              {formatPercent(progressFill, { dp: 0 })} of max DD
             </div>
           </div>
         </div>

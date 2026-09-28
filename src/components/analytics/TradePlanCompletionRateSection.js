@@ -4,6 +4,7 @@ import { cn } from "../../lib/utils";
 import { api } from "../../api/base44Client";
 import DataState from "../ui/DataState";
 import EmptyStateAction from "../ui/EmptyStateAction";
+import { formatPercent } from "../../lib/format";
 
 const RATE_GREEN_THRESHOLD = 60;
 const RATE_AMBER_THRESHOLD = 40;
@@ -36,7 +37,7 @@ function SummaryCards({ plansCreated, completionRate, plansAbandoned, abandonedP
           <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">Completion Rate</p>
         </div>
         <p className={cn("text-2xl font-bold", rateColour(completionRate ?? 0))}>
-          {completionRate != null ? `${completionRate.toFixed(1)}%` : "—"}
+          {formatPercent(completionRate)}
         </p>
       </div>
 

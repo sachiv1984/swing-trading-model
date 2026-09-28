@@ -14,6 +14,7 @@ import { createPageUrl } from "../utils";
 import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
 import { Button } from "../components/ui/button";
+import { formatCurrency, formatPercent } from "../lib/format";
 import {
   DataTable,
   TableHeader,
@@ -37,12 +38,11 @@ function formatValue(field, value) {
   if (value === null || value === undefined) return "—";
   switch (field) {
     case "realised_pnl_7d":
-      return `£${value.toFixed(2)}`;
     case "unrealised_pnl_delta_7d":
-      return `£${value.toFixed(2)}`;
+      return formatCurrency(value);
     case "compliance_score_current":
     case "compliance_score_7d_ago":
-      return `${value.toFixed(1)}%`;
+      return formatPercent(value);
     case "staleness_hours":
       return `${value.toFixed(1)} h`;
     case "as_of_utc":

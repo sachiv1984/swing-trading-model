@@ -3,13 +3,14 @@ import { formatDistanceToNow } from "date-fns";
 import { Activity } from "lucide-react";
 import { api } from "../../../api/base44Client";
 import DashboardCard from "./DashboardCard";
+import { formatR } from "../../../lib/format";
 
 function activityLabel(t) {
   if (t.exit_date || t.status === "closed") {
     const r = t.r_multiple != null ? t.r_multiple : null;
     return {
       label: `${t.ticker} closed`,
-      detail: r != null ? `(${r > 0 ? "+" : ""}${Number(r).toFixed(1)}R)` : "",
+      detail: r != null ? `(${formatR(r)})` : "",
       date: t.exit_date ?? t.updated_date,
     };
   }

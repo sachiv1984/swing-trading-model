@@ -5,6 +5,7 @@ import { Textarea } from "../ui/textarea";
 import { Loader2, BookOpen, CheckCircle2 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { api } from "../../api/base44Client";
+import { formatCurrency, formatR, currencyForMarket } from "../../lib/format";
 
 // Spec: docs/specs/frontend/pages/trade_reflection.md v0.1
 // EPIC-01, ST-02, v1.9
@@ -73,7 +74,7 @@ export default function TradeReflectionModal({ trade, open, onClose }) {
   const holdDays = trade.holding_days ?? null;
   const rMultiple = trade.r_multiple ?? null;
   const exitState = trade.exit_state ?? null;
-  const currencySymbol = trade.market === "UK" ? "£" : "$";
+  const tradeCurrency = currencyForMarket(trade.market);
 
   const exitDateFormatted = trade.exit_date
     ? new Date(trade.exit_date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
@@ -129,14 +130,14 @@ export default function TradeReflectionModal({ trade, open, onClose }) {
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <SummaryRow label="Ticker" value={<span className="text-cyan-400 font-bold">{trade.ticker}</span>} />
-              <SummaryRow label="Entry Price" value={trade.entry_price != null ? `${currencySymbol}${trade.entry_price.toFixed(2)}` : null} />
-              <SummaryRow label="Exit Price"  value={trade.exit_price  != null ? `${currencySymbol}${trade.exit_price.toFixed(2)}`  : null} />
+              <SummaryRow label="Entry Price" value={trade.entry_price != null ? formatCurrency(trade.entry_price, { currency: tradeCurrency }) : null} />
+              <SummaryRow label="Exit Price"  value={trade.exit_price  != null ? formatCurrency(trade.exit_price, { currency: tradeCurrency })  : null} />
               <SummaryRow label="Hold Time"   value={holdDays != null ? `${holdDays} day${holdDays !== 1 ? "s" : ""}` : null} />
               <SummaryRow
                 label="R-Multiple"
                 value={rMultiple != null ? (
-                  <span className={rMultiple >= 0 ? "text-emerald-400" : "text-rose-400"}>
-                    {rMultiple >= 0 ? "+" : ""}{rMultiple.toFixed(2)}R
+                  <span className={rMultiple > 0 ? "text-emerald-400" : rMultiple < 0 ? "text-rose-400" : "text-slate-300"}>
+                    {formatR(rMultiple)}
                   </span>
                 ) : null}
               />

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-28 (release planning 2026-09-28__release-v9.8 — Release Slice v9.8 ephemeral section appended, 39 items, marker `RP:v9.8:2026-09-28__release-v9.8`; no other structural changes); prior — 2026-09-28 (roadmap rebalance 2026-09-28__scheduled — 7 items added via idea intake IW-20260928-01 + 1 re-evaluated parked idea (BLG-GOV-350/351/352, BLG-SPEC-173/174, BLG-BE-130, BLG-OPS-170); 0 items archived/removed); prior — 2026-09-28 (groom backlog post-ship closure 2026-09-23__release-v9.7 — 30 items archived: 29 v9.7 shipped items + `BLG-FE-189` (already resolved, never archived); 1 ephemeral Release Slice section removed — v9.7; Spec-Debt Deep Review cadence due, ran, 0 new gaps found); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-28 (session — 1 new item added: BLG-FE-192); prior — 2026-09-28 (release planning 2026-09-28__release-v9.8 — Release Slice v9.8 ephemeral section appended, 39 items, marker `RP:v9.8:2026-09-28__release-v9.8`; no other structural changes); prior — 2026-09-28 (roadmap rebalance 2026-09-28__scheduled — 7 items added via idea intake IW-20260928-01 + 1 re-evaluated parked idea (BLG-GOV-350/351/352, BLG-SPEC-173/174, BLG-BE-130, BLG-OPS-170); 0 items archived/removed); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4236,6 +4236,26 @@ When a sprint story is phased into sub-stories (`ST-01a`/`ST-01b`/`ST-01c` — a
 **Acceptance Criteria**
 - `POST /replay/run` is categorized under a meaningful label (not `'Other'`) on the System Status dashboard
 - No other endpoint's categorization changes
+
+---
+
+### BLG-FE-192 — RecentTradesWidget icon-background badge uses two-way (>=0) colour logic for zero P&L, inconsistent with the neutral-tone convention
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-01/EPIC-01, formatting-helper migration, cycle 2026-09-28__release-v9.8 — 2026-09-28
+**Effort:** XS (<1h)
+**Provisional-Target:** Backlog (no release scheduled; P3)
+
+**Problem**
+In `src/components/dashboard/widgets/RecentTradesWidget.js` (line 36-38), the trade-row icon badge background/icon colour uses `(trade.pnl || 0) >= 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"` — a two-way threshold that colours an exact-zero P&L trade the same green as a genuine winner. This is the same "zero-P&L should render neutral, not green" bug pattern already fixed at the adjacent P&L text a few lines below (line 48, now a three-way `> 0` / `< 0` / neutral split) and fixed across several other files in the ST-01 formatting migration (v9.8). This specific site isn't a `toFixed()`/`toLocaleString()` call site, so it fell outside that migration's scope and was left unmigrated by design.
+
+**Scope**
+- Change the badge's background/icon-colour condition to the same three-way split already used for the adjacent P&L text (`trade.pnl > 0` emerald / `trade.pnl < 0` rose / else neutral slate)
+
+**Acceptance Criteria**
+- A trade with `pnl === 0` renders the icon badge in a neutral (non-green, non-rose) colour, consistent with the adjacent P&L text's own zero-P&L treatment
+- Winning (`pnl > 0`) and losing (`pnl < 0`) trades retain their existing emerald/rose badge colours
 
 ---
 

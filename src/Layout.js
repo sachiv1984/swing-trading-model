@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
+import { formatCurrency } from "./lib/format";
 import { apiFetch, api } from "./api/base44Client";
 import CommandPalette, { OPEN_COMMAND_PALETTE_EVENT } from "./components/CommandPalette";
 import CashManagementModal from "./components/cash/CashManagementModal";
@@ -707,7 +708,7 @@ export default function Layout({ children, currentPageName }) {
             <span className="flex-1 text-left">Manage Cash</span>
             {portfolioForCashModal?.cash_balance != null && (
               <span className="text-xs opacity-80">
-                £{Number(portfolioForCashModal.cash_balance).toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+                {formatCurrency(portfolioForCashModal.cash_balance)}
               </span>
             )}
           </button>

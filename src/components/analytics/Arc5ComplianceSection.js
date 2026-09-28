@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ShieldCheck, Activity, AlertTriangle, ClipboardList, Info } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { api } from "../../api/base44Client";
+import { formatPercent } from "../../lib/format";
 
 // Low-trade-volume advisory threshold (ST-01, EPIC-01, v9.2, BLG-FEAT-44).
 // Below this many all-time closed trades, the compliance stats above are
@@ -54,7 +55,7 @@ export default function Arc5ComplianceSection() {
   const showLowVolumeAdvisory =
     !isLoading && !error && metrics?.total_closed_trades != null && metrics.total_closed_trades < LOW_VOLUME_THRESHOLD;
 
-  const fmtRate = (val) => (val != null ? `${(val * 100).toFixed(1)}%` : "—");
+  const fmtRate = (val) => (val != null ? formatPercent(val * 100) : "—");
   const fmtCount = (val) => (val != null ? val.toFixed(1) : "—");
   const fmtText = (val) => (val != null ? val.replace(/_/g, " ") : "—");
 

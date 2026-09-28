@@ -1,5 +1,6 @@
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { formatCurrency, formatPercent } from "../../lib/format";
 
 export default function TopPerformers({ topWinners, topLosers }) {
   const TradeList = ({ title, trades, isWinner, icon: Icon, iconColor }) => (
@@ -23,13 +24,13 @@ export default function TopPerformers({ topWinners, topLosers }) {
                   "font-bold text-lg",
                   isWinner ? "text-emerald-400" : "text-rose-400"
                 )}>
-                  {isWinner ? "+" : "-"}£{Math.abs(trade.pnl).toFixed(2)}
+                  {formatCurrency(trade.pnl, { signed: true })}
                 </p>
                 <p className={cn(
                   "text-sm",
                   isWinner ? "text-emerald-400" : "text-rose-400"
                 )}>
-                  {isWinner ? "+" : ""}{trade.pnlPercent.toFixed(1)}%
+                  {formatPercent(trade.pnlPercent, { signed: true })}
                 </p>
               </div>
             </div>

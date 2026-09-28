@@ -1,5 +1,6 @@
 import { cn } from "../../lib/utils";
 import { ArrowDown, AlertCircle } from "lucide-react";
+import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
 
 const STATUS_ORDER = { GRACE: 0, LOSING: 1, PROFITABLE: 2 };
 
@@ -25,8 +26,6 @@ export default function PositionRiskTable({ positions = [], error }) {
       // ascending = smallest distance first = most at risk
       return (a._stopDist ?? Infinity) - (b._stopDist ?? Infinity);
     });
-
-  const currSym = (pos) => pos.market === "UK" ? "£" : "$";
 
   if (error) {
     return (
@@ -93,16 +92,16 @@ export default function PositionRiskTable({ positions = [], error }) {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-slate-300 tabular-nums">
-                    {pos.entry_price != null ? `${currSym(pos)}${Number(pos.entry_price).toFixed(2)}` : "—"}
+                    {pos.entry_price != null ? formatCurrency(pos.entry_price, { currency: currencyForMarket(pos.market) }) : "—"}
                   </td>
                   <td className="px-4 py-3 text-slate-300 tabular-nums">
-                    {pos.current_price != null ? `£${Number(pos.current_price).toFixed(2)}` : "—"}
+                    {pos.current_price != null ? formatCurrency(pos.current_price) : "—"}
                   </td>
                   <td className="px-4 py-3 text-slate-300 tabular-nums">
-                    {pos.current_stop ? `£${Number(pos.current_stop).toFixed(2)}` : "—"}
+                    {pos.current_stop ? formatCurrency(pos.current_stop) : "—"}
                   </td>
                   <td className={cn("px-4 py-3 tabular-nums font-medium", distColor)}>
-                    {dist === null ? "—" : `${dist.toFixed(1)}%`}
+                    {dist === null ? "—" : formatPercent(dist)}
                   </td>
                   <td className="px-4 py-3 text-slate-600 dark:text-slate-400 tabular-nums">
                     {pos.holding_days != null ? `${pos.holding_days}d` : "—"}

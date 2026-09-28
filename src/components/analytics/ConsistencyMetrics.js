@@ -1,4 +1,5 @@
 import { TrendingUp, BarChart3, Activity } from "lucide-react";
+import { formatCurrency, formatPercent } from "../../lib/format";
 
 export default function ConsistencyMetrics({ metrics }) {
   return (
@@ -25,7 +26,7 @@ export default function ConsistencyMetrics({ metrics }) {
             </div>
             <div>
               <p className="text-xs text-slate-600 dark:text-slate-400">Win Rate Consistency</p>
-              <p className="text-2xl font-bold text-white mt-1">{metrics.winRateStdDev.toFixed(1)}%</p>
+              <p className="text-2xl font-bold text-white mt-1">{formatPercent(metrics.winRateStdDev)}</p>
             </div>
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -40,7 +41,7 @@ export default function ConsistencyMetrics({ metrics }) {
             </div>
             <div>
               <p className="text-xs text-slate-600 dark:text-slate-400">Monthly P&L Volatility</p>
-              <p className="text-2xl font-bold text-white mt-1">£{metrics.pnlStdDev.toFixed(0)}</p>
+              <p className="text-2xl font-bold text-white mt-1">{formatCurrency(metrics.pnlStdDev)}</p>
             </div>
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400">Standard deviation of returns</p>

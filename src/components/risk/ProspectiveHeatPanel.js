@@ -5,6 +5,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { cn } from "../../lib/utils";
 import { api } from "../../api/base44Client";
+import { formatPercent } from "../../lib/format";
 
 export default function ProspectiveHeatPanel({ currentHeat }) {
   const [open, setOpen] = useState(false);
@@ -125,7 +126,7 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
                   <div>
                     <span className="text-slate-600 dark:text-slate-400 text-xs">Projected Heat</span>
                     <div className="flex items-center gap-2">
-                      <p className="font-bold text-white">{result.projected_heat_percent?.toFixed(1)}%</p>
+                      <p className="font-bold text-white">{formatPercent(result.projected_heat_percent)}</p>
                       {threshold && (
                         <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${threshold.color}`}>
                           {threshold.label}
@@ -137,7 +138,7 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
                     <div>
                       <span className="text-slate-600 dark:text-slate-400 text-xs">Delta</span>
                       <p className={cn("font-bold", delta > 0 ? "text-rose-400" : "text-emerald-400")}>
-                        {delta > 0 ? "+" : ""}{delta.toFixed(1)}%
+                        {formatPercent(delta, { signed: true })}
                       </p>
                     </div>
                   )}

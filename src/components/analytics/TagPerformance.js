@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowUpDown, TrendingUp } from "lucide-react";
 import { Badge } from "../ui/badge";
+import { formatCurrency, formatPercent } from "../../lib/format";
 
 export default function TagPerformance({ trades }) {
   const [sortBy, setSortBy] = useState("pnl");
@@ -65,8 +66,8 @@ export default function TagPerformance({ trades }) {
   // Best tag insight
   const bestTag = sortedData[0];
   const metricLabels = {
-    pnl: `highest total P&L (£${bestTag.totalPnl.toFixed(0)})`,
-    winRate: `best win rate (${bestTag.winRate.toFixed(0)}%)`,
+    pnl: `highest total P&L (${formatCurrency(bestTag.totalPnl)})`,
+    winRate: `best win rate (${formatPercent(bestTag.winRate, { dp: 0 })})`,
     count: `most trades`
   };
 
@@ -134,14 +135,14 @@ export default function TagPerformance({ trades }) {
                 </td>
                 <td className="px-6 py-4 text-right">
                   <Badge className={getWinRateColor(item.winRate)}>
-                    {item.winRate.toFixed(0)}%
+                    {formatPercent(item.winRate, { dp: 0 })}
                   </Badge>
                 </td>
-                <td className={`px-6 py-4 text-right text-sm font-medium ${item.totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {item.totalPnl >= 0 ? '+' : ''}£{item.totalPnl.toFixed(0)}
+                <td className={`px-6 py-4 text-right text-sm font-medium ${item.totalPnl > 0 ? 'text-emerald-400' : item.totalPnl < 0 ? 'text-rose-400' : 'text-slate-300'}`}>
+                  {formatCurrency(item.totalPnl, { signed: true })}
                 </td>
-                <td className={`px-6 py-4 text-right text-sm font-medium ${item.avgPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {item.avgPnl >= 0 ? '+' : ''}£{item.avgPnl.toFixed(0)}
+                <td className={`px-6 py-4 text-right text-sm font-medium ${item.avgPnl > 0 ? 'text-emerald-400' : item.avgPnl < 0 ? 'text-rose-400' : 'text-slate-300'}`}>
+                  {formatCurrency(item.avgPnl, { signed: true })}
                 </td>
               </tr>
             ))}

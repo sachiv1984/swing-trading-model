@@ -5,6 +5,7 @@ import { Label } from "../../components/ui/label";
 import { BellPlus, Trash2 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { apiFetch } from "../../api/base44Client";
+import { formatCurrency } from "../../lib/format";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
@@ -12,8 +13,7 @@ const TICKER_RE = /^[A-Z0-9.]{1,10}$/;
 
 function formatThresholdPrice(ticker, price) {
   const isUK = (ticker || "").toUpperCase().endsWith(".L");
-  const symbol = isUK ? "£" : "$";
-  return `${symbol}${Number(price).toFixed(2)}`;
+  return formatCurrency(price, { currency: isUK ? "GBP" : "USD" });
 }
 
 function ConditionText({ alert }) {

@@ -5,12 +5,12 @@ import { cn } from "../../lib/utils";
 import { apiFetch } from "../../api/base44Client";
 import DataState from "../ui/DataState";
 import EmptyStateAction from "../ui/EmptyStateAction";
+import { formatCurrency } from "../../lib/format";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
 function formatGbp(value) {
-  const sign = value >= 0 ? "+" : "−";
-  return `${sign}£${Math.abs(value).toFixed(2)}`;
+  return formatCurrency(value, { signed: true });
 }
 
 function makeDayButton(dailyPnlByDay, onDaySelect) {

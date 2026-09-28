@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { formatPercent } from "../../lib/format";
 
 export default function WinRateChart({ winRate, wins, losses }) {
   const circumference = 2 * Math.PI * 45;
@@ -46,7 +47,7 @@ export default function WinRateChart({ winRate, wins, losses }) {
             </defs>
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-3xl font-bold text-white">{winRate.toFixed(0)}%</span>
+            <span className="text-3xl font-bold text-white">{formatPercent(winRate)}</span>
           </div>
         </div>
       </div>

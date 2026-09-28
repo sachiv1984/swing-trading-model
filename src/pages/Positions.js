@@ -339,9 +339,9 @@ function DrawdownReviewPrompt() {
       </div>
       <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Current Drawdown", value: `${data.current_drawdown_pct?.toFixed(1) ?? "—"}%`, amber: true },
-          { label: "Threshold", value: `${data.threshold_pct?.toFixed(1) ?? "—"}%` },
-          { label: "Portfolio Heat", value: data.portfolio_heat_pct != null ? `${data.portfolio_heat_pct.toFixed(1)}%` : "—" },
+          { label: "Current Drawdown", value: formatPercent(data.current_drawdown_pct), amber: true },
+          { label: "Threshold", value: formatPercent(data.threshold_pct) },
+          { label: "Portfolio Heat", value: formatPercent(data.portfolio_heat_pct) },
           { label: "Regime", value: data.regime_status || "—" },
         ].map(({ label, value, amber }) => (
           <div key={label} className="bg-amber-100/60 rounded p-2">
@@ -397,7 +397,7 @@ function ConcentrationLimitsWarning() {
             {breaching_positions.map((p) => (
               <li key={p.ticker} className="text-sm text-amber-900">
                 <span className="font-semibold">{p.ticker}</span>
-                {" — "}{p.heat_pct.toFixed(1)}% of heat{" "}
+                {" — "}{formatPercent(p.heat_pct)} of heat{" "}
                 <span className="text-amber-700 text-xs">(limit: {p.limit_pct}%)</span>
               </li>
             ))}
@@ -413,7 +413,7 @@ function ConcentrationLimitsWarning() {
             {breaching_sectors.map((s) => (
               <li key={s.sector} className="text-sm text-amber-900">
                 <span className="font-semibold">{s.sector}</span>
-                {" — "}{s.concentration_pct.toFixed(1)}%{" "}
+                {" — "}{formatPercent(s.concentration_pct)}{" "}
                 <span className="text-amber-700 text-xs">(limit: {s.limit_pct}%)</span>
               </li>
             ))}

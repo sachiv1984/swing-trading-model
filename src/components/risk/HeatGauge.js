@@ -1,5 +1,6 @@
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "../ui/button";
+import { formatCurrency, formatPercent } from "../../lib/format";
 
 function ErrorCard({ onRetry }) {
   return (
@@ -87,13 +88,13 @@ export default function HeatGauge({ heatPercent, positionRisks = [], error, onRe
               fill={color}
               style={{ transition: "fill 0.4s ease" }}
             >
-              {value.toFixed(1)}%
+              {formatPercent(value)}
             </text>
             <text x={cx} y={cy + 18} textAnchor="middle" fontSize="9" fill="#64748b">
               Portfolio Heat
             </text>
             <text x={cx} y={cy + 30} textAnchor="middle" fontSize="8" fill="#475569">
-              {`£${totalAtRisk.toFixed(2)} at risk`}
+              {`${formatCurrency(totalAtRisk)} at risk`}
             </text>
           </svg>
           {/* Threshold labels */}

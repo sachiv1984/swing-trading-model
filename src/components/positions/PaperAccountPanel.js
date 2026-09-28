@@ -13,15 +13,15 @@ import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../../api/base44Client";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { formatCurrency, formatPercent } from "../../lib/format";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
-function PnlCell({ value, suffix = "" }) {
+function PnlCell({ value, kind = "currency" }) {
   if (value == null) return <span className="text-slate-600 dark:text-slate-400">—</span>;
-  const pos = value >= 0;
   return (
-    <span className={cn("font-semibold", pos ? "text-emerald-400" : "text-rose-400")}>
-      {pos ? "+" : ""}{value.toFixed(2)}{suffix}
+    <span className={cn("font-semibold", value > 0 ? "text-emerald-400" : value < 0 ? "text-rose-400" : "text-slate-300")}>
+      {kind === "percent" ? formatPercent(value, { signed: true }) : formatCurrency(value, { currency: "USD", signed: true })}
     </span>
   );
 }
@@ -107,16 +107,16 @@ export default function PaperAccountPanel() {
                     <tr key={pos.ticker} className="border-b border-slate-700/20 last:border-0">
                       <td className="py-2 pr-4 font-semibold text-slate-200">{pos.ticker}</td>
                       <td className="py-2 pr-4 text-right text-slate-300">
-                        {pos.paper_entry_price != null ? `$${pos.paper_entry_price.toFixed(2)}` : "—"}
+                        {formatCurrency(pos.paper_entry_price, { currency: "USD" })}
                       </td>
                       <td className="py-2 pr-4 text-right text-slate-300">
-                        {pos.current_market_price != null ? `$${pos.current_market_price.toFixed(2)}` : "—"}
+                        {formatCurrency(pos.current_market_price, { currency: "USD" })}
                       </td>
                       <td className="py-2 pr-4 text-right">
-                        <PnlCell value={pos.paper_pnl_usd} suffix="" />
+                        <PnlCell value={pos.paper_pnl_usd} kind="currency" />
                       </td>
                       <td className="py-2 pr-4 text-right">
-                        <PnlCell value={pos.paper_pnl_pct} suffix="%" />
+                        <PnlCell value={pos.paper_pnl_pct} kind="percent" />
                       </td>
                       <td className="py-2 pr-4 text-right text-slate-600 dark:text-slate-400">
                         {formatDate(pos.date_opened)}

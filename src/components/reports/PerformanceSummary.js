@@ -1,55 +1,57 @@
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Target, Shield, DollarSign, Percent } from "lucide-react";
+import { formatCurrency } from "../../lib/format";
 
 export default function PerformanceSummary({ metrics, period }) {
+  const netPnL = metrics.totalPnL - metrics.totalFees;
   const summaryItems = [
     {
       label: "Gross Profit",
-      value: `£${metrics.grossProfit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatCurrency(metrics.grossProfit),
       icon: TrendingUp,
       color: "text-emerald-400"
     },
     {
       label: "Gross Loss",
-      value: `£${metrics.grossLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatCurrency(metrics.grossLoss),
       icon: TrendingDown,
       color: "text-rose-400"
     },
     {
       label: "Average Win",
-      value: `£${metrics.avgWin.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatCurrency(metrics.avgWin),
       icon: Target,
       color: "text-cyan-400"
     },
     {
       label: "Average Loss",
-      value: `£${metrics.avgLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatCurrency(metrics.avgLoss),
       icon: Shield,
       color: "text-amber-400"
     },
     {
       label: "Best Trade",
-      value: `£${metrics.bestTrade.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatCurrency(metrics.bestTrade),
       icon: TrendingUp,
       color: "text-emerald-400"
     },
     {
       label: "Worst Trade",
-      value: `£${metrics.worstTrade.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatCurrency(metrics.worstTrade),
       icon: TrendingDown,
       color: "text-rose-400"
     },
     {
       label: "Total Fees",
-      value: `£${metrics.totalFees.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatCurrency(metrics.totalFees),
       icon: DollarSign,
       color: "text-slate-600 dark:text-slate-400"
     },
     {
       label: "Net P&L",
-      value: `£${(metrics.totalPnL - metrics.totalFees).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatCurrency(netPnL),
       icon: Percent,
-      color: metrics.totalPnL - metrics.totalFees >= 0 ? "text-emerald-400" : "text-rose-400"
+      color: netPnL > 0 ? "text-emerald-400" : netPnL < 0 ? "text-rose-400" : "text-slate-300"
     }
   ];
 

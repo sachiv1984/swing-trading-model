@@ -10,6 +10,7 @@ import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
 import { Skeleton } from "../components/ui/skeleton";
 import { cn } from "../lib/utils";
+import { formatCurrency, formatPercent } from "../lib/format";
 import {
   RefreshCw,
   ChevronUp,
@@ -51,26 +52,25 @@ function isStale(isoString) {
   return diff > STALE_HOURS * 3600000;
 }
 
-function currencySymbol(currency) {
-  if (!currency) return "$";
-  if (currency === "GBP" || currency === "GBp") return "£";
-  return "$";
+// Screener rows only ever carry GBP/GBp (LSE, pence-quoted symbol collapses to the same £ display) or USD.
+function screenerCurrency(currency) {
+  return currency === "GBP" || currency === "GBp" ? "GBP" : "USD";
 }
 
 function formatPrice(value, currency) {
   if (value == null) return "—";
-  return `${currencySymbol(currency)}${Number(value).toFixed(2)}`;
+  return formatCurrency(value, { currency: screenerCurrency(currency) });
 }
 
 function formatATR(atr, atrPct, currency) {
   if (atr == null) return "—";
-  const pct = atrPct != null ? ` (${(atrPct * 100).toFixed(1)}%)` : "";
-  return `${currencySymbol(currency)}${Number(atr).toFixed(2)}${pct}`;
+  const pct = atrPct != null ? ` (${formatPercent(atrPct * 100)})` : "";
+  return `${formatCurrency(atr, { currency: screenerCurrency(currency) })}${pct}`;
 }
 
 function formatSignal(score) {
   if (score == null) return "—";
-  return `${(score * 100).toFixed(0)}%`;
+  return formatPercent(score * 100, { dp: 0 });
 }
 
 function entryZoneLabel(proximity) {

@@ -1,4 +1,5 @@
 import { cn } from "../../lib/utils";
+import { formatCurrency, formatPercent } from "../../lib/format";
 
 export default function ExitReasonTable({ exitReasonData }) {
   return (
@@ -21,20 +22,20 @@ export default function ExitReasonTable({ exitReasonData }) {
               <tr key={idx} className="border-b border-slate-700/30 hover:bg-slate-800/30 transition-colors">
                 <td className="py-3 px-4 text-sm text-white font-medium">{row.reason}</td>
                 <td className="py-3 px-4 text-sm text-slate-300 text-right">{row.count}</td>
-                <td className="py-3 px-4 text-sm text-slate-300 text-right">{row.winRate.toFixed(1)}%</td>
+                <td className="py-3 px-4 text-sm text-slate-300 text-right">{formatPercent(row.winRate)}</td>
                 <td className={cn(
                   "py-3 px-4 text-sm font-semibold text-right",
-                  row.totalPnl >= 0 ? "text-emerald-400" : "text-rose-400"
+                  row.totalPnl > 0 ? "text-emerald-400" : row.totalPnl < 0 ? "text-rose-400" : "text-slate-300"
                 )}>
-                  {row.totalPnl >= 0 ? "+" : ""}£{row.totalPnl.toFixed(2)}
+                  {formatCurrency(row.totalPnl, { signed: true })}
                 </td>
                 <td className={cn(
                   "py-3 px-4 text-sm font-semibold text-right",
-                  row.avgPnl >= 0 ? "text-emerald-400" : "text-rose-400"
+                  row.avgPnl > 0 ? "text-emerald-400" : row.avgPnl < 0 ? "text-rose-400" : "text-slate-300"
                 )}>
-                  {row.avgPnl >= 0 ? "+" : ""}£{row.avgPnl.toFixed(2)}
+                  {formatCurrency(row.avgPnl, { signed: true })}
                 </td>
-                <td className="py-3 px-4 text-sm text-slate-300 text-right">{row.percentage.toFixed(1)}%</td>
+                <td className="py-3 px-4 text-sm text-slate-300 text-right">{formatPercent(row.percentage)}</td>
               </tr>
             ))}
           </tbody>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { formatCurrency, formatR } from "../../lib/format";
 
 const EXIT_REASON_LABELS = {
   stop_hit: "Stop Hit",
@@ -79,7 +80,7 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
                 >
                   <p className="text-xs font-medium text-white/90">{month.month}</p>
                   <p className="text-sm font-bold text-white mt-1">
-                    {month.pnl >= 0 ? "+" : ""}£{month.pnl.toFixed(0)}
+                    {formatCurrency(month.pnl, { signed: true })}
                   </p>
                   <p className="text-xs text-white/70 mt-1">{month.trades} trades</p>
                 </div>
@@ -92,9 +93,9 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
                       <p className="font-semibold text-white">{month.month}</p>
                       <p className={cn(
                         "font-medium",
-                        month.pnl >= 0 ? "text-emerald-400" : "text-rose-400"
+                        month.pnl > 0 ? "text-emerald-400" : month.pnl < 0 ? "text-rose-400" : "text-slate-300"
                       )}>
-                        P&L: {month.pnl >= 0 ? "+" : ""}£{month.pnl.toFixed(2)}
+                        P&L: {formatCurrency(month.pnl, { signed: true })}
                       </p>
                       <p className="text-slate-300">Trades: {month.trades}</p>
                       <p className="text-slate-300">Win Rate: {month.winRate}%</p>
@@ -162,9 +163,9 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
                 {" · "}Total P&L:{" "}
                 <span className={cn(
                   "font-medium",
-                  modalTotalPnl >= 0 ? "text-emerald-400" : "text-rose-400"
+                  modalTotalPnl > 0 ? "text-emerald-400" : modalTotalPnl < 0 ? "text-rose-400" : "text-slate-300"
                 )}>
-                  {modalTotalPnl >= 0 ? "+" : ""}£{modalTotalPnl.toFixed(2)}
+                  {formatCurrency(modalTotalPnl, { signed: true })}
                 </span>
               </p>
             </div>
@@ -196,13 +197,13 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
                         </td>
                         <td className={cn(
                           "px-4 py-3 text-sm text-right font-medium",
-                          trade.pnl >= 0 ? "text-emerald-400" : "text-rose-400"
+                          trade.pnl > 0 ? "text-emerald-400" : trade.pnl < 0 ? "text-rose-400" : "text-slate-300"
                         )}>
-                          {trade.pnl >= 0 ? "+" : ""}£{trade.pnl.toFixed(2)}
+                          {formatCurrency(trade.pnl, { signed: true })}
                         </td>
                         <td className="px-4 py-3 text-sm text-right text-slate-300">
                           {r !== null
-                            ? <span className={r >= 0 ? "text-emerald-400" : "text-rose-400"}>{r.toFixed(2)}R</span>
+                            ? <span className={r > 0 ? "text-emerald-400" : r < 0 ? "text-rose-400" : "text-slate-300"}>{formatR(r)}</span>
                             : <span className="text-slate-600 dark:text-slate-400">—</span>
                           }
                         </td>

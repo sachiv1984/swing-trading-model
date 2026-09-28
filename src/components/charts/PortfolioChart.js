@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 import { Loader2 } from "lucide-react";
+import { formatCurrency } from "../../lib/format";
 
 export default function PortfolioChart() {
   const { data: historyData, isLoading } = useQuery({
@@ -94,7 +95,7 @@ export default function PortfolioChart() {
                 itemStyle={{ color: '#f1f5f9' }}
                 formatter={(value, name) => {
                   const label = name === 'value' ? 'Value' : name === 'pnl' ? 'P&L' : name;
-                  return [`£${value.toLocaleString()}`, label];
+                  return [formatCurrency(value), label];
                 }}
               />
               <Area

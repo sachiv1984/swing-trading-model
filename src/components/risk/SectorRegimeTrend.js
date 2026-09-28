@@ -10,6 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { formatPercent } from "../../lib/format";
 
 const DEFAULT_TREND_WEEKS = 12;
 const SECTOR_COLOURS = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"];
@@ -37,7 +38,7 @@ function SectorTrendTooltip({ active, payload, label }) {
       <p className="font-semibold text-white mb-1">{label}</p>
       {payload.map((p) => (
         <p key={p.dataKey} className="text-slate-300">
-          {p.dataKey}: <span className="font-medium text-white">{p.value.toFixed(1)}%</span>
+          {p.dataKey}: <span className="font-medium text-white">{formatPercent(p.value)}</span>
         </p>
       ))}
     </div>

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine } from "recharts";
 import { motion } from "framer-motion";
+import { formatCurrency } from "../../lib/format";
 
 export default function PortfolioGrowthChart({ positions, period, periodDates }) {
   const chartData = useMemo(() => {
@@ -115,7 +116,7 @@ export default function PortfolioGrowthChart({ positions, period, periodDates })
               labelStyle={{ color: '#94a3b8' }}
               formatter={(value, name) => {
                 if (name === 'pnl') {
-                  return [`£${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, 'P&L'];
+                  return [formatCurrency(value, { signed: true }), 'P&L'];
                 }
                 return [value, name];
               }}

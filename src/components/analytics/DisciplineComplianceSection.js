@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { BookOpen, Target, BarChart2, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { api } from "../../api/base44Client";
+import { formatPercent } from "../../lib/format";
 
 function ComplianceCard({ title, value, subLabel, icon: CardIcon, gradient, isLoading, isError }) {
   const Icon = CardIcon;
@@ -47,8 +48,8 @@ export default function DisciplineComplianceSection({ period }) {
   const noData = tradeCount === 0;
 
   // Backend returns percentages (0–100), 1dp for rates, 2dp for position size
-  const fmtRate = (val) => (val != null && !noData ? `${val.toFixed(1)}%` : "—");
-  const fmtSize = (val) => (val != null && !noData ? `${val.toFixed(2)}%` : "—");
+  const fmtRate = (val) => (val != null && !noData ? formatPercent(val) : "—");
+  const fmtSize = (val) => (val != null && !noData ? formatPercent(val, { dp: 2 }) : "—");
 
   const tradeSubLabel = tradeCount > 0 ? `last ${tradeCount} trades` : null;
   const sizeSubLabel = tradeCount > 0 ? `of portfolio, last ${tradeCount} trades` : null;

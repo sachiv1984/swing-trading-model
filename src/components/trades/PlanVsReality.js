@@ -11,6 +11,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../../api/base44Client";
 import { cn } from "../../lib/utils";
+import { formatPercent, formatR } from "../../lib/format";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -115,8 +116,8 @@ export default function PlanVsReality({ tradeId }) {
           lifecycle_state_at_exit, plan_adherence_flag, deviation_note } = data;
 
   const rClass = rColourClass(r_achieved, r_target);
-  const rAchievedLabel = r_achieved != null ? `${r_achieved >= 0 ? "+" : ""}${r_achieved.toFixed(2)}R` : "—";
-  const rTargetLabel   = r_target   != null ? `Target: ${r_target.toFixed(2)}R` : "No R target set";
+  const rAchievedLabel = r_achieved != null ? formatR(r_achieved) : "—";
+  const rTargetLabel   = r_target   != null ? `Target: ${formatR(r_target, { target: true })}` : "No R target set";
 
   return (
     <div className="space-y-2.5" data-testid="plan-vs-reality-section">
@@ -155,7 +156,7 @@ export default function PlanVsReality({ tradeId }) {
             <CompRow
               label="Entry Delta"
               planned="—"
-              actual={`${entry_delta_pct >= 0 ? "+" : ""}${entry_delta_pct.toFixed(2)}%`}
+              actual={formatPercent(entry_delta_pct, { signed: true, dp: 2 })}
               actualClass={entry_delta_pct <= 0 ? "text-emerald-400" : "text-rose-400"}
             />
           ) : (
@@ -178,8 +179,8 @@ export default function PlanVsReality({ tradeId }) {
           {r_delta != null && (
             <div className="pt-2 border-t border-slate-700/30 text-xs text-slate-600 dark:text-slate-400">
               R delta:{" "}
-              <span className={r_delta >= 0 ? "text-emerald-400 font-semibold" : "text-rose-400 font-semibold"}>
-                {r_delta >= 0 ? "+" : ""}{r_delta.toFixed(2)}R vs target
+              <span className={r_delta > 0 ? "text-emerald-400 font-semibold" : r_delta < 0 ? "text-rose-400 font-semibold" : "text-slate-300 font-semibold"}>
+                {formatR(r_delta)} vs target
               </span>
             </div>
           )}
