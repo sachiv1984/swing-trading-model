@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-09-19 (roadmap rebalance 2026-09-19__scheduled — appended row for DL-080, refreshed sparkline (rescaled: new min 0.046)); prior — 2026-09-14 (roadmap rebalance 2026-09-14__scheduled — appended row for DL-079, refreshed sparkline, new min 0.092); prior — 2026-08-11 (roadmap rebalance 2026-08-11__scheduled — appended row for DL-078, refreshed sparkline); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-28 (roadmap rebalance 2026-09-28__scheduled — appended row for DL-081, refreshed sparkline (0.089, min/max unchanged)); prior — 2026-09-19 (roadmap rebalance 2026-09-19__scheduled — appended row for DL-080, refreshed sparkline (rescaled: new min 0.046)); prior — 2026-09-14 (roadmap rebalance 2026-09-14__scheduled — appended row for DL-079, refreshed sparkline, new min 0.092); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-22 (BLG-FEAT-72, EPIC-06, v8.5)
 
@@ -19,7 +19,7 @@ This file is the structured, durable record going forward: one row per rebalance
 ## Sparkline (all readings, chronological, ▁=0.046 min · █=0.42 max recorded)
 
 ```
-▇▇▇▆▆▅▄▄▆▆▅▇██▇▂▂▁
+▇▇▇▆▆▅▄▄▆▆▅▇██▇▂▂▁▂
 ```
 
 ## History
@@ -44,6 +44,7 @@ This file is the structured, durable record going forward: one row per rebalance
 | 2026-08-11__scheduled | 2026-08-11 | 0.110 | 🔴 Alert (first time below 0.30 floor since 2026-07-12) | 14 | 30 | 80 | 3 | 127 | v8.1-v8.5 | DL-078 |
 | 2026-09-14__scheduled | 2026-09-14 | 0.092 | 🔴 Alert (2nd consecutive Alert-tier reading, new low) | 16 | 48 | 110 | 0 | 174 | v8.9-v9.3 | DL-079 |
 | 2026-09-19__scheduled | 2026-09-19 | 0.046 | 🔴 Alert (3rd consecutive Alert-tier reading, new low) | 9 | 60 | 122 | 4 | 195 | v9.1-v9.5 | DL-080 |
+| 2026-09-28__scheduled | 2026-09-28 | 0.089 | 🔴 Alert (4th consecutive Alert-tier reading, improved from prior low) | 14 | 36 | 104 | 4 | 158 | v9.3-v9.7 | DL-081 |
 
 **Consecutive Advisory-tier streak (broken 2026-08-11):** The prior 3-reading Advisory streak (2026-07-24, 2026-07-27, 2026-07-28) ended this reading — not because it improved to Healthy, but because it dropped through Advisory straight into 🔴 Alert. Per `roadmap_prompt.md` STEP 2.4's Alert-tier rule (stronger than the sustained-Advisory clause), this reading independently mandates a pull-forward with explicit PO written response — see `cycle_record.md` 2026-08-11__scheduled STEP 2.4/STEP 7.1 for the combined response (this reading's root cause is the same one driving the concurrent Skill-Silo mandatory-pull-forward trigger).
 
@@ -51,7 +52,9 @@ This file is the structured, durable record going forward: one row per rebalance
 
 **3rd consecutive Alert-tier reading (2026-09-19):** 0.046 (window v9.1-v9.5, U=9/G=60/D=122/P=4 of 195) — a new low, down from 0.092. The 5 U-stories in v9.1 remain in this window but roll out at the next reading; with only `BLG-FEAT-96`/`97` (P2, committed at this rebalance) as the next release's U-items, the v9.2-v9.6 window is projected at roughly 6 U of ~182 stories ≈ 0.033, i.e. the ratio is expected to stay in Alert for at least the next 3 readings by construction. The PO response this reading is **Modify** (commit ≥2 build-and-ship U-items) rather than accept-shortfall; the measurement question — the `D` bucket is 122 of 195 stories and cannot distinguish user-protective from hygiene debt — is routed to `BLG-GOV-339`. See `cycle_record.md` 2026-09-19__scheduled STEP 2.4.
 
-**Most recent scheduled rebalance:** 2026-09-19__scheduled — this history is current as of that run.
+**4th consecutive Alert-tier reading, but the first improvement since the Alert began (2026-09-28):** 0.089 (window v9.3-v9.7, U=14/G=36/D=104/P=4 of 158) — up from the 0.046 low, roughly double, because the prior reading's own commitment actually landed: v9.6 shipped 8 U-stories and v9.7 shipped 5 more (13 of the 14 U-stories in this window), directly reflecting the `BLG-FEAT-96`/`97`/`98` pull-forward plus v9.7's own build-and-ship EPICs. Still below the 0.30 floor, so the Alert-tier mandatory-response rule still applies; PO response **Modify** (reaffirmed) — the next `plan release` must again seat ≥1-2 build-and-ship U-items, with no specific item named yet since no release is currently being scoped (Now horizon empty). See `cycle_record.md` 2026-09-28__scheduled STEP 2.4.
+
+**Most recent scheduled rebalance:** 2026-09-28__scheduled — this history is current as of that run.
 
 ## Backfill Method
 

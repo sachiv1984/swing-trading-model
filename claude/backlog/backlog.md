@@ -5,8 +5,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-28 (groom backlog post-ship closure 2026-09-23__release-v9.7 — 30 items archived: 29 v9.7 shipped items + `BLG-FE-189` (already resolved, never archived); 1 ephemeral Release Slice section removed — v9.7; Spec-Debt Deep Review cadence due, ran, 0 new gaps found); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 STEP 6 — 1 new item added: BLG-FE-191, SystemStatus.js categorizeEndpoint() /replay gap, Endpoint Coverage Drift Check); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 STEP 3 — 29 items marked ✅ COMPLETE); prior history retained — see prior entries in version control.
-**Last rebalance:** 2026-09-19 (cycle 2026-09-19__scheduled — DL-080; 0 active initiatives, CPS=N/A; idea intake IW-20260919-01 (44 submissions, 22 agents): 41 Promoted-Backlog (36 items after 4 consolidations), 2 Parked-cycle-1, 1 Rejected; PVR 0.046 🔴 Alert (3rd consecutive, new low, U=9/G=60/D=122/P=4 of 195, window v9.1–v9.5); Skill-Silo 98.8% (5th consecutive worsening) — PO committed `BLG-FEAT-96`/`97` (P2) as the ≥2 build-and-ship U-items; STEP 8.1 Option (b) defer, 6th consecutive)
+**Last Updated:** 2026-09-28 (roadmap rebalance 2026-09-28__scheduled — 7 items added via idea intake IW-20260928-01 + 1 re-evaluated parked idea (BLG-GOV-350/351/352, BLG-SPEC-173/174, BLG-BE-130, BLG-OPS-170); 0 items archived/removed); prior — 2026-09-28 (groom backlog post-ship closure 2026-09-23__release-v9.7 — 30 items archived: 29 v9.7 shipped items + `BLG-FE-189` (already resolved, never archived); 1 ephemeral Release Slice section removed — v9.7; Spec-Debt Deep Review cadence due, ran, 0 new gaps found); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 STEP 6 — 1 new item added: BLG-FE-191, SystemStatus.js categorizeEndpoint() /replay gap, Endpoint Coverage Drift Check); prior history retained — see prior entries in version control.
+**Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -4236,5 +4236,151 @@ When a sprint story is phased into sub-stories (`ST-01a`/`ST-01b`/`ST-01c` — a
 **Acceptance Criteria**
 - `POST /replay/run` is categorized under a meaningful label (not `'Other'`) on the System Status dashboard
 - No other endpoint's categorization changes
+
+---
+
+### BLG-GOV-350 — Five near-duplicate "AI adoption window" gate-criteria texts should be one canonical shared reference
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Idea intake `IW-20260928-01` (`IDEA-head-of-specs-20260928-01`), roadmap rebalance `2026-09-28__scheduled` STEP 3.1/4 — 2026-09-28
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`BLG-FEAT-59`, `BLG-FEAT-60`, `BLG-FE-84`, `BLG-FEAT-63`, and `BLG-OPS-88` each carry their own copy of the same "AI adoption window verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence)" gate text, each with a slightly different owner clause. This is the same class of drift risk the Candidate/Item Backlog-Status Verification Subroutine (`BLG-GOV-324`) was extracted to prevent for procedure text — here it is gate-criteria prose, so a future update to the review's schedule or scope must be hand-propagated across 5 separate items or silently drift.
+
+**Scope**
+- Define one canonical gate reference (e.g. a named gate ID in `current_roadmap.md` §6 or a shared backlog convention) that all 5 items point to by reference
+- Update the 5 items' `**Gate criteria:**` fields to cite the canonical reference instead of restating it
+
+**Acceptance Criteria**
+- A single canonical statement of the 2026-09-24 AI adoption review gate exists
+- All 5 affected items reference it rather than restating it
+
+---
+
+### BLG-GOV-351 — No scheduled trigger/owner fires the 90-day post-ship AI feature usage review (BLG-GOV-74/140/141/142 cluster)
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** Idea intake `IW-20260928-01` (`IDEA-head-of-specs-20260928-02`), roadmap rebalance `2026-09-28__scheduled` STEP 3.1 — found the review 4 days overdue with no artefact filed — 2026-09-28
+**Effort:** S (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+`BLG-FEAT-59/60/63`, `BLG-FE-84`, `BLG-OPS-88`, and `BLG-GOV-140/141/142` all gate on a 90-day post-v6.2-ship (2026-06-25) AI feature usage/cost review due 2026-09-24. As of this rebalance (2026-09-28, 4 days past due), no review record exists in `docs/ops/` or `backlog_archive.md`, and no governed routine (roadmap, release planning, post-ship closure) currently has a STEP that fires this review on its own schedule — it only surfaces reactively when a rebalance's STEP 3.1 date-lapse scan happens to notice the gate text.
+
+**Scope**
+- Decide which routine should own firing this review (post-ship closure's own cadence checks are the most natural fit, since the trigger is release-relative) and add an explicit STEP
+- Alternatively/additionally, add a lightweight scheduled reminder (mirrors the quarterly AI-copy boundary-scan cadence, `docs/ops/quarterly_ai_copy_boundary_scan_cadence.md`)
+- Once triggered, actually conduct the review (real adoption/cost data) — out of scope for this item itself, which is only the trigger mechanism
+
+**Acceptance Criteria**
+- A named routine/step fires this review automatically at the 90-day mark, without depending on a rebalance's incidental date-lapse scan to notice it
+- The 8 downstream gated items above have a concrete path to resolution once the review runs
+
+---
+
+### BLG-SPEC-173 — Column provenance annotations in data_model.md (user-entered / derived / system-stamped)
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Data Model & Domain Schema Owner
+**Source:** `IDEA-data-model-20260919-02` (window `IW-20260919-01`), re-evaluated and cleared at roadmap rebalance `2026-09-28__scheduled` STEP 4.0 — gate (`BLG-SPEC-150` disposition) shipped v9.7 — 2026-09-28
+**Effort:** S (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model.md` documents each column's name, type, and nullability but not its provenance — whether a field is user-entered, derived/computed, or system-stamped. Analytics and future migration work has no canonical way to know which fields are safe to recompute versus which represent an authoritative user input, short of reading the originating service code each time. This was previously blocked on `BLG-SPEC-150`'s disposition of 4 orphaned `positions` columns (annotating provenance before that triage would have documented columns about to be dropped) — that triage shipped v9.7 (ST-25), clearing the dependency.
+
+**Scope**
+- Add a provenance column/tag (user-entered / derived / system-stamped) to each table's field documentation in `data_model.md`
+- Start with `positions` and `trade_plans` (highest-traffic tables); expand to others opportunistically
+
+**Acceptance Criteria**
+- `positions` and `trade_plans` tables in `data_model.md` carry a provenance annotation per field
+- No field is left ambiguous between user-entered and derived without an explicit note
+
+---
+
+### BLG-SPEC-174 — No adoption/usage counter for the AI-assisted monthly P&L narrative feature
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Financial Reporting & Records Owner
+**Source:** Idea intake `IW-20260928-01` (`IDEA-financial-reporting-20260928-01`), roadmap rebalance `2026-09-28__scheduled` STEP 4 — 2026-09-28
+**Effort:** S (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+`BLG-FEAT-59`'s gate (AI adoption window verification, part of the `BLG-GOV-351` cluster above) requires the Financial Reporting & Records Owner to "confirm usage patterns have stabilised," but no mechanism logs how often the AI-assisted monthly P&L narrative feature is actually used — every prior review of this gate has relied on ad hoc estimation rather than a real count.
+
+**Scope**
+- Add a lightweight usage/adoption counter (e.g. a log row or counter column) recorded whenever the AI-assisted monthly P&L narrative is generated
+- Document the field in `data_model.md` and cite it as the authoritative source for future `BLG-FEAT-59`-style adoption reviews
+
+**Acceptance Criteria**
+- A real, queryable count of AI-assisted monthly P&L narrative generations exists
+- The `BLG-FEAT-59` gate criteria is updated to cite this count as its evidence source instead of an estimate
+
+---
+
+### BLG-BE-130 — Extend the v9.7 float→Decimal fee-rounding audit to tax-year statement calculations
+**Priority:** P3 (Low)
+**Type:** Backend Debt
+**Owner:** Backend Engineering Patterns Owner; Financial Reporting & Records Owner
+**Source:** Idea intake `IW-20260928-01` (`IDEA-financial-reporting-20260928-02`), roadmap rebalance `2026-09-28__scheduled` STEP 4 — 2026-09-28
+**Effort:** S (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+v9.7 (ST-08) moved trade-fee rounding from float to Decimal, following the v9.6 float-vs-Decimal money-arithmetic audit (`BLG-BE-127`, ST-12) that found a real rounding-boundary bug. The tax-year statement / carried-forward-loss calculation path (`docs/specs/pnl_export_reconciliation.md`, the design-only carried-forward-loss field from v9.4 ST-17) has not been audited against the same class of float-rounding risk at half-penny/cent boundaries.
+
+**Scope**
+- Apply the same rounding-boundary audit method (`docs/ops/money_arithmetic_audit_2026-09-22.md`) to the tax-year statement and carried-forward-loss calculation code paths
+- Fix any Decimal-vs-float boundary bugs found, following the v9.7 ST-08 pattern
+
+**Acceptance Criteria**
+- Tax-year statement and carried-forward-loss calculations are confirmed Decimal-consistent at rounding boundaries, or a specific gap is filed with the same rigor as `BLG-BE-127`
+
+---
+
+### BLG-OPS-170 — No documented allow-list of pre-approved read-only staging-DB query patterns for governed-session gate re-checks
+**Priority:** P3 (Low)
+**Type:** Operations / Governance Process
+**Owner:** Infrastructure & Operations Owner
+**Source:** Idea intake `IW-20260928-01` (`IDEA-infra-ops-20260928-01`), roadmap rebalance `2026-09-28__scheduled` STEP 4 — 2026-09-28
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`BLG-OPS-121` (v9.5, ST-14) provisioned a read-only Postgres role on the staging database for governed sessions, and `roadmap_prompt.md` STEP 2.3 permits its opportunistic use for a single aggregate read, cited as staging context only. Each session that considers using it must re-derive from scratch which specific query patterns are appropriate (aggregate counts only, no row-level data, etc.) and, per current practice (this cycle included), often defers or asks for confirmation rather than proceeding, since no single document states the boundary explicitly. This is distinct from the already-settled "no production credential provisioning" standing decision (`BLG-GOV-279`, ST-15) — this concerns the *staging* credential's usage boundaries, which is provisioned and available but under-specified.
+
+**Scope**
+- Document a short, explicit allow-list of query shapes considered pre-approved for governed-session use against the staging read-only role (e.g. `SELECT COUNT(*)` aggregates against named tables) in `docs/infrastructure/staging_setup.md` §8
+- Note what is out of scope (row-level reads, any table not already named in an existing gate condition)
+
+**Acceptance Criteria**
+- `docs/infrastructure/staging_setup.md` §8 states which query patterns a governed session may run against the staging read-only role without seeking additional confirmation each time
+
+---
+
+### BLG-GOV-352 — Rebalance diagnostic tallies (STEP 2.4/7.1/7.2) are recomputed by hand each cycle
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** Idea intake `IW-20260928-01` (`IDEA-infra-ops-20260928-02`), roadmap rebalance `2026-09-28__scheduled` STEP 4 — 2026-09-28
+**Effort:** M (~2d)
+**Provisional-Target:** TBD
+
+**Problem**
+`roadmap_prompt.md` STEP 2.4 (Product Value Ratio), STEP 7.1 (Skill-Silo Alert), and STEP 7.2 (Cross-Role Workload Balance) each require manually re-reading several `docs/product/changelog.md`/`sprint_backlog.md` files per rebalance and hand-tallying U/G/D/P tags or `**Owner:**` field text. This is exactly the transcription-variance risk STEP 2.4's own "read the tag, don't re-derive it" rule already flags for the U/G/D/P classification itself — the tallying step downstream of reading the tags carries the same risk and is not mechanized.
+
+**Scope**
+- Write `scripts/compute_rebalance_diagnostics.py` that reads the relevant changelog/sprint_backlog files for a given cycle window and outputs the STEP 2.4/7.1/7.2 tallies
+- Wire it as an optional-but-recommended step in `roadmap_prompt.md`'s own STEP 2.4/7.1/7.2 instructions (advisory — a routine without script access must still be able to perform the tally manually)
+
+**Acceptance Criteria**
+- The script reproduces this cycle's STEP 2.4 (14/36/104/4 of 158) and STEP 7.1 (85.7% rolling average) figures exactly, given the same input files
+- `roadmap_prompt.md` references the script as an optional acceleration, not a hard dependency
 
 ---
