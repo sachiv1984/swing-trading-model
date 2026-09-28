@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-03-18
+**Version:** 1.2
+**Last Updated:** 2026-09-28 (v9.8 design gate — ST-04/BLG-FE-191: new §Endpoint Test Category Labels documenting the endpoint-test-grid categorisation scheme, including the new Replay category); prior — 2026-03-18 (initial spec).
+**Design Source (v1.2 endpoint category labels):** docs/design/2026-09-28__release-v9.8/system-status-replay-categorisation/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose & User Goals
@@ -73,6 +74,33 @@ Each card includes:
 - Health indicator icons  
 - Timestamp labels  
 - Error explanation text blocks  
+
+---
+
+## Endpoint Test Category Labels (v1.2 — ST-04, EPIC-01, v9.8, BLG-FE-191)
+
+**Design source:** docs/design/2026-09-28__release-v9.8/system-status-replay-categorisation/decision_record.md
+
+The endpoint test grid (`Tests {N} endpoints`, CLAUDE.md §2) groups each tested endpoint into a category chip via `categorizeEndpoint()` (`SystemStatus.js`), most-specific-pattern-first, falling back to `Other` when nothing matches:
+
+| Category | Match | Icon | Colour |
+|----------|-------|------|--------|
+| Analytics | `/analytics` | `BarChart3` | violet |
+| Validation | `/validate` | `Shield` | emerald |
+| Alerts | `/alerts`, `/price-alerts` | `Bell` | rose |
+| Notifications | `/notifications` | `BellRing` | orange |
+| Digest | `/digest` | `Mail` | teal |
+| Portfolio | `/position`, `/portfolio` | `Database` | green |
+| Trading | `/trades`, `/saved-filters` | `Activity` | cyan |
+| Cash Management | `/cash` | `Zap` | amber |
+| Market Data | `/signals`, `/market` | `Globe` | indigo |
+| Configuration | `/settings` | `Settings` | purple |
+| AI | `/ai` | — | (no dedicated icon/colour entry; renders with `Other`'s styling under its own `"AI"` label — pre-existing gap, out of this story's scope) |
+| Replay | `/replay` | `RefreshCw` | pink |
+| Core | `/health`, exact `GET /`, `/changelog` | `Server` | blue |
+| Other | anything else | `HelpCircle` | slate |
+
+This section records the current scheme as of v9.8; it does not attempt to reconcile the rest of this page's spec (written for an earlier, higher-level health-card view) with the shipped endpoint-test-grid feature.
 
 ---
 

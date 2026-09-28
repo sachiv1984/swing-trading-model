@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.8
-**Last Updated:** 2026-09-21 (v9.6 design gate — ST-03/BLG-FEAT-97: new §CSV Export, Page Header action group updated); prior — 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "Your watchlist is empty." heading to drop the trailing period, matching already-shipped `Watchlist.js`; documentation-only); prior history retained — see prior entries in version control.
+**Version:** 0.9
+**Last Updated:** 2026-09-28 (v9.8 design gate — ST-02/BLG-FE-185: new §Column Definition Architecture note — `WATCHLIST_COLUMNS` is the single source for header, body cell and CSV value; no visual change); prior — 2026-09-21 (v9.6 design gate — ST-03/BLG-FEAT-97: new §CSV Export, Page Header action group updated); prior — 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "Your watchlist is empty." heading to drop the trailing period, matching already-shipped `Watchlist.js`; documentation-only); prior history retained — see prior entries in version control.
+**Design Source (v0.9 column architecture):** docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md
 **Design Source (v0.8 CSV export):** docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/watchlist/ux_spec.md
@@ -284,10 +285,19 @@ A secondary (outline) **"Download CSV"** button with the download icon — same 
 
 ---
 
+## Column Definition Architecture (v0.9 — ST-02, EPIC-01, v9.8, BLG-FE-185)
+
+**Design source:** docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md
+
+`WATCHLIST_COLUMNS` (`src/components/watchlist/WatchlistTable.js`) is the single definition consumed by the table header, each body cell's render logic, and the CSV export (§CSV Export) — one definition per column, not three independently-maintained ones. Internal architecture note; no visual output changes as a result.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.9 | 2026-09-28 | v9.8 design gate — ST-02 (EPIC-01, BLG-FE-185): added §Column Definition Architecture — `WATCHLIST_COLUMNS` documented as the single source for header, body cell and CSV value. No visual change. Design source: `docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md`. Authority: Head of Specs Team. |
 | 0.8 | 2026-09-21 | v9.6 design gate — ST-03 (EPIC-01, BLG-FEAT-97): added §CSV Export and updated the Page Header action group — "Download CSV" button; exports displayed rows and the `TABLE_HEADERS` columns excluding checkbox/Actions; machine-readable values; UTF-8/RFC 4180, dated filename, formula-injection guard; disabled when empty. **Note:** no row for 0.7 (the v9.5 ST-30 heading fix) was appended to this table — recoverable via version control. Authority: Head of Specs Team. |
 | 0.6 | 2026-07-27 | ST-01 (BLG-FEAT-66, EPIC-01, v7.9) implementation: corrected the §Watchlist Table "Added" column placement (design said "after Research, before Target Entry"; the shipped table's actual column order has Research much later — placed after Entry Signal instead, honouring the design's stated signal/status-metadata-first rationale). `added_at` is an API-level alias for the existing `created_at` column, not a new column — no `data_model.md` change. `PATCH /watchlist/{id}` `added_at` is a server-authoritative reset trigger, never a client-supplied timestamp. Contract: `watchlist_endpoints.md` v1.2. |
 | 0.5 | 2026-07-27 | v7.9 design gate — added §Staleness Indicator (ST-01, BLG-FEAT-66): new "Added" column showing days-on-watchlist (`added_at`, existing field); staleness threshold 30 days (fixed, server-side); stale rows get amber "{N}d, no action" text + clock icon and a new "Keep" action (resets clock, `PATCH /watchlist/{id}`); no automatic removal — Keep/Remove remain the only paths off the list. Design source: watchlist-staleness-review/ux_spec.md. Approved: Product Owner 2026-07-27. Design gate: 2026-07-27__release-v7.9. Head of Specs Team confirmed. |

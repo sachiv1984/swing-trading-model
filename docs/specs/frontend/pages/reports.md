@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.19
-**Last Updated:** 2026-09-24 — ST-04, EPIC-02, v9.7 sprint execution: added Known Deviation DEV-v9.7-ST04-01 (detail row's `{snapshot_date}` and the "check unavailable" trigger are not backed by the live API); deviation documentation only, no spec wording changed; prior — 2026-09-23 (v9.7 design gate: Monthly P&L fees-not-recorded and restatement-diff field names corrected to match the live API/contract (ST-03/BLG-FE-187, ST-04/BLG-FE-188)); prior — 2026-09-21 (v9.6 design gate: Monthly P&L fees-not-recorded notice/indicator/basis caption (ST-07/BLG-FR-04) and month-end restatement marker/diff + Tax Year restated-months notice (ST-08/BLG-FR-05)); prior history retained — see prior entries in version control
+**Version:** 0.20
+**Last Updated:** 2026-09-28 — v9.8 design gate, ST-03 (EPIC-01, BLG-FE-190): §Summary Bar restated-months notice link now carries the selected tax year; new §Monthly Financial Table Tax Year Filter; prior — 2026-09-24 (ST-04, EPIC-02, v9.7 sprint execution: added Known Deviation DEV-v9.7-ST04-01, deviation documentation only, no spec wording changed); prior — 2026-09-23 (v9.7 design gate: Monthly P&L fees-not-recorded and restatement-diff field names corrected to match the live API/contract (ST-03/BLG-FE-187, ST-04/BLG-FE-188)); prior history retained — see prior entries in version control
+**Design Source (v0.20 restated-notice year-scoped link):** docs/design/2026-09-28__release-v9.8/tax-year-restated-notice-year-scoped-link/decision_record.md
 **Design Source (v0.19 fees-not-recorded field-name correction):** docs/design/2026-09-23__release-v9.7/monthly-pnl-fees-surfacing/decision_record.md
 **Design Source (v0.19 restatement field-name correction):** docs/design/2026-09-23__release-v9.7/monthly-pnl-restatement-surfacing/decision_record.md
 **Design Source (v0.18 fees-not-recorded visibility):** docs/design/2026-09-21__release-v9.6/monthly-pnl-fees-not-recorded/decision_record.md
@@ -103,7 +104,7 @@ Displayed below the year selector. Sourced from the `summary` object in the API 
 
 All values are sourced directly from the API response. The frontend must not calculate or derive these figures. (`carried_forward_loss_gbp` is Design Only — see row above — no API response contains it yet.)
 
-**Restated-months notice (v0.18, ST-08, BLG-FR-05):** a one-line muted notice below the Summary Bar — `"Includes {k} restated month(s) — see the Monthly tab for details."`, with a link to the Monthly tab — shown **only when** `summary.restated_month_count ≥ 1` for the selected tax year. The count is supplied by the API (a restated month is one whose live figures differ from its immutable month-end snapshot, §Monthly Restatement Marker); the frontend does not derive it. No tax-year-level snapshot is stored. `data-testid="taxyear-restated-notice"`. Design source: `docs/design/2026-09-21__release-v9.6/monthly-pnl-restatement-diff/decision_record.md`.
+**Restated-months notice (v0.18, ST-08, BLG-FR-05; link scoped to the selected tax year v0.20, ST-03, BLG-FE-190):** a one-line muted notice below the Summary Bar — `"Includes {k} restated month(s) — see the Monthly tab for details."`, with a link to the Monthly tab — shown **only when** `summary.restated_month_count ≥ 1` for the selected tax year. The count is supplied by the API (a restated month is one whose live figures differ from its immutable month-end snapshot, §Monthly Restatement Marker); the frontend does not derive it. No tax-year-level snapshot is stored. The link carries the Tax Year tab's currently `selectedYear` through to the Monthly tab, which applies it as its own §Monthly Financial Table Tax Year filter on arrival — so the notice always lands on a view that shows the months it counted, not just when the selected tax year happens to be the current one. `data-testid="taxyear-restated-notice"`. Design sources: `docs/design/2026-09-21__release-v9.6/monthly-pnl-restatement-diff/decision_record.md`; `docs/design/2026-09-28__release-v9.8/tax-year-restated-notice-year-scoped-link/decision_record.md`.
 
 ---
 
@@ -297,6 +298,16 @@ One row per calendar month (descending order). Sourced from `GET /reports/monthl
 
 Empty state (no closed trades in scope): "No monthly P&L data available yet."
 
+#### Tax Year Filter (v0.20 — ST-03, EPIC-01, v9.8, BLG-FE-190)
+
+**Design source:** `docs/design/2026-09-28__release-v9.8/tax-year-restated-notice-year-scoped-link/decision_record.md`
+
+A UK tax year filter control, matching the Tax Year tab's §Year Selector pattern (same control, same position — above the table), scopes which months `GET /reports/monthly-pnl` fetches/displays.
+
+- **Default:** the current UK tax year, same as the Tax Year tab's own default — matches today's behaviour for anyone arriving via direct tab navigation.
+- **Arrival via the Tax Year tab's restated-months notice link (§Summary Bar):** the filter is pre-set to whichever tax year the notice was shown for, so the linked-to view always contains the months the notice counted — including tax years other than the current one.
+- Changing the filter re-fetches `GET /reports/monthly-pnl?year=YYYY` (or client-side filters the existing response, implementation's choice) and re-renders the table; does not affect the Restated marker, detail row, CSV export, or Unrealised P&L Card behaviour documented below, which are unaffected by this filter beyond showing/hiding rows.
+
 #### Fees-Not-Recorded Visibility (v0.18 — ST-07, BLG-FR-04; field names corrected v0.19 — ST-03, BLG-FE-187)
 
 **Design source:** `docs/design/2026-09-21__release-v9.6/monthly-pnl-fees-not-recorded/decision_record.md`; field-name correction: `docs/design/2026-09-23__release-v9.7/monthly-pnl-fees-surfacing/decision_record.md`
@@ -486,6 +497,7 @@ A new **"Reconciliation"** tab (4th tab in the page's tab navigation, alongside 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.20 | 2026-09-28 | v9.8 design gate — ST-03 (EPIC-01, BLG-FE-190): §Summary Bar restated-months notice now carries the Tax Year tab's selected year through its Monthly tab link; new §Monthly Financial Table Tax Year Filter (default: current tax year; pre-set from the notice link) so the linked-to view always contains the months the notice counted, including non-current tax years. Design source: `docs/design/2026-09-28__release-v9.8/tax-year-restated-notice-year-scoped-link/decision_record.md`. Authority: Head of Specs Team. |
 | 0.19 | 2026-09-23 | v9.7 design gate — ST-03 (EPIC-02, BLG-FE-187): §Fees-Not-Recorded Visibility field names corrected from the v9.6 design's `fees_missing_count`/`fees_missing_total` to the live API's `null_fee_trade_count` (per-month; no top-level aggregate field — aggregate notice now documented as a client-side sum across loaded months). ST-04 (EPIC-02, BLG-FE-188): §Monthly Restatement Marker corrected from a nested `restatement` object to the live API's flat `snapshotted`/`restated`/`snapshot_realised_pnl_gbp`/`restated_diff_gbp` fields; detail row reduced to Realised P&L only (no snapshot trade-count field exists) with a new muted fallback line for the trade-count-only-restatement edge case (`restated=true`, `restated_diff_gbp=0`). Neither correction changes previously-approved UX beyond the new fallback line. Design sources: `docs/design/2026-09-23__release-v9.7/monthly-pnl-fees-surfacing/decision_record.md`, `.../monthly-pnl-restatement-surfacing/decision_record.md`. Authority: Head of Specs Team. |
 | 0.18 | 2026-09-21 | v9.6 design gate — ST-07 (EPIC-02, BLG-FR-04): Monthly P&L gains §Fees-Not-Recorded Visibility — aggregate Info notice, per-month "k no fees" indicator in the Trades cell, and a mandatory net/gross basis caption; additive `fees_missing_count`/`fees_missing_total` API fields; CSV unchanged. ST-08 (EPIC-02, BLG-FR-05): §Monthly Restatement Marker — immutable month-end snapshot, amber "Restated" marker with expandable snapshot-vs-live detail, no acknowledge action, failure fallback line; Tax Year Summary Bar gains an API-supplied restated-months notice (no second snapshot store); exports stay live. Design sources under `docs/design/2026-09-21__release-v9.6/`. Authority: Head of Specs Team. |
 | 0.17 | 2026-09-14 | v9.4 design gate — ST-17 (EPIC-04, BLG-FR-03): Carried Forward Loss row added to the Summary Bar — **Design Only — Implementation Pending**, same convention as §Arc 5 Compliance Summary/§Gross vs Net Comparison (v0.8). Field mapping locked (`carried_forward_loss_gbp`, prior year's negative `total_realised_pnl`), no backend work this cycle. Design source: `docs/design/2026-09-14__release-v9.4/carried-forward-loss-field/decision_record.md`. Head of UX & Design sign-off: 2026-09-14. Financial Reporting & Records Owner: 2026-09-14. Product Owner approved: 2026-09-14. Head of Specs Team confirmed. |

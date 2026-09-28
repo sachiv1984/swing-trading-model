@@ -3,11 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.2
-**Last Updated:** 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — §2 cross-reference to the Reflection Reminder and its `/TradeHistory?reflect=` re-entry); prior — 2026-03-06
+**Version:** 0.3
+**Last Updated:** 2026-09-28 (ST-27, EPIC-05, v9.8, BLG-SPEC-162 — §4 missing-value glyph corrected from en dash to em dash to match the already-shipped modal and canonical convention; R-Multiple/P&L/price fields now specified as formatting via the shared helper); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — §2 cross-reference to the Reflection Reminder and its `/TradeHistory?reflect=` re-entry); prior — 2026-03-06 (initial spec)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v1.9
 **EPIC:** EPIC-01
+**Design Source (v0.3 glyph/formatting correction):** docs/design/2026-09-28__release-v9.8/trade-reflection-em-dash-consistency/decision_record.md
 **Design Source:** docs/design/2026-03-06__release-v1.9/trade-reflection/ux_spec.md
 **Confirmed by:** Head of Specs Team — 2026-03-06
 
@@ -57,7 +58,9 @@ Displayed at the top of the modal. All fields are read-only, sourced from the tr
 | Exit State | `trade.exit_state` | GRACE / LOSING / PROFITABLE |
 | Exit Date | `trade.exit_date` | ISO date, formatted DD Mon YYYY |
 
-**Hard rule:** All 8 fields are backend-sourced. None are computed on the frontend. If a field is null (e.g., r_multiple not computable), display "–".
+**Hard rule:** All 8 fields are backend-sourced. None are computed on the frontend. If a field is null (e.g., r_multiple not computable), display "—" (em dash — corrected v0.3; matches `format.js`'s canonical `MISSING` glyph and the already-shipped modal, which never rendered the en dash this line previously specified).
+
+**Formatting (v0.3 — ST-27, BLG-SPEC-162):** Entry Price, Exit Price and R-Multiple format via the shared helper (`formatCurrency`/`formatR`, `src/lib/format.js`) rather than page-local `toFixed`/sign logic — same canonical output (symbol + 2dp; signed R, 2dp), single source of truth.
 
 ---
 
@@ -138,5 +141,6 @@ Reflection responses require a storage table linked to the trade record. The Dat
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3 | 2026-09-28 | ST-27 (v9.8, EPIC-05, BLG-SPEC-162): §4 missing-value glyph corrected "–" → "—" (em dash), matching `format.js`'s canonical `MISSING` glyph and the already-shipped modal (documentation-only — code was already correct). §4 gains a formatting note: Entry Price, Exit Price and R-Multiple specified as using the shared helper (`formatCurrency`/`formatR`) rather than page-local logic; same output. Design source: `docs/design/2026-09-28__release-v9.8/trade-reflection-em-dash-consistency/decision_record.md`. Authority: Head of Specs Team. |
 | 0.2 | 2026-09-21 | ST-04 (v9.6, EPIC-01, BLG-FEAT-98): §2 cross-reference to the Reflection Reminder re-entry (`/TradeHistory?reflect={trade_id}`) — the cross-reference the design gate left to this story's spec-sync commit. Documentation only; no behaviour change to the modal. |
 | 0.1 | 2026-03-06 | Initial spec — v1.9 EPIC-01 ST-02. |

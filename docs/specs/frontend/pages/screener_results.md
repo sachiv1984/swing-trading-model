@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.7
-**Last Updated:** 2026-09-21 (v9.6 design gate — ST-03/BLG-FEAT-97: new §5.3 CSV Export); prior — 2026-09-15 (v9.4 sprint execution — ST-25/BLG-FE-174: `SkeletonRow` implementation confirmed refactored to compose from the shared `Skeleton` primitive; no visual change); prior — 2026-09-14 (v9.4 design gate — ST-25/BLG-FE-174: §10 skeleton UI now cites the canonical loading-skeleton pattern/shared `Skeleton` primitive); prior history retained — see prior entries in version control.
+**Version:** 1.8
+**Last Updated:** 2026-09-28 (v9.8 design gate — ST-02/BLG-FE-185: new §14 Column Definition Architecture note — `SCREENER_COLUMNS` is the single source for header, body cell and CSV value; no visual change); prior — 2026-09-21 (v9.6 design gate — ST-03/BLG-FEAT-97: new §5.3 CSV Export); prior — 2026-09-15 (v9.4 sprint execution — ST-25/BLG-FE-174: `SkeletonRow` implementation confirmed refactored to compose from the shared `Skeleton` primitive; no visual change); prior history retained — see prior entries in version control.
+**Design Source (v1.8 column architecture):** docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md
 **Design Source (v1.7 CSV export):** docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md
 **Design Source (v1.5):** docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md
 **Design Source (v1.4):** docs/design/2026-08-08__release-v8.5/regime-distribution-panel/decision_record.md
@@ -287,6 +288,15 @@ This spec covers all DS-02 interaction patterns:
 | Skeleton/progressive loading | §10 |
 | Research navigation (v3.2) | §11 |
 | Run quality panel — FULL/DEGRADED/FAILED states (v6.0) | §12 |
+| Column definition architecture (v9.8) | §14 |
+
+---
+
+## 14. Column Definition Architecture (v1.8 — ST-02, EPIC-01, v9.8, BLG-FE-185)
+
+**Design source:** `docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md`
+
+`SCREENER_COLUMNS` (`src/pages/Screener.js`) is the single definition consumed by the table header, each body cell's render logic, and the CSV export (§5.3) — one definition per column, not three independently-maintained ones. A column's label, field mapping, and render/format logic are defined once; header, cell and CSV all read from it. This is an internal architecture note, not a new interaction pattern — no visual output changes as a result.
 
 ---
 
@@ -316,6 +326,7 @@ This spec covers all DS-02 interaction patterns:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.8 | 2026-09-28 | v9.8 design gate — ST-02 (EPIC-01, BLG-FE-185): added §14 Column Definition Architecture — `SCREENER_COLUMNS` documented as the single source for header, body cell and CSV value. No visual change. Design source: `docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md`. Authority: Head of Specs Team. |
 | 1.7 | 2026-09-21 | v9.6 design gate — ST-03 (EPIC-01, BLG-FEAT-97): added §5.3 CSV Export — "Download CSV" button in the filter bar; exports displayed (filtered/sorted) rows and the full §4 columns except Actions; machine-readable values; UTF-8/RFC 4180, dated filename, formula-injection guard; disabled at zero rows. Design source: `docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md`. Authority: Head of Specs Team. |
 | 1.6 | 2026-09-15 | v9.4 sprint execution — ST-25 (EPIC-06, BLG-FE-174): §10 implementation confirmed — `Screener.js`'s `SkeletonRow` refactored to compose from the shared `Skeleton` primitive (`bg-slate-700/50` override preserves colour). No visual/row-count change. `SC-SCR-09` passes unchanged. |
 | 1.5 | 2026-09-14 | v9.4 design gate — ST-25 (EPIC-06, BLG-FE-174): §10 Progressive Loading Pattern now cites the canonical loading-skeleton pattern — Table/List Row Skeleton template (`base44_prompt_template_library.md` §8) backed by the shared `Skeleton` primitive, superseding the implicit assumption that `SkeletonRow` was a standalone pattern. No visual/row-count change. Design source: `docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md`. Head of UX & Design sign-off: 2026-09-14. Product Owner approved: 2026-09-14. Head of Specs Team confirmed. |
