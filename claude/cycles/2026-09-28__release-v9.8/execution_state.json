@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-28T15:12:52Z",
+  "last_updated_utc": "2026-09-28T15:19:04Z",
   "epics": {
     "EPIC-01": {
       "status": "in_progress",
@@ -14,7 +14,7 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-28__release-v9.8/qa_evidence_EPIC-01.md",
-      "test_scenarios": ["tests/e2e/st01-v98-formatting-migration.spec.js", "tests/e2e/screener.spec.js", "tests/e2e/screener-uk-suffix.spec.js", "tests/e2e/screener-quality.spec.js", "tests/e2e/watchlist.spec.js", "tests/e2e/watchlist-staleness-review.spec.js", "tests/e2e/screener-watchlist-csv-export.spec.js", "tests/e2e/tax-year-restated-notice-year-scoped-link.spec.js", "tests/test_monthly_pnl_tax_year_filter.py"],
+      "test_scenarios": ["tests/e2e/st01-v98-formatting-migration.spec.js", "tests/e2e/screener.spec.js", "tests/e2e/screener-uk-suffix.spec.js", "tests/e2e/screener-quality.spec.js", "tests/e2e/watchlist.spec.js", "tests/e2e/watchlist-staleness-review.spec.js", "tests/e2e/screener-watchlist-csv-export.spec.js", "tests/e2e/tax-year-restated-notice-year-scoped-link.spec.js", "tests/test_monthly_pnl_tax_year_filter.py", "tests/e2e/system-status.spec.js"],
       "stories": {
         "ST-01": {
           "title": "Migrate the remaining toFixed / toLocaleString call sites to the shared formatting helper",
@@ -82,7 +82,7 @@
         "ST-04": {
           "title": "SystemStatus.js categorizeEndpoint() has no case for the new /replay prefix",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1807,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-01",
@@ -91,14 +91,14 @@
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "acceptance_verified": true,
+          "spec_references": ["src/Layout.js#NAV_GROUPS"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step9_pre_push",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Added a /replay branch to categorizeEndpoint(), folding POST /replay/run into the Analytics category (matches src/Layout.js's own NAV_GROUPS taxonomy, where the Replay page lives in the Analytics nav group, not Trading). No new backend route added (POST /replay/run already existed from v9.7, already registered in backend/routers/test.py) -- CLAUDE.md's fallback-count-update rule for new routes does not apply. Extended tests/e2e/system-status.spec.js: added POST /replay/run to the shared TEST_RESULTS_RESPONSE fixture (bumping total 31->32, updating SC-SS-06a/b's count assertions), and a new SC-SS-07h test confirming it renders under Analytics, not Other. Full file (22 tests) passes."
         },
         "ST-05": {
           "title": "Responsive-table behaviour spec for Positions, TradeHistory and TradePlans",
