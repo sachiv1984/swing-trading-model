@@ -6,17 +6,19 @@
   "issues_mode": "none",
   "auto_escalate": true,
   "prompt_schema_version": "v2",
-  "status": "Validated",
+  "status": "Published",
   "publish_eligible": true,
-  "last_transition_utc": "2026-09-28T11:05:00Z",
+  "last_transition_utc": "2026-09-28T13:00:00Z",
 
   "sealed": {
-    "sealed_utc": "",
+    "sealed_utc": "2026-09-28T13:00:00Z",
     "sealed_assumptions": {
       "timebox": "",
       "capacity": "full capacity"
     },
-    "state_snapshot_hash": ""
+    "state_snapshot_hash": "ba5c2256b8f047fe0e89b73b7927a10ec00bb48a",
+    "drift_detected": false,
+    "drift_notes": []
   },
 
   "mutation_seq": 0,
