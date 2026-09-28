@@ -325,7 +325,9 @@ test.describe('SC-REP-05: Monthly P&L — Strategy Compliance section', () => {
     await page.route(`${API}/analytics/metrics*`, (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: {} }) })
     );
-    await page.route(`${API}/reports/monthly-pnl`, (route) =>
+    // Wildcard (ST-03, EPIC-01, v9.8, BLG-FE-190): the Monthly tab's own Tax Year filter now
+    // always appends ?year=<n> to this request, so an exact-match pattern would no longer hit.
+    await page.route(`${API}/reports/monthly-pnl*`, (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MONTHLY_PNL_WITH_COMPLIANCE) })
     );
     await page.goto('/#/Reports');

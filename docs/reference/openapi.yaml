@@ -805,7 +805,8 @@ paths:
       tags: [Reports]
       summary: Get month-by-month realised P&L
       description: >
-        Returns month-by-month realised P&L for the current and prior calendar year.
+        Returns month-by-month realised P&L for the current and prior calendar year by
+        default, or for a specific UK tax year when year is given (v9.8, ST-03).
         Only months with closed trades are included. Sorted descending by year then month.
         Includes optional compliance_summary (30d Arc 5 metrics) when data is available.
         Includes estimated_unrealised_pnl/unrealised_note (v7.0, ST-14) — current-snapshot
@@ -813,8 +814,18 @@ paths:
         Pass format=csv to receive a CSV file download instead of JSON (ST-05, v7.8).
         Each month object also includes null_fee_trade_count (ST-07, v9.6) — an
         audit signal, not part of the CSV export.
-        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.13. ST-03 (v4.7), ST-14 (v7.0), ST-05 (v7.8), ST-07 (v9.6).
+        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.14. ST-03 (v4.7), ST-14 (v7.0), ST-05 (v7.8), ST-07 (v9.6), ST-03 (v9.8).
       parameters:
+        - in: query
+          name: year
+          required: false
+          schema:
+            type: integer
+          description: >
+            UK tax-year start year (e.g. 2024 for 2024/25). When given, scopes the
+            returned months to that tax year (Apr 6 - Apr 5) instead of the default
+            fixed rolling window (v9.8, ST-03, BLG-FE-190). 400 if the tax year has
+            not started yet.
         - in: query
           name: format
           required: false

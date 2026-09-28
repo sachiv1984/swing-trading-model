@@ -307,7 +307,7 @@ function TaxYearReport({ onViewMonthly }) {
               {reportData.summary.restated_month_count === 1 ? "" : "s"} — see the{" "}
               <button
                 type="button"
-                onClick={onViewMonthly}
+                onClick={() => onViewMonthly(selectedYear)}
                 className="underline underline-offset-2 hover:no-underline text-cyan-600 dark:text-cyan-400"
               >
                 Monthly tab
@@ -368,7 +368,10 @@ function TaxYearReport({ onViewMonthly }) {
                     // touch P&L %..." -- kept on the original binary rule,
                     // deliberately NOT sharing pnlColor with the cell below,
                     // so this column's colour is unaffected by ST-08.
-                    const pnlPctColor = trade.pnl_pct > 0 ? "text-emerald-400" : trade.pnl_pct < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400";
+                    // Deliberately two-way (not the three-way zero-neutral rule used for Realised P&L
+                    // above): DEV-REPORTS-ST01-02 / decision_record.md §5 scopes the zero-P&L neutral-tone
+                    // convention to the Realised P&L column only -- P&L % keeps the original rule.
+                    const pnlPctColor = trade.pnl_pct > 0 ? "text-emerald-400" : "text-rose-400";
                     const currency = trade.currency === "USD" ? "USD" : "GBP";
                     return (
                       <tr
@@ -695,7 +698,7 @@ const MONTH_NAMES = [
   "July", "August", "September", "October", "November", "December",
 ];
 
-function MonthlyPnlTable() {
+function MonthlyPnlTable({ initialYear }) {
   const [csvGenerating, setCsvGenerating] = useState(false);
   // ST-04 (BLG-FE-188): months whose restatement detail row is expanded (collapsed by default).
   const [expandedMonths, setExpandedMonths] = useState(() => new Set());
@@ -708,10 +711,21 @@ function MonthlyPnlTable() {
     });
   const { toast } = useToast();
 
+  // ST-03 (EPIC-01, v9.8, BLG-FE-190): Tax Year filter — reports.md §Monthly Financial
+  // Table Tax Year Filter. Defaults to initialYear (set when arriving via the Tax Year
+  // tab's restated-months notice link) or the current UK tax year (direct navigation).
+  const currentTaxYear = getCurrentUKTaxYear();
+  const [selectedYear, setSelectedYear] = useState(() => initialYear ?? currentTaxYear);
+  const yearOptions = [];
+  for (let y = currentTaxYear; y >= 2020; y--) {
+    yearOptions.push(y);
+  }
+  const taxYearFilterLabel = `${selectedYear}/${String(selectedYear + 1).slice(2)}`;
+
   const { data: response, isLoading } = useQuery({
-    queryKey: ["monthlyPnl"],
+    queryKey: ["monthlyPnl", selectedYear],
     queryFn: () =>
-      apiFetch(`${base44.baseUrl}/reports/monthly-pnl`).then((r) => r.json()),
+      apiFetch(`${base44.baseUrl}/reports/monthly-pnl?year=${selectedYear}`).then((r) => r.json()),
   });
 
   // ST-05 (BLG-FEAT-81, v7.8): reuses the Tax Year tab's Download CSV pattern
@@ -719,7 +733,7 @@ function MonthlyPnlTable() {
   const handleCsvDownload = async () => {
     setCsvGenerating(true);
     try {
-      const response = await apiFetch(`${base44.baseUrl}/reports/monthly-pnl?format=csv`);
+      const response = await apiFetch(`${base44.baseUrl}/reports/monthly-pnl?format=csv&year=${selectedYear}`);
       if (!response.ok) throw new Error("CSV generation failed");
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
@@ -765,6 +779,29 @@ function MonthlyPnlTable() {
 
   return (
     <div className="space-y-4">
+      {/* ST-03 (EPIC-01, v9.8, BLG-FE-190): Tax Year filter — same control, same
+          position (above the table) as the Tax Year tab's own §Year Selector.
+          reports.md §Monthly Financial Table Tax Year Filter. */}
+      <div className="flex items-center gap-3">
+        <Calendar className="w-4 h-4 text-slate-400" />
+        <span className="text-sm text-slate-600 dark:text-slate-400">Tax Year</span>
+        <Select
+          value={String(selectedYear)}
+          onValueChange={(v) => setSelectedYear(Number(v))}
+        >
+          <SelectTrigger data-testid="monthly-tax-year-filter" className="w-36 bg-slate-800/50 border-slate-700 text-white h-9">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-slate-800 border-slate-700">
+            {yearOptions.map((y) => (
+              <SelectItem key={y} value={String(y)}>
+                {y}/{String(y + 1).slice(2)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       {/* ST-05 (BLG-FEAT-81, v7.8): Download CSV control for the Monthly P&L
           Report view — verbatim reuse of the Tax Year tab's export button,
           per monthly-csv-export/ux_spec.md §2. Drops below the section
@@ -794,7 +831,7 @@ function MonthlyPnlTable() {
       <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-700/50">
           <h3 className="text-sm font-semibold text-white">Monthly Realised P&L</h3>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Current and prior calendar year. Only months with closed trades shown.</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Tax year {taxYearFilterLabel}. Only months with closed trades shown.</p>
         </div>
         {nullFeeTotal >= 1 && (
           <div data-testid="monthly-fees-missing-notice" className="px-4 pt-4">
@@ -998,6 +1035,11 @@ export default function Reports() {
   const [activeTab, setActiveTab] = useState("performance");
   const [period, setPeriod] = useState("month");
   const [exportModalOpen, setExportModalOpen] = useState(false);
+  // ST-03 (EPIC-01, v9.8, BLG-FE-190): year the restated-months notice link was clicked for,
+  // if any -- passed to MonthlyPnlTable as its initial Tax Year filter value. Cleared by direct
+  // tab navigation so that path still defaults to the current tax year, per reports.md
+  // §Monthly Financial Table Tax Year Filter's "Default" bullet.
+  const [monthlyInitialYear, setMonthlyInitialYear] = useState(null);
 
   const backendPeriod = PERIOD_MAP[period] ?? "last_month";
 
@@ -1142,7 +1184,7 @@ export default function Reports() {
           Tax Year P&L
         </button>
         <button
-          onClick={() => setActiveTab("monthly")}
+          onClick={() => { setMonthlyInitialYear(null); setActiveTab("monthly"); }}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === "monthly"
               ? "border-cyan-500 text-white"
@@ -1165,9 +1207,9 @@ export default function Reports() {
       </div>
 
       {activeTab === "taxYear" ? (
-        <TaxYearReport onViewMonthly={() => setActiveTab("monthly")} />
+        <TaxYearReport onViewMonthly={(year) => { setMonthlyInitialYear(year); setActiveTab("monthly"); }} />
       ) : activeTab === "monthly" ? (
-        <MonthlyPnlTable />
+        <MonthlyPnlTable initialYear={monthlyInitialYear} />
       ) : activeTab === "reconciliation" ? (
         <ReconciliationReport />
       ) : isLoading ? (

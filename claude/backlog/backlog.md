@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-28 (session — 1 new item added: BLG-FE-192); prior — 2026-09-28 (release planning 2026-09-28__release-v9.8 — Release Slice v9.8 ephemeral section appended, 39 items, marker `RP:v9.8:2026-09-28__release-v9.8`; no other structural changes); prior — 2026-09-28 (roadmap rebalance 2026-09-28__scheduled — 7 items added via idea intake IW-20260928-01 + 1 re-evaluated parked idea (BLG-GOV-350/351/352, BLG-SPEC-173/174, BLG-BE-130, BLG-OPS-170); 0 items archived/removed); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-28 (session — 1 new item added: BLG-QA-197); prior — 2026-09-28 (session — 1 new item added: BLG-FE-192); prior — 2026-09-28 (release planning 2026-09-28__release-v9.8 — Release Slice v9.8 ephemeral section appended, 39 items, marker `RP:v9.8:2026-09-28__release-v9.8`; no other structural changes); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4193,6 +4193,25 @@ The Tax Year summary notice ("Includes {k} restated month(s) — see the Monthly
 **Acceptance Criteria**
 - The axe scan covers the Replay page (both selector modes, populated result) in dark and light themes
 - Any serious/critical finding is fixed or has its own filed item
+
+---
+
+### BLG-QA-197 — reports-performance-tab.spec.js SC-REP-04a expects a signed "+£0.00" for zero Total P&L, contradicting the established zero-is-unsigned money convention
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-03/EPIC-01, cycle 2026-09-28__release-v9.8 — discovered while running the existing Reports Playwright suite to confirm no regressions from a Monthly P&L Tax Year filter change — 2026-09-28
+**Effort:** XS (<1h)
+**Provisional-Target:** Backlog (no release scheduled; P3)
+
+**Problem**
+`tests/e2e/reports-performance-tab.spec.js`'s SC-REP-04a ("Total P&L shows £0.00 when no trades", line 281-284) asserts `page.getByText(/\+£0\.00/)` is visible when `metrics.totalPnL = 0`. This contradicts `src/lib/format.js`'s canonical `formatCurrency` convention (`design_system.md` §Number and Currency Formatting, v1.21): a value that rounds to zero is always rendered unsigned (`"£0.00"`, never `"+£0.00"` or `"−£0.00"`) — `formatCurrency`'s `signOf()` helper explicitly special-cases this. The Performance tab's Total P&L stat card correctly renders the unsigned `"£0.00"` for a zero value, so this test fails (element not found) — it appears to predate the "zero is unsigned" convention being formally established and was never updated to match. Confirmed pre-existing and unrelated to any specific feature work: fails identically before and after the ST-03/EPIC-01/v9.8 changes that surfaced it (`git stash` bisection against the pre-ST-03 commit reproduces the same single failure, in isolation, with no other test in the file affected).
+
+**Scope**
+- Change the assertion to `page.getByText('£0.00', { exact: true })` (or scope it to the specific Total P&L stat card testid if one exists) and drop the `+` from the regex
+
+**Acceptance Criteria**
+- SC-REP-04a passes and matches the same zero-is-unsigned convention already correctly asserted elsewhere (e.g. `tests/e2e/number-format-tables.spec.js` SC-NFT-01's "zero is unsigned" checks)
 
 ---
 

@@ -31,6 +31,7 @@ from database import (
     get_trade_history_by_tax_year,
     get_trade_history_pnl_sum_by_tax_year,
     get_monthly_pnl,
+    get_monthly_pnl_by_tax_year,
     get_daily_pnl,
     get_monthly_pnl_snapshot,
     insert_monthly_pnl_snapshot_if_absent,
@@ -380,10 +381,19 @@ def _snapshot_month(portfolio_id: str, year: int, month: int, realised_pnl_gbp: 
     }
 
 
-def get_monthly_pnl_report() -> dict:
+def get_monthly_pnl_report(year: Optional[int] = None) -> dict:
     """
-    Return month-by-month realised P&L for the current and prior calendar year,
-    plus a current-snapshot estimated unrealised P&L figure (ST-14, BLG-FEAT-70, v7.0).
+    Return month-by-month realised P&L, plus a current-snapshot estimated
+    unrealised P&L figure (ST-14, BLG-FEAT-70, v7.0).
+
+    Args:
+        year: optional UK tax-year start year (e.g. 2025 for 2025/26) -- when
+              given, scopes the returned months to that tax year (Apr 6 -
+              Apr 5) instead of the default fixed rolling window (ST-03,
+              EPIC-01, v9.8, BLG-FE-190). Raises ValueError if the tax year
+              has not started yet, matching get_tax_year_report's own guard.
+              When omitted: unchanged behaviour -- current and prior calendar
+              year via get_monthly_pnl's fixed window.
 
     Returns:
         {
@@ -400,7 +410,14 @@ def get_monthly_pnl_report() -> dict:
     if not portfolio:
         return {"months": [], "estimated_unrealised_pnl": None, "unrealised_note": UNREALISED_NOTE}
     portfolio_id = str(portfolio['id'])
-    rows = get_monthly_pnl(portfolio_id)
+    if year is not None:
+        tax_year_start = date(year, 4, 6)
+        if tax_year_start > date.today():
+            raise ValueError("tax year has not started yet")
+        tax_year_end = date(year + 1, 4, 5)
+        rows = get_monthly_pnl_by_tax_year(portfolio_id, tax_year_start, tax_year_end)
+    else:
+        rows = get_monthly_pnl(portfolio_id)
     today = datetime.now(timezone.utc).date()
     months = []
 

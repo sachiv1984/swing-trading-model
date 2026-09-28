@@ -383,6 +383,35 @@ def get_monthly_pnl(portfolio_id: str) -> List[Dict]:
             return cur.fetchall()
 
 
+def get_monthly_pnl_by_tax_year(portfolio_id: str, tax_year_start, tax_year_end) -> List[Dict]:
+    """Aggregate realised P&L by calendar month for trades whose exit_date falls
+    within [tax_year_start, tax_year_end] inclusive -- the tax-year-scoped sibling
+    of get_monthly_pnl's fixed rolling-1-year window (ST-03, EPIC-01, v9.8, BLG-FE-190).
+
+    Used by GET /reports/monthly-pnl?year=<n> -- lets the Monthly tab's restated-
+    months notice link land on a view that actually shows the months it counted,
+    for any tax year, not just the current rolling window.
+    Spec: docs/specs/api_contracts/reports_endpoints.md §GET /reports/monthly-pnl
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT
+                   EXTRACT(YEAR FROM exit_date)::int AS year,
+                   EXTRACT(MONTH FROM exit_date)::int AS month,
+                   COALESCE(SUM(pnl), 0)::float AS realised_pnl_gbp,
+                   COUNT(*)::int AS trade_count,
+                   COUNT(*) FILTER (WHERE entry_fees IS NULL OR exit_fees IS NULL)::int AS null_fee_trade_count
+                   FROM trade_history
+                   WHERE portfolio_id = %s
+                   AND exit_date BETWEEN %s AND %s
+                   GROUP BY year, month
+                   ORDER BY year DESC, month DESC""",
+                (portfolio_id, tax_year_start, tax_year_end)
+            )
+            return cur.fetchall()
+
+
 def get_daily_pnl(portfolio_id: str, year: int, month: int) -> List[Dict]:
     """Aggregate realised P&L by calendar day for a single given month (ST-04, BLG-FE-118, v7.5).
 
