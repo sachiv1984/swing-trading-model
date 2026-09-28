@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-28 (roadmap rebalance 2026-09-28__scheduled — 7 items added via idea intake IW-20260928-01 + 1 re-evaluated parked idea (BLG-GOV-350/351/352, BLG-SPEC-173/174, BLG-BE-130, BLG-OPS-170); 0 items archived/removed); prior — 2026-09-28 (groom backlog post-ship closure 2026-09-23__release-v9.7 — 30 items archived: 29 v9.7 shipped items + `BLG-FE-189` (already resolved, never archived); 1 ephemeral Release Slice section removed — v9.7; Spec-Debt Deep Review cadence due, ran, 0 new gaps found); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 STEP 6 — 1 new item added: BLG-FE-191, SystemStatus.js categorizeEndpoint() /replay gap, Endpoint Coverage Drift Check); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-28 (release planning 2026-09-28__release-v9.8 — Release Slice v9.8 ephemeral section appended, 39 items, marker `RP:v9.8:2026-09-28__release-v9.8`; no other structural changes); prior — 2026-09-28 (roadmap rebalance 2026-09-28__scheduled — 7 items added via idea intake IW-20260928-01 + 1 re-evaluated parked idea (BLG-GOV-350/351/352, BLG-SPEC-173/174, BLG-BE-130, BLG-OPS-170); 0 items archived/removed); prior — 2026-09-28 (groom backlog post-ship closure 2026-09-23__release-v9.7 — 30 items archived: 29 v9.7 shipped items + `BLG-FE-189` (already resolved, never archived); 1 ephemeral Release Slice section removed — v9.7; Spec-Debt Deep Review cadence due, ran, 0 new gaps found); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4384,3 +4384,51 @@ v9.7 (ST-08) moved trade-fee rounding from float to Decimal, following the v9.6 
 - `roadmap_prompt.md` references the script as an optional acceleration, not a hard dependency
 
 ---
+
+## Release Slice — v9.8 (ephemeral — remove at next `groom backlog` per Placement Rule)
+
+<!-- release-plan-marker: RP:v9.8:2026-09-28__release-v9.8 -->
+
+39 items selected into `2026-09-28__release-v9.8` scope (28.00 estimated days, full capacity). Full acceptance criteria: `claude/cycles/2026-09-28__release-v9.8/stage4_backlog_slice.md`. Selection method: 0 ready P1 items; all 3 ready P2 items seated first per §1.4c, then category-balanced round-robin oldest-first for the remaining P3/P4, from a 65-item / 46.7-day ready pool. Excluded as gate-blocked: `BLG-FEAT-73`, `BLG-FEAT-76`.
+
+| ST-ID | Item | EPIC |
+|-------|------|------|
+| ST-01 | BLG-FE-184 | EPIC-01 |
+| ST-02 | BLG-FE-185 | EPIC-01 |
+| ST-03 | BLG-FE-190 | EPIC-01 |
+| ST-04 | BLG-FE-191 | EPIC-01 |
+| ST-05 | BLG-SPEC-158 | EPIC-01 |
+| ST-06 | BLG-SPEC-159 | EPIC-01 |
+| ST-07 | BLG-BE-128 | EPIC-02 |
+| ST-08 | BLG-BE-130 | EPIC-02 |
+| ST-09 | BLG-AI-07 | EPIC-03 |
+| ST-10 | BLG-QA-179 | EPIC-03 |
+| ST-11 | BLG-QA-180 | EPIC-03 |
+| ST-12 | BLG-QA-181 | EPIC-03 |
+| ST-13 | BLG-QA-182 | EPIC-03 |
+| ST-14 | BLG-QA-183 | EPIC-03 |
+| ST-15 | BLG-QA-184 | EPIC-03 |
+| ST-16 | BLG-QA-187 | EPIC-03 |
+| ST-17 | BLG-OPS-169 | EPIC-04 |
+| ST-18 | BLG-OPS-170 | EPIC-04 |
+| ST-19 | BLG-SEC-39 | EPIC-04 |
+| ST-20 | BLG-API-04 | EPIC-05 |
+| ST-21 | BLG-API-05 | EPIC-05 |
+| ST-22 | BLG-SPEC-152 | EPIC-05 |
+| ST-23 | BLG-SPEC-153 | EPIC-05 |
+| ST-24 | BLG-SPEC-154 | EPIC-05 |
+| ST-25 | BLG-SPEC-155 | EPIC-05 |
+| ST-26 | BLG-SPEC-161 | EPIC-05 |
+| ST-27 | BLG-SPEC-162 | EPIC-05 |
+| ST-28 | BLG-SPEC-163 | EPIC-05 |
+| ST-29 | BLG-SPEC-172 | EPIC-05 |
+| ST-30 | BLG-GOV-338 | EPIC-06 |
+| ST-31 | BLG-GOV-339 | EPIC-06 |
+| ST-32 | BLG-GOV-340 | EPIC-06 |
+| ST-33 | BLG-GOV-341 | EPIC-06 |
+| ST-34 | BLG-GOV-342 | EPIC-06 |
+| ST-35 | BLG-GOV-346 | EPIC-06 |
+| ST-36 | BLG-GOV-348 | EPIC-06 |
+| ST-37 | BLG-GOV-349 | EPIC-06 |
+| ST-38 | BLG-GOV-351 | EPIC-06 |
+| ST-39 | BLG-SPEC-156 | EPIC-06 |

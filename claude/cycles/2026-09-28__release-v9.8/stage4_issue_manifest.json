@@ -1,0 +1,587 @@
+[
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-01",
+    "story_id": "ST-01",
+    "s2_id": "S2-01",
+    "source": "BLG-FE-184",
+    "title": "Migrate the remaining toFixed / toLocaleString call sites to the shared formatting helper",
+    "priority": "P3",
+    "effort": "L (~3-5d)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-01",
+    "story_id": "ST-02",
+    "s2_id": "S2-02",
+    "source": "BLG-FE-185",
+    "title": "Drive Screener and Watchlist table body cells from the shared column definitions",
+    "priority": "P4",
+    "effort": "M (~1-2d)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-01",
+    "story_id": "ST-03",
+    "s2_id": "S2-03",
+    "source": "BLG-FE-190",
+    "title": "Make the Tax Year restated-months notice link to months the Monthly tab actually shows",
+    "priority": "P4",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-01",
+    "story_id": "ST-04",
+    "s2_id": "S2-04",
+    "source": "BLG-FE-191",
+    "title": "SystemStatus.js categorizeEndpoint() has no case for the new /replay prefix",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-01",
+    "story_id": "ST-05",
+    "s2_id": "S2-05",
+    "source": "BLG-SPEC-158",
+    "title": "Responsive-table behaviour spec for Positions, TradeHistory and TradePlans",
+    "priority": "P3",
+    "effort": "S (~0.5\u20131d)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-01",
+    "story_id": "ST-06",
+    "s2_id": "S2-06",
+    "source": "BLG-SPEC-159",
+    "title": "Canonical keyboard-shortcut inventory spec",
+    "priority": "P4",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-02",
+    "story_id": "ST-07",
+    "s2_id": "S2-07",
+    "source": "BLG-BE-128",
+    "title": "Remaining ad hoc `timeout=`/retry call sites not yet on the shared upstream-call helper",
+    "priority": "P3",
+    "effort": "S (~1d)",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-02",
+    "story_id": "ST-08",
+    "s2_id": "S2-08",
+    "source": "BLG-BE-130",
+    "title": "Extend the v9.7 float\u2192Decimal fee-rounding audit to tax-year statement calculations",
+    "priority": "P3",
+    "effort": "S (~1d)",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-03",
+    "story_id": "ST-09",
+    "s2_id": "S2-09",
+    "source": "BLG-AI-07",
+    "title": "Golden-fixture CI regression for AI prompt templates \u2014 boundary-language drift caught at template-change time",
+    "priority": "P3",
+    "effort": "S (~0.5\u20131d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-03",
+    "story_id": "ST-10",
+    "s2_id": "S2-10",
+    "source": "BLG-QA-179",
+    "title": "No end-to-end test confirms backend/main.py's wired root logger actually emits JSON in situ",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-03",
+    "story_id": "ST-11",
+    "s2_id": "S2-11",
+    "source": "BLG-QA-180",
+    "title": "Add Playwright duration-assertion coverage for the 9 toast call sites fixed in ST-42 (Toast Notification Timing standard)",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-03",
+    "story_id": "ST-12",
+    "s2_id": "S2-12",
+    "source": "BLG-QA-181",
+    "title": "Add regression coverage for the motion-timing values fixed in ST-41 (500ms ceiling components)",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-03",
+    "story_id": "ST-13",
+    "s2_id": "S2-13",
+    "source": "BLG-QA-182",
+    "title": "Escaped-defect and follow-on-ratio tracking per cycle",
+    "priority": "P3",
+    "effort": "S (~0.5\u20131d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-03",
+    "story_id": "ST-14",
+    "s2_id": "S2-14",
+    "source": "BLG-QA-183",
+    "title": "DoQ checklist addendum for AI-touching stories",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-03",
+    "story_id": "ST-15",
+    "s2_id": "S2-15",
+    "source": "BLG-QA-184",
+    "title": "Mutation-testing pilot on the sizing calculator and stop ratchet",
+    "priority": "P3",
+    "effort": "M (~2d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-03",
+    "story_id": "ST-16",
+    "s2_id": "S2-16",
+    "source": "BLG-QA-187",
+    "title": "Enable Playwright trace and screenshot retain-on-failure",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-04",
+    "story_id": "ST-17",
+    "s2_id": "S2-17",
+    "source": "BLG-OPS-169",
+    "title": "No check that the staging backend actually redeployed after a merge that changes startup-applied schema (DS-19 sat unapplied on staging)",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-04",
+    "story_id": "ST-18",
+    "s2_id": "S2-18",
+    "source": "BLG-OPS-170",
+    "title": "No documented allow-list of pre-approved read-only staging-DB query patterns for governed-session gate re-checks",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-04",
+    "story_id": "ST-19",
+    "s2_id": "S2-19",
+    "source": "BLG-SEC-39",
+    "title": "Harden the non-registry dependency guard (missed specifier forms, trailing-comment false positive, no exit-code test)",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-05",
+    "story_id": "ST-20",
+    "s2_id": "S2-20",
+    "source": "BLG-API-04",
+    "title": "Document idempotency and double-submit behaviour for every mutating endpoint",
+    "priority": "P3",
+    "effort": "S (~0.5\u20131d)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-05",
+    "story_id": "ST-21",
+    "s2_id": "S2-21",
+    "source": "BLG-API-05",
+    "title": "Error-payload (4xx/5xx) examples for the 10 most-called endpoints, covered by the example-freshness checker",
+    "priority": "P3",
+    "effort": "S (~0.5\u20131d)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-05",
+    "story_id": "ST-22",
+    "s2_id": "S2-22",
+    "source": "BLG-SPEC-152",
+    "title": "Full field-level openapi.yaml authoring pass for 20 generic/thin `data` payload schemas",
+    "priority": "P3",
+    "effort": "M (~1\u20132 days)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-05",
+    "story_id": "ST-23",
+    "s2_id": "S2-23",
+    "source": "BLG-SPEC-153",
+    "title": "POST /trade-plans and DELETE /trade-plans/{id} declare no response schema in openapi.yaml",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-05",
+    "story_id": "ST-24",
+    "s2_id": "S2-24",
+    "source": "BLG-SPEC-154",
+    "title": "trade_plans CREATE TABLE / DS-04 CHECK constraint undocumented since ensure_trade_plans_extended_status() shipped",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-05",
+    "story_id": "ST-25",
+    "s2_id": "S2-25",
+    "source": "BLG-SPEC-155",
+    "title": "openapi.yaml's OperationalHealthResponse.ai_journal doesn't model its either/or shape with oneOf",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-05",
+    "story_id": "ST-26",
+    "s2_id": "S2-26",
+    "source": "BLG-SPEC-161",
+    "title": "screener_results.md column list omits the Earnings column that the shipped table has",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-05",
+    "story_id": "ST-27",
+    "s2_id": "S2-27",
+    "source": "BLG-SPEC-162",
+    "title": "trade_reflection.md \u00a74 specifies an en dash for a missing R-multiple; the convention is an em dash",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-05",
+    "story_id": "ST-28",
+    "s2_id": "S2-28",
+    "source": "BLG-SPEC-163",
+    "title": "sprint_velocity_trend_chart.md trend sentence splices non-adjacent PVR readings",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-05",
+    "story_id": "ST-29",
+    "s2_id": "S2-29",
+    "source": "BLG-SPEC-172",
+    "title": "Reconcile the IT-06 \u00a713 review (Alpaca sync recorded as GET-only, no orders placed) with a sync that POSTs orders and DELETEs positions",
+    "priority": "P2",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-06",
+    "story_id": "ST-30",
+    "s2_id": "S2-30",
+    "source": "BLG-GOV-338",
+    "title": "Bake accessible-name and heading-order rules into the Base44 prompt template",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-06",
+    "story_id": "ST-31",
+    "s2_id": "S2-31",
+    "source": "BLG-GOV-339",
+    "title": "PVR / Skill-Silo measurement package \u2014 split debt into user-protective vs hygiene, add effort-weighted PVR, add a leading ungated-U-pool indicator",
+    "priority": "P3",
+    "effort": "M (~1.5\u20132d)",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-06",
+    "story_id": "ST-32",
+    "s2_id": "S2-32",
+    "source": "BLG-GOV-340",
+    "title": "Delivery-flow metrics \u2014 lead time by priority band and ready-pool runway forecast",
+    "priority": "P3",
+    "effort": "S (~1d)",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-06",
+    "story_id": "ST-33",
+    "s2_id": "S2-33",
+    "source": "BLG-GOV-341",
+    "title": "Persist STEP 7.2 role-share tallies as a structured history file",
+    "priority": "P3",
+    "effort": "S (~0.5\u20131d)",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-06",
+    "story_id": "ST-34",
+    "s2_id": "S2-34",
+    "source": "BLG-GOV-342",
+    "title": "JSON Schema for `.claude_current_state.json`, including the `last_updated_utc` field the roadmap engine reads",
+    "priority": "P3",
+    "effort": "S (~0.5\u20131d)",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-06",
+    "story_id": "ST-35",
+    "s2_id": "S2-35",
+    "source": "BLG-GOV-346",
+    "title": "Size \"grep-and-fix-everywhere\" and \"verify against live environment\" story classes a notch higher by default",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-06",
+    "story_id": "ST-36",
+    "s2_id": "S2-36",
+    "source": "BLG-GOV-348",
+    "title": "strategy_rules.md \u00a713.5 roster missing PO-05 row after 2026-09-23 clearance",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-06",
+    "story_id": "ST-37",
+    "s2_id": "S2-37",
+    "source": "BLG-GOV-349",
+    "title": "governance_sync.yml does not auto-close a phased story's GitHub issue (ST-XXa/b/c vs. the commit tag's bare ST-XX)",
+    "priority": "P2",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-06",
+    "story_id": "ST-38",
+    "s2_id": "S2-38",
+    "source": "BLG-GOV-351",
+    "title": "No scheduled trigger/owner fires the 90-day post-ship AI feature usage review (BLG-GOV-74/140/141/142 cluster)",
+    "priority": "P2",
+    "effort": "S (~1d)",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  },
+  {
+    "cycle": "2026-09-28__release-v9.8",
+    "epic": "EPIC-06",
+    "story_id": "ST-39",
+    "s2_id": "S2-39",
+    "source": "BLG-SPEC-156",
+    "title": "PO-04 (Reflection \u2194 Outcome Correlation) needs its own \u00a713 boundary review, not just a stub-file note",
+    "priority": "P3",
+    "effort": "XS (~0.5 day)",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-09-28__release-v9.8"
+    ]
+  }
+]
