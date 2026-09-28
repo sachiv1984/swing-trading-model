@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
 import { BookOpen, Newspaper, ChevronDown, ChevronUp, Clock } from "lucide-react";
 import { cn } from "../../lib/utils";
-import { SignalBadge, MarketBadge, priceDisplay, WatchlistEarningsBadge } from "./WatchlistBadges";
+import { signalLabel, SignalBadge, MarketBadge, priceDisplay, WatchlistEarningsBadge } from "./WatchlistBadges";
 import WatchlistRowActions from "./WatchlistRowActions";
 import WatchlistNewsRow from "./WatchlistNewsRow";
 import { Checkbox } from "../ui/checkbox";
+import { getCachedEarningsDays } from "../../hooks/useEarnings";
 
 function AddedCell({ entry }) {
   const days = entry.days_on_watchlist ?? 0;
@@ -76,10 +77,51 @@ TickerCell.propTypes = {
   onEdit: PropTypes.func.isRequired,
 };
 
+// ST-03 (EPIC-01, v9.6, BLG-FEAT-97): single column definition consumed by the table header
+// AND by the Watchlist CSV export (buildCsv) — see WatchlistTable.js's re-export.
+// ST-02 (EPIC-01, v9.8, BLG-FE-185): `cell` renders the table body <td> content for this column,
+// so header, body cell and CSV export all derive from one definition instead of the row below
+// separately hand-duplicating each column's field mapping. `cell` receives `(entry, ctx)`; only
+// Research and News use `ctx`. The Actions column is deliberately not a data column.
+// Design: docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md §2.2
+export const WATCHLIST_COLUMNS = [
+  { header: "Ticker", value: (e) => e.ticker, cell: (e, ctx) => <TickerCell entry={e} onEdit={ctx.onEdit} /> },
+  { header: "Market", value: (e) => e.market, cell: (e) => <MarketBadge market={e.market} /> },
+  {
+    header: "Entry Signal", value: (e) => (e.signal_status ? signalLabel(e.signal_status) : ""),
+    cell: (e) => <SignalBadge status={e.signal_status} />,
+  },
+  { header: "Added", value: (e) => e.days_on_watchlist, cell: (e) => <AddedCell entry={e} /> },
+  { header: "Target Entry", value: (e) => e.target_entry_price, cell: (e) => priceDisplay(e.target_entry_price, e.market) },
+  { header: "Stop (Initial)", value: (e) => e.initial_stop_price, cell: (e) => priceDisplay(e.initial_stop_price, e.market) },
+  { header: "Stop (Current)", value: (e) => e.current_stop_price, cell: (e) => priceDisplay(e.current_stop_price, e.market) },
+  {
+    header: "Earnings", value: (e) => getCachedEarningsDays(e.ticker, e.market),
+    cell: (e) => <WatchlistEarningsBadge ticker={e.ticker} market={e.market} />,
+  },
+  {
+    header: "Research", value: (e, ctx) => (ctx.screenerTickers.has(e.ticker?.toUpperCase()) ? "Yes" : "No"),
+    cell: (e, ctx) => (
+      <BookOpen
+        className={cn("w-4 h-4", ctx.hasResearch ? "text-emerald-400" : "text-slate-600")}
+        title={ctx.hasResearch ? "Research data available" : "No research data"}
+      />
+    ),
+  },
+  {
+    header: "News", value: (e) => (e.market === "US" ? "Yes" : "No"),
+    cell: (e, ctx) => <NewsToggleCell entry={e} isExpanded={ctx.isNewsExpanded} onToggle={ctx.onToggleNews} />,
+  },
+];
+
 export default function WatchlistRow({
   entry, isRemoving, hasResearch, isNewsExpanded, newsState, isSelected, onToggleSelect,
   onEdit, onToggleNews, onCloseNews, onResearch, onAddToPosition, onDeleteConfirm, onKeep,
 }) {
+  const cellCtx = { onEdit, hasResearch, isNewsExpanded, onToggleNews };
+  // Columns whose <td> previously carried "text-sm text-slate-300" beyond the shared padding.
+  const TEXT_CELL_HEADERS = new Set(["Target Entry", "Stop (Initial)", "Stop (Current)"]);
+
   return (
     <>
       <tr className={cn(
@@ -90,23 +132,14 @@ export default function WatchlistRow({
         <td className="px-5 py-4">
           <Checkbox checked={isSelected} onCheckedChange={onToggleSelect} aria-label={`Select ${entry.ticker}`} />
         </td>
-        <td className="px-5 py-4">
-          <TickerCell entry={entry} onEdit={onEdit} />
-        </td>
-        <td className="px-5 py-4"><MarketBadge market={entry.market} /></td>
-        <td className="px-5 py-4"><SignalBadge status={entry.signal_status} /></td>
-        <td className="px-5 py-4"><AddedCell entry={entry} /></td>
-        <td className="px-5 py-4 text-sm text-slate-300">{priceDisplay(entry.target_entry_price, entry.market)}</td>
-        <td className="px-5 py-4 text-sm text-slate-300">{priceDisplay(entry.initial_stop_price, entry.market)}</td>
-        <td className="px-5 py-4 text-sm text-slate-300">{priceDisplay(entry.current_stop_price, entry.market)}</td>
-        <td className="px-5 py-4"><WatchlistEarningsBadge ticker={entry.ticker} market={entry.market} /></td>
-        <td className="px-5 py-4">
-          <BookOpen className={cn("w-4 h-4", hasResearch ? "text-emerald-400" : "text-slate-600")}
-            title={hasResearch ? "Research data available" : "No research data"} />
-        </td>
-        <td className="px-5 py-4">
-          <NewsToggleCell entry={entry} isExpanded={isNewsExpanded} onToggle={onToggleNews} />
-        </td>
+        {WATCHLIST_COLUMNS.map((col) => (
+          <td
+            key={col.header}
+            className={cn("px-5 py-4", TEXT_CELL_HEADERS.has(col.header) && "text-sm text-slate-300")}
+          >
+            {col.cell(entry, cellCtx)}
+          </td>
+        ))}
         <td className="px-5 py-4">
           <WatchlistRowActions
             isStale={!!entry.is_stale}

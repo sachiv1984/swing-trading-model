@@ -432,17 +432,112 @@ function SortHeader({ label, field, current, dir, onSort, className }) {
 // `sortField` marks sortable headers; `thClass`/`title` reproduce the existing responsive
 // hiding — export is viewport-independent and always includes the full desktop column set.
 // Design: docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md §2.2
+// `cell` renders the table body <td> content for this column (ST-02, EPIC-01, v9.8, BLG-FE-185)
+// — added alongside the pre-existing `header`/`value` so header, body cell and CSV export all
+// derive from one definition instead of the body row separately hand-duplicating each column's
+// field mapping. `cdClass` mirrors `thClass` for the body <td> (defaults to "px-3 py-3" — see the
+// tbody map below). `cell` receives `(row, ctx)`; only the News/Actions column uses `ctx`.
 const SCREENER_COLUMNS = [
-  { header: "Ticker", value: (r) => (r.market === "UK" ? stripUkSuffix(r.ticker) : r.ticker) },
-  { header: "Market", value: (r) => r.market },
-  { header: "Price", sortField: "price", value: (r) => r.price },
-  { header: "ATR", sortField: "atr", value: (r) => r.atr },
-  { header: "Regime", value: (r) => (r.regime_status === "risk_on" ? "Risk On" : "Risk Off") },
-  { header: "Signal", sortField: "signal_score", value: (r) => r.signal_score },
-  { header: "Sector", thClass: "hidden md:table-cell", value: (r) => r.sector || "" },
-  { header: "Entry Zone", thClass: "hidden md:table-cell", value: (r) => { const l = entryZoneLabel(r.proximity_to_entry_zone); return l === "—" ? "" : l; } },
-  { header: "Earnings", thClass: "hidden lg:table-cell", title: "Days until next earnings", value: (r) => getCachedEarningsDays(r.ticker, r.market) },
-  { header: "News", value: (r) => (r.market === "US" && r.news_headline_count > 0 ? r.news_headline_count : null) },
+  {
+    header: "Ticker", value: (r) => (r.market === "UK" ? stripUkSuffix(r.ticker) : r.ticker),
+    cdClass: "px-3 py-3 font-mono font-medium text-white",
+    cell: (r) => (r.market === "UK" ? stripUkSuffix(r.ticker) : r.ticker),
+  },
+  {
+    header: "Market", value: (r) => r.market,
+    cell: (r) => <MarketBadge market={r.market} />,
+  },
+  {
+    header: "Price", sortField: "price", value: (r) => r.price,
+    cdClass: "px-3 py-3 text-slate-300",
+    cell: (r) => formatPrice(r.price, r.currency),
+  },
+  {
+    header: "ATR", sortField: "atr", value: (r) => r.atr,
+    cdClass: "px-3 py-3 text-slate-300",
+    cell: (r) => formatATR(r.atr, r.atr_pct, r.currency),
+  },
+  {
+    header: "Regime", value: (r) => (r.regime_status === "risk_on" ? "Risk On" : "Risk Off"),
+    cell: (r) => <RegimeBadge status={r.regime_status} />,
+  },
+  {
+    header: "Signal", sortField: "signal_score", value: (r) => r.signal_score,
+    cell: (r) => (
+      <div className="flex items-center gap-2">
+        <div className="w-16 bg-slate-700/50 rounded-full h-1.5 overflow-hidden">
+          <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${(r.signal_score || 0) * 100}%` }} />
+        </div>
+        <span className="text-slate-300 text-xs">{formatSignal(r.signal_score)}</span>
+      </div>
+    ),
+  },
+  {
+    header: "Sector", thClass: "hidden md:table-cell", value: (r) => r.sector || "",
+    cdClass: "px-3 py-3 text-slate-600 dark:text-slate-400 hidden md:table-cell",
+    cell: (r) => r.sector || "—",
+  },
+  {
+    header: "Entry Zone", thClass: "hidden md:table-cell",
+    value: (r) => { const l = entryZoneLabel(r.proximity_to_entry_zone); return l === "—" ? "" : l; },
+    cdClass: "px-3 py-3 text-slate-600 dark:text-slate-400 hidden md:table-cell",
+    cell: (r) => entryZoneLabel(r.proximity_to_entry_zone),
+  },
+  {
+    header: "Earnings", thClass: "hidden lg:table-cell", title: "Days until next earnings",
+    value: (r) => getCachedEarningsDays(r.ticker, r.market),
+    cdClass: "px-3 py-3 hidden lg:table-cell",
+    cell: (r) => <EarningsBadge ticker={r.ticker} market={r.market} />,
+  },
+  {
+    header: "News", value: (r) => (r.market === "US" && r.news_headline_count > 0 ? r.news_headline_count : null),
+    cell: (r, ctx) => (
+      <div className="flex items-center gap-2">
+        {r.market === "US" && r.news_headline_count > 0 ? (
+          <button
+            onClick={() => ctx.toggleNews(r.ticker)}
+            className={cn(
+              "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors",
+              ctx.newsOpen
+                ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
+                : "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30 hover:text-blue-400"
+            )}
+            title="Show news headlines"
+          >
+            <Newspaper className="w-3 h-3" />
+            {r.news_headline_count}
+          </button>
+        ) : null}
+
+        {ctx.added ? (
+          <span className="inline-flex items-center gap-1 text-xs text-emerald-400">
+            <Check className="w-3 h-3" /> Added
+          </span>
+        ) : (
+          <button
+            onClick={() => { ctx.setPromoRow(ctx.isPromoOpen ? null : r.ticker); }}
+            className={cn(
+              "inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border transition-colors",
+              ctx.isPromoOpen
+                ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
+                : "border-slate-600/30 text-slate-600 dark:text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30"
+            )}
+            title="Add to watchlist"
+          >
+            <Plus className="w-3 h-3" />
+            Watchlist
+          </button>
+        )}
+        <button
+          onClick={() => ctx.navigate(`/research/${r.ticker}`)}
+          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border border-slate-600/30 text-slate-600 dark:text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors"
+          title="Pre-trade research"
+        >
+          Research
+        </button>
+      </div>
+    ),
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -1016,100 +1111,19 @@ export default function Screener() {
                       const newsOpen = expandedNews[row.ticker];
                       const added = watchlistAdded.has(row.ticker);
 
+                      const cellCtx = { newsOpen, added, isPromoOpen, toggleNews, setPromoRow, navigate };
+
                       return (
                         <>
                           <tr
                             key={row.ticker}
                             className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors"
                           >
-                            <td className="px-3 py-3 font-mono font-medium text-white">
-                              {row.market === "UK" ? stripUkSuffix(row.ticker) : row.ticker}
-                            </td>
-                            <td className="px-3 py-3">
-                              <MarketBadge market={row.market} />
-                            </td>
-                            <td className="px-3 py-3 text-slate-300">
-                              {formatPrice(row.price, row.currency)}
-                            </td>
-                            <td className="px-3 py-3 text-slate-300">
-                              {formatATR(row.atr, row.atr_pct, row.currency)}
-                            </td>
-                            <td className="px-3 py-3">
-                              <RegimeBadge status={row.regime_status} />
-                            </td>
-                            <td className="px-3 py-3">
-                              <div className="flex items-center gap-2">
-                                <div className="w-16 bg-slate-700/50 rounded-full h-1.5 overflow-hidden">
-                                  <div
-                                    className="h-full bg-emerald-500 rounded-full"
-                                    style={{ width: `${(row.signal_score || 0) * 100}%` }}
-                                  />
-                                </div>
-                                <span className="text-slate-300 text-xs">
-                                  {formatSignal(row.signal_score)}
-                                </span>
-                              </div>
-                            </td>
-                            <td className="px-3 py-3 text-slate-600 dark:text-slate-400 hidden md:table-cell">
-                              {row.sector || "—"}
-                            </td>
-                            <td className="px-3 py-3 text-slate-600 dark:text-slate-400 hidden md:table-cell">
-                              {entryZoneLabel(row.proximity_to_entry_zone)}
-                            </td>
-                            <td className="px-3 py-3 hidden lg:table-cell">
-                              <EarningsBadge ticker={row.ticker} market={row.market} />
-                            </td>
-                            <td className="px-3 py-3">
-                              <div className="flex items-center gap-2">
-                                {/* News badge — US only */}
-                                {row.market === "US" && row.news_headline_count > 0 ? (
-                                  <button
-                                    onClick={() => toggleNews(row.ticker)}
-                                    className={cn(
-                                      "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors",
-                                      newsOpen
-                                        ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
-                                        : "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30 hover:text-blue-400"
-                                    )}
-                                    title="Show news headlines"
-                                  >
-                                    <Newspaper className="w-3 h-3" />
-                                    {row.news_headline_count}
-                                  </button>
-                                ) : null}
-
-                                {/* Watchlist button */}
-                                {added ? (
-                                  <span className="inline-flex items-center gap-1 text-xs text-emerald-400">
-                                    <Check className="w-3 h-3" /> Added
-                                  </span>
-                                ) : (
-                                  <button
-                                    onClick={() => {
-                                      setPromoRow(isPromoOpen ? null : row.ticker);
-                                    }}
-                                    className={cn(
-                                      "inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border transition-colors",
-                                      isPromoOpen
-                                        ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
-                                        : "border-slate-600/30 text-slate-600 dark:text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30"
-                                    )}
-                                    title="Add to watchlist"
-                                  >
-                                    <Plus className="w-3 h-3" />
-                                    Watchlist
-                                  </button>
-                                )}
-                                {/* Research link */}
-                                <button
-                                  onClick={() => navigate(`/research/${row.ticker}`)}
-                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border border-slate-600/30 text-slate-600 dark:text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors"
-                                  title="Pre-trade research"
-                                >
-                                  Research
-                                </button>
-                              </div>
-                            </td>
+                            {SCREENER_COLUMNS.map((col) => (
+                              <td key={col.header} className={col.cdClass || "px-3 py-3"}>
+                                {col.cell(row, cellCtx)}
+                              </td>
+                            ))}
                           </tr>
 
                           {/* Watchlist promotion popover row */}
