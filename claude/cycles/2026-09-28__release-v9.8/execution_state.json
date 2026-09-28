@@ -5,13 +5,13 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-28T15:28:09Z",
+  "last_updated_utc": "2026-09-28T15:48:41Z",
   "epics": {
     "EPIC-01": {
       "status": "done",
       "branch": "exec/2026-09-28__release-v9.8/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1843,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-28__release-v9.8/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/e2e/st01-v98-formatting-migration.spec.js", "tests/e2e/screener.spec.js", "tests/e2e/screener-uk-suffix.spec.js", "tests/e2e/screener-quality.spec.js", "tests/e2e/watchlist.spec.js", "tests/e2e/watchlist-staleness-review.spec.js", "tests/e2e/screener-watchlist-csv-export.spec.js", "tests/e2e/tax-year-restated-notice-year-scoped-link.spec.js", "tests/test_monthly_pnl_tax_year_filter.py", "tests/e2e/system-status.spec.js"],
@@ -909,7 +909,9 @@
     ],
     "all_merged": false
   },
-  "process_notes": [],
+  "process_notes": [
+    "2026-09-28T15:48:41Z: PR #1843 (EPIC-01) opened with qa_evidence_EPIC-01.md's Standard Sign-Off Block Date field still blank -- per BLG-GOV-18 this normally blocks PR opening, but Product Owner gave explicit direction in-session to open now with sign-off pending rather than wait. The PR is not mergeable until a human Director of Quality completes the sign-off block and Product Owner acceptance is separately recorded (STEP 4 merge gate unaffected by this early open)."
+  ],
   "sealed": false,
   "sealed_utc": null
 }
