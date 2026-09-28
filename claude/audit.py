@@ -24,32 +24,27 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-09-14"
-PRIOR_AUDIT_OPEN_ITEMS = []
-  # All 5 improvements filed at AUD-2026-09-14 were resolved same session, per explicit user
-  # direction ("review the 5 improvements and action"). 4 patched: release_planning_prompt.md
-  # v2.49->v2.50 (001), lessons_learnt_prompt.md v1.13->v1.14 (003), OPERATIONAL_GUIDE.md
-  # v4.185->v4.186 (002 + 004, backfilling team_charter.md and .github/pull_request_template.md
-  # §14 rows). Companion changelogs and prompt_change_log.md updated in the same pass. -005
-  # (CLAUDE.md staleness) was reviewed against this session's actual work per the user's explicit
-  # instruction and closed no-change-needed (advisory only, no file to patch — nothing in
-  # CLAUDE.md's command table, non-negotiables, or §6 checklist was found stale or broken).
-  # Left out of this list (not "OPEN") since it has no prompt_change_log.md entry by design and
-  # would otherwise be misclassified OPEN by the next audit's Phase 0 evidence search. Full
-  # disposition recorded in the filed report's post-publication note.
+PRIOR_AUDIT_ID = "AUD-2026-09-28"
+PRIOR_AUDIT_OPEN_ITEMS = ["AUD-2026-09-28-001", "AUD-2026-09-28-002", "AUD-2026-09-28-003"]
+  # All 3 improvements filed at AUD-2026-09-28 remain open: 001 (Release Planning lessons_learnt.md
+  # format vs. lessons_learnt_prompt.md §5 scope) and 003 (CLAUDE.md/README.md/audit.py absent from
+  # OPERATIONAL_GUIDE.md §13 register) both need a Head of Specs Team ruling before either PATCH can
+  # be applied; 002 is an explicit draft PATCH for execution_prompt.md §3.2.A offered to accelerate
+  # the already-open ESC-CLOSE-20260928-01 ruling, not an authorised action-now change. None applied
+  # this session. See claude/cycles/2026-09-23__release-v9.7/audit_report_AUD-2026-09-28.md §5/§11.
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
     "token_efficiency":      100,
-    "governance_integrity":  84,
+    "governance_integrity":  100,
     "execution_reliability": 53,
-    "friction_load":         73,
+    "friction_load":         39,
     "document_hygiene":      100,
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 80  # current completed_cycle_count at AUD-2026-09-14
+COMPLETED_CYCLES = 84  # current completed_cycle_count at AUD-2026-09-28
 
 # -------------------------
 # MISSING FILE RULE
