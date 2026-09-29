@@ -362,7 +362,7 @@ test.describe('SC-SIG-CB-02 — Cash balance fallback to 0', () => {
     // Verify 0 cash is rendered. Use exact:true + first() to avoid strict-mode violation:
     // the regex also matches signal price data ("£0.00 vs MA200") and other zero values.
     // The cash balance renders as a bold "£0" element (distinct from small signal data text).
-    await expect(page.getByText('£0', { exact: true }).first()).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText('£0.00', { exact: true }).first()).toBeVisible({ timeout: 8000 }); // ST-01 (EPIC-01, v9.8): MarketStatusBar's cash cell now renders via the shared formatCurrency helper (always 2dp), not toLocaleString() (no forced decimals).
   });
 
   test('SC-SIG-CB-02b: Cash shows 0 when /cash/summary returns null current_cash', async ({ page }) => {
@@ -382,7 +382,7 @@ test.describe('SC-SIG-CB-02 — Cash balance fallback to 0', () => {
     // cashSummary?.current_cash ?? 0 → 0 when current_cash is null
     await expect(page.locator('body')).not.toContainText('Something went wrong');
     // Use exact:true + first() — same strict-mode fix as SC-SIG-CB-02a.
-    await expect(page.getByText('£0', { exact: true }).first()).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText('£0.00', { exact: true }).first()).toBeVisible({ timeout: 8000 }); // ST-01 (EPIC-01, v9.8): MarketStatusBar's cash cell now renders via the shared formatCurrency helper (always 2dp), not toLocaleString() (no forced decimals).
   });
 });
 

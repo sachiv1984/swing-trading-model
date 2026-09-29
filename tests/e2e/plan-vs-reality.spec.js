@@ -257,8 +257,9 @@ test.describe('SC-PVR-03 — entry_delta_pct non-null displays formatted percent
     await page.getByText('AAPL').first().click();
     await expect(page.getByText(/plan vs reality/i).first()).toBeVisible({ timeout: 8000 });
 
-    // Should show "-1.75%"
-    await expect(page.getByText('-1.75%')).toBeVisible({ timeout: 5000 });
+    // Should show "−1.75%" — typographic minus U+2212 (ST-01, EPIC-01, v9.8: this cell now
+    // renders via the shared formatPercent helper, not an ASCII hyphen).
+    await expect(page.getByText('−1.75%')).toBeVisible({ timeout: 5000 });
   });
 });
 

@@ -173,7 +173,8 @@ test.describe('SC-RM-03 — R-multiple colour coding', () => {
     await stubRoutesAndLoad(page);
 
     const aaplCard = page.locator('button').filter({ hasText: 'AAPL' }).first();
-    const rCell = aaplCard.getByText('-0.75R');
+    // Typographic minus U+2212 (ST-01, EPIC-01, v9.8: renders via the shared formatR helper).
+    const rCell = aaplCard.getByText('−0.75R');
     await expect(rCell).toBeVisible({ timeout: 3000 });
     await expect(rCell).toHaveClass(/text-rose-400/);
   });
