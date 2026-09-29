@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-29T07:37:58Z",
+  "last_updated_utc": "2026-09-29T07:58:49Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -145,55 +145,55 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-28__release-v9.8/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-28__release-v9.8/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/test_upstream_call_helper.py", "tests/test_tax_year_statement_rounding_audit.py"],
       "stories": {
         "ST-07": {
           "title": "Remaining ad hoc timeout=/retry call sites not yet on the shared upstream-call helper",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1810,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "ac569bb5943de3dd60056baae423c77ba50b8ff2",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T07:58:15Z",
+          "acceptance_verified": true,
+          "spec_references": ["backend/utils/upstream_call.py", "tests/test_upstream_call_helper.py"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "9 call sites from BLG-BE-128's follow-up list resolved: 7 migrated to get_timeout() (screener_data_service.py Stooq/Twelve Data config-only; live_trading_assistant.py, database.py, routers/research.py direct-Yahoo call sites to yfinance/yfinance_history; news_service.py to alpaca; si05_digest_service.py + ai_endpoint_anomaly_service.py to a new telegram provider entry), 2 explicitly documented as not migrated with reasons (health_service.py -- internal self-test, not a 3rd-party provider; routers/ticker_universe.py -- ThreadPoolExecutor future timeout, different mechanism, intentionally tighter UX bound than the general yfinance timeout). No retry behaviour changed at any site (AC bullet 2) -- every migration is a literal timeout-value substitution only. Full backend suite green throughout (1861 -> 1875 tests, +14 new TestST07* tests in tests/test_upstream_call_helper.py covering the new provider config and 6 of 7 real call sites; database.py's own site not independently unit-testable due to conftest.py's session-wide sys.modules['database'] stub -- verified by code review + full suite pass instead)."
         },
         "ST-08": {
           "title": "Extend the v9.7 float\u2192Decimal fee-rounding audit to tax-year statement calculations",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1811,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "1ef40035a97fbba374ace33eae870797dd72c5b4",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T07:58:26Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/ops/money_arithmetic_audit_tax_year_2026-09-29.md", "tests/test_tax_year_statement_rounding_audit.py"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Traced every money-arithmetic call site feeding get_tax_year_report() back to source: entry/exit fee rate-multiplications already use the v9.7 ST-08/BLG-BE-127 Decimal fix; the tax-year statement layer itself adds no new rate multiplication, only summation/rounding of already-computed values. Golden-scanned the one arithmetic step that could introduce its own float-accumulation drift (summary aggregation's round(sum(pnls),2)) via 2,000 random + 28 deliberately-constructed half-penny-boundary trade sets -- 0 disagreements against an independently-derived Decimal sum. Carried-forward-loss confirmed not applicable: no backend implementation exists (Design Only, v9.4 ST-17/BLG-FR-03 decision record) -- added a regression guard test so this disposition cannot silently go stale. Audit write-up: docs/ops/money_arithmetic_audit_tax_year_2026-09-29.md. No gap filed -- none found, per AC's first disjunct. Full backend suite green (1875 -> 1879 tests)."
         }
       }
     },
@@ -895,7 +895,7 @@
   },
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08"],
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
