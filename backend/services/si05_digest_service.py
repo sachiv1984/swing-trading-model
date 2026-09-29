@@ -19,6 +19,8 @@ from urllib.parse import urlencode, urlparse, urlunparse, parse_qs
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
+from utils.upstream_call import get_timeout
+
 logger = logging.getLogger(__name__)
 
 MAX_MESSAGE_LENGTH = 4096
@@ -63,7 +65,7 @@ def _send_telegram_request(url: str, payload: dict, sleep_fn=None) -> Optional[s
                 headers={"Content-Type": "application/json"},
                 method="POST",
             )
-            with urllib.request.urlopen(req, timeout=10) as resp:  # noqa: S310
+            with urllib.request.urlopen(req, timeout=get_timeout("telegram")) as resp:  # noqa: S310
                 message_id = None
                 try:
                     resp_data = json.loads(resp.read())

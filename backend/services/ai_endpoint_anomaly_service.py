@@ -244,6 +244,7 @@ def _send_anomaly_telegram_alert(firing: list) -> bool:
     mechanism (urllib, same bot/chat env vars) rather than a log-only
     notification."""
     from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+    from utils.upstream_call import get_timeout
     import urllib.request
     import urllib.parse
 
@@ -264,7 +265,7 @@ def _send_anomaly_telegram_alert(firing: list) -> bool:
     })
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage?{params}"
     try:
-        urllib.request.urlopen(url, timeout=10)
+        urllib.request.urlopen(url, timeout=get_timeout("telegram"))
         return True
     except Exception:
         return False

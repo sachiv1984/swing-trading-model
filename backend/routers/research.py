@@ -21,6 +21,7 @@ from database import get_portfolio
 from services.signal_service import get_signals_for_ticker
 from services.sector_service import get_sector_and_industry
 from services.screener_batch_service import get_screener_results
+from utils.upstream_call import get_timeout
 
 router = APIRouter(prefix="/research", tags=["Research"])
 
@@ -80,7 +81,7 @@ def _get_price_data(ticker: str, market: str):
     try:
         time.sleep(0.3)
         url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
-        resp = requests.get(url, params={"interval": "1d", "range": "1d"}, headers=_YF_HEADERS, timeout=10)
+        resp = requests.get(url, params={"interval": "1d", "range": "1d"}, headers=_YF_HEADERS, timeout=get_timeout("yfinance"))
         if not resp.ok:
             return _YF_UNAVAILABLE
         chart = resp.json().get("chart", {})
