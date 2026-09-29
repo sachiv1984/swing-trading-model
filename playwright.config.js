@@ -56,6 +56,14 @@ module.exports = defineConfig({
     // http://localhost:8000 (cross-port, non-https). Playwright must bypass CSP
     // so page.route() interceptors can fulfill API requests in tests.
     bypassCSP: true,
+    // ST-16 (BLG-QA-187, EPIC-03, v9.8): a failing run previously left no
+    // trace or screenshot behind, so diagnosing a CI-only failure meant
+    // re-running locally and hoping to reproduce it. 'retain-on-failure'/
+    // 'only-on-failure' keep artifacts only for failing tests (passing runs
+    // stay as cheap as before) — view a trace via `npx playwright show-trace
+    // <path>.zip`.
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
   },
 
   projects: [

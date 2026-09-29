@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-29 (session — 3 new items added: BLG-BE-132, BLG-BE-133, BLG-BE-134); prior — 2026-09-28 (session — 1 new item added: BLG-BE-131); prior — 2026-09-28 (session — 1 new item added: BLG-QA-197); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-29 (session — 1 new item added: BLG-QA-198); prior — 2026-09-29 (session — 3 new items added: BLG-BE-132, BLG-BE-133, BLG-BE-134); prior — 2026-09-28 (session — 1 new item added: BLG-BE-131); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4212,6 +4212,25 @@ The Tax Year summary notice ("Includes {k} restated month(s) — see the Monthly
 
 **Acceptance Criteria**
 - SC-REP-04a passes and matches the same zero-is-unsigned convention already correctly asserted elsewhere (e.g. `tests/e2e/number-format-tables.spec.js` SC-NFT-01's "zero is unsigned" checks)
+
+---
+
+### BLG-QA-198 — mutmut source-path compatibility fix needed before mutation-testing pilot can run
+**Priority:** P3 (Low)
+**Type:** QA / Test Tooling
+**Owner:** QA Lead
+**Source:** ST-15 (BLG-QA-184, EPIC-03, cycle 2026-09-28__release-v9.8) — discovered while attempting the mutation-testing pilot on `backend/services/sizing_service.py` and `backend/utils/calculations.py` — 2026-09-29
+**Effort:** S (~0.5–1d)
+
+**Problem**
+`mutmut` 3.x hardcodes `sys.path` setup for its mutated copy to only `mutants/.`, `mutants/src`, or `mutants/source` (`mutmut/utils/file_utils.py::setup_source_paths`) — not configurable via the `source_paths` setting. This repo's `tests/conftest.py` instead adds `backend/` itself onto `sys.path`, so tests import backend modules as `services.X`/`utils.X` (bare, backend-relative), never as `backend.services.X`. The mismatch means mutmut cannot correlate any mutant to actual test coverage and aborts before running any mutant, regardless of real coverage — confirmed live: `tests/test_golden_outputs.py` and `tests/test_trailing_stop_breakeven_floor.py` demonstrably cover both target modules (32 passing tests), yet mutmut reported 0 exercised.
+
+**Scope**
+- Choose and apply one of: (a) run mutmut with `cwd=backend/` and a relocated `tests/` copy alongside it so the import convention matches; or (b) change `tests/conftest.py`'s `sys.path` setup to add the repo root instead of `backend/` and repoint the suite's imports to `backend.services.X` style (touches the whole suite's collection path — needs its own decision, not a silent side effect of this item)
+
+**Acceptance Criteria**
+- One of the two fix options is chosen and applied
+- BLG-QA-184's mutation-testing pilot (`docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`) can then produce a real mutation score for the two target modules
 
 ---
 

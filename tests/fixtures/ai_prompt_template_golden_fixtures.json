@@ -1,0 +1,38 @@
+{
+  "_metadata": {
+    "description": "Golden-fixture registry for AI prompt templates (ST-09, BLG-AI-07, EPIC-03, v9.8). Each entry pins the exact template text (via sha256) to the prompt_version recorded in the source at fixture-authoring time. tests/test_ai_prompt_template_golden_fixtures.py fails a covered template's drift check if its text changes without prompt_version also changing. When intentionally editing a covered template: bump the source's prompt_version/PROMPT_VERSION constant AND update this fixture's sha256 + prompt_version for that entry in the same commit.",
+    "disallowed_phrase_source": "scripts/run_ai_output_boundary_sample_audit.py::scan_prescriptive / scan_prediction (implements strategy_rules.md \u00a713.2 boundary)"
+  },
+  "templates": {
+    "daily-briefing (POST /ai/daily-briefing)": {
+      "file": "backend/services/ai_service.py",
+      "function": "generate_daily_briefing",
+      "prompt_version": "v1.0",
+      "sha256": "3586e32cb122fc6bf527fa1dbeede75626622635365dbcfb77bb32c482d7c657"
+    },
+    "chat (POST /ai/chat)": {
+      "file": "backend/services/ai_service.py",
+      "function": "ai_chat",
+      "prompt_version": "v1.0",
+      "sha256": "f63c1a2f6b42f2cda574d4a21404f248d25e63b009b1d95e39850372e6725d97"
+    },
+    "generate-plan system (POST /trade-plans/generate-plan)": {
+      "file": "backend/services/gemini_service.py",
+      "constant": "_FULL_PLAN_SYSTEM",
+      "prompt_version": "v3.0",
+      "sha256": "d2a13f9ef993e24067e0dffe1fd548bbbdef6356b5b1312be66fb99adffb0145"
+    },
+    "generate-thesis system (POST /trade-plans/generate-thesis)": {
+      "file": "backend/services/gemini_service.py",
+      "constant": "_THESIS_SYSTEM",
+      "prompt_version": "v3.0",
+      "sha256": "697d0f10653d287b74e790fd13f4aaf34a5ff24c11b956ca5bb1946ab8b18cb1"
+    },
+    "debrief focus_area system (POST /trades/{id}/debrief)": {
+      "file": "backend/services/debrief_service.py",
+      "constant": "_FOCUS_AREA_SYSTEM",
+      "prompt_version": "v1.0",
+      "sha256": "c9f557e8c611a6015d45dc273020729c75b179248963967c1dd93d072a795899"
+    }
+  }
+}
