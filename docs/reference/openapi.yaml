@@ -6797,6 +6797,13 @@ components:
         - $ref: "#/components/schemas/HealthResponse"
         - type: object
           properties:
+            deployed_commit_sha:
+              type: string
+              nullable: true
+              description: |
+                Full commit SHA the running process was deployed from (Render's
+                RENDER_GIT_COMMIT, falling back to a local `git rev-parse HEAD`).
+                Null if neither source is determinable in this environment.
             response_time_ms: { type: number }
             checks:
               type: object

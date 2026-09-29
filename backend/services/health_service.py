@@ -23,6 +23,33 @@ import json
 
 from database import get_portfolio, get_settings, get_database_size_bytes
 from utils.pricing import get_live_fx_rate
+import subprocess
+
+
+def get_deployed_commit_sha() -> Optional[str]:
+    """The commit SHA the running process was actually deployed from (ST-17,
+    BLG-OPS-169, EPIC-04, v9.8) -- lets a post-merge check confirm staging is
+    running what was merged, not just that a deploy hook fired.
+
+    Render sets `RENDER_GIT_COMMIT` automatically for every service (no
+    envVars entry needed in render.yaml) -- preferred, since it reflects
+    exactly what Render checked out and built, not what happens to be on
+    disk in whatever environment the process runs in. Falls back to a local
+    `git rev-parse HEAD` for dev/CI environments with no Render env var,
+    then to None if neither source is available (e.g. no .git directory in
+    a minimal container) -- known limit: a null value means "not
+    determinable in this environment", not "not deployed"."""
+    render_sha = os.environ.get("RENDER_GIT_COMMIT")
+    if render_sha:
+        return render_sha
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True, text=True, timeout=5, check=True,
+        )
+        return result.stdout.strip() or None
+    except Exception:
+        return None
 
 
 # Module-level tracking (in-memory; resets on process restart)
@@ -324,6 +351,7 @@ def get_detailed_health() -> Dict:
         "status": overall_status,
         "timestamp": datetime.now().isoformat(),
         "version": "1.4.0",
+        "deployed_commit_sha": get_deployed_commit_sha(),
         "response_time_ms": response_time,
         "checks": checks
     }

@@ -122,6 +122,64 @@ class TestGetHealthResponseSchema:
         assert isinstance(result["ai_journal"]["error_rate"], (int, float))
 
 
+class TestGetHealthDetailedResponseSchema:
+    """SC-HEALTH-01c — GET /health/detailed response matches health_endpoints.md's
+    documented schema, in particular the deployed_commit_sha field added for ST-17
+    (BLG-OPS-169, EPIC-04, v9.8)."""
+
+    def test_top_level_keys_present(self):
+        from services.health_service import get_detailed_health
+        with patch('services.health_service.get_portfolio') as mock_p, \
+             patch('services.health_service.get_live_fx_rate') as mock_fx, \
+             patch('services.health_service.get_settings') as mock_settings:
+            mock_p.return_value = {}
+            mock_fx.return_value = 1.27
+            mock_settings.return_value = {"some": "setting"}
+            result = get_detailed_health()
+
+        expected_keys = {
+            "status", "timestamp", "version", "deployed_commit_sha",
+            "response_time_ms", "checks",
+        }
+        assert expected_keys.issubset(result.keys()), (
+            f"Missing keys: {expected_keys - result.keys()}"
+        )
+
+    def test_deployed_commit_sha_uses_render_env_var_when_set(self):
+        from services.health_service import get_deployed_commit_sha
+        with patch.dict(os.environ, {"RENDER_GIT_COMMIT": "abc123deployedsha"}):
+            assert get_deployed_commit_sha() == "abc123deployedsha"
+
+    def test_deployed_commit_sha_falls_back_to_local_git_when_render_env_absent(self):
+        from services.health_service import get_deployed_commit_sha
+        env_without_render = {k: v for k, v in os.environ.items() if k != "RENDER_GIT_COMMIT"}
+        with patch.dict(os.environ, env_without_render, clear=True):
+            with patch('subprocess.run') as mock_run:
+                mock_run.return_value.stdout = "locallycheckedoutsha\n"
+                result = get_deployed_commit_sha()
+        assert result == "locallycheckedoutsha"
+
+    def test_deployed_commit_sha_is_none_when_no_source_available(self):
+        from services.health_service import get_deployed_commit_sha
+        env_without_render = {k: v for k, v in os.environ.items() if k != "RENDER_GIT_COMMIT"}
+        with patch.dict(os.environ, env_without_render, clear=True):
+            with patch('subprocess.run', side_effect=FileNotFoundError("no git")):
+                result = get_deployed_commit_sha()
+        assert result is None
+
+    def test_get_detailed_health_includes_deployed_commit_sha_via_get_deployed_commit_sha(self):
+        from services.health_service import get_detailed_health
+        with patch('services.health_service.get_portfolio') as mock_p, \
+             patch('services.health_service.get_live_fx_rate') as mock_fx, \
+             patch('services.health_service.get_settings') as mock_settings, \
+             patch('services.health_service.get_deployed_commit_sha', return_value="stubbed-sha"):
+            mock_p.return_value = {}
+            mock_fx.return_value = 1.27
+            mock_settings.return_value = {"some": "setting"}
+            result = get_detailed_health()
+        assert result["deployed_commit_sha"] == "stubbed-sha"
+
+
 class TestGetHealthDatabaseResponseSchema:
     """SC-HEALTH-01b — GET /health/database response matches health_endpoints.md's documented schema."""
 

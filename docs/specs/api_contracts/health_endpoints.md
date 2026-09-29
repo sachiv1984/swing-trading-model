@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.6
-**Last Updated:** 2026-08-18
+**Version:** 1.7
+**Last Updated:** 2026-09-29 (ST-17, EPIC-04, v9.8 — added `deployed_commit_sha` to `GET /health/detailed`)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -137,6 +137,7 @@ No parameters.
   "status": "healthy",
   "timestamp": "2026-02-17T10:30:00Z",
   "version": "1.5.0",
+  "deployed_commit_sha": "5e38e1c8b43c0cf6a0f7c125a0cad3a62ec90fc5",
   "response_time_ms": 42.5,
   "checks": {
     "database": {
@@ -174,6 +175,7 @@ No parameters.
 #### Field notes
 
 - `version` reflects the deployed backend version. See note under `GET /health`.
+- `deployed_commit_sha`: full commit SHA the running process was deployed from (ST-17, BLG-OPS-169, EPIC-04, v9.8) — read from Render's `RENDER_GIT_COMMIT` environment variable (set automatically for every Render service, no configuration needed), falling back to a local `git rev-parse HEAD` for environments with no Render env var. `null` if neither source is determinable (e.g. a minimal container with no `.git` directory and not running on Render) — a `null` value means "not determinable in this environment", not "not deployed". Unlike `version` (a manually-maintained semver string), this field is derived at request time and always reflects the exact commit the process booted from — this is what `.github/workflows/staging-smoke-test.yml`'s stale-deploy check compares against the merged commit on `main` (see `docs/ops/staging_deploy_notes.md` §7).
 - `checks` key names and `details` structures are implementation-specific but stable within a version.
 - Internal error details must not expose secrets or credentials.
 
@@ -546,6 +548,7 @@ None — all known deviations resolved as of v1.1 (BLG-SPEC-D14, 2026-03-25).
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7 | 2026-09-29 | ST-17 (BLG-OPS-169, EPIC-04, v9.8): Added `deployed_commit_sha` to `GET /health/detailed` — lets `staging-smoke-test.yml` detect a merge to `main` that should have redeployed staging but did not. Authority: Infrastructure & Operations Owner. |
 | 1.6 | 2026-08-18 | ST-18 (BLG-SPEC-130, EPIC-05, v8.9): `GET /health/scheduler`'s architecture note and response example only documented 3 of the 6 live jobs `_NIGHTLY_JOB_NAMES`/`get_scheduler_health()` actually track — added `custom_price_alerts`, `screener_refresh`, and `risk_off_alerts` to both, matching `backend/services/health_service.py` exactly. Authority: API Contracts & Documentation Owner. |
 | 1.5 | 2026-08-07 | ST-05 (BLG-SPEC-114, EPIC-02, v8.4): `GET /health` example was missing the `external_apis` and `ai_journal` nested objects that `health_service.get_operational_health()` has returned since ST-08/ST-09. Added both to the example and field notes. Authority: API Contracts & Documentation Owner. |
 | 1.4 | 2026-08-07 | ST-02 (BLG-SPEC-116, EPIC-02, v8.4): Added `GET /test/quick-health` and `POST /test/rate-limit-scenarios` — both routes existed in `backend/routers/test.py` but were undocumented, causing OpenAPI Drift Detection CI gate failures once `openapi.yaml`'s structural defect was fixed. Also added `GET /health/scheduler` to the Endpoints TOC (pre-existing section, TOC omission only). Authority: API Contracts & Documentation Owner. |

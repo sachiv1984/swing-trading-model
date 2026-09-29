@@ -7,6 +7,17 @@ name: Staging Smoke Test (Scheduled)
 # issue, a Render platform incident) is still caught, not just deploy-time
 # breakage. Alerts via Telegram on failure, same mechanism as
 # backtest.yml's nightly-job alerting.
+#
+# ST-17 (BLG-OPS-169, EPIC-04, v9.8): also passes EXPECTED_COMMIT_SHA (the
+# tip of main this run checked out) so the smoke test script's optional
+# stale-deploy check runs — catching a merge to main that should have
+# redeployed staging but did not (e.g. because a schema-changing merge's
+# startup-applied ensure_*() functions never ran against the new code).
+# Chosen over a new dedicated workflow or a cycle-close verification step:
+# this workflow already runs every 6 hours against the same staging
+# environment, so no new infra is needed and detection lag is bounded by
+# the existing schedule. See docs/ops/staging_deploy_notes.md #7 for the
+# full design rationale and known limits.
 
 on:
   schedule:
@@ -33,6 +44,7 @@ jobs:
         env:
           STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
           STAGING_API_KEY: ${{ secrets.STAGING_API_KEY }}
+          EXPECTED_COMMIT_SHA: ${{ github.sha }}
         run: |
           set +e
           python3 scripts/staging_smoke_test.py

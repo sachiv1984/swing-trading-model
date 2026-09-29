@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-08-21 (ST-13, EPIC-03, v9.0, BLG-OPS-25 — added post-deploy smoke test suite to `deploy-staging`, plus a new independent scheduled smoke test workflow; §3 build minute assessment updated)
+**Version:** 1.2
+**Last Updated:** 2026-09-29 (ST-17, EPIC-04, v9.8, BLG-OPS-169 — added §7, stale-staging detection via `staging-smoke-test.yml` + `deployed_commit_sha`); prior — 2026-08-21 (ST-13, EPIC-03, v9.0, BLG-OPS-25 — added post-deploy smoke test suite to `deploy-staging`, plus a new independent scheduled smoke test workflow; §3 build minute assessment updated)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -86,3 +86,24 @@ on:
 | Deploy hook does not confirm deploy success | Render returns HTTP 200 on hook receipt, not on deploy completion. Monitor Render dashboard for deploy status. |
 | Staging-only AC deferred | Live deploy verification requires a configured Render environment with `RENDER_STAGING_DEPLOY_HOOK` set. Tracked in BLG-OPS-28. |
 | Render auto-deploy may conflict | If Render's own GitHub integration auto-deploy is also enabled, deploys may double-trigger. Disable Render's native auto-deploy if using this hook approach. |
+
+---
+
+## 7. Stale-Staging Detection (Post-Merge Redeploy Verification) (ST-17, BLG-OPS-169, EPIC-04, v9.8)
+
+**Background:** Staging was found on 2026-09-24 still running pre-v9.6 code — a merged schema change (`alert_type` CHECK constraint gaining `reflection_reminder`) had not actually taken effect on staging, because this application applies schema changes via startup-run `ensure_*()` functions rather than a separate migration step, and nothing checked that staging had actually restarted with the new code. The only thing that surfaced it was a manual verification story.
+
+**Decision (Infrastructure & Operations Owner, ESC-EXEC-20260929-01, 2026-09-29):** Extend the existing `staging-smoke-test.yml` scheduled workflow, rather than a new dedicated workflow or a cycle-close verification step. This workflow already runs every 6 hours against the same staging environment, so no new infrastructure is needed, and it keeps the build-minute footprint change to zero new jobs (§3 above).
+
+**Mechanism:**
+1. `backend/services/health_service.py`'s `get_deployed_commit_sha()` reads Render's `RENDER_GIT_COMMIT` environment variable (auto-set for every Render service, no `render.yaml` change needed), falling back to a local `git rev-parse HEAD` for non-Render environments. Exposed as `deployed_commit_sha` on `GET /health/detailed` (contract: `docs/specs/api_contracts/health_endpoints.md` v1.7).
+2. `staging-smoke-test.yml` passes `EXPECTED_COMMIT_SHA: ${{ github.sha }}` (the tip of `main` this scheduled run checked out) to `scripts/staging_smoke_test.py`.
+3. `staging_smoke_test.py`'s `check_deployed_commit()` compares the two. A mismatch fails the job (same Telegram-alert mechanism as any other smoke-test failure, §5) with a `STALE STAGING DEPLOY` message naming both SHAs.
+
+**Known limits (what can't be verified from the repo alone):**
+- **Detection lag:** bounded by the scheduled workflow's 6-hour cadence, not immediate — a stale deploy can go undetected for up to ~6 hours after the merge that should have redeployed staging.
+- **Schema-bearing changes are not distinguished from any other change.** The check has no way to inspect *which* merged commits changed a startup-applied schema function versus any other code — it flags *any* commit divergence between staging and `main` identically. This is the deliberate, conservative choice: treating every divergence as worth alerting on always covers the schema-bearing case too, at the cost of also alerting on non-schema staleness (which is itself still useful signal, just not the specific failure mode this story was filed for).
+- **A `null`/missing `deployed_commit_sha`** (e.g. an older staging deploy from before this field existed) is reported as a `::warning::`, not a failure — the check cannot distinguish "genuinely stale" from "field not populated yet" without more information than it has.
+- **Confirming the alert fires on a real stale-staging condition is a staging-only AC** — this cannot be reproduced in CI (there is no way to genuinely desynchronize a CI sandbox's "staging" from "main"). Tracked as `BLG-OPS-171`; see the ST-17 QA evidence log for this cycle for disposition.
+
+---

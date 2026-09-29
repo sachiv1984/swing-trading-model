@@ -19,6 +19,12 @@ All four are read-only GETs — this suite never writes to staging data,
 safe to run on every deploy and on an independent schedule
 (.github/workflows/staging-smoke-test.yml) without side effects.
 
+Optionally, when EXPECTED_COMMIT_SHA is set, also runs a stale-deploy check
+(ST-17, BLG-OPS-169, EPIC-04, v9.8): confirms GET /health/detailed's
+deployed_commit_sha matches it, catching a merge to main that should have
+redeployed staging but did not. See check_deployed_commit()'s docstring for
+this check's documented known limits.
+
 Exit code: 0 if all checks pass, 1 if any fails (same convention as
 scripts/check_api_performance_baseline_drift.py /
 scripts/check_deploy_path_filter_drift.py).
@@ -119,9 +125,63 @@ def run_checks(base_url: str, api_key: str) -> list:
     return failures
 
 
+def check_deployed_commit(base_url: str, api_key: str, expected_sha: str) -> str:
+    """Compare GET /health/detailed's deployed_commit_sha (ST-17, BLG-OPS-169,
+    EPIC-04, v9.8) against expected_sha (the merged commit on `main` this run
+    checked out). Returns a failure description string, or "" if the deploy
+    is current or the comparison can't be made (see known limits below).
+
+    This is a *stale-staging* check, not a smoke check: it doesn't test
+    whether staging is healthy, only whether it is running what was merged.
+    It intentionally treats any divergence the same way regardless of
+    whether the missed commit changed a startup-applied schema or not --
+    the check has no way to inspect *which* commits changed schema, so it
+    can't narrow the alert to schema-bearing changes specifically. This is
+    the documented, known limit of what's verifiable from the repo alone
+    (see docs/ops/staging_deploy_notes.md #7): treating every divergence as
+    worth alerting on is the conservative choice, and by construction it
+    always covers the schema-bearing case too.
+
+    A missing/null deployed_commit_sha (e.g. an older staging deploy that
+    predates this field) is reported as a warning-shaped message prefixed
+    "known limit:" rather than a stale-deploy failure -- can't tell staleness
+    apart from "field not populated yet" without more information than this
+    check has.
+    """
+    try:
+        status, body = _request(f"{base_url}/health/detailed", api_key=api_key, timeout=30)
+    except (urllib.error.HTTPError, urllib.error.URLError, OSError, TimeoutError) as e:
+        return f"GET /health/detailed: could not check deployed commit — request failed: {e}"
+
+    if status != 200:
+        return f"GET /health/detailed: could not check deployed commit — expected HTTP 200, got {status}"
+
+    try:
+        parsed = json.loads(body)
+    except json.JSONDecodeError:
+        return "GET /health/detailed: could not check deployed commit — response is not valid JSON"
+
+    deployed_sha = parsed.get("deployed_commit_sha")
+    if not deployed_sha:
+        return (
+            "known limit: GET /health/detailed did not report a deployed_commit_sha "
+            "(null/missing) -- cannot confirm staging is running the merged commit"
+        )
+
+    if deployed_sha != expected_sha:
+        return (
+            f"STALE STAGING DEPLOY: staging is running commit {deployed_sha!r} but "
+            f"the latest merged commit on main is {expected_sha!r} -- a merge did not "
+            f"redeploy staging (or the deploy has not completed yet)"
+        )
+
+    return ""
+
+
 def main() -> int:
     base_url = os.environ.get("STAGING_API_URL", "").rstrip("/")
     api_key = os.environ.get("STAGING_API_KEY", "")
+    expected_commit_sha = os.environ.get("EXPECTED_COMMIT_SHA", "").strip()
 
     if not base_url:
         print("::error::STAGING_API_URL environment variable is not set.")
@@ -134,6 +194,17 @@ def main() -> int:
 
     print(f"Running {len(CHECKS)} smoke checks against {base_url} ...")
     failures = run_checks(base_url, api_key)
+
+    if expected_commit_sha:
+        print(f"Checking staging's deployed commit against {expected_commit_sha} ...")
+        deploy_check_result = check_deployed_commit(base_url, api_key, expected_commit_sha)
+        if deploy_check_result:
+            if deploy_check_result.startswith("known limit:"):
+                print(f"::warning::{deploy_check_result}")
+            else:
+                failures.append(deploy_check_result)
+        else:
+            print(f"  ✓ staging is running the latest merged commit ({expected_commit_sha})")
 
     if failures:
         print("::error::Staging smoke test FAILED:")

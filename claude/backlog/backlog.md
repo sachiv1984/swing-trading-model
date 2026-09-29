@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-29 (session — 3 new items added: BLG-QA-200, BLG-QA-201, BLG-QA-202); prior — 2026-09-29 (session — 1 new item added: BLG-QA-199; BLG-QA-198 resolved same-session); prior — 2026-09-29 (session — 1 new item added: BLG-QA-198); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-29 (session — 2 new items added: BLG-QA-203, BLG-OPS-171); prior — 2026-09-29 (session — 3 new items added: BLG-QA-200, BLG-QA-201, BLG-QA-202); prior — 2026-09-29 (session — 1 new item added: BLG-QA-199; BLG-QA-198 resolved same-session); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4316,6 +4316,29 @@ The ST-15 mutation-testing pilot (`docs/testing/mutation_testing_pilot_sizing_an
 
 ---
 
+### BLG-QA-203 — GET /reports/tax-year returns HTTP 500 against its own test fixture
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** Head of Engineering; Director of Quality
+**Source:** ST-17/EPIC-04, cycle 2026-09-28__release-v9.8 — discovered incidentally while running `tests/test_api_contracts.py` to check for regressions from ST-17's `health_service.py` change — 2026-09-29
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_api_contracts.py::TestReportsEndpoints::test_get_tax_year_report_returns_ok` fails on the current `main` tip when run in isolation or as part of just `test_api_contracts.py`: `GET /reports/tax-year` returns HTTP 500 (`{"status":"error","message":"Internal server error"}`) instead of the expected 200, with the traceback originating in `backend/main.py` line 887 (`get_tax_year_report_endpoint`). Confirmed pre-existing and unrelated to any in-flight EPIC-04 change (reproduces identically with those changes stashed out) — not a regression introduced this cycle, but a live, currently-red test in some run configurations. **Test-order dependency found:** the same test *passes* when the full suite is run (`pytest tests/ -q --ignore=tests/e2e`, 1941 passed / 0 failed) — some other test file, when collected/run first, leaves shared state (likely module-level or in-memory) that this test's own fixture does not set up on its own. This makes it either an order-dependent test-isolation bug (the real defect) or a genuinely broken endpoint that happens to be masked by leftover state from another test — root-causing which is this item's first step.
+
+**Scope**
+- Determine whether `GET /reports/tax-year` is genuinely broken (masked by cross-test state pollution) or the test's own fixture is incomplete/order-dependent (bisect which other test file's execution makes it pass, e.g. `pytest tests/test_api_contracts.py tests/<suspect>.py -q`)
+- Root-cause the 500 (`backend/main.py:887`, `get_tax_year_report_endpoint`) and fix the underlying defect, or fix the test fixture/isolation if the endpoint's behaviour is actually correct and only the test's own setup is incomplete
+- Confirm `tests/test_api_contracts.py::TestReportsEndpoints::test_get_tax_year_report_returns_ok` passes **both** in isolation and as part of the full suite
+
+**Acceptance Criteria**
+- `backend/.venv/bin/python3 -m pytest tests/test_api_contracts.py::TestReportsEndpoints::test_get_tax_year_report_returns_ok` passes when run alone
+- `backend/.venv/bin/python3 -m pytest tests/ -q --ignore=tests/e2e` continues to pass (confirms the fix didn't just move the order-dependency elsewhere)
+- Root cause (genuine endpoint defect vs. test-isolation gap) is documented in the fix's commit message or a linked deviation record
+
+---
+
 ### BLG-GOV-349 — governance_sync.yml does not auto-close a phased story's GitHub issue (ST-XXa/b/c vs. the commit tag's bare ST-XX)
 **Priority:** P2 (Medium)
 **Type:** Governance Process
@@ -4521,6 +4544,28 @@ v9.7 (ST-08) moved trade-fee rounding from float to Decimal, following the v9.6 
 
 **Acceptance Criteria**
 - `docs/infrastructure/staging_setup.md` §8 states which query patterns a governed session may run against the staging read-only role without seeking additional confirmation each time
+
+---
+
+### BLG-OPS-171 — Confirm the stale-staging-deploy alert fires on a real stale-staging condition
+**Priority:** P3 (Low)
+**Type:** Operations / QA
+**Owner:** Infrastructure & Operations Owner; Director of Quality
+**Source:** ST-17/EPIC-04 (BLG-OPS-169), cycle 2026-09-28__release-v9.8 — staging-only AC deferred at PR-open time per sprint_backlog.md ST-17 Notes — 2026-09-29
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-17 (BLG-OPS-169) added a stale-deploy check to `staging-smoke-test.yml` (compares `GET /health/detailed`'s `deployed_commit_sha` against the merged commit on `main`) and unit-tested the comparison logic in isolation (`tests/test_staging_smoke_test.py`), but confirming the check actually produces a visible failure/alert against a *real* stale-staging condition cannot be reproduced in CI or this sandbox — there is no way to genuinely desynchronize a real staging deploy from `main` without either withholding a real deploy or reverting staging to an old commit, both of which require live Render/GitHub Actions access this environment does not have.
+
+**Scope**
+- Deliberately let (or force) staging fall behind `main` by one commit (e.g. temporarily pause auto-deploy, or manually redeploy an older commit via the Render dashboard)
+- Confirm the next `staging-smoke-test.yml` scheduled run (or a manual `workflow_dispatch`) reports the `STALE STAGING DEPLOY` failure and the Telegram alert fires
+- Restore staging to the current `main` commit afterward and confirm the check reports a pass
+
+**Acceptance Criteria**
+- A recorded failing CI run (run URL) showing the `STALE STAGING DEPLOY` message for a real, deliberately-introduced staging/main divergence
+- A recorded passing run (run URL) after staging is restored to the current `main` commit
 
 ---
 
