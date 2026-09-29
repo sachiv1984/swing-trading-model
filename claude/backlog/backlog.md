@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-29 (session — 1 new item added: BLG-SPEC-175, from ST-21/EPIC-05's error-envelope freshness-checker extension); prior — 2026-09-29 (session — 4 new items added: BLG-OPS-172, BLG-OPS-173, BLG-OPS-174, BLG-API-06, from ST-20/EPIC-05's idempotency/double-submit documentation sweep); prior — 2026-09-29 (session — 1 new item added: BLG-SEC-40, from agent-mediated review of PR #1846); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-29 (session — 1 new item added: BLG-SPEC-176, from ST-23/EPIC-05's openapi.yaml response-schema authoring); prior — 2026-09-29 (session — 1 new item added: BLG-SPEC-175, from ST-21/EPIC-05's error-envelope freshness-checker extension); prior — 2026-09-29 (session — 4 new items added: BLG-OPS-172, BLG-OPS-173, BLG-OPS-174, BLG-API-06, from ST-20/EPIC-05's idempotency/double-submit documentation sweep); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4770,6 +4770,26 @@ ST-21 extended `scripts/check_contract_example_freshness.py` to validate documen
 **Acceptance Criteria**
 - All 5 flagged cases are resolved (code fixed to conform, or documentation corrected to match actual conforming behaviour, or heading label corrected)
 - `python3 scripts/check_contract_example_freshness.py` reports 0 error-envelope violations
+
+---
+
+### BLG-SPEC-176 — DELETE /trade-plans/{id} uses a different success envelope than conventions.md §12's documented DELETE convention
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / API Contracts
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-23/EPIC-05 (BLG-SPEC-153), cycle 2026-09-28__release-v9.8 — openapi.yaml response-schema authoring — 2026-09-29
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`conventions.md` §12 (DELETE Response Convention) states successful DELETE operations return `{"status": "ok", "data": {"deleted": true, "id": "..."}}`, and every other DELETE endpoint's documented example in this codebase follows that shape. `trade_plan_endpoints.md`'s `DELETE /trade-plans/{id}` is the one exception: its documented response is `{"status": "ok", "message": "Trade plan deleted"}` — a `message` field instead of a `data.deleted`/`data.id` object. Found while authoring `openapi.yaml`'s response schema for this endpoint (ST-23) — the schema was written to match what is actually documented (not silently reconciled to the convention), since changing which side is "correct" is a decision, not a typo fix.
+
+**Scope**
+- Confirm which side is authoritative: does the live `DELETE /trade-plans/{id}` route actually return `{status, message}` (in which case `conventions.md` §12 should note this endpoint as a named exception, or the route should be migrated to the standard envelope), or was the markdown simply never updated when the route was built against the standard envelope
+- Reconcile the losing side (code or doc) to match
+
+**Acceptance Criteria**
+- `DELETE /trade-plans/{id}`'s documented response and its live behaviour agree with each other, and conventions.md §12 either lists this endpoint as an explicit exception or the endpoint is migrated to the standard DELETE envelope
 
 ---
 

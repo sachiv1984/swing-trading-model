@@ -4979,6 +4979,14 @@ paths:
       responses:
         "201":
           description: Trade plan created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data:
+                    $ref: "#/components/schemas/TradePlan"
     get:
       summary: List trade plans
       tags: [Trade Plans]
@@ -5039,6 +5047,13 @@ paths:
           description: Updated trade plan
     delete:
       summary: Delete trade plan
+      description: |
+        Note: unlike most DELETE endpoints in this API, the response body is
+        {status, message} -- not the {status, data: {deleted, id}} envelope
+        in conventions.md SS12. Documented as-is (matches
+        trade_plan_endpoints.md exactly); filed as BLG-SPEC-176 for the
+        API Contracts & Documentation Owner to reconcile which side is
+        the intended convention.
       tags: [Trade Plans]
       parameters:
         - name: id
@@ -5048,6 +5063,13 @@ paths:
       responses:
         "200":
           description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  message: { type: string, example: "Trade plan deleted" }
 
   /trade-plans/by-position/{position_id}:
     get:
@@ -6971,6 +6993,44 @@ components:
         Intentionally broad to avoid drift. Canonical nested field definitions live in:
         docs/specs/api_contracts/health_endpoints.md (POST /test/endpoints)
       additionalProperties: true
+
+    TradePlan:
+      type: object
+      description: |
+        Canonical contract: docs/specs/api_contracts/trade_plan_endpoints.md
+        (ST-23, EPIC-05, v9.8, BLG-SPEC-153).
+      properties:
+        id: { type: string, format: uuid }
+        ticker: { type: string }
+        market: { type: string, enum: [US, UK] }
+        position_id: { type: string, format: uuid, nullable: true }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        setup_type: { type: string, nullable: true, enum: [Breakout, "Pullback to MA", "Momentum Continuation", "Mean Reversion", "Catalyst-driven", Other] }
+        setup_thesis: { type: string, nullable: true }
+        entry_rationale: { type: string, nullable: true }
+        regime_context_at_entry: { type: string, nullable: true }
+        r_target: { type: number, nullable: true }
+        early_exit_conditions: { type: string, nullable: true }
+        confirmation_criteria: { type: string, nullable: true }
+        checklist_completed: { type: boolean }
+        checklist_items:
+          type: array
+          items:
+            type: object
+            properties:
+              item: { type: string }
+              checked: { type: boolean }
+        status: { type: string, enum: [draft, active, closed] }
+        pre_entry_override_acknowledged: { type: boolean }
+        trade_tags:
+          type: array
+          items: { type: string }
+        thesis_model_version: { type: string, nullable: true }
+        thesis_prompt_version: { type: string, nullable: true }
+        invalidation_condition: { type: string, nullable: true }
+        is_ai_draft: { type: boolean }
+        triggered_by_price_alert_id: { type: string, format: uuid, nullable: true }
 
   securitySchemes:
     ApiKey:
