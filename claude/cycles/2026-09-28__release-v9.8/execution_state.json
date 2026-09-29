@@ -721,23 +721,25 @@
         "ST-27": {
           "title": "trade_reflection.md \u00a74 specifies an en dash for a missing R-multiple",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1830,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "c9fbdd9d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-28T09:43:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_reflection.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "pre_met",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Pre-met (LL-v2.4-P4-02) -- both AC bullets were already resolved at this cycle's design gate (commit c9fbdd9d, '[GOVERNANCE] Design gate: 2026-09-28__release-v9.8 -- 39 items cleared, 0 blocked', 2026-09-28, already on main and inherited by this branch): trade_reflection.md v0.3 corrects the missing-value glyph to em dash and specifies the shared-helper formatting rule. Verified by code review that src/components/trades/TradeReflectionModal.js already matches exactly -- formatCurrency/formatR imported and used for Entry Price/Exit Price/R-Multiple, and the SummaryRow default renders em dash ('\u2014') for null values, not en dash. No new commit needed on this branch; no divergence between the design-gate spec text and the shipped code found."
         },
         "ST-28": {
           "title": "sprint_velocity_trend_chart.md trend sentence splices non-adjacent PVR readings",
@@ -1033,7 +1035,8 @@
     "ST-23",
     "ST-24",
     "ST-25",
-    "ST-26"
+    "ST-26",
+    "ST-27"
   ],
   "open_escalations": [],
   "merge_gate": {
