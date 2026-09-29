@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-29 (session — 2 new items added: BLG-QA-203, BLG-OPS-171); prior — 2026-09-29 (session — 3 new items added: BLG-QA-200, BLG-QA-201, BLG-QA-202); prior — 2026-09-29 (session — 1 new item added: BLG-QA-199; BLG-QA-198 resolved same-session); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-29 (session — 1 new item added: BLG-SEC-40, from agent-mediated review of PR #1846); prior — 2026-09-29 (session — 2 new items added: BLG-QA-203, BLG-OPS-171); prior — 2026-09-29 (session — 3 new items added: BLG-QA-200, BLG-QA-201, BLG-QA-202); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -3976,6 +3976,30 @@ Schema changes in this application are applied by `ensure_*()` functions when th
 **Acceptance Criteria**
 - Each missed form above is rejected by a test, and the trailing-comment line is accepted
 - `main()` exits non-zero on a violation and zero on the current repo tree, asserted by a test
+
+---
+
+### BLG-SEC-40 — Two residual gaps in the just-hardened non-registry dependency guard
+**Priority:** P3 (Low)
+**Type:** Security / Supply Chain
+**Owner:** Cybersecurity & Trust Lead
+**Source:** ST-19/EPIC-04 (BLG-SEC-39), cycle 2026-09-28__release-v9.8 — agent-mediated review of PR #1846 — 2026-09-29
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+Two gaps found reviewing `scripts/check_non_registry_dependencies.py` after BLG-SEC-39's hardening (PR #1846):
+1. `_PIP_LOCAL_PATH_RE` requires a trailing `/` after `-e ` and the dot(s) (`\.{1,2}/`), so it catches `-e ./pkg` and `-e ../pkg` but misses the bare current-directory self-install form `-e .` (no trailing slash) — a real, still-unflagged local-path install.
+2. `check_package_lock_json` flags any `resolved` value not served from `https://registry.npmjs.org/` as a violation, including a legitimate npm workspace-local reference (`"resolved": "file:../packages/foo"` without a `"link": true` marker) — currently dormant since this repo has no npm workspaces, but would false-positive the moment one is introduced.
+
+**Scope**
+- Extend `_PIP_LOCAL_PATH_RE` (or add a second pattern) to also match a bare `-e .`/`-e ..` with no trailing slash
+- Add an exemption (or a documented allow-list check) for `file:` workspace-local `resolved` entries in `check_package_lock_json`, scoped narrowly enough not to reopen the general `file:` non-registry gap
+- Add a regression test for each
+
+**Acceptance Criteria**
+- `-e .` and `-e ..` (no trailing slash) are rejected by a test
+- A synthetic npm-workspace-local `file:` lockfile entry is confirmed NOT flagged by a test, while a genuine non-workspace `file:`/git resolved URL is still flagged
 
 ---
 
