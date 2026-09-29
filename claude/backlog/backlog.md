@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-28 (session — 1 new item added: BLG-BE-131); prior — 2026-09-28 (session — 1 new item added: BLG-QA-197); prior — 2026-09-28 (session — 1 new item added: BLG-FE-192); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-29 (session — 3 new items added: BLG-BE-132, BLG-BE-133, BLG-BE-134); prior — 2026-09-28 (session — 1 new item added: BLG-BE-131); prior — 2026-09-28 (session — 1 new item added: BLG-QA-197); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4441,6 +4441,63 @@ v9.7 (ST-08) moved trade-fee rounding from float to Decimal, following the v9.6 
 **Acceptance Criteria**
 - The script reproduces this cycle's STEP 2.4 (14/36/104/4 of 158) and STEP 7.1 (85.7% rolling average) figures exactly, given the same input files
 - `roadmap_prompt.md` references the script as an optional acceleration, not a hard dependency
+
+---
+
+### BLG-BE-132 — gemini_service.py's daily-cost Telegram alert still uses a hardcoded timeout, not utils.upstream_call
+**Priority:** P4 (Trivial)
+**Type:** Backend / Reliability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1844 review (agent-mediated Director of Quality), EPIC-02/ST-07, cycle 2026-09-28__release-v9.8 — 2026-09-29
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/services/gemini_service.py:394` (`check_and_alert_daily_cost`) calls `urllib.request.urlopen(url, timeout=10)` to send a Telegram alert. ST-07 (BLG-BE-128, EPIC-02, v9.8) added a `"telegram"` provider entry to `backend/utils/upstream_call.py` (`get_timeout("telegram")` == 10) and migrated the two other Telegram call sites (`si05_digest_service.py`, `ai_endpoint_anomaly_service.py`) to it, but this third site was never on BLG-BE-128's original list (filed 2026-09-22) and so was out of ST-07's scope.
+
+**Scope**
+- Replace the hardcoded `timeout=10` with `get_timeout("telegram")`, config-only (no retry-shape change), same treatment ST-07 gave the other two Telegram call sites
+
+**Acceptance Criteria**
+- `gemini_service.py`'s Telegram alert timeout is sourced from `get_timeout("telegram")`; no behaviour change to the existing alert logic
+
+---
+
+### BLG-BE-133 — utils/pricing.py's ATR-fallback Yahoo Finance call still uses a hardcoded timeout, not utils.upstream_call
+**Priority:** P4 (Trivial)
+**Type:** Backend / Reliability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1844 review (agent-mediated Director of Quality), EPIC-02/ST-07, cycle 2026-09-28__release-v9.8 — 2026-09-29
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/utils/pricing.py:403` (an ATR-fallback function that queries Yahoo Finance directly when Alpaca ATR data is unavailable) calls `requests.get(url, params=params, headers=headers, timeout=10)`. This is a different function than the one ST-13 (BLG-BE-122, v9.6) already migrated in the same file — this ATR-fallback path was missed by both ST-13's original migration and ST-07's (BLG-BE-128) follow-up list.
+
+**Scope**
+- Replace the hardcoded `timeout=10` with `get_timeout("yfinance")` (matching value, config-only, no retry-shape change)
+
+**Acceptance Criteria**
+- The ATR-fallback Yahoo Finance call's timeout is sourced from `get_timeout("yfinance")`; no behaviour change to the existing fallback logic
+
+---
+
+### BLG-BE-134 — alpaca_paper_sync_service.py's 3 Alpaca calls still use hardcoded timeouts, not utils.upstream_call
+**Priority:** P4 (Trivial)
+**Type:** Backend / Reliability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1844 review (agent-mediated Director of Quality), EPIC-02/ST-07, cycle 2026-09-28__release-v9.8 — 2026-09-29
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/services/alpaca_paper_sync_service.py` (IT-06, paper-trading position mirroring) has 3 call sites — lines 68 (`requests.post`), 115 (`requests.delete`), 158 (`requests.get`) — each hardcoding `timeout=10` against the Alpaca API, matching the `"alpaca"` provider value ST-13 (BLG-BE-122, v9.6) already configured in `utils/upstream_call.py`. This file/service was never on BLG-BE-128's original list, likely because it postdates that list (IT-06 tag suggests a later initiative).
+
+**Scope**
+- Replace all 3 hardcoded `timeout=10` literals with `get_timeout("alpaca")`, config-only (no retry-shape change) — the file already imports `from utils.retry import retry_with_backoff`, so check whether any of the 3 call sites already use retry wrapping before deciding whether a retry-shape change is in scope or should stay a pure timeout substitution like `BLG-BE-132`/`BLG-BE-133` above
+
+**Acceptance Criteria**
+- All 3 Alpaca call sites in `alpaca_paper_sync_service.py` source their timeout from `get_timeout("alpaca")`; no behaviour change to existing sync/retry logic
 
 ---
 
