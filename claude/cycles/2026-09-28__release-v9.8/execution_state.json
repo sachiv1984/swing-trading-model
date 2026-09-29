@@ -5,13 +5,13 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-29T07:14:24Z",
+  "last_updated_utc": "2026-09-29T07:37:58Z",
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-28__release-v9.8/EPIC-01",
       "pr_number": 1843,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-28__release-v9.8/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/e2e/st01-v98-formatting-migration.spec.js", "tests/e2e/screener.spec.js", "tests/e2e/screener-uk-suffix.spec.js", "tests/e2e/screener-quality.spec.js", "tests/e2e/watchlist.spec.js", "tests/e2e/watchlist-staleness-review.spec.js", "tests/e2e/screener-watchlist-csv-export.spec.js", "tests/e2e/tax-year-restated-notice-year-scoped-link.spec.js", "tests/test_monthly_pnl_tax_year_filter.py", "tests/e2e/system-status.spec.js"],
@@ -898,9 +898,10 @@
   "completed_items": [],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": [
+      "EPIC-01"
+    ],
     "epics_pending": [
-      "EPIC-01",
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
@@ -910,7 +911,8 @@
     "all_merged": false
   },
   "process_notes": [
-    "2026-09-28T15:48:41Z: PR #1843 (EPIC-01) opened with qa_evidence_EPIC-01.md's Standard Sign-Off Block Date field still blank -- per BLG-GOV-18 this normally blocks PR opening, but Product Owner gave explicit direction in-session to open now with sign-off pending rather than wait. The PR is not mergeable until a human Director of Quality completes the sign-off block and Product Owner acceptance is separately recorded (STEP 4 merge gate unaffected by this early open)."
+    "2026-09-28T15:48:41Z: PR #1843 (EPIC-01) opened with qa_evidence_EPIC-01.md's Standard Sign-Off Block Date field still blank -- per BLG-GOV-18 this normally blocks PR opening, but Product Owner gave explicit direction in-session to open now with sign-off pending rather than wait. The PR is not mergeable until a human Director of Quality completes the sign-off block and Product Owner acceptance is separately recorded (STEP 4 merge gate unaffected by this early open).",
+    "2026-09-29T07:36:47Z: PR #1843 (EPIC-01) merged by the Product Owner (merge commit f28fc3c3). Human Director of Quality sign-off recorded 2026-09-29 (qa_evidence_EPIC-01.md); real CI confirmed fully green on head_sha e485b057 (all 8 Playwright E2E shards, verify_governance, full backend suite) before merge. Post-open CI-triggered fixes: 8 pre-existing test-expectation issues found by real CI that pre-PR local verification missed (7 stale expectations vs. ST-01's now-correct canonical formatting; 1 already-tracked pre-existing bug, BLG-QA-197, fixed to unblock this PR's own gate) -- all fixed across commits 8ea1d3f0 and e485b057, restated in qa_evidence_EPIC-01.md per the post-open CI-fix restatement requirement."
   ],
   "sealed": false,
   "sealed_utc": null
