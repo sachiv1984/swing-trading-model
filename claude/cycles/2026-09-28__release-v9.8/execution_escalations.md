@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-09-29
+Last Updated: 2026-09-29 (ESC-EXEC-20260929-03 added and resolved same-session)
 
 ## ESC-EXEC-20260929-01
 
@@ -34,3 +34,19 @@ Last Updated: 2026-09-29
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary:** Infrastructure & Operations Owner (2026-09-29T12:35:00Z, in-session via `AskUserQuestion`): aggregate counts only (`SELECT COUNT(*)`-shaped, no row-level columns), against a table already named in an existing `current_roadmap.md` gate condition — matching `BLG-OPS-170`'s own drafted scope. Today that's `trade_history`/`trade_plans` (the SI-02 gate's own query). Implemented in commit `f95a4a89` — see `docs/infrastructure/staging_setup.md` §8.
+
+## ESC-EXEC-20260929-03
+
+- **Raised at:** 2026-09-29T14:47:45Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-28__release-v9.8
+- **Step:** STEP 3.1.D
+- **ST/EPIC item:** ST-29 / EPIC-05
+- **Trigger type:** Strategy
+- **Blocking statement:** IT-06's original §13 review (`decisions--2026-05-15__release-v3.5--IT-06-section13-review.md`) PASSED on the explicit condition that the Alpaca paper-trading sync is read-only (GET only; "must not include any POST, PUT, PATCH, or DELETE calls to the Alpaca API"). Code review of `backend/services/alpaca_paper_sync_service.py` found this has never been true — the service POSTs a paper order on real position open and DELETEs the paper position on real position close, present since the original ST-02/ST-03 commit (`b496f5ef`, v3.5), not a later scope-creep addition. No follow-up §13 review reconciled this. `po05_section13_preassessment.md` (2026-09-21, PASS) explicitly relies on "IT-06's existing binding conditions (read-only Alpaca access...)" still holding, so this gap could be resting on a false premise there too. `sprint_backlog.md`'s own Notes for ST-29 require the disposition to be recorded by the Strategy Rules & System Intent Owner — not engine-determinable.
+- **Owning authority:** Strategy Rules & System Intent Owner
+- **Unblock criteria:** Strategy Rules & System Intent Owner determines whether the shipped mirror-write mechanism (a deterministic 1:1 mirror of the user's own real trade action — idempotent client_order_id, best-effort/never-blocking, zero real capital, no signal/decision logic reads from the paper side) is §13-compliant in substance despite the original record's incorrect "read-only" description, or whether remediation (strip to genuinely read-only, or a fresh review) is required.
+- **SLA due-by:** 2026-10-02T14:47:45Z
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary:** Strategy Rules & System Intent Owner (2026-09-29T14:47:45Z, in-session via `AskUserQuestion`): **Re-affirm PASS, correct the record.** The mirror-write mechanism is §13-compliant in substance — every paper order/close is a deterministic, synchronous mirror of a user-initiated action the system did not decide, never generates or acts on any signal, involves no real capital, and is best-effort/non-blocking on the primary (real) operation. The original review's "read-only" description was a factually incorrect characterisation of an already-compliant mechanism, not a boundary violation requiring remediation. Addendum added to `decisions--2026-05-15__release-v3.5--IT-06-section13-review.md` correcting the technical description and re-confirming PASS under corrected conditions (mirror-write permitted only as a deterministic, idempotent reflection of a user-initiated real-position event; no independently-originated order; no signal path from paper data). `po05_section13_preassessment.md`'s reliance on IT-06's conditions remains valid — the *substance* of those conditions (no autonomous order origination, paper-data isolation) was never actually violated, only their prior written description.

@@ -1,7 +1,7 @@
 **Owner:** Strategy Rules & System Intent Owner
 **Class:** Operational Record (Class 3)
-**Status:** Active — PASS
-**Last Updated:** 2026-05-15
+**Status:** Active — PASS (re-affirmed under corrected conditions, 2026-09-29)
+**Last Updated:** 2026-09-29 (ST-29, EPIC-05, v9.8, BLG-SPEC-172 — addendum: corrected the sync mechanism's technical description from "read-only" to "deterministic mirror-write of user-initiated actions"; PASS re-affirmed under corrected binding conditions); prior — 2026-05-15 (initial review)
 **Cycle:** 2026-05-15__release-v3.5
 **Story:** ST-01 (EPIC-01, v3.5)
 
@@ -131,3 +131,24 @@ If the Strategy Rules & System Intent Owner determines this is a FAIL:
 **Date:** 2026-05-15
 **Determination:** PASS
 **Comments:** All eight §13 compliance criteria confirmed COMPLIANT. Critical boundary confirmed: backend sync is read-only (GET /portfolio/paper-positions only; no write operations against Alpaca API). Alpaca paper account is managed independently by the user — the system does not place, modify, or cancel any paper orders. Paper P&L data is display-only and must not be used as input to signals, screener scoring, regime detection, or position-sizing logic. The four implementation conditions in §13 Conditions for Implementation are binding on ST-02 and ST-03. Any future extension introducing automated paper order creation requires a new §13 review before implementation.
+
+---
+
+## Addendum (2026-09-29, ST-29, EPIC-05, v9.8, BLG-SPEC-172) — Correction: sync mechanism was never read-only
+
+**Trigger:** Code review of `backend/services/alpaca_paper_sync_service.py` (found while executing ST-29) confirmed the shipped IT-06 sync has, since the original ST-02/ST-03 commit (`b496f5ef`, this same v3.5 cycle — not a later addition), POSTed a paper order to Alpaca when the user opens a real position and DELETEd the paper position when the user closes it, in addition to GETting positions for display. This directly contradicts this record's binding condition 1 above ("must not include any POST, PUT, PATCH, or DELETE calls to the Alpaca API"), which was never actually met — the PASS determination's technical premise ("backend sync is read-only") was incorrect from the start, not a later regression. No §13 review reconciled this gap until now.
+
+**What the mechanism actually does:** every paper POST/DELETE is a deterministic, synchronous mirror of a user-initiated real-position event (open → mirror-open with a deterministic `client_order_id` so retries are idempotent, not duplicate orders; close → mirror-close). It is best-effort — any failure is logged and never blocks the real (primary) operation — involves no real capital (Alpaca *paper* account only), and no signal, screener, regime, or sizing logic reads from the paper side. The system does not independently decide to place or modify any order; it reflects a decision the user already made via the primary (real) position workflow.
+
+**Re-assessment:** the critical §13 boundary question is not "does the sync make any write call to Alpaca" (it does) but "does the sync *originate* an order the user did not already decide" (it does not). Re-applying the original criteria on that corrected basis: all eight compliance criteria (see table above) remain COMPLIANT — no automated decision, no order execution not already mirroring a user action, no real capital, human-in-the-loop preserved (the human decision is the real position action; the paper mirror has no independent judgement of its own), no advisory generated, not a broker execution engine in the sense §13 means to exclude (a discretionary/adaptive system deciding what to trade), not real-time streaming, no cross-contamination with real position logic.
+
+**Determination: PASS re-affirmed, under corrected conditions** (Strategy Rules & System Intent Owner, in-session via `AskUserQuestion`, per `execution_prompt.md` §5.3 agent-mediated protocol — see `claude/cycles/2026-09-28__release-v9.8/execution_escalations.md` `ESC-EXEC-20260929-03`):
+
+1. **Mirror-write, not autonomous-write:** the Alpaca paper sync may POST/DELETE only as a deterministic, idempotent reflection of a user-initiated real-position event (open/close) already recorded via the primary system workflow. It must never originate, modify, or size an order independently of a real position action the user has already taken. *(Supersedes original Condition 1's "read-only" framing, which incorrectly described this already-compliant mechanism.)*
+2. **Idempotency preserved:** the deterministic `client_order_id` (or equivalent) construction that makes a retried mirror-write a no-op rather than a duplicate order remains required for any future change to this sync.
+3. Original Condition 3 (paper data isolation from signals/screener/regime/sizing logic) — **unchanged, still binding.**
+4. Original Condition 4 (any future extension introducing *independently-originated* paper order creation — i.e. one not mirroring a specific real user action — requires a new §13 review) — **unchanged, still binding**, now stated to make clear it governs a materially different case than the already-covered mirror-write behaviour.
+5. `po05_section13_preassessment.md`'s (2026-09-21) reliance on IT-06's binding conditions remains valid on re-examination: the *substance* of those conditions (no autonomous order origination, paper-data isolation) was never actually violated by IT-06 — only their prior written description was inaccurate. No re-review of PO-05 is required as a result of this addendum.
+
+**Signed off by:** Strategy Rules & System Intent Owner (in-session, `AskUserQuestion`)
+**Date:** 2026-09-29
