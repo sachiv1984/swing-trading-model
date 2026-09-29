@@ -239,7 +239,7 @@
       "branch": "exec/2026-09-28__release-v9.8/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-28__release-v9.8/qa_evidence_EPIC-03.md",
       "test_scenarios": [
         "tests/test_ai_prompt_template_golden_fixtures.py",
@@ -427,6 +427,13 @@
           "sign_off_record": null,
           "notes": ""
         }
+      },
+      "sign_off_record": {
+        "method": "agent_mediated",
+        "role": "Director of Quality",
+        "status": "cleared_partial",
+        "date": "2026-09-29",
+        "notes": "7 of 8 stories signed off; ST-15 blocked/delegated (DEL-20260929-01, BLG-QA-198), does not block the EPIC's PR per the delegation model."
       }
     },
     "EPIC-04": {
