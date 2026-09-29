@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-29T13:55:27Z",
+  "last_updated_utc": "2026-09-29T14:06:27Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -605,23 +605,26 @@
         "ST-22": {
           "title": "Full field-level openapi.yaml authoring pass for 20 generic/thin data payload schemas",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1825,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "65d6fcc27eadec2c1c73e11f66fb6e6df0891328",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T14:06:27Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/contract_example_freshness_triage_2026-09-18.md",
+            "docs/reference/openapi.yaml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "All 20 findings from contract_example_freshness_triage_2026-09-18.md SS5 dispositioned: 12 genuinely under-authored (real field-level properties added, matching each markdown contract exactly -- POST /positions/{position_id}/exit required a full rewrite, prior schema's field names didn't match actual response shape at all); 8 confirmed intentionally broad, normalised to the standard description. Full disposition table in the triage doc's new SS9 (v1.0->1.1). POSSIBLE DRIFT 20->8 (exactly the 8 intentionally-broad ones -- expected to persist, script limitation not a spec gap, documented in SS9). scripts/check_openapi_drift.py and scripts/check_api_performance_baseline_drift.py both PASSED (no new endpoints added, so CLAUDE.md's same-commit baseline-row rule N/A). Full backend suite: 1941 passed/12 skipped/0 failed -- confirmed the one isolated-run failure in test_api_contracts.py is pre-existing BLG-QA-203, not a regression."
         },
         "ST-23": {
           "title": "POST /trade-plans and DELETE /trade-plans/{id} declare no response schema in openapi.yaml",
@@ -1017,7 +1020,8 @@
     "ST-18",
     "ST-19",
     "ST-20",
-    "ST-21"
+    "ST-21",
+    "ST-22"
   ],
   "open_escalations": [],
   "merge_gate": {
