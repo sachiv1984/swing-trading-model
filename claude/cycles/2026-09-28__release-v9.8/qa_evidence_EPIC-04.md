@@ -36,8 +36,8 @@ Last Updated: 2026-09-29
 - [x] Regression areas checked
 - [ ] For any frontend component making direct URL construction (not via `api.*` wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no frontend-visible change in this EPIC
 - Signed off by: Director of Quality
-- Date: <fill in — must be non-blank>
-- Comments:
+- Date: 2026-09-29
+- Comments: Approved as-is. All 3 stories' AC verified per the evidence table; ST-17's staging-only gap is disclosed and tracked (BLG-OPS-171), not blocking. Full backend suite (1941 passed, 0 failed), OpenAPI drift, and API performance baseline drift all clean.
 
 **Autonomous class eligibility check (BLG-GOV-19) — not applicable, standard sign-off used:**
 - Criterion 1 (all stories `autonomous`): ✓ — met, but see Criterion 2.
