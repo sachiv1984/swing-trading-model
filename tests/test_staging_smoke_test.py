@@ -124,6 +124,7 @@ class TestMain:
     def test_all_checks_pass_returns_zero(self, monkeypatch):
         monkeypatch.setenv("STAGING_API_URL", "http://fake")
         monkeypatch.setenv("STAGING_API_KEY", "test-key")
+        monkeypatch.delenv("EXPECTED_COMMIT_SHA", raising=False)
         with patch("staging_smoke_test._wake_up", return_value=True):
             with patch("staging_smoke_test.run_checks", return_value=[]):
                 assert smoke.main() == 0
@@ -131,6 +132,7 @@ class TestMain:
     def test_any_check_failure_returns_one(self, monkeypatch):
         monkeypatch.setenv("STAGING_API_URL", "http://fake")
         monkeypatch.setenv("STAGING_API_KEY", "test-key")
+        monkeypatch.delenv("EXPECTED_COMMIT_SHA", raising=False)
         with patch("staging_smoke_test._wake_up", return_value=True):
             with patch("staging_smoke_test.run_checks", return_value=["GET /positions: HTTP 500"]):
                 assert smoke.main() == 1
@@ -141,6 +143,106 @@ class TestMain:
         still run and determine the outcome."""
         monkeypatch.setenv("STAGING_API_URL", "http://fake")
         monkeypatch.setenv("STAGING_API_KEY", "test-key")
+        monkeypatch.delenv("EXPECTED_COMMIT_SHA", raising=False)
         with patch("staging_smoke_test._wake_up", return_value=False):
             with patch("staging_smoke_test.run_checks", return_value=[]):
                 assert smoke.main() == 0
+
+    def test_expected_commit_sha_unset_skips_deploy_check_entirely(self, monkeypatch):
+        """No EXPECTED_COMMIT_SHA (e.g. a manual workflow_dispatch run with no
+        commit context) -- the stale-deploy check must not run at all, and
+        must not affect the exit code."""
+        monkeypatch.setenv("STAGING_API_URL", "http://fake")
+        monkeypatch.setenv("STAGING_API_KEY", "test-key")
+        monkeypatch.delenv("EXPECTED_COMMIT_SHA", raising=False)
+        with patch("staging_smoke_test._wake_up", return_value=True):
+            with patch("staging_smoke_test.run_checks", return_value=[]):
+                with patch("staging_smoke_test.check_deployed_commit") as mock_check:
+                    assert smoke.main() == 0
+        mock_check.assert_not_called()
+
+    def test_expected_commit_sha_set_and_matching_returns_zero(self, monkeypatch):
+        monkeypatch.setenv("STAGING_API_URL", "http://fake")
+        monkeypatch.setenv("STAGING_API_KEY", "test-key")
+        monkeypatch.setenv("EXPECTED_COMMIT_SHA", "abc123")
+        with patch("staging_smoke_test._wake_up", return_value=True):
+            with patch("staging_smoke_test.run_checks", return_value=[]):
+                with patch("staging_smoke_test.check_deployed_commit", return_value="") as mock_check:
+                    assert smoke.main() == 0
+        mock_check.assert_called_once_with("http://fake", "test-key", "abc123")
+
+    def test_stale_deploy_fails_the_run_even_when_smoke_checks_pass(self, monkeypatch):
+        monkeypatch.setenv("STAGING_API_URL", "http://fake")
+        monkeypatch.setenv("STAGING_API_KEY", "test-key")
+        monkeypatch.setenv("EXPECTED_COMMIT_SHA", "abc123")
+        with patch("staging_smoke_test._wake_up", return_value=True):
+            with patch("staging_smoke_test.run_checks", return_value=[]):
+                with patch(
+                    "staging_smoke_test.check_deployed_commit",
+                    return_value="STALE STAGING DEPLOY: staging is running commit 'def456' but the latest merged commit on main is 'abc123'",
+                ):
+                    assert smoke.main() == 1
+
+    def test_known_limit_message_does_not_fail_the_run(self, monkeypatch):
+        """A missing deployed_commit_sha (e.g. an older staging deploy predating
+        this field) is a documented known limit, not a stale-deploy failure."""
+        monkeypatch.setenv("STAGING_API_URL", "http://fake")
+        monkeypatch.setenv("STAGING_API_KEY", "test-key")
+        monkeypatch.setenv("EXPECTED_COMMIT_SHA", "abc123")
+        with patch("staging_smoke_test._wake_up", return_value=True):
+            with patch("staging_smoke_test.run_checks", return_value=[]):
+                with patch(
+                    "staging_smoke_test.check_deployed_commit",
+                    return_value="known limit: GET /health/detailed did not report a deployed_commit_sha",
+                ):
+                    assert smoke.main() == 0
+
+
+class TestCheckDeployedCommit:
+    def test_matching_commit_returns_empty_string(self):
+        with patch("staging_smoke_test.urllib.request.urlopen") as mock_urlopen:
+            mock_urlopen.return_value = _mock_response(200, {"deployed_commit_sha": "abc123"})
+            result = smoke.check_deployed_commit("http://fake", "test-key", "abc123")
+        assert result == ""
+
+    def test_mismatched_commit_is_flagged_as_stale(self):
+        with patch("staging_smoke_test.urllib.request.urlopen") as mock_urlopen:
+            mock_urlopen.return_value = _mock_response(200, {"deployed_commit_sha": "old-sha"})
+            result = smoke.check_deployed_commit("http://fake", "test-key", "new-sha")
+        assert "STALE STAGING DEPLOY" in result
+        assert "old-sha" in result
+        assert "new-sha" in result
+
+    def test_null_deployed_commit_sha_is_a_known_limit_not_a_failure(self):
+        with patch("staging_smoke_test.urllib.request.urlopen") as mock_urlopen:
+            mock_urlopen.return_value = _mock_response(200, {"deployed_commit_sha": None})
+            result = smoke.check_deployed_commit("http://fake", "test-key", "abc123")
+        assert result.startswith("known limit:")
+
+    def test_missing_deployed_commit_sha_key_is_a_known_limit_not_a_failure(self):
+        """Older staging deploy predating this field -- key absent entirely."""
+        with patch("staging_smoke_test.urllib.request.urlopen") as mock_urlopen:
+            mock_urlopen.return_value = _mock_response(200, {"status": "healthy"})
+            result = smoke.check_deployed_commit("http://fake", "test-key", "abc123")
+        assert result.startswith("known limit:")
+
+    def test_request_failure_is_reported_not_raised(self):
+        with patch("staging_smoke_test.urllib.request.urlopen", side_effect=OSError("Connection refused")):
+            result = smoke.check_deployed_commit("http://fake", "test-key", "abc123")
+        assert "could not check deployed commit" in result
+
+    def test_non_200_status_is_reported(self):
+        with patch("staging_smoke_test.urllib.request.urlopen") as mock_urlopen:
+            mock_urlopen.return_value = _mock_response(503, {})
+            result = smoke.check_deployed_commit("http://fake", "test-key", "abc123")
+        assert "503" in result
+
+    def test_invalid_json_is_reported(self):
+        mock_resp = MagicMock()
+        mock_resp.status = 200
+        mock_resp.read.return_value = b"not json"
+        mock_resp.__enter__ = lambda self: mock_resp
+        mock_resp.__exit__ = lambda self, *a: None
+        with patch("staging_smoke_test.urllib.request.urlopen", return_value=mock_resp):
+            result = smoke.check_deployed_commit("http://fake", "test-key", "abc123")
+        assert "not valid JSON" in result
