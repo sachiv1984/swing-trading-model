@@ -392,7 +392,7 @@
           "assigned_to": "qa",
           "github_issue": 1818,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-03",
-          "commit_sha": "1f9fe404",
+          "commit_sha": "5af1aa71",
           "delegation_record_id": "DEL-20260929-01",
           "blocked_since_utc": "2026-09-29T00:00:00Z",
           "unblock_criteria": "BLG-QA-198 resolved and a real mutation score recorded for the two target modules (see docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md).",
