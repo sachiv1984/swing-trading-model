@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-29T13:31:16Z",
+  "last_updated_utc": "2026-09-29T13:40:34Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -539,23 +539,37 @@
         "ST-20": {
           "title": "Document idempotency and double-submit behaviour for every mutating endpoint",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1823,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "6e3f0be474714bc28bf85540f8b9fcbad12a7fbe",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T13:40:34Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md",
+            "docs/specs/api_contracts/alerts_endpoints.md",
+            "docs/specs/api_contracts/digest_endpoints.md",
+            "docs/specs/api_contracts/ops_endpoints.md",
+            "docs/specs/api_contracts/position_endpoints.md",
+            "docs/specs/api_contracts/replay_endpoints.md",
+            "docs/specs/api_contracts/saved_filters_endpoints.md",
+            "docs/specs/api_contracts/screener_api_contract.md",
+            "docs/specs/api_contracts/strategy_benchmark_endpoints.md",
+            "docs/specs/api_contracts/ticker_universe_api_contract.md",
+            "docs/specs/api_contracts/trade_endpoints.md",
+            "docs/specs/api_contracts/trade_plan_endpoints.md",
+            "docs/specs/api_contracts/watchlist_endpoints.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Added an Idempotency subsection to all 64 mutating (POST/PUT/PATCH/DELETE) endpoint headings across docs/specs/api_contracts/ (38 missing, 26 already had one from prior stories). 4 undefined double-submit behaviours found and filed to backlog.md (BLG-OPS-172/173/174, BLG-API-06) rather than fixed in-line, per AC bullet 2. Heading-level lint (scripts/lint_api_contract_headings.py) and OpenAPI drift check (scripts/check_openapi_drift.py) both PASSED post-edit -- endpoint headings unaffected (AC bullet 3). No Playwright/backend test required -- pure documentation story, no runtime behaviour change."
         },
         "ST-21": {
           "title": "Error-payload (4xx/5xx) examples for the 10 most-called endpoints",
@@ -991,7 +1005,8 @@
     "ST-16",
     "ST-17",
     "ST-18",
-    "ST-19"
+    "ST-19",
+    "ST-20"
   ],
   "open_escalations": [],
   "merge_gate": {
