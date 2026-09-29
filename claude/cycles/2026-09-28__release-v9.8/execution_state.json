@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-29T14:08:37Z",
+  "last_updated_utc": "2026-09-29T14:10:41Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -652,23 +652,25 @@
         "ST-24": {
           "title": "trade_plans CREATE TABLE / DS-04 CHECK constraint undocumented",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1827,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "d992b8cfaed32c58fbe697c84293245bc3cca177",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T14:10:41Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Corrected DS-04's CREATE TABLE CHECK constraint from the stale 3-value list to the live 7-value list; added DS-21 migration entry documenting ensure_trade_plans_extended_status(), matching the doc's established format (SQL, story ref, reversibility, verification status). Updated the pre-existing DS-29 discovery note (which had already self-flagged this gap and filed BLG-SPEC-154) to point at the resolution. Header/footer version bumped 2.42->2.43 in sync. check_specs_index_freshness.py's one finding (qa_evidence_EPIC-xx.md) is pre-existing and unrelated."
         },
         "ST-25": {
           "title": "openapi.yaml's OperationalHealthResponse.ai_journal doesn't model its either/or shape with oneOf",
@@ -1024,7 +1026,8 @@
     "ST-20",
     "ST-21",
     "ST-22",
-    "ST-23"
+    "ST-23",
+    "ST-24"
   ],
   "open_escalations": [],
   "merge_gate": {
