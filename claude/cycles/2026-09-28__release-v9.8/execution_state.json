@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-29T14:14:28Z",
+  "last_updated_utc": "2026-09-29T14:17:37Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -744,23 +744,25 @@
         "ST-28": {
           "title": "sprint_velocity_trend_chart.md trend sentence splices non-adjacent PVR readings",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1831,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "48a2aa49f51fbbb417951b1bd1c7b11336b46396",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T14:17:37Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/sprint_velocity_trend_chart.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Confirmed the prior sentence spliced the 2026-07-08 row's total (47) into a claimed 3-reading trend with the two most recent readings (174, 195) -- verified by hand-computing D-share for all 4 relevant rows from the table's own U/G/D/P figures. The actual 3 most recent adjacent readings show D share roughly flat (63.0%->63.2%->62.6%), not rising. Rewrote to compare like-for-like: earliest-vs-latest for the genuine full-history trend, 3-most-recent-adjacent for the recent picture."
         },
         "ST-29": {
           "title": "Reconcile the IT-06 \u00a713 review with a sync that POSTs orders and DELETEs positions",
@@ -1036,7 +1038,8 @@
     "ST-24",
     "ST-25",
     "ST-26",
-    "ST-27"
+    "ST-27",
+    "ST-28"
   ],
   "open_escalations": [],
   "merge_gate": {
