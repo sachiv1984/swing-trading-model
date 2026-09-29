@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-29T14:12:09Z",
+  "last_updated_utc": "2026-09-29T14:14:28Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -698,23 +698,25 @@
         "ST-26": {
           "title": "screener_results.md column list omits the Earnings column",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1829,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "3f86b76fba236f88e98aa2a2cea19283229a54e6",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T14:14:28Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/screener_results.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Corrected SS4/SS5.3 to match live SCREENER_COLUMNS (src/pages/Screener.js) exactly: added the missing Earnings column, and fixed a second stale-doc issue found in the same read -- the doc's separate 'Actions' column no longer exists in code (Watchlist + Research actions both render inside the News cell). Updated SS8/SS11's Actions-column cross-references too. No code change -- pure documentation correction, verified by reading Screener.js directly, not the doc's own (stale) self-description."
         },
         "ST-27": {
           "title": "trade_reflection.md \u00a74 specifies an en dash for a missing R-multiple",
@@ -1030,7 +1032,8 @@
     "ST-22",
     "ST-23",
     "ST-24",
-    "ST-25"
+    "ST-25",
+    "ST-26"
   ],
   "open_escalations": [],
   "merge_gate": {
