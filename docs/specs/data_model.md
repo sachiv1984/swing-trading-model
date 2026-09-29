@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.42
-**Last Updated:** 2026-09-24 (ST-26, EPIC-06, v9.7, BLG-SPEC-151 — reconciled positions.fees_paid nullability to nullable, matching live schema; constraint-reapplication decision filed as BLG-SPEC-165); prior — 2026-09-24 (ST-25, EPIC-06, v9.7, BLG-SPEC-150 — documented 4 confirmed-orphaned, always-NULL live positions columns; disposition recommend-drop, filed as BLG-SPEC-164); prior — 2026-09-24 (ST-24, EPIC-06, v9.7, BLG-SPEC-149 — removed the Positions Table's false claim of a live `exit_note` column); prior history retained — see prior entries in version control.
+**Version:** 2.43
+**Last Updated:** 2026-09-29 (ST-24, EPIC-05, v9.8, BLG-SPEC-154 — DS-04's CREATE TABLE block and CHECK constraint corrected to the live 7-value status list; new DS-21 entry documents the ensure_trade_plans_extended_status() migration); prior — 2026-09-24 (ST-26, EPIC-06, v9.7, BLG-SPEC-151 — reconciled positions.fees_paid nullability to nullable, matching live schema; constraint-reapplication decision filed as BLG-SPEC-165); prior — 2026-09-24 (ST-25, EPIC-06, v9.7, BLG-SPEC-150 — documented 4 confirmed-orphaned, always-NULL live positions columns; disposition recommend-drop, filed as BLG-SPEC-164); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -602,7 +602,7 @@ CREATE INDEX idx_price_alerts_portfolio_active ON price_alerts(portfolio_id, act
 
 **Added ST-29 (BLG-SPEC-142, EPIC-04, v9.5).** Canonical state diagram for the two lifecycle state machines in this system: a `trade_plans` row's `status`, and a `positions` row's `status` + `position_state`. Cross-referenced by `docs/specs/api_contracts/trade_plan_endpoints.md`, `docs/specs/api_contracts/position_endpoints.md`, and `docs/specs/frontend/pages/trade_plan.md` (all 3 must link back here rather than restate the diagram — see each file's own cross-reference note).
 
-**Discovery note (relevant to why this diagram wasn't accurate before now):** researching this diagram surfaced that `backend/database.py::ensure_trade_plans_extended_status()` extends `trade_plans_status_check` to 7 statuses (`draft`, `research_pending`, `research_complete`, `entry_conditions_set`, `active`, `closed`, `abandoned`) — confirmed live via a direct query against this session's available `DATABASE_URL` (readonly staging): `pg_get_constraintdef` on `trade_plans_status_check` returns exactly this 7-value list. The `trade_plans` `CREATE TABLE` block above (§Trade Plan Object, DS-04) and its CHECK constraint still only document 3 (`draft`, `active`, `closed`) — this migration was applied live and is fully documented and used correctly in `docs/specs/frontend/pages/trade_plan.md` §9's Status Badge Scheme (all 7 statuses, v3.3), but was never given its own DS-xx entry here. Filed as `BLG-SPEC-154` for the DDL/CHECK-constraint correction — this diagram documents the real (7-status) lifecycle regardless, so it is not blocked on that correction landing first.
+**Discovery note (relevant to why this diagram wasn't accurate before now — resolved, ST-24, EPIC-05, v9.8, BLG-SPEC-154):** researching this diagram surfaced that `backend/database.py::ensure_trade_plans_extended_status()` extends `trade_plans_status_check` to 7 statuses (`draft`, `research_pending`, `research_complete`, `entry_conditions_set`, `active`, `closed`, `abandoned`) — confirmed live via a direct query against this session's available `DATABASE_URL` (readonly staging): `pg_get_constraintdef` on `trade_plans_status_check` returns exactly this 7-value list. This migration was applied live and was already fully documented and used correctly in `docs/specs/frontend/pages/trade_plan.md` §9's Status Badge Scheme (all 7 statuses, v3.3), but had no DS-xx entry here until now — corrected: the `trade_plans` `CREATE TABLE` block (§Trade Plan Object, DS-04) now documents the live 7-value CHECK constraint directly, and its own migration entry, DS-21, records the `ensure_trade_plans_extended_status()` DDL.
 
 ### Trade Plan Lifecycle (`trade_plans.status`)
 
@@ -1018,7 +1018,12 @@ CREATE TABLE IF NOT EXISTS trade_plans (
     confirmation_criteria TEXT,
     checklist_completed BOOLEAN NOT NULL DEFAULT FALSE,
     checklist_items JSONB NOT NULL DEFAULT '[]'::JSONB,
-    status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'closed'))
+    status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN (
+        'draft', 'research_pending', 'research_complete',
+        'entry_conditions_set', 'active', 'closed', 'abandoned'))
+    -- Original CHECK at table creation (v3.1) only allowed ('draft', 'active', 'closed').
+    -- Extended to the 7-value list shown here by DS-21 (v9.8, BLG-SPEC-154) via
+    -- ensure_trade_plans_extended_status() -- see DS-21 below for the live migration.
 );
 
 CREATE INDEX idx_trade_plans_portfolio ON trade_plans(portfolio_id);
@@ -2422,6 +2427,28 @@ CREATE TABLE IF NOT EXISTS monthly_pnl_snapshots (
 
 ---
 
-**Document Version:** 2.38
+## DS-21 — trade_plans_status_check extended to the 7-value workflow status list (v2.43, 2026-09-29)
+
+**Story:** ST-24 (EPIC-05, v9.8) — BLG-SPEC-154, documentation-only correction: `trade_plans_status_check` has allowed the 7-value list below in production since `ensure_trade_plans_extended_status()` shipped (predates this doc's own DS-numbering reaching this migration); this entry backfills the missing DS-xx record so the `CREATE TABLE` block (§DS-04, Trade Plan Object) and this migration history agree with the live schema.
+
+Additive, idempotent — `ensure_trade_plans_extended_status()` drops and re-adds the named CHECK constraint on every application startup (no manual step, no data rewritten).
+
+```sql
+ALTER TABLE trade_plans DROP CONSTRAINT IF EXISTS trade_plans_status_check;
+ALTER TABLE trade_plans ADD CONSTRAINT trade_plans_status_check
+    CHECK (status IN (
+        'draft', 'research_pending', 'research_complete',
+        'entry_conditions_set', 'active', 'closed', 'abandoned'));
+```
+
+Original constraint (at table creation, v3.1) allowed only `('draft', 'active', 'closed')`. The frontend workflow (`docs/specs/frontend/pages/trade_plan.md` §9 Status Badge Scheme, v3.3) has used all 7 statuses correctly since that migration shipped — only this document's `CREATE TABLE`/CHECK-constraint documentation and migration history were stale.
+
+**Reversible:** re-run with the original 3-value list — `CHECK (status IN ('draft', 'active', 'closed'))` — though this would break any row already carrying one of the 4 extended statuses (a real, in-use path per the frontend workflow), so reversal is documented for completeness only, not recommended.
+
+**Verification status:** confirmed live via a direct query against this session's available `DATABASE_URL` (readonly staging) during ST-29/BLG-SPEC-142's DS-04 diagram research — `pg_get_constraintdef` on `trade_plans_status_check` returned exactly this 7-value list.
+
+---
+
+**Document Version:** 2.43
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-09-22 (ST-08, EPIC-02, v9.6, BLG-FR-05 — DS-20; header/footer version kept in sync); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — DS-19; header/footer version kept in sync)
+**Last Review:** 2026-09-29 (ST-24, EPIC-05, v9.8, BLG-SPEC-154 — DS-21; header/footer version kept in sync); prior — 2026-09-22 (ST-08, EPIC-02, v9.6, BLG-FR-05 — DS-20; header/footer version kept in sync); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — DS-19; header/footer version kept in sync)
