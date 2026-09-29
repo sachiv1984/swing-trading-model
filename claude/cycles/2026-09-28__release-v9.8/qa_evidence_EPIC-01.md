@@ -35,7 +35,7 @@ Last Updated: 2026-09-28
 - [x] Regression areas checked
 - [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no direct URL construction outside the existing `apiFetch`/`api.*` wrappers was introduced by this EPIC
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-09-29
+- Comments: Reviewed agent-mediated DoQ/PO commentary on PR #1843; accepted.
 
 **Autonomous class eligibility check (BLG-GOV-19): not applicable.** All 6 stories are classified `autonomous` (Criterion 1 met), but Criterion 3 (no frontend-visible change) is unmet — 5 of 6 stories modify files under `src/pages/**` or `src/components/**` (ST-01, ST-02, ST-03, ST-04; ST-05/ST-06 are documentation-only). Per `execution_prompt.md` §3.2.A's detection rule, this disqualifies the Autonomous Class path regardless of Playwright coverage. The Standard Sign-Off Block above is the correct path and requires human Director of Quality completion — the engine has not signed this block on the Director of Quality's behalf.
