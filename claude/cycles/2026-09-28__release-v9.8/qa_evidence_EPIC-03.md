@@ -140,22 +140,22 @@ Last Updated: 2026-09-29
 
 ### ST-15 — Mutation-testing pilot on the sizing calculator and stop ratchet
 
-**Spec reference:** N/A — investigation/tooling story
-**Commit:** `1f9fe404` (investigation + delegation artefacts; story itself not complete)
+**Spec reference:** `strategy_rules.md` §4.1 (Position Sizing Calculator), §7.2/§7.3 (stop-ratchet rule)
+**Commit:** `1f9fe404` (initial investigation), resolved same-cycle — see `docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`
 
-**What was built:** Full investigation, documented in `docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`: `mutmut` 3.8.0 installed and a scoped run configured against the two target modules; mutant generation succeeded (99 mutants) but the run hard-stopped on a genuine environmental blocker (mutmut's hardcoded `sys.path` assumptions don't match this repo's `tests/conftest.py` convention). Filed `BLG-QA-198` to track the fix (two options identified, neither applied — option (b) would touch the whole suite's test-collection path and needs its own owner decision, out of scope for this pilot to decide unilaterally). Delegated to QA Lead via `DEL-20260929-01`.
+**What was built:** Initial investigation hit a genuine environmental blocker (mutmut's hardcoded `sys.path` assumptions vs. this repo's `tests/conftest.py` convention), filed as `BLG-QA-198` and delegated (`DEL-20260929-01`). Per direct instruction to resolve rather than leave delegated, `BLG-QA-198` was fixed in-session (mutmut run with `cwd=backend/` instead of the repo root, plus a standalone `backend/mutmut_pilot_tests/conftest.py` replicating the main suite's AST-derived DB-stub mechanism) and a real mutation run completed: 896 mutants resolved. `calculate_trailing_stop` (the story's core "stop ratchet" scope) reached 100% (35/35 killed) after 2 rounds of test additions — the first run found 13 survivors, inspection (`mutmut show`) revealed 2 genuine gaps (a dropped `new_stop` term in the ratchet's `max()`, and multiplier values/key names that coincided with the function's own defaults), both fixed with new test cases, confirmed by re-running. `_floor_4dp` reached 100% (5/5). `size_position` reached 51.6% (127/246) — the remaining gap (US-market path, `size_batch_inv_vol`) filed as `BLG-QA-199` rather than expanding this pilot indefinitely. `_apply_concentration_adjustment`/`_calculate_heat_impact`'s near-0% pilot scores were confirmed (via a real `coverage run` against the repo's actual dedicated test files) to be an artifact of this pilot's own narrow test file, not a real production gap — the main suite already covers them at 61% line coverage via ticker-driven cases.
 
 **Acceptance criteria:**
-1. Baseline mutation score recorded for both modules — **Not met this session** — blocked on `BLG-QA-198`.
-2. Survivors triaged — **Not met this session** — no mutants were run.
+1. Baseline mutation score recorded for both modules — Pass (see table above in the full write-up; per-function scores recorded rather than file-level, since `only_mutate` is file-granular and file-level numbers are diluted by out-of-scope functions).
+2. Survivors triaged — Pass (each survivor category traced to a specific, named cause — 2 fixed live, 1 filed as a follow-up, 2 confirmed as pilot-scope artifacts backed by a real coverage check, 1 timeout noted but not chased).
 
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|----------------|----------------|---------------------|--------|------------|
-| ST-15 | N/A | Full investigation; environmental blocker found and filed (`BLG-QA-198`) | Neither AC met yet | **Blocked — delegated** (`DEL-20260929-01`, `BLG-QA-198`) | `BLG-QA-198` tracks the fix required before this story can complete |
+| ST-15 | `strategy_rules.md` §4.1, §7.2, §7.3 | Mutation-testing pilot, `BLG-QA-198` resolved, real score + triage recorded | Both ACs met | Pass | `BLG-QA-199` (size_position US-market/batch-sizing follow-up, not a defect) |
 
-**Test coverage:** N/A — no mutation run completed.
+**Test coverage:** `backend/mutmut_pilot_tests/test_pilot.py` (17 tests, standalone) + full backend suite unaffected (1905 passed, 12 skipped).
 
-**Deviations:** `BLG-QA-198` filed (environmental blocker, not a defect in the target modules — `sizing_service.py`/`calculations.py` are demonstrably covered by 32 passing tests today).
+**Deviations:** `BLG-QA-199` filed for `size_position`'s remaining coverage gap (US-market/batch-sizing paths) — a scoping choice for this pilot, not a defect in shipped behaviour. `BLG-QA-198` resolved, not a deviation in the final state.
 
 ---
 
@@ -184,7 +184,7 @@ Last Updated: 2026-09-29
 **EPIC:** EPIC-03 — QA & Test Coverage
 **Cycle:** 2026-09-28__release-v9.8
 **Sprint goal:** Clear the full v9.8 full-capacity debt slice — 39 stories across 6 EPICs spanning frontend/UX consistency, backend reliability, QA/test coverage, operations/security hardening, spec & API contract debt, and governance/process debt — with no anchor feature, at exactly the top of the confirmed ~24–28 day sprint capacity band.
-**Test scenarios used:** `tests/test_ai_prompt_template_golden_fixtures.py`, `tests/test_root_logging_json_output_e2e.py`, `tests/test_toast_notification_timing_regression.py`, `tests/test_motion_timing_500ms_ceiling_regression.py`, `tests/test_escaped_defect_follow_on_ratio_tracker.py`
+**Test scenarios used:** `tests/test_ai_prompt_template_golden_fixtures.py`, `tests/test_root_logging_json_output_e2e.py`, `tests/test_toast_notification_timing_regression.py`, `tests/test_motion_timing_500ms_ceiling_regression.py`, `tests/test_escaped_defect_follow_on_ratio_tracker.py`, `backend/mutmut_pilot_tests/test_pilot.py`
 
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|----------------|----------------|---------------------|--------|------------|
@@ -194,13 +194,13 @@ Last Updated: 2026-09-29
 | ST-12 | `design_system.md` §Motion-timing | Static regression, 4/4 components | Met | Pass | None |
 | ST-13 | N/A (new artefact) | Escaped-defect/follow-on tracker + v9.5 baseline | AC-1 met, AC-2 mechanism established | Pass with notes | None |
 | ST-14 | `qa_evidence_template.md` | AI-Touching Story Evidence Addendum | Met | Pass | None |
-| ST-15 | N/A | Mutation-testing pilot investigation | Not met | **Blocked — delegated** | `BLG-QA-198` |
+| ST-15 | `strategy_rules.md` §4.1/§7.2/§7.3 | Mutation-testing pilot, `BLG-QA-198` resolved, real score recorded | Met | Pass | `BLG-QA-199` |
 | ST-16 | N/A | Playwright trace/screenshot retain-on-failure | Met | Pass | None |
 
 **QA test coverage:**
-- Scenarios run: 5 new test files (26 new tests) + full backend suite (`backend/.venv/bin/python3 -m pytest tests/ -q --ignore=tests/e2e`) — 1905 passed, 12 skipped, 0 failed
-- Regression areas checked: AI prompt templates (chat/briefing/generate-plan/generate-thesis/debrief), root logging config, toast notification call sites, motion-timing components, QA metrics tracking — all existing suites pass unchanged
-- Known deviations: `BLG-QA-198` (ST-15's environmental blocker) — all other stories' deviation checks completed with nothing to file
+- Scenarios run: 5 new test files (26 new tests) + `backend/mutmut_pilot_tests/test_pilot.py` (17 tests, standalone mutation-testing pilot) + full backend suite (`backend/.venv/bin/python3 -m pytest tests/ -q --ignore=tests/e2e`) — 1905 passed, 12 skipped, 0 failed
+- Regression areas checked: AI prompt templates (chat/briefing/generate-plan/generate-thesis/debrief), root logging config, toast notification call sites, motion-timing components, QA metrics tracking, sizing calculator + stop ratchet mutation coverage — all existing suites pass unchanged
+- Known deviations: `BLG-QA-199` (ST-15's `size_position` US-market/batch-sizing coverage gap, a scoping choice not a shipped-behaviour defect) — all other stories' deviation checks completed with nothing to file
 
 No frontend-visible change in this EPIC — no file under `src/components/**` or `src/pages/**` was created or modified (ST-11/ST-12's tests read `src/**` files but do not modify them; ST-16 touches `playwright.config.js`, a tooling config, not a component/page).
 
@@ -208,8 +208,8 @@ No frontend-visible change in this EPIC — no file under `src/components/**` or
 
 ## Mixed-Class Sign-Off Block
 
-This EPIC contains 7 `autonomous` stories (ST-09/10/11/12/13/14/16) and 1 `delegated_qa` story (ST-15, currently blocked). Per `qa_evidence_template.md`'s Mixed-Class EPIC Signer Format Note, a single `delegated_*` story disqualifies the BLG-GOV-19 Autonomous Class block — the agent-mediated format is used instead. ST-15 remains open and delegated (`DEL-20260929-01`); it does not block the other 7 stories' own sign-off, and does not block this PR from opening — see `execution_prompt.md` §5.1's "Assign, document, park, continue other items" delegation model.
+This EPIC contains 7 `autonomous` stories (ST-09/10/11/12/13/14/16) and 1 `delegated_qa` story (ST-15). Per `qa_evidence_template.md`'s Mixed-Class EPIC Signer Format Note, a single `delegated_*` story disqualifies the BLG-GOV-19 Autonomous Class block — the agent-mediated format is used instead. ST-15's delegation (`DEL-20260929-01`) was resolved in-session per explicit Product Owner direction to resolve `BLG-QA-198` rather than leave it parked — all 8 stories are now complete.
 
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-09-29
-- Comments: 7 of 8 stories complete and verified (full backend suite green: 1905 passed, 12 skipped, 0 failed). ST-15 blocked on a genuine environmental tooling blocker (`BLG-QA-198`), delegated to QA Lead, non-blocking to the rest of this EPIC per the delegation model. No frontend-visible change in this EPIC.
+- Comments: 8 of 8 stories complete and verified (full backend suite green: 1905 passed, 12 skipped, 0 failed). ST-15's `BLG-QA-198` environmental blocker was resolved in-session; its own mutation-testing pilot now records a real baseline score with survivors triaged (`docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`). No frontend-visible change in this EPIC.

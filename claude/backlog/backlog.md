@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-29 (session — 1 new item added: BLG-QA-198); prior — 2026-09-29 (session — 3 new items added: BLG-BE-132, BLG-BE-133, BLG-BE-134); prior — 2026-09-28 (session — 1 new item added: BLG-BE-131); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-29 (session — 1 new item added: BLG-QA-199; BLG-QA-198 resolved same-session); prior — 2026-09-29 (session — 1 new item added: BLG-QA-198); prior — 2026-09-29 (session — 3 new items added: BLG-BE-132, BLG-BE-133, BLG-BE-134); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4231,6 +4231,28 @@ The Tax Year summary notice ("Includes {k} restated month(s) — see the Monthly
 **Acceptance Criteria**
 - One of the two fix options is chosen and applied
 - BLG-QA-184's mutation-testing pilot (`docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`) can then produce a real mutation score for the two target modules
+
+**Resolution (2026-09-29):** Option (a) applied — `mutmut` run with `cwd=backend/` (`backend/setup.cfg`'s `[mutmut]` section, `source_paths = .`) instead of the repo root, so its path-relative mutant-key computation matches the `services.X`/`utils.X` bare-import convention with no prefix-stripping needed. A standalone `backend/mutmut_pilot_tests/conftest.py` (replicating the main `tests/conftest.py`'s AST-derived DB-stub mechanism, BLG-QA-73) provides the isolated test entry point. `tests/conftest.py` itself was not touched — option (b) was not needed. BLG-QA-184's pilot produced a real mutation score: `docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`.
+
+---
+
+### BLG-QA-199 — size_position mutation-testing survivors: US-market and batch-sizing paths need their own mutation score confirmed
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead
+**Source:** ST-15 (BLG-QA-184, EPIC-03, cycle 2026-09-28__release-v9.8) — mutation-testing pilot found 119/246 `size_position` mutants survived — 2026-09-29
+**Effort:** S (~0.5–1d)
+
+**Problem**
+The ST-15 mutation-testing pilot (`docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`) scoped its own test file to `size_position`'s UK-market path only (5 cases, adapted from `tests/golden_outputs.json`'s pre-ST-04 golden vectors). `size_position`'s US-market FX-rate branch and `size_batch_inv_vol` (a separate function in the same file, also mutated since `only_mutate` is file-granular) were never exercised by this pilot's own tests, contributing the bulk of its 119 survivors. `tests/test_signal_sizing.py` already covers `size_batch_inv_vol`'s behaviour with unit tests, but its own mutation score has not been separately measured.
+
+**Scope**
+- Extend the pilot's mutmut config (`backend/setup.cfg`, `backend/mutmut_pilot_tests/`) to also select `tests/test_signal_sizing.py`-equivalent cases (or a standalone-conftest-compatible port of them) and a US-market `size_position` case
+- Re-run and record the updated `size_position`/`size_batch_inv_vol` mutation scores in the pilot doc
+
+**Acceptance Criteria**
+- `size_position`'s US-market path and `size_batch_inv_vol` each have at least one mutation-testing case in the pilot's test file
+- Updated mutation score recorded in `docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`
 
 ---
 

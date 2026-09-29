@@ -388,7 +388,7 @@
         "ST-15": {
           "title": "Mutation-testing pilot on the sizing calculator and stop ratchet",
           "classification": "delegated_qa",
-          "status": "blocked_delegated",
+          "status": "done",
           "assigned_to": "qa",
           "github_issue": 1818,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-03",
@@ -396,15 +396,19 @@
           "delegation_record_id": "DEL-20260929-01",
           "blocked_since_utc": "2026-09-29T00:00:00Z",
           "unblock_criteria": "BLG-QA-198 resolved and a real mutation score recorded for the two target modules (see docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md).",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#4.1",
+            "claude/strategy/strategy_rules.md#7.2",
+            "claude/strategy/strategy_rules.md#7.3"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Investigated: mutmut 3.x sys.path assumptions incompatible with this repo's tests/conftest.py convention. See investigation doc + BLG-QA-198. Delegated to QA Lead."
+          "notes": "BLG-QA-198 resolved in-session (mutmut run with cwd=backend/). Mutation score: calculate_trailing_stop 35/35 (100%), _floor_4dp 5/5 (100%), size_position 127/246 (51.6%, gap filed as BLG-QA-199). See docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md."
         },
         "ST-16": {
           "title": "Enable Playwright trace and screenshot retain-on-failure",
@@ -431,9 +435,9 @@
       "sign_off_record": {
         "method": "agent_mediated",
         "role": "Director of Quality",
-        "status": "cleared_partial",
+        "status": "cleared",
         "date": "2026-09-29",
-        "notes": "7 of 8 stories signed off; ST-15 blocked/delegated (DEL-20260929-01, BLG-QA-198), does not block the EPIC's PR per the delegation model."
+        "notes": "All 8 stories complete. ST-15's BLG-QA-198 environmental blocker resolved in-session; real mutation score recorded (see docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md)."
       }
     },
     "EPIC-04": {
