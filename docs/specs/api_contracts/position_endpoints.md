@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.6.3
-**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /positions/nightly-stop-update); prior — 2026-09-18 (ST-29, BLG-SPEC-142, EPIC-04, v9.5: added lifecycle diagram cross-reference); prior — 2026-09-18 (ST-25, BLG-SPEC-133, EPIC-04, v9.5: corrected `current_trailing_stop_native` example value)
+**Version:** 2.6.4
+**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /positions); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /positions/nightly-stop-update); prior — 2026-09-18 (ST-29, BLG-SPEC-142, EPIC-04, v9.5: added lifecycle diagram cross-reference); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -159,6 +159,15 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
+
+**Error example (401 — missing/invalid API key):**
+
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing API key"
+}
+```
 
 ---
 

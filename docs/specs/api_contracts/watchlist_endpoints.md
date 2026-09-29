@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.4
-**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to all 5 mutating endpoints in this file); prior — 2026-08-07
+**Version:** 1.5
+**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added an Errors subsection with a 401 error example to GET /watchlist); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to all 5 mutating endpoints in this file); prior — 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint:** 2026-06-08__release-v5.3 — ST-07 (BLG-SPEC-52, EPIC-01)
 **Signed off by:** API Contracts & Documentation Owner; Head of Specs Team
@@ -73,6 +73,19 @@ No parameters.
 | `data[].added_at` | string (ISO 8601) or null | (v1.2, ST-01/BLG-FEAT-66) API-level alias for `created_at` — no separate column; exposed under this name to match the Staleness Indicator's naming in `watchlist.md`. |
 | `data[].days_on_watchlist` | integer | (v1.2, ST-01/BLG-FEAT-66) Server-computed days since `added_at`. Legacy rows with no `added_at` are treated as added today (`0`). |
 | `data[].is_stale` | boolean | (v1.2, ST-01/BLG-FEAT-66) `true` when `days_on_watchlist >= 30` (fixed server-side threshold this cycle, not user-configurable). |
+
+**Errors**
+
+Errors use the standard error envelope from **conventions.md**.
+
+**Error example (401 — missing/invalid API key):**
+
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing API key"
+}
+```
 
 ---
 

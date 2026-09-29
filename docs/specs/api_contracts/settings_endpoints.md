@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.3.1
-**Last Updated:** 2026-08-07
+**Version:** 1.3.2
+**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /settings); prior — 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # settings_endpoints.md
@@ -113,6 +113,15 @@ The default values (`min_hold_days: 10`, `atr_multiplier_initial: 5.0`, `atr_mul
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
+
+**Error example (401 — missing/invalid API key):**
+
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing API key"
+}
+```
 
 ---
 

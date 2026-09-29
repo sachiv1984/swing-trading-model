@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 Contract example-payload freshness check (ST-44, EPIC-05, v9.2, BLG-SPEC-120).
+Extended with an error-envelope conformance check (ST-21, EPIC-05, v9.8,
+BLG-API-05) -- see the second half of this docstring.
 
 For each `## METHOD /path` heading in a `docs/specs/api_contracts/*.md`
 canonical contract file, finds the nearest response example JSON block
@@ -18,13 +20,24 @@ declared schema, which is itself required to track the real implementation
 the actual running backend is out of this script's scope — that is what
 `docs/ops/openapi_3way_sweep_log.md`-style manual sweeps are for.
 
+**Error-envelope check (ST-21, BLG-API-05):** separately, every JSON object
+fence that looks like a documented 4xx/5xx error example (see
+`find_error_examples`/`BOUNDARY_RE` below) is validated against the fixed
+canonical envelope in `conventions.md` §13.1 (`{"status": "error", "message":
+"<str>"}`), not against openapi.yaml — the envelope is a codebase-wide
+convention, not a per-endpoint schema. `/health`, `/health/detailed`,
+`/health/database`, `/test/endpoints` and `/test/rate-limit-scenarios` are
+exempt (conventions.md §13.3).
+
 Usage: python3 scripts/check_contract_example_freshness.py
-Exit code: 0 if every checked example's top-level keys are a subset of (or
-equal to) the resolved schema's known properties, 1 if any example uses a
-key the schema doesn't declare (likely stale/renamed field) or the schema
-declares required fields absent from every checked example for that path.
-Endpoints/examples this script cannot confidently match are reported
-separately as SKIPPED, not counted as pass or fail.
+Exit code: 0 if every checked success example's top-level keys are a subset
+of (or equal to) the resolved schema's known properties AND every checked
+error example matches the canonical envelope; 1 if either check finds a
+divergence (an unknown key, or a non-conforming error shape). Endpoints/
+examples this script cannot confidently match a success schema for are
+reported separately as SKIPPED, not counted as pass or fail (this SKIPPED
+category applies only to the openapi.yaml success-schema check, not the
+error-envelope check, which has no schema to skip against).
 
 **Scheduled cadence (ST-44 AC):** run manually before any `docs/reference/openapi.yaml`
 version bump that touches an endpoint with a contract example (part of the
@@ -204,6 +217,111 @@ def find_examples(text):
             yield method, path, example
 
 
+# ST-21 (BLG-API-05, EPIC-05, v9.8): error-payload envelope conformance check.
+#
+# Distinct from `find_examples`/`response_schema_for` above (which validate a
+# *success* example's keys against openapi.yaml's 200/201/202 schema) --
+# this instead validates *error* (4xx/5xx) examples against the fixed
+# canonical envelope shape in conventions.md SS13.1 (`{"status": "error",
+# "message": "<str>"}`), not against openapi.yaml, since the envelope is a
+# codebase-wide convention rather than a per-endpoint schema.
+ERROR_CODE_RE = re.compile(r"\b([45]\d{2})\b")
+
+# Local section-boundary markers: a real ATX heading (`## `..`###### `) OR a
+# line that STARTS with a bold label (this codebase's dominant convention
+# for sub-headers within an endpoint section) -- either bold-only
+# (`**Idempotency**`) or a bold label immediately followed by prose on the
+# same line (`**Request body (application/json):** exactly one of...`,
+# `**Bounds:** at most 100...`). Both forms must count as boundaries: a
+# bold-only-line requirement missed the latter, inline-labelled form,
+# under-bounding the lookback for a fence that followed one (found live,
+# ST-21: replay_endpoints.md's `**Request body (application/json):**`
+# paragraph mentions a `400` validation constraint, and without this the
+# lookback for the two REQUEST-shape example fences that follow it reached
+# back past that paragraph's own boundary to the unrelated `**Idempotency**`
+# label above it instead).
+BOUNDARY_RE = re.compile(r"^(?:#{1,6}\s.*|\*\*[^\n*]+\*\*.*)$", re.M)
+
+# Health/monitoring endpoints are explicitly exempt from the standard error
+# envelope (conventions.md SS13.3) -- they use their own always-200
+# monitoring-status shapes (e.g. a nested `"status": "error"` field is a
+# component's health status, not this envelope).
+ENVELOPE_EXEMPT_PATHS = {"/health", "/health/detailed", "/health/database", "/test/endpoints", "/test/rate-limit-scenarios"}
+
+
+def find_error_examples(text):
+    """Yield (method, path, code, example_dict) for each JSON object fence
+    immediately preceded (within the current local block only -- see
+    `BOUNDARY_RE`) by an HTTP 4xx/5xx status code number. Unlike
+    `find_examples` above (which looks for a "response"/"schema" marker
+    near ONE fence per section), this scans EVERY fence in the section,
+    since a single endpoint's Errors subsection commonly documents more
+    than one error example (e.g. 400 and 404 and 500).
+
+    The lookback is bounded to the nearest preceding boundary line (a real
+    heading or a bold-only pseudo-heading), not a fixed character window,
+    to avoid picking up an unrelated status-code digit sequence mentioned
+    in an earlier, structurally distinct part of the same METHOD/path
+    section (e.g. a `**Idempotency**` subsection's prose noting "a
+    repeated call ... returns `404`" -- found live, ST-21, where several
+    DELETE endpoints' 200-success example was mis-flagged as a 404 error
+    example under a fixed-window version of this lookback)."""
+    headings = list(HEADING_RE.finditer(text))
+    for i, m in enumerate(headings):
+        method, path = m.group(1), m.group(2)
+        if path in ENVELOPE_EXEMPT_PATHS:
+            continue
+        section_end = headings[i + 1].start() if i + 1 < len(headings) else len(text)
+        section = text[m.end():section_end]
+        boundaries = [b.start() for b in BOUNDARY_RE.finditer(section)]
+        for fence in JSON_FENCE_RE.finditer(section):
+            prior_boundaries = [b for b in boundaries if b < fence.start()]
+            boundary_start = prior_boundaries[-1] if prior_boundaries else max(0, fence.start() - 200)
+            # Additional 120-char cap (whichever bound is closer to the fence
+            # wins): a genuine error-response marker sits immediately above
+            # its fence (one heading/bold line + a blank line) -- the
+            # boundary match alone is not tight enough on its own.
+            lookback_start = max(boundary_start, fence.start() - 120)
+            preceding = section[lookback_start:fence.start()]
+            # A boundary line describing the REQUEST shape (e.g. "**Request
+            # body (application/json):**") is a strong negative signal even
+            # when a 4xx/5xx code number happens to appear nearby in that
+            # same paragraph (e.g. a request-validation constraint like "is
+            # a `400 validation_error`") -- found live, ST-21:
+            # replay_endpoints.md's two REQUEST-shape example fences were
+            # otherwise mis-flagged this way. A fence following a "request"
+            # boundary is never itself a response/error example.
+            boundary_line = section[boundary_start:boundary_start + 80]
+            if re.search(r"request", boundary_line, re.I):
+                continue
+            codes = [c for c in ERROR_CODE_RE.findall(preceding) if c[0] in ("4", "5")]
+            if not codes:
+                continue
+            code = codes[-1]
+            try:
+                example = json.loads(fence.group(1))
+            except json.JSONDecodeError:
+                continue
+            if isinstance(example, dict):
+                yield method, path, code, example
+
+
+def envelope_violation_reasons(example):
+    """Return a list of human-readable reasons the example diverges from
+    the canonical `{"status": "error", "message": "<str>"}` envelope
+    (conventions.md SS13.1). An empty list means conformant. Extra fields
+    (e.g. the additive `code` field used by replay_endpoints.md /
+    strategy_version_comparison_contract.md) are NOT a violation -- SS13.1
+    only fixes the two required fields, not an exhaustive key set."""
+    reasons = []
+    if example.get("status") != "error":
+        reasons.append(f"status={example.get('status')!r} (expected \"error\")")
+    message = example.get("message")
+    if not isinstance(message, str) or not message.strip():
+        reasons.append("missing or empty string \"message\" field")
+    return reasons
+
+
 def main():
     if not OPENAPI_FILE.exists() or not CONTRACTS_DIR.exists():
         print("Required files not found.", file=sys.stderr)
@@ -214,6 +332,8 @@ def main():
     stale = []  # (file, method, path, extra_keys)
     checked = 0
     skipped = []
+    envelope_violations = []  # (file, method, path, code, reasons)
+    error_examples_checked = 0
 
     for md_file in sorted(CONTRACTS_DIR.glob("*.md")):
         text = md_file.read_text(errors="replace")
@@ -235,12 +355,27 @@ def main():
             if extra:
                 stale.append((md_file.name, method, path, sorted(extra)))
 
-    print(f"Checked {checked} contract response examples against openapi.yaml.\n")
+        # ST-21 (BLG-API-05): error-example envelope conformance, separate
+        # from the success-example vs. openapi.yaml check above.
+        for method, path, code, example in find_error_examples(text):
+            error_examples_checked += 1
+            reasons = envelope_violation_reasons(example)
+            if reasons:
+                envelope_violations.append((md_file.name, method, path, code, reasons))
+
+    print(f"Checked {checked} contract response examples against openapi.yaml.")
+    print(f"Checked {error_examples_checked} contract error-response examples against the canonical envelope (conventions.md §13.1).\n")
 
     if stale:
         print(f"POSSIBLE DRIFT ({len(stale)}) — example key(s) not found in the resolved openapi.yaml schema:")
         for fname, method, path, extra in stale:
             print(f"  - {fname}: {method} {path} -> {', '.join(extra)}")
+        print()
+
+    if envelope_violations:
+        print(f"ERROR ENVELOPE DRIFT ({len(envelope_violations)}) — error example(s) diverge from the canonical `{{\"status\": \"error\", \"message\": \"...\"}}` envelope:")
+        for fname, method, path, code, reasons in envelope_violations:
+            print(f"  - {fname}: {method} {path} ({code}) -> {'; '.join(reasons)}")
         print()
 
     if skipped:
@@ -249,7 +384,7 @@ def main():
             print(f"  - {fname}: {method} {path} ({reason})")
         print()
 
-    if not stale:
+    if not stale and not envelope_violations:
         print("No drift detected in checked examples.")
         return 0
     return 1

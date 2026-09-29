@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.11
-**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to the 6 remaining mutating endpoints in this file; flagged undefined double-submit duplicate-alert-creation behaviour on POST /price-alerts as BLG-OPS-174); prior — 2026-09-24 (ST-10, EPIC-03, v9.7, BLG-BE-124 — generic re-delivery now also requires `read = false`, so an already-read notification is never re-enqueued for delivery); prior — 2026-09-24 (ST-09, EPIC-03, v9.7, BLG-BE-123 — documented the `reflection_reminder` NULL-portfolio exclusion and rollback-consistency fix); prior history retained — see prior entries in version control.
+**Version:** 0.12
+**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added error examples to GET /alerts/rules (500) and GET /notifications (400)); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to the 6 remaining mutating endpoints in this file; flagged undefined double-submit duplicate-alert-creation behaviour on POST /price-alerts as BLG-OPS-174); prior — 2026-09-24 (ST-10, EPIC-03, v9.7, BLG-BE-124 — generic re-delivery now also requires `read = false`, so an already-read notification is never re-enqueued for delivery); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **ADR Reference:** `docs/adr/ADR-003-notification-delivery-architecture.md` — FastAPI BackgroundTasks delivery architecture
 **Design Gate:** `claude/cycles/2026-03-18__release-v2.1/` — EPIC-02
@@ -155,6 +155,15 @@ Response uses the standard success envelope from **conventions.md**.
 | HTTP Status | Condition |
 |-------------|-----------|
 | `500` | Internal server error |
+
+**Error example (500):**
+
+```json
+{
+  "status": "error",
+  "message": "Internal server error"
+}
+```
 
 ---
 
@@ -667,6 +676,15 @@ Return the notification feed for the portfolio, newest first. Supports page-base
 | `400` | `page` is not a positive integer |
 | `400` | `since_days` is not a positive integer |
 | `500` | Internal server error |
+
+**Error example (400 — invalid `page`):**
+
+```json
+{
+  "status": "error",
+  "message": "page must be a positive integer"
+}
+```
 
 ---
 

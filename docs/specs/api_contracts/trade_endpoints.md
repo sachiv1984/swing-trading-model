@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.5.2
-**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to POST /trades/{trade_id}/reflection, PATCH /trades/{trade_id}/costs, POST /trades/{trade_id}/debrief); prior — 2026-08-21 (BLG-BE-108, ST-03, v9.0: clarified "linked journal entries" sourcing for POST/GET /trades/{trade_id}/debrief — resolves ESC-EXEC-20260821-01)
+**Version:** 2.5.3
+**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /trades); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to POST /trades/{trade_id}/reflection, PATCH /trades/{trade_id}/costs, POST /trades/{trade_id}/debrief); prior — 2026-08-21 (BLG-BE-108, ST-03, v9.0: clarified "linked journal entries" sourcing for POST/GET /trades/{trade_id}/debrief — resolves ESC-EXEC-20260821-01); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -119,6 +119,15 @@ Response uses the standard success envelope from **conventions.md**.
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
+
+**Error example (401 — missing/invalid API key):**
+
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing API key"
+}
+```
 
 --- 
 
