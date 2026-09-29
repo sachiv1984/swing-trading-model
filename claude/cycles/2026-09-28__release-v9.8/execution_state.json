@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-29T14:17:37Z",
+  "last_updated_utc": "2026-09-29T14:48:49Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -528,7 +528,7 @@
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-28__release-v9.8/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
@@ -767,23 +767,31 @@
         "ST-29": {
           "title": "Reconcile the IT-06 \u00a713 review with a sync that POSTs orders and DELETEs positions",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "human",
-          "github_issue": null,
+          "github_issue": 1832,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-05",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "commit_sha": "ecaa7ce117e02589e4aa9934e45ef397546811e3",
+          "delegation_record_id": "ESC-EXEC-20260929-03",
+          "blocked_since_utc": "2026-09-29T14:47:45Z",
+          "unblock_criteria": "Strategy Rules & System Intent Owner determines whether the shipped mirror-write mechanism is \u00a713-compliant in substance despite the original record's incorrect read-only description, or whether remediation is required.",
+          "completed_utc": "2026-09-29T14:48:49Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "method": "agent_mediated",
+            "role": "Strategy Rules & System Intent Owner",
+            "status": "cleared",
+            "date": "2026-09-29",
+            "notes": "Resolved in-session via AskUserQuestion, per execution_prompt.md \u00a75.3. Re-affirm PASS, correct the record -- see ESC-EXEC-20260929-03 and the addendum in the IT-06 \u00a713 review doc."
+          },
+          "notes": "Escalated as ESC-EXEC-20260929-03 (Strategy trigger, resolved same-session). Code review of backend/services/alpaca_paper_sync_service.py confirmed the original 2026-05-15 PASS's 'read-only' technical premise was wrong from the original ST-02/ST-03 commit (b496f5ef) onward -- the sync POSTs/DELETEs paper orders as a deterministic mirror of user-initiated real-position events. Strategy Rules & System Intent Owner re-affirmed PASS under corrected binding conditions (mirror-write, not autonomous-write). Addendum added to the review doc; confirmed po05_section13_preassessment.md's reliance on IT-06's conditions remains valid since the substance was never violated. No code change -- documentation/decision output only, per this story's own scope."
         }
       }
     },
@@ -1039,7 +1047,8 @@
     "ST-25",
     "ST-26",
     "ST-27",
-    "ST-28"
+    "ST-28",
+    "ST-29"
   ],
   "open_escalations": [],
   "merge_gate": {
