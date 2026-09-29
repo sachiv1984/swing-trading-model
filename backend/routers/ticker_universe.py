@@ -28,6 +28,11 @@ def _validate_ticker_yfinance(ticker: str) -> str | None:
         info = yf.Ticker(ticker).info
         return bool(info.get("quoteType"))
 
+    # Not migrated to utils.upstream_call (ST-07, BLG-BE-128): this bounds a
+    # ThreadPoolExecutor future, not a direct HTTP request timeout, and is a
+    # deliberately tighter interactive-UX bound than the general "yfinance"
+    # timeout — see upstream_call.py's module docstring for the full
+    # disposition list.
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
         future = executor.submit(_fetch)
         try:

@@ -36,6 +36,45 @@ follow-ups" instruction):
     distinguishes rate-limit vs. server-error vs. auth-failure); only its
     timeout value is migrated to this module's config, not its retry
     shape
+
+Follow-up resolution (ST-07, EPIC-02, v9.8, BLG-BE-128) — disposition of
+every call site listed above:
+  - screener_data_service.py's Stooq/Twelve Data timeouts: config-only
+    migration (new "stooq"/"twelve_data" provider entries below); retry
+    behaviour deliberately left untouched, per the rate-limit-interaction
+    risk noted above — no `bounded_upstream_call` wrap added
+  - live_trading_assistant.py (get_live_fx_rate, download_ticker_data),
+    database.py (download_ticker_data), routers/research.py
+    (_get_price_data): direct Yahoo Finance chart-API calls at the same
+    timeout values this module already configures for "yfinance"/
+    "yfinance_history" — migrated to get_timeout(), no retry added (none
+    existed before; adding one is a separate decision, same rationale as
+    Stooq/Twelve Data above)
+  - news_service.py's Alpaca News call: timeout migrated to get_timeout
+    ("alpaca"); its own 429-aware retry loop (max 3 attempts, doubling
+    delay capped at 30s) is left as-is — already bounded and
+    status-code-aware, same treatment as alpaca_service.py::
+    get_ohlcv_bars above
+  - si05_digest_service.py and ai_endpoint_anomaly_service.py's Telegram
+    calls: new "telegram" provider entry added for timeout consistency;
+    si05_digest_service.py's own 3-attempt/30s+60s backoff (delivery-
+    critical digest send) and ai_endpoint_anomaly_service.py's fire-and-
+    forget best-effort alert (no retry) are both left unchanged — neither
+    is a yfinance/Alpaca/Anthropic-shaped retry candidate and both are
+    intentionally different from each other
+  - health_service.py: NOT migrated — this call site is the app's own
+    internal self-test hitting its own deployed API endpoints
+    (`test_all_endpoints`), not a third-party upstream provider this
+    module is designed to configure. Out of scope by definition, not by
+    priority.
+  - routers/ticker_universe.py: NOT migrated — `future.result(timeout=...)`
+    bounds a `ThreadPoolExecutor` future wrapping a synchronous
+    `yf.Ticker(...).info` call, not a direct HTTP request timeout this
+    module's config shape applies to. Its 5s value is also a deliberately
+    tighter interactive-UX bound for a synchronous ticker-validation
+    request than the general "yfinance" 10s timeout — collapsing it into
+    that shared key would either lose the intentional distinction or
+    require a redundant provider key with no behavioural benefit.
 """
 from typing import Dict, Tuple, Type
 
@@ -56,6 +95,12 @@ UPSTREAM_TIMEOUTS: Dict[str, float] = {
     "yfinance_history": 15,
     "alpaca": 10,
     "anthropic": 60,
+    # Config-only migrations (ST-07, BLG-BE-128) — no retry budget added for
+    # these; see the "Follow-up resolution" note above for why each is
+    # timeout-only.
+    "stooq": 5,
+    "twelve_data": 15,
+    "telegram": 10,
 }
 
 # Retry budget per provider: max_attempts (including the first, non-retry

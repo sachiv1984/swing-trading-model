@@ -396,6 +396,10 @@ def test_all_endpoints(base_url: str = None, api_key: str = None) -> Dict:
             start = time.time()
 
             if endpoint["method"] == "GET":
+                # Not migrated to utils.upstream_call (ST-07, BLG-BE-128):
+                # this hits the app's own deployed endpoints as a self-test,
+                # not a third-party upstream provider — see upstream_call.py's
+                # module docstring for the full disposition list.
                 response = requests.get(
                     f"{base_url}{endpoint['path']}",
                     headers=headers,

@@ -13,6 +13,8 @@ import logging
 import requests
 from typing import List, Dict
 
+from utils.upstream_call import get_timeout
+
 logger = logging.getLogger(__name__)
 
 ALPACA_BASE_URL = "https://data.alpaca.markets"
@@ -61,7 +63,7 @@ def get_news_headlines(ticker: str, market: str, limit: int = MAX_HEADLINES) -> 
 
     for attempt in range(1, max_attempts + 1):
         try:
-            resp = requests.get(url, params=params, headers=headers, timeout=10)
+            resp = requests.get(url, params=params, headers=headers, timeout=get_timeout("alpaca"))
             if resp.status_code == 200:
                 data = resp.json()
                 articles = data.get("news", [])

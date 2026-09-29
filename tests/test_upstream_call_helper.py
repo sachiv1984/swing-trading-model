@@ -285,3 +285,157 @@ class TestAiChatRetryAndTimeout:
             mock_anthropic.Anthropic.assert_called_once_with(
                 api_key="test-key", timeout=get_timeout("anthropic")
             )
+
+
+# ---------------------------------------------------------------------------
+# ST-07 (EPIC-02, v9.8, BLG-BE-128): remaining ad hoc timeout= call sites
+# migrated to get_timeout(). Config-only — no retry behaviour changed at
+# any of these sites; see upstream_call.py's module docstring for the full
+# per-site disposition (migrated vs. explicitly-not-migrated-and-why).
+# ---------------------------------------------------------------------------
+
+class TestST07NewProviderConfig:
+    @pytest.mark.parametrize("provider,expected", [("stooq", 5), ("twelve_data", 15), ("telegram", 10)])
+    def test_get_timeout_new_provider(self, provider, expected):
+        assert get_timeout(provider) == expected == UPSTREAM_TIMEOUTS[provider]
+
+    @pytest.mark.parametrize("provider", ["stooq", "twelve_data", "telegram"])
+    def test_new_providers_have_no_retry_budget(self, provider):
+        """Config-only migration (AC bullet 2: no behaviour change to
+        already-working fallback/rate-limit logic) — deliberately no
+        retry budget added for these providers."""
+        assert provider not in UPSTREAM_RETRY_BUDGETS
+
+
+class TestST07ScreenerFallbackTiersUseConfiguredTimeout:
+    def test_twelve_data_uses_configured_timeout(self):
+        import services.screener_data_service as svc
+
+        svc._TWELVE_DATA_API_KEY = "test-key"
+        mock_resp = MagicMock(status_code=500, text="error")
+        with patch.object(svc.requests, "get", return_value=mock_resp) as mock_get, \
+             patch.object(svc, "_twelve_data_rate_wait", lambda: None):
+            svc._twelve_data_fetch_ohlcv("AAPL", 30)
+
+        assert mock_get.call_args.kwargs["timeout"] == get_timeout("twelve_data")
+
+    def test_stooq_uses_configured_timeout(self):
+        import services.screener_data_service as svc
+
+        mock_resp = MagicMock(status_code=500, text="error")
+        with patch.object(svc.requests, "get", return_value=mock_resp) as mock_get:
+            svc._stooq_fetch_ohlcv("AZN.L", 30)
+
+        assert mock_get.call_args.kwargs["timeout"] == get_timeout("stooq")
+
+
+class TestST07DirectYahooCallSitesUseConfiguredTimeout:
+    """research.py, database.py and live_trading_assistant.py each call
+    Yahoo Finance's chart API directly (not via services/screener_data_service.py) —
+    all three previously hardcoded the same 10s/15s values this module already
+    configures for "yfinance"/"yfinance_history"."""
+
+    def _chart_response(self):
+        resp = MagicMock(status_code=200)
+        resp.ok = True
+        resp.json.return_value = {
+            "chart": {"result": [{"meta": {"regularMarketPrice": 100.0}, "timestamp": [], "indicators": {"quote": [{}]}}]}
+        }
+        return resp
+
+    def test_research_get_price_data_uses_yfinance_timeout(self):
+        import routers.research as research
+
+        with patch.object(research.requests, "get", return_value=self._chart_response()) as mock_get, \
+             patch.object(research.time, "sleep", lambda *_: None):
+            research._get_price_data("AAPL", "US")
+
+        assert mock_get.call_args.kwargs["timeout"] == get_timeout("yfinance")
+
+    # database.py's own download_ticker_data is not covered by a dedicated
+    # timeout-kwarg test here: conftest.py replaces `sys.modules["database"]`
+    # with an all-MagicMock stub for the whole test session (every backend
+    # module that does `from database import X` must get a safe stub, not a
+    # real DB connection) — `import database` inside a test therefore never
+    # returns the real module `requests.get` call to assert against.
+    # Verified instead by code review (identical edit shape to the
+    # live_trading_assistant.py call sites below, which import cleanly and
+    # are directly testable) plus the full backend suite (1861 tests)
+    # passing with no import or behavioural regression.
+
+    def test_live_trading_assistant_get_live_fx_rate_uses_yfinance_timeout(self):
+        import live_trading_assistant as lta
+
+        with patch.object(lta.requests, "get", return_value=self._chart_response()) as mock_get, \
+             patch.object(lta.time, "sleep", lambda *_: None):
+            lta.get_live_fx_rate()
+
+        assert mock_get.call_args.kwargs["timeout"] == get_timeout("yfinance")
+
+    def test_live_trading_assistant_download_ticker_data_uses_yfinance_history_timeout(self):
+        import live_trading_assistant as lta
+
+        with patch.object(lta.requests, "get", return_value=self._chart_response()) as mock_get, \
+             patch.object(lta.time, "sleep", lambda *_: None):
+            lta.download_ticker_data("AAPL", "2026-01-01", "2026-01-31")
+
+        assert mock_get.call_args.kwargs["timeout"] == get_timeout("yfinance_history")
+
+
+class TestST07AlpacaNewsUsesConfiguredTimeout:
+    def test_get_news_headlines_uses_alpaca_timeout(self):
+        import services.news_service as svc
+
+        mock_resp = MagicMock(status_code=200)
+        mock_resp.json.return_value = {"news": []}
+        with patch.object(svc, "ALPACA_API_KEY", "k"), \
+             patch.object(svc, "ALPACA_API_SECRET", "s"), \
+             patch.object(svc.requests, "get", return_value=mock_resp) as mock_get:
+            svc.get_news_headlines("AAPL", "US")
+
+        assert mock_get.call_args.kwargs["timeout"] == get_timeout("alpaca")
+
+
+class TestST07TelegramCallSitesUseConfiguredTimeout:
+    """si05_digest_service.py (delivery-critical digest, 3-attempt/30s+60s
+    backoff) and ai_endpoint_anomaly_service.py (fire-and-forget best-effort
+    alert, no retry) both call the Telegram Bot API directly. Both retry
+    shapes are left unchanged by this migration — only the timeout value
+    is now sourced from get_timeout("telegram") instead of a local literal."""
+
+    def test_si05_send_telegram_request_uses_telegram_timeout(self):
+        from services.si05_digest_service import _send_telegram_request
+
+        captured = {}
+
+        def _capture_urlopen(_req, timeout=None):
+            captured["timeout"] = timeout
+            resp = MagicMock()
+            resp.__enter__.return_value = resp
+            resp.__exit__.return_value = False
+            resp.read.return_value = b'{"ok": true, "result": {"message_id": 1}}'
+            return resp
+
+        with patch("urllib.request.urlopen", side_effect=_capture_urlopen):
+            _send_telegram_request("https://api.telegram.org/botX/sendMessage", {"text": "hi"})
+
+        assert captured["timeout"] == get_timeout("telegram")
+
+    def test_ai_endpoint_anomaly_alert_uses_telegram_timeout(self):
+        import services.ai_endpoint_anomaly_service as svc
+        import config
+
+        captured = {}
+
+        def _capture_urlopen(_url, timeout=None):
+            captured["timeout"] = timeout
+            return MagicMock()
+
+        firing = [MagicMock(endpoint="POST /ai/chat", metric="cost", recent_value=1.0, baseline_value=0.5, multiplier=2.0)]
+        with patch.object(config, "TELEGRAM_BOT_TOKEN", "tok"), \
+             patch.object(config, "TELEGRAM_CHAT_ID", "123"), \
+             patch("urllib.request.urlopen", side_effect=_capture_urlopen):
+            result = svc._send_anomaly_telegram_alert(firing)
+
+        assert result is True
+        assert captured["timeout"] == get_timeout("telegram")

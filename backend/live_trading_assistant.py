@@ -19,6 +19,8 @@ import requests
 from typing import Tuple, Dict, Optional
 import warnings
 
+from utils.upstream_call import get_timeout
+
 warnings.filterwarnings("ignore")
 pd.set_option("display.float_format", lambda x: f"{x:,.2f}")
 
@@ -84,7 +86,7 @@ def get_live_fx_rate():
             'Accept': 'application/json',
         }
         
-        response = requests.get(url, params=params, headers=headers, timeout=10)
+        response = requests.get(url, params=params, headers=headers, timeout=get_timeout("yfinance"))
         data = response.json()
         
         if "chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0:
@@ -139,23 +141,23 @@ def download_ticker_data(ticker: str, start_date: str, end_date: str = None):
             'Accept': 'application/json',
         }
         
-        response = requests.get(url, params=params, headers=headers, timeout=15)
-        
+        response = requests.get(url, params=params, headers=headers, timeout=get_timeout("yfinance_history"))
+
         if response.status_code != 200:
             return None
-        
+
         data = response.json()
-        
+
         if "chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0:
             result = data["chart"]["result"][0]
-            
+
             # Get timestamps
             if "timestamp" not in result:
                 return None
-                
+
             timestamps = result["timestamp"]
             dates = [datetime.fromtimestamp(ts) for ts in timestamps]
-            
+
             # Get price data
             if "indicators" not in result or "quote" not in result["indicators"]:
                 return None

@@ -284,7 +284,7 @@ def _twelve_data_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecor
         if mic_code:
             params["mic_code"] = mic_code
 
-        resp = requests.get(_TWELVE_DATA_URL, params=params, timeout=15)
+        resp = requests.get(_TWELVE_DATA_URL, params=params, timeout=get_timeout("twelve_data"))
         latency = (_time.monotonic() - t0) * 1000
 
         if resp.status_code == 429:
@@ -369,7 +369,7 @@ def _stooq_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
             _STOOQ_URL,
             params={"s": stooq_symbol, "i": "d"},
             headers=_STOOQ_HEADERS,
-            timeout=5,
+            timeout=get_timeout("stooq"),
         )
         latency = (_time.monotonic() - t0) * 1000
 
