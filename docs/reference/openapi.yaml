@@ -233,20 +233,34 @@ paths:
               schema:
                 type: object
                 properties:
-                  valid:
-                    type: boolean
-                  current_heat_percent:
-                    type: number
-                  prospective_heat_percent:
-                    type: number
-                  incremental_heat_percent:
-                    type: number
-                  prospective_risk_gbp:
-                    type: number
-                  portfolio_value_gbp:
-                    type: number
-                  ticker:
+                  status:
                     type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      valid:
+                        type: boolean
+                        description: "false when the calculation could not be performed (see error); true otherwise"
+                      error:
+                        type: string
+                        nullable: true
+                        description: Present only when valid is false, e.g. "stop_price must be less than entry_price"
+                      current_heat_percent:
+                        type: number
+                      prospective_heat_percent:
+                        type: number
+                      incremental_heat_percent:
+                        type: number
+                      prospective_risk_gbp:
+                        type: number
+                      portfolio_value_gbp:
+                        type: number
+                      ticker:
+                        type: string
+                      fx_rate_used:
+                        type: number
+                        description: Effective GBP/USD rate applied (user-provided fx_rate if supplied, else live rate). 1.0 for UK tickers.
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -766,10 +780,18 @@ paths:
                         format: date
                       summary:
                         type: object
+                        description: |
+                          Intentionally broad to avoid drift. Canonical nested field definitions live in:
+                          docs/specs/api_contracts/reports_endpoints.md
+                        additionalProperties: true
                       trades:
                         type: array
                         items:
                           type: object
+                          description: |
+                            Intentionally broad to avoid drift. Canonical nested field definitions live in:
+                            docs/specs/api_contracts/reports_endpoints.md
+                          additionalProperties: true
                       estimated_unrealised_pnl:
                         type: number
                         description: v7.0 ST-14 (BLG-FEAT-70) — sum of pnl across currently open positions, computed on-read at request time (not stored). Same field/computation as GET /reports/monthly-pnl's value.
@@ -4090,6 +4112,28 @@ paths:
                         detail:
                           type: object
                           nullable: true
+                  trigger_endpoints:
+                    type: object
+                    description: Static map of tracked job name to the endpoint (or co-invocation note) that triggers it. See health_endpoints.md's Architecture note.
+                    properties:
+                      trailing_stop:
+                        type: string
+                        example: "POST /positions/nightly-stop-update"
+                      rebalance_exit:
+                        type: string
+                        example: "POST /signals/rebalance-exit"
+                      inv_vol_sizing:
+                        type: string
+                        example: "co-invoked by rebalance-exit"
+                      custom_price_alerts:
+                        type: string
+                        example: "co-invoked by POST /alerts/evaluate"
+                      screener_refresh:
+                        type: string
+                        example: "POST /screener/run"
+                      risk_off_alerts:
+                        type: string
+                        example: "POST /positions/risk-off-alerts"
                   note:
                     type: string
         "500":
@@ -4232,7 +4276,37 @@ paths:
                 type: object
                 properties:
                   status: { type: string, example: ok }
-                  data: { type: array, items: { type: object } }
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: string, format: uuid }
+                        portfolio_id: { type: string }
+                        ticker: { type: string }
+                        market: { type: string, enum: [US, UK] }
+                        company_name: { type: string, nullable: true }
+                        target_entry_price: { type: number, nullable: true }
+                        initial_stop_price: { type: number, nullable: true }
+                        current_stop_price: { type: number, nullable: true }
+                        signal_status: { type: string, nullable: true, enum: [active, watchlisted, null] }
+                        tags:
+                          type: array
+                          items: { type: string }
+                          description: Populated only via POST /watchlist/bulk-tag.
+                        created_at: { type: string, format: date-time }
+                        updated_at: { type: string, format: date-time }
+                        added_at:
+                          type: string
+                          format: date-time
+                          nullable: true
+                          description: API-level alias for created_at (v1.2, ST-01/BLG-FEAT-66).
+                        days_on_watchlist:
+                          type: integer
+                          description: Server-computed days since added_at. Legacy rows with no added_at are treated as added today (0).
+                        is_stale:
+                          type: boolean
+                          description: true when days_on_watchlist >= 30 (fixed server-side threshold).
         "500":
           $ref: "#/components/responses/InternalError"
     post:
@@ -5616,6 +5690,7 @@ paths:
                     items:
                       type: object
                       properties:
+                        id: { type: string, format: uuid }
                         ticker: { type: string }
                         entry_date: { type: string, format: date }
                         exit_date: { type: string, format: date }
@@ -5628,6 +5703,10 @@ paths:
                         exit_reason: { type: string, nullable: true }
                         was_profitable: { type: boolean, nullable: true }
                         entry_year: { type: integer }
+                        imported_at:
+                          type: string
+                          format: date-time
+                          description: Timestamp of the import_backtest.py run that (re-)wrote this row.
                   actual_trades:
                     type: array
                     items:
@@ -5637,6 +5716,8 @@ paths:
                         entry_date: { type: string, format: date, nullable: true }
                         exit_date: { type: string, format: date, nullable: true }
                         holding_days: { type: integer, nullable: true }
+                        entry_price: { type: number, nullable: true }
+                        exit_price: { type: number, nullable: true }
                         pnl_gbp: { type: number, nullable: true }
                         pnl_pct: { type: number, nullable: true }
                         market: { type: string }
@@ -5847,7 +5928,11 @@ components:
           type: string
         filter_state:
           type: object
-          description: Serialised filter selection, opaque to the backend.
+          description: |
+            Serialised filter selection, opaque to the backend -- shape owned by the frontend.
+            Intentionally broad to avoid drift. Canonical nested field definitions live in:
+            docs/specs/api_contracts/saved_filters_endpoints.md
+          additionalProperties: true
         created_at:
           type: string
           format: date-time
@@ -6214,6 +6299,18 @@ components:
           type: number
           format: float
           description: "All-time high total_value from portfolio_history (GBP, all-time, not period-scoped). Defaults to 0.0 when no portfolio_history exists."
+        portfolio_heat_percent:
+          type: number
+          format: float
+          description: "Total open-position risk (sum of position_risks[].position_risk_gbp) as a percentage of total_value. Rounded to 2 d.p. 0.0 when total_value is 0 or no open positions carry risk (no initial_stop)."
+        position_risks:
+          type: array
+          description: "GBP risk (entry price minus stop, converted to GBP) per open position with a set initial_stop; positions without one are excluded."
+          items:
+            type: object
+            properties:
+              ticker: { type: string }
+              position_risk_gbp: { type: number }
         positions:
           type: array
           items: { $ref: "#/components/schemas/PositionSummary" }
@@ -6312,6 +6409,9 @@ components:
         initial_stop: { type: number }
         remaining_cash: { type: number }
         position_id: { type: string, format: uuid }
+        fx_rate_used:
+          type: number
+          description: The effective GBP/USD rate applied at entry (user-provided fx_rate if supplied, else the live rate). 1.0 for UK tickers.
         trade_plan_linked:
           type: boolean
           description: ST-03 (BLG-BE-91, v8.6) — true if this position was linked to a trade plan at creation (explicit trade_plan_id or ticker/market auto-match).
@@ -6358,6 +6458,20 @@ components:
       description: |
         Intentionally broad to avoid drift. Canonical nested field definitions live in:
         docs/specs/api_contracts/portfolio_endpoints.md
+      additionalProperties: true
+
+    PositionAnalysisResult:
+      type: object
+      description: |
+        Intentionally broad to avoid drift. Canonical nested field definitions live in:
+        docs/specs/api_contracts/position_endpoints.md (GET /positions/analyze)
+      additionalProperties: true
+
+    SignalsGenerateResult:
+      type: object
+      description: |
+        Intentionally broad to avoid drift. Canonical nested field definitions live in:
+        docs/specs/api_contracts/signal_endpoints.md (POST /signals/generate)
       additionalProperties: true
 
     ReplayRunRequest:
@@ -6429,14 +6543,30 @@ components:
 
     ExitPositionResponse:
       type: object
+      description: |
+        Canonical contract: docs/specs/api_contracts/position_endpoints.md
+        (POST /positions/{position_id}/exit).
       properties:
         ticker: { type: string }
-        shares_exited: { type: number }
-        realized_pnl: { type: number }
+        market: { type: string, enum: [US, UK] }
         exit_price: { type: number }
-        fees_paid: { type: number }
+        shares: { type: number, description: Shares exited (full exit unless a partial shares amount was requested). }
+        gross_proceeds: { type: number }
+        exit_fees: { type: number }
+        fee_breakdown:
+          type: object
+          properties:
+            commission: { type: number }
+            stamp_duty: { type: number }
+            fx_fee: { type: number }
+        net_proceeds: { type: number }
+        realized_pnl: { type: number }
+        realized_pnl_pct: { type: number }
+        new_cash_balance: { type: number }
+        exit_fx_rate: { type: number, nullable: true }
+        exit_date: { type: string, format: date }
+        is_partial_exit: { type: boolean }
         remaining_shares: { type: number }
-        cash_received: { type: number }
 
     UpdateNoteRequest:
       type: object
@@ -6448,8 +6578,10 @@ components:
       type: object
       properties:
         id: { type: string, format: uuid }
+        ticker: { type: string }
         entry_note: { type: string, nullable: true }
         exit_note: { type: string, nullable: true }
+        updated_at: { type: string, format: date-time }
 
     UpdateTagsRequest:
       type: object
@@ -6467,9 +6599,11 @@ components:
       type: object
       properties:
         id: { type: string, format: uuid }
+        ticker: { type: string }
         tags:
           type: array
           items: { type: string }
+        updated_at: { type: string, format: date-time }
 
     TagsListResponse:
       type: object
@@ -6477,6 +6611,11 @@ components:
         tags:
           type: array
           items: { type: string }
+        total_positions:
+          type: integer
+          description: Includes open and closed positions.
+        positions_with_tags:
+          type: integer
 
     TradeHistoryResponse:
       type: object
@@ -6621,6 +6760,10 @@ components:
           format: float
           nullable: true
           description: "ST-09 supplementary. (current_native_price - 50d_MA) / 50d_MA * 100. Positive = above MA. Display-only."
+        updated_at:
+          type: string
+          format: date-time
+          description: Returned by PATCH /signals/{signal_id} after a status update.
 
     AnalyticsMetricsResponse:
       type: object
@@ -6652,13 +6795,8 @@ components:
     Settings:
       type: object
       description: |
-        Settings object. Canonical field meanings and constraints live in:
-        docs/specs/api_contracts/settings_endpoints.md v1.3.0
-        Includes default_risk_percent (float, > 0, <= 100) added in v1.8.0
-        for Position Sizing Calculator pre-population support.
-        Includes concentration_position_threshold_pct (float, default 15.0) and
-        concentration_sector_threshold_pct (float, default 30.0) added in v5.0
-        for configurable concentration-limit alert thresholds.
+        Intentionally broad to avoid drift. Canonical nested field definitions live in:
+        docs/specs/api_contracts/settings_endpoints.md
       additionalProperties: true
 
     UpdateSettingsRequest:
@@ -6675,10 +6813,28 @@ components:
     MarketStatus:
       type: object
       description: |
-        Market status payload. No dedicated canonical Markdown contract exists yet.
-        Market regime data is currently surfaced inline via GET /positions/analyze.
-        See docs/specs/api_contracts/position_endpoints.md for the analyze response shape.
-      additionalProperties: true
+        Canonical contract: docs/specs/api_contracts/market_endpoints.md (GET /market/status).
+        Market regime data is also surfaced inline via GET /positions/analyze --
+        see docs/specs/api_contracts/position_endpoints.md for that response shape.
+      properties:
+        spy:
+          type: object
+          properties:
+            price: { type: number }
+            ma200: { type: number }
+            is_risk_on: { type: boolean }
+        ftse:
+          type: object
+          properties:
+            price: { type: number }
+            ma200: { type: number }
+            is_risk_on: { type: boolean }
+        fx_rate:
+          type: number
+          description: Live GBP/USD FX rate.
+        last_updated:
+          type: string
+          format: date-time
 
     OperationalHealthResponse:
       type: object
@@ -6812,8 +6968,8 @@ components:
     EndpointTestResponse:
       type: object
       description: |
-        Endpoint test results payload. Canonical structure lives in:
-        docs/specs/api_contracts/health_endpoints.md
+        Intentionally broad to avoid drift. Canonical nested field definitions live in:
+        docs/specs/api_contracts/health_endpoints.md (POST /test/endpoints)
       additionalProperties: true
 
   securitySchemes:
@@ -6964,7 +7120,12 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ApiOk"
+            allOf:
+              - $ref: "#/components/schemas/ApiOk"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/PositionAnalysisResult"
 
     OkExitPosition:
       description: Exit successful
@@ -7069,7 +7230,12 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ApiOk"
+            allOf:
+              - $ref: "#/components/schemas/ApiOk"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/SignalsGenerateResult"
 
     OkSignalsList:
       description: Signals retrieved
