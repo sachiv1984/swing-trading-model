@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-29 (session — 1 new item added: BLG-QA-199; BLG-QA-198 resolved same-session); prior — 2026-09-29 (session — 1 new item added: BLG-QA-198); prior — 2026-09-29 (session — 3 new items added: BLG-BE-132, BLG-BE-133, BLG-BE-134); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-29 (session — 3 new items added: BLG-QA-200, BLG-QA-201, BLG-QA-202); prior — 2026-09-29 (session — 1 new item added: BLG-QA-199; BLG-QA-198 resolved same-session); prior — 2026-09-29 (session — 1 new item added: BLG-QA-198); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4253,6 +4253,66 @@ The ST-15 mutation-testing pilot (`docs/testing/mutation_testing_pilot_sizing_an
 **Acceptance Criteria**
 - `size_position`'s US-market path and `size_batch_inv_vol` each have at least one mutation-testing case in the pilot's test file
 - Updated mutation score recorded in `docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`
+
+---
+
+### BLG-QA-200 — Ceiling/count-assertion tests in ST-11/ST-12 regression files don't read the source they claim to verify
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** PR #1845 review (Director of Quality persona), cycle 2026-09-28__release-v9.8 — 2026-09-29
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_motion_timing_500ms_ceiling_regression.py`'s `test_max_combined_time_to_full_opacity_within_ceiling` methods (one per component class) and `tests/test_toast_notification_timing_regression.py`'s `test_exactly_8_error_call_sites_covered`/`test_nine_call_sites_covered_between_info_and_error_classes` all assert on hardcoded Python literals (e.g. `max_delay = 4 * 0.05; duration = 0.3; assert max_delay + duration <= 0.5`) rather than values extracted from the actual source file. The motion-timing file's own docstring claims these tests "independently recompute max(delay) + duration for each to confirm the 500ms ceiling itself, not just the presence of a particular string" — but they don't read the source at all, so if the sibling string-match test in the same class were ever weakened or removed, these "ceiling" tests would keep passing regardless of the real component's values. The toast-count tests are similarly tautological (asserting `len()` of a hardcoded list equals a hardcoded number).
+
+**Scope**
+- Rework the ceiling tests to parse the actual delay/duration values out of the regex match (or a dedicated extraction helper) rather than hardcoding them a second time
+- Remove or repurpose the toast "count" tests, which currently verify nothing about the source code
+
+**Acceptance Criteria**
+- Each "ceiling" test fails if the actual source value regresses over 500ms, verified by temporarily editing a component's duration value in a scratch branch and confirming the test catches it without relying on the sibling string-match test
+- No test in either file asserts purely on hardcoded literals unrelated to the source file's actual content
+
+---
+
+### BLG-QA-201 — mutmut_pilot_tests/test_pilot.py shares mutable database mock state across tests with no reset — order-dependency risk
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead
+**Source:** PR #1845 review (Director of Quality persona), cycle 2026-09-28__release-v9.8 — 2026-09-29
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/mutmut_pilot_tests/test_pilot.py`'s `TestSizePositionGoldenVectors` tests set `database.get_portfolio.return_value`, `database.get_latest_snapshot.return_value`, and `database.get_settings.return_value` directly on the session-scoped database stub module (`backend/mutmut_pilot_tests/conftest.py`) with no fixture-based reset/teardown between tests. Every current test happens to set all three before use, so there is no live failure today, but a future test added to this file that forgets to set one of the three would silently inherit a stale `return_value` left by whichever test last set it, rather than failing loudly or getting a fresh mock — an order-dependency trap. The sibling `_no_heat_impact` fixture in the same file uses `unittest.mock.patch.object(...)` correctly (with automatic teardown); the three database stub assignments don't follow the same pattern.
+
+**Scope**
+- Convert the three `database.*` mock assignments to a fixture using `unittest.mock.patch.object` (or `reset_mock()`/an autouse fixture) so each test starts from a clean, unconfigured mock
+
+**Acceptance Criteria**
+- Each test in `TestSizePositionGoldenVectors` is independently runnable in isolation and in any order with identical results
+- A test added without configuring all three database mocks fails loudly (AttributeError/None) rather than silently inheriting a prior test's stale `return_value`
+
+---
+
+### BLG-QA-202 — backend/setup.cfg's mutmut comment references a leaked sandbox-local /tmp path
+**Priority:** P3 (Low)
+**Type:** QA / Test Tooling
+**Owner:** QA Lead
+**Source:** PR #1845 review (Director of Quality persona), cycle 2026-09-28__release-v9.8 — 2026-09-29
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/setup.cfg`'s `[mutmut]` section header comment says to invoke via `/tmp/mutmut_pilot_venv/venv/bin/python3 -m mutmut run` — a session-specific temporary path from the original pilot's own sandbox investigation (used to temporarily relocate `backend/.venv` out of the way) that will not exist for anyone else reproducing the pilot. `docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`'s own "Reproducing this pilot" section correctly uses a generic `python3 -m pip install mutmut` / `python3 -m mutmut run` with no such path, so the `setup.cfg` comment is now the only place with the stale reference.
+
+**Scope**
+- Correct `backend/setup.cfg`'s comment to reference the backend venv (e.g. `backend/.venv/bin/python3`) or simply match the doc's generic invocation, dropping the `/tmp` path
+
+**Acceptance Criteria**
+- `backend/setup.cfg` contains no sandbox-specific `/tmp` path
 
 ---
 
