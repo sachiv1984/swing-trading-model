@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { formatPercent } from "../../lib/format";
 
 // WinRateByMonth - Component 12 (BLG-FEAT-05)
 // Source: monthly_data from GET /analytics/metrics
@@ -40,7 +41,7 @@ function WinRateTooltip({ active, payload, label }) {
     <div className="rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 shadow-xl text-sm">
       <p className="font-semibold text-white mb-1">{label}</p>
       <p className="text-slate-300">
-        Win rate: <span className="font-medium text-white">{d.winRate.toFixed(1)}%</span>
+        Win rate: <span className="font-medium text-white">{formatPercent(d.winRate)}</span>
       </p>
       <p className="text-slate-600 dark:text-slate-400 text-xs mt-0.5">
         {d.tradeCount} trade{d.tradeCount !== 1 ? "s" : ""}

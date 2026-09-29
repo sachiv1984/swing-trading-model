@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { TrendingUp, TrendingDown, Trophy, AlertTriangle } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { formatCurrency, formatR as sharedFormatR } from "../../lib/format";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BestWorstTrades — Component 11 (BLG-FEAT-04)
@@ -25,13 +26,11 @@ function calcR(trade) {
 }
 
 function formatR(r) {
-  const sign = r >= 0 ? "+" : "";
-  return `${sign}${r.toFixed(2)}R`;
+  return sharedFormatR(r);
 }
 
 function formatPnL(pnl) {
-  const sign = pnl >= 0 ? "+" : "-";
-  return `${sign}£${Math.abs(pnl).toFixed(2)}`;
+  return formatCurrency(pnl, { signed: true });
 }
 
 function formatDate(dateStr) {
@@ -48,7 +47,9 @@ function formatDate(dateStr) {
 // ─────────────────────────────────────────────────────────────────────────────
 function TradeCard({ trade, rValue, isBest }) {
   const rText  = formatR(rValue);
-  const pnlPos = (trade.pnl ?? 0) >= 0;
+  const pnlVal = trade.pnl ?? 0;
+  const pnlPos = pnlVal > 0;
+  const pnlNeg = pnlVal < 0;
 
   return (
     <div className={cn(
@@ -70,8 +71,8 @@ function TradeCard({ trade, rValue, isBest }) {
 
       {/* Secondary row: P&L + exit date */}
       <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 mb-2">
-        <span className={cn("font-medium", pnlPos ? "text-emerald-400" : "text-rose-400")}>
-          {formatPnL(trade.pnl ?? 0)}
+        <span className={cn("font-medium", pnlPos ? "text-emerald-400" : pnlNeg ? "text-rose-400" : "text-slate-300")}>
+          {formatPnL(pnlVal)}
         </span>
         <span>{formatDate(trade.exitDate)}</span>
       </div>

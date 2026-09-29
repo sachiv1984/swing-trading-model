@@ -7,6 +7,7 @@ import { Textarea } from "../ui/textarea";
 import { format, differenceInDays } from "date-fns";
 import { BookOpen, Edit2, X } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { formatCurrency, currencyForMarket } from "../../lib/format";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 
@@ -48,9 +49,8 @@ export default function PositionModal({ position, open, onClose, onSave }) {
 
   const pnl = (currentPriceNative - entryPriceNative) * shares;
   const pnlPercent = entryPriceNative > 0 ? ((currentPriceNative - entryPriceNative) / entryPriceNative * 100) : 0;
-  const isProfit = pnl >= 0;
   const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
-  const currencySymbol = position.market === "UK" ? "£" : "$";
+  const positionCurrency = currencyForMarket(position.market);
 
   const defaultTags = ["momentum", "breakout", "pullback", "news-driven", "high-conviction"];
   const allAvailableTags = [...new Set([...existingTags, ...defaultTags])];
@@ -124,16 +124,18 @@ export default function PositionModal({ position, open, onClose, onSave }) {
             </div>
             <div className={cn(
               "p-3 rounded-xl border",
-              isProfit 
-                ? "bg-emerald-500/10 border-emerald-500/30" 
-                : "bg-rose-500/10 border-rose-500/30"
+              pnl > 0
+                ? "bg-emerald-500/10 border-emerald-500/30"
+                : pnl < 0
+                  ? "bg-rose-500/10 border-rose-500/30"
+                  : "bg-slate-800/50 border-slate-700/50"
             )}>
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">P&L</p>
               <p className={cn(
                 "text-lg font-semibold",
-                isProfit ? "text-emerald-400" : "text-rose-400"
+                pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-300"
               )}>
-                {isProfit ? "+" : ""}{currencySymbol}{Math.abs(pnl).toFixed(2)}
+                {formatCurrency(pnl, { signed: true, currency: positionCurrency })}
               </p>
             </div>
           </div>
@@ -148,11 +150,11 @@ export default function PositionModal({ position, open, onClose, onSave }) {
               </div>
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400">Entry Price</p>
-                <p className="text-sm text-white">{currencySymbol}{entryPriceNative.toFixed(2)}</p>
+                <p className="text-sm text-white">{formatCurrency(entryPriceNative, { currency: positionCurrency })}</p>
               </div>
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400">ATR Value</p>
-                <p className="text-sm text-white">{position.atr_value?.toFixed(2) || "—"}</p>
+                <p className="text-sm text-white">{position.atr_value != null ? formatCurrency(position.atr_value, { currency: positionCurrency }) : "—"}</p>
               </div>
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400">FX Rate</p>

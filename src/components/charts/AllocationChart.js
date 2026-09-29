@@ -1,5 +1,6 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { motion } from "framer-motion";
+import { formatCurrency, formatPercent } from "../../lib/format";
 
 const COLORS = ['#22d3ee', '#a78bfa', '#f472b6', '#fb923c', '#4ade80', '#facc15'];
 
@@ -45,7 +46,7 @@ export default function AllocationChart({ positions }) {
                   border: '1px solid #334155',
                   borderRadius: '8px'
                 }}
-                formatter={(value) => [`£${value.toLocaleString()}`, '']}
+                formatter={(value) => [formatCurrency(value), '']}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -63,7 +64,7 @@ export default function AllocationChart({ positions }) {
               </div>
               <div className="text-right">
                 <span className="text-sm font-medium text-white">
-                  {((item.value / total) * 100).toFixed(1)}%
+                  {formatPercent((item.value / total) * 100)}
                 </span>
               </div>
             </div>

@@ -8,6 +8,7 @@ import {
   Calendar,
   TrendingUp,
   TrendingDown,
+  Minus,
   BarChart3,
   PieChart,
   Loader2,
@@ -23,7 +24,7 @@ import { Button } from "../components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
 import { StandingAlert } from "../components/ui/StandingAlert";
-import { formatCurrency } from "../lib/format";
+import { formatCurrency, formatPercent } from "../lib/format";
 import StatsCard from "../components/ui/StatsCard";
 import PerformanceSummary from "../components/reports/PerformanceSummary";
 import PortfolioGrowthChart from "../components/reports/PortfolioGrowthChart";
@@ -41,16 +42,11 @@ function getCurrentUKTaxYear() {
 }
 
 function formatGBP(value) {
-  if (value == null) return "—";
-  return `£${Number(value).toLocaleString("en-GB", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
+  return formatCurrency(value);
 }
 
 function formatPct(value) {
-  if (value == null) return "—";
-  return `${Number(value).toFixed(1)}%`;
+  return formatPercent(value);
 }
 
 // ─── Tax Year P&L View ─────────────────────────────────────────────────────────
@@ -252,7 +248,7 @@ function TaxYearReport({ onViewMonthly }) {
               className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4"
             >
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Realised P&L</p>
-              <p className={`text-xl font-bold ${(reportData?.summary?.total_realised_pnl ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+              <p className={`text-xl font-bold ${(reportData?.summary?.total_realised_pnl ?? 0) > 0 ? "text-emerald-400" : (reportData?.summary?.total_realised_pnl ?? 0) < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"}`}>
                 {formatGBP(reportData?.summary?.total_realised_pnl)}
               </p>
             </motion.div>
@@ -311,7 +307,7 @@ function TaxYearReport({ onViewMonthly }) {
               {reportData.summary.restated_month_count === 1 ? "" : "s"} — see the{" "}
               <button
                 type="button"
-                onClick={onViewMonthly}
+                onClick={() => onViewMonthly(selectedYear)}
                 className="underline underline-offset-2 hover:no-underline text-cyan-600 dark:text-cyan-400"
               >
                 Monthly tab
@@ -372,9 +368,11 @@ function TaxYearReport({ onViewMonthly }) {
                     // touch P&L %..." -- kept on the original binary rule,
                     // deliberately NOT sharing pnlColor with the cell below,
                     // so this column's colour is unaffected by ST-08.
+                    // Deliberately two-way (not the three-way zero-neutral rule used for Realised P&L
+                    // above): DEV-REPORTS-ST01-02 / decision_record.md §5 scopes the zero-P&L neutral-tone
+                    // convention to the Realised P&L column only -- P&L % keeps the original rule.
                     const pnlPctColor = trade.pnl_pct > 0 ? "text-emerald-400" : "text-rose-400";
                     const currency = trade.currency === "USD" ? "USD" : "GBP";
-                    const priceSymbol = currency === "USD" ? "$" : "£";
                     return (
                       <tr
                         key={trade.id ?? i}
@@ -390,11 +388,11 @@ function TaxYearReport({ onViewMonthly }) {
                         <td className="px-3 py-3 text-slate-300">{trade.exit_date}</td>
                         <td className="px-3 py-3 text-slate-300">{trade.holding_days}</td>
                         <td className="px-3 py-3 text-slate-300">
-                          {priceSymbol}{Number(trade.entry_price_native ?? 0).toFixed(2)}
+                          {formatCurrency(trade.entry_price_native ?? 0, { currency })}
                           <span className="text-xs text-slate-600 dark:text-slate-400 ml-1">{currency}</span>
                         </td>
                         <td className="px-3 py-3 text-slate-300">
-                          {priceSymbol}{Number(trade.exit_price_native ?? 0).toFixed(2)}
+                          {formatCurrency(trade.exit_price_native ?? 0, { currency })}
                           <span className="text-xs text-slate-600 dark:text-slate-400 ml-1">{currency}</span>
                         </td>
                         <td className="px-3 py-3 text-slate-300">{trade.shares}</td>
@@ -425,7 +423,7 @@ function TaxYearReport({ onViewMonthly }) {
               <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
                 Indicative Unrealised P&L (current positions)
               </h3>
-              <p className={`text-2xl font-bold mb-3 ${(reportData.estimated_unrealised_pnl ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+              <p className={`text-2xl font-bold mb-3 ${(reportData.estimated_unrealised_pnl ?? 0) > 0 ? "text-emerald-400" : (reportData.estimated_unrealised_pnl ?? 0) < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"}`}>
                 {formatGBP(reportData.estimated_unrealised_pnl)}
               </p>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -658,7 +656,7 @@ function ReconciliationReport() {
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">System-Computed Total</p>
                 <p
-                  className={`text-lg font-semibold ${data.system_total_pnl_gbp >= 0 ? "text-emerald-400" : "text-rose-400"}`}
+                  className={`text-lg font-semibold ${data.system_total_pnl_gbp > 0 ? "text-emerald-400" : data.system_total_pnl_gbp < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"}`}
                   data-testid="reconciliation-system-total"
                 >
                   {formatGBP(data.system_total_pnl_gbp)}
@@ -667,7 +665,7 @@ function ReconciliationReport() {
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Trade Export Total</p>
                 <p
-                  className={`text-lg font-semibold ${data.export_total_pnl_gbp >= 0 ? "text-emerald-400" : "text-rose-400"}`}
+                  className={`text-lg font-semibold ${data.export_total_pnl_gbp > 0 ? "text-emerald-400" : data.export_total_pnl_gbp < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"}`}
                   data-testid="reconciliation-export-total"
                 >
                   {formatGBP(data.export_total_pnl_gbp)}
@@ -700,7 +698,7 @@ const MONTH_NAMES = [
   "July", "August", "September", "October", "November", "December",
 ];
 
-function MonthlyPnlTable() {
+function MonthlyPnlTable({ initialYear }) {
   const [csvGenerating, setCsvGenerating] = useState(false);
   // ST-04 (BLG-FE-188): months whose restatement detail row is expanded (collapsed by default).
   const [expandedMonths, setExpandedMonths] = useState(() => new Set());
@@ -713,10 +711,21 @@ function MonthlyPnlTable() {
     });
   const { toast } = useToast();
 
+  // ST-03 (EPIC-01, v9.8, BLG-FE-190): Tax Year filter — reports.md §Monthly Financial
+  // Table Tax Year Filter. Defaults to initialYear (set when arriving via the Tax Year
+  // tab's restated-months notice link) or the current UK tax year (direct navigation).
+  const currentTaxYear = getCurrentUKTaxYear();
+  const [selectedYear, setSelectedYear] = useState(() => initialYear ?? currentTaxYear);
+  const yearOptions = [];
+  for (let y = currentTaxYear; y >= 2020; y--) {
+    yearOptions.push(y);
+  }
+  const taxYearFilterLabel = `${selectedYear}/${String(selectedYear + 1).slice(2)}`;
+
   const { data: response, isLoading } = useQuery({
-    queryKey: ["monthlyPnl"],
+    queryKey: ["monthlyPnl", selectedYear],
     queryFn: () =>
-      apiFetch(`${base44.baseUrl}/reports/monthly-pnl`).then((r) => r.json()),
+      apiFetch(`${base44.baseUrl}/reports/monthly-pnl?year=${selectedYear}`).then((r) => r.json()),
   });
 
   // ST-05 (BLG-FEAT-81, v7.8): reuses the Tax Year tab's Download CSV pattern
@@ -724,7 +733,7 @@ function MonthlyPnlTable() {
   const handleCsvDownload = async () => {
     setCsvGenerating(true);
     try {
-      const response = await apiFetch(`${base44.baseUrl}/reports/monthly-pnl?format=csv`);
+      const response = await apiFetch(`${base44.baseUrl}/reports/monthly-pnl?format=csv&year=${selectedYear}`);
       if (!response.ok) throw new Error("CSV generation failed");
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
@@ -770,6 +779,29 @@ function MonthlyPnlTable() {
 
   return (
     <div className="space-y-4">
+      {/* ST-03 (EPIC-01, v9.8, BLG-FE-190): Tax Year filter — same control, same
+          position (above the table) as the Tax Year tab's own §Year Selector.
+          reports.md §Monthly Financial Table Tax Year Filter. */}
+      <div className="flex items-center gap-3">
+        <Calendar className="w-4 h-4 text-slate-400" />
+        <span className="text-sm text-slate-600 dark:text-slate-400">Tax Year</span>
+        <Select
+          value={String(selectedYear)}
+          onValueChange={(v) => setSelectedYear(Number(v))}
+        >
+          <SelectTrigger data-testid="monthly-tax-year-filter" className="w-36 bg-slate-800/50 border-slate-700 text-white h-9">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-slate-800 border-slate-700">
+            {yearOptions.map((y) => (
+              <SelectItem key={y} value={String(y)}>
+                {y}/{String(y + 1).slice(2)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       {/* ST-05 (BLG-FEAT-81, v7.8): Download CSV control for the Monthly P&L
           Report view — verbatim reuse of the Tax Year tab's export button,
           per monthly-csv-export/ux_spec.md §2. Drops below the section
@@ -799,7 +831,7 @@ function MonthlyPnlTable() {
       <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-700/50">
           <h3 className="text-sm font-semibold text-white">Monthly Realised P&L</h3>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Current and prior calendar year. Only months with closed trades shown.</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Tax year {taxYearFilterLabel}. Only months with closed trades shown.</p>
         </div>
         {nullFeeTotal >= 1 && (
           <div data-testid="monthly-fees-missing-notice" className="px-4 pt-4">
@@ -935,7 +967,7 @@ function MonthlyPnlTable() {
           <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
             Indicative Unrealised P&L (current positions)
           </h3>
-          <p className={`text-2xl font-bold mb-3 ${(estimatedUnrealisedPnl ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+          <p className={`text-2xl font-bold mb-3 ${(estimatedUnrealisedPnl ?? 0) > 0 ? "text-emerald-400" : (estimatedUnrealisedPnl ?? 0) < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"}`}>
             {formatGBP(estimatedUnrealisedPnl)}
           </p>
           <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -963,9 +995,7 @@ function MonthlyPnlTable() {
             <div data-testid="compliance-pass-rate" className="bg-slate-800/50 px-5 py-4">
               <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Validation Pass Rate</p>
               <p className="text-lg font-semibold text-white">
-                {compliance.validation_pass_rate != null
-                  ? `${(compliance.validation_pass_rate * 100).toFixed(1)}%`
-                  : "—"}
+                {formatPercent(compliance.validation_pass_rate != null ? compliance.validation_pass_rate * 100 : null)}
               </p>
             </div>
             <div data-testid="compliance-override-count" className="bg-slate-800/50 px-5 py-4">
@@ -1005,6 +1035,11 @@ export default function Reports() {
   const [activeTab, setActiveTab] = useState("performance");
   const [period, setPeriod] = useState("month");
   const [exportModalOpen, setExportModalOpen] = useState(false);
+  // ST-03 (EPIC-01, v9.8, BLG-FE-190): year the restated-months notice link was clicked for,
+  // if any -- passed to MonthlyPnlTable as its initial Tax Year filter value. Cleared by direct
+  // tab navigation so that path still defaults to the current tax year, per reports.md
+  // §Monthly Financial Table Tax Year Filter's "Default" bullet.
+  const [monthlyInitialYear, setMonthlyInitialYear] = useState(null);
 
   const backendPeriod = PERIOD_MAP[period] ?? "last_month";
 
@@ -1149,7 +1184,7 @@ export default function Reports() {
           Tax Year P&L
         </button>
         <button
-          onClick={() => setActiveTab("monthly")}
+          onClick={() => { setMonthlyInitialYear(null); setActiveTab("monthly"); }}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === "monthly"
               ? "border-cyan-500 text-white"
@@ -1172,9 +1207,9 @@ export default function Reports() {
       </div>
 
       {activeTab === "taxYear" ? (
-        <TaxYearReport onViewMonthly={() => setActiveTab("monthly")} />
+        <TaxYearReport onViewMonthly={(year) => { setMonthlyInitialYear(year); setActiveTab("monthly"); }} />
       ) : activeTab === "monthly" ? (
-        <MonthlyPnlTable />
+        <MonthlyPnlTable initialYear={monthlyInitialYear} />
       ) : activeTab === "reconciliation" ? (
         <ReconciliationReport />
       ) : isLoading ? (
@@ -1187,14 +1222,14 @@ export default function Reports() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatsCard
               title="Total P&L"
-              value={`${metrics.totalPnL >= 0 ? "+" : ""}£${metrics.totalPnL.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+              value={formatCurrency(metrics.totalPnL, { signed: true })}
               subtitle={periodLabels[period]}
-              icon={metrics.totalPnL >= 0 ? TrendingUp : TrendingDown}
-              gradient={metrics.totalPnL >= 0 ? "emerald" : "rose"}
+              icon={metrics.totalPnL > 0 ? TrendingUp : metrics.totalPnL < 0 ? TrendingDown : Minus}
+              gradient={metrics.totalPnL > 0 ? "emerald" : metrics.totalPnL < 0 ? "rose" : "cyan"}
             />
             <StatsCard
               title="Win Rate"
-              value={`${metrics.winRate.toFixed(1)}%`}
+              value={formatPercent(metrics.winRate)}
               subtitle={`${metrics.winningTrades}W / ${metrics.losingTrades}L`}
               icon={PieChart}
               gradient="cyan"

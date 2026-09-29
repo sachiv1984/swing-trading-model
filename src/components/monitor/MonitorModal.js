@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { CheckCircle2, XCircle, Loader2, AlertTriangle } from "lucide-react";
 import StatusBadge from "../ui/StatusBadge";
 import { cn } from "../../lib/utils";
+import { formatCurrency, currencyForMarket } from "../../lib/format";
 
 export default function MonitorModal({ 
   open, 
@@ -69,7 +70,7 @@ export default function MonitorModal({
                 const { status, reason } = getPositionStatus(position);
                 const isExitSuggested = status === "exit";
                 const isSelected = selectedExits.includes(position.id);
-                const currencySymbol = position.market === "UK" ? "£" : "$";
+                const positionCurrency = currencyForMarket(position.market);
 
                 return (
                   <div
@@ -120,19 +121,19 @@ export default function MonitorModal({
                         <div>
                           <p className="text-xs text-slate-600 dark:text-slate-400">Current</p>
                           <p className="text-white font-medium">
-                            {currencySymbol}{position.current_price?.toFixed(2) || "—"}
+                            {position.current_price != null ? formatCurrency(position.current_price, { currency: positionCurrency }) : "—"}
                           </p>
                         </div>
                         <div>
                           <p className="text-xs text-slate-600 dark:text-slate-400">Stop</p>
                           <p className="text-rose-400 font-medium">
-                            {currencySymbol}{position.stop_price?.toFixed(2) || "—"}
+                            {position.stop_price != null ? formatCurrency(position.stop_price, { currency: positionCurrency }) : "—"}
                           </p>
                         </div>
                         <div>
                           <p className="text-xs text-slate-600 dark:text-slate-400">Entry</p>
                           <p className="text-slate-300">
-                            {currencySymbol}{position.entry_price?.toFixed(2)}
+                            {formatCurrency(position.entry_price, { currency: positionCurrency })}
                           </p>
                         </div>
                       </div>

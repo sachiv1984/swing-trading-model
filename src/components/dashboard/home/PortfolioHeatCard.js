@@ -3,6 +3,7 @@ import { Flame } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import { api } from "../../../api/base44Client";
 import DashboardCard from "./DashboardCard";
+import { formatPercent } from "../../../lib/format";
 
 function heatColor(pct) {
   if (pct == null) return "text-white";
@@ -33,7 +34,7 @@ export default function PortfolioHeatCard() {
       emptyBody="Heat will show here once you're holding a position."
     >
       <p className={cn("text-4xl font-bold mb-2", heatColor(heat))}>
-        {heat != null ? `${heat.toFixed(1)}%` : ""}
+        {heat != null ? formatPercent(heat) : ""}
       </p>
       <p className="text-sm text-slate-600 dark:text-slate-400">
         {heat != null && (heat < 15 ? "Heat within safe range" : heat <= 25 ? "Heat elevated — monitor closely" : "Heat critical — review positions")}

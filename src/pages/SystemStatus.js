@@ -47,6 +47,10 @@ export default function SystemStatus() {
   const categorizeEndpoint = (endpointName) => {
     // Check more specific patterns first
     if (endpointName.includes('/analytics')) return 'Analytics';
+    // ST-04 (EPIC-01, v9.8, BLG-FE-191): /replay/run (added v9.7, EPIC-01/ST-01b) has no case
+    // here, so it silently fell into 'Other'. Grouped under 'Analytics' to match the app's own
+    // nav taxonomy (src/Layout.js NAV_GROUPS — Replay lives in the Analytics group, not Trading).
+    if (endpointName.includes('/replay')) return 'Analytics';
     if (endpointName.includes('/validate')) return 'Validation';
     if (endpointName.includes('/alerts') || endpointName.includes('/price-alerts')) return 'Alerts';
     if (endpointName.includes('/notifications')) return 'Notifications';

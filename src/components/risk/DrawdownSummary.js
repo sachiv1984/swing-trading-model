@@ -1,4 +1,5 @@
 import { TrendingDown, Mountain, AlertCircle } from "lucide-react";
+import { formatCurrency, formatPercent } from "../../lib/format";
 
 function ErrorCard() {
   return (
@@ -9,7 +10,7 @@ function ErrorCard() {
   );
 }
 
-export default function DrawdownSummary({ drawdownPercent, peakValue, error, currency = "£" }) {
+export default function DrawdownSummary({ drawdownPercent, peakValue, error }) {
   if (error) return <ErrorCard />;
 
   const dd = drawdownPercent ?? null;
@@ -40,7 +41,7 @@ export default function DrawdownSummary({ drawdownPercent, peakValue, error, cur
           ) : isAtPeak ? (
             <p className="text-xl font-bold text-emerald-400">🎉 At Peak</p>
           ) : (
-            <p className={`text-2xl font-bold ${ddColor}`}>{dd.toFixed(1)}%</p>
+            <p className={`text-2xl font-bold ${ddColor}`}>{formatPercent(dd)}</p>
           )}
         </div>
         <div>
@@ -48,9 +49,7 @@ export default function DrawdownSummary({ drawdownPercent, peakValue, error, cur
           <div className="flex items-center gap-1.5">
             <Mountain className="w-4 h-4 text-slate-400" />
             <p className="text-lg font-semibold text-slate-200">
-              {peakValue != null
-                ? `${currency}${Number(peakValue).toLocaleString("en-GB", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
-                : "N/A"}
+              {peakValue != null ? formatCurrency(peakValue) : "N/A"}
             </p>
           </div>
         </div>

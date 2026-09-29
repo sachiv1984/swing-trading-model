@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { formatCurrency } from "../../lib/format";
 
 const COLORS = ['#22d3ee', '#a78bfa', '#f472b6', '#34d399', '#fbbf24', '#f87171'];
 
@@ -60,8 +61,8 @@ export default function TradeBreakdown({ positions }) {
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-3 shadow-xl">
           <p className="text-white font-medium">{data.name}</p>
           <p className="text-slate-600 dark:text-slate-400 text-sm">{data.value} trades</p>
-          <p className={`text-sm ${data.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-            £{data.pnl.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          <p className={`text-sm ${data.pnl > 0 ? 'text-emerald-400' : data.pnl < 0 ? 'text-rose-400' : 'text-slate-300'}`}>
+            {formatCurrency(data.pnl, { signed: true })}
           </p>
         </div>
       );

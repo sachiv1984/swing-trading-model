@@ -1,3 +1,5 @@
+import { formatPercent } from "../../lib/format";
+
 export default function AdvancedMetricsGrid({ metrics, executiveMetrics }) {
   const gridMetrics = [
     [
@@ -14,7 +16,7 @@ export default function AdvancedMetricsGrid({ metrics, executiveMetrics }) {
     ],
     [
       { label: "Trade Frequency", value: metrics.tradeFrequency?.toFixed(1) || "N/A", suffix: " per week" },
-      { label: "Capital Efficiency", value: metrics.capitalEfficiency?.toFixed(1) || "N/A", suffix: "%" }
+      { label: "Capital Efficiency", value: metrics.capitalEfficiency != null ? formatPercent(metrics.capitalEfficiency) : "N/A" }
     ]
   ];
 

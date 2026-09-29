@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../api/base44Client";
+import { formatCurrency, formatPercent } from "../lib/format";
 import PageHeader from "../components/ui/PageHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Download, BarChart2 } from "lucide-react";
@@ -252,6 +253,7 @@ export default function PerformanceAnalytics() {
             .metric-subtitle { font-size: 12px; color: #64748b; margin-top: 4px; }
             .positive { color: #16a34a; }
             .negative { color: #dc2626; }
+            .neutral { color: #0f172a; }
             .insight-list { list-style: none; padding: 0; }
             .insight-item { background: #fffbeb; padding: 12px 16px; margin-bottom: 8px; border-radius: 6px; border-left: 3px solid #f59e0b; font-size: 14px; }
             table { width: 100%; border-collapse: collapse; margin-top: 16px; }
@@ -277,8 +279,8 @@ export default function PerformanceAnalytics() {
               </div>
               <div class="metric-card">
                 <div class="metric-label">Max Drawdown</div>
-                <div class="metric-value negative">${metrics.maxDrawdown.percent.toFixed(1)}%</div>
-                <div class="metric-subtitle">£${metrics.maxDrawdown.amount.toFixed(0)}</div>
+                <div class="metric-value negative">${formatPercent(metrics.maxDrawdown.percent)}</div>
+                <div class="metric-subtitle">${formatCurrency(metrics.maxDrawdown.amount)}</div>
               </div>
               <div class="metric-card">
                 <div class="metric-label">Recovery Factor</div>
@@ -286,7 +288,7 @@ export default function PerformanceAnalytics() {
               </div>
               <div class="metric-card">
                 <div class="metric-label">Expectancy</div>
-                <div class="metric-value ${metrics.expectancy >= 0 ? 'positive' : 'negative'}">£${metrics.expectancy.toFixed(2)}</div>
+                <div class="metric-value ${metrics.expectancy > 0 ? 'positive' : metrics.expectancy < 0 ? 'negative' : 'neutral'}">${formatCurrency(metrics.expectancy, { signed: true })}</div>
                 <div class="metric-subtitle">Per Trade</div>
               </div>
               <div class="metric-card">
@@ -309,8 +311,8 @@ export default function PerformanceAnalytics() {
               ${metrics.avgHoldWinners > metrics.avgHoldLosers ?
                 `<li class="insight-item">✅ Great discipline - cutting losers faster (${metrics.avgHoldLosers.toFixed(1)} days) than letting winners run (${metrics.avgHoldWinners.toFixed(1)} days)</li>` :
                 `<li class="insight-item">⚠️ Holding losers too long (${metrics.avgHoldLosers.toFixed(1)} days) compared to winners (${metrics.avgHoldWinners.toFixed(1)} days)</li>`}
-              ${metrics.profitFactor > 2 ? `<li class="insight-item">Excellent profit factor of ${metrics.profitFactor.toFixed(2)} means earning £${metrics.profitFactor.toFixed(2)} for every £1 lost</li>` :
-                `<li class="insight-item">Profit factor of ${metrics.profitFactor.toFixed(2)} - earning £${metrics.profitFactor.toFixed(2)} per £1 lost</li>`}
+              ${metrics.profitFactor > 2 ? `<li class="insight-item">Excellent profit factor of ${metrics.profitFactor.toFixed(2)} means earning ${formatCurrency(metrics.profitFactor)} for every £1 lost</li>` :
+                `<li class="insight-item">Profit factor of ${metrics.profitFactor.toFixed(2)} - earning ${formatCurrency(metrics.profitFactor)} per £1 lost</li>`}
             </ul>
           </div>
 
@@ -342,7 +344,7 @@ export default function PerformanceAnalytics() {
                   <td>Trade Frequency</td>
                   <td>${metrics.tradeFrequency.toFixed(1)} per week</td>
                   <td>Capital Efficiency</td>
-                  <td>${metrics.capitalEfficiency.toFixed(1)}%</td>
+                  <td>${formatPercent(metrics.capitalEfficiency)}</td>
                 </tr>
               </tbody>
             </table>

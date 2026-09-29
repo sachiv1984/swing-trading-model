@@ -6,6 +6,7 @@ import { api } from '../api/base44Client';
 import { BarChart2, RefreshCw, Upload, ChevronDown, ChevronUp, Play, Loader2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import PageHeader from '../components/ui/PageHeader';
+import { formatCurrency, formatPercent, formatR } from '../lib/format';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -40,14 +41,11 @@ const TOGGLE_LABELS = {
 // ---------------------------------------------------------------------------
 
 function fmtPct(val) {
-  if (val == null) return '—';
-  return `${Number(val).toFixed(1)}%`;
+  return formatPercent(val);
 }
 
 function fmtGbp(val) {
-  if (val == null) return '—';
-  const n = Number(val);
-  return (n < 0 ? '-£' : '£') + Math.abs(n).toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  return formatCurrency(val);
 }
 
 function fmtDays(val) {
@@ -73,22 +71,18 @@ function unrealizedPnlClass(val) {
   return Number(val) >= 0 ? 'text-emerald-400' : 'text-rose-400';
 }
 
-function fmtGbpSigned(val, decimals = 0) {
-  if (val == null) return '—';
-  const n = Number(val);
-  const sign = n >= 0 ? '+' : '-';
-  return sign + '£' + Math.abs(n).toLocaleString('en-GB', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+// Note (ST-01, v9.8): the `decimals` param is dropped — the shared helper fixes money at 2dp
+// per design_system.md v1.21's canonical convention; callers that previously passed 0 now render 2dp.
+function fmtGbpSigned(val) {
+  return formatCurrency(val, { signed: true });
 }
 
 function fmtGbpPrice(val) {
-  if (val == null) return '—';
-  return '£' + Number(val).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return formatCurrency(val);
 }
 
 function fmtPctSigned(val) {
-  if (val == null) return '—';
-  const n = Number(val);
-  return (n >= 0 ? '+' : '') + n.toFixed(1) + '%';
+  return formatPercent(val, { signed: true });
 }
 
 function fmtDateLong(val) {
@@ -197,7 +191,7 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
                 <td className="py-2 pr-3 text-slate-600 dark:text-slate-400">{fmtDateLong(pos.entry_date)}</td>
                 <td className="py-2 pr-3 text-right text-slate-300">{fmtGbpPrice(pos.entry_price)}</td>
                 <td className="py-2 pr-3 text-right text-slate-300">{fmtGbpPrice(pos.current_price)}</td>
-                <td className={`py-2 pr-3 text-right ${unrealizedPnlClass(pos.unrealized_pnl_gbp)}`}>{fmtGbpSigned(pos.unrealized_pnl_gbp, 2)}</td>
+                <td className={`py-2 pr-3 text-right ${unrealizedPnlClass(pos.unrealized_pnl_gbp)}`}>{fmtGbpSigned(pos.unrealized_pnl_gbp)}</td>
                 <td className={`py-2 pr-3 text-right ${unrealizedPnlClass(pos.unrealized_pnl_pct)}`}>{fmtPctSigned(pos.unrealized_pnl_pct)}</td>
                 <td className="py-2 text-right text-slate-300">{pos.days_held ?? '—'}</td>
               </tr>
@@ -440,9 +434,7 @@ function Panel3({ backtestTrades, actualTrades, toggleMode, onToggleMode }) {
 // ---------------------------------------------------------------------------
 
 function fmtR(val) {
-  if (val == null) return '—';
-  const n = Number(val);
-  return (n >= 0 ? '+' : '') + n.toFixed(2) + 'R';
+  return formatR(val);
 }
 
 function fmtDelta(val, suffix = '') {
@@ -622,10 +614,10 @@ function VersionComparisonTab() {
           {/* Comparison Summary strip */}
           <div className="mt-4 flex flex-wrap items-center gap-4 rounded-lg border border-slate-700 bg-slate-800/50 p-3" data-testid="version-comparison-summary">
             <span className={`text-sm font-medium ${deltaClass(result.comparison_summary.win_rate_delta)}`}>
-              Win Rate {fmtDelta(result.comparison_summary.win_rate_delta * 100, '%')}
+              Win Rate {formatPercent(result.comparison_summary.win_rate_delta * 100, { signed: true })}
             </span>
             <span className={`text-sm font-medium ${deltaClass(result.comparison_summary.avg_R_delta)}`}>
-              Avg R {fmtDelta(result.comparison_summary.avg_R_delta, 'R')}
+              Avg R {formatR(result.comparison_summary.avg_R_delta)}
             </span>
             <span className="text-sm font-medium text-slate-300">
               Trades {fmtDelta(result.comparison_summary.trade_count_delta)}

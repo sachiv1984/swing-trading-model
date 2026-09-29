@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.13
-**Last Updated:** 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §Keyboard Navigation Requirements)
+**Version:** 1.14
+**Last Updated:** 2026-09-28 (ST-05, EPIC-01, v9.8, BLG-SPEC-158 — §Responsive Behavior corrected to match `TradeHistoryTable.js`'s actual implementation: the table does not collapse to cards, it scrolls horizontally); prior — 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §Keyboard Navigation Requirements)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.8 AI Journal Summary):** docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md
 **Design Source (v2.6 UX polish):** docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md
@@ -505,10 +505,12 @@ Displays:
 ---
 
 ## Responsive Behavior
-- Table collapses into stacked cards on narrow screens  
-- Journal expansion becomes a vertical panel under each card  
-- Filters collapse into a drawer or stacked inputs on mobile  
-- Tags wrap into multiple lines  
+- **Table does not collapse to cards.** `TradeHistoryTable.js` uses the shared `DataTable` component (`overflow-x-auto` wrapper, `src/components/ui/DataTable.js`): all ~10 data columns (§Trade History Table) render unconditionally at every width — the user scrolls horizontally below `md` (768px) to reach columns past the viewport. `TH_CLASS`'s reduced header padding (`px-2`, vs `DataTable`'s `px-6` default) narrows the table to reduce how much scroll is typically needed, but does not eliminate it on narrow viewports. No column-hiding/priority logic exists — every column is always present
+- **Journal expansion is an in-table expanded row**, not a card panel: clicking a trade opens a full-width `<tr>` (`colSpan={11}`) beneath that row, at every viewport width — there is no separate "card" layout to expand within
+- Filters collapse into a drawer or stacked inputs on mobile
+- Tags wrap into multiple lines
+
+**Corrected v1.14 (ST-05, BLG-SPEC-158):** the prior "Table collapses into stacked cards" and "vertical panel under each card" bullets did not match the actual code (no card layout exists for this table at any width) — see the two bullets above.
 
 ---
 
@@ -554,6 +556,7 @@ Documentation-only requirements baseline for this table-based page — no implem
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.14 | 2026-09-28 | ST-05 (BLG-SPEC-158, EPIC-01, v9.8): §Responsive Behavior corrected to match `TradeHistoryTable.js`'s actual implementation — the table scrolls horizontally (no card collapse, no column-hiding); journal expansion is an in-table expanded row, not a card panel. Documentation-only; no implementation change. |
 | 1.13 | 2026-09-04 | v9.1 ST-07 (BLG-SPEC-99, EPIC-01): added §Keyboard Navigation Requirements — documentation-only baseline covering Trade History Table row/expand tab order, Expandable Journal Row / Plan vs Reality / Post-Trade Debrief control tab order, Filters (incl. Saved Filter Presets), Calendar View day-cell keyboard activation, and focus-indicator contrast. No implementation change. |
 | 1.12 | 2026-08-20 | v8.9 (ST-06, EPIC-02, BLG-FEAT-90): Post-Trade Debrief section added to Expandable Journal Row — 5th section, rendered for every closed trade (not conditional on a linked plan, unlike Plan vs Reality); deterministic summary text always shown, one AI-generated pattern-surfacing "focus area" sentence shown when present; on-demand Generate/Regenerate action (`POST /trades/{id}/debrief`) since generation is not hooked into the live trade-close event path; §13 review CONDITIONAL (9 binding conditions) — Condition 4 requires no other action affordance in this section. Design decision documented directly in this spec (no separate ux_spec.md — component mirrors the existing Plan vs Reality precedent closely enough that a dedicated design artefact was not required). Approved: Product Owner 2026-08-20 (agent-mediated). |
 | 1.11 | 2026-07-17 | v7.5 design gate — added §Saved Filter Presets & Calendar View (ST-04, BLG-FE-118): named saved filter presets (new `saved_filters` table, server-side, distinct from the existing ephemeral localStorage active-filter state), Table/Calendar view toggle, month-grid with day-level realised-P&L indicators sourced from `exit_date`, day-click navigates to Table view filtered to that date, unrealised P&L shown once as a summary banner (never per-day). Design source: saved-filters-calendar-view/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |

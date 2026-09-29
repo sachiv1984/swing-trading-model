@@ -1,5 +1,6 @@
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { formatCurrency } from "../../lib/format";
 
 export default function MarketStatusBar({ spyStatus, ftseStatus, fxRate, availableCash }) {
   return (
@@ -23,7 +24,7 @@ export default function MarketStatusBar({ spyStatus, ftseStatus, fxRate, availab
           )}
         </div>
         <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-          ${spyStatus?.price.toFixed(2)} vs MA200
+          {formatCurrency(spyStatus?.price, { currency: "USD" })} vs MA200
         </p>
       </div>
 
@@ -46,7 +47,7 @@ export default function MarketStatusBar({ spyStatus, ftseStatus, fxRate, availab
           )}
         </div>
         <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-          £{ftseStatus?.price.toFixed(2)} vs MA200
+          {formatCurrency(ftseStatus?.price)} vs MA200
         </p>
       </div>
 
@@ -57,7 +58,7 @@ export default function MarketStatusBar({ spyStatus, ftseStatus, fxRate, availab
 
       <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-500/10 to-violet-500/10 border border-cyan-500/30">
         <span className="text-sm text-slate-600 dark:text-slate-400 block mb-2">Available Cash</span>
-        <p className="text-lg font-bold text-white">£{availableCash.toLocaleString()}</p>
+        <p className="text-lg font-bold text-white">{formatCurrency(availableCash)}</p>
       </div>
     </div>
   );

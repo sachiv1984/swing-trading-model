@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import PageHeader from "../components/ui/PageHeader";
 import { Input } from "../components/ui/input";
 import TradeReflectionModal from "../components/trades/TradeReflectionModal";
+import { formatCurrency, formatR } from "../lib/format";
 
 function exitReasonLabel(r) {
   const map = { stop_hit: "STOP", manual: "MANUAL", target: "TARGET", market_regime: "REGIME" };
@@ -64,7 +65,7 @@ export default function TradeReflection() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map((r) => {
-            const isProfit = (r.pnl ?? 0) >= 0;
+            const pnl = r.pnl ?? 0;
 
             return (
               <button
@@ -92,14 +93,14 @@ export default function TradeReflection() {
                 <div className="grid grid-cols-3 gap-2 mb-3">
                   <div>
                     <div className="text-xs text-slate-600 dark:text-slate-400">P&L</div>
-                    <div className={cn("text-sm font-semibold", isProfit ? "text-emerald-400" : "text-rose-400")}>
-                      {isProfit ? "+" : ""}£{(r.pnl || 0).toFixed(2)}
+                    <div className={cn("text-sm font-semibold", pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-300")}>
+                      {formatCurrency(pnl, { signed: true })}
                     </div>
                   </div>
                   <div>
                     <div className="text-xs text-slate-600 dark:text-slate-400">R-Multiple</div>
-                    <div className={cn("text-sm font-semibold", r.r_multiple == null ? "text-slate-600 dark:text-slate-400" : r.r_multiple >= 0 ? "text-emerald-400" : "text-rose-400")}>
-                      {r.r_multiple != null ? `${r.r_multiple >= 0 ? "+" : ""}${r.r_multiple.toFixed(2)}R` : "N/A"}
+                    <div className={cn("text-sm font-semibold", r.r_multiple == null ? "text-slate-600 dark:text-slate-400" : r.r_multiple > 0 ? "text-emerald-400" : r.r_multiple < 0 ? "text-rose-400" : "text-slate-300")}>
+                      {r.r_multiple != null ? formatR(r.r_multiple) : "N/A"}
                     </div>
                   </div>
                   <div>

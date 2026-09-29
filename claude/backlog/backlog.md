@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-28 (release planning 2026-09-28__release-v9.8 — Release Slice v9.8 ephemeral section appended, 39 items, marker `RP:v9.8:2026-09-28__release-v9.8`; no other structural changes); prior — 2026-09-28 (roadmap rebalance 2026-09-28__scheduled — 7 items added via idea intake IW-20260928-01 + 1 re-evaluated parked idea (BLG-GOV-350/351/352, BLG-SPEC-173/174, BLG-BE-130, BLG-OPS-170); 0 items archived/removed); prior — 2026-09-28 (groom backlog post-ship closure 2026-09-23__release-v9.7 — 30 items archived: 29 v9.7 shipped items + `BLG-FE-189` (already resolved, never archived); 1 ephemeral Release Slice section removed — v9.7; Spec-Debt Deep Review cadence due, ran, 0 new gaps found); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-28 (session — 1 new item added: BLG-BE-131); prior — 2026-09-28 (session — 1 new item added: BLG-QA-197); prior — 2026-09-28 (session — 1 new item added: BLG-FE-192); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4196,6 +4196,25 @@ The Tax Year summary notice ("Includes {k} restated month(s) — see the Monthly
 
 ---
 
+### BLG-QA-197 — reports-performance-tab.spec.js SC-REP-04a expects a signed "+£0.00" for zero Total P&L, contradicting the established zero-is-unsigned money convention
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-03/EPIC-01, cycle 2026-09-28__release-v9.8 — discovered while running the existing Reports Playwright suite to confirm no regressions from a Monthly P&L Tax Year filter change — 2026-09-28
+**Effort:** XS (<1h)
+**Provisional-Target:** Backlog (no release scheduled; P3)
+
+**Problem**
+`tests/e2e/reports-performance-tab.spec.js`'s SC-REP-04a ("Total P&L shows £0.00 when no trades", line 281-284) asserts `page.getByText(/\+£0\.00/)` is visible when `metrics.totalPnL = 0`. This contradicts `src/lib/format.js`'s canonical `formatCurrency` convention (`design_system.md` §Number and Currency Formatting, v1.21): a value that rounds to zero is always rendered unsigned (`"£0.00"`, never `"+£0.00"` or `"−£0.00"`) — `formatCurrency`'s `signOf()` helper explicitly special-cases this. The Performance tab's Total P&L stat card correctly renders the unsigned `"£0.00"` for a zero value, so this test fails (element not found) — it appears to predate the "zero is unsigned" convention being formally established and was never updated to match. Confirmed pre-existing and unrelated to any specific feature work: fails identically before and after the ST-03/EPIC-01/v9.8 changes that surfaced it (`git stash` bisection against the pre-ST-03 commit reproduces the same single failure, in isolation, with no other test in the file affected).
+
+**Scope**
+- Change the assertion to `page.getByText('£0.00', { exact: true })` (or scope it to the specific Total P&L stat card testid if one exists) and drop the `+` from the regex
+
+**Acceptance Criteria**
+- SC-REP-04a passes and matches the same zero-is-unsigned convention already correctly asserted elsewhere (e.g. `tests/e2e/number-format-tables.spec.js` SC-NFT-01's "zero is unsigned" checks)
+
+---
+
 ### BLG-GOV-349 — governance_sync.yml does not auto-close a phased story's GitHub issue (ST-XXa/b/c vs. the commit tag's bare ST-XX)
 **Priority:** P2 (Medium)
 **Type:** Governance Process
@@ -4236,6 +4255,26 @@ When a sprint story is phased into sub-stories (`ST-01a`/`ST-01b`/`ST-01c` — a
 **Acceptance Criteria**
 - `POST /replay/run` is categorized under a meaningful label (not `'Other'`) on the System Status dashboard
 - No other endpoint's categorization changes
+
+---
+
+### BLG-FE-192 — RecentTradesWidget icon-background badge uses two-way (>=0) colour logic for zero P&L, inconsistent with the neutral-tone convention
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-01/EPIC-01, formatting-helper migration, cycle 2026-09-28__release-v9.8 — 2026-09-28
+**Effort:** XS (<1h)
+**Provisional-Target:** Backlog (no release scheduled; P3)
+
+**Problem**
+In `src/components/dashboard/widgets/RecentTradesWidget.js` (line 36-38), the trade-row icon badge background/icon colour uses `(trade.pnl || 0) >= 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"` — a two-way threshold that colours an exact-zero P&L trade the same green as a genuine winner. This is the same "zero-P&L should render neutral, not green" bug pattern already fixed at the adjacent P&L text a few lines below (line 48, now a three-way `> 0` / `< 0` / neutral split) and fixed across several other files in the ST-01 formatting migration (v9.8). This specific site isn't a `toFixed()`/`toLocaleString()` call site, so it fell outside that migration's scope and was left unmigrated by design.
+
+**Scope**
+- Change the badge's background/icon-colour condition to the same three-way split already used for the adjacent P&L text (`trade.pnl > 0` emerald / `trade.pnl < 0` rose / else neutral slate)
+
+**Acceptance Criteria**
+- A trade with `pnl === 0` renders the icon badge in a neutral (non-green, non-rose) colour, consistent with the adjacent P&L text's own zero-P&L treatment
+- Winning (`pnl > 0`) and losing (`pnl < 0`) trades retain their existing emerald/rose badge colours
 
 ---
 
@@ -4341,6 +4380,26 @@ v9.7 (ST-08) moved trade-fee rounding from float to Decimal, following the v9.6 
 
 **Acceptance Criteria**
 - Tax-year statement and carried-forward-loss calculations are confirmed Decimal-consistent at rounding boundaries, or a specific gap is filed with the same rigor as `BLG-BE-127`
+
+---
+
+### BLG-BE-131 — GET /reports/monthly-pnl's new `year` param has no bounds check, unlike its sibling GET /reports/tax-year
+**Priority:** P4 (Trivial)
+**Type:** Backend Debt
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1843 review (agent-mediated Director of Quality), EPIC-01/ST-03, cycle 2026-09-28__release-v9.8 — 2026-09-28
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /reports/monthly-pnl?year=<n>` (added ST-03, EPIC-01, v9.8, BLG-FE-190) passes `year` straight into `date(year, 4, 6)` inside `get_monthly_pnl_report()` with no numeric bounds check, unlike its sibling `GET /reports/tax-year`, whose handler explicitly validates `year < 1000 or year > 9999` before calling the service layer. Confirmed live: `GET /reports/monthly-pnl?year=0` returns `404 {"message": "year must be in 1..9999, not 0"}` — a raw Python `ValueError` from `date()` construction, caught by the endpoint's generic `except ValueError` branch and returned as an ambiguous 404 with a leaked internal message, instead of a clean `400` matching the sibling endpoint's convention. Not reachable via the current UI (the frontend's year dropdown is always bounded `2020..currentTaxYear`), so not user-facing today, but it is a defensive-validation gap and an inconsistency between two sibling endpoints that should be closed.
+
+**Scope**
+- Add the same `year < 1000 or year > 9999` (or equivalent) bounds check to `get_monthly_pnl_endpoint` in `backend/main.py`, returning `400` with a clear message, before calling `get_monthly_pnl_report(year=year)`
+
+**Acceptance Criteria**
+- `GET /reports/monthly-pnl?year=0` (and other out-of-range values) returns a clean `400` with a validation message, not a `404` with a raw Python error string
+- Regression test added confirming the bounds check, mirroring the existing `GET /reports/tax-year` bounds-check test pattern
 
 ---
 

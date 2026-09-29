@@ -61,7 +61,9 @@ test("SC-DIG-03: numeric values formatted from API response", async ({ page }) =
   await page.goto('/#/WeeklyDigest');
   // Scope numeric checks to table cells to avoid matching badges/nav elements
   await expect(page.locator('td').filter({ hasText: /^£166\.10$/ }).first()).toBeVisible({ timeout: 8000 });
-  await expect(page.locator('td').filter({ hasText: /^£-42\.80$/ }).first()).toBeVisible();
+  // ST-01 (EPIC-01, v9.8): renders via the shared formatCurrency helper — typographic minus
+  // U+2212 placed BEFORE the currency symbol, not an ASCII hyphen after it.
+  await expect(page.locator('td').filter({ hasText: /^−£42\.80$/ }).first()).toBeVisible();
   await expect(page.locator('td').filter({ hasText: /^5$/ }).first()).toBeVisible();
   await expect(page.locator('td').filter({ hasText: /^3$/ }).first()).toBeVisible();
   await expect(page.locator('td').filter({ hasText: /^80\.0%$/ }).first()).toBeVisible();

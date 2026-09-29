@@ -1,4 +1,5 @@
 import { TrendingUp, TrendingDown } from "lucide-react";
+import { formatCurrency } from "../../lib/format";
 
 const normalizeMetrics = (m) => {
   const safe = m ?? {};
@@ -48,20 +49,20 @@ export default function MarketComparison({ ukMetrics, usMetrics }) {
 
           <div className="flex justify-between items-center">
             <span className="text-sm text-slate-600 dark:text-slate-400">Total P&amp;L</span>
-            <span className={`text-sm font-semibold ${m.totalPnl >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
-              {m.totalPnl >= 0 ? "+" : ""}£{m.totalPnl.toFixed(2)}
+            <span className={`text-sm font-semibold ${m.totalPnl > 0 ? "text-emerald-400" : m.totalPnl < 0 ? "text-rose-400" : "text-slate-300"}`}>
+              {formatCurrency(m.totalPnl, { signed: true })}
             </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-sm text-slate-600 dark:text-slate-400">Avg Win</span>
-            <span className="text-sm font-semibold text-emerald-400">+£{m.avgWin.toFixed(2)}</span>
+            <span className="text-sm font-semibold text-emerald-400">{formatCurrency(m.avgWin, { signed: true })}</span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-sm text-slate-600 dark:text-slate-400">Avg Loss</span>
             <span className="text-sm font-semibold text-rose-400">
-              -£{Math.abs(m.avgLoss).toFixed(2)}
+              {formatCurrency(-Math.abs(m.avgLoss), { signed: true })}
             </span>
           </div>
 
@@ -74,7 +75,7 @@ export default function MarketComparison({ ukMetrics, usMetrics }) {
             {m.bestPerformer ? (
               <>
                 <p className="text-sm font-semibold text-white">{m.bestPerformer.ticker?.replace(".L", "")}</p>
-                <p className="text-xs text-emerald-400">+£{m.bestPerformer.pnl.toFixed(2)}</p>
+                <p className="text-xs text-emerald-400">{formatCurrency(m.bestPerformer.pnl, { signed: true })}</p>
               </>
             ) : (
               <p className="text-sm text-slate-600 dark:text-slate-400">No trades yet</p>
@@ -90,7 +91,7 @@ export default function MarketComparison({ ukMetrics, usMetrics }) {
             {m.worstPerformer ? (
               <>
                 <p className="text-sm font-semibold text-white">{m.worstPerformer.ticker?.replace(".L", "")}</p>
-                <p className="text-xs text-rose-400">-£{Math.abs(m.worstPerformer.pnl).toFixed(2)}</p>
+                <p className="text-xs text-rose-400">{formatCurrency(-Math.abs(m.worstPerformer.pnl), { signed: true })}</p>
               </>
             ) : (
               <p className="text-sm text-slate-600 dark:text-slate-400">No trades yet</p>

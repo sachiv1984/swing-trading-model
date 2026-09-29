@@ -279,8 +279,14 @@ test.describe('SC-REP-04 — Empty state (no trades for period)', () => {
   });
 
   test('SC-REP-04a: Total P&L shows £0.00 when no trades', async ({ page }) => {
-    // metrics.totalPnL = 0 → "+£0.00"
-    await expect(page.getByText(/\+£0\.00/)).toBeVisible({ timeout: 8000 });
+    // metrics.totalPnL = 0 -> "£0.00", unsigned -- formatCurrency's zero-is-unsigned
+    // convention (design_system.md §Number and Currency Formatting) applies even with
+    // signed: true. BLG-QA-197: this assertion previously expected a signed "+£0.00",
+    // which the convention has never produced. Scoped to the Total P&L StatsCard itself
+    // (not just page-wide text) since PerformanceSummary/TradeBreakdown below it can also
+    // render "£0.00" for other zeroed metrics in this same empty state.
+    const totalPnLCard = page.locator('p', { hasText: 'Total P&L' }).locator('..');
+    await expect(totalPnLCard.getByText('£0.00', { exact: true })).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-REP-04b: Win Rate shows 0.0% when no trades', async ({ page }) => {
@@ -325,7 +331,9 @@ test.describe('SC-REP-05: Monthly P&L — Strategy Compliance section', () => {
     await page.route(`${API}/analytics/metrics*`, (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: {} }) })
     );
-    await page.route(`${API}/reports/monthly-pnl`, (route) =>
+    // Wildcard (ST-03, EPIC-01, v9.8, BLG-FE-190): the Monthly tab's own Tax Year filter now
+    // always appends ?year=<n> to this request, so an exact-match pattern would no longer hit.
+    await page.route(`${API}/reports/monthly-pnl*`, (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MONTHLY_PNL_WITH_COMPLIANCE) })
     );
     await page.goto('/#/Reports');

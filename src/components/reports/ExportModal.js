@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "../ui/button";
 import { FileSpreadsheet, FileText, Download, Loader2, Check } from "lucide-react";
 import { motion } from "framer-motion";
+import { formatCurrency, formatPercent } from "../../lib/format";
 
 // Covers both legacy snake_case values (stop_hit) and current human-readable values
 const EXIT_REASON_LABELS = {
@@ -90,6 +91,7 @@ export default function ExportModal({ open, onClose, positions, metrics, period,
           td { padding: 10px; border-bottom: 1px solid #e2e8f0; }
           .positive { color: #10b981; }
           .negative { color: #ef4444; }
+          .neutral { color: #1e293b; }
           .footer { margin-top: 40px; text-align: center; color: #94a3b8; font-size: 12px; }
         </style>
       </head>
@@ -101,11 +103,11 @@ export default function ExportModal({ open, onClose, positions, metrics, period,
         <div class="summary">
           <div class="stat">
             <div class="stat-label">Total P&L</div>
-            <div class="stat-value ${metrics.totalPnL >= 0 ? 'positive' : 'negative'}">£${metrics.totalPnL.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            <div class="stat-value ${metrics.totalPnL > 0 ? 'positive' : metrics.totalPnL < 0 ? 'negative' : 'neutral'}">${formatCurrency(metrics.totalPnL, { signed: true })}</div>
           </div>
           <div class="stat">
             <div class="stat-label">Win Rate</div>
-            <div class="stat-value">${metrics.winRate.toFixed(1)}%</div>
+            <div class="stat-value">${formatPercent(metrics.winRate)}</div>
           </div>
           <div class="stat">
             <div class="stat-label">Profit Factor</div>
@@ -120,19 +122,19 @@ export default function ExportModal({ open, onClose, positions, metrics, period,
         <div class="summary">
           <div class="stat">
             <div class="stat-label">Gross Profit</div>
-            <div class="stat-value positive">£${metrics.grossProfit.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            <div class="stat-value positive">${formatCurrency(metrics.grossProfit)}</div>
           </div>
           <div class="stat">
             <div class="stat-label">Gross Loss</div>
-            <div class="stat-value negative">£${metrics.grossLoss.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            <div class="stat-value negative">${formatCurrency(metrics.grossLoss)}</div>
           </div>
           <div class="stat">
             <div class="stat-label">Average Win</div>
-            <div class="stat-value">£${metrics.avgWin.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            <div class="stat-value">${formatCurrency(metrics.avgWin)}</div>
           </div>
           <div class="stat">
             <div class="stat-label">Average Loss</div>
-            <div class="stat-value">£${metrics.avgLoss.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            <div class="stat-value">${formatCurrency(metrics.avgLoss)}</div>
           </div>
         </div>
 
@@ -157,7 +159,7 @@ export default function ExportModal({ open, onClose, positions, metrics, period,
                 <td>${p.entry_date}</td>
                 <td>${p.exit_date || '-'}</td>
                 <td>${p.shares ?? '—'}</td>
-                <td class="${(p.pnl || 0) >= 0 ? 'positive' : 'negative'}">£${(p.pnl || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td class="${(p.pnl || 0) > 0 ? 'positive' : (p.pnl || 0) < 0 ? 'negative' : 'neutral'}">${formatCurrency(p.pnl || 0, { signed: true })}</td>
                 <td>${formatExitReason(p.exit_reason)}</td>
               </tr>
             `).join('')}

@@ -258,8 +258,9 @@ test.describe('What-If Sizing Preview (V-WHATIF-01..03)', () => {
     await page.waitForResponse(/\/portfolio\/size/, { timeout: 5000 });
 
     expect(capturedBody.fx_rate).toBe(1.3);
-    // (850-780)*20 = 1400.00 native (USD) / fx_rate_used=1.3 = £1076.92
-    await expect(page.getByTestId('what-if-r-at-risk')).toHaveText('£1076.92');
+    // (850-780)*20 = 1400.00 native (USD) / fx_rate_used=1.3 = £1076.92, en-GB grouped
+    // (ST-01, EPIC-01, v9.8: this cell now renders via the shared formatCurrency helper).
+    await expect(page.getByTestId('what-if-r-at-risk')).toHaveText('£1,076.92');
   });
 
   test('V-WHATIF-06 — leaving the FX Rate override empty omits fx_rate from the request (live rate used)', { tag: ['@smoke'] }, async ({ page }) => {

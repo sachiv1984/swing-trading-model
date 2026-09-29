@@ -2,6 +2,7 @@ import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { TrendingUp, ChevronDown, ChevronUp, ArrowUpDown } from "lucide-react";
 import { Badge } from "../ui/badge";
+import { formatPercent, formatR } from "../../lib/format";
 
 export default function RMultipleAnalysis({ trades }) {
   const [expandedTags, setExpandedTags] = useState(false);
@@ -207,7 +208,7 @@ export default function RMultipleAnalysis({ trades }) {
             {/* Average R */}
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
               <div className={`text-3xl font-bold ${getAvgRColor(avgR)}`}>
-                {avgR.toFixed(2)}R
+                {formatR(avgR)}
               </div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">Per trade</div>
             </div>
@@ -215,7 +216,7 @@ export default function RMultipleAnalysis({ trades }) {
             {/* Best Trade */}
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
               <div className="text-3xl font-bold text-emerald-400">
-                {bestTrade.rMultiple.toFixed(1)}R
+                {formatR(bestTrade.rMultiple)}
               </div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">Max R • {bestTrade.ticker}</div>
             </div>
@@ -223,7 +224,7 @@ export default function RMultipleAnalysis({ trades }) {
             {/* Worst Trade */}
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
               <div className="text-3xl font-bold text-rose-400">
-                {worstTrade.rMultiple.toFixed(1)}R
+                {formatR(worstTrade.rMultiple)}
               </div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">Max loss • {worstTrade.ticker}</div>
             </div>
@@ -231,7 +232,7 @@ export default function RMultipleAnalysis({ trades }) {
             {/* Win Rate */}
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
               <div className="text-3xl font-bold text-cyan-400">
-                {winRate.toFixed(0)}%
+                {formatPercent(winRate, { dp: 0 })}
               </div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">Profitable trades</div>
             </div>
@@ -239,7 +240,7 @@ export default function RMultipleAnalysis({ trades }) {
             {/* Avg Winner */}
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
               <div className="text-3xl font-bold text-emerald-400">
-                {avgWinner.toFixed(1)}R
+                {formatR(avgWinner)}
               </div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">When profitable</div>
             </div>
@@ -247,7 +248,7 @@ export default function RMultipleAnalysis({ trades }) {
             {/* Avg Loser */}
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
               <div className="text-3xl font-bold text-rose-400">
-                {avgLoser.toFixed(1)}R
+                {formatR(avgLoser)}
               </div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">When stopped</div>
             </div>
@@ -314,13 +315,13 @@ export default function RMultipleAnalysis({ trades }) {
                         </Badge>
                       </td>
                       <td className={`px-4 py-3 text-right text-sm font-medium ${getAvgRColor(item.avgR)}`}>
-                        {item.avgR.toFixed(2)}R
+                        {formatR(item.avgR)}
                       </td>
                       <td className="px-4 py-3 text-right text-sm text-slate-300">
                         {item.count}
                       </td>
                       <td className="px-4 py-3 text-right text-sm text-slate-300">
-                        {item.winRate.toFixed(0)}%
+                        {formatPercent(item.winRate, { dp: 0 })}
                       </td>
                     </tr>
                   ))}

@@ -1,5 +1,6 @@
 import StatsCard from "../../ui/StatsCard";
 import { Wallet, TrendingUp, Briefcase, PieChart, Award, Clock } from "lucide-react";
+import { formatCurrency, formatPercent } from "../../../lib/format";
 
 export function PortfolioValueWidget({ portfolio, totalPositionsValue }) {
   const cashBalance = portfolio?.cash_balance || 0;
@@ -7,7 +8,7 @@ export function PortfolioValueWidget({ portfolio, totalPositionsValue }) {
   return (
     <StatsCard
       title="Portfolio Value"
-      value={`£${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+      value={formatCurrency(value)}
       subtitle={`Cash + Positions`}
       icon={Wallet}
       gradient="cyan"
@@ -20,7 +21,7 @@ export function CashBalanceWidget({ portfolio, onManageCash }) {
     <div onClick={onManageCash} className="cursor-pointer">
       <StatsCard
         title="Cash Balance"
-        value={`£${(portfolio?.cash_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+        value={formatCurrency(portfolio?.cash_balance || 0)}
         subtitle="Click to manage"
         icon={Briefcase}
         gradient="violet"
@@ -33,7 +34,7 @@ export function OpenPositionsWidget({ totalPositionsValue, positionsCount }) {
   return (
     <StatsCard
       title="Open Positions"
-      value={`£${totalPositionsValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+      value={formatCurrency(totalPositionsValue)}
       subtitle={`${positionsCount} position${positionsCount !== 1 ? "s" : ""}`}
       icon={PieChart}
       gradient="fuchsia"
@@ -45,9 +46,9 @@ export function TotalPnLWidget({ totalPnL, totalPositionsValue }) {
   return (
     <StatsCard
       title="Total P&L"
-      value={`${totalPnL >= 0 ? "+" : ""}£${totalPnL.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+      value={formatCurrency(totalPnL, { signed: true })}
       trend={totalPnL >= 0 ? "up" : "down"}
-      trendValue={`${totalPnL >= 0 ? "+" : ""}${((totalPnL / (totalPositionsValue || 1)) * 100).toFixed(2)}%`}
+      trendValue={formatPercent((totalPnL / (totalPositionsValue || 1)) * 100, { signed: true })}
       icon={TrendingUp}
       gradient={totalPnL >= 0 ? "emerald" : "rose"}
     />
@@ -57,12 +58,12 @@ export function TotalPnLWidget({ totalPnL, totalPositionsValue }) {
 export function WinRateWidget({ closedPositions }) {
   const wins = closedPositions?.filter(p => (p.pnl || 0) > 0).length || 0;
   const total = closedPositions?.length || 0;
-  const winRate = total > 0 ? ((wins / total) * 100).toFixed(1) : "0.0";
-  
+  const winRate = total > 0 ? (wins / total) * 100 : 0;
+
   return (
     <StatsCard
       title="Win Rate"
-      value={`${winRate}%`}
+      value={formatPercent(winRate)}
       subtitle={`${wins}W / ${total - wins}L`}
       icon={Award}
       gradient="amber"

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../api/base44Client";
+import { formatPercent } from "../../lib/format";
 
 function tileClass(exposurePct) {
   if (exposurePct >= 40) return "border border-amber-400 bg-amber-400/10";
@@ -18,7 +19,7 @@ function SectorTile({ sector_name, position_count, exposure_pct }) {
         {sector_name}
       </span>
       <span className="text-lg font-semibold text-white leading-tight">
-        {exposure_pct.toFixed(1)}%
+        {formatPercent(exposure_pct)}
       </span>
       <span className="text-xs text-slate-600 dark:text-slate-400">
         {position_count} {position_count === 1 ? "position" : "positions"}

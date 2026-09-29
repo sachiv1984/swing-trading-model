@@ -980,25 +980,30 @@ def get_daily_pnl_endpoint(year: int, month: int):
 
 
 @app.get("/reports/monthly-pnl")
-def get_monthly_pnl_endpoint(format: Optional[str] = None):
+def get_monthly_pnl_endpoint(year: Optional[int] = None, format: Optional[str] = None):
     """
-    GET /reports/monthly-pnl[?format=csv]
+    GET /reports/monthly-pnl[?year=YYYY][&format=csv]
 
     Returns month-by-month realised P&L for the current and prior calendar year,
     plus a compliance_summary (30d Arc 5 compliance metrics) and (v7.0, ST-14,
     BLG-FEAT-70) a current-snapshot estimated_unrealised_pnl/unrealised_note pair
     — same field/computation as the Tax Year tab, top-level siblings of `data`.
+    When `year` is given (a UK tax-year start year, e.g. 2024 for 2024/25):
+    scopes the returned months to that tax year (Apr 6 - Apr 5) instead of the
+    default fixed rolling window (ST-03, EPIC-01, v9.8, BLG-FE-190) -- lets the
+    Monthly tab's own Tax Year filter, and the restated-months notice link from
+    the Tax Year tab, show months outside the default window.
     When format=csv, returns a CSV file download of the month rows instead of
     JSON (ST-05, EPIC-05, v7.8, BLG-FEAT-81) -- mirrors GET /reports/tax-year's
     existing format=csv handler.
-    Spec: reports_endpoints.md §GET /reports/monthly-pnl (v0.6, ST-03 v4.7; v0.7, ST-14 v7.0; v0.8, ST-05 v7.8)
+    Spec: reports_endpoints.md §GET /reports/monthly-pnl (v0.6, ST-03 v4.7; v0.7, ST-14 v7.0; v0.8, ST-05 v7.8; v0.9, ST-03 v9.8)
     """
     from fastapi.responses import Response
     if format is not None and format != "csv":
         return JSONResponse(status_code=400,
             content={"status": "error", "message": "format must be: csv"})
     try:
-        report = get_monthly_pnl_report()
+        report = get_monthly_pnl_report(year=year)
         if format == "csv":
             csv_text = build_monthly_pnl_csv(report["months"])
             return Response(
@@ -1016,6 +1021,13 @@ def get_monthly_pnl_endpoint(format: Optional[str] = None):
             "unrealised_note": report["unrealised_note"],
             "compliance_summary": compliance_summary,
         }
+    except ValueError as e:
+        msg = str(e)
+        if "not started yet" in msg:
+            return JSONResponse(status_code=400,
+                content={"status": "error", "message": "tax year has not started yet"})
+        return JSONResponse(status_code=404,
+            content={"status": "error", "message": msg})
     except Exception as e:
         import traceback
         traceback.print_exc()

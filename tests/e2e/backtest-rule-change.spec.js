@@ -131,11 +131,13 @@ test.describe('Backtest Rule Change Tab (V-BACKTEST-01..04)', () => {
     await runPromise;
 
     await expect(page.getByTestId('backtest-results-loaded')).toBeVisible({ timeout: 5000 });
-    // fmtPct formats to 1dp (not the raw 2dp API value).
+    // fmtPct formats to 1dp (not the raw 2dp API value). fmtPct now delegates to the shared
+    // formatPercent helper (ST-01, EPIC-01, v9.8) -- negative values use the typographic minus
+    // U+2212, not an ASCII hyphen, per design_system.md's canonical convention.
     await expect(page.getByText('58.8%')).toBeVisible();
     await expect(page.getByText('54.8%')).toBeVisible();
-    await expect(page.getByText('-14.2%')).toBeVisible();
-    await expect(page.getByText('-15.0%')).toBeVisible();
+    await expect(page.getByText('−14.2%')).toBeVisible();
+    await expect(page.getByText('−15.0%')).toBeVisible();
     // R-multiple histogram renders (recharts SVG with the candidate/live bar series).
     await expect(page.getByRole('application')).toBeVisible();
     await expect(page.locator('.recharts-legend-item-text', { hasText: 'Candidate' })).toBeVisible();

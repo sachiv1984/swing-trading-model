@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { apiFetch } from "../api/base44Client";
+import { formatCurrency, formatPercent } from "../lib/format";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
@@ -57,8 +58,8 @@ function formatValue(key, value) {
   if (value === null || value === undefined) return "—";
   const k = key.toLowerCase();
   if (typeof value === "number") {
-    if (k.includes("_price") || k === "price" || k === "total_pnl") return `$${value.toFixed(2)}`;
-    if (k.includes("_pct") || k.endsWith("pct")) return `${parseFloat(value.toFixed(2))}%`;
+    if (k.includes("_price") || k === "price" || k === "total_pnl") return formatCurrency(value, { currency: "USD", signed: k === "total_pnl" });
+    if (k.includes("_pct") || k.endsWith("pct")) return formatPercent(value);
   }
   if (typeof value === "boolean") return value ? "Yes" : "No";
   return String(value);

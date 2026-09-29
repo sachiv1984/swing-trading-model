@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Activity, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "../../../lib/utils";
+import { formatCurrency } from "../../../lib/format";
 
 export default function RecentTradesWidget({ positions }) {
   const recentTrades = positions
@@ -44,9 +45,9 @@ export default function RecentTradesWidget({ positions }) {
               <div className="text-right">
                 <p className={cn(
                   "font-semibold",
-                  (trade.pnl || 0) >= 0 ? "text-emerald-400" : "text-rose-400"
+                  (trade.pnl || 0) > 0 ? "text-emerald-400" : (trade.pnl || 0) < 0 ? "text-rose-400" : "text-slate-300"
                 )}>
-                  {(trade.pnl || 0) >= 0 ? "+" : ""}£{(trade.pnl || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  {formatCurrency(trade.pnl || 0, { signed: true })}
                 </p>
                 <p className="text-xs text-slate-600 dark:text-slate-400">{trade.shares} shares</p>
               </div>

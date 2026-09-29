@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.16
-**Last Updated:** 2026-09-23 (v9.7 design gate — ST-02/BLG-FE-186 §4.5 copy table adds `setup_type`); prior — 2026-09-21 (v9.6 design gate — ST-01/BLG-FEAT-96 new §4.5 Clone as New Plan, ST-02/BLG-FE-180 new §4.6 Stale Plan Marker); prior — 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added lifecycle diagram cross-reference to §9 Status Badge Scheme); prior history retained — see prior entries in version control.
+**Version:** 1.17
+**Last Updated:** 2026-09-28 (ST-05, EPIC-01, v9.8, BLG-SPEC-158 — §4.2 gains a narrow-width behaviour statement: the list has no card view, it scrolls horizontally); prior — 2026-09-23 (v9.7 design gate — ST-02/BLG-FE-186 §4.5 copy table adds `setup_type`); prior — 2026-09-21 (v9.6 design gate — ST-01/BLG-FEAT-96 new §4.5 Clone as New Plan, ST-02/BLG-FE-180 new §4.6 Stale Plan Marker); prior history retained — see prior entries in version control.
 **Design Source (v1.16 setup_type copy fix):** docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md
 **Design Source (v1.15 clone as new plan):** docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md
 **Design Source (v1.15 stale plan marker):** docs/design/2026-09-21__release-v9.6/trade-plan-stale-marker/decision_record.md
@@ -89,7 +89,7 @@ Canonical contract: `docs/specs/api_contracts/trade_plan_endpoints.md`
 
 ### 4.2 List Layout
 
-One card or row per trade plan. Default sort: most recently updated first. Abandoned plans shown with muted row styling (opacity 0.7).
+One row per trade plan. Default sort: most recently updated first. Abandoned plans shown with muted row styling (opacity 0.7).
 
 | Column | Source | Notes |
 |--------|--------|-------|
@@ -99,6 +99,8 @@ One card or row per trade plan. Default sort: most recently updated first. Aband
 | Notes | `setup_thesis` | Truncated to ~60 chars; `—` if empty |
 | Updated | `updated_at` | Relative timestamp |
 | Actions | — | "View" link + "Edit" link (Edit hidden for abandoned plans) + "Clone" link (v1.15 — shown for every status, see §4.5) |
+
+**Narrow-width behaviour (v1.17, ST-05, BLG-SPEC-158):** there is no card/stacked alternative — `src/pages/TradePlans.js` renders a single plain `<table>` inside an `overflow-x-auto` wrapper at every viewport width. Below `md` (768px) the user scrolls horizontally to reach columns past the viewport; no column is hidden or reprioritised.
 
 ### 4.3 Empty State
 
@@ -667,6 +669,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.17 | 2026-09-28 | ST-05 (BLG-SPEC-158, EPIC-01, v9.8): §4.2 List Layout gains a narrow-width behaviour statement — no card/stacked alternative exists, the list scrolls horizontally below `md` (768px), no column is hidden. Corrected "One card or row per trade plan" to "One row per trade plan" (no card view exists). Documentation-only; no implementation change. |
 | 1.16 | 2026-09-23 | v9.7 design gate — ST-02 (EPIC-02, BLG-FE-186): §4.5's Copied/Reset table gains `setup_type` (copied unchanged, including `null`) and a footnote establishing that a copied value always wins over the watchlisted-signal auto-fill default. Fixes a bug where cloning a plan whose ticker also carries a live watchlisted signal silently overwrote the source's Setup Type. Design source: `docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md`. Authority: Head of Specs Team. |
 | 1.15 | 2026-09-21 | v9.6 design gate — ST-01 (EPIC-01, BLG-FEAT-96): new §4.5 Clone as New Plan (list-row link + detail-header button, `?clone_from=` route, copy/reset field table, banner, failure toast) and the §2 route row; corrects the sealed slice's non-existent `planned` status to `draft`. ST-02 (EPIC-01, BLG-FE-180): new §4.6 Stale Plan Marker (pre-entry statuses, `updated_at` age > 14 days, Clock + amber text matching the Watchlist staleness language, display-only). §4.2 Status/Actions columns and §7 action buttons updated. Design sources under `docs/design/2026-09-21__release-v9.6/`. **Note:** rows for 1.13 and 1.14 were not appended to this table by the v9.5 stories (only the header `Last Updated` was) — recoverable via version control. Authority: Head of Specs Team. |
 | 1.12 | 2026-09-07 | ST-25 (EPIC-04, v9.1, BLG-SPEC-132): new §10.6a Position Sizing Widget Baseline — fields (Risk %, Suggested Shares, session-persistence via `useSessionRiskPercent`), debounce behaviour (300ms, `checkBeforeDebounce: false` timing variant, shared with §5d via `usePositionSizingFetch.js` per ST-06/BLG-TECH-14), the `POST /portfolio/size` request body, auto-fill behaviour, and full status-derivation order. Resolves §10.7's own "baseline... filed as spec debt" forward reference, live since the `2026-08-17__release-v8.9` design gate. Authority: Frontend Specifications & UX Documentation Owner. |

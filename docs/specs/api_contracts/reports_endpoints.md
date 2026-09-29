@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.13
-**Last Updated:** 2026-09-22 (ST-07 + ST-08, EPIC-02, v9.6, BLG-FR-04 + BLG-FR-05 — added `null_fee_trade_count` and month-end snapshot/restatement fields to `GET /reports/monthly-pnl`'s per-month response objects, plus a derived restated-month notice on `GET /reports/tax-year`)
+**Version:** 0.14
+**Last Updated:** 2026-09-28 (ST-03, EPIC-01, v9.8, BLG-FE-190 — `GET /reports/monthly-pnl` gains an optional `year` query param to scope results to a UK tax year instead of the default rolling window; also documented the pre-existing, previously-undocumented `format` param in the same edit); prior — 2026-09-22 (ST-07 + ST-08, EPIC-02, v9.6, BLG-FR-04 + BLG-FR-05 — added `null_fee_trade_count` and month-end snapshot/restatement fields to `GET /reports/monthly-pnl`'s per-month response objects, plus a derived restated-month notice on `GET /reports/tax-year`)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -402,11 +402,11 @@ GET /reports/tax-year?year=2025&format=pdf
 
 **Purpose**
 
-Returns month-by-month realised P&L for the current and prior calendar year. Used by the Financial Reporting section to render a monthly breakdown table alongside the existing annual tax-year report.
+Returns month-by-month realised P&L. By default, for the current and prior calendar year; when `year` is given, scoped instead to that UK tax year (Apr 6 - Apr 5) — see `year` below (v0.9, ST-03, EPIC-01, v9.8, BLG-FE-190). Used by the Financial Reporting section to render a monthly breakdown table alongside the existing annual tax-year report.
 
 **Method & Path**
 
-- `GET /reports/monthly-pnl`
+- `GET /reports/monthly-pnl[?year=YYYY][&format=csv]`
 
 **Idempotency**
 
@@ -416,7 +416,10 @@ Returns month-by-month realised P&L for the current and prior calendar year. Use
 
 ### Request
 
-No query parameters.
+| Query Parameter | Type | Required | Description |
+|---|---|---|---|
+| `year` | integer | No | *(v0.9)* UK tax-year start year (e.g. `2024` for the 2024/25 tax year). When given, scopes the returned months to `[Apr 6 <year>, Apr 5 <year+1>]` instead of the default fixed rolling window. Returns `400` (`"tax year has not started yet"`) if the tax year has not started. |
+| `format` | string | No | *(v0.8)* `csv` returns a CSV file download of the month rows (mirrors `GET /reports/tax-year`'s `format=csv`) instead of JSON. Any other value returns `400`. This parameter predates this revision and was previously undocumented here — corrected in the same edit as the `year` parameter above (opportunistic in-file fix, ST-03/EPIC-01/v9.8; no behaviour change). |
 
 ---
 
@@ -455,7 +458,7 @@ Array of monthly summary objects, sorted descending by year then month. Only mon
 | `snapshot_realised_pnl_gbp` | float \| null | *(v0.13 — ST-08)* The stored baseline figure for this month. `null` when `snapshotted` is `false`. |
 | `restated_diff_gbp` | float \| null | *(v0.13 — ST-08)* `realised_pnl_gbp − snapshot_realised_pnl_gbp` when `restated` is `true`; `0.0` when snapshotted but not restated; `null` when `snapshotted` is `false`. |
 
-**Scope:** Returns data for the current calendar year and the prior calendar year only (24 months maximum). Empty array if no closed trades exist in scope.
+**Scope:** By default, returns data for the current calendar year and the prior calendar year only (24 months maximum). When `year` is given, returns data for that UK tax year instead (12 months maximum). Empty array if no closed trades exist in scope.
 
 #### `compliance_summary` schema (ST-03, v4.7)
 

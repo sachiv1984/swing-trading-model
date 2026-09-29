@@ -4,6 +4,7 @@ import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Search, Tag, X, Calen
 import { Input } from "../ui/input";
 import { cn } from "../../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
 
 export default function JournalView({ positions, availableTags }) {
   const [searchText, setSearchText] = useState("");
@@ -166,10 +167,9 @@ export default function JournalView({ positions, availableTags }) {
           filteredPositions.map((position) => {
             const pnl = position.pnl || ((position.current_price || position.entry_price) - position.entry_price) * position.shares;
             const pnlPercent = position.pnl_percent || ((position.current_price || position.entry_price) - position.entry_price) / position.entry_price * 100;
-            const isProfit = pnl >= 0;
             const isClosed = position.status === "closed";
             const isExpanded = expandedEntry === position.id;
-            const currencySymbol = position.market === "UK" ? "£" : "$";
+            const journalCurrency = currencyForMarket(position.market);
 
             return (
               <motion.div
@@ -201,13 +201,15 @@ export default function JournalView({ positions, availableTags }) {
                   
                   <div className={cn(
                     "px-3 py-1 rounded-lg border flex items-center gap-1.5 font-medium",
-                    isProfit 
+                    pnl > 0
                       ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
-                      : "bg-rose-500/20 text-rose-400 border-rose-500/30"
+                      : pnl < 0
+                        ? "bg-rose-500/20 text-rose-400 border-rose-500/30"
+                        : "bg-slate-700/30 text-slate-300 border-slate-600/30"
                   )}>
-                    {isProfit ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                    <span>{currencySymbol}{Math.abs(pnl).toFixed(2)}</span>
-                    <span className="text-xs opacity-70">({pnlPercent.toFixed(1)}%)</span>
+                    {pnl >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                    <span>{formatCurrency(pnl, { signed: true, currency: journalCurrency })}</span>
+                    <span className="text-xs opacity-70">({formatPercent(pnlPercent)})</span>
                   </div>
                 </div>
 

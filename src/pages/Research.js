@@ -7,6 +7,7 @@ import EntryChecklist from "../components/trades/EntryChecklist";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
 import { ArrowLeft, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "../lib/utils";
+import { formatCurrency, formatPercent } from "../lib/format";
 import { TradePlanStatusBadge } from "./TradePlans";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -56,9 +57,8 @@ function SignalBadge({ status }) {
 function HeatValue({ value, isError }) {
   if (isError) return <span className="text-slate-600 dark:text-slate-400 text-sm">N/A</span>;
   if (value == null) return <span className="text-slate-600 dark:text-slate-400 text-sm">—</span>;
-  const pct = Number(value).toFixed(1);
   const cls = value > 25 ? "text-red-400" : value >= 15 ? "text-amber-400" : "text-emerald-400";
-  return <span className={cn("text-xl font-semibold", cls)}>{pct}%</span>;
+  return <span className={cn("text-xl font-semibold", cls)}>{formatPercent(Number(value))}</span>;
 }
 
 function Skeleton({ className }) {
@@ -156,6 +156,7 @@ export default function Research() {
 
   const r = researchData;
   const sym = currencySymbol(ticker);
+  const currency = sym === "£" ? "GBP" : "USD";
   const priceChangePct = r?.price_change_pct;
   const priceChangePos = priceChangePct != null && priceChangePct >= 0;
 
@@ -233,7 +234,7 @@ export default function Research() {
             <div>
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current Price</p>
               <p className="text-xl font-semibold text-white">
-                {r?.price != null ? `${sym}${Number(r.price).toFixed(2)}` : "—"}
+                {formatCurrency(r?.price, { currency })}
               </p>
             </div>
             <div>
@@ -255,8 +256,7 @@ export default function Research() {
                     ) : (
                       <TrendingDown className="w-4 h-4" />
                     )}
-                    {priceChangePos ? "+" : ""}
-                    {(priceChangePct * 100).toFixed(1)}%
+                    {formatPercent(priceChangePct * 100, { signed: true })}
                   </>
                 ) : (
                   "—"
@@ -276,7 +276,7 @@ export default function Research() {
             <div>
               <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">ATR (14d)</p>
               <p className="text-sm text-slate-200">
-                {r?.signal?.atr != null ? `${sym}${Number(r.signal.atr).toFixed(2)}` : "—"}
+                {formatCurrency(r?.signal?.atr, { currency })}
               </p>
             </div>
           </div>
@@ -347,7 +347,7 @@ export default function Research() {
             {activePlan.stop_level != null && (
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Stop Level</p>
-                <p className="text-sm text-slate-200">{sym}{Number(activePlan.stop_level).toFixed(2)}</p>
+                <p className="text-sm text-slate-200">{formatCurrency(activePlan.stop_level, { currency })}</p>
               </div>
             )}
             {activePlan.risk_reward_notes && (

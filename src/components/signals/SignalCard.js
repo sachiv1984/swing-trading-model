@@ -4,10 +4,10 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { TrendingUp, TrendingDown, Bookmark, Award, CheckCircle2, Lock, XCircle, BookmarkCheck } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
 
 export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddingToWatchlist }) {
   const isUS = signal.market === "US";
-  const currencySymbol = isUS ? "$" : "£";
   const isNew = signal.status === "new";
   const isEntered = signal.status === "entered";
   const isAlreadyHeld = signal.status === "already_held";
@@ -116,17 +116,17 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
           <div className="flex items-center gap-1">
             <TrendingUp className="w-4 h-4 text-emerald-400" />
             <p className="text-lg font-bold text-emerald-400">
-              +{signal.momentum_percent.toFixed(1)}%
+              {formatPercent(signal.momentum_percent, { signed: true })}
             </p>
           </div>
         </div>
         <div className="p-3 rounded-lg bg-slate-900/40 border border-slate-700/50">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Price</p>
-          <p className="text-lg font-bold text-white">{currencySymbol}{signal.current_price.toFixed(2)}</p>
+          <p className="text-lg font-bold text-white">{formatCurrency(signal.current_price, { currency: currencyForMarket(signal.market) })}</p>
         </div>
         <div className="p-3 rounded-lg bg-slate-900/40 border border-slate-700/50">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Stop</p>
-          <p className="text-lg font-bold text-rose-400">{currencySymbol}{signal.initial_stop.toFixed(2)}</p>
+          <p className="text-lg font-bold text-rose-400">{formatCurrency(signal.initial_stop, { currency: currencyForMarket(signal.market) })}</p>
         </div>
       </div>
 
@@ -146,16 +146,16 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
               </div>
               <div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Allocation Cost</p>
-                <p className="text-xl font-bold text-white">£{signal.total_cost.toFixed(2)}</p>
+                <p className="text-xl font-bold text-white">{formatCurrency(signal.total_cost)}</p>
               </div>
             </div>
             <div className="mt-3 pt-3 border-t border-slate-700/50">
               <p className="text-sm text-slate-300">
                 Buy <span className="font-bold text-cyan-400">{formatShares(signal.suggested_shares)} shares</span> at{" "}
-                <span className="font-bold text-white">{currencySymbol}{signal.current_price.toFixed(2)}</span>
+                <span className="font-bold text-white">{formatCurrency(signal.current_price, { currency: currencyForMarket(signal.market) })}</span>
               </p>
               <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                Stop distance: <span className="text-rose-400 font-mono">{currencySymbol}{(signal.current_price - signal.initial_stop).toFixed(2)}</span>
+                Stop distance: <span className="text-rose-400 font-mono">{formatCurrency(signal.current_price - signal.initial_stop, { currency: currencyForMarket(signal.market) })}</span>
               </p>
               {signal.reason && (
                 <p className="text-xs text-amber-400/80 mt-2">⚠ {signal.reason}</p>

@@ -1,5 +1,6 @@
 import { TrendingUp, TrendingDown, Target, Zap, Calendar } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { formatCurrency, formatPercent } from "../../lib/format";
 
 export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
   // Calculate days underwater color
@@ -22,8 +23,8 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
     {
       title: "Max Drawdown",
       subtitle: "Worst Case Scenario",
-      value: metrics.maxDrawdown ? `${metrics.maxDrawdown.percent.toFixed(1)}%` : "N/A",
-      subValue: metrics.maxDrawdown ? `£${metrics.maxDrawdown.amount.toFixed(2)}` : "",
+      value: metrics.maxDrawdown ? formatPercent(metrics.maxDrawdown.percent) : "N/A",
+      subValue: metrics.maxDrawdown ? formatCurrency(metrics.maxDrawdown.amount) : "",
       date: metrics.maxDrawdown?.date,
       icon: TrendingDown,
       gradient: "from-rose-500 to-red-500"
@@ -39,7 +40,7 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
     {
       title: "Expectancy",
       subtitle: "Edge Per Trade",
-      value: metrics.expectancy ? `£${metrics.expectancy.toFixed(2)}` : "N/A",
+      value: metrics.expectancy ? formatCurrency(metrics.expectancy) : "N/A",
       icon: Zap,
       gradient: "from-emerald-500 to-green-500",
       isPositive: metrics.expectancy > 0
@@ -48,7 +49,7 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
       title: "Time Underwater",
       subtitle: "Current Risk Status",
       value: advancedMetrics?.daysUnderwater === 0 ? "At Peak 🎉" : advancedMetrics?.daysUnderwater ? `${advancedMetrics.daysUnderwater} days` : "No Data",
-      subValue: advancedMetrics?.portfolioPeakEquity ? `Peak: £${advancedMetrics.portfolioPeakEquity.toFixed(0)}` : "",
+      subValue: advancedMetrics?.portfolioPeakEquity ? `Peak: ${formatCurrency(advancedMetrics.portfolioPeakEquity)}` : "",
       date: advancedMetrics?.peakDate ? `on ${advancedMetrics.peakDate}` : "",
       icon: Calendar,
       gradient: getDaysUnderwaterColor(advancedMetrics?.daysUnderwater || 0)

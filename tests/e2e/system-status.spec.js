@@ -49,8 +49,8 @@ const HEALTH_RESPONSE = {
  */
 const TEST_RESULTS_RESPONSE = {
   summary: {
-    total: 31,
-    passed: 31,
+    total: 32,
+    passed: 32,
     failed: 0,
     errors: 0,
     success_rate: 100.0,
@@ -60,9 +60,11 @@ const TEST_RESULTS_RESPONSE = {
     { endpoint: 'GET /',                          status: 'pass', status_code: 200, response_time_ms: 3.1 },
     { endpoint: 'GET /health/detailed',           status: 'pass', status_code: 200, response_time_ms: 4.8 },
     { endpoint: 'GET /changelog/latest',          status: 'pass', status_code: 200, response_time_ms: 4.2 },
-    // Analytics (2)
+    // Analytics (3) — includes POST /replay/run (ST-04, EPIC-01, v9.8, BLG-FE-191:
+    // categorizeEndpoint() previously had no /replay case, so it silently fell into "Other")
     { endpoint: 'GET /analytics/metrics',         status: 'pass', status_code: 200, response_time_ms: 12.3 },
     { endpoint: 'GET /analytics/summary',         status: 'pass', status_code: 200, response_time_ms: 9.7 },
+    { endpoint: 'POST /replay/run',               status: 'pass', status_code: 200, response_time_ms: 15.0 },
     // Alerts (4) — includes GET /price-alerts (ST-18, EPIC-05, v7.10, BLG-FE-123)
     { endpoint: 'GET /alerts/rules',              status: 'pass', status_code: 200, response_time_ms: 7.2 },
     { endpoint: 'POST /alerts/rules',             status: 'pass', status_code: 201, response_time_ms: 8.5 },
@@ -303,14 +305,14 @@ test.describe('Post-run state — SC-SS-03 through SC-SS-07', () => {
   });
 
   // SC-SS-06 — Total endpoint count display
-  test('SC-SS-06a: Total count of 31 is shown in the summary bar after tests run', async ({ page }) => {
+  test('SC-SS-06a: Total count of 32 is shown in the summary bar after tests run', async ({ page }) => {
     const totalLabel = page.locator('span').filter({ hasText: /^total:$/i });
     await expect(totalLabel).toBeVisible({ timeout: 8000 });
-    await expect(totalLabel.locator('xpath=following-sibling::span[1]')).toHaveText('31', { timeout: 8000 });
+    await expect(totalLabel.locator('xpath=following-sibling::span[1]')).toHaveText('32', { timeout: 8000 });
   });
 
   test('SC-SS-06b: Endpoint count in sub-header updates to actual count after tests run', async ({ page }) => {
-    await expect(page.getByText(/testing 31 endpoints/i)).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText(/testing 32 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   // SC-SS-07 — Targeted endpoints absent from "Other" category
@@ -352,6 +354,15 @@ test.describe('Post-run state — SC-SS-03 through SC-SS-07', () => {
     const coreBtn = page.getByRole('button', { name: /^core/i });
     await expect(coreBtn).toBeVisible({ timeout: 8000 });
     await expect(page.getByText('GET /changelog/latest')).toBeVisible({ timeout: 8000 });
+  });
+
+  // ST-04 (EPIC-01, v9.8, BLG-FE-191): categorizeEndpoint() gained a /replay branch —
+  // confirm it renders under Analytics (folded in per src/Layout.js's own nav taxonomy),
+  // not Other.
+  test('SC-SS-07h: /replay/run endpoint appears under Analytics, not Other', async ({ page }) => {
+    const analyticsBtn = page.getByRole('button', { name: /^analytics.*3\/3/i });
+    await expect(analyticsBtn).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText('POST /replay/run')).toBeVisible({ timeout: 8000 });
   });
 });
 

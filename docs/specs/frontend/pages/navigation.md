@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.6
-**Last Updated:** 2026-08-12 (ST-22, EPIC-06, v8.6, BLG-GOV-294 — added §Known Deviations, filed retroactive DEV-NAV-ST06-01 for the v8.5 dark-mode/Radix-portal Layout.js fix; renumbered 1.5→1.6 at cross-EPIC merge-conflict resolution, since EPIC-03/ST-09's independent v1.5 bump for a different change merged to main first — per CLAUDE.md §8.2a); prior — 2026-08-11 (ST-09, EPIC-03, v8.6, BLG-FE-154 — corrected §Group Structure table, which had drifted from the live `NAV_GROUPS` array in `src/Layout.js`)
+**Version:** 1.7
+**Last Updated:** 2026-09-28 (ST-06, EPIC-01, v9.8, BLG-SPEC-159 — §Keyboard Shortcuts gains a canonical inventory of every keyboard-handling site across the app, not just Layout.js's global shortcuts, plus a conflict analysis); prior — 2026-08-12 (ST-22, EPIC-06, v8.6, BLG-GOV-294 — added §Known Deviations, filed retroactive DEV-NAV-ST06-01 for the v8.5 dark-mode/Radix-portal Layout.js fix; renumbered 1.5→1.6 at cross-EPIC merge-conflict resolution, since EPIC-03/ST-09's independent v1.5 bump for a different change merged to main first — per CLAUDE.md §8.2a); prior — 2026-08-11 (ST-09, EPIC-03, v8.6, BLG-FE-154 — corrected §Group Structure table, which had drifted from the live `NAV_GROUPS` array in `src/Layout.js`)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md
 **Design Source (v1.3 command palette):** docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md
@@ -86,6 +86,35 @@ Global keyboard shortcuts are available on applicable pages. Shortcuts fire on d
 - Dynamic filtering: show only shortcuts applicable to the current page; hide the section entirely when no shortcuts apply to the current page
 - Responsive: hidden on mobile collapsed sidebar (shortcuts remain active; reference not shown)
 
+### Canonical Inventory — All Keyboard-Handling Sites (v1.7, ST-06, EPIC-01, BLG-SPEC-159)
+
+The app-wide overlap scan behind this story found keyboard-event handling in `Layout.js`, `CommandPalette.js`, `TradeEntry.js`, `TradePlan.js`, `RedFlagJournal.js` and `TickerUniverse.js`, with no single document listing all of them. This is that inventory.
+
+**Global (document-level `keydown`, active on every applicable page regardless of focus location elsewhere on the page):**
+
+| Key | Source | Action | Guard |
+|-----|--------|--------|-------|
+| `n` | `Layout.js` | Navigate to Trade Entry | Positions/TradeHistory only; suppressed if focus is in an input/textarea/select or a modifier key is held |
+| `w` | `Layout.js` | Dispatch `app:add-to-watchlist` | Screener/Watchlist only; same suppression |
+| `r` | `Layout.js` | Dispatch `app:refresh` | All pages; same suppression |
+| `Cmd/Ctrl+K` | `CommandPalette.js` | Toggle the command palette | All pages; suppressed if focus is in an input/textarea/select |
+
+**Page-local (scoped to one focused element's own `onKeyDown`, not document-level — cannot fire unless that specific element has focus):**
+
+| Key | Source | Element | Action |
+|-----|--------|---------|--------|
+| `Enter` | `TradeEntry.js` | Tag input field | Add the typed tag |
+| `Enter` | `TradePlan.js` | Tag input field | Add the typed tag (same pattern as TradeEntry) |
+| `Enter` | `RedFlagJournal.js` | Ticker filter text input | Apply the ticker filter |
+| `Enter` / `Space` | `TickerUniverse.js` | "Clear filters" badge (`role="button"`, not a native `<button>`) | Clear active filters — standard keyboard-activation pattern for a custom interactive element, not a page shortcut |
+
+**Conflict analysis:** no conflicts exist, by construction rather than coincidence —
+- Every global shortcut's own handler explicitly returns early when `document.activeElement` is an `<input>`/`<textarea>`/`<select>` (see the suppression rule above and each source file's own guard clause). Every page-local handler in the second table is itself attached to one of those exact element types (or an element that receives focus the same way). The two tables are therefore mutually exclusive by focus state — a page-local handler can only fire in the one state where every global handler has already declined to act.
+- The global shortcuts do not collide with each other: `n`, `w`, `r` are distinct bare keys, and `Cmd/Ctrl+K` requires a modifier that `Layout.js`'s handler explicitly excludes (`if (e.metaKey || e.ctrlKey || e.altKey) return;`) before checking `n`/`w`/`r` — so a `Cmd+K`/`Ctrl+K` press cannot also trigger a bare-key binding.
+- The page-local handlers do not collide with each other: each is scoped to a distinct element on a distinct page; two of them can never hold focus simultaneously.
+
+No conflicts required filing.
+
 ---
 
 ## Global Command Palette (v7.5 — ST-01 BLG-FE-115)
@@ -146,6 +175,7 @@ First-session-only dismissible tooltip on the nav-bar search affordance. No moda
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7 | 2026-09-28 | ST-06 (EPIC-01, v9.8, BLG-SPEC-159): §Keyboard Shortcuts gains "Canonical Inventory — All Keyboard-Handling Sites", listing the global shortcuts (already documented) alongside the page-local `onKeyDown` handlers in `TradeEntry.js`, `TradePlan.js`, `RedFlagJournal.js` and `TickerUniverse.js` that had no single documented home. Conflict analysis performed: none found (global handlers are input-focus-suppressed by construction; page-local handlers are scoped to one element each). Documentation-only; no implementation change. |
 | 1.6 | 2026-08-12 | ST-22 (EPIC-06, v8.6, BLG-GOV-294): added §Known Deviations, filed retroactive `DEV-NAV-ST06-01` for the v8.5 EPIC-03/ST-06 dark-mode/Radix-portal `Layout.js` fix (commit `41619410`) — documentation only, no behavioural change. **Renumbered 1.5→1.6 at cross-EPIC merge-conflict resolution** (this row originally landed on this branch as v1.5, as flagged pre-emptively in this row's own text at authoring time — see prior row): EPIC-03's ST-09 independently bumped this file to v1.5 for a different change (§Group Structure count correction) and merged to `main` first (PR #1359), so per `CLAUDE.md` §8.2a this branch's bump renumbers to the next free version rather than conflating the two changes under one version number. |
 | 1.5 | 2026-08-11 | ST-09 (EPIC-03, v8.6, BLG-FE-154): corrected §Group Structure table against live `NAV_GROUPS` (`src/Layout.js`) — Trading gained Trade Entry; Analytics gained Strategy Benchmark and Reports; Tools gained Screener and Ticker Universe. Documentation-only correction, no behavioural change. Head of Specs Team confirmed (Sprint Execution Engine, agent-mediated). |
 | 1.4 | 2026-07-21 | v7.7 design gate — ST-02 (EPIC-02, BLG-FE-114): removed duplicate "Alerts" nav item (Tools group; routed to the same page as "Notifications" with no visual indication of the duplication). "Notifications" (System group) retained as sole nav path, inherits the alert-count badge. "Weekly Digest" moved from Analytics to System group, adjacent to Notifications. §Alert Badge Integration updated (Tools → System propagation). Design source: nav-notification-digest-consolidation/ux_spec.md. Approved: Product Owner 2026-07-21. Design gate: 2026-07-21__release-v7.7. Head of Specs Team confirmed. |

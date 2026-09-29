@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { cn } from "../../lib/utils";
 import { useEarnings } from "../../hooks/useEarnings";
+import { formatCurrency, currencyForMarket } from "../../lib/format";
 
 const EARNINGS_DUE_SOON_DAYS = 5;
 const EARNINGS_UPCOMING_DAYS = 14;
@@ -39,8 +40,7 @@ MarketBadge.propTypes = { market: PropTypes.string };
 
 export function priceDisplay(value, market) {
   if (value == null) return "—";
-  const sym = market === "UK" ? "£" : "$";
-  return `${sym}${Number(value).toFixed(2)}`;
+  return formatCurrency(value, { currency: currencyForMarket(market) });
 }
 
 export function WatchlistEarningsBadge({ ticker, market }) {

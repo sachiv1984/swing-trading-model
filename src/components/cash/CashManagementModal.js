@@ -9,6 +9,7 @@ import { Label } from "../ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { PlusCircle, MinusCircle, Loader2 } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { formatCurrency } from "../../lib/format";
 
 export default function CashManagementModal({ open, onClose, portfolio, transactions }) {
   const [type, setType] = useState("deposit");
@@ -35,8 +36,8 @@ export default function CashManagementModal({ open, onClose, portfolio, transact
       setNote("");
       toast.success(
         type === "deposit"
-          ? `£${Number(response?.amount ?? amount).toLocaleString("en-GB", { minimumFractionDigits: 2 })} deposited.`
-          : `£${Number(response?.amount ?? amount).toLocaleString("en-GB", { minimumFractionDigits: 2 })} withdrawn.`
+          ? `${formatCurrency(Number(response?.amount ?? amount))} deposited.`
+          : `${formatCurrency(Number(response?.amount ?? amount))} withdrawn.`
       );
       onClose();
     },
@@ -73,7 +74,7 @@ export default function CashManagementModal({ open, onClose, portfolio, transact
         <div className="mb-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700">
           <p className="text-sm text-slate-600 dark:text-slate-400">Current Cash Balance</p>
           <p className="text-2xl font-bold text-white">
-            £{(portfolio?.cash_balance || 0).toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+            {formatCurrency(portfolio?.cash_balance || 0)}
           </p>
         </div>
 
@@ -144,7 +145,7 @@ export default function CashManagementModal({ open, onClose, portfolio, transact
                     <span className="text-slate-300">{tx.note || tx.type}</span>
                   </div>
                   <span className={tx.type === "withdrawal" ? "text-rose-400" : "text-emerald-400"}>
-                    {tx.type === "withdrawal" ? "-" : "+"}£{tx.amount.toLocaleString()}
+                    {formatCurrency(tx.type === "withdrawal" ? -Math.abs(tx.amount) : Math.abs(tx.amount), { signed: true })}
                   </span>
                 </div>
               ))}

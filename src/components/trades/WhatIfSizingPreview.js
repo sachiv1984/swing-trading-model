@@ -4,6 +4,7 @@ import { Label } from "../ui/label";
 import { Loader2, Sliders, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
 import { AMBER_MESSAGES, SYSTEM_MESSAGES } from "./PositionSizingWidget";
 import { useSessionRiskPercent, useDebouncedSizing } from "../../hooks/usePositionSizingFetch";
+import { formatCurrency, formatPercent } from "../../lib/format";
 
 // ST-05 (BLG-FEAT-91, EPIC-02, v8.9) — Pre-commit "what-if" sizing/risk
 // simulator on the trade-plan form.
@@ -201,7 +202,7 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
                     {sizingLoading ? (
                       <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
                     ) : rAtRisk != null ? (
-                      `£${rAtRisk.toFixed(2)}`
+                      formatCurrency(rAtRisk)
                     ) : (
                       "—"
                     )}
@@ -213,7 +214,7 @@ export default function WhatIfSizingPreview({ ticker, market, stopLevel, fxRate,
                     {sizingLoading ? (
                       <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
                     ) : heatImpact != null ? (
-                      `${heatImpact >= 0 ? "+" : ""}${heatImpact.toFixed(1)}% heat`
+                      `${formatPercent(heatImpact, { signed: true })} heat`
                     ) : (
                       "—"
                     )}
