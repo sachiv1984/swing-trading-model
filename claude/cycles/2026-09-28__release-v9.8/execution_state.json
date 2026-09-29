@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-29T14:06:27Z",
+  "last_updated_utc": "2026-09-29T14:08:37Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -629,23 +629,25 @@
         "ST-23": {
           "title": "POST /trade-plans and DELETE /trade-plans/{id} declare no response schema in openapi.yaml",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1826,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "700ad46ce31a9d02f593f1de122856b0db25ab65",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T14:08:37Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/reference/openapi.yaml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Added TradePlan schema (referenced by POST /trade-plans 201) and DELETE /trade-plans/{id} 200 response schema. Both were SKIPPED by the freshness checker (no content/schema block at all) -- now 0 SKIPPED. Found DELETE /trade-plans/{id} deviates from conventions.md SS12's standard DELETE envelope (uses {status,message} not {status,data:{deleted,id}}) -- documented to match actual spec, filed BLG-SPEC-176 for disposition rather than silently reconciling. check_openapi_drift.py and lint_api_contract_headings.py both PASSED."
         },
         "ST-24": {
           "title": "trade_plans CREATE TABLE / DS-04 CHECK constraint undocumented",
@@ -1021,7 +1023,8 @@
     "ST-19",
     "ST-20",
     "ST-21",
-    "ST-22"
+    "ST-22",
+    "ST-23"
   ],
   "open_escalations": [],
   "merge_gate": {
