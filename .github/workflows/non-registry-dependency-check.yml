@@ -1,11 +1,14 @@
 name: Non-Registry Dependency Check
 
 # [EPIC-07][ST-29] (BLG-SEC-38) — Reject a dependency specifier that bypasses the
-# package registry (git+ssh://, git+https://, git://, file:, link:) in
-# backend/requirements.txt or package.json. Such a specifier has no published,
-# versioned, checksummed artefact — it is invisible to pip-audit/npm audit and the
-# dependency-vuln-rescan cadence, and the exact code that ships is whatever the
-# referenced ref/path happened to contain at install time, not a reproducible release.
+# package registry (git/hg/svn/bzr VCS refs of any transport, file:, link:, a
+# direct/tarball URL, a relative or absolute local path, an npm GitHub shorthand, or
+# a -r/--requirement include) in backend/requirements.txt, package.json or
+# package-lock.json (hardened [EPIC-04][ST-19], BLG-SEC-39, v9.8). Such a specifier
+# has no published, versioned, checksummed artefact — it is invisible to
+# pip-audit/npm audit and the dependency-vuln-rescan cadence, and the exact code that
+# ships is whatever the referenced ref/path/URL happened to contain at install time,
+# not a reproducible release.
 #
 # Regression-tested by tests/test_non_registry_dependency_check.py (run as part of
 # the normal backend pytest suite, ci-tests.yml Phase A). This workflow is the
