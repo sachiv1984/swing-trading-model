@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-29T13:04:36Z",
+  "last_updated_utc": "2026-09-29T13:31:16Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -442,11 +442,12 @@
       "merge_commit_sha": "f2717e66274eb5c85eb8e6f1a7cce47b64961a4e"
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-09-28__release-v9.8/EPIC-04",
       "pr_number": 1846,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
+      "merge_commit_sha": "ba7d8c2a9224ff00dc324a7b580645f1c37adba4",
       "qa_evidence_log": "claude/cycles/2026-09-28__release-v9.8/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "tests/test_non_registry_dependency_check.py",
@@ -997,10 +998,10 @@
     "epics_merged": [
       "EPIC-01",
       "EPIC-02",
-      "EPIC-03"
+      "EPIC-03",
+      "EPIC-04"
     ],
     "epics_pending": [
-      "EPIC-04",
       "EPIC-05",
       "EPIC-06"
     ],
@@ -1017,7 +1018,8 @@
     "2026-09-29T12:47:53Z: ST-17/ST-18 unblocked in-session. User (acting as the owning authorities) answered both design/policy questions directly via AskUserQuestion at 2026-09-29T12:35:00Z: ST-17 -- extend staging-smoke-test.yml (not a new workflow, not a cycle-close step), confirm the deployed commit via a new build-commit field on GET /health/detailed (not deploy-hook-fired confirmation alone); ST-18 -- aggregate counts only, named-gate tables only. Both reclassified delegated_decision -> autonomous per STEP 3.1.D's unblock path and implemented. ST-17: backend/services/health_service.py gained get_deployed_commit_sha() (Render RENDER_GIT_COMMIT env var, falling back to local git rev-parse HEAD), exposed as deployed_commit_sha on GET /health/detailed (health_endpoints.md v1.6->v1.7, openapi.yaml HealthDetailedResponse updated); scripts/staging_smoke_test.py gained check_deployed_commit(), wired into staging-smoke-test.yml via EXPECTED_COMMIT_SHA: ${{ github.sha }}; design + known limits documented in docs/ops/staging_deploy_notes.md #7 (v1.1->v1.2). 5 tests added to test_health_response_schema.py, 9 to test_staging_smoke_test.py. Commit 78f4a991. Staging-only AC-01 evidence deferred to BLG-OPS-171 (filed before PR open, per sprint_backlog.md ST-17 Notes). ST-18: docs/infrastructure/staging_setup.md #8 gained the pre-approved query-pattern allow-list (trade_history/trade_plans today, extensible to any future gate-condition table); documentation-only, no staging-only AC. Commit f95a4a89. Both escalations (ESC-EXEC-20260929-01/-02) marked Resolved in execution_escalations.md with resolution summaries. Incidentally found and filed BLG-QA-203 while checking ST-17 for regressions: tests/test_api_contracts.py::TestReportsEndpoints::test_get_tax_year_report_returns_ok fails in isolation but passes as part of the full suite (test-order dependency) -- pre-existing, unrelated. Full backend suite (tests/, excluding e2e) re-run after both stories: 1941 passed, 12 skipped, 0 failed. openapi drift check and API performance baseline drift check both PASSED. All 3 ST items in EPIC-04 now done -- proceeding to STEP 3.2 (EPIC completion: QA evidence consolidation, then PR open).",
     "2026-09-29T12:51:25Z: qa_evidence_EPIC-04.md created and committed (d8c1a566) -- BLG-GOV-19 autonomous class does not apply (Criterion 2 unmet: ST-17's AC-01 carries a staging-only-evidence tag), standard Director of Quality sign-off block used, Date field blank. Per BLG-GOV-18 this normally blocks PR opening; asked the user (Product Owner) how to proceed via AskUserQuestion -- explicit direction given to open now with sign-off pending, matching the PR #1843/EPIC-01 precedent this cycle. PR #1846 opened (exec/2026-09-28__release-v9.8/EPIC-04 -> main), pr_status synced to 'open' via gh pr view immediately after (mergeStateStatus: BLOCKED, as expected pending human review). Not mergeable until a human Director of Quality completes the sign-off block and Product Owner acceptance is separately recorded (STEP 4).",
     "2026-09-29T12:59:58Z: PR #1846's verify_governance CI check failed as expected (blank Date field) -- reviewed the qa_evidence_EPIC-04.md summary with the user and got their sign-off decision via AskUserQuestion: Approve as-is. Human Director of Quality sign-off recorded (Date: 2026-09-29, Comments filled in) in qa_evidence_EPIC-04.md; execution_state.json qa_signed_off set to true in the same commit per the hard requirement in execution_prompt.md STEP 3.2.A. Product Owner acceptance (merge approval) still required separately before merge -- STEP 4 merge gate unaffected by this sign-off alone.",
-    "2026-09-29T13:04:36Z: Agent-mediated Director of Quality + Product Owner review posted to PR #1846 (per explicit user instruction) -- DoQ: Approved with Comments (2 residual gaps found in ST-19's guard hardening -- bare `-e .` local-path form still unflagged, npm-workspace file: resolved entries would false-positive -- plus the unverified RENDER_GIT_COMMIT/git-fallback assumption flagged as the primary residual risk, tracked via BLG-OPS-171); PO: Approved (all ACs substantively met, ST-17's staging-only gap correctly disclosed not silently claimed, no scope creep). Filed BLG-SEC-40 for the two guard gaps (commit f62c3842). Reviews explicitly labelled agent-mediated/pending human confirmation per execution_prompt.md SS5.3 -- did not merge."
+    "2026-09-29T13:04:36Z: Agent-mediated Director of Quality + Product Owner review posted to PR #1846 (per explicit user instruction) -- DoQ: Approved with Comments (2 residual gaps found in ST-19's guard hardening -- bare `-e .` local-path form still unflagged, npm-workspace file: resolved entries would false-positive -- plus the unverified RENDER_GIT_COMMIT/git-fallback assumption flagged as the primary residual risk, tracked via BLG-OPS-171); PO: Approved (all ACs substantively met, ST-17's staging-only gap correctly disclosed not silently claimed, no scope creep). Filed BLG-SEC-40 for the two guard gaps (commit f62c3842). Reviews explicitly labelled agent-mediated/pending human confirmation per execution_prompt.md SS5.3 -- did not merge.",
+    "2026-09-29T13:31:16Z: PR #1846 (EPIC-04) merged by the Product Owner (merge commit ba7d8c2a, mergedAt 2026-09-29T13:30:32Z) -- confirmed via gh pr view. Branch-check performed before this sync write (was on exec/2026-09-28__release-v9.8/EPIC-04, checked out main and pulled -- fast-forward, 16 files). No orphaned post-merge commits found (git fetch origin; git log origin/main..origin/exec/.../EPIC-04 empty). merge_gate synced: epics_merged now [EPIC-01, EPIC-02, EPIC-03, EPIC-04], epics_pending [EPIC-05, EPIC-06]. No sibling EPIC branches exist yet (EPIC-05/06 not started) so STEP 4 3c sibling-sync is not applicable. HARD GATE: engine halts here per execution_prompt.md STEP 4 -- awaiting explicit `run sprint` re-invocation before proceeding to EPIC-05."
   ],
   "sealed": false,
   "sealed_utc": null
