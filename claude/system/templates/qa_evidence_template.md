@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.16
-**Last Updated:** 2026-09-22 (Sprint execution 2026-09-21__release-v9.6 EPIC-05/ST-19, BLG-QA-172 — added a Flaky-Test Disposition Addendum: retry/quarantine/fix-now decision framework, cross-referenced against the existing quarantine mechanism and tracking item); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-P4-01, same-cycle application — added a disambiguation note distinguishing `Pass, escalation open` (a named open ESC-* record) from a plain `Pass` with an incidental backlog-item finding); prior — 2026-09-14 (post-ship closure 2026-09-09__release-v9.3 STEP 8 immediate action, Head of Specs Team direct action — added "Pass, escalation open" to the Result column's enumerated values with defined semantics, matching delivery_verification_prompt.md v3.11 §2.1, LL-v9.3-P4-02); prior history retained — see prior entries in version control.
+**Version:** 1.17
+**Last Updated:** 2026-09-29 (Sprint execution 2026-09-28__release-v9.8 EPIC-03/ST-14, BLG-QA-183 — added an AI-Touching Story Evidence Addendum: standard evidence shape recording prompt-template version and a boundary-language sample, closing the gap where AI-touching stories like BLG-AI-06 reached sign-off with no fixed place to look for this); prior — 2026-09-22 (Sprint execution 2026-09-21__release-v9.6 EPIC-05/ST-19, BLG-QA-172 — added a Flaky-Test Disposition Addendum: retry/quarantine/fix-now decision framework, cross-referenced against the existing quarantine mechanism and tracking item); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-P4-01, same-cycle application — added a disambiguation note distinguishing `Pass, escalation open` (a named open ESC-* record) from a plain `Pass` with an incidental backlog-item finding); prior history retained — see prior entries in version control.
 
 # QA Evidence Template
 
@@ -95,6 +95,19 @@ When a test is found flaky during DoQ sign-off (or at any other point QA evidenc
 4. **No quarantine without a tracked follow-up:** an untracked quarantine (a `test.fixme` with no `BLG-*` reference) is a process violation, enforced in CI by `tests/test_flaky_quarantine_format.py`.
 
 **Cross-reference (confirmed correct as of 2026-09-22, per this story's own AC-2):** the quarantine *mechanism* itself (the `test.fixme`/`FLAKY-QUARANTINE:` tag format, backlog cross-reference requirement, and CI enforcement) already shipped — `docs/testing/flaky_test_quarantine_process.md` (BLG-QA-117, EPIC-10, v7.8, Status: Canonical) — and is what step 2 above uses. `BLG-QA-75` (Playwright flake-rate tracking, consolidated) is a **separate, still gate-conditional** item: its lightweight quarantine-list/log scope is superseded by the mechanism above (a live per-test tag is a better source of truth than a separate hand-maintained log — see `docs/testing/flaky_test_quarantine_process.md` §Review Cadence for how quarantined tests are surfaced at each `groom backlog` pass), and its broader CI-pipeline-integrated flake-rate *tracking* scope remains gated on the first demonstrated flaky-test incident (not yet met — `docs/testing/flaky_test_quarantine_process.md` §Currently-Known Flaky Tests records none identified at time of writing). This decision framework governs an individual disposition call at sign-off time; it does not itself trigger `BLG-QA-75`'s gate — building the fuller CI-integrated tooling remains a separate question from disposing of one flaky test found during review.
+
+---
+
+## AI-Touching Story Evidence Addendum (ST-14, BLG-QA-183, EPIC-03, v9.8)
+
+An AI-touching story is one whose acceptance criteria depend on the behaviour of a live-model call (chat, briefing, debrief, or trade-plan generation endpoints) or on the wording of a prompt template that governs one. Prior AI-touching stories (e.g. `BLG-AI-06`) reached DoQ sign-off with observable ACs recorded as staging-only, with no standard evidence shape for the AI-specific parts — reviewers had no fixed place to look for "did this change the prompt, and was the change checked against the §13 boundary."
+
+For any AI-touching story, add the following two lines to its row's evidence (in the `What was built` cell, or as a dedicated `AI evidence:` line directly under the evidence table if the detail doesn't fit inline):
+
+1. **Prompt-template version:** the `PROMPT_VERSION`/`prompt_version` value the story's change is recorded under (e.g. `gemini_service.py PROMPT_VERSION v3.0`), or `"unchanged"` if the story does not touch a prompt template at all. If the story *does* edit a covered template's text, this value must differ from the pre-change value — see `tests/test_ai_prompt_template_golden_fixtures.py` (ST-09, BLG-AI-07).
+2. **Boundary-language sample:** one representative sample of the actual (or, if no live API access, illustrative) generated text this change produces or affects, with a one-line note on whether `scripts/run_ai_output_boundary_sample_audit.py`'s `scan_prescriptive`/`scan_prediction` checks were run against it and the result.
+
+This addendum does not replace the observable-AC Playwright/staging evidence requirement (CLAUDE.md §2) for any AC that is itself frontend-visible — it is additive, covering the AI-specific evidence gap only.
 
 ---
 
