@@ -6900,21 +6900,30 @@ components:
                 type: integer
                 nullable: true
         ai_journal:
-          type: object
           description: >-
-            Either the 3 metric fields below, or {"status": "unavailable"} if no AI
-            journal activity in the relevant window or the underlying query fails.
-          properties:
-            status:
-              type: string
-              enum: [unavailable]
-            usage_rate:
-              type: number
-            error_rate:
-              type: number
-            p95_latency_ms:
-              type: integer
-              nullable: true
+            Either the 3 metric fields (usage/error rate over the relevant
+            window), or {"status": "unavailable"} if no AI journal activity
+            occurred in the relevant window or the underlying query fails --
+            never both at once (ST-25, EPIC-05, v9.8, BLG-SPEC-155).
+          oneOf:
+            - type: object
+              required: [usage_rate, error_rate, p95_latency_ms]
+              properties:
+                usage_rate:
+                  type: number
+                  description: AI summaries produced per day, 7-day window.
+                error_rate:
+                  type: number
+                  description: 0-1, 24h window.
+                p95_latency_ms:
+                  type: integer
+                  nullable: true
+            - type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [unavailable]
 
     DatabaseSizeResponse:
       type: object
