@@ -16,8 +16,8 @@ Last Updated: 2026-09-29
 - **Unblock criteria:** Infrastructure & Operations Owner records which of the 3 named vehicles to use (or an alternative), including whether/how a build-commit indicator is added to an existing health/status endpoint, so implementation can proceed against a locked design.
 - **SLA due-by:** 2026-10-02T12:06:33Z
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:**
+- **Disposition:** Resolved
+- **Resolution summary:** Infrastructure & Operations Owner (2026-09-29T12:35:00Z, in-session via `AskUserQuestion`): extend the existing `staging-smoke-test.yml` scheduled workflow (not a new dedicated workflow, not a cycle-close step); confirm the deployed commit via a new `deployed_commit_sha` field on `GET /health/detailed` (not a Render-deploy-hook-fired confirmation alone). Implemented in commit `78f4a991` — see `docs/ops/staging_deploy_notes.md` §7 for the full design record. Staging-only AC-01 evidence deferred to `BLG-OPS-171` (filed before this EPIC's PR opened, per `sprint_backlog.md` ST-17 Notes).
 
 ## ESC-EXEC-20260929-02
 
@@ -32,5 +32,5 @@ Last Updated: 2026-09-29
 - **Unblock criteria:** Infrastructure & Operations Owner and Cybersecurity & Trust Lead jointly record the pre-approved read-only query-pattern allow-list (scope and any exclusions) so the engine can write it into `docs/infrastructure/staging_setup.md` §8 verbatim.
 - **SLA due-by:** 2026-10-02T12:06:33Z
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:**
+- **Disposition:** Resolved
+- **Resolution summary:** Infrastructure & Operations Owner (2026-09-29T12:35:00Z, in-session via `AskUserQuestion`): aggregate counts only (`SELECT COUNT(*)`-shaped, no row-level columns), against a table already named in an existing `current_roadmap.md` gate condition — matching `BLG-OPS-170`'s own drafted scope. Today that's `trade_history`/`trade_plans` (the SI-02 gate's own query). Implemented in commit `f95a4a89` — see `docs/infrastructure/staging_setup.md` §8.

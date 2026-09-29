@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-29T12:06:33Z",
+  "last_updated_utc": "2026-09-29T12:47:53Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -442,57 +442,64 @@
       "merge_commit_sha": "f2717e66274eb5c85eb8e6f1a7cce47b64961a4e"
     },
     "EPIC-04": {
-      "status": "blocked",
+      "status": "done",
       "branch": "exec/2026-09-28__release-v9.8/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-28__release-v9.8/qa_evidence_EPIC-04.md",
       "test_scenarios": [
-        "tests/test_non_registry_dependency_check.py"
+        "tests/test_non_registry_dependency_check.py",
+        "tests/test_health_response_schema.py",
+        "tests/test_staging_smoke_test.py"
       ],
       "stories": {
         "ST-17": {
           "title": "No check that the staging backend actually redeployed after a merge that changes startup-applied schema",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 1820,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "78f4a991f8b7ec19786f3a547b0a5792f5027eeb",
           "delegation_record_id": "ESC-EXEC-20260929-01",
           "blocked_since_utc": "2026-09-29T12:06:33Z",
           "unblock_criteria": "Infrastructure & Operations Owner records which of the 3 named vehicles (extend staging-smoke-test.yml / new post-merge workflow / cycle-close verification step) to use, per sprint_backlog.md ST-17 Notes.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T12:47:46Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/health_endpoints.md",
+            "docs/ops/staging_deploy_notes.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Blocked per ESC-EXEC-20260929-01 -- design decision not engine-determinable, RISK-01."
+          "notes": "Reclassified delegated_decision -> autonomous once Infrastructure & Operations Owner resolved the design decision in-session (ESC-EXEC-20260929-01, resolved 2026-09-29T12:35:00Z via AskUserQuestion: extend staging-smoke-test.yml + add deployed_commit_sha to GET /health/detailed). AC-01's staging-only evidence deferred; backlog item BLG-OPS-171 filed before this EPIC's PR opens, per sprint_backlog.md ST-17 Notes."
         },
         "ST-18": {
           "title": "No documented allow-list of pre-approved read-only staging-DB query patterns",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 1821,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "f95a4a899537c63d49750f52c8b4e0f865880fc1",
           "delegation_record_id": "ESC-EXEC-20260929-02",
           "blocked_since_utc": "2026-09-29T12:06:33Z",
           "unblock_criteria": "Infrastructure & Operations Owner and Cybersecurity & Trust Lead jointly record the pre-approved read-only query-pattern allow-list for docs/infrastructure/staging_setup.md #8.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T12:47:53Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/infrastructure/staging_setup.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Blocked per ESC-EXEC-20260929-02 -- security-sensitive policy call, not engine-determinable."
+          "notes": "Reclassified delegated_decision -> autonomous once Infrastructure & Operations Owner resolved the policy call in-session (ESC-EXEC-20260929-02, resolved 2026-09-29T12:35:00Z via AskUserQuestion: aggregate counts only, named-gate tables only). Documentation-only; no staging-only AC (sprint_backlog.md ST-18 Notes)."
         },
         "ST-19": {
           "title": "Harden the non-registry dependency guard",
@@ -962,10 +969,7 @@
       }
     }
   },
-  "blocked_items": [
-    "ST-17",
-    "ST-18"
-  ],
+  "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -984,12 +988,11 @@
     "ST-14",
     "ST-15",
     "ST-16",
+    "ST-17",
+    "ST-18",
     "ST-19"
   ],
-  "open_escalations": [
-    "ESC-EXEC-20260929-01",
-    "ESC-EXEC-20260929-02"
-  ],
+  "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
@@ -1010,7 +1013,8 @@
     "2026-09-29T08:17:53Z: Agent-mediated Director of Quality + Product Owner review posted to PR #1844 (per explicit user instruction) -- both Approved with Comments; found 3 pre-existing ad hoc timeout= call sites (gemini_service.py, utils/pricing.py, alpaca_paper_sync_service.py) outside BLG-BE-128's original list, not a defect in this PR. Filed as BLG-BE-132/133/134 (commit 3eeb682c on main, per user direction). Reviews explicitly labelled agent-mediated/pending human confirmation per execution_prompt.md SS5.3 -- did not merge.",
     "2026-09-29T09:07:01Z: PR #1844 (EPIC-02) merged by the Product Owner (merge commit 413045ac, mergedAt 2026-09-29T09:06:01Z) -- confirmed via gh pr view. Session-start divergence check run before trusting local state (local main was 7 commits behind origin/main; fast-forwarded via git pull). No orphaned post-merge commits found on exec/2026-09-28__release-v9.8/EPIC-02 (git log origin/main..origin/exec/.../EPIC-02 empty). merge_gate synced: epics_merged now [EPIC-01, EPIC-02], epics_pending [EPIC-03, EPIC-04, EPIC-05, EPIC-06]. No sibling EPIC branches exist yet (EPIC-03..06 not started) so STEP 4 3c sibling-sync is not applicable. HARD GATE: engine halts here per execution_prompt.md STEP 4 -- awaiting explicit `run sprint` re-invocation before proceeding to EPIC-03.",
     "2026-09-29T12:05:00Z: Resume-sync gap found and corrected at session start (LL-v3.9-P3-1 / AUD-2026-08-21-010 pattern). PR #1845 (EPIC-03) was merged in a prior session (merge commit f2717e66, mergedAt 2026-09-29T11:55:55Z, confirmed via `gh pr view 1845 --json mergedAt,mergeStateStatus,state`) and that session's commit 64c6c0f9 (\"Persist merged state after PR #1845 merge\") correctly updated EPIC-03's own status/pr_status/merge_commit_sha fields, but did not update the top-level merge_gate.epics_merged/epics_pending lists, append a process_notes entry, or advance last_updated_utc -- the STEP 4 hard-gate halt appears not to have completed its full persist sequence (steps 3/3a) before session end. Orphaned post-merge commit check run (git log origin/main..origin/exec/2026-09-28__release-v9.8/EPIC-03 --oneline): empty, nothing to reconcile. Corrected now: merge_gate.epics_merged is [EPIC-01, EPIC-02, EPIC-03], epics_pending is [EPIC-04, EPIC-05, EPIC-06]. Proceeding to STEP 3 execution loop for EPIC-04 (next pending, not_started) per this invocation's `run sprint` re-entry.",
-    "2026-09-29T12:06:33Z: EPIC-04 started. Branch exec/2026-09-28__release-v9.8/EPIC-04 created from main (did not previously exist). GitHub issues #1820 (ST-17), #1821 (ST-18), #1822 (ST-19) already existed from sync gh -- no duplicates created. ST-17 and ST-18 are both delegation_class delegated_decision per the sealed sprint_backlog.md (RISK-01 design-decision-vehicle choice for ST-17; security-sensitive staging-DB query allow-list policy call for ST-18) -- neither is engine-determinable, so per STEP 3.1.D both were escalated (ESC-EXEC-20260929-01 owner Infrastructure & Operations Owner, ESC-EXEC-20260929-02 owner Infrastructure & Operations Owner / Cybersecurity & Trust Lead, both non-blocking, SLA 72h due 2026-10-02T12:06:33Z per Human-Delegation precedent) and set to status blocked_decision, then execution continued to the next item rather than stalling the EPIC. ST-19 (autonomous, Cybersecurity & Trust Lead-owned, BLG-SEC-39) completed in full: scripts/check_non_registry_dependencies.py hardened against all forms named in the backlog item's Problem section (pip git+http/hg+/svn+/bzr+ any transport, bare VCS schemes, direct URL references, bare URL lines, relative/absolute local paths, -r/--requirement includes; npm github: prefix, bare user/repo shorthand, tarball URLs) plus the reported trailing-comment false positive fixed and package-lock.json scanning added (previously unscanned). 32 tests added/extended in tests/test_non_registry_dependency_check.py, all passing; hardened script re-confirmed clean (exit 0) against the real repo tree. Commit 5e38e1c8, pushed. EPIC-04 cannot reach `done` (all-stories-done precondition, STEP 3.2) until ST-17/ST-18 unblock -- no PR opened this session. No further EPIC-05/EPIC-06 work started this session; halting here to report status rather than fabricating implementation evidence for 20 additional stories sight-unseen. Also backfilled a second, related resume-sync gap found while touching this file: the top-level completed_items array was missing ST-09 through ST-16 (EPIC-03's stories, already 'done' at story level and merged) -- same class of incomplete-persist gap as the merge_gate fix above, corrected in the same commit."
+    "2026-09-29T12:06:33Z: EPIC-04 started. Branch exec/2026-09-28__release-v9.8/EPIC-04 created from main (did not previously exist). GitHub issues #1820 (ST-17), #1821 (ST-18), #1822 (ST-19) already existed from sync gh -- no duplicates created. ST-17 and ST-18 are both delegation_class delegated_decision per the sealed sprint_backlog.md (RISK-01 design-decision-vehicle choice for ST-17; security-sensitive staging-DB query allow-list policy call for ST-18) -- neither is engine-determinable, so per STEP 3.1.D both were escalated (ESC-EXEC-20260929-01 owner Infrastructure & Operations Owner, ESC-EXEC-20260929-02 owner Infrastructure & Operations Owner / Cybersecurity & Trust Lead, both non-blocking, SLA 72h due 2026-10-02T12:06:33Z per Human-Delegation precedent) and set to status blocked_decision, then execution continued to the next item rather than stalling the EPIC. ST-19 (autonomous, Cybersecurity & Trust Lead-owned, BLG-SEC-39) completed in full: scripts/check_non_registry_dependencies.py hardened against all forms named in the backlog item's Problem section (pip git+http/hg+/svn+/bzr+ any transport, bare VCS schemes, direct URL references, bare URL lines, relative/absolute local paths, -r/--requirement includes; npm github: prefix, bare user/repo shorthand, tarball URLs) plus the reported trailing-comment false positive fixed and package-lock.json scanning added (previously unscanned). 32 tests added/extended in tests/test_non_registry_dependency_check.py, all passing; hardened script re-confirmed clean (exit 0) against the real repo tree. Commit 5e38e1c8, pushed. EPIC-04 cannot reach `done` (all-stories-done precondition, STEP 3.2) until ST-17/ST-18 unblock -- no PR opened this session. No further EPIC-05/EPIC-06 work started this session; halting here to report status rather than fabricating implementation evidence for 20 additional stories sight-unseen. Also backfilled a second, related resume-sync gap found while touching this file: the top-level completed_items array was missing ST-09 through ST-16 (EPIC-03's stories, already 'done' at story level and merged) -- same class of incomplete-persist gap as the merge_gate fix above, corrected in the same commit.",
+    "2026-09-29T12:47:53Z: ST-17/ST-18 unblocked in-session. User (acting as the owning authorities) answered both design/policy questions directly via AskUserQuestion at 2026-09-29T12:35:00Z: ST-17 -- extend staging-smoke-test.yml (not a new workflow, not a cycle-close step), confirm the deployed commit via a new build-commit field on GET /health/detailed (not deploy-hook-fired confirmation alone); ST-18 -- aggregate counts only, named-gate tables only. Both reclassified delegated_decision -> autonomous per STEP 3.1.D's unblock path and implemented. ST-17: backend/services/health_service.py gained get_deployed_commit_sha() (Render RENDER_GIT_COMMIT env var, falling back to local git rev-parse HEAD), exposed as deployed_commit_sha on GET /health/detailed (health_endpoints.md v1.6->v1.7, openapi.yaml HealthDetailedResponse updated); scripts/staging_smoke_test.py gained check_deployed_commit(), wired into staging-smoke-test.yml via EXPECTED_COMMIT_SHA: ${{ github.sha }}; design + known limits documented in docs/ops/staging_deploy_notes.md #7 (v1.1->v1.2). 5 tests added to test_health_response_schema.py, 9 to test_staging_smoke_test.py. Commit 78f4a991. Staging-only AC-01 evidence deferred to BLG-OPS-171 (filed before PR open, per sprint_backlog.md ST-17 Notes). ST-18: docs/infrastructure/staging_setup.md #8 gained the pre-approved query-pattern allow-list (trade_history/trade_plans today, extensible to any future gate-condition table); documentation-only, no staging-only AC. Commit f95a4a89. Both escalations (ESC-EXEC-20260929-01/-02) marked Resolved in execution_escalations.md with resolution summaries. Incidentally found and filed BLG-QA-203 while checking ST-17 for regressions: tests/test_api_contracts.py::TestReportsEndpoints::test_get_tax_year_report_returns_ok fails in isolation but passes as part of the full suite (test-order dependency) -- pre-existing, unrelated. Full backend suite (tests/, excluding e2e) re-run after both stories: 1941 passed, 12 skipped, 0 failed. openapi drift check and API performance baseline drift check both PASSED. All 3 ST items in EPIC-04 now done -- proceeding to STEP 3.2 (EPIC completion: QA evidence consolidation, then PR open)."
   ],
   "sealed": false,
   "sealed_utc": null
