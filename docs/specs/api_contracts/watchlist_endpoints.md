@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.3
-**Last Updated:** 2026-08-07
+**Version:** 1.4
+**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to all 5 mutating endpoints in this file); prior — 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint:** 2026-06-08__release-v5.3 — ST-07 (BLG-SPEC-52, EPIC-01)
 **Signed off by:** API Contracts & Documentation Owner; Head of Specs Team
@@ -86,6 +86,10 @@ Add a ticker to the watchlist. Returns 409 if the ticker already exists in the p
 
 - `POST /watchlist`
 
+**Idempotency**
+
+- Not idempotent by HTTP semantics (creates a resource), but double-submit-safe: a duplicate `POST` for a ticker already on the watchlist returns `409` rather than creating a second entry.
+
 **Request Body**
 
 ```json
@@ -144,6 +148,10 @@ Remove a watchlist entry by ID. Not idempotent — a second call returns 404.
 **Method & Path**
 
 - `DELETE /watchlist/{entry_id}`
+
+**Idempotency**
+
+- Not idempotent by response code (see Purpose above) — a repeated call after the first successful delete returns `404`. The underlying state (entry absent) is unchanged either way, same as any delete-by-id endpoint (conventions.md §12).
 
 **Path Parameters**
 
@@ -209,6 +217,10 @@ Add tags to each selected watchlist entry's existing tag set (union, not replace
 
 - `POST /watchlist/bulk-tag`
 
+**Idempotency**
+
+- Idempotent — a set union is idempotent by construction; repeating the same call with the same `tags` leaves each entry's tag set unchanged after the first application.
+
 **Request Body**
 
 ```json
@@ -256,6 +268,10 @@ Remove each selected watchlist entry in a single call. New in v1.1 (ST-03, BLG-F
 
 - `DELETE /watchlist/bulk`
 
+**Idempotency**
+
+- Idempotent in effect — an id already deleted by a prior call is reported in `failed` (not found) rather than erroring the whole batch; already-deleted ids on a repeated call produce the same outcome.
+
 **Request Body**
 
 ```json
@@ -296,6 +312,10 @@ Update price fields on an existing watchlist entry, or reset its staleness clock
 **Method & Path**
 
 - `PATCH /watchlist/{entry_id}`
+
+**Idempotency**
+
+- Mixed: price-field updates alone are idempotent (repeating the same values yields the same state). `added_at` is a **reset trigger, not idempotent** — every call carrying a non-null `added_at` re-stamps `created_at` to the current server time (see below), so a double-submit moves the staleness clock forward again rather than being a no-op.
 
 **Request Body** (all fields optional)
 

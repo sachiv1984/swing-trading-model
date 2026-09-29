@@ -1,8 +1,8 @@
 **Owner:** Backend Engineering Patterns Owner; Product Owner
 **Class:** API Contract (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-09-25 — ST-01b, EPIC-01, v9.7, BLG-FEAT-74 (new file)
+**Version:** 1.1
+**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an explicit Idempotency subsection to POST /replay/run); prior — 2026-09-25 — ST-01b, EPIC-01, v9.7, BLG-FEAT-74 (new file)
 **Story:** ST-01b (EPIC-01, v9.7, BLG-FEAT-74)
 
 ---
@@ -47,6 +47,10 @@ a run over the full 100-trade / 25-ticker bound is expected to take several seco
 (dominated by `yfinance` network I/O, the same profile as `POST
 /strategy/backtest-rule-change/run`); the frontend shows an inline spinner for the
 duration. Read-only and persists nothing — repeated identical requests are safe to retry.
+
+**Idempotency**
+
+- Idempotent — read-only, writes no row. A double-submit simply runs the same simulation twice; results are deterministic given the same inputs and market data snapshot.
 
 **Request body (application/json):** exactly one of the two shapes below. Any other
 combination (both, neither, an extra field, an empty `trade_ids` array, a malformed

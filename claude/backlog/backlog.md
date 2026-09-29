@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-29 (session — 1 new item added: BLG-SEC-40, from agent-mediated review of PR #1846); prior — 2026-09-29 (session — 2 new items added: BLG-QA-203, BLG-OPS-171); prior — 2026-09-29 (session — 3 new items added: BLG-QA-200, BLG-QA-201, BLG-QA-202); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-29 (session — 4 new items added: BLG-OPS-172, BLG-OPS-173, BLG-OPS-174, BLG-API-06, from ST-20/EPIC-05's idempotency/double-submit documentation sweep); prior — 2026-09-29 (session — 1 new item added: BLG-SEC-40, from agent-mediated review of PR #1846); prior — 2026-09-29 (session — 2 new items added: BLG-QA-203, BLG-OPS-171); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4668,6 +4668,83 @@ ST-17 (BLG-OPS-169) added a stale-deploy check to `staging-smoke-test.yml` (comp
 
 **Acceptance Criteria**
 - All 3 Alpaca call sites in `alpaca_paper_sync_service.py` source their timeout from `get_timeout("alpaca")`; no behaviour change to existing sync/retry logic
+
+---
+
+### BLG-OPS-172 — POST /ai/check-daily-cost has no de-duplication guard against a double-submitted Telegram alert
+**Priority:** P4 (Trivial)
+**Type:** Operations / Reliability
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-20/EPIC-05 (BLG-API-04), cycle 2026-09-28__release-v9.8 — idempotency/double-submit documentation sweep — 2026-09-29
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/api_contracts/ai_endpoints.md`'s `POST /ai/check-daily-cost` sends a Telegram alert whenever `threshold_exceeded` is true, with no already-alerted-today guard. A double-submitted or accidentally-repeated call within the same day re-evaluates the same threshold and can send a duplicate alert.
+
+**Scope**
+- Add a per-day "already alerted" guard (e.g. a marker row, or checking whether an alert was already sent today before sending another)
+
+**Acceptance Criteria**
+- A second call on the same UTC day, after an alert has already been sent for a still-exceeded threshold, does not send a second Telegram message
+
+---
+
+### BLG-OPS-173 — POST /ai/check-endpoint-anomalies has no de-duplication guard against a double-submitted Telegram alert
+**Priority:** P4 (Trivial)
+**Type:** Operations / Reliability
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-20/EPIC-05 (BLG-API-04), cycle 2026-09-28__release-v9.8 — idempotency/double-submit documentation sweep — 2026-09-29
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/api_contracts/ai_endpoints.md`'s `POST /ai/check-endpoint-anomalies` sends a Telegram alert whenever `firing_count > 0`, with no already-alerted guard. A double-submitted or accidentally-repeated call while the same anomaly is still firing re-sends the summarising alert.
+
+**Scope**
+- Add an already-alerted-for-this-firing-window guard (e.g. a marker row keyed by the check window, or suppressing a repeat alert within a short cooldown)
+
+**Acceptance Criteria**
+- A second call within the same firing window, with the same anomalies still firing, does not send a second Telegram message
+
+---
+
+### BLG-OPS-174 — POST /price-alerts has no de-duplication guard against a double-submitted duplicate alert
+**Priority:** P4 (Trivial)
+**Type:** Operations / Reliability
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-20/EPIC-05 (BLG-API-04), cycle 2026-09-28__release-v9.8 — idempotency/double-submit documentation sweep — 2026-09-29
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/api_contracts/alerts_endpoints.md`'s `POST /price-alerts` has no uniqueness guard on `(ticker, condition, threshold_price)`. A double-submit (e.g. a duplicate click on the Add Alert button) creates a second, functionally-duplicate active alert, bounded only by the unrelated 50-active-alert cap.
+
+**Scope**
+- Consider a uniqueness guard (return 409, matching `POST /alerts/rules`'s pattern) or a client-side submit-guard, for an exact `(ticker, condition, threshold_price)` match already active
+
+**Acceptance Criteria**
+- A double-submit of the same `(ticker, condition, threshold_price)` while the first alert is still active does not create a second active alert (or, if guarding is deemed unnecessary, the disposition is recorded as accepted with rationale)
+
+---
+
+### BLG-API-06 — POST /trade-plans has no guard against a double-submitted duplicate plan
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / API Contracts
+**Owner:** Head of Specs Team
+**Source:** ST-20/EPIC-05 (BLG-API-04), cycle 2026-09-28__release-v9.8 — idempotency/double-submit documentation sweep — 2026-09-29
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/api_contracts/trade_plan_endpoints.md`'s `POST /trade-plans` has no uniqueness guard — every call creates a new row. A double-submit (e.g. a duplicate click on the Save button) creates a second, functionally-duplicate draft plan with no warning. Deliberate multi-plan creation for the same ticker is a legitimate use case, so a DB-level uniqueness constraint is not the right fix.
+
+**Scope**
+- Consider a client-side submit-guard (disable button on submit) as the primary mitigation, since a server-side uniqueness constraint would block legitimate multi-plan use cases
+- Record the disposition (client-side guard vs. accepted risk) once decided
+
+**Acceptance Criteria**
+- A disposition is recorded (client-side guard added, or accepted risk with rationale) for the double-submit duplicate-plan-creation case
 
 ---
 

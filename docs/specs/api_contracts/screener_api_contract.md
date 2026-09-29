@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2 Canonical Specification
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-09-09 (ST-01, BLG-BE-13, v9.3 — added GET /screener/history); prior — 2026-08-10 (ST-21, BLG-FEAT-29, v8.5 — added GET /screener/regime-distribution)
+**Version:** 1.5
+**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /screener/run); prior — 2026-09-09 (ST-01, BLG-BE-13, v9.3 — added GET /screener/history); prior — 2026-08-10 (ST-21, BLG-FEAT-29, v8.5 — added GET /screener/regime-distribution)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Schema reference:** docs/specs/screener_results_schema.md
 
@@ -80,6 +80,10 @@ Returns screener result records from the latest completed screener run (or a spe
 Triggers a new screener run. The run executes asynchronously; results are available via `GET /screener/results?run_id={run_id}` once complete.
 
 **Authentication:** Standard API key authentication.
+
+**Idempotency**
+
+- Not idempotent — each accepted call starts a new run with its own `run_id`. Double-submit-safe against *concurrent* duplicates: a second call while one run is still in progress returns `409 RUN_IN_PROGRESS` rather than queuing a second run. A double-submit sent *after* the first run completes is not blocked and starts a genuinely new run — this is expected (re-running the screener is a normal user action), not an error condition.
 
 ### Request Body (optional JSON)
 
