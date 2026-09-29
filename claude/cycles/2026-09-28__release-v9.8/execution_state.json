@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-29T14:10:41Z",
+  "last_updated_utc": "2026-09-29T14:12:09Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -675,23 +675,25 @@
         "ST-25": {
           "title": "openapi.yaml's OperationalHealthResponse.ai_journal doesn't model its either/or shape with oneOf",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1828,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "5da709af60feec74d4251a2d7930f64312b6f1fe",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T14:12:09Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/reference/openapi.yaml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Replaced ai_journal's flat sibling-properties schema with oneOf (metric-fields branch vs {status:unavailable} branch, both required-listed), matching health_endpoints.md's documented either/or contract exactly -- a response can no longer validate as carrying both shapes simultaneously. check_openapi_drift.py PASSED, freshness checker's schema_top_keys already handles oneOf (pre-existing support), tests/test_api_contracts.py health tests pass."
         },
         "ST-26": {
           "title": "screener_results.md column list omits the Earnings column",
@@ -1027,7 +1029,8 @@
     "ST-21",
     "ST-22",
     "ST-23",
-    "ST-24"
+    "ST-24",
+    "ST-25"
   ],
   "open_escalations": [],
   "merge_gate": {
