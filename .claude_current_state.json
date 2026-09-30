@@ -1,10 +1,10 @@
 {
   "active_cycle": "2026-09-28__release-v9.8",
-  "cycle_name": "v9.8 \u2014 Full-Capacity Debt Clearance",
+  "cycle_name": "v9.8 — Full-Capacity Debt Clearance",
   "status": "Closed",
   "prior_status": "Verified_with_deviations",
   "engine": "Post-Ship Closure",
-  "last_updated_utc": "2026-09-30T14:34:59Z",
+  "last_updated_utc": "2026-09-30T16:11:50Z",
   "execution_state_path": "claude/cycles/2026-09-28__release-v9.8/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-09-28__release-v9.8/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -12,7 +12,7 @@
   "design_gate_record": "claude/cycles/2026-09-28__release-v9.8/design_gate.md",
   "design_gate_completed_utc": "2026-09-28T12:00:00Z",
   "sprint_sealed": true,
-  "_sprint_sealed_note": "Set true at Sprint Planning STEP 7 for 2026-09-28__release-v9.8 \u2014 sign-off gate (STEP 6.2) passed, no [AC REQUIRED]/[ESTIMATE REQUIRED] placeholders, no Blocker? Yes outstanding actions, RISK-01/RISK-02 resolved via delegated_decision classification + internal design-decision-sub-step sequencing (ST-17, ST-38) rather than ST-ID phasing (backlog slice defines them as single sealed items). Owned exclusively by sprint_planning_prompt.md's own seal for this cycle.",
+  "_sprint_sealed_note": "Set true at Sprint Planning STEP 7 for 2026-09-28__release-v9.8 — sign-off gate (STEP 6.2) passed, no [AC REQUIRED]/[ESTIMATE REQUIRED] placeholders, no Blocker? Yes outstanding actions, RISK-01/RISK-02 resolved via delegated_decision classification + internal design-decision-sub-step sequencing (ST-17, ST-38) rather than ST-ID phasing (backlog slice defines them as single sealed items). Owned exclusively by sprint_planning_prompt.md's own seal for this cycle.",
   "sprint_goal_path": "claude/cycles/2026-09-28__release-v9.8/sprint_goal.md",
   "sprint_backlog_path": "claude/cycles/2026-09-28__release-v9.8/sprint_backlog.md",
   "sprint_capacity_path": "claude/cycles/2026-09-28__release-v9.8/sprint_capacity.md",
@@ -38,7 +38,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-09-30T15:00:00Z",
-  "last_sync_utc": "2026-09-30T14:34:59Z",
+  "last_sync_utc": "2026-09-30T16:11:50Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-09-28T00:00:00Z",
   "deviation_consolidation_review_cycle_count": 1,
@@ -191,7 +191,7 @@
   "deferred_escalations": {
     "ESC-EXEC-20260910-01": {
       "cycle": "2026-09-09__release-v9.3",
-      "summary": "ST-22/EPIC-05 \u2014 genuine live-production AI-output boundary-language sample still pending (dry-run against illustrative examples satisfied the literal AC only)",
+      "summary": "ST-22/EPIC-05 — genuine live-production AI-output boundary-language sample still pending (dry-run against illustrative examples satisfied the literal AC only)",
       "trigger_type": "Strategy",
       "owning_authority": "AI Compliance & Governance Officer",
       "raised_utc": "2026-09-10T10:45:00Z",
@@ -200,22 +200,22 @@
       "disposition": "Deferred",
       "deferred_utc": "2026-09-14T12:42:04Z",
       "deferred_by": "AI Compliance & Governance Officer",
-      "deferred_rationale": "72h SLA breached (~26h past due when reviewed); genuine live-production sample still structurally blocked in this execution environment (no DATABASE_URL, no ANTHROPIC_API_KEY \u2014 re-confirmed). Cannot mark Resolved without fabricating evidence. Cannot mark Accepted Risk \u2014 Strategy-boundary trigger type is barred from that disposition per shared_standards.md \u00a74.",
+      "deferred_rationale": "72h SLA breached (~26h past due when reviewed); genuine live-production sample still structurally blocked in this execution environment (no DATABASE_URL, no ANTHROPIC_API_KEY — re-confirmed). Cannot mark Resolved without fabricating evidence. Cannot mark Accepted Risk — Strategy-boundary trigger type is barred from that disposition per shared_standards.md §4.",
       "deferred_trigger": "Re-acknowledge once BLG-AI-06 (generation-time sampling hook) ships and a genuine sample can be drawn, or sooner if production credentials become available in an execution session.",
-      "resolution_summary": "Deferred, not Resolved \u2014 see docs/ops/ai_output_boundary_sample_audit_20260910.md Addendum (2026-09-14) and claude/backlog/backlog.md BLG-GOV-178/BLG-AI-06."
+      "resolution_summary": "Deferred, not Resolved — see docs/ops/ai_output_boundary_sample_audit_20260910.md Addendum (2026-09-14) and claude/backlog/backlog.md BLG-GOV-178/BLG-AI-06."
     }
   },
-  "last_rebalance_cycle": "2026-09-28__scheduled",
-  "last_rebalance_utc": "2026-09-28T09:13:51Z",
-  "last_scheduled_rebalance_utc": "2026-09-28T09:13:51Z",
+  "last_rebalance_cycle": "2026-09-30__scheduled",
+  "last_rebalance_utc": "2026-09-30T16:11:50Z",
+  "last_scheduled_rebalance_utc": "2026-09-30T16:11:50Z",
   "last_ideas_housekeeping_utc": "2026-09-30T14:44:46Z",
   "last_ideas_housekeeping_outcome": "7 rows archived (window IW-20260928-01: 7 Promoted-Backlog, including re-evaluated IDEA-data-model-20260919-02); 2 rows kept (IDEA-challenger-20260809-02 Rejected-but-strong, IDEA-director-of-hr-20260919-02 Parked-cycle-2); rejected_but_strong.md revival review: all 4 open entries remain Unmet -- IDEA-strategy-owner-20260304-02/IDEA-challenger-20260304-01 (strategy_rules.md section12.2 100-closed-trades-since-2026-09-23 threshold, no new evidence this cycle); IDEA-ai-compliance-20260321-01 (no substantial governance-decision-volume increase beyond normal cycle load); IDEA-challenger-20260809-02 (SI-02 gate data untouched this cycle) -- no revival action required; pipeline health: 180 active backlog items (post-groom), well above 5-item threshold, no action required",
-  "last_rebalance_outcome": "Standard tier; CPS=N/A (0 active initiatives, unchanged since 2026-04-03, 14 consecutive scheduled cycles) - no-change decision, DL-081; Product Value Ratio 0.089 (U=14/G=36/D=104/P=4 of 158, window v9.3-v9.7) - 4th consecutive Alert-tier reading, improved from 0.046 low - PO Modify (reaffirmed): next plan release must again seat >=1-2 build-and-ship U-items; Skill-Silo Alert rolling-3-cycle avg=85.7% (v9.5/v9.6/v9.7) - 1st improving reading after 5 consecutive worsening, no mandatory pull-forward re-triggered; STEP 7.2 max role share 12.4% (Infrastructure & Operations Owner, raw-tally method), no advisory; STEP 7.3 not re-measured (no plan release since last reading), carried forward; STEP 3.1 date-lapse re-check found 11 gated items lapsed, 8 tracing to one overdue 90-day AI-review cluster (BLG-GOV-74/140/141/142 + BLG-FEAT-59/60/63/BLG-FE-84/BLG-OPS-88) - BLG-GOV-351 filed; idea intake window IW-20260928-01 (2 open ideas carried, 6 new submissions from a disclosed 3-of-22-agent reduced-scope window): 6 Promoted-Backlog (ungated) + 1 re-evaluated parked idea Promoted-Backlog (BLG-SPEC-150 gate cleared), 1 re-parked cycle 2; STEP 8.0 found 0 qualifying P0/P1 items (13 scanned); STEP 8.1 Option (b) defer (7th consecutive); STEP 8.1.5 \u00a713-adjacent expiry re-surfaced, standing PO disposition reconfirmed; meta-review not due (2 of 3)",
-  "last_rebalance_pvr": 0.089,
-  "last_skill_silo_rolling_avg": 0.857,
+  "last_rebalance_outcome": "Standard tier; CPS=N/A (0 active initiatives, unchanged since 2026-04-03, 15 consecutive scheduled cycles) - no-change decision, DL-082; Product Value Ratio 0.094 (U=16/G=41/D=109/P=4 of 170, window v9.4-v9.8) - 5th consecutive Alert-tier reading, marginal improvement - PO Modify: BLG-BE-135/BLG-FE-193 (ATR consolidation + stop-loss transparency, from IW-20260930-01) named as the recommended next-release build-and-ship U-item candidate - first concrete candidate found in several cycles; Skill-Silo Alert rolling-3-cycle avg=83.7% (v9.6/v9.7/v9.8) - 2nd consecutive improving reading, no mandatory pull-forward; STEP 7.2 max role share 17.6% (Head of Specs Team, canonical compute_role_share_history.py method), no advisory; STEP 7.3 not re-measured (no plan release since last reading), carried forward; STEP 3.1 date-lapse re-check found 12 gated items lapsed (2 false positives excluded), 8 tracing to the already-tracked BLG-GOV-351 AI-review cluster; new BLG-GOV-358 §13-boundary finding filed (gap_risk_service.py/BLG-FEAT-65 has no recorded §13 review, apparently contradicts §13.3's exclusion text); idea intake window IW-20260930-01 (run standalone pre-run, 4 submissions from a disclosed 2-of-22-agent reduced-scope window): consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional); IDEA-director-of-hr-20260919-02 reached 3-cycle park hard cap, resolved Backlog (ungated) -> BLG-GOV-357; STEP 8.0 found 0 qualifying P0/P1 items (13 scanned); STEP 8.1 Option (b) defer (8th consecutive); STEP 8.1.5 standing §13-adjacent finding reconfirmed, no re-litigation; STEP 11.4 meta-review DUE and actioned (2 candidate patterns reviewed, both deferred with recorded rationale); 1 action-now prompt patch (roadmap_prompt.md v9.26->v9.27, STEP -1.6 standalone pre-run exception, from live session friction, not from the meta-review itself)",
+  "last_rebalance_pvr": 0.094,
+  "last_skill_silo_rolling_avg": 0.837,
   "last_rebalance_cps": 0,
-  "last_meta_review_cycle": "2026-09-14__scheduled",
-  "rebalance_cycles_since_meta_review": 1,
+  "last_meta_review_cycle": "2026-09-30__scheduled",
+  "rebalance_cycles_since_meta_review": 0,
   "last_manage_roadmap_utc": "2026-09-30T14:38:17Z",
   "last_manage_roadmap_outcome": "0 items retired (v9.8 was pure backlog-slice debt clearance, no §3-§7 roadmap item completed), 0 flagged stale, 0 ambiguous; 0 RA: markers pruned (1 already-retired non-numeric pointer, exempt); governance version-table audit DUE and run (invocation 3 of 3) - 0 mismatches across 22 tracked files, self-consistency PASS (v4.214/2026-09-30), 2 known untracked templates re-confirmed unchanged (decisions_record_template.md, scope_document_template.md); marker advanced to 2026-09-28__release-v9.8",
   "last_groom_backlog_utc": "2026-09-30T14:43:24Z",
@@ -225,10 +225,10 @@
     "ESC-20260304-01": {
       "cycle": "2026-03-04__release-v1.8",
       "summary": "Settings endpoint method decision resolved",
-      "resolution": "Option (a) \u2014 update settings_endpoints.md to document PATCH /settings/{settings_id} and POST /settings as canonical. No backend change. No decision record required.",
+      "resolution": "Option (a) — update settings_endpoints.md to document PATCH /settings/{settings_id} and POST /settings as canonical. No backend change. No decision record required.",
       "resolved_by": "Product Owner",
       "resolved_utc": "2026-03-04T00:25:00Z",
-      "formal_capture": "Sprint Planning cycle \u2014 ST-09 acceptance criteria update"
+      "formal_capture": "Sprint Planning cycle — ST-09 acceptance criteria update"
     }
   },
   "release_plan": {

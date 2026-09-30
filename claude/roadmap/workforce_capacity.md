@@ -795,3 +795,21 @@ Both approved candidates (`BLG-FEAT-52` ungated/descoped, new `BLG-FEAT-71`) are
 **Sprint capacity:** Not re-evaluated this cycle; held unchanged at ~24–28 working-day-equivalent units (per the 2026-09-23 Sprint Capacity Band Utilisation Review above).
 
 **Workforce constraints:** None new.
+
+---
+
+## Rebalance 2026-09-30__scheduled
+
+**Skill-Silo Alert (STEP 7.1):** rolling-3-cycle avg **83.7%** (v9.6 75.0%, v9.7 82.1%, v9.8 94.9%) — >40% ceiling, but the **2nd consecutive improving reading** (prior: 85.7%). Mandatory ≥2-item pull-forward clause **not triggered**. Advisory-only pull-forward scan named `BLG-BE-135`/`BLG-FE-193` (ATR consolidation + stop-loss transparency, filed this cycle) as the recommended candidate for the next `plan release`.
+
+**Cross-Role Workload Balance (STEP 7.2):** recomputed via the canonical `scripts/compute_role_share_history.py` raw-tally method (`BLG-GOV-353`; Owner-canonicalisation patch still not landed — 3rd carry, condition-gated). Window v9.6–v9.8, 102 pooled stories: Head of Specs Team highest at **17.6%** (18/102), then Director of Quality 15.7%, Frontend Specifications & UX Documentation Owner 11.8%. Well below the 40% ceiling. **No advisory fires.**
+
+**Ready-Pool Capacity Gap Trend (STEP 7.3):** not re-measured this cycle — no `plan release` has run since the last reading (v9.5: 43.79 d, streak broken). Carried forward unchanged; checkpoint remains a 2nd consecutive widening reading (at the next `plan release`) still below the 3-consecutive mandatory-decision threshold.
+
+**Product Value Ratio (STEP 2.4):** 0.094 🔴 Alert (window v9.4–v9.8, U=16/G=41/D=109/P=4/170) — 5th consecutive Alert-tier reading, marginal further improvement. PO response: **Modify** — `BLG-BE-135`/`BLG-FE-193` named as the recommended next-release build-and-ship U-item candidate. See `product_value_ratio_history.md`.
+
+**v9.9+ capacity outlook:** Now horizon empty (STEP 8.1 Option (b), 8th consecutive firing). Next `plan release`: (1) read the 12-item date-lapse list (`BLG-FEAT-55/59/60/62/63`, `BLG-FE-84`, `BLG-OPS-88`, `BLG-GOV-121/140/141/142`, `BLG-SPEC-65`) before fixing the ready pool; (2) `BLG-BE-135`/`BLG-FE-193` — the cycle's strongest ungated/gate-conditional-on-sibling build-and-ship U-item pair, directly answering a live user-reported trust issue — should be seriously weighed for the mandatory U-item seat (subject to Release Planning's own LP-05/live-status re-verification); (3) `BLG-GOV-357`/`BLG-GOV-358` also newly available (governance-process and §13-boundary-determination items respectively, not build-and-ship).
+
+**Sprint capacity:** Not re-evaluated this cycle; held unchanged at ~24–28 working-day-equivalent units (per the 2026-09-23 Sprint Capacity Band Utilisation Review above).
+
+**Workforce constraints:** None new.

@@ -5,8 +5,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 STEP 12.6 — 1 new item added: BLG-GOV-356, 90-day AI feature usage review still 6 days overdue, 8 downstream gated items named); prior — 2026-09-30 (groom backlog post-ship closure 2026-09-28__release-v9.8 — 40 items archived (39 v9.8 shipped + BLG-QA-198, resolved in-session); 1 ephemeral Release Slice section removed; 2 field-completeness gaps corrected (BLG-QA-196/199 Provisional-Target); 0 gate/effort/duplicate issues found); prior — 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 STEP 3 — 39 shipped items marked ✅ COMPLETE, cycle-tagged); prior history retained — see prior entries in version control (includes EPIC-05's own 2026-09-29 additions: BLG-SPEC-175/176, BLG-OPS-172/173/174, BLG-API-06, merged to main via PR #1847).
-**Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
+**Last Updated:** 2026-09-30 (roadmap rebalance 2026-09-30__scheduled — 4 new items added: BLG-BE-135/BLG-FE-193 (consolidated from IW-20260930-01, ATR consolidation + stop-loss transparency), BLG-GOV-357 (sign-off SPOF matrix, 3-cycle park cap), BLG-GOV-358 (§13-boundary gap-risk finding); 12 items reclassified A (date-lapsed — verify) at STEP 3.1); prior — 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 STEP 12.6 — 1 new item added: BLG-GOV-356, 90-day AI feature usage review still 6 days overdue, 8 downstream gated items named); prior — 2026-09-30 (groom backlog post-ship closure 2026-09-28__release-v9.8 — 40 items archived (39 v9.8 shipped + BLG-QA-198, resolved in-session); 1 ephemeral Release Slice section removed; 2 field-completeness gaps corrected (BLG-QA-196/199 Provisional-Target); 0 gate/effort/duplicate issues found); prior history retained — see prior entries in version control (includes EPIC-05's own 2026-09-29 additions: BLG-SPEC-175/176, BLG-OPS-172/173/174, BLG-API-06, merged to main via PR #1847).
+**Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -3637,6 +3637,30 @@ In `src/components/dashboard/widgets/RecentTradesWidget.js` (line 36-38), the tr
 
 ---
 
+### BLG-FE-193 — Stop-loss cell ATR/multiplier/recalculation-source display; live-event explainer tooltip
+**Priority:** P2 (High)
+**Type:** Frontend / UX Trust & Transparency
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** `IDEA-head-of-ux-20260930-01`, `IDEA-head-of-ux-20260930-02` (consolidated, `IW-20260930-01`), roadmap rebalance `2026-09-30__scheduled`
+**Gate criteria:** `BLG-BE-135`'s `atr`/active-multiplier/`stop_calculated_at` fields shipped and available on `GET /positions`
+**Effort:** M (~4-6 days)
+**Provisional-Target:** TBD
+
+**Problem**
+User-reported loss of confidence in the displayed stop-loss for open positions: the stop-loss cell (`src/pages/Positions.js`, `PositionCard.js`) shows only the final Init/Trailing prices — no ATR, no multiplier, no source event — so the user cannot independently verify a displayed stop. `strategy_rules.md` §5 (Initial stop calculation) states its purpose is "to make downside risk visible... to reduce reactive decision-making"; a stop the user cannot verify produces the opposite effect. Separately, `TrailingStopExplainerIcon.js`'s tooltip states "ATR is recalculated daily (14-day period)," but the live system recalculates on every `GET /positions` page load as well as nightly — the copy is a hardcoded claim, not a reflection of what actually happened for the row it sits next to, undermining `strategy_rules.md` §3's "decision support only" trust model independent of whether the underlying number is correct.
+
+**Scope**
+- Add ATR value, the active multiplier (2× profitable / 5× losing, per §7.2), and a recalculation source line to the stop-loss cell/tooltip, checkable against the §5/§7.2 formula without leaving the page
+- Source the explainer tooltip copy from the row's actual last-recalculation event/timestamp (e.g. "Recalculated when you opened this page at 09:14" / "Recalculated by the nightly job at 22:30 UTC") instead of a hardcoded cadence claim
+- A first increment (removing the false "daily" claim from the tooltip) may ship independently if full live-event sourcing is not yet available
+
+**Acceptance Criteria**
+- Stop-loss cell/tooltip displays ATR value, active multiplier, and calculation source, checkable against the documented formula without leaving the page
+- Explainer tooltip copy reflects the actual last-recalculation event (on-load timestamp or nightly-job timestamp) rather than a hardcoded "daily" claim
+- Depends on `BLG-BE-135` shipping first — do not begin implementation until the backend fields are available on `GET /positions`
+
+---
+
 ### BLG-GOV-350 — Five near-duplicate "AI adoption window" gate-criteria texts should be one canonical shared reference
 **Priority:** P3 (Low)
 **Type:** Governance Process
@@ -3817,6 +3841,31 @@ ST-17 (BLG-OPS-169) added a stale-deploy check to `staging-smoke-test.yml` (comp
 
 **Acceptance Criteria**
 - All 3 Alpaca call sites in `alpaca_paper_sync_service.py` source their timeout from `get_timeout("alpaca")`; no behaviour change to existing sync/retry logic
+
+---
+
+### BLG-BE-135 — Consolidate 4 duplicate ATR implementations; persist stop/ATR recalculation timestamp; expose atr/multiplier/timestamp on GET /positions
+**Priority:** P2 (High)
+**Type:** Backend / Data Integrity
+**Owner:** Backend Engineering Patterns Owner; Head of Engineering
+**Source:** `IDEA-head-of-engineering-20260930-01`, `IDEA-head-of-engineering-20260930-02` (consolidated, `IW-20260930-01`), roadmap rebalance `2026-09-30__scheduled`
+**Effort:** L (~6-10 days)
+**Provisional-Target:** TBD
+
+**Problem**
+ATR is independently implemented in at least 4 places (`backend/utils/pricing.py::calculate_atr`, `backend/services/strategy_engine.py::compute_atr`, `backend/services/screener_engine.py::compute_atr`, `backend/database.py::compute_atr_simple`), plus a 5th, unwired dead copy in `backend/position_manager.py` never imported by `main.py` or any live service — if these diverge, exposing a raw ATR value in the UI (`BLG-FE-193`) would surface the inconsistency directly to the user rather than resolving it. Separately, no `atr_calculated_at`/`stop_calculated_at` column or field exists anywhere in the system, though a refresh-on-login (`position_service.py::get_positions_with_prices`, recalculated on every `GET /positions`) and a nightly backstop (`.github/workflows/nightly-stop-update.yml`) both already exist in code — neither is visible or timestamped anywhere the user can see. `strategy_rules.md` §7.1 states "ATR is recalculated daily," while `position_endpoints.md` line 147 documents the stop as "always present and non-zero after the first nightly update" — both describe a nightly-only cadence that doesn't match the actual on-load + nightly behaviour. `strategy_rules.md` §12.3 requires strategy parameters "applied consistently across backtests, live logic, and documentation" — §12.3 already carries one documented, tested exception for `position_manager.py`'s backtest path (the breakeven-floor divergence, v9.5); a second, undocumented divergence source (independent ATR math) in the same file is a materially different, unaccepted risk.
+
+**Scope**
+- Designate one canonical ATR implementation (the live-path function backing `calculate_trailing_stop`'s callers); have the other live call sites use it; remove the dead `position_manager.py` copy, or explicitly document why it is exempt if intentionally kept as a standalone backtest tool
+- Add a `stop_calculated_at` (and reuse for `atr`) timestamp column, written alongside `current_stop`/`atr` in both the on-load recompute path and the nightly job
+- Expose `atr`, the active multiplier, and the timestamp on `GET /positions`; document in `position_endpoints.md` + `openapi.yaml` in the same commit
+- Raise a mid-implementation spec query (per Head of Engineering charter) to the Strategy Rules & System Intent Owner: either `strategy_rules.md` §7.1 and `position_endpoints.md` are updated to describe the actual on-load + nightly cadence, or the implementation is deliberately constrained to nightly-only recompute to match the documented "daily" cadence — this is a spec decision, not an engineering judgment call
+
+**Acceptance Criteria**
+- ATR implementation count reduced from 4 (5 including dead code) to 1 canonical source across `backend/utils/pricing.py`, `strategy_engine.py`, `screener_engine.py`, `database.py`; `position_manager.py`'s dead copy removed or explicitly documented as an exempt standalone tool
+- `stop_calculated_at`/`atr_calculated_at` persisted alongside `current_stop`/`atr` in both the on-load recompute path and the nightly job
+- `atr`, active multiplier, and the timestamp exposed on `GET /positions` and documented in `position_endpoints.md` + `openapi.yaml` (same commit)
+- Spec query raised and resolved; `strategy_rules.md` §7.1 and `position_endpoints.md` updated to reflect the actual recompute cadence (or engineering constrained to match the documented cadence, per the Owner's ruling)
 
 ---
 
@@ -4061,6 +4110,50 @@ ST-21 extended `scripts/check_contract_example_freshness.py` to validate documen
 **Acceptance Criteria**
 - A dated review artefact exists assessing AI feature adoption rate, cost per use, and continued-investment justification
 - All 8 downstream gated items listed above have an explicit disposition recorded against this review's finding
+
+---
+
+### BLG-GOV-357 — Sign-off single-point-of-failure matrix (per governance gate, which roles can sign)
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Director of HR
+**Source:** `IDEA-director-of-hr-20260919-02` (3-cycle park hard cap reached, resolved to terminal disposition), roadmap rebalance `2026-09-30__scheduled`
+**Effort:** S (~1-2 days)
+**Provisional-Target:** TBD
+
+**Problem**
+No document currently maps which roles are authorised to sign off each governance gate across this system's routines, or flags where a single agent-mediated role is the sole signer for a given gate — a concentration risk that would be invisible without deliberately enumerating it. Originally submitted 2026-09-19, parked twice (rationale: `BLG-GOV-335`/`337`'s signer-topology effect not yet observable with only 2 sprints of post-ruling data) and reached the 3-cycle park hard cap this cycle, at which point re-parking is no longer a valid outcome per `roadmap_prompt.md §4.5`.
+
+**Scope**
+- Enumerate the governance gates across all governed routines (roadmap, release planning, sprint planning, sprint execution, delivery verification, post-ship closure) and the role(s) authorised to sign each, per each routine's own prompt file
+- Flag any gate where only one agent-mediated role can sign, as a concentration risk worth Product Owner/Director of HR awareness
+- A follow-up note on whether concentration is an observed live risk (the originally-deferred question) may be added once more sprints of `BLG-GOV-335`/`337`-era data accrue — the matrix's existence does not depend on that data being available yet
+
+**Acceptance Criteria**
+- A published matrix (governance gate × authorised signer role(s)) exists in an appropriate location (e.g. `docs/ops/` or `claude/roadmap/`)
+- Gates with a sole authorised signer are explicitly flagged in the matrix
+
+---
+
+### BLG-GOV-358 — gap_risk_service.py (BLG-FEAT-65) shipped without a recorded §13 review or §13.5 roster row; apparently contradicts §13.3's exclusion text
+**Priority:** P2 (High)
+**Type:** Governance Process / Strategy Boundary
+**Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
+**Source:** STEP 8.1.5 finding, roadmap rebalance `2026-09-30__scheduled` (surfaced via `window_summary_IW-20260930-01.md`'s out-of-scope note)
+**Effort:** S (~1-2 days)
+**Provisional-Target:** TBD
+
+**Problem**
+`strategy_rules.md` §13.3 states: "Gap risk monitoring is excluded by design because the system operates on a daily decision cadence and cannot act on gaps at the moment they occur. Exposing a gap risk metric would increase noise without enabling a decision." Yet `backend/services/gap_risk_service.py` and its `GapRiskBadge`/`GapRiskCardBadge` UI components are live and shipped (`BLG-FEAT-65`, v6.9). Confirmed this cycle: `docs/product/decisions/decisions--2026-07-10__release-v6.9.md` (the feature's own ship decision record) contains no §13 reference at all, and the feature does not appear on `strategy_rules.md` §13.5's semi-annual re-attestation roster table. This is a genuine live-vs-canonical-spec boundary question, not a housekeeping gap.
+
+**Scope**
+- Strategy Rules & System Intent Owner determines whether the shipped badge (a static per-position display flag, not an active notification/alerting mechanism) falls within or outside §13.3's stated exclusion
+- If in-scope: retroactively conduct a §13 review and add the feature to the §13.5 roster (with any binding conditions the review finds necessary)
+- If out-of-scope: record why a passive display flag differs from the "gap risk metric" §13.3's exclusion contemplates, narrowing/clarifying §13.3's wording if the distinction is not already clear from its text
+
+**Acceptance Criteria**
+- A dated determination is recorded (new `docs/product/decisions/` file, or a `strategy_rules.md` §13.3/§13.5 wording update, as appropriate to the outcome)
+- If the determination is CONDITIONAL or finds a genuine gap, binding conditions or a remediation item are filed
 
 ---
 

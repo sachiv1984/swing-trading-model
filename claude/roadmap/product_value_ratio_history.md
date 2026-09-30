@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-09-28 (roadmap rebalance 2026-09-28__scheduled — appended row for DL-081, refreshed sparkline (0.089, min/max unchanged)); prior — 2026-09-19 (roadmap rebalance 2026-09-19__scheduled — appended row for DL-080, refreshed sparkline (rescaled: new min 0.046)); prior — 2026-09-14 (roadmap rebalance 2026-09-14__scheduled — appended row for DL-079, refreshed sparkline, new min 0.092); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-30 (roadmap rebalance 2026-09-30__scheduled — appended row for DL-082, refreshed sparkline (0.094, min/max unchanged)); prior — 2026-09-28 (roadmap rebalance 2026-09-28__scheduled — appended row for DL-081, refreshed sparkline (0.089, min/max unchanged)); prior — 2026-09-19 (roadmap rebalance 2026-09-19__scheduled — appended row for DL-080, refreshed sparkline (rescaled: new min 0.046)); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-22 (BLG-FEAT-72, EPIC-06, v8.5)
 
@@ -19,7 +19,7 @@ This file is the structured, durable record going forward: one row per rebalance
 ## Sparkline (all readings, chronological, ▁=0.046 min · █=0.42 max recorded)
 
 ```
-▇▇▇▆▆▅▄▄▆▆▅▇██▇▂▂▁▂
+▇▇▇▆▆▅▄▄▆▆▅▇██▇▂▂▁▂▂
 ```
 
 ## History
@@ -45,6 +45,7 @@ This file is the structured, durable record going forward: one row per rebalance
 | 2026-09-14__scheduled | 2026-09-14 | 0.092 | 🔴 Alert (2nd consecutive Alert-tier reading, new low) | 16 | 48 | 110 | 0 | 174 | v8.9-v9.3 | DL-079 |
 | 2026-09-19__scheduled | 2026-09-19 | 0.046 | 🔴 Alert (3rd consecutive Alert-tier reading, new low) | 9 | 60 | 122 | 4 | 195 | v9.1-v9.5 | DL-080 |
 | 2026-09-28__scheduled | 2026-09-28 | 0.089 | 🔴 Alert (4th consecutive Alert-tier reading, improved from prior low) | 14 | 36 | 104 | 4 | 158 | v9.3-v9.7 | DL-081 |
+| 2026-09-30__scheduled | 2026-09-30 | 0.094 | 🔴 Alert (5th consecutive Alert-tier reading, marginal further improvement) | 16 | 41 | 109 | 4 | 170 | v9.4-v9.8 | DL-082 |
 
 **Consecutive Advisory-tier streak (broken 2026-08-11):** The prior 3-reading Advisory streak (2026-07-24, 2026-07-27, 2026-07-28) ended this reading — not because it improved to Healthy, but because it dropped through Advisory straight into 🔴 Alert. Per `roadmap_prompt.md` STEP 2.4's Alert-tier rule (stronger than the sustained-Advisory clause), this reading independently mandates a pull-forward with explicit PO written response — see `cycle_record.md` 2026-08-11__scheduled STEP 2.4/STEP 7.1 for the combined response (this reading's root cause is the same one driving the concurrent Skill-Silo mandatory-pull-forward trigger).
 
@@ -54,7 +55,9 @@ This file is the structured, durable record going forward: one row per rebalance
 
 **4th consecutive Alert-tier reading, but the first improvement since the Alert began (2026-09-28):** 0.089 (window v9.3-v9.7, U=14/G=36/D=104/P=4 of 158) — up from the 0.046 low, roughly double, because the prior reading's own commitment actually landed: v9.6 shipped 8 U-stories and v9.7 shipped 5 more (13 of the 14 U-stories in this window), directly reflecting the `BLG-FEAT-96`/`97`/`98` pull-forward plus v9.7's own build-and-ship EPICs. Still below the 0.30 floor, so the Alert-tier mandatory-response rule still applies; PO response **Modify** (reaffirmed) — the next `plan release` must again seat ≥1-2 build-and-ship U-items, with no specific item named yet since no release is currently being scoped (Now horizon empty). See `cycle_record.md` 2026-09-28__scheduled STEP 2.4.
 
-**Most recent scheduled rebalance:** 2026-09-28__scheduled — this history is current as of that run.
+**5th consecutive Alert-tier reading, marginal further improvement (2026-09-30):** 0.094 (window v9.4-v9.8, U=16/G=41/D=109/P=4 of 170) — up slightly from 0.089, effectively flat: v9.8 itself shipped only 2 U-classified stories (an all-debt-clearance release), so the window's continued slow rise is now mostly carried by v9.6/v9.7 remaining inside it rather than fresh U-item supply. Still below the 0.30 floor; PO response **Modify**, this time with a concrete, well-specified candidate named — `BLG-BE-135`/`BLG-FE-193` (ATR calculation consolidation + stop-loss transparency), filed this cycle from `IW-20260930-01`, directly answering a live user-reported trust issue. Recommended (not force-selected) for the next `plan release`'s mandatory U-item seat. See `cycle_record.md` 2026-09-30__scheduled STEP 2.4.
+
+**Most recent scheduled rebalance:** 2026-09-30__scheduled — this history is current as of that run.
 
 ## Backfill Method
 
