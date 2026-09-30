@@ -1,9 +1,37 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.49
-**Last Updated:** 2026-09-25 (delivery verification 2026-09-23__release-v9.7 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation); prior — 2026-09-25 (sprint close 2026-09-23__release-v9.7 — new Sprint section added); prior — 2026-09-23 (delivery verification 2026-09-21__release-v9.6 — status line updated Sprint_Complete → Verified_with_deviations; Deviations column and Verification-inputs Deviations/Test-scenarios lists corrected to reflect BLG-BE-127/BLG-BE-128/DEV-EPIC05-ST21-01 and the EPIC-03/EPIC-05 test files, STEP 6 reconciliation); prior history retained — see prior entries in version control.
+**Version:** 4.50
+**Last Updated:** 2026-09-30 (sprint close 2026-09-28__release-v9.8 — new Sprint section added); prior — 2026-09-25 (delivery verification 2026-09-23__release-v9.7 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation); prior — 2026-09-25 (sprint close 2026-09-23__release-v9.7 — new Sprint section added); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-09-28__release-v9.8
+**Date:** 2026-09-30
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Frontend/UX debt clearance: remaining `toFixed`/`toLocaleString` call sites migrated to the shared formatting helper (ST-01); Screener/Watchlist table cells driven from shared column definitions (ST-02); Tax Year restated-months notice links to months the Monthly tab actually shows (ST-03); SystemStatus.js `/replay` categorisation (ST-04); responsive-table behaviour spec correction for Positions/TradeHistory/TradePlans (ST-05); canonical keyboard-shortcut inventory spec (ST-06) | `design_system.md#Number and Currency Formatting`; `reports.md#Monthly Financial Table Tax Year Filter`; `positions.md`/`trade_history.md`/`trade_plan.md#Responsive Behavior`; `navigation.md#Canonical Inventory` | None |
+| EPIC-02 | Remaining ad hoc timeout/retry call sites migrated to the shared upstream-call helper (ST-07); v9.7 float→Decimal fee-rounding audit extended to tax-year statement calculations (ST-08) | `backend/utils/upstream_call.py`; `docs/ops/money_arithmetic_audit_tax_year_2026-09-29.md` | None |
+| EPIC-03 | Golden-fixture CI regression for AI prompt templates (ST-09); end-to-end root-logger JSON-output test (ST-10); Playwright duration-assertion coverage for toast call sites (ST-11); motion-timing regression coverage (ST-12); escaped-defect/follow-on-ratio tracker (ST-13); DoQ checklist addendum for AI-touching stories (ST-14); mutation-testing pilot on sizing calculator/stop ratchet (ST-15); Playwright trace/screenshot retain-on-failure (ST-16) | `strategy_rules.md#13.2`; `structured_logging_standards.md`; `design_system.md`; `docs/testing/escaped_defect_and_follow_on_ratio_tracker.md`; `docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md` | None |
+| EPIC-04 | Staging-redeploy-miss detection via `deployed_commit_sha` on `GET /health/detailed` + extended `staging-smoke-test.yml` (ST-17); pre-approved read-only staging-DB query-pattern allow-list (ST-18); hardened non-registry dependency guard (ST-19) | `health_endpoints.md`; `docs/ops/staging_deploy_notes.md#7`; `docs/infrastructure/staging_setup.md#8`; `scripts/check_non_registry_dependencies.py` | `BLG-OPS-171` (ST-17, staging-only evidence deferred) |
+| EPIC-05 | Idempotency/double-submit documentation for all 64 mutating endpoints (ST-20); error-payload examples for the 10 most-called endpoints (ST-21); field-level openapi.yaml authoring for 20 thin schemas (ST-22); trade-plans response schemas (ST-23); `trade_plans` CHECK constraint documentation (ST-24); `ai_journal` oneOf modelling (ST-25); screener_results.md Earnings column fix (ST-26); trade_reflection.md em-dash fix — pre-met (ST-27); sprint velocity trend-chart non-adjacent-reading fix (ST-28); IT-06 §13 review reconciled with mirror-write paper sync (ST-29) | 13 `docs/specs/api_contracts/*.md` files; `docs/reference/openapi.yaml`; `docs/specs/data_model.md`; `docs/specs/frontend/pages/screener_results.md`/`trade_reflection.md`; `decisions--2026-05-15__release-v3.5--IT-06-section13-review.md` | None |
+| EPIC-06 | Base44 prompt template accessible-name/heading-order rules (ST-30); PVR/Skill-Silo measurement package (ST-31); delivery lead-time/ready-pool runway metrics (ST-32); role-share tally history backfill — interim location (ST-33); JSON Schema for `.claude_current_state.json` (ST-34); story-class effort calibration check (ST-35); strategy_rules.md §13.5 PO-05 roster row (ST-36); `governance_sync.yml` phased-story issue auto-close (ST-37); 90-day AI feature usage review trigger (ST-38); PO-04 §13 boundary cross-reference (ST-39) | `base44_prompt_template_library.md`; `metrics_definitions.md` Appendix F; `state_schema.json`; `release_planning_prompt.md`; `strategy_rules.md`; `governance_sync_lib.sh`; `post_ship_closure.md` | `BLG-GOV-355` (ST-31), `BLG-GOV-353` (ST-33, both canonical `claude/roadmap/*` placement deferred — write-scope) |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| None | All 39 scoped items delivered within the sprint | — |
+
+### Verification inputs ready
+- QA evidence logs: `qa_evidence_EPIC-01.md`, `qa_evidence_EPIC-02.md`, `qa_evidence_EPIC-03.md`, `qa_evidence_EPIC-04.md`, `qa_evidence_EPIC-05.md`, `qa_evidence_EPIC-06.md`
+- Deviations filed: None (canonical spec deviations) — `BLG-OPS-171`, `BLG-GOV-353`, `BLG-GOV-355` are backlog follow-ups for disclosed, non-blocking write-scope/staging-evidence deferrals, not spec deviations
+- Test scenarios referenced: `tests/e2e/st01-v98-formatting-migration.spec.js`, `tests/e2e/screener*.spec.js`, `tests/e2e/watchlist*.spec.js`, `tests/e2e/tax-year-restated-notice-year-scoped-link.spec.js`, `tests/test_monthly_pnl_tax_year_filter.py`, `tests/e2e/system-status.spec.js`, `tests/test_upstream_call_helper.py`, `tests/test_tax_year_statement_rounding_audit.py`, `tests/test_ai_prompt_template_golden_fixtures.py`, `tests/test_root_logging_json_output_e2e.py`, `tests/test_toast_notification_timing_regression.py`, `tests/test_motion_timing_500ms_ceiling_regression.py`, `tests/test_escaped_defect_follow_on_ratio_tracker.py`, `tests/test_non_registry_dependency_check.py`, `tests/test_health_response_schema.py`, `tests/test_staging_smoke_test.py`, `scripts/test_governance_sync_phased_story_logic.sh`
 
 ---
 
