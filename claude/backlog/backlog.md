@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-30 (session — 1 new item added: BLG-GOV-355, from ST-31/EPIC-06 write-scope escalation); prior — 2026-09-30 (session — 2 new items added: BLG-GOV-353, BLG-GOV-354, from ST-33/EPIC-06 write-scope escalation and a stale-pointer finding); prior — 2026-09-29 (session — 1 new item added: BLG-SEC-40, from agent-mediated review of PR #1846); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-30 (session — 1 new item added: BLG-SPEC-177, from agent-mediated review of PR #1847); prior — 2026-09-30 (session — 1 new item added: BLG-GOV-355, from ST-31/EPIC-06 write-scope escalation); prior — 2026-09-30 (session — 2 new items added: BLG-GOV-353, BLG-GOV-354, from ST-33/EPIC-06 write-scope escalation and a stale-pointer finding); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4735,6 +4735,29 @@ ST-33's AC ("persist STEP 7.2 role-share tallies as a structured history file") 
 **Acceptance Criteria**
 - `product_value_ratio_history.md`'s `## History` table carries the effort-weighted PVR reading alongside the existing story-count PVR, backfilled for the same 5 windows already computed in `metrics_definitions.md` Appendix F
 - `roadmap_prompt.md` STEP 2.4 is updated to append both readings at future rebalances, contingent on `BLG-GOV-339`'s own required sign-off for any STEP 2.4 behaviour change
+
+---
+
+### BLG-SPEC-177 — openapi.yaml's new TradePlan schema declares the stale 3-value status enum
+**Priority:** P3 (Low)
+**Type:** Spec / API Contract
+**Owner:** API Contracts & Documentation Owner
+**Source:** PR #1847 agent-mediated review (Director of Quality finding), EPIC-05/ST-23, cycle 2026-09-28__release-v9.8 — 2026-09-30
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Note on numbering:** PR #1847 (EPIC-05, not yet merged) already claims `BLG-SPEC-175`/`176` on its own branch — this item is numbered `177` deliberately, ahead of what is visible on this branch's own `backlog.md`, to avoid a collision when the two branches merge (see CLAUDE.md §8's identical-text-masks-differing-semantics / cross-EPIC collision guidance). Confirm this number is still free at merge time.
+
+**Problem**
+`docs/reference/openapi.yaml`'s new `TradePlan` schema (added by ST-23, EPIC-05, v9.8, `BLG-SPEC-153`, referenced by `POST /trade-plans` 201) declares `status: { type: string, enum: [draft, active, closed] }` — the stale 3-value list. In the very same PR, ST-24 (`BLG-SPEC-154`) corrects `data_model.md`'s DS-04 CHECK constraint to the live 7-value list (`draft, research_pending, research_complete, entry_conditions_set, active, closed, abandoned`) and adds DS-21 documenting exactly this migration. The new schema directly contradicts its own PR-sibling's fix. Not a live bug today — `POST /trade-plans` always creates with `status="draft"` (confirmed in `backend/routers/trade_plans.py`) — but `TradePlan` is a general-purpose, reusable schema name; a future consumer reusing it for a GET response, a codegen client, or a contract test would be misled into thinking only 3 statuses are ever valid.
+
+**Scope**
+- Update `TradePlan.status`'s enum in `openapi.yaml` to the same 7-value list DS-21 documents
+- Confirm no example/test relies on the narrower 3-value assumption
+
+**Acceptance Criteria**
+- `TradePlan.status` enum matches `data_model.md` DS-04's live CHECK constraint exactly (7 values)
+- `scripts/check_openapi_drift.py` and `scripts/check_contract_example_freshness.py` both still pass
 
 ---
 
