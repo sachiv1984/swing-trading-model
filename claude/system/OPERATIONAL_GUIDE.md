@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.212
-**Last Updated:** 2026-09-30 (Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-34, BLG-GOV-342 — shared_standards.md v3.35→v3.36: new §24 `.claude_current_state.json` `last_updated_utc` Write Convention; §14 Shared Standards row updated to v3.36); prior — 2026-09-30 (Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-35, BLG-GOV-346 — release_planning_prompt.md v2.57→v2.58: STEP 4 gains a story-class effort calibration check; §6B source-prompt header and §14 Release Engine Source row updated to v2.58); prior — 2026-09-29 (Sprint execution `2026-09-28__release-v9.8` EPIC-03/ST-14, BLG-QA-183 — qa_evidence_template.md v1.16→v1.17: new AI-Touching Story Evidence Addendum recording prompt-template version and a boundary-language sample; §14 QA Evidence Template row updated; §14 self-row corrected from a found 1-version drift (stale at 4.208 despite the Change Log's own top row already reading 4.209) to 4.210, folding in both the missed correction and this entry's own +1 bump); prior history retained — see prior entries in version control.
+**Version:** 4.213
+**Last Updated:** 2026-09-30 (Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-38, BLG-GOV-351 — post_ship_closure.md v2.35→v2.36: new STEP 12.6, 90-Day AI Feature Usage Review Trigger Check; §10 source-prompt header and §14 Post-Ship Closure Engine row updated to v2.36); prior — 2026-09-30 (Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-34, BLG-GOV-342 — shared_standards.md v3.35→v3.36: new §24 `.claude_current_state.json` `last_updated_utc` Write Convention; §14 Shared Standards row updated to v3.36); prior — 2026-09-30 (Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-35, BLG-GOV-346 — release_planning_prompt.md v2.57→v2.58: STEP 4 gains a story-class effort calibration check; §6B source-prompt header and §14 Release Engine Source row updated to v2.58); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1063,7 +1063,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.35)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.36)
 **Process document:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); `claude/system/post_ship_closure.md` is the sole authority.
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1368,7 +1368,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.212 |
+| Version | 4.213 |
 | Last Updated | 2026-09-30 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.9 |
@@ -1385,7 +1385,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.17 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.12 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.35 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.36 |
 | Shared Standards | `claude/system/shared_standards.md` v3.36 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.15 |
@@ -1503,6 +1503,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.213 | 2026-09-30 | **Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-38 (BLG-GOV-351) — post_ship_closure.md v2.35→v2.36: new STEP 12.6, 90-Day AI Feature Usage Review Trigger Check.** §10 source prompt header v2.35→v2.36; §14 Post-Ship Closure Engine row v2.35→v2.36. §14 self-row `Version`/`Last Updated` 4.212/2026-09-30→4.213/2026-09-30. Change: runs on every cycle close alongside STEPs 11/12/12.5 — scans `claude/backlog/backlog.md` via `scripts/scan_backlog_gate_conditions.py` for a lapsed AI-feature-usage-review-shaped gate; if due, surfaces it in the Advisory Summary and files (or confirms already filed) a tracking backlog item. Trigger mechanism only, does not conduct the review. Resolves `BLG-GOV-351` (`BLG-FEAT-59/60/63`, `BLG-FE-84`, `BLG-OPS-88`, `BLG-GOV-140/141/142` cluster, found 4 days overdue with no trigger at `2026-09-28__scheduled`). Design decision (which routine owns the trigger) resolved in-session via AskUserQuestion, Head of Specs Team / PMO Lead. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-38, 2026-09-30). |
 | 4.212 | 2026-09-30 | **Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-34 (BLG-GOV-342) — shared_standards.md v3.35→v3.36: new §24 `.claude_current_state.json` `last_updated_utc` Write Convention.** §14 table: Shared Standards v3.35→v3.36. §14 self-row `Version`/`Last Updated` 4.211/2026-09-30→4.212/2026-09-30. Change: any engine writing `.claude_current_state.json` must set `last_updated_utc` to the real current UTC time in the same write, regardless of which other field(s) that write touches. Root cause: `roadmap_prompt.md` STEP -1.6's state-age advisory read this field, which did not exist, so it fired unconditionally on every run. Companion, non-governance-prompt artefacts added in the same commit: `claude/system/state_schema.json` (new structural JSON Schema, distinct from the existing `lifecycle_schema.json` state-machine definition), `scripts/validate_state_schema.py` (new validator), and a new `last_updated_utc` entry in `claude/schemas/state_field_owners.json`. `.claude_current_state.json` itself gained the field, set to this write's real timestamp. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-34, 2026-09-30). |
 | 4.211 | 2026-09-30 | **Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-35 (BLG-GOV-346) — release_planning_prompt.md v2.57→v2.58: STEP 4 gains a story-class effort calibration check.** §6B source prompt header v2.57→v2.58 (line 625); §14 Release Engine Source row v2.57→v2.58. §14 self-row `Version`/`Last Updated` 4.210/2026-09-29→4.211/2026-09-30. Change: STEP 4 (Backlog Slice commitment) now flags any candidate item whose scope contains a "grep-and-fix-everywhere" or "verify against a live/staging environment" pattern, defaulting its effort one tier higher (or requiring a confirmed expected file/case count before the estimate is locked). Origin: 3 stories in one sprint (`2026-09-21__release-v9.6` ST-17/ST-18/ST-21) each needed a mid-execution scope correction from this exact under-estimation pattern. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-35, 2026-09-30). |
 | 4.210 | 2026-09-29 | **Sprint execution `2026-09-28__release-v9.8` EPIC-03/ST-14 (BLG-QA-183) — qa_evidence_template.md v1.16→v1.17: AI-Touching Story Evidence Addendum.** §14 QA Evidence Template v1.16→v1.17. §14 self-row `Version`/`Last Updated` 4.208/2026-09-28→4.210/2026-09-29 (also corrects a found 1-version self-row drift: the immediately-prior 4.209 entry's own change text claimed the self-row was bumped to 4.209, but it was left at the stale 4.208 — corrected here alongside this entry's own +1 bump, same self-caught-drift pattern as the 4.157/4.163/4.96 precedents above). Change: new "AI-Touching Story Evidence Addendum" section requires an AI-touching story's evidence to record the prompt-template version and a boundary-language sample (`scan_prescriptive`/`scan_prediction` result), closing the gap where prior AI-touching stories (e.g. `BLG-AI-06`) reached DoQ sign-off with no standard, fixed place to record this. No separate phase-section source-prompt header exists for this template (confirmed against every prior `qa_evidence_template.md` Change Log entry — none reference one), so none was touched. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-14, 2026-09-29). |

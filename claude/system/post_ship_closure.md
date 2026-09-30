@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.35
-**Last Updated:** 2026-09-21 (governance-drift fix, Head of Specs Team direct action — header `Process Reference` line pointed at a file deleted 2026-03-13 and is replaced by a retirement note; no procedural change); prior — 2026-09-19 (post-ship closure `2026-09-15__release-v9.5` follow-up, Head of Specs Team direct action — STEP 0 Rebalance Cadence Check treats a `next_release` equal to the release being closed as unscoped, not as a fresh unconsumed release); prior — 2026-09-09 (post-ship closure 2026-09-07__release-v9.2 outstanding-actions resolution, Head of Specs Team direct action — STEP 6 Endpoint Coverage Drift Check gains a Markdown-formatting normalisation note (backticks/query-string stripping), LL-v9.2-P-Closure-01); prior history retained — see prior entries in version control.
+**Version:** 2.36
+**Last Updated:** 2026-09-30 (ST-38, EPIC-06, v9.8, BLG-GOV-351 — new STEP 12.6, 90-Day AI Feature Usage Review Trigger Check, runs on every cycle close alongside STEPs 11/12/12.5); prior — 2026-09-21 (governance-drift fix, Head of Specs Team direct action — header `Process Reference` line pointed at a file deleted 2026-03-13 and is replaced by a retirement note; no procedural change); prior — 2026-09-19 (post-ship closure `2026-09-15__release-v9.5` follow-up, Head of Specs Team direct action — STEP 0 Rebalance Cadence Check treats a `next_release` equal to the release being closed as unscoped, not as a fresh unconsumed release); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); this prompt is the sole authority for the Post-Ship Closure Engine.
@@ -718,6 +718,22 @@ This subroutine handles three tasks:
 The subroutine returns an advisory block for inclusion in the Advisory Summary. It does not commit — STEP 13 owns the commit.
 
 On completion: record subroutine outcome (rows archived, revival advisory, pipeline advisory) in closure_state.json `steps.step_12_5_ideas_housekeeping`.
+
+## STEP 12.6 — 90-Day AI Feature Usage Review Trigger Check (Mandatory, ST-38, BLG-GOV-351)
+
+**Purpose:** `BLG-FEAT-59/60/63`, `BLG-FE-84`, `BLG-OPS-88`, and `BLG-GOV-140/141/142` (and any future analogous cluster) each gate on a 90-day post-ship AI feature usage/cost review, expressed as free-text `Gate criteria` in `claude/backlog/backlog.md`. Before this step existed, nothing fired this review on its own schedule — it surfaced only reactively, when a roadmap rebalance's STEP 3.1 date-lapse scan happened to notice the gate text (found 4 days overdue at `2026-09-28__scheduled`, with no review artefact filed). This step runs on **every** cycle close, independent of that cycle's own scope, matching the existing always-run pattern of STEP 11/12/12.5 above.
+
+**This step is the trigger mechanism only — it does not conduct the review itself** (real adoption/cost data analysis is a separate, larger body of work, out of scope for this check). Pass through `--dry-run` if `run post-ship` was invoked with `--dry-run` — the scan (steps 1-2) and Advisory Summary line always run, but step 4's backlog-item filing is skipped in dry-run mode (report what would be filed instead).
+
+1. Run `python3 scripts/scan_backlog_gate_conditions.py` (the same script `roadmap_prompt.md` §1.3a already uses for its own date-lapse scan — do not hand-roll a second parser).
+2. From its `DATE-LAPSED` output, filter for entries whose `Gate criteria` text matches an AI-feature-usage-review pattern (case-insensitive): contains `AI feature usage review`, `AI adoption`, `AI cost review`, or `90` combined with both `day` and `ship` appearing anywhere in the same entry. This keyword set was verified live against all 8 known cluster items' actual gate text (`BLG-FEAT-59/60/63`, `BLG-FE-84`, `BLG-OPS-88`, `BLG-GOV-140/141/142`, confirmed `2026-09-28__release-v9.8` — a narrower first-draft pattern requiring the literal substring `90 days post-...ship` missed `BLG-GOV-141`'s "90 days **of** v6.2 ship" and `BLG-OPS-88`'s "90-day AI cost review", both real, differently-worded phrasings of the same gate) and is intentionally broad enough to also catch a future, differently-worded review gate rather than hardcoding this one cluster's specific item IDs.
+3. If zero matches: record "no AI feature usage review currently due" in the Advisory Summary (§ below) and continue — this is the expected steady state between review windows.
+4. If one or more matches: this review is due/overdue.
+   - Surface a prominent line in the Advisory Summary naming every matched backlog item ID and its gate date.
+   - Check whether a review artefact already exists for this gate date (`docs/ops/*ai*usage*review*<date>*.md` or equivalent — confirm by filename pattern, not by re-deriving the review's content). If one exists, this cluster is already resolved; do not re-flag it, and note the artefact path in the Advisory Summary instead.
+   - If no artefact exists: file (or confirm already filed, do not duplicate) a `BLG-GOV-*` backlog item via the standard new-item-addition write-scope exception, owned by **Head of Specs Team; PMO Lead** (the actual review's owning authority — this step does not conduct the review), naming the overdue gate date and every downstream item blocked on it. This makes the overdue review an actionable, tracked item rather than a silent recurring miss.
+
+On completion: record outcome (matches found, artefact-exists check, backlog item filed/confirmed or none needed) in closure_state.json `steps.step_12_6_ai_feature_usage_review_trigger`.
 
 ---
 

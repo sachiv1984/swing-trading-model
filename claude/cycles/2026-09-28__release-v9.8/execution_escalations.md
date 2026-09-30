@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-09-29
+Last Updated: 2026-09-30 (ESC-EXEC-20260930-01 added and resolved same-session)
 
 ## ESC-EXEC-20260929-01
 
@@ -34,3 +34,19 @@ Last Updated: 2026-09-29
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary:** Infrastructure & Operations Owner (2026-09-29T12:35:00Z, in-session via `AskUserQuestion`): aggregate counts only (`SELECT COUNT(*)`-shaped, no row-level columns), against a table already named in an existing `current_roadmap.md` gate condition — matching `BLG-OPS-170`'s own drafted scope. Today that's `trade_history`/`trade_plans` (the SI-02 gate's own query). Implemented in commit `f95a4a89` — see `docs/infrastructure/staging_setup.md` §8.
+
+## ESC-EXEC-20260930-01
+
+- **Raised at:** 2026-09-30T08:16:52Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-28__release-v9.8
+- **Step:** STEP 3.1.D
+- **ST/EPIC item:** ST-38 / EPIC-06
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-38 (`BLG-GOV-351`) requires deciding which governed routine owns firing the 90-day post-ship AI feature usage review (`BLG-FEAT-59/60/63`, `BLG-FE-84`, `BLG-OPS-88`, `BLG-GOV-140/141/142` cluster — found 4 days overdue at `2026-09-28__scheduled`'s roadmap rebalance, with no trigger mechanism). `sprint_backlog.md`'s own Notes for ST-38 (RISK-02) require this design decision to be resolved by Head of Specs Team / PMO Lead as a first sub-step before the build sub-step begins — not engine-determinable per the sealed sprint backlog's own `delegated_decision` classification.
+- **Owning authority:** Head of Specs Team; PMO Lead
+- **Unblock criteria:** Head of Specs Team / PMO Lead records which routine owns firing this review (post-ship closure's own cadence checks vs. a standalone lightweight scheduled cadence doc vs. both), so the trigger mechanism can be built against a locked design.
+- **SLA due-by:** 2026-10-01T08:16:52Z
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary:** Head of Specs Team / PMO Lead (2026-09-30T08:16:52Z, in-session via `AskUserQuestion`): Post-Ship Closure gets a new mandatory STEP (alongside its existing always-run STEPs 11/12/12.5). Implemented as `post_ship_closure.md` STEP 12.6 (v2.35→v2.36) — scans `claude/backlog/backlog.md` via `scripts/scan_backlog_gate_conditions.py` for a lapsed AI-feature-usage-review-shaped gate on every cycle close, surfaces it in the Advisory Summary if due, and files (or confirms already filed) a tracking backlog item. Trigger mechanism only, per this story's own scope — does not conduct the review itself.
