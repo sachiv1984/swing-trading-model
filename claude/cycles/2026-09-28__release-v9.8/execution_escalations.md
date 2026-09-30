@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-09-30 (ESC-EXEC-20260930-01 added and resolved same-session)
+Last Updated: 2026-09-30 (ESC-EXEC-20260930-02 added and resolved same-session)
 
 ## ESC-EXEC-20260929-01
 
@@ -50,3 +50,19 @@ Last Updated: 2026-09-30 (ESC-EXEC-20260930-01 added and resolved same-session)
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary:** Head of Specs Team / PMO Lead (2026-09-30T08:16:52Z, in-session via `AskUserQuestion`): Post-Ship Closure gets a new mandatory STEP (alongside its existing always-run STEPs 11/12/12.5). Implemented as `post_ship_closure.md` STEP 12.6 (v2.35→v2.36) — scans `claude/backlog/backlog.md` via `scripts/scan_backlog_gate_conditions.py` for a lapsed AI-feature-usage-review-shaped gate on every cycle close, surfaces it in the Advisory Summary if due, and files (or confirms already filed) a tracking backlog item. Trigger mechanism only, per this story's own scope — does not conduct the review itself.
+
+## ESC-EXEC-20260930-02
+
+- **Raised at:** 2026-09-30T09:12:04Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-28__release-v9.8
+- **Step:** STEP 3.1.D
+- **ST/EPIC item:** ST-33 / EPIC-06
+- **Trigger type:** Write-Scope
+- **Blocking statement:** ST-33 (`BLG-GOV-341`) requires persisting the STEP 7.2 role-share tally as a structured history file. The natural location, mirroring `product_value_ratio_history.md`'s own precedent, is `claude/roadmap/role_share_history.md` — but `execution_prompt.md` §7's write-scope restriction only carves out `claude/roadmap/workforce_capacity.md` (BLG-GOV-337) for direct engine writes to `claude/roadmap/*`, and that ruling explicitly states it extends to no other roadmap file. `sprint_backlog.md`'s ST-33 Notes field does not name a target path or authorise a `claude/roadmap/*` write — only "History backfilled for the last 3 cycles (explicit AC)." Not engine-determinable: proceeding would repeat the same class of out-of-scope write already self-corrected once earlier this session (`current_roadmap.md`).
+- **Owning authority:** PMO Lead (ST-33's Owner)
+- **Unblock criteria:** PMO Lead records where the persisted history file should live given the write-scope conflict.
+- **SLA due-by:** 2026-10-02T09:12:04Z
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary:** PMO Lead (2026-09-30T09:12:04Z, in-session via `AskUserQuestion`): file a backlog item deferring the canonical `claude/roadmap/role_share_history.md` placement to the roadmap engine (`BLG-GOV-353`); this sprint, deliver the backfilled data and computation script at an in-scope interim location (`claude/cycles/2026-09-28__release-v9.8/role_share_history.md`). `roadmap_prompt.md` §7.2 is **not** updated this sprint — that change is deferred to `BLG-GOV-353`'s resolution, since it would read from a file this engine has no authority to create. ST-33 closes with this AC-half deferred and documented, not silently dropped.

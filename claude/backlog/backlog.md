@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-29 (session — 1 new item added: BLG-SEC-40, from agent-mediated review of PR #1846); prior — 2026-09-29 (session — 2 new items added: BLG-QA-203, BLG-OPS-171); prior — 2026-09-29 (session — 3 new items added: BLG-QA-200, BLG-QA-201, BLG-QA-202); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-30 (session — 2 new items added: BLG-GOV-353, BLG-GOV-354, from ST-33/EPIC-06 write-scope escalation and a stale-pointer finding); prior — 2026-09-29 (session — 1 new item added: BLG-SEC-40, from agent-mediated review of PR #1846); prior — 2026-09-29 (session — 2 new items added: BLG-QA-203, BLG-OPS-171); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4668,6 +4668,51 @@ ST-17 (BLG-OPS-169) added a stale-deploy check to `staging-smoke-test.yml` (comp
 
 **Acceptance Criteria**
 - All 3 Alpaca call sites in `alpaca_paper_sync_service.py` source their timeout from `get_timeout("alpaca")`; no behaviour change to existing sync/retry logic
+
+---
+
+### BLG-GOV-353 — role_share_history.md has no governance-authorized home under claude/roadmap/
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** ST-33 (BLG-GOV-341), EPIC-06, cycle 2026-09-28__release-v9.8 — 2026-09-30
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-33's AC ("persist STEP 7.2 role-share tallies as a structured history file") assumes the resulting file lives at `claude/roadmap/role_share_history.md`, mirroring the existing `product_value_ratio_history.md` precedent in the same directory. But `execution_prompt.md` §7's write-scope restriction only carves out `claude/roadmap/workforce_capacity.md` (BLG-GOV-337) for direct engine writes to `claude/roadmap/*`, and that ruling explicitly states it extends to no other roadmap file. Sprint Execution has no standing authority to create a new file at that path without an explicit `sprint_backlog.md` Notes-field authorization, which ST-33's sealed Notes field does not provide (PMO Lead confirmed this reading in-session via `AskUserQuestion`, 2026-09-30). As a result, ST-33 delivered the backfilled history data and computation script at a cycle-scoped interim location (`claude/cycles/2026-09-28__release-v9.8/role_share_history.md`) rather than the canonical roadmap location, and `roadmap_prompt.md` §7.2 was **not** updated to read from it — the AC's second half ("STEP 7.2 reads the file instead of re-parsing Owner fields") remains outstanding.
+
+**Scope**
+- Roadmap Engine (or Head of Specs Team acting directly) formally authorises and creates `claude/roadmap/role_share_history.md`, migrating the interim data from `claude/cycles/2026-09-28__release-v9.8/role_share_history.md`
+- Update `roadmap_prompt.md` §7.2 to read the structured file instead of re-parsing `sprint_backlog.md` Owner fields at each rebalance (applying the full CLAUDE.md §6 governance-file-edit checklist for the version bump)
+- Confirm whether `product_value_ratio_history.md`'s own original creation had an equivalent explicit authorisation on record, to establish the precedent cleanly for this and future `claude/roadmap/` additions
+
+**Acceptance Criteria**
+- `claude/roadmap/role_share_history.md` exists, seeded with the 3-cycle backfill already computed by `scripts/compute_role_share_history.py`
+- `roadmap_prompt.md` §7.2 reads from it instead of re-deriving the tally by hand
+- The interim `claude/cycles/2026-09-28__release-v9.8/role_share_history.md` file is either superseded/removed or left as a dated historical snapshot, at the implementer's discretion
+
+---
+
+### BLG-GOV-354 — .claude_current_state.json's execution_state_path points to the prior cycle, not the active one
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** ST-33, EPIC-06, cycle 2026-09-28__release-v9.8 — 2026-09-30
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`.claude_current_state.json`'s `active_cycle` field correctly reads `2026-09-28__release-v9.8`, but its `execution_state_path` field still reads `claude/cycles/2026-09-23__release-v9.7/execution_state.json` — the prior cycle's file, not `claude/cycles/2026-09-28__release-v9.8/execution_state.json` (which exists and is the file Sprint Execution has actually been reading/writing all cycle via its own resumability model). Nothing appears to have updated this pointer at cycle transition. A tool or reader that trusts this field rather than deriving the path from `active_cycle` would silently read/write the wrong cycle's execution state.
+
+**Scope**
+- Update `.claude_current_state.json`'s `execution_state_path` to match the active cycle
+- Check whether any script or governance prompt STEP actually reads this field (vs. deriving the path from `active_cycle` directly, as Sprint Execution appears to do) — if something does trust it, this is a live correctness bug, not just stale metadata
+- Confirm whether the roadmap/sprint-planning engine's cycle-transition steps are supposed to update this field and, if so, why it didn't happen at the `2026-09-28__release-v9.8` transition
+
+**Acceptance Criteria**
+- `execution_state_path` matches `active_cycle`'s own `execution_state.json`
+- Root cause of the missed update at cycle transition is identified and, if a real reader depends on it, fixed so it can't drift again
 
 ---
 
