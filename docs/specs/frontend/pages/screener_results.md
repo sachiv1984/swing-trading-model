@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.8
-**Last Updated:** 2026-09-28 (v9.8 design gate — ST-02/BLG-FE-185: new §14 Column Definition Architecture note — `SCREENER_COLUMNS` is the single source for header, body cell and CSV value; no visual change); prior — 2026-09-21 (v9.6 design gate — ST-03/BLG-FEAT-97: new §5.3 CSV Export); prior — 2026-09-15 (v9.4 sprint execution — ST-25/BLG-FE-174: `SkeletonRow` implementation confirmed refactored to compose from the shared `Skeleton` primitive; no visual change); prior history retained — see prior entries in version control.
+**Version:** 1.9
+**Last Updated:** 2026-09-29 (ST-26, EPIC-05, v9.8, BLG-SPEC-161 — §4/§5.3 column lists corrected to match the live `SCREENER_COLUMNS`: added the missing Earnings column, and replaced the stale separate "Actions" column with the actual shape — Watchlist/Research actions live inside the News cell); prior — 2026-09-28 (v9.8 design gate — ST-02/BLG-FE-185: new §14 Column Definition Architecture note — `SCREENER_COLUMNS` is the single source for header, body cell and CSV value; no visual change); prior — 2026-09-21 (v9.6 design gate — ST-03/BLG-FEAT-97: new §5.3 CSV Export); prior history retained — see prior entries in version control.
 **Design Source (v1.8 column architecture):** docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md
 **Design Source (v1.7 CSV export):** docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md
 **Design Source (v1.5):** docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md
@@ -67,8 +67,8 @@ The screener results are displayed in a table/list with the following columns:
 | Signal | `signal_score` | Numeric score 0.0–1.0 displayed as percentage or bar indicator |
 | Sector | `sector` | Sector classification text (or em dash `—` if null) |
 | Entry Zone | `proximity_to_entry_zone` | Displayed as "Near entry" / "In zone" / "—" based on proximity value |
-| News | `news_headline_count` | Headline count badge (e.g. "3") clicking expands inline panel |
-| Actions | — | "Research" link + "Add to Watchlist" button (see §8 and §11) |
+| Earnings | — | Days until next earnings (badge, cached client-side per ticker/market). Hidden below the `lg` breakpoint. (ST-26, EPIC-05, v9.8, BLG-SPEC-161) |
+| News | `news_headline_count` | Headline count badge (e.g. "3") clicking expands inline panel; also hosts the "Add to Watchlist" (see §8) and "Research" (see §11) actions in the same cell — there is no separate Actions column |
 
 **Column ordering is fixed.** The frontend must not reorder columns without a spec update.
 
@@ -120,7 +120,7 @@ Filter state is not persisted across page refreshes.
 A secondary (outline) **"Download CSV"** button with the download icon — same label and weight as the Reports page's button — at the right end of the filter bar, after the Sector filter. Narrow screens: drops below the filter row, full width.
 
 - **Rows:** exactly the rows currently displayed (after the Market/Regime/Sector filters and the current sort).
-- **Columns:** the full §4 column set in display order — Ticker, Market, Price, ATR, Regime, Signal, Sector, Entry Zone, News — **excluding Actions**. Viewport-independent: the mobile hiding of Sector/Entry Zone (§4) does not shrink the export. The column list is defined once and consumed by both the table and the CSV builder so the two cannot drift.
+- **Columns:** the full §4 column set in display order — Ticker, Market, Price, ATR, Regime, Signal, Sector, Entry Zone, Earnings, News — **excluding the Watchlist/Research actions embedded in the News cell** (§4 — there is no separate Actions column). Viewport-independent: the mobile hiding of Sector/Entry Zone (§4) does not shrink the export. The column list is defined once and consumed by both the table and the CSV builder so the two cannot drift.
 - **Header row:** the displayed header labels. **Values** are machine-readable (plain numbers with no currency symbol/grouping/%, chip labels as text — `Risk On`/`Risk Off`; `Signal` as the raw 0.0–1.0 score).
 - **Format:** UTF-8, RFC 4180 quoting, no BOM, filename `screener-results-YYYY-MM-DD.csv` (local date). Client-side; nothing persisted. String cells starting with `=`, `+`, `-` or `@` are prefixed with `'` (formula-injection guard); numeric cells are unaffected.
 - **States:** disabled with tooltip `"Nothing to export"` when zero rows are displayed (loading, empty, or all filtered out). On failure: Error toast (8s) `"CSV download failed. Please try again."`. No success toast; no "Generating…" state (synchronous).
@@ -220,12 +220,12 @@ On response:
 
 ## 11. Research Navigation (v3.2 — ST-04)
 
-Each ticker row in the screener results table has a **"Research"** action (text link or secondary button) in the Actions column, adjacent to "Add to Watchlist".
+Each ticker row in the screener results table has a **"Research"** action (text link or secondary button) in the News column's cell, adjacent to "Add to Watchlist" (§4 — there is no separate Actions column).
 
 | Attribute | Specification |
 |-----------|---------------|
 | Label | "Research" |
-| Placement | Actions column, adjacent to "Add to Watchlist" |
+| Placement | News column's cell, adjacent to "Add to Watchlist" |
 | Target | `/research/{ticker}` |
 | Context carry | None — ticker in URL path is sufficient |
 
@@ -326,6 +326,7 @@ This spec covers all DS-02 interaction patterns:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.9 | 2026-09-29 | ST-26 (EPIC-05, v9.8, BLG-SPEC-161): §4/§5.3 corrected to match live `SCREENER_COLUMNS` — added the missing Earnings column (present in code since an earlier cycle but never documented) and replaced the stale separate "Actions" column with its actual shape (Watchlist + Research actions live inside the News cell, not a distinct column). No code change. Authority: Head of Specs Team. |
 | 1.8 | 2026-09-28 | v9.8 design gate — ST-02 (EPIC-01, BLG-FE-185): added §14 Column Definition Architecture — `SCREENER_COLUMNS` documented as the single source for header, body cell and CSV value. No visual change. Design source: `docs/design/2026-09-28__release-v9.8/screener-watchlist-shared-column-definitions/decision_record.md`. Authority: Head of Specs Team. |
 | 1.7 | 2026-09-21 | v9.6 design gate — ST-03 (EPIC-01, BLG-FEAT-97): added §5.3 CSV Export — "Download CSV" button in the filter bar; exports displayed (filtered/sorted) rows and the full §4 columns except Actions; machine-readable values; UTF-8/RFC 4180, dated filename, formula-injection guard; disabled at zero rows. Design source: `docs/design/2026-09-21__release-v9.6/screener-watchlist-csv-export/decision_record.md`. Authority: Head of Specs Team. |
 | 1.6 | 2026-09-15 | v9.4 sprint execution — ST-25 (EPIC-06, BLG-FE-174): §10 implementation confirmed — `Screener.js`'s `SkeletonRow` refactored to compose from the shared `Skeleton` primitive (`bg-slate-700/50` override preserves colour). No visual/row-count change. `SC-SCR-09` passes unchanged. |

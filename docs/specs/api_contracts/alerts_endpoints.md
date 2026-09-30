@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.10
-**Last Updated:** 2026-09-24 (ST-10, EPIC-03, v9.7, BLG-BE-124 — generic re-delivery now also requires `read = false`, so an already-read notification is never re-enqueued for delivery); prior — 2026-09-24 (ST-09, EPIC-03, v9.7, BLG-BE-123 — documented the `reflection_reminder` NULL-portfolio exclusion and rollback-consistency fix); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — new `reflection_reminder` alert type); prior history retained — see prior entries in version control.
+**Version:** 0.12
+**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added error examples to GET /alerts/rules (500) and GET /notifications (400)); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to the 6 remaining mutating endpoints in this file; flagged undefined double-submit duplicate-alert-creation behaviour on POST /price-alerts as BLG-OPS-174); prior — 2026-09-24 (ST-10, EPIC-03, v9.7, BLG-BE-124 — generic re-delivery now also requires `read = false`, so an already-read notification is never re-enqueued for delivery); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **ADR Reference:** `docs/adr/ADR-003-notification-delivery-architecture.md` — FastAPI BackgroundTasks delivery architecture
 **Design Gate:** `claude/cycles/2026-03-18__release-v2.1/` — EPIC-02
@@ -156,6 +156,15 @@ Response uses the standard success envelope from **conventions.md**.
 |-------------|-----------|
 | `500` | Internal server error |
 
+**Error example (500):**
+
+```json
+{
+  "status": "error",
+  "message": "Internal server error"
+}
+```
+
 ---
 
 ## POST /alerts/rules
@@ -167,6 +176,10 @@ Create an alert rule. Primarily used to restore a rule after deletion. Under nor
 **Method & Path**
 
 - `POST /alerts/rules`
+
+**Idempotency**
+
+- Not idempotent by HTTP semantics (creates a resource), but double-submit-safe: a duplicate `POST` for a `type` that already exists returns `400` rather than creating a second rule for that type.
 
 #### Request Body
 
@@ -227,6 +240,10 @@ Update an alert rule. Supports partial update — include only the fields to cha
 **Method & Path**
 
 - `PATCH /alerts/rules/{rule_id}`
+
+**Idempotency**
+
+- Mutating. Partial update — repeating the same request body yields the same resulting rule state.
 
 #### Path Parameters
 
@@ -383,6 +400,10 @@ Create a custom price alert.
 
 - `POST /price-alerts`
 
+**Idempotency**
+
+- Not idempotent — creates a new alert on every call, with no uniqueness guard on `(ticker, condition, threshold_price)`. **Undefined behaviour:** a double-submit creates a second, functionally-duplicate active alert (bounded only by the 50-active-alert cap). Filed as BLG-OPS-174.
+
 #### Request Body
 
 ```json
@@ -445,6 +466,10 @@ Delete a custom price alert (active or already-triggered).
 **Method & Path**
 
 - `DELETE /price-alerts/{id}`
+
+**Idempotency**
+
+- Idempotent in effect — a repeated call after the first successful delete returns `404` (already gone), same as any delete-by-id endpoint. See **conventions.md §12**.
 
 #### Path Parameters
 
@@ -652,6 +677,15 @@ Return the notification feed for the portfolio, newest first. Supports page-base
 | `400` | `since_days` is not a positive integer |
 | `500` | Internal server error |
 
+**Error example (400 — invalid `page`):**
+
+```json
+{
+  "status": "error",
+  "message": "page must be a positive integer"
+}
+```
+
 ---
 
 ## PATCH /notifications/{id}
@@ -663,6 +697,10 @@ Mark a single notification as read. Sets `read = true`. Idempotent — calling a
 **Method & Path**
 
 - `PATCH /notifications/{id}`
+
+**Idempotency**
+
+- Idempotent — calling again on an already-read notification returns success without error (see Purpose above).
 
 #### Path Parameters
 
@@ -815,6 +853,10 @@ Update notification preferences for one or more alert types. Partial update — 
 **Method & Path**
 
 - `PATCH /notifications/preferences`
+
+**Idempotency**
+
+- Mutating. Partial update, per-key — repeating the same request body yields the same resulting preference state for the specified types; unspecified types are unaffected on every call.
 
 #### Request Body
 

@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-09-18 (ST-26, EPIC-04, v9.5, BLG-SPEC-139 — triage of the 40-finding baseline)
+**Version:** 1.1
+**Last Updated:** 2026-09-29 (ST-22, EPIC-05, v9.8, BLG-SPEC-152 — §9 added: case-by-case disposition of all 20 §5 findings); prior — 2026-09-18 (ST-26, EPIC-04, v9.5, BLG-SPEC-139 — triage of the 40-finding baseline)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -88,10 +88,52 @@ Checked 132 contract response examples against openapi.yaml. POSSIBLE DRIFT: 20.
 
 **API Contracts & Documentation Owner:** Accepted — 40 baseline findings triaged; 18 resolved (3 script bugs fixed with regression tests, 3 genuine openapi.yaml gaps fixed); 22 remaining disposed as documented follow-ups (`BLG-SPEC-152`, `BLG-SPEC-153`), not left silent. 2026-09-18.
 
+## 9. `BLG-SPEC-152` Resolution — Case-by-Case Disposition of the 20 §5 Findings (ST-22, EPIC-05, v9.8)
+
+Per §6's follow-up, each of the 20 `§5` findings (confirmed still exactly the current `POSSIBLE DRIFT` set at ST-22 kickoff — no drift, and no new mutating endpoint, had entered or left the list since 2026-09-18) was given one of two case-by-case dispositions:
+
+**(a) Genuinely under-authored — filled in real field-level properties (12 of 20):**
+
+| Endpoint | Fix |
+|----------|-----|
+| `GET /health/scheduler` | Added `trigger_endpoints` (static job-name → triggering-endpoint map). |
+| `GET /portfolio/prospective-heat` | Wrapped in the `{status, data}` envelope (was flat) and added the missing `fx_rate_used`/`error` fields. |
+| `GET /portfolio` | Added `portfolio_heat_percent` and `position_risks[]` (documentation-backfill fields per `portfolio_endpoints.md`'s own ST-12/BLG-QA-128 note — always returned, never previously in this schema). |
+| `POST /portfolio/position` | Added `fx_rate_used`. |
+| `POST /positions/{position_id}/exit` | Full rewrite — the existing schema used stale field names (`shares_exited`, `fees_paid`, `cash_received`) that don't match the actual response shape (`shares`, `exit_fees`, `new_cash_balance`, plus `market`/`gross_proceeds`/`fee_breakdown`/`net_proceeds`/`realized_pnl_pct`/`exit_fx_rate`/`exit_date`/`is_partial_exit`, all previously undeclared). |
+| `PATCH /positions/{position_id}/note` | Added `ticker`, `updated_at`. |
+| `PATCH /positions/{position_id}/tags` | Added `ticker`, `updated_at`. |
+| `GET /positions/tags` | Added `total_positions`, `positions_with_tags`. |
+| `PATCH /signals/{signal_id}` | Added `updated_at` to the shared `Signal` schema. |
+| `GET /strategy/benchmark/trades` | Added `backtest_trades[].id`/`.imported_at` and `actual_trades[].entry_price`/`.exit_price`. |
+| `GET /watchlist` | Full field-level authoring (was a bare `data: array<object>` stub) — all 13 documented fields added. |
+| `GET /market/status` | Full field-level authoring (`spy`/`ftse`/`fx_rate`/`last_updated`) — the prior schema's own description was stale, claiming "no dedicated canonical Markdown contract exists yet" when `market_endpoints.md` has documented this endpoint since v0.1. |
+
+**(b) Confirmed intentionally broad — standard description applied (8 of 20):**
+
+| Endpoint | Schema | Note |
+|----------|--------|------|
+| `POST /test/endpoints` | `EndpointTestResponse` | Already `additionalProperties: true`; normalised to the standard description wording. |
+| `GET /positions/analyze` | `PositionAnalysisResult` (new) | 24-field, deeply-nested daily-monitoring payload (`actions[]`, `market_regime`, `summary`) — re-diagnosing and hand-authoring field-by-field was judged not worth it relative to `GET /watchlist`-class endpoints given this response's volatility (an internal computation result, not a stable resource shape). |
+| `GET /reports/tax-year` | inline `summary`/`trades[]` | 17+ nested trade fields per row; marked broad rather than duplicating `trade_endpoints.md`'s own `TradeHistoryResponse` field list a second time. |
+| `GET /saved-filters` | `SavedFilter.filter_state` | Explicitly documented as "opaque to the backend, shape owned by the frontend" in both the Markdown contract and the pre-existing schema description — broad is the *correct*, not merely expedient, disposition here. |
+| `POST /settings` / `PATCH /settings/{settings_id}` | `Settings` | Already `additionalProperties: true` and already one of the triage's §5 spot-checked "confirmed by convention" schemas; normalised to the standard description wording (was bespoke prose making the same claim). |
+| `POST /signals/generate` | `SignalsGenerateResult` (new) | 23-field payload including a re-declared `market_regime` sub-shape — same rationale as `GET /positions/analyze`. |
+| `GET /strategy/backtest-rule-change/runs` | `BacktestRuleChangeRunSummary` | Already correctly marked intentionally broad (pre-existing, from the `POST /strategy/backtest-rule-change/run` story) — confirmed, no change needed. Still appears in `POSSIBLE DRIFT` after this pass because the freshness-check script does not treat `additionalProperties: true` as a wildcard match (a script limitation, not a spec gap — see below). |
+
+**Re-run confirmation:**
+```
+python3 scripts/check_contract_example_freshness.py
+```
+`POSSIBLE DRIFT` dropped from 20 to 8 — exactly the 8 "(b)" dispositions above, each now carrying the standard "Intentionally broad to avoid drift..." description. This 8 is expected to persist on every future run: the script's `schema_top_keys` only descends into declared `properties`, not `additionalProperties: true` — an intentionally-broad schema's own example will always show its real nested keys as "extra" against a schema with no declared properties. Fixing that is a script-behaviour change (checking `additionalProperties: true` as a match-anything escape hatch), out of this story's own scope; not filed as a new backlog item since it is cosmetic (the script's advisory, non-CI-blocking status per its own docstring is unaffected either way) and the same false-report already existed, unremarked, for every "(b)"-class schema since the original 2026-09-18 triage.
+
+**Sign-off (ST-22, BLG-SPEC-152):** API Contracts & Documentation Owner (autonomous class, code-review-only — no runtime behaviour changed, all 20 findings individually diagnosed and dispositioned per the table above) — 2026-09-29.
+
 ---
 
 ## Change Log
 
 | Date | Version | Summary |
 |---|---|---|
+| 2026-09-29 | 1.1 | ST-22 (EPIC-05, v9.8, BLG-SPEC-152) — resolved the deferred follow-up: case-by-case disposition of all 20 §5 findings (§9). |
 | 2026-09-18 | 1.0 | Initial triage of the 2026-09-08 baseline (ST-26, EPIC-04, v9.5, BLG-SPEC-139). |

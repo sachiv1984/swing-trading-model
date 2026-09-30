@@ -1,8 +1,8 @@
 **Owner:** PMO Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-09-23 (created — ST-32, EPIC-07, v9.6, BLG-GOV-188)
+**Version:** 1.1
+**Last Updated:** 2026-09-29 (ST-28, EPIC-05, v9.8, BLG-SPEC-163 — §2's trend-narrative sentence corrected: it had spliced a non-adjacent reading's total (47, from 2026-07-08) into what was presented as the 3 most recent readings' trend, overstating a rising D-share that the actual 3 most recent adjacent readings do not show); prior — 2026-09-23 (created — ST-32, EPIC-07, v9.6, BLG-GOV-188)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-32 (BLG-GOV-188, EPIC-07, v9.6)
 
@@ -68,7 +68,7 @@ Bar length ∝ delivered (`Completed`) story count, scaled to the window's own m
 
 (4 rows omitted — `2026-06-26`, `2026-07-01`, `2026-07-02` predate the current rolling-window convention or have "breakdown not recorded" per `product_value_ratio_history.md`'s own Window column; `2026-07-24`/`27`/`28` also have no recorded breakdown. See that file directly for the complete raw record including those rows.)
 
-**Reading this table:** `D` (Debt-clearance) has dominated every window shown, and the split has become more D-heavy over time — `U` (user-value / build-and-ship) fell from double digits in most `v6.x` windows to single digits in the most recent 3 readings, while `D` more than doubled (`47`→`174`→`195` total items, `D` share `45%`→`63%`→`63%`). This is the same trend already tracked and acted on by `roadmap_prompt.md` §2.4/§7.1's mandatory pull-forward rules (see `.claude_current_state.json.last_rebalance_outcome` for the latest disposition) — this chart does not duplicate that decision logic, only visualises the same underlying numbers PMO Lead and the Product Owner already use to make it.
+**Reading this table (corrected, ST-28, EPIC-05, v9.8, BLG-SPEC-163 — the prior version of this sentence compared non-adjacent readings: it cited `47` as if it belonged to the most recent 3-reading run, when it is actually the `2026-07-08` row, 5 readings earlier):** `D` (Debt-clearance) has dominated every window shown. Comparing the earliest tracked window (`2026-07-03`, v6.1–v6.5: `D` share `41%` of `58` total items) against the latest (`2026-09-19`, v9.1–v9.5: `D` share `63%` of `195` total items) shows both `D`'s share and overall item volume have grown substantially across the full history. Within just the 3 most recent, chronologically adjacent readings (`2026-08-11`→`2026-09-14`→`2026-09-19`), `D` share has actually been roughly flat (`63.0%`→`63.2%`→`62.6%`) while total volume kept climbing (`127`→`174`→`195`) — the debt-heavy mix looks like the current steady state rather than one still worsening reading-to-reading. `U` (user-value / build-and-ship) has stayed in single digits across all 3 of these recent readings (`14`, `16`, `9`), after ranging into double digits in several earlier `v6.x` windows. This is the same trend already tracked and acted on by `roadmap_prompt.md` §2.4/§7.1's mandatory pull-forward rules (see `.claude_current_state.json.last_rebalance_outcome` for the latest disposition) — this chart does not duplicate that decision logic, only visualises the same underlying numbers PMO Lead and the Product Owner already use to make it.
 
 ---
 

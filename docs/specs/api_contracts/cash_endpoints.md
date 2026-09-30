@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-03-18
+**Version:** 1.1
+**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /cash/summary); prior — 2026-03-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -193,3 +193,12 @@ Response uses the standard success envelope from **conventions.md**.
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
+
+**Error example (401 — missing/invalid API key):**
+
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing API key"
+}
+```
