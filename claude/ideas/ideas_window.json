@@ -1,23 +1,29 @@
 {
-  "window_id": "IW-20260928-01",
-  "opened_utc": "2026-09-28T08:58:00Z",
+  "window_id": "IW-20260930-01",
+  "opened_utc": "2026-09-30T15:08:27Z",
   "opened_by": "PMO Lead",
   "status": "Closed",
   "mode": "standard",
   "eligible_agents": [
-    "head-of-specs",
-    "financial-reporting",
-    "infra-ops"
+    "head-of-ux",
+    "head-of-engineering"
   ],
-  "scoping_note": "Deliberately reduced 3-of-~22-agent subset, disclosed in run_manifest.md and this window's summary — session time constraints, not a hidden shortcut. Each of the other ~19 agent roles is unchanged from the full IW-20260919-01 roster and remains eligible at the next full-roster window.",
+  "scoping_note": "Deliberately reduced 2-of-~22-agent subset, disclosed in this window's summary — user requested a joint UX/Engineering design review of open-position stop-loss transparency (trust in the displayed stop-loss/ATR value, on-load vs nightly recalculation visibility) and this window scopes intake to the two roles that did that review. Precedent: IW-20260928-01 used the same reduced-roster pattern. Each of the other ~20 agent roles is unchanged from the full IW-20260919-01 roster and remains eligible at the next full-roster window.",
   "submissions_received": [
-    "IDEA-head-of-specs-20260928-01",
-    "IDEA-head-of-specs-20260928-02",
-    "IDEA-financial-reporting-20260928-01",
-    "IDEA-financial-reporting-20260928-02",
-    "IDEA-infra-ops-20260928-01",
-    "IDEA-infra-ops-20260928-02"
+    "IDEA-head-of-ux-20260930-01",
+    "IDEA-head-of-ux-20260930-02",
+    "IDEA-head-of-engineering-20260930-01",
+    "IDEA-head-of-engineering-20260930-02"
   ],
   "register_path": "claude/ideas/ideas_register.md",
-  "closed_utc": "2026-09-28T09:05:00Z"
+  "closed_utc": "2026-09-30T15:20:00Z",
+  "total_submissions": 4,
+  "agents_submitted": ["head-of-ux", "head-of-engineering"],
+  "agents_not_submitted": [],
+  "per_agent_submission_count": {
+    "head-of-ux": 2,
+    "head-of-engineering": 2
+  },
+  "parked_ideas_carried": 0,
+  "new_submissions": 4
 }
