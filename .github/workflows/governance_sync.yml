@@ -112,13 +112,28 @@ jobs:
               echo "Skipping close for ${ST_ID} — no execution_state entry found (tracking commit may not have landed yet, or this is a genuinely untracked reference)"
               continue
             fi
-            # DONE = "yes" (confirmed complete via execution_state). Use exact
-            # title prefix match to prevent fuzzy search returning wrong issues
-            # (e.g. a second [ST-14] commit must not close [ST-10] when [ST-14] is already closed)
-            ISSUE_NUMBER=$(gh issue list --search "[${ST_ID}] in:title" --state open --json number,title \
-              --jq "[.[] | select(.title | startswith(\"[${ST_ID}]\"))] | .[0].number // empty")
+            # DONE = "yes" (confirmed complete via execution_state, and for a
+            # phased story, confirmed via is_story_done that every sibling
+            # phase sharing the same issue is also done -- ST-37/BLG-GOV-349).
+            #
+            # Resolve the issue number directly from execution_state's own
+            # github_issue field first (ST-37/BLG-GOV-349) -- this is the
+            # source of truth STEP 1 already records at issue-creation time,
+            # and is required for a phased story: its issue is titled with
+            # the bare parent ID (e.g. "[ST-01] ...", not "[ST-01a] ..."), so
+            # a title-prefix search for the phased ST_ID itself never matches.
+            # Falls back to the title-prefix search only when no github_issue
+            # is recorded (older cycles predating this field).
+            ISSUE_NUMBER=$(get_github_issue_number "claude/cycles" "$ACTIVE_CYCLE" "$ST_ID")
+            if [ -z "$ISSUE_NUMBER" ] || [ "$ISSUE_NUMBER" = "null" ]; then
+              # Fallback: exact title prefix match to prevent fuzzy search
+              # returning wrong issues (e.g. a second [ST-14] commit must not
+              # close [ST-10] when [ST-14] is already closed).
+              ISSUE_NUMBER=$(gh issue list --search "[${ST_ID}] in:title" --state open --json number,title \
+                --jq "[.[] | select(.title | startswith(\"[${ST_ID}]\"))] | .[0].number // empty")
+            fi
             if [ -n "$ISSUE_NUMBER" ]; then
-              gh issue close "$ISSUE_NUMBER"
+              gh issue close "$ISSUE_NUMBER" 2>&1 || echo "Issue #${ISSUE_NUMBER} for ${ST_ID} already closed or close failed"
               echo "Closed issue #${ISSUE_NUMBER} for ${ST_ID}"
             else
               echo "No open issue found for ${ST_ID} — may already be closed or never created"

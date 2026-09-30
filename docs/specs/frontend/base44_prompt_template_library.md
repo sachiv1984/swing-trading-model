@@ -2,8 +2,8 @@
 **Class:** Class 2 — Supporting
 **Status:** Supporting
 **Canonical Source:** docs/specs/frontend/design_system.md
-**Version:** 1.9
-**Last Updated:** 2026-09-10 (v1.9 — §17 Regeneration Diff Checklist extended with 3 items: dropped props, changed class names relied on outside the component, detached event handlers — ST-25, BLG-GOV-181, EPIC-05, v9.3); prior — 2026-09-08 (v1.8 — added §16 Prompt-Version Provenance Tag convention and §17 Regeneration Diff Checklist, ST-45/ST-46, EPIC-05, v9.2)
+**Version:** 1.10
+**Last Updated:** 2026-09-30 (v1.10 — added §18 Standard Accessible-Name and Heading-Order Section, generation-time rules for heading order and aria-labelledby-over-duplicated-aria-label — ST-30, BLG-GOV-338, EPIC-06, v9.8); prior — 2026-09-10 (v1.9 — §17 Regeneration Diff Checklist extended with 3 items: dropped props, changed class names relied on outside the component, detached event handlers — ST-25, BLG-GOV-181, EPIC-05, v9.3); prior — 2026-09-08 (v1.8 — added §16 Prompt-Version Provenance Tag convention and §17 Regeneration Diff Checklist, ST-45/ST-46, EPIC-05, v9.2)
 **Version history index:** `docs/specs/frontend/base44_prompt_changelog.md` (ST-24, BLG-GOV-180, v9.3) indexes this Change Log alongside `claude/agents/base44_frontend_prompt_owner.md` §3's own Changelog.
 **Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3); ST-06 (BLG-SPEC-93, EPIC-04, v7.3); ST-13 (BLG-FE-129, EPIC-13, v7.9); ST-18 (BLG-FE-124, EPIC-03, v8.0); ST-12 (BLG-FE-121, EPIC-03, v8.3); ST-14 (BLG-FE-132, EPIC-03, v8.3); ST-17 (BLG-FE-99, EPIC-05, v8.5)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -335,10 +335,37 @@ Run this checklist against the diff, not just the new file in isolation — a re
 
 ---
 
+## 18. Template: Standard Accessible-Name and Heading-Order Section (Generation-Time)
+
+**Use when:** drafting the Behaviour Rules or Non-Functional Rules section of **any** `delegated_frontend` Base44 prompt that generates or modifies a page or a non-trivial component (a heading, a `Select`/native `<select>`, or any interactive control needing an accessible name) — unconditionally, the same standing-rule treatment already given to §11's theme-compliance section. Paste this fragment into every prompt draft from the start.
+
+**Source pattern:** the recurring defect class `BLG-FE-170` (Settings heading order — a `SectionCard` `<h3>` skipped a level under the page's single `<h1>`) and `BLG-FE-171`/`BLG-FE-166` (Settings/TradePlan `Select`/native-select controls missing an accessible name, fixed with `aria-labelledby` referencing an existing visible label element) — both caught only after generation, by a later axe-core scan or manual review, never prevented at generation time. `BLG-GOV-338`'s problem statement: nothing in the prompt template stopped the next regeneration from reintroducing either defect. Pinned by `tests/e2e/settings-heading-order-and-aria-labelledby-regression.spec.js` (`SC-SET-HDR-01`, `SC-SET-ARIA-01`, `SC-TP-ARIA-01`) and the ongoing `tests/e2e/accessibility-axe-scan.spec.js` `KNOWN_VIOLATIONS` gate (any new `(page, ruleId)` violation not already grandfathered fails the build).
+
+**Distinction from the axe-core scan gate:** the scan (`accessibility-axe-scan.spec.js`) is a **review-time** control — it catches a violation after the page exists. This section is a **generation-time** instruction — it tells the delegate the rule to build against before any code is written, so the violation is never generated in the first place. Both are required together; this section does not replace the scan.
+
+**Reusable fragment — Behaviour Rules section (paste verbatim):**
+```
+- Heading order: every page has exactly one <h1> (its PageHeader). Every section/card heading nested under it must be <h2> — never <h3> or deeper unless a genuinely nested sub-section under an <h2> requires <h3> (no level may be skipped). This is a standing project rule, not a one-off review comment (recurring defect: BLG-FE-170).
+- Accessible name: any interactive control needing a label (a Select trigger, a native <select>, an icon-only button) must reference an existing, visible label element via aria-labelledby="<id>" pointing at that element's id — do not duplicate the label text into a separate aria-label string. A duplicated aria-label drifts from the visible label over time (edited once, not the other); aria-labelledby cannot drift because there is only one copy of the text. This is a standing project rule, not a one-off review comment (recurring defect: BLG-FE-171, BLG-FE-166).
+```
+
+**Reusable fragment — Non-Functional Rules section (paste verbatim):**
+```
+- Do not defer accessible-name or heading-order correctness to a follow-up audit pass — verify both before considering the story complete, not only when an axe-core scan later flags it.
+```
+
+**Reusable fragment — Expected Outcome section (paste verbatim):**
+```
+Every new or modified heading follows single-h1/no-skipped-level order, and every new or modified interactive control needing a label uses aria-labelledby referencing an existing visible label element (never a duplicated aria-label) — a regenerated page introduces no new axe-core KNOWN_VIOLATIONS entries.
+```
+
+---
+
 ## Change Log
 
 | Date | Version | Summary |
 |---|---|---|
+| 2026-09-30 | 1.10 | Added §18 Standard Accessible-Name and Heading-Order Section (generation-time) — single-h1/no-skipped-heading-level rule and aria-labelledby-over-duplicated-aria-label rule, mirroring §11's theme-compliance section pattern (ST-30, EPIC-06, v9.8, `BLG-GOV-338`). Closes the gap where `BLG-FE-170`/`171`/`166` were each fixed page-by-page with nothing preventing a regeneration reintroducing them. |
 | 2026-09-10 | 1.9 | §17 Regeneration Diff Checklist extended with 3 items — dropped props, changed class names relied on outside the component (cross-check `tests/e2e/*.spec.js` class-based selectors and sibling-component CSS dependencies), detached event handlers — closing the gap between the checklist's existing design-token-only scope and BLG-GOV-181's own named examples (ST-25, EPIC-05, v9.3). Also referenced from `claude/agents/base44_frontend_prompt_owner.md` §5 rule 2 for the first time. |
 | 2026-09-08 | 1.8 | Added §16 Prompt-Version Provenance Tag convention (generated files carry a one-line `template_library vX.Y §N` comment) and §17 Regeneration Diff Checklist — design-token compliance pass (ST-45/BLG-SPEC-121, ST-46/BLG-SPEC-122, EPIC-05, v9.2) |
 | 2026-08-10 | 1.7 | Added §12 Standard Full-Page/Section Empty-State (Non-Card Context) — the full `DataState` empty-branch stack (icon+heading+body, `py-16`) for page/section-level empty states, distinct from §2's small-grid-card `compact` variant; incorporates the empty-state microcopy pattern (`design_system.md` v1.8) and the trailing-period generation mistake caught and fixed at `EPIC-04/ST-10` (`TradePlans.js`, `CalendarView.js`) this same cycle — the 2 concrete precedents satisfying §14's Maintenance threshold; renumbered old §12/§13/§14 → §13/§14/§15 (ST-17, EPIC-05, v8.5, BLG-FE-99) |

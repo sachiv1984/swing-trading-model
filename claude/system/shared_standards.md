@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.35
-**Last Updated:** 2026-09-24 (sprint execution 2026-09-23__release-v9.7 EPIC-05/ST-21, BLG-GOV-331 — new §23 ensure_ascii=False Convention for Governance JSON Writes); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #4 resolution — new §16.4.1 Non-Blocking SLA-Breach Advisory Surfacing); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-P3-01 — §18 database stub-isolation pattern requirement); prior history retained — see prior entries in version control.
+**Version:** 3.36
+**Last Updated:** 2026-09-30 (sprint execution 2026-09-28__release-v9.8 EPIC-06/ST-34, BLG-GOV-342 — new §24 `.claude_current_state.json` `last_updated_utc` Write Convention); prior — 2026-09-24 (sprint execution 2026-09-23__release-v9.7 EPIC-05/ST-21, BLG-GOV-331 — new §23 ensure_ascii=False Convention for Governance JSON Writes); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #4 resolution — new §16.4.1 Non-Blocking SLA-Breach Advisory Surfacing); prior history retained — see prior entries in version control.
 
 # Shared Standards — All Governed Routines
 
@@ -1187,6 +1187,22 @@ json.dump(data, f, indent=2, ensure_ascii=False)
 This preserves non-ASCII characters literally, keeping diffs minimal (only the semantically-changed fields appear as changed lines) and the raw file human-readable without needing to mentally decode escape sequences. Applies to `.claude_current_state.json`, every cycle's `execution_state.json`, and any other JSON file a governed routine writes that carries prose fields (as opposed to a pure data/config JSON file with no free-text content, where the distinction is moot).
 
 **Sign-off:** Head of Specs Team — Approved. A one-line, mechanically-checkable convention is the right scope for this finding — it needs no engine STEP change, only a rule future writers (agent or human) see before writing. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-24.
+
+---
+
+## 24. `.claude_current_state.json` — `last_updated_utc` Write Convention (ST-34, EPIC-06, v9.8, BLG-GOV-342)
+
+**Purpose:** `roadmap_prompt.md` STEP -1.6's state-age advisory ("State file not updated in >30 days — confirm active_cycle is current") reads `.claude_current_state.json`'s `last_updated_utc` field. Before this convention, the field did not exist at all, so the advisory's "absent" branch fired unconditionally on every single `run roadmap` invocation, regardless of how recently the state file had actually been touched — confirmed at `2026-09-19__scheduled` with `last_sync_utc` (a different, narrower field — see below) fresh.
+
+**Convention:** any engine that writes `.claude_current_state.json` — regardless of which other field(s) that specific write touches — must set `last_updated_utc` to the real current UTC wall-clock time (e.g. via a shell `date -u +%Y-%m-%dT%H:%M:%SZ` call or language equivalent, not a narrated/estimated value — same derivation discipline already required of `execution_state.json`'s `blocked_since_utc`/`completed_utc` fields, `execution_prompt.md` §3.1.A step 4b / §3.1.B step 3) in the same write.
+
+**Distinct from `last_sync_utc`:** `last_sync_utc` tracks a specific, narrower operation (an explicit `sync gh` / external-sync run — see `claude/schemas/state_field_owners.json`). `last_updated_utc` tracks *any* write to the file by *any* engine. Do not conflate the two, and do not infer one from the other.
+
+**Ownership registry:** `claude/schemas/state_field_owners.json` maps every top-level field in `.claude_current_state.json` to the engine responsible for writing it, including this one. That file is tooling metadata (not a governance prompt) and may be updated directly as ordinary engineering work whenever a new field is added — see its own `_meta.maintenance` note.
+
+**Validation:** `claude/system/state_schema.json` is the structural JSON Schema for `.claude_current_state.json` (field names/types/presence — distinct from `claude/system/lifecycle_schema.json`, the canonical state-machine definition of valid `status` values and transitions). Run `python3 scripts/validate_state_schema.py` to validate the live state file and report `last_updated_utc`'s computed age; not currently wired into any engine's preflight as a hard gate — advisory/manual use for now, same posture as other structural-drift detectors in this codebase (e.g. `check_specs_index_freshness.py`).
+
+**Sign-off:** Head of Specs Team — Approved. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-30.
 
 ---
 

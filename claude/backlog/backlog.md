@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-29 (session — 1 new item added: BLG-SPEC-176, from ST-23/EPIC-05's openapi.yaml response-schema authoring); prior — 2026-09-29 (session — 1 new item added: BLG-SPEC-175, from ST-21/EPIC-05's error-envelope freshness-checker extension); prior — 2026-09-29 (session — 4 new items added: BLG-OPS-172, BLG-OPS-173, BLG-OPS-174, BLG-API-06, from ST-20/EPIC-05's idempotency/double-submit documentation sweep); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-30 (session — 1 new item added: BLG-SPEC-177, from agent-mediated review of PR #1847); prior — 2026-09-30 (session — 1 new item added: BLG-GOV-355, from ST-31/EPIC-06 write-scope escalation); prior — 2026-09-30 (session — 2 new items added: BLG-GOV-353, BLG-GOV-354, from ST-33/EPIC-06 write-scope escalation and a stale-pointer finding); prior history retained — see prior entries in version control (includes EPIC-05's own 2026-09-29 additions: BLG-SPEC-175/176, BLG-OPS-172/173/174, BLG-API-06, merged to main via PR #1847).
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4668,6 +4668,96 @@ ST-17 (BLG-OPS-169) added a stale-deploy check to `staging-smoke-test.yml` (comp
 
 **Acceptance Criteria**
 - All 3 Alpaca call sites in `alpaca_paper_sync_service.py` source their timeout from `get_timeout("alpaca")`; no behaviour change to existing sync/retry logic
+
+---
+
+### BLG-GOV-353 — role_share_history.md has no governance-authorized home under claude/roadmap/
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** ST-33 (BLG-GOV-341), EPIC-06, cycle 2026-09-28__release-v9.8 — 2026-09-30
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-33's AC ("persist STEP 7.2 role-share tallies as a structured history file") assumes the resulting file lives at `claude/roadmap/role_share_history.md`, mirroring the existing `product_value_ratio_history.md` precedent in the same directory. But `execution_prompt.md` §7's write-scope restriction only carves out `claude/roadmap/workforce_capacity.md` (BLG-GOV-337) for direct engine writes to `claude/roadmap/*`, and that ruling explicitly states it extends to no other roadmap file. Sprint Execution has no standing authority to create a new file at that path without an explicit `sprint_backlog.md` Notes-field authorization, which ST-33's sealed Notes field does not provide (PMO Lead confirmed this reading in-session via `AskUserQuestion`, 2026-09-30). As a result, ST-33 delivered the backfilled history data and computation script at a cycle-scoped interim location (`claude/cycles/2026-09-28__release-v9.8/role_share_history.md`) rather than the canonical roadmap location, and `roadmap_prompt.md` §7.2 was **not** updated to read from it — the AC's second half ("STEP 7.2 reads the file instead of re-parsing Owner fields") remains outstanding.
+
+**Scope**
+- Roadmap Engine (or Head of Specs Team acting directly) formally authorises and creates `claude/roadmap/role_share_history.md`, migrating the interim data from `claude/cycles/2026-09-28__release-v9.8/role_share_history.md`
+- Update `roadmap_prompt.md` §7.2 to read the structured file instead of re-parsing `sprint_backlog.md` Owner fields at each rebalance (applying the full CLAUDE.md §6 governance-file-edit checklist for the version bump)
+- Confirm whether `product_value_ratio_history.md`'s own original creation had an equivalent explicit authorisation on record, to establish the precedent cleanly for this and future `claude/roadmap/` additions
+
+**Acceptance Criteria**
+- `claude/roadmap/role_share_history.md` exists, seeded with the 3-cycle backfill already computed by `scripts/compute_role_share_history.py`
+- `roadmap_prompt.md` §7.2 reads from it instead of re-deriving the tally by hand
+- The interim `claude/cycles/2026-09-28__release-v9.8/role_share_history.md` file is either superseded/removed or left as a dated historical snapshot, at the implementer's discretion
+
+---
+
+### BLG-GOV-354 — .claude_current_state.json's execution_state_path points to the prior cycle, not the active one
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** ST-33, EPIC-06, cycle 2026-09-28__release-v9.8 — 2026-09-30
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`.claude_current_state.json`'s `active_cycle` field correctly reads `2026-09-28__release-v9.8`, but its `execution_state_path` field still reads `claude/cycles/2026-09-23__release-v9.7/execution_state.json` — the prior cycle's file, not `claude/cycles/2026-09-28__release-v9.8/execution_state.json` (which exists and is the file Sprint Execution has actually been reading/writing all cycle via its own resumability model). Nothing appears to have updated this pointer at cycle transition. A tool or reader that trusts this field rather than deriving the path from `active_cycle` would silently read/write the wrong cycle's execution state.
+
+**Scope**
+- Update `.claude_current_state.json`'s `execution_state_path` to match the active cycle
+- Check whether any script or governance prompt STEP actually reads this field (vs. deriving the path from `active_cycle` directly, as Sprint Execution appears to do) — if something does trust it, this is a live correctness bug, not just stale metadata
+- Confirm whether the roadmap/sprint-planning engine's cycle-transition steps are supposed to update this field and, if so, why it didn't happen at the `2026-09-28__release-v9.8` transition
+
+**Acceptance Criteria**
+- `execution_state_path` matches `active_cycle`'s own `execution_state.json`
+- Root cause of the missed update at cycle transition is identified and, if a real reader depends on it, fixed so it can't drift again
+
+---
+
+### BLG-GOV-355 — product_value_ratio_history.md's effort-weighted PVR column has no governance-authorized home
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** ST-31 (BLG-GOV-339), EPIC-06, cycle 2026-09-28__release-v9.8 — 2026-09-30
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** TBD
+
+**Problem**
+`BLG-GOV-339`'s own Scope text names `claude/roadmap/product_value_ratio_history.md` directly as the intended target for a new effort-weighted PVR column ("Report an effort-weighted PVR alongside the story-count PVR in `product_value_ratio_history.md`"). But `execution_prompt.md` §7's write-scope restriction only carves out `claude/roadmap/workforce_capacity.md` (BLG-GOV-337) for direct engine writes to `claude/roadmap/*`, and `sprint_backlog.md`'s ST-31 Notes field carries no per-file authorisation ("None"). This is the third instance of the same write-scope gap this sprint (see `BLG-GOV-353`, ST-33/role-share history; the runway forecast for ST-32/`BLG-GOV-340` avoided it by using `metrics_definitions.md` instead). Resolved for ST-31 (`ESC-EXEC-20260930-03`) by defining and backfilling the effort-weighted PVR metric in `docs/specs/metrics_definitions.md` Appendix F instead, independently cross-validated against `product_value_ratio_history.md`'s own recorded U/G/D/P counts (4 of 5 windows matched exactly). The canonical file itself was not touched.
+
+**Scope**
+- Roadmap Engine (or Head of Specs Team acting directly) formally authorises and performs the `product_value_ratio_history.md` append: a new effort-weighted PVR column added to the `## History` table, backfilled from the 5-window data already computed and cross-validated in `metrics_definitions.md` Appendix F via `scripts/compute_effort_weighted_pvr.py`
+- Going forward, `roadmap_prompt.md` STEP 2.4 appends both readings each rebalance (subject to the separate Head of Specs Team + Product Owner sign-off `BLG-GOV-339` itself already requires before any STEP 2.4 behaviour change)
+- **Secondary recommendation:** this is the third near-identical `claude/roadmap/*` write-scope conflict raised in one sprint (`BLG-GOV-353`, this item, and the runway forecast that avoided it). Consider whether `execution_prompt.md` §7 should gain a standing, lighter-weight escalation path for "extend an existing, already-authorised `claude/roadmap/*` file with a new column/section the file's own owning engine will consume" — distinct from the heavier bar appropriate to creating a brand-new file at that path — rather than re-litigating this per-story each time it recurs
+
+**Acceptance Criteria**
+- `product_value_ratio_history.md`'s `## History` table carries the effort-weighted PVR reading alongside the existing story-count PVR, backfilled for the same 5 windows already computed in `metrics_definitions.md` Appendix F
+- `roadmap_prompt.md` STEP 2.4 is updated to append both readings at future rebalances, contingent on `BLG-GOV-339`'s own required sign-off for any STEP 2.4 behaviour change
+
+---
+
+### BLG-SPEC-177 — openapi.yaml's new TradePlan schema declares the stale 3-value status enum
+**Priority:** P3 (Low)
+**Type:** Spec / API Contract
+**Owner:** API Contracts & Documentation Owner
+**Source:** PR #1847 agent-mediated review (Director of Quality finding), EPIC-05/ST-23, cycle 2026-09-28__release-v9.8 — 2026-09-30
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Note on numbering:** PR #1847 (EPIC-05, not yet merged) already claims `BLG-SPEC-175`/`176` on its own branch — this item is numbered `177` deliberately, ahead of what is visible on this branch's own `backlog.md`, to avoid a collision when the two branches merge (see CLAUDE.md §8's identical-text-masks-differing-semantics / cross-EPIC collision guidance). Confirm this number is still free at merge time.
+
+**Problem**
+`docs/reference/openapi.yaml`'s new `TradePlan` schema (added by ST-23, EPIC-05, v9.8, `BLG-SPEC-153`, referenced by `POST /trade-plans` 201) declares `status: { type: string, enum: [draft, active, closed] }` — the stale 3-value list. In the very same PR, ST-24 (`BLG-SPEC-154`) corrects `data_model.md`'s DS-04 CHECK constraint to the live 7-value list (`draft, research_pending, research_complete, entry_conditions_set, active, closed, abandoned`) and adds DS-21 documenting exactly this migration. The new schema directly contradicts its own PR-sibling's fix. Not a live bug today — `POST /trade-plans` always creates with `status="draft"` (confirmed in `backend/routers/trade_plans.py`) — but `TradePlan` is a general-purpose, reusable schema name; a future consumer reusing it for a GET response, a codegen client, or a contract test would be misled into thinking only 3 statuses are ever valid.
+
+**Scope**
+- Update `TradePlan.status`'s enum in `openapi.yaml` to the same 7-value list DS-21 documents
+- Confirm no example/test relies on the narrower 3-value assumption
+
+**Acceptance Criteria**
+- `TradePlan.status` enum matches `data_model.md` DS-04's live CHECK constraint exactly (7 values)
+- `scripts/check_openapi_drift.py` and `scripts/check_contract_example_freshness.py` both still pass
 
 ---
 

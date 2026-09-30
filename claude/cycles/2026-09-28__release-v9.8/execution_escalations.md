@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-09-29 (ESC-EXEC-20260929-03 added and resolved same-session)
+Last Updated: 2026-09-30 (ESC-EXEC-20260930-03 added and resolved same-session; merged with EPIC-05's ESC-EXEC-20260929-03 on EPIC-05 merge to main)
 
 ## ESC-EXEC-20260929-01
 
@@ -50,3 +50,51 @@ Last Updated: 2026-09-29 (ESC-EXEC-20260929-03 added and resolved same-session)
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary:** Strategy Rules & System Intent Owner (2026-09-29T14:47:45Z, in-session via `AskUserQuestion`): **Re-affirm PASS, correct the record.** The mirror-write mechanism is §13-compliant in substance — every paper order/close is a deterministic, synchronous mirror of a user-initiated action the system did not decide, never generates or acts on any signal, involves no real capital, and is best-effort/non-blocking on the primary (real) operation. The original review's "read-only" description was a factually incorrect characterisation of an already-compliant mechanism, not a boundary violation requiring remediation. Addendum added to `decisions--2026-05-15__release-v3.5--IT-06-section13-review.md` correcting the technical description and re-confirming PASS under corrected conditions (mirror-write permitted only as a deterministic, idempotent reflection of a user-initiated real-position event; no independently-originated order; no signal path from paper data). `po05_section13_preassessment.md`'s reliance on IT-06's conditions remains valid — the *substance* of those conditions (no autonomous order origination, paper-data isolation) was never actually violated, only their prior written description.
+
+## ESC-EXEC-20260930-01
+
+- **Raised at:** 2026-09-30T08:16:52Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-28__release-v9.8
+- **Step:** STEP 3.1.D
+- **ST/EPIC item:** ST-38 / EPIC-06
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-38 (`BLG-GOV-351`) requires deciding which governed routine owns firing the 90-day post-ship AI feature usage review (`BLG-FEAT-59/60/63`, `BLG-FE-84`, `BLG-OPS-88`, `BLG-GOV-140/141/142` cluster — found 4 days overdue at `2026-09-28__scheduled`'s roadmap rebalance, with no trigger mechanism). `sprint_backlog.md`'s own Notes for ST-38 (RISK-02) require this design decision to be resolved by Head of Specs Team / PMO Lead as a first sub-step before the build sub-step begins — not engine-determinable per the sealed sprint backlog's own `delegated_decision` classification.
+- **Owning authority:** Head of Specs Team; PMO Lead
+- **Unblock criteria:** Head of Specs Team / PMO Lead records which routine owns firing this review (post-ship closure's own cadence checks vs. a standalone lightweight scheduled cadence doc vs. both), so the trigger mechanism can be built against a locked design.
+- **SLA due-by:** 2026-10-01T08:16:52Z
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary:** Head of Specs Team / PMO Lead (2026-09-30T08:16:52Z, in-session via `AskUserQuestion`): Post-Ship Closure gets a new mandatory STEP (alongside its existing always-run STEPs 11/12/12.5). Implemented as `post_ship_closure.md` STEP 12.6 (v2.35→v2.36) — scans `claude/backlog/backlog.md` via `scripts/scan_backlog_gate_conditions.py` for a lapsed AI-feature-usage-review-shaped gate on every cycle close, surfaces it in the Advisory Summary if due, and files (or confirms already filed) a tracking backlog item. Trigger mechanism only, per this story's own scope — does not conduct the review itself.
+
+## ESC-EXEC-20260930-02
+
+- **Raised at:** 2026-09-30T09:12:04Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-28__release-v9.8
+- **Step:** STEP 3.1.D
+- **ST/EPIC item:** ST-33 / EPIC-06
+- **Trigger type:** Write-Scope
+- **Blocking statement:** ST-33 (`BLG-GOV-341`) requires persisting the STEP 7.2 role-share tally as a structured history file. The natural location, mirroring `product_value_ratio_history.md`'s own precedent, is `claude/roadmap/role_share_history.md` — but `execution_prompt.md` §7's write-scope restriction only carves out `claude/roadmap/workforce_capacity.md` (BLG-GOV-337) for direct engine writes to `claude/roadmap/*`, and that ruling explicitly states it extends to no other roadmap file. `sprint_backlog.md`'s ST-33 Notes field does not name a target path or authorise a `claude/roadmap/*` write — only "History backfilled for the last 3 cycles (explicit AC)." Not engine-determinable: proceeding would repeat the same class of out-of-scope write already self-corrected once earlier this session (`current_roadmap.md`).
+- **Owning authority:** PMO Lead (ST-33's Owner)
+- **Unblock criteria:** PMO Lead records where the persisted history file should live given the write-scope conflict.
+- **SLA due-by:** 2026-10-02T09:12:04Z
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary:** PMO Lead (2026-09-30T09:12:04Z, in-session via `AskUserQuestion`): file a backlog item deferring the canonical `claude/roadmap/role_share_history.md` placement to the roadmap engine (`BLG-GOV-353`); this sprint, deliver the backfilled data and computation script at an in-scope interim location (`claude/cycles/2026-09-28__release-v9.8/role_share_history.md`). `roadmap_prompt.md` §7.2 is **not** updated this sprint — that change is deferred to `BLG-GOV-353`'s resolution, since it would read from a file this engine has no authority to create. ST-33 closes with this AC-half deferred and documented, not silently dropped.
+
+## ESC-EXEC-20260930-03
+
+- **Raised at:** 2026-09-30T10:20:00Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-28__release-v9.8
+- **Step:** STEP 3.1.D
+- **ST/EPIC item:** ST-31 / EPIC-06
+- **Trigger type:** Write-Scope
+- **Blocking statement:** ST-31 (`BLG-GOV-339`) requires "History file carries both readings for the last 5 windows" — `BLG-GOV-339`'s own Scope text names the target explicitly: "Report an effort-weighted PVR alongside the story-count PVR in `product_value_ratio_history.md`." That file lives under `claude/roadmap/`, and `sprint_backlog.md`'s ST-31 Notes field reads "None" — no explicit per-file write-scope authorisation, the same gap already raised and resolved once this session as `ESC-EXEC-20260930-02` (ST-33/`BLG-GOV-353`) and avoided by relocation for ST-32.
+- **Owning authority:** PMO Lead (ST-31's Owner)
+- **Unblock criteria:** Where should the effort-weighted PVR backfill be recorded given the same write-scope conflict.
+- **SLA due-by:** 2026-10-02T10:20:00Z
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary:** Resolved by direct application of `ESC-EXEC-20260930-02`'s established precedent rather than a fresh `AskUserQuestion` round-trip on an already-answered question (same requester role, same underlying conflict, same session) — per Auto Mode guidance to make the reasonable call once precedent is genuinely established rather than re-asking. Disposition: define both sub-metrics and the effort-weighted PVR backfill in `docs/specs/metrics_definitions.md` Appendix F (its own established, in-scope home — already hosts the PVR boundary-trade-handling rule with a cross-reference to `product_value_ratio_history.md`), independently cross-validated against that file's own recorded U/G/D/P counts rather than editing it directly. Filed `BLG-GOV-355` for the roadmap engine to formally authorise and perform the canonical `product_value_ratio_history.md` append. If a third near-identical write-scope conflict recurs in a future sprint, it should be escalated to the Roadmap Engine directly (a standing carve-out process) rather than re-litigated per-story each time — noted in `BLG-GOV-355` as a secondary recommendation.

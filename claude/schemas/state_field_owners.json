@@ -13,6 +13,7 @@
     "status": { "owner": "multiple (lifecycle transitions)", "phase": "sprint_planning_prompt.md / execution_prompt.md / delivery_verification_prompt.md / post_ship_closure.md", "notes": "Advances Sealed -> Executing -> Verified -> Closed across engines; no single owner." },
     "prior_status": { "owner": "execution_prompt.md", "phase": "Phase 3" },
     "engine": { "owner": "self-declared by whichever engine is currently active", "phase": "all" },
+    "last_updated_utc": { "owner": "every engine, on every write to this file", "phase": "all", "notes": "Added ST-34, BLG-GOV-342, EPIC-06, v9.8. Must be set to the real current UTC wall-clock time (not narrated/estimated -- same rule already applied to execution_state.json's own blocked_since_utc/completed_utc fields, shared_standards.md's derivation convention) on every write, by every engine, regardless of which other fields that write touches. roadmap_prompt.md STEP -1.6's state-age advisory reads this field and previously always fired (field was absent entirely) -- see claude/system/state_schema.json (structural schema) and scripts/validate_state_schema.py (validator)." },
     "execution_state_path": { "owner": "sprint_planning_prompt.md", "phase": "Phase 2, seal step" },
     "backlog_slice_path": { "owner": "roadmap_prompt.md / release_planning_prompt.md", "phase": "Phase 1 / 1B" },
     "design_gate_required": { "owner": "release_planning_prompt.md", "phase": "Phase 1B" },

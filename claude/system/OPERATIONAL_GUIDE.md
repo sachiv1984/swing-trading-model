@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.210
-**Last Updated:** 2026-09-29 (Sprint execution `2026-09-28__release-v9.8` EPIC-03/ST-14, BLG-QA-183 — qa_evidence_template.md v1.16→v1.17: new AI-Touching Story Evidence Addendum recording prompt-template version and a boundary-language sample; §14 QA Evidence Template row updated; §14 self-row corrected from a found 1-version drift (stale at 4.208 despite the Change Log's own top row already reading 4.209) to 4.210, folding in both the missed correction and this entry's own +1 bump); prior — 2026-09-28 (Sprint Planning STEP -1 Hard Gate 2 halt investigation, `2026-09-28__release-v9.8` — release_planning_prompt.md v2.56→v2.57: new STEP 6 (Publish Gate Evaluation) and STEP 8.5 (Pre-Seal Revalidation & Publish Sealing) wired into the numbered flow, closing a gap where neither procedure was ever actually invoked and every cycle's `state.json` stalled at `Validated`; §6B.3 Engine Steps table gains both rows and corrects the STEP 9 row's stale "sets Published" claim; §6B.6 gains a pointer to the two new steps); prior — 2026-09-28 (lifecycle audit `AUD-2026-09-28` ruling session, Head of Specs Team — `lessons_learnt_prompt.md` v1.14→v1.15 and `execution_prompt.md` v3.79→v3.80 applied per AUD-2026-09-28-001/-002; §13 gains an entry-point/meta-document scope note per AUD-2026-09-28-003); prior history retained — see prior entries in version control.
+**Version:** 4.214
+**Last Updated:** 2026-09-30 (Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-32, BLG-GOV-340 — roadmap_prompt.md v9.25→v9.26: §7.3 gains a Runway Projection cross-reference to metrics_definitions.md Appendix F's new Ready-Pool Runway Forecast metric; §6 source-prompt header and §14 Roadmap Engine Source row updated to v9.26); prior — 2026-09-30 (Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-38, BLG-GOV-351 — post_ship_closure.md v2.35→v2.36: new STEP 12.6, 90-Day AI Feature Usage Review Trigger Check; §10 source-prompt header and §14 Post-Ship Closure Engine row updated to v2.36); prior — 2026-09-30 (Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-34, BLG-GOV-342 — shared_standards.md v3.35→v3.36: new §24 `.claude_current_state.json` `last_updated_utc` Write Convention; §14 Shared Standards row updated to v3.36); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -398,7 +398,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.25)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.26)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -622,7 +622,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.57)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.58)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1063,7 +1063,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.35)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.36)
 **Process document:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); `claude/system/post_ship_closure.md` is the sole authority.
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1368,8 +1368,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.210 |
-| Last Updated | 2026-09-29 |
+| Version | 4.214 |
+| Last Updated | 2026-09-30 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.9 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1377,16 +1377,16 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.18 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.10 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.25 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.57 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.26 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.58 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.19 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.80 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.17 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.12 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.35 |
-| Shared Standards | `claude/system/shared_standards.md` v3.35 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.36 |
+| Shared Standards | `claude/system/shared_standards.md` v3.36 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.15 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1503,6 +1503,10 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.214 | 2026-09-30 | **Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-32 (BLG-GOV-340) — roadmap_prompt.md v9.25→v9.26: §7.3 gains a Runway Projection cross-reference.** §6 source prompt header v9.25→v9.26; §14 Roadmap Engine Source row v9.25→v9.26. §14 self-row `Version`/`Last Updated` 4.213/2026-09-30→4.214/2026-09-30. Change: §7.3 (Ready-Pool Capacity Gap Trend) now points to `docs/specs/metrics_definitions.md` Appendix F's new "Ready-Pool Runway Forecast" metric — a rolling-3-cycle "cycles until empty" projection, distinct from §7.3's existing absolute gap-vs-ceiling check — and directs the next rebalance to cite the maintained Appendix F figure there rather than recompute one ad hoc. Companion, non-governance-prompt artefact: `docs/specs/metrics_definitions.md` v1.24.0→v1.25.0 (Appendix F gains this metric plus a Delivery Lead Time by Priority Band metric, both backfilled for the last 5 shipped cycles, v9.3–v9.7). Authority: PMO Lead (Sprint Execution Engine, agent-mediated per §5.3, ST-32, 2026-09-30). |
+| 4.213 | 2026-09-30 | **Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-38 (BLG-GOV-351) — post_ship_closure.md v2.35→v2.36: new STEP 12.6, 90-Day AI Feature Usage Review Trigger Check.** §10 source prompt header v2.35→v2.36; §14 Post-Ship Closure Engine row v2.35→v2.36. §14 self-row `Version`/`Last Updated` 4.212/2026-09-30→4.213/2026-09-30. Change: runs on every cycle close alongside STEPs 11/12/12.5 — scans `claude/backlog/backlog.md` via `scripts/scan_backlog_gate_conditions.py` for a lapsed AI-feature-usage-review-shaped gate; if due, surfaces it in the Advisory Summary and files (or confirms already filed) a tracking backlog item. Trigger mechanism only, does not conduct the review. Resolves `BLG-GOV-351` (`BLG-FEAT-59/60/63`, `BLG-FE-84`, `BLG-OPS-88`, `BLG-GOV-140/141/142` cluster, found 4 days overdue with no trigger at `2026-09-28__scheduled`). Design decision (which routine owns the trigger) resolved in-session via AskUserQuestion, Head of Specs Team / PMO Lead. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-38, 2026-09-30). |
+| 4.212 | 2026-09-30 | **Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-34 (BLG-GOV-342) — shared_standards.md v3.35→v3.36: new §24 `.claude_current_state.json` `last_updated_utc` Write Convention.** §14 table: Shared Standards v3.35→v3.36. §14 self-row `Version`/`Last Updated` 4.211/2026-09-30→4.212/2026-09-30. Change: any engine writing `.claude_current_state.json` must set `last_updated_utc` to the real current UTC time in the same write, regardless of which other field(s) that write touches. Root cause: `roadmap_prompt.md` STEP -1.6's state-age advisory read this field, which did not exist, so it fired unconditionally on every run. Companion, non-governance-prompt artefacts added in the same commit: `claude/system/state_schema.json` (new structural JSON Schema, distinct from the existing `lifecycle_schema.json` state-machine definition), `scripts/validate_state_schema.py` (new validator), and a new `last_updated_utc` entry in `claude/schemas/state_field_owners.json`. `.claude_current_state.json` itself gained the field, set to this write's real timestamp. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-34, 2026-09-30). |
+| 4.211 | 2026-09-30 | **Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-35 (BLG-GOV-346) — release_planning_prompt.md v2.57→v2.58: STEP 4 gains a story-class effort calibration check.** §6B source prompt header v2.57→v2.58 (line 625); §14 Release Engine Source row v2.57→v2.58. §14 self-row `Version`/`Last Updated` 4.210/2026-09-29→4.211/2026-09-30. Change: STEP 4 (Backlog Slice commitment) now flags any candidate item whose scope contains a "grep-and-fix-everywhere" or "verify against a live/staging environment" pattern, defaulting its effort one tier higher (or requiring a confirmed expected file/case count before the estimate is locked). Origin: 3 stories in one sprint (`2026-09-21__release-v9.6` ST-17/ST-18/ST-21) each needed a mid-execution scope correction from this exact under-estimation pattern. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-35, 2026-09-30). |
 | 4.210 | 2026-09-29 | **Sprint execution `2026-09-28__release-v9.8` EPIC-03/ST-14 (BLG-QA-183) — qa_evidence_template.md v1.16→v1.17: AI-Touching Story Evidence Addendum.** §14 QA Evidence Template v1.16→v1.17. §14 self-row `Version`/`Last Updated` 4.208/2026-09-28→4.210/2026-09-29 (also corrects a found 1-version self-row drift: the immediately-prior 4.209 entry's own change text claimed the self-row was bumped to 4.209, but it was left at the stale 4.208 — corrected here alongside this entry's own +1 bump, same self-caught-drift pattern as the 4.157/4.163/4.96 precedents above). Change: new "AI-Touching Story Evidence Addendum" section requires an AI-touching story's evidence to record the prompt-template version and a boundary-language sample (`scan_prescriptive`/`scan_prediction` result), closing the gap where prior AI-touching stories (e.g. `BLG-AI-06`) reached DoQ sign-off with no standard, fixed place to record this. No separate phase-section source-prompt header exists for this template (confirmed against every prior `qa_evidence_template.md` Change Log entry — none reference one), so none was touched. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-14, 2026-09-29). |
 | 4.209 | 2026-09-28 | **Sprint Planning STEP -1 Hard Gate 2 halt investigation (`2026-09-28__release-v9.8`) — release_planning_prompt.md v2.56→v2.57: Publish Gate + Sealing wired into the numbered flow.** Root cause: the Publish Gate evaluation and Publish Sealing Checklist (`claude/system/shared/publish_gate.md`) were referenced only in a disconnected trailing section after STEP 10 — no numbered step ever invoked either procedure, so every `plan release` run reached `status = Validated` and stopped there, while STEP 10 unconditionally committed a message claiming "Published" regardless. New STEP 6 (Publish Gate Evaluation, sets `Validated`) inserted between STEP 5.5 and STEP 7; new STEP 8.5 (Pre-Seal Revalidation & Publish Sealing, sets `Published`) inserted between STEP 8 and STEP 9. Corrected two stale forward-references (in STEP 7 and STEP 9's own notes) that still claimed "STEP 9 sets Published" — the same vocabulary confusion partially fixed once before at v2.42→v2.43 (2026-07-27) but left uncorrected at these two sites. STEP 10's commit message is now conditional on STEP 8.5 having actually sealed. §6B.3 Engine Steps table gains STEP 6 and STEP 8.5 rows and corrects the STEP 9 row. §6B.6 gains a pointer distinguishing the two steps. Companion fix: `claude/system/shared/publish_gate.md` v1.0→v1.1 (corrected a stale reference to the RESUME PRECHECK mutation-detection machinery removed at release_planning_prompt.md v2.47). Retroactively applied to unblock `2026-09-28__release-v9.8`, whose `state.json` was found stuck at `Validated` with an empty `sealed.*` block despite a "Published Release Plan" commit message. §6B source prompt header v2.56→v2.57 (line 625); §14 table: Release Engine Source v2.56→v2.57. §14 self-row `Version`/`Last Updated` 4.208/2026-09-28→4.209/2026-09-28. Authority: Head of Specs Team (agent-mediated per §5.3, user-directed "act as Head of Specs Team and apply the fix", 2026-09-28). |
 | 4.208 | 2026-09-28 | **Lifecycle audit `AUD-2026-09-28`, 3 filed improvements ruled on and applied (Head of Specs Team, per explicit user direction to act as the relevant role).** `lessons_learnt_prompt.md` v1.14→v1.15 (AUD-2026-09-28-001: §5 Scope line narrowed to Roadmap Rebalance and Post-Ship Closure only; Release Planning's stable 4-cycle "Friction Item N" lightweight format confirmed as its own intended variant, not a compliance gap). `execution_prompt.md` v3.79→v3.80 (AUD-2026-09-28-002: §3.2.A gains a same-EPIC cross-story testing-gap consistency check, resolving the 3-cycle-overdue `ESC-CLOSE-20260928-01`). §13 Artefact Register gains a scope note (AUD-2026-09-28-003): `CLAUDE.md`, `claude/README.md`, and `claude/audit.py` are intentionally excluded as entry-point/meta-documents, not a register gap. §8 source prompt header v3.79→v3.80 (line 889); §14 table: Execution Engine Source v3.79→v3.80, Lessons Learnt Prompt v1.14→v1.15. §14 self-row `Version`/`Last Updated` 4.207/2026-09-28→4.208/2026-09-28. Authority: Head of Specs Team (agent-mediated per §5.3, lifecycle audit `AUD-2026-09-28` ruling session, user-directed, 2026-09-28). |
