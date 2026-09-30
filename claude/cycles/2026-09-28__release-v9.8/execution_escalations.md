@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-09-30 (ESC-EXEC-20260930-02 added and resolved same-session)
+Last Updated: 2026-09-30 (ESC-EXEC-20260930-03 added and resolved same-session)
 
 ## ESC-EXEC-20260929-01
 
@@ -66,3 +66,19 @@ Last Updated: 2026-09-30 (ESC-EXEC-20260930-02 added and resolved same-session)
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary:** PMO Lead (2026-09-30T09:12:04Z, in-session via `AskUserQuestion`): file a backlog item deferring the canonical `claude/roadmap/role_share_history.md` placement to the roadmap engine (`BLG-GOV-353`); this sprint, deliver the backfilled data and computation script at an in-scope interim location (`claude/cycles/2026-09-28__release-v9.8/role_share_history.md`). `roadmap_prompt.md` §7.2 is **not** updated this sprint — that change is deferred to `BLG-GOV-353`'s resolution, since it would read from a file this engine has no authority to create. ST-33 closes with this AC-half deferred and documented, not silently dropped.
+
+## ESC-EXEC-20260930-03
+
+- **Raised at:** 2026-09-30T10:20:00Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-28__release-v9.8
+- **Step:** STEP 3.1.D
+- **ST/EPIC item:** ST-31 / EPIC-06
+- **Trigger type:** Write-Scope
+- **Blocking statement:** ST-31 (`BLG-GOV-339`) requires "History file carries both readings for the last 5 windows" — `BLG-GOV-339`'s own Scope text names the target explicitly: "Report an effort-weighted PVR alongside the story-count PVR in `product_value_ratio_history.md`." That file lives under `claude/roadmap/`, and `sprint_backlog.md`'s ST-31 Notes field reads "None" — no explicit per-file write-scope authorisation, the same gap already raised and resolved once this session as `ESC-EXEC-20260930-02` (ST-33/`BLG-GOV-353`) and avoided by relocation for ST-32.
+- **Owning authority:** PMO Lead (ST-31's Owner)
+- **Unblock criteria:** Where should the effort-weighted PVR backfill be recorded given the same write-scope conflict.
+- **SLA due-by:** 2026-10-02T10:20:00Z
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary:** Resolved by direct application of `ESC-EXEC-20260930-02`'s established precedent rather than a fresh `AskUserQuestion` round-trip on an already-answered question (same requester role, same underlying conflict, same session) — per Auto Mode guidance to make the reasonable call once precedent is genuinely established rather than re-asking. Disposition: define both sub-metrics and the effort-weighted PVR backfill in `docs/specs/metrics_definitions.md` Appendix F (its own established, in-scope home — already hosts the PVR boundary-trade-handling rule with a cross-reference to `product_value_ratio_history.md`), independently cross-validated against that file's own recorded U/G/D/P counts rather than editing it directly. Filed `BLG-GOV-355` for the roadmap engine to formally authorise and perform the canonical `product_value_ratio_history.md` append. If a third near-identical write-scope conflict recurs in a future sprint, it should be escalated to the Roadmap Engine directly (a standing carve-out process) rather than re-litigated per-story each time — noted in `BLG-GOV-355` as a secondary recommendation.

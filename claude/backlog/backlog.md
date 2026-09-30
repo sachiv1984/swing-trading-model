@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-30 (session — 2 new items added: BLG-GOV-353, BLG-GOV-354, from ST-33/EPIC-06 write-scope escalation and a stale-pointer finding); prior — 2026-09-29 (session — 1 new item added: BLG-SEC-40, from agent-mediated review of PR #1846); prior — 2026-09-29 (session — 2 new items added: BLG-QA-203, BLG-OPS-171); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-30 (session — 1 new item added: BLG-GOV-355, from ST-31/EPIC-06 write-scope escalation); prior — 2026-09-30 (session — 2 new items added: BLG-GOV-353, BLG-GOV-354, from ST-33/EPIC-06 write-scope escalation and a stale-pointer finding); prior — 2026-09-29 (session — 1 new item added: BLG-SEC-40, from agent-mediated review of PR #1846); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -4713,6 +4713,28 @@ ST-33's AC ("persist STEP 7.2 role-share tallies as a structured history file") 
 **Acceptance Criteria**
 - `execution_state_path` matches `active_cycle`'s own `execution_state.json`
 - Root cause of the missed update at cycle transition is identified and, if a real reader depends on it, fixed so it can't drift again
+
+---
+
+### BLG-GOV-355 — product_value_ratio_history.md's effort-weighted PVR column has no governance-authorized home
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** ST-31 (BLG-GOV-339), EPIC-06, cycle 2026-09-28__release-v9.8 — 2026-09-30
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** TBD
+
+**Problem**
+`BLG-GOV-339`'s own Scope text names `claude/roadmap/product_value_ratio_history.md` directly as the intended target for a new effort-weighted PVR column ("Report an effort-weighted PVR alongside the story-count PVR in `product_value_ratio_history.md`"). But `execution_prompt.md` §7's write-scope restriction only carves out `claude/roadmap/workforce_capacity.md` (BLG-GOV-337) for direct engine writes to `claude/roadmap/*`, and `sprint_backlog.md`'s ST-31 Notes field carries no per-file authorisation ("None"). This is the third instance of the same write-scope gap this sprint (see `BLG-GOV-353`, ST-33/role-share history; the runway forecast for ST-32/`BLG-GOV-340` avoided it by using `metrics_definitions.md` instead). Resolved for ST-31 (`ESC-EXEC-20260930-03`) by defining and backfilling the effort-weighted PVR metric in `docs/specs/metrics_definitions.md` Appendix F instead, independently cross-validated against `product_value_ratio_history.md`'s own recorded U/G/D/P counts (4 of 5 windows matched exactly). The canonical file itself was not touched.
+
+**Scope**
+- Roadmap Engine (or Head of Specs Team acting directly) formally authorises and performs the `product_value_ratio_history.md` append: a new effort-weighted PVR column added to the `## History` table, backfilled from the 5-window data already computed and cross-validated in `metrics_definitions.md` Appendix F via `scripts/compute_effort_weighted_pvr.py`
+- Going forward, `roadmap_prompt.md` STEP 2.4 appends both readings each rebalance (subject to the separate Head of Specs Team + Product Owner sign-off `BLG-GOV-339` itself already requires before any STEP 2.4 behaviour change)
+- **Secondary recommendation:** this is the third near-identical `claude/roadmap/*` write-scope conflict raised in one sprint (`BLG-GOV-353`, this item, and the runway forecast that avoided it). Consider whether `execution_prompt.md` §7 should gain a standing, lighter-weight escalation path for "extend an existing, already-authorised `claude/roadmap/*` file with a new column/section the file's own owning engine will consume" — distinct from the heavier bar appropriate to creating a brand-new file at that path — rather than re-litigating this per-story each time it recurs
+
+**Acceptance Criteria**
+- `product_value_ratio_history.md`'s `## History` table carries the effort-weighted PVR reading alongside the existing story-count PVR, backfilled for the same 5 windows already computed in `metrics_definitions.md` Appendix F
+- `roadmap_prompt.md` STEP 2.4 is updated to append both readings at future rebalances, contingent on `BLG-GOV-339`'s own required sign-off for any STEP 2.4 behaviour change
 
 ---
 
