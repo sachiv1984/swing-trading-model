@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-29T13:31:16Z",
+  "last_updated_utc": "2026-09-30T07:57:07Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -886,23 +886,25 @@
         "ST-36": {
           "title": "strategy_rules.md \u00a713.5 roster missing PO-05 row",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1839,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "4431baa79debb88e297437c8151678cf1d61b138",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-30T07:57:07Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Added PO-05 (Lightweight Replay Mode) row to SS13.5's roster, citing po05_section13_preassessment.md (PASS, v9.6, CONDITIONAL, 6 binding conditions). Write to strategy_rules.md authorised by sprint_backlog.md's own sealed ST-36 Notes ('this story is the explicit instruction authorising the edit') per CLAUDE.md SS2's carve-out -- same precedent class as BLG-GOV-337. Also caught and reverted an out-of-scope edit to claude/roadmap/current_roadmap.md made while researching ST-39 (no authorisation existed for that file; reverted before commit)."
         },
         "ST-37": {
           "title": "governance_sync.yml does not auto-close a phased story's GitHub issue",
@@ -991,7 +993,8 @@
     "ST-16",
     "ST-17",
     "ST-18",
-    "ST-19"
+    "ST-19",
+    "ST-36"
   ],
   "open_escalations": [],
   "merge_gate": {
