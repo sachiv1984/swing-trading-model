@@ -532,7 +532,7 @@
       "branch": "exec/2026-09-28__release-v9.8/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-28__release-v9.8/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
       "stories": {
@@ -793,6 +793,13 @@
           },
           "notes": "Escalated as ESC-EXEC-20260929-03 (Strategy trigger, resolved same-session). Code review of backend/services/alpaca_paper_sync_service.py confirmed the original 2026-05-15 PASS's 'read-only' technical premise was wrong from the original ST-02/ST-03 commit (b496f5ef) onward -- the sync POSTs/DELETEs paper orders as a deterministic mirror of user-initiated real-position events. Strategy Rules & System Intent Owner re-affirmed PASS under corrected binding conditions (mirror-write, not autonomous-write). Addendum added to the review doc; confirmed po05_section13_preassessment.md's reliance on IT-06's conditions remains valid since the substance was never violated. No code change -- documentation/decision output only, per this story's own scope."
         }
+      },
+      "sign_off_record": {
+        "method": "autonomous_class",
+        "role": "Sprint Execution Engine",
+        "status": "cleared",
+        "date": "2026-09-29",
+        "notes": "BLG-GOV-19 autonomous class -- all 10 stories code/document-review-verifiable, no frontend-visible change, Criterion 1 satisfied via Verification-class sub-criterion for ST-29."
       }
     },
     "EPIC-06": {
