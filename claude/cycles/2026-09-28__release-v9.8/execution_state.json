@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-30T07:57:47Z",
+  "last_updated_utc": "2026-09-30T08:00:03Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -760,23 +760,25 @@
         "ST-30": {
           "title": "Bake accessible-name and heading-order rules into the Base44 prompt template",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1833,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "f3dd1648e5127eb8108b68266a6a6df81894dbff",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-30T08:00:03Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/base44_prompt_template_library.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Added SS18 (heading-order + aria-labelledby-over-duplicated-aria-label rules), mirroring SS11's generation-time pattern. Recorded in the template library's own Change Log (v1.9->1.10) per base44_prompt_changelog.md's own routing rule -- that separate index doc is explicitly not updated on every version bump, so left untouched. AC-2 (no new axe-core KNOWN_VIOLATIONS on a regenerated page) is a protects-future-regenerations criterion with no live Base44 regeneration tool available in this sandbox to actually run -- verified by confirming the new rules encode exactly the two pinned regression tests' fix rationale (settings-heading-order-and-aria-labelledby-regression.spec.js, accessibility-axe-scan.spec.js, both currently 0 known violations)."
         },
         "ST-31": {
           "title": "PVR / Skill-Silo measurement package",
@@ -998,7 +1000,8 @@
     "ST-18",
     "ST-19",
     "ST-36",
-    "ST-39"
+    "ST-39",
+    "ST-30"
   ],
   "open_escalations": [],
   "merge_gate": {
