@@ -1,17 +1,17 @@
 {
-  "active_cycle": "2026-09-28__release-v9.8",
-  "cycle_name": "v9.8 — Full-Capacity Debt Clearance",
-  "status": "Closed",
-  "prior_status": "Verified_with_deviations",
-  "engine": "Post-Ship Closure",
-  "last_updated_utc": "2026-09-30T16:11:50Z",
+  "active_cycle": "2026-09-30__release-v9.9",
+  "cycle_name": "v9.9 — Full-Capacity Debt Clearance",
+  "status": "Release_Planning_Complete",
+  "prior_status": "Closed",
+  "engine": "Release Planning",
+  "last_updated_utc": "2026-09-30T18:20:00Z",
   "execution_state_path": "claude/cycles/2026-09-28__release-v9.8/execution_state.json",
-  "backlog_slice_path": "claude/cycles/2026-09-28__release-v9.8/stage4_backlog_slice.md",
+  "backlog_slice_path": "claude/cycles/2026-09-30__release-v9.9/stage4_backlog_slice.md",
   "design_gate_required": true,
-  "design_gate_status": "Passed",
-  "design_gate_record": "claude/cycles/2026-09-28__release-v9.8/design_gate.md",
-  "design_gate_completed_utc": "2026-09-28T12:00:00Z",
-  "sprint_sealed": true,
+  "design_gate_status": "not_started",
+  "design_gate_record": "",
+  "design_gate_completed_utc": "",
+  "sprint_sealed": false,
   "_sprint_sealed_note": "Set true at Sprint Planning STEP 7 for 2026-09-28__release-v9.8 — sign-off gate (STEP 6.2) passed, no [AC REQUIRED]/[ESTIMATE REQUIRED] placeholders, no Blocker? Yes outstanding actions, RISK-01/RISK-02 resolved via delegated_decision classification + internal design-decision-sub-step sequencing (ST-17, ST-38) rather than ST-ID phasing (backlog slice defines them as single sealed items). Owned exclusively by sprint_planning_prompt.md's own seal for this cycle.",
   "sprint_goal_path": "claude/cycles/2026-09-28__release-v9.8/sprint_goal.md",
   "sprint_backlog_path": "claude/cycles/2026-09-28__release-v9.8/sprint_backlog.md",
@@ -49,7 +49,7 @@
   "last_audit_overall_score": 78,
   "last_audit_open_items": 0,
   "last_audit_cycle_count": 84,
-  "next_release": "v9.8",
+  "next_release": "v9.9",
   "prior_cycle": "2026-09-28__release-v9.8",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
@@ -232,9 +232,9 @@
     }
   },
   "release_plan": {
-    "release_plan_path": "claude/cycles/2026-09-28__release-v9.8/release_plan.md",
-    "cycle_id": "2026-09-28__release-v9.8",
-    "published_utc": "2026-09-28T11:20:00Z",
+    "release_plan_path": "claude/cycles/2026-09-30__release-v9.9/release_plan.md",
+    "cycle_id": "2026-09-30__release-v9.9",
+    "published_utc": "2026-09-30T18:20:00Z",
     "epics": [
       "EPIC-01",
       "EPIC-02",
@@ -243,18 +243,18 @@
       "EPIC-05",
       "EPIC-06"
     ],
-    "story_items": 39,
-    "story_items_firm": 39,
+    "story_items": 35,
+    "story_items_firm": 35,
     "story_items_conditional": 0,
-    "scope_items": 39,
+    "scope_items": 35,
     "capacity_check": "pass",
     "design_gate_required": true,
-    "state_json": "claude/cycles/2026-09-28__release-v9.8/state.json",
-    "scope_doc": "docs/product/scope/scope--2026-09-28__release-v9.8-full-capacity-debt-clearance.md"
+    "state_json": "claude/cycles/2026-09-30__release-v9.9/state.json",
+    "scope_doc": "docs/product/scope/scope--2026-09-30__release-v9.9.md"
   },
   "prior_release_plan": {
-    "release_plan_path": "claude/cycles/2026-09-23__release-v9.7/release_plan.md",
-    "cycle_id": "2026-09-23__release-v9.7",
-    "published_utc": "2026-09-23T19:20:00Z"
+    "release_plan_path": "claude/cycles/2026-09-28__release-v9.8/release_plan.md",
+    "cycle_id": "2026-09-28__release-v9.8",
+    "published_utc": "2026-09-28T11:20:00Z"
   }
 }

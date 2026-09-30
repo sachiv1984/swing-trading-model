@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-30 (roadmap rebalance 2026-09-30__scheduled — 4 new items added: BLG-BE-135/BLG-FE-193 (consolidated from IW-20260930-01, ATR consolidation + stop-loss transparency), BLG-GOV-357 (sign-off SPOF matrix, 3-cycle park cap), BLG-GOV-358 (§13-boundary gap-risk finding); 12 items reclassified A (date-lapsed — verify) at STEP 3.1); prior — 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 STEP 12.6 — 1 new item added: BLG-GOV-356, 90-day AI feature usage review still 6 days overdue, 8 downstream gated items named); prior — 2026-09-30 (groom backlog post-ship closure 2026-09-28__release-v9.8 — 40 items archived (39 v9.8 shipped + BLG-QA-198, resolved in-session); 1 ephemeral Release Slice section removed; 2 field-completeness gaps corrected (BLG-QA-196/199 Provisional-Target); 0 gate/effort/duplicate issues found); prior history retained — see prior entries in version control (includes EPIC-05's own 2026-09-29 additions: BLG-SPEC-175/176, BLG-OPS-172/173/174, BLG-API-06, merged to main via PR #1847).
+**Last Updated:** 2026-09-30 (release planning 2026-09-30__release-v9.9 — Release Slice v9.9 ephemeral section appended, 35 items, marker `RP:v9.9:2026-09-30__release-v9.9`; no other structural changes); prior — 2026-09-30 (roadmap rebalance 2026-09-30__scheduled — 4 new items added: BLG-BE-135/BLG-FE-193 (consolidated from IW-20260930-01, ATR consolidation + stop-loss transparency), BLG-GOV-357 (sign-off SPOF matrix, 3-cycle park cap), BLG-GOV-358 (§13-boundary gap-risk finding); 12 items reclassified A (date-lapsed — verify) at STEP 3.1); prior — 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 STEP 12.6 — 1 new item added: BLG-GOV-356, 90-day AI feature usage review still 6 days overdue, 8 downstream gated items named); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4157,3 +4157,48 @@ No document currently maps which roles are authorised to sign off each governanc
 
 ---
 
+## Release Slice — v9.9 (ephemeral — remove at next `groom backlog` per Placement Rule)
+
+<!-- release-plan-marker: RP:v9.9:2026-09-30__release-v9.9 -->
+
+35 items selected into `2026-09-30__release-v9.9` scope (27.85 estimated days, full capacity). Full acceptance criteria: `claude/cycles/2026-09-30__release-v9.9/stage4_backlog_slice.md`. Selection method: 0 ready P1 items; all 4 ready P2 items seated first per §1.4c, then category-balanced round-robin oldest-first for the remaining P3/P4, from a 53-item / 36.20-day ready pool. Excluded as gate-blocked: `BLG-FEAT-73`, `BLG-FEAT-76`, `BLG-FE-193` (gated on `BLG-BE-135` shipping).
+
+| ST-ID | Item | EPIC |
+|-------|------|------|
+| ST-01 | BLG-BE-135 | EPIC-01 |
+| ST-02 | BLG-BE-131 | EPIC-01 |
+| ST-03 | BLG-BE-132 | EPIC-01 |
+| ST-04 | BLG-BE-133 | EPIC-01 |
+| ST-05 | BLG-BE-134 | EPIC-01 |
+| ST-06 | BLG-SEC-40 | EPIC-02 |
+| ST-07 | BLG-OPS-172 | EPIC-02 |
+| ST-08 | BLG-OPS-173 | EPIC-02 |
+| ST-09 | BLG-OPS-174 | EPIC-02 |
+| ST-10 | BLG-QA-203 | EPIC-03 |
+| ST-11 | BLG-QA-185 | EPIC-03 |
+| ST-12 | BLG-QA-186 | EPIC-03 |
+| ST-13 | BLG-QA-189 | EPIC-03 |
+| ST-14 | BLG-QA-190 | EPIC-03 |
+| ST-15 | BLG-QA-191 | EPIC-03 |
+| ST-16 | BLG-QA-192 | EPIC-03 |
+| ST-17 | BLG-QA-193 | EPIC-03 |
+| ST-18 | BLG-QA-194 | EPIC-03 |
+| ST-19 | BLG-GOV-356 | EPIC-04 |
+| ST-20 | BLG-GOV-358 | EPIC-04 |
+| ST-21 | BLG-GOV-343 | EPIC-04 |
+| ST-22 | BLG-GOV-344 | EPIC-04 |
+| ST-23 | BLG-GOV-347 | EPIC-04 |
+| ST-24 | BLG-GOV-350 | EPIC-04 |
+| ST-25 | BLG-GOV-352 | EPIC-04 |
+| ST-26 | BLG-GOV-353 | EPIC-04 |
+| ST-27 | BLG-GOV-354 | EPIC-04 |
+| ST-28 | BLG-SPEC-157 | EPIC-05 |
+| ST-29 | BLG-SPEC-164 | EPIC-05 |
+| ST-30 | BLG-SPEC-165 | EPIC-05 |
+| ST-31 | BLG-SPEC-166 | EPIC-05 |
+| ST-32 | BLG-SPEC-167 | EPIC-05 |
+| ST-33 | BLG-SPEC-168 | EPIC-05 |
+| ST-34 | BLG-SPEC-169 | EPIC-05 |
+| ST-35 | BLG-FE-192 | EPIC-06 |
+
+---

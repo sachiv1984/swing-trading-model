@@ -1,0 +1,527 @@
+[
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-01",
+    "story_id": "ST-01",
+    "s2_id": "S2-01",
+    "source": "BLG-BE-135",
+    "title": "Consolidate 4 duplicate ATR implementations; persist stop/ATR recalculation timestamp; expose atr/multiplier/timestamp on GET /positions",
+    "priority": "P2",
+    "effort": "L (~6-10 days)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-01",
+    "story_id": "ST-02",
+    "s2_id": "S2-02",
+    "source": "BLG-BE-131",
+    "title": "GET /reports/monthly-pnl's year param has no bounds check, unlike its sibling GET /reports/tax-year",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-01",
+    "story_id": "ST-03",
+    "s2_id": "S2-03",
+    "source": "BLG-BE-132",
+    "title": "gemini_service.py's daily-cost Telegram alert still uses a hardcoded timeout, not utils.upstream_call",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-01",
+    "story_id": "ST-04",
+    "s2_id": "S2-04",
+    "source": "BLG-BE-133",
+    "title": "utils/pricing.py's ATR-fallback Yahoo Finance call still uses a hardcoded timeout, not utils.upstream_call",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-01",
+    "story_id": "ST-05",
+    "s2_id": "S2-05",
+    "source": "BLG-BE-134",
+    "title": "alpaca_paper_sync_service.py's 3 Alpaca calls still use hardcoded timeouts, not utils.upstream_call",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-02",
+    "story_id": "ST-06",
+    "s2_id": "S2-06",
+    "source": "BLG-SEC-40",
+    "title": "Two residual gaps in the just-hardened non-registry dependency guard",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-02",
+    "story_id": "ST-07",
+    "s2_id": "S2-07",
+    "source": "BLG-OPS-172",
+    "title": "POST /ai/check-daily-cost has no de-duplication guard against a double-submitted Telegram alert",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-02",
+    "story_id": "ST-08",
+    "s2_id": "S2-08",
+    "source": "BLG-OPS-173",
+    "title": "POST /ai/check-endpoint-anomalies has no de-duplication guard against a double-submitted Telegram alert",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-02",
+    "story_id": "ST-09",
+    "s2_id": "S2-09",
+    "source": "BLG-OPS-174",
+    "title": "POST /price-alerts has no de-duplication guard against a double-submitted duplicate alert",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-03",
+    "story_id": "ST-10",
+    "s2_id": "S2-10",
+    "source": "BLG-QA-203",
+    "title": "GET /reports/tax-year returns HTTP 500 against its own test fixture",
+    "priority": "P2",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-03",
+    "story_id": "ST-11",
+    "s2_id": "S2-11",
+    "source": "BLG-QA-185",
+    "title": "Strategy-rule → test traceability matrix for strategy_rules.md §4–§8",
+    "priority": "P3",
+    "effort": "M (~2d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-03",
+    "story_id": "ST-12",
+    "s2_id": "S2-12",
+    "source": "BLG-QA-186",
+    "title": "Property-based tests for 'stop never decreases' and sizing validity rules",
+    "priority": "P3",
+    "effort": "S (~1d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-03",
+    "story_id": "ST-13",
+    "s2_id": "S2-13",
+    "source": "BLG-QA-189",
+    "title": "Real-Postgres integration test for the reflection-reminder evaluation step",
+    "priority": "P3",
+    "effort": "S (~0.5-1d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-03",
+    "story_id": "ST-14",
+    "s2_id": "S2-14",
+    "source": "BLG-QA-190",
+    "title": "Convert remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules[\"database\"] swap pattern",
+    "priority": "P3",
+    "effort": "M (~1-2d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-03",
+    "story_id": "ST-15",
+    "s2_id": "S2-15",
+    "source": "BLG-QA-191",
+    "title": "Add automated test coverage for the I/O-boundary functions in EPIC-04's staleness/CI-usage scripts",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-03",
+    "story_id": "ST-16",
+    "s2_id": "S2-16",
+    "source": "BLG-QA-192",
+    "title": "test_null_fee_trade_audit.py's inspect.getsource() call fails against the database module stub",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-03",
+    "story_id": "ST-17",
+    "s2_id": "S2-17",
+    "source": "BLG-QA-193",
+    "title": "Prove the non-registry dependency check fails a real PR, and confirm it is a required status check on main",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-03",
+    "story_id": "ST-18",
+    "s2_id": "S2-18",
+    "source": "BLG-QA-194",
+    "title": "Harden the UI-copy boundary lint against obfuscation-grade and cross-node phrase splits",
+    "priority": "P4",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-04",
+    "story_id": "ST-19",
+    "s2_id": "S2-19",
+    "source": "BLG-GOV-356",
+    "title": "Conduct the overdue 90-day AI feature usage review (BLG-GOV-74/140/141/142 cluster)",
+    "priority": "P2",
+    "effort": "M (~1–2d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-04",
+    "story_id": "ST-20",
+    "s2_id": "S2-20",
+    "source": "BLG-GOV-358",
+    "title": "gap_risk_service.py (BLG-FEAT-65) shipped without a recorded §13 review or §13.5 roster row",
+    "priority": "P2",
+    "effort": "S (~1-2 days)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-04",
+    "story_id": "ST-21",
+    "s2_id": "S2-21",
+    "source": "BLG-GOV-343",
+    "title": "Split roadmap_prompt.md into a core plus an appendix so it fits a single read",
+    "priority": "P3",
+    "effort": "M (~1.5–2d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-04",
+    "story_id": "ST-22",
+    "s2_id": "S2-22",
+    "source": "BLG-GOV-344",
+    "title": "Parameter-change ledger for strategy_rules.md §11 production parameters",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-04",
+    "story_id": "ST-23",
+    "s2_id": "S2-23",
+    "source": "BLG-GOV-347",
+    "title": "scan_backlog_gate_conditions.py date-disambiguation gap can produce false negatives",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-04",
+    "story_id": "ST-24",
+    "s2_id": "S2-24",
+    "source": "BLG-GOV-350",
+    "title": "Five near-duplicate \"AI adoption window\" gate-criteria texts should be one canonical shared reference",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-04",
+    "story_id": "ST-25",
+    "s2_id": "S2-25",
+    "source": "BLG-GOV-352",
+    "title": "Rebalance diagnostic tallies (STEP 2.4/7.1/7.2) are recomputed by hand each cycle",
+    "priority": "P3",
+    "effort": "M (~2d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-04",
+    "story_id": "ST-26",
+    "s2_id": "S2-26",
+    "source": "BLG-GOV-353",
+    "title": "role_share_history.md has no governance-authorized home under claude/roadmap/",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-04",
+    "story_id": "ST-27",
+    "s2_id": "S2-27",
+    "source": "BLG-GOV-354",
+    "title": ".claude_current_state.json's execution_state_path points to the prior cycle, not the active one",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-05",
+    "story_id": "ST-28",
+    "s2_id": "S2-28",
+    "source": "BLG-SPEC-157",
+    "title": "Read-only live-schema vs data_model.md drift detector",
+    "priority": "P3",
+    "effort": "M (~2d)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-05",
+    "story_id": "ST-29",
+    "s2_id": "S2-29",
+    "source": "BLG-SPEC-164",
+    "title": "Drop 4 confirmed-orphaned, always-NULL columns from the live positions table",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-05",
+    "story_id": "ST-30",
+    "s2_id": "S2-30",
+    "source": "BLG-SPEC-165",
+    "title": "Reconcile positions.fees_paid NOT NULL constraint (re-apply live, or confirm nullable is intentional)",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-05",
+    "story_id": "ST-31",
+    "s2_id": "S2-31",
+    "source": "BLG-SPEC-166",
+    "title": "Cross-reference current_roadmap.md's SI-02 field to the canonical \"linked trade plan\" definition",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-05",
+    "story_id": "ST-32",
+    "s2_id": "S2-32",
+    "source": "BLG-SPEC-167",
+    "title": "data_model.md DS-19 \"Verification status\" still says the migration was never run against a live PostgreSQL",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-05",
+    "story_id": "ST-33",
+    "s2_id": "S2-33",
+    "source": "BLG-SPEC-168",
+    "title": "Correct the BLG-BE-128 citation to BLG-BE-129 for the latency_ms composition decision",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-05",
+    "story_id": "ST-34",
+    "s2_id": "S2-34",
+    "source": "BLG-SPEC-169",
+    "title": "Correct notifications.md and the alert-thresholds empty-state scenario doc to the no-trailing-period headings now shipped",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  },
+  {
+    "cycle": "2026-09-30__release-v9.9",
+    "epic": "EPIC-06",
+    "story_id": "ST-35",
+    "s2_id": "S2-35",
+    "source": "BLG-FE-192",
+    "title": "RecentTradesWidget icon-background badge uses two-way (>=0) colour logic for zero P&L",
+    "priority": "P3",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-09-30__release-v9.9"
+    ]
+  }
+]
