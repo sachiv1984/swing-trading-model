@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-30T08:09:08Z",
+  "last_updated_utc": "2026-09-30T08:12:35Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -755,7 +755,9 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-28__release-v9.8/qa_evidence_EPIC-06.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "scripts/test_governance_sync_phased_story_logic.sh"
+      ],
       "stories": {
         "ST-30": {
           "title": "Bake accessible-name and heading-order rules into the Base44 prompt template",
@@ -916,23 +918,26 @@
         "ST-37": {
           "title": "governance_sync.yml does not auto-close a phased story's GitHub issue",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1840,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "820e2b8e65196613ffcc924bfb862135bf3cedf4",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-30T08:12:35Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/governance_sync_lib.sh",
+            "scripts/test_governance_sync_phased_story_logic.sh"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Root-caused against the real v9.7 PO-05/ST-01a/b/c precedent (issue #1792, all 3 phases sharing one issue titled with the bare parent ID). is_story_done() made group-aware (checks all siblings sharing the same github_issue); new get_github_issue_number() resolves the issue directly from execution_state instead of a title-prefix search that can never match a phased ID. New regression test (12 assertions, both per-EPIC and legacy shapes) plus both pre-existing governance_sync tests re-run clean -- no regression of ST-19/BLG-GOV-314's unknown-does-not-close fix."
         },
         "ST-38": {
           "title": "No scheduled trigger/owner fires the 90-day post-ship AI feature usage review",
@@ -1008,7 +1013,8 @@
     "ST-39",
     "ST-30",
     "ST-35",
-    "ST-34"
+    "ST-34",
+    "ST-37"
   ],
   "open_escalations": [],
   "merge_gate": {
