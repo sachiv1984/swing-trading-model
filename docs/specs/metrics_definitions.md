@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.24.0
-**Last Updated:** 2026-09-24 (ST-19, EPIC-05, v9.7, BLG-GOV-327 — added Appendix F's Quarterly Governance Overhead Ratio metric definition and first baseline reading (not yet meaningfully computable, data-availability gap documented)); prior — 2026-09-23 (ST-26, EPIC-06, v9.6, BLG-SPEC-146 — Sharpe Ratio section gains a canonical Lookback Window subsection); prior — 2026-09-22 (ST-08, EPIC-02, v9.6, BLG-FR-05 — Month-end immutability and restatement paragraph); prior history retained — see prior entries in version control
+**Version:** 1.25.0
+**Last Updated:** 2026-09-30 (ST-32, EPIC-06, v9.8, BLG-GOV-340 — added Appendix F's Delivery Lead Time by Priority Band and Ready-Pool Runway Forecast metric definitions, backfilled for the last 5 shipped cycles); prior — 2026-09-24 (ST-19, EPIC-05, v9.7, BLG-GOV-327 — added Appendix F's Quarterly Governance Overhead Ratio metric definition and first baseline reading); prior — 2026-09-23 (ST-26, EPIC-06, v9.6, BLG-SPEC-146 — Sharpe Ratio section gains a canonical Lookback Window subsection); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1258,6 +1258,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-09-30 | 1.25.0 | ST-32 (EPIC-06, v9.8, BLG-GOV-340): Added two delivery-flow metrics to Appendix F — Delivery Lead Time by Priority Band (median filed→shipped days, from `backlog_archive.md`'s `**Source:**`/`**Retired:**` fields, with an honest 2-tier filed-date convention and a 3-item disclosed exclusion) and Ready-Pool Runway Forecast ("cycles until empty", rolling-3-cycle trailing net-change average against §7.3's existing leftover-pool figures). Both backfilled for the last 5 shipped cycles (v9.3–v9.7); 4 of the 5 runway readings report "N/A — pool growing" rather than a fabricated cycle-count, with the first finite reading (~4.0 cycles) at v9.7. Metrics Definitions & Analytics Canonical Owner sign-off cleared 2026-09-30. | Metrics Definitions & Analytics Canonical Owner |
 | 2026-09-24 | 1.24.0 | ST-19 (EPIC-05, v9.7, BLG-GOV-327): Added the Quarterly Governance Overhead Ratio metric to Appendix F — governance-side wall-clock time ÷ total wall-clock time, per `shared_standards.md` §22's logging convention. First baseline reading recorded as "not yet meaningfully computable" (3 governance-side readings totaling 1h53m42s found; 0 shipped-side/Sprint Execution readings exist yet, since only `roadmap_prompt.md` is currently wired to capture Session start/end) rather than a fabricated ratio. Metrics Definitions & Analytics Canonical Owner sign-off cleared 2026-09-24. | Metrics Definitions & Analytics Canonical Owner |
 | 2026-09-23 | 1.23.0 | ST-26 (EPIC-06, v9.6, BLG-SPEC-146): Added the Lookback Window (CANONICAL) subsection under Sharpe Ratio — trailing 252 trading days, with the discrepancy documented explicitly against each of the 3 current call sites (`analytics_service.py` unbounded `all_time`, `production_strategy.py` already-conforming 252-day backtest window with a differing formula shape, `PerformanceAnalytics.js` frontend-only recomputation with a page-selector-driven window, population variance, and no minimum-sample check). Documentation only — no call-site fix in this cycle. | Metrics Definitions & Analytics Canonical Owner |
 | 2026-09-08 | 1.20.0 | ST-48 (EPIC-05, v9.2, BLG-SPEC-128): Add Gate-Metric Naming section — canonical "SI-02 Data-Sufficiency Gate" term, surface-name mapping across roadmap/dashboard/reports/digest, and historical note that `PT-04` is no longer part of this gate's live naming (gate-cleared v6.1). Also relabelled the v1.19.0 Governance Metrics appendix from "Appendix D" (duplicate of the existing Change Log heading) to "Appendix F" (next free letter). Metrics Definitions & Analytics Canonical Owner sign-off cleared 2026-09-08. | Metrics Definitions & Analytics Canonical Owner |
@@ -1457,3 +1458,55 @@ When any required input field is unavailable from the API (e.g. null `override_r
 This taxonomy is the same role list §7.2 already tallies by `**Owner:**` field — §7.1's "workload composition" framing (see the companion `roadmap_prompt.md` §7.1 patch, ST-24, this cycle) uses this table to classify by *who actually did the work*, distinct from STEP 2.4's U/G/D/P classification of *why the work matters* (product-value lens). The two lenses can diverge for a single story (e.g. an audit-shaped `D`-classified story executed primarily by Backend Engineering Owner is execution-heavy by workload even though it is governance/debt-shaped by product value) — this is the gap ST-24 names and this taxonomy makes concrete.
 
 **Sign-off:** Metrics Definitions & Analytics Canonical Owner — Approved. The taxonomy correctly separates the workload-composition lens (this table) from the product-value lens (STEP 2.4's existing U/G/D/P), rather than conflating them as the pre-ST-24 §7.1 text did; the three-role "cross-cutting" carve-out is honest about roles that genuinely span both buckets rather than forcing a false binary. Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Canonical Owner role — §5.3), 2026-09-08.
+
+### Delivery Lead Time by Priority Band (ST-32, EPIC-06, v9.8, BLG-GOV-340)
+
+**Authoritative computation:** `claude/backlog/backlog_archive.md` (each retired item's `**Source:**` line and `**Retired:**`/`**Priority at retirement:**`/`**Shipped in:**` fields), cross-referenced against `docs/product/changelog.md`.
+
+**Definition:** for each backlog item shipped in a given release cycle, lead time (days) = `Retired` date − filed date, where **filed date** is: (a) the explicit trailing `— YYYY-MM-DD` citation at the end of the item's `**Source:**` line, when present; or (b) for idea-intake-sourced items whose `**Source:**` line has no trailing citation, the roadmap-rebalance/promotion date embedded in that same line's own text (e.g. `"...roadmap rebalance 2026-09-14__scheduled"` → `2026-09-14`) — the date the idea was promoted into `backlog.md`, which is this convention's own definition of when a backlog item starts existing. Metric reported as the **median** lead time per priority band (`P0`–`P4`) per cycle, not the mean, since a small number of very old or same-day items would otherwise dominate a mean for the smaller priority bands.
+
+**Known limitation:** items whose `**Source:**` line names neither an explicit date nor a reconstructable rebalance/intake date (3 of 158 items scanned across the last 5 cycles: `BLG-GOV-301`, `BLG-GOV-302`, `BLG-GOV-304`) are excluded from the reading rather than assigned a fabricated date. This is a small, disclosed gap, not a silent one.
+
+**Readings (last 5 shipped cycles):**
+
+| Cycle | n | P0 | P1 | P2 | P3 | P4 |
+|-------|---|----|----|----|----|----|
+| v9.3 | 26 | — | — | — | 68.0d (n=26) | — |
+| v9.4 | 25 | — | — | 1.0d (n=6) | 1.0d (n=19) | — |
+| v9.5 | 46 | — | 4.0d (n=2) | 1.0d (n=3) | 8.0d (n=40) | 31.0d (n=1) |
+| v9.6 | 32 | — | — | 4.0d (n=8) | 7.5d (n=24) | — |
+| v9.7 | 29 | — | 80.0d (n=1) | 7.0d (n=7) | 10.0d (n=21) | — |
+
+**Reading notes:** v9.3's archive records only P3 completions that cycle (a debt-clearance-shaped release, consistent with that cycle's own Skill-Silo reading). The v9.4–v9.7 P2/P3 medians of 1–10 days are genuine, not a parsing artefact: most items shipped in those cycles were promoted into the ready pool and selected within the same or an adjacent rebalance, so "filed → shipped" for the bulk of the backlog's throughput is short by construction — this backlog is dominated by same-cycle or near-term findings (PR-review deviations, opportunistic fixes), not a queue of long-aged feature requests. The two outlier high-median readings (v9.3's 68.0d P3 median, v9.7's single 80.0d P1) both reflect genuinely long-aged items reaching the front of the queue, not a computation error — spot-checked against their own `**Source:**` dates directly.
+
+**Sign-off:** Metrics Definitions & Analytics Canonical Owner — Approved. The two-tier filed-date convention (explicit citation, falling back to the embedded promotion date) is the correct reading of an already-inconsistent `**Source:**` line format rather than inventing a new required field; excluding the 3 unreconstructable items is preferable to fabricating a date for them. Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Canonical Owner role — §5.3), 2026-09-30.
+
+### Ready-Pool Runway Forecast — "Cycles Until Empty" (ST-32, EPIC-06, v9.8, BLG-GOV-340)
+
+**Authoritative computation:** `claude/system/roadmap_prompt.md` §7.3 (Ready-Pool Capacity Gap Trend), which already tracks the underlying leftover-pool figures this metric projects from; historical readings recorded here pending `BLG-GOV-353`'s resolution of a canonical `claude/roadmap/` history-file location (see `claude/cycles/2026-09-28__release-v9.8/role_share_history.md`'s own interim-location precedent, same underlying write-scope constraint).
+
+**Definition:** distinct from §7.3's existing gap-trend check (which compares the *absolute* leftover-pool size against the capacity-band ceiling), this metric projects **how many future release cycles at the current trend it would take the carrying-forward unselected ready pool to reach zero**, given the pool's own recent net rate of change (intake of newly-ready items minus capacity consumed per cycle). Computed as: `cycles_until_empty = current_leftover_pool_days ÷ |rolling_trailing_average_net_change_per_cycle|`, using the trailing average of up to the 3 most recent cycle-over-cycle net-change readings (mirroring the rolling-3-cycle window already used by PVR and Skill-Silo). If the trailing average net change is zero or positive (pool flat or growing), the pool does not project to empty at the current trend — reported honestly as **"N/A — pool growing"**, not a fabricated or infinite-looking number.
+
+**Inputs (from each cycle's own `run_manifest.md` "Ready pool" / "Result" figures):**
+
+| Cycle | Starting pool (days) | Selected (days) | Leftover (days) | Δ leftover vs. prior cycle |
+|-------|----------------------|-------------------|-------------------|------------------------------|
+| v9.3 | ~41.0 | 27.50 | 13.10 | — (no v9.2 comparable reading exists; §7.3 tracking began at v9.4) |
+| v9.4 | ~65.05 | 27.55 | 37.50 | +24.40 |
+| v9.5 | ~43.79 | 27.99 | 16.80 | −20.70 |
+| v9.6 | ~61.75 | 28.00 | 33.75 | +16.95 |
+| v9.7 | ~61.35 | 28.00 | 21.35 | −12.40 |
+
+**Readings (last 5 shipped cycles, using only data available as of each cycle — no look-ahead):**
+
+| Cycle | Trailing Δ's used (n) | Rolling avg Δ/cycle | Cycles until empty |
+|-------|--------------------------|----------------------|----------------------|
+| v9.3 | 0 | N/A | N/A — insufficient trend data (first tracked reading) |
+| v9.4 | 1 (+24.40) | +24.40 | N/A — pool growing (low confidence, n=1) |
+| v9.5 | 2 (+24.40, −20.70) | +1.85 | N/A — pool growing (n=2) |
+| v9.6 | 3 (+24.40, −20.70, +16.95) | +6.88 | N/A — pool growing (n=3, full window) |
+| v9.7 | 3 (−20.70, +16.95, −12.40) | −5.38 | **≈4.0 cycles** (21.35 ÷ 5.38), n=3, full window |
+
+**Reading notes:** the pool grew for 3 of the last 4 tracked cycle-over-cycle deltas — consistent with the "ready pool more than doubled" watch-item §7.3 already flags for `v9.3→v9.4`, and the further idea-intake-driven growth into `v9.6`. Only at `v9.7` does the trailing-3 average turn net-negative, producing the first finite runway reading (~4 cycles, i.e. into roughly `v10.1`–`v10.2` territory at the current rate) — this is the figure ST-32's own AC requires citing at the next rebalance's STEP 7.3. Because the average includes 2 growing-quarter deltas, this reading is a fragile, recent reversal, not a confirmed shrinking trend — the next rebalance's own fresh reading should be treated as the real confirmation or refutation of it, not this backfilled figure alone.
+
+**Sign-off:** Metrics Definitions & Analytics Canonical Owner — Approved. Reporting "N/A — pool growing" for 4 of the 5 backfilled cycles rather than a negative or fabricated cycle-count is the correct disposition — a runway projection is only meaningful once the trend is actually shrinking. The rolling-3-cycle window matches existing PVR/Skill-Silo convention rather than inventing a new window length. Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Canonical Owner role — §5.3), 2026-09-30.
