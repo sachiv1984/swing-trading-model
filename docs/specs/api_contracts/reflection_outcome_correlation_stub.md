@@ -1,7 +1,7 @@
 # Reflection ↔ Outcome Correlation — Arc 4 PO-04 (Pre-Authoring Stub)
 
-**Version:** 0.1.0 (stub — not implemented)
-**Last Updated:** 2026-09-18
+**Version:** 0.1.1 (stub — not implemented)
+**Last Updated:** 2026-09-30 (ST-39, EPIC-06, v9.8, BLG-SPEC-156 — the §13 note now cross-references its own trackable backlog item instead of standing as orphaned prose); prior — 2026-09-18
 **Spec Owner:** API Contracts & Documentation Owner
 **Governed by:** docs/specs/api_contracts/conventions.md
 **Story:** ST-23 (BLG-SPEC-56, EPIC-04, v9.5 sprint execution)
@@ -52,6 +52,8 @@
 | `correlation_summary` | string | Descriptive prose, not a numeric coefficient alone — per the §13 boundary note below. |
 
 **§13 note (display-only, sharper than PO-02/PO-03):** "correlation" language is closer to a predictive claim than a pattern-recognition summary — the eventual real contract's AC must explicitly require descriptive/advisory framing (e.g. "trades with X show Y in this sample") and must not present this as a forward-looking prediction. Not assumed resolved here; flagged for the real contract-authoring step and — per this codebase's standing pattern for AI-adjacent statistical output — worth a `BLG-SPEC-35`-style §13 check of its own rather than assuming PO-02's §13 clearance (if it lands first) automatically covers this endpoint too, since the boundary risk profile differs.
+
+**Tracked as (ST-39, EPIC-06, v9.8, BLG-SPEC-156):** this note is no longer prose-only — `claude/backlog/backlog.md`'s `BLG-SPEC-156` is the dedicated trackable item for PO-04's own §13 pre-assessment (the `BLG-SPEC-160`/PO-05 precedent: a standalone pre-assessment performable ahead of the full feature build, since PO-04 itself remains gated on 50+ trades with plans — `roadmap_unlock_tracker.md` Group B, not yet met). `claude/roadmap/current_roadmap.md`'s PO-04 roster rows now cross-reference `BLG-SPEC-156` directly (matching PS-03's own roster-row §13 annotation), so this suggestion cannot be silently dropped once `BLG-SPEC-35` (PO-02's clearance) closes.
 
 ---
 
