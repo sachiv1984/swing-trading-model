@@ -1,8 +1,8 @@
 **Owner:** Backend Engineering Patterns Owner; Product Owner
 **Class:** API Contract (Class 2)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-09-22 (ST-10, EPIC-03, v9.6, BLG-BE-118 — GET /strategy/backtest-rule-change/runs gains an `offset` param and 400 INVALID_PARAMS validation on negative limit/offset); prior — 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — added POST /strategy/backtest-rule-change/run, GET /strategy/backtest-rule-change/runs, GET /strategy/backtest-rule-change/runs/{run_id}); prior — 2026-07-02 (ST-08, EPIC-03, v6.4, BLG-FEAT-54 — open positions panel)
+**Version:** 1.4
+**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to POST /strategy/benchmark/import and POST /strategy/backtest-rule-change/run); prior — 2026-09-22 (ST-10, EPIC-03, v9.6, BLG-BE-118 — GET /strategy/backtest-rule-change/runs gains an `offset` param and 400 INVALID_PARAMS validation on negative limit/offset); prior — 2026-08-18 (ST-07, EPIC-02, v8.9, BLG-FEAT-89 — added POST /strategy/backtest-rule-change/run, GET /strategy/backtest-rule-change/runs, GET /strategy/backtest-rule-change/runs/{run_id}); prior history retained — see prior entries in version control
 **Story:** ST-10 (BLG-BE-118, EPIC-03, v9.6); ST-07 (BLG-FEAT-89, EPIC-02, v8.9); ST-11 (BLG-FEAT-53, EPIC-03, v6.3); ST-08 (BLG-FEAT-54, EPIC-03, v6.4)
 
 ---
@@ -22,6 +22,10 @@ All endpoints require `X-API-Key` header authentication.
 Upserts backtest trade records and yearly performance data parsed from production_strategy.py CSV outputs. Called by `import_backtest.py`. Safe to re-run — all inserts use `ON CONFLICT DO UPDATE`.
 
 **Auth:** X-API-Key required
+
+**Idempotency**
+
+- Idempotent — every insert uses `ON CONFLICT DO UPDATE` (see above); repeating an identical import produces the same stored state.
 
 **Request body (application/json):**
 
@@ -261,6 +265,10 @@ ST-07 (BLG-FEAT-89, EPIC-02, v8.9). Runs a candidate `strategy_rules.md` paramet
 **Scope note (RISK-02):** the full nightly `production_strategy.py` run covers the entire `ticker_universe` over ~8 years and is budgeted 90 minutes of CI compute (`.github/workflows/backtest.yml`) — infeasible to run synchronously in a web request. This endpoint runs a bounded backtest instead: the first 20 active tickers from `ticker_universe` (alphabetical) over the trailing 4 years. Both the candidate and live-parameter baseline are computed over the identical bounded universe/window in the same run, so the comparison is apples-to-apples; absolute figures will not match the full nightly Benchmark tab (different universe/window by design) — `universe_tickers`/`universe_start_date`/`universe_end_date` in the response make this explicit.
 
 **§13 compliance:** deterministic simulation over historical market data (no ML model, no adaptive inference), applied to a candidate rule set instead of the live one — same category as the existing Benchmark/Version Comparison tabs. Output is comparative statistical context for a human decision; this endpoint never writes to `strategy_rules.md` or any live rule configuration.
+
+**Idempotency**
+
+- Not idempotent by design — every call persists a new audit-trail run row (AC-03 above), even with an identical request body. This is intentional: the audit trail is meant to record every run, including repeats.
 
 **Request body (application/json):** all fields optional — any omitted field falls back to the live `strategy_rules.md` value.
 

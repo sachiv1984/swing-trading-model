@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.8.1
-**Last Updated:** 2026-08-19 (ST-04 correction, EPIC-02, v8.9, BLG-BE-104 — fixed concentration_reason example/field-note text mislabeling sector % of portfolio value as "% of portfolio heat"); prior — 2026-08-18 (ST-05, EPIC-02, v8.9, BLG-FEAT-91 — POST /portfolio/size gains heat_impact_percent response field); prior — 2026-08-18 (ST-04, EPIC-02, v8.9, BLG-BE-104 — POST /portfolio/size gains ticker request field and concentration_adjusted/concentration_reason response fields); prior history retained — see prior entries in version control.
+**Version:** 2.8.2
+**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /portfolio); prior — 2026-08-19 (ST-04 correction, EPIC-02, v8.9, BLG-BE-104 — fixed concentration_reason example/field-note text mislabeling sector % of portfolio value as "% of portfolio heat"); prior — 2026-08-18 (ST-05, EPIC-02, v8.9, BLG-FEAT-91 — POST /portfolio/size gains heat_impact_percent response field); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -132,6 +132,15 @@ The position objects returned here are a **summary shape**. Key omissions versus
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
+
+**Error example (401 — missing/invalid API key):**
+
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing API key"
+}
+```
 
 ---
 

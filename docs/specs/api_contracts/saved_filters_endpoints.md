@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-07-20
+**Version:** 1.1
+**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to POST /saved-filters and DELETE /saved-filters/{id}); prior — 2026-07-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint:** 2026-07-17__release-v7.5 — ST-04 (BLG-FE-118, EPIC-04)
 **Signed off by:** API Contracts & Documentation Owner; Head of Specs Team
@@ -79,6 +79,10 @@ Create a named filter preset. Returns 400 if a preset with the same name already
 
 - `POST /saved-filters`
 
+**Idempotency**
+
+- Not idempotent by HTTP semantics (creates a resource), but double-submit-safe: a duplicate `POST` with the same `name` returns `400` rather than creating a second preset.
+
 **Request Body**
 
 ```json
@@ -127,6 +131,10 @@ Delete a saved filter preset. Does not affect the currently-active filter select
 **Method & Path**
 
 - `DELETE /saved-filters/{id}`
+
+**Idempotency**
+
+- Idempotent in effect — a repeated call after the first successful delete returns `404` (already gone), same as any delete-by-id endpoint. See **conventions.md §12**.
 
 **Path Parameters**
 

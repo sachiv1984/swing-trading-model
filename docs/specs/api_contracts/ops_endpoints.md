@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner; API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-09-16 (ST-07/ST-06, BLG-OPS-154/BLG-OPS-153 — purge-audit-logs extended to api_call_log, added possible_silent_failure signal); prior — 2026-09-10 (ST-13, BLG-OPS-94 — added POST /ops/purge-audit-logs).
+**Version:** 1.3
+**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /ops/purge-audit-logs); prior — 2026-09-16 (ST-07/ST-06, BLG-OPS-154/BLG-OPS-153 — purge-audit-logs extended to api_call_log, added possible_silent_failure signal); prior — 2026-09-10 (ST-13, BLG-OPS-94 — added POST /ops/purge-audit-logs).
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -143,6 +143,10 @@ Added for ST-13 (BLG-OPS-94, EPIC-03, v9.3). `api_call_log` added ST-07 (BLG-OPS
 **Silent-purge-failure visibility (ST-06 sub-item 3, BLG-OPS-153, EPIC-02, v9.5):** each purge function fails safe (returns `0` on any DB error), so a `0`-deleted result is ambiguous between "nothing qualified" and "the purge is broken." After each table's purge, an independent read-only row count against the same retention cutoff disambiguates: `0` deleted + `0` rows still past the cutoff is healthy; `0` deleted + rows still past the cutoff means the purge itself likely failed. Any table matching the latter is both logged as a `WARNING` and listed in the new `possible_silent_failure` response field.
 
 **§13 Status:** N/A — no AI output; a maintenance/deletion operation on audit metadata only (no AI-generated content is itself stored in either table — see each table's schema in `docs/ops/gemini_cost_tracking.md` / `render_log_retention_policy.md` §3.1).
+
+**Idempotency**
+
+- Idempotent — safe to call repeatedly (see Purpose above); deletes nothing when no rows qualify.
 
 ### Request
 

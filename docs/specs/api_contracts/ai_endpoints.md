@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.14
-**Last Updated:** 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 STEP 5.1 remediation — Known Deviations section corrected from stale "None at v1.10" to a proper `DEV-v9.7-ST13-01` entry for the already-disclosed BLG-BE-128 won't-fix; no normative change); prior — 2026-09-24 (ST-13, EPIC-03, v9.7, BLG-BE-128 — documented and confirmed as intentional that latency_ms includes retry backoff sleep time, not just the final attempt's duration; no code change); prior — 2026-09-16 (ST-13, BLG-OPS-161, v9.5 — POST /ai/check-endpoint-anomalies latency now real-data); prior history retained — see prior entries in version control
+**Version:** 1.15
+**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to all 5 POST endpoints in this file; flagged undefined double-submit alert-duplication behaviour on check-daily-cost/check-endpoint-anomalies as BLG-OPS-172/173); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 STEP 5.1 remediation — Known Deviations section corrected from stale "None at v1.10" to a proper `DEV-v9.7-ST13-01` entry for the already-disclosed BLG-BE-128 won't-fix; no normative change); prior — 2026-09-24 (ST-13, EPIC-03, v9.7, BLG-BE-128 — documented and confirmed as intentional that latency_ms includes retry backoff sleep time, not just the final attempt's duration; no code change); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -33,6 +33,10 @@ All AI output is **display-only** and must NOT be used as input to any signal, s
 Accepts a set of closed trade IDs or a date range, retrieves the associated journal entry/exit notes, and calls an external LLM API to produce a plain-text summary of themes and patterns across those notes. Returns summarised text.
 
 **§13 Status:** CONDITIONALLY COMPLIANT — SRB-v1.7 (2026-03-02). AI output is read-only display; it does not feed into any signal, scoring, or recommendation pipeline.
+
+**Idempotency**
+
+- Read-only — no trade or database state is modified. Safe to repeat; each call independently re-summarises the same input via a fresh LLM call (no caching, no dedup).
 
 ### Request
 
@@ -119,6 +123,10 @@ Assembles a read-only context object from live portfolio state and calls `claude
 **§13 Status:** PASS — SRB-v1.7. LLM output is advisory-only, display-only. Does not modify positions, signals, or trade plans. See `docs/product/decisions/decisions--2026-06-24__release-v6.2--BLG-FEAT-50-51-section13-review.md`.
 
 **Story:** ST-06 (BLG-FEAT-50, EPIC-02, v6.2)
+
+**Idempotency**
+
+- Read-only — no writes to `positions`, `signals`, `trade_plans`, or any strategy table. Safe to repeat, subject to the endpoint's own 10 req/min rate limit.
 
 ### Request
 
@@ -216,6 +224,10 @@ Accepts a user question with optional context (ticker, position_id) and returns 
 **§13 Status:** PASS — SRB-v1.7. LLM output is advisory-only, display-only. No integration with trade execution. See `docs/product/decisions/decisions--2026-06-24__release-v6.2--BLG-FEAT-50-51-section13-review.md`.
 
 **Story:** ST-08 (BLG-FEAT-51, EPIC-02, v6.2)
+
+**Idempotency**
+
+- Read-only and stateless — no conversation state or portfolio data is written. Safe to repeat, subject to the endpoint's own 30 req/min rate limit.
 
 ### Request
 
@@ -320,6 +332,10 @@ Checks today's Claude API spend against the configured daily cost threshold. If 
 
 **§13 Status:** N/A — operational monitoring endpoint. No AI output generated; no display surface.
 
+**Idempotency**
+
+- Read-only against `gemini_audit_log`; the audit log itself is not written by this endpoint. **Undefined behaviour:** if `threshold_exceeded` is true, a repeated/double-submitted call re-evaluates the same threshold and can send a duplicate Telegram alert — there is no de-duplication or already-alerted-today guard. Filed as BLG-OPS-172.
+
 ### Request
 
 ```
@@ -372,6 +388,10 @@ When `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` is absent, no alert is sent even
 Runs the per-endpoint cost/latency anomaly check across the 6 AI-invoking endpoints (`POST /ai/journal-summary`, `POST /ai/daily-briefing`, `POST /ai/chat`, `POST /trade-plans/generate-plan`, `POST /trade-plans/{plan_id}/generate-thesis`, `POST /trades/{trade_id}/debrief`). Sends a Telegram alert if any endpoint's cost or latency fires. Intended to be called by a daily scheduler (GitHub Actions cron — `.github/workflows/ai-endpoint-anomaly-check.yml`).
 
 **§13 Status:** N/A — operational monitoring endpoint. No AI output generated; no display surface.
+
+**Idempotency**
+
+- Read-only against `claude_audit_log`; no state is written. **Undefined behaviour:** a repeated/double-submitted call while `firing_count > 0` re-sends the summarising Telegram alert — there is no de-duplication or already-alerted guard. Filed as BLG-OPS-173.
 
 ### Request
 

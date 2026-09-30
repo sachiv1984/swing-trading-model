@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2 Canonical Specification
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-05-24
+**Version:** 1.3
+**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to POST /ticker-universe and DELETE /ticker-universe/{ticker}); prior — 2026-05-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Implementation:** `backend/routers/ticker_universe.py`, `backend/services/ticker_universe_service.py`
 
@@ -60,6 +60,10 @@ Adds a ticker to the screener universe. Re-activates soft-deleted tickers on con
 
 **Authentication:** Standard API key authentication.
 
+**Idempotency**
+
+- Idempotent in effect — a repeated `POST` for an already-active ticker returns the same active record; a repeated `POST` for a soft-deleted ticker re-activates it (see above) rather than erroring or creating a duplicate row.
+
 ### Request Body
 
 ```json
@@ -109,6 +113,10 @@ Adds a ticker to the screener universe. Re-activates soft-deleted tickers on con
 Soft-deletes a ticker from the screener universe (sets `active=FALSE`). The ticker remains in the database and can be re-activated via `POST /ticker-universe`.
 
 **Authentication:** Standard API key authentication.
+
+**Idempotency**
+
+- Not strictly idempotent by response code: the first call returns `200`; a repeated call on an already-inactive ticker returns `404` ("Ticker not found or already inactive") rather than a second `200`. The underlying state (`active=FALSE`) is unchanged either way — no double-delete side effect.
 
 ### Path Parameters
 

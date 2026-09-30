@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.5.1
-**Last Updated:** 2026-08-21 (BLG-BE-108, ST-03, v9.0: clarified "linked journal entries" sourcing for POST/GET /trades/{trade_id}/debrief — resolves ESC-EXEC-20260821-01)
+**Version:** 2.5.3
+**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /trades); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to POST /trades/{trade_id}/reflection, PATCH /trades/{trade_id}/costs, POST /trades/{trade_id}/debrief); prior — 2026-08-21 (BLG-BE-108, ST-03, v9.0: clarified "linked journal entries" sourcing for POST/GET /trades/{trade_id}/debrief — resolves ESC-EXEC-20260821-01); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -119,6 +119,15 @@ Response uses the standard success envelope from **conventions.md**.
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
+
+**Error example (401 — missing/invalid API key):**
+
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing API key"
+}
+```
 
 --- 
 
@@ -244,6 +253,10 @@ Errors use the standard error envelope from **conventions.md**. Note: on error, 
 
 **Method & Path:** `POST /trades/{trade_id}/reflection`
 
+**Idempotency**
+
+- Idempotent — upsert semantics (see Purpose above); a repeated call with the same body produces the same stored reflection.
+
 ### Path parameters
 
 | Parameter | Type | Required | Description |
@@ -353,6 +366,10 @@ Record or update commission and spread costs (in GBP) for a closed trade. Both f
 
 **Story:** ST-03 (EPIC-02, v6.0) — BLG-FEAT-20
 
+**Idempotency**
+
+- Idempotent — a repeated call with the same body overwrites with the same values (see Purpose above).
+
 ### Path parameters
 
 | Parameter | Type | Required | Description |
@@ -456,6 +473,10 @@ Returns the existing AI-generated post-trade debrief for a closed trade, if one 
 Generate (or regenerate) the AI post-trade debrief for a closed trade, on demand. Regeneration overwrites the prior debrief for this trade. **Implementation note:** generation is on-demand only — there is no hook into the live position-close event path; the story's own acceptance criteria explicitly names on-demand as an accepted fallback ("real-time generation, or on-demand if real-time isn't feasible").
 
 Always returns 200 with a debrief — the deterministic `summary_text` is never unavailable, even when the AI-generated `focus_area_text` is omitted. See `generation_status` in the response.
+
+**Idempotency**
+
+- Idempotent by storage effect — regeneration overwrites the prior debrief row rather than appending (see above), so repeated calls never accumulate duplicate records. `focus_area_text` itself is not byte-identical across calls (fresh LLM generation each time), but this is expected regeneration behaviour, not a double-submit defect.
 
 **§13 Condition 9 (output-side enforcement):** before `focus_area_text` is returned or persisted, the generated text is scanned for prescriptive phrasing (Condition 1) and every numeric token in it is cross-checked against the deterministic source values passed into the prompt (Condition 2). On a failure, generation is retried once; a second failure on the regenerated text is terminal for this call — the debrief is returned with `focus_area_text: null` and `generation_status: "fallback_no_focus_area"`, never with non-compliant text. Every generation call's compliance-check outcome is logged to `claude_audit_log` (Condition 5/9), independent of the debrief response itself.
 

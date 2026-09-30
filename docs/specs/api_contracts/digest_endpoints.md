@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.4
-**Last Updated:** 2026-06-09
+**Version:** 0.5
+**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /digest/si05/send); prior — 2026-06-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint:** 2026-03-31__release-v2.4 — ST-08 (BLG-FEAT-14 BE component)
 **Signed off by:** Head of Specs Team
@@ -113,6 +113,10 @@ Intended for weekly cron/scheduled invocation. Safe to retry — message content
 **Method & Path**
 
 - `POST /digest/si05/send`
+
+**Idempotency**
+
+- Not idempotent — sends a fresh Telegram message on every successful call (no send-once-per-window dedup). A double-submit sends two messages; this is an accepted trade-off for a manually/cron-triggered digest, not a defect — no state is written or corrupted either way ("safe to retry" per Purpose above refers to retry-safety of the read side, not message-count suppression).
 
 **Request**
 

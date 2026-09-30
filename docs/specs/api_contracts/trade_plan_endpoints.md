@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.16
-**Last Updated:** 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added lifecycle diagram cross-reference); prior — 2026-09-10 (ST-20, EPIC-04, v9.3, BLG-SPEC-76 — trade_tags row cross-references new canonical docs/specs/trade_tagging_taxonomy.md); prior — 2026-08-21 (ST-07, EPIC-02, v9.0, BLG-FEAT-93 — document that PUT /trade-plans/{id} does NOT apply POST's null→"Other" setup_type default); prior history retained — see prior entries in version control.
+**Version:** 0.17
+**Last Updated:** 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to all 8 mutating endpoints in this file; flagged undefined double-submit duplicate-plan-creation behaviour on POST /trade-plans as BLG-API-06); prior — 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added lifecycle diagram cross-reference); prior — 2026-09-10 (ST-20, EPIC-04, v9.3, BLG-SPEC-76 — trade_tags row cross-references new canonical docs/specs/trade_tagging_taxonomy.md); prior history retained — see prior entries in version control.
 **Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07); 2026-08-12__release-v8.7 (ST-01/ST-03); 2026-08-14__release-v8.8 (ST-09); 2026-08-18__release-v8.9 (ST-13); 2026-08-21__release-v9.0 (ST-07)
 
 ---
@@ -24,6 +24,10 @@ Documents the Trade Plan CRUD endpoints. Trade Plans capture pre-trade reasoning
 ## POST /trade-plans
 
 Create a new trade plan.
+
+**Idempotency**
+
+- Not idempotent — no uniqueness guard on `(ticker, setup_type, ...)`; every call creates a new row. **Undefined behaviour:** a double-submit (e.g. a duplicate click on the Save button) creates a second, functionally-duplicate draft plan with no warning. Deliberate multi-plan creation for the same ticker is a legitimate use case, so this is not fixable by a uniqueness constraint — filed as BLG-API-06 for a client-side/idempotency-key guard to consider.
 
 ### Request Body
 
@@ -155,6 +159,10 @@ Retrieve a single trade plan by ID.
 
 Update an existing trade plan. All fields are optional; only provided fields are updated — a field omitted or sent as `null` leaves the existing stored value unchanged, uniformly across all fields.
 
+**Idempotency**
+
+- Idempotent — a repeated call with the same body produces the same resulting plan state (see above).
+
 ### Request Body
 
 Same fields as POST (all optional for PUT), including `pre_entry_override_acknowledged`.
@@ -184,6 +192,10 @@ Errors use the standard error envelope from **conventions.md**.
 ## DELETE /trade-plans/{id}
 
 Delete a trade plan.
+
+**Idempotency**
+
+- Idempotent in effect — a repeated call after the first successful delete returns `404` (already gone), same as any delete-by-id endpoint. See **conventions.md §12**.
 
 ### Response (200 OK)
 
@@ -222,6 +234,10 @@ Generate a setup thesis for an existing trade plan using Claude Haiku 4.5.
 Returns a generated thesis when `ANTHROPIC_API_KEY` is configured. Returns a graceful error payload (HTTP 200 with `available: false`) when the key is absent or the API call fails.
 
 **Authentication:** Standard API key authentication.
+
+**Idempotency**
+
+- Read-only against `trade_plans` — this endpoint returns a suggested thesis for the client to optionally save via `PUT /trade-plans/{id}`; it does not itself persist anything. Safe to repeat, though the generated text is not byte-identical across calls (fresh LLM generation each time).
 
 ### Path Parameters
 
@@ -272,6 +288,10 @@ Generate a full set of trade plan fields from a ticker and optional signal data,
 Returns all fields when `ANTHROPIC_API_KEY` is configured. Returns a graceful error payload (HTTP 200 with `available: false`) when the key is absent or the API call fails.
 
 **Authentication:** Standard API key authentication.
+
+**Idempotency**
+
+- Read-only — this endpoint returns suggested field values for the client to optionally save via `POST /trade-plans`; it does not itself persist anything. Safe to repeat, though the generated content is not byte-identical across calls (fresh LLM generation each time).
 
 ### Request Body
 
@@ -360,6 +380,10 @@ Returns all unique tags used across `trade_plans.trade_tags` for the portfolio. 
 
 Add tags to each selected trade plan's existing `trade_tags` (union, not replace). New in v0.7 (ST-03, BLG-FE-117, EPIC-03, v7.5) — see `docs/specs/blg_fe_117_pre_implementation_readiness_pass.md` AC-01 for the batch-mutation pattern.
 
+**Idempotency**
+
+- Idempotent — a set union is idempotent by construction; repeating the same call with the same `tags` leaves each plan's `trade_tags` unchanged after the first application.
+
 ### Request Body
 
 ```json
@@ -394,6 +418,10 @@ Abandon (archive) each selected trade plan — reuses the existing single-plan a
 
 Plans with `status = 'active'` are excluded (mirrors §8.1's single-item hide rule) and reported in `failed` with `reason: "active_status_excluded"`. The abandonment reason is a fixed system string (`"Bulk archived via Trade Plans bulk-action toolbar"`) — the bulk confirmation dialog does not collect a per-plan reason (`bulk-actions-toolbar/ux_spec.md` §2.5 defines no reason field for this flow, unlike the single-item Abandon modal's required reason textarea, §8.2).
 
+**Idempotency**
+
+- Idempotent in effect — a plan already `status = 'abandoned'` stays `abandoned` on a repeated call (same terminal state, same fixed reason string); no duplicate transition history is recorded.
+
 ### Request Body
 
 ```json
@@ -422,6 +450,10 @@ Plans with `status = 'active'` are excluded (mirrors §8.1's single-item hide ru
 ## DELETE /trade-plans/bulk
 
 Delete each selected trade plan in a single call. New in v0.7 (ST-03, BLG-FE-117, EPIC-03, v7.5).
+
+**Idempotency**
+
+- Idempotent in effect — an id already deleted by a prior call is reported in `failed` (not found) rather than erroring the whole batch; already-deleted ids on a repeated call produce the same outcome.
 
 ### Request Body
 
