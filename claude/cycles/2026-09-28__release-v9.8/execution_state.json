@@ -5,7 +5,7 @@
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-09-30T08:00:03Z",
+  "last_updated_utc": "2026-09-30T08:04:07Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -867,23 +867,25 @@
         "ST-35": {
           "title": "Size grep-and-fix-everywhere and verify-against-live-environment story classes a notch higher",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1838,
           "branch": "exec/2026-09-28__release-v9.8/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "bb6de380c00a29bc53abc1d799bfb429cbeae991",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-30T08:04:07Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/release_planning_prompt.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Added a story-class effort calibration check to release_planning_prompt.md STEP 4 (Backlog Slice commitment). CLAUDE.md SS6 Governance File Edit Checklist applied in full: header 2.57->2.58, OPERATIONAL_GUIDE.md SS6B header + SS14 row + SS14 self-row + Change Log top row all synced to 4.211/2026-09-30 (3-way self-consistency verified directly), prompt_change_log.md entries for both files, companion changelog row added."
         },
         "ST-36": {
           "title": "strategy_rules.md \u00a713.5 roster missing PO-05 row",
@@ -1001,7 +1003,8 @@
     "ST-19",
     "ST-36",
     "ST-39",
-    "ST-30"
+    "ST-30",
+    "ST-35"
   ],
   "open_escalations": [],
   "merge_gate": {
