@@ -1,6 +1,6 @@
 {
   "cycle_id": "2026-09-28__release-v9.8",
-  "sprint_goal": "Clear the full v9.8 full-capacity debt slice \u2014 39 stories across 6 EPICs spanning frontend/UX consistency, backend reliability, QA/test coverage, operations/security hardening, spec & API contract debt, and governance/process debt \u2014 with no anchor feature, at exactly the top of the confirmed ~24\u201328 day sprint capacity band.",
+  "sprint_goal": "Clear the full v9.8 full-capacity debt slice — 39 stories across 6 EPICs spanning frontend/UX consistency, backend reliability, QA/test coverage, operations/security hardening, spec & API contract debt, and governance/process debt — with no anchor feature, at exactly the top of the confirmed ~24–28 day sprint capacity band.",
   "backlog_slice_source": "claude/cycles/2026-09-28__release-v9.8/stage4_backlog_slice.md",
   "invoked_utc": "2026-09-28T15:00:00Z",
   "mode": "standard",
@@ -49,7 +49,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": "Formatting-helper migration complete. 285 toFixed()/toLocaleString() call sites across 70 files identified (outside src/lib/format.js). All 70 files processed across 2 sessions (7 in the first partial commit 9ee399b7, 63 in this session via 3 parallel batch passes): money/percent/R display sites migrated to formatCurrency/formatPercent/formatR; non-financial sites (dates, ratios without a design-system convention, durations, counts, fractional shares, chart-data props, CSV exports per format.js's own documented exemption, FX rates, abbreviated axis/gauge/peak-value notation, operational/infra cost amounts) left out of scope or allow-listed with reasoning in docs/design/2026-09-28__release-v9.8/ST-01-formatting-migration-allowlist.md. Also fixed 19 total pre-existing zero-P&L/zero-delta neutral-tone colour violations (AC bullet 2) opportunistically across the touched files (6 in the first partial commit; 13 more in this session's batches, e.g. MonthlyHeatmap.js, PlanVsReality.js, PositionModal.js, RMultipleDistribution.js, CohortAnalysis.js, JournalView.js, PerformanceSummary.js, MarketComparison.js x1, ExitReasonTable.js x2, PaperAccountPanel.js, TradeReflection.js x2, TagPerformance.js x2, TradeReflectionModal.js, BestWorstTrades.js, TradeBreakdown.js). One out-of-scope finding (RecentTradesWidget.js icon-badge colour, not a toFixed call site) filed as BLG-FE-192 rather than fixed in-line. New Playwright coverage: tests/e2e/st01-v98-formatting-migration.spec.js (SC-ST01-01/02), passes locally (2/2); representative sample per CLAUDE.md \u00a72, not exhaustive per-file coverage."
+          "notes": "Formatting-helper migration complete. 285 toFixed()/toLocaleString() call sites across 70 files identified (outside src/lib/format.js). All 70 files processed across 2 sessions (7 in the first partial commit 9ee399b7, 63 in this session via 3 parallel batch passes): money/percent/R display sites migrated to formatCurrency/formatPercent/formatR; non-financial sites (dates, ratios without a design-system convention, durations, counts, fractional shares, chart-data props, CSV exports per format.js's own documented exemption, FX rates, abbreviated axis/gauge/peak-value notation, operational/infra cost amounts) left out of scope or allow-listed with reasoning in docs/design/2026-09-28__release-v9.8/ST-01-formatting-migration-allowlist.md. Also fixed 19 total pre-existing zero-P&L/zero-delta neutral-tone colour violations (AC bullet 2) opportunistically across the touched files (6 in the first partial commit; 13 more in this session's batches, e.g. MonthlyHeatmap.js, PlanVsReality.js, PositionModal.js, RMultipleDistribution.js, CohortAnalysis.js, JournalView.js, PerformanceSummary.js, MarketComparison.js x1, ExitReasonTable.js x2, PaperAccountPanel.js, TradeReflection.js x2, TagPerformance.js x2, TradeReflectionModal.js, BestWorstTrades.js, TradeBreakdown.js). One out-of-scope finding (RecentTradesWidget.js icon-badge colour, not a toFixed call site) filed as BLG-FE-192 rather than fixed in-line. New Playwright coverage: tests/e2e/st01-v98-formatting-migration.spec.js (SC-ST01-01/02), passes locally (2/2); representative sample per CLAUDE.md §2, not exhaustive per-file coverage."
         },
         "ST-02": {
           "title": "Drive Screener and Watchlist table body cells from the shared column definitions",
@@ -97,7 +97,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.step12_done",
           "sign_off_record": null,
-          "notes": "Design gate already produced an Approved decision record + fully-written reports.md v0.20 spec section for this story; implemented per that spec exactly. Backend: added get_monthly_pnl_by_tax_year (database.py) and an optional year param on get_monthly_pnl_report()/GET /reports/monthly-pnl (backward-compatible; omitting year is unchanged rolling-window behaviour). Frontend: TaxYearReport's notice link now passes its selectedYear up to Reports' new monthlyInitialYear state; MonthlyPnlTable gained its own Tax Year filter (Select, same pattern as the Tax Year tab's own selector) seeded from that value, defaulting to the current UK tax year on direct tab navigation (reset via the plain nav button's onClick). Opportunistic in-file fixes (small, same-file, disclosed in commit): corrected reports_endpoints.md's stale 'No query parameters' line to also document the pre-existing, previously-undocumented format=csv param; reordered the CSV download URL to format=csv&year=... so an existing test's exact-prefix route regex still matches; added a wildcard to one pre-existing test's exact-string monthly-pnl route mock in reports-performance-tab.spec.js (broken by the new always-present ?year= query string). Also fixed a real, already-committed regression from this same session's ST-01 partial-migration batch pass: Reports.js's Tax Year Trades Table pnl_pct cell had been incorrectly given the three-way zero-neutral colour rule during ST-01's opportunistic zero-P&L fixes -- DEV-REPORTS-ST01-02/decision_record.md \u00a75 explicitly scopes that convention to the Realised P&L column only; reverted to the original two-way rule (>0 emerald / else rose), confirmed by tests/e2e/reports-realised-pnl-zero-colour-convention.spec.js SC-RPZ-05 (which was failing before this fix, passing after). New tests: tests/test_monthly_pnl_tax_year_filter.py (6 backend unit/endpoint tests, all passing) and tests/e2e/tax-year-restated-notice-year-scoped-link.spec.js (3 Playwright scenarios covering the story's own 'older tax year' AC, direct-navigation default, and re-filter behaviour -- all passing). Full backend suite (1861 tests) and the full existing Reports/Monthly/TaxYear Playwright suite re-run clean after all fixes. Two genuinely pre-existing, unrelated test issues discovered during this regression pass were NOT fixed in-line (out of this story's scope) -- one already tracked (BLG-QA-190, test_monthly_ai_cost.py's unrestored sys.modules['database'] swap, confirmed via git-stash bisection to reproduce identically pre-ST-03), one newly filed (BLG-QA-197, reports-performance-tab.spec.js SC-REP-04a's stale zero-P&L sign-convention assertion, also confirmed pre-existing via the same bisection method)."
+          "notes": "Design gate already produced an Approved decision record + fully-written reports.md v0.20 spec section for this story; implemented per that spec exactly. Backend: added get_monthly_pnl_by_tax_year (database.py) and an optional year param on get_monthly_pnl_report()/GET /reports/monthly-pnl (backward-compatible; omitting year is unchanged rolling-window behaviour). Frontend: TaxYearReport's notice link now passes its selectedYear up to Reports' new monthlyInitialYear state; MonthlyPnlTable gained its own Tax Year filter (Select, same pattern as the Tax Year tab's own selector) seeded from that value, defaulting to the current UK tax year on direct tab navigation (reset via the plain nav button's onClick). Opportunistic in-file fixes (small, same-file, disclosed in commit): corrected reports_endpoints.md's stale 'No query parameters' line to also document the pre-existing, previously-undocumented format=csv param; reordered the CSV download URL to format=csv&year=... so an existing test's exact-prefix route regex still matches; added a wildcard to one pre-existing test's exact-string monthly-pnl route mock in reports-performance-tab.spec.js (broken by the new always-present ?year= query string). Also fixed a real, already-committed regression from this same session's ST-01 partial-migration batch pass: Reports.js's Tax Year Trades Table pnl_pct cell had been incorrectly given the three-way zero-neutral colour rule during ST-01's opportunistic zero-P&L fixes -- DEV-REPORTS-ST01-02/decision_record.md §5 explicitly scopes that convention to the Realised P&L column only; reverted to the original two-way rule (>0 emerald / else rose), confirmed by tests/e2e/reports-realised-pnl-zero-colour-convention.spec.js SC-RPZ-05 (which was failing before this fix, passing after). New tests: tests/test_monthly_pnl_tax_year_filter.py (6 backend unit/endpoint tests, all passing) and tests/e2e/tax-year-restated-notice-year-scoped-link.spec.js (3 Playwright scenarios covering the story's own 'older tax year' AC, direct-navigation default, and re-filter behaviour -- all passing). Full backend suite (1861 tests) and the full existing Reports/Monthly/TaxYear Playwright suite re-run clean after all fixes. Two genuinely pre-existing, unrelated test issues discovered during this regression pass were NOT fixed in-line (out of this story's scope) -- one already tracked (BLG-QA-190, test_monthly_ai_cost.py's unrestored sys.modules['database'] swap, confirmed via git-stash bisection to reproduce identically pre-ST-03), one newly filed (BLG-QA-197, reports-performance-tab.spec.js SC-REP-04a's stale zero-P&L sign-convention assertion, also confirmed pre-existing via the same bisection method)."
         },
         "ST-04": {
           "title": "SystemStatus.js categorizeEndpoint() has no case for the new /replay prefix",
@@ -161,7 +161,7 @@
           "completed_utc": "2026-09-28T15:28:09Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/navigation.md#Canonical Inventory \u2014 All Keyboard-Handling Sites"
+            "docs/specs/frontend/pages/navigation.md#Canonical Inventory — All Keyboard-Handling Sites"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
@@ -209,7 +209,7 @@
           "notes": "9 call sites from BLG-BE-128's follow-up list resolved: 7 migrated to get_timeout() (screener_data_service.py Stooq/Twelve Data config-only; live_trading_assistant.py, database.py, routers/research.py direct-Yahoo call sites to yfinance/yfinance_history; news_service.py to alpaca; si05_digest_service.py + ai_endpoint_anomaly_service.py to a new telegram provider entry), 2 explicitly documented as not migrated with reasons (health_service.py -- internal self-test, not a 3rd-party provider; routers/ticker_universe.py -- ThreadPoolExecutor future timeout, different mechanism, intentionally tighter UX bound than the general yfinance timeout). No retry behaviour changed at any site (AC bullet 2) -- every migration is a literal timeout-value substitution only. Full backend suite green throughout (1861 -> 1875 tests, +14 new TestST07* tests in tests/test_upstream_call_helper.py covering the new provider config and 6 of 7 real call sites; database.py's own site not independently unit-testable due to conftest.py's session-wide sys.modules['database'] stub -- verified by code review + full suite pass instead)."
         },
         "ST-08": {
-          "title": "Extend the v9.7 float\u2192Decimal fee-rounding audit to tax-year statement calculations",
+          "title": "Extend the v9.7 float→Decimal fee-rounding audit to tax-year statement calculations",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -684,7 +684,7 @@
           "notes": ""
         },
         "ST-27": {
-          "title": "trade_reflection.md \u00a74 specifies an en dash for a missing R-multiple",
+          "title": "trade_reflection.md §4 specifies an en dash for a missing R-multiple",
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
@@ -726,7 +726,7 @@
           "notes": ""
         },
         "ST-29": {
-          "title": "Reconcile the IT-06 \u00a713 review with a sync that POSTs orders and DELETEs positions",
+          "title": "Reconcile the IT-06 §13 review with a sync that POSTs orders and DELETEs positions",
           "classification": "delegated_decision",
           "status": "not_started",
           "assigned_to": "human",
@@ -802,7 +802,7 @@
           "notes": ""
         },
         "ST-32": {
-          "title": "Delivery-flow metrics \u2014 lead time by priority band and ready-pool runway forecast",
+          "title": "Delivery-flow metrics — lead time by priority band and ready-pool runway forecast",
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
@@ -888,7 +888,7 @@
           "notes": "Added a story-class effort calibration check to release_planning_prompt.md STEP 4 (Backlog Slice commitment). CLAUDE.md SS6 Governance File Edit Checklist applied in full: header 2.57->2.58, OPERATIONAL_GUIDE.md SS6B header + SS14 row + SS14 self-row + Change Log top row all synced to 4.211/2026-09-30 (3-way self-consistency verified directly), prompt_change_log.md entries for both files, companion changelog row added."
         },
         "ST-36": {
-          "title": "strategy_rules.md \u00a713.5 roster missing PO-05 row",
+          "title": "strategy_rules.md §13.5 roster missing PO-05 row",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -953,7 +953,7 @@
           "notes": ""
         },
         "ST-39": {
-          "title": "PO-04 needs its own \u00a713 boundary review, not just a stub-file note",
+          "title": "PO-04 needs its own §13 boundary review, not just a stub-file note",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",

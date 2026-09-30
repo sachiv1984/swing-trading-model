@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://swing-trading-model/claude/system/state_schema.json",
+  "title": ".claude_current_state.json Structural Schema",
+  "description": "Structural JSON Schema for .claude_current_state.json (ST-34, EPIC-06, v9.8, BLG-GOV-342). Validates the session-start state pointer's field types and presence of the core fields every engine reads/writes. This is a STRUCTURAL schema (field names/types/presence) -- it is distinct from claude/system/lifecycle_schema.json, which is the canonical STATE-MACHINE definition (valid `status` values, allowed transitions, guard rules). Both are referenced by .claude_current_state.json itself via the `lifecycle_schema`/`schema_version` fields (state-machine) and this file's own path convention (structural). additionalProperties is intentionally true: this file grows per-cycle with new ad hoc fields (e.g. `release_plan`, `active_pog`), and an exhaustive closed schema would need a version bump every cycle for no validation benefit -- the fields below are the stable, cross-cycle core every engine actually depends on.",
+  "type": "object",
+  "required": [
+    "active_cycle",
+    "status",
+    "engine",
+    "last_updated_utc"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "active_cycle": {
+      "type": "string",
+      "description": "The active cycle_id, e.g. '2026-09-28__release-v9.8'. Identifies the cycle folder under claude/cycles/."
+    },
+    "cycle_name": { "type": "string" },
+    "status": {
+      "type": "string",
+      "description": "Current lifecycle status. Valid values are defined in claude/system/lifecycle_schema.json's `states` object -- this schema does not duplicate that enum, to avoid the two files drifting out of sync on every new state added.",
+      "minLength": 1
+    },
+    "prior_status": { "type": "string" },
+    "engine": {
+      "type": "string",
+      "description": "Which governance engine last wrote this file (e.g. 'Sprint Execution', 'Release Planning')."
+    },
+    "last_updated_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC timestamp of the most recent write to this file by ANY engine. Added ST-34/BLG-GOV-342 -- roadmap_prompt.md STEP -1.6's state-age advisory reads this field and previously always fired (absent-field case) regardless of actual staleness. Every engine that writes this file MUST set this field to the current UTC time in the same write -- see shared_standards.md SS24."
+    },
+    "last_sync_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Distinct from last_updated_utc: the last time an explicit `sync gh` (or similar external-sync) operation ran. Not a general write timestamp."
+    },
+    "lifecycle_schema": {
+      "type": "string",
+      "description": "Path to the canonical state-machine definition (claude/system/lifecycle_schema.json)."
+    },
+    "schema_version": { "type": "string" },
+    "design_gate_required": { "type": "boolean" },
+    "design_gate_status": { "type": "string" },
+    "design_gate_record": { "type": "string" },
+    "design_gate_completed_utc": { "type": "string" },
+    "sprint_sealed": { "type": "boolean" },
+    "sprint_goal_path": { "type": "string" },
+    "sprint_backlog_path": { "type": "string" },
+    "sprint_capacity_path": { "type": "string" },
+    "sprint_goal_status": { "type": "string" },
+    "capacity_warn_acknowledged": { "type": "boolean" },
+    "execution_state_path": { "type": "string" },
+    "backlog_slice_path": { "type": "string" },
+    "amended_backlog_slice_path": { "type": "string" },
+    "active_amendment": { "type": "string" },
+    "amendment_status": { "type": "string" },
+    "verification_report": { "type": "string" },
+    "verification_status": { "type": "string" },
+    "next_cycle_unblocked": { "type": "boolean" },
+    "closure_record": { "type": "string" },
+    "closure_status": { "type": "string" },
+    "post_ship_complete": { "type": "boolean" },
+    "completed_cycle_count": { "type": "integer", "minimum": 0 },
+    "release_complete": { "type": "boolean" },
+    "next_release": { "type": "string" },
+    "prior_cycle": { "type": "string" },
+    "blocked_sla_breached": { "type": "boolean" },
+    "open_escalations": {
+      "type": "object",
+      "description": "Map of ESC-* / ESC-EXEC-* / ESC-CLOSE-* IDs to escalation records. Each record's own shape is defined by shared_standards.md SS4, not repeated here."
+    },
+    "deferred_escalations": {
+      "type": "object",
+      "description": "Same record shape as open_escalations, for escalations formally deferred rather than resolved."
+    },
+    "release_plan": { "type": "object" },
+    "prior_release_plan": { "type": "object" },
+    "active_pog": { "type": "object" },
+    "resolved_pre_sprint": { "type": "object" }
+  }
+}
