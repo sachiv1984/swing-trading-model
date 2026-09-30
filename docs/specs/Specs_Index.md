@@ -1199,6 +1199,16 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ---
 
+## 48. Test Coverage Gaps — v9.8 (2026-09-28__release-v9.8)
+
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps requiring a backlog item this cycle** — EPIC-01 through EPIC-04 (populated `test_scenarios`) were cross-referenced against their `qa_evidence_EPIC-xx.md` records and confirmed fully executed; EPIC-05 correctly recorded `not_applicable` (empty `test_scenarios`, documentation/spec/openapi-schema authoring, no frontend-visible AC or runtime behaviour change); EPIC-06 recorded `not_applicable` for the 9 governance/spec/tooling stories with no executable surface, with its 1 populated file (ST-30's Base44 template Playwright/axe check) confirmed run 12/12 pass. Structured register: `TSG-v9.8-01` (EPIC-05, not_applicable), `TSG-v9.8-02` (EPIC-06, not_applicable — 9 of 10 stories).
+
+**Endpoint coverage drift check (STEP 6 advisory, cross-referenced here as it touches spec/ops documentation currency):** Post-ship closure re-ran `scripts/check_api_performance_baseline_drift.py` — PASSED, no new drift detected. No new backend routes were added this cycle (EPIC-05's 39-item slice was documentation/openapi-schema authoring only), so no `SystemStatus.js` `categorizeEndpoint()` follow-up is needed.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep, per `post_ship_closure.md`'s no-fixed-section-number scan rule):** Scanned all `### N.N TSG-*` entries for literal `**Status:** Open`. 0 Open entries found — every existing TSG entry already carries a `RESOLVED`/`not_applicable`/confirmed-still-open disposition. 0 Open TSG entries checked, 0 resolved.
+
+---
+
 ## 12. Guiding Principle
 
 > Specs explain decisions.
@@ -1212,6 +1222,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-09-30 | Post-ship closure `2026-09-28__release-v9.8` — §48 Test Coverage Gaps (v9.8) added, 0 new gaps requiring a backlog item this cycle (TSG-v9.8-01/02 both not_applicable); endpoint coverage drift check (`check_api_performance_baseline_drift.py`) PASSED, 0 gaps, no new routes this cycle; full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-28 | Post-ship closure `2026-09-23__release-v9.7` — §47 Test Coverage Gaps (v9.7) added, 0 new gaps requiring a backlog item this cycle (TSG-v9.7-01/02 both not_applicable); endpoint coverage drift check found 0 gaps (147 normalised endpoints; new `POST /replay/run` already registered in `api_performance_baseline.md` same-PR); `SystemStatus.js` `/replay` categorisation gap flagged and filed as `BLG-FE-191`; full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-23 | Post-ship closure `2026-09-21__release-v9.6` — §46 Test Coverage Gaps (v9.6) added, 0 new gaps this cycle; endpoint coverage drift check found 0 gaps (146 normalised endpoints, no new routes this cycle); full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-18 | Post-ship closure `2026-09-15__release-v9.5` — §45 Test Coverage Gaps (v9.5) added, 0 new gaps this cycle; endpoint coverage drift check found 0 gaps; full-document TSG reconciliation sweep found 0 Open entries. **(Backfilled 2026-09-23 — this row was omitted at the time; the §45 section itself was added correctly, only this table row was missed.)** |

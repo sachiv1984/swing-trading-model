@@ -3,11 +3,75 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 — v9.7 entry added); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — v9.6 entry added); prior — 2026-09-18 (post-ship closure 2026-09-15__release-v9.5 — v9.5 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 — v9.8 entry added); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 — v9.7 entry added); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — v9.6 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.8 — Full-Capacity Debt Clearance — 2026-09-30
+Cycle: 2026-09-28__release-v9.8
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-09-28__release-v9.8/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Frontend & UX Debt Clearance — remaining `toFixed`/`toLocaleString` call sites (70 files) migrated to the shared formatting helper with zero-P&L colour-convention fixes, Screener and Watchlist table body cells now driven from shared column definitions, the Tax Year restated-months notice now links to the months the Monthly tab actually shows, `SystemStatus.js` gains a `/replay` endpoint category, responsive-table behaviour documented for Positions/TradeHistory/TradePlans, and a canonical keyboard-shortcut inventory spec added | Numbers and currency now display consistently on more screens across the app, and the Tax Year report's restated-months notice now takes you to the correct months in the Monthly tab instead of a mismatched range. | `docs/specs/frontend/design_system.md#Number and Currency Formatting`; `docs/specs/frontend/pages/reports.md#Monthly Financial Table Tax Year Filter`; `docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl`; `docs/specs/frontend/pages/positions.md#Responsive Behavior`; `docs/specs/frontend/pages/trade_history.md#Responsive Behavior`; `docs/specs/frontend/pages/trade_plan.md#4.2 List Layout`; `docs/specs/frontend/pages/navigation.md#Canonical Inventory` |
+| EPIC-02 | Backend Reliability & Financial Correctness — 9 remaining ad hoc `timeout=`/retry call sites migrated to the shared upstream-call helper, v9.7's float→Decimal fee-rounding audit extended to tax-year statement calculations (0 new drift found) | — | `backend/utils/upstream_call.py`; `docs/ops/money_arithmetic_audit_tax_year_2026-09-29.md` |
+| EPIC-03 | QA & Test Coverage — golden-fixture CI regression for AI prompt templates, an end-to-end test confirming the root logger emits JSON in situ, Playwright duration-assertion coverage for toast timing and motion-timing ceilings, a new escaped-defect/follow-on-ratio tracker, a DoQ checklist addendum for AI-touching stories, a mutation-testing pilot on the sizing calculator and stop ratchet, and Playwright trace/screenshot retain-on-failure enabled in CI | — | `claude/strategy/strategy_rules.md#13.2`; `docs/specs/structured_logging_standards.md#Structured Log Format`; `docs/specs/frontend/design_system.md#Shared UI Components`, `#Motion-vs-contrast guideline`; `claude/system/templates/qa_evidence_template.md` |
+| EPIC-04 | Operations & Security Hardening — detection for a merge that should have redeployed staging but did not, a documented allow-list of pre-approved read-only staging-DB query patterns, and a hardened non-registry dependency guard | — | `docs/specs/api_contracts/health_endpoints.md`; `docs/ops/staging_deploy_notes.md`; `docs/infrastructure/staging_setup.md`; `scripts/check_non_registry_dependencies.py` |
+| EPIC-05 | Spec & API Contract Debt — idempotency/double-submit documentation added to all 64 mutating endpoints, error-payload (4xx/5xx) examples added for the 10 most-called endpoints, a full field-level `openapi.yaml` authoring pass for 20 thin data-payload schemas, response schemas added for `POST /trade-plans` and `DELETE /trade-plans/{id}`, the `trade_plans` table's CHECK constraint documentation corrected, `ai_journal`'s either/or response shape modelled with `oneOf`, and 3 smaller spec-accuracy fixes (screener Earnings column, trade-reflection glyph, IT-06 §13 reconciliation) | — | `docs/specs/api_contracts/*.md` (21 contract files); `docs/reference/openapi.yaml`; `docs/specs/data_model.md`; `docs/specs/frontend/pages/screener_results.md`; `docs/specs/frontend/pages/trade_reflection.md` |
+| EPIC-06 | Governance & Process Debt — accessible-name/heading-order rules baked into the Base44 prompt template, a PVR/Skill-Silo measurement package, new delivery-flow metrics (lead time by priority band, ready-pool runway forecast), STEP 7.2 role-share tallies persisted as structured history, a JSON Schema for `.claude_current_state.json`, grep-and-fix/verify-against-live-environment story classes resized, a PO-05 row added to the `strategy_rules.md` §13.5 roster, `governance_sync.yml` now auto-closes phased stories' GitHub issues, a trigger/owner defined for the 90-day post-ship AI feature usage review, and a §13 boundary cross-reference added for PO-04 | — | `docs/specs/frontend/base44_prompt_template_library.md`; `docs/specs/metrics_definitions.md`; `claude/system/roadmap_prompt.md`; `claude/system/state_schema.json`; `claude/system/release_planning_prompt.md`; `claude/strategy/strategy_rules.md`; `claude/system/post_ship_closure.md`; `docs/specs/api_contracts/reflection_outcome_correlation_stub.md` |
+
+### Deviations accepted
+3 minor deviations (QA-evidence-classified, P3-default per verification_report.md §2.1 — disclosed scope narrowing with a confirmed backlog item each, not formal canonical-spec `DEV-*` records) — see `verification_report.md §4`: `BLG-OPS-171` (ST-17, staging-only redeploy-alert evidence deferred), `BLG-GOV-355` (ST-31, canonical `product_value_ratio_history.md` append deferred — write-scope), `BLG-GOV-353` (ST-33, canonical `role_share_history.md` placement deferred — write-scope). No P0–P2 deviations.
+
+### Tech backlog items shipped
+- [ST-01] [U] Formatting-helper migration completed across all 70 remaining call sites
+- [ST-02] [D] Screener/Watchlist table cells driven from shared column definitions
+- [ST-03] [U] Tax Year restated-months notice now links to the correct Monthly tab months
+- [ST-04] [D] SystemStatus.js `/replay` endpoint categorisation
+- [ST-05] [D] Responsive-table behaviour spec for Positions/TradeHistory/TradePlans
+- [ST-06] [D] Canonical keyboard-shortcut inventory spec
+- [ST-07] [D] Remaining upstream-call sites migrated to the shared timeout/retry helper
+- [ST-08] [D] Float→Decimal fee-rounding audit extended to tax-year statements
+- [ST-09] [D] Golden-fixture CI regression for AI prompt templates
+- [ST-10] [D] End-to-end test confirms root logger emits JSON in situ
+- [ST-11] [D] Playwright duration-assertion coverage for toast timing
+- [ST-12] [D] Regression coverage for motion-timing values
+- [ST-13] [D] Escaped-defect and follow-on-ratio tracking per cycle
+- [ST-14] [D] DoQ checklist addendum for AI-touching stories
+- [ST-15] [D] Mutation-testing pilot on sizing calculator and stop ratchet
+- [ST-16] [D] Playwright trace/screenshot retain-on-failure enabled
+- [ST-17] [D] Detects a merge that should have redeployed staging but did not
+- [ST-18] [D] Pre-approved read-only staging-DB query-pattern allow-list
+- [ST-19] [D] Hardened non-registry dependency guard
+- [ST-20] [D] Idempotency/double-submit documentation, all mutating endpoints
+- [ST-21] [D] Error-payload examples for the 10 most-called endpoints
+- [ST-22] [D] Field-level openapi.yaml authoring pass, 20 thin schemas
+- [ST-23] [D] POST /trade-plans and DELETE /trade-plans/{id} response schemas
+- [ST-24] [D] trade_plans CREATE TABLE / DS-04 CHECK constraint documentation
+- [ST-25] [D] openapi.yaml ai_journal oneOf modelling
+- [ST-26] [D] screener_results.md Earnings column fix
+- [ST-27] [D] trade_reflection.md missing-R-multiple glyph fix
+- [ST-28] [D] sprint_velocity_trend_chart.md splice fix
+- [ST-29] [D] IT-06 §13 review reconciliation with mirror-write paper sync
+- [ST-30] [G] Accessible-name/heading-order rules in Base44 prompt template
+- [ST-31] [G] PVR / Skill-Silo measurement package
+- [ST-32] [G] Delivery-flow metrics — lead time, ready-pool runway forecast
+- [ST-33] [G] STEP 7.2 role-share tallies persisted as structured history
+- [ST-34] [G] JSON Schema for .claude_current_state.json
+- [ST-35] [G] Grep-and-fix/verify-against-live-environment story classes resized
+- [ST-36] [G] strategy_rules.md §13.5 roster gains PO-05 row
+- [ST-37] [G] governance_sync.yml auto-closes phased stories' GitHub issues
+- [ST-38] [G] Trigger/owner for the 90-day post-ship AI feature usage review
+- [ST-39] [G] PO-04 gains its own §13 boundary cross-reference
+
+Sign-off: Product Owner (agent-mediated, §5.3) — 2026-09-30
+QA sign-off: Director of Quality (agent-mediated, §5.3) — 2026-09-30
 
 ---
 

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-30 (session — 1 new item added: BLG-SPEC-177, from agent-mediated review of PR #1847); prior — 2026-09-30 (session — 1 new item added: BLG-GOV-355, from ST-31/EPIC-06 write-scope escalation); prior — 2026-09-30 (session — 2 new items added: BLG-GOV-353, BLG-GOV-354, from ST-33/EPIC-06 write-scope escalation and a stale-pointer finding); prior history retained — see prior entries in version control (includes EPIC-05's own 2026-09-29 additions: BLG-SPEC-175/176, BLG-OPS-172/173/174, BLG-API-06, merged to main via PR #1847).
+**Last Updated:** 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 STEP 12.6 — 1 new item added: BLG-GOV-356, 90-day AI feature usage review still 6 days overdue, 8 downstream gated items named); prior — 2026-09-30 (groom backlog post-ship closure 2026-09-28__release-v9.8 — 40 items archived (39 v9.8 shipped + BLG-QA-198, resolved in-session); 1 ephemeral Release Slice section removed; 2 field-completeness gaps corrected (BLG-QA-196/199 Provisional-Target); 0 gate/effort/duplicate issues found); prior — 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 STEP 3 — 39 shipped items marked ✅ COMPLETE, cycle-tagged); prior history retained — see prior entries in version control (includes EPIC-05's own 2026-09-29 additions: BLG-SPEC-175/176, BLG-OPS-172/173/174, BLG-API-06, merged to main via PR #1847).
 **Last rebalance:** 2026-09-28 (cycle 2026-09-28__scheduled — DL-081; 0 active initiatives, CPS=N/A (14th consecutive); idea intake IW-20260928-01 (6 submissions, 3-agent disclosed reduced scope): 6 Promoted-Backlog (ungated), plus 1 re-evaluated parked idea (IDEA-data-model-20260919-02, gate cleared) also Promoted-Backlog (ungated), 1 re-parked (IDEA-director-of-hr-20260919-02, cycle 2); PVR 0.089 🔴 Alert (4th consecutive, improved from 0.046 low, U=14/G=36/D=104/P=4 of 158, window v9.3–v9.7) — PO Modify: next `plan release` must again seat ≥1-2 build-and-ship U-items; Skill-Silo 85.7% (1st improving reading after 5 consecutive worsening) — advisory only, no mandatory pull-forward this cycle; STEP 8.1 Option (b) defer, 7th consecutive)
 
 > ⚠️ Standing Notice
@@ -2976,351 +2976,6 @@ The full pipeline (screener hit → watchlist → research → trade plan → po
 
 ---
 
-### BLG-SPEC-152 — Full field-level openapi.yaml authoring pass for 20 generic/thin `data` payload schemas
-**Priority:** P3 (Low)
-**Type:** Spec Debt / API Contracts
-**Owner:** API Contracts & Documentation Owner
-**Source:** ST-26/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v9.6
-
-**Problem**
-`docs/ops/contract_example_freshness_triage_2026-09-18.md` §5 found 20 endpoints where `openapi.yaml`'s declared schema leaves the response `data` payload as a generic `type: object` with little or no declared properties, while the markdown contract in `docs/specs/api_contracts/` carries the real field-level detail. Some of these carry an explicit "Intentionally broad to avoid drift" description (a deliberate, established convention); others (e.g. `GET /watchlist`, `GET /reports/tax-year`'s `trades[]`/`summary`) are bare `{type: object}` with no description at all, and it isn't yet confirmed case-by-case which category each falls into.
-
-**Scope**
-- For each of the 20 endpoints listed in the triage doc §5: confirm whether the schema is intentionally broad (add the standard description if missing, no functional change) or genuinely under-authored (fill in real properties matching the markdown contract, types included)
-- Re-run `scripts/check_contract_example_freshness.py` after each fix to confirm it drops off the POSSIBLE DRIFT list (or is deliberately left, once labelled intentional)
-
-**Acceptance Criteria**
-- All 20 endpoints from the triage doc's §5 have a case-by-case disposition recorded
-- `scripts/check_contract_example_freshness.py`'s POSSIBLE DRIFT count reflects only genuinely-remaining intentional gaps, each carrying the standard description
-
----
-
-### BLG-SPEC-153 — POST /trade-plans and DELETE /trade-plans/{id} declare no response schema in openapi.yaml
-**Priority:** P3 (Low)
-**Type:** Spec Debt / API Contracts
-**Owner:** API Contracts & Documentation Owner
-**Source:** ST-26/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
-**Effort:** S (~0.5d)
-**Provisional-Target:** v9.6
-
-**Problem**
-`docs/ops/contract_example_freshness_triage_2026-09-18.md` §6 found `POST /trade-plans` (201) and `DELETE /trade-plans/{id}` (200) declare only a bare `description` in `openapi.yaml`, no `content`/`schema` at all — confirmed as a genuine spec gap, not a freshness-check script limitation (both response codes are ones the script already checks). Both have real, documented JSON examples in `docs/specs/api_contracts/trade_plan_endpoints.md`.
-
-**Scope**
-- Author `content`/`schema` entries for both responses in `openapi.yaml`, matching `trade_plan_endpoints.md`'s documented examples
-
-**Acceptance Criteria**
-- Both endpoints have a real response schema in `openapi.yaml`
-- `scripts/check_contract_example_freshness.py` no longer reports either as SKIPPED
-
----
-
-### BLG-SPEC-154 — trade_plans CREATE TABLE / DS-04 CHECK constraint undocumented since ensure_trade_plans_extended_status() shipped
-**Priority:** P3 (Low)
-**Type:** Spec Debt / Data Model
-**Owner:** Data Model & Domain Schema Owner
-**Source:** ST-29/EPIC-04, 2026-09-15__release-v9.5 — 2026-09-18
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.6
-
-**Problem**
-`data_model.md`'s `trade_plans` `CREATE TABLE` block (§Trade Plan Object, DS-04) still declares `status VARCHAR(20) ... CHECK (status IN ('draft', 'active', 'closed'))` — 3 values. `backend/database.py::ensure_trade_plans_extended_status()` extends this to 7 (`draft`, `research_pending`, `research_complete`, `entry_conditions_set`, `active`, `closed`, `abandoned`) and has clearly already shipped: confirmed live via `DATABASE_URL` (readonly staging) this session — `pg_get_constraintdef` on `trade_plans_status_check` returns exactly the 7-value list — and `docs/specs/frontend/pages/trade_plan.md` §9's Status Badge Scheme (v3.3) has correctly documented and styled all 7 statuses for a long time. Only `data_model.md`'s own DDL/CHECK-constraint documentation was never updated with a DS-xx entry for this migration.
-
-**Scope**
-- Add a DS-xx entry documenting `ensure_trade_plans_extended_status()`'s migration (7-value CHECK constraint), following the existing DS-xx entry format
-- Update the `trade_plans` `CREATE TABLE` block's CHECK constraint and field notes to show all 7 values
-
-**Acceptance Criteria**
-- `data_model.md`'s `trade_plans` CHECK constraint and field notes match the live 7-value constraint
-- A DS-xx entry exists documenting the migration, matching this doc's own established format
-
----
-
-### BLG-SPEC-155 — openapi.yaml's OperationalHealthResponse.ai_journal doesn't model its either/or shape with oneOf
-**Priority:** P4 (Trivial)
-**Type:** Spec Debt / API Contracts
-**Owner:** API Contracts & Documentation Owner
-**Source:** Agent-mediated Director of Quality review, PR #1715 (EPIC-04, 2026-09-15__release-v9.5) — 2026-09-18
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.6
-
-**Problem**
-`docs/reference/openapi.yaml`'s `OperationalHealthResponse.ai_journal` schema (added PR #1715, ST-26/BLG-SPEC-139) lists `status` (enum `[unavailable]`) as a sibling property alongside `usage_rate`/`error_rate`/`p95_latency_ms`, rather than modelling the real "either the 3 metric fields, or `{status: unavailable}`" either/or shape via `oneOf`. The description text correctly explains the real behaviour, but the schema itself currently permits (and doesn't forbid) a response carrying all 4 keys at once, which the real endpoint never returns. Low-severity — a pre-existing style pattern elsewhere in this file, not a regression introduced by PR #1715.
-
-**Scope**
-- Model `ai_journal` as a `oneOf` of the two real shapes (3-metric object, or `{status: unavailable}`)
-
-**Acceptance Criteria**
-- `ai_journal`'s schema forbids a response carrying both the metric fields and `status: unavailable` simultaneously
-
----
-
-### BLG-SPEC-156 — PO-04 (Reflection ↔ Outcome Correlation) needs its own §13 boundary review, not just a stub-file note
-**Priority:** P3 (Low)
-**Type:** Governance / §13 Compliance
-**Owner:** Strategy Rules & System Intent Owner
-**Source:** Agent-mediated Product Owner review, PR #1715 (EPIC-04, 2026-09-15__release-v9.5, ST-23) — 2026-09-18
-**Effort:** XS (~0.5 day)
-**Provisional-Target:** Unscheduled (pre-work before PO-04 gate)
-
-**Problem**
-`docs/specs/api_contracts/reflection_outcome_correlation_stub.md` (ST-23) flags that "correlation" language reads closer to a predictive claim than PO-02/PO-03's pattern-recognition/classification framing, and suggests PO-04 may need its own §13 boundary check rather than inheriting `BLG-SPEC-35`'s PO-02 clearance if that lands first. That suggestion currently exists only as prose inside a pre-authoring stub file — nothing tracks it as an actionable item, so it risks being silently dropped once `BLG-SPEC-35` closes and nobody re-reads the stub.
-
-**Scope**
-- File (or confirm covered by) a dedicated §13 pre-assessment for PO-04, distinct from `BLG-SPEC-35`'s PO-02 scope
-- Cross-reference from `reflection_outcome_correlation_stub.md`
-
-**Acceptance Criteria**
-- A trackable item (this one, or a successor) exists for PO-04's own §13 review — not just prose in a stub file
-
----
-
-### BLG-QA-179 — No end-to-end test confirms backend/main.py's wired root logger actually emits JSON in situ
-**Priority:** P3 (Low)
-**Type:** QA / Test Automation
-**Owner:** QA & Testing Owner
-**Source:** PR #1712 review (Director of Quality agent-mediated review), EPIC-01/v9.5 (BLG-BE-112) — 2026-09-16
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.6
-
-**Problem**
-`BLG-BE-112`/ST-02 added `tests/test_json_log_formatter.py` (unit coverage of `JsonLinesFormatter` in isolation) and relies on the pre-existing `tests/test_root_logging_config.py` (structural coverage of root logger handler count/level). Neither test connects the two: there is no test that actually runs application code through `backend/main.py`'s wired root logger handler and confirms the captured output is valid JSON Lines end-to-end. A future change that reintroduces a plain-text formatter, or wires a second handler with a different formatter, would not be caught by either existing suite.
-
-**Scope**
-- Add a subprocess-isolated test (following the existing pattern in `tests/test_root_logging_config.py`'s `_run_isolated()` helper) that imports `main`, emits a log line through a real application logger, captures stdout, and asserts it parses as JSON with the required fields
-
-**Acceptance Criteria**
-- A new test fails if `backend/main.py`'s root handler formatter is reverted to plain text or replaced with a non-JSON formatter
-- Test passes against the current implementation
-
----
-
-### BLG-QA-180 — Add Playwright duration-assertion coverage for the 9 toast call sites fixed in ST-42 (Toast Notification Timing standard)
-
-**Priority:** P3 (Low)
-**Type:** QA / Test Automation
-**Owner:** QA & Testing Owner
-**Source:** Sprint execution `2026-09-15__release-v9.5`, ST-42/`BLG-FE-176`, discovered mid-story — 2026-09-18
-**Effort:** S (~0.5d)
-**Provisional-Target:** v9.6
-
-**Problem**
-ST-42 fixed all 9 non-conforming toast call sites (`Layout.js`, `Settings.js` ×2, `Signals.js` ×2, `Positions.js` ×2, `PositionCard.js`, `useWatchlistModal.js`) to carry the correct `duration` per `design_system.md`'s Toast Notification Timing standard — `Layout.js`'s incorrect `duration: 8000` on an info toast was removed (reverting to the 4s default), and the 8 `toast.error(...)` sites each gained an explicit `duration: 8000`. No existing Playwright test asserts on toast duration/dismissal timing for any of these 9 sites (confirmed via grep across `tests/e2e/` for each site's exact message text — zero matches). The fix was verified by code review plus re-running unrelated-but-adjacent Playwright suites (`watchlist.spec.js`, `settings-heading-order-and-aria-labelledby-regression.spec.js`, `v7.2-dashboard-tradeplan-ux-hardening.spec.js`) confirming no runtime regression, but none of those assert the new duration values themselves.
-
-**Scope**
-- Add Playwright assertions for the 9 call sites confirming each toast's configured duration matches the standard (8s for error, 4s default for the `Layout.js` info toast) — e.g. asserting the toast remains visible past the old 4s default before disappearing, or reading the rendered duration where `sonner` exposes it
-
-**Acceptance Criteria**
-- A regression test exists per call site (or a consolidated test covering all 9) that would fail if a future change silently reverted any site's `duration` back to a non-conforming value
-- Tests pass against the current (ST-42) implementation
-
----
-
-### BLG-QA-181 — Add regression coverage for the motion-timing values fixed in ST-41 (500ms ceiling components)
-
-**Priority:** P3 (Low)
-**Type:** QA / Test Automation
-**Owner:** QA & Testing Owner
-**Source:** Agent-mediated Director of Quality review of PR #1717 (EPIC-06, `2026-09-15__release-v9.5`) — 2026-09-18
-**Effort:** S (~0.5d)
-**Provisional-Target:** v9.6
-
-**Problem**
-ST-42 (same EPIC) correctly filed `BLG-QA-180` when it found no Playwright test asserts the specific `duration` values its 9 toast fixes introduced. ST-41 has the identical gap and none was filed for it: no Playwright test asserts `SystemStatus.js`/`Signals.js`/`Reports.js`/`RecentTradesWidget.js`'s actual `delay`/`duration` transition-prop values (Playwright cannot easily read a React `transition` prop directly — coverage would need a timing-based or prop-inspection approach). Two of the fixed values now sit at exactly the 500ms ceiling with zero margin (`Reports.js`: `0.2s` max delay + `0.3s` duration = `0.5s`; `RecentTradesWidget.js`: same), meaning a future, unrelated change to either component's animation (e.g. bumping `duration` for a different visual reason) could silently push it back over the ceiling with nothing in CI to catch it.
-
-**Scope**
-- Add regression coverage for the 4 components' motion-timing values fixed in ST-41 — e.g. a lightweight source-inspection test (grep/AST-based, checking the literal `delay`/`duration` values in each file) or a timing-based Playwright assertion, whichever is more practical for framer-motion transition props
-- Cover both fixed-value components (exact-ceiling risk) and the capped/staggered components (regression risk if the cap constant is later removed)
-
-**Acceptance Criteria**
-- A regression test/check exists that would fail if any of the 4 components' `max(delay) + duration` were pushed back over 500ms by a future change
-- Test/check passes against the current (ST-41) implementation
-
----
-
-*41 of the window's 44 submissions promoted to backlog per STEP 4 "📋 Backlog" disposition, filed as **36 items** after 4 consolidations (Idea Consolidation convention); 35 are ungated and 1 (`BLG-SEC-37`) is gate-conditional. 2 submissions parked (`Parked-cycle-1`), 1 rejected as already implemented. **Plus 1 item (`BLG-GOV-345`) filed from this rebalance's own lessons learnt, not an idea** — 37 items in all. All carry `**Provisional-Target:** TBD` (Now/Next horizons both empty — §16.6 fallback) and no release-specific effort day-range is required (§16.12 n/a). `BLG-FEAT-96`, `BLG-FEAT-97`, `BLG-SPEC-160`, `BLG-OPS-166` and `BLG-GOV-345` are P2 by explicit PO decision (see `claude/cycles/2026-09-19__scheduled/cycle_record.md` STEP 4). Window: `claude/ideas/window_summary_IW-20260919-01.md`.*
-
----
-
-### BLG-AI-07 — Golden-fixture CI regression for AI prompt templates — boundary-language drift caught at template-change time
-**Priority:** P3 (Low)
-**Type:** AI Compliance / QA Tooling
-**Owner:** AI Compliance & Governance Officer; QA & Testing Owner
-**Source:** IDEA-ai-compliance-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** S (~0.5–1d)
-**Provisional-Target:** TBD
-
-**Problem**
-Boundary-language sampling (`BLG-AI-04` quarterly re-scan, `BLG-AI-06` generation-time hook) inspects text after generation, so a prompt-template edit that reintroduces predictive or advice-crossing phrasing is caught only at the next sample (up to ~90 days). `claude_audit_log` already records `model_id` and `prompt_version` (confirmed in `backend/database.py`), so attribution exists — but nothing asserts that `prompt_version` actually changes when a template's text changes.
-
-**Scope**
-- Fixed rendered-prompt fixtures per AI endpoint (chat, briefing, debrief) checked against the `strategy_rules.md` §13.2 disallowed-phrase list — deterministic, template-level, no live API call
-- CI test asserting no disallowed phrase appears in any rendered template
-- CI test asserting `prompt_version` differs whenever a template's text hash differs
-
-**Acceptance Criteria**
-- CI fails when a disallowed phrase is introduced into any covered template
-- CI fails when template text changes without a `prompt_version` change
-- The suite runs without `ANTHROPIC_API_KEY`
-
-*Note: `IDEA-ai-compliance-20260919-02` (stamp model/prompt version on audit rows) was rejected as already implemented; its residual value — asserting the version actually moves — is folded into this item's third scope bullet.*
-
----
-
-### BLG-API-04 — Document idempotency and double-submit behaviour for every mutating endpoint
-**Priority:** P3 (Low)
-**Type:** Spec Debt / API Contracts
-**Owner:** API Contracts & Documentation Owner
-**Source:** IDEA-api-contracts-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** S (~0.5–1d)
-**Provisional-Target:** TBD
-
-**Problem**
-No contract states what a retried `POST` does. `BLG-BE-115`/DS-17 (duplicate open positions) shows the risk is real, yet retry and double-submit semantics for `POST /trades`, `POST /trade-plans` and position entry are specified nowhere.
-
-**Scope**
-- Add an "Idempotency / retry behaviour" subsection to every mutating endpoint's contract in `docs/specs/api_contracts/`
-- Verify each statement against code and tests (for example the DS-17 unique index); where behaviour is undefined, record it as such and file a follow-up item
-
-**Acceptance Criteria**
-- Every `POST`/`PUT`/`PATCH`/`DELETE` heading in `docs/specs/api_contracts/` carries the subsection
-- Undefined behaviours are listed and each has a filed backlog item
-- Endpoint headings remain `## METHOD /path` (OpenAPI drift gate unaffected)
-
----
-
-### BLG-API-05 — Error-payload (4xx/5xx) examples for the 10 most-called endpoints, covered by the example-freshness checker
-**Priority:** P3 (Low)
-**Type:** Spec Debt / API Contracts
-**Owner:** API Contracts & Documentation Owner
-**Source:** IDEA-api-contracts-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** S (~0.5–1d)
-**Provisional-Target:** TBD
-
-**Problem**
-Contracts carry success examples; the overlap scan found no backlog item covering error-response examples, so client-side error handling is specified by reading code. `BLG-SPEC-139` established freshness checking for example payloads; error payloads are outside what any item covers.
-
-**Scope**
-- Pick the 10 most-called endpoints (from `api_performance_baseline.md`) and add at least one 4xx example each
-- Extend the contract example-freshness checker to compare error examples against the canonical error envelope
-
-**Acceptance Criteria**
-- 10 endpoints carry ≥1 error example
-- The freshness checker fails when an error example diverges from the envelope
-
----
-
-### BLG-GOV-338 — Bake accessible-name and heading-order rules into the Base44 prompt template
-**Priority:** P3 (Low)
-**Type:** Governance / Base44
-**Owner:** Base44 Frontend Prompt Owner; Frontend Specifications & UX Documentation Owner
-**Source:** IDEA-base44-frontend-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-Accessible-name and heading-order defects were fixed page by page (`BLG-FE-170`/`171`) with nothing preventing the next regeneration reintroducing them.
-
-**Scope**
-- Add `aria-labelledby`-over-duplicated-`aria-label` and heading-order rules to the Base44 prompt template
-- Record the change in the prompt versioning changelog
-
-**Acceptance Criteria**
-- The template carries both rules
-- A regenerated page in a test run introduces no new axe-core `KNOWN_VIOLATIONS` entries
-
----
-
-### BLG-GOV-339 — PVR / Skill-Silo measurement package — split debt into user-protective vs hygiene, add effort-weighted PVR, add a leading ungated-U-pool indicator
-**Priority:** P3 (Low)
-**Type:** Governance / Metrics
-**Owner:** Metrics Definitions & Analytics Owner; Head of Specs Team
-**Source:** IDEA-challenger-20260919-01, IDEA-challenger-20260919-02, IDEA-metrics-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled (consolidates 3 ideas — Idea Consolidation convention)
-**Effort:** M (~1.5–2d)
-**Provisional-Target:** TBD
-
-**Problem**
-Three consecutive PVR Alert readings (0.110 / 0.092 / 0.046) and a 99.0% Skill-Silo reading cannot drive a differentiated response: `D` is 122 of 195 stories in the current window, conflating user-protective debt (bug, security, data integrity) with hygiene; story counts weight a one-hour fix like a two-week build; and both mandatory clauses depend on a pool of ungated U-items that neither clause replenishes. Three submissions converge on this one problem (Idea Consolidation convention).
-
-**Scope**
-- Define a user-protective vs hygiene split of `D` and re-tag at ship time going forward
-- Report an effort-weighted PVR alongside the story-count PVR in `product_value_ratio_history.md`
-- Add a leading indicator: count of ungated, build-and-ship U-items in the backlog at each rebalance
-- **Proposal only** — any change to `roadmap_prompt.md` STEP 2.4/§7.1 needs Head of Specs Team + Product Owner sign-off and the CLAUDE.md §6 checklist
-
-**Acceptance Criteria**
-- Definitions documented in `metrics_definitions.md`
-- History file carries both readings for the last 5 windows
-- Leading indicator computed at the next rebalance
-
----
-
-### BLG-GOV-340 — Delivery-flow metrics — lead time by priority band and ready-pool runway forecast
-**Priority:** P3 (Low)
-**Type:** Governance / Metrics
-**Owner:** Metrics Definitions & Analytics Owner; PMO Lead
-**Source:** IDEA-metrics-20260919-02, IDEA-pmo-lead-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled (consolidates 2 ideas — Idea Consolidation convention)
-**Effort:** S (~1d)
-**Provisional-Target:** TBD
-
-**Problem**
-No measure shows whether P1/P2 items ship faster than P3, and §7.3 measures the ready-pool gap retrospectively — nothing projects when the pool empties. Both are delivery-flow observability gaps (Idea Consolidation convention).
-
-**Scope**
-- Median filed→shipped days by priority band per cycle (from `backlog_archive.md` and the changelog)
-- One projected 'cycles until empty' number per rebalance, given intake and capacity
-
-**Acceptance Criteria**
-- Both metrics defined and computed for the last 5 cycles
-- The runway figure is cited in the next rebalance's STEP 7.3
-
----
-
-### BLG-GOV-341 — Persist STEP 7.2 role-share tallies as a structured history file
-**Priority:** P3 (Low)
-**Type:** Governance / Workforce
-**Owner:** Director of HR; PMO Lead
-**Source:** IDEA-director-of-hr-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** S (~0.5–1d)
-**Provisional-Target:** TBD
-
-**Problem**
-STEP 7.2 re-tallies free-text `**Owner:**` fields each rebalance; at `2026-09-14__scheduled` raw counts exceeded story totals in 3 of 3 cycles, and at this rebalance again (v9.3: 35 raw vs 27 stories). Complements — does not replace — the deferred Owner-field canonicalisation patch.
-
-**Scope**
-- Create a history file (one row per cycle, primary-owner counts) analogous to `product_value_ratio_history.md`
-- Wire STEP 7.2 to read and append it
-
-**Acceptance Criteria**
-- History backfilled for the last 3 cycles
-- STEP 7.2 reads the file instead of re-parsing Owner fields
-
----
-
-### BLG-GOV-342 — JSON Schema for `.claude_current_state.json`, including the `last_updated_utc` field the roadmap engine reads
-**Priority:** P3 (Low)
-**Type:** Governance / Process
-**Owner:** Head of Specs Team
-**Source:** IDEA-head-of-specs-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** S (~0.5–1d)
-**Provisional-Target:** TBD
-
-**Problem**
-`roadmap_prompt.md` STEP -1.6 reads `last_updated_utc`, which the state file does not carry, so the state-age advisory fires on every run (confirmed at `2026-09-19__scheduled`, with `last_sync_utc` fresh).
-
-**Scope**
-- Author a JSON Schema for the state file
-- Identify each engine that writes state and have it set `last_updated_utc`
-- Validate against the schema in preflight or the `governance-drift` skill
-
-**Acceptance Criteria**
-- The state file validates
-- The state-age advisory computes a real age instead of always firing
-
----
-
 ### BLG-GOV-343 — Split `roadmap_prompt.md` into a core plus an appendix so it fits a single read
 **Priority:** P3 (Low)
 **Type:** Governance / Process
@@ -3363,27 +3018,6 @@ Parameter history is recoverable only from git and the change log. Refines `BLG-
 
 ---
 
-### BLG-GOV-346 — Size "grep-and-fix-everywhere" and "verify against live environment" story classes a notch higher by default
-**Priority:** P3 (Low)
-**Type:** Governance Process
-**Owner:** Head of Specs Team; Product Owner
-**Source:** PR #1753 and PR #1754 (EPIC-04/EPIC-05) agent-mediated Product Owner review finding — 2026-09-22
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.7
-
-**Problem**
-Three stories in the same v9.6 sprint needed a mid-execution scope correction or shortfall disclosure because their own effort estimate (XS/S) didn't anticipate what the work actually required once started: `ST-21` (EPIC-05, `BLG-QA-178`, XS) — its own AC-3 ("fix every file sharing this pattern") turned out to touch ~29 files needing two structurally different fix strategies, disclosed as `DEV-EPIC05-ST21-01` with a filed follow-up (`BLG-QA-190`); `ST-18` (EPIC-05, `BLG-QA-171`, M) — "run the Phase-B suite against a freshly-seeded staging DB" was found mid-execution to conflate an unrelated CI job with the real staging environment, requiring a scope correction before execution rather than after; `ST-17` (EPIC-04, `BLG-OPS-165`) — the new CI-usage-report script's I/O-boundary functions shipped with zero test coverage (`BLG-QA-191`), only caught by a later PR review pass. All three were handled correctly (disclosed transparently, not hidden or silently narrowed), but the pattern recurring three times in one sprint across two EPICs suggests the underlying story classes are systematically under-estimated, not that each occurrence was a one-off surprise.
-
-**Scope**
-- At sprint/release planning time, flag stories whose scope includes "grep across the codebase / fix every match" or "verify behaviour against a live/staging environment" phrasing
-- For that story class, default to one effort tier higher than the estimator's first instinct, or explicitly require the estimate to name the expected file/case count and confirm it against a quick grep/count before the estimate is finalized
-
-**Acceptance Criteria**
-- Either `sprint_planning_prompt.md` or `release_planning_prompt.md` gains a short check/note for this story class at estimate time
-- Applied retrospectively: none required — this is a forward-looking calibration note, not a fix to the three already-disclosed instances above
-
----
-
 ### BLG-GOV-347 — scan_backlog_gate_conditions.py date-disambiguation gap can produce false negatives
 **Priority:** P3 (Low)
 **Type:** Governance Process
@@ -3402,86 +3036,6 @@ Three stories in the same v9.6 sprint needed a mid-execution scope correction or
 **Acceptance Criteria**
 - A `gate_condition` with an early future date and a later past date is correctly flagged as lapsed (or explicitly flagged for manual disambiguation, not silently resolved wrong)
 - A test file exists and passes in CI covering the cases above
-
----
-
-### BLG-GOV-348 — strategy_rules.md §13.5 roster missing PO-05 row after 2026-09-23 clearance
-**Priority:** P3 (Low)
-**Type:** Governance / Strategy
-**Owner:** Head of Specs Team; Strategy Rules & System Intent Owner
-**Source:** Agent-mediated Director of Quality review, PR #1757 (ST-23), cycle 2026-09-21__release-v9.6; also flagged in `decisions--2026-09-21__release-v9.6.md`'s ST-23 addendum and `qa_evidence_EPIC-06.md` note 1 — 2026-09-23
-**Effort:** XS (<1h)
-**Provisional-Target:** TBD
-
-**Problem**
-PO-05 (Lightweight Replay Mode)'s §13 pre-assessment (`docs/product/decisions/po05_section13_preassessment.md`) cleared PASS on 2026-09-23. Per `strategy_rules.md` §13.5's own maintenance rule, a newly-cleared feature should add itself to the semi-annual re-attestation roster table in the same commit as its clearance — but `claude/strategy/` is a governance folder outside `execution_prompt.md`'s write scope for the Sprint Execution engine, so the roster update could not be applied at clearance time and was disclosed instead.
-
-**Scope**
-- Add a row for PO-05 to `strategy_rules.md` §13.5's roster table, citing `po05_section13_preassessment.md` as the review record, cleared v9.6
-
-**Acceptance Criteria**
-- PO-05 appears in the §13.5 roster table with the correct review-record link and clearance release
-
----
-
-### BLG-QA-182 — Escaped-defect and follow-on-ratio tracking per cycle
-**Priority:** P3 (Low)
-**Type:** QA / Metrics
-**Owner:** Director of Quality; PMO Lead
-**Source:** IDEA-director-of-quality-20260919-01, IDEA-pmo-lead-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled (consolidates 2 ideas — Idea Consolidation convention)
-**Effort:** S (~0.5–1d)
-**Provisional-Target:** TBD
-
-**Problem**
-v9.5 filed 21 follow-on items during execution and two PR review rounds (~0.49 per shipped story), several found only by review — no measure separates defects escaping a story from planned debt (Idea Consolidation: both concern post-merge findings).
-
-**Scope**
-- Per cycle: defects first observed after merge, linked to the originating story; follow-ons filed per shipped story
-
-**Acceptance Criteria**
-- Baseline computed for v9.5
-- A per-cycle row is added at each post-ship closure
-
----
-
-### BLG-QA-183 — DoQ checklist addendum for AI-touching stories
-**Priority:** P3 (Low)
-**Type:** QA / Governance
-**Owner:** Director of Quality
-**Source:** IDEA-director-of-quality-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-AI-touching stories (for example `BLG-AI-06`) reached sign-off with two ACs staging-only and no standard evidence shape.
-
-**Scope**
-- Addendum: record prompt-template version and a boundary-language sample in the evidence file
-
-**Acceptance Criteria**
-- The addendum exists in the DoQ template
-- The next AI-touching story uses it
-
----
-
-### BLG-QA-184 — Mutation-testing pilot on the sizing calculator and stop ratchet
-**Priority:** P3 (Low)
-**Type:** QA / Test Quality
-**Owner:** QA Lead
-**Source:** IDEA-qa-lead-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** M (~2d)
-**Provisional-Target:** TBD
-
-**Problem**
-Passing tests do not show that the sizing (§4.1) and stop-ratchet (§7.3) tests would catch a mutated rule.
-
-**Scope**
-- Run a Python mutation tool over the two modules
-- Record the mutation score and survivors; file survivors as follow-ups
-
-**Acceptance Criteria**
-- Baseline mutation score recorded for both modules
-- Survivors triaged
 
 ---
 
@@ -3523,25 +3077,6 @@ Example-based tests cover chosen cases; the §7.3 hard constraint (stops never d
 **Acceptance Criteria**
 - Both properties pass over generated inputs in CI
 - A deliberately broken ratchet fails the property
-
----
-
-### BLG-QA-187 — Enable Playwright trace and screenshot retain-on-failure
-**Priority:** P4 (Trivial)
-**Type:** QA / CI Tooling
-**Owner:** QA & Testing Owner
-**Source:** IDEA-qa-testing-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** XS (<1h)
-**Provisional-Target:** TBD
-
-**Problem**
-`playwright.yml` already retains the report artifact 14 days, but no `trace`/`screenshot` option is configured, so failure evidence is thin. Narrowed from the submitted idea after checking the workflow.
-
-**Scope**
-- Set `trace: 'retain-on-failure'` and `screenshot: 'only-on-failure'`
-
-**Acceptance Criteria**
-- A failing run's report includes a trace
 
 ---
 
@@ -3588,104 +3123,6 @@ v9.5 found five live-vs-spec divergences by hand (`BLG-SPEC-148`/`149`/`150`/`15
 
 ---
 
-### BLG-SPEC-158 — Responsive-table behaviour spec for Positions, TradeHistory and TradePlans
-**Priority:** P3 (Low)
-**Type:** Frontend Spec
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** IDEA-frontend-specs-20260919-01 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** S (~0.5–1d)
-**Provisional-Target:** TBD
-
-**Problem**
-No spec states table behaviour below 768px (column priority, scroll vs card).
-
-**Scope**
-- Spec each table's narrow-width behaviour
-
-**Acceptance Criteria**
-- Three tables have stated behaviour in the frontend specs
-
----
-
-### BLG-SPEC-159 — Canonical keyboard-shortcut inventory spec
-**Priority:** P4 (Trivial)
-**Type:** Frontend Spec
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** IDEA-frontend-specs-20260919-02 — Promoted-Backlog, idea intake IW-20260919-01, roadmap rebalance 2026-09-19__scheduled
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-Keyboard-event handling appears in `Layout`, `TradeEntry`, `TradePlan`, `RedFlagJournal` and `TickerUniverse`; the overlap scan found no single inventory (`BLG-FE-19` shipped the shortcuts).
-
-**Scope**
-- Inventory every shortcut; flag conflicts
-
-**Acceptance Criteria**
-- One inventory; conflicts resolved or filed
-
----
-
-### BLG-SPEC-161 — screener_results.md column list omits the Earnings column that the shipped table has
-**Priority:** P3 (Low)
-**Type:** Spec Debt
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** ST-03/EPIC-01/2026-09-21__release-v9.6 (BLG-FEAT-97) — found while building the CSV export; `screener_results.md` §4/§5.3 list nine columns but the rendered table has ten — 2026-09-21
-**Effort:** XS (<1h)
-**Provisional-Target:** v9.7
-
-**Problem**
-The Screener results table renders an "Earnings" column (`lg`-visible, days until next earnings), but `screener_results.md` §4 never documents it and the v1.7 §5.3 CSV column list ("Ticker, Market, Price, ATR, Regime, Signal, Sector, Entry Zone, News") omits it. ST-03 exported it anyway, following the AC "columns equal the visible columns", so the spec now disagrees with shipped behaviour.
-
-**Scope**
-- Document the Earnings column in §4 (source, format, responsive rule) and add it to the §5.3 export column list
-- Bump the spec version and changelog
-
-**Acceptance Criteria**
-- `screener_results.md` §4 and §5.3 name all ten columns in display order
-- The §5.3 list matches `SCREENER_COLUMNS` in `src/pages/Screener.js`
-
----
-
-### BLG-SPEC-162 — trade_reflection.md §4 specifies an en dash for a missing R-multiple; the convention is an em dash
-**Priority:** P4 (Backlog)
-**Type:** Spec Debt
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** ST-06/EPIC-01/2026-09-21__release-v9.6 (BLG-FE-182) — known discrepancy recorded in `number-format-convention/decision_record.md` §2.7 and left for a follow-up — 2026-09-21
-**Effort:** XS (<1h)
-**Provisional-Target:** TBD
-
-**Problem**
-`design_system.md` v1.21 §Number and Currency Formatting defines a missing value as an em dash (U+2014). `trade_reflection.md` §4 (Canonical, v0.2) still specifies an en dash for a missing R-multiple, so the reflection modal cannot both conform to its own spec and to the shared convention.
-
-**Scope**
-- Decide which wins (expected: the shared convention), update `trade_reflection.md` §4, and align `TradeReflectionModal.js` to use `src/lib/format.js`
-
-**Acceptance Criteria**
-- Spec and modal agree on the missing-value glyph
-- The modal's R-multiple, P&L and price fields format via the shared helper
-
----
-
-### BLG-SPEC-163 — sprint_velocity_trend_chart.md trend sentence splices non-adjacent PVR readings
-**Priority:** P4 (Backlog)
-**Type:** Spec Debt
-**Owner:** PMO Lead
-**Source:** Agent-mediated Director of Quality review, PR #1758 (ST-32), cycle 2026-09-21__release-v9.6 — 2026-09-23
-**Effort:** XS (<1h)
-**Provisional-Target:** TBD
-
-**Problem**
-`claude/cycles/sprint_velocity_trend_chart.md` §2 "Reading this table" states "D more than doubled (47→174→195 total items, D share 45%→63%→63%)", framed as describing "the most recent 3 readings." The `47`/`45%` figure is actually from the `2026-07-08__scheduled` row (`v6.3–v6.7` window) — an early/mid-`v6.x` reading — while `174`/`195` are the two most recent readings (`2026-09-14`, `2026-09-19`). The sentence skips 9 intervening rows without disclosing the gap, overstating the continuity of the trend it describes. The underlying table data itself is accurate; only this one summary sentence is misleading.
-
-**Scope**
-- Correct the sentence to either use 3 actually-consecutive recent readings, or explicitly label the `47`/`45%` figure by its own date/window rather than implying adjacency
-
-**Acceptance Criteria**
-- The trend-narrative sentence in §2 accurately reflects which readings it compares and their actual chronological relationship
-
----
-
 ### BLG-SPEC-164 — Drop 4 confirmed-orphaned, always-NULL columns from the live positions table
 **Priority:** P4 (Trivial)
 **Type:** Spec Debt / Data Model
@@ -3725,51 +3162,6 @@ The Screener results table renders an "Earnings" column (`lg`-visible, days unti
 **Acceptance Criteria**
 - Disposition recorded (constraint re-applied, or nullable confirmed intentional with a stated reason)
 - `data_model.md` and the live schema agree, one way or the other, with the reasoning documented (not just the fact)
-
----
-
-### BLG-FE-184 — Migrate the remaining toFixed / toLocaleString call sites to the shared formatting helper
-**Priority:** P3 (Low)
-**Type:** Frontend / UX
-**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
-**Source:** ST-06/EPIC-01/2026-09-21__release-v9.6 (BLG-FE-182) — the design record scopes the migration to Positions, Trade History and Trade Plans and lists the rest as follow-ups — 2026-09-21
-**Effort:** L (~3-5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`src/lib/format.js` now implements the canonical formats, but ~60 other files under `src/` still format money, percentages and R-multiples ad hoc (`toFixed(`, `toLocaleString`, `Intl.NumberFormat`), so identical values still render differently across pages. Zero P&L also still takes the >= 0 (green) tone at existing call sites rather than the neutral tone the convention specifies.
-
-**Scope**
-- Inventory the remaining call sites (`grep -rn "toFixed(\|toLocaleString\|Intl.NumberFormat" src`) and migrate in page-sized batches, updating affected Playwright assertions in the same commit
-- Apply the neutral tone for zero P&L where P&L is coloured
-- Add a lint/CI check that fails on new ad hoc money formatting in components
-- Harden `src/lib/format.js` (DoQ review note): reject non-number inputs such as booleans (`formatCurrency(true)` currently returns `£1.00`) and treat an unknown currency code as an error rather than silently falling back to `£`
-
-**Acceptance Criteria**
-- 0 unmigrated money/percentage/R formatting call sites outside `src/lib/format.js` (or an explicit, reasoned allow-list)
-- Zero P&L renders unsigned in the neutral tone wherever P&L is coloured
-
----
-
-### BLG-FE-185 — Drive Screener and Watchlist table body cells from the shared column definitions
-**Priority:** P4 (Backlog)
-**Type:** Frontend / UX
-**Owner:** Head of Engineering; Head of UX & Design
-**Source:** ST-03/EPIC-01/2026-09-21__release-v9.6 (BLG-FEAT-97) — the design record asks for one `{header, value}` array consumed by both the table renderer and the CSV builder; the shipped arrays drive the header and the CSV but not the cell JSX — 2026-09-21
-**Effort:** M (~1-2d)
-**Provisional-Target:** TBD
-
-**Problem**
-`SCREENER_COLUMNS` and `WATCHLIST_COLUMNS` are the single source for the header row and the CSV, but each table's body cells are still hand-written JSX. A future column can therefore be added to the JSX and the header without a matching CSV `value` (or the reverse); only the header/CSV pairing is protected by construction today.
-
-**Scope**
-- Add a `cell` renderer to each column definition and render body rows from the array
-- Keep responsive hiding, badges and row actions unchanged
-- Consider extending the CSV formula-injection guard to a leading TAB or CR, which OWASP also lists (DoQ review note; the sealed ST-03 record specifies only `= + - @`, so this needs a design-record amendment)
-
-**Acceptance Criteria**
-- Header, cell and CSV value for every data column come from one definition
-- Existing Screener/Watchlist Playwright specs pass unchanged
 
 ---
 
@@ -3859,39 +3251,6 @@ ST-21 fixed `test_trade_plan_audit_log.py`'s permanent, unrestored `sys.modules.
 
 ---
 
-### BLG-BE-128 — Remaining ad hoc `timeout=`/retry call sites not yet on the shared upstream-call helper
-**Priority:** P3 (Low)
-**Type:** Backend / Reliability
-**Owner:** Backend Engineering Patterns Owner
-**Source:** ST-13/EPIC-03/2026-09-21__release-v9.6 (BLG-BE-122) — shared upstream-call helper, follow-up list per that story's own Scope ("Migrate the nightly stop-update and screener call paths first; list remaining call sites as follow-ups") — 2026-09-22
-**Effort:** S (~1d)
-**Provisional-Target:** TBD
-
-**Problem**
-`backend/utils/upstream_call.py` (ST-13, BLG-BE-122) centralises timeout/retry-budget config for `yfinance`, `alpaca`, and `anthropic`, and migrates the nightly stop-update path (`utils/pricing.py`, `services/alpaca_service.py::get_ohlcv_bars`), the screener path's Yahoo-Finance-specific timeouts (`services/screener_data_service.py`, `services/screener_batch_service.py::_fetch_index_regime_raw`), and all 5 Anthropic client-construction call sites (`services/ai_service.py` x3, `services/gemini_service.py`, `services/debrief_service.py`). The following call sites still use ad hoc, locally-hardcoded `timeout=` values (and, in most cases, no retry at all) and were deliberately not migrated this story:
-- `services/screener_data_service.py`'s Stooq and Twelve Data fallback tiers (`timeout=5`, `timeout=15`) — not one of the 3 providers this helper currently configures, and each has its own existing rate-limit/cooldown bookkeeping (Twelve Data's token-bucket lock in particular) that a blind retry wrap risks interacting with poorly without a dedicated review
-- `backend/live_trading_assistant.py` (`timeout=10`, `timeout=15`)
-- `backend/services/news_service.py` (`timeout=10`)
-- `backend/services/si05_digest_service.py` (`timeout=10`, via `urllib.request.urlopen`)
-- `backend/services/ai_endpoint_anomaly_service.py` (`timeout=10`, via `urllib.request.urlopen`)
-- `backend/routers/research.py` (`timeout=10`)
-- `backend/database.py` (`timeout=15`)
-- `backend/services/health_service.py` (`timeout=10`)
-- `backend/routers/ticker_universe.py` (`future.result(timeout=5.0)` — a different mechanism, thread-pool result wait rather than an HTTP call; may not fit this helper's shape at all)
-
-None of these are on the live-capital nightly stop-update path, so there is no correctness urgency; this is a consistency/maintainability follow-up.
-
-**Scope**
-- For each yfinance/Alpaca/Anthropic-provider call site above: replace the hardcoded `timeout=` literal with `utils.upstream_call.get_timeout(provider)`, and add `bounded_upstream_call(provider, ...)` retry coverage where none exists today
-- For Stooq/Twelve Data: either add new `"stooq"`/`"twelve_data"` provider entries to `UPSTREAM_TIMEOUTS`/`UPSTREAM_RETRY_BUDGETS` (config-only migration; leave retry-wrapping as a separate decision given the rate-limit-interaction risk noted above), or explicitly decide these providers are out of this helper's scope and document why
-- `backend/routers/ticker_universe.py`'s thread-pool `timeout=5.0` — assess separately whether it belongs in this helper at all before migrating it
-
-**Acceptance Criteria**
-- Every call site listed above is either migrated to `utils.upstream_call` or has an explicit, documented reason it is not (e.g. Stooq/Twelve Data's rate-limit-interaction risk, or ticker_universe.py's different mechanism)
-- No behaviour change to any already-working fallback/rate-limit logic (Stooq/Twelve Data cooldown timers, `_TWELVE_DATA_RATE_LIMIT`) as a side effect of any migration performed
-
----
-
 ### BLG-SPEC-166 — Cross-reference current_roadmap.md's SI-02 field to the canonical "linked trade plan" definition
 **Priority:** P4 (Backlog)
 **Type:** Spec Debt
@@ -3932,50 +3291,6 @@ ST-23 (EPIC-06, `2026-09-23__release-v9.7`) shipped the canonical "linked trade 
 **Acceptance Criteria**
 - DS-19 no longer claims the migration has never run against a live database, and states what was confirmed, where (staging) and when
 - `data_model.md` header/footer versions stay in sync
-
----
-
-### BLG-OPS-169 — No check that the staging backend actually redeployed after a merge that changes startup-applied schema (DS-19 sat unapplied on staging)
-**Priority:** P3 (Low)
-**Type:** Operations / Infrastructure
-**Owner:** Infrastructure & Operations Owner
-**Source:** ST-27/EPIC-07, cycle 2026-09-23__release-v9.7 — DEL-20260924-02 staging verification found staging still on pre-v9.6 code — 2026-09-24
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-Schema changes in this application are applied by `ensure_*()` functions when the backend boots, not by a separate migration step. Staging was found on 2026-09-24 still running pre-v9.6 code: both `alert_type` CHECK constraints lacked `reflection_reminder` until the operator redeployed. Nothing in the delivery flow noticed, so a merged, "shipped" schema change silently did not exist on staging for an extended period, and the only thing that surfaced it was a manual verification story. Because the deploy path filters and hooks are configured partly outside the repo (see `docs/ops/render_build_deploy_path_filter_audit.md`), a repo-only review could not have caught it.
-
-**Scope**
-- Establish a post-merge check that the staging service is running the merged commit, and surface a visible failure when they differ. The backend currently exposes no deployed-version/commit indicator, so this likely needs one added (for example a build-commit field on an existing health/status endpoint, with the usual contract, `openapi.yaml` and `backend/routers/test.py` obligations) or an alternative such as confirming the Render deploy hook fired
-- Decide where it runs (existing `staging-smoke-test.yml`, a post-merge workflow, or a cycle-close verification step) and document it in `docs/ops/staging_deploy_notes.md`
-- State how it treats schema-bearing changes specifically, since those have no other application-level signal
-
-**Acceptance Criteria**
-- A merge to `main` that should have redeployed staging but did not produces a visible failure or alert
-- The check and its trigger are documented, including the known limits of what can be verified from the repo alone
-
----
-
-### BLG-SEC-39 — Harden the non-registry dependency guard (missed specifier forms, trailing-comment false positive, no exit-code test)
-**Priority:** P3 (Low)
-**Type:** Security / Supply Chain
-**Owner:** Cybersecurity & Trust Lead; QA & Testing Owner
-**Source:** ST-29/EPIC-07 (BLG-SEC-38), cycle 2026-09-23__release-v9.7 — agent-mediated review of PR #1800 — 2026-09-24
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`scripts/check_non_registry_dependencies.py` (ST-29) rejects `git+ssh`, `git+https` and `file:` specifiers, but the review of PR #1800 found gaps: for pip it does not catch `git+http`, `hg+`/`svn+`, bare direct URLs, relative paths, upper-case schemes, or `-r` includes; for npm it does not catch `github:user/repo` or `user/repo` shorthand, tarball URLs, or `package-lock.json`. It also raises a false positive on a pinned line with a trailing comment (`fastapi==0.135.1  # pinned, not git+ssh` is flagged — reproduced 2026-09-24). No test exercises `main()`'s exit code, which is the behaviour CI actually depends on.
-
-**Scope**
-- Extend the pip and npm checks to the missed forms above, and strip trailing comments before matching
-- Add tests for each new form, for the trailing-comment case, and for `main()`'s exit code (0 on clean, non-zero on a violation)
-- Confirm the script still passes on the current tree (no new false positives)
-
-**Acceptance Criteria**
-- Each missed form above is rejected by a test, and the trailing-comment line is accepted
-- `main()` exits non-zero on a violation and zero on the current repo tree, asserted by a test
 
 ---
 
@@ -4135,27 +3450,6 @@ ST-29's acceptance criterion is "a test PR adding a `git+ssh` dependency fails C
 
 ---
 
-### BLG-FE-190 — Make the Tax Year restated-months notice link to months the Monthly tab actually shows
-**Priority:** P4 (Backlog)
-**Type:** Frontend / UX
-**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
-**Source:** PR #1802 review (agent-mediated DoQ), ST-04/EPIC-02, cycle 2026-09-23__release-v9.7 — 2026-09-24
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-The Tax Year summary notice ("Includes {k} restated month(s) — see the Monthly tab for details.", `reports.md` §Summary Bar) links to the Monthly tab, but `GET /reports/monthly-pnl` returns only the current and prior calendar year. Restatement snapshots only exist from the v9.6 baseline onward, so today every restated month is inside that window and the link is safe; as time passes, a user viewing an older tax year could follow the link to a tab that does not show the months the notice counts.
-
-**Scope**
-- Decide the treatment: a year-aware link or state, a note that the Monthly tab covers only two calendar years, or extending the Monthly window
-- Record the decision in a design record and update `reports.md`, then implement with Playwright coverage
-
-**Acceptance Criteria**
-- A restated-months notice never directs the user to a view that cannot show the months it counts
-- Playwright covers the older-tax-year case
-
----
-
 ### BLG-SPEC-171 — Correct the PO-05 pre-assessment, roadmap and replay page spec: replay does not reuse IT-06's Alpaca mechanics, determinism wording, engine-versus-live rule divergences
 **Priority:** P3 (Low)
 **Type:** Spec Debt
@@ -4177,33 +3471,13 @@ The Tax Year summary notice ("Includes {k} restated month(s) — see the Monthly
 
 ---
 
-### BLG-SPEC-172 — Reconcile the IT-06 §13 review (Alpaca sync recorded as GET-only, no orders placed) with a sync that POSTs orders and DELETEs positions
-**Priority:** P2 (Medium)
-**Type:** Spec Debt
-**Owner:** Strategy Rules & System Intent Owner; Head of Engineering
-**Source:** ST-01a/EPIC-01, cycle 2026-09-23__release-v9.7 — independent review of the PO-05 scope note (observation N8) — 2026-09-24
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md` records the Alpaca integration as compliant because "Backend sync is GET-only; no orders placed against Alpaca API" and "the system does not place, modify, or cancel any orders (paper or real); read-only sync only". `backend/services/alpaca_paper_sync_service.py` does the opposite: it POSTs to `/v2/orders` and DELETEs `/v2/positions/{ticker}` when the user opens or closes a position (hooked from `main.py`). The orders are mirrored user-initiated events on a paper account, so the §13.2 "not an automated trading bot" boundary is probably still met, but the recorded basis for the PASS does not match the shipped behaviour (the review's own text says it must be re-evaluated if the backend creates paper positions), and PO-05 (BLG-FEAT-74) explicitly declines to build on this mechanism.
-
-**Scope**
-- Confirm what the service actually does against the review's stated conditions
-- Either re-attest the IT-06 §13 review on the accurate description, or correct the service to match the review
-- Record the outcome and correct whichever document was wrong
-
-**Acceptance Criteria**
-- The IT-06 §13 review and the shipped Alpaca sync agree on whether orders are placed, with the disposition recorded by the Strategy Rules & System Intent Owner
-
----
-
 ### BLG-QA-196 — Extend the axe accessibility scan to the new Replay page
 **Priority:** P3 (Low)
 **Type:** QA / Test Automation
 **Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
 **Source:** PR #1803 review (agent-mediated DoQ + PO), ST-01c/EPIC-01, cycle 2026-09-23__release-v9.7 — 2026-09-25
 **Effort:** XS (<0.5d)
+**Provisional-Target:** Backlog (no release scheduled; P3)
 **Depends on:** BLG-QA-195 (same underlying gap — `tests/e2e/accessibility-axe-scan.spec.js` scans only a small, fixed set of pages)
 
 **Problem**
@@ -4239,33 +3513,13 @@ The Tax Year summary notice ("Includes {k} restated month(s) — see the Monthly
 
 ---
 
-### BLG-QA-198 — mutmut source-path compatibility fix needed before mutation-testing pilot can run
-**Priority:** P3 (Low)
-**Type:** QA / Test Tooling
-**Owner:** QA Lead
-**Source:** ST-15 (BLG-QA-184, EPIC-03, cycle 2026-09-28__release-v9.8) — discovered while attempting the mutation-testing pilot on `backend/services/sizing_service.py` and `backend/utils/calculations.py` — 2026-09-29
-**Effort:** S (~0.5–1d)
-
-**Problem**
-`mutmut` 3.x hardcodes `sys.path` setup for its mutated copy to only `mutants/.`, `mutants/src`, or `mutants/source` (`mutmut/utils/file_utils.py::setup_source_paths`) — not configurable via the `source_paths` setting. This repo's `tests/conftest.py` instead adds `backend/` itself onto `sys.path`, so tests import backend modules as `services.X`/`utils.X` (bare, backend-relative), never as `backend.services.X`. The mismatch means mutmut cannot correlate any mutant to actual test coverage and aborts before running any mutant, regardless of real coverage — confirmed live: `tests/test_golden_outputs.py` and `tests/test_trailing_stop_breakeven_floor.py` demonstrably cover both target modules (32 passing tests), yet mutmut reported 0 exercised.
-
-**Scope**
-- Choose and apply one of: (a) run mutmut with `cwd=backend/` and a relocated `tests/` copy alongside it so the import convention matches; or (b) change `tests/conftest.py`'s `sys.path` setup to add the repo root instead of `backend/` and repoint the suite's imports to `backend.services.X` style (touches the whole suite's collection path — needs its own decision, not a silent side effect of this item)
-
-**Acceptance Criteria**
-- One of the two fix options is chosen and applied
-- BLG-QA-184's mutation-testing pilot (`docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`) can then produce a real mutation score for the two target modules
-
-**Resolution (2026-09-29):** Option (a) applied — `mutmut` run with `cwd=backend/` (`backend/setup.cfg`'s `[mutmut]` section, `source_paths = .`) instead of the repo root, so its path-relative mutant-key computation matches the `services.X`/`utils.X` bare-import convention with no prefix-stripping needed. A standalone `backend/mutmut_pilot_tests/conftest.py` (replicating the main `tests/conftest.py`'s AST-derived DB-stub mechanism, BLG-QA-73) provides the isolated test entry point. `tests/conftest.py` itself was not touched — option (b) was not needed. BLG-QA-184's pilot produced a real mutation score: `docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`.
-
----
-
 ### BLG-QA-199 — size_position mutation-testing survivors: US-market and batch-sizing paths need their own mutation score confirmed
 **Priority:** P3 (Low)
 **Type:** QA / Test Automation
 **Owner:** QA Lead
 **Source:** ST-15 (BLG-QA-184, EPIC-03, cycle 2026-09-28__release-v9.8) — mutation-testing pilot found 119/246 `size_position` mutants survived — 2026-09-29
 **Effort:** S (~0.5–1d)
+**Provisional-Target:** Backlog (no release scheduled; P3)
 
 **Problem**
 The ST-15 mutation-testing pilot (`docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`) scoped its own test file to `size_position`'s UK-market path only (5 cases, adapted from `tests/golden_outputs.json`'s pre-ST-04 golden vectors). `size_position`'s US-market FX-rate branch and `size_batch_inv_vol` (a separate function in the same file, also mutated since `only_mutate` is file-granular) were never exercised by this pilot's own tests, contributing the bulk of its 119 survivors. `tests/test_signal_sizing.py` already covers `size_batch_inv_vol`'s behaviour with unit tests, but its own mutation score has not been separately measured.
@@ -4363,49 +3617,6 @@ The ST-15 mutation-testing pilot (`docs/testing/mutation_testing_pilot_sizing_an
 
 ---
 
-### BLG-GOV-349 — governance_sync.yml does not auto-close a phased story's GitHub issue (ST-XXa/b/c vs. the commit tag's bare ST-XX)
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Specs Team; Infrastructure & Operations Owner
-**Source:** EPIC-01/PR #1803 merge, cycle 2026-09-23__release-v9.7 — issue #1792 stayed open after merge, closed manually — 2026-09-25
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-When a sprint story is phased into sub-stories (`ST-01a`/`ST-01b`/`ST-01c` — a pattern the sealed `sprint_backlog.md` itself uses, e.g. this cycle's ST-01, and documented as RISK-01's own resolution mechanism), `.githooks/commit-msg` still requires the bare numeric tag (`[ST-01]`) on every commit, since it only accepts numeric story IDs. `execution_state.json` correctly stores each sub-story under its own key (`stories.ST-01a`, `.ST-01b`, `.ST-01c`) — there is no `stories.ST-01` entry at all. `scripts/governance_sync_lib.sh`'s `is_story_done()` looks up the commit tag's literal `ST-01` key, finds nothing, returns `unknown`, and the ST-19/BLG-GOV-314 safety fix deliberately treats `unknown` as skip-not-close (correctly, to avoid the opposite false-positive-close bug it was fixing). Net effect: a fully merged, fully `done` phased story's GitHub issue silently never auto-closes, with no error or warning — found only because a human asked why an issue was still open after a merge.
-
-**Scope**
-- Decide the fix shape: (a) `is_story_done()` also checks whether every `ST-XX{letter}` key sharing the bare `ST-XX` prefix is done/merged, treating the umbrella `ST-XX` as done only once all its lettered sub-stories are; or (b) the Sprint Execution Engine also writes a bare `stories.ST-XX` roll-up entry (mirroring the sub-stories' aggregate status) whenever it phases a story, purely for this automation's benefit; or (c) some other reconciliation
-- Apply the fix and add a regression test to `scripts/test_governance_sync_close_gate_logic.sh`'s fixture set covering a phased story
-- Retroactively confirm no other already-merged phased story in this repo's history has a similarly-stuck-open issue
-
-**Acceptance Criteria**
-- A fully-done phased story's GitHub issue auto-closes on merge without manual intervention
-- A partially-done phased story's issue is correctly NOT closed (no regression of the ST-19/BLG-GOV-314 fix this must coexist with)
-- Regression test added
-
----
-
-### BLG-FE-191 — SystemStatus.js categorizeEndpoint() has no case for the new /replay prefix
-**Priority:** P4 (Low)
-**Type:** Frontend / QA tooling
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** Post-ship closure STEP 6 Endpoint Coverage Drift Check, cycle 2026-09-23__release-v9.7 — EPIC-01/ST-01b added `POST /replay/run` (`docs/reference/openapi.yaml`, `docs/ops/api_performance_baseline.md` §46) — 2026-09-28
-**Effort:** XS (<1h)
-**Provisional-Target:** Backlog (no release scheduled; P4)
-
-**Problem**
-`src/pages/SystemStatus.js`'s `categorizeEndpoint()` (~line 47-62) checks `endpointName.includes(...)` against a fixed list of path-prefix patterns (`/analytics`, `/alerts`, `/notifications`, `/position`, `/trades`, `/ai`, etc.) to bucket each tested endpoint into a dashboard category. `POST /replay/run` does not match any existing pattern, so it silently falls into the catch-all `'Other'` category on the System Status dashboard instead of a meaningful category.
-
-**Scope**
-- Add an `endpointName.includes('/replay')` check to `categorizeEndpoint()`, returning a suitable category label (e.g. `'Replay'` or fold into `'Trading'`)
-
-**Acceptance Criteria**
-- `POST /replay/run` is categorized under a meaningful label (not `'Other'`) on the System Status dashboard
-- No other endpoint's categorization changes
-
----
-
 ### BLG-FE-192 — RecentTradesWidget icon-background badge uses two-way (>=0) colour logic for zero P&L, inconsistent with the neutral-tone convention
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
@@ -4444,28 +3655,6 @@ In `src/components/dashboard/widgets/RecentTradesWidget.js` (line 36-38), the tr
 **Acceptance Criteria**
 - A single canonical statement of the 2026-09-24 AI adoption review gate exists
 - All 5 affected items reference it rather than restating it
-
----
-
-### BLG-GOV-351 — No scheduled trigger/owner fires the 90-day post-ship AI feature usage review (BLG-GOV-74/140/141/142 cluster)
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Specs Team; PMO Lead
-**Source:** Idea intake `IW-20260928-01` (`IDEA-head-of-specs-20260928-02`), roadmap rebalance `2026-09-28__scheduled` STEP 3.1 — found the review 4 days overdue with no artefact filed — 2026-09-28
-**Effort:** S (~1d)
-**Provisional-Target:** TBD
-
-**Problem**
-`BLG-FEAT-59/60/63`, `BLG-FE-84`, `BLG-OPS-88`, and `BLG-GOV-140/141/142` all gate on a 90-day post-v6.2-ship (2026-06-25) AI feature usage/cost review due 2026-09-24. As of this rebalance (2026-09-28, 4 days past due), no review record exists in `docs/ops/` or `backlog_archive.md`, and no governed routine (roadmap, release planning, post-ship closure) currently has a STEP that fires this review on its own schedule — it only surfaces reactively when a rebalance's STEP 3.1 date-lapse scan happens to notice the gate text.
-
-**Scope**
-- Decide which routine should own firing this review (post-ship closure's own cadence checks are the most natural fit, since the trigger is release-relative) and add an explicit STEP
-- Alternatively/additionally, add a lightweight scheduled reminder (mirrors the quarterly AI-copy boundary-scan cadence, `docs/ops/quarterly_ai_copy_boundary_scan_cadence.md`)
-- Once triggered, actually conduct the review (real adoption/cost data) — out of scope for this item itself, which is only the trigger mechanism
-
-**Acceptance Criteria**
-- A named routine/step fires this review automatically at the 90-day mark, without depending on a rebalance's incidental date-lapse scan to notice it
-- The 8 downstream gated items above have a concrete path to resolution once the review runs
 
 ---
 
@@ -4511,26 +3700,6 @@ In `src/components/dashboard/widgets/RecentTradesWidget.js` (line 36-38), the tr
 
 ---
 
-### BLG-BE-130 — Extend the v9.7 float→Decimal fee-rounding audit to tax-year statement calculations
-**Priority:** P3 (Low)
-**Type:** Backend Debt
-**Owner:** Backend Engineering Patterns Owner; Financial Reporting & Records Owner
-**Source:** Idea intake `IW-20260928-01` (`IDEA-financial-reporting-20260928-02`), roadmap rebalance `2026-09-28__scheduled` STEP 4 — 2026-09-28
-**Effort:** S (~1d)
-**Provisional-Target:** TBD
-
-**Problem**
-v9.7 (ST-08) moved trade-fee rounding from float to Decimal, following the v9.6 float-vs-Decimal money-arithmetic audit (`BLG-BE-127`, ST-12) that found a real rounding-boundary bug. The tax-year statement / carried-forward-loss calculation path (`docs/specs/pnl_export_reconciliation.md`, the design-only carried-forward-loss field from v9.4 ST-17) has not been audited against the same class of float-rounding risk at half-penny/cent boundaries.
-
-**Scope**
-- Apply the same rounding-boundary audit method (`docs/ops/money_arithmetic_audit_2026-09-22.md`) to the tax-year statement and carried-forward-loss calculation code paths
-- Fix any Decimal-vs-float boundary bugs found, following the v9.7 ST-08 pattern
-
-**Acceptance Criteria**
-- Tax-year statement and carried-forward-loss calculations are confirmed Decimal-consistent at rounding boundaries, or a specific gap is filed with the same rigor as `BLG-BE-127`
-
----
-
 ### BLG-BE-131 — GET /reports/monthly-pnl's new `year` param has no bounds check, unlike its sibling GET /reports/tax-year
 **Priority:** P4 (Trivial)
 **Type:** Backend Debt
@@ -4548,26 +3717,6 @@ v9.7 (ST-08) moved trade-fee rounding from float to Decimal, following the v9.6 
 **Acceptance Criteria**
 - `GET /reports/monthly-pnl?year=0` (and other out-of-range values) returns a clean `400` with a validation message, not a `404` with a raw Python error string
 - Regression test added confirming the bounds check, mirroring the existing `GET /reports/tax-year` bounds-check test pattern
-
----
-
-### BLG-OPS-170 — No documented allow-list of pre-approved read-only staging-DB query patterns for governed-session gate re-checks
-**Priority:** P3 (Low)
-**Type:** Operations / Governance Process
-**Owner:** Infrastructure & Operations Owner
-**Source:** Idea intake `IW-20260928-01` (`IDEA-infra-ops-20260928-01`), roadmap rebalance `2026-09-28__scheduled` STEP 4 — 2026-09-28
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`BLG-OPS-121` (v9.5, ST-14) provisioned a read-only Postgres role on the staging database for governed sessions, and `roadmap_prompt.md` STEP 2.3 permits its opportunistic use for a single aggregate read, cited as staging context only. Each session that considers using it must re-derive from scratch which specific query patterns are appropriate (aggregate counts only, no row-level data, etc.) and, per current practice (this cycle included), often defers or asks for confirmation rather than proceeding, since no single document states the boundary explicitly. This is distinct from the already-settled "no production credential provisioning" standing decision (`BLG-GOV-279`, ST-15) — this concerns the *staging* credential's usage boundaries, which is provisioned and available but under-specified.
-
-**Scope**
-- Document a short, explicit allow-list of query shapes considered pre-approved for governed-session use against the staging read-only role (e.g. `SELECT COUNT(*)` aggregates against named tables) in `docs/infrastructure/staging_setup.md` §8
-- Note what is out of scope (row-level reads, any table not already named in an existing gate condition)
-
-**Acceptance Criteria**
-- `docs/infrastructure/staging_setup.md` §8 states which query patterns a governed session may run against the staging read-only role without seeking additional confirmation each time
 
 ---
 
@@ -4883,50 +4032,35 @@ ST-21 extended `scripts/check_contract_example_freshness.py` to validate documen
 
 ---
 
-## Release Slice — v9.8 (ephemeral — remove at next `groom backlog` per Placement Rule)
+### BLG-GOV-356 — Conduct the overdue 90-day AI feature usage review (BLG-GOV-74/140/141/142 cluster)
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** Post-ship closure `2026-09-28__release-v9.8` STEP 12.6 (90-Day AI Feature Usage Review Trigger Check, `post_ship_closure.md` v2.36, shipped this same cycle as ST-38/`BLG-GOV-351`) — first live run of the new trigger found the review still due, now 6 days overdue — 2026-09-30
+**Effort:** M (~1–2d)
+**Provisional-Target:** TBD
 
-<!-- release-plan-marker: RP:v9.8:2026-09-28__release-v9.8 -->
+**Problem**
+`BLG-GOV-351` (shipped this cycle, ST-38) built the trigger mechanism that fires this check automatically at post-ship closure, but explicitly scoped conducting the review itself as out of scope for that item ("Once triggered, actually conduct the review (real adoption/cost data) — out of scope for this item itself, which is only the trigger mechanism"). This is that follow-on item. The review was due 2026-09-24 (90 days post-v6.2 ship, 2026-06-25); as of this closure (2026-09-30) it is 6 days overdue with no review artefact filed in `docs/ops/` or `docs/governance/` for this due date (the nearest existing artefact, `docs/governance/ai_feature_usage_quarterly_review_2026-09-07.md`, predates the due date and does not cover it).
 
-39 items selected into `2026-09-28__release-v9.8` scope (28.00 estimated days, full capacity). Full acceptance criteria: `claude/cycles/2026-09-28__release-v9.8/stage4_backlog_slice.md`. Selection method: 0 ready P1 items; all 3 ready P2 items seated first per §1.4c, then category-balanced round-robin oldest-first for the remaining P3/P4, from a 65-item / 46.7-day ready pool. Excluded as gate-blocked: `BLG-FEAT-73`, `BLG-FEAT-76`.
+**Downstream items blocked on this review's outcome:**
+- `BLG-FEAT-59` — AI adoption window verification (Financial Reporting & Records Owner)
+- `BLG-FEAT-60` — AI adoption window verification (Metrics Definitions & Analytics Owner)
+- `BLG-FEAT-63` — same AI-adoption gate as `BLG-FEAT-59`
+- `BLG-FE-84` — AI adoption window verification (Head of UX & Design)
+- `BLG-OPS-88` — bundled with this same 90-day AI cost review
+- `BLG-GOV-140` — first quarterly review due 2026-09-24
+- `BLG-GOV-141` — schedule within 90 days of v6.2 ship
+- `BLG-GOV-142` — assess adoption rate, cost per use, and continued-investment justification
 
-| ST-ID | Item | EPIC |
-|-------|------|------|
-| ST-01 | BLG-FE-184 | EPIC-01 |
-| ST-02 | BLG-FE-185 | EPIC-01 |
-| ST-03 | BLG-FE-190 | EPIC-01 |
-| ST-04 | BLG-FE-191 | EPIC-01 |
-| ST-05 | BLG-SPEC-158 | EPIC-01 |
-| ST-06 | BLG-SPEC-159 | EPIC-01 |
-| ST-07 | BLG-BE-128 | EPIC-02 |
-| ST-08 | BLG-BE-130 | EPIC-02 |
-| ST-09 | BLG-AI-07 | EPIC-03 |
-| ST-10 | BLG-QA-179 | EPIC-03 |
-| ST-11 | BLG-QA-180 | EPIC-03 |
-| ST-12 | BLG-QA-181 | EPIC-03 |
-| ST-13 | BLG-QA-182 | EPIC-03 |
-| ST-14 | BLG-QA-183 | EPIC-03 |
-| ST-15 | BLG-QA-184 | EPIC-03 |
-| ST-16 | BLG-QA-187 | EPIC-03 |
-| ST-17 | BLG-OPS-169 | EPIC-04 |
-| ST-18 | BLG-OPS-170 | EPIC-04 |
-| ST-19 | BLG-SEC-39 | EPIC-04 |
-| ST-20 | BLG-API-04 | EPIC-05 |
-| ST-21 | BLG-API-05 | EPIC-05 |
-| ST-22 | BLG-SPEC-152 | EPIC-05 |
-| ST-23 | BLG-SPEC-153 | EPIC-05 |
-| ST-24 | BLG-SPEC-154 | EPIC-05 |
-| ST-25 | BLG-SPEC-155 | EPIC-05 |
-| ST-26 | BLG-SPEC-161 | EPIC-05 |
-| ST-27 | BLG-SPEC-162 | EPIC-05 |
-| ST-28 | BLG-SPEC-163 | EPIC-05 |
-| ST-29 | BLG-SPEC-172 | EPIC-05 |
-| ST-30 | BLG-GOV-338 | EPIC-06 |
-| ST-31 | BLG-GOV-339 | EPIC-06 |
-| ST-32 | BLG-GOV-340 | EPIC-06 |
-| ST-33 | BLG-GOV-341 | EPIC-06 |
-| ST-34 | BLG-GOV-342 | EPIC-06 |
-| ST-35 | BLG-GOV-346 | EPIC-06 |
-| ST-36 | BLG-GOV-348 | EPIC-06 |
-| ST-37 | BLG-GOV-349 | EPIC-06 |
-| ST-38 | BLG-GOV-351 | EPIC-06 |
-| ST-39 | BLG-SPEC-156 | EPIC-06 |
+**Scope**
+- Gather real adoption/cost data for the AI briefing and chat features (Anthropic API cost per use, session counts, usage-pattern stability) per `BLG-GOV-142`'s stated assessment criteria
+- Produce a dated review artefact (`docs/ops/ai_feature_usage_review_<date>.md` or equivalent) confirming or disconfirming that usage patterns have stabilised
+- Disposition each of the 8 downstream gated items above against the review's finding (clear the gate, or re-park with an updated concrete trigger)
+
+**Acceptance Criteria**
+- A dated review artefact exists assessing AI feature adoption rate, cost per use, and continued-investment justification
+- All 8 downstream gated items listed above have an explicit disposition recorded against this review's finding
+
+---
+

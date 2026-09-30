@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.4
-**Last Updated:** 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 — v9.7 row added, rolling average window advanced to v9.2–v9.7); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — v9.6 row added, rolling average window advanced to v9.1–v9.6); prior — 2026-09-18 (post-ship closure 2026-09-15__release-v9.5 — v9.5 row added, rolling average window advanced to v9.0–v9.5); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 — v9.8 row added, rolling average window advanced to v9.3–v9.8); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 — v9.7 row added, rolling average window advanced to v9.2–v9.7); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — v9.6 row added, rolling average window advanced to v9.1–v9.6); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -112,7 +112,9 @@
 
 | v9.7  | 31      | 31        | 1.00     | All 31 `execution_state.json` story entries done across 7 EPICs (ST-01 phased into ST-01a/b/c per RISK-01 mitigation, sealed `sprint_backlog.md`), sized to 28.00 days (top of capacity band); PO-05 Lightweight Replay Mode shipped end-to-end (`BLG-FEAT-74`, Arc 4 flagship item, §13-cleared this week) alongside the category-balanced debt-clearance slice across Frontend/UX, Backend financial reliability, QA coverage, Governance process, Spec/data-model, and Ops/security; 2 P4 deviations accepted (`BLG-SPEC-169`/ST-05,06, `BLG-SPEC-170`/ST-04) — no P0–P2 deviations; 3 delegation records all reached terminal state (2 Unblocked, 1 Cancelled/reclassified autonomous on explicit user direction); 0 blocked items; 0 returns at seal; Verified_with_deviations |
 
-**Rolling 6-cycle average (v9.2–v9.7):** 1.00
+| v9.8  | 39      | 39        | 1.00     | All 39 stories done across 6 EPICs (frontend/UX debt clearance, backend reliability & financial correctness, QA & test coverage, operations & security hardening, spec & API contract debt, governance & process debt), sized to 28.00 days (top of capacity band), no anchor feature — entirely backlog-driven debt clearance; formatting-helper migration completed across all remaining 70 files (`BLG-FE-184`); Screener/Watchlist table cells driven from shared column definitions (`BLG-FE-185`); 64 mutating endpoints gained idempotency documentation (`BLG-API-04`); 20 thin openapi.yaml schemas fully authored (`BLG-SPEC-152`); mutation-testing pilot on sizing calculator and stop ratchet (`BLG-QA-184`); 90-day AI feature usage review trigger defined (`BLG-GOV-351`); 0 formal `DEV-*` deviations filed; 3 P3-tier QA-evidence-classified items disclosed, each with a confirmed backlog item (`BLG-OPS-171`/ST-17, `BLG-GOV-355`/ST-31, `BLG-GOV-353`/ST-33); 1 delegation record (`DEL-20260929-01`/ST-15) reached terminal `Unblocked` state in-session; 6 `delegated_decision` escalations all resolved in-session; 0 blocked items; 0 returns at seal; Verified_with_deviations |
+
+**Rolling 6-cycle average (v9.3–v9.8):** 1.00
 
 ---
 

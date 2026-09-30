@@ -9,6 +9,22 @@ Permanent record of terminal ideas rows retired from `claude/ideas/ideas_registe
 
 ---
 
+## Archived 2026-09-30 (ideas_housekeeping — post-ship closure 2026-09-28__release-v9.8)
+
+*Terminal classification: Promoted-Backlog (7, all from window IW-20260928-01) — includes `IDEA-data-model-20260919-02` (originally IW-20260919-01, Parked-cycle-1, gate cleared and re-evaluated to Promoted-Backlog at the `2026-09-28__scheduled` rebalance). 2 non-terminal rows kept — `IDEA-challenger-20260809-02` (Rejected, present in `rejected_but_strong.md`) and `IDEA-director-of-hr-20260919-02` (Parked-cycle-2).*
+
+| Idea ID | Title | Submitter | Window | Submitted At | Status | Park Count | Park Rationale | Step 4 | Step 5 |
+|---------|-------|-----------|--------|--------------|--------|------------|----------------|--------|--------|
+| IDEA-data-model-20260919-02 | Column provenance annotations in data_model.md (user-entered / derived / system-stamped) so analytics know which fields are safe to recompute | Data Model & Domain Schema Owner | IW-20260919-01 | 2026-09-19 | Promoted-Backlog | 1 | Gate cleared 2026-09-28 — BLG-SPEC-150 (4 orphaned, always-NULL columns on live `positions`) shipped/archived v9.7 ST-25. Mandatory re-evaluation per STEP 4.0 — Advanced to Backlog (ungated). | Backlog (ungated) — BLG-SPEC-173 | N/A — filed direct to backlog, no debate required |
+| IDEA-head-of-specs-20260928-01 | Consolidate 5 near-duplicate "AI adoption window" gate-criteria texts into one canonical shared reference | Head of Specs Team | IW-20260928-01 | 2026-09-28 | Promoted-Backlog | — | — | Backlog (ungated) — BLG-GOV-350 | N/A — filed direct to backlog, no debate required |
+| IDEA-head-of-specs-20260928-02 | Add an explicit scheduled trigger/owner for the 90-day post-ship AI feature usage review (BLG-GOV-74/140/141/142 cluster), found 4 days overdue with no artefact filed | Head of Specs Team | IW-20260928-01 | 2026-09-28 | Promoted-Backlog | — | — | Backlog (ungated) — BLG-GOV-351 | N/A — filed direct to backlog, no debate required |
+| IDEA-financial-reporting-20260928-01 | Lightweight adoption/usage counter for the AI-assisted monthly P&L narrative feature so future reviews don't require ad hoc estimation | Financial Reporting & Records Owner | IW-20260928-01 | 2026-09-28 | Promoted-Backlog | — | — | Backlog (ungated) — BLG-SPEC-174 | N/A — filed direct to backlog, no debate required |
+| IDEA-financial-reporting-20260928-02 | Extend the v9.7 float→Decimal fee-rounding audit method to the tax-year statement / carried-forward-loss calculations | Financial Reporting & Records Owner | IW-20260928-01 | 2026-09-28 | Promoted-Backlog | — | — | Backlog (ungated) — BLG-BE-130 | N/A — filed direct to backlog, no debate required |
+| IDEA-infra-ops-20260928-01 | Document a pre-approved allow-list of read-only staging-DB aggregate query patterns for governed-session gate re-checks | Infrastructure & Operations Owner | IW-20260928-01 | 2026-09-28 | Promoted-Backlog | — | — | Backlog (ungated) — BLG-OPS-170 | N/A — filed direct to backlog, no debate required |
+| IDEA-infra-ops-20260928-02 | Small script to mechanize STEP 2.4/7.1/7.2's rebalance-diagnostic tallies, reducing transcription-variance risk | Infrastructure & Operations Owner | IW-20260928-01 | 2026-09-28 | Promoted-Backlog | — | — | Backlog (ungated) — BLG-GOV-352 | N/A — filed direct to backlog, no debate required |
+
+---
+
 ## Archived 2026-09-23 (ideas_housekeeping — post-ship closure 2026-09-21__release-v9.6)
 
 *Terminal classification: Promoted-Backlog (41) and Rejected-not-strong (1, `IDEA-ai-compliance-20260919-02` — confirmed absent from `rejected_but_strong.md`) — window IW-20260919-01 (44 submissions), plus the carried `IDEA-challenger-20260809-02` row remains kept (Rejected, present in `rejected_but_strong.md`). 2 Parked-cycle-1 rows from IW-20260919-01 (`IDEA-data-model-20260919-02`, `IDEA-director-of-hr-20260919-02`) kept pending next scheduled rebalance.*

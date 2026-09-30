@@ -1,6 +1,6 @@
 # Sprint Planning Operational Playbook
 
-<!-- last-governance-version-audit: 2026-09-21__release-v9.6 -->
+<!-- last-governance-version-audit: 2026-09-28__release-v9.8 -->
 
 **Owner:** Head of Specs Team
 **Status:** Active
