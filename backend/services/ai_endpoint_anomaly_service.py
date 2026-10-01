@@ -209,7 +209,12 @@ def run_scheduled_anomaly_check(
     firing = [r for r in cost_results + latency_results if r.is_anomaly]
     alert_sent = False
     if firing and send_alert:
-        alert_sent = _send_anomaly_telegram_alert(firing)
+        alert_sent = _send_anomaly_telegram_alert_deduped(firing)
+    elif not firing:
+        # Nothing firing now -- clear any stored fingerprint so a future
+        # recurrence (even with an identical signature to a past alert)
+        # is treated as new, not silently suppressed forever (ST-08).
+        _clear_anomaly_alert_fingerprint()
 
     return {
         "checked_utc": _now_iso(),
@@ -219,6 +224,42 @@ def run_scheduled_anomaly_check(
         "alert_sent": alert_sent,
         "latency_data_source": latency_data_source,
     }
+
+
+_ANOMALY_ALERT_KEY = "endpoint_anomaly_alert"
+
+
+def _anomaly_firing_fingerprint(firing: list) -> str:
+    """Stable fingerprint of *which* (endpoint, metric) pairs are firing --
+    not their exact values, so two consecutive checks with the same
+    anomalies still firing (values drifting slightly) are still recognised
+    as "the same firing window" per ST-08's AC."""
+    return "|".join(sorted(f"{r.endpoint}:{r.metric}" for r in firing))
+
+
+def _send_anomaly_telegram_alert_deduped(firing: list) -> bool:
+    """Send the Telegram alert only if the firing set differs from the last
+    alert sent (ST-08, BLG-OPS-173, EPIC-02, v9.9) -- a second call within
+    the same firing window, with the same anomalies still firing, does not
+    send a second Telegram message. A changed firing set (a new anomaly
+    joins, or one resolves while another remains) is treated as new."""
+    from database import ensure_scheduled_alert_dedup_table, get_last_alert_fingerprint, record_alert_fingerprint
+
+    ensure_scheduled_alert_dedup_table()
+    fingerprint = _anomaly_firing_fingerprint(firing)
+    if get_last_alert_fingerprint(_ANOMALY_ALERT_KEY) == fingerprint:
+        return False
+    sent = _send_anomaly_telegram_alert(firing)
+    if sent:
+        record_alert_fingerprint(_ANOMALY_ALERT_KEY, fingerprint)
+    return sent
+
+
+def _clear_anomaly_alert_fingerprint() -> None:
+    from database import ensure_scheduled_alert_dedup_table, record_alert_fingerprint
+
+    ensure_scheduled_alert_dedup_table()
+    record_alert_fingerprint(_ANOMALY_ALERT_KEY, "")
 
 
 def _result_dict(r: AnomalyResult) -> dict:
