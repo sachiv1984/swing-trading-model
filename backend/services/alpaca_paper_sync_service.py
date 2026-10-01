@@ -16,6 +16,7 @@ from datetime import date
 from typing import Dict, List, Optional
 
 from utils.retry import retry_with_backoff
+from utils.upstream_call import get_timeout
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +66,7 @@ def _sync_open_paper_position_raw(ticker: str, shares: float, client_order_id: s
         "time_in_force": "day",
         "client_order_id": client_order_id,
     }
-    resp = requests.post(url, json=payload, headers=_paper_headers(), timeout=10)
+    resp = requests.post(url, json=payload, headers=_paper_headers(), timeout=get_timeout("alpaca"))
     if resp.status_code in (200, 201):
         logger.info("Paper sync: opened position for %s (%.4f shares)", ticker, shares)
         return
@@ -112,7 +113,7 @@ def _sync_close_paper_position_raw(ticker: str) -> str:
     BLG-BE-83). Returns a disposition string for the caller to log; 404
     ("nothing to close") is a legitimate outcome, not a failure."""
     url = f"{ALPACA_PAPER_BASE_URL}/v2/positions/{ticker}"
-    resp = requests.delete(url, headers=_paper_headers(), timeout=10)
+    resp = requests.delete(url, headers=_paper_headers(), timeout=get_timeout("alpaca"))
     if resp.status_code in (200, 204):
         return "closed"
     if resp.status_code == 404:
@@ -155,7 +156,7 @@ def _get_paper_positions_raw() -> list:
     failure or a non-200 response — retried by the decorator (ST-11,
     BLG-BE-83)."""
     url = f"{ALPACA_PAPER_BASE_URL}/v2/positions"
-    resp = requests.get(url, headers=_paper_headers(), timeout=10)
+    resp = requests.get(url, headers=_paper_headers(), timeout=get_timeout("alpaca"))
     if resp.status_code != 200:
         logger.warning("Paper sync: get_positions HTTP %d — %s", resp.status_code, resp.text[:200])
         resp.raise_for_status()

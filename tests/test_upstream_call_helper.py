@@ -439,3 +439,74 @@ class TestST07TelegramCallSitesUseConfiguredTimeout:
 
         assert result is True
         assert captured["timeout"] == get_timeout("telegram")
+
+
+class TestST03GeminiDailyCostAlertUsesConfiguredTimeout:
+    """ST-03, EPIC-01, v9.9, BLG-BE-132: gemini_service.py's daily-cost Telegram
+    alert (check_and_alert_daily_cost) also called the Telegram Bot API directly
+    with a hardcoded timeout=10, missed by the ST-07 migration above. Same
+    treatment as the two call sites in TestST07TelegramCallSitesUseConfiguredTimeout
+    -- no behaviour change, only the timeout value is now sourced from
+    get_timeout("telegram")."""
+
+    def test_check_and_alert_daily_cost_uses_telegram_timeout(self):
+        import services.gemini_service as svc
+        import config
+
+        captured = {}
+
+        def _capture_urlopen(_url, timeout=None):
+            captured["timeout"] = timeout
+            return MagicMock()
+
+        with patch("database.get_daily_ai_cost", return_value={"total_cost_usd": 5.0, "request_count": 3}), \
+             patch.object(config, "TELEGRAM_BOT_TOKEN", "tok"), \
+             patch.object(config, "TELEGRAM_CHAT_ID", "123"), \
+             patch("urllib.request.urlopen", side_effect=_capture_urlopen):
+            result = svc.check_and_alert_daily_cost(threshold_usd=1.00)
+
+        assert result["alert_sent"] is True
+        assert captured["timeout"] == get_timeout("telegram")
+
+
+class TestST05AlpacaPaperSyncUsesConfiguredTimeout:
+    """ST-05, EPIC-01, v9.9, BLG-BE-134: alpaca_paper_sync_service.py's 3 direct
+    Alpaca Trading API calls (open order, close position, get positions) each
+    had a hardcoded timeout=10, distinct from TestST07AlpacaNewsUsesConfiguredTimeout
+    above (a different module, the Alpaca Data API's news endpoint). No retry
+    or behaviour change -- only the timeout value is now sourced from
+    get_timeout("alpaca")."""
+
+    def test_open_order_uses_alpaca_timeout(self):
+        import services.alpaca_paper_sync_service as svc
+
+        mock_resp = MagicMock(status_code=200)
+        with patch.object(svc, "ALPACA_PAPER_API_KEY", "k"), \
+             patch.object(svc, "ALPACA_PAPER_SECRET_KEY", "s"), \
+             patch.object(svc.requests, "post", return_value=mock_resp) as mock_post:
+            svc._sync_open_paper_position_raw("AAPL", 1.0, "order-1")
+
+        assert mock_post.call_args.kwargs["timeout"] == get_timeout("alpaca")
+
+    def test_close_position_uses_alpaca_timeout(self):
+        import services.alpaca_paper_sync_service as svc
+
+        mock_resp = MagicMock(status_code=200)
+        with patch.object(svc, "ALPACA_PAPER_API_KEY", "k"), \
+             patch.object(svc, "ALPACA_PAPER_SECRET_KEY", "s"), \
+             patch.object(svc.requests, "delete", return_value=mock_resp) as mock_delete:
+            svc._sync_close_paper_position_raw("AAPL")
+
+        assert mock_delete.call_args.kwargs["timeout"] == get_timeout("alpaca")
+
+    def test_get_positions_uses_alpaca_timeout(self):
+        import services.alpaca_paper_sync_service as svc
+
+        mock_resp = MagicMock(status_code=200)
+        mock_resp.json.return_value = []
+        with patch.object(svc, "ALPACA_PAPER_API_KEY", "k"), \
+             patch.object(svc, "ALPACA_PAPER_SECRET_KEY", "s"), \
+             patch.object(svc.requests, "get", return_value=mock_resp) as mock_get:
+            svc._get_paper_positions_raw()
+
+        assert mock_get.call_args.kwargs["timeout"] == get_timeout("alpaca")
