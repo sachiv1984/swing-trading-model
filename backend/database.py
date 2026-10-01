@@ -5649,3 +5649,58 @@ def get_arc5_composite_for_range(start_date, end_date, conn=None) -> float:
         return _fetch(conn)
     with get_db() as conn:
         return _fetch(conn)
+
+
+# ---------------------------------------------------------------------------
+# ST-07/ST-08 (BLG-OPS-172/BLG-OPS-173, EPIC-02, v9.9) — Scheduled-alert
+# Telegram de-duplication
+#
+# A generic, additive store so a scheduled check (daily cost, endpoint
+# anomalies) can tell whether it already sent a Telegram alert for the
+# current "state" (a date, or a specific set of firing anomalies) and skip
+# re-sending while that state is unchanged. Distinct from idempotency_keys
+# above, which is an opt-in, client-supplied-key cache for POST response
+# bodies -- this is a server-side dedup keyed by the caller's own fingerprint
+# of "what would this alert say," with no client involvement at all.
+# ---------------------------------------------------------------------------
+
+def ensure_scheduled_alert_dedup_table() -> None:
+    """Create scheduled_alert_dedup table if it does not exist (idempotent)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS scheduled_alert_dedup (
+                    alert_key VARCHAR(100) PRIMARY KEY,
+                    last_fingerprint TEXT NOT NULL,
+                    last_sent_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+        conn.commit()
+
+
+def get_last_alert_fingerprint(alert_key: str) -> Optional[str]:
+    """Pure read -- returns the stored fingerprint for alert_key, or None if
+    no row exists yet (first-ever check for this key)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT last_fingerprint FROM scheduled_alert_dedup WHERE alert_key = %s",
+                (alert_key,),
+            )
+            row = cur.fetchone()
+            return row["last_fingerprint"] if row else None
+
+
+def record_alert_fingerprint(alert_key: str, fingerprint: str) -> None:
+    """Upsert alert_key's fingerprint and bump last_sent_at to now."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """INSERT INTO scheduled_alert_dedup (alert_key, last_fingerprint, last_sent_at)
+                   VALUES (%s, %s, NOW())
+                   ON CONFLICT (alert_key) DO UPDATE
+                       SET last_fingerprint = EXCLUDED.last_fingerprint,
+                           last_sent_at = NOW()""",
+                (alert_key, fingerprint),
+            )
+        conn.commit()

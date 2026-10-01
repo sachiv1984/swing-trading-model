@@ -362,8 +362,15 @@ def generate_setup_thesis(
 
 
 def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
-    """Check daily Claude API spend and send Telegram alert if threshold exceeded."""
-    from database import get_daily_ai_cost
+    """Check daily Claude API spend and send Telegram alert if threshold exceeded.
+
+    De-duplicated per UTC day (ST-07, BLG-OPS-172, EPIC-02, v9.9): a second
+    call on the same day, with the threshold still exceeded, does not send a
+    second Telegram message -- the alert fingerprint is the date itself, so
+    a new day always sends fresh regardless of whether yesterday's alert
+    fired.
+    """
+    from database import get_daily_ai_cost, ensure_scheduled_alert_dedup_table, get_last_alert_fingerprint, record_alert_fingerprint
     from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
     import urllib.request
     import urllib.parse
@@ -375,8 +382,18 @@ def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
     threshold_exceeded = total >= threshold_usd
 
     alert_sent = False
+    today = date.today().isoformat()
     if threshold_exceeded and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
-        today = date.today().isoformat()
+        ensure_scheduled_alert_dedup_table()
+        already_alerted_today = get_last_alert_fingerprint("daily_cost_alert") == today
+        if already_alerted_today:
+            return {
+                "total_cost_usd": total,
+                "request_count": count,
+                "threshold_usd": threshold_usd,
+                "threshold_exceeded": threshold_exceeded,
+                "alert_sent": False,
+            }
         msg = (
             f"⚠️ Claude API daily cost threshold exceeded\n"
             f"Date: {today}\n"
@@ -393,6 +410,7 @@ def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
         try:
             urllib.request.urlopen(url, timeout=get_timeout("telegram"))
             alert_sent = True
+            record_alert_fingerprint("daily_cost_alert", today)
         except Exception:
             pass
 
