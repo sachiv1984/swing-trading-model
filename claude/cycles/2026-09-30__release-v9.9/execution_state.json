@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-01T15:25:04Z",
+  "last_updated_utc": "2026-10-01T15:32:03Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -664,28 +664,32 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-30__release-v9.9/qa_evidence_EPIC-05.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_check_data_model_drift.py"
+      ],
       "stories": {
         "ST-28": {
           "title": "Read-only live-schema vs data_model.md drift detector",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1876,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "aba5e44b95ffef093252b65e9b91bb1127a96906",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-01T15:32:03Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_data_model_drift.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Reproduces 2 of 5 known divergence classes still live today (orphaned columns BLG-SPEC-150; missing index BLG-SPEC-148, newly found to still apply on staging specifically). Other 3 classes already resolved in docs+live, correctly reported clean. New findings beyond the 5 filed as BLG-SPEC-178 (out-of-scope-finding exception, CLAUDE.md §7) for Data Model Owner triage -- not remediated by this story."
         },
         "ST-29": {
           "title": "Drop 4 confirmed-orphaned, always-NULL columns from the live positions table",
@@ -875,6 +879,7 @@
     "ST-23",
     "ST-25",
     "ST-27",
+    "ST-28",
     "ST-32"
   ],
   "open_escalations": [
