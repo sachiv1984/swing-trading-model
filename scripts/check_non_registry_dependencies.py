@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
 CI guard rejecting non-registry dependency specifiers (ST-29, BLG-SEC-38, EPIC-07,
-v9.7; hardened ST-19, BLG-SEC-39, EPIC-04, v9.8).
+v9.7; hardened ST-19, BLG-SEC-39, EPIC-04, v9.8; hardened again ST-06, BLG-SEC-40,
+EPIC-02, v9.9 -- bare `-e .`/`-e ..` pip installs, and an npm-workspace-local
+`file:` lockfile entry false positive).
 
 A dependency pinned to a VCS ref (`git+ssh://`, `git+https://`, `git+http://`,
 `git://`, `hg+...`, `svn+...`, `bzr+...`), a local/relative path, a direct tarball
@@ -53,6 +55,11 @@ _PIP_DIRECT_URL_RE = re.compile(r"(@\s*|^)(https?|ftp)://", re.IGNORECASE)
 # without a leading `-e` editable-install flag.
 _PIP_LOCAL_PATH_RE = re.compile(r"^(-e\s+)?(\.{1,2}/|/|~/)")
 
+# pip: bare `.`/`..` with no trailing slash (`-e .`, `-e ..`, or no `-e` at all) --
+# installs the current/parent directory as the package itself. Not matched by
+# _PIP_LOCAL_PATH_RE above, which requires a trailing `/` after the dot(s).
+_PIP_BARE_DOT_PATH_RE = re.compile(r"^(-e\s+)?\.{1,2}$")
+
 # pip: `-r other.txt` / `--requirement other.txt` include -- pulls in a second file
 # this guard does not itself scan, so treat the include as a violation to catch.
 _PIP_INCLUDE_RE = re.compile(r"^(-r\b|--requirement\b)")
@@ -103,6 +110,7 @@ def check_requirements_txt(text: str) -> list:
             or _PIP_FILE_RE.search(matchable)
             or _PIP_DIRECT_URL_RE.search(matchable)
             or _PIP_LOCAL_PATH_RE.search(matchable)
+            or _PIP_BARE_DOT_PATH_RE.search(matchable)
         ):
             violations.append(
                 f"backend/requirements.txt:{lineno}: non-registry dependency specifier: {stripped!r}"
@@ -131,6 +139,25 @@ def check_package_json(text: str) -> list:
     return violations
 
 
+def _file_url_is_within_repo(resolved: str) -> bool:
+    """A `file:` resolved value is workspace-local (and therefore safe) only if it
+    stays within the repository once resolved -- an absolute path, a `~`-relative
+    path, or a path that `..`s its way out of the repo is a genuine non-workspace
+    local dependency, not an npm workspace member."""
+    # Strip the `file:` scheme and at most 2 slashes (the `//[host]` authority
+    # separator) -- a 3rd leading slash, if present, is the path's own absolute-path
+    # marker and must survive so `file:///abs/path` is still recognised as absolute.
+    path_part = re.sub(r"^file:/{0,2}", "", resolved, flags=re.IGNORECASE)
+    if not path_part or path_part.startswith("/") or path_part.startswith("~"):
+        return False
+    try:
+        candidate = (REPO_ROOT / path_part).resolve()
+        candidate.relative_to(REPO_ROOT.resolve())
+        return True
+    except ValueError:
+        return False
+
+
 def check_package_lock_json(text: str) -> list:
     violations = []
     try:
@@ -142,6 +169,14 @@ def check_package_lock_json(text: str) -> list:
             continue
         resolved = entry.get("resolved")
         if not resolved or entry.get("link"):
+            continue
+        if resolved.lower().startswith("file:"):
+            if _file_url_is_within_repo(resolved):
+                continue  # npm-workspace-local reference -- safe, not a violation
+            violations.append(
+                f"package-lock.json: {pkg_path or '(root)'} resolves from a non-registry, "
+                f"non-workspace local path: {resolved!r}"
+            )
             continue
         if not resolved.startswith(_NPM_REGISTRY_PREFIX):
             violations.append(
