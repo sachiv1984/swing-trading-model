@@ -846,7 +846,7 @@
     "ST-27"
   ],
   "open_escalations": [
-    "ST-24"
+    "ESC-EXEC-20261001-01"
   ],
   "merge_gate": {
     "epics_merged": [],
