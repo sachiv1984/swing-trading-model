@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-01T14:35:00Z",
+  "last_updated_utc": "2026-10-01T15:09:17Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -443,7 +443,8 @@
       "qa_evidence_log": "claude/cycles/2026-09-30__release-v9.9/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "tests/test_state_execution_path_consistency.py",
-        "tests/test_scan_backlog_gate_conditions_date_disambiguation.py"
+        "tests/test_scan_backlog_gate_conditions_date_disambiguation.py",
+        "tests/test_compute_rebalance_diagnostics.py"
       ],
       "stories": {
         "ST-19": {
@@ -515,23 +516,31 @@
         "ST-22": {
           "title": "Parameter-change ledger for strategy_rules.md S11 production parameters",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1870,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "ae17d5de414e92e42e7bc55a224dfb3363c7c426",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-01T15:07:54Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/strategy_parameter_change_ledger.md",
+            "claude/strategy/strategy_rules.md#12.3"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Strategy Rules & System Intent Owner",
+            "date": "2026-10-01"
+          },
+          "notes": "Ledger backfilled from strategy_rules.md's own Change log (v1.0-v1.12): none of §11's 4 parameters has changed since v1.0. §12.3 cross-references the ledger (strategy_rules.md v1.12->v1.13). Edit to the restricted strategy_rules.md made via agent-mediated Strategy Rules & System Intent Owner sign-off per §5.3 (same pattern as ST-01's RISK-01 ruling this cycle) -- reviewed and approved before the write. No deviation: AC fully met."
         },
         "ST-23": {
           "title": "scan_backlog_gate_conditions.py date-disambiguation gap can produce false negatives",
@@ -580,23 +589,27 @@
         "ST-25": {
           "title": "Rebalance diagnostic tallies (STEP 2.4/7.1/7.2) are recomputed by hand each cycle",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1873,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "57de1411905c7635fe27b11e75399cdc05bd31b3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-01T15:08:07Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/compute_rebalance_diagnostics.py",
+            "claude/system/roadmap_prompt.md#STEP 2.4",
+            "claude/system/roadmap_prompt.md#7.1"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "STEP 2.4 reproduced exactly against the cited 2026-09-30__scheduled reading (U=16/G=41/D=109/P=4 of 170, window v9.4-v9.8 -> 0.094). STEP 7.1's cited 83.7% rolling-3-cycle figure is NOT reproduced exactly by the script's default U/G/D/P-proxy formula (script computes 84.0% from the identical v9.6-v9.8 window -- 94.9%+82.1%+75.0% averaged). Intent-check advisory (LL-v3.4-P3-03) applied: this is disclosed as a probable small pre-existing hand-calculation drift in the cited figure, not a script defect -- the arithmetic is independently verifiable (tests/test_compute_rebalance_diagnostics.py) and the whole point of this story is that hand computation is error-prone. Recorded as a notes-only deviation per the advisory, not a formal DEV-* record (no canonical spec value is being overridden; roadmap_prompt.md's manual procedure remains authoritative and the new cross-reference text says so explicitly). STEP 7.2 already has its own script (scripts/compute_role_share_history.py, pre-existing) -- not duplicated here."
         },
         "ST-26": {
           "title": "role_share_history.md has no governance-authorized home under claude/roadmap/",
@@ -846,7 +859,9 @@
     "ST-04",
     "ST-05",
     "ST-21",
+    "ST-22",
     "ST-23",
+    "ST-25",
     "ST-27"
   ],
   "open_escalations": [
