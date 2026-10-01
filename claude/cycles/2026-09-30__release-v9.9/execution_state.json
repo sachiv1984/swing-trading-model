@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-01T12:30:06Z",
+  "last_updated_utc": "2026-10-01T12:43:09Z",
   "epics": {
     "EPIC-01": {
       "status": "done",
@@ -441,7 +441,9 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-30__release-v9.9/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_state_execution_path_consistency.py"
+      ],
       "stories": {
         "ST-19": {
           "title": "Conduct the overdue 90-day AI feature usage review (BLG-GOV-74/140/141/142 cluster)",
@@ -614,21 +616,23 @@
         "ST-27": {
           "title": ".claude_current_state.json's execution_state_path points to the prior cycle, not the active one",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1875,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "018f5c1c061029a6479d24890f1fc1f1672fd104",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-01T12:43:09Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/schemas/state_field_owners.json#execution_state_path"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
           "sign_off_record": null,
           "notes": ""
         }
@@ -832,7 +836,8 @@
     "ST-02",
     "ST-03",
     "ST-04",
-    "ST-05"
+    "ST-05",
+    "ST-27"
   ],
   "open_escalations": [],
   "merge_gate": {
