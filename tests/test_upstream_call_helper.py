@@ -382,6 +382,27 @@ class TestST07DirectYahooCallSitesUseConfiguredTimeout:
         assert mock_get.call_args.kwargs["timeout"] == get_timeout("yfinance_history")
 
 
+class TestST04CalculateAtrYahooFallbackUsesConfiguredTimeout:
+    """ST-04, EPIC-01, v9.9, BLG-BE-133: utils/pricing.py::calculate_atr's
+    Yahoo Finance fallback path (used for UK tickers always, and for US
+    tickers when Alpaca is unavailable) had its own separate hardcoded
+    timeout=10, missed by the ST-07 migration above which only covered
+    get_current_price/get_live_fx_rate's Yahoo calls in this module. No
+    retry decorator on this path (unlike get_live_fx_rate) and no
+    behaviour change -- only the timeout value is now sourced from
+    get_timeout("yfinance")."""
+
+    def test_calculate_atr_uk_ticker_uses_yfinance_timeout(self):
+        import utils.pricing as pricing
+
+        resp = MagicMock(status_code=200)
+        resp.json.return_value = {"chart": {"result": []}}  # insufficient data -> None, timeout kwarg still captured
+        with patch.object(pricing.requests, "get", return_value=resp) as mock_get:
+            pricing.calculate_atr("VOD.L", period=14)
+
+        assert mock_get.call_args.kwargs["timeout"] == get_timeout("yfinance")
+
+
 class TestST07AlpacaNewsUsesConfiguredTimeout:
     def test_get_news_headlines_uses_alpaca_timeout(self):
         import services.news_service as svc

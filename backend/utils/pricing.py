@@ -428,9 +428,9 @@ def calculate_atr(ticker: str, period: int = 14) -> Optional[float]:
             'Accept': 'application/json',
         }
         
-        response = requests.get(url, params=params, headers=headers, timeout=10)
+        response = requests.get(url, params=params, headers=headers, timeout=get_timeout("yfinance"))
         data = response.json()
-        
+
         if "chart" in data and "result" in data["chart"] and data["chart"]["result"]:
             result = data["chart"]["result"][0]
             if "indicators" in result and "quote" in result["indicators"]:
