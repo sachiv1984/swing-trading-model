@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-01T12:43:09Z",
+  "last_updated_utc": "2026-10-01T12:49:02Z",
   "epics": {
     "EPIC-01": {
       "status": "done",
@@ -442,7 +442,8 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-30__release-v9.9/qa_evidence_EPIC-04.md",
       "test_scenarios": [
-        "tests/test_state_execution_path_consistency.py"
+        "tests/test_state_execution_path_consistency.py",
+        "tests/test_scan_backlog_gate_conditions_date_disambiguation.py"
       ],
       "stories": {
         "ST-19": {
@@ -532,21 +533,23 @@
         "ST-23": {
           "title": "scan_backlog_gate_conditions.py date-disambiguation gap can produce false negatives",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1871,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "d260e98b1923bf99798d64ca236e5c2ae6f1f416",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-01T12:49:02Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/scan_backlog_gate_conditions.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
           "sign_off_record": null,
           "notes": ""
         },
@@ -837,6 +840,7 @@
     "ST-03",
     "ST-04",
     "ST-05",
+    "ST-23",
     "ST-27"
   ],
   "open_escalations": [],
