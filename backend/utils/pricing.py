@@ -14,6 +14,7 @@ Functions:
 import time
 import logging
 import requests
+import pandas as pd
 from datetime import datetime
 from typing import Optional, Dict
 
@@ -376,6 +377,33 @@ def _alpaca_calculate_atr(ticker: str, period: int) -> Optional[float]:
         return None
 
 
+def compute_atr_close_approximation(prices: pd.Series, period: int = 14) -> pd.Series:
+    """
+    Canonical close-to-close ATR approximation (ST-01, EPIC-01, v9.9, BLG-BE-135).
+
+    This is the ONE shared implementation of the "close-only" ATR approximation
+    used by the backtest/signal-generation code path, which has no access to
+    intraday high/low history -- backend/services/backtest_rule_service.py
+    fetches only yfinance's "Close" column. Consolidated here from what were 4
+    byte-identical duplicates: services/strategy_engine.py::compute_atr (now
+    delegates to this function per-column), database.py::compute_atr_simple
+    (now delegates directly), and position_manager.py / live_trading_assistant.py's
+    standalone copies (left as-is -- legacy, exempt standalone tools not
+    wired into the running app; see strategy_rules.md §7.1 for the full ruling).
+
+    Deliberately distinct from, and NOT interchangeable with, the two
+    real-OHLC ATR formulas elsewhere in this module and in screener_engine.py:
+      - calculate_atr() below -- live stop-loss calc (strategy_rules.md §7),
+        simple moving average of true range from real high/low/close bars
+      - services/screener_engine.py::compute_atr -- entry screening, Wilder's
+        smoothed ATR from real high/low/close bars
+    See strategy_rules.md §7.1 for why these three are not unified into one
+    formula (RISK-01 ruling, Strategy Rules & System Intent Owner).
+    """
+    close_to_close = prices.diff().abs()
+    return close_to_close.rolling(window=period, min_periods=period).mean()
+
+
 def calculate_atr(ticker: str, period: int = 14) -> Optional[float]:
     """
     Calculate Average True Range (ATR) for a ticker.
@@ -400,9 +428,9 @@ def calculate_atr(ticker: str, period: int = 14) -> Optional[float]:
             'Accept': 'application/json',
         }
         
-        response = requests.get(url, params=params, headers=headers, timeout=10)
+        response = requests.get(url, params=params, headers=headers, timeout=get_timeout("yfinance"))
         data = response.json()
-        
+
         if "chart" in data and "result" in data["chart"] and data["chart"]["result"]:
             result = data["chart"]["result"][0]
             if "indicators" in result and "quote" in result["indicators"]:

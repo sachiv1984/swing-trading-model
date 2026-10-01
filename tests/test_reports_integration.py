@@ -536,5 +536,36 @@ class TestReconciliation(unittest.TestCase):
         self.assertEqual(resp.json()["data"]["tax_year_label"], "2025/26")
 
 
+# ---------------------------------------------------------------------------
+# ST-02, EPIC-01, v9.9, BLG-BE-131: GET /reports/monthly-pnl year bounds check
+# Mirrors TestTaxYearValidation's three-digit/five-digit boundary tests above
+# -- before this fix, an out-of-range year reached date(year, 4, 6) inside
+# get_monthly_pnl_report and raised a raw "year N is out of range" ValueError,
+# surfaced as a 404 with that raw Python message instead of a clean 400.
+# ---------------------------------------------------------------------------
+
+class TestMonthlyPnlValidation(unittest.TestCase):
+
+    def test_three_digit_year_returns_400(self):
+        resp = CLIENT.get("/reports/monthly-pnl?year=999")
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn("four-digit", resp.json()["message"])
+
+    def test_five_digit_year_returns_400(self):
+        resp = CLIENT.get("/reports/monthly-pnl?year=10000")
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn("four-digit", resp.json()["message"])
+
+    def test_zero_year_returns_400(self):
+        resp = CLIENT.get("/reports/monthly-pnl?year=0")
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn("four-digit", resp.json()["message"])
+
+    def test_negative_year_returns_400(self):
+        resp = CLIENT.get("/reports/monthly-pnl?year=-1")
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn("four-digit", resp.json()["message"])
+
+
 if __name__ == "__main__":
     unittest.main()

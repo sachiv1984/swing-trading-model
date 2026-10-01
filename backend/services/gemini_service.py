@@ -391,7 +391,7 @@ def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
         })
         url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage?{params}"
         try:
-            urllib.request.urlopen(url, timeout=10)
+            urllib.request.urlopen(url, timeout=get_timeout("telegram"))
             alert_sent = True
         except Exception:
             pass

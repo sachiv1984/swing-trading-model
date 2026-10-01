@@ -90,7 +90,10 @@ CREATE TABLE positions (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     position_state VARCHAR(20),
     state_entered_at TIMESTAMP WITHOUT TIME ZONE,
-    state_history JSONB NOT NULL DEFAULT '[]'::JSONB
+    state_history JSONB NOT NULL DEFAULT '[]'::JSONB,
+    stop_calculated_at TIMESTAMPTZ,
+    atr_calculated_at TIMESTAMPTZ,
+    active_atr_multiplier DECIMAL(4, 2)
 );
 
 CREATE INDEX idx_positions_portfolio ON positions(portfolio_id);
@@ -135,6 +138,9 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | position_state | VARCHAR(20) | YES | Lifecycle state: `GRACE`, `LOSING`, `PROFITABLE`, `EXIT ZONE`, `UNKNOWN`. Null for closed positions. Computed by `PositionLifecycleService`. Added v2.6. |
 | state_entered_at | TIMESTAMP | YES | Timestamp when current `position_state` was assigned. Updated on each state transition. Null for closed positions. Added v2.6. |
 | state_history | JSONB | NO | Ordered array of `{state, entered_at}` objects recording all state transitions. Default `[]`. Never truncated — full audit trail. Added v2.6. |
+| stop_calculated_at | TIMESTAMPTZ | YES | Timestamp of the most recent `current_stop` recalculation, written by both `analyze_positions()` (on-load) and `run_nightly_trailing_stop_update()` (nightly). `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
+| atr_calculated_at | TIMESTAMPTZ | YES | Timestamp of the most recent `atr` recalculation, written whenever `atr` itself is freshly computed (not merely read from cache). `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
+| active_atr_multiplier | DECIMAL(4,2) | YES | The ATR multiplier (`calculate_trailing_stop()`'s own `atr_multiplier` return value — currently 2 or 5, depending on profitability) used to produce the current `current_stop`. `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
 
 **No `exit_note` column (ST-24, EPIC-06, v9.7, BLG-SPEC-149):** this table has no live `exit_note` column, despite an earlier version of this document claiming one. A closed position's exit journal note is stored on `trade_history.exit_note` (§3 below), not here — confirmed via a live (readonly staging) schema query, per the §Live schema verification note above this table.
 
@@ -2449,6 +2455,63 @@ Original constraint (at table creation, v3.1) allowed only `('draft', 'active', 
 
 ---
 
-**Document Version:** 2.43
+## DS-22 — Add stop_calculated_at and atr_calculated_at to positions (v2.44, 2026-10-01)
+
+**Story:** ST-01 (EPIC-01, v9.9) — `BLG-BE-135`
+
+Persists the timestamp of the most recent trailing-stop/ATR recalculation, and the ATR multiplier actually used to produce the current `current_stop`, alongside the existing `current_stop`/`atr` columns. Written by both recompute paths (`analyze_positions()`'s on-load recompute and `run_nightly_trailing_stop_update()`'s nightly job — see `services/position_service.py` and `strategy_rules.md` §7.1). Exposed on `GET /positions` per `position_endpoints.md`.
+
+**RISK (no live DB write access in this execution environment):** the `DATABASE_URL` available in this sandbox is `readonly_staging`, granted `SELECT` only (confirmed via `information_schema.role_table_grants`; `ALTER TABLE` attempted and rejected with `InsufficientPrivilege: must be owner of table positions`). Same structural constraint as DS-17's original application. Confirmed via read-only query that none of the 3 new column names already exist on the live table prior to application. **Status: CONFIRMED APPLIED — see §Live Confirmation below.**
+
+**Live Confirmation (ST-01, EPIC-01, v9.9, BLG-BE-135, 2026-10-01):** the Up Migration above was run against **both staging and production** Supabase directly by the Data Model & Domain Schema Owner (not this execution session — no write access exists here, per the RISK note above). Verification query output was pasted back for both environments, and independently re-confirmed by this session against the staging `readonly_staging` connection:
+
+```json
+[
+  {"column_name": "active_atr_multiplier", "data_type": "numeric", "is_nullable": "YES"},
+  {"column_name": "atr_calculated_at", "data_type": "timestamp with time zone", "is_nullable": "YES"},
+  {"column_name": "stop_calculated_at", "data_type": "timestamp with time zone", "is_nullable": "YES"}
+]
+```
+
+This matches the migration's own definition exactly (2 nullable `TIMESTAMPTZ`, 1 nullable `DECIMAL(4,2)`/`numeric`). **DS-22 is confirmed live in both staging and production as of 2026-10-01.**
+
+### Up Migration (v2.43 → v2.44)
+
+```sql
+ALTER TABLE positions
+    ADD COLUMN IF NOT EXISTS stop_calculated_at TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS atr_calculated_at TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS active_atr_multiplier DECIMAL(4, 2);
+```
+
+Additive, nullable, no default — existing rows get `NULL` for all 3 new columns until their next recompute (on-load or nightly), at which point the application populates them. No backfill required; `GET /positions` treats `null` as "not yet recomputed since this migration." `active_atr_multiplier` mirrors `calculate_trailing_stop()`'s own `atr_multiplier` return value (`utils/calculations.py`) — currently 2 or 5 depending on profitability, `DECIMAL(4,2)` leaves headroom beyond today's two values.
+
+### Down Migration (v2.44 → v2.43)
+
+```sql
+ALTER TABLE positions
+    DROP COLUMN IF EXISTS stop_calculated_at,
+    DROP COLUMN IF EXISTS atr_calculated_at,
+    DROP COLUMN IF EXISTS active_atr_multiplier;
+```
+
+### Verification
+
+```sql
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'positions'
+  AND column_name IN ('stop_calculated_at', 'atr_calculated_at', 'active_atr_multiplier');
+```
+
+Expect 3 rows: `stop_calculated_at` and `atr_calculated_at` both `timestamp with time zone`, `active_atr_multiplier` `numeric`, all nullable.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: migration content reviewed and approved for application — additive, nullable, reversible, no pre-check required (no existing-row constraint to violate). Sprint Execution Engine (agent-mediated, Data Model & Domain Schema Owner role — §5.3), 2026-10-01.
+- Data Model & Domain Schema Owner: **Confirmed applied** — 2026-10-01. Migration run directly against both staging and production Supabase (outside this execution session — no write access exists here); verification query output pasted back for both and independently re-confirmed against staging. See §Live Confirmation above. `DEL-20261001-01` resolved.
+
+---
+
+**Document Version:** 2.44
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-09-29 (ST-24, EPIC-05, v9.8, BLG-SPEC-154 — DS-21; header/footer version kept in sync); prior — 2026-09-22 (ST-08, EPIC-02, v9.6, BLG-FR-05 — DS-20; header/footer version kept in sync); prior — 2026-09-21 (ST-04, EPIC-01, v9.6, BLG-FEAT-98 — DS-19; header/footer version kept in sync)
+**Last Review:** 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — DS-22; header/footer version kept in sync); prior — 2026-09-29 (ST-24, EPIC-05, v9.8, BLG-SPEC-154 — DS-21; header/footer version kept in sync); prior history retained — see prior entries in version control.

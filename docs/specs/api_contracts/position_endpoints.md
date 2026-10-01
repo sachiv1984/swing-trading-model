@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.6.4
-**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /positions); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /positions/nightly-stop-update); prior — 2026-09-18 (ST-29, BLG-SPEC-142, EPIC-04, v9.5: added lifecycle diagram cross-reference); prior history retained — see prior entries in version control.
+**Version:** 2.7.0
+**Last Updated:** 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — GET /positions gains atr_calculated_at, stop_calculated_at, active_atr_multiplier); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /positions); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /positions/nightly-stop-update); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -104,6 +104,9 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
     "display_status": "PROFITABLE",
     "grace_days_remaining": null,
     "atr_value": 15.32,
+    "atr_calculated_at": "2026-10-01T06:00:00+00:00",
+    "stop_calculated_at": "2026-10-01T06:00:00+00:00",
+    "active_atr_multiplier": 2.0,
     "fx_rate": 1.3642,
     "live_fx_rate": 1.3650,
     "current_trailing_stop": 560.50,
@@ -153,6 +156,9 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
 | `position_state` | `string`. One of `"GRACE"`, `"PROFITABLE"`, `"LOSING"`, `"EXIT ZONE"`, `"UNKNOWN"`. Server-computed lifecycle state, distinct from `display_status` — recalculated and persisted (with transition history) on each `GET /positions` call. `"UNKNOWN"` when required inputs (entry price, current price, ATR, entry date) are unavailable. (v7.10 ST-14 BLG-SPEC-103) |
 | `state_entered_at` | ISO-8601 timestamp \| `null`. Timestamp of the most recent transition into the current `position_state`. `null` only in the `position_state = "UNKNOWN"` fallback case. (v7.10 ST-14 BLG-SPEC-103) |
 | `days_in_state` | `integer`. Whole days elapsed since `state_entered_at`. `0` on the day of transition or when `state_entered_at` is `null`. (v7.10 ST-14 BLG-SPEC-103) |
+| `atr_calculated_at` | ISO-8601 timestamp \| `null`. When `atr_value` was last freshly recomputed (not merely read from cache) — written by the on-load recompute path (`GET /positions/analyze`) and `POST /positions/nightly-stop-update`. `null` if never recomputed since this field was added. See `strategy_rules.md` §7.1. (v9.9 ST-01 BLG-BE-135) |
+| `stop_calculated_at` | ISO-8601 timestamp \| `null`. When `current_trailing_stop`/`stop_price` was last recalculated against ATR (not the grace-period carry-over, which leaves this unchanged). `null` if never recomputed since this field was added. (v9.9 ST-01 BLG-BE-135) |
+| `active_atr_multiplier` | `number` \| `null`. The ATR multiplier used to produce the current stop — `2` while profitable (tight trail), `5` while at a loss (wide stop), per `strategy_rules.md` §7.2. `null` during the grace period (no real recompute has run) or if never recomputed since this field was added. (v9.9 ST-01 BLG-BE-135) |
 
 > **Note:** For a summary view of open positions alongside portfolio totals, use `GET /portfolio`. This endpoint returns the full enriched position object including native prices, stop context, and journal fields; `GET /portfolio` returns a lighter position shape.
 
