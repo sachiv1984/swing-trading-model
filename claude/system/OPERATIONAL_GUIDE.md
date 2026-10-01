@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.216
-**Last Updated:** 2026-10-01 (Sprint execution `2026-09-30__release-v9.9` EPIC-04/ST-21, BLG-GOV-343 — roadmap_prompt.md v9.27→v9.28: split into a core file plus `roadmap_prompt_appendix.md` so the core fits a single read (under 25,000 tokens); §6 source-prompt header and §14 Roadmap Engine Source row updated to v9.28); prior — 2026-09-30 (Roadmap rebalance `2026-09-30__scheduled` STEP 11 meta-review — roadmap_prompt.md v9.26→v9.27: STEP -1.6 gains a standalone pre-run exception clarifying that a same-session standalone `run ideas` window's fresh unprocessed submissions satisfy this step without requiring a second inline window; §6 source-prompt header and §14 Roadmap Engine Source row updated to v9.27); prior — 2026-09-30 (Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-32, BLG-GOV-340 — roadmap_prompt.md v9.25→v9.26: §7.3 gains a Runway Projection cross-reference to metrics_definitions.md Appendix F's new Ready-Pool Runway Forecast metric; §6 source-prompt header and §14 Roadmap Engine Source row updated to v9.26); prior history retained — see prior entries in version control.
+**Version:** 4.217
+**Last Updated:** 2026-10-01 (Sprint execution `2026-09-30__release-v9.9` EPIC-04/ST-25, BLG-GOV-352 — roadmap_prompt.md v9.28→v9.29: STEP 2.4/STEP 7.1 each gain an "Optional acceleration" cross-reference to the new `scripts/compute_rebalance_diagnostics.py`; §6 source-prompt header and §14 Roadmap Engine Source row updated to v9.29); prior — 2026-10-01 (Sprint execution `2026-09-30__release-v9.9` EPIC-04/ST-21, BLG-GOV-343 — roadmap_prompt.md v9.27→v9.28: split into a core file plus `roadmap_prompt_appendix.md` so the core fits a single read (under 25,000 tokens); §6 source-prompt header and §14 Roadmap Engine Source row updated to v9.28); prior — 2026-09-30 (Roadmap rebalance `2026-09-30__scheduled` STEP 11 meta-review — roadmap_prompt.md v9.26→v9.27: STEP -1.6 gains a standalone pre-run exception clarifying that a same-session standalone `run ideas` window's fresh unprocessed submissions satisfy this step without requiring a second inline window; §6 source-prompt header and §14 Roadmap Engine Source row updated to v9.27); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -398,7 +398,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.28) + `claude/system/roadmap_prompt_appendix.md` (STEP 9 onward, plus detailed rationale for the core's compacted rules)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.29) + `claude/system/roadmap_prompt_appendix.md` (STEP 9 onward, plus detailed rationale for the core's compacted rules)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1377,7 +1377,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.18 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.10 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.28 (+ `roadmap_prompt_appendix.md`) |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.29 (+ `roadmap_prompt_appendix.md`) |
 | Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.58 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.19 |
