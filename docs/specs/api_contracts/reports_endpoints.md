@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.14
-**Last Updated:** 2026-09-28 (ST-03, EPIC-01, v9.8, BLG-FE-190 — `GET /reports/monthly-pnl` gains an optional `year` query param to scope results to a UK tax year instead of the default rolling window; also documented the pre-existing, previously-undocumented `format` param in the same edit); prior — 2026-09-22 (ST-07 + ST-08, EPIC-02, v9.6, BLG-FR-04 + BLG-FR-05 — added `null_fee_trade_count` and month-end snapshot/restatement fields to `GET /reports/monthly-pnl`'s per-month response objects, plus a derived restated-month notice on `GET /reports/tax-year`)
+**Version:** 0.15
+**Last Updated:** 2026-10-01 (ST-02, EPIC-01, v9.9, BLG-BE-131 — `GET /reports/monthly-pnl`'s `year` param documented as requiring a four-digit integer, matching the bounds check now enforced to mirror `GET /reports/tax-year`); prior — 2026-09-28 (ST-03, EPIC-01, v9.8, BLG-FE-190 — `GET /reports/monthly-pnl` gains an optional `year` query param to scope results to a UK tax year instead of the default rolling window; also documented the pre-existing, previously-undocumented `format` param in the same edit); prior — 2026-09-22 (ST-07 + ST-08, EPIC-02, v9.6, BLG-FR-04 + BLG-FR-05 — added `null_fee_trade_count` and month-end snapshot/restatement fields to `GET /reports/monthly-pnl`'s per-month response objects, plus a derived restated-month notice on `GET /reports/tax-year`); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -418,7 +418,7 @@ Returns month-by-month realised P&L. By default, for the current and prior calen
 
 | Query Parameter | Type | Required | Description |
 |---|---|---|---|
-| `year` | integer | No | *(v0.9)* UK tax-year start year (e.g. `2024` for the 2024/25 tax year). When given, scopes the returned months to `[Apr 6 <year>, Apr 5 <year+1>]` instead of the default fixed rolling window. Returns `400` (`"tax year has not started yet"`) if the tax year has not started. |
+| `year` | integer | No | *(v0.9)* UK tax-year start year (e.g. `2024` for the 2024/25 tax year). When given, scopes the returned months to `[Apr 6 <year>, Apr 5 <year+1>]` instead of the default fixed rolling window. Must be a four-digit integer — returns `400` (`"year must be a valid four-digit integer"`) otherwise *(v0.10, ST-02, EPIC-01, v9.9, BLG-BE-131 — mirrors `GET /reports/tax-year`'s own bounds check)*. Returns `400` (`"tax year has not started yet"`) if the tax year has not started. |
 | `format` | string | No | *(v0.8)* `csv` returns a CSV file download of the month rows (mirrors `GET /reports/tax-year`'s `format=csv`) instead of JSON. Any other value returns `400`. This parameter predates this revision and was previously undocumented here — corrected in the same edit as the `year` parameter above (opportunistic in-file fix, ST-03/EPIC-01/v9.8; no behaviour change). |
 
 ---
