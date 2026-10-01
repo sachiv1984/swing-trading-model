@@ -20,3 +20,51 @@ Last Updated: 2026-10-01
 - **Blocks execution:** No
 - **Disposition:** Open
 - **Resolution summary:** —
+
+## ESC-EXEC-20261001-02
+
+- **Raised at:** 2026-10-01T15:10:44Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-30__release-v9.9
+- **Step:** STEP 3.1.D (EPIC-04 execution loop)
+- **ST/EPIC item:** ST-19 / EPIC-04
+- **Trigger type:** Human-Delegation
+- **Blocking statement:** ST-19 requires conducting the overdue 90-day AI feature usage review (BLG-GOV-74/140/141/142 cluster) — AC-1 requires assessing production AI feature adoption rate, cost per use, and continued-investment justification. This sandboxed environment has no production credential (same structural gap as `ESC-EXEC-20260921-02/03/04`, `ESC-EXEC-20260910-01`) — the review cannot be genuinely conducted against live production data from within this session.
+- **Owning authority:** Head of Specs Team; PMO Lead
+- **Unblock criteria:** A human with production access conducts (or directly supplies the data for) the review — a dated review artefact assessing adoption rate, cost per use, and continued-investment justification, with all 8 downstream gated items in the source cluster given an explicit disposition. Per CLAUDE.md §2's frontend-testing-gate pattern applied by analogy here (deferred-to-post-merge evidence requires a filed backlog item before the PR opens): if this is deferred past this EPIC's PR, a backlog item must be filed for the pending review before the PR opens.
+- **SLA due-by:** 2026-10-04T15:10:44Z (72h — Human-Delegation)
+- **Blocks execution:** No
+- **Disposition:** Open
+- **Resolution summary:** —
+
+## ESC-EXEC-20261001-03
+
+- **Raised at:** 2026-10-01T15:10:44Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-30__release-v9.9
+- **Step:** STEP 3.1.D (EPIC-04 execution loop)
+- **ST/EPIC item:** ST-20 / EPIC-04
+- **Trigger type:** Strategy
+- **Blocking statement:** `gap_risk_service.py` (BLG-FEAT-65) shipped without a recorded §13 review or §13.5 roster row. Determining whether this was a genuine gap (and, if so, whether it is CONDITIONAL/COMPLIANT and what binding conditions apply) requires Strategy Rules & System Intent Owner / Head of Specs Team judgement against §13's actual boundary criteria — not a mechanical check. Per `execution_prompt.md` §5.3, this class of determination is eligible for agent-mediated sign-off in principle, but given its precedent-setting nature (a retroactive §13 finding against an already-shipped production feature) and this session having no standing user authorisation to rule on §13 boundary questions on the Strategy Rules & System Intent Owner's behalf for this specific item, it is surfaced rather than agent-mediated.
+- **Owning authority:** Head of Specs Team; Strategy Rules & System Intent Owner
+- **Unblock criteria:** A dated determination recorded (new `docs/product/decisions/` file, or a `strategy_rules.md` §13.3/§13.5 wording update, as appropriate to the outcome). If CONDITIONAL or a genuine gap is found, binding conditions or a remediation item must be filed in the same determination.
+- **SLA due-by:** 2026-10-04T15:10:44Z (72h — Strategy)
+- **Blocks execution:** No
+- **Disposition:** Open
+- **Resolution summary:** —
+
+## ESC-EXEC-20261001-04
+
+- **Raised at:** 2026-10-01T15:10:44Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-30__release-v9.9
+- **Step:** STEP 3.1.D (EPIC-04 execution loop)
+- **ST/EPIC item:** ST-26 / EPIC-04
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-26's AC requires creating `claude/roadmap/role_share_history.md` (seeded with the 3-cycle backfill already computed by `scripts/compute_role_share_history.py`) so `roadmap_prompt.md` §7.2 can read from it instead of re-deriving the tally by hand. RISK-02 (per `sprint_backlog.md`'s own note): `claude/roadmap/*` is outside this routine's declared write scope (`execution_prompt.md` §7) beyond the narrow `workforce_capacity.md` exception — creating a new file there requires the same kind of explicit, plan-authorised routing/authority decision as that exception, not an engine-side default. This is also the same underlying write-scope gap already disclosed as deferred twice (`BLG-GOV-353` at v9.7 and v9.8 — see `docs/specs/metrics_definitions.md`'s Ready-Pool Runway Forecast section, which cites `claude/cycles/2026-09-28__release-v9.8/role_share_history.md`'s own interim-location precedent for the same constraint).
+- **Owning authority:** Head of Specs Team (write-scope/routing authority for `claude/roadmap/*`)
+- **Unblock criteria:** Head of Specs Team decides the canonical home for `role_share_history.md` (a `claude/roadmap/*` write-scope exception in the `workforce_capacity.md`/BLG-GOV-337 format, or a different canonical location) and either makes the edit directly or explicitly authorises this engine to do so, citing this escalation ID in the commit message.
+- **SLA due-by:** 2026-10-02T15:10:44Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Open
+- **Resolution summary:** —
