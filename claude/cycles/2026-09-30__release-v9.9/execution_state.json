@@ -847,7 +847,9 @@
     ],
     "all_merged": false
   },
-  "process_notes": [],
+  "process_notes": [
+    "EPIC-01 PR #1884: all CI checks green, mergeable=MERGEABLE, mergeStateStatus=BLOCKED (no reviews yet). STEP 4 merge gate conditions unmet: 'QA sign-off comment from Director of Quality on PR' and 'Product Owner acceptance' are both outstanding -- always-human gates (execution_prompt.md §5.3), not self-approvable. Per 'park and continue other items', proceeding to EPIC-04 (next in sprint_backlog.md's merge order) rather than stalling the sprint on this EPIC's human sign-off wait."
+  ],
   "sealed": false,
   "sealed_utc": null
 }
