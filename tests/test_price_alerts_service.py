@@ -109,6 +109,7 @@ class TestCreatePriceAlertValidation(unittest.TestCase):
             mock_db.return_value.__enter__.return_value = mock_conn
             cur = MagicMock()
             cur.fetchone.side_effect = [
+                None,  # dedup check: no existing active duplicate
                 {"cnt": 0},
                 {"id": "pa-1", "ticker": "AAPL", "condition": "above", "threshold_price": Decimal("150.0"),
                  "active": True, "triggered_at": None, "created_at": "2026-07-17T10:00:00Z",
@@ -130,7 +131,7 @@ class TestCreatePriceAlertCap(unittest.TestCase):
             mock_conn = MagicMock()
             mock_db.return_value.__enter__.return_value = mock_conn
             cur = MagicMock()
-            cur.fetchone.return_value = {"cnt": PRICE_ALERT_CAP}
+            cur.fetchone.side_effect = [None, {"cnt": PRICE_ALERT_CAP}]
             mock_conn.cursor.return_value.__enter__.return_value = cur
 
             with self.assertRaises(ValueError) as ctx:
@@ -143,6 +144,7 @@ class TestCreatePriceAlertCap(unittest.TestCase):
             mock_db.return_value.__enter__.return_value = mock_conn
             cur = MagicMock()
             cur.fetchone.side_effect = [
+                None,  # dedup check: no existing active duplicate
                 {"cnt": PRICE_ALERT_CAP - 1},
                 {"id": "pa-1", "ticker": "AAPL", "condition": "above", "threshold_price": Decimal("150.0"),
                  "active": True, "triggered_at": None, "created_at": "2026-07-17T10:00:00Z",
@@ -152,6 +154,55 @@ class TestCreatePriceAlertCap(unittest.TestCase):
 
             result = create_price_alert("portfolio-1", {"ticker": "AAPL", "condition": "above", "threshold_price": 150.0})
             self.assertEqual(result["ticker"], "AAPL")
+
+
+class TestCreatePriceAlertDeduplication(unittest.TestCase):
+    """ST-09 (BLG-OPS-174, EPIC-02, v9.9): a double-submit of the same
+    (ticker, condition, threshold_price) while an identical active alert
+    already exists returns that existing alert instead of creating a
+    second, functionally-duplicate one."""
+
+    def test_duplicate_active_alert_returns_existing_without_inserting(self):
+        with patch.object(alerts_service, "get_db") as mock_db:
+            mock_conn = MagicMock()
+            mock_db.return_value.__enter__.return_value = mock_conn
+            cur = MagicMock()
+            existing_row = {
+                "id": "pa-existing", "ticker": "AAPL", "condition": "above",
+                "threshold_price": Decimal("150.0"), "active": True, "triggered_at": None,
+                "created_at": "2026-07-17T10:00:00Z", "updated_at": "2026-07-17T10:00:00Z",
+            }
+            cur.fetchone.return_value = existing_row
+            mock_conn.cursor.return_value.__enter__.return_value = cur
+
+            result = create_price_alert("portfolio-1", {"ticker": "AAPL", "condition": "above", "threshold_price": 150.0})
+
+            self.assertEqual(result["id"], "pa-existing")
+            insert_calls = [c for c in cur.execute.call_args_list if "INSERT INTO price_alerts" in c.args[0]]
+            self.assertEqual(len(insert_calls), 0)
+
+    def test_duplicate_check_is_scoped_to_active_alerts_only(self):
+        """A dedup SELECT must filter active = TRUE -- confirmed via the
+        executed SQL text, so a past (inactive/triggered) alert with the
+        same (ticker, condition, threshold_price) does not block a new one."""
+        with patch.object(alerts_service, "get_db") as mock_db:
+            mock_conn = MagicMock()
+            mock_db.return_value.__enter__.return_value = mock_conn
+            cur = MagicMock()
+            cur.fetchone.side_effect = [
+                None,  # dedup check: no existing *active* duplicate
+                {"cnt": 0},
+                {"id": "pa-new", "ticker": "AAPL", "condition": "above", "threshold_price": Decimal("150.0"),
+                 "active": True, "triggered_at": None, "created_at": "2026-07-17T10:00:00Z",
+                 "updated_at": "2026-07-17T10:00:00Z"},
+            ]
+            mock_conn.cursor.return_value.__enter__.return_value = cur
+
+            result = create_price_alert("portfolio-1", {"ticker": "AAPL", "condition": "above", "threshold_price": 150.0})
+
+            self.assertEqual(result["id"], "pa-new")
+            dedup_call = cur.execute.call_args_list[0]
+            self.assertIn("active = TRUE", dedup_call.args[0])
 
 
 # ---------------------------------------------------------------------------

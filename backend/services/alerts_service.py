@@ -401,6 +401,20 @@ def create_price_alert(portfolio_id: str, data: Dict) -> Dict:
 
     with get_db() as conn:
         with conn.cursor() as cur:
+            # De-duplication guard (ST-09, BLG-OPS-174, EPIC-02, v9.9): a double-submit
+            # of the same (ticker, condition, threshold_price) while an identical
+            # active alert already exists returns that existing alert instead of
+            # creating a second, functionally-duplicate one.
+            cur.execute(
+                """SELECT * FROM price_alerts
+                   WHERE portfolio_id = %s AND ticker = %s AND condition = %s
+                     AND threshold_price = %s AND active = TRUE""",
+                (portfolio_id, ticker, condition, float(threshold_price)),
+            )
+            existing = cur.fetchone()
+            if existing:
+                return _price_alert_row(existing)
+
             cur.execute(
                 "SELECT COUNT(*) AS cnt FROM price_alerts WHERE portfolio_id = %s AND active = TRUE",
                 (portfolio_id,)
