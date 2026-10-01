@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-09-30 (release planning 2026-09-30__release-v9.9 — Release Slice v9.9 ephemeral section appended, 35 items, marker `RP:v9.9:2026-09-30__release-v9.9`; no other structural changes); prior — 2026-09-30 (roadmap rebalance 2026-09-30__scheduled — 4 new items added: BLG-BE-135/BLG-FE-193 (consolidated from IW-20260930-01, ATR consolidation + stop-loss transparency), BLG-GOV-357 (sign-off SPOF matrix, 3-cycle park cap), BLG-GOV-358 (§13-boundary gap-risk finding); 12 items reclassified A (date-lapsed — verify) at STEP 3.1); prior — 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 STEP 12.6 — 1 new item added: BLG-GOV-356, 90-day AI feature usage review still 6 days overdue, 8 downstream gated items named); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-01 (session — PR #1884/EPIC-01 review, 1 new item added: BLG-QA-204 (get_settings() not mocked in ST-01's timestamp-persistence test)); prior — 2026-09-30 (release planning 2026-09-30__release-v9.9 — Release Slice v9.9 ephemeral section appended, 35 items, marker `RP:v9.9:2026-09-30__release-v9.9`; no other structural changes); prior — 2026-09-30 (roadmap rebalance 2026-09-30__scheduled — 4 new items added: BLG-BE-135/BLG-FE-193 (consolidated from IW-20260930-01, ATR consolidation + stop-loss transparency), BLG-GOV-357 (sign-off SPOF matrix, 3-cycle park cap), BLG-GOV-358 (§13-boundary gap-risk finding); 12 items reclassified A (date-lapsed — verify) at STEP 3.1); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4154,6 +4154,26 @@ No document currently maps which roles are authorised to sign off each governanc
 **Acceptance Criteria**
 - A dated determination is recorded (new `docs/product/decisions/` file, or a `strategy_rules.md` §13.3/§13.5 wording update, as appropriate to the outcome)
 - If the determination is CONDITIONAL or finds a genuine gap, binding conditions or a remediation item are filed
+
+---
+
+### BLG-QA-204 — test_position_atr_timestamp_persistence.py doesn't mock get_settings(), so active_atr_multiplier assertions don't confirm production values
+**Priority:** P4 (Low)
+**Type:** QA / Test Debt
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** PR #1884 (EPIC-01, cycle `2026-09-30__release-v9.9`) code review — 2026-10-01
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_position_atr_timestamp_persistence.py::TestAnalyzePositionsWritesTimestamps::test_post_grace_write_includes_stop_calculated_at_and_multiplier` only asserts `active_atr_multiplier > 0`, not that it equals the real production values (`2.0` profitable / `5.0` losing, per `calculate_trailing_stop()`/`strategy_rules.md` §7.2), because `get_settings()` is not mocked in that test — the test environment's `get_settings()` returns an unconfirmed value (observed `1.0` during development, not either production multiplier). The test passes either way, so it would not catch a regression that silently changed which multiplier value gets persisted.
+
+**Scope**
+- Mock `get_settings()` in the affected test(s) to return the real `atr_multiplier_trailing=2`/`atr_multiplier_initial=5` production values
+
+**Acceptance Criteria**
+- Test explicitly mocks `get_settings()` to the real production multiplier values
+- Assertion checks `active_atr_multiplier` equals the exact expected value (`2.0` or `5.0`) in both the profitable and losing branches, not merely `> 0`
 
 ---
 
