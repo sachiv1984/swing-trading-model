@@ -1,21 +1,21 @@
 {
   "active_cycle": "2026-09-30__release-v9.9",
-  "cycle_name": "v9.9 — Full-Capacity Debt Clearance",
-  "status": "Design_Gate_Passed",
-  "prior_status": "Closed",
-  "engine": "Release Planning",
-  "last_updated_utc": "2026-09-30T18:20:00Z",
+  "cycle_name": "v9.9 \u2014 Full-Capacity Debt Clearance",
+  "status": "Sprint_Planning_Complete",
+  "prior_status": "Design_Gate_Passed",
+  "engine": "Sprint Planning",
+  "last_updated_utc": "2026-10-01T10:28:58Z",
   "execution_state_path": "claude/cycles/2026-09-28__release-v9.8/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-09-30__release-v9.9/stage4_backlog_slice.md",
   "design_gate_required": true,
   "design_gate_status": "Passed",
   "design_gate_record": "claude/cycles/2026-09-30__release-v9.9/design_gate.md",
   "design_gate_completed_utc": "2026-10-01T00:00:00Z",
-  "sprint_sealed": false,
-  "_sprint_sealed_note": "Set true at Sprint Planning STEP 7 for 2026-09-28__release-v9.8 — sign-off gate (STEP 6.2) passed, no [AC REQUIRED]/[ESTIMATE REQUIRED] placeholders, no Blocker? Yes outstanding actions, RISK-01/RISK-02 resolved via delegated_decision classification + internal design-decision-sub-step sequencing (ST-17, ST-38) rather than ST-ID phasing (backlog slice defines them as single sealed items). Owned exclusively by sprint_planning_prompt.md's own seal for this cycle.",
-  "sprint_goal_path": "claude/cycles/2026-09-28__release-v9.8/sprint_goal.md",
-  "sprint_backlog_path": "claude/cycles/2026-09-28__release-v9.8/sprint_backlog.md",
-  "sprint_capacity_path": "claude/cycles/2026-09-28__release-v9.8/sprint_capacity.md",
+  "sprint_sealed": true,
+  "_sprint_sealed_note": "Set true at Sprint Planning STEP 7 for 2026-09-28__release-v9.8 \u2014 sign-off gate (STEP 6.2) passed, no [AC REQUIRED]/[ESTIMATE REQUIRED] placeholders, no Blocker? Yes outstanding actions, RISK-01/RISK-02 resolved via delegated_decision classification + internal design-decision-sub-step sequencing (ST-17, ST-38) rather than ST-ID phasing (backlog slice defines them as single sealed items). Owned exclusively by sprint_planning_prompt.md's own seal for this cycle.",
+  "sprint_goal_path": "claude/cycles/2026-09-30__release-v9.9/sprint_goal.md",
+  "sprint_backlog_path": "claude/cycles/2026-09-30__release-v9.9/sprint_backlog.md",
+  "sprint_capacity_path": "claude/cycles/2026-09-30__release-v9.9/sprint_capacity.md",
   "sprint_goal_status": "confirmed",
   "capacity_warn_acknowledged": false,
   "design_gate_bypass_authority": "",
@@ -38,7 +38,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-09-30T15:00:00Z",
-  "last_sync_utc": "2026-09-30T16:11:50Z",
+  "last_sync_utc": "2026-10-01T10:28:58Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-09-28T00:00:00Z",
   "deviation_consolidation_review_cycle_count": 1,
@@ -146,31 +146,31 @@
       "resolution_summary": "Granted -- narrow, plan-authorised write exception (same class as BLG-GOV-337's workforce_capacity.md precedent), scoped ONLY to applying the already-determined, already-published replacement text for: BLG-FEAT-59/60/63/BLG-FE-84 Gate criteria lines (ST-27/BLG-GOV-345 determination) and BLG-FEAT-74 Provisional-Target line (ST-23/BLG-SPEC-160 determination). Does not extend to any other backlog.md edit, any claude/strategy/ file, or any future item -- each is its own one-time authorisation citing this ESC ID in its commit message. (Same ruling also recorded on the EPIC-07 branch for ST-27's own use.)"
     },
     "ESC-CLOSE-20260928-01": {
-      "summary": "execution_prompt.md §3.2.A same-EPIC cross-story testing-gap disclosure consistency check — deferred 3 consecutive cycles (v9.5→v9.6→v9.7), no prompt_change_log.md entry; lessons_learnt_prompt.md §3.7 mandatory recurrence escalation",
+      "summary": "execution_prompt.md \u00a73.2.A same-EPIC cross-story testing-gap disclosure consistency check \u2014 deferred 3 consecutive cycles (v9.5\u2192v9.6\u2192v9.7), no prompt_change_log.md entry; lessons_learnt_prompt.md \u00a73.7 mandatory recurrence escalation",
       "owner": "Head of Specs Team",
       "sla_due_utc": "2026-10-01T00:00:00Z",
       "disposition": "Resolved",
       "resolved_utc": "2026-09-28T00:00:00Z",
       "resolved_by": "Sprint Execution Engine (agent-mediated, Head of Specs Team role, per explicit user direction to act as the relevant role and apply the lifecycle audit's filed improvements)",
-      "resolution_summary": "Closed by lifecycle audit AUD-2026-09-28's improvement AUD-2026-09-28-002: execution_prompt.md v3.79→v3.80 adds a same-EPIC cross-story testing-gap consistency check to §3.2.A's Frontend testing gate, giving the DoQ sign-off step concrete, structural wording rather than relying on independent PR review to catch a sibling story's identical unfiled gap. See claude/system/prompt_change_log.md 2026-09-28 entry and claude/system/changelogs/execution_prompt_changelog.md v3.80."
+      "resolution_summary": "Closed by lifecycle audit AUD-2026-09-28's improvement AUD-2026-09-28-002: execution_prompt.md v3.79\u2192v3.80 adds a same-EPIC cross-story testing-gap consistency check to \u00a73.2.A's Frontend testing gate, giving the DoQ sign-off step concrete, structural wording rather than relying on independent PR review to catch a sibling story's identical unfiled gap. See claude/system/prompt_change_log.md 2026-09-28 entry and claude/system/changelogs/execution_prompt_changelog.md v3.80."
     },
     "ESC-CLOSE-20260928-02": {
-      "summary": "release_planning_prompt.md §-1.2 Option(b) rebalance-equivalence precedent cited a 2nd time beyond the release its own rationale named — ruling needed on reuse limits",
+      "summary": "release_planning_prompt.md \u00a7-1.2 Option(b) rebalance-equivalence precedent cited a 2nd time beyond the release its own rationale named \u2014 ruling needed on reuse limits",
       "owner": "Head of Specs Team",
       "sla_due_utc": "2026-10-01T00:00:00Z"
     },
     "ESC-CLOSE-20260930-01": {
-      "summary": "PO Modify directive (seat >=1-2 build-and-ship U-items) unsatisfiable for lack of ready candidates across 5 non-consecutive cycles (v9.1-v9.4, v9.8) — ruling needed on whether idea-intake windows adequately prompt for genuine build-and-ship candidates",
+      "summary": "PO Modify directive (seat >=1-2 build-and-ship U-items) unsatisfiable for lack of ready candidates across 5 non-consecutive cycles (v9.1-v9.4, v9.8) \u2014 ruling needed on whether idea-intake windows adequately prompt for genuine build-and-ship candidates",
       "owner": "Product Owner",
       "sla_due_utc": "2026-10-03T00:00:00Z"
     },
     "ESC-CLOSE-20260930-02": {
-      "summary": "execution_state.json top-level summary array/field staleness (merge_gate, completed_items, deviations_filed) self-corrected at resume/close rather than prevented at write time — 3rd recurrence (v9.6->v9.7->v9.8), lessons_learnt_prompt.md §3.7 mandatory recurrence escalation, ruling needed on a STEP 3.1/3.1.D self-verification read-back",
+      "summary": "execution_state.json top-level summary array/field staleness (merge_gate, completed_items, deviations_filed) self-corrected at resume/close rather than prevented at write time \u2014 3rd recurrence (v9.6->v9.7->v9.8), lessons_learnt_prompt.md \u00a73.7 mandatory recurrence escalation, ruling needed on a STEP 3.1/3.1.D self-verification read-back",
       "owner": "Head of Specs Team",
       "sla_due_utc": "2026-10-03T00:00:00Z"
     },
     "ESC-CLOSE-20260930-03": {
-      "summary": "delivery_verification_prompt.md §7 Known Deviations sync note scope ambiguity — does not cover QA-evidence Pass_with_deviation items whose spec_references name a genuine canonical spec; ruling needed on whether to treat as a STEP 3-equivalent deviation or narrow the note's scope explicitly",
+      "summary": "delivery_verification_prompt.md \u00a77 Known Deviations sync note scope ambiguity \u2014 does not cover QA-evidence Pass_with_deviation items whose spec_references name a genuine canonical spec; ruling needed on whether to treat as a STEP 3-equivalent deviation or narrow the note's scope explicitly",
       "owner": "Head of Specs Team",
       "sla_due_utc": "2026-10-03T00:00:00Z"
     },
@@ -191,7 +191,7 @@
   "deferred_escalations": {
     "ESC-EXEC-20260910-01": {
       "cycle": "2026-09-09__release-v9.3",
-      "summary": "ST-22/EPIC-05 — genuine live-production AI-output boundary-language sample still pending (dry-run against illustrative examples satisfied the literal AC only)",
+      "summary": "ST-22/EPIC-05 \u2014 genuine live-production AI-output boundary-language sample still pending (dry-run against illustrative examples satisfied the literal AC only)",
       "trigger_type": "Strategy",
       "owning_authority": "AI Compliance & Governance Officer",
       "raised_utc": "2026-09-10T10:45:00Z",
@@ -200,9 +200,9 @@
       "disposition": "Deferred",
       "deferred_utc": "2026-09-14T12:42:04Z",
       "deferred_by": "AI Compliance & Governance Officer",
-      "deferred_rationale": "72h SLA breached (~26h past due when reviewed); genuine live-production sample still structurally blocked in this execution environment (no DATABASE_URL, no ANTHROPIC_API_KEY — re-confirmed). Cannot mark Resolved without fabricating evidence. Cannot mark Accepted Risk — Strategy-boundary trigger type is barred from that disposition per shared_standards.md §4.",
+      "deferred_rationale": "72h SLA breached (~26h past due when reviewed); genuine live-production sample still structurally blocked in this execution environment (no DATABASE_URL, no ANTHROPIC_API_KEY \u2014 re-confirmed). Cannot mark Resolved without fabricating evidence. Cannot mark Accepted Risk \u2014 Strategy-boundary trigger type is barred from that disposition per shared_standards.md \u00a74.",
       "deferred_trigger": "Re-acknowledge once BLG-AI-06 (generation-time sampling hook) ships and a genuine sample can be drawn, or sooner if production credentials become available in an execution session.",
-      "resolution_summary": "Deferred, not Resolved — see docs/ops/ai_output_boundary_sample_audit_20260910.md Addendum (2026-09-14) and claude/backlog/backlog.md BLG-GOV-178/BLG-AI-06."
+      "resolution_summary": "Deferred, not Resolved \u2014 see docs/ops/ai_output_boundary_sample_audit_20260910.md Addendum (2026-09-14) and claude/backlog/backlog.md BLG-GOV-178/BLG-AI-06."
     }
   },
   "last_rebalance_cycle": "2026-09-30__scheduled",
@@ -210,14 +210,14 @@
   "last_scheduled_rebalance_utc": "2026-09-30T16:11:50Z",
   "last_ideas_housekeeping_utc": "2026-09-30T14:44:46Z",
   "last_ideas_housekeeping_outcome": "7 rows archived (window IW-20260928-01: 7 Promoted-Backlog, including re-evaluated IDEA-data-model-20260919-02); 2 rows kept (IDEA-challenger-20260809-02 Rejected-but-strong, IDEA-director-of-hr-20260919-02 Parked-cycle-2); rejected_but_strong.md revival review: all 4 open entries remain Unmet -- IDEA-strategy-owner-20260304-02/IDEA-challenger-20260304-01 (strategy_rules.md section12.2 100-closed-trades-since-2026-09-23 threshold, no new evidence this cycle); IDEA-ai-compliance-20260321-01 (no substantial governance-decision-volume increase beyond normal cycle load); IDEA-challenger-20260809-02 (SI-02 gate data untouched this cycle) -- no revival action required; pipeline health: 180 active backlog items (post-groom), well above 5-item threshold, no action required",
-  "last_rebalance_outcome": "Standard tier; CPS=N/A (0 active initiatives, unchanged since 2026-04-03, 15 consecutive scheduled cycles) - no-change decision, DL-082; Product Value Ratio 0.094 (U=16/G=41/D=109/P=4 of 170, window v9.4-v9.8) - 5th consecutive Alert-tier reading, marginal improvement - PO Modify: BLG-BE-135/BLG-FE-193 (ATR consolidation + stop-loss transparency, from IW-20260930-01) named as the recommended next-release build-and-ship U-item candidate - first concrete candidate found in several cycles; Skill-Silo Alert rolling-3-cycle avg=83.7% (v9.6/v9.7/v9.8) - 2nd consecutive improving reading, no mandatory pull-forward; STEP 7.2 max role share 17.6% (Head of Specs Team, canonical compute_role_share_history.py method), no advisory; STEP 7.3 not re-measured (no plan release since last reading), carried forward; STEP 3.1 date-lapse re-check found 12 gated items lapsed (2 false positives excluded), 8 tracing to the already-tracked BLG-GOV-351 AI-review cluster; new BLG-GOV-358 §13-boundary finding filed (gap_risk_service.py/BLG-FEAT-65 has no recorded §13 review, apparently contradicts §13.3's exclusion text); idea intake window IW-20260930-01 (run standalone pre-run, 4 submissions from a disclosed 2-of-22-agent reduced-scope window): consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional); IDEA-director-of-hr-20260919-02 reached 3-cycle park hard cap, resolved Backlog (ungated) -> BLG-GOV-357; STEP 8.0 found 0 qualifying P0/P1 items (13 scanned); STEP 8.1 Option (b) defer (8th consecutive); STEP 8.1.5 standing §13-adjacent finding reconfirmed, no re-litigation; STEP 11.4 meta-review DUE and actioned (2 candidate patterns reviewed, both deferred with recorded rationale); 1 action-now prompt patch (roadmap_prompt.md v9.26->v9.27, STEP -1.6 standalone pre-run exception, from live session friction, not from the meta-review itself)",
+  "last_rebalance_outcome": "Standard tier; CPS=N/A (0 active initiatives, unchanged since 2026-04-03, 15 consecutive scheduled cycles) - no-change decision, DL-082; Product Value Ratio 0.094 (U=16/G=41/D=109/P=4 of 170, window v9.4-v9.8) - 5th consecutive Alert-tier reading, marginal improvement - PO Modify: BLG-BE-135/BLG-FE-193 (ATR consolidation + stop-loss transparency, from IW-20260930-01) named as the recommended next-release build-and-ship U-item candidate - first concrete candidate found in several cycles; Skill-Silo Alert rolling-3-cycle avg=83.7% (v9.6/v9.7/v9.8) - 2nd consecutive improving reading, no mandatory pull-forward; STEP 7.2 max role share 17.6% (Head of Specs Team, canonical compute_role_share_history.py method), no advisory; STEP 7.3 not re-measured (no plan release since last reading), carried forward; STEP 3.1 date-lapse re-check found 12 gated items lapsed (2 false positives excluded), 8 tracing to the already-tracked BLG-GOV-351 AI-review cluster; new BLG-GOV-358 \u00a713-boundary finding filed (gap_risk_service.py/BLG-FEAT-65 has no recorded \u00a713 review, apparently contradicts \u00a713.3's exclusion text); idea intake window IW-20260930-01 (run standalone pre-run, 4 submissions from a disclosed 2-of-22-agent reduced-scope window): consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional); IDEA-director-of-hr-20260919-02 reached 3-cycle park hard cap, resolved Backlog (ungated) -> BLG-GOV-357; STEP 8.0 found 0 qualifying P0/P1 items (13 scanned); STEP 8.1 Option (b) defer (8th consecutive); STEP 8.1.5 standing \u00a713-adjacent finding reconfirmed, no re-litigation; STEP 11.4 meta-review DUE and actioned (2 candidate patterns reviewed, both deferred with recorded rationale); 1 action-now prompt patch (roadmap_prompt.md v9.26->v9.27, STEP -1.6 standalone pre-run exception, from live session friction, not from the meta-review itself)",
   "last_rebalance_pvr": 0.094,
   "last_skill_silo_rolling_avg": 0.837,
   "last_rebalance_cps": 0,
   "last_meta_review_cycle": "2026-09-30__scheduled",
   "rebalance_cycles_since_meta_review": 0,
   "last_manage_roadmap_utc": "2026-09-30T14:38:17Z",
-  "last_manage_roadmap_outcome": "0 items retired (v9.8 was pure backlog-slice debt clearance, no §3-§7 roadmap item completed), 0 flagged stale, 0 ambiguous; 0 RA: markers pruned (1 already-retired non-numeric pointer, exempt); governance version-table audit DUE and run (invocation 3 of 3) - 0 mismatches across 22 tracked files, self-consistency PASS (v4.214/2026-09-30), 2 known untracked templates re-confirmed unchanged (decisions_record_template.md, scope_document_template.md); marker advanced to 2026-09-28__release-v9.8",
+  "last_manage_roadmap_outcome": "0 items retired (v9.8 was pure backlog-slice debt clearance, no \u00a73-\u00a77 roadmap item completed), 0 flagged stale, 0 ambiguous; 0 RA: markers pruned (1 already-retired non-numeric pointer, exempt); governance version-table audit DUE and run (invocation 3 of 3) - 0 mismatches across 22 tracked files, self-consistency PASS (v4.214/2026-09-30), 2 known untracked templates re-confirmed unchanged (decisions_record_template.md, scope_document_template.md); marker advanced to 2026-09-28__release-v9.8",
   "last_groom_backlog_utc": "2026-09-30T14:43:24Z",
   "last_groom_backlog_outcome": "40 archived (39 v9.8 shipped + BLG-QA-198, resolved in-session no prior COMPLETE banner), 0 orphans, 0 stale blockers, 0 promotion candidates (no next release scoped); 1 ephemeral section cleared (Release Slice v9.8 table); Gate Field Normalisation PASS; Effort Day-Range Validation PASS; Field-Completeness scans: 3 gaps found (BLG-QA-196/198/199), 2 corrected (Provisional-Target added), 1 reclassified Complete-Archive; Gate-Inheritance scan PASS; Governance Prompt Duplicate Cross-Check PASS (0 candidates); Spec-Debt Deep Review not due (1 of 3 since marker 2026-09-23__release-v9.7); Deferral Age Validation: 0 items at 3+ cycles, 3 items advisory-noted with a shipped-and-passed Provisional-Target (v9.7, 1st miss); ID Uniqueness: 5 pre-existing archive duplicates unchanged, 0 new",
   "active_pog": {},
@@ -225,10 +225,10 @@
     "ESC-20260304-01": {
       "cycle": "2026-03-04__release-v1.8",
       "summary": "Settings endpoint method decision resolved",
-      "resolution": "Option (a) — update settings_endpoints.md to document PATCH /settings/{settings_id} and POST /settings as canonical. No backend change. No decision record required.",
+      "resolution": "Option (a) \u2014 update settings_endpoints.md to document PATCH /settings/{settings_id} and POST /settings as canonical. No backend change. No decision record required.",
       "resolved_by": "Product Owner",
       "resolved_utc": "2026-03-04T00:25:00Z",
-      "formal_capture": "Sprint Planning cycle — ST-09 acceptance criteria update"
+      "formal_capture": "Sprint Planning cycle \u2014 ST-09 acceptance criteria update"
     }
   },
   "release_plan": {
