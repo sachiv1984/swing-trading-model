@@ -2,7 +2,10 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.16.0
+  version: 3.17.0
+  # v3.17.0 (2026-10-01, ST-01, EPIC-01, v9.9): GET /positions' Position schema
+  # gains atr_calculated_at, stop_calculated_at, active_atr_multiplier
+  # (BLG-BE-135) -- no new endpoint, existing response schema only.
   # v3.16.0 (2026-09-21, ST-04, EPIC-01, v9.6): reflection_reminder alert type
   # (BLG-FEAT-98) — notification/preference alert_type enums gain `reflection_reminder`;
   # AlertEvaluationResult gains `reflection_reminders`; NotificationItem gains `context`
@@ -6373,6 +6376,20 @@ components:
           properties:
             initial_stop: { type: number }
             atr_value: { type: number }
+            atr_calculated_at:
+              type: string
+              format: date-time
+              nullable: true
+              description: v9.9 ST-01 (BLG-BE-135) — when atr_value was last freshly recomputed. Null if never recomputed since this field was added.
+            stop_calculated_at:
+              type: string
+              format: date-time
+              nullable: true
+              description: v9.9 ST-01 (BLG-BE-135) — when the current stop was last recalculated against ATR (grace-period carry-over does not update this). Null if never recomputed since this field was added.
+            active_atr_multiplier:
+              type: number
+              nullable: true
+              description: v9.9 ST-01 (BLG-BE-135) — the ATR multiplier used to produce the current stop (2 while profitable, 5 at a loss, per strategy_rules.md §7.2). Null during grace period or if never recomputed since this field was added.
             fx_rate: { type: number }
             live_fx_rate: { type: number }
             entry_note: { type: string, nullable: true }

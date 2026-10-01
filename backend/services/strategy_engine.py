@@ -97,16 +97,19 @@ def compute_risk_on(price: pd.Series, ma_period: int = 200) -> pd.Series:
 
 
 def compute_atr(prices: pd.DataFrame) -> pd.DataFrame:
-    high = prices.copy()
-    low = prices.copy()
-    close = prices.copy()
-    tr1 = high - low
-    tr2 = (high - close.shift(1)).abs()
-    tr3 = (low - close.shift(1)).abs()
-    tr = pd.concat([tr1, tr2, tr3], axis=1)
-    tr.columns = pd.MultiIndex.from_tuples([(c, "tr") for c in tr.columns])
-    tr = tr.T.groupby(level=0).max().T
-    return tr.rolling(14).mean()
+    """
+    Close-to-close ATR approximation, applied per ticker column.
+
+    Delegates to utils.pricing.compute_atr_close_approximation (ST-01,
+    EPIC-01, v9.9, BLG-BE-135) -- this backtest engine only ever has close
+    prices available (backtest_rule_service.py / production_strategy.py both
+    fetch yfinance's "Close" column only), so this has always been a
+    close-only approximation, not true ATR. See strategy_rules.md §7.1 for
+    why this is intentionally NOT unified with the real-OHLC ATR formulas
+    used by live stop-loss calc and the screener.
+    """
+    from utils.pricing import compute_atr_close_approximation
+    return prices.apply(lambda col: compute_atr_close_approximation(col, 14))
 
 
 def compute_signals(prices: pd.DataFrame, lookback: int, top_n: int, ma_period: int = 200,

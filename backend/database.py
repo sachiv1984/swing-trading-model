@@ -735,10 +735,15 @@ def download_ticker_data(ticker: str, start_date: str, end_date: str = None):
 
 
 def compute_atr_simple(prices: pd.Series, period: int = 14):
-    """Calculate ATR using close-to-close approximation (simpler)"""
-    close_to_close = prices.diff().abs()
-    atr = close_to_close.rolling(window=period, min_periods=period).mean()
-    return atr
+    """
+    Thin wrapper over the canonical close-to-close ATR approximation (ST-01,
+    EPIC-01, v9.9, BLG-BE-135) -- kept here under its original name so
+    existing callers (e.g. services/signal_service.py) are unaffected.
+    See utils.pricing.compute_atr_close_approximation for the full
+    consolidation rationale and strategy_rules.md §7.1 for the RISK-01 ruling.
+    """
+    from utils.pricing import compute_atr_close_approximation
+    return compute_atr_close_approximation(prices, period)
 
 
 # ============================================================================

@@ -11,7 +11,7 @@ All functions are independent of FastAPI for maximum testability.
 """
 import re
 from typing import Dict, List, Optional, Tuple
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 from services.grace_service import compute_grace_days_remaining
 from services.sector_service import get_sector_and_industry
@@ -204,6 +204,16 @@ def get_positions_with_prices() -> List[Dict]:
         last_reviewed_at = pos.get('last_reviewed_at')
         last_reviewed_at = last_reviewed_at.isoformat() if last_reviewed_at else None
 
+        # ST-01 (BLG-BE-135, EPIC-01, v9.9): stop/ATR recalculation
+        # timestamps and active multiplier, written by analyze_positions()
+        # and run_nightly_trailing_stop_update() (strategy_rules.md §7.1).
+        # NULL (-> None) for any position not yet recomputed since DS-22.
+        stop_calculated_at = pos.get('stop_calculated_at')
+        stop_calculated_at = stop_calculated_at.isoformat() if stop_calculated_at else None
+        atr_calculated_at = pos.get('atr_calculated_at')
+        atr_calculated_at = atr_calculated_at.isoformat() if atr_calculated_at else None
+        active_atr_multiplier = pos.get('active_atr_multiplier')
+
         # Build position dict
         positions_list.append({
             "id": str(pos['id']),
@@ -248,6 +258,9 @@ def get_positions_with_prices() -> List[Dict]:
             "grace_days_remaining": grace_days_remaining,
             "stop_reason": f"Grace period ({holding_days}/10 days)" if grace_period else "Active",
             "atr_value": pos.get('atr', 0),
+            "atr_calculated_at": atr_calculated_at,
+            "stop_calculated_at": stop_calculated_at,
+            "active_atr_multiplier": active_atr_multiplier,
             "fx_rate": pos.get('fx_rate', 1.0),
             "live_fx_rate": live_fx_rate,
             "total_cost": round(pos.get('total_cost', 0), 2),
@@ -413,9 +426,14 @@ def analyze_positions() -> Dict:
             if not atr_value or atr_value == 0:
                 print(f"   ⚠️  No ATR in database, calculating...")
                 atr_value = calculate_atr(pos['ticker'])
-                
+
                 if atr_value and atr_value > 0:
-                    update_position(str(pos['id']), {'atr': round(atr_value, 4)})
+                    update_position(str(pos['id']), {
+                        'atr': round(atr_value, 4),
+                        # ST-01 (BLG-BE-135, EPIC-01, v9.9): stamp when ATR was
+                        # actually freshly computed, not merely read from cache.
+                        'atr_calculated_at': datetime.now(timezone.utc),
+                    })
                     print(f"   💾 Stored calculated ATR: {atr_value:.2f}")
             
             if atr_value and atr_value > 0:
@@ -476,13 +494,21 @@ def analyze_positions() -> Dict:
         # Update position in database
         if live_price:
             print(f"   💾 Updating position in database...")
-            update_position(str(pos['id']), {
+            position_updates = {
                 'current_price': round(current_price, 4),
                 'current_stop': round(trailing_stop_native, 2),
                 'holding_days': holding_days,
                 'pnl': round(pnl_gbp, 2),
                 'pnl_pct': round(pnl_pct, 2)
-            })
+            }
+            # ST-01 (BLG-BE-135, EPIC-01, v9.9): only stamp stop_calculated_at /
+            # active_atr_multiplier when the stop was actually recalculated
+            # against ATR (grace period carries the stop over unchanged, with
+            # atr_mult=0 -- not a real multiplier value worth persisting).
+            if not grace_period and atr_mult:
+                position_updates['stop_calculated_at'] = datetime.now(timezone.utc)
+                position_updates['active_atr_multiplier'] = atr_mult
+            update_position(str(pos['id']), position_updates)
         
         # Add to actions
         actions.append({
@@ -605,11 +631,18 @@ def run_nightly_trailing_stop_update() -> Dict:
             settings=_SETTINGS,
         )
 
+        now_utc = datetime.now(timezone.utc)
         update_position(position_id, {
             'current_stop': round(new_stop_native, 2),
             'current_price': round(live_price, 4),
             'atr': round(atr_value, 4),
             'holding_days': holding_days,
+            # ST-01 (BLG-BE-135, EPIC-01, v9.9): the nightly job always
+            # freshly recomputes both ATR and the stop in the same pass, so
+            # both timestamps are stamped together here.
+            'stop_calculated_at': now_utc,
+            'atr_calculated_at': now_utc,
+            'active_atr_multiplier': atr_mult,
         })
 
         results.append({

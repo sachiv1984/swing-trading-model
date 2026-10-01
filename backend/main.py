@@ -1002,6 +1002,9 @@ def get_monthly_pnl_endpoint(year: Optional[int] = None, format: Optional[str] =
     if format is not None and format != "csv":
         return JSONResponse(status_code=400,
             content={"status": "error", "message": "format must be: csv"})
+    if year is not None and (year < 1000 or year > 9999):
+        return JSONResponse(status_code=400,
+            content={"status": "error", "message": "year must be a valid four-digit integer"})
     try:
         report = get_monthly_pnl_report(year=year)
         if format == "csv":
