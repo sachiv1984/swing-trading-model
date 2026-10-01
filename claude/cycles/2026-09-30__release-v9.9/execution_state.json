@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-01T11:45:00Z",
+  "last_updated_utc": "2026-10-01T12:22:53Z",
   "epics": {
     "EPIC-01": {
       "status": "not_started",
@@ -93,21 +93,21 @@
         "ST-04": {
           "title": "utils/pricing.py's ATR-fallback Yahoo Finance call still uses a hardcoded timeout, not utils.upstream_call",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1852,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "9cdfc2c6438b0661b37a9637fd3a873d630a96ee",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-01T12:22:53Z",
+          "acceptance_verified": true,
           "spec_references": [],
-          "spec_reference_not_applicable": false,
-          "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "spec_reference_not_applicable": true,
+          "spec_reference_not_applicable_reason": "config/timeout-sourcing consistency fix (pattern already established by prior ST-07 migration), no prior canonical spec — verified via tests/test_upstream_call_helper.py::TestST04CalculateAtrYahooFallbackUsesConfiguredTimeout",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
           "sign_off_record": null,
           "notes": ""
         },
@@ -824,7 +824,12 @@
   "delegated_items": [
     "ST-01"
   ],
-  "completed_items": [],
+  "completed_items": [
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05"
+  ],
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [],
