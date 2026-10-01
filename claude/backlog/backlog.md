@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-01 (session — PR #1884/EPIC-01 review, 1 new item added: BLG-QA-204 (get_settings() not mocked in ST-01's timestamp-persistence test)); prior — 2026-09-30 (release planning 2026-09-30__release-v9.9 — Release Slice v9.9 ephemeral section appended, 35 items, marker `RP:v9.9:2026-09-30__release-v9.9`; no other structural changes); prior — 2026-09-30 (roadmap rebalance 2026-09-30__scheduled — 4 new items added: BLG-BE-135/BLG-FE-193 (consolidated from IW-20260930-01, ATR consolidation + stop-loss transparency), BLG-GOV-357 (sign-off SPOF matrix, 3-cycle park cap), BLG-GOV-358 (§13-boundary gap-risk finding); 12 items reclassified A (date-lapsed — verify) at STEP 3.1); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-01 (sprint execution EPIC-05/ST-28 — 1 new item added: BLG-SPEC-178 (new live-vs-doc divergences found by the new drift-detector tool, beyond the 5 originally known)); prior — 2026-10-01 (session — PR #1884/EPIC-01 review, 1 new item added: BLG-QA-204 (get_settings() not mocked in ST-01's timestamp-persistence test)); prior — 2026-09-30 (release planning 2026-09-30__release-v9.9 — Release Slice v9.9 ephemeral section appended, 35 items, marker `RP:v9.9:2026-09-30__release-v9.9`; no other structural changes); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4174,6 +4174,33 @@ No document currently maps which roles are authorised to sign off each governanc
 **Acceptance Criteria**
 - Test explicitly mocks `get_settings()` to the real production multiplier values
 - Assertion checks `active_atr_multiplier` equals the exact expected value (`2.0` or `5.0`) in both the profitable and losing branches, not merely `> 0`
+
+---
+
+### BLG-SPEC-178 — New live-vs-doc divergences found by the ST-28 drift-detector tool, beyond the 5 originally known
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-28/EPIC-05, cycle `2026-09-30__release-v9.9` (`scripts/check_data_model_drift.py`, `BLG-SPEC-157`) — 2026-10-01
+**Effort:** S (~1d, triage + disposition; may grow if any finding requires a live migration)
+**Provisional-Target:** TBD
+
+**Problem**
+Running the new `scripts/check_data_model_drift.py` against this sandbox's `readonly_staging` `DATABASE_URL` reproduced the 2 of 5 originally-known divergence classes still live today (BLG-SPEC-148's missing-index pattern, BLG-SPEC-150's orphaned-columns pattern — see below), confirming the tool works as intended. It also surfaced genuinely new findings beyond the original 5 that no prior story has triaged:
+
+1. **DS-17's unique index (`idx_positions_open_ticker_entry_date_unique`) is absent from staging's live `positions` table**, despite `data_model.md`'s own DS-17 section recording it "confirmed live in production as of 2026-09-23." The verification query cited there was run against **production** only — this is the first time anyone has checked staging specifically since. Staging and production may have been migrated independently and now disagree, or staging was never migrated. Needs a Data Model & Domain Schema Owner check against production (write access this sandbox does not have) to confirm whether production still has it, and if staging should be brought in line.
+2. **3 further undocumented, always-present `positions` columns** beyond the 4 already known and disclosed (`BLG-SPEC-150`/`BLG-SPEC-164`): `last_reviewed_at`, `risk_off_exit`, `strategy_version_at_entry`. Unlike the 4 known orphans, these are **not confirmed always-NULL** by this story — only their absence from `data_model.md`'s Fields table was checked. Needs its own live NULL/populated check and disposition (document vs. drop) before being folded into the existing orphaned-columns item.
+3. **8 nullable mismatches between `data_model.md`'s Fields table and live `positions`** — `created_at`, `holding_days`, `pnl`, `pnl_pct`, `portfolio_id`, `status`, `total_cost`, `updated_at` are all documented `NO` (not nullable) but report `YES` (nullable) live. Severity varies: `portfolio_id`/`total_cost`/`status` have an explicit `NOT NULL` in the documented `CREATE TABLE` block itself (a real, more concerning doc-vs-enforcement gap), while the other 5 (`created_at`, `holding_days`, `pnl`, `pnl_pct`, `updated_at`) only carry a `DEFAULT` in the documented SQL with no `NOT NULL` keyword — i.e. the Fields table's "NO" already disagreed with this document's own `CREATE TABLE` block before live was even checked.
+4. **`notifications.updated_at` is documented but not present live.**
+5. **10 documented `CREATE INDEX` names and 1 documented `ADD CONSTRAINT ... CHECK` name (`settings_risk_percent_check`) were not found live** — not yet individually triaged; at least one spot-checked case (`idx_trade_plans_ticker`) turned out to be a false positive from the tool reading a "Reversible:" rollback block's old index name rather than the current migration's actual index (`idx_trade_plans_ticker_upper`), so each of these 11 names needs a manual check before assuming it is a genuine gap rather than another rollback-text false positive.
+
+**Scope**
+- Data Model & Domain Schema Owner triages findings 1–5 above, one disposition each (confirm/correct `data_model.md`, or schedule a live migration)
+- Finding 5's false-positive risk means each of the 11 names needs individual confirmation, not a bulk assumption
+
+**Acceptance Criteria**
+- Each of the 5 findings above has an explicit disposition recorded (matches known pattern / needs live action / false positive / documentation fix)
+- Any genuine gap gets its own canonical-spec correction or migration-scheduling item, per the existing `BLG-SPEC-150`/`BLG-SPEC-151` precedent for the original 4 orphaned columns
 
 ---
 
