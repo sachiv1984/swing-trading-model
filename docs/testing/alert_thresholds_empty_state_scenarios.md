@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 0.1
-**Last Updated:** 2026-03-26
+**Version:** 0.2
+**Last Updated:** 2026-10-01 (ST-34, EPIC-05, v9.9, BLG-SPEC-169 — dropped the trailing period from the "No alert rules configured" heading assertion, matching shipped code and notifications.md's own DEV-v9.7-ST05-01 resolution)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint Item:** ST-11 — EPIC-04 (v2.3)
 **Spec Ref:** docs/specs/frontend/pages/notifications.md §Section 2 v0.3
@@ -33,7 +33,7 @@ Test scenarios covering the "Add alert rule" CTA button added to `AlertThreshold
 
 **Expected:**
 - BellPlus icon visible, centred, in muted (slate-600) colour
-- "No alert rules configured." heading in white, bold
+- "No alert rules configured" heading in white, bold
 - "Add an alert rule to receive notifications." body in muted text (slate-400)
 - "Add alert rule" button rendered below body text, centred
 - Button has cyan-to-violet gradient fill (matches design system primary action style)

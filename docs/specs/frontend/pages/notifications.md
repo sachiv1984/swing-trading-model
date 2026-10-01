@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.9
-**Last Updated:** 2026-09-24 (ST-05/ST-06, EPIC-02, v9.7 sprint execution — added Known Deviation DEV-v9.7-ST05-01: this spec's two empty-state headings still carry a trailing period that shipped code no longer has; deviation documentation only, no spec wording changed); prior — 2026-09-21 (v9.6 design gate — ST-04/BLG-FEAT-98: new `reflection_reminder` alert type — Reflection Reminder feed row and Email Preferences row); prior — 2026-09-18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143 — corrected "No notifications yet." heading to drop the trailing period, matching already-shipped `Notifications.js`; documentation-only); prior history retained — see prior entries in version control.
+**Version:** 0.10
+**Last Updated:** 2026-10-01 (ST-34, EPIC-05, v9.9, BLG-SPEC-169 — corrected §Section 2's and §Alert History's empty-state headings to drop the trailing period, matching already-shipped code and `design_system.md` §Data States; closed Known Deviation DEV-v9.7-ST05-01; documentation-only); prior — 2026-09-24 (ST-05/ST-06, EPIC-02, v9.7 sprint execution — added Known Deviation DEV-v9.7-ST05-01: this spec's two empty-state headings still carry a trailing period that shipped code no longer has; deviation documentation only, no spec wording changed); prior — 2026-09-21 (v9.6 design gate — ST-04/BLG-FEAT-98: new `reflection_reminder` alert type — Reflection Reminder feed row and Email Preferences row); prior history retained — see prior entries in version control.
 **Design Source (v0.9 reflection reminder):** docs/design/2026-09-21__release-v9.6/reflection-reminder/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md | docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md | docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md
@@ -196,7 +196,7 @@ For types without a configurable threshold: no threshold display is shown.
 
 **Empty state (no rules configured):**
 - Icon: bell with plus
-- Heading: **"No alert rules configured."**
+- Heading: **"No alert rules configured"**
 - Body: `"Add an alert rule to receive notifications."`
 - CTA: **"Add alert rule"** button
 
@@ -367,7 +367,7 @@ Click again to collapse.
 **Loading state:** Skeleton rows (5 rows at standard table-row height).
 
 **Empty state — no records:**
-- Heading: **"No alert history yet."**
+- Heading: **"No alert history yet"**
 - Body: `"Alert evaluations will appear here once the system has run."`
 
 **Empty state — filter applied, no matches:**
@@ -410,6 +410,7 @@ Click again to collapse.
 - **Target resolution release:** Backlog — reviewed at each `groom backlog` pass and the quarterly audit (no release scheduled; P4)
 - **Owner:** Frontend Specifications & UX Documentation Owner
 - **Backlog reference:** BLG-SPEC-169 (filed sprint execution 2026-09-24, cycle 2026-09-23__release-v9.7, ST-05/ST-06) — also covers `docs/testing/alert_thresholds_empty_state_scenarios.md` line 36.
+- **Resolution:** ✅ Resolved — ST-34 in cycle 2026-09-30__release-v9.9 corrected both headings above to drop the trailing period, matching the shipped code and `design_system.md` §Data States. `docs/testing/alert_thresholds_empty_state_scenarios.md` corrected in the same commit. BLG-SPEC-169 closed. Closed 2026-10-01.
 
 ---
 
@@ -445,6 +446,7 @@ When the System nav group is collapsed, the badge count propagates to the group 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.10 | 2026-10-01 | ST-34 (EPIC-05, v9.9, BLG-SPEC-169): §Section 2's "No alert rules configured." and §Alert History's "No alert history yet." headings corrected to drop the trailing period, matching `AlertThresholdsSection.js`/`NotificationsHistory.js` (shipped v9.7, ST-05/ST-06) and `design_system.md` §Data States. Closes Known Deviation DEV-v9.7-ST05-01. `docs/testing/alert_thresholds_empty_state_scenarios.md` corrected in the same commit. Documentation only. |
 | 0.9 | 2026-09-21 | v9.6 design gate — ST-04 (EPIC-01, BLG-FEAT-98): added §Reflection Reminder Row — new `reflection_reminder` alert type reusing the standard feed row plus a "Write reflection" link to `/TradeHistory?reflect={trade_id}` (re-opens the existing reflection modal; needed because the modal has no route and is skippable), 48 h / one-per-trade / auto-read-on-completion rules; new "Reflection Reminder" row in §Email Preferences (email-only scope, default Off). **Note:** no row for 0.8 (the v9.5 ST-30 heading fix) was appended to this table — recoverable via version control. Authority: Head of Specs Team. |
 | 0.7 | 2026-07-26 | ST-03 (EPIC-03, v7.8, BLG-FE-127) accessibility audit execution finding: Nav Alert Badge's `bg-red-500` fill gave white-on-red contrast of 3.76:1, below the WCAG AA 4.5:1 normal-text threshold (badge text is 8-9px, below the "large text" exemption size). Fixed directly (trivial single-token swap) to `bg-red-600` (4.83:1). Applies to both the collapsed-group-header and item-level badge instances (`src/Layout.js`). Test coverage: `tests/e2e/alert-nav-badge.spec.js` selectors updated in the same commit; `docs/testing/alert_nav_badge_scenarios.md` SC-ANB-VIS-01 updated. |
 | 0.6 | 2026-07-24 | v7.8 design gate — ST-03 (EPIC-03, BLG-FE-127): fixed the accessibility-audit standard and scope for the v7.7 notification/digest consolidation surface (this page's nav badge + digest grouping) and the `StandingAlert` primitive it builds on — WCAG AA text contrast (existing token) plus a new ≥3:1 focus-indicator contrast threshold (`design_system.md` §Hover & Focus States v1.4). Audit itself runs during sprint execution; trivial findings fixed directly, non-trivial findings filed as follow-up backlog items. Design source: `docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |
