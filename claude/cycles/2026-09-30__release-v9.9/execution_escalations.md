@@ -68,3 +68,19 @@ Last Updated: 2026-10-01
 - **Blocks execution:** No
 - **Disposition:** Open
 - **Resolution summary:** —
+
+## ESC-EXEC-20261001-05
+
+- **Raised at:** 2026-10-01T15:17:20Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-09-30__release-v9.9
+- **Step:** STEP 3.1 (EPIC-05 execution loop)
+- **ST/EPIC item:** ST-31 / EPIC-05
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-31's AC requires editing `claude/roadmap/current_roadmap.md`'s SI-02 field to cross-reference `docs/specs/metrics/si02_drift_score.md` §2.4's canonical "linked trade plan" definition (completing ST-23/v9.7's own already-decided cross-reference, which that cycle's `si02_drift_score.md` entry explicitly recorded as "deferred, outside Sprint Execution's write scope"). Sprint Planning classified this `autonomous`, but `claude/roadmap/*` (including `current_roadmap.md` by name) is explicitly listed as **not permitted** under `execution_prompt.md` §7's write-scope restriction, beyond the narrow `workforce_capacity.md` exception — the same gap already identified this session for ST-26 (`ESC-EXEC-20261001-04`), and the same gap `si02_drift_score.md` itself already disclosed at v9.7.
+- **Owning authority:** Head of Specs Team (write-scope/routing authority for `claude/roadmap/*`)
+- **Unblock criteria:** Head of Specs Team either makes the `current_roadmap.md` edit directly, or explicitly authorises this engine to do so (citing this escalation ID in the commit message, per the `workforce_capacity.md`/BLG-GOV-337 precedent format). The content itself is not in question — only the write-scope authorisation — since ST-23/v9.7 already decided what the cross-reference should say; this escalation and `ESC-EXEC-20261001-04` (ST-26) may be resolved together if Head of Specs Team grants a single `claude/roadmap/*` write-scope ruling covering both.
+- **SLA due-by:** 2026-10-02T15:17:20Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Open
+- **Resolution summary:** —

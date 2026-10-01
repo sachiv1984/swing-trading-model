@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-01T15:10:44Z",
+  "last_updated_utc": "2026-10-01T15:17:20Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -671,7 +671,7 @@
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1876,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
@@ -692,7 +692,7 @@
           "classification": "delegated_backend",
           "status": "not_started",
           "assigned_to": "human",
-          "github_issue": null,
+          "github_issue": 1877,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
@@ -713,7 +713,7 @@
           "classification": "delegated_backend",
           "status": "not_started",
           "assigned_to": "human",
-          "github_issue": null,
+          "github_issue": 1878,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
@@ -731,15 +731,15 @@
         },
         "ST-31": {
           "title": "Cross-reference current_roadmap.md's SI-02 field to the canonical 'linked trade plan' definition",
-          "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": null,
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "Head of Specs Team",
+          "github_issue": 1879,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-10-01T15:17:20Z",
+          "unblock_criteria": "Head of Specs Team edits claude/roadmap/current_roadmap.md directly or authorises this engine to do so, citing ESC-EXEC-20261001-05.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -748,14 +748,14 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Reclassified from autonomous: AC requires editing claude/roadmap/current_roadmap.md, outside Sprint Execution write scope (same gap as ST-26). Content already decided by ST-23/v9.7 (si02_drift_score.md §2.4); only the write-scope authorisation is outstanding. See ESC-EXEC-20261001-05."
         },
         "ST-32": {
           "title": "data_model.md DS-19 'Verification status' still says the migration was never run against a live PostgreSQL",
           "classification": "delegated_backend",
           "status": "not_started",
           "assigned_to": "human",
-          "github_issue": null,
+          "github_issue": 1880,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
@@ -776,7 +776,7 @@
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1881,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
@@ -797,7 +797,7 @@
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1882,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
@@ -853,7 +853,8 @@
     "ST-19",
     "ST-20",
     "ST-24",
-    "ST-26"
+    "ST-26",
+    "ST-31"
   ],
   "completed_items": [
     "ST-01",
@@ -871,7 +872,8 @@
     "ESC-EXEC-20261001-01",
     "ESC-EXEC-20261001-02",
     "ESC-EXEC-20261001-03",
-    "ESC-EXEC-20261001-04"
+    "ESC-EXEC-20261001-04",
+    "ESC-EXEC-20261001-05"
   ],
   "merge_gate": {
     "epics_merged": [
