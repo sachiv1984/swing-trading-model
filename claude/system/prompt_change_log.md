@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-09-24
+**Last Updated:** 2026-10-01
 
 # Prompt Change Log
 
@@ -13,6 +13,8 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-10-01 | `claude/system/OPERATIONAL_GUIDE.md` | v4.215→v4.216 | Sprint execution `2026-09-30__release-v9.9` EPIC-04/ST-21 (BLG-GOV-343): §6 source-prompt header and §14 Roadmap Engine Source row updated for roadmap_prompt.md v9.27→v9.28 (core+appendix split); §14 self-row `Version`/`Last Updated` and Change Log top row updated. | Head of Specs Team (Sprint Execution Engine, agent-mediated, §5.3, 2026-10-01) |
+| 2026-10-01 | `claude/system/roadmap_prompt.md` | v9.27→v9.28 | ST-21 (BLG-GOV-343, EPIC-04, v9.9): split into this core file (Sections 1–8 through STEP 8.5, under 25,000 tokens, fits a single read) plus new `claude/system/roadmap_prompt_appendix.md` (Part A: STEP 9 onward, direct continuation of the mandatory process; Part B: detailed historical rationale for rules now stated compactly in the core). No procedural step lost — diff-verified: every `##`/`###`/`####` heading in the pre-split file is present in core+appendix (1 heading text shortened, content unchanged). §6 source prompt header and §14 row updated. Companion changelog `roadmap_prompt_changelog.md` v9.28 row added. | Head of Specs Team (Sprint Execution Engine, agent-mediated, §5.3, 2026-10-01) |
 | 2026-09-24 | `claude/system/OPERATIONAL_GUIDE.md` | v4.205→v4.206 | Sprint execution `2026-09-23__release-v9.7` EPIC-05/ST-22 (BLG-GOV-333): §7 source prompt header and §14 Sprint Planning Engine row v3.18→v3.19; §14 self-row `Version`/`Last Updated` and Change Log top row updated. | Head of Specs Team (Sprint Execution Engine, agent-mediated, §5.3, 2026-09-24) |
 | 2026-09-24 | `claude/system/sprint_planning_prompt.md` | v3.18→v3.19 | ST-22 (BLG-GOV-333, EPIC-05, v9.7): STEP -1 Hard Gates 1-2 reconciled against `shared_standards.md` §10.1 — Gate 1's stale status enum replaced with a direct §10.1 citation; Gate 2 clarified as a distinct check cross-referenced to `release_planning_prompt.md` STEP 8/9. Head of Specs Team sign-off. Companion changelog `sprint_planning_changelog.md` v3.19 row added. | Head of Specs Team (Sprint Execution Engine, agent-mediated, §5.3, 2026-09-24) |
 | 2026-09-24 | `claude/system/OPERATIONAL_GUIDE.md` | v4.204→v4.205 | Sprint execution `2026-09-23__release-v9.7` EPIC-05/ST-21 (BLG-GOV-331): §14 Shared Standards row v3.34→v3.35; §14 self-row `Version`/`Last Updated` and Change Log top row updated. | Head of Specs Team (Sprint Execution Engine, agent-mediated, §5.3, 2026-09-24) |
