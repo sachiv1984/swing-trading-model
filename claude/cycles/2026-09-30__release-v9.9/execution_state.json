@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-01T15:17:20Z",
+  "last_updated_utc": "2026-10-01T15:25:04Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -690,17 +690,19 @@
         "ST-29": {
           "title": "Drop 4 confirmed-orphaned, always-NULL columns from the live positions table",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "human",
           "github_issue": 1877,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20261001-02",
+          "blocked_since_utc": "2026-10-01T15:25:04Z",
+          "unblock_criteria": "Data Model & Domain Schema Owner drops the 4 orphaned columns live (staging then production) and confirms via SELECT. See DEL-20261001-02.",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/data_model.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
@@ -711,17 +713,19 @@
         "ST-30": {
           "title": "Reconcile positions.fees_paid NOT NULL constraint (re-apply live, or confirm nullable is intentional)",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "human",
           "github_issue": 1878,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20261001-03",
+          "blocked_since_utc": "2026-10-01T15:25:04Z",
+          "unblock_criteria": "Data Model & Domain Schema Owner records a binding disposition (re-apply NOT NULL, or confirm nullable intentional) with stated reason. See DEL-20261001-03.",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/data_model.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
@@ -753,23 +757,25 @@
         "ST-32": {
           "title": "data_model.md DS-19 'Verification status' still says the migration was never run against a live PostgreSQL",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 1880,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "62eebdd8845ac0100877e382a93c10dfe7ae894d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-01T15:24:40Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-19"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Ran DS-19 own confirm-on-staging queries against readonly_staging DATABASE_URL (user-approved, read-only): both CHECK constraints and the unique index confirmed live. Also fixed header/footer version drift in data_model.md (opportunistic in-file, CLAUDE.md §7) -- header was stuck at 2.43 while footer had already moved to 2.44 from ST-01 same cycle."
         },
         "ST-33": {
           "title": "Correct the BLG-BE-128 citation to BLG-BE-129 for the latency_ms composition decision",
@@ -854,6 +860,8 @@
     "ST-20",
     "ST-24",
     "ST-26",
+    "ST-29",
+    "ST-30",
     "ST-31"
   ],
   "completed_items": [
@@ -866,7 +874,8 @@
     "ST-22",
     "ST-23",
     "ST-25",
-    "ST-27"
+    "ST-27",
+    "ST-32"
   ],
   "open_escalations": [
     "ESC-EXEC-20261001-01",
