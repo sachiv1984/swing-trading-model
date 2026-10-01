@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.43
-**Last Updated:** 2026-09-29 (ST-24, EPIC-05, v9.8, BLG-SPEC-154 — DS-04's CREATE TABLE block and CHECK constraint corrected to the live 7-value status list; new DS-21 entry documents the ensure_trade_plans_extended_status() migration); prior — 2026-09-24 (ST-26, EPIC-06, v9.7, BLG-SPEC-151 — reconciled positions.fees_paid nullability to nullable, matching live schema; constraint-reapplication decision filed as BLG-SPEC-165); prior — 2026-09-24 (ST-25, EPIC-06, v9.7, BLG-SPEC-150 — documented 4 confirmed-orphaned, always-NULL live positions columns; disposition recommend-drop, filed as BLG-SPEC-164); prior history retained — see prior entries in version control.
+**Version:** 2.45
+**Last Updated:** 2026-10-01 (ST-32, EPIC-05, v9.9, BLG-SPEC-167 — DS-19's Verification status confirmed applied against live staging Postgres; header/footer version resynced — this header had drifted behind the footer's 2.44/DS-22 update, opportunistic in-file fix per CLAUDE.md §7); prior — 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — DS-22; header/footer version kept in sync); prior — 2026-09-29 (ST-24, EPIC-05, v9.8, BLG-SPEC-154 — DS-04's CREATE TABLE block and CHECK constraint corrected to the live 7-value status list; new DS-21 entry documents the ensure_trade_plans_extended_status() migration); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -2394,7 +2394,7 @@ Reversible: `DROP INDEX IF EXISTS uq_notifications_reflection_reminder_trade;` t
 
 **Reads/writes outside these tables:** the evaluation step reads `trade_history` (`created_at`, `exit_date`) and `trade_reflections`; saving a reflection (`upsert_trade_reflection`) marks that trade's unread `reflection_reminder` notification read (`UPDATE notifications SET read = TRUE ...`), isolated by a SAVEPOINT so it cannot fail the reflection save.
 
-**Verification status:** the DDL and SQL above are covered by mocked-cursor unit tests (`tests/test_reflection_reminder.py`) that assert structure and parameters; they have **not** been executed against a live PostgreSQL (no database access in the execution sandbox). Confirm on staging after deploy: `SELECT conname, pg_get_constraintdef(oid) FROM pg_constraint WHERE conrelid IN ('notifications'::regclass, 'notification_preferences'::regclass) AND contype = 'c';` and `SELECT indexdef FROM pg_indexes WHERE indexname = 'uq_notifications_reflection_reminder_trade';`.
+**Verification status:** the DDL and SQL above are covered by mocked-cursor unit tests (`tests/test_reflection_reminder.py`) that assert structure and parameters, **and have been confirmed applied against live staging Postgres** (ST-32, EPIC-05, v9.9, BLG-SPEC-167, 2026-10-01 — readonly staging `DATABASE_URL` was available this session). Both `SELECT conname, pg_get_constraintdef(oid) FROM pg_constraint WHERE conrelid IN ('notifications'::regclass, 'notification_preferences'::regclass) AND contype = 'c';` and `SELECT indexdef FROM pg_indexes WHERE indexname = 'uq_notifications_reflection_reminder_trade';` were run directly: both `notifications_alert_type_check` and `notification_preferences_alert_type_check` include `'reflection_reminder'` in their value list, and `uq_notifications_reflection_reminder_trade` exists exactly as specified above (unique btree index on `(context->>'trade_id')` WHERE `alert_type = 'reflection_reminder'`). `ensure_alerts_tables()`'s startup-applied, idempotent migration is confirmed live.
 
 ---
 
@@ -2512,6 +2512,6 @@ Expect 3 rows: `stop_calculated_at` and `atr_calculated_at` both `timestamp with
 
 ---
 
-**Document Version:** 2.44
+**Document Version:** 2.45
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — DS-22; header/footer version kept in sync); prior — 2026-09-29 (ST-24, EPIC-05, v9.8, BLG-SPEC-154 — DS-21; header/footer version kept in sync); prior history retained — see prior entries in version control.
+**Last Review:** 2026-10-01 (ST-32, EPIC-05, v9.9, BLG-SPEC-167 — DS-19 live confirmation; header/footer version kept in sync); prior — 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — DS-22; header/footer version kept in sync); prior — 2026-09-29 (ST-24, EPIC-05, v9.8, BLG-SPEC-154 — DS-21; header/footer version kept in sync); prior history retained — see prior entries in version control.
