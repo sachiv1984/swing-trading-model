@@ -8,11 +8,11 @@
   "last_updated_utc": "2026-10-01T12:30:06Z",
   "epics": {
     "EPIC-01": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-30__release-v9.9/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-30__release-v9.9/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/test_reports_integration.py",
