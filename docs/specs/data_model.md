@@ -2461,7 +2461,19 @@ Original constraint (at table creation, v3.1) allowed only `('draft', 'active', 
 
 Persists the timestamp of the most recent trailing-stop/ATR recalculation, and the ATR multiplier actually used to produce the current `current_stop`, alongside the existing `current_stop`/`atr` columns. Written by both recompute paths (`analyze_positions()`'s on-load recompute and `run_nightly_trailing_stop_update()`'s nightly job — see `services/position_service.py` and `strategy_rules.md` §7.1). Exposed on `GET /positions` per `position_endpoints.md`.
 
-**RISK (no live DB write access in this execution environment):** the `DATABASE_URL` available in this sandbox is `readonly_staging`, granted `SELECT` only (confirmed via `information_schema.role_table_grants`; `ALTER TABLE` attempted and rejected with `InsufficientPrivilege: must be owner of table positions`). Same structural constraint as DS-17's original application. Confirmed via read-only query that none of the 3 new column names already exist on the live table. **Status: PENDING — migration not yet applied live.** Must be run by a role with staging write access (Data Model & Domain Schema Owner / Infrastructure & Operations Owner) before this PR merges — see `delegation_log.md` for this cycle.
+**RISK (no live DB write access in this execution environment):** the `DATABASE_URL` available in this sandbox is `readonly_staging`, granted `SELECT` only (confirmed via `information_schema.role_table_grants`; `ALTER TABLE` attempted and rejected with `InsufficientPrivilege: must be owner of table positions`). Same structural constraint as DS-17's original application. Confirmed via read-only query that none of the 3 new column names already exist on the live table prior to application. **Status: CONFIRMED APPLIED — see §Live Confirmation below.**
+
+**Live Confirmation (ST-01, EPIC-01, v9.9, BLG-BE-135, 2026-10-01):** the Up Migration above was run against **both staging and production** Supabase directly by the Data Model & Domain Schema Owner (not this execution session — no write access exists here, per the RISK note above). Verification query output was pasted back for both environments, and independently re-confirmed by this session against the staging `readonly_staging` connection:
+
+```json
+[
+  {"column_name": "active_atr_multiplier", "data_type": "numeric", "is_nullable": "YES"},
+  {"column_name": "atr_calculated_at", "data_type": "timestamp with time zone", "is_nullable": "YES"},
+  {"column_name": "stop_calculated_at", "data_type": "timestamp with time zone", "is_nullable": "YES"}
+]
+```
+
+This matches the migration's own definition exactly (2 nullable `TIMESTAMPTZ`, 1 nullable `DECIMAL(4,2)`/`numeric`). **DS-22 is confirmed live in both staging and production as of 2026-10-01.**
 
 ### Up Migration (v2.43 → v2.44)
 
@@ -2496,7 +2508,7 @@ Expect 3 rows: `stop_calculated_at` and `atr_calculated_at` both `timestamp with
 
 **Sign-off:**
 - Data Model & Domain Schema Owner: migration content reviewed and approved for application — additive, nullable, reversible, no pre-check required (no existing-row constraint to violate). Sprint Execution Engine (agent-mediated, Data Model & Domain Schema Owner role — §5.3), 2026-10-01.
-- Data Model & Domain Schema Owner: **Confirmed applied** — *pending*. Live write access required; see RISK note above.
+- Data Model & Domain Schema Owner: **Confirmed applied** — 2026-10-01. Migration run directly against both staging and production Supabase (outside this execution session — no write access exists here); verification query output pasted back for both and independently re-confirmed against staging. See §Live Confirmation above. `DEL-20261001-01` resolved.
 
 ---
 

@@ -18,4 +18,4 @@ Last Updated: 2026-10-01
 - **Spec reference:** docs/specs/data_model.md#DS-22
 - **Unblock criteria:** Migration applied to staging; verification query (DS-22) confirms all 3 columns present (2 nullable TIMESTAMPTZ, 1 nullable DECIMAL(4,2)). Update DS-22's sign-off block from "pending" to "Confirmed applied" with the verification output once run.
 - **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-09-30__release-v9.9/EPIC-01`
-- **Status:** Pending
+- **Status:** Unblocked — 2026-10-01T12:29:32Z. Data Model & Domain Schema Owner ran the migration against both staging and production directly; verification output pasted back and independently re-confirmed by this session against staging. See `data_model.md` §DS-22 Live Confirmation.
