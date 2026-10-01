@@ -1,8 +1,8 @@
 **Owner:** PMO Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-09-24 (ST-28, EPIC-07, v9.7, BLG-OPS-167 — added yfinance, Anthropic, Supabase, and Render entries, covering all 5 dependencies named in this cycle's failure-mode-matrix story; Alpaca and News API entries unchanged)
+**Version:** 1.2
+**Last Updated:** 2026-10-01 (ST-33, EPIC-05, v9.9, BLG-SPEC-168 — CFM-03's citation corrected from `BLG-BE-128` to the correct `BLG-BE-129`; documentation only); prior — 2026-09-24 (ST-28, EPIC-07, v9.7, BLG-OPS-167 — added yfinance, Anthropic, Supabase, and Render entries, covering all 5 dependencies named in this cycle's failure-mode-matrix story; Alpaca and News API entries unchanged)
 **Cycle:** 2026-04-29__release-v3.1 (ST-12)
 
 ---
@@ -137,7 +137,7 @@ This register documents all external API dependencies of the Momentum Trading As
 |----|------|-------------|------------|
 | CFM-01 | Missing API key | If `ANTHROPIC_API_KEY` is not configured, AI features must degrade gracefully rather than 500 — a trading system's core function must not depend on an advisory-only AI feature being available. |
 | CFM-02 | Transient 5xx / rate limit / timeout | Anthropic's own infrastructure can return transient errors or rate-limit responses under load, distinct from a genuine client-side error (bad request, auth failure). |
-| CFM-03 | Retry backoff inflating recorded latency | Retried calls' recorded `latency_ms` includes backoff sleep time between attempts, not just the final successful attempt's duration (documented as intentional, see `docs/specs/api_contracts/ai_endpoints.md` §Implementation constraints, ST-13/BLG-BE-128, v9.7). |
+| CFM-03 | Retry backoff inflating recorded latency | Retried calls' recorded `latency_ms` includes backoff sleep time between attempts, not just the final successful attempt's duration (documented as intentional, see `docs/specs/api_contracts/ai_endpoints.md` §Implementation constraints, ST-13/BLG-BE-129, v9.7). |
 
 #### Mitigations in Place
 
