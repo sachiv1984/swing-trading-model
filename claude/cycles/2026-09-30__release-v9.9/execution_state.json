@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T07:27:17Z",
+  "last_updated_utc": "2026-10-05T08:48:52Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -842,35 +842,46 @@
       }
     },
     "EPIC-06": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-30__release-v9.9/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-30__release-v9.9/qa_evidence_EPIC-06.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/recent-trades-zero-pnl-badge.spec.js"
+      ],
       "stories": {
         "ST-35": {
           "title": "RecentTradesWidget icon-background badge uses two-way (>=0) colour logic for zero P&L",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "7013c331dbca423f9d886929cbd60f007a1a10ef",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:48:42Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Data States",
+            "tests/e2e/recent-trades-zero-pnl-badge.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Three-way badge split per design_system.md zero-neutral rule; Playwright SC-RTB-01..04 4/4 locally (x2), mutation to old >=0 logic fails RTB-01/04. CI Playwright confirmation pending on PR. No deviation."
         }
+      },
+      "sign_off_record": {
+        "status": "cleared",
+        "method": "agent_mediated",
+        "role": "Director of Quality",
+        "date": "2026-10-05"
       }
     }
   },
@@ -900,7 +911,8 @@
     "ST-25",
     "ST-27",
     "ST-28",
-    "ST-32"
+    "ST-32",
+    "ST-35"
   ],
   "open_escalations": [
     "ESC-EXEC-20261001-01",
