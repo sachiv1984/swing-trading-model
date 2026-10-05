@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T09:15:22Z",
+  "last_updated_utc": "2026-10-05T09:30:49Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -251,203 +251,240 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "merged",
       "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1888,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-30__release-v9.9/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_api_contracts.py",
+        "tests/test_null_fee_trade_audit.py",
+        "tests/test_ci_scripts_io_boundary.py",
+        "tests/test_strategy_invariants_property.py",
+        "tests/test_reflection_reminder_postgres.py",
+        "tests/test_ui_copy_forbidden_phrases.py"
+      ],
       "stories": {
         "ST-10": {
           "title": "GET /reports/tax-year returns HTTP 500 against its own test fixture",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "eff1ea9845fd524b8b317615df721ceb693d0d95",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:05:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_api_contracts.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Root cause: test-isolation gap (unpatched get_monthly_pnl_snapshots_in_range added by v9.6 ST-08), not an endpoint defect -- documented in commit message. Passes alone; full suite green. No deviation."
         },
         "ST-11": {
           "title": "Strategy-rule -> test traceability matrix for strategy_rules.md S4-S8",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "7af317f69f49d166a328c1d54ce2c6cab40a6564",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:23:17Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/testing/strategy_rule_test_traceability_matrix.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Matrix published; 51.0% (25/49) clauses asserted, 69.4% incl. partial. Follow-ups filed grouped by area as BLG-QA-205..208 (source scope said one per clause; grouped into 4 area items each listing its clause IDs -- disclosed in qa_evidence). No spec deviation."
         },
         "ST-12": {
           "title": "Property-based tests for 'stop never decreases' and sizing validity rules",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "e160a8d806f8e334b614989e57c87384d8b28968",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:10:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_strategy_invariants_property.py",
+            "claude/strategy/strategy_rules.md#7.3",
+            "claude/strategy/strategy_rules.md#4.1.4"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "hypothesis property tests for §7.3 ratchet + §4.1.4 validity; broken ratchet falsified (synthetic + real-code mutation, restored). No deviation."
         },
         "ST-13": {
           "title": "Real-Postgres integration test for the reflection-reminder evaluation step",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "d1312ca5c3020c1591d8620b6772eedb49d46716",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:13:49Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_reflection_reminder_postgres.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Phase B real-Postgres test; verified locally against throwaway Postgres 18 (not staging), 6/6 mutations caught. Phase A skip confirmed. Real Phase B CI run to be confirmed on PR. No deviation."
         },
         "ST-14": {
           "title": "Convert remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules swap pattern",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "c2ab1ea12a38def275b3b83c7611524351754a8e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:38:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/_real_database.py",
+            "tests/conftest.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "37 files re-grepped (29 collection-time leakers, 6 runtime pops, 2 comment-only). Category A -> isolated copy (13), B -> scoped restore (16), C/runtime -> restore fixture (6); permanent conftest leak guard added. Full suite 2056 passed; simulated Phase B 2067 passed; reverse-order 0 database-guard trips, remaining 32 failures pre-existing utils.* leak (identical on main) -> BLG-QA-209. No spec deviation."
         },
         "ST-15": {
           "title": "Add automated test coverage for the I/O-boundary functions in EPIC-04's staleness/CI-usage scripts",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "f98732cd93982e917f8f2d1ff9953666a2bf1f32",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:05:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_ci_scripts_io_boundary.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "20 mocked I/O-boundary tests; deliberate pagination regression (unconditional break after page 1) fails 2 of them. No deviation."
         },
         "ST-16": {
           "title": "test_null_fee_trade_audit.py's inspect.getsource() call fails against the database module stub",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "86612f9f3c66e0e3c765d98738aa829dc8d9f7e8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:05:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_null_fee_trade_audit.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Converted to isolated importlib copy of database.py. 4/4 pass alone and in full suite. No deviation."
         },
         "ST-17": {
           "title": "Prove the non-registry dependency check fails a real PR, and confirm it is a required status check on main",
-          "classification": "delegated_backend",
-          "status": "not_started",
-          "assigned_to": "human",
-          "github_issue": null,
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1865,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "8a1db62458d52d22906d532b5c49e1309600eec2",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:24:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/non_registry_dependency_check_live_fire_2026-10-05.md",
+            ".github/workflows/non-registry-dependency-check.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Reclassified delegated_backend -> autonomous 2026-10-05 (sealed sprint_backlog.md classifies it autonomous; the engine could perform both ACs: throwaway PR + read-only branch-protection summary API; no delegation record existed to cancel). Failing run 37282917791 recorded. Check NOT required on main -> BLG-OPS-177. No spec deviation."
         },
         "ST-18": {
           "title": "Harden the UI-copy boundary lint against obfuscation-grade and cross-node phrase splits",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "7ef43618f3b6c03ac8ffc038bfa3e76da1e348bc",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:18:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_ui_copy_forbidden_phrases.py",
+            "tests/test_ui_copy_forbidden_phrases.py",
+            "scripts/ui_copy_lint_babel_differential.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "All BLG-QA-194 bypasses detected by regression tests or documented as accepted limits; babel differential 0 missed hits over src/ (212 files, 12,891 literals). No deviation."
         }
+      },
+      "sign_off_record": {
+        "status": "cleared",
+        "method": "agent_mediated",
+        "role": "Director of Quality",
+        "date": "2026-10-05"
       }
     },
     "EPIC-04": {
@@ -918,7 +955,16 @@
     "ST-27",
     "ST-28",
     "ST-32",
-    "ST-35"
+    "ST-35",
+    "ST-10",
+    "ST-16",
+    "ST-15",
+    "ST-12",
+    "ST-13",
+    "ST-18",
+    "ST-11",
+    "ST-17",
+    "ST-14"
   ],
   "open_escalations": [
     "ESC-EXEC-20261001-01",
@@ -931,19 +977,20 @@
     "epics_merged": [
       "EPIC-01",
       "EPIC-02",
-      "EPIC-06"
+      "EPIC-06",
+      "EPIC-03"
     ],
     "epics_pending": [
       "EPIC-04",
-      "EPIC-05",
-      "EPIC-03"
+      "EPIC-05"
     ],
     "all_merged": false
   },
   "process_notes": [
     "EPIC-01 PR #1884: all CI checks green, mergeable=MERGEABLE, mergeStateStatus=BLOCKED (no reviews yet). STEP 4 merge gate conditions unmet: 'QA sign-off comment from Director of Quality on PR' and 'Product Owner acceptance' are both outstanding -- always-human gates (execution_prompt.md §5.3), not self-approvable. Per 'park and continue other items', proceeding to EPIC-04 (next in sprint_backlog.md's merge order) rather than stalling the sprint on this EPIC's human sign-off wait.",
     "2026-10-05 resume: PR #1886 (EPIC-02) merged 17 EPIC-04/EPIC-05 commits into main alongside ST-06-ST-09, because EPIC-02's branch was cut on top of the EPIC-04/05 linear history. CLAUDE.md §2 branch-matching deviation, plus bypass of the STEP 4 merge gate for those EPICs. Per user direction: retroactive gate. Recorded in qa_evidence_EPIC-02/04/05.md, EPIC-04/05 marked in_progress with merged_via.retroactive_gate=pending. execution_state.json had also left EPIC-04/05 at not_started and ST-33/ST-34 at not_started despite their commits being on main; corrected.",
-    "2026-10-05: EPIC-06 PR #1889 merged (576b27df, 2026-10-05T09:05:04Z). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-06 empty -- nothing to reconcile."
+    "2026-10-05: EPIC-06 PR #1889 merged (576b27df, 2026-10-05T09:05:04Z). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-06 empty -- nothing to reconcile.",
+    "2026-10-05 resume (run sprint): local main was 20 commits behind origin/main at session start -- pulled before reading state (LL-v7.2-P3-01). Merge-gate resume sync (LL-v3.9-P3-1): EPIC-03 PR #1888 found MERGED (mergedAt 2026-10-05T09:25:32Z, merge commit e502f2aa) while execution_state.json still recorded pr_status=open; EPIC-03 moved to epics_merged, status/pr_status=merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-03 empty -- nothing to reconcile. Block re-evaluation: ESC-EXEC-20261001-01..05 still Open (all past SLA and open >=72h; non-blocking, so advisory only per shared_standards.md §16.4.1) and DEL-20261001-02/03 still Open with no [EPIC-05][ST-29]/[ST-30] commits -- ST-19/20/24/26/29/30/31 remain blocked."
   ],
   "sealed": false,
   "sealed_utc": null

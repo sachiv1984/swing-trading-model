@@ -52,6 +52,13 @@ _SKIP_PHASE_A = "stub" in _DATABASE_URL.lower()
 _SKIP_REASON = "Phase A — DATABASE_URL is a stub; rollback verification requires real Postgres (Phase B)"
 
 
+from tests._real_database import restore_database_module  # noqa: E402,F401
+
+# Tests here re-import the real `database` inside the test body; put conftest's
+# stub back after each one so it never leaks into later files (ST-14, BLG-QA-190).
+pytestmark = pytest.mark.usefixtures("restore_database_module")
+
+
 def _get_conn():
     return psycopg2.connect(_DATABASE_URL, cursor_factory=RealDictCursor)
 

@@ -13,3 +13,6 @@ test-results/
 coverage_head.json
 coverage_base.json
 coverage_report.md
+
+# hypothesis example database (ST-12, BLG-QA-186)
+.hypothesis/

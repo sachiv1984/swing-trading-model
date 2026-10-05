@@ -18,14 +18,39 @@ What is scanned
   Comments are never scanned. Test files (*.test.js, *.spec.js) and `__tests__`
   directories are skipped -- test descriptions are not user-facing copy.
   The scanner is a dependency-free tokeniser, not a full JS parser. Checked against
-  @babel/parser over all of src/ (211 files, ~12,000 literals) it extracts every literal
-  except ~0.1%, all benign: JSX text that contains an HTML entity (`&amp;`) and JSX text
-  split by a quote character, whose fragments are scanned separately (so a forbidden phrase
-  that itself straddles a quote inside JSX text would not be seen).
-  Known limits: a phrase split across concatenated literals (`'you ' + 'should'`) is not
-  joined; only .js/.jsx are scanned (src/ has no .ts/.tsx today); every string literal is
-  treated as copy, including import paths and object keys, so a lexical match there needs an
-  allow-list entry; code such as `a > forecast && b < 3` can read as JSX text.
+  @babel/parser over all of src/ (scripts/ui_copy_lint_babel_differential.py) it extracts
+  every literal except ~0.35% (12,846 of 12,891 at 2026-10-05), all benign: symbol-only JSX text
+  with no letters (`•`, `%`), which carries no phrase, and JSX text split by a quote character, whose
+  fragments are scanned separately (so a forbidden phrase that itself straddles a quote
+  inside JSX text would not be seen).
+
+Obfuscation and split handling (ST-18, BLG-QA-194, EPIC-03, v9.9)
+  Before matching, each literal is decoded and folded, so a phrase is seen as the user sees it:
+  - JS escapes are decoded: \\uXXXX, \\u{...}, \\xXX (an escaped space such as \\u0020 is a space)
+  - HTML numeric and named entities are decoded (`&#160;`, `&#x20;`, `&#32;`, `&ensp;`,
+    `&nbsp;`, `&amp;` ...), as JSX itself does for text and attribute strings
+  - invisible characters are removed (zero-width space/joiners, word joiner, BOM, soft
+    hyphen) and the non-breaking hyphen is folded to `-`; every Unicode space folds to ' '
+  - a JSX attribute string that spans lines (`title="you<newline> should"`) is extracted
+  - adjacent literals are joined when only these separate them, i.e. when the rendered copy
+    is the literals run together: `+` (`'you ' + 'should'`), a JSX expression container
+    (`You{' '}should`, `{'you '}{'should'}`), a template-literal `${` / `}` around a string
+    literal (`` `you ${'should'}` ``), and bare inline formatting tags with no attributes
+    (`<b>Buy</b> now`; b, strong, em, i, u, s, mark, small, code, span, abbr, sub, sup).
+    A joined hit is reported only when no single part already matches on its own.
+  Accepted limits (deliberate, with rationale):
+  - copy assembled at runtime is not joined: `['you', 'should'].join(' ')`, a variable or
+    function call between literals (`'you ' + verb`, `` `you ${verb}` ``), `.concat()`,
+    ternaries. Resolving those needs data-flow analysis, which a lint of static copy cannot
+    do soundly; each piece is still scanned on its own, and review covers the composition.
+  - an opening inline tag carrying attributes (`Buy <span className="x">now</span>`) and
+    block-level tags do not join: attributes are themselves scanned as separate literals, and
+    the tag-text boundary is not tracked through them; joining
+    across block elements (`<td>Buy</td><td>now</td>`) would invent phrases the user never
+    sees as one run of text.
+  - only .js/.jsx are scanned (src/ has no .ts/.tsx today); every string literal is treated
+    as copy, including import paths and object keys, so a lexical match there needs an
+    allow-list entry; code such as `a > forecast && b < 3` can read as JSX text.
 
 Allow-list (scripts/ui_copy_lint_allowlist.json)
   A reviewed, legitimate use of a listed phrase (for example, copy that *negates* the
@@ -42,6 +67,7 @@ Allow-list (scripts/ui_copy_lint_allowlist.json)
 Usage: python3 scripts/check_ui_copy_forbidden_phrases.py
 Exit code 0 = clean, 1 = violations found (each is printed with file:line).
 """
+import html
 import json
 import re
 import sys
@@ -71,35 +97,72 @@ _REGEX_PRECEDING_CHARS = set("(,=:[!&|?{;+-*%~^")
 _REGEX_PRECEDING_KEYWORDS = ("return", "typeof", "case", "do", "else", "in", "of", "delete", "void", "throw")
 
 
+# Characters that render as nothing (zero-width space/non-joiner/joiner, word joiner,
+# BOM/zero-width no-break space, soft hyphen, Mongolian vowel separator) are dropped; the
+# non-breaking hyphen renders as a hyphen. Unicode spaces (NBSP, en/em/thin space ...) are
+# already whitespace to str.split() below.
+_INVISIBLE_FOLD = str.maketrans({
+    "\u200b": None, "\u200c": None, "\u200d": None, "\u2060": None, "\ufeff": None,
+    "\u00ad": None, "\u180e": None, "\u2011": "-",
+})
+
+
 def _normalise(text):
-    """Fold every run of whitespace (newlines from wrapped JSX text / multi-line templates,
-    tabs, double spaces, non-breaking spaces and the literal `&nbsp;` entity) to one space,
-    so a phrase cannot evade the single-space patterns by how the source was wrapped."""
-    return " ".join(text.replace("&nbsp;", " ").split())
+    """Decode HTML entities (`&#160;`, `&ensp;`, `&nbsp;`, `&amp;` ...), drop invisible
+    characters, then fold every run of whitespace (newlines from wrapped JSX text /
+    multi-line templates, tabs, double spaces, Unicode spaces) to one space, so a phrase
+    cannot evade the single-space patterns by how the source was wrapped or encoded."""
+    return " ".join(html.unescape(text).translate(_INVISIBLE_FOLD).split())
 
 
-def _unescape(ch):
-    """The character an escape `\\<ch>` stands for, as far as phrase matching cares: the
-    whitespace escapes become a space (so 'you\\tshould' is seen as 'you should'); any other
-    escaped character stands for itself."""
-    return " " if ch in "ntr" else ch
+def _decode_escape(source, i):
+    """Decode the JS escape sequence starting at the backslash at source[i]. Returns
+    (text, consumed). Whitespace escapes become a space (so 'you\\tshould' is seen as
+    'you should'); \\uXXXX, \\u{...} and \\xXX become their character; a line
+    continuation becomes nothing; any other escaped character stands for itself."""
+    nxt = source[i + 1]
+    if nxt in "ntrvf":
+        return " ", 2
+    if nxt == "\n":
+        return "", 2
+    if nxt == "x":
+        m = re.match(r"[0-9A-Fa-f]{2}", source[i + 2:i + 4])
+        if m:
+            return chr(int(m.group(0), 16)), 4
+    if nxt == "u":
+        m = re.match(r"\{([0-9A-Fa-f]{1,6})\}|([0-9A-Fa-f]{4})", source[i + 2:i + 10])
+        if m:
+            code_point = int(m.group(1) or m.group(2), 16)
+            if code_point <= 0x10FFFF:
+                return chr(code_point), 2 + len(m.group(0))
+    return nxt, 2
 
 
-def _is_string_opener(source, i):
+_JSX_ATTR_STRING_MAX_LINES = 10
+
+
+def _is_string_opener(source, i, jsx_attribute=False):
     """True if the quote at source[i] opens a real JS string literal. A quote that has no
     closing partner on the same line, or an apostrophe directly after a letter/digit (a
     contraction in JSX text: "It's", "Don't"), is text, not a string -- a string opener is
-    never glued to the end of an identifier."""
+    never glued to the end of an identifier. With `jsx_attribute` (the quote directly
+    follows `name=`), the closing partner may sit up to _JSX_ATTR_STRING_MAX_LINES lines
+    later: a JSX attribute string, unlike a JS string, may span lines."""
     quote = source[i]
     if quote == "'" and i > 0 and source[i - 1].isalnum():
         return False
     j = i + 1
     n = len(source)
-    while j < n and source[j] != "\n":
-        if source[j] == "\\":
+    newlines = 0
+    while j < n:
+        if source[j] == "\n":
+            newlines += 1
+            if not jsx_attribute or newlines > _JSX_ATTR_STRING_MAX_LINES:
+                return False
+        elif source[j] == "\\":
             j += 2
             continue
-        if source[j] == quote:
+        elif source[j] == quote:
             return True
         j += 1
     return False
@@ -108,6 +171,13 @@ def _is_string_opener(source, i):
 def extract_literals(source):
     """Return [(line_number, text)] for every string literal / template static part / JSX
     text node in `source`. Comments and regex literals are never returned."""
+    return [(line, text) for line, text, _, _ in _extract_literal_spans(source)[0]]
+
+
+def _extract_literal_spans(source):
+    """Return (literals, code): literals is [(line, text, start, end)] in source order, where
+    [start, end) is the literal's extent in `source`; code is `source` with every string,
+    comment and regex blanked to spaces (same length, newlines kept)."""
     literals = []
     blanked = []  # the source with strings/comments/regexes replaced by spaces (newlines kept)
     n = len(source)
@@ -145,24 +215,27 @@ def extract_literals(source):
         (and including) the next `${`, in which case the expression is left for the main loop."""
         nonlocal i, line, brace_depth
         start_line = line
+        start = i
         buf = []
         while i < n:
             c = source[i]
             if c == "\\" and i + 1 < n:
-                buf.append(_unescape(source[i + 1]))
-                if source[i + 1] == "\n":
-                    line += 1
-                blank(c), blank(source[i + 1])
-                i += 2
+                text, consumed = _decode_escape(source, i)
+                buf.append(text)
+                for k in range(consumed):
+                    if source[i + k] == "\n":
+                        line += 1
+                    blank(source[i + k])
+                i += consumed
                 continue
             if c == "`":
+                literals.append((start_line, "".join(buf), start, i))
                 blank(c)
                 i += 1
-                literals.append((start_line, "".join(buf)))
                 mark_literal_end()
                 return
             if c == "$" and i + 1 < n and source[i + 1] == "{":
-                literals.append((start_line, "".join(buf)))
+                literals.append((start_line, "".join(buf), start, i))
                 emit_code("$"), emit_code("{")
                 i += 2
                 template_stack.append(brace_depth)
@@ -175,7 +248,7 @@ def extract_literals(source):
                 blank(c)
             buf.append(c)
             i += 1
-        literals.append((start_line, "".join(buf)))  # unterminated template: keep what we saw
+        literals.append((start_line, "".join(buf), start, i))  # unterminated template: keep what we saw
 
     while i < n:
         ch = source[i]
@@ -206,30 +279,38 @@ def extract_literals(source):
                 i += 2
             continue
 
-        # string literals
-        if ch in ("'", '"') and not _is_string_opener(source, i):
+        # string literals (a JSX attribute string, directly after `name=`, may span lines)
+        jsx_attribute = last_sig == "=" and prev_sig not in ("=", "!", "<", ">")
+        if ch in ("'", '"') and not _is_string_opener(source, i, jsx_attribute):
             emit_code(ch)  # apostrophe / stray quote in JSX text -- stays part of the text
             i += 1
             continue
         if ch in ("'", '"'):
             quote = ch
             start_line = line
+            start = i
             buf = []
             blank(ch)
             i += 1
-            while i < n and source[i] != quote and source[i] != "\n":
+            while i < n and source[i] != quote and (jsx_attribute or source[i] != "\n"):
                 if source[i] == "\\" and i + 1 < n:
-                    buf.append(_unescape(source[i + 1]))
-                    blank(source[i]), blank(source[i + 1])
-                    i += 2
+                    text, consumed = _decode_escape(source, i)
+                    buf.append(text)
+                    for k in range(consumed):
+                        if source[i + k] == "\n":
+                            line += 1
+                        blank(source[i + k])
+                    i += consumed
                     continue
+                if source[i] == "\n":
+                    line += 1
                 buf.append(source[i])
                 blank(source[i])
                 i += 1
             if i < n and source[i] == quote:
                 blank(source[i])
                 i += 1
-            literals.append((start_line, "".join(buf)))
+            literals.append((start_line, "".join(buf), start, i))
             mark_literal_end()
             continue
 
@@ -295,18 +376,53 @@ def extract_literals(source):
         if re.search(r"[A-Za-z]", text):
             start = m.start(1)
             first_text_offset = len(text) - len(text.lstrip())
-            literals.append((code.count("\n", 0, start + first_text_offset) + 1, text))
-    return literals
+            literals.append((code.count("\n", 0, start + first_text_offset) + 1, text, start, m.end(1)))
+    literals.sort(key=lambda lit: lit[2])
+    return literals, code
+
+
+# What may separate two literals for their rendered text to be one run: whitespace, `+`
+# concatenation, JSX expression-container braces, a template-literal `${`, and bare inline
+# formatting tags with no attributes. See the module docstring's accepted limits.
+_INLINE_TAGS = "b|strong|em|i|u|s|mark|small|code|span|abbr|sub|sup"
+_JOINABLE_GAP_RE = re.compile(r"(?:\s|\+|\{|\}|\$\{|</?(?:" + _INLINE_TAGS + r")\s*>)*")
+
+
+def _joined_runs(literals, code):
+    """Yield (line, joined_text, parts) for each maximal run of 2+ adjacent literals that
+    only joinable gaps separate."""
+    run = []
+    for lit in literals + [None]:
+        if lit is not None and run and _JOINABLE_GAP_RE.fullmatch(code[run[-1][3]:lit[2]]):
+            run.append(lit)
+            continue
+        if len(run) > 1:
+            yield run[0][0], "".join(part[1] for part in run), run
+        run = [lit] if lit is not None else []
 
 
 def scan_text(source):
-    """Return [(line, matched_phrase, literal_text)] for every forbidden phrase found."""
+    """Return [(line, matched_phrase, literal_text)] for every forbidden phrase found, in a
+    single literal or in a run of adjacent literals that render as one piece of text (a run
+    is reported only if no single part of it already matches on its own)."""
+    literals, code = _extract_literal_spans(source)
     hits = []
-    for line, text in extract_literals(source):
+    matched = set()
+    for idx, (line, text, _, _) in enumerate(literals):
         normalised = _normalise(text)
         m = _PHRASE_RE.search(normalised)
         if m:
             hits.append((line, m.group(0), normalised))
+            matched.add(idx)
+    index_of = {id(lit): idx for idx, lit in enumerate(literals)}
+    for line, joined, parts in _joined_runs(literals, code):
+        if any(index_of[id(part)] in matched for part in parts):
+            continue
+        normalised = _normalise(joined)
+        m = _PHRASE_RE.search(normalised)
+        if m:
+            hits.append((line, m.group(0), normalised))
+    hits.sort(key=lambda hit: hit[0])
     return hits
 
 
