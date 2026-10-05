@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-10-05 (created — ST-19, EPIC-04, `2026-09-30__release-v9.9`, BLG-GOV-356; 90-day review due 2026-09-24, conducted 2026-10-05 against production data)
+**Last Updated:** 2026-10-05 (July wording corrected — one plan-generation call fell on 2026-07-02, inside launch week; per agent-mediated DoQ review); prior — 2026-10-05 (created — ST-19, EPIC-04, `2026-09-30__release-v9.9`, BLG-GOV-356; 90-day review due 2026-09-24, conducted 2026-10-05 against production data)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -81,7 +81,7 @@ The weekly totals (31 calls, $0.1726) match the per-feature totals (31 calls, $0
 
 ## Findings
 
-1. **Adoption is low and was concentrated at launch.** 74% of all AI calls (23 of 31) happened in the first full week after release. AI was used in 5 of 15 weeks; there were 7 calls in total from July onwards, and none at all in July.
+1. **Adoption is low and was concentrated at launch.** 74% of all AI calls (23 of 31) happened in the first full week after release. AI was used in 5 of 15 weeks. After launch week (which ended with one plan-generation call on 2026-07-02) there were only 7 calls in total, and none at all from 2026-07-03 to 2026-08-02.
 2. **The daily briefing was trialled and dropped.** 14 calls on 2 days in launch week, none since 2026-06-30. Chat has been idle since 2026-08-17. Plan generation is the only feature in recent use (5 calls in the week of 2026-09-21).
 3. **Half the AI features have never been used.** Setup thesis, trade debrief and journal summary have 0 calls since launch.
 4. **Cost is not a constraint.** About $0.17 in 102 days. The Sonnet-backed features (briefing, chat) cost roughly 3–5× more per call than the Haiku ones, but at this volume the difference is immaterial. Cost per use: $0.0017–$0.0080.
@@ -94,7 +94,7 @@ The weekly totals (31 calls, $0.1726) match the per-feature totals (31 calls, $0
 - **On cost:** continued investment is justified. AI spend is negligible.
 - **On adoption alone:** the data does not show demand for further AI features. The existing ones are barely used.
 - **Product Owner decision (2026-10-05, human):** remove the gate and allow the gated AI features to be built regardless of current engagement. In the Product Owner's words: *"remove the gate, no harm in building the items even if not used now. There is still low engagement but more features making it easier may help increase engagement."* This is a product judgement the Product Owner is entitled to make; the review records it alongside the data rather than overriding it.
-- **Recommendation that follows from that decision:** sequence BLG-FEAT-60 (AI chat engagement metric) early, so the hypothesis that more features raise engagement can actually be measured, and compare against this review's baseline (31 calls / 102 days; 7 calls since July).
+- **Recommendation that follows from that decision:** sequence BLG-FEAT-60 (AI chat engagement metric) early, so the hypothesis that more features raise engagement can actually be measured, and compare against this review's baseline (31 calls / 102 days; 7 calls after launch week).
 
 ## Dispositions of the Gated Items
 
