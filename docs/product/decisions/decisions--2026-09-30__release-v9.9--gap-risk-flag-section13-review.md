@@ -1,7 +1,7 @@
 **Owner:** Strategy Rules & System Intent Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active — CONDITIONAL
-**Last Updated:** 2026-10-05
+**Last Updated:** 2026-10-05 (appendix: wording as applied to strategy_rules.md v1.14 via BLG-GOV-360, after an amended second-pass review); prior — 2026-10-05 (created)
 **Cycle:** 2026-09-30__release-v9.9
 **Story:** ST-20 (EPIC-04)
 **Backlog ref:** BLG-GOV-358 (this review) / BLG-FEAT-65 (feature reviewed, shipped v6.9)
@@ -223,35 +223,22 @@ If this had been a FAIL, the feature would have been withdrawn from the Position
 
 ---
 
-## Appendix — Proposed strategy_rules.md Wording
+## Appendix — strategy_rules.md Wording as Applied
 
-Recorded here so BLG-GOV-360 can apply it verbatim. Version bump (v1.13→v1.14), Change Log row and `**Last Updated:**` entry follow the document's own §16 template at the time the edit is applied.
+Applied to `claude/strategy/strategy_rules.md` v1.14 on 2026-10-05 (BLG-GOV-360), in ST-20's own commit on the user's explicit instruction. The first-pass draft originally recorded here was superseded by an independent second-pass Strategy Rules & System Intent Owner review (agent-mediated, §5.3, Approved with amendments), which: (1) narrowed the permitted carve-out from any dated position-specific event to events a canonical rule already recognises as gap risk (today only earnings, §4.2.3), with every new event type or trigger needing its own §13 review; (2) recorded the standalone weekend-hold trigger in §13.3 itself as a time-boxed deviation (BLG-BE-136, due 2027-02-06), since the clarified exclusion describes it exactly and §14 makes the document prevail over code; (3) moved the re-attestation escalation instruction into the §13.5 roster row. The applied text follows.
 
-### Clarify §13.3's Gap-Risk Wording (`claude/strategy/strategy_rules.md`)
-
-**Why:** Read literally, §13.3 ("Exposing a gap risk metric would increase noise…") contradicts a shipped, reviewed feature. This determination finds the contradiction is textual, not substantive, for the earnings trigger. The text should state the distinction so future readers, idea-intake windows and audits do not re-raise it. This is the same kind of failure the v9.9 idea window hit (`claude/ideas/window_summary_IW-20260930-01.md:101`).
-
-**Old text (`strategy_rules.md:501`, exact):**
+### §13.3 Clarification
 
 ```
-Gap risk monitoring is excluded by design because the system operates on a daily decision cadence and cannot act on gaps at the moment they occur. Exposing a gap risk metric would increase noise without enabling a decision.
+Gap risk monitoring is excluded by design because the system operates on a daily decision cadence and cannot act on gaps at the moment they occur. Exposing a standing or real-time gap risk metric — one evaluated continuously or in the background, one pushed as a notification or alert, one that detects or reacts to gaps as or after they occur, or one that flags every position uniformly regardless of any event specific to that position's ticker — would increase noise without enabling a decision.
+
+This exclusion does not cover a display-only flag, computed on request, that is tied to a known, dated event specific to the position's ticker, falls before that position's next trading session, and is already recognised as a gap-risk event by a canonical rule in this document. The only such event recognised today is a scheduled earnings date (§4.2.3). The user can act on such an event within the daily cadence, before the gap, through a manual exit (§8.3). Each flag of this kind, and each new event type or trigger added to one, requires its own §13 review before it ships and is permitted only under that review's binding conditions.
+
+The shipped Overnight/Weekend Gap Risk Flag (BLG-FEAT-65, v6.9) is governed by `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` (CONDITIONAL, 2026-10-05). Its earnings trigger is cleared under the paragraph above. Its standalone weekend-hold trigger flags every open position each Friday and does not meet this clarification; it is a recorded, time-boxed deviation that must be removed, or given a position-specific justification signed off under that record with this section amended to match, no later than 2027-02-06 (BLG-BE-136). Any extension towards background evaluation, notification, realised-gap detection or forward-looking gap estimates requires a new §13 review.
 ```
 
-**New text:**
+### §13.5 Roster Row
 
 ```
-Gap risk monitoring is excluded by design because the system operates on a daily decision cadence and cannot act on gaps at the moment they occur. Exposing a standing or real-time gap risk metric — one evaluated continuously or in the background, one that detects or reacts to gaps as or after they occur, or one that flags every position uniformly regardless of any position-specific event — would increase noise without enabling a decision.
-
-This exclusion does not cover a display-only flag, computed on request, that is tied to a known, dated event specific to the position and falling before that position's next trading session (for example, a scheduled earnings date). The user can still act on such an event within the daily cadence, through a manual exit (§8.3). Such a flag carries §4.2.3's earnings-proximity rationale through the holding period and is permitted subject to binding conditions. The shipped Overnight/Weekend Gap Risk Flag (BLG-FEAT-65, v6.9) is governed by `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` (CONDITIONAL, 2026-10-05). Any extension towards background evaluation, notification, realised-gap detection or forward-looking gap estimates requires a new §13 review.
+| Overnight/Weekend Gap Risk Flag (BLG-FEAT-65) | `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` | v6.9 shipped; retroactive §13 review v9.9 (**CONDITIONAL** — 9 binding conditions; reviewed against §13.3 as well as §13.1/§13.2, so re-attestation must also confirm its §13.3 standing; earnings trigger cleared as outside §13.3's exclusion; standalone weekend-hold trigger found within §13.3's noise rationale and must be dispositioned per Binding Condition 6 / `BLG-BE-136` by this cadence's first review date, 2027-02-06 — if it has not been, record that re-attestation's outcome as escalated, not unchanged. Original v6.9 AC-04 sign-off, `claude/cycles/2026-07-10__release-v6.9/qa_evidence_EPIC-02.md`, covered §13.2 only) |
 ```
-
-
-### Add a §13.5 Re-Attestation Roster Row (`claude/strategy/strategy_rules.md`)
-
-**Insert after line 526** (the PO-05 row, the last row of the roster table):
-
-```
-| Overnight/Weekend Gap Risk Flag (BLG-FEAT-65) | `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` | v6.9 shipped; retroactive §13 review v9.9 (**CONDITIONAL** — 9 binding conditions; earnings trigger cleared as outside §13.3's exclusion; standalone weekend-hold trigger found within §13.3's noise rationale and must be dispositioned per Binding Condition 6 no later than this cadence's first review date, 2027-02-06. Original v6.9 AC-04 sign-off, `claude/cycles/2026-07-10__release-v6.9/qa_evidence_EPIC-02.md`, covered §13.2 only) |
-```
-
-**Re-attestation note for 2027-02-06:** step 1 of the procedure at `strategy_rules.md:530-533` should specifically check whether Remediation Item 1 has landed. If it has not, Binding Condition 6 is breached and the outcome is "escalated", not "unchanged".

@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T12:39:00Z",
+  "last_updated_utc": "2026-10-05T13:30:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -542,7 +542,9 @@
           "completed_utc": "2026-10-05T12:05:45Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md"
+            "docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md",
+            "claude/strategy/strategy_rules.md#13.3",
+            "claude/strategy/strategy_rules.md#13.5"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
@@ -554,7 +556,7 @@
             "role": "Strategy Rules & System Intent Owner; Head of Specs Team",
             "date": "2026-10-05"
           },
-          "notes": "Escalated: §13 boundary determination requires named-authority judgement, not mechanical execution. See ESC-EXEC-20261001-03. | Reclassified delegated_decision -> autonomous on unblock. Unblocked: ESC-EXEC-20261001-03 Resolved — agent-mediated Strategy Rules & System Intent Owner + Head of Specs Team §13 determination, CONDITIONAL (earnings trigger outside §13.3; weekend-hold trigger a genuine gap, disposition due 2027-02-06). 9 binding conditions; remediation BLG-BE-136, BLG-SPEC-179, BLG-GOV-359, BLG-GOV-360 (strategy_rules.md §13.3/§13.5 wording, outside write scope). No spec deviation filed — remediation items are backlog items, not DEV-* records (§5.3 step 5 / BLG-GOV-73)."
+          "notes": "Escalated: §13 boundary determination requires named-authority judgement, not mechanical execution. See ESC-EXEC-20261001-03. | Reclassified delegated_decision -> autonomous on unblock. Unblocked: ESC-EXEC-20261001-03 Resolved — agent-mediated Strategy Rules & System Intent Owner + Head of Specs Team §13 determination, CONDITIONAL (earnings trigger outside §13.3; weekend-hold trigger a genuine gap, disposition due 2027-02-06). 9 binding conditions; remediation BLG-BE-136, BLG-SPEC-179, BLG-GOV-359, BLG-GOV-360 (strategy_rules.md §13.3/§13.5 wording, outside write scope). No spec deviation filed — remediation items are backlog items, not DEV-* records (§5.3 step 5 / BLG-GOV-73). | 2026-10-05: BLG-GOV-360 applied in ST-20 on the user's explicit instruction — strategy_rules.md v1.13->v1.14 (§13.3 clarification, §13.5 roster row), wording per an independent second-pass Strategy Rules & System Intent Owner review (Approved with amendments). §15 version cross-reference grep re-run: 0 actionable."
         },
         "ST-21": {
           "title": "Split roadmap_prompt.md into a core plus an appendix so it fits a single read",
