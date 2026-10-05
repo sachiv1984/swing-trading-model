@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (sprint execution EPIC-04/ST-20, BLG-GOV-358 — §13 retroactive review of the Gap Risk Flag (CONDITIONAL); 4 remediation items added: BLG-BE-136 (weekend-hold trigger disposition + trigger-timing label/spec alignment), BLG-SPEC-179 (positions.md Gap Risk Badge data source), BLG-GOV-359 (§13 ACs must cite every §13 clause naming the subject), BLG-GOV-360 (apply §13.3/§13.5 strategy_rules.md wording)); prior — 2026-10-05 (sprint execution EPIC-04/ST-24, BLG-GOV-350, under Head of Specs Team write-scope ruling ESC-EXEC-20261001-01 — new `## Shared Gate References` section holding the canonical 90-Day AI Feature Usage Review Gate statement; Gate criteria lines of BLG-FEAT-59/60/63, BLG-FE-84, BLG-OPS-88 now cite it; 2 new items added: BLG-GOV-361 (BLG-SPEC-65's stale sixth gate copy), BLG-GOV-362 (standing plan-authorised write-scope rule)); prior — 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-05 (sprint execution EPIC-04/ST-19, BLG-GOV-356 — 90-day AI feature usage review filed (`docs/ops/ai_feature_usage_review_2026-09-24.md`); Product Owner-authorised dispositions: gates cleared on BLG-FEAT-59/60/63, BLG-FE-84, BLG-GOV-140/141; BLG-OPS-88 unbundled and re-gated on a Render alert or latency breach; BLG-GOV-142 resolved; `## Shared Gate References` section removed (no remaining citers); BLG-GOV-361 updated); prior — 2026-10-05 (sprint execution EPIC-04/ST-20, BLG-GOV-358 — §13 retroactive review of the Gap Risk Flag (CONDITIONAL); 4 remediation items added: BLG-BE-136 (weekend-hold trigger disposition + trigger-timing label/spec alignment), BLG-SPEC-179 (positions.md Gap Risk Badge data source), BLG-GOV-359 (§13 ACs must cite every §13 clause naming the subject), BLG-GOV-360 (apply §13.3/§13.5 strategy_rules.md wording)); prior — 2026-10-05 (sprint execution EPIC-04/ST-24, BLG-GOV-350, under Head of Specs Team write-scope ruling ESC-EXEC-20261001-01 — new `## Shared Gate References` section holding the canonical 90-Day AI Feature Usage Review Gate statement; Gate criteria lines of BLG-FEAT-59/60/63, BLG-FE-84, BLG-OPS-88 now cite it; 2 new items added: BLG-GOV-361 (BLG-SPEC-65's stale sixth gate copy), BLG-GOV-362 (standing plan-authorised write-scope rule)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -28,20 +28,6 @@
 - **P1 — High**: Enables core workflows or governance
 - **P2 — Medium**: High leverage but not blocking
 - **P3 — Low**: Nice-to-have or future scale
-
----
-
-## Shared Gate References
-
-> Canonical statements of gate conditions shared by more than one backlog item. An item that depends on one of these gates names it in its own `**Gate criteria:**` line instead of restating the condition. Each citing line keeps the gate's review-due date as a plain `due YYYY-MM-DD` token, because `scripts/scan_backlog_gate_conditions.py` — read by `post_ship_closure.md` STEP 12.6, `roadmap_prompt.md` STEP 3.1 and `release_planning_prompt.md` §1.3a — only sees the item's own line. Everything else about the gate is stated here and nowhere else. Section owner: Head of Specs Team.
-
-### 90-Day AI Feature Usage Review Gate
-
-- **What is reviewed:** the 90-day AI feature usage and cost review of the AI briefing and chat features (BLG-GOV-74 cadence — 90 days after the v6.2 ship of 2026-06-25). It assesses adoption rate, cost per use, usage-pattern stability and continued-investment justification (BLG-GOV-142's criteria). Conducting the review is tracked as BLG-GOV-356.
-- **Review due date:** 2026-09-24. Every citing item carries this same date as `due 2026-09-24`. If the review is rescheduled, change this line and every citing item's date token in the same commit — `grep -n "90-Day AI Feature Usage Review Gate" claude/backlog/backlog.md` lists them.
-- **Evidence:** a dated review artefact matching `docs/ops/*ai*usage*review*<date>*.md` (the same pattern `post_ship_closure.md` STEP 12.6 checks), or the equivalent artefact named when BLG-GOV-356 closes.
-- **Clearance rule:** the gate clears for an item only when that artefact exists, records an explicit disposition for that item, and the item's named clearance owner has confirmed it on the item. Until then the gate is unmet. A passed due date on its own is never a clearance.
-- **After the review:** each citing item's outcome (cleared, or re-parked with a new concrete trigger) is recorded on that item, replacing its `**Gate criteria:**` line. This statement does not change when the review completes. Remove it in the same commit that dispositions the last item still citing it.
 
 ---
 
@@ -277,7 +263,7 @@ No schema exists for user-authored free-text annotations on individual trades, d
 **Source:** IDEA-financial-reporting-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** M (~1–2 days)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** 90-Day AI Feature Usage Review Gate — review due 2026-09-24 (canonical statement: § Shared Gate References at the top of this file). Clearance for this item confirmed by: Financial Reporting & Records Owner.
+**Gate cleared (2026-10-05, ST-19):** the 90-day AI feature usage review was conducted (`docs/ops/ai_feature_usage_review_2026-09-24.md`: 31 AI calls and ≈$0.17 in 102 days, 74% of them in launch week). Product Owner decision 2026-10-05: gate removed — build regardless of current low engagement, since more features may help increase it.
 
 **Problem**
 Monthly P&L (shipped v2.x) is a fixed-format report. An optional AI-generated narrative commentary could add interpretive value, but adding it before existing AI features (daily briefing, chat) are validated risks compounding unvalidated AI surface area onto a financial-reporting document specifically.
@@ -288,7 +274,7 @@ Monthly P&L (shipped v2.x) is a fixed-format report. An optional AI-generated na
 
 **Acceptance Criteria**
 - Narrative section renders as optional/dismissible
-- Gate condition (AI adoption window) verified by Financial Reporting & Records Owner before sprint planning
+- Gate condition (AI adoption window) verified by Financial Reporting & Records Owner before sprint planning — satisfied 2026-10-05: gate removed by Product Owner decision (see Gate cleared note)
 
 ---
 
@@ -299,7 +285,7 @@ Monthly P&L (shipped v2.x) is a fixed-format report. An optional AI-generated na
 **Source:** IDEA-metrics-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** S (~0.5–1 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** 90-Day AI Feature Usage Review Gate — review due 2026-09-24 (canonical statement: § Shared Gate References at the top of this file). Clearance for this item confirmed by: Metrics Definitions & Analytics Owner.
+**Gate cleared (2026-10-05, ST-19):** the 90-day AI feature usage review was conducted (`docs/ops/ai_feature_usage_review_2026-09-24.md`: 31 AI calls and ≈$0.17 in 102 days, 74% of them in launch week). Product Owner decision 2026-10-05: gate removed — build regardless of current low engagement, since more features may help increase it. Recommended to sequence early so the engagement effect of new AI features can be measured against the review's baseline.
 
 **Problem**
 No metric tracks AI chat engagement (sessions per week, questions per session, response acceptance rate). Defining the metric before usage patterns stabilise risks needing early revision.
@@ -310,7 +296,7 @@ No metric tracks AI chat engagement (sessions per week, questions per session, r
 
 **Acceptance Criteria**
 - Metric set defined and documented
-- Gate condition (AI adoption window) verified before sprint planning
+- Gate condition (AI adoption window) verified before sprint planning — satisfied 2026-10-05: gate removed by Product Owner decision (see Gate cleared note)
 
 ---
 
@@ -724,7 +710,7 @@ No formal assessment of current React bundle size or heavy dependencies has been
 **Source:** IDEA-head-of-ux-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** 90-Day AI Feature Usage Review Gate — review due 2026-09-24 (canonical statement: § Shared Gate References at the top of this file). Clearance for this item confirmed by: Head of UX & Design.
+**Gate cleared (2026-10-05, ST-19):** the 90-day AI feature usage review was conducted (`docs/ops/ai_feature_usage_review_2026-09-24.md`: 31 AI calls and ≈$0.17 in 102 days, 74% of them in launch week). Product Owner decision 2026-10-05: gate removed — build regardless of current low engagement, since more features may help increase it.
 
 **Problem**
 No structured protocol exists to study how the AI chat advisor is actually used. Designing one before interaction patterns stabilise risks studying patterns that later shift.
@@ -735,7 +721,7 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 
 **Acceptance Criteria**
 - Protocol document produced
-- Gate condition (AI adoption window) verified before use
+- Gate condition (AI adoption window) verified before use — satisfied 2026-10-05: gate removed by Product Owner decision (see Gate cleared note)
 
 ---
 
@@ -1849,9 +1835,9 @@ When sprint planning seals scope, there is no step to cross-reference the change
 **Owner:** Strategy Rules & System Intent Owner; AI Compliance & Governance Officer
 **Source:** IDEA-strategy-owner-20260626-02 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
 **Effort:** S (~0.5 day)
-**Provisional-Target:** Gate-conditional — first review due 2026-09-24, not yet due
+**Provisional-Target:** TBD
 
-**Gate criteria:** First review due 2026-09-24 (90 days post-v6.2 ship 2026-06-25). Quarterly cadence thereafter.
+**Gate cleared (2026-10-05, ST-19):** the 90-day post-v6.2 date (2026-09-24) has passed and the 90-day AI feature usage review is filed (`docs/ops/ai_feature_usage_review_2026-09-24.md`). The first-review date has passed, so this item is ready to schedule; the checklist itself is still to be written. Product Owner authorised.
 
 > **Product Owner note (2026-08-21, post-ship closure `2026-08-17__release-v8.9` STEP 12 review):** This item was flagged by `groom backlog`'s Deferral Age Validation as a stale-target/kill candidate because its `Provisional-Target` field still read the leftover placeholder `v6.3` (long since shipped). That flag was a false positive — the item's own `Gate criteria` field is the actual operative schedule, and 2026-09-24 has not yet arrived. Not neglected, not a kill candidate. `Provisional-Target` corrected above to avoid re-triggering the same false-positive check at the next groom run.
 
@@ -1876,9 +1862,9 @@ v6.2 AI chat advisor and daily briefing are now live. §13 requires AI advisory 
 **Owner:** AI Compliance & Governance Officer; Infrastructure & Operations Owner
 **Source:** IDEA-ai-compliance-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
 **Effort:** S (~0.5 day)
-**Provisional-Target:** Gate-conditional — schedule within 90 days of v6.2 ship, due 2026-09-24, not yet due
+**Provisional-Target:** TBD
 
-**Gate criteria:** Schedule within 90 days of v6.2 ship (by 2026-09-24).
+**Gate cleared (2026-10-05, ST-19):** the 90-day post-v6.2 date (2026-09-24) has passed and the 90-day AI feature usage review is filed (`docs/ops/ai_feature_usage_review_2026-09-24.md`). Still to be done and ready to schedule. The review found `database.create_claude_audit_entry()` swallows insert errors (`except Exception: pass`), so a failed log write is silent — this audit should cover that. Product Owner authorised.
 
 > **Product Owner note (2026-08-21, post-ship closure `2026-08-17__release-v8.9` STEP 12 review):** This item was flagged by `groom backlog`'s Deferral Age Validation as a stale-target/kill candidate because its `Provisional-Target` field still read the leftover placeholder `v6.3` (long since shipped). That flag was a false positive — the item's own `Gate criteria` field is the actual operative schedule, and 2026-09-24 has not yet arrived. Not neglected, not a kill candidate. `Provisional-Target` corrected above to avoid re-triggering the same false-positive check at the next groom run.
 
@@ -1906,7 +1892,7 @@ v6.2 AI features (briefing, chat) should be logging all AI responses with model 
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** 2026-09-24 (90 days post-v6.2 ship). Assess: adoption rate of AI briefing and chat features, cost per use (Anthropic API cost / sessions), and whether usage data justifies continued investment.
+**Resolved (2026-10-05, ST-19):** this assessment is `docs/ops/ai_feature_usage_review_2026-09-24.md` — adoption rate (31 calls, 5 of 15 weeks active, 3 of 6 AI features never used), cost per use ($0.0017–$0.0080; ≈$0.17 total), continue/modify recommendation, and the Product Owner decision (continue building; gate removed). Archive at the next `groom backlog`.
 
 **Problem**
 v6.2 AI features have a per-use cost (Anthropic API call for each briefing and chat interaction). Without a formal ROI assessment at 3 months, there is no trigger to reconsider the feature investment if adoption is low or costs are disproportionate. The assessment is a formal governance checkpoint, not a presumption of cancellation.
@@ -2329,16 +2315,17 @@ No evidence yet of a dangling (unlinked/broken) DoQ sign-off claim, but none has
 **Source:** IDEA-finops-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** 90-Day AI Feature Usage Review Gate — review due 2026-09-24 (canonical statement: § Shared Gate References at the top of this file). This item is bundled with that review (carried out alongside it) rather than cleared by an adoption finding — no standalone signal yet shows the current dyno tier is mismatched. Clearance for this item confirmed by: FinOps & Resource Architect.
+**Gate criteria:** A Render resource alert (memory or CPU) on the backend service, or a sustained backend latency breach.
+**Gate change (ST-19, Product Owner authorised):** unbundled on 2026-10-05 from the 90-day AI usage review (`docs/ops/ai_feature_usage_review_2026-09-24.md`), which found AI load negligible (31 calls in 102 days) and so gives no dyno-sizing signal.
 
 **Problem**
 The 2 AI endpoints are only 8 days live as of this idea's submission; no cost/performance signal yet indicates a right-sizing need.
 
 **Scope**
-- Review dyno tier alongside the 2026-09-24 AI cost review
+- Review dyno tier when the gate fires (a Render resource alert or latency breach), using Render metrics rather than AI usage
 
 **Acceptance Criteria**
-- Review conducted at or after the 2026-09-24 gate date
+- Review conducted after the gate fires, citing the triggering alert or breach
 
 ---
 
@@ -2489,7 +2476,7 @@ No signal currently indicates Facilitator workload is a bottleneck; formal track
 **Source:** IDEA-financial-reporting-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** 90-Day AI Feature Usage Review Gate — review due 2026-09-24 (canonical statement: § Shared Gate References at the top of this file). This estimate feeds BLG-FEAT-59 — its disposition follows BLG-FEAT-59's. Clearance for this item confirmed by: Financial Reporting & Records Owner.
+**Gate cleared (2026-10-05, ST-19):** the 90-day AI feature usage review was conducted (`docs/ops/ai_feature_usage_review_2026-09-24.md`: 31 AI calls and ≈$0.17 in 102 days, 74% of them in launch week). Product Owner decision 2026-10-05: gate removed — build regardless of current low engagement, since more features may help increase it. Follows BLG-FEAT-59.
 
 **Problem**
 This cost estimate directly feeds BLG-FEAT-59, which is itself gated on the AI-adoption window; estimating cost ahead of that gate is premature.
@@ -4475,6 +4462,8 @@ ST-24 replaced the restated AI adoption window gate text on its 5 named items (B
 
 **Scope**
 - Point BLG-SPEC-65's adoption-window half at the canonical "90-Day AI Feature Usage Review Gate" statement (keeping a `due 2026-09-24` token so `scan_backlog_gate_conditions.py` still detects it), leaving its §13 / BLG-FEAT-55 half unchanged — or have BLG-GOV-356 (the review itself) disposition it directly
+
+**Update (2026-10-05, ST-19):** the 90-day review is now filed (`docs/ops/ai_feature_usage_review_2026-09-24.md`) and the `## Shared Gate References` section has been removed, since no item cites it any more. BLG-SPEC-65's adoption-window half is therefore met; the fix is to drop that half from its gate line (keeping the §13 / BLG-FEAT-55 half), not to point it at the removed section.
 
 **Acceptance Criteria**
 - No backlog item restates the AI adoption window gate or cites the 2026-07-25 date; BLG-SPEC-65 references the canonical statement or carries an explicit disposition

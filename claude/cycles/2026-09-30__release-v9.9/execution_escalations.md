@@ -36,8 +36,10 @@ Last Updated: 2026-10-05
 - **Unblock criteria:** A human with production access conducts (or directly supplies the data for) the review — a dated review artefact assessing adoption rate, cost per use, and continued-investment justification, with all 8 downstream gated items in the source cluster given an explicit disposition. Per CLAUDE.md §2's frontend-testing-gate pattern applied by analogy here (deferred-to-post-merge evidence requires a filed backlog item before the PR opens): if this is deferred past this EPIC's PR, a backlog item must be filed for the pending review before the PR opens.
 - **SLA due-by:** 2026-10-04T15:10:44Z (72h — Human-Delegation)
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-05
+- **Resolved by:** Product Owner (human) supplied the production data in-session on 2026-10-05 (3 read-only queries run against production) and made the continued-investment decision; review drafted by the Sprint Execution Engine (agent-mediated, Head of Specs Team; PMO Lead roles — §5.3). SLA (2026-10-04T15:10:44Z) exceeded by ~1 day.
+- **Resolution summary:** Unblocked in-session. Review filed as `docs/ops/ai_feature_usage_review_2026-09-24.md` (named for the gate date so post-ship STEP 12.6's artefact check matches). Production data over 102 days: 31 AI calls, ≈$0.17 total, 74% in launch week; daily briefing unused since 2026-06-30, chat since 2026-08-17; setup thesis, trade debrief and journal summary never used. Product Owner decision: remove the gate and build the gated AI features anyway (more features may raise engagement). Dispositions recorded on all 8 items in `backlog.md` under the Product Owner's authorisation: gates cleared on BLG-FEAT-59/60/63, BLG-FE-84, BLG-GOV-140/141; BLG-OPS-88 unbundled and re-gated on a Render alert or latency breach; BLG-GOV-142 resolved. The shared gate statement added by ST-24 was removed, since no item cites it any more. Next review 2027-01-03.
 
 ## ESC-EXEC-20261001-03
 
