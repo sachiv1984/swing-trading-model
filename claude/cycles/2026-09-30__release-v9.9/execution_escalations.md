@@ -18,8 +18,10 @@ Last Updated: 2026-10-05
 - **Unblock criteria:** Head of Specs Team decides where the canonical gate statement should live (new `current_roadmap.md` §6 entry, a shared backlog convention section, or another Class-1/Class-4 home) and either makes the edit directly or explicitly authorises this engine to do so (citing this escalation ID in the commit message, per the `workforce_capacity.md`/BLG-GOV-337 precedent format).
 - **SLA due-by:** 2026-10-02T13:05:00Z (24h — Lifecycle/Process Integrity)
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-05
+- **Resolved by:** Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), on the user's explicit direction ("act as relevant agents and resolve issues", 2026-10-05). SLA (2026-10-02T13:05:00Z) exceeded by ~3 days.
+- **Resolution summary:** Head of Specs Team, 2026-10-05: Approved as a one-off write-scope authorisation (execution_prompt.md §7 not amended). Canonical home is a new unnumbered `## Shared Gate References` section in `claude/backlog/backlog.md` (not `current_roadmap.md` §6, which tracks roadmap-feature gates and is read by no backlog gate scanner). Engine authorised to insert that section and replace only the `**Gate criteria:**` line of BLG-FEAT-59/60/63, BLG-FE-84 and BLG-OPS-88; replacement lines keep a `due 2026-09-24` token so `scan_backlog_gate_conditions.py` and post-ship STEP 12.6 still detect them (verified: 130 gated / 14 lapsed unchanged; 4 items now report the correct 2026-09-24 lapse date instead of 2026-07-25). BLG-SPEC-65's stale sixth variant filed as BLG-GOV-361; standing-rule recommendation filed as BLG-GOV-362. Ownership correction: `backlog.md` is owned by the Product Owner — PO acknowledgement in PR review recommended, not blocking (content signed off at the planning seal).
 
 ## ESC-EXEC-20261001-02
 
@@ -34,8 +36,10 @@ Last Updated: 2026-10-05
 - **Unblock criteria:** A human with production access conducts (or directly supplies the data for) the review — a dated review artefact assessing adoption rate, cost per use, and continued-investment justification, with all 8 downstream gated items in the source cluster given an explicit disposition. Per CLAUDE.md §2's frontend-testing-gate pattern applied by analogy here (deferred-to-post-merge evidence requires a filed backlog item before the PR opens): if this is deferred past this EPIC's PR, a backlog item must be filed for the pending review before the PR opens.
 - **SLA due-by:** 2026-10-04T15:10:44Z (72h — Human-Delegation)
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-05
+- **Resolved by:** Product Owner (human) supplied the production data in-session on 2026-10-05 (3 read-only queries run against production) and made the continued-investment decision; review drafted by the Sprint Execution Engine (agent-mediated, Head of Specs Team; PMO Lead roles — §5.3). SLA (2026-10-04T15:10:44Z) exceeded by ~1 day.
+- **Resolution summary:** Unblocked in-session. Review filed as `docs/ops/ai_feature_usage_review_2026-09-24.md` (named for the gate date so post-ship STEP 12.6's artefact check matches). Production data over 102 days: 31 AI calls, ≈$0.17 total, 74% in launch week; daily briefing unused since 2026-06-30, chat since 2026-08-17; setup thesis, trade debrief and journal summary never used. Product Owner decision: remove the gate and build the gated AI features anyway (more features may raise engagement). Dispositions recorded on all 8 items in `backlog.md` under the Product Owner's authorisation: gates cleared on BLG-FEAT-59/60/63, BLG-FE-84, BLG-GOV-140/141; BLG-OPS-88 unbundled and re-gated on a Render alert or latency breach; BLG-GOV-142 resolved. The shared gate statement added by ST-24 was removed, since no item cites it any more. Next review 2027-01-03.
 
 ## ESC-EXEC-20261001-03
 
@@ -50,8 +54,10 @@ Last Updated: 2026-10-05
 - **Unblock criteria:** A dated determination recorded (new `docs/product/decisions/` file, or a `strategy_rules.md` §13.3/§13.5 wording update, as appropriate to the outcome). If CONDITIONAL or a genuine gap is found, binding conditions or a remediation item must be filed in the same determination.
 - **SLA due-by:** 2026-10-04T15:10:44Z (72h — Strategy)
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-05
+- **Resolved by:** Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner jointly with Head of Specs Team — §5.3), on the user's explicit direction ("act as relevant agents and resolve issues", 2026-10-05). SLA (2026-10-04T15:10:44Z) exceeded by ~1 day.
+- **Resolution summary:** CONDITIONAL. Decision record `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` (2026-10-05). The earnings-triggered flag is outside §13.3's exclusion (display-only, on request, position-specific dated event the user can act on within the daily cadence, consistent with §4.2.3); the standalone weekend-hold trigger (flags every open position all day every Friday) falls within §13.3's noise rationale — a genuine gap. Premise correction: a §13 sign-off was recorded at v6.9 (`claude/cycles/2026-07-10__release-v6.9/qa_evidence_EPIC-02.md`) but its AC tested §13.2 only. 9 binding conditions recorded; remediation filed as BLG-BE-136 (weekend-hold disposition by 2027-02-06), BLG-SPEC-179, BLG-GOV-359, BLG-GOV-360 (strategy_rules.md §13.3/§13.5 wording — outside Sprint Execution's write scope, exact text in the record's appendix).
 
 ## ESC-EXEC-20261001-04
 
@@ -66,8 +72,10 @@ Last Updated: 2026-10-05
 - **Unblock criteria:** Head of Specs Team decides the canonical home for `role_share_history.md` (a `claude/roadmap/*` write-scope exception in the `workforce_capacity.md`/BLG-GOV-337 format, or a different canonical location) and either makes the edit directly or explicitly authorises this engine to do so, citing this escalation ID in the commit message.
 - **SLA due-by:** 2026-10-02T15:10:44Z (24h — Lifecycle)
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-05
+- **Resolved by:** Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), on the user's explicit direction ("act as relevant agents and resolve issues", 2026-10-05). SLA (2026-10-02T15:10:44Z) exceeded by ~3 days.
+- **Resolution summary:** Head of Specs Team, 2026-10-05: Approved as a one-off write-scope authorisation (execution_prompt.md §7 not amended). Engine authorised to create `claude/roadmap/role_share_history.md` (PMO Lead, Class 3) — interim v9.8-cycle copy migrated, v9.8 row computed by `scripts/compute_role_share_history.py` (39 stories, Head of Specs Team 12 = 30.8%; v9.6–v9.8 rolling 18/102 = 17.6%, cross-checked against `2026-09-30__scheduled/cycle_record.md` §7.2) — and to edit `roadmap_prompt.md` §4 and §7.2 with the full CLAUDE.md §6 checklist (v9.29→v9.30; OPERATIONAL_GUIDE.md v4.217→v4.218). Interim file left as a dated historical snapshot. BLG-GOV-353 bullet-3 finding: `product_value_ratio_history.md` (v8.5 ST-22, `ad102c50`) had no write-scope authorisation on record and was absent from `roadmap_prompt.md` §4 — ratified retroactively by adding it to §4. One drafted edit not applied: adding story/backlog IDs to the §7.2 `####` heading, which CLAUDE.md §2 forbids — provenance recorded in the step text and changelog instead.
 
 ## ESC-EXEC-20261001-05
 
