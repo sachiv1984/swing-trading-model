@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior — 2026-10-05 (sprint execution EPIC-03/ST-11, ST-14, ST-17 — 6 new items added: BLG-QA-205 to BLG-QA-208 (ST-11 traceability-matrix follow-ups), BLG-QA-209 (ST-14: utils.* sys.modules stub leak) and BLG-OPS-177 (ST-17: non-registry check not a required status check on main)); prior — 2026-10-05 (PR #1886/EPIC-02 agent-mediated DoQ+PO review, 2 new items added: BLG-OPS-175 (ST-09's price-alert dedup guard not race-safe), BLG-OPS-176 (ST-08's dedup-clear path ignores send_alert)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-05 (sprint execution EPIC-04/ST-24, BLG-GOV-350, under Head of Specs Team write-scope ruling ESC-EXEC-20261001-01 — new `## Shared Gate References` section holding the canonical 90-Day AI Feature Usage Review Gate statement; Gate criteria lines of BLG-FEAT-59/60/63, BLG-FE-84, BLG-OPS-88 now cite it; 2 new items added: BLG-GOV-361 (BLG-SPEC-65's stale sixth gate copy), BLG-GOV-362 (standing plan-authorised write-scope rule)); prior — 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior — 2026-10-05 (sprint execution EPIC-03/ST-11, ST-14, ST-17 — 6 new items added: BLG-QA-205 to BLG-QA-208 (ST-11 traceability-matrix follow-ups), BLG-QA-209 (ST-14: utils.* sys.modules stub leak) and BLG-OPS-177 (ST-17: non-registry check not a required status check on main)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -28,6 +28,20 @@
 - **P1 — High**: Enables core workflows or governance
 - **P2 — Medium**: High leverage but not blocking
 - **P3 — Low**: Nice-to-have or future scale
+
+---
+
+## Shared Gate References
+
+> Canonical statements of gate conditions shared by more than one backlog item. An item that depends on one of these gates names it in its own `**Gate criteria:**` line instead of restating the condition. Each citing line keeps the gate's review-due date as a plain `due YYYY-MM-DD` token, because `scripts/scan_backlog_gate_conditions.py` — read by `post_ship_closure.md` STEP 12.6, `roadmap_prompt.md` STEP 3.1 and `release_planning_prompt.md` §1.3a — only sees the item's own line. Everything else about the gate is stated here and nowhere else. Section owner: Head of Specs Team.
+
+### 90-Day AI Feature Usage Review Gate
+
+- **What is reviewed:** the 90-day AI feature usage and cost review of the AI briefing and chat features (BLG-GOV-74 cadence — 90 days after the v6.2 ship of 2026-06-25). It assesses adoption rate, cost per use, usage-pattern stability and continued-investment justification (BLG-GOV-142's criteria). Conducting the review is tracked as BLG-GOV-356.
+- **Review due date:** 2026-09-24. Every citing item carries this same date as `due 2026-09-24`. If the review is rescheduled, change this line and every citing item's date token in the same commit — `grep -n "90-Day AI Feature Usage Review Gate" claude/backlog/backlog.md` lists them.
+- **Evidence:** a dated review artefact matching `docs/ops/*ai*usage*review*<date>*.md` (the same pattern `post_ship_closure.md` STEP 12.6 checks), or the equivalent artefact named when BLG-GOV-356 closes.
+- **Clearance rule:** the gate clears for an item only when that artefact exists, records an explicit disposition for that item, and the item's named clearance owner has confirmed it on the item. Until then the gate is unmet. A passed due date on its own is never a clearance.
+- **After the review:** each citing item's outcome (cleared, or re-parked with a new concrete trigger) is recorded on that item, replacing its `**Gate criteria:**` line. This statement does not change when the review completes. Remove it in the same commit that dispositions the last item still citing it.
 
 ---
 
@@ -263,7 +277,7 @@ No schema exists for user-authored free-text annotations on individual trades, d
 **Source:** IDEA-financial-reporting-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** M (~1–2 days)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** AI adoption window verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence) — Financial Reporting & Records Owner to confirm usage patterns have stabilised before this clears. A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; re-verify against the 2026-09-24 review's actual finding.
+**Gate criteria:** 90-Day AI Feature Usage Review Gate — review due 2026-09-24 (canonical statement: § Shared Gate References at the top of this file). Clearance for this item confirmed by: Financial Reporting & Records Owner.
 
 **Problem**
 Monthly P&L (shipped v2.x) is a fixed-format report. An optional AI-generated narrative commentary could add interpretive value, but adding it before existing AI features (daily briefing, chat) are validated risks compounding unvalidated AI surface area onto a financial-reporting document specifically.
@@ -285,7 +299,7 @@ Monthly P&L (shipped v2.x) is a fixed-format report. An optional AI-generated na
 **Source:** IDEA-metrics-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** S (~0.5–1 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** AI adoption window verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence) — Metrics Definitions & Analytics Owner to confirm usage patterns have stabilised before this clears. A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; re-verify against the 2026-09-24 review's actual finding.
+**Gate criteria:** 90-Day AI Feature Usage Review Gate — review due 2026-09-24 (canonical statement: § Shared Gate References at the top of this file). Clearance for this item confirmed by: Metrics Definitions & Analytics Owner.
 
 **Problem**
 No metric tracks AI chat engagement (sessions per week, questions per session, response acceptance rate). Defining the metric before usage patterns stabilise risks needing early revision.
@@ -710,7 +724,7 @@ No formal assessment of current React bundle size or heavy dependencies has been
 **Source:** IDEA-head-of-ux-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** AI adoption window verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence) — Head of UX & Design to confirm usage patterns have stabilised before this clears. A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; re-verify against the 2026-09-24 review's actual finding.
+**Gate criteria:** 90-Day AI Feature Usage Review Gate — review due 2026-09-24 (canonical statement: § Shared Gate References at the top of this file). Clearance for this item confirmed by: Head of UX & Design.
 
 **Problem**
 No structured protocol exists to study how the AI chat advisor is actually used. Designing one before interaction patterns stabilise risks studying patterns that later shift.
@@ -2315,7 +2329,7 @@ No evidence yet of a dangling (unlinked/broken) DoQ sign-off claim, but none has
 **Source:** IDEA-finops-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** Bundle with the existing scheduled 90-day AI cost review (due 2026-09-24) — no standalone signal yet indicates the current dyno tier is mismatched.
+**Gate criteria:** 90-Day AI Feature Usage Review Gate — review due 2026-09-24 (canonical statement: § Shared Gate References at the top of this file). This item is bundled with that review (carried out alongside it) rather than cleared by an adoption finding — no standalone signal yet shows the current dyno tier is mismatched. Clearance for this item confirmed by: FinOps & Resource Architect.
 
 **Problem**
 The 2 AI endpoints are only 8 days live as of this idea's submission; no cost/performance signal yet indicates a right-sizing need.
@@ -2475,7 +2489,7 @@ No signal currently indicates Facilitator workload is a bottleneck; formal track
 **Source:** IDEA-financial-reporting-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** Same AI-adoption gate as BLG-FEAT-59 — verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence). A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; track disposition on BLG-FEAT-59.
+**Gate criteria:** 90-Day AI Feature Usage Review Gate — review due 2026-09-24 (canonical statement: § Shared Gate References at the top of this file). This estimate feeds BLG-FEAT-59 — its disposition follows BLG-FEAT-59's. Clearance for this item confirmed by: Financial Reporting & Records Owner.
 
 **Problem**
 This cost estimate directly feeds BLG-FEAT-59, which is itself gated on the AI-adoption window; estimating cost ahead of that gate is premature.
@@ -4445,6 +4459,46 @@ ST-35 (BLG-FE-192) made the `RecentTradesWidget` icon badge's colour neutral for
 **Acceptance Criteria**
 - A zero-P&L trade renders a neutral glyph; winners and losers keep their arrows
 - Playwright scenario passes in CI
+
+---
+
+### BLG-GOV-361 — BLG-SPEC-65 still carries a stale sixth copy of the AI adoption window gate text
+**Priority:** P4 (Backlog)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Data Model & Domain Schema Owner
+**Source:** ST-24 (BLG-GOV-350), EPIC-04, cycle `2026-09-30__release-v9.9` — out-of-scope finding in the Head of Specs Team write-scope ruling for ESC-EXEC-20261001-01 — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-24 replaced the restated AI adoption window gate text on its 5 named items (BLG-FEAT-59/60/63, BLG-FE-84, BLG-OPS-88) with a pointer to the new `## Shared Gate References` → "90-Day AI Feature Usage Review Gate" statement at the top of this file. BLG-SPEC-65 (AI interaction history data model) has a sixth variant of the same clause — "…AND AI adoption window clears ~2026-07-25" — that still cites the superseded 2026-07-25 date. It was not one of BLG-GOV-350's five items, so ST-24's ruling did not authorise editing it.
+
+**Scope**
+- Point BLG-SPEC-65's adoption-window half at the canonical "90-Day AI Feature Usage Review Gate" statement (keeping a `due 2026-09-24` token so `scan_backlog_gate_conditions.py` still detects it), leaving its §13 / BLG-FEAT-55 half unchanged — or have BLG-GOV-356 (the review itself) disposition it directly
+
+**Acceptance Criteria**
+- No backlog item restates the AI adoption window gate or cites the 2026-07-25 date; BLG-SPEC-65 references the canonical statement or carries an explicit disposition
+
+---
+
+### BLG-GOV-362 — Make "the sealed plan names this file" a standing Sprint Execution write-scope rule for claude/roadmap/* and existing backlog item fields
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Product Owner
+**Source:** Head of Specs Team write-scope ruling for ESC-EXEC-20261001-01/-04/-05 (ST-24, ST-26, ST-31), cycle `2026-09-30__release-v9.9` — recommendation section — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Three escalations this cycle (ESC-EXEC-20261001-01/-04/-05) had the same root cause: a sealed AC named a `claude/roadmap/*` file or an existing `backlog.md` item's field, but `execution_prompt.md` §7 only carves out `workforce_capacity.md` (BLG-GOV-337), so each needed a one-off Head of Specs Team ruling. The same gap was hit at v9.8 (ESC-EXEC-20260930-02), v9.7 (ST-23's deferred SI-02 cross-reference) and v8.5 (ST-22 created `product_value_ratio_history.md` out of scope, unflagged). Sprint Planning also classified ST-24 and ST-31 `autonomous` despite both needing out-of-scope writes.
+
+**Scope**
+- Consider widening BLG-GOV-337's exception in `execution_prompt.md` §7 to a general "plan-authorised named-file" rule: Sprint Execution may write a `claude/roadmap/*` file, or edit an existing `backlog.md` item's non-priority fields, when the sealed AC names that exact file and field — keeping the existing prioritisation/scope/capacity exclusions
+- Consider a Sprint Planning check that classifies any AC naming a `claude/roadmap/*` path or existing-item `backlog.md` content as `delegated_decision` with a RISK entry at seal, rather than `autonomous`
+- Apply the CLAUDE.md §6 checklist to each prompt changed
+
+**Acceptance Criteria**
+- A ruling is recorded on both proposals; any adopted change ships with the full CLAUDE.md §6 checklist
 
 ---
 

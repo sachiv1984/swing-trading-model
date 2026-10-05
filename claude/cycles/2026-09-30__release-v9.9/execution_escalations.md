@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-01
+Last Updated: 2026-10-05
 
 # Execution Escalations — 2026-09-30__release-v9.9
 
@@ -18,8 +18,10 @@ Last Updated: 2026-10-01
 - **Unblock criteria:** Head of Specs Team decides where the canonical gate statement should live (new `current_roadmap.md` §6 entry, a shared backlog convention section, or another Class-1/Class-4 home) and either makes the edit directly or explicitly authorises this engine to do so (citing this escalation ID in the commit message, per the `workforce_capacity.md`/BLG-GOV-337 precedent format).
 - **SLA due-by:** 2026-10-02T13:05:00Z (24h — Lifecycle/Process Integrity)
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-05
+- **Resolved by:** Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), on the user's explicit direction ("act as relevant agents and resolve issues", 2026-10-05). SLA (2026-10-02T13:05:00Z) exceeded by ~3 days.
+- **Resolution summary:** Head of Specs Team, 2026-10-05: Approved as a one-off write-scope authorisation (execution_prompt.md §7 not amended). Canonical home is a new unnumbered `## Shared Gate References` section in `claude/backlog/backlog.md` (not `current_roadmap.md` §6, which tracks roadmap-feature gates and is read by no backlog gate scanner). Engine authorised to insert that section and replace only the `**Gate criteria:**` line of BLG-FEAT-59/60/63, BLG-FE-84 and BLG-OPS-88; replacement lines keep a `due 2026-09-24` token so `scan_backlog_gate_conditions.py` and post-ship STEP 12.6 still detect them (verified: 130 gated / 14 lapsed unchanged; 4 items now report the correct 2026-09-24 lapse date instead of 2026-07-25). BLG-SPEC-65's stale sixth variant filed as BLG-GOV-361; standing-rule recommendation filed as BLG-GOV-362. Ownership correction: `backlog.md` is owned by the Product Owner — PO acknowledgement in PR review recommended, not blocking (content signed off at the planning seal).
 
 ## ESC-EXEC-20261001-02
 
