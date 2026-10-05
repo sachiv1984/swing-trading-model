@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T07:27:17Z",
+  "last_updated_utc": "2026-10-05T08:01:24Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -451,7 +451,7 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
@@ -671,6 +671,12 @@
           "sign_off_record": null,
           "notes": ""
         }
+      },
+      "merged_via": {
+        "pr_number": 1886,
+        "merge_commit": "362ff619",
+        "retroactive_gate": "pending",
+        "note": "Done stories ST-21/22/23/25/27 reached main via EPIC-02 PR #1886 without an EPIC-04 merge gate (process deviation). Retroactive gate per user direction 2026-10-05: qa_evidence_EPIC-04.md written, DoQ sign-off + PO acceptance pending (human)."
       }
     },
     "EPIC-05": {
@@ -923,7 +929,8 @@
     "all_merged": false
   },
   "process_notes": [
-    "EPIC-01 PR #1884: all CI checks green, mergeable=MERGEABLE, mergeStateStatus=BLOCKED (no reviews yet). STEP 4 merge gate conditions unmet: 'QA sign-off comment from Director of Quality on PR' and 'Product Owner acceptance' are both outstanding -- always-human gates (execution_prompt.md §5.3), not self-approvable. Per 'park and continue other items', proceeding to EPIC-04 (next in sprint_backlog.md's merge order) rather than stalling the sprint on this EPIC's human sign-off wait."
+    "EPIC-01 PR #1884: all CI checks green, mergeable=MERGEABLE, mergeStateStatus=BLOCKED (no reviews yet). STEP 4 merge gate conditions unmet: 'QA sign-off comment from Director of Quality on PR' and 'Product Owner acceptance' are both outstanding -- always-human gates (execution_prompt.md §5.3), not self-approvable. Per 'park and continue other items', proceeding to EPIC-04 (next in sprint_backlog.md's merge order) rather than stalling the sprint on this EPIC's human sign-off wait.",
+    "2026-10-05 resume: PR #1886 (EPIC-02) merged 17 EPIC-04/EPIC-05 commits into main alongside ST-06-ST-09, because EPIC-02's branch was cut on top of the EPIC-04/05 linear history. CLAUDE.md §2 branch-matching deviation, plus bypass of the STEP 4 merge gate for those EPICs. Per user direction: retroactive gate. Recorded in qa_evidence_EPIC-02/04/05.md, EPIC-04/05 marked in_progress with merged_via.retroactive_gate=pending. execution_state.json had also left EPIC-04/05 at not_started and ST-33/ST-34 at not_started despite their commits being on main; corrected."
   ],
   "sealed": false,
   "sealed_utc": null
