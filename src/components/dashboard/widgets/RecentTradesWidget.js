@@ -31,10 +31,17 @@ export default function RecentTradesWidget({ positions }) {
               className="flex items-center justify-between p-3 rounded-xl bg-slate-800/50 dark:bg-slate-800/50 border border-slate-700/30"
             >
               <div className="flex items-center gap-3">
-                <div className={cn(
-                  "p-2 rounded-lg",
-                  (trade.pnl || 0) >= 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"
-                )}>
+                <div
+                  data-testid={`recent-trade-badge-${trade.id}`}
+                  className={cn(
+                    "p-2 rounded-lg",
+                    (trade.pnl || 0) > 0
+                      ? "bg-emerald-500/20 text-emerald-400"
+                      : (trade.pnl || 0) < 0
+                        ? "bg-rose-500/20 text-rose-400"
+                        : "bg-slate-500/20 text-slate-300"
+                  )}
+                >
                   {(trade.pnl || 0) >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                 </div>
                 <div>
