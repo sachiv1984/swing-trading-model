@@ -6,7 +6,6 @@ Tests get_monthly_pnl_report() in isolation (database layer mocked) -- same
 convention as test_reports_integration.py / test_monthly_pnl_cost_basis.py.
 No live DB or network connections are made.
 """
-import importlib.util as _ilu
 import inspect
 import sys
 from pathlib import Path
@@ -18,15 +17,11 @@ from services.reports_service import get_monthly_pnl_report  # noqa: E402
 
 # tests/conftest.py replaces sys.modules["database"] with a session-scoped MagicMock stub
 # (BLG-QA-20/retired BLG-QA-73), so `from database import get_monthly_pnl` would yield a
-# MagicMock and inspect.getsource() on it raises TypeError (BLG-QA-192). Load a private,
-# isolated copy of the real backend/database.py instead -- same pattern as
-# tests/test_month_closure_clock_source.py (shared_standards.md §18): never touches
-# sys.modules["database"].
-_DATABASE_PY = Path(__file__).parent.parent / "backend" / "database.py"
-_spec = _ilu.spec_from_file_location("database_real_for_null_fee_audit_test", _DATABASE_PY)
-_real_database = _ilu.module_from_spec(_spec)
-with patch.dict("os.environ", {"DATABASE_URL": "postgresql://user:pw@localhost:5432/dummy"}):
-    _spec.loader.exec_module(_real_database)
+# MagicMock and inspect.getsource() on it raises TypeError (BLG-QA-192). Use a private copy
+# of the real backend/database.py instead (tests/_real_database.py, ST-14).
+from tests._real_database import load_real_database  # noqa: E402
+
+_real_database = load_real_database("database_real_for_test_null_fee_trade_audit")
 
 MOCK_PORTFOLIO = {"id": "portfolio-test-001"}
 
