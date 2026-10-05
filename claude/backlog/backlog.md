@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (sprint execution EPIC-04/ST-24, BLG-GOV-350, under Head of Specs Team write-scope ruling ESC-EXEC-20261001-01 — new `## Shared Gate References` section holding the canonical 90-Day AI Feature Usage Review Gate statement; Gate criteria lines of BLG-FEAT-59/60/63, BLG-FE-84, BLG-OPS-88 now cite it; 2 new items added: BLG-GOV-361 (BLG-SPEC-65's stale sixth gate copy), BLG-GOV-362 (standing plan-authorised write-scope rule)); prior — 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior — 2026-10-05 (sprint execution EPIC-03/ST-11, ST-14, ST-17 — 6 new items added: BLG-QA-205 to BLG-QA-208 (ST-11 traceability-matrix follow-ups), BLG-QA-209 (ST-14: utils.* sys.modules stub leak) and BLG-OPS-177 (ST-17: non-registry check not a required status check on main)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-05 (sprint execution EPIC-04/ST-20, BLG-GOV-358 — §13 retroactive review of the Gap Risk Flag (CONDITIONAL); 4 remediation items added: BLG-BE-136 (weekend-hold trigger disposition + trigger-timing label/spec alignment), BLG-SPEC-179 (positions.md Gap Risk Badge data source), BLG-GOV-359 (§13 ACs must cite every §13 clause naming the subject), BLG-GOV-360 (apply §13.3/§13.5 strategy_rules.md wording)); prior — 2026-10-05 (sprint execution EPIC-04/ST-24, BLG-GOV-350, under Head of Specs Team write-scope ruling ESC-EXEC-20261001-01 — new `## Shared Gate References` section holding the canonical 90-Day AI Feature Usage Review Gate statement; Gate criteria lines of BLG-FEAT-59/60/63, BLG-FE-84, BLG-OPS-88 now cite it; 2 new items added: BLG-GOV-361 (BLG-SPEC-65's stale sixth gate copy), BLG-GOV-362 (standing plan-authorised write-scope rule)); prior — 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4499,6 +4499,95 @@ Three escalations this cycle (ESC-EXEC-20261001-01/-04/-05) had the same root ca
 
 **Acceptance Criteria**
 - A ruling is recorded on both proposals; any adopted change ships with the full CLAUDE.md §6 checklist
+
+---
+
+### BLG-BE-136 — Gap risk flag: disposition the standalone weekend-hold trigger (§13.3) and align trigger-timing label/spec with code
+**Priority:** P2 (Medium)
+**Type:** Backend + Frontend / §13 Remediation
+**Owner:** Head of Engineering; Head of UX & Design; Strategy Rules & System Intent Owner (disposition sign-off)
+**Source:** §13 retroactive review of the Gap Risk Flag (ST-20, EPIC-04, v9.9; `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`, Binding Conditions 6 and 8, Remediation Item 1); escalation ESC-EXEC-20261001-03
+**Effort:** S (~1–2 days)
+**Provisional-Target:** No later than the first §13.5 semi-annual re-attestation (2027-02-06) — hard deadline per Binding Condition 6
+
+**Problem**
+`backend/services/gap_risk_service.py:117-119` adds `"weekend_hold"` to every open position's flag whenever the server date is a Friday (`_is_weekend_hold`, `:40-43`). That flags the whole book identically every week, regardless of ticker or event. The §13 review found this standalone trigger falls within `strategy_rules.md` §13.3's "noise without enabling a decision" rationale, and it is the only binding condition the shipped code does not meet. Separately, the reason label "Weekend hold (flagged at Friday close)" (`src/pages/Positions.js:466`, `src/components/positions/PositionCard.js:19`), `docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md:76` and `docs/specs/frontend/pages/positions.md:484` all describe the flag as raised "at Friday close", but the code flags it all day Friday (server date). The earnings window is also measured in calendar days (`_EARNINGS_NEXT_SESSION_WINDOW_DAYS = 1`, `:37`, `:114`), so viewed on a Friday it does not flag Monday-morning earnings. Today the weekend trigger covers that case incidentally.
+
+**Scope**
+- Default (recommended): remove the standalone `weekend_hold` trigger. Make the earnings trigger aware of trading sessions ("earnings before the position's next trading session", per the original AC-01), so that a Friday view flags Monday earnings. When an earnings flag spans a weekend, the tooltip may still show the historical *weekend* gap statistic as context (Binding Condition 4).
+- Alternative (only with sign-off): the Product Owner and the Strategy Rules & System Intent Owner record a position-specific justification for keeping a weekend trigger, and §13.3's clarification is extended to cover it. Without that, the default applies.
+- Whichever option is chosen, align the reason label, `ux_spec.md` §5 and `positions.md` §Gap Risk Badge with the actual trigger timing (no "at Friday close" wording unless the code implements it).
+- Add a citation of the §13 review record to `gap_risk_service.py`'s module docstring (Binding Condition 8; currently `:11-12` cites only "§13, AC-04").
+- Update `tests/test_gap_risk.py` (e.g. `test_flagged_for_weekend_hold_on_friday`, `:79-88`, and `test_both_reasons_stack_when_earnings_and_weekend_coincide`, `:91`) and `tests/e2e/gap-risk-flag.spec.js` to match. Update `docs/specs/api_contracts/position_endpoints.md` and `docs/reference/openapi.yaml` if the `reasons` enum changes (CLAUDE.md §2 same-commit rule).
+
+**Acceptance Criteria**
+- No flag trigger in `gap_risk_service.py` fires identically for all open positions independent of ticker or event (Binding Condition 6), or a signed alternative disposition is recorded in the §13 review record's Known Deviations / disposition section
+- A position viewed on a Friday with earnings on the following Monday is flagged with reason `earnings`
+- Label, UX spec, frontend spec and code agree on trigger timing
+- Module docstring cites the §13 review record
+- Unit and Playwright tests updated and passing; contract/OpenAPI updated if the `reasons` enum changes
+- Strategy Rules & System Intent Owner sign-off recorded confirming Binding Conditions 1–8 still hold after the change
+
+---
+
+### BLG-SPEC-179 — positions.md Gap Risk Badge names the wrong data source (GET /positions field vs dedicated gap-risk endpoint)
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Frontend Spec Drift
+**Owner:** Head of Specs Team; Frontend Specification Owner
+**Source:** §13 retroactive review of the Gap Risk Flag (ST-20, EPIC-04, v9.9; `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`, Remediation Item 2)
+**Effort:** XS (<0.5 day)
+**Provisional-Target:** TBD (may be folded into BLG-BE-136 if that lands first)
+
+**Problem**
+`docs/specs/frontend/pages/positions.md:482` states the Gap Risk Badge's data source is "`gap_risk` object from `GET /positions` (new field…)". The shipped implementation uses a dedicated, lazily fetched `GET /positions/{position_id}/gap-risk` endpoint (`backend/main.py:1759`; `src/hooks/useGapRisk.js:23`). This alternative was pre-authorised and is already documented in `docs/specs/api_contracts/position_endpoints.md` (2.4.0 changelog row, `:37`; implementation note in the endpoint section). The frontend spec was never updated to match.
+
+**Scope**
+- Update `positions.md` §Gap Risk Badge's Data source line to name `GET /positions/{position_id}/gap-risk` (lazily fetched per position, independent per-cell loading state), with a version bump and changelog row per the document lifecycle guide
+
+**Acceptance Criteria**
+- `positions.md` §Gap Risk Badge names the shipped endpoint; no remaining reference claims a `gap_risk` field on `GET /positions`
+
+---
+
+### BLG-GOV-359 — §13 sign-off ACs must cite every §13 clause that names the feature's subject matter
+**Priority:** P3 (Low)
+**Type:** Governance Process / §13 Gate Quality
+**Owner:** Head of Specs Team; Strategy Rules & System Intent Owner
+**Source:** §13 retroactive review of the Gap Risk Flag (ST-20, EPIC-04, v9.9; `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`, Critical Boundary Question 4 / Remediation Item 3)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+BLG-FEAT-65's v6.9 AC-04 was framed only as "no prediction of gap direction or magnitude" (`claude/cycles/2026-07-10__release-v6.9/stage4_backlog_slice.md:75`), a §13.2 test. So the agent-mediated sign-off (`qa_evidence_EPIC-02.md:33-39`) answered only that question. Nobody asked about `strategy_rules.md` §13.3, which names gap risk monitoring explicitly as excluded, until an unrelated idea-intake window noticed it roughly 12 weeks later (`claude/ideas/window_summary_IW-20260930-01.md:101`). The cycle's "expected fast pass given SI-01 precedent" framing (`cycle_summary.md:32` of that cycle) likely reduced scrutiny.
+
+**Scope**
+- Add a check to the governing prompt(s) that author §13 sign-off ACs (release planning and/or sprint planning; owning prompt to be confirmed by the Head of Specs Team). When drafting a §13 AC, search `strategy_rules.md` §13 for the feature's subject terms, and have the AC cite every §13 clause that names that subject explicitly (not only §13.2's generic prediction test)
+- Apply the CLAUDE.md §6 governance-file edit checklist to whichever prompt is changed
+
+**Acceptance Criteria**
+- The governing prompt requires §13 ACs to cite each §13 clause that names the feature's subject, with a worked example referencing this gap-risk case
+- CLAUDE.md §6 checklist complete (version bump, OPERATIONAL_GUIDE §14 + phase header, prompt_change_log row)
+
+---
+
+### BLG-GOV-360 — Apply the §13.3 gap-risk clarification and §13.5 roster row for the Gap Risk Flag to strategy_rules.md
+**Priority:** P2 (Medium)
+**Type:** Governance Process / Strategy Boundary
+**Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
+**Source:** §13 retroactive review of the Gap Risk Flag (ST-20, EPIC-04, v9.9; `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`, Binding Condition 9); escalation ESC-EXEC-20261001-03 — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** Next routine or session with `claude/strategy/` write scope (e.g. post-ship closure `2026-09-30__release-v9.9`); before the first §13.5 re-attestation (2027-02-06) at the latest
+
+**Problem**
+The ST-20 determination (CONDITIONAL) finds §13.3's literal text ("Exposing a gap risk metric would increase noise…") contradicts the shipped, reviewed earnings-triggered flag on its face, and the feature is missing from §13.5's re-attestation roster. Sprint Execution may not write `claude/strategy/strategy_rules.md` (`execution_prompt.md` §7), so the decision record was filed alone (sufficient for ST-20's AC) and the canonical-text edits were left as exact proposed wording in the record's appendix.
+
+**Scope**
+- Apply the §13.3 clarification and the §13.5 roster row verbatim from the appendix "Proposed strategy_rules.md Wording" of `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`
+- Bump `strategy_rules.md` (v1.13→v1.14 if still current, else next free version — CLAUDE.md §8 step 2a), add its Change Log row and `**Last Updated:**` entry; documentation-only per §12.3/§16; re-run the §15 version cross-reference grep
+
+**Acceptance Criteria**
+- §13.3 distinguishes standing/real-time gap risk monitoring (excluded) from a display-only, on-request, position-specific dated-event flag, and cites the decision record
+- §13.5's roster lists the Gap Risk Flag as CONDITIONAL with the 2027-02-06 weekend-hold disposition deadline
 
 ---
 

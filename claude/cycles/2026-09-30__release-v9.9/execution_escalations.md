@@ -52,8 +52,10 @@ Last Updated: 2026-10-05
 - **Unblock criteria:** A dated determination recorded (new `docs/product/decisions/` file, or a `strategy_rules.md` §13.3/§13.5 wording update, as appropriate to the outcome). If CONDITIONAL or a genuine gap is found, binding conditions or a remediation item must be filed in the same determination.
 - **SLA due-by:** 2026-10-04T15:10:44Z (72h — Strategy)
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-05
+- **Resolved by:** Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner jointly with Head of Specs Team — §5.3), on the user's explicit direction ("act as relevant agents and resolve issues", 2026-10-05). SLA (2026-10-04T15:10:44Z) exceeded by ~1 day.
+- **Resolution summary:** CONDITIONAL. Decision record `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` (2026-10-05). The earnings-triggered flag is outside §13.3's exclusion (display-only, on request, position-specific dated event the user can act on within the daily cadence, consistent with §4.2.3); the standalone weekend-hold trigger (flags every open position all day every Friday) falls within §13.3's noise rationale — a genuine gap. Premise correction: a §13 sign-off was recorded at v6.9 (`claude/cycles/2026-07-10__release-v6.9/qa_evidence_EPIC-02.md`) but its AC tested §13.2 only. 9 binding conditions recorded; remediation filed as BLG-BE-136 (weekend-hold disposition by 2027-02-06), BLG-SPEC-179, BLG-GOV-359, BLG-GOV-360 (strategy_rules.md §13.3/§13.5 wording — outside Sprint Execution's write scope, exact text in the record's appendix).
 
 ## ESC-EXEC-20261001-04
 
