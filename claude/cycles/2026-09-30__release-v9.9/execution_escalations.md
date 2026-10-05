@@ -70,8 +70,10 @@ Last Updated: 2026-10-05
 - **Unblock criteria:** Head of Specs Team decides the canonical home for `role_share_history.md` (a `claude/roadmap/*` write-scope exception in the `workforce_capacity.md`/BLG-GOV-337 format, or a different canonical location) and either makes the edit directly or explicitly authorises this engine to do so, citing this escalation ID in the commit message.
 - **SLA due-by:** 2026-10-02T15:10:44Z (24h — Lifecycle)
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-05
+- **Resolved by:** Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), on the user's explicit direction ("act as relevant agents and resolve issues", 2026-10-05). SLA (2026-10-02T15:10:44Z) exceeded by ~3 days.
+- **Resolution summary:** Head of Specs Team, 2026-10-05: Approved as a one-off write-scope authorisation (execution_prompt.md §7 not amended). Engine authorised to create `claude/roadmap/role_share_history.md` (PMO Lead, Class 3) — interim v9.8-cycle copy migrated, v9.8 row computed by `scripts/compute_role_share_history.py` (39 stories, Head of Specs Team 12 = 30.8%; v9.6–v9.8 rolling 18/102 = 17.6%, cross-checked against `2026-09-30__scheduled/cycle_record.md` §7.2) — and to edit `roadmap_prompt.md` §4 and §7.2 with the full CLAUDE.md §6 checklist (v9.29→v9.30; OPERATIONAL_GUIDE.md v4.217→v4.218). Interim file left as a dated historical snapshot. BLG-GOV-353 bullet-3 finding: `product_value_ratio_history.md` (v8.5 ST-22, `ad102c50`) had no write-scope authorisation on record and was absent from `roadmap_prompt.md` §4 — ratified retroactively by adding it to §4. One drafted edit not applied: adding story/backlog IDs to the §7.2 `####` heading, which CLAUDE.md §2 forbids — provenance recorded in the step text and changelog instead.
 
 ## ESC-EXEC-20261001-05
 
