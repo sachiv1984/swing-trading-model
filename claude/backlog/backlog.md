@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-01 (sprint execution EPIC-05/ST-28 — 1 new item added: BLG-SPEC-178 (new live-vs-doc divergences found by the new drift-detector tool, beyond the 5 originally known)); prior — 2026-10-01 (session — PR #1884/EPIC-01 review, 1 new item added: BLG-QA-204 (get_settings() not mocked in ST-01's timestamp-persistence test)); prior — 2026-09-30 (release planning 2026-09-30__release-v9.9 — Release Slice v9.9 ephemeral section appended, 35 items, marker `RP:v9.9:2026-09-30__release-v9.9`; no other structural changes); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-05 (PR #1886/EPIC-02 agent-mediated DoQ+PO review, 2 new items added: BLG-OPS-175 (ST-09's price-alert dedup guard not race-safe), BLG-OPS-176 (ST-08's dedup-clear path ignores send_alert)); prior — 2026-10-01 (sprint execution EPIC-05/ST-28 — 1 new item added: BLG-SPEC-178 (new live-vs-doc divergences found by the new drift-detector tool, beyond the 5 originally known)); prior — 2026-10-01 (session — PR #1884/EPIC-01 review, 1 new item added: BLG-QA-204 (get_settings() not mocked in ST-01's timestamp-persistence test)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4201,6 +4201,47 @@ Running the new `scripts/check_data_model_drift.py` against this sandbox's `read
 **Acceptance Criteria**
 - Each of the 5 findings above has an explicit disposition recorded (matches known pattern / needs live action / false positive / documentation fix)
 - Any genuine gap gets its own canonical-spec correction or migration-scheduling item, per the existing `BLG-SPEC-150`/`BLG-SPEC-151` precedent for the original 4 orphaned columns
+
+---
+
+### BLG-OPS-175 — ST-09's price-alert de-duplication guard has no DB-level unique constraint
+**Priority:** P4 (Trivial)
+**Type:** Backend / Reliability
+**Owner:** Infrastructure & Operations Owner; Head of Engineering
+**Source:** PR #1886 (EPIC-02, cycle `2026-09-30__release-v9.9`) code review — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-09 (`BLG-OPS-174`) added a SELECT-then-INSERT de-duplication check to `create_price_alert()` (`backend/services/alerts_service.py`) so a sequential double-submit of the same `(portfolio_id, ticker, condition, threshold_price)` returns the existing active alert instead of creating a second one. This closes the common sequential case but is not race-safe: two genuinely concurrent requests can both pass the SELECT check before either INSERTs, still producing two active duplicate alerts. This was disclosed at the time (PR #1886 description, commit message) rather than silently left as a gap, but was not itself filed as a tracked follow-up.
+
+**Scope**
+- Add a partial unique index on `price_alerts (portfolio_id, ticker, condition, threshold_price) WHERE active = TRUE`, mirroring the `idx_positions_open_ticker_entry_date_unique` precedent (DS-17)
+- Requires a live migration — same write-access constraint as other `delegated_backend` DB-schema stories this cycle
+
+**Acceptance Criteria**
+- A genuinely concurrent double-submit (not just sequential) is rejected or absorbed at the DB layer, not just the application layer
+- `data_model.md`'s `price_alerts` section documents the new constraint
+
+---
+
+### BLG-OPS-176 — run_scheduled_anomaly_check()'s dedup-fingerprint-clear path ignores send_alert, unlike the send path
+**Priority:** P4 (Trivial)
+**Type:** Backend / Code Quality
+**Owner:** Infrastructure & Operations Owner
+**Source:** PR #1886 (EPIC-02, cycle `2026-09-30__release-v9.9`) code review — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-08 (`BLG-OPS-173`) added `_send_anomaly_telegram_alert_deduped()`/`_clear_anomaly_alert_fingerprint()` to `backend/services/ai_endpoint_anomaly_service.py`'s `run_scheduled_anomaly_check()`. The send path is correctly gated on both `firing` and `send_alert` (`if firing and send_alert`), but the clear path is gated on `not firing` alone (`elif not firing: _clear_anomaly_alert_fingerprint()`), with no `send_alert` check. A call made with `send_alert=False` (e.g. a future preview/dry-run/status endpoint) while nothing is firing will still mutate the persisted dedup state. Today this is low-impact — clearing an already-empty-or-soon-to-be-cleared fingerprint is idempotent — but the asymmetry between the two branches was not a deliberate design choice, just an oversight, and could surprise a future caller that expects `send_alert=False` to mean "no side effects."
+
+**Scope**
+- Decide whether the clear path should also respect `send_alert` (making both branches symmetric), or keep the current behaviour with an explicit code comment stating it is intentional (dedup state should always reflect the true current firing status, independent of whether this particular call was asked to alert)
+
+**Acceptance Criteria**
+- Either the clear path is gated on `send_alert` to match the send path, or a comment explains why it deliberately is not
+- A test exercises the chosen behaviour explicitly (today's tests only exercise `send_alert`'s default `True`, or `False` combined with no-firing as an incidental side effect, not a deliberate assertion of this specific interaction)
 
 ---
 
