@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (sprint execution EPIC-03/ST-11, ST-14, ST-17 — 6 new items added: BLG-QA-205 to BLG-QA-208 (ST-11 traceability-matrix follow-ups), BLG-QA-209 (ST-14: utils.* sys.modules stub leak) and BLG-OPS-177 (ST-17: non-registry check not a required status check on main)); prior — 2026-10-05 (PR #1886/EPIC-02 agent-mediated DoQ+PO review, 2 new items added: BLG-OPS-175 (ST-09's price-alert dedup guard not race-safe), BLG-OPS-176 (ST-08's dedup-clear path ignores send_alert)); prior — 2026-10-01 (sprint execution EPIC-05/ST-28 — 1 new item added: BLG-SPEC-178 (new live-vs-doc divergences found by the new drift-detector tool, beyond the 5 originally known); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior — 2026-10-05 (sprint execution EPIC-03/ST-11, ST-14, ST-17 — 6 new items added: BLG-QA-205 to BLG-QA-208 (ST-11 traceability-matrix follow-ups), BLG-QA-209 (ST-14: utils.* sys.modules stub leak) and BLG-OPS-177 (ST-17: non-registry check not a required status check on main)); prior — 2026-10-05 (PR #1886/EPIC-02 agent-mediated DoQ+PO review, 2 new items added: BLG-OPS-175 (ST-09's price-alert dedup guard not race-safe), BLG-OPS-176 (ST-08's dedup-clear path ignores send_alert)); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4363,6 +4363,88 @@ ST-14 removed every unrestored `sys.modules["database"]` swap and added a confte
 **Acceptance Criteria**
 - `pytest $(ls tests/test_*.py | sort -r)` passes with no failures, matching the default order
 - The guard fails a file that leaves a `utils.*` stub installed
+
+---
+
+### BLG-QA-210 — ST-12's valid-input sizing property checks only an upper bound, so it would pass if size_position returned 0 shares
+**Priority:** P4 (Backlog)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** PR #1888 (EPIC-03, cycle `2026-09-30__release-v9.9`) agent-mediated Director of Quality review — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_strategy_invariants_property.py::test_valid_inputs_produce_valid_conservative_size` asserts `shares >= 0` and `shares × StopDistance × FX <= RiskAmount`, but nothing from below. A regression that returned `suggested_shares = 0` (or any value well under the §4.1.3 result) would still satisfy the property. The golden tests (`test_golden_outputs.py` PS01–PS05) cover the formula on fixed cases, so this is a gap in the property's strength, not a coverage hole today.
+
+**Scope**
+- Add a lower bound: `shares` is within one 4dp floor step of `RiskAmount / (StopDistance × FX)` (before the ST-04 concentration adjustment, which `ticker=None` already disables)
+
+**Acceptance Criteria**
+- A deliberately zeroed or halved `suggested_shares` falsifies the property
+
+---
+
+### BLG-QA-211 — Backend modules imported inside real_database_imports() stay bound to the real database module for the rest of the pytest session
+**Priority:** P4 (Backlog)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** PR #1888 (EPIC-03, cycle `2026-09-30__release-v9.9`) agent-mediated Director of Quality review (ST-14) — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-14's `real_database_imports()` restores `sys.modules["database"]` after its block, and the conftest guard enforces that. But the modules imported inside the block stay cached in `sys.modules` with `from database import X` bindings to the real module: `main`, every router, and the services they import (first imported by `tests/test_api_contracts.py` at collection). Any later test file importing one of those services gets the real-bound copy, not a stub-bound one. The suite passes today because tests patch at the service level, but this is still cross-file coupling the new guard does not detect. ST-14 deliberately did not evict them, because eviction would break other files' string `patch()` targets.
+
+**Scope**
+- Decide whether to accept this as documented behaviour (and say so in `tests/_real_database.py`), or move contract tests to a pattern that does not populate the shared module cache (e.g. a session-scoped app fixture shared by every TestClient file)
+- If accepted, extend the conftest guard's docstring to state what it does not cover
+
+**Acceptance Criteria**
+- Either a documented, reviewed decision in `tests/_real_database.py`, or no backend module bound to the real database survives past the importing file
+
+---
+
+### BLG-OPS-178 — Test-only Python dependencies (pytest, pytest-cov, hypothesis) are installed in the production Render build
+**Priority:** P4 (Backlog)
+**Type:** Operations / Build
+**Owner:** Infrastructure & Operations Owner
+**Source:** PR #1888 (EPIC-03, cycle `2026-09-30__release-v9.9`) agent-mediated Director of Quality review (ST-12 added hypothesis==6.168.4) — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`render.yaml` builds the production service with `pip install -r requirements.txt`, and `backend/requirements.txt` mixes runtime and test-only packages. `pytest` and `pytest-cov` were already there; ST-12 followed that precedent and added `hypothesis`. Each one adds production install time and attack surface for no runtime use.
+
+**Scope**
+- Split test-only packages into `backend/requirements-dev.txt` (which includes `-r requirements.txt`)
+- Point every CI workflow that runs tests at the dev file, and keep the venv cache key covering both files
+- Leave the Render build on `requirements.txt` only
+
+**Acceptance Criteria**
+- The production build installs no test-only package
+- All CI test workflows still pass
+
+---
+
+### BLG-FE-194 — Recent Trades badge still shows an up-trend glyph for a break-even trade
+**Priority:** P4 (Backlog)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** PR #1889 (EPIC-06/ST-35, cycle `2026-09-30__release-v9.9`) agent-mediated Product Owner / Director of Quality review — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-35 (BLG-FE-192) made the `RecentTradesWidget` icon badge's colour neutral for `pnl === 0`, as scoped. The glyph inside it still uses the old two-way `>= 0` split (`src/components/dashboard/widgets/RecentTradesWidget.js:45`), so a break-even trade shows a neutral-coloured badge with a `TrendingUp` arrow, which still signals a gain.
+
+**Scope**
+- Use a neutral glyph (e.g. lucide `Minus`) for `pnl === 0` / missing pnl, keeping `TrendingUp`/`TrendingDown` for > 0 / < 0
+- Extend `tests/e2e/recent-trades-zero-pnl-badge.spec.js` to assert the glyph
+
+**Acceptance Criteria**
+- A zero-P&L trade renders a neutral glyph; winners and losers keep their arrows
+- Playwright scenario passes in CI
 
 ---
 
