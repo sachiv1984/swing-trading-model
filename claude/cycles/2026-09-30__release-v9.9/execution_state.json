@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T07:27:17Z",
+  "last_updated_utc": "2026-10-05T08:05:55Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -251,34 +251,40 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-09-30__release-v9.9/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_api_contracts.py",
+        "tests/test_null_fee_trade_audit.py",
+        "tests/test_ci_scripts_io_boundary.py"
+      ],
       "stories": {
         "ST-10": {
           "title": "GET /reports/tax-year returns HTTP 500 against its own test fixture",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "eff1ea9845fd524b8b317615df721ceb693d0d95",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:05:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_api_contracts.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Root cause: test-isolation gap (unpatched get_monthly_pnl_snapshots_in_range added by v9.6 ST-08), not an endpoint defect -- documented in commit message. Passes alone; full suite green. No deviation."
         },
         "ST-11": {
           "title": "Strategy-rule -> test traceability matrix for strategy_rules.md S4-S8",
@@ -367,44 +373,48 @@
         "ST-15": {
           "title": "Add automated test coverage for the I/O-boundary functions in EPIC-04's staleness/CI-usage scripts",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "f98732cd93982e917f8f2d1ff9953666a2bf1f32",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:05:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_ci_scripts_io_boundary.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "20 mocked I/O-boundary tests; deliberate pagination regression (unconditional break after page 1) fails 2 of them. No deviation."
         },
         "ST-16": {
           "title": "test_null_fee_trade_audit.py's inspect.getsource() call fails against the database module stub",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "86612f9f3c66e0e3c765d98738aa829dc8d9f7e8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:05:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_null_fee_trade_audit.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Converted to isolated importlib copy of database.py. 4/4 pass alone and in full suite. No deviation."
         },
         "ST-17": {
           "title": "Prove the non-registry dependency check fails a real PR, and confirm it is a required status check on main",
@@ -900,7 +910,10 @@
     "ST-25",
     "ST-27",
     "ST-28",
-    "ST-32"
+    "ST-32",
+    "ST-10",
+    "ST-16",
+    "ST-15"
   ],
   "open_escalations": [
     "ESC-EXEC-20261001-01",
