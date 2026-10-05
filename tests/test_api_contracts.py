@@ -501,6 +501,7 @@ class TestReportsEndpoints(unittest.TestCase):
     @patch("services.reports_service.get_portfolio", return_value=MOCK_PORTFOLIO)
     @patch("services.reports_service.get_positions", return_value=[])
     @patch("services.reports_service.get_trade_history_by_tax_year", return_value=[])
+    @patch("services.reports_service.get_monthly_pnl_snapshots_in_range", return_value=[])
     def test_get_tax_year_report_returns_ok(self, *_):
         body = _ok(CLIENT.get("/reports/tax-year?year=2025"))
         assert "data" in body
