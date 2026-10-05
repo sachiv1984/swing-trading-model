@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (sprint execution EPIC-05/ST-30, BLG-SPEC-165 — Data Model & Domain Schema Owner disposition: re-apply positions.fees_paid NOT NULL (DS-23, pending live); 1 new item added: BLG-SPEC-180 (metrics_definitions.md cites an unreachable NULL-fees_paid cause)); prior — 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior — 2026-10-05 (sprint execution EPIC-03/ST-11, ST-14, ST-17 — 6 new items added: BLG-QA-205 to BLG-QA-208 (ST-11 traceability-matrix follow-ups), BLG-QA-209 (ST-14: utils.* sys.modules stub leak) and BLG-OPS-177 (ST-17: non-registry check not a required status check on main)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-05 (EPIC-05 DoQ review — 1 new item added: BLG-SPEC-181 (action-rate spec/docstring cite the dropped positions.stop_price); ST-29 dropped 4 orphaned positions columns and ST-30 applied fees_paid NOT NULL live, no default); prior — 2026-10-05 (sprint execution EPIC-05/ST-30, BLG-SPEC-165 — Data Model & Domain Schema Owner disposition: re-apply positions.fees_paid NOT NULL (DS-23, pending live); 1 new item added: BLG-SPEC-180 (metrics_definitions.md cites an unreachable NULL-fees_paid cause)); prior — 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4466,6 +4466,26 @@ ST-35 (BLG-FE-192) made the `RecentTradesWidget` icon badge's colour neutral for
 **Acceptance Criteria**
 - The paragraph no longer cites a NULL `positions.fees_paid` as a reachable cause of a NULL trade_history fee leg
 - No change to the `null_fee_trade_count` contract or computation
+
+---
+
+### BLG-SPEC-181 — Action-rate metric spec and query docstring still cite the dropped positions.stop_price column
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Metrics
+**Owner:** Metrics Definitions & Analytics Owner; Data Model & Domain Schema Owner
+**Source:** EPIC-05 agent-mediated Director of Quality review (ST-29), cycle `2026-09-30__release-v9.9` — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-29 dropped the orphaned, always-NULL `positions.stop_price` column (`data_model.md` DS-24). `docs/specs/metrics_definitions.md` (the action-rate definition, around lines 687 and 1110) and the docstring near `backend/database.py:2421` still describe the action-rate query as matching a later `PATCH /positions/{id}` that set `positions.stop_price >= recommended_stop`. The live stop column is `current_stop`. Nothing breaks today because the action-rate metric is not yet computed, but an implementation built from this text would query a column that no longer exists.
+
+**Scope**
+- Replace `positions.stop_price` with `positions.current_stop` in both `metrics_definitions.md` passages (version bump per the document's lifecycle) and in the `database.py` docstring
+
+**Acceptance Criteria**
+- No spec or code comment refers to `positions.stop_price` as a live column
+- `grep -rn "positions.stop_price" docs backend` returns only historical/migration references (DS-24)
 
 ---
 
