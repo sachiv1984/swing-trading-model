@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (sprint execution EPIC-03/ST-11 — 4 new items added: BLG-QA-205 to BLG-QA-208, the strategy-rule → test traceability matrix's untested-clause follow-ups); prior — 2026-10-05 (PR #1886/EPIC-02 agent-mediated DoQ+PO review, 2 new items added: BLG-OPS-175 (ST-09's price-alert dedup guard not race-safe), BLG-OPS-176 (ST-08's dedup-clear path ignores send_alert)); prior — 2026-10-01 (sprint execution EPIC-05/ST-28 — 1 new item added: BLG-SPEC-178 (new live-vs-doc divergences found by the new drift-detector tool, beyond the 5 originally known); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-05 (sprint execution EPIC-03/ST-11, ST-17 — 5 new items added: BLG-QA-205 to BLG-QA-208 (ST-11 traceability-matrix follow-ups) and BLG-OPS-177 (ST-17: non-registry check not a required status check on main)); prior — 2026-10-05 (PR #1886/EPIC-02 agent-mediated DoQ+PO review, 2 new items added: BLG-OPS-175 (ST-09's price-alert dedup guard not race-safe), BLG-OPS-176 (ST-08's dedup-clear path ignores send_alert)); prior — 2026-10-01 (sprint execution EPIC-05/ST-28 — 1 new item added: BLG-SPEC-178 (new live-vs-doc divergences found by the new drift-detector tool, beyond the 5 originally known); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4321,6 +4321,27 @@ The traceability matrix found C4-01 (`POST /portfolio/position` requires ticker,
 
 **Acceptance Criteria**
 - Both clauses asserted by CI-run tests; matrix rows updated
+
+---
+
+### BLG-OPS-177 — Make "Non-Registry Dependency Check (ST-29)" a required status check on main
+**Priority:** P3 (Low)
+**Type:** Operations / CI Governance
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-17/EPIC-03, cycle `2026-09-30__release-v9.9` — live-fire confirmation (`docs/ops/non_registry_dependency_check_live_fire_2026-10-05.md`) — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-17 proved the guard fails a real PR (run 37282917791), but `main`'s branch protection does not list `Non-Registry Dependency Check (ST-29)` among its required checks (required today: `verify_governance`, `Pytest Phase A`, `Endpoint Coverage Report (ST-16)`, `OpenAPI Drift Detection (ST-08)`). A non-registry entry in `backend/requirements.txt` is still blocked indirectly, because Phase A's `pip install` fails. A non-registry `package.json`/`package-lock.json` entry is not blocked at all, since nothing required depends on resolving it.
+
+**Scope**
+- Add `Non-Registry Dependency Check (ST-29)` to `main`'s required status checks (repository settings, admin access needed)
+- Confirm the workflow runs on every PR to `main` (no `paths:` filter that would leave the required check pending on unrelated PRs). If it has one, remove it or add a pass-through job first
+
+**Acceptance Criteria**
+- `gh api repos/sachiv1984/swing-trading-model/branches/main` lists the check under `protection.required_status_checks`
+- A PR that does not touch dependency files is not left blocked waiting on the check
 
 ---
 
