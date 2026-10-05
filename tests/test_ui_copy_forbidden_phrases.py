@@ -261,3 +261,95 @@ def test_real_allowlist_entries_all_carry_a_justification():
     assert raw["entries"], "allow-list unexpectedly empty (the TradePlan placeholder is the baseline entry)"
     for e in raw["entries"]:
         assert len(e["justification"].strip()) >= lint.MIN_JUSTIFICATION_LENGTH, e
+
+
+# ── ST-18 (BLG-QA-194, EPIC-03, v9.9): obfuscation-grade and cross-node bypasses ──────
+# Each bypass named in BLG-QA-194 is either detected (tests below) or listed in the
+# script docstring's "Accepted limits" with rationale (pinned by the last two tests).
+
+@pytest.mark.parametrize("source", [
+    r'const a = "you should";',            # \uXXXX escape for the space
+    r'const a = "you\u{20}should";',            # \u{...} escape
+    r'const a = "you\x20should";',              # \xXX escape
+    r'const a = "you should";',            # escape inside the word itself
+    r'const a = `you\x20should`;',              # escape in a template literal
+    r'const a = <p>you&#32;should</p>;',        # HTML decimal entity for a space
+    r'const a = <p>you&#x20;should</p>;',       # HTML hex entity
+    r'const a = <p>you&#160;should</p>;',       # numeric non-breaking space
+    r'const a = <p>you&ensp;should</p>;',       # named entity
+    r'const a = <p title="buy&nbsp;now" />;',   # entity in a JSX attribute string
+    'const a = "you​ should";',            # zero-width space
+    'const a = "you sh­ould";',            # soft hyphen inside a word
+    'const a = "you⁠ ﻿should";',      # word joiner + BOM
+    'const a = <p>you should</p>;',        # en space (Unicode whitespace)
+])
+def test_escaped_entity_and_invisible_character_obfuscation_is_detected(source):
+    assert _phrases(source) == ["you should"] or _phrases(source) == ["buy now"], source
+
+
+def test_non_breaking_hyphen_is_folded_to_a_hyphen_not_dropped():
+    # "buy‑now" renders as "buy-now", which is not the phrase -- folding must not invent one.
+    assert lint._normalise("buy‑now") == "buy-now"
+    assert _phrases('const a = "buy‑now";') == []
+
+
+def test_jsx_attribute_string_spanning_lines_is_extracted():
+    source = '<Field\n  placeholder="Before you enter, you\n    should check the setup"\n/>\n'
+    assert _phrases(source) == ["you should"]
+    assert lint.scan_text(source)[0][0] == 2  # reported on the attribute's own line
+
+
+def test_unterminated_quote_in_jsx_text_does_not_swallow_following_lines():
+    source = "<p>He said \"wait</p>\nconst b = 'you should';\n"
+    assert _phrases(source) == ["you should"]
+
+
+@pytest.mark.parametrize("source", [
+    "const a = 'you ' + 'should';",
+    "const a = 'you '\n  + 'should';",
+    "const a = <p>You{' '}should</p>;",
+    "const a = <p>{'you '}{'should'}</p>;",
+    "const a = <p>You {'should'}</p>;",
+    "const a = `you ${'should'}`;",
+    "const a = <p><b>Buy</b> now</p>;",
+    "const a = <p>Buy <strong>now</strong></p>;",
+    "const a = <p>We <em>re</em>commend</p>;",
+])
+def test_phrase_split_across_adjacent_literals_is_joined_and_detected(source):
+    assert len(lint.scan_text(source)) == 1, source
+
+
+def test_joined_hit_is_not_double_reported_when_a_part_already_matches():
+    hits = lint.scan_text("const a = 'you should ' + 'now';")
+    assert [h[1].lower() for h in hits] == ["you should"]
+
+
+@pytest.mark.parametrize("source", [
+    "const a = ['you', 'should'].join(' ');",       # runtime join -- accepted limit
+    "const a = 'you ' + verb;",                     # variable between literals
+    "const a = `you ${verb}`;",                     # interpolated expression
+    "const a = cond ? 'you ' : 'should';",           # ternary branches are alternatives
+    "const a = { x: 'you ', y: 'should' };",        # object values are separate copy
+    "const a = <tr><td>Buy</td><td>now</td></tr>;", # block-level cells never join
+    "const a = <p>Buy <span className=\"x\">now</span></p>;",  # opening tag with attributes
+    "const a = 'you' + 'should';",                  # renders 'youshould' -- no phrase
+])
+def test_non_rendered_or_runtime_composition_is_not_joined(source):
+    assert lint.scan_text(source) == [], source
+
+
+def test_accepted_limits_are_documented_in_the_script_docstring():
+    doc = lint.__doc__
+    assert "Accepted limits" in doc
+    for limit in (".join(' ')", "variable or", "inline tag carrying attributes", "block-level"):
+        assert limit in doc, limit
+
+
+def test_joined_literal_is_what_an_allowlist_entry_must_name(tmp_path):
+    src, al = _make_tree(
+        tmp_path,
+        {"pages/X.js": "const a = <p>You{' '}should</p>;\n"},
+        {"entries": [{"file": "src/pages/X.js", "literal": "You should",
+                      "justification": "Fixture: joined-literal allow-list keying check."}]},
+    )
+    assert lint.check_tree(src, al, repo_root=tmp_path) == []
