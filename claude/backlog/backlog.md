@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (Head of Specs Team ruling on ESC-CLOSE-20260930-02, agent-mediated, user-directed — 1 new item added: BLG-GOV-363 (script the execution_state.json read-back check from execution_prompt.md v3.81 §9.2)); prior — 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior — 2026-10-05 (sprint execution EPIC-03/ST-11, ST-14, ST-17 — 6 new items added: BLG-QA-205 to BLG-QA-208 (ST-11 traceability-matrix follow-ups), BLG-QA-209 (ST-14: utils.* sys.modules stub leak) and BLG-OPS-177 (ST-17: non-registry check not a required status check on main)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-05 (ESC-CLOSE-20260930-01 Product Owner ruling confirmed — 1 new item added: BLG-GOV-364 (rule on reduced-roster idea-intake windows)); prior — 2026-10-05 (Head of Specs Team ruling on ESC-CLOSE-20260930-02, agent-mediated, user-directed — 1 new item added: BLG-GOV-363 (script the execution_state.json read-back check from execution_prompt.md v3.81 §9.2)); prior — 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4466,6 +4466,26 @@ ST-35 (BLG-FE-192) made the `RecentTradesWidget` icon badge's colour neutral for
 **Acceptance Criteria**
 - Script passes on a consistent file and fails, naming the field, for each of the 4 equality breaks
 - Unit tests cover each failure mode
+
+---
+
+### BLG-GOV-364 — Decide whether idea-intake windows may run with a reduced roster, and if so cap them
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Product Owner
+**Source:** ESC-CLOSE-20260930-01 Product Owner review (agent-mediated, confirmed by the human Product Owner) — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`idea_intake_prompt.md` §4 and STEP 0 assume every role in `eligible_agents` is exercised, yet `IW-20260928-01` (3 roles) and `IW-20260930-01` (2 roles) ran with a disclosed reduced roster. v2.10's roster rule now constrains such windows while a build-and-ship pull-forward is mandatory, but whether reduced windows are permitted at all — and how they interact with `roadmap_prompt.md` STEP -1.6's standalone pre-run exception — has never been ruled on. `IW-20260928-01` exercised no user-facing role, which left the PO Modify directive unsatisfiable at v9.8.
+
+**Scope**
+- Rule on whether §4/STEP 0 should permit reduced-roster windows; if yes, define when and set a cap (e.g. no two consecutive reduced windows)
+- Apply the CLAUDE.md §6 checklist to any prompt changed
+
+**Acceptance Criteria**
+- A recorded ruling; any adopted change ships with the full CLAUDE.md §6 checklist
 
 ---
 

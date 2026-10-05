@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.9
-**Last Updated:** 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` STEP 11 Friction Item 2 — §2.0 step 6 codebase overlap check); prior — 2026-07-27
+**Version:** 2.10
+**Last Updated:** 2026-10-05 (ESC-CLOSE-20260930-01 Product Owner ruling, agent-mediated and confirmed by the human Product Owner 2026-10-05 — §2.1 step 2a build-and-ship candidate requirement and reduced-roster rule; STEP 4 Notes tally line); prior — 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` STEP 11 Friction Item 2 — §2.0 step 6 codebase overlap check); prior — 2026-07-27; prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -308,6 +308,18 @@ This check prevents duplicate submissions that burden STEP 4 with unnecessary cl
 For each agent:
 1. Switch to that agent's perspective (per the delegation model in the roadmap prompt §4)
 2. Generate a minimum of 2 net-new idea submissions for that agent
+2a. **Build-and-ship candidate requirement (ESC-CLOSE-20260930-01, Product Owner ruling confirmed 2026-10-05):** for each *user-facing role* exercised in this window — Product Owner, Head of UX & Design, Head of Engineering, Frontend Specifications & UX Documentation Owner, Base44 Frontend Prompt Owner — at least 1 of its submissions must be a **build-and-ship candidate**. A build-and-ship candidate meets all three conditions:
+   - **Shipped, user-visible change:** its acceptance criteria would require a shipped, user-visible behaviour change. Apply the content-based test in `roadmap_prompt.md` §7.1, which STEP 2.4 also uses. An audit, documentation, design-only, metric-definition or investigation-shaped idea does not count, even if its subject is user-facing.
+   - **Ready to build:** it is not gated on a §13 review or on any other condition outside its own delivery. A dependency on a named sibling submission in the same window is allowed, for example a frontend idea that needs a paired backend idea.
+   - **Grounded in a live surface and evidence of need:** it comes from a direct read of one named live product surface: a page in `src/pages/`, a component in `src/components/`, or an endpoint the UI consumes. Its Problem Statement names that surface and the evidence of need found there. Acceptable evidence is a user-reported problem, a `strategy_rules.md` purpose the surface does not serve, or a contradiction between what the surface shows or says and what the system actually does.
+
+   A build-and-ship candidate goes through §2.0 steps 5–6 like any other submission. A topic dropped for overlap does not satisfy this step: read another surface instead. If no genuine candidate survives, record `<role> — no build-and-ship candidate; surface reviewed: <path>` in the window summary's Notes rather than fabricating one. The role then meets its minimum from its normal domain. If the same role cited the same surface for "none found" in the previous window, say what was re-checked. Submissions from any other role that pass the same test also count toward the window's tally in Notes.
+
+   **Roster rule:** this rule applies to a window opened for fewer than all roles in `eligible_agents`. §4 and STEP 0 do not provide for that, so when it happens the window summary must disclose it, as `IW-20260928-01` and `IW-20260930-01` did. Such a window must include at least one user-facing role if a build-and-ship pull-forward is mandatory at the time. A pull-forward is mandatory when either of these holds:
+   - the latest row of `claude/roadmap/product_value_ratio_history.md` is in the Product Value Alert tier, or meets `roadmap_prompt.md` STEP 2.4's sustained-Advisory clause;
+   - the most recent completed rebalance recorded a §7.1 Skill-Silo sustained-failure pull-forward.
+
+   *Why:* `IW-20260914-01` and `IW-20260919-01` ran under identical instructions. They produced 1 (`BLG-FEAT-95`) and 6 (`BLG-FEAT-96/97/98`, `BLG-FE-180/181/182`) build-and-ship ideas, and the next release that honoured the directive used up each pool (v9.4, v9.6). The reduced-roster `IW-20260928-01` exercised no user-facing role, which left the directive unsatisfiable at v9.8. Full rationale: `changelogs/idea_intake_changelog.md` v2.10.
 3. Each submission must fully complete all required template fields (per §7)
 4. Append a new row to `claude/ideas/ideas_register.md` using the Idea ID convention in §6 and the schema from `shared_standards.md §16.5`. Set Status to `Submitted`.
 5. Update `ideas_window.json.submissions_received` with the Idea ID
@@ -394,6 +406,8 @@ Closed: <date/time>
 | ... | | | | |
 
 ## Notes
+
+Build-and-ship candidates (§2.1 step 2a): <n> — <Idea IDs, with submitting role>. User-facing roles with none: <role — surface reviewed: path>, "None", or "n/a — no user-facing role exercised (roster rule not triggered: <reason>)".
 
 <Any gaps, non-compliant submissions flagged, or process notes>
 ```
