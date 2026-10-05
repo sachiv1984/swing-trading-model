@@ -25,9 +25,13 @@ from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
-sys.modules.pop("database", None)
-import database  # noqa: E402
-import services.reports_service as reports_service  # noqa: E402
+from tests._real_database import real_database_imports  # noqa: E402
+
+# Real backend/database.py only while these modules import; conftest's stub is
+# restored afterwards so later test files still see it (ST-14, BLG-QA-190).
+with real_database_imports():
+    import database  # noqa: E402
+    import services.reports_service as reports_service  # noqa: E402
 
 
 def _mock_conn(fetchall_rows=None):

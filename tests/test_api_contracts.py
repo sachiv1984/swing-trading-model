@@ -32,9 +32,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 # Earlier test files (e.g. test_service_coverage.py) inject a stub into
 # sys.modules["database"] that predates EPIC-01 and lacks trade_plan functions.
 # Evict it here so Python loads the real backend/database.py instead.
-sys.modules.pop("database", None)
+from tests._real_database import real_database_imports  # noqa: E402
 
-from main import app  # noqa: E402
+# Real backend/database.py only while these modules import; conftest's stub is
+# restored afterwards so later test files still see it (ST-14, BLG-QA-190).
+with real_database_imports():
+
+    from main import app  # noqa: E402
 
 CLIENT = TestClient(app, raise_server_exceptions=False)
 
@@ -501,6 +505,7 @@ class TestReportsEndpoints(unittest.TestCase):
     @patch("services.reports_service.get_portfolio", return_value=MOCK_PORTFOLIO)
     @patch("services.reports_service.get_positions", return_value=[])
     @patch("services.reports_service.get_trade_history_by_tax_year", return_value=[])
+    @patch("services.reports_service.get_monthly_pnl_snapshots_in_range", return_value=[])
     def test_get_tax_year_report_returns_ok(self, *_):
         body = _ok(CLIENT.get("/reports/tax-year?year=2025"))
         assert "data" in body

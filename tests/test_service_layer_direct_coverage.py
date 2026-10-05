@@ -18,12 +18,16 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
-sys.modules.pop("database", None)
+from tests._real_database import real_database_imports  # noqa: E402
 
-import services.cash_service as cash_service  # noqa: E402
-import services.compliance_service as compliance_service  # noqa: E402
-import services.news_service as news_service  # noqa: E402
-from services.validation_service import _check, _by_severity  # noqa: E402
+# Real backend/database.py only while these modules import; conftest's stub is
+# restored afterwards so later test files still see it (ST-14, BLG-QA-190).
+with real_database_imports():
+
+    import services.cash_service as cash_service  # noqa: E402
+    import services.compliance_service as compliance_service  # noqa: E402
+    import services.news_service as news_service  # noqa: E402
+    from services.validation_service import _check, _by_severity  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

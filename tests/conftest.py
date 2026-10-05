@@ -62,8 +62,9 @@ else:
 # (adding a new `database` import no longer requires a matching conftest.py
 # edit — see claude/backlog resolution for BLG-QA-73).
 #
-# test_api_contracts.py intentionally evicts this stub (sys.modules.pop) to
-# load the real database.py — that is the correct behaviour for contract tests.
+# Test files that need the real database.py (e.g. test_api_contracts.py) import it
+# via tests/_real_database.py, which never leaves this stub replaced -- enforced by
+# the leak guard below (ST-14, BLG-QA-190).
 # ---------------------------------------------------------------------------
 
 import ast  # noqa: E402
@@ -101,6 +102,42 @@ sys.modules["database"] = _database_stub
 def database_stub():
     """Exposes the session-scoped database stub registered at conftest load time."""
     yield _database_stub
+
+
+# ---------------------------------------------------------------------------
+# sys.modules["database"] leak guard (ST-14, BLG-QA-190, EPIC-03, v9.9)
+#
+# A test file that swaps the stub for the real backend/database.py and never puts
+# it back changes what every later file sees, so results silently depend on
+# collection order. Files that need the real module use tests/_real_database.py
+# (a private copy, or a scoped swap that restores the stub). These two checks
+# turn any new unrestored swap into a failure attributed to the file or test
+# that caused it, instead of a confusing failure somewhere else.
+# ---------------------------------------------------------------------------
+
+_LEAK_HINT = (
+    "replaced sys.modules['database'] (conftest's stub) without restoring it -- use "
+    "tests/_real_database.py: load_real_database(), real_database_imports() or the "
+    "restore_database_module fixture (ST-14, BLG-QA-190)"
+)
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_make_collect_report(collector):
+    outcome = yield
+    if isinstance(collector, pytest.Module) and sys.modules.get("database") is not _database_stub:
+        sys.modules["database"] = _database_stub
+        report = outcome.get_result()
+        report.outcome = "failed"
+        report.longrepr = f"{collector.nodeid}: importing this test file {_LEAK_HINT}"
+
+
+@pytest.fixture(autouse=True)
+def _database_stub_not_leaked(request):
+    yield
+    if sys.modules.get("database") is not _database_stub:
+        sys.modules["database"] = _database_stub
+        pytest.fail(f"{request.node.nodeid} {_LEAK_HINT}", pytrace=False)
 
 
 # Import mock harness fixtures (BLG-QA-08 / ST-09)

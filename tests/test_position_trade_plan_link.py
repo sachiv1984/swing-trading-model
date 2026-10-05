@@ -23,6 +23,14 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 import services.position_service as position_service  # noqa: E402
 
 
+import pytest  # noqa: E402
+from tests._real_database import restore_database_module  # noqa: E402,F401
+
+# Tests here re-import the real `database` inside the test body; put conftest's
+# stub back after each one so it never leaks into later files (ST-14, BLG-QA-190).
+pytestmark = pytest.mark.usefixtures("restore_database_module")
+
+
 def _portfolio():
     return {"id": "portfolio-1", "cash": 100000.0}
 

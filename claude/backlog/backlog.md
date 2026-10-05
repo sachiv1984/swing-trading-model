@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (PR #1886/EPIC-02 agent-mediated DoQ+PO review, 2 new items added: BLG-OPS-175 (ST-09's price-alert dedup guard not race-safe), BLG-OPS-176 (ST-08's dedup-clear path ignores send_alert)); prior — 2026-10-01 (sprint execution EPIC-05/ST-28 — 1 new item added: BLG-SPEC-178 (new live-vs-doc divergences found by the new drift-detector tool, beyond the 5 originally known)); prior — 2026-10-01 (session — PR #1884/EPIC-01 review, 1 new item added: BLG-QA-204 (get_settings() not mocked in ST-01's timestamp-persistence test)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior — 2026-10-05 (sprint execution EPIC-03/ST-11, ST-14, ST-17 — 6 new items added: BLG-QA-205 to BLG-QA-208 (ST-11 traceability-matrix follow-ups), BLG-QA-209 (ST-14: utils.* sys.modules stub leak) and BLG-OPS-177 (ST-17: non-registry check not a required status check on main)); prior — 2026-10-05 (PR #1886/EPIC-02 agent-mediated DoQ+PO review, 2 new items added: BLG-OPS-175 (ST-09's price-alert dedup guard not race-safe), BLG-OPS-176 (ST-08's dedup-clear path ignores send_alert)); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4242,6 +4242,209 @@ ST-08 (`BLG-OPS-173`) added `_send_anomaly_telegram_alert_deduped()`/`_clear_ano
 **Acceptance Criteria**
 - Either the clear path is gated on `send_alert` to match the send path, or a comment explains why it deliberately is not
 - A test exercises the chosen behaviour explicitly (today's tests only exercise `send_alert`'s default `True`, or `False` combined with no-firing as an incidental side effect, not a deliberate assertion of this specific interaction)
+
+---
+
+### BLG-QA-205 — No backend test asserts the §4.1.5 FX defaulting/echo or the §4.1.6 insufficient-cash sizing result
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** ST-11/EPIC-03, cycle `2026-09-30__release-v9.9` — strategy-rule → test traceability matrix (`docs/testing/strategy_rule_test_traceability_matrix.md`) — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The traceability matrix found `services/sizing_service.py::size_position`'s FX handling and cash constraint unasserted in CI: C4.1.5-01 (user FX override, Partial), C4.1.5-02 (live FX default, None), C4.1.5-03 (`fx_rate_used` returned, None), C4.1.6-01 (`cash_sufficient: false` when estimated cost exceeds cash, None), C4.1.6-02 (`max_affordable_shares`, None). The only backend tests of the cash path live in `backend/mutmut_pilot_tests/`, which no CI workflow runs; Playwright mocks the response.
+
+**Scope**
+- Add pytest coverage of `size_position` for: US with no `fx_rate` (uses `get_live_fx_rate()`), US with an override (override used and echoed as `fx_rate_used`), UK (`fx_rate_used == 1.0`), estimated cost above available cash (`cash_sufficient` false, `max_affordable_shares` present and affordable), and below it
+
+**Acceptance Criteria**
+- Each clause above asserted by a CI-run test; matrix rows updated to Asserted
+
+---
+
+### BLG-QA-206 — §4.1.7 sizing-widget behaviours have no Playwright coverage
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** ST-11/EPIC-03, cycle `2026-09-30__release-v9.9` — strategy-rule → test traceability matrix (`docs/testing/strategy_rule_test_traceability_matrix.md`) — 2026-10-05
+**Effort:** M (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+The traceability matrix found most of `strategy_rules.md` §4.1.7's Position Sizing Calculator UI rules unasserted: C4.1.7-01 always visible / no toggle (Partial), C4.1.7-02 auto-recalculation with 300ms debounce, C4.1.7-03 loading state, C4.1.7-05 manually entered shares not overwritten + "use this" affordance, C4.1.7-06 no auto-fill on INSUFFICIENT_CASH with MaxAffordableShares shown as information, C4.1.7-07 no auto-fill on an invalid result + inline message, C4.1.7-08 sizing result never blocks form submission (all None). The no-overwrite rule is described in §4.1.7 as a financial safety constraint.
+
+**Scope**
+- Add Playwright scenarios (mocked `POST /portfolio/size`, per `shared_standards.md` §18) for each clause listed
+
+**Acceptance Criteria**
+- Each listed clause has a passing CI Playwright scenario; matrix rows updated
+
+---
+
+### BLG-QA-207 — The live exit decision (should_exit_position) and grace-period behaviour are not called by any CI test
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** ST-11/EPIC-03, cycle `2026-09-30__release-v9.9` — strategy-rule → test traceability matrix (`docs/testing/strategy_rule_test_traceability_matrix.md`) — 2026-10-05
+**Effort:** S (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+The traceability matrix found §6.3 and §8 asserted only on the replay engine's equivalent logic or a compliance view, never against `backend/utils/calculations.py::should_exit_position` (tests only stub it): C6.3-01 no stop-based exit during grace (Partial), C8.1-01 stop trigger after grace (Partial), C8.2 risk-off exit regardless of stop (Partial), C8-00 exactly three exit conditions, C8.1-02 manual confirmation, C8.3 / C6.3-03 manual exit always permitted (None). Also partial: C5-02 stop persisted from day one, C6.3-02 stop calculated and stored during grace, C7.1-02 on-load ATR recompute cadence.
+
+**Scope**
+- Unit-test `should_exit_position` directly: grace boundary (day 9 vs day 10), price at/below/above stop, risk-off overriding both grace and stop, the closed set of exit reasons
+- Assert the entry write path persists an initial stop, and the grace-period path still stores the calculated stop
+- Assert manual exit is accepted inside the grace period
+
+**Acceptance Criteria**
+- Each listed clause asserted by a CI-run test; matrix rows updated
+
+---
+
+### BLG-QA-208 — Entry required-field set and the advisory panel's non-blocking rule are untested at their boundary
+**Priority:** P4 (Backlog)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** ST-11/EPIC-03, cycle `2026-09-30__release-v9.9` — strategy-rule → test traceability matrix (`docs/testing/strategy_rule_test_traceability_matrix.md`) — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+The traceability matrix found C4-01 (`POST /portfolio/position` requires ticker, entry date, entry price, shares and ATR) unasserted, and C4.2.6 (advisory checks never prevent plan submission) asserted only at the API level (`test_response_always_200_on_fail`), not at the trade-plan form.
+
+**Scope**
+- Add a contract test that each required entry field, when omitted, is rejected
+- Add a Playwright scenario submitting a trade plan while the pre-entry panel shows FAIL/WARN
+
+**Acceptance Criteria**
+- Both clauses asserted by CI-run tests; matrix rows updated
+
+---
+
+### BLG-OPS-177 — Make "Non-Registry Dependency Check (ST-29)" a required status check on main
+**Priority:** P3 (Low)
+**Type:** Operations / CI Governance
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-17/EPIC-03, cycle `2026-09-30__release-v9.9` — live-fire confirmation (`docs/ops/non_registry_dependency_check_live_fire_2026-10-05.md`) — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-17 proved the guard fails a real PR (run 37282917791), but `main`'s branch protection does not list `Non-Registry Dependency Check (ST-29)` among its required checks (required today: `verify_governance`, `Pytest Phase A`, `Endpoint Coverage Report (ST-16)`, `OpenAPI Drift Detection (ST-08)`). A non-registry entry in `backend/requirements.txt` is still blocked indirectly, because Phase A's `pip install` fails. A non-registry `package.json`/`package-lock.json` entry is not blocked at all, since nothing required depends on resolving it.
+
+**Scope**
+- Add `Non-Registry Dependency Check (ST-29)` to `main`'s required status checks (repository settings, admin access needed)
+- Confirm the workflow runs on every PR to `main` (no `paths:` filter that would leave the required check pending on unrelated PRs). If it has one, remove it or add a pass-through job first
+
+**Acceptance Criteria**
+- `gh api repos/sachiv1984/swing-trading-model/branches/main` lists the check under `protection.required_status_checks`
+- A PR that does not touch dependency files is not left blocked waiting on the check
+
+---
+
+### BLG-QA-209 — Test files leave permanent utils.* stubs in sys.modules, so a reordered run fails 32 tests and one collection
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** ST-14/EPIC-03, cycle `2026-09-30__release-v9.9` — BLG-QA-190's "widen the audit to utils.formatting" scope item — 2026-10-05
+**Effort:** M (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-14 removed every unrestored `sys.modules["database"]` swap and added a conftest guard against new ones. The same shape of leak exists for `utils.*`. `tests/test_alerts_service.py`, `tests/test_plan_vs_reality.py` and `tests/test_trade_service.py` install module-level stubs for `utils`, `utils.pricing`, `utils.calculations`, `utils.formatting` (and others) with no restore. Meanwhile `test_money_arithmetic_golden.py`, `test_nightly_computations.py`, `test_golden_outputs.py` and `test_rebalance_exit_signal_numpy_regression.py` pop them again to recover. The default alphabetical order happens to pass. Run in reverse file order, the suite fails identically on `main` and with ST-14: 32 failures (`test_replay_service.py`, `test_atr_consolidation.py`, `test_upstream_call_helper.py`, `test_strategy_engine_*`, `test_production_strategy.py`, `test_pre_entry_validation.py::TestMarketRegimeCache`, `test_backtest_rule_service.py`, ...) plus a collection error in `tests/test_pagination.py` (`'utils' is not a package`).
+
+**Scope**
+- Convert the stub-installing files to scoped stubs (`patch.dict(sys.modules, ...)` around the import, as `tests/test_reflection_reminder.py` does), and drop the compensating pops where they become unnecessary
+- Extend `tests/conftest.py`'s ST-14 leak guard (or add a sibling) to cover the `utils` package modules
+
+**Acceptance Criteria**
+- `pytest $(ls tests/test_*.py | sort -r)` passes with no failures, matching the default order
+- The guard fails a file that leaves a `utils.*` stub installed
+
+---
+
+### BLG-QA-210 — ST-12's valid-input sizing property checks only an upper bound, so it would pass if size_position returned 0 shares
+**Priority:** P4 (Backlog)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** PR #1888 (EPIC-03, cycle `2026-09-30__release-v9.9`) agent-mediated Director of Quality review — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/test_strategy_invariants_property.py::test_valid_inputs_produce_valid_conservative_size` asserts `shares >= 0` and `shares × StopDistance × FX <= RiskAmount`, but nothing from below. A regression that returned `suggested_shares = 0` (or any value well under the §4.1.3 result) would still satisfy the property. The golden tests (`test_golden_outputs.py` PS01–PS05) cover the formula on fixed cases, so this is a gap in the property's strength, not a coverage hole today.
+
+**Scope**
+- Add a lower bound: `shares` is within one 4dp floor step of `RiskAmount / (StopDistance × FX)` (before the ST-04 concentration adjustment, which `ticker=None` already disables)
+
+**Acceptance Criteria**
+- A deliberately zeroed or halved `suggested_shares` falsifies the property
+
+---
+
+### BLG-QA-211 — Backend modules imported inside real_database_imports() stay bound to the real database module for the rest of the pytest session
+**Priority:** P4 (Backlog)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** PR #1888 (EPIC-03, cycle `2026-09-30__release-v9.9`) agent-mediated Director of Quality review (ST-14) — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-14's `real_database_imports()` restores `sys.modules["database"]` after its block, and the conftest guard enforces that. But the modules imported inside the block stay cached in `sys.modules` with `from database import X` bindings to the real module: `main`, every router, and the services they import (first imported by `tests/test_api_contracts.py` at collection). Any later test file importing one of those services gets the real-bound copy, not a stub-bound one. The suite passes today because tests patch at the service level, but this is still cross-file coupling the new guard does not detect. ST-14 deliberately did not evict them, because eviction would break other files' string `patch()` targets.
+
+**Scope**
+- Decide whether to accept this as documented behaviour (and say so in `tests/_real_database.py`), or move contract tests to a pattern that does not populate the shared module cache (e.g. a session-scoped app fixture shared by every TestClient file)
+- If accepted, extend the conftest guard's docstring to state what it does not cover
+
+**Acceptance Criteria**
+- Either a documented, reviewed decision in `tests/_real_database.py`, or no backend module bound to the real database survives past the importing file
+
+---
+
+### BLG-OPS-178 — Test-only Python dependencies (pytest, pytest-cov, hypothesis) are installed in the production Render build
+**Priority:** P4 (Backlog)
+**Type:** Operations / Build
+**Owner:** Infrastructure & Operations Owner
+**Source:** PR #1888 (EPIC-03, cycle `2026-09-30__release-v9.9`) agent-mediated Director of Quality review (ST-12 added hypothesis==6.168.4) — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`render.yaml` builds the production service with `pip install -r requirements.txt`, and `backend/requirements.txt` mixes runtime and test-only packages. `pytest` and `pytest-cov` were already there; ST-12 followed that precedent and added `hypothesis`. Each one adds production install time and attack surface for no runtime use.
+
+**Scope**
+- Split test-only packages into `backend/requirements-dev.txt` (which includes `-r requirements.txt`)
+- Point every CI workflow that runs tests at the dev file, and keep the venv cache key covering both files
+- Leave the Render build on `requirements.txt` only
+
+**Acceptance Criteria**
+- The production build installs no test-only package
+- All CI test workflows still pass
+
+---
+
+### BLG-FE-194 — Recent Trades badge still shows an up-trend glyph for a break-even trade
+**Priority:** P4 (Backlog)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** PR #1889 (EPIC-06/ST-35, cycle `2026-09-30__release-v9.9`) agent-mediated Product Owner / Director of Quality review — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-35 (BLG-FE-192) made the `RecentTradesWidget` icon badge's colour neutral for `pnl === 0`, as scoped. The glyph inside it still uses the old two-way `>= 0` split (`src/components/dashboard/widgets/RecentTradesWidget.js:45`), so a break-even trade shows a neutral-coloured badge with a `TrendingUp` arrow, which still signals a gain.
+
+**Scope**
+- Use a neutral glyph (e.g. lucide `Minus`) for `pnl === 0` / missing pnl, keeping `TrendingUp`/`TrendingDown` for > 0 / < 0
+- Extend `tests/e2e/recent-trades-zero-pnl-badge.spec.js` to assert the glyph
+
+**Acceptance Criteria**
+- A zero-P&L trade renders a neutral glyph; winners and losers keep their arrows
+- Playwright scenario passes in CI
 
 ---
 
