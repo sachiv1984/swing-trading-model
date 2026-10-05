@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T12:10:00Z",
+  "last_updated_utc": "2026-10-05T12:39:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -502,24 +502,31 @@
       "stories": {
         "ST-19": {
           "title": "Conduct the overdue 90-day AI feature usage review (BLG-GOV-74/140/141/142 cluster)",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 1867,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "979f0126c224f44432d7ecfc195771ed1fa45ff7",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-01T15:10:44Z",
           "unblock_criteria": "Human with production access conducts (or supplies data for) the 90-day AI feature usage review; see ESC-EXEC-20261001-02.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T12:38:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/ai_feature_usage_review_2026-09-24.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Escalated: no production credential in this sandbox (RISK-03). See ESC-EXEC-20261001-02."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team; PMO Lead (review); Product Owner (human) decision",
+            "date": "2026-10-05"
+          },
+          "notes": "Escalated: no production credential in this sandbox (RISK-03). See ESC-EXEC-20261001-02. | Reclassified delegated_decision -> autonomous on unblock. Unblocked in-session: Product Owner ran the 3 read-only production queries and pasted results (2026-10-05). Review filed; Product Owner decision to clear the gate and build the AI features; all 8 gated items dispositioned in backlog.md under PO authorisation. ESC-EXEC-20261001-02 Resolved. No spec deviation."
         },
         "ST-20": {
           "title": "gap_risk_service.py (BLG-FEAT-65) shipped without a recorded S13 review or S13.5 roster row",
@@ -952,7 +959,6 @@
   },
   "blocked_items": [],
   "delegated_items": [
-    "ST-19",
     "ST-29",
     "ST-30",
     "ST-31"
@@ -986,10 +992,10 @@
     "ST-14",
     "ST-24",
     "ST-20",
-    "ST-26"
+    "ST-26",
+    "ST-19"
   ],
   "open_escalations": [
-    "ESC-EXEC-20261001-02",
     "ESC-EXEC-20261001-05"
   ],
   "merge_gate": {
