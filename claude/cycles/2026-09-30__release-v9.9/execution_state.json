@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T08:24:21Z",
+  "last_updated_utc": "2026-10-05T08:39:04Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -363,23 +363,26 @@
         "ST-14": {
           "title": "Convert remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules swap pattern",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "c2ab1ea12a38def275b3b83c7611524351754a8e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:38:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/_real_database.py",
+            "tests/conftest.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "37 files re-grepped (29 collection-time leakers, 6 runtime pops, 2 comment-only). Category A -> isolated copy (13), B -> scoped restore (16), C/runtime -> restore fixture (6); permanent conftest leak guard added. Full suite 2056 passed; simulated Phase B 2067 passed; reverse-order 0 database-guard trips, remaining 32 failures pre-existing utils.* leak (identical on main) -> BLG-QA-209. No spec deviation."
         },
         "ST-15": {
           "title": "Add automated test coverage for the I/O-boundary functions in EPIC-04's staleness/CI-usage scripts",
@@ -936,7 +939,8 @@
     "ST-13",
     "ST-18",
     "ST-11",
-    "ST-17"
+    "ST-17",
+    "ST-14"
   ],
   "open_escalations": [
     "ESC-EXEC-20261001-01",
