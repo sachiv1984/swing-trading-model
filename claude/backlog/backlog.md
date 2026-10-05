@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (sprint execution EPIC-04/ST-20 — BLG-GOV-360 resolved: strategy_rules.md v1.14 §13.3/§13.5 wording applied); prior — 2026-10-05 (sprint execution EPIC-04/ST-19, BLG-GOV-356 — 90-day AI feature usage review filed (`docs/ops/ai_feature_usage_review_2026-09-24.md`); Product Owner-authorised dispositions: gates cleared on BLG-FEAT-59/60/63, BLG-FE-84, BLG-GOV-140/141; BLG-OPS-88 unbundled and re-gated on a Render alert or latency breach; BLG-GOV-142 resolved; `## Shared Gate References` section removed (no remaining citers); BLG-GOV-361 updated); prior — 2026-10-05 (sprint execution EPIC-04/ST-20, BLG-GOV-358 — §13 retroactive review of the Gap Risk Flag (CONDITIONAL); 4 remediation items added: BLG-BE-136 (weekend-hold trigger disposition + trigger-timing label/spec alignment), BLG-SPEC-179 (positions.md Gap Risk Badge data source), BLG-GOV-359 (§13 ACs must cite every §13 clause naming the subject), BLG-GOV-360 (apply §13.3/§13.5 strategy_rules.md wording)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-05 (PR #1891 agent-mediated Director of Quality + Product Owner review — 6 new items added: BLG-QA-212 (tests for compute_role_share_history.py), BLG-GOV-365 (§13.3 carve-out: UK earnings / pre-open timing), BLG-BE-137 (strategy version registry stuck at v1.4), BLG-GOV-366 (track the next AI usage review, 2027-01-03), BLG-GOV-367 (Skill-Silo series mixes two formulas), BLG-SPEC-182 (refresh the Gap Risk Flag decision record to v1.14)); prior — 2026-10-05 (sprint execution EPIC-04/ST-20 — BLG-GOV-360 resolved: strategy_rules.md v1.14 §13.3/§13.5 wording applied); prior — 2026-10-05 (sprint execution EPIC-04/ST-19, BLG-GOV-356 — 90-day AI feature usage review filed (`docs/ops/ai_feature_usage_review_2026-09-24.md`); Product Owner-authorised dispositions: gates cleared on BLG-FEAT-59/60/63, BLG-FE-84, BLG-GOV-140/141; BLG-OPS-88 unbundled and re-gated on a Render alert or latency breach; BLG-GOV-142 resolved; `## Shared Gate References` section removed (no remaining citers); BLG-GOV-361 updated); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4579,6 +4579,146 @@ The ST-20 determination (CONDITIONAL) finds §13.3's literal text ("Exposing a g
 **Acceptance Criteria**
 - §13.3 distinguishes standing/real-time gap risk monitoring (excluded) from a display-only, on-request, position-specific dated-event flag, and cites the decision record
 - §13.5's roster lists the Gap Risk Flag as CONDITIONAL with the 2027-02-06 weekend-hold disposition deadline
+
+---
+
+### BLG-QA-212 — Add unit tests for scripts/compute_role_share_history.py now that roadmap §7.2 depends on it
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner; PMO Lead
+**Source:** PR #1891 agent-mediated Director of Quality review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`roadmap_prompt.md` v9.30 §7.2 step 1 now requires running `scripts/compute_role_share_history.py` to append each shipped cycle's row to `claude/roadmap/role_share_history.md`. The script has no tests (`git grep compute_role_share_history -- tests` returns nothing). It silently drops any ST block that has no `**Owner:**` line, which understates the total. It also matches only `#### ST-` headings. Today its totals equal the ST-heading counts for every cycle from v7.6 to v9.9, but nothing would catch a format drift in a future `sprint_backlog.md`. The same gap exists for STEP 7.1 in `compute_rebalance_diagnostics.py`: only STEP 2.4 is pinned against the real changelog, and a 7.1 pin would have caught the 84.0%/84.8% misstatement (finding F-1).
+
+**Scope**
+- Add `tests/test_compute_role_share_history.py` covering:
+  - a fixture with simple and compound Owner strings
+  - a story with no Owner line, which should produce a warning or non-zero exit rather than a silent drop
+  - the `--json` output shape
+  - a regression pin against `claude/cycles/2026-09-28__release-v9.8/sprint_backlog.md` (39 stories, Head of Specs Team 12)
+- Make the script report stories it found but could not attribute, rather than dropping them silently
+- Add a STEP 7.1 real-changelog pin to `tests/test_compute_rebalance_diagnostics.py` (v9.6–v9.8 window → 84/99 = 84.8%)
+
+**Acceptance Criteria**
+- New test file passes in CI Phase B and covers compound owners, a missing Owner line and the v9.8 regression pin
+- The script's total equals the number of ST headings, or it reports the difference
+- The STEP 7.1 real-changelog figure is pinned in a test
+
+---
+
+### BLG-GOV-365 — Gap Risk Flag §13.3 carve-out: rule on UK-ticker earnings flags and day-0 pre-open earnings timing
+**Priority:** P2 (Medium)
+**Type:** Governance Process / Strategy Boundary
+**Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
+**Source:** PR #1891 agent-mediated Director of Quality review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** S (~0.5 day ruling, plus any scope folded into BLG-BE-136)
+**Provisional-Target:** TBD (before the first §13.5 re-attestation, 2027-02-06)
+
+**Problem**
+`strategy_rules.md` v1.14 §13.3 (`:504`) permits a display-only flag only for an event "already recognised as a gap-risk event by a canonical rule". It names a scheduled earnings date per §4.2.3 as the only such event. Two shipped behaviours fall outside that text, and the retroactive §13 review did not examine either:
+1. **UK tickers.** §4.2.3 is US-only (`strategy_rules.md:273`), and pre-entry validation skips non-US tickers (`pre_entry_validation.py:168-174`). `gap_risk_service.get_gap_risk` applies the earnings trigger to every market (`:110-115`, with UK mapped to `.L`).
+2. **Day-0 timing.** The trigger fires at `days_until_earnings == 0`. For a before-market-open release the gap has already happened, so the flag reacts after the gap, which §13.3 `:502` excludes. The code cannot tell before-open from after-close releases (`gap_risk_service.py:31-37`). The decision record's "0–1 calendar days before" (`:129`) does not hold in that case.
+
+**Scope**
+- SRSIO ruling on each point, recorded as an addendum to `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`. For UK, either restrict the trigger to US or extend the canonical recognition with its own justification. For day 0, either drop day 0, or accept it with a stated rationale.
+- Fold any resulting code change into BLG-BE-136's session-aware rework, with the CLAUDE.md §2 contract and OpenAPI rules applying if the response changes
+- If §13.3 or §4.2.3 wording changes, bump `strategy_rules.md` with its Change Log row and the §15 grep
+
+**Acceptance Criteria**
+- A dated ruling on UK tickers and on day-0 timing is recorded in the decision record
+- The code, `strategy_rules.md` §13.3/§4.2.3 and the decision record agree on which markets and which day offsets the earnings trigger covers
+- Tests in `tests/test_gap_risk.py` pin the ruled behaviour, covering a UK position and the day-0 case
+
+---
+
+### BLG-BE-137 — strategy_version_registry.py stuck at v1.4 while strategy_rules.md is at v1.14
+**Priority:** P3 (Low)
+**Type:** Backend / Spec–Code Drift
+**Owner:** Strategy Rules & System Intent Owner; Backend Engineering Patterns Owner
+**Source:** PR #1891 agent-mediated Director of Quality review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/strategy_version_registry.py`'s docstring (`:19-21`) and `docs/specs/data_model.md:1689` (DS-11) both say `STRATEGY_VERSION_REGISTRY` is updated "in the same commit as any new `strategy_rules.md` Change Log row". The registry ends at 1.4 (`:35-41`), but `strategy_rules.md` has Change Log rows from 1.5 to 1.14. Ten versions have gone unregistered since v8.1, including this PR's v1.14. As a result, `get_current_strategy_version()` stamps `strategy_version_at_entry = "1.4"` on new trade plans and positions, and the SI-04 comparison view attributes every trade since 2026-05-20 to 1.4. That may be the intended behaviour, since 1.5–1.14 are documentation-only, but nothing records it as a rule. Either the obligation is being silently breached, or there is an undocumented exemption.
+
+**Scope**
+- SRSIO ruling: either register only versions that change behaviour or parameters, or register all versions
+- If behaviour-only: amend the registry docstring, DS-11 text and `strategy_version_comparison_contract.md` Implementation Note 2 to state the exemption, and add a Change Log tag or column in `strategy_rules.md` that marks each version as behavioural or documentation-only
+- If all versions: add 1.5–1.14 with effective dates, and assess the effect on `strategy_version_at_entry` and comparison-view attribution
+- Add a test that checks the registry against `strategy_rules.md`'s Change Log under whichever rule is chosen, replacing the hardcoded `len == 5` in `tests/test_strategy_version_registry.py:13`
+
+**Acceptance Criteria**
+- A ruling is recorded, and the registry, docstring, DS-11 and contract all agree with it
+- A test fails if a qualifying `strategy_rules.md` Change Log row is added without a matching registry entry
+
+---
+
+### BLG-GOV-366 — Track the next AI feature usage review (2027-01-03) now that every AI gate the trigger relied on is cleared
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** PR #1891 agent-mediated Product Owner review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/ops/ai_feature_usage_review_2026-09-24.md:116-118` sets the next review for 2027-01-03, to repeat the same three production queries and test the Product Owner's hypothesis that building more AI features raises engagement (baseline: 31 calls / 102 days). Nothing schedules it. BLG-GOV-74 (the quarterly cadence) is archived. Post-ship STEP 12.6 (`claude/system/post_ship_closure.md:722-736`) fires only on `DATE-LAPSED` backlog gate text that matches AI-review keywords, and ST-19 removed that gate text from every item. The review's recommendation to sequence BLG-FEAT-60 (engagement metric) early is likewise not recorded anywhere release planning will read it as a constraint. Without a tracked trigger, the PO's build-anyway bet will go unmeasured.
+
+**Scope**
+- File a dated, gate-scanner-detectable item for the 2027-01-03 review, in the form STEP 12.6 recognises (e.g. a `**Gate criteria:**` line containing "AI feature usage review … due 2027-01-03"), so the existing trigger mechanism fires without a prompt change
+- Record on BLG-FEAT-60 (or in the next release-planning input) that it should ship before or alongside the first newly built AI feature, so the engagement effect is measurable
+
+**Acceptance Criteria**
+- `python3 scripts/scan_backlog_gate_conditions.py --as-of 2027-01-04` reports the 2027-01-03 AI usage review as lapsed and matches STEP 12.6's keyword filter
+- BLG-FEAT-60 carries an explicit sequencing note referencing the 2026-10-05 review baseline
+
+---
+
+### BLG-GOV-367 — Skill-Silo rolling-3-cycle series mixes a plain per-cycle average with §7.1's pooled formula
+**Priority:** P3 (Low)
+**Type:** Governance Process / Metrics Integrity
+**Owner:** Metrics Definitions & Analytics Owner; Head of Specs Team
+**Source:** PR #1891 agent-mediated Product Owner review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`roadmap_prompt.md:563` defines Governance story % as a pooled ratio: (G+D+P) ÷ total stories over the last 3 cycles. The recorded series in `claude/roadmap/decision_log.md` is labelled "rolling-3-cycle avg" and matches a plain mean of the per-cycle percentages. For example, 85.7% = mean(100.0, 75.0, 82.1). ST-25's `scripts/compute_rebalance_diagnostics.py` computes the pooled form (84.8% for v9.6–v9.8, against the recorded 83.7%). Once rebalances adopt the script, the "improving/worsening" comparison against prior readings mixes the two methods. That comparison drives §7.1's mandatory pull-forward after 3 consecutive worsening readings, so a change of method could flip a trend reading that the data does not support.
+
+**Scope**
+- Confirm which method §7.1 intends (pooled per its formula, or plain mean per the recorded series) and state it explicitly in §7.1
+- Restate the recent readings (at least the last 4) under the chosen method, or record an explicit method-break note the next rebalance must honour when judging trend direction
+- Align `compute_rebalance_diagnostics.py`'s output (or add a flag) with the chosen method; apply the CLAUDE.md §6 checklist if `roadmap_prompt.md` changes
+
+**Acceptance Criteria**
+- §7.1 names one aggregation method unambiguously
+- The next rebalance's trend comparison uses readings computed by that single method, or cites the recorded method-break note
+
+---
+
+### BLG-SPEC-182 — Refresh the Gap Risk Flag §13 decision record to match strategy_rules.md v1.14 as applied
+**Priority:** P3 (Low)
+**Type:** Spec Debt / §13 Record Integrity
+**Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
+**Source:** PR #1891 agent-mediated Product Owner review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD (before the first §13.5 re-attestation, 2027-02-06)
+
+**Problem**
+`docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` was updated only in its appendix after the v1.14 wording was applied. The body's write-scope note (`:11`) and Binding Condition 9 (`:175`) still state that Sprint Execution cannot write `strategy_rules.md` and that registration is pending. Remediation Item 4 (`:188`) still reads as open. Binding Condition 6 (`:172`) permits any "known, dated event specific to the position's ticker", which is wider than the second-pass-amended §13.3 (`strategy_rules.md:504`: only events already recognised as gap-risk events by a canonical rule — today only earnings). The 2027-02-06 re-attestation will read this record's binding conditions as the operative terms.
+
+**Scope**
+- Update the write-scope note, Binding Condition 9 and Remediation Item 4 to record that registration was completed in `strategy_rules.md` v1.14 (`a5d4dbd2`, BLG-GOV-360 resolved)
+- Narrow Binding Condition 6's wording to match §13.3 as applied, or add an explicit note that §13.3 v1.14 supersedes it where they differ
+- Bump the record's `**Last Updated:**` per the 3-entry rule
+
+**Acceptance Criteria**
+- No statement in the record's body contradicts `strategy_rules.md` v1.14 §13.3/§13.5 or describes BLG-GOV-360 as pending
+- Binding Condition 6's permitted-trigger scope equals §13.3's carve-out
 
 ---
 
