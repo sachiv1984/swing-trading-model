@@ -39,8 +39,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
 # See tests/test_signal_write_sanitization.py for the rationale — conftest.py's
 # database stub lacks the real implementations under test here.
-sys.modules.pop("database", None)
-import database  # noqa: E402
+# Private copy of the real backend/database.py; conftest's sys.modules["database"]
+# stub stays in place for every other test file (ST-14, BLG-QA-190).
+from tests._real_database import load_real_database  # noqa: E402
+
+database = load_real_database("database_real_for_test_ticker_market_sanitization_regression")
 
 from services.ai_service import _validate_context_ticker  # noqa: E402
 

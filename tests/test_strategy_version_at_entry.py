@@ -18,8 +18,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
 # conftest.py registers a MagicMock stub at sys.modules["database"] (BLG-QA-20).
 # Evict it so Python loads the real backend/database.py for the functions under test.
-sys.modules.pop("database", None)
-import database  # noqa: E402
+# Private copy of the real backend/database.py; conftest's sys.modules["database"]
+# stub stays in place for every other test file (ST-14, BLG-QA-190).
+from tests._real_database import load_real_database  # noqa: E402
+
+database = load_real_database("database_real_for_test_strategy_version_at_entry")
 
 from strategy_version_registry import (  # noqa: E402
     get_current_strategy_version,
