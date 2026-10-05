@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T14:15:00Z",
+  "last_updated_utc": "2026-10-05T14:40:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -748,11 +748,11 @@
       }
     },
     "EPIC-05": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1892,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-30__release-v9.9/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_check_data_model_drift.py"
@@ -942,8 +942,8 @@
       "merged_via": {
         "pr_number": 1886,
         "merge_commit": "362ff619",
-        "retroactive_gate": "pending",
-        "note": "Done stories ST-28/32/33/34 reached main via EPIC-02 PR #1886 without an EPIC-05 merge gate (process deviation). Retroactive gate per user direction 2026-10-05: qa_evidence_EPIC-05.md written, DoQ sign-off + PO acceptance pending (human)."
+        "retroactive_gate": "doq_signed_off_pending_po",
+        "note": "Done stories ST-28/32/33/34 reached main via EPIC-02 PR #1886 without an EPIC-05 merge gate (process deviation). Retroactive gate per user direction 2026-10-05: qa_evidence_EPIC-05.md written, DoQ sign-off + PO acceptance pending (human). Update 2026-10-05: agent-mediated Director of Quality sign-off recorded in qa_evidence_EPIC-05.md (user-authorised, option 2); Product Owner acceptance still pending on the EPIC-05 PR."
       }
     },
     "EPIC-06": {
@@ -1048,7 +1048,8 @@
     "2026-10-05 resume: PR #1886 (EPIC-02) merged 17 EPIC-04/EPIC-05 commits into main alongside ST-06-ST-09, because EPIC-02's branch was cut on top of the EPIC-04/05 linear history. CLAUDE.md §2 branch-matching deviation, plus bypass of the STEP 4 merge gate for those EPICs. Per user direction: retroactive gate. Recorded in qa_evidence_EPIC-02/04/05.md, EPIC-04/05 marked in_progress with merged_via.retroactive_gate=pending. execution_state.json had also left EPIC-04/05 at not_started and ST-33/ST-34 at not_started despite their commits being on main; corrected.",
     "2026-10-05: EPIC-06 PR #1889 merged (576b27df, 2026-10-05T09:05:04Z). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-06 empty -- nothing to reconcile.",
     "2026-10-05 resume (run sprint): local main was 20 commits behind origin/main at session start -- pulled before reading state (LL-v7.2-P3-01). Merge-gate resume sync (LL-v3.9-P3-1): EPIC-03 PR #1888 found MERGED (mergedAt 2026-10-05T09:25:32Z, merge commit e502f2aa) while execution_state.json still recorded pr_status=open; EPIC-03 moved to epics_merged, status/pr_status=merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-03 empty -- nothing to reconcile. Block re-evaluation: ESC-EXEC-20261001-01..05 still Open (all past SLA and open >=72h; non-blocking, so advisory only per shared_standards.md §16.4.1) and DEL-20261001-02/03 still Open with no [EPIC-05][ST-29]/[ST-30] commits -- ST-19/20/24/26/29/30/31 remain blocked.",
-    "2026-10-05: EPIC-04 PR #1891 opened after agent-mediated DoQ sign-off (user chose agent-mediated sign-offs). The first EPIC-05 DoQ subagent launch was refused by Claude Code's auto-mode classifier as self-approval; the user then explicitly chose agent-mediated sign-offs (option 2) and the review was re-run with their approval. Branch execution_state.json/execution_escalations.md were synced between EPIC-04 and EPIC-05 (per-story data from each owning branch, summary arrays recomputed) so the two PRs do not conflict on them."
+    "2026-10-05: EPIC-04 PR #1891 opened after agent-mediated DoQ sign-off (user chose agent-mediated sign-offs). The first EPIC-05 DoQ subagent launch was refused by Claude Code's auto-mode classifier as self-approval; the user then explicitly chose agent-mediated sign-offs (option 2) and the review was re-run with their approval. Branch execution_state.json/execution_escalations.md were synced between EPIC-04 and EPIC-05 (per-story data from each owning branch, summary arrays recomputed) so the two PRs do not conflict on them.",
+    "2026-10-05: EPIC-05 PR #1892 opened after agent-mediated DoQ sign-off (Approved; full tests/ 2054 passed). Merge order: #1891 (EPIC-04) first, then #1892; backlog.md will need CLAUDE.md §8 conflict resolution on #1892 after #1891 merges."
   ],
   "sealed": false,
   "sealed_utc": null
