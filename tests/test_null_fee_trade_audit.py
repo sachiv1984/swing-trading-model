@@ -6,6 +6,8 @@ Tests get_monthly_pnl_report() in isolation (database layer mocked) -- same
 convention as test_reports_integration.py / test_monthly_pnl_cost_basis.py.
 No live DB or network connections are made.
 """
+import importlib.util as _ilu
+import inspect
 import sys
 from pathlib import Path
 from unittest.mock import patch
@@ -13,6 +15,18 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
 from services.reports_service import get_monthly_pnl_report  # noqa: E402
+
+# tests/conftest.py replaces sys.modules["database"] with a session-scoped MagicMock stub
+# (BLG-QA-20/retired BLG-QA-73), so `from database import get_monthly_pnl` would yield a
+# MagicMock and inspect.getsource() on it raises TypeError (BLG-QA-192). Load a private,
+# isolated copy of the real backend/database.py instead -- same pattern as
+# tests/test_month_closure_clock_source.py (shared_standards.md §18): never touches
+# sys.modules["database"].
+_DATABASE_PY = Path(__file__).parent.parent / "backend" / "database.py"
+_spec = _ilu.spec_from_file_location("database_real_for_null_fee_audit_test", _DATABASE_PY)
+_real_database = _ilu.module_from_spec(_spec)
+with patch.dict("os.environ", {"DATABASE_URL": "postgresql://user:pw@localhost:5432/dummy"}):
+    _spec.loader.exec_module(_real_database)
 
 MOCK_PORTFOLIO = {"id": "portfolio-test-001"}
 
@@ -63,8 +77,6 @@ def test_get_monthly_pnl_sql_filters_on_either_fee_leg_null():
     """Mutation check on the SQL: the FILTER clause must use OR, not AND --
     a trade missing only one of entry_fees/exit_fees still has an unrecorded
     fee leg and must be counted (RISK-02: do not under-count)."""
-    import inspect
-    from database import get_monthly_pnl
-    source = inspect.getsource(get_monthly_pnl)
+    source = inspect.getsource(_real_database.get_monthly_pnl)
     assert "null_fee_trade_count" in source
     assert "entry_fees IS NULL OR exit_fees IS NULL" in source
