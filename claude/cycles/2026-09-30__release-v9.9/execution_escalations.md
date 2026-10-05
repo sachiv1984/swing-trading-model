@@ -90,5 +90,7 @@ Last Updated: 2026-10-05
 - **Unblock criteria:** Head of Specs Team either makes the `current_roadmap.md` edit directly, or explicitly authorises this engine to do so (citing this escalation ID in the commit message, per the `workforce_capacity.md`/BLG-GOV-337 precedent format). The content itself is not in question — only the write-scope authorisation — since ST-23/v9.7 already decided what the cross-reference should say; this escalation and `ESC-EXEC-20261001-04` (ST-26) may be resolved together if Head of Specs Team grants a single `claude/roadmap/*` write-scope ruling covering both.
 - **SLA due-by:** 2026-10-02T15:17:20Z (24h — Lifecycle)
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-05
+- **Resolved by:** Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), on the user's explicit direction ("act as relevant agents and resolve issues", 2026-10-05). SLA (2026-10-02T15:17:20Z) exceeded by ~3 days.
+- **Resolution summary:** Head of Specs Team, 2026-10-05: Approved as a one-off write-scope authorisation (execution_prompt.md §7 not amended). Engine inserted one "Canonical 'linked trade plan' definition" line into `current_roadmap.md`'s SI-02 gate confirmation status block (after the linked-plan reading line; no gate status/reading changed) and replaced `si02_drift_score.md` §2.4's stale "deferred" cross-reference note (which also mis-cited `shared_standards.md` §17 as granting Head of Specs Team `claude/roadmap/*` authority); `**Last Updated:**` headers only, no version bump. Ownership correction: `current_roadmap.md` is owned by the Product Owner — PO acknowledgement in PR review recommended, not blocking.
