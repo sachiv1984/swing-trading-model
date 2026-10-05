@@ -18,8 +18,9 @@ What is scanned
   Comments are never scanned. Test files (*.test.js, *.spec.js) and `__tests__`
   directories are skipped -- test descriptions are not user-facing copy.
   The scanner is a dependency-free tokeniser, not a full JS parser. Checked against
-  @babel/parser over all of src/ (scripts/ui_copy_lint_babel_differential.js) it extracts
-  every literal except ~0.1%, all benign: JSX text split by a quote character, whose
+  @babel/parser over all of src/ (scripts/ui_copy_lint_babel_differential.py) it extracts
+  every literal except ~0.35% (12,846 of 12,891 at 2026-10-05), all benign: symbol-only JSX text
+  with no letters (`•`, `%`), which carries no phrase, and JSX text split by a quote character, whose
   fragments are scanned separately (so a forbidden phrase that itself straddles a quote
   inside JSX text would not be seen).
 
