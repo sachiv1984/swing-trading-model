@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T12:12:00Z",
+  "last_updated_utc": "2026-10-05T12:46:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -747,25 +747,30 @@
         "ST-29": {
           "title": "Drop 4 confirmed-orphaned, always-NULL columns from the live positions table",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 1877,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "bd89ed4935e931f369f2711e1a41092f5e31bb69",
           "delegation_record_id": "DEL-20261001-02",
           "blocked_since_utc": "2026-10-01T15:25:04Z",
           "unblock_criteria": "Data Model & Domain Schema Owner drops the 4 orphaned columns live (staging then production) and confirms via SELECT. See DEL-20261001-02.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-05T12:45:37Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/data_model.md"
+            "docs/specs/data_model.md#DS-24"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Data Model & Domain Schema Owner (content); live application by the user",
+            "date": "2026-10-05"
+          },
+          "notes": "Unblocked in-session: user ran the pre-check, drop and verification on staging (2 rows) and production (27 rows), all values NULL, 0 columns remaining. Recorded as DS-24 (data_model.md v2.47). DEL-20261001-02 Unblocked. No spec deviation."
         },
         "ST-30": {
           "title": "Reconcile positions.fees_paid NOT NULL constraint (re-apply live, or confirm nullable is intentional)",
@@ -948,7 +953,6 @@
     "ST-20",
     "ST-24",
     "ST-26",
-    "ST-29",
     "ST-30"
   ],
   "completed_items": [
@@ -980,7 +984,8 @@
     "ST-11",
     "ST-17",
     "ST-14",
-    "ST-31"
+    "ST-31",
+    "ST-29"
   ],
   "open_escalations": [
     "ESC-EXEC-20261001-01",

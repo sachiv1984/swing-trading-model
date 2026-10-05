@@ -33,7 +33,7 @@ Last Updated: 2026-10-01
 - **Spec reference:** docs/specs/data_model.md §"4 orphaned, always-NULL, undocumented live columns" (BLG-SPEC-150/BLG-SPEC-164)
 - **Unblock criteria:** Columns dropped on staging (then production); a verification query (`SELECT column_name FROM information_schema.columns WHERE table_name = 'positions' AND column_name IN ('atr_value','stop_price','fees','pnl_percent');` returns 0 rows) confirms. Add a new Migration History entry to `data_model.md` recording the drop.
 - **Commit format required:** `[EPIC-05][ST-29] <description>` pushed to `exec/2026-09-30__release-v9.9/EPIC-05`
-- **Status:** Open — awaiting Data Model & Domain Schema Owner action.
+- **Status:** Unblocked — 2026-10-05T12:45:37Z. Unblocked in-session — the user (human, with live write access, acting for the Data Model & Domain Schema Owner) ran the NULL pre-check (staging 2/2 rows, production 27/27 all NULL), the drop and the verification query (0 rows) on staging then production, same session as the walkthrough. Sign-off cleared; commit `bd89ed49` records it as `data_model.md` DS-24.
 
 ## DEL-20261001-03
 
