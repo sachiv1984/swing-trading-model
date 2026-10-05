@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior — 2026-10-05 (sprint execution EPIC-03/ST-11, ST-14, ST-17 — 6 new items added: BLG-QA-205 to BLG-QA-208 (ST-11 traceability-matrix follow-ups), BLG-QA-209 (ST-14: utils.* sys.modules stub leak) and BLG-OPS-177 (ST-17: non-registry check not a required status check on main)); prior — 2026-10-05 (PR #1886/EPIC-02 agent-mediated DoQ+PO review, 2 new items added: BLG-OPS-175 (ST-09's price-alert dedup guard not race-safe), BLG-OPS-176 (ST-08's dedup-clear path ignores send_alert)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-05 (sprint execution EPIC-05/ST-30, BLG-SPEC-165 — Data Model & Domain Schema Owner disposition: re-apply positions.fees_paid NOT NULL (DS-23, pending live); 1 new item added: BLG-SPEC-180 (metrics_definitions.md cites an unreachable NULL-fees_paid cause)); prior — 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior — 2026-10-05 (sprint execution EPIC-03/ST-11, ST-14, ST-17 — 6 new items added: BLG-QA-205 to BLG-QA-208 (ST-11 traceability-matrix follow-ups), BLG-QA-209 (ST-14: utils.* sys.modules stub leak) and BLG-OPS-177 (ST-17: non-registry check not a required status check on main)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4445,6 +4445,27 @@ ST-35 (BLG-FE-192) made the `RecentTradesWidget` icon badge's colour neutral for
 **Acceptance Criteria**
 - A zero-P&L trade renders a neutral glyph; winners and losers keep their arrows
 - Playwright scenario passes in CI
+
+---
+
+### BLG-SPEC-180 — Correct metrics_definitions.md's claim that a NULL positions.fees_paid yields a silently-zero trade_history fee leg
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Metrics
+**Owner:** Metrics Definitions & Analytics Canonical Owner
+**Source:** ST-30/EPIC-05, 2026-09-30__release-v9.9 — Data Model & Domain Schema Owner disposition on BLG-SPEC-165 — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/metrics_definitions.md` §Fee-Netting Basis (the "Audit finding: a NULL fee leg is silently treated as zero" paragraph) gives, as an example cause of a NULL `trade_history.entry_fees`, "the source `positions.fees_paid` was itself `NULL` at entry". That cannot happen via the application: `position_service.py` `exit_position()` computes `float(position.get('fees_paid', 0))`, which raises `TypeError` on a NULL value (the key is always present in the row dict), so such a position cannot be exited and no trade_history row is written; `entry_fees` is always the numeric `exit_entry_fees`. With DS-23 (`data_model.md`) re-applying `NOT NULL` on `positions.fees_paid`, the cited cause is additionally structurally impossible. A NULL `entry_fees`/`exit_fees` can only originate from legacy or hand-inserted `trade_history` rows. The `null_fee_trade_count` flag itself remains correct and useful.
+
+**Scope**
+- Reword the example cause to "legacy or manually inserted `trade_history` rows", and cross-reference DS-23
+- Remove the dependency on `BLG-SPEC-151` as a live drift (now dispositioned)
+
+**Acceptance Criteria**
+- The paragraph no longer cites a NULL `positions.fees_paid` as a reachable cause of a NULL trade_history fee leg
+- No change to the `null_fee_trade_count` contract or computation
 
 ---
 
