@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.217
-**Last Updated:** 2026-10-01 (Sprint execution `2026-09-30__release-v9.9` EPIC-04/ST-25, BLG-GOV-352 — roadmap_prompt.md v9.28→v9.29: STEP 2.4/STEP 7.1 each gain an "Optional acceleration" cross-reference to the new `scripts/compute_rebalance_diagnostics.py`; §6 source-prompt header and §14 Roadmap Engine Source row updated to v9.29); prior — 2026-10-01 (Sprint execution `2026-09-30__release-v9.9` EPIC-04/ST-21, BLG-GOV-343 — roadmap_prompt.md v9.27→v9.28: split into a core file plus `roadmap_prompt_appendix.md` so the core fits a single read (under 25,000 tokens); §6 source-prompt header and §14 Roadmap Engine Source row updated to v9.28); prior — 2026-09-30 (Roadmap rebalance `2026-09-30__scheduled` STEP 11 meta-review — roadmap_prompt.md v9.26→v9.27: STEP -1.6 gains a standalone pre-run exception clarifying that a same-session standalone `run ideas` window's fresh unprocessed submissions satisfy this step without requiring a second inline window; §6 source-prompt header and §14 Roadmap Engine Source row updated to v9.27); prior history retained — see prior entries in version control.
+**Version:** 4.219
+**Last Updated:** 2026-10-05 (Head of Specs Team rulings on ESC-CLOSE-20260928-02, -20260930-02, -20260930-03, agent-mediated per execution_prompt.md §5.3, user-directed — release_planning_prompt.md v2.58→v2.59, execution_prompt.md v3.80→v3.81, delivery_verification_prompt.md v3.12→v3.13, post_ship_closure.md v2.36→v2.37; §6B/§8/§9/§10 source-prompt headers and §14 rows updated; v4.218 is taken by EPIC-04/ST-26's open branch, so this change is numbered v4.219 per CLAUDE.md §8 step 2a); prior — 2026-10-01 (Sprint execution `2026-09-30__release-v9.9` EPIC-04/ST-25, BLG-GOV-352 — roadmap_prompt.md v9.28→v9.29: STEP 2.4/STEP 7.1 each gain an "Optional acceleration" cross-reference to the new `scripts/compute_rebalance_diagnostics.py`; §6 source-prompt header and §14 Roadmap Engine Source row updated to v9.29); prior — 2026-10-01 (Sprint execution `2026-09-30__release-v9.9` EPIC-04/ST-21, BLG-GOV-343 — roadmap_prompt.md v9.27→v9.28: split into a core file plus `roadmap_prompt_appendix.md` so the core fits a single read (under 25,000 tokens); §6 source-prompt header and §14 Roadmap Engine Source row updated to v9.28); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -622,7 +622,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.58)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.59)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -888,7 +888,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.80)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.81)
 
 ### 8.1 Invocation
 
@@ -977,7 +977,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.12)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.13)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1063,7 +1063,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.36)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.37)
 **Process document:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); `claude/system/post_ship_closure.md` is the sole authority.
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1368,8 +1368,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.216 |
-| Last Updated | 2026-10-01 |
+| Version | 4.219 |
+| Last Updated | 2026-10-05 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.9 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1379,14 +1379,14 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.29 (+ `roadmap_prompt_appendix.md`) |
 | Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.0 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.58 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.59 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.19 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.80 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.81 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.17 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.12 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.13 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.36 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.37 |
 | Shared Standards | `claude/system/shared_standards.md` v3.36 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.15 |
@@ -1504,6 +1504,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.219 | 2026-10-05 | **Head of Specs Team rulings on 3 overdue closure escalations (agent-mediated, execution_prompt.md §5.3, user-directed) — 4 source prompts bumped.** `release_planning_prompt.md` v2.58→v2.59 (ESC-CLOSE-20260928-02: one Option(b) record clears one release); `execution_prompt.md` v3.80→v3.81 (ESC-CLOSE-20260930-02: derived summary fields + per-write read-back; resume-time pushed-commit reconciliation); `delivery_verification_prompt.md` v3.12→v3.13 and `post_ship_closure.md` v2.36→v2.37 (ESC-CLOSE-20260930-03: Known Deviations sync scoped to registered deviations, missing entries routed to Post-Ship STEP 5). §6B/§8/§9/§10 source-prompt headers and §14 rows updated; §14 self-row 4.216/2026-10-01→4.219/2026-10-05. **Numbering note (CLAUDE.md §8 step 2a):** v4.218 is already cut on the unmerged `exec/2026-09-30__release-v9.9/EPIC-04` branch (ST-26), and v4.217 (ST-25) has no row on `main` — both rows arrive when that branch merges; keep this row above them. |
 | 4.216 | 2026-10-01 | **Sprint execution `2026-09-30__release-v9.9` EPIC-04/ST-21 (BLG-GOV-343) — roadmap_prompt.md v9.27→v9.28: split into a core file plus `roadmap_prompt_appendix.md` so the core fits a single read (under 25,000 tokens; was ~29,200).** §6 source prompt header v9.27→v9.28 (now also notes the appendix); §14 Roadmap Engine Source row v9.27→v9.28. §14 self-row `Version`/`Last Updated` 4.215/2026-09-30→4.216/2026-10-01. Change: core covers Sections 1–8 through STEP 8.5 (preflight through the verified write plan); the new appendix's Part A continues STEP 9 (Canonical Write) through STEP 12 (Stage, Commit & Global State Update) plus the closing Invariants/Completion Condition sections — the direct continuation of the same process, not optional material; the appendix's Part B holds detailed historical rationale for rules the core now states compactly with a pointer. No procedural step lost — diff-verified: every `##`/`###`/`####` heading in the pre-split file (74 total) is present in core+appendix (73 exact matches, 1 heading text shortened with its content preserved intact — STEP 7.3's parenthetical). Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, ST-21, 2026-10-01). |
 | 4.215 | 2026-09-30 | **Roadmap rebalance `2026-09-30__scheduled` STEP 11 meta-review — roadmap_prompt.md v9.26→v9.27: STEP -1.6 gains a standalone pre-run exception.** §6 source prompt header v9.26→v9.27; §14 Roadmap Engine Source row v9.26→v9.27. §14 self-row `Version`/`Last Updated` 4.214/2026-09-30→4.215/2026-09-30. Change: STEP -1.6 (Idea Intake, Conditional) now recognises that a standalone `run ideas` window already opened and closed within the same session-chain immediately prior to this invocation — with its submissions still `Submitted`, unprocessed — satisfies this step's purpose without opening a second inline window merely because the open-idea count is still <20. Cites `idea_intake_prompt.md §2`'s own stated relationship ("Run `run ideas` first, then `run roadmap`") as the basis; does not apply when the only open rows are `Parked-cycle-<n>` carries with no fresh same-session `Submitted` rows. Meta-review candidate (this cycle's Candidate 1, Type C Dependency-Stall recurrence pattern) was separately reviewed and deferred, not actioned — see `claude/cycles/2026-09-30__scheduled/meta_review.md`. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated per §5.3, roadmap rebalance `2026-09-30__scheduled` STEP 11, 2026-09-30). |
 | 4.214 | 2026-09-30 | **Sprint execution `2026-09-28__release-v9.8` EPIC-06/ST-32 (BLG-GOV-340) — roadmap_prompt.md v9.25→v9.26: §7.3 gains a Runway Projection cross-reference.** §6 source prompt header v9.25→v9.26; §14 Roadmap Engine Source row v9.25→v9.26. §14 self-row `Version`/`Last Updated` 4.213/2026-09-30→4.214/2026-09-30. Change: §7.3 (Ready-Pool Capacity Gap Trend) now points to `docs/specs/metrics_definitions.md` Appendix F's new "Ready-Pool Runway Forecast" metric — a rolling-3-cycle "cycles until empty" projection, distinct from §7.3's existing absolute gap-vs-ceiling check — and directs the next rebalance to cite the maintained Appendix F figure there rather than recompute one ad hoc. Companion, non-governance-prompt artefact: `docs/specs/metrics_definitions.md` v1.24.0→v1.25.0 (Appendix F gains this metric plus a Delivery Lead Time by Priority Band metric, both backfilled for the last 5 shipped cycles, v9.3–v9.7). Authority: PMO Lead (Sprint Execution Engine, agent-mediated per §5.3, ST-32, 2026-09-30). |

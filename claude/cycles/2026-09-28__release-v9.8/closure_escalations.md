@@ -21,7 +21,7 @@ Format per `claude/system/shared_standards.md §4`.
 | Escalated to | Product Owner |
 | Reason | Re-flagging an empty ungated-U-item pool each cycle without addressing the intake side will keep producing the same finding. A ruling is needed on whether idea-intake windows are adequately prompting for genuine build-and-ship candidates, and if not, what intake-process change would surface them. |
 | Tracking | SLA 2026-10-03 (72h from filing) |
-| Disposition | Open |
+| Disposition | Deferred — agent-mediated Product Owner ruling recorded 2026-10-05 (§5.3, user-directed): intake is not adequately prompting for build-and-ship candidates. Proposed change: `idea_intake_prompt.md` §2.1 step 2a (at least 1 build-and-ship candidate per participating user-facing role, grounded in a live surface, with a recorded "none found" escape) plus a roster rule for reduced windows. Awaiting confirmation from the human Product Owner before the patch is applied. New SLA 2026-10-08. Correction to the premise: `IW-20260919-01` did produce 6 build-and-ship items (`BLG-FEAT-96/97/98`, `BLG-FE-180/181/182`), all shipped at v9.6. The pool emptied rather than never filling. |
 
 ---
 
@@ -34,7 +34,7 @@ Format per `claude/system/shared_standards.md §4`.
 | Escalated to | Head of Specs Team |
 | Reason | Three separate backstops (STEP 4 resume-sync, STEP 5.1 item-count reconciliation, STEP 5.1 deviations-filed enforcement) already catch every instance before seal, but nothing prevents the underlying per-story write from going stale in the first place. A ruling is needed on whether to implement a same-step self-verification read-back for STEP 3.1.A's per-story writes generally (extending the pattern already applied narrowly to `deviations_filed` by `LL-v9.0-P3-01` and to the merge-state persist by `LL-v9.2-P3-01`), or an alternative structural fix — not actioned in this closure, as no unambiguous fix wording exists yet for a general-purpose read-back mechanism. |
 | Tracking | SLA 2026-10-03 (72h from filing) |
-| Disposition | Open |
+| Disposition | Resolved — 2026-10-05, Head of Specs Team ruling (agent-mediated, §5.3, user-directed). Adopted a general same-step self-verification rule rather than another read-back for one field. Applied as `execution_prompt.md` v3.80→v3.81: - §9.2: the top-level summary arrays and `merge_gate` are projections, rebuilt from per-story and per-EPIC records in the same write, and every state write ends with a read-back from disk checking 4 equalities before advancing. - §10 step 3a: on resume, pushed commits are reconciled before any `not_started`/`in_progress` item runs. This closes the §3.7 recurrence (v9.6→v9.7→v9.8). The fourth instance at v9.9 (EPIC-03 PR #1888 state; ST-33/ST-34 left `not_started`) is cited as evidence. Follow-up: a backlog item to script the read-back check (`/backlog-add`, owner Head of Engineering). Follow-up filed: BLG-GOV-363. |
 
 ---
 
@@ -47,7 +47,7 @@ Format per `claude/system/shared_standards.md §4`.
 | Escalated to | Head of Specs Team |
 | Reason | Ruling needed on whether a QA-evidence `Pass_with_deviation` classification whose `spec_references` include a genuine canonical spec should (a) be treated as a STEP 3-equivalent deviation, with Known Deviations sync performed by a downstream engine that holds spec write-authority (e.g. Post-Ship Closure), or (b) remain a QA-evidence-only category exempt from the sync note, with the note's own scope line narrowed to say so explicitly. Not actioned in this closure — Post-Ship Closure's own write-scope permits canonical-spec edits only for deviation-compliance field completeness (§5), not for authoring a new Known Deviations entry outside that narrow carve-out. |
 | Tracking | SLA 2026-10-03 (72h from filing) |
-| Disposition | Open |
+| Disposition | Resolved — 2026-10-05, Head of Specs Team ruling (agent-mediated, §5.3, user-directed). Option (b), with a narrow exception. A QA-evidence `Pass_with_deviation` result is exempt from the Known Deviations sync note even when its `spec_references` name a canonical spec. The exception: when the `Comments` show the shipped behaviour contradicts the spec, it is treated as an unfiled STEP 3 deviation. The separate conflict between the sync note and Delivery Verification §5's write scope is also fixed: Delivery Verification now detects a missing entry and routes it, and Post-Ship Closure STEP 5 creates it under its deviation-compliance carve-out. Applied as `delivery_verification_prompt.md` v3.12→v3.13 (STEP 3) and `post_ship_closure.md` v2.36→v2.37 (§5, STEP 5). ST-17/`BLG-OPS-171` at v9.8 is confirmed exempt, so no retroactive spec entry is owed. (The note sits under STEP 3, not §7 as the record cited.) |
 
 ---
 
