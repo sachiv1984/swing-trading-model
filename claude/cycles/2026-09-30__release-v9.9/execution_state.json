@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T09:30:49Z",
+  "last_updated_utc": "2026-10-05T12:10:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -523,24 +523,31 @@
         },
         "ST-20": {
           "title": "gap_risk_service.py (BLG-FEAT-65) shipped without a recorded S13 review or S13.5 roster row",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 1868,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "90b43b53e4d6ac5f51a443fb1dc7d3103c4f58b9",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-01T15:10:44Z",
           "unblock_criteria": "Head of Specs Team / Strategy Rules & System Intent Owner records a dated §13 determination; see ESC-EXEC-20261001-03.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T12:05:45Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Escalated: §13 boundary determination requires named-authority judgement, not mechanical execution. See ESC-EXEC-20261001-03."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Strategy Rules & System Intent Owner; Head of Specs Team",
+            "date": "2026-10-05"
+          },
+          "notes": "Escalated: §13 boundary determination requires named-authority judgement, not mechanical execution. See ESC-EXEC-20261001-03. | Reclassified delegated_decision -> autonomous on unblock. Unblocked: ESC-EXEC-20261001-03 Resolved — agent-mediated Strategy Rules & System Intent Owner + Head of Specs Team §13 determination, CONDITIONAL (earnings trigger outside §13.3; weekend-hold trigger a genuine gap, disposition due 2027-02-06). 9 binding conditions; remediation BLG-BE-136, BLG-SPEC-179, BLG-GOV-359, BLG-GOV-360 (strategy_rules.md §13.3/§13.5 wording, outside write scope). No spec deviation filed — remediation items are backlog items, not DEV-* records (§5.3 step 5 / BLG-GOV-73)."
         },
         "ST-21": {
           "title": "Split roadmap_prompt.md into a core plus an appendix so it fits a single read",
@@ -620,24 +627,31 @@
         },
         "ST-24": {
           "title": "Five near-duplicate 'AI adoption window' gate-criteria texts should be one canonical shared reference",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "Head of Specs Team",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 1872,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "64e7525cf1a0798312c6aa6e1dca99826cd1ee81",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-01T13:05:00Z",
           "unblock_criteria": "Head of Specs Team decides canonical gate-reference location and either edits backlog.md/current_roadmap.md directly or authorises this engine to do so, citing ESC-EXEC-20261001-01.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T12:05:17Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/backlog/backlog.md#Shared Gate References"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Reclassified from autonomous: AC requires edits to claude/roadmap/* and existing backlog.md item content, both outside Sprint Execution's declared write scope. See ESC-EXEC-20261001-01."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "date": "2026-10-05"
+          },
+          "notes": "Reclassified from autonomous: AC requires edits to claude/roadmap/* and existing backlog.md item content, both outside Sprint Execution's declared write scope. See ESC-EXEC-20261001-01. | Reclassified delegated_decision -> autonomous on unblock. Unblocked: ESC-EXEC-20261001-01 Resolved by agent-mediated Head of Specs Team write-scope ruling (2026-10-05, user direction). Canonical gate statement in backlog.md '## Shared Gate References'; 5 items cite it with a 'due 2026-09-24' token (scanner: 130 gated / 14 lapsed unchanged). Filed BLG-GOV-361, BLG-GOV-362. No spec deviation."
         },
         "ST-25": {
           "title": "Rebalance diagnostic tallies (STEP 2.4/7.1/7.2) are recomputed by hand each cycle",
@@ -666,24 +680,32 @@
         },
         "ST-26": {
           "title": "role_share_history.md has no governance-authorized home under claude/roadmap/",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 1874,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "3e0f61e8474e2e243cf7910244c69cac3464f908",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-01T15:10:44Z",
           "unblock_criteria": "Head of Specs Team decides canonical home for role_share_history.md and either edits claude/roadmap/* directly or authorises this engine to do so, citing ESC-EXEC-20261001-04.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T12:09:05Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/roadmap/role_share_history.md",
+            "claude/system/roadmap_prompt.md#7.2 Cross-Role Workload Balance Check"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Escalated: claude/roadmap/* is outside Sprint Execution write scope beyond the workforce_capacity.md exception (RISK-02). See ESC-EXEC-20261001-04."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "date": "2026-10-05"
+          },
+          "notes": "Escalated: claude/roadmap/* is outside Sprint Execution write scope beyond the workforce_capacity.md exception (RISK-02). See ESC-EXEC-20261001-04. | Reclassified delegated_decision -> autonomous on unblock. Unblocked: ESC-EXEC-20261001-04 Resolved by agent-mediated Head of Specs Team write-scope ruling. Canonical file created (v9.8 row: 39 stories, HoST 12; rolling 18/102 = 17.6%, matches cycle_record); roadmap_prompt.md v9.30 §7.2 reads it; §6 checklist complete (OG v4.218, incl. backfilled v4.217 SELF-DRIFT). No spec deviation."
         },
         "ST-27": {
           "title": ".claude_current_state.json's execution_state_path points to the prior cycle, not the active one",
@@ -931,9 +953,6 @@
   "blocked_items": [],
   "delegated_items": [
     "ST-19",
-    "ST-20",
-    "ST-24",
-    "ST-26",
     "ST-29",
     "ST-30",
     "ST-31"
@@ -964,13 +983,13 @@
     "ST-18",
     "ST-11",
     "ST-17",
-    "ST-14"
+    "ST-14",
+    "ST-24",
+    "ST-20",
+    "ST-26"
   ],
   "open_escalations": [
-    "ESC-EXEC-20261001-01",
     "ESC-EXEC-20261001-02",
-    "ESC-EXEC-20261001-03",
-    "ESC-EXEC-20261001-04",
     "ESC-EXEC-20261001-05"
   ],
   "merge_gate": {
