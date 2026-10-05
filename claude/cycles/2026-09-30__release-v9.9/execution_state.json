@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T07:27:17Z",
+  "last_updated_utc": "2026-10-05T08:01:55Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -674,7 +674,7 @@
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
@@ -800,45 +800,57 @@
         "ST-33": {
           "title": "Correct the BLG-BE-128 citation to BLG-BE-129 for the latency_ms composition decision",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1881,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "3677d86e4101fb5ee106f56f795efde4e365509b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-01T15:16:25Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md",
+            "docs/ops/external_api_dependency_register.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commit landed on main via PR #1886 (2026-10-01) but execution_state was never updated; backfilled 2026-10-05 after re-verifying AC on main (no BLG-BE-128 citation left where BLG-BE-129 is meant; BLG-BE-128's own references untouched). No deviation."
         },
         "ST-34": {
           "title": "Correct notifications.md and the alert-thresholds empty-state scenario doc to the no-trailing-period headings now shipped",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1882,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "ebc23c147d0b09aa449d37b4bb7209e26322088a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-01T15:16:34Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/notifications.md",
+            "docs/testing/alert_thresholds_empty_state_scenarios.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commit landed on main via PR #1886 (2026-10-01) but execution_state was never updated; backfilled 2026-10-05 after re-verifying AC on main (both headings now have no trailing period; DEV-v9.7-ST05-01 marked Resolved citing ST-34/BLG-SPEC-169). Resolving-commit deviation-closure discipline (step 10a) met in the same commit. No new deviation."
         }
+      },
+      "merged_via": {
+        "pr_number": 1886,
+        "merge_commit": "362ff619",
+        "retroactive_gate": "pending",
+        "note": "Done stories ST-28/32/33/34 reached main via EPIC-02 PR #1886 without an EPIC-05 merge gate (process deviation). Retroactive gate per user direction 2026-10-05: qa_evidence_EPIC-05.md written, DoQ sign-off + PO acceptance pending (human)."
       }
     },
     "EPIC-06": {
@@ -900,7 +912,9 @@
     "ST-25",
     "ST-27",
     "ST-28",
-    "ST-32"
+    "ST-32",
+    "ST-33",
+    "ST-34"
   ],
   "open_escalations": [
     "ESC-EXEC-20261001-01",
