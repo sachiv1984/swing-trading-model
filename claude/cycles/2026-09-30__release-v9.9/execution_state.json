@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T09:30:49Z",
+  "last_updated_utc": "2026-10-05T12:12:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -777,39 +777,47 @@
           "commit_sha": null,
           "delegation_record_id": "DEL-20261001-03",
           "blocked_since_utc": "2026-10-01T15:25:04Z",
-          "unblock_criteria": "Data Model & Domain Schema Owner records a binding disposition (re-apply NOT NULL, or confirm nullable intentional) with stated reason. See DEL-20261001-03.",
+          "unblock_criteria": "Data Model & Domain Schema Owner (human, write credential) runs DS-23's pre-check (0 NULL rows), Up Migration and Verification on staging and production; output recorded in data_model.md DS-23 and the Fields row flipped to NO (stage 2).",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "docs/specs/data_model.md"
+            "docs/specs/data_model.md#DS-23"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.disposition_recorded",
           "sign_off_record": null,
-          "notes": ""
+          "notes": " | 2026-10-05: disposition decided — re-apply NOT NULL (agent-mediated Data Model & Domain Schema Owner, §5.3, user direction). Stage 1 committed a8a90c77 (data_model.md v2.46, DS-23 pending live; BLG-SPEC-180 filed). Still blocked_backend on the live ALTER only."
         },
         "ST-31": {
           "title": "Cross-reference current_roadmap.md's SI-02 field to the canonical 'linked trade plan' definition",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "Head of Specs Team",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 1879,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "13e33563142ccb0a5360dcb3aa3017c77e26680d",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-01T15:17:20Z",
           "unblock_criteria": "Head of Specs Team edits claude/roadmap/current_roadmap.md directly or authorises this engine to do so, citing ESC-EXEC-20261001-05.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T12:10:21Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics/si02_drift_score.md#2.4 Canonical \"Linked Trade Plan\" Count",
+            "claude/roadmap/current_roadmap.md#SI-02 gate confirmation status"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Reclassified from autonomous: AC requires editing claude/roadmap/current_roadmap.md, outside Sprint Execution write scope (same gap as ST-26). Content already decided by ST-23/v9.7 (si02_drift_score.md §2.4); only the write-scope authorisation is outstanding. See ESC-EXEC-20261001-05."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "date": "2026-10-05"
+          },
+          "notes": "Reclassified from autonomous: AC requires editing claude/roadmap/current_roadmap.md, outside Sprint Execution write scope (same gap as ST-26). Content already decided by ST-23/v9.7 (si02_drift_score.md §2.4); only the write-scope authorisation is outstanding. See ESC-EXEC-20261001-05. | Reclassified delegated_decision -> autonomous on unblock. Unblocked: ESC-EXEC-20261001-05 Resolved by agent-mediated Head of Specs Team write-scope ruling (2026-10-05, user direction). SI-02 block cross-references si02_drift_score.md §2.4; §2.4's stale deferred note replaced. ST-23 (v9.7) AC now fully met. No spec deviation."
         },
         "ST-32": {
           "title": "data_model.md DS-19 'Verification status' still says the migration was never run against a live PostgreSQL",
@@ -941,8 +949,7 @@
     "ST-24",
     "ST-26",
     "ST-29",
-    "ST-30",
-    "ST-31"
+    "ST-30"
   ],
   "completed_items": [
     "ST-01",
@@ -972,14 +979,14 @@
     "ST-18",
     "ST-11",
     "ST-17",
-    "ST-14"
+    "ST-14",
+    "ST-31"
   ],
   "open_escalations": [
     "ESC-EXEC-20261001-01",
     "ESC-EXEC-20261001-02",
     "ESC-EXEC-20261001-03",
-    "ESC-EXEC-20261001-04",
-    "ESC-EXEC-20261001-05"
+    "ESC-EXEC-20261001-04"
   ],
   "merge_gate": {
     "epics_merged": [

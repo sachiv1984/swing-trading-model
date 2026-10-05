@@ -48,4 +48,4 @@ Last Updated: 2026-10-01
 - **Spec reference:** docs/specs/data_model.md §"fees_paid nullability reconciled to nullable" (BLG-SPEC-151/BLG-SPEC-165)
 - **Unblock criteria:** Disposition recorded in `data_model.md` with the stated reason either way; if re-applying `NOT NULL`, the live schema and `data_model.md` must agree after the `ALTER TABLE` runs (pre-checked for 0 violating rows).
 - **Commit format required:** `[EPIC-05][ST-30] <description>` pushed to `exec/2026-09-30__release-v9.9/EPIC-05`
-- **Status:** Open — awaiting Data Model & Domain Schema Owner decision.
+- **Status:** Open — disposition decided 2026-10-05 (re-apply `NOT NULL`, agent-mediated Data Model & Domain Schema Owner, §5.3; recorded as `data_model.md` DS-23, commit `a8a90c77`). Awaiting live application: DS-23 pre-check, Up Migration and Verification on staging and production (needs a write credential).
