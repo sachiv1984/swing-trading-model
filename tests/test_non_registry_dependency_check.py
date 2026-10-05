@@ -150,6 +150,14 @@ def test_pip_upper_case_scheme_is_flagged():
     assert len(violations) == 1
 
 
+def test_pip_bare_dot_editable_install_is_flagged():
+    """ST-06 (EPIC-02, v9.9, BLG-SEC-40): `-e .`/`-e ..` with no trailing slash was
+    not matched by _PIP_LOCAL_PATH_RE, which requires a trailing `/` after the dot(s)."""
+    text = "-e .\n-e ..\n"
+    violations = check_requirements_txt(text)
+    assert len(violations) == 2
+
+
 def test_pip_requirement_include_is_flagged():
     text = "-r other-requirements.txt\n--requirement more.txt\n"
     violations = check_requirements_txt(text)
@@ -244,6 +252,52 @@ def test_package_lock_link_entry_without_resolved_is_not_flagged():
     external dependency fetch -- must not be treated as a violation."""
     lock = json.dumps({"packages": {"": {}, "node_modules/workspace-pkg": {"link": True}}})
     assert check_package_lock_json(lock) == []
+
+
+def test_package_lock_npm_workspace_local_file_entry_is_not_flagged():
+    """ST-06 (EPIC-02, v9.9, BLG-SEC-40): a `resolved: "file:..."` entry that stays
+    within the repo (an npm workspace member) must not be flagged, even without a
+    `link` key -- distinct from the already-covered `link`-only case above."""
+    lock = json.dumps(
+        {
+            "packages": {
+                "": {},
+                "node_modules/workspace-pkg": {"resolved": "file:packages/workspace-pkg"},
+            }
+        }
+    )
+    assert check_package_lock_json(lock) == []
+
+
+def test_package_lock_non_workspace_file_entry_is_still_flagged():
+    """The other half of ST-06's AC: a genuine non-workspace `file:` resolved path
+    (escaping the repo via `..` or an absolute path) must still be flagged."""
+    lock = json.dumps(
+        {
+            "packages": {
+                "": {},
+                "node_modules/escaped-pkg": {"resolved": "file:../../outside-the-repo-package"},
+                "node_modules/abs-pkg": {"resolved": "file:///home/user/local-package"},
+            }
+        }
+    )
+    violations = check_package_lock_json(lock)
+    assert len(violations) == 2
+
+
+def test_package_lock_non_workspace_git_entry_is_still_flagged():
+    """Non-`file:` non-workspace resolutions (e.g. a git URL) are unaffected by the
+    workspace-local exemption, which only applies to `file:` resolved values."""
+    lock = json.dumps(
+        {
+            "packages": {
+                "": {},
+                "node_modules/some-lib": {"resolved": "git+ssh://git@github.com/example/some-lib.git"},
+            }
+        }
+    )
+    violations = check_package_lock_json(lock)
+    assert len(violations) == 1
 
 
 def test_real_package_lock_json_has_no_violations_today():

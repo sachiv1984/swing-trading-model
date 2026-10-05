@@ -2,8 +2,8 @@
 
 **Owner:** Strategy Rules & System Intent Owner  
 **Status:** Canonical  
-**Version:** 1.12
-**Last Updated:** 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — §7.1 gains the RISK-01 ruling: 3 ATR formulas are deliberately distinct, not duplicates; 3 of the ~5 apparent copies consolidated into one canonical function, live stop-loss and screener formulas left unchanged); prior — 2026-09-30 (ST-36, EPIC-06, v9.8, BLG-GOV-348 — added PO-05 (Lightweight Replay Mode) to §13.5's semi-annual re-attestation roster — documentation-only, no behaviour change); prior — 2026-09-16 (§7.2 formalises the profitable-position breakeven floor into the canonical formula — documentation-only, no live behaviour change); prior history retained — see prior entries in version control.
+**Version:** 1.13
+**Last Updated:** 2026-10-01 (ST-22, EPIC-04, v9.9, BLG-GOV-344 — §12.3 gains a cross-reference to the new `docs/governance/strategy_parameter_change_ledger.md`, documentation only); prior — 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — §7.1 gains the RISK-01 ruling: 3 ATR formulas are deliberately distinct, not duplicates; 3 of the ~5 apparent copies consolidated into one canonical function, live stop-loss and screener formulas left unchanged); prior — 2026-09-30 (ST-36, EPIC-06, v9.8, BLG-GOV-348 — added PO-05 (Lightweight Replay Mode) to §13.5's semi-annual re-attestation roster — documentation-only, no behaviour change); prior history retained — see prior entries in version control.
 **Applies to:** Production backtests, live system, and documentation  
 
 ---
@@ -12,6 +12,7 @@
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.13 | 1 October 2026 | §12.3 gains a cross-reference to the new parameter-change ledger (ST-22, EPIC-04, v9.9, BLG-GOV-344) — `docs/governance/strategy_parameter_change_ledger.md` backfills every §11 parameter's change history from this table; finds none of the 4 values has changed since v1.0. Documentation only — no behavioural or parameter-value change. |
 | 1.12 | 1 October 2026 | §7.1 RISK-01 ruling (ST-01, EPIC-01, v9.9, `BLG-BE-135`): the ~5 apparent ATR implementations are in fact 3 deliberately distinct formulas (live stop-loss real-OHLC SMA-of-TR, screener Wilder's ATR, backtest/signal close-to-close approximation), matched to data availability per code path. 3 byte-identical copies of the backtest/signal formula consolidated into `utils/pricing.py::compute_atr_close_approximation`; live stop-loss and screener formulas unchanged. Full record: `docs/product/decisions/st01_atr_consolidation_ruling.md`. |
 | 1.11 | 30 September 2026 | Added PO-05 (Lightweight Replay Mode) to §13.5's semi-annual re-attestation roster (ST-36, EPIC-06, v9.8, `BLG-GOV-348`) — `docs/product/decisions/po05_section13_preassessment.md`, CONDITIONAL determination, v9.6, 6 binding conditions carried forward. Roster row was missing since the review's own 2026-09-23 clearance; this closes that gap. No behavioural rules changed. |
 | 1.10 | 16 September 2026 | §7.2's profitable-position formula gains an explicit `max(..., EntryPrice)` breakeven floor (ST-04, EPIC-01, v9.5, `BLG-BE-114`/`BLG-BE-119`) — Documentation-only: no change to live logic. Rationale: this has been live production behaviour since `BLG-BE-102` (v8.9) fixed a P0 bug where a profitable position's stop could stay frozen below entry; it was never back-ported into this formula, so `ST-04`'s attempted consolidation of the 3 "duplicate" trailing-stop implementations surfaced production diverging from this spec's literal text. Impact: documentation only — live logic (`calculate_trailing_stop`) is unchanged; the backtest tool (`position_manager.py`) is explicitly and intentionally exempted from this floor per the new §7.2 note, consistent with the `BLG-BE-102` precedent, so no backtest-comparability loss is introduced by this entry. No §13 boundary is touched. |
@@ -471,6 +472,8 @@ Any parameter change must:
 - be applied consistently across backtests, live logic, and documentation  
 
 Until a change is made, the listed parameters define canonical production behaviour.
+
+A dated history of every §11 parameter value and any change made to it is maintained in `docs/governance/strategy_parameter_change_ledger.md`.
 
 ---
 

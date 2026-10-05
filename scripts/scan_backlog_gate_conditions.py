@@ -84,6 +84,14 @@ from pathlib import Path
 BACKLOG_PATH = Path("claude/backlog/backlog.md")
 EMBEDDED_DATE_RE = re.compile(r"~?(\d{4}-\d{2}-\d{2})")
 
+# ST-23 (BLG-GOV-347, EPIC-04, v9.9): a date immediately preceded by one of
+# these governing keywords is preferred over a bare first-match when a
+# gate_condition embeds more than one date — see _lapsed_date()'s docstring.
+GOVERNING_KEYWORD_DATE_RE = re.compile(
+    r"(?:no earlier than|clears?|due|completes?|by)\s*~?(\d{4}-\d{2}-\d{2})",
+    re.IGNORECASE,
+)
+
 HEADING_RE = re.compile(r"^### (BLG-[A-Z]+-[A-Za-z0-9]+|TEST-GAP-[A-Za-z0-9-]+) — (.+)$")
 GATE_CRITERIA_RE = re.compile(r"^\*\*Gate criteria:\*\*\s*(.+)$", re.MULTILINE)
 GATE_SHORT_RE = re.compile(r"^\*\*Gate:\*\*\s*(.+)$", re.MULTILINE)
@@ -138,19 +146,68 @@ def parse_items(text: str):
 
 
 def _lapsed_date(gate_condition, as_of):
-    """Return the first embedded ISO date in gate_condition if it is on or
-    before as_of, else None. Multiple dates (e.g. a 'due' date and an
-    unrelated year reference) are not disambiguated — the first match is
-    used, matching this scan's existing single-first-match convention for
-    every other field."""
-    m = EMBEDDED_DATE_RE.search(gate_condition)
-    if not m:
-        return None
-    try:
-        found = datetime.date.fromisoformat(m.group(1))
-    except ValueError:
-        return None
-    return found if found <= as_of else None
+    """Return (lapsed_date_or_None, ambiguous) for the embedded ISO date(s)
+    in gate_condition.
+
+    ST-23 (BLG-GOV-347, EPIC-04, v9.9): previously used re.search to take
+    only the FIRST embedded date, undisambiguated — a gate_condition
+    mentioning an earlier, still-future date before a later, already-past
+    clears-date was silently reported as NOT lapsed (a false negative that
+    could hide a genuinely-clearable item from the ready pool indefinitely,
+    since this script drives release_planning_prompt.md §1.3a).
+
+    Fix, in priority order:
+      1. If a date is immediately preceded by a governing keyword ("no
+         earlier than", "clears", "due", "completes", "by" —
+         GOVERNING_KEYWORD_DATE_RE), that date is authoritative regardless
+         of any other embedded date. This is the common case in practice
+         (e.g. "No earlier than 2026-11-01 (~6 months after ... 2026-05-28)"
+         — the keyword date is clearly the one that governs; a bare
+         multi-date heuristic would otherwise misflag this as ambiguous).
+      2. Otherwise, examine ALL embedded dates:
+         - 0 dates: (None, False)
+         - All dates agree on lapsed status (all <= as_of, or all > as_of):
+           (earliest lapsed date or None, False) — no ambiguity.
+         - Dates disagree (at least one <= as_of and at least one > as_of):
+           report as LAPSED (the conservative choice — matches this scan's
+           existing bias toward surfacing a possibly-clearable item for
+           human verification rather than silently hiding it) AND flag
+           ambiguous=True, so the report/JSON output distinguishes "lapsed,
+           unambiguous" from "lapsed, but multiple dates disagree — verify
+           which one actually governs." This satisfies both of the AC's
+           accepted resolutions (correctly flagged as lapsed, AND
+           explicitly flagged for manual disambiguation) rather than
+           choosing only one.
+    """
+    kw = GOVERNING_KEYWORD_DATE_RE.search(gate_condition)
+    if kw:
+        try:
+            governing = datetime.date.fromisoformat(kw.group(1))
+            return (governing if governing <= as_of else None), False
+        except ValueError:
+            pass  # fall through to the no-keyword-match path below
+
+    found_dates = []
+    for raw in EMBEDDED_DATE_RE.findall(gate_condition):
+        try:
+            found_dates.append(datetime.date.fromisoformat(raw))
+        except ValueError:
+            continue
+
+    if not found_dates:
+        return None, False
+
+    lapsed_dates = [d for d in found_dates if d <= as_of]
+    future_dates = [d for d in found_dates if d > as_of]
+
+    if lapsed_dates and future_dates:
+        # Disagreement: report lapsed (earliest lapsed date) + ambiguous.
+        return min(lapsed_dates), True
+
+    if lapsed_dates:
+        return min(lapsed_dates), False
+
+    return None, False
 
 
 def classify_item(item_id, title, body, as_of):
@@ -162,6 +219,7 @@ def classify_item(item_id, title, body, as_of):
         "gate_condition": None,
         "data_quality_warning": None,
         "date_lapsed": None,
+        "date_ambiguous": False,
         "already_resolved": None,
     }
 
@@ -174,7 +232,7 @@ def classify_item(item_id, title, body, as_of):
         result["gated"] = True
         result["gate_source"] = "Gate criteria"
         result["gate_condition"] = m.group(1).strip()
-        result["date_lapsed"] = _lapsed_date(result["gate_condition"], as_of)
+        result["date_lapsed"], result["date_ambiguous"] = _lapsed_date(result["gate_condition"], as_of)
         return result
 
     m = GATE_SHORT_RE.search(body)
@@ -182,7 +240,7 @@ def classify_item(item_id, title, body, as_of):
         result["gated"] = True
         result["gate_source"] = "Gate"
         result["gate_condition"] = m.group(1).strip()
-        result["date_lapsed"] = _lapsed_date(result["gate_condition"], as_of)
+        result["date_lapsed"], result["date_ambiguous"] = _lapsed_date(result["gate_condition"], as_of)
         return result
 
     m = GATE_DATE_RE.search(body)
@@ -190,7 +248,7 @@ def classify_item(item_id, title, body, as_of):
         result["gated"] = True
         result["gate_source"] = "Gate date"
         result["gate_condition"] = m.group(1).strip()
-        result["date_lapsed"] = _lapsed_date(result["gate_condition"], as_of)
+        result["date_lapsed"], result["date_ambiguous"] = _lapsed_date(result["gate_condition"], as_of)
         return result
 
     # No formal gate field found — check for an embedded-gate signal inside
@@ -241,13 +299,18 @@ def main():
     print(f"Scanned {len(results)} backlog items ({BACKLOG_PATH}), as of {as_of.isoformat()}.")
     print(f"\n{len(gated)} gated/conditional item(s):")
     for r in gated:
-        lapsed_note = f"  [DATE-LAPSED {r['date_lapsed'].isoformat()} — verify]" if r["date_lapsed"] else ""
+        if r["date_lapsed"]:
+            ambiguous_suffix = " — AMBIGUOUS: multiple dates disagree, verify which one governs" if r["date_ambiguous"] else ""
+            lapsed_note = f"  [DATE-LAPSED {r['date_lapsed'].isoformat()} — verify{ambiguous_suffix}]"
+        else:
+            lapsed_note = ""
         print(f"  {r['id']} — [{r['gate_source']}] {r['gate_condition']}{lapsed_note}")
 
     if date_lapsed:
         print(f"\n{len(date_lapsed)} item(s) with a lapsed gate date — verify before treating as still gated (do not auto-clear):")
         for r in date_lapsed:
-            print(f"  {r['id']} — gate date {r['date_lapsed'].isoformat()} — {r['gate_condition']}")
+            ambiguous_note = " [AMBIGUOUS — multiple embedded dates disagree on lapsed status; manually confirm which date actually governs this gate]" if r["date_ambiguous"] else ""
+            print(f"  {r['id']} — gate date {r['date_lapsed'].isoformat()} — {r['gate_condition']}{ambiguous_note}")
 
     if warnings:
         print(f"\n{len(warnings)} data-quality warning(s) (embedded gate language, no formal Gate field):")

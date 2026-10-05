@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.12
-**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added error examples to GET /alerts/rules (500) and GET /notifications (400)); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to the 6 remaining mutating endpoints in this file; flagged undefined double-submit duplicate-alert-creation behaviour on POST /price-alerts as BLG-OPS-174); prior — 2026-09-24 (ST-10, EPIC-03, v9.7, BLG-BE-124 — generic re-delivery now also requires `read = false`, so an already-read notification is never re-enqueued for delivery); prior history retained — see prior entries in version control.
+**Version:** 0.13
+**Last Updated:** 2026-10-01 (ST-09, EPIC-02, v9.9, BLG-OPS-174 — POST /price-alerts's Idempotency subsection updated: a double-submit of the same active (ticker, condition, threshold_price) now returns the existing alert instead of the previously-undefined duplicate-creation behaviour); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added error examples to GET /alerts/rules (500) and GET /notifications (400)); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to the 6 remaining mutating endpoints in this file; flagged undefined double-submit duplicate-alert-creation behaviour on POST /price-alerts as BLG-OPS-174); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **ADR Reference:** `docs/adr/ADR-003-notification-delivery-architecture.md` — FastAPI BackgroundTasks delivery architecture
 **Design Gate:** `claude/cycles/2026-03-18__release-v2.1/` — EPIC-02
@@ -402,7 +402,7 @@ Create a custom price alert.
 
 **Idempotency**
 
-- Not idempotent — creates a new alert on every call, with no uniqueness guard on `(ticker, condition, threshold_price)`. **Undefined behaviour:** a double-submit creates a second, functionally-duplicate active alert (bounded only by the 50-active-alert cap). Filed as BLG-OPS-174.
+- De-duplicated (ST-09, BLG-OPS-174, EPIC-02, v9.9): if an **active** alert already exists for this portfolio with the same `(ticker, condition, threshold_price)`, that existing alert is returned (same 200 shape, same `id`) instead of creating a second one. A past (inactive/triggered) alert with the same values does not block a new one. Not protected by a DB-level unique constraint — a true concurrent double-submit race is not fully closed, only the common sequential double-submit case.
 
 #### Request Body
 

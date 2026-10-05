@@ -164,6 +164,83 @@ def test_scheduled_check_no_alert_on_normal_variance(monkeypatch):
     assert called["count"] == 0
 
 
+# ---------------------------------------------------------------------------
+# ST-08 (BLG-OPS-173, EPIC-02, v9.9) — Telegram alert de-duplication within
+# the same firing window.
+# ---------------------------------------------------------------------------
+
+def test_second_call_same_firing_window_does_not_resend(monkeypatch):
+    import database
+    import services.ai_endpoint_anomaly_service as svc
+
+    monkeypatch.setattr(
+        database,
+        "get_claude_endpoint_cost_windows",
+        lambda: [
+            {"endpoint": "POST /ai/chat", "recent_avg_cost_usd": 0.90,
+             "recent_count": 5, "baseline_avg_cost_usd": 0.10, "baseline_count": 40},
+        ],
+    )
+    fingerprint = svc._anomaly_firing_fingerprint(
+        [check_cost_anomaly(endpoint="POST /ai/chat", recent_cost_usd=0.90, baseline_cost_usd=0.10)]
+    )
+    monkeypatch.setattr(database, "get_last_alert_fingerprint", lambda key: fingerprint)
+    monkeypatch.setattr(database, "ensure_scheduled_alert_dedup_table", lambda: None)
+    send_called = {"count": 0}
+    monkeypatch.setattr(svc, "_send_anomaly_telegram_alert", lambda firing: send_called.__setitem__("count", send_called["count"] + 1) or True)
+
+    result = run_scheduled_anomaly_check()
+
+    assert result["firing_count"] == 1
+    assert result["alert_sent"] is False
+    assert send_called["count"] == 0
+
+
+def test_changed_firing_set_resends(monkeypatch):
+    """A different set of firing anomalies than last time's stored
+    fingerprint is treated as a new alert, not suppressed."""
+    import database
+    import services.ai_endpoint_anomaly_service as svc
+
+    monkeypatch.setattr(
+        database,
+        "get_claude_endpoint_cost_windows",
+        lambda: [
+            {"endpoint": "POST /ai/chat", "recent_avg_cost_usd": 0.90,
+             "recent_count": 5, "baseline_avg_cost_usd": 0.10, "baseline_count": 40},
+        ],
+    )
+    monkeypatch.setattr(database, "get_last_alert_fingerprint", lambda key: "POST /ai/debrief:cost")
+    recorded = []
+    monkeypatch.setattr(database, "record_alert_fingerprint", lambda key, fp: recorded.append(fp))
+    monkeypatch.setattr(database, "ensure_scheduled_alert_dedup_table", lambda: None)
+    monkeypatch.setattr(svc, "_send_anomaly_telegram_alert", lambda firing: True)
+
+    result = run_scheduled_anomaly_check()
+
+    assert result["alert_sent"] is True
+    assert recorded == ["POST /ai/chat:cost"]
+
+
+def test_firing_resolves_then_recurs_identically_still_alerts(monkeypatch):
+    """When nothing is firing, the stored fingerprint is cleared -- so a
+    later recurrence of the *same* anomaly signature still alerts, rather
+    than being permanently suppressed by a stale fingerprint."""
+    import database
+    import services.ai_endpoint_anomaly_service as svc
+
+    monkeypatch.setattr(database, "get_claude_endpoint_cost_windows", lambda: [])
+    monkeypatch.setattr(database, "get_claude_endpoint_latency_windows", lambda: [])
+    cleared = []
+    monkeypatch.setattr(database, "record_alert_fingerprint", lambda key, fp: cleared.append((key, fp)))
+    monkeypatch.setattr(database, "ensure_scheduled_alert_dedup_table", lambda: None)
+
+    result = run_scheduled_anomaly_check()
+
+    assert result["firing_count"] == 0
+    assert cleared == [(svc._ANOMALY_ALERT_KEY, "")]
+
+
 def test_scheduled_check_latency_sourced_from_claude_audit_log_when_no_feed_supplied(monkeypatch):
     # ST-13 (BLG-OPS-161, EPIC-02, v9.5): latency is now real-data by
     # default, sourced from database.get_claude_endpoint_latency_windows()
