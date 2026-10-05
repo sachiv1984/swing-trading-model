@@ -47,10 +47,32 @@ This EPIC's story commits were never merged through an EPIC-04 PR. They were mad
 
 > Autonomous class (BLG-GOV-19) not applicable: Criterion 1 is unmet — ST-19 relied on live production data, and ST-20/24/26 were `delegated_decision` items resolved by named-authority rulings. The merge-gate bypass above is reviewed here as part of the retroactive gate. Agent-mediated Director of Quality sign-off authorised by the user on 2026-10-05 ("go ahead with the sign-offs and PRs"), superseding the earlier note that left this block for a human reviewer; Product Owner acceptance remains with the human Product Owner.
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no frontend-visible change in this EPIC
-- Signed off by:
-- Date:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no frontend-visible change in this EPIC
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-10-05
 - Comments:
+  Agent-mediated DoQ sign-off (user-authorised 2026-10-05), retroactive merge gate for PR #1886. I verified all 9 stories' ACs against the delivered artefacts, not just the log.
+
+  - ST-19: review arithmetic reconciles; all 8 gated items carry dispositions in `backlog.md`.
+  - ST-20: `strategy_rules.md` v1.14 §13.3/§13.5 text matches the decision-record appendix verbatim; 9 binding conditions and the remediation items exist; §15 grep shows 0 actionable.
+  - ST-21: core is 65,284 chars (≈16k tokens), and all 41 STEP ids survive the split.
+  - ST-22: ledger exists and §12.3 cites it.
+  - ST-23: test file passes and CI Phase B passed on PR #1886.
+  - ST-24: 5 citing items at `64e7525c`; scanner 130/14 unchanged.
+  - ST-25: STEP 2.4 reproduced exactly; STEP 7.1 script = 84.8% pooled (canonical formula) vs the cited 83.7% hand figure — row corrected from 84.0% in `7f316477`/`3cc572d6` (finding F-1, re-verified by re-running the script).
+  - ST-26: 18/102 = 17.6% re-derived; §7.2 reads the file.
+  - ST-27: path matches `active_cycle`.
+
+  Tests: 17/17 EPIC tests and 48/48 extended set passed. OPERATIONAL_GUIDE self-consistency is 4.218 in all 3 places, with 0 §14 drift. Frontend gate N/A (0 `src/` files across all 21 `[EPIC-04]` commits). No open escalations, and no P0/P1 deviations.
+
+  Non-blocking:
+  - `prompt_change_log.md:19` repeats the 84.0% figure (append-only; note at the next edit).
+  - The AI usage review's "none in July / 7 since July" wording contradicted its own 2026-07-02 first-use date — corrected in `3cc572d6`.
+  - ST-24's spec anchor was retired by ST-19 by design.
+  - The ST-20 decision record's write-scope note, Binding Condition 9 and line references are outdated.
+  - ST-20's `strategy_rules.md` edit was made under user instruction, outside the normal Sprint Execution scope; flagged for PO acceptance.
+
+  Product Owner acceptance is still required before EPIC-04 is treated as merged.
