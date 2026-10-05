@@ -1,8 +1,8 @@
 **Owner:** Data Model Domain & Schema Owner
 **Class:** Class 1 Canonical Specification
 **Status:** Active
-**Version:** 0.1
-**Last Updated:** 2026-03-17
+**Version:** 0.2
+**Last Updated:** 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — `fees_paid` row: NOT NULL re-applied live, no default (the documented `0` default never existed live)); prior — 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -56,7 +56,7 @@ The `positions` table serves **both open and closed positions** within a single 
 | `fx_rate` | DECIMAL(10,6) | YES | GBP/USD exchange rate at time of entry. Applied to US positions only. NULL for UK positions. Used to convert US position cost to GBP for `total_cost`. |
 | `shares` | DECIMAL(10,4) | NO | Number of shares held. Fractional shares allowed (4 decimal places). Changed from INTEGER to DECIMAL in migration v1.2→v1.3. |
 | `total_cost` | DECIMAL(12,2) | NO | Total cost of the position **in GBP**, including fees. Derivation: for UK positions `total_cost = (entry_price × shares) + fees_paid`; for US positions `total_cost = (entry_price × shares / fx_rate) + fees_paid`. This is the GBP book cost used for all P&L and analytics calculations. |
-| `fees_paid` | DECIMAL(10,2) | NO | Total fees paid at entry, in GBP. NOT NULL as of migration v1.5→v1.6 (previously nullable). Default `0`. |
+| `fees_paid` | DECIMAL(10,2) | NO | Total fees paid at entry, in GBP. `NOT NULL`, no default — re-applied live 2026-10-05 (`data_model.md` DS-23); an insert that omits it fails rather than recording £0. |
 | `fee_type` | VARCHAR(20) | YES | Fee calculation method applied (e.g. `"flat"`, `"percent"`). Informational — does not affect `fees_paid` which is always the computed amount. Added in migration v1.1→v1.2. |
 
 ---
@@ -196,3 +196,4 @@ All GBP-denominated fields use `DECIMAL(12,2)`. All native-currency price fields
 | Version | Date | Change |
 |---------|------|--------|
 | 0.1 | 2026-03-17 | Initial version. ST-15 — EPIC-05 (Documentation & Standards Pack). v2.0 sprint cycle 2026-03-17__release-v2.0. Data Model Domain & Schema Owner. Reviewed by Head of Engineering. |
+| 0.2 | 2026-10-05 | `fees_paid` row corrected: `NOT NULL` re-applied live on staging and production (`data_model.md` DS-23, ST-30, EPIC-05, v9.9, BLG-SPEC-165); the documented `Default 0` removed — no default ever existed live. Data Model & Domain Schema Owner (agent-mediated, §5.3); live change by the user. |

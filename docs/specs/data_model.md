@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.47
-**Last Updated:** 2026-10-05 (ST-29, EPIC-05, v9.9, BLG-SPEC-164 — new DS-24: 4 orphaned, always-NULL positions columns dropped from staging and production after a NULL pre-check; orphaned-column note replaced with a pointer to DS-24); prior — 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — positions.fees_paid disposition: re-apply NOT NULL; new DS-23 entry, pending live application); prior — 2026-10-01 (ST-32, EPIC-05, v9.9, BLG-SPEC-167 — DS-19's Verification status confirmed applied against live staging Postgres; header/footer version resynced); prior history retained — see prior entries in version control.
+**Version:** 2.48
+**Last Updated:** 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — DS-23 applied live on staging and production: positions.fees_paid now NOT NULL; documented DEFAULT 0 corrected to no default (never present live); Fields row, CREATE TABLE block and disposition note updated); prior — 2026-10-05 (ST-29, EPIC-05, v9.9, BLG-SPEC-164 — new DS-24: 4 orphaned, always-NULL positions columns dropped from staging and production after a NULL pre-check; orphaned-column note replaced with a pointer to DS-24); prior — 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — positions.fees_paid disposition: re-apply NOT NULL; new DS-23 entry, pending live application); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -70,7 +70,7 @@ CREATE TABLE positions (
     fx_rate DECIMAL(10, 6),
     shares DECIMAL(10, 4) NOT NULL,
     total_cost DECIMAL(12, 2) NOT NULL,
-    fees_paid DECIMAL(10, 2) DEFAULT 0,
+    fees_paid DECIMAL(10, 2) NOT NULL,
     fee_type VARCHAR(20),
     initial_stop DECIMAL(10, 4),
     current_stop DECIMAL(10, 4),
@@ -117,7 +117,7 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | fx_rate | DECIMAL(10,6) | YES | GBP/USD rate at time of entry (US stocks) |
 | shares | DECIMAL(10,4) | NO | Number of shares (fractional allowed) |
 | total_cost | DECIMAL(12,2) | NO | Total cost including fees in GBP |
-| fees_paid | DECIMAL(10,2) | YES | Total entry fees in GBP (commission + stamp duty for UK, FX fee + commission for US), reduced proportionally on partial exit. Every write path supplies a value; NULL is not a valid domain state. **Intended `NOT NULL`** — re-application approved as DS-23 but pending live application; this row stays `YES` until DS-23's Live Confirmation is recorded, so it continues to match the live schema (see note below). |
+| fees_paid | DECIMAL(10,2) | NO | Total entry fees in GBP (commission + stamp duty for UK, FX fee + commission for US), reduced proportionally on partial exit. Every write path supplies a value. **`NOT NULL`, no default** — re-applied live on staging and production 2026-10-05 (DS-23). An insert that omits it fails rather than recording an unknown fee as £0 (see note below). |
 | fee_type | VARCHAR(20) | YES | Fee calculation method applied |
 | initial_stop | DECIMAL(10,4) | YES | Stop price at entry |
 | current_stop | DECIMAL(10,4) | YES | Current trailing stop price |
@@ -146,7 +146,7 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 
 **4 orphaned, always-NULL live columns — dropped (ST-29, EPIC-05, v9.9, BLG-SPEC-164; originally found by ST-25, EPIC-06, v9.7, BLG-SPEC-150):** `atr_value`, `stop_price`, `fees` and `pnl_percent` were undocumented leftovers on the live `positions` table, NULL on every row and referenced by no read or write path (their used counterparts are `atr`, `current_stop`, `fees_paid` and `pnl_pct`). They were dropped from staging and production on 2026-10-05 after a pre-check confirmed every value was NULL — see DS-24 for the migration and verification output. The `stop_price` key returned by the analytics trade query is a computed alias of `positions.initial_stop`, not this column, and is unaffected.
 
-**`fees_paid` nullability — disposition: re-apply `NOT NULL` (ST-30, EPIC-05, v9.9, BLG-SPEC-165; supersedes the ST-26/v9.7 interim reconciliation, BLG-SPEC-151):** v9.7 reconciled this document to nullable to match a readonly staging query, deferring the question of whether nullable is intended. The Data Model & Domain Schema Owner has decided it is **not**: `NOT NULL` is the intended permanent state and is re-applied by DS-23. Reasoning: (1) **no write path produces NULL** — the only application `INSERT` (`database.py` `create_position()`) is fed solely by `position_service.py`'s entry flow, whose `fees_paid` is always the numeric `total` of `calculate_uk_entry_fees()`/`calculate_us_entry_fees()`; the only `UPDATE` touching it (partial exit) writes a numeric remainder; no import, sync (Alpaca paper sync is read-only against `positions`), or "fees unknown" path exists, and the column's `DEFAULT 0` covers any omitted insert; (2) **the reader cannot tolerate NULL** — `exit_position()` computes `float(position.get('fees_paid', 0))`, and because the row dict always carries the key, a NULL arrives as `None` and raises `TypeError`, making the position un-exitable; (3) a nullable fees column lets "fee unknown" coexist indistinguishably with "fee is £0", the kind of fee ambiguity this document exists to prevent. Root cause of the live drift is not determinable from the repo: the v1.6 `SET NOT NULL` was a hand-run block with no idempotent `ensure_*` startup equivalent, and this document's own `CREATE TABLE` block above omitted `NOT NULL`, so any environment built from it (or via `staging_setup.md`'s Supabase-UI alternative, which does not carry constraints) would be nullable. Production nullability was never independently queried (v9.5/v9.7 checks were staging-only). Until DS-23's Live Confirmation is recorded, the Fields row above remains `YES` to match live.
+**`fees_paid` nullability — disposition: re-apply `NOT NULL` (ST-30, EPIC-05, v9.9, BLG-SPEC-165; supersedes the ST-26/v9.7 interim reconciliation, BLG-SPEC-151):** v9.7 reconciled this document to nullable to match a readonly staging query, deferring the question of whether nullable is intended. The Data Model & Domain Schema Owner has decided it is **not**: `NOT NULL` is the intended permanent state and is re-applied by DS-23. Reasoning: (1) **no write path produces NULL** — the only application `INSERT` (`database.py` `create_position()`) is fed solely by `position_service.py`'s entry flow, whose `fees_paid` is always the numeric `total` of `calculate_uk_entry_fees()`/`calculate_us_entry_fees()`; the only `UPDATE` touching it (partial exit) writes a numeric remainder; no import, sync (Alpaca paper sync is read-only against `positions`), or "fees unknown" path exists; (2) **the reader cannot tolerate NULL** — `exit_position()` computes `float(position.get('fees_paid', 0))`, and because the row dict always carries the key, a NULL arrives as `None` and raises `TypeError`, making the position un-exitable; (3) a nullable fees column lets "fee unknown" coexist indistinguishably with "fee is £0", the kind of fee ambiguity this document exists to prevent. Root cause of the live drift is not determinable from the repo: the v1.6 `SET NOT NULL` was a hand-run block with no idempotent `ensure_*` startup equivalent, and this document's own `CREATE TABLE` block above omitted `NOT NULL`, so any environment built from it (or via `staging_setup.md`'s Supabase-UI alternative, which does not carry constraints) would be nullable. Production nullability was never independently queried (v9.5/v9.7 checks were staging-only). **Applied live 2026-10-05 on staging and production (DS-23 Live Confirmation).** **No default (corrected 2026-10-05):** this document previously showed `DEFAULT 0`, but neither staging nor production has ever had one (`column_default` NULL in both). The intended state is `NOT NULL` with no default, so an insert that omits the fee fails loudly instead of silently recording £0 — consistent with the unknown-fee-is-not-zero reasoning above. The manual chart-QA seed (`backend/test_data/seed_chart_test_data.sql`), the only insert that omitted the column, now passes it explicitly.
 
 ---
 
@@ -2520,9 +2520,9 @@ Expect 3 rows: `stop_calculated_at` and `atr_calculated_at` both `timestamp with
 
 **Rationale:** `fees_paid` was made `NOT NULL` in the "Migration from v1.5 to v1.6" record, but the constraint was found absent on live staging at v9.5. The disposition is to re-enforce the original intent rather than accept nullable as permanent: every write path supplies a numeric value, `exit_position()` raises on a NULL value (so a NULL row is un-exitable, not merely imprecise), and no domain meaning for "fee unknown" exists in this system. See §2 Positions Table's "`fees_paid` nullability — disposition" note for the full evidence.
 
-**Backward compatibility:** no application change required — no code writes NULL, and the existing `DEFAULT 0` is unchanged. The constraint only rejects explicit `NULL` writes, which no path performs.
+**Backward compatibility:** no application change required — every application and automated-seed insert supplies `fees_paid`. There is no column default in either environment (the `DEFAULT 0` previously shown in this document never existed live), so an insert omitting the column now fails; the one such insert, the manual chart-QA seed `backend/test_data/seed_chart_test_data.sql`, was updated to pass `fees_paid` explicitly in the same change.
 
-**RISK (no live DB write access in this execution environment):** as with DS-22, the sandbox `DATABASE_URL` is `readonly_staging` (`SELECT` only). The Up Migration must be run by the Data Model & Domain Schema Owner directly against **both staging and production**, pre-check first. **Status: PENDING LIVE APPLICATION.**
+**RISK (no live DB write access in this execution environment):** as with DS-22, the sandbox `DATABASE_URL` is `readonly_staging` (`SELECT` only). The Up Migration must be run by the Data Model & Domain Schema Owner directly against **both staging and production**, pre-check first. **Status: APPLIED LIVE 2026-10-05** (staging, then production — see Live Confirmation below).
 
 ### Pre-check (must return 0 / 0 in each environment before applying)
 
@@ -2557,11 +2557,18 @@ FROM information_schema.columns
 WHERE table_name = 'positions' AND column_name = 'fees_paid';
 ```
 
-Expect 1 row: `fees_paid`, `is_nullable = NO`, `column_default = 0`.
+Expect 1 row: `fees_paid`, `is_nullable = NO`, `column_default = NULL` (no default — see Backward compatibility).
+
+**Live Confirmation (2026-10-05):**
+
+| Environment | Pre-check (null_fees_rows / null_fees_open_rows) | Before | After |
+|---|---|---|---|
+| Staging | 0 / 0 | not captured before the change | `is_nullable = NO`, `column_default = NULL` |
+| Production | 0 / 0 | `is_nullable = YES`, `column_default = NULL` | `is_nullable = NO`, `column_default = NULL` |
 
 **Sign-off:**
 - Data Model & Domain Schema Owner: disposition and migration content approved — re-apply `NOT NULL` (outcome (a) of `BLG-SPEC-165`); reversible; pre-check mandatory. Sprint Execution Engine (agent-mediated, Data Model & Domain Schema Owner role — §5.3), 2026-10-05.
-- Data Model & Domain Schema Owner: **Live application — PENDING** (staging and production). `DEL-20261001-03` remains open until verification output for both environments is recorded here.
+- **Live Confirmation — applied 2026-10-05:** pre-check, Up Migration and Verification run by the user (human, with live write access, acting for the Data Model & Domain Schema Owner) on staging, then production; outputs pasted into the session and recorded above. No-default disposition (option A) chosen 2026-10-05 after both environments were found to have no default. `DEL-20261001-03` unblocked in-session.
 
 ---
 
@@ -2625,6 +2632,6 @@ Result: **0 rows** on both staging and production.
 
 ---
 
-**Document Version:** 2.47
+**Document Version:** 2.48
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-05 (ST-29, EPIC-05, v9.9, BLG-SPEC-164 — DS-24 orphaned positions columns dropped live; header/footer version kept in sync); prior — 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — DS-23 positions.fees_paid NOT NULL disposition, pending live; header/footer version kept in sync); prior — 2026-10-01 (ST-32, EPIC-05, v9.9, BLG-SPEC-167 — DS-19 live confirmation; header/footer version kept in sync); prior history retained — see prior entries in version control.
+**Last Review:** 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — DS-23 live confirmation; fees_paid default corrected; header/footer version kept in sync); prior — 2026-10-05 (ST-29, EPIC-05, v9.9, BLG-SPEC-164 — DS-24 orphaned positions columns dropped live; header/footer version kept in sync); prior — 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — DS-23 positions.fees_paid NOT NULL disposition, pending live; header/footer version kept in sync); prior history retained — see prior entries in version control.
