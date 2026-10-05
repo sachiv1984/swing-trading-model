@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T08:18:16Z",
+  "last_updated_utc": "2026-10-05T08:24:21Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -292,23 +292,25 @@
         "ST-11": {
           "title": "Strategy-rule -> test traceability matrix for strategy_rules.md S4-S8",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "7af317f69f49d166a328c1d54ce2c6cab40a6564",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:23:17Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/testing/strategy_rule_test_traceability_matrix.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Matrix published; 51.0% (25/49) clauses asserted, 69.4% incl. partial. Follow-ups filed grouped by area as BLG-QA-205..208 (source scope said one per clause; grouped into 4 area items each listing its clause IDs -- disclosed in qa_evidence). No spec deviation."
         },
         "ST-12": {
           "title": "Property-based tests for 'stop never decreases' and sizing validity rules",
@@ -427,24 +429,27 @@
         },
         "ST-17": {
           "title": "Prove the non-registry dependency check fails a real PR, and confirm it is a required status check on main",
-          "classification": "delegated_backend",
-          "status": "not_started",
-          "assigned_to": "human",
-          "github_issue": null,
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1865,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "8a1db62458d52d22906d532b5c49e1309600eec2",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:24:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/non_registry_dependency_check_live_fire_2026-10-05.md",
+            ".github/workflows/non-registry-dependency-check.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Reclassified delegated_backend -> autonomous 2026-10-05 (sealed sprint_backlog.md classifies it autonomous; the engine could perform both ACs: throwaway PR + read-only branch-protection summary API; no delegation record existed to cancel). Failing run 37282917791 recorded. Check NOT required on main -> BLG-OPS-177. No spec deviation."
         },
         "ST-18": {
           "title": "Harden the UI-copy boundary lint against obfuscation-grade and cross-node phrase splits",
@@ -929,7 +934,9 @@
     "ST-15",
     "ST-12",
     "ST-13",
-    "ST-18"
+    "ST-18",
+    "ST-11",
+    "ST-17"
   ],
   "open_escalations": [
     "ESC-EXEC-20261001-01",
