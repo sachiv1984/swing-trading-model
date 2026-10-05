@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (PR #1886/EPIC-02 agent-mediated DoQ+PO review, 2 new items added: BLG-OPS-175 (ST-09's price-alert dedup guard not race-safe), BLG-OPS-176 (ST-08's dedup-clear path ignores send_alert)); prior — 2026-10-01 (sprint execution EPIC-05/ST-28 — 1 new item added: BLG-SPEC-178 (new live-vs-doc divergences found by the new drift-detector tool, beyond the 5 originally known)); prior — 2026-10-01 (session — PR #1884/EPIC-01 review, 1 new item added: BLG-QA-204 (get_settings() not mocked in ST-01's timestamp-persistence test)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-05 (sprint execution EPIC-03/ST-11 — 4 new items added: BLG-QA-205 to BLG-QA-208, the strategy-rule → test traceability matrix's untested-clause follow-ups); prior — 2026-10-05 (PR #1886/EPIC-02 agent-mediated DoQ+PO review, 2 new items added: BLG-OPS-175 (ST-09's price-alert dedup guard not race-safe), BLG-OPS-176 (ST-08's dedup-clear path ignores send_alert)); prior — 2026-10-01 (sprint execution EPIC-05/ST-28 — 1 new item added: BLG-SPEC-178 (new live-vs-doc divergences found by the new drift-detector tool, beyond the 5 originally known); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4242,6 +4242,85 @@ ST-08 (`BLG-OPS-173`) added `_send_anomaly_telegram_alert_deduped()`/`_clear_ano
 **Acceptance Criteria**
 - Either the clear path is gated on `send_alert` to match the send path, or a comment explains why it deliberately is not
 - A test exercises the chosen behaviour explicitly (today's tests only exercise `send_alert`'s default `True`, or `False` combined with no-firing as an incidental side effect, not a deliberate assertion of this specific interaction)
+
+---
+
+### BLG-QA-205 — No backend test asserts the §4.1.5 FX defaulting/echo or the §4.1.6 insufficient-cash sizing result
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** ST-11/EPIC-03, cycle `2026-09-30__release-v9.9` — strategy-rule → test traceability matrix (`docs/testing/strategy_rule_test_traceability_matrix.md`) — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The traceability matrix found `services/sizing_service.py::size_position`'s FX handling and cash constraint unasserted in CI: C4.1.5-01 (user FX override, Partial), C4.1.5-02 (live FX default, None), C4.1.5-03 (`fx_rate_used` returned, None), C4.1.6-01 (`cash_sufficient: false` when estimated cost exceeds cash, None), C4.1.6-02 (`max_affordable_shares`, None). The only backend tests of the cash path live in `backend/mutmut_pilot_tests/`, which no CI workflow runs; Playwright mocks the response.
+
+**Scope**
+- Add pytest coverage of `size_position` for: US with no `fx_rate` (uses `get_live_fx_rate()`), US with an override (override used and echoed as `fx_rate_used`), UK (`fx_rate_used == 1.0`), estimated cost above available cash (`cash_sufficient` false, `max_affordable_shares` present and affordable), and below it
+
+**Acceptance Criteria**
+- Each clause above asserted by a CI-run test; matrix rows updated to Asserted
+
+---
+
+### BLG-QA-206 — §4.1.7 sizing-widget behaviours have no Playwright coverage
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** ST-11/EPIC-03, cycle `2026-09-30__release-v9.9` — strategy-rule → test traceability matrix (`docs/testing/strategy_rule_test_traceability_matrix.md`) — 2026-10-05
+**Effort:** M (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+The traceability matrix found most of `strategy_rules.md` §4.1.7's Position Sizing Calculator UI rules unasserted: C4.1.7-01 always visible / no toggle (Partial), C4.1.7-02 auto-recalculation with 300ms debounce, C4.1.7-03 loading state, C4.1.7-05 manually entered shares not overwritten + "use this" affordance, C4.1.7-06 no auto-fill on INSUFFICIENT_CASH with MaxAffordableShares shown as information, C4.1.7-07 no auto-fill on an invalid result + inline message, C4.1.7-08 sizing result never blocks form submission (all None). The no-overwrite rule is described in §4.1.7 as a financial safety constraint.
+
+**Scope**
+- Add Playwright scenarios (mocked `POST /portfolio/size`, per `shared_standards.md` §18) for each clause listed
+
+**Acceptance Criteria**
+- Each listed clause has a passing CI Playwright scenario; matrix rows updated
+
+---
+
+### BLG-QA-207 — The live exit decision (should_exit_position) and grace-period behaviour are not called by any CI test
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** ST-11/EPIC-03, cycle `2026-09-30__release-v9.9` — strategy-rule → test traceability matrix (`docs/testing/strategy_rule_test_traceability_matrix.md`) — 2026-10-05
+**Effort:** S (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+The traceability matrix found §6.3 and §8 asserted only on the replay engine's equivalent logic or a compliance view, never against `backend/utils/calculations.py::should_exit_position` (tests only stub it): C6.3-01 no stop-based exit during grace (Partial), C8.1-01 stop trigger after grace (Partial), C8.2 risk-off exit regardless of stop (Partial), C8-00 exactly three exit conditions, C8.1-02 manual confirmation, C8.3 / C6.3-03 manual exit always permitted (None). Also partial: C5-02 stop persisted from day one, C6.3-02 stop calculated and stored during grace, C7.1-02 on-load ATR recompute cadence.
+
+**Scope**
+- Unit-test `should_exit_position` directly: grace boundary (day 9 vs day 10), price at/below/above stop, risk-off overriding both grace and stop, the closed set of exit reasons
+- Assert the entry write path persists an initial stop, and the grace-period path still stores the calculated stop
+- Assert manual exit is accepted inside the grace period
+
+**Acceptance Criteria**
+- Each listed clause asserted by a CI-run test; matrix rows updated
+
+---
+
+### BLG-QA-208 — Entry required-field set and the advisory panel's non-blocking rule are untested at their boundary
+**Priority:** P4 (Backlog)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** ST-11/EPIC-03, cycle `2026-09-30__release-v9.9` — strategy-rule → test traceability matrix (`docs/testing/strategy_rule_test_traceability_matrix.md`) — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+The traceability matrix found C4-01 (`POST /portfolio/position` requires ticker, entry date, entry price, shares and ATR) unasserted, and C4.2.6 (advisory checks never prevent plan submission) asserted only at the API level (`test_response_always_200_on_fail`), not at the trade-plan form.
+
+**Scope**
+- Add a contract test that each required entry field, when omitted, is rejected
+- Add a Playwright scenario submitting a trade plan while the pre-entry panel shows FAIL/WARN
+
+**Acceptance Criteria**
+- Both clauses asserted by CI-run tests; matrix rows updated
 
 ---
 
