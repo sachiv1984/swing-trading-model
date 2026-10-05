@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T08:05:55Z",
+  "last_updated_utc": "2026-10-05T08:18:16Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -260,7 +260,10 @@
       "test_scenarios": [
         "tests/test_api_contracts.py",
         "tests/test_null_fee_trade_audit.py",
-        "tests/test_ci_scripts_io_boundary.py"
+        "tests/test_ci_scripts_io_boundary.py",
+        "tests/test_strategy_invariants_property.py",
+        "tests/test_reflection_reminder_postgres.py",
+        "tests/test_ui_copy_forbidden_phrases.py"
       ],
       "stories": {
         "ST-10": {
@@ -310,44 +313,50 @@
         "ST-12": {
           "title": "Property-based tests for 'stop never decreases' and sizing validity rules",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "e160a8d806f8e334b614989e57c87384d8b28968",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:10:38Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_strategy_invariants_property.py",
+            "claude/strategy/strategy_rules.md#7.3",
+            "claude/strategy/strategy_rules.md#4.1.4"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "hypothesis property tests for §7.3 ratchet + §4.1.4 validity; broken ratchet falsified (synthetic + real-code mutation, restored). No deviation."
         },
         "ST-13": {
           "title": "Real-Postgres integration test for the reflection-reminder evaluation step",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "d1312ca5c3020c1591d8620b6772eedb49d46716",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:13:49Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_reflection_reminder_postgres.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Phase B real-Postgres test; verified locally against throwaway Postgres 18 (not staging), 6/6 mutations caught. Phase A skip confirmed. Real Phase B CI run to be confirmed on PR. No deviation."
         },
         "ST-14": {
           "title": "Convert remaining test files sharing test_trade_plan_audit_log.py's unrestored sys.modules swap pattern",
@@ -440,23 +449,27 @@
         "ST-18": {
           "title": "Harden the UI-copy boundary lint against obfuscation-grade and cross-node phrase splits",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "7ef43618f3b6c03ac8ffc038bfa3e76da1e348bc",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T08:18:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_ui_copy_forbidden_phrases.py",
+            "tests/test_ui_copy_forbidden_phrases.py",
+            "scripts/ui_copy_lint_babel_differential.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "All BLG-QA-194 bypasses detected by regression tests or documented as accepted limits; babel differential 0 missed hits over src/ (212 files, 12,891 literals). No deviation."
         }
       }
     },
@@ -913,7 +926,10 @@
     "ST-32",
     "ST-10",
     "ST-16",
-    "ST-15"
+    "ST-15",
+    "ST-12",
+    "ST-13",
+    "ST-18"
   ],
   "open_escalations": [
     "ESC-EXEC-20261001-01",
