@@ -2,7 +2,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Version:** 1.3
-**Last Updated:** 2026-09-24 (ST-23, EPIC-06, v9.7, BLG-SPEC-147 — new §2.4 formal canonical definition of "linked trade plan" counting for the SI-02 gate; current_roadmap.md cross-reference deferred, outside Sprint Execution's write scope); prior — 2026-09-07 (ST-38, EPIC-05, v9.1, BLG-SPEC-127 — §2.1 gains exact window-boundary and timezone semantics)
+**Last Updated:** 2026-10-05 (ST-31, EPIC-05, v9.9, BLG-SPEC-166 — §2.4's deferred cross-reference note replaced: `current_roadmap.md`'s SI-02 block now cross-references this section; definition unchanged, no version bump); prior — 2026-09-24 (ST-23, EPIC-06, v9.7, BLG-SPEC-147 — new §2.4 formal canonical definition of "linked trade plan" counting for the SI-02 gate; current_roadmap.md cross-reference deferred, outside Sprint Execution's write scope); prior — 2026-09-07 (ST-38, EPIC-05, v9.1, BLG-SPEC-127 — §2.1 gains exact window-boundary and timezone semantics); prior history retained — see prior entries in version control.
 **Cycle:** 2026-05-30__release-v4.5 (EPIC-03, ST-07, BLG-SPEC-41)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **§13 gate:** PASS — `docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md`
@@ -85,7 +85,7 @@ WHERE th.pnl IS NOT NULL
 - This count is intentionally **not** deduplicated further: if more than one `trade_plans` row somehow points at the same `trade_history.id` (not expected under normal use, since a position is opened from at most one plan), each would count separately under a bare `COUNT(*)`. No live case of this has been observed; flagged here rather than silently assumed impossible.
 - Historical readings of this count are recorded inline in `current_roadmap.md`'s SI-02 gate confirmation status field (not duplicated here) — this section defines *what* is counted, not the running history of readings.
 
-**Cross-reference (deferred, outside this story's write scope):** `current_roadmap.md`'s SI-02 structured field should cross-reference this section once written by a session with write access to `claude/roadmap/*` (Roadmap Rebalance engine, or Head of Specs Team out-of-band authority per `shared_standards.md` §17) — Sprint Execution's write scope does not extend to `claude/roadmap/*` beyond the narrow `workforce_capacity.md` exception (execution_prompt.md §7). Flagged here rather than silently left undone.
+**Cross-reference:** `current_roadmap.md`'s SI-02 gate confirmation status block cross-references this section ("Canonical "linked trade plan" definition" line) — added ST-31, EPIC-05, v9.9 (BLG-SPEC-166), under Head of Specs Team write-scope ruling ESC-EXEC-20261001-05, completing ST-23's originally-scoped acceptance criteria.
 
 ---
 
