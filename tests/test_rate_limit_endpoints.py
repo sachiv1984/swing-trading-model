@@ -18,15 +18,19 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
-sys.modules.pop("database", None)
+from tests._real_database import real_database_imports  # noqa: E402
 
-from fastapi.testclient import TestClient  # noqa: E402
+# Real backend/database.py only while these modules import; conftest's stub is
+# restored afterwards so later test files still see it (ST-14, BLG-QA-190).
+with real_database_imports():
 
-from main import app  # noqa: E402
-from services.rate_limiter import _ai_limiter, _public_limiter  # noqa: E402
-import routers.ai as ai_router  # noqa: E402
-import routers.trade_plans as trade_plans_router  # noqa: E402
-import main as main_module  # noqa: E402
+    from fastapi.testclient import TestClient  # noqa: E402
+
+    from main import app  # noqa: E402
+    from services.rate_limiter import _ai_limiter, _public_limiter  # noqa: E402
+    import routers.ai as ai_router  # noqa: E402
+    import routers.trade_plans as trade_plans_router  # noqa: E402
+    import main as main_module  # noqa: E402
 
 CLIENT = TestClient(app, raise_server_exceptions=False)
 

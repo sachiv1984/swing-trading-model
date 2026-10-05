@@ -69,12 +69,19 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 # services.signal_service itself is intentionally left untouched (see module
 # docstring) since create_rebalance_exit_signal IS a true module-global lookup
 # there (no local shadowing) and patch.object works correctly for it.
-sys.modules.pop("database", None)
+#
+# "database" is NOT evicted (ST-14, BLG-QA-190): the real create_rebalance_exit_signal
+# comes from a private copy of backend/database.py instead, so conftest's
+# sys.modules["database"] stub stays in place for every later test file. The
+# utils.* evictions above recover from stubs other files leave behind (tracked
+# separately as BLG-QA-209) and are unchanged.
 sys.modules.pop("utils.formatting", None)
 sys.modules.pop("utils.pricing", None)
 sys.modules.pop("utils", None)
 
-import database  # noqa: E402
+from tests._real_database import load_real_database  # noqa: E402
+
+database = load_real_database("database_real_for_test_rebalance_exit_signal_numpy_regression")
 import services.signal_service as signal_service  # noqa: E402
 
 

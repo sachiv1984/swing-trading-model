@@ -42,8 +42,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 # that lacks the real create_signal/create_rebalance_exit_signal/_sanitize_signal_string
 # implementations under test here. Evict it so Python loads the real backend/database.py,
 # following the same pattern as test_api_contracts.py.
-sys.modules.pop("database", None)
-import database
+# Private copy of the real backend/database.py; conftest's sys.modules["database"]
+# stub stays in place for every other test file (ST-14, BLG-QA-190).
+from tests._real_database import load_real_database  # noqa: E402
+
+database = load_real_database("database_real_for_test_signal_write_sanitization")
 
 
 # ---------------------------------------------------------------------------

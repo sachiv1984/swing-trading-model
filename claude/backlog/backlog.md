@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (sprint execution EPIC-03/ST-11, ST-17 — 5 new items added: BLG-QA-205 to BLG-QA-208 (ST-11 traceability-matrix follow-ups) and BLG-OPS-177 (ST-17: non-registry check not a required status check on main)); prior — 2026-10-05 (PR #1886/EPIC-02 agent-mediated DoQ+PO review, 2 new items added: BLG-OPS-175 (ST-09's price-alert dedup guard not race-safe), BLG-OPS-176 (ST-08's dedup-clear path ignores send_alert)); prior — 2026-10-01 (sprint execution EPIC-05/ST-28 — 1 new item added: BLG-SPEC-178 (new live-vs-doc divergences found by the new drift-detector tool, beyond the 5 originally known); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-05 (sprint execution EPIC-03/ST-11, ST-14, ST-17 — 6 new items added: BLG-QA-205 to BLG-QA-208 (ST-11 traceability-matrix follow-ups), BLG-QA-209 (ST-14: utils.* sys.modules stub leak) and BLG-OPS-177 (ST-17: non-registry check not a required status check on main)); prior — 2026-10-05 (PR #1886/EPIC-02 agent-mediated DoQ+PO review, 2 new items added: BLG-OPS-175 (ST-09's price-alert dedup guard not race-safe), BLG-OPS-176 (ST-08's dedup-clear path ignores send_alert)); prior — 2026-10-01 (sprint execution EPIC-05/ST-28 — 1 new item added: BLG-SPEC-178 (new live-vs-doc divergences found by the new drift-detector tool, beyond the 5 originally known); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4342,6 +4342,27 @@ ST-17 proved the guard fails a real PR (run 37282917791), but `main`'s branch pr
 **Acceptance Criteria**
 - `gh api repos/sachiv1984/swing-trading-model/branches/main` lists the check under `protection.required_status_checks`
 - A PR that does not touch dependency files is not left blocked waiting on the check
+
+---
+
+### BLG-QA-209 — Test files leave permanent utils.* stubs in sys.modules, so a reordered run fails 32 tests and one collection
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** ST-14/EPIC-03, cycle `2026-09-30__release-v9.9` — BLG-QA-190's "widen the audit to utils.formatting" scope item — 2026-10-05
+**Effort:** M (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-14 removed every unrestored `sys.modules["database"]` swap and added a conftest guard against new ones. The same shape of leak exists for `utils.*`. `tests/test_alerts_service.py`, `tests/test_plan_vs_reality.py` and `tests/test_trade_service.py` install module-level stubs for `utils`, `utils.pricing`, `utils.calculations`, `utils.formatting` (and others) with no restore. Meanwhile `test_money_arithmetic_golden.py`, `test_nightly_computations.py`, `test_golden_outputs.py` and `test_rebalance_exit_signal_numpy_regression.py` pop them again to recover. The default alphabetical order happens to pass. Run in reverse file order, the suite fails identically on `main` and with ST-14: 32 failures (`test_replay_service.py`, `test_atr_consolidation.py`, `test_upstream_call_helper.py`, `test_strategy_engine_*`, `test_production_strategy.py`, `test_pre_entry_validation.py::TestMarketRegimeCache`, `test_backtest_rule_service.py`, ...) plus a collection error in `tests/test_pagination.py` (`'utils' is not a package`).
+
+**Scope**
+- Convert the stub-installing files to scoped stubs (`patch.dict(sys.modules, ...)` around the import, as `tests/test_reflection_reminder.py` does), and drop the compensating pops where they become unnecessary
+- Extend `tests/conftest.py`'s ST-14 leak guard (or add a sibling) to cover the `utils` package modules
+
+**Acceptance Criteria**
+- `pytest $(ls tests/test_*.py | sort -r)` passes with no failures, matching the default order
+- The guard fails a file that leaves a `utils.*` stub installed
 
 ---
 

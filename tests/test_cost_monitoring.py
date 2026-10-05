@@ -18,8 +18,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
 # conftest.py's database stub lacks the real implementations under test here —
 # same rationale as test_monthly_ai_cost.py / test_signal_write_sanitization.py.
-sys.modules.pop("database", None)
-import database  # noqa: E402
+# Private copy of the real backend/database.py; conftest's sys.modules["database"]
+# stub stays in place for every other test file (ST-14, BLG-QA-190).
+from tests._real_database import load_real_database  # noqa: E402
+
+database = load_real_database("database_real_for_test_cost_monitoring")
 
 
 def _mock_conn(fetchone_row=None, fetchall_rows=None):
