@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.36
-**Last Updated:** 2026-09-30 (ST-38, EPIC-06, v9.8, BLG-GOV-351 — new STEP 12.6, 90-Day AI Feature Usage Review Trigger Check, runs on every cycle close alongside STEPs 11/12/12.5); prior — 2026-09-21 (governance-drift fix, Head of Specs Team direct action — header `Process Reference` line pointed at a file deleted 2026-03-13 and is replaced by a retirement note; no procedural change); prior — 2026-09-19 (post-ship closure `2026-09-15__release-v9.5` follow-up, Head of Specs Team direct action — STEP 0 Rebalance Cadence Check treats a `next_release` equal to the release being closed as unscoped, not as a fresh unconsumed release); prior history retained — see prior entries in version control.
+**Version:** 2.37
+**Last Updated:** 2026-10-05 (ESC-CLOSE-20260930-03, Head of Specs Team ruling, agent-mediated per execution_prompt.md §5.3, user-directed — §5 canonical-spec carve-out and STEP 5 item 1 now cover a wholly missing Known Deviations entry/section routed from Delivery Verification STEP 3); prior — 2026-09-30 (ST-38, EPIC-06, v9.8, BLG-GOV-351 — new STEP 12.6, 90-Day AI Feature Usage Review Trigger Check, runs on every cycle close alongside STEPs 11/12/12.5); prior — 2026-09-21 (governance-drift fix, Head of Specs Team direct action — header `Process Reference` line pointed at a file deleted 2026-03-13 and is replaced by a retirement note; no procedural change); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); this prompt is the sole authority for the Post-Ship Closure Engine.
@@ -105,7 +105,7 @@ Canonical governance stack: per `claude/system/shared/governance_stack.md`. This
 - `claude/backlog/backlog.md` (mark shipped items complete; add missing Phase 4 items; no other changes)
 - Scope document at `docs/product/scope/scope--{id}-{slug}.md` (status → Superseded only)
 - Decisions record at `docs/product/decisions/{id}-{slug}.md` (status → Superseded only)
-- Canonical spec files (deviation note compliance fixes only — missing required fields per §3 Known Deviation Standard; no other spec edits permitted; the document owner must be notified of any fields added to their spec by this routine — record in closure record §6)
+- Canonical spec files (deviation note compliance fixes only — missing required fields per §3 Known Deviation Standard, including a wholly missing Known Deviations entry/section routed from Delivery Verification STEP 3 (ESC-CLOSE-20260930-03); no other spec edits permitted; the document owner must be notified of any fields added to their spec by this routine — record in closure record §6)
 - `claude/cycles/<cycle_id>/closure_escalations.md` (create if escalations raised during closure — format per `shared_standards.md §4`; ID prefix `ESC-CLOSE-YYYYMMDD-nn`)
   - **State-pointer sync (mandatory, closes AUD-2026-08-03-001 / AUD-2026-08-08-003):** Whenever an entry is appended to `closure_escalations.md`, in the same STEP 8 write also set `.claude_current_state.json.open_escalations.<ESC-ID> = {"summary": "<one-line>", "owner": "<role>", "sla_due_utc": "<timestamp>"}`. When that escalation's `Disposition` is later set to `Resolved` (in this file or a future session that resolves it), remove the corresponding key from `open_escalations` in the same write. This is the only path outside Sprint Execution that raises escalations against the global state pointer's gate condition — Release Planning, Sprint Planning, and Roadmap Rebalance all read this field and must see real data.
 - `docs/System_status_report.md` (reconciliation only — correct stale notes)
@@ -428,7 +428,7 @@ If the decisions record cannot be located: same flag behaviour as scope document
 
 For each deviation listed in `sprint_close.md` "Deviations filed this sprint":
 
-1. Locate the deviation entry in the referenced canonical spec file (filed there during Phase 3 execution per §3.1.A step 10 of the execution prompt).
+1. Locate the deviation entry in the referenced canonical spec file (filed there during Phase 3 execution per §3.1.A step 10 of the execution prompt). If `verification_report.md` §4's Deviation Register marks it `Known Deviations entry missing — routed to Post-Ship Closure STEP 5`, or the entry is otherwise absent: create it now (and the `## Known Deviations` section if absent) with all fields in step 2 — a wholly missing entry is the all-fields-missing case of step 3's compliance fix, applied in either mode — and record the addition in closure record §6 for the document owner (ESC-CLOSE-20260930-03).
 2. Confirm the entry contains all required fields per §3 Known Deviation Standard:
    - Description
    - Canonical requirement
