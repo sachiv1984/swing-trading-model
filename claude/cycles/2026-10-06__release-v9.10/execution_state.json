@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-06T16:03:30Z",
+  "last_updated_utc": "2026-10-06T16:16:25Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -431,20 +431,21 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-02.md",
       "test_scenarios": [
-        "tests/e2e/recent-trades-zero-pnl-badge.spec.js"
+        "tests/e2e/recent-trades-zero-pnl-badge.spec.js",
+        "tests/e2e/exit-condition-surfacing.spec.js"
       ],
       "stories": {
         "ST-06": {
           "title": "Show ATR, active multiplier and recalculation source in the stop-loss cell",
           "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
+          "status": "blocked_decision",
+          "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1899,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-10-06T16:16:25Z",
+          "unblock_criteria": "Dependency: ST-01 ruling ESC-EXEC-20261006-01 (displayed multiplier and stop_calculation_source)",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -460,14 +461,14 @@
         "ST-07": {
           "title": "Trade Entry shows the stop and risk the system will actually store",
           "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
+          "status": "blocked_decision",
+          "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1900,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-10-06T16:16:25Z",
+          "unblock_criteria": "Dependency: ST-01 ruling ESC-EXEC-20261006-01 (single fallback-multiplier source)",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -483,48 +484,50 @@
         "ST-08": {
           "title": "Exit dialog pre-selects the exit reason the system already knows",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1901,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "1d7b7a2466c0a98cc33f6fb36658575264006601",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-06T16:16:11Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/positions.md"
+            "docs/specs/frontend/pages/positions.md#Exit Dialog Pre-Selection and Deep Link",
+            "tests/e2e/exit-condition-surfacing.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "SC-EXD-01..05 + SC-ECP-01..04 pass locally. Deviation check: none."
         },
         "ST-09": {
           "title": "Morning briefing card for §8 exit recommendations",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1902,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "1d7b7a2466c0a98cc33f6fb36658575264006601",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-06T16:16:11Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/dashboard.md"
+            "docs/specs/frontend/pages/dashboard.md#Exit Conditions Met Row",
+            "tests/e2e/exit-condition-surfacing.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "SC-EXC-01..02 pass locally; UI copy lint passes. Deviation check: none."
         },
         "ST-10": {
           "title": "Recent Trades badge shows a neutral glyph for a break-even trade",
@@ -558,7 +561,9 @@
     "ST-11",
     "ST-13",
     "ST-14",
-    "ST-20"
+    "ST-20",
+    "ST-06",
+    "ST-07"
   ],
   "delegated_items": [
     "ST-02",
@@ -570,6 +575,8 @@
     "ST-17",
     "ST-19",
     "ST-21",
+    "ST-08",
+    "ST-09",
     "ST-10"
   ],
   "open_escalations": [
@@ -589,7 +596,9 @@
     ],
     "all_merged": false
   },
-  "process_notes": [],
+  "process_notes": [
+    "ST-06/ST-07 (autonomous) held as blocked_decision on dependency ST-01's ruling (ESC-EXEC-20261006-01); classification unchanged, they resume as autonomous once ruled."
+  ],
   "sealed": false,
   "sealed_utc": null
 }
