@@ -1,5 +1,5 @@
 {
-  "_comment": "BLG-SEC-15 / ST-04 (EPIC-02, v8.5): known-as-of-baseline snapshot for the monthly dependency-vuln-rescan.yml scheduled job. Advisory IDs listed here are treated as 'already tracked' by the workflow's dedup logic and will NOT re-trigger a new GitHub issue on every run -- only advisory IDs absent from this file are reported as 'new'. This is NOT an accepted-risk register (unlike vulnerability-scan.yml's inline CVE-2026-4539 ignore, which has explicit Cybersecurity & Trust Lead + Head of Engineering sign-off) -- these are unreviewed at baseline time and were filed as BLG-SEC-18 for Cybersecurity & Trust Lead triage. Update this file (add the advisory ID) once a finding has been reviewed and is either fixed, or a considered accept-risk decision is recorded elsewhere (e.g. inline in vulnerability-scan.yml per the CVE-2026-4539 pattern) -- do not silently let the baseline grow uncurated. ST-24 (BLG-SEC-18, EPIC-05, v8.8) update, 2026-08-16: react-router/react-router-dom's 12 advisory IDs removed below (genuinely fixed -- react-router-dom upgraded ^7.13.0 -> ^7.18.2, confirmed absent from a fresh npm audit); the remaining 29 IDs (14 packages) are recorded accept-risk per docs/security/npm_audit_baseline_review_2026-08-16.md, review-by 2027-02-16 -- no longer 'unreviewed'.",
+  "_comment": "BLG-SEC-15 / ST-04 (EPIC-02, v8.5): known-as-of-baseline snapshot for the monthly dependency-vuln-rescan.yml scheduled job. Advisory IDs listed here are treated as 'already tracked' by the workflow's dedup logic and will NOT re-trigger a new GitHub issue on every run -- only advisory IDs absent from this file are reported as 'new'. This is NOT an accepted-risk register (unlike vulnerability-scan.yml's inline CVE-2026-4539 ignore, which has explicit Cybersecurity & Trust Lead + Head of Engineering sign-off) -- these are unreviewed at baseline time and were filed as BLG-SEC-18 for Cybersecurity & Trust Lead triage. Update this file (add the advisory ID) once a finding has been reviewed and is either fixed, or a considered accept-risk decision is recorded elsewhere (e.g. inline in vulnerability-scan.yml per the CVE-2026-4539 pattern) -- do not silently let the baseline grow uncurated. ST-24 (BLG-SEC-18, EPIC-05, v8.8) update, 2026-08-16: react-router/react-router-dom's 12 advisory IDs removed below (genuinely fixed -- react-router-dom upgraded ^7.13.0 -> ^7.18.2, confirmed absent from a fresh npm audit); the remaining 29 IDs (14 packages) are recorded accept-risk per docs/security/npm_audit_baseline_review_2026-08-16.md, review-by 2027-02-16 -- no longer 'unreviewed'. Rescan triage update, 2026-10-06 (GitHub issue #1885, [GOVERNANCE] hotfix): lockfile-only non-breaking remediation (npm audit fix --legacy-peer-deps) plus a compression >=1.8.2 override resolved 23 previously-baselined IDs (shell-quote, websocket-driver, ws, form-data, brace-expansion, fast-uri, nanoid, tar and others -- no longer present at HIGH/CRITICAL, removed below) and 7 newly-disclosed ones; 11 newly-disclosed IDs across 5 react-scripts/tailwindcss build-toolchain packages with no non-breaking fix added below as recorded accept-risk per docs/security/npm_audit_rescan_triage_2026-10-06.md, same 2027-02-16 review-by date.",
   "generated_utc": "2026-08-10T14:00:00Z",
   "generated_by": "ST-04 (EPIC-02, v8.5) initial baseline capture",
   "pip_audit": {
@@ -9,38 +9,26 @@
   },
   "npm_audit": {
     "scope": "package-lock.json (root)",
-    "high_critical_count": 14,
-    "note": "All 14 remaining are transitive dependencies of react-scripts (CRA v5 build toolchain -- webpack-dev-server/svgo/postcss/ws chain), confirmed never imported by application source (build-tooling only, never shipped to the browser). Individually risk-assessed and accept-risk-dispositioned by ST-24 (BLG-SEC-18, EPIC-05, v8.8) -- see docs/security/npm_audit_baseline_review_2026-08-16.md for owner, rationale, and 2027-02-16 review-by date. react-router/react-router-dom (previously 12 of the original 41 advisory IDs) were fixed directly by the same story (react-router-dom ^7.13.0 -> ^7.18.2) and removed from this list.",
+    "high_critical_count": 6,
+    "note": "6 packages carry their own HIGH advisories as of 2026-10-06 (postcss, svgo, webpack-dev-server, webpack-dev-middleware, node-forge, braces); every other HIGH entry in npm audit output inherits from one of these. All are transitive build/dev-toolchain dependencies of react-scripts (CRA v5) or tailwindcss, confirmed never imported by application source and never shipped to the browser. Accept-risk: postcss + svgo GHSA-2p49 per docs/security/npm_audit_baseline_review_2026-08-16.md (ST-24, BLG-SEC-18, v8.8); remaining 11 IDs per docs/security/npm_audit_rescan_triage_2026-10-06.md. Review-by 2027-02-16 for all. Durable fix: CRA -> Vite migration (docs/ops/cra_migration_scoping_2026-09-08.md).",
     "advisory_ids": [
-      "GHSA-395f-4hp3-45gv",
-      "GHSA-w7jw-789q-3m8p",
-      "GHSA-23hp-3jrh-7fpw",
-      "GHSA-8x88-c5mf-7j5w",
-      "GHSA-gvwx-54wh-qm9j",
-      "GHSA-r292-9mhp-454m",
-      "GHSA-vmf3-w455-68vh",
-      "GHSA-w8wr-v893-vjvp",
-      "GHSA-mp7j-qc5w-4988",
-      "GHSA-xv26-6w52-cph6",
-      "GHSA-3jxr-9vmj-r5cp",
-      "GHSA-mh99-v99m-4gvg",
-      "GHSA-rgw5-rvv9-x895",
-      "GHSA-4c8g-83qw-93j6",
-      "GHSA-7p8r-x3mc-p8w7",
-      "GHSA-v2hh-gcrm-f6hx",
-      "GHSA-hmw2-7cc7-3qxx",
-      "GHSA-52cp-r559-cp3m",
-      "GHSA-5p4m-2wfm-xmqj",
-      "GHSA-h67p-54hq-rp68",
-      "GHSA-28wg-ghj8-5hjv",
-      "GHSA-2v37-7h3g-55p8",
       "GHSA-6g55-p6wh-862q",
       "GHSA-7fh5-64p2-3v2j",
       "GHSA-fxqj-rqcc-2cmp",
       "GHSA-qx2v-qp2m-jg93",
       "GHSA-r28c-9q8g-f849",
       "GHSA-2p49-hgcm-8545",
-      "GHSA-96hv-2xvq-fx4p"
+      "GHSA-4vpr-x523-8j87",
+      "GHSA-w27v-7q3p-w38r",
+      "GHSA-4v9v-hfq4-rm2v",
+      "GHSA-79cf-xcqc-c78w",
+      "GHSA-9jgg-88mc-972h",
+      "GHSA-f5vj-f2hx-8m93",
+      "GHSA-m28w-2pqf-7qgj",
+      "GHSA-mx8g-39q3-5c79",
+      "GHSA-g84c-rxfj-3j2c",
+      "GHSA-86w9-cpqp-85rv",
+      "GHSA-vfj7-8cjw-p6xm"
     ]
   }
 }

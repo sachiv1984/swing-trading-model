@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-06 (groom backlog post-ship closure 2026-09-30__release-v9.9 — 35 items archived (v9.9 shipped); 2 duplicate ephemeral `## Release Slice — v9.9` sections removed; 0 gate/effort/field-completeness/duplicate-ID issues; 2 governance-prompt duplicate candidates flagged for owner review (BLG-GOV-355, BLG-GOV-368)); prior — 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 STEP 3 — 35 shipped items marked ✅ COMPLETE, cycle-tagged); prior — 2026-10-05 (PR #1892 agent-mediated Director of Quality review — 3 new items added: BLG-QA-213 (regression guard for the positions.fees_paid NOT NULL invariant), BLG-SPEC-183 (positions.entry_price currency: specs say native, code stores GBP), BLG-SPEC-184 (drift detector should compare documented column defaults)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-06 (session — 1 new item(s) added: BLG-TECH-21); prior — 2026-10-06 (groom backlog post-ship closure 2026-09-30__release-v9.9 — 35 items archived (v9.9 shipped); 2 duplicate ephemeral `## Release Slice — v9.9` sections removed; 0 gate/effort/field-completeness/duplicate-ID issues; 2 governance-prompt duplicate candidates flagged for owner review (BLG-GOV-355, BLG-GOV-368)); prior — 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 STEP 3 — 35 shipped items marked ✅ COMPLETE, cycle-tagged); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -347,6 +347,31 @@ Only Phase 1 shipped (v5.0/v5.1) — a lightweight Telegram-only digest. The ful
 - Weekly digest includes a drift score summary line
 - Weekly digest includes a brief before/after comparison note when a strategy version change occurred in the reporting period
 - Phase 2 channel decision (Telegram-only vs. added in-app view) resolved before frontend work begins
+
+---
+
+### BLG-TECH-21 — Migrate the frontend build toolchain off Create React App to Vite
+**Priority:** P2 (Medium)
+**Type:** Platform / Technical Debt
+**Owner:** Head of Engineering
+**Source:** GitHub issue #1885 rescan triage (`docs/security/npm_audit_rescan_triage_2026-10-06.md`); executes the plan scoped by BLG-TECH-11 (`docs/ops/cra_migration_scoping_2026-09-08.md`, v9.2) — 2026-10-06
+**Effort:** M (2–3d per scoping document)
+**Provisional-Target:** v10.0
+
+**Problem**
+Two consecutive npm-audit triages (2026-08-16, 2026-10-06) have been dominated by HIGH findings pinned by `react-scripts` v5 (`svgo`, `webpack-dev-server`, `webpack-dev-middleware`, `node-forge`), none fixable without a `react-scripts` major bump that does not exist — Create React App is unmaintained upstream. 17 advisory IDs are currently held as accept-risk with a 2027-02-16 review-by date; each monthly rescan adds more. BLG-TECH-11 scoped the migration but no item exists to execute it, so the accept-risk will otherwise be renewed indefinitely.
+
+**Scope**
+- Replace `react-scripts` with Vite per the scoping document (§3 target toolchain, §4 effort breakdown)
+- Port `PUBLIC_URL`/asset-path handling to Vite `base` config for both deploy targets (GitHub Pages and Render) — highest-risk area, BLG-OPS-148 precedent
+- Port `REACT_APP_*` env var handling and update the Playwright `webServer` build/serve command
+- Schedule as a dedicated single-EPIC story, not folded into a mixed-scope sprint (scoping document §6)
+
+**Acceptance Criteria**
+- `react-scripts` removed from `package.json`; `npm ci`, build, and the full Playwright suite pass in CI
+- Human staging run recorded for both GitHub Pages and Render deploys confirming assets load and routing works (date recorded in DoQ sign-off)
+- Fresh `npm audit` shows the `react-scripts`-pinned HIGH/CRITICAL findings resolved; `docs/security/dependency_vuln_baseline.json` and the two accept-risk review records updated to close them out
+- Ships before the 2027-02-16 accept-risk review-by date, or that review is performed on schedule if it slips
 
 ---
 
