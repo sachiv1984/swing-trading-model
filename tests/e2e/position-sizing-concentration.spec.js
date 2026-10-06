@@ -66,7 +66,8 @@ async function mockPortfolioSize(page, data) {
   });
 }
 
-async function fillSizingInputs(page, { ticker = 'MSFT', entry = '100.00', stop = '90.00' } = {}) {
+// ST-07 (BLG-FE-197, v9.10): the stop is the system stop, entry − 5× ATR; ATR 2 gives 90.00.
+async function fillSizingInputs(page, { ticker = 'MSFT', entry = '100.00', atr = '2' } = {}) {
   const tickerInput = page.getByPlaceholder('e.g., AAPL or VOD.L');
   await expect(tickerInput).toBeVisible({ timeout: 10000 });
   await tickerInput.fill(ticker);
@@ -74,8 +75,7 @@ async function fillSizingInputs(page, { ticker = 'MSFT', entry = '100.00', stop 
   const entryPriceInput = page.getByPlaceholder('0.00').first();
   await entryPriceInput.fill(entry);
 
-  const stopPriceInput = page.getByPlaceholder('0.00').last();
-  await stopPriceInput.fill(stop);
+  await page.getByPlaceholder('Fetched automatically if blank').fill(atr);
 }
 
 test.describe('Position Sizing — Concentration Display (V-SIZE-01, V-SIZE-02)', () => {
