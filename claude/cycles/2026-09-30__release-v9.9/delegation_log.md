@@ -33,7 +33,7 @@ Last Updated: 2026-10-01
 - **Spec reference:** docs/specs/data_model.md §"4 orphaned, always-NULL, undocumented live columns" (BLG-SPEC-150/BLG-SPEC-164)
 - **Unblock criteria:** Columns dropped on staging (then production); a verification query (`SELECT column_name FROM information_schema.columns WHERE table_name = 'positions' AND column_name IN ('atr_value','stop_price','fees','pnl_percent');` returns 0 rows) confirms. Add a new Migration History entry to `data_model.md` recording the drop.
 - **Commit format required:** `[EPIC-05][ST-29] <description>` pushed to `exec/2026-09-30__release-v9.9/EPIC-05`
-- **Status:** Open — awaiting Data Model & Domain Schema Owner action.
+- **Status:** Unblocked — 2026-10-05T12:45:37Z. Unblocked in-session — the user (human, with live write access, acting for the Data Model & Domain Schema Owner) ran the NULL pre-check (staging 2/2 rows, production 27/27 all NULL), the drop and the verification query (0 rows) on staging then production, same session as the walkthrough. Sign-off cleared; commit `bd89ed49` records it as `data_model.md` DS-24.
 
 ## DEL-20261001-03
 
@@ -48,4 +48,4 @@ Last Updated: 2026-10-01
 - **Spec reference:** docs/specs/data_model.md §"fees_paid nullability reconciled to nullable" (BLG-SPEC-151/BLG-SPEC-165)
 - **Unblock criteria:** Disposition recorded in `data_model.md` with the stated reason either way; if re-applying `NOT NULL`, the live schema and `data_model.md` must agree after the `ALTER TABLE` runs (pre-checked for 0 violating rows).
 - **Commit format required:** `[EPIC-05][ST-30] <description>` pushed to `exec/2026-09-30__release-v9.9/EPIC-05`
-- **Status:** Open — awaiting Data Model & Domain Schema Owner decision.
+- **Status:** Unblocked — 2026-10-05T12:55:48Z. Unblocked in-session — the user (human, with live write access, acting for the Data Model & Domain Schema Owner) ran DS-23's pre-check (0/0 NULL rows in both environments), `SET NOT NULL` and verification (`is_nullable = NO`, `column_default = NULL`) on staging then production, same session as the walkthrough. Both environments had no column default (documented `DEFAULT 0` was wrong); Product Owner chose no default. Sign-off cleared; commit `425dcd89` records it as `data_model.md` DS-23 Live Confirmation.

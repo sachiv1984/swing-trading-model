@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (PR #1891 agent-mediated Director of Quality + Product Owner review — 6 new items added: BLG-QA-212 (tests for compute_role_share_history.py), BLG-GOV-365 (§13.3 carve-out: UK earnings / pre-open timing), BLG-BE-137 (strategy version registry stuck at v1.4), BLG-GOV-366 (track the next AI usage review, 2027-01-03), BLG-GOV-367 (Skill-Silo series mixes two formulas), BLG-SPEC-182 (refresh the Gap Risk Flag decision record to v1.14)); prior — 2026-10-05 (ESC-CLOSE-20260930-01 Product Owner ruling confirmed — 1 new item added: BLG-GOV-364 (rule on reduced-roster idea-intake windows)); prior — 2026-10-05 (sprint execution EPIC-04/ST-20 — BLG-GOV-360 resolved: strategy_rules.md v1.14 §13.3/§13.5 wording applied); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-05 (PR #1892 agent-mediated Director of Quality review — 3 new items added: BLG-QA-213 (regression guard for the positions.fees_paid NOT NULL invariant), BLG-SPEC-183 (positions.entry_price currency: specs say native, code stores GBP), BLG-SPEC-184 (drift detector should compare documented column defaults)); prior — 2026-10-05 (PR #1891 agent-mediated Director of Quality + Product Owner review — 6 new items added: BLG-QA-212 (tests for compute_role_share_history.py), BLG-GOV-365 (§13.3 carve-out: UK earnings / pre-open timing), BLG-BE-137 (strategy version registry stuck at v1.4), BLG-GOV-366 (track the next AI usage review, 2027-01-03), BLG-GOV-367 (Skill-Silo series mixes two formulas), BLG-SPEC-182 (refresh the Gap Risk Flag decision record to v1.14)); prior — 2026-10-05 (ESC-CLOSE-20260930-01 Product Owner ruling confirmed — 1 new item added: BLG-GOV-364 (rule on reduced-roster idea-intake windows)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4760,6 +4760,116 @@ The ST-20 determination (CONDITIONAL) finds §13.3's literal text ("Exposing a g
 
 **Acceptance Criteria**
 - A recorded ruling; any adopted change ships with the full CLAUDE.md §6 checklist
+
+---
+
+### BLG-SPEC-180 — Correct metrics_definitions.md's claim that a NULL positions.fees_paid yields a silently-zero trade_history fee leg
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Metrics
+**Owner:** Metrics Definitions & Analytics Canonical Owner
+**Source:** ST-30/EPIC-05, 2026-09-30__release-v9.9 — Data Model & Domain Schema Owner disposition on BLG-SPEC-165 — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/metrics_definitions.md` §Fee-Netting Basis (the "Audit finding: a NULL fee leg is silently treated as zero" paragraph) gives, as an example cause of a NULL `trade_history.entry_fees`, "the source `positions.fees_paid` was itself `NULL` at entry". That cannot happen via the application: `position_service.py` `exit_position()` computes `float(position.get('fees_paid', 0))`, which raises `TypeError` on a NULL value (the key is always present in the row dict), so such a position cannot be exited and no trade_history row is written; `entry_fees` is always the numeric `exit_entry_fees`. With DS-23 (`data_model.md`) re-applying `NOT NULL` on `positions.fees_paid`, the cited cause is additionally structurally impossible. A NULL `entry_fees`/`exit_fees` can only originate from legacy or hand-inserted `trade_history` rows. The `null_fee_trade_count` flag itself remains correct and useful.
+
+**Scope**
+- Reword the example cause to "legacy or manually inserted `trade_history` rows", and cross-reference DS-23
+- Remove the dependency on `BLG-SPEC-151` as a live drift (now dispositioned)
+
+**Acceptance Criteria**
+- The paragraph no longer cites a NULL `positions.fees_paid` as a reachable cause of a NULL trade_history fee leg
+- No change to the `null_fee_trade_count` contract or computation
+
+---
+
+### BLG-SPEC-181 — Action-rate metric spec and query docstring still cite the dropped positions.stop_price column
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Metrics
+**Owner:** Metrics Definitions & Analytics Owner; Data Model & Domain Schema Owner
+**Source:** EPIC-05 agent-mediated Director of Quality review (ST-29), cycle `2026-09-30__release-v9.9` — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-29 dropped the orphaned, always-NULL `positions.stop_price` column (`data_model.md` DS-24). `docs/specs/metrics_definitions.md` (the action-rate definition, around lines 687 and 1110) and the docstring near `backend/database.py:2421` still describe the action-rate query as matching a later `PATCH /positions/{id}` that set `positions.stop_price >= recommended_stop`. The live stop column is `current_stop`. Nothing breaks today because the action-rate metric is not yet computed, but an implementation built from this text would query a column that no longer exists.
+
+**Scope**
+- Replace `positions.stop_price` with `positions.current_stop` in both `metrics_definitions.md` passages (version bump per the document's lifecycle) and in the `database.py` docstring
+
+**Acceptance Criteria**
+- No spec or code comment refers to `positions.stop_price` as a live column
+- `grep -rn "positions.stop_price" docs backend` returns only historical/migration references (DS-24)
+
+---
+
+### BLG-QA-213 — Regression guard for the positions.fees_paid NOT NULL invariant (entry flow and SQL seeds)
+**Priority:** P3 (Low)
+**Type:** Testing Gap / Data Model
+**Owner:** QA & Testing Owner
+**Source:** PR #1892 agent-mediated Director of Quality review (EPIC-05, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+DS-23 (`docs/specs/data_model.md:2517`) re-applied `NOT NULL` with no default on `positions.fees_paid` in staging and production. Its justification is that every write path supplies a numeric value. Nothing in the test suite enforces this. `create_position()` binds `position_data.get('fees_paid')` (`backend/database.py:98-135`), so a refactor of `position_service.py`'s entry flow (`:838-888`) that drops or renames the key would pass all 2054 tests and fail only in production, as a `NOT NULL` violation on every new position. In the same way, no test checks that the SQL seeds (`backend/test_data/seed_chart_test_data.sql`, `scripts/seeds/seed_portfolio_trades.sql`) supply `fees_paid`. The chart seed omitted it until ST-30, and it is run against staging by `.github/workflows/seed-preview.yml:64`.
+
+**Scope**
+- Unit test (database layer mocked): open a UK and a US position through the service entry flow, capture the `position_data` passed to `create_position()`, and assert that `fees_paid` is present, non-None and numeric (≥ 0).
+- Unit test: a partial exit passes a numeric, non-None `fees_paid` to `update_position()`.
+- Static test: every `INSERT INTO positions` statement in `*.sql` files under `backend/` and `scripts/` names `fees_paid` in its column list, and has as many values as columns.
+
+**Acceptance Criteria**
+- [ ] Both tests fail if `'fees_paid'` is removed from `position_data` in `position_service.py`, or if its value is `None`, for either market.
+- [ ] The static test fails on a fixture or temporary copy of a seed insert that omits `fees_paid`, and passes on the current repo.
+- [ ] Runs under the stub `DATABASE_URL` convention, with no live DB access.
+
+---
+
+### BLG-SPEC-183 — positions.entry_price currency: specs say native, code stores GBP
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** PR #1892 agent-mediated Director of Quality review (EPIC-05, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** S (~0.5d; includes a read-only live sample check of US rows)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/specs/data_model.md:114` ("Entry price in native currency (USD for US, GBP for UK)") and `docs/specs/data_model_positions_dictionary.md:53,58` (US `total_cost = entry_price × shares / fx_rate + fees_paid`) describe `positions.entry_price` as native currency. The application stores `entry_price_gbp` (`backend/services/position_service.py:845,882`) and the native price in `fill_price`. Readers work around this by using `fill_price` for US (`backend/services/portfolio_service.py:141`). DS-23 (`data_model.md:2536`), added in PR #1892, asserts that `entry_price` is GBP. The canonical model now contradicts itself, and the dictionary's US derivation formula is wrong for application-created rows. The fee reconstruction guidance in DS-23 and any future analytics built from the Fields table can therefore be wrong by a factor of the FX rate on US positions. The chart seed adds a third convention: UK prices in pence (`seed_chart_test_data.sql:45`).
+
+**Scope**
+- Confirm the stored convention with a read-only sample of live US rows (`entry_price` vs `fill_price / fx_rate`).
+- Correct `data_model.md:114` and the dictionary's `entry_price`/`total_cost` rows (or file a code defect if native was the intended convention), and align the DS-23 reconstruction note.
+- Note the pence convention in the chart seed, or normalise it.
+
+**Acceptance Criteria**
+- [ ] `data_model.md`, `data_model_positions_dictionary.md` and DS-23 state one consistent `entry_price` currency that matches `create_position()`'s input.
+- [ ] The dictionary's US `total_cost` derivation matches `position_service.py`'s computation.
+- [ ] The decision (doc fix vs code fix) is recorded with Data Model & Domain Schema Owner sign-off.
+
+---
+
+### BLG-SPEC-184 — Extend check_data_model_drift.py to compare documented column defaults
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Tooling
+**Owner:** Data Model & Domain Schema Owner
+**Source:** PR #1892 agent-mediated Director of Quality review (EPIC-05, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`scripts/check_data_model_drift.py` compares only column presence and `is_nullable` (`:95`). `data_model.md` documented `fees_paid DECIMAL(10, 2) DEFAULT 0` for many versions, but no default ever existed live. The error was found by hand during ST-30, not by the ST-28 drift tool, which cannot see defaults. Any other documented `DEFAULT` in a `CREATE TABLE` block (for example `state_history` "Default `[]`") could have drifted the same way without detection.
+
+**Scope**
+- Parse `DEFAULT <expr>` from each section's `CREATE TABLE` block (and/or "Default `x`" in Fields descriptions).
+- Select `column_default` from `information_schema.columns`, and report a "default mismatch" class next to the existing nullable mismatches, normalising Postgres casts such as `'[]'::jsonb` and `0`.
+- Add unit tests in `tests/test_check_data_model_drift.py` with mocked rows.
+
+**Acceptance Criteria**
+- [ ] A doc showing `DEFAULT 0` against a live `column_default = NULL` is reported as a default mismatch, and vice versa.
+- [ ] Equivalent forms (`0` vs `0::numeric`, `'[]'::jsonb` vs `'[]'`) do not produce false positives.
+- [ ] The tool remains read-only (`SELECT` against `information_schema` only), and the existing 36 drift/orphan/dashboard tests still pass.
 
 ---
 
