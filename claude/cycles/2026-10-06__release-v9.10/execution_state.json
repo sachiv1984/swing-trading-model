@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-06T19:29:24Z",
+  "last_updated_utc": "2026-10-06T21:01:55Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -14,10 +14,10 @@
   ],
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-06__release-v9.10/EPIC-01",
       "pr_number": 1915,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -173,7 +173,8 @@
           },
           "notes": "Ruling (1). Classification beside registry (strategy_rules.md out of write scope). Deviation check: none."
         }
-      }
+      },
+      "merged_utc": "2026-10-06T21:00:45Z"
     },
     "EPIC-03": {
       "status": "not_started",
@@ -570,9 +571,10 @@
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": [
+      "EPIC-01"
+    ],
     "epics_pending": [
-      "EPIC-01",
       "EPIC-03",
       "EPIC-04",
       "EPIC-02"
@@ -581,7 +583,8 @@
   },
   "process_notes": [
     "EPIC-01 DoQ sign-off agent-mediated (Director of Quality role, §5.3) on explicit user direction 2026-10-06; Product Owner review agent-mediated, comment only. Merge gate still requires human QA comment and PO acceptance.",
-    "EPIC-01 PR #1915 opened 2026-10-06; combined agent-mediated DoQ + PO review comment posted (both Approved with Comments). Awaiting CI, human QA sign-off comment and PO acceptance."
+    "EPIC-01 PR #1915 opened 2026-10-06; combined agent-mediated DoQ + PO review comment posted (both Approved with Comments). Awaiting CI, human QA sign-off comment and PO acceptance.",
+    "Resume sync 2026-10-06T21:01:55Z: PR #1915 (EPIC-01) found merged at 2026-10-06T21:00:45Z (mergedAt) — pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-01 is empty — nothing to reconcile."
   ],
   "sealed": false,
   "sealed_utc": null
