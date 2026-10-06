@@ -5,7 +5,6 @@ Last Updated: 2026-10-06
 
 # QA Evidence — EPIC-01: Stop-Parameter Correctness & ATR Integrity
 
-> Per-story evidence is recorded here as it arrives. The EPIC-level consolidation block and the DoQ sign-off block are added at EPIC completion (STEP 3.2.A).
 
 ## ST-01 — Production stop-parameter and open-position evidence (AC 1, AC 6)
 
@@ -53,3 +52,45 @@ No AC 6 correction decision is owed, because AC 6 applies only to positions "who
 **Note:** the `stop_calculated_at` stamps (02:21 UTC, about 2s apart) do not match the nightly job's 22:30 UTC schedule. They are most likely an on-load recompute (`GET /positions/analyze`). Either path gives the same result here, because both used 5×/2×.
 
 **AC result:** AC 1 met (production values recorded, read-only). AC 6 met: no diverged stops, so no correction needed.
+
+---
+
+## Consolidation Block
+
+**EPIC:** EPIC-01 — Stop-Parameter Correctness & ATR Integrity
+**Cycle:** 2026-10-06__release-v9.10
+**Sprint goal:** Make every live stop come from one §11 parameter source, and show the ATR, multiplier, recalculation source and already-known exit conditions behind each position (BLG-BE-138, BLG-FE-193, BLG-FE-198), while clearing v9.10's lifecycle/gap-risk rulings and AI-governance, ops and QA hygiene items.
+**Test scenarios used:** `tests/test_strategy_parameter_parity.py`, `tests/test_live_exit_decision.py`, `tests/test_atr_provenance.py`, `tests/test_strategy_version_registry.py`, `tests/test_strategy_version_at_entry.py`, `tests/e2e/settings-strategy-parameters-fixed.spec.js`
+
+| ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
+|---------|----------------|----------------|---------------------|--------|------------|
+| ST-01 | `strategy_rules.md` §11; `backend/utils/strategy_parameters.py`; `settings.md` §Strategy Parameter Presentation; `data_model.md` DS-26 | One fixed §11 source read by every live stop path; Settings read-only; Trade Entry 5×; `stop_calculation_source` (DS-26, live) | 6 ACs: production read recorded (AC 1); ruling (a) by the user as Strategy Rules & System Intent Owner (AC 2); one source (AC 3); Settings/Trade Entry values equal §11 (AC 4); parity test (AC 5); no diverged stops, so no correction owed (AC 6) | Pass | None |
+| ST-02 | `data_model.md` DS-25; `position_endpoints.md` GET /positions | `positions.atr_source` (fetched/user/fallback, live); missing ATR on recompute keeps the stop and flags `atr_unavailable` instead of moving it to entry | All 4 ACs met; both fallbacks tested | Pass | None |
+| ST-03 | `position_endpoints.md` v2.8.1; `settings_endpoints.md` v1.4.0 | Losing stop documented as current price − 5×ATR; analyze side effects stated; settings multiplier fields documented as having no effect | All 4 ACs met; documentation only | Pass | None |
+| ST-04 | `strategy_rules.md` §5–§8; traceability matrix | 67 tests calling `should_exit_position` directly; 9 matrix rows moved to Asserted (51.0% → 69.4%) | All 4 ACs met. C7.1-02 stays Partial for a behaviour reason (on-load path reuses stored ATR), noted in the matrix | Pass with notes | None |
+| ST-05 | `data_model.md` DS-11; `strategy_version_comparison_contract.md` Note 2 | Behaviour-only registry rule by the user's ruling; `DOCUMENTATION_ONLY_VERSIONS`; test derived from the Change Log replaces `len == 5` | All 4 ACs met. AC 4 not triggered, because ST-01's ruling added no Change Log row | Pass | None |
+
+**QA test coverage**
+- **Scenarios run:** full backend pytest suite, 2160 passed / 14 skipped on the EPIC-01 branch. Playwright `settings-strategy-parameters-fixed.spec.js` SC-SPF-01..05 passed locally (chromium), along with the Settings axe scan and the Trade Entry linkage spec. CI has not yet run on this branch; it runs on PR open.
+- **Mutation checks:** a hard-coded nightly multiplier copy fails `test_both_paths_follow_a_changed_source`. An unclassified Change Log row (1.15 probe) fails the registry test.
+- **Regression areas:** stop recompute (on-load and nightly), entry stop, exit decision, grace countdown, compliance, alerts grace warning, Settings save payload, Trade Entry suggested stop, `strategy_version_at_entry` stamping.
+- **Frontend testing gate (CLAUDE.md §2):**
+  - Settings read-only values, caption and save payload: Playwright SC-SPF-01..04.
+  - Trade Entry suggested stop: SC-SPF-05.
+  - No observable AC is "code review only".
+  - EPIC-01 changes `src/pages/Settings.js` and `src/pages/TradeEntry.js`, so the autonomous sign-off class does not apply (Criterion 3).
+- **Live environment:** DS-25 and DS-26 applied and verified on staging and production (`data_model.md` Live Confirmation). Production settings and open positions recorded under ST-01 above.
+- **Story-level authority sign-offs (BLG-GOV-14):**
+  - Strategy Rules & System Intent Owner rulings for ST-01 (a) and ST-05 (behaviour-only): direct user rulings, 2026-10-06.
+  - Data Model & Domain Schema Owner: DS-25/DS-26 applied and verified by the user.
+- **Known deviations filed:** None.
+
+## Standard Sign-Off Block
+
+- [ ] All acceptance criteria verified against canonical spec
+- [ ] No unresolved P0 or P1 deviations
+- [ ] Regression areas checked
+- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
+- Signed off by: _pending (Director of Quality)_
+- Date:
+- Comments:
