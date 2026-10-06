@@ -4,7 +4,7 @@
 **Class:** Class 1
 **Status:** Canonical
 **Version:** 2.51
-**Last Updated:** 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — new DS-26: positions.stop_calculation_source; settings strategy-parameter columns no longer read by any stop path, ruling (a)); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — new DS-25: positions.atr_source records fetched / user / fallback ATR provenance; Fields row and CREATE TABLE block updated; pending live application); prior — 2026-10-05 (PR #1892 review corrections — DS-23's fee-reconstruction note no longer assumes entry_price is GBP or ignores partial exits; the chart-QA seed is noted as also run by seed-preview.yml, not only by hand); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-06 (DS-25 and DS-26 confirmed applied live on staging and production, verification output recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — new DS-26: positions.stop_calculation_source; settings strategy-parameter columns no longer read by any stop path, ruling (a)); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — new DS-25: positions.atr_source records fetched / user / fallback ATR provenance; Fields row and CREATE TABLE block updated; pending live application); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -2642,7 +2642,7 @@ Result: **0 rows** on both staging and production.
 
 **Rationale:** `add_position()` substitutes `entry_price × 0.02` when no ATR can be fetched, and stored the result exactly like a real ATR. Neither the user nor the Positions stop cell (ST-06, `BLG-FE-193`) could tell a fetched, a typed and an invented ATR apart. `atr_source` records which one it is. Written by `add_position()` at entry and by both recompute paths when they freshly fetch ATR. When a recompute reuses the stored ATR, the existing value is left alone. Exposed on `GET /positions` per `position_endpoints.md`.
 
-**RISK (no live DB write access in this execution environment):** as with DS-22 to DS-24, the sandbox `DATABASE_URL` is staging and read-only. The Up Migration must be run against **both staging and production** by the Data Model & Domain Schema Owner before EPIC-01 merges: `add_position()`'s INSERT names the column, so a deploy without it fails every new position. **Status: PENDING APPLICATION** (`DEL-20261006-02`).
+**RISK (no live DB write access in this execution environment):** as with DS-22 to DS-24, the sandbox `DATABASE_URL` is staging and read-only. The Up Migration must be run against **both staging and production** by the Data Model & Domain Schema Owner before EPIC-01 merges: `add_position()`'s INSERT names the column, so a deploy without it fails every new position. **Status: CONFIRMED APPLIED, 2026-10-06** (staging and production; see Live Confirmation below).
 
 ### Up Migration (v2.49 → v2.50)
 
@@ -2671,7 +2671,17 @@ WHERE table_name = 'positions' AND column_name = 'atr_source';
 Expect 1 row: `atr_source`, `character varying`, `10`, `YES`.
 
 **Sign-off:**
-- Data Model & Domain Schema Owner: migration content to be reviewed before application. Additive, nullable and reversible; no pre-check needed, because no existing row can violate the constraint.
+- Data Model & Domain Schema Owner: migration content is additive, nullable and reversible; no pre-check needed. Applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner).
+- **Live Confirmation, applied 2026-10-06:** the Up Migration was run on staging, then production. Both returned "Success. No rows returned", as expected for DDL. The Verification query was then run in each environment, and the output was pasted into the execution session. Both environments returned identical results; DS-26's column was applied and verified in the same session:
+
+```json
+[
+  {"column_name": "atr_source", "data_type": "character varying", "character_maximum_length": 10, "is_nullable": "YES"},
+  {"column_name": "stop_calculation_source", "data_type": "character varying", "character_maximum_length": 10, "is_nullable": "YES"}
+]
+```
+
+`DEL-20261006-02` unblocked in-session.
 
 ---
 
@@ -2681,7 +2691,7 @@ Expect 1 row: `atr_source`, `character varying`, `10`, `YES`.
 
 **Rationale:** ST-06 (`BLG-FE-193`) shows the user when and how a stop was last recalculated. `stop_calculated_at` records when; this column records which path did it, `on_load` or `nightly`. Both paths now use the same fixed §11 parameters (ST-01 ruling (a)), so the source records provenance only, not a different calculation.
 
-**RISK (no live DB write access in this execution environment):** as with DS-25, the sandbox `DATABASE_URL` is read-only staging. Both recompute paths now write this column, so the Up Migration must be applied to **staging and production** before EPIC-01 deploys. Otherwise every stop recompute fails. **Status: PENDING APPLICATION** (`DEL-20261006-04`).
+**RISK (no live DB write access in this execution environment):** as with DS-25, the sandbox `DATABASE_URL` is read-only staging. Both recompute paths now write this column, so the Up Migration must be applied to **staging and production** before EPIC-01 deploys. Otherwise every stop recompute fails. **Status: CONFIRMED APPLIED, 2026-10-06** (staging and production; see Live Confirmation below).
 
 ### Up Migration (v2.50 → v2.51)
 
@@ -2710,10 +2720,11 @@ WHERE table_name = 'positions' AND column_name = 'stop_calculation_source';
 Expect 1 row: `stop_calculation_source`, `character varying`, `10`, `YES`.
 
 **Sign-off:**
-- Data Model & Domain Schema Owner: migration content to be reviewed before application. Additive, nullable and reversible; no pre-check needed.
+- Data Model & Domain Schema Owner: migration content is additive, nullable and reversible; no pre-check needed. Applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner).
+- **Live Confirmation, applied 2026-10-06:** applied alongside DS-25 on staging, then production. The combined Verification output was identical in both environments (see DS-25's Live Confirmation): `stop_calculation_source`, `character varying`, `10`, `YES`. `DEL-20261006-04` unblocked in-session.
 
 ---
 
 **Document Version:** 2.51
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — DS-26 stop_calculation_source; header/footer version kept in sync); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — DS-25 atr_source); prior — 2026-10-05 (PR #1892 review corrections to DS-23 and the fees_paid note); prior history retained — see prior entries in version control.
+**Last Review:** 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — DS-26 stop_calculation_source; header/footer version kept in sync); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — DS-25 atr_source); prior history retained — see prior entries in version control.

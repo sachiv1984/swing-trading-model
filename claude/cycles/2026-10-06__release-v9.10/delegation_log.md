@@ -33,7 +33,7 @@ Last Updated: 2026-10-06
 - **Spec reference:** docs/specs/data_model.md#DS-25
 - **Unblock criteria:** The Verification query returns 1 row (`atr_source`, `character varying`, `10`, `YES`) in both environments. Its output is recorded in DS-25's Live Confirmation, and DS-25's status moves from PENDING APPLICATION to applied.
 - **Commit format required:** `[EPIC-01][ST-02] <description>` pushed to `exec/2026-10-06__release-v9.10/EPIC-01`
-- **Status:** Open
+- **Status:** Unblocked — 2026-10-06T17:38:42Z. Unblocked in-session: the user (human, with live write access, acting for the Data Model & Domain Schema Owner) applied DS-25 and DS-26 on staging, then production. The Verification query returned `atr_source` and `stop_calculation_source` (`character varying`, `10`, `YES`) in both environments. Sign-off cleared; recorded in `data_model.md` DS-25 Live Confirmation.
 
 ## DEL-20261006-04
 
@@ -48,4 +48,4 @@ Last Updated: 2026-10-06
 - **Spec reference:** docs/specs/data_model.md#DS-26
 - **Unblock criteria:** The Verification query returns 1 row (`stop_calculation_source`, `character varying`, `10`, `YES`) in both environments. Its output is recorded in DS-26's Live Confirmation.
 - **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-10-06__release-v9.10/EPIC-01`
-- **Status:** Open
+- **Status:** Unblocked — 2026-10-06T17:38:42Z. Unblocked in-session: the user (human, with live write access, acting for the Data Model & Domain Schema Owner) applied DS-25 and DS-26 on staging, then production. The Verification query returned `atr_source` and `stop_calculation_source` (`character varying`, `10`, `YES`) in both environments. Sign-off cleared; recorded in `data_model.md` DS-26 Live Confirmation.
