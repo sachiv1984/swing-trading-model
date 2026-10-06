@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.6
-**Last Updated:** 2026-09-15 (v9.4 sprint execution — ST-28/BLG-FEAT-95: swapped the advisory's icon from AlertTriangle to Info after CI found it collided with an unrelated test's icon-absence assertion); prior — 2026-09-15 (v9.4 sprint execution — ST-28/BLG-FEAT-95: Trade Plan Linkage Advisory implementation confirmed in TradeEntry.js, required Playwright coverage added); prior — 2026-09-14 (v9.4 design gate — ST-28/BLG-FEAT-95: new Trade Plan Linkage Advisory section — non-blocking soft nudge when no trade plan is linked); prior history retained — see prior entries in version control
+**Version:** 1.7
+**Last Updated:** 2026-10-06 (v9.10 design gate — ST-07/BLG-FE-197: Stop Price input replaced by a read-only system initial stop; ATR field relabelled; risk and sizing driven only by the system stop); prior — 2026-09-15 (v9.4 sprint execution — ST-28/BLG-FEAT-95: swapped the advisory's icon from AlertTriangle to Info after CI found it collided with an unrelated test's icon-absence assertion); prior — 2026-09-15 (v9.4 sprint execution — ST-28/BLG-FEAT-95: Trade Plan Linkage Advisory implementation confirmed in TradeEntry.js, required Playwright coverage added); prior history retained — see prior entries in version control
+**Design Source (v1.7):** docs/design/2026-10-06__release-v9.10/trade-entry-system-stop/decision_record.md
 **Design Source (v1.4):** docs/design/2026-09-14__release-v9.4/trade-plan-required-nudge/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -46,15 +47,24 @@ Users rely on this form to:
 - Format: 1.XXXX
 - Max 6 decimal places
 
-### ATR Value (optional)
-- Number input
-- Auto‑calculated if available
-- User may override
+### ATR (14-day) (v1.7 — ST-07)
+- Number input. Label "ATR (14-day)", placeholder "Fetched automatically if blank". Replaces "ATR Value (Optional)" / "For stop suggestion".
+- If left blank, the backend fetches the 14-day ATR at save (falling back to 2% of entry if the fetch fails; ST-02 records this as `atr_source`).
+- The former "Suggested stop: … (n× ATR)" hint is removed and superseded by Initial Stop below.
 
-### Stop Price (optional)
-- Number input
-- Auto‑calculated as: `entry_price - (5 × ATR)`
-- User may override
+### Initial Stop (set by system) (v1.7 — ST-07, replaces Stop Price)
+- **Read-only display, not an input.** The backend stores `entry_price − ({mult} × ATR)` and ignores any submitted stop. `{mult}` comes from ST-01's single parameter source (§11: 5), never a hard-coded value or a Settings-form fallback.
+- `data-testid="system-initial-stop"`. Label "Initial Stop (set by system)".
+
+| State | Value | Caption (muted `text-xs`) |
+|-------|-------|---------------------------|
+| Entry + ATR present | `Entry − {mult}× ATR`, native currency, 2 dp, `text-rose-400` | "Entry − {mult}× ATR (§5). This is the stop that will be stored." |
+| Entry present, ATR blank | "Calculated on save" | "The system fetches the 14-day ATR for {TICKER} and sets the stop at Entry − {mult}× ATR." |
+| Entry blank | "—" | — |
+
+- **Trade plan prefill:** a plan `stop_price` is not placed into any input. A muted note under this panel (`data-testid="plan-stop-reference"`): "Trade plan stop: {value}. Shown for reference; the stored stop follows the strategy formula."
+- **Risk (to stop)** summary row: computed from this system stop only. Shows "Calculated on save" when ATR is blank.
+- **On save:** the success toast appends "Initial stop {value}." from the response's `initial_stop` (existing toast-timing standard).
 
 ### Position Sizing Calculator (always visible)
 See **Position Sizing Calculator** section below.
@@ -89,8 +99,8 @@ Fields render in this sequence:
 1. Ticker
 2. Entry Date
 3. Entry Price + FX Rate (US only, side by side)
-4. ATR Value
-5. Stop Price
+4. ATR (14-day)
+5. Initial Stop (set by system), read-only (v1.7)
 6. **Position Sizing Calculator widget** (always visible, directly above Shares)
 7. Shares
 8. Entry Note
@@ -110,7 +120,7 @@ The calculator is decision support — it does not block form submission regardl
 
 ### Widget inputs
 - **Risk %** — number input, pre-populated from `settings.default_risk_percent` on form load. Editable by the user within the widget. Represents percentage of portfolio value to risk on this trade (e.g. `1.00` = 1%).
-- **Entry Price, Stop Price, FX Rate** — read passively from the corresponding form fields above. The widget does not duplicate these inputs.
+- **Entry Price, Stop Price, FX Rate** — read passively from the corresponding form fields above. The widget does not duplicate these inputs. **(v1.7, ST-07):** the Stop Price is the read-only system initial stop (§Initial Stop), passed as `null` while ATR is blank.
 
 ### Calculation trigger
 The widget calls `POST /portfolio/size` 300ms after the user stops typing in any of: Entry Price, Stop Price, FX Rate, or the Risk % field within the widget. The frontend owns and implements the debounce. The backend performs all calculations — the frontend must not derive or recalculate any returned value.
@@ -130,7 +140,7 @@ When the result is valid, the widget displays:
 ### Widget States
 
 #### Idle
-Shown when Entry Price or Stop Price is empty or zero. No API call is made.
+Shown when Entry Price or Stop Price is empty or zero. No API call is made. (v1.7: with the system stop, this means Entry Price or ATR is blank.) An informational line reads "Enter an entry price and ATR to size this position."
 - Output values display as `—`
 - Risk % field is visible and editable
 - No "Use suggested shares" button shown
