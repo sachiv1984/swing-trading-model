@@ -10,7 +10,7 @@ Canonical spec: position_endpoints.md v1.8.3
 
 from typing import Optional
 
-from utils.strategy_parameters import GRACE_PERIOD_DAYS
+from strategy_parameters import GRACE_PERIOD_DAYS
 
 
 def compute_grace_days_remaining(

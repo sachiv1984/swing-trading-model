@@ -37,7 +37,7 @@ SIZE_TOLERANCE = 1.10
 DEFAULT_RISK_PERCENT = 1.0
 
 # Grace period length: the single §11 source (ST-01, v9.10).
-from utils.strategy_parameters import GRACE_PERIOD_DAYS  # noqa: E402
+from strategy_parameters import GRACE_PERIOD_DAYS  # noqa: E402
 
 
 def _compute_stop_compliance(

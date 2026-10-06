@@ -118,7 +118,7 @@ Introduced by ST-01 (`BLG-BE-138`) under parameter-authority ruling (a).
 
 - The four Strategy Parameters (Minimum Hold Days `10`, ATR Period `14`, Initial Stop `5.0`, Trailing Stop `2.0`) render as **read-only values, not disabled inputs**, with their existing labels and helper text (`data-testid="strategy-param-{min-hold-days|atr-period|atr-multiplier-initial|atr-multiplier-trailing}"`).
 - Caption under the section header (`data-testid="strategy-params-fixed-caption"`): "These parameters are fixed by the strategy rules (§11) and are shown for reference."
-- The displayed values come from `src/lib/strategyParameters.js`, the display mirror of the backend source `backend/utils/strategy_parameters.py`; `tests/test_strategy_parameter_parity.py` fails if the two drift. The values no longer come from the settings row, so a stored row cannot show a different number.
+- The displayed values come from `src/lib/strategyParameters.js`, the display mirror of the backend source `backend/strategy_parameters.py`; `tests/test_strategy_parameter_parity.py` fails if the two drift. The values no longer come from the settings row, so a stored row cannot show a different number.
 - Save omits these four fields. Any values still stored in the `settings` row are ignored by every stop path (`settings_endpoints.md`).
 - Default Risk % stays editable.
 

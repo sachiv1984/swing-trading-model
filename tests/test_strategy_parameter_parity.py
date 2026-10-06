@@ -3,7 +3,7 @@ ST-01 (BLG-BE-138, EPIC-01, v9.10): one source for the strategy_rules.md §11
 stop parameters across the on-load and nightly stop paths.
 
 Parameter-authority ruling (a), 2026-10-06 (ESC-EXEC-20261006-01): the §11
-values are fixed, held in backend/utils/strategy_parameters.py, and never read
+values are fixed, held in backend/strategy_parameters.py, and never read
 from the editable settings row.
 
 Covers:
@@ -37,7 +37,7 @@ real_calcs = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(real_calcs)
 
 import services.position_service as position_service  # noqa: E402
-import utils.strategy_parameters as sp  # noqa: E402
+import strategy_parameters as sp  # noqa: E402
 
 
 def _position(**overrides):
@@ -167,7 +167,7 @@ class TestEveryPathUsesTheSource:
     def test_compliance_and_alerts_import_the_source(self):
         for rel in ("services/compliance_service.py", "services/alerts_service.py"):
             text = (BACKEND / rel).read_text()
-            assert "from utils.strategy_parameters import GRACE_PERIOD_DAYS" in text, rel
+            assert "from strategy_parameters import GRACE_PERIOD_DAYS" in text, rel
             assert not re.search(r"GRACE_PERIOD_DAYS\s*=\s*\d", text), rel
         assert "min_hold_days = GRACE_PERIOD_DAYS" in (BACKEND / "services/alerts_service.py").read_text()
 

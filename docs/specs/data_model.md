@@ -339,7 +339,7 @@ CREATE TABLE settings (
 
 ### Strategy parameter context
 
-The default values (`min_hold_days: 10`, `atr_multiplier_initial: 5.0`, `atr_multiplier_trailing: 2.0`) reflect backtest-optimised parameters. **Since v9.10 (ST-01, `BLG-BE-138`, parameter-authority ruling (a)) no stop path reads these four columns** (`min_hold_days`, `atr_period`, `atr_multiplier_initial`, `atr_multiplier_trailing`). The fixed §11 values come from `backend/utils/strategy_parameters.py`. The columns are retained for compatibility; editing them changes nothing. Removing them is a separate decision.
+The default values (`min_hold_days: 10`, `atr_multiplier_initial: 5.0`, `atr_multiplier_trailing: 2.0`) reflect backtest-optimised parameters. **Since v9.10 (ST-01, `BLG-BE-138`, parameter-authority ruling (a)) no stop path reads these four columns** (`min_hold_days`, `atr_period`, `atr_multiplier_initial`, `atr_multiplier_trailing`). The fixed §11 values come from `backend/strategy_parameters.py`. The columns are retained for compatibility; editing them changes nothing. Removing them is a separate decision.
 
 ### `default_risk_percent` design note
 

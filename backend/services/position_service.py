@@ -61,7 +61,7 @@ from utils.calculations import (
 )
 
 from utils.formatting import decimal_to_float
-from utils.strategy_parameters import (
+from strategy_parameters import (
     GRACE_PERIOD_DAYS,
     INITIAL_ATR_MULTIPLIER,
     PROFIT_ATR_MULTIPLIER,

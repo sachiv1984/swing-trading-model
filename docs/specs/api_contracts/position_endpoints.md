@@ -194,7 +194,7 @@ Recomputes the trailing stop for every open position using the profit-lock strat
 
 - `POST /positions/nightly-stop-update`
 
-**Strategy constants (the fixed `strategy_rules.md` §11 values, read from `backend/utils/strategy_parameters.py`, the same source `GET /positions/analyze` uses; ST-01, v9.10):**
+**Strategy constants (the fixed `strategy_rules.md` §11 values, read from `backend/strategy_parameters.py`, the same source `GET /positions/analyze` uses; ST-01, v9.10):**
 - `INITIAL_ATR_MULT = 5` — wide stop when position is not in profit
 - `PROFIT_ATR_MULT = 2` — tight stop when position is in profit
 - `ATR_PERIOD = 14` — 14-day ATR

@@ -27,7 +27,7 @@ from typing import Dict, List, Optional
 from uuid import uuid4
 
 from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
-from utils.strategy_parameters import GRACE_PERIOD_DAYS
+from strategy_parameters import GRACE_PERIOD_DAYS
 from database import get_db, get_portfolio, get_positions, get_settings
 from utils.pricing import check_market_regime, get_current_price
 

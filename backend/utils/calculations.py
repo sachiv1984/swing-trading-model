@@ -9,7 +9,7 @@ from typing import Dict, Tuple, Optional
 from datetime import datetime
 from decimal import Decimal, ROUND_HALF_UP
 
-from utils.strategy_parameters import (
+from strategy_parameters import (
     GRACE_PERIOD_DAYS,
     INITIAL_ATR_MULTIPLIER,
     PROFIT_ATR_MULTIPLIER,

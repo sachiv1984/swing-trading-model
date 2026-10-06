@@ -25,7 +25,7 @@ from database import (
 
 from utils.pricing import get_current_price, get_live_fx_rate, check_market_regime
 from services.grace_service import compute_grace_days_remaining
-from utils.strategy_parameters import GRACE_PERIOD_DAYS
+from strategy_parameters import GRACE_PERIOD_DAYS
 from utils.formatting import decimal_to_float
 from utils.position_lifecycle_states import GRACE, PROFITABLE, LOSING
 

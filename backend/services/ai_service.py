@@ -19,7 +19,7 @@ from typing import Optional
 
 from fastapi import HTTPException
 
-from utils.strategy_parameters import GRACE_PERIOD_DAYS
+from strategy_parameters import GRACE_PERIOD_DAYS
 from utils.upstream_call import anthropic_retryable_exceptions, bounded_upstream_call, get_timeout
 
 logger = logging.getLogger(__name__)
