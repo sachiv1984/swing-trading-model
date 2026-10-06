@@ -9,6 +9,12 @@ from typing import Dict, Tuple, Optional
 from datetime import datetime
 from decimal import Decimal, ROUND_HALF_UP
 
+from utils.strategy_parameters import (
+    GRACE_PERIOD_DAYS,
+    INITIAL_ATR_MULTIPLIER,
+    PROFIT_ATR_MULTIPLIER,
+)
+
 
 # ============================================================================
 # FEE CALCULATIONS
@@ -326,7 +332,7 @@ def calculate_portfolio_pnl(
 # STOP LOSS CALCULATIONS
 # ============================================================================
 
-def calculate_initial_stop(entry_price: float, atr: float, multiplier: float = 5.0) -> float:
+def calculate_initial_stop(entry_price: float, atr: float, multiplier: float = INITIAL_ATR_MULTIPLIER) -> float:
     """
     Calculate initial stop loss for new position
     
@@ -384,10 +390,10 @@ def calculate_trailing_stop(
     """
     # Determine ATR multiplier based on profitability
     if is_profitable:
-        atr_mult = float(settings.get('atr_multiplier_trailing', 2.0))
+        atr_mult = float(settings.get('atr_multiplier_trailing', PROFIT_ATR_MULTIPLIER))
         reason = f"Profitable (tight {atr_mult}x ATR)"
     else:
-        atr_mult = float(settings.get('atr_multiplier_initial', 5.0))
+        atr_mult = float(settings.get('atr_multiplier_initial', INITIAL_ATR_MULTIPLIER))
         reason = f"At loss (wide {atr_mult}x ATR)"
     
     # Calculate new stop: current price - (multiplier × ATR)
@@ -409,7 +415,7 @@ def should_exit_position(
     stop_price: float,
     holding_days: int,
     market_risk_on: bool,
-    grace_period_days: int = 10
+    grace_period_days: int = GRACE_PERIOD_DAYS
 ) -> Tuple[bool, Optional[str]]:
     """
     Determine if position should be exited

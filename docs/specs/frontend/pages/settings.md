@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.7
-**Last Updated:** 2026-10-06 (v9.10 design gate — ST-01/BLG-BE-138: Strategy Parameter fallbacks pinned to §11 values; ruling-conditional editability presentation); prior — 2026-07-24
+**Version:** 1.8
+**Last Updated:** 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — ruling (a) applied: the four Strategy Parameters are read-only §11 values; branches (b)/(c) removed); prior — 2026-10-06 (v9.10 design gate — ruling-conditional editability presentation); prior — 2026-07-24
 **Design Source (§1 Strategy Parameter Editability):** docs/design/2026-10-06__release-v9.10/stop-parameter-settings-presentation/decision_record.md
 **Design Source (§6a AI Spend Trend Chart):** docs/design/2026-07-24__release-v7.8/ai-spend-trend-chart/ux_spec.md
 **Design Source (§6 AI Usage & Costs):** docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md (v1.1 addendum)
@@ -75,7 +75,7 @@ Sections:
 
 These values define the core risk model, stop logic, and position sizing defaults.
 
-> These defaults are the backtest-optimised values (26.37% CAGR, 1.29 Sharpe, −25.38% max drawdown). Users should understand the strategy rationale before changing them.
+> Minimum Hold Days, ATR Period and the two ATR multiples are the backtest-optimised `strategy_rules.md` §11 values (26.37% CAGR, 1.29 Sharpe, −25.38% max drawdown). Since v9.10 (ST-01, parameter-authority ruling (a)) they are fixed and shown read-only. They change only through a §12.3 strategy change. Default Risk % stays an editable user preference.
 
 **Fields:**
 
@@ -111,141 +111,15 @@ These values define the core risk model, stop logic, and position sizing default
   - Stored as `DECIMAL(4,2)` — accepts up to two decimal places (e.g. `1.50`, `0.75`).
   - Constraint: must be `> 0` and `<= 100`. Values outside this range are rejected by the API with a `400`.
 
-#### Strategy Parameter Fallbacks and Editability (v9.10 — ST-01, BLG-BE-138)
+#### Strategy Parameter Presentation (v9.10 — ST-01, BLG-BE-138, ruling (a))
 
-- **Fallbacks:** when no settings row loads, the form must show the §11 values above (`10`, `14`, `5.0`, `2.0`). Shipped code seeded `5`/`2`/`3`, which is a code-to-spec defect fixed by ST-01. Displayed values come from ST-01's single parameter source when it is available.
-- **Editability depends on ST-01's parameter-authority ruling.** ST-01's spec-sync commit removes the branches that were not chosen:
+- The four Strategy Parameters (Minimum Hold Days `10`, ATR Period `14`, Initial Stop `5.0`, Trailing Stop `2.0`) render as **read-only values, not disabled inputs**, with their existing labels and helper text (`data-testid="strategy-param-{min-hold-days|atr-period|atr-multiplier-initial|atr-multiplier-trailing}"`).
+- Caption under the section header (`data-testid="strategy-params-fixed-caption"`): "These parameters are fixed by the strategy rules (§11) and are shown for reference."
+- The displayed values come from `src/lib/strategyParameters.js`, the display mirror of the backend source `backend/utils/strategy_parameters.py`; `tests/test_strategy_parameter_parity.py` fails if the two drift. The values no longer come from the settings row, so a stored row cannot show a different number.
+- Save omits these four fields. Any values still stored in the `settings` row are ignored by every stop path (`settings_endpoints.md`).
+- Default Risk % stays editable.
 
-| Ruling | Presentation |
-|--------|--------------|
-| (a) fixed | The four Strategy Parameters render as read-only values (not disabled inputs), with existing labels and helper text. Caption under the section header (`data-testid="strategy-params-fixed-caption"`): "These parameters are fixed by the strategy rules (§11) and are shown for reference." Save omits them. Default Risk % stays editable. |
-| (b) sanctioned override | Inputs stay editable. A muted note under any value that differs from its §11 default (`data-testid="strategy-param-override-note"`): "Differs from the strategy default ({default})." The Important note below is replaced by ST-03's `settings_endpoints.md` settings-change-effect text. |
-| (c) §12.3 change record | As (a), with the caption "These parameters change only through a strategy change record (§12.3) and are shown for reference." |
-
-> **Important:** Changes to strategy parameters take effect on the **next** call to `GET /positions/analyze`. Open positions are not retroactively affected. Changes to `default_risk_percent` take effect immediately on the next load of the Trade Entry page — no positions are affected.
-
----
-
-### 2. Commission & Fees
-
-These fields define the fee assumptions used in Trade Entry and Exit previews.
-
-**Fields:**
-
-- **UK Commission (£)**
-  - Type: number, step `0.01`
-  - Default: `9.95`
-
-- **US Commission ($)**
-  - Type: number, step `0.01`
-  - Default: `0`
-
-- **UK Stamp Duty Rate**
-  - Type: number, step `0.001`
-  - Default: `0.005` (0.5%)
-  - Helper text: "Default: 0.005 (0.5%)"
-
-- **US FX Fee Rate**
-  - Type: number, step `0.0001`
-  - Default: `0.0015` (0.15%)
-  - Helper text: "Default: 0.0015 (0.15%)"
-
-> Fee changes apply to new transactions only. Existing trade history is not recalculated.
-
----
-
-### 3. Preferences
-
-Preferences control how the interface is presented.
-
-**Fields:**
-
-- **Theme**
-  - Type: select
-  - Options: `dark`, `light`
-  - Default: `dark`
-
-> **`default_currency`** is a stored field (`GBP` only) that is not user-configurable via this UI. Multi-currency support is position-level (USD positions are tracked in native currency), not portfolio-level. The backend will reject any value other than `"GBP"` if submitted.
-
----
-
-### 4. Risk Limits
-
-Configures the concentration alert thresholds shown on the Positions page. When a breach is detected, a warning banner appears with a link back to this section.
-
-**Fields:**
-
-- **Position Concentration Limit (%)**
-  - Type: number, integer, `min=1`, `max=100`
-  - Default: `15`
-  - Helper text: "Alert when 1 position exceeds this % of total portfolio heat (default: 15%)"
-  - Maps to `concentration_position_threshold_pct` in settings. Read by `GET /portfolio/concentration-status`.
-
-- **Sector Concentration Limit (%)**
-  - Type: number, integer, `min=1`, `max=100`
-  - Default: `30`
-  - Helper text: "Alert when 1 sector exceeds this % of total portfolio heat (default: 30%)"
-  - Maps to `concentration_sector_threshold_pct` in settings. Read by `GET /portfolio/concentration-status`.
-
-> Threshold changes take effect on the next poll of `GET /portfolio/concentration-status` (every 2 minutes on the Positions page).
-
----
-
-### 5. Analytics
-
-Configures when analytics become meaningful enough to display.
-
-**Fields:**
-
-- **Minimum Trades for Analytics**
-  - Type: number, integer, `min=1`
-  - Default: `10`
-  - Helper text: "Minimum number of closed trades required to display analytics"
-
-Analytics views show only once this threshold is met, avoiding misleading statistics on very small samples.
-
-> **Analytics page default period note:** The Analytics page explicitly passes `period=last_month` on initial load as a UX decision — it does not rely on the API's default (`all_time`). This is intentional: `last_month` presents a meaningful recent window rather than the full historical dataset on first view. `all_time` remains available as a user-selectable option on the Analytics page. This note is here because the `min_trades_for_analytics` threshold applies across all period selections; a user who has enough trades all-time may not meet the threshold for `last_month`.
-
----
-
-### 6. Claude API Usage & Costs (v7.6 — ST-07, BLG-FEAT-77)
-
-**Design source:** docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md (v1.1 addendum)
-
-**Reframed per `ESC-EXEC-20260720-01`:** the original design assumed Gemini and Claude were two separate cost-generating providers, sourced from `gemini_audit_log` and a Claude equivalent respectively, summed into a "Combined Total." Tracing the actual implementation during sprint execution found this codebase integrates only the Anthropic Claude API — `gemini_service.py` (despite its filename) calls only `anthropic`, and no `google-generativeai` package or `GEMINI_API_KEY` exists anywhere in the codebase. `gemini_audit_log` and `claude_audit_log` both log the *same* Claude spend event per call, not two providers' independent costs. The original design would have double-counted one real cost stream as two. This section now shows a single Claude API total.
-
-A **read-only** section showing Claude API spend for the current calendar month. Unlike sections 1–5, this section has no form fields and does not participate in the `Save Settings` mutation — it loads via its own independent query and is excluded from the Save button's scope.
-
-**Fields (read-only):**
-
-| Row | Source | Format |
-|-----|--------|--------|
-| Claude API spend (current month) | `GET /ai/monthly-cost` — aggregates `claude_audit_log.cost_usd` for the current calendar month | `$X.XX`, bold |
-
-**Loading:** inline skeleton within the card only — does not block the rest of the Settings page.
-**Error:** card shows "AI cost data unavailable" — no numeric fallback is rendered (never shown as `$0.00` or `—`); rest of the page is unaffected.
-
-#### 6a. AI Spend Trend Chart (v7.8 — ST-06, EPIC-06, BLG-FEAT-82)
-
-**Design source:** docs/design/2026-07-24__release-v7.8/ai-spend-trend-chart/ux_spec.md
-
-Added directly below the current-month figure, inside the same card — not a new top-level section. A bar chart showing Claude API spend for the last 6 release cycles (or fewer if less history exists — no zero-padding), following the same fixed-pattern bar chart convention as `analytics.md` §12 Win Rate by Month.
-
-| Element | Value |
-|---------|-------|
-| X-axis | Release cycle labels (e.g. "v7.3" … "v7.8"), oldest to newest |
-| Y-axis | Spend (USD), auto-scaled to the max value shown (no fixed ceiling) |
-| Bar value | Total Claude API spend for that cycle's date window |
-| Bar colour | Single accent — `bg-blue-500` dark / `bg-blue-600` light (informational-monitoring accent; the emerald/rose profit-loss convention does not apply to a cost-only metric) |
-| Tooltip | On hover/focus per bar: cycle label + exact spend (`$X.XX`) |
-| Reference line | None (spend has no natural target/threshold) |
-
-**Loading:** inline skeleton within the chart area only.
-**Error:** "AI spend trend unavailable" in place of the chart; independent of the current-month figure's own query/error state above.
-
-**Naming note:** the backlog title says "Gemini/Claude" but this codebase integrates only the Claude API (per this section's v1.5 reframing above) — the chart shows Claude spend only, consistent with the single-total figure it extends.
-
-**Backend dependency:** requires a new endpoint/query-param to aggregate `claude_audit_log.cost_usd` by release-cycle window (`GET /ai/monthly-cost` only covers the current calendar month today) — not new data collection, but a new aggregation endpoint. Implementation detail for sprint execution; API contract entry required in `docs/specs/api_contracts/` in the same commit.
+> **Important:** Changes to `default_risk_percent` take effect on the next load of the Trade Entry page. No positions are affected.
 
 ---
 
@@ -312,6 +186,7 @@ Added directly below the current-month figure, inside the same card — not a ne
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.8 | 2026-10-06 | ST-01 (EPIC-01, BLG-BE-138): parameter-authority ruling (a), 2026-10-06 (`ESC-EXEC-20261006-01`). The four Strategy Parameters are read-only §11 values with the fixed caption; Save omits them. The ruling-conditional (b)/(c) branches are removed, as the design record requires. The Important note no longer says strategy-parameter changes take effect on the next analyze call. |
 | 1.7 | 2026-10-06 | v9.10 design gate — ST-01 (EPIC-01, BLG-BE-138): §1 gains Strategy Parameter Fallbacks and Editability. Fallbacks must equal the §11 values; editability is presented per the pending ST-01 parameter-authority ruling (a/b/c branches). Design source: `docs/design/2026-10-06__release-v9.10/stop-parameter-settings-presentation/decision_record.md`. Head of UX & Design sign-off: 2026-10-06. Product Owner approved: 2026-10-06. Head of Specs Team confirmed. |
 | 1.6 | 2026-07-24 | v7.8 design gate — ST-06 (EPIC-06, BLG-FEAT-82): §6a AI Spend Trend Chart added below the current-month figure, inside the existing §6 card — bar chart of Claude API spend across the last 6 release cycles (or fewer if less history exists), reusing the `analytics.md` §12 Win Rate by Month fixed-axis bar chart pattern. Naming resolved: chart shows Claude spend only (no separate Gemini stream exists, per v1.5 reframing). New spend-by-cycle aggregation endpoint required (not new data collection) — flagged as a sprint-execution implementation dependency requiring an API contract entry in the same commit. Design source: `docs/design/2026-07-24__release-v7.8/ai-spend-trend-chart/ux_spec.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |
 | 1.5 | 2026-07-20 | v7.6 sprint execution (ST-07, EPIC-07, BLG-FEAT-77) — reframed §6 per `ESC-EXEC-20260720-01`: title changed from "AI Usage & Costs" to "Claude API Usage & Costs"; removed the Gemini row and client-side Combined Total (both premised on a Gemini provider that does not exist in this codebase — `gemini_service.py` calls only the Anthropic Claude API); now shows a single `GET /ai/monthly-cost` figure. Sprint Execution Engine, agent-mediated Director of Quality sign-off. |

@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.50
-**Last Updated:** 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — new DS-25: positions.atr_source records fetched / user / fallback ATR provenance; Fields row and CREATE TABLE block updated; pending live application); prior — 2026-10-05 (PR #1892 review corrections — DS-23's fee-reconstruction note no longer assumes entry_price is GBP or ignores partial exits; the chart-QA seed is noted as also run by seed-preview.yml, not only by hand); prior — 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — DS-23 applied live on staging and production: positions.fees_paid now NOT NULL); prior history retained — see prior entries in version control.
+**Version:** 2.51
+**Last Updated:** 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — new DS-26: positions.stop_calculation_source; settings strategy-parameter columns no longer read by any stop path, ruling (a)); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — new DS-25: positions.atr_source records fetched / user / fallback ATR provenance; Fields row and CREATE TABLE block updated; pending live application); prior — 2026-10-05 (PR #1892 review corrections — DS-23's fee-reconstruction note no longer assumes entry_price is GBP or ignores partial exits; the chart-QA seed is noted as also run by seed-preview.yml, not only by hand); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -94,7 +94,8 @@ CREATE TABLE positions (
     stop_calculated_at TIMESTAMPTZ,
     atr_calculated_at TIMESTAMPTZ,
     active_atr_multiplier DECIMAL(4, 2),
-    atr_source VARCHAR(10) CHECK (atr_source IN ('fetched', 'user', 'fallback'))
+    atr_source VARCHAR(10) CHECK (atr_source IN ('fetched', 'user', 'fallback')),
+    stop_calculation_source VARCHAR(10) CHECK (stop_calculation_source IN ('on_load', 'nightly'))
 );
 
 CREATE INDEX idx_positions_portfolio ON positions(portfolio_id);
@@ -143,6 +144,7 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | atr_calculated_at | TIMESTAMPTZ | YES | Timestamp of the most recent `atr` recalculation, written whenever `atr` itself is freshly computed (not merely read from cache). `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
 | active_atr_multiplier | DECIMAL(4,2) | YES | The ATR multiplier (`calculate_trailing_stop()`'s own `atr_multiplier` return value — currently 2 or 5, depending on profitability) used to produce the current `current_stop`. `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
 | atr_source | VARCHAR(10) | YES | Where the stored `atr` came from: `fetched` (computed from market data), `user` (typed at entry), or `fallback` (no ATR could be fetched at entry, so 2% of the entry price was substituted). `NULL` for positions entered before this column was added and not freshly recomputed since. Written at entry and whenever ATR is freshly fetched on recompute. Added v2.50 (DS-25). |
+| stop_calculation_source | VARCHAR(10) | YES | Which path last recalculated `current_stop` against ATR: `on_load` (`GET /positions/analyze`) or `nightly` (`POST /positions/nightly-stop-update`). Written together with `stop_calculated_at`; the grace-period carry-over writes neither. `NULL` until the first recompute after this column was added. Added v2.51 (DS-26). |
 
 **No `exit_note` column (ST-24, EPIC-06, v9.7, BLG-SPEC-149):** this table has no live `exit_note` column, despite an earlier version of this document claiming one. A closed position's exit journal note is stored on `trade_history.exit_note` (§3 below), not here — confirmed via a live (readonly staging) schema query, per the §Live schema verification note above this table.
 
@@ -337,7 +339,7 @@ CREATE TABLE settings (
 
 ### Strategy parameter context
 
-The default values (`min_hold_days: 10`, `atr_multiplier_initial: 5.0`, `atr_multiplier_trailing: 2.0`) reflect backtest-optimised parameters. Changes take effect on the next call to `GET /positions/analyze` and do not retroactively affect open positions.
+The default values (`min_hold_days: 10`, `atr_multiplier_initial: 5.0`, `atr_multiplier_trailing: 2.0`) reflect backtest-optimised parameters. **Since v9.10 (ST-01, `BLG-BE-138`, parameter-authority ruling (a)) no stop path reads these four columns** (`min_hold_days`, `atr_period`, `atr_multiplier_initial`, `atr_multiplier_trailing`). The fixed §11 values come from `backend/utils/strategy_parameters.py`. The columns are retained for compatibility; editing them changes nothing. Removing them is a separate decision.
 
 ### `default_risk_percent` design note
 
@@ -2673,6 +2675,45 @@ Expect 1 row: `atr_source`, `character varying`, `10`, `YES`.
 
 ---
 
-**Document Version:** 2.50
+## DS-26 — Add stop_calculation_source to positions (v2.51, 2026-10-06)
+
+**Story:** ST-01 (EPIC-01, v9.10) — `BLG-BE-138`. Delegation `DEL-20261006-04`.
+
+**Rationale:** ST-06 (`BLG-FE-193`) shows the user when and how a stop was last recalculated. `stop_calculated_at` records when; this column records which path did it, `on_load` or `nightly`. Both paths now use the same fixed §11 parameters (ST-01 ruling (a)), so the source records provenance only, not a different calculation.
+
+**RISK (no live DB write access in this execution environment):** as with DS-25, the sandbox `DATABASE_URL` is read-only staging. Both recompute paths now write this column, so the Up Migration must be applied to **staging and production** before EPIC-01 deploys. Otherwise every stop recompute fails. **Status: PENDING APPLICATION** (`DEL-20261006-04`).
+
+### Up Migration (v2.50 → v2.51)
+
+```sql
+ALTER TABLE positions
+    ADD COLUMN IF NOT EXISTS stop_calculation_source VARCHAR(10)
+    CHECK (stop_calculation_source IN ('on_load', 'nightly'));
+```
+
+Additive and nullable, with no default and no backfill. A row is populated on its next post-grace recompute.
+
+### Down Migration (v2.51 → v2.50)
+
+```sql
+ALTER TABLE positions DROP COLUMN IF EXISTS stop_calculation_source;
+```
+
+### Verification
+
+```sql
+SELECT column_name, data_type, character_maximum_length, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'positions' AND column_name = 'stop_calculation_source';
+```
+
+Expect 1 row: `stop_calculation_source`, `character varying`, `10`, `YES`.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: migration content to be reviewed before application. Additive, nullable and reversible; no pre-check needed.
+
+---
+
+**Document Version:** 2.51
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — DS-25 atr_source; header/footer version kept in sync); prior — 2026-10-05 (PR #1892 review corrections to DS-23 and the fees_paid note; header/footer version kept in sync); prior — 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — DS-23 live confirmation; fees_paid default corrected; header/footer version kept in sync); prior history retained — see prior entries in version control.
+**Last Review:** 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — DS-26 stop_calculation_source; header/footer version kept in sync); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — DS-25 atr_source); prior — 2026-10-05 (PR #1892 review corrections to DS-23 and the fees_paid note); prior history retained — see prior entries in version control.

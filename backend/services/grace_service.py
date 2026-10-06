@@ -10,6 +10,8 @@ Canonical spec: position_endpoints.md v1.8.3
 
 from typing import Optional
 
+from utils.strategy_parameters import GRACE_PERIOD_DAYS
+
 
 def compute_grace_days_remaining(
     grace_period: bool,
@@ -41,4 +43,4 @@ def compute_grace_days_remaining(
     if not grace_period:
         return None
 
-    return max(0, 10 - holding_days)
+    return max(0, GRACE_PERIOD_DAYS - holding_days)

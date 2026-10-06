@@ -36,8 +36,8 @@ SIZE_TOLERANCE = 1.10
 # Default risk percent if settings row is absent or field is null.
 DEFAULT_RISK_PERCENT = 1.0
 
-# Grace period length in days (must match grace_service.py / strategy rules).
-GRACE_PERIOD_DAYS = 10
+# Grace period length: the single §11 source (ST-01, v9.10).
+from utils.strategy_parameters import GRACE_PERIOD_DAYS  # noqa: E402
 
 
 def _compute_stop_compliance(

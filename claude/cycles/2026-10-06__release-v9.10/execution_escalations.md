@@ -20,7 +20,10 @@ Last Updated: 2026-10-06
 - **Dependants:** ST-03 (settings-change text), ST-06 (displayed multiplier), ST-07 (Trade Entry fallback multiplier), ST-05 (registry entry if §12 changes).
 - **SLA due-by:** 2026-10-09T15:08:11Z (72h — Strategy)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-06T17:30:09Z
+- **Resolved by:** Strategy Rules & System Intent Owner (direct user ruling, 2026-10-06: "Go with (a), start building")
+- **Resolution summary:** Outcome (a), fixed parameters. The §11 values (10-day grace, 5× / 2× ATR, 14-day ATR) are held in one backend source, `backend/utils/strategy_parameters.py`, read by every live stop path. They are never read from the editable `settings` row. Settings shows them read-only. No `strategy_rules.md` §12 change is needed, so ST-05's registry rule is not triggered. AC 1 (production read, `DEL-20261006-01`) and AC 6 (Product Owner correction decision, only if production drifted) remain open.
 
 ## ESC-EXEC-20261006-02
 

@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.8.1
-**Last Updated:** 2026-10-06 (ST-03, EPIC-01, v9.10, BLG-SPEC-187 — losing-stop formula corrected to current price − 5×ATR; GET /positions/analyze's persistent side effects stated); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — GET /positions gains atr_source; analyze keeps the stored stop when ATR is unavailable); prior — 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — GET /positions gains atr_calculated_at, stop_calculated_at, active_atr_multiplier); prior history retained — see prior entries in version control.
+**Version:** 2.10.0
+**Last Updated:** 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — GET /positions gains stop_calculation_source; both stop paths use the fixed §11 parameters); prior — 2026-10-06 (ST-03, EPIC-01, v9.10, BLG-SPEC-187 — losing-stop formula corrected; analyze side effects stated); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — GET /positions gains atr_source); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.10.0 | 2026-10-06 | ST-01 (BLG-BE-138, EPIC-01, v9.10): `GET /positions` gains `stop_calculation_source` (`on_load` / `nightly` / `null`, DS-26). Parameter-authority ruling (a): `GET /positions/analyze` and `POST /positions/nightly-stop-update` both use the fixed `strategy_rules.md` §11 values (5×/2× ATR, 10-day grace) from one backend source. The on-load path no longer reads the editable `settings` row. (2.9.0 is EPIC-03's ST-12 on its own branch; skipped so versions stay distinct at merge.) |
 | 2.8.1 | 2026-10-06 | ST-03 (BLG-SPEC-187, EPIC-01, v9.10): The losing-stop formula is corrected to `current price − 5×ATR` (§7.2) in the `current_trailing_stop` field note, and `POST /positions/nightly-stop-update` gains a stop-formula block, so a displayed stop can be reproduced from the contract. `GET /positions/analyze` no longer says "Safe to refresh": a new Side effects subsection lists its persistent writes and the irreversible §7.3 ratchet. Documentation only; no behaviour change. |
 | 2.8.0 | 2026-10-06 | ST-02 (BLG-BE-139, EPIC-01, v9.10): `GET /positions` gains `atr_source` (`fetched` / `user` / `fallback` / `null`, DS-25). `GET /positions/analyze`: when no ATR is available, the stored stop is kept instead of being moved to entry, and the action carries `atr_unavailable: true`. The old move-to-entry produced a stop-breach EXIT for losing positions that §7.2's wide stop would not. |
 | 2.6.2 | 2026-09-18 | ST-29 (BLG-SPEC-142, EPIC-04, v9.5): Added a "Lifecycle diagram" cross-reference to `docs/specs/data_model.md §Position & Trade Plan Lifecycle State Diagram`, canonical for `status`/`position_state` transitions. No functional change — documentation only. |
@@ -110,6 +111,7 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
     "stop_calculated_at": "2026-10-01T06:00:00+00:00",
     "active_atr_multiplier": 2.0,
     "atr_source": "fetched",
+    "stop_calculation_source": "nightly",
     "fx_rate": 1.3642,
     "live_fx_rate": 1.3650,
     "current_trailing_stop": 560.50,
@@ -163,6 +165,7 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
 | `stop_calculated_at` | ISO-8601 timestamp \| `null`. When `current_trailing_stop`/`stop_price` was last recalculated against ATR (not the grace-period carry-over, which leaves this unchanged). `null` if never recomputed since this field was added. (v9.9 ST-01 BLG-BE-135) |
 | `active_atr_multiplier` | `number` \| `null`. The ATR multiplier used to produce the current stop — `2` while profitable (tight trail), `5` while at a loss (wide stop), per `strategy_rules.md` §7.2. `null` during the grace period (no real recompute has run) or if never recomputed since this field was added. (v9.9 ST-01 BLG-BE-135) |
 | `atr_source` | `string` \| `null`. Where `atr_value` came from: `"fetched"` (computed from market data), `"user"` (typed at entry) or `"fallback"` (no ATR could be fetched at entry, so 2% of the entry price was substituted). Written at entry and whenever a recompute freshly fetches ATR; a recompute that reuses the stored ATR leaves it unchanged. `null` for positions entered before DS-25 and not freshly recomputed since. (v9.10 ST-02 BLG-BE-139) |
+| `stop_calculation_source` | `string` \| `null`. Which path last recalculated the stop against ATR: `"on_load"` (`GET /positions/analyze`) or `"nightly"` (`POST /positions/nightly-stop-update`). Set together with `stop_calculated_at`. `null` until the first post-grace recompute after DS-26. Both paths use the same fixed §11 parameters (ST-01 ruling (a)), so this records provenance, not a different formula. (v9.10 ST-01 BLG-BE-138) |
 
 > **Note:** For a summary view of open positions alongside portfolio totals, use `GET /portfolio`. This endpoint returns the full enriched position object including native prices, stop context, and journal fields; `GET /portfolio` returns a lighter position shape.
 
@@ -191,7 +194,7 @@ Recomputes the trailing stop for every open position using the profit-lock strat
 
 - `POST /positions/nightly-stop-update`
 
-**Strategy constants (must match `production_strategy.py` OPTIMAL_PARAMS):**
+**Strategy constants (the fixed `strategy_rules.md` §11 values, read from `backend/utils/strategy_parameters.py`, the same source `GET /positions/analyze` uses; ST-01, v9.10):**
 - `INITIAL_ATR_MULT = 5` — wide stop when position is not in profit
 - `PROFIT_ATR_MULT = 2` — tight stop when position is in profit
 - `ATR_PERIOD = 14` — 14-day ATR

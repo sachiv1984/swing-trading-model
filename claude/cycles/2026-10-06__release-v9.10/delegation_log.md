@@ -34,3 +34,18 @@ Last Updated: 2026-10-06
 - **Unblock criteria:** The Verification query returns 1 row (`atr_source`, `character varying`, `10`, `YES`) in both environments. Its output is recorded in DS-25's Live Confirmation, and DS-25's status moves from PENDING APPLICATION to applied.
 - **Commit format required:** `[EPIC-01][ST-02] <description>` pushed to `exec/2026-10-06__release-v9.10/EPIC-01`
 - **Status:** Open
+
+## DEL-20261006-04
+
+- **ST Item:** ST-01 — One source for §11 stop parameters across the on-load and nightly stop paths
+- **EPIC:** EPIC-01
+- **Classification:** delegated_decision (sub-step: DS-26 migration needs live DB write access)
+- **Assigned to:** Data Model & Domain Schema Owner (with Infrastructure & Operations Owner)
+- **GitHub Issue:** #1894
+- **Branch:** exec/2026-10-06__release-v9.10/EPIC-01
+- **Delegated at:** 2026-10-06T17:30:09Z
+- **What is needed:** Run DS-26's Up Migration (`docs/specs/data_model.md` §DS-26) on **staging, then production**: `ALTER TABLE positions ADD COLUMN IF NOT EXISTS stop_calculation_source VARCHAR(10) CHECK (stop_calculation_source IN ('on_load', 'nightly'));`, then its Verification query. Both recompute paths now write this column, so EPIC-01 must not deploy before it exists. It can be run in the same session as DS-25 (`DEL-20261006-02`).
+- **Spec reference:** docs/specs/data_model.md#DS-26
+- **Unblock criteria:** The Verification query returns 1 row (`stop_calculation_source`, `character varying`, `10`, `YES`) in both environments. Its output is recorded in DS-26's Live Confirmation.
+- **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-10-06__release-v9.10/EPIC-01`
+- **Status:** Open
