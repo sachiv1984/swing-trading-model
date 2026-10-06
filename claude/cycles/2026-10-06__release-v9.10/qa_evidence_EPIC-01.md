@@ -67,11 +67,11 @@ No AC 6 correction decision is owed, because AC 6 applies only to positions "who
 | ST-01 | `strategy_rules.md` §11; `backend/utils/strategy_parameters.py`; `settings.md` §Strategy Parameter Presentation; `data_model.md` DS-26 | One fixed §11 source read by every live stop path; Settings read-only; Trade Entry 5×; `stop_calculation_source` (DS-26, live) | 6 ACs: production read recorded (AC 1); ruling (a) by the user as Strategy Rules & System Intent Owner (AC 2); one source (AC 3); Settings/Trade Entry values equal §11 (AC 4); parity test (AC 5); no diverged stops, so no correction owed (AC 6) | Pass | None |
 | ST-02 | `data_model.md` DS-25; `position_endpoints.md` GET /positions | `positions.atr_source` (fetched/user/fallback, live); missing ATR on recompute keeps the stop and flags `atr_unavailable` instead of moving it to entry | All 4 ACs met; both fallbacks tested | Pass | None |
 | ST-03 | `position_endpoints.md` v2.8.1; `settings_endpoints.md` v1.4.0 | Losing stop documented as current price − 5×ATR; analyze side effects stated; settings multiplier fields documented as having no effect | All 4 ACs met; documentation only | Pass | None |
-| ST-04 | `strategy_rules.md` §5–§8; traceability matrix | 67 tests calling `should_exit_position` directly; 9 matrix rows moved to Asserted (51.0% → 69.4%) | All 4 ACs met. C7.1-02 stays Partial for a behaviour reason (on-load path reuses stored ATR), noted in the matrix | Pass with notes | None |
+| ST-04 | `strategy_rules.md` §5–§8; traceability matrix | 67 tests calling `should_exit_position` directly; 8 matrix rows moved to Asserted (51.0% → 67.3%) | All 4 ACs met. C7.1-02 stays Partial for a behaviour reason (on-load path reuses stored ATR). C6.3-02 corrected to Partial after PR review: the in-grace stop is kept, not shown to be recalculated (`BLG-BE-143`). Both noted in the matrix | Pass with notes | None (BLG-BE-143) |
 | ST-05 | `data_model.md` DS-11; `strategy_version_comparison_contract.md` Note 2 | Behaviour-only registry rule by the user's ruling; `DOCUMENTATION_ONLY_VERSIONS`; test derived from the Change Log replaces `len == 5` | All 4 ACs met. AC 4 not triggered, because ST-01's ruling added no Change Log row | Pass | None |
 
 **QA test coverage**
-- **Scenarios run:** full backend pytest suite, 2160 passed / 14 skipped on the EPIC-01 branch. Playwright `settings-strategy-parameters-fixed.spec.js` SC-SPF-01..05 passed locally (chromium), along with the Settings axe scan and the Trade Entry linkage spec. CI has not yet run on this branch; it runs on PR open.
+- **Scenarios run:** full backend pytest suite, 2162 passed / 14 skipped on the EPIC-01 branch (after the PR-review fixes in `a101c65c`). Playwright `settings-strategy-parameters-fixed.spec.js` SC-SPF-01..05 passed locally (chromium), along with the Settings axe scan and the Trade Entry linkage spec. CI has not yet run on this branch; it runs on PR open.
 - **Mutation checks:** a hard-coded nightly multiplier copy fails `test_both_paths_follow_a_changed_source`. An unclassified Change Log row (1.15 probe) fails the registry test.
 - **Regression areas:** stop recompute (on-load and nightly), entry stop, exit decision, grace countdown, compliance, alerts grace warning, Settings save payload, Trade Entry suggested stop, `strategy_version_at_entry` stamping.
 - **Frontend testing gate (CLAUDE.md §2):**
@@ -87,10 +87,17 @@ No AC 6 correction decision is owed, because AC 6 applies only to positions "who
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- Signed off by: _pending (Director of Quality)_
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object (N/A: no new direct URL construction; Settings/TradeEntry use existing `base44` clients)
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-10-06
+- Comments: Performed on the user's explicit direction to review the EPIC-01 PR as Director of Quality; pending human confirmation. Verdict: **⚠️ Approved with Comments**, with no blocking defects.
+  - The review ran 115 targeted tests (all passed) and re-traced the single-source, deploy-ordering (only `atr_source` and `stop_calculation_source` written, both live) and missing-ATR paths at line level.
+  - It checked every doc deletion. The `settings.md` §2–§6 loss had already been found and restored in `280aed00`; nothing else was deleted.
+  - Non-blocking findings fixed in-PR (`a101c65c`): GET /portfolio grace via `GRACE_PERIOD_DAYS`; nightly `atr_calculated_at` stamped only on a fresh fetch, with a new test; heading IDs removed from `settings.md`; analyze side-effects text; registry row-count guard.
+  - Traceability row C6.3-02 corrected from Asserted to Partial.
+  - Filed as backlog: `BLG-BE-143` (in-grace on-load vs nightly behaviour), `BLG-BE-144` (Settings create NULLs and trade-plan snapshot), `BLG-BE-145` (US NULL `fill_price`, pre-existing), `BLG-QA-214` (alerts grace behaviour test).
+  - The Product Owner review (agent-mediated, Approved with Comments) filed `BLG-FE-201`, `BLG-FE-202` and `BLG-API-07`.
+  - CI has not yet run on this branch. It runs on PR open, and a green run must be confirmed before merge.

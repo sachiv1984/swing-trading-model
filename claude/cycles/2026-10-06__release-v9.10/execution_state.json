@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-06T17:42:57Z",
+  "last_updated_utc": "2026-10-06T19:28:30Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -18,7 +18,7 @@
       "branch": "exec/2026-10-06__release-v9.10/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/test_live_exit_decision.py",
@@ -579,7 +579,9 @@
     ],
     "all_merged": false
   },
-  "process_notes": [],
+  "process_notes": [
+    "EPIC-01 DoQ sign-off agent-mediated (Director of Quality role, §5.3) on explicit user direction 2026-10-06; Product Owner review agent-mediated, comment only. Merge gate still requires human QA comment and PO acceptance."
+  ],
   "sealed": false,
   "sealed_utc": null
 }

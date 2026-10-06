@@ -28,13 +28,13 @@
 
 | | Clauses | Share |
 |---|---:|---:|
-| Asserted | 34 | **69.4%** |
-| Partial | 4 | 8.2% |
+| Asserted | 33 | **67.3%** |
+| Partial | 5 | 10.2% |
 | None | 11 | 22.4% |
 | **Total normative clauses** | **49** | |
 | Asserted or partial | 38 | 77.6% |
 
-**% of clauses with an asserting test: 69.4% (34/49)** — 77.6% counting partial coverage. (Was 51.0% before ST-04, v9.10.)
+**% of clauses with an asserting test: 67.3% (33/49)** — 77.6% counting partial coverage. (Was 51.0% before ST-04, v9.10. C6.3-02 was corrected from Asserted to Partial after PR review.)
 
 Where coverage is strong: the backend sizing arithmetic (§4.1.1–§4.1.4), the pre-entry advisory checks (§4.2.1–§4.2.5), and the stop formulas and ratchet (§5, §7.2, §7.3). The last two are covered by golden tests, reconciliation tests and, since ST-12, property-based tests.
 
@@ -106,7 +106,7 @@ Follow-ups for every Partial/None clause are filed, grouped by area, as `BLG-QA-
 |----|--------|--------|-------------------|-----------|
 | C6.2 | Grace period is 10 calendar days (days 0–9) | Asserted | `tests/test_portfolio_integration.py::test_grace_period_when_holding_days_lt_10`; `tests/test_stop_reconciliation.py::test_grace_period_days` | — |
 | C6.3-01 | During grace: stop-loss enforcement disabled; no stop-based exit recommendation | Asserted | `tests/test_live_exit_decision.py::TestGraceBoundary` (live `should_exit_position`, day 9 vs day 10), `::TestGracePeriodStillStoresStop`; `tests/test_service_layer_direct_coverage.py::test_grace_period_returns_none` | — |
-| C6.3-02 | During grace: the stop price is still calculated and stored | Asserted | `tests/test_live_exit_decision.py::TestGracePeriodStillStoresStop` (in-grace `analyze_positions` write keeps the stored stop); `tests/test_live_exit_decision.py::TestEntryPersistsInitialStop` (the stop is calculated at entry) | — |
+| C6.3-02 | During grace: the stop price is still calculated and stored | Partial | `tests/test_live_exit_decision.py::TestGracePeriodStillStoresStop` (in-grace `analyze_positions` write keeps the stored stop); `tests/test_live_exit_decision.py::TestEntryPersistsInitialStop` (the stop is calculated at entry). The on-load path carries the stored stop over rather than recalculating it during grace, while the nightly job does recalculate and ratchet from day 0. Which behaviour §6.3 intends is undecided, and neither in-grace path is asserted as a recalculation | BLG-BE-143 |
 | C6.3-03 | During grace: manual exit is always permitted | Asserted | `tests/test_live_exit_decision.py::TestManualExitInsideGrace` (days 0, 3, 9) | — |
 
 ### §7 Trailing stop-loss framework
