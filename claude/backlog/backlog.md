@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (PR #1892 agent-mediated Director of Quality review — 3 new items added: BLG-QA-213 (regression guard for the positions.fees_paid NOT NULL invariant), BLG-SPEC-183 (positions.entry_price currency: specs say native, code stores GBP), BLG-SPEC-184 (drift detector should compare documented column defaults)); prior — 2026-10-05 (EPIC-05 DoQ review — 1 new item added: BLG-SPEC-181 (action-rate spec/docstring cite the dropped positions.stop_price); ST-29 dropped 4 orphaned positions columns and ST-30 applied fees_paid NOT NULL live, no default); prior — 2026-10-05 (sprint execution EPIC-05/ST-30, BLG-SPEC-165 — Data Model & Domain Schema Owner disposition: re-apply positions.fees_paid NOT NULL (DS-23, pending live); 1 new item added: BLG-SPEC-180 (metrics_definitions.md cites an unreachable NULL-fees_paid cause)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-05 (PR #1892 agent-mediated Director of Quality review — 3 new items added: BLG-QA-213 (regression guard for the positions.fees_paid NOT NULL invariant), BLG-SPEC-183 (positions.entry_price currency: specs say native, code stores GBP), BLG-SPEC-184 (drift detector should compare documented column defaults)); prior — 2026-10-05 (ESC-CLOSE-20260930-01 Product Owner ruling confirmed — 1 new item added: BLG-GOV-364 (rule on reduced-roster idea-intake windows)); prior — 2026-10-05 (EPIC-05 DoQ review — 1 new item added: BLG-SPEC-181 (action-rate spec/docstring cite the dropped positions.stop_price); ST-29 dropped 4 orphaned positions columns and ST-30 applied fees_paid NOT NULL live, no default); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -4555,6 +4555,93 @@ DS-23 (`docs/specs/data_model.md:2517`) re-applied `NOT NULL` with no default on
 - [ ] A doc showing `DEFAULT 0` against a live `column_default = NULL` is reported as a default mismatch, and vice versa.
 - [ ] Equivalent forms (`0` vs `0::numeric`, `'[]'::jsonb` vs `'[]'`) do not produce false positives.
 - [ ] The tool remains read-only (`SELECT` against `information_schema` only), and the existing 36 drift/orphan/dashboard tests still pass.
+
+---
+
+### BLG-GOV-363 — Script the execution_state.json read-back check introduced by execution_prompt.md v3.81 §9.2
+**Priority:** P3 (Low)
+**Type:** Governance Tooling
+**Owner:** Head of Engineering; Head of Specs Team
+**Source:** Head of Specs Team ruling on ESC-CLOSE-20260930-02 (agent-mediated, user-directed) — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`execution_prompt.md` v3.81 §9.2 makes the top-level `completed_items`, `blocked_items`, `delegated_items` and `merge_gate` fields projections of per-story `status` / per-EPIC `pr_status`, and requires a 4-equality read-back from disk after every state write. The check is currently performed by hand, which is the same memory-dependent failure mode the ruling exists to remove.
+
+**Scope**
+- Add `scripts/check_execution_state_consistency.py <execution_state.json>` asserting the 4 equalities in §9.2 (plus `status: done` ⇒ `commit_sha`/`completed_utc` set), exiting non-zero with a per-field diff
+- Reference it from §9.2 as the mechanical form of the read-back (CLAUDE.md §6 checklist applies)
+
+**Acceptance Criteria**
+- Script passes on a consistent file and fails, naming the field, for each of the 4 equality breaks
+- Unit tests cover each failure mode
+
+---
+
+### BLG-GOV-364 — Decide whether idea-intake windows may run with a reduced roster, and if so cap them
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Product Owner
+**Source:** ESC-CLOSE-20260930-01 Product Owner review (agent-mediated, confirmed by the human Product Owner) — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`idea_intake_prompt.md` §4 and STEP 0 assume every role in `eligible_agents` is exercised, yet `IW-20260928-01` (3 roles) and `IW-20260930-01` (2 roles) ran with a disclosed reduced roster. v2.10's roster rule now constrains such windows while a build-and-ship pull-forward is mandatory, but whether reduced windows are permitted at all — and how they interact with `roadmap_prompt.md` STEP -1.6's standalone pre-run exception — has never been ruled on. `IW-20260928-01` exercised no user-facing role, which left the PO Modify directive unsatisfiable at v9.8.
+
+**Scope**
+- Rule on whether §4/STEP 0 should permit reduced-roster windows; if yes, define when and set a cap (e.g. no two consecutive reduced windows)
+- Apply the CLAUDE.md §6 checklist to any prompt changed
+
+**Acceptance Criteria**
+- A recorded ruling; any adopted change ships with the full CLAUDE.md §6 checklist
+
+---
+
+## Release Slice — v9.9 (ephemeral — remove at next `groom backlog` per Placement Rule)
+
+<!-- release-plan-marker: RP:v9.9:2026-09-30__release-v9.9 -->
+
+35 items selected into `2026-09-30__release-v9.9` scope (27.85 estimated days, full capacity). Full acceptance criteria: `claude/cycles/2026-09-30__release-v9.9/stage4_backlog_slice.md`. Selection method: 0 ready P1 items; all 4 ready P2 items seated first per §1.4c, then category-balanced round-robin oldest-first for the remaining P3/P4, from a 53-item / 36.20-day ready pool. Excluded as gate-blocked: `BLG-FEAT-73`, `BLG-FEAT-76`, `BLG-FE-193` (gated on `BLG-BE-135` shipping).
+
+| ST-ID | Item | EPIC |
+|-------|------|------|
+| ST-01 | BLG-BE-135 | EPIC-01 |
+| ST-02 | BLG-BE-131 | EPIC-01 |
+| ST-03 | BLG-BE-132 | EPIC-01 |
+| ST-04 | BLG-BE-133 | EPIC-01 |
+| ST-05 | BLG-BE-134 | EPIC-01 |
+| ST-06 | BLG-SEC-40 | EPIC-02 |
+| ST-07 | BLG-OPS-172 | EPIC-02 |
+| ST-08 | BLG-OPS-173 | EPIC-02 |
+| ST-09 | BLG-OPS-174 | EPIC-02 |
+| ST-10 | BLG-QA-203 | EPIC-03 |
+| ST-11 | BLG-QA-185 | EPIC-03 |
+| ST-12 | BLG-QA-186 | EPIC-03 |
+| ST-13 | BLG-QA-189 | EPIC-03 |
+| ST-14 | BLG-QA-190 | EPIC-03 |
+| ST-15 | BLG-QA-191 | EPIC-03 |
+| ST-16 | BLG-QA-192 | EPIC-03 |
+| ST-17 | BLG-QA-193 | EPIC-03 |
+| ST-18 | BLG-QA-194 | EPIC-03 |
+| ST-19 | BLG-GOV-356 | EPIC-04 |
+| ST-20 | BLG-GOV-358 | EPIC-04 |
+| ST-21 | BLG-GOV-343 | EPIC-04 |
+| ST-22 | BLG-GOV-344 | EPIC-04 |
+| ST-23 | BLG-GOV-347 | EPIC-04 |
+| ST-24 | BLG-GOV-350 | EPIC-04 |
+| ST-25 | BLG-GOV-352 | EPIC-04 |
+| ST-26 | BLG-GOV-353 | EPIC-04 |
+| ST-27 | BLG-GOV-354 | EPIC-04 |
+| ST-28 | BLG-SPEC-157 | EPIC-05 |
+| ST-29 | BLG-SPEC-164 | EPIC-05 |
+| ST-30 | BLG-SPEC-165 | EPIC-05 |
+| ST-31 | BLG-SPEC-166 | EPIC-05 |
+| ST-32 | BLG-SPEC-167 | EPIC-05 |
+| ST-33 | BLG-SPEC-168 | EPIC-05 |
+| ST-34 | BLG-SPEC-169 | EPIC-05 |
+| ST-35 | BLG-FE-192 | EPIC-06 |
 
 ---
 
