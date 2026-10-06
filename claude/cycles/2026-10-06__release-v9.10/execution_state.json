@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-06T17:38:55Z",
+  "last_updated_utc": "2026-10-06T17:42:57Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -14,7 +14,7 @@
   ],
   "epics": {
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-06__release-v9.10/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
@@ -145,23 +145,33 @@
         "ST-05": {
           "title": "Rule on strategy-version registry coverage and enforce it with a test",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1898,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "60f77f9186c3c0457963510818e86005c6913c9c",
           "delegation_record_id": null,
-          "blocked_since_utc": "2026-10-06T15:26:08Z",
-          "unblock_criteria": "ESC-EXEC-20261006-02 ruling (1) behaviour-only or (2) all versions",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-10-06T17:42:54Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-11",
+            "docs/specs/api_contracts/strategy_version_comparison_contract.md",
+            "tests/test_strategy_version_registry.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "human",
+            "status": "cleared",
+            "cleared_utc": "2026-10-06T17:42:54Z",
+            "notes": "Behaviour-only ruling by direct user instruction"
+          },
+          "notes": "Ruling (1). Classification beside registry (strategy_rules.md out of write scope). Deviation check: none."
         }
       }
     },
@@ -549,19 +559,16 @@
       }
     }
   },
-  "blocked_items": [
-    "ST-05"
-  ],
+  "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
     "ST-03",
-    "ST-04"
+    "ST-04",
+    "ST-05"
   ],
-  "open_escalations": [
-    "ESC-EXEC-20261006-02"
-  ],
+  "open_escalations": [],
   "merge_gate": {
     "epics_merged": [],
     "epics_pending": [
