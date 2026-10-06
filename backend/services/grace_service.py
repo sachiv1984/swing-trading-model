@@ -22,11 +22,11 @@ def compute_grace_days_remaining(
 
     Rules (canonical — position_endpoints.md v1.8.3):
         When grace_period is True:
-            grace_days_remaining = max(0, 10 - holding_days)
+            grace_days_remaining = max(0, GRACE_PERIOD_DAYS - holding_days)  (§11: 10)
         When grace_period is False:
             grace_days_remaining = None  (serialises as JSON null)
 
-    CRITICAL (A-QA-05): On day 10, grace_period becomes False.
+    CRITICAL (A-QA-05): On day GRACE_PERIOD_DAYS (10), grace_period becomes False.
     The field returns None — NOT 0. The formula max(0, 10-10) = 0
     does NOT apply because the grace_period flag gates which branch
     executes. Day 10 is post-grace. Returning 0 on day 10 is a defect.

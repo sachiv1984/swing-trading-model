@@ -216,6 +216,13 @@ class TestNightlyProvenance(_Patcher):
     def test_reused_stored_atr_leaves_provenance_alone(self):
         _, mock_update = self._run(_open_position(atr=5.0, atr_source="user"), fetched_atr=None)
         assert "atr_source" not in mock_update.call_args.args[1]
+        # DS-22 meaning: atr_calculated_at moves only on a fresh fetch (PR review fix).
+        assert "atr_calculated_at" not in mock_update.call_args.args[1]
+        assert "stop_calculated_at" in mock_update.call_args.args[1]
+
+    def test_fresh_fetch_stamps_atr_calculated_at(self):
+        _, mock_update = self._run(_open_position(), fetched_atr=6.0)
+        assert "atr_calculated_at" in mock_update.call_args.args[1]
 
     def test_no_atr_at_all_skips_and_writes_nothing(self):
         result, mock_update = self._run(_open_position(atr=None), fetched_atr=None)

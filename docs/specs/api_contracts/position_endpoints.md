@@ -303,7 +303,7 @@ Runs deterministic daily monitoring logic across open positions and returns an a
 
 **Side effects (persistent)**
 
-This is a `GET`, but it is **not** read-only and should not be described as "safe to refresh". Each call, for every open position with a live price, writes `current_price`, `current_stop`, `holding_days`, `pnl` and `pnl_pct`. Past grace, it also writes `stop_calculated_at` and `active_atr_multiplier`. When the stored ATR is missing and a fresh one is fetched, it writes `atr`, `atr_calculated_at` and `atr_source`. The §7.3 ratchet makes the stop write irreversible: a stop raised by one call is never lowered by a later one, even if the price falls back. Repeated calls with unchanged market data converge on the same stored values. Calls made at different prices can each ratchet the stop higher.
+This is a `GET`, but it is **not** read-only and should not be described as "safe to refresh". Each call, for every open position with a live price, writes `current_price`, `current_stop`, `holding_days`, `pnl` and `pnl_pct`. Past grace, it also writes `stop_calculated_at`, `active_atr_multiplier` and `stop_calculation_source` (`"on_load"`). When the stored ATR is missing and a fresh one is fetched, it writes `atr`, `atr_calculated_at` and `atr_source`. The §7.3 ratchet makes the stop write irreversible: a stop raised by one call is never lowered by a later one, even if the price falls back. Repeated calls with unchanged market data converge on the same stored values. Calls made at different prices can each ratchet the stop higher.
 
 ### Request
 

@@ -668,7 +668,6 @@ def run_nightly_trailing_stop_update() -> Dict:
             # freshly recomputes both ATR and the stop in the same pass, so
             # both timestamps are stamped together here.
             'stop_calculated_at': now_utc,
-            'atr_calculated_at': now_utc,
             'active_atr_multiplier': atr_mult,
             # ST-01 (v9.10, DS-26): which path last recalculated the stop.
             'stop_calculation_source': 'nightly',
@@ -678,6 +677,10 @@ def run_nightly_trailing_stop_update() -> Dict:
         # existing provenance is left as it was.
         if atr_fresh:
             nightly_updates['atr_source'] = 'fetched'
+            # Only a fresh fetch moves atr_calculated_at ("freshly recomputed,
+            # not merely read from cache", DS-22). A reused stored ATR keeps
+            # its original timestamp.
+            nightly_updates['atr_calculated_at'] = now_utc
         update_position(position_id, nightly_updates)
 
         results.append({

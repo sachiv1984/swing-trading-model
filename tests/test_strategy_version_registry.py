@@ -47,6 +47,16 @@ def test_change_log_parses():
     assert "1.0" in log and "1.4" in log and len(log) >= 15
 
 
+def test_every_change_log_row_is_parsed():
+    # A row in an unexpected format (e.g. "1.15.1" or "v1.15") must fail here
+    # rather than be skipped silently by _change_log()'s version regex.
+    text = (ROOT / "claude" / "strategy" / "strategy_rules.md").read_text()
+    table = text[text.index("| Version | Date | Summary |"):]
+    table = table[: table.index("\n\n")]
+    data_rows = [l for l in table.splitlines()[2:] if l.startswith("|")]
+    assert len(data_rows) == len(_change_log())
+
+
 def test_every_change_log_version_is_registered_or_documentation_only():
     registered = {e["version"] for e in STRATEGY_VERSION_REGISTRY}
     unclassified = sorted(set(_change_log()) - registered - DOCUMENTATION_ONLY_VERSIONS, key=_key)

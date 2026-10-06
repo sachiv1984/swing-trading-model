@@ -111,7 +111,10 @@ These values define the core risk model, stop logic, and position sizing default
   - Stored as `DECIMAL(4,2)` — accepts up to two decimal places (e.g. `1.50`, `0.75`).
   - Constraint: must be `> 0` and `<= 100`. Values outside this range are rejected by the API with a `400`.
 
-#### Strategy Parameter Presentation (v9.10 — ST-01, BLG-BE-138, ruling (a))
+#### Strategy Parameter Presentation (v9.10)
+
+Introduced by ST-01 (`BLG-BE-138`) under parameter-authority ruling (a).
+
 
 - The four Strategy Parameters (Minimum Hold Days `10`, ATR Period `14`, Initial Stop `5.0`, Trailing Stop `2.0`) render as **read-only values, not disabled inputs**, with their existing labels and helper text (`data-testid="strategy-param-{min-hold-days|atr-period|atr-multiplier-initial|atr-multiplier-trailing}"`).
 - Caption under the section header (`data-testid="strategy-params-fixed-caption"`): "These parameters are fixed by the strategy rules (§11) and are shown for reference."
