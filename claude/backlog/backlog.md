@@ -375,6 +375,107 @@ Two consecutive npm-audit triages (2026-08-16, 2026-10-06) have been dominated b
 
 ---
 
+### BLG-BE-143 — Decide and test stop recalculation during grace: the nightly job ratchets from day 0, on-load does not
+**Priority:** P3 (Low)
+**Type:** Backend / Strategy Rule Conformance
+**Owner:** Strategy Rules & System Intent Owner; Head of Engineering
+**Source:** ST-01/ST-02/ST-04 (EPIC-01, cycle `2026-10-06__release-v9.10`) — agent-mediated Director of Quality review of the EPIC-01 PR — 2026-10-06
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`strategy_rules.md` §6.3 says the stop "is still calculated and stored" during grace. In grace, `analyze_positions()` carries the stored stop over unchanged, while `run_nightly_trailing_stop_update()` never checks grace and recalculates and ratchets the stop from day 0. ST-01's parity test covers post-grace positions only. Traceability row C6.3-02 was corrected to Partial.
+
+**Scope**
+- A Strategy Rules & System Intent Owner ruling on the intended in-grace behaviour.
+- Align the losing path to the ruling, and add an in-grace parity test for the on-load and nightly paths.
+
+**Acceptance Criteria**
+- [ ] The ruling is recorded. Both paths behave the same during grace, and a test asserts it.
+- [ ] Traceability row C6.3-02 is moved to Asserted with that test.
+
+---
+
+### BLG-BE-144 — First-time Settings save writes NULL strategy columns; trade-plan settings snapshot records editable-row multipliers
+**Priority:** P3 (Low)
+**Type:** Backend / Data Integrity
+**Owner:** Backend Engineering Patterns Owner; Data Model & Domain Schema Owner
+**Source:** ST-01/ST-02/ST-04 (EPIC-01, cycle `2026-10-06__release-v9.10`) — agent-mediated Director of Quality review of the EPIC-01 PR — 2026-10-06
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+After ST-01 (ruling (a)), the Settings page no longer sends `min_hold_days`, `atr_period`, `atr_multiplier_initial` or `atr_multiplier_trailing`. On the first-time create path, `SettingsRequest.dict()` fills them as None, and `create_settings` inserts every key (`database.py`), which overrides the column defaults with NULL. No stop path reads them, but `routers/trade_plans.py` still copies those row values into `effective_settings_snapshot`. Under ruling (a) that snapshot is misleading.
+
+**Scope**
+- `create_settings` (and update) drops None values.
+- Trade-plan snapshots record the fixed §11 values from `utils/strategy_parameters.py`.
+- A Playwright or API test covers the create path (SC-SPF-04 covers update only).
+
+**Acceptance Criteria**
+- [ ] A first-time Settings save leaves the four columns at their defaults
+- [ ] New trade-plan snapshots carry the §11 values
+
+---
+
+### BLG-BE-145 — US position with NULL fill_price crashes both stop recompute paths; no US coverage in parity tests
+**Priority:** P3 (Low)
+**Type:** Backend / Robustness
+**Owner:** Head of Engineering
+**Source:** ST-01/ST-02/ST-04 (EPIC-01, cycle `2026-10-06__release-v9.10`) — agent-mediated Director of Quality review of the EPIC-01 PR — 2026-10-06 (pre-existing; not introduced by EPIC-01)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`pos.get('fill_price', entry_price)` returns None when the key exists but is NULL (`position_service.py`, in `analyze_positions` and `run_nightly_trailing_stop_update`). A US position with a NULL `fill_price` would raise in stop arithmetic. The ST-01 parity and ST-02 provenance fixtures are all UK, so the US branch is untested on both paths.
+
+**Scope**
+- Fall back to `entry_price` when `fill_price` is NULL, as `pos.get('fill_price') or entry_price`.
+- Add US-position cases to `tests/test_strategy_parameter_parity.py` and `tests/test_atr_provenance.py`.
+
+**Acceptance Criteria**
+- [ ] A NULL `fill_price` US position recomputes without error on both paths. Both test files include a US case.
+
+---
+
+### BLG-QA-214 — Behaviour test that alerts grace warning ignores settings.min_hold_days
+**Priority:** P4 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner
+**Source:** ST-01/ST-02/ST-04 (EPIC-01, cycle `2026-10-06__release-v9.10`) — agent-mediated Director of Quality review of the EPIC-01 PR — 2026-10-06
+**Effort:** XS (<0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-01 moved `alerts_service`'s grace-period warning from `settings.min_hold_days` to the fixed `GRACE_PERIOD_DAYS`. That change is checked only by text-matching the source (`tests/test_strategy_parameter_parity.py`). `test_settings_row_min_hold_days_does_not_shorten_grace` would also pass on the pre-change code, because `analyze_positions` never read `min_hold_days`.
+
+**Scope**
+- A behaviour test of the alert evaluation with a settings row of `min_hold_days = 5`. It asserts the warning fires on days 8–9 of the 10-day window, not days 3–4.
+
+**Acceptance Criteria**
+- [ ] The test fails if `alerts_service` reads `min_hold_days` from the settings row again
+
+---
+
+### BLG-API-07 — Settings API still accepts the four fixed strategy-parameter fields, which no stop path reads
+**Priority:** P4 (Low)
+**Type:** API Contract
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-01/ST-02/ST-04 (EPIC-01, cycle `2026-10-06__release-v9.10`) — agent-mediated Product Owner review of the EPIC-01 PR — 2026-10-06
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+After ST-01 (ruling (a)), `POST /settings` and `PATCH /settings/{settings_id}` still accept and store `min_hold_days`, `atr_period`, `atr_multiplier_initial` and `atr_multiplier_trailing`. `settings_endpoints.md` documents that they have no effect, but an API caller gets a 200 and cannot tell that the change was ignored.
+
+**Scope**
+- Choose one: reject the four fields with a 400 naming the §11 rule, or return a deprecation warning field. Update the contract and OpenAPI in the same commit.
+
+**Acceptance Criteria**
+- [ ] A write that includes any of the four fields is rejected or flagged in the response, and documented
+
+---
+
 ### BLG-TECH-22 — Batch the in-range dependency patch/minor bumps from the October 2026 quarterly review
 **Priority:** P3 (Low)
 **Type:** Platform / Technical Debt
@@ -4820,3 +4921,47 @@ The axe-core scan added by ST-19 finds serious `color-contrast` violations on th
 
 **Acceptance Criteria**
 - [ ] The light-theme Reports and Notifications axe scans pass with no `color-contrast` baseline entry
+
+---
+
+### BLG-FE-201 — Settings helper text for the fixed strategy parameters contradicts §6 and §7.2
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Copy
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** ST-01/ST-02/ST-04 (EPIC-01, cycle `2026-10-06__release-v9.10`) — agent-mediated Product Owner review of the EPIC-01 PR — 2026-10-06
+**Effort:** XS (<0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The read-only Strategy Parameters on Settings keep their old helper text. The ST-01 decision record (§2.2) said to keep it, but the text is wrong:
+- "Days before stop can trail": during grace there is no active stop.
+- "e.g., 5 = Entry − 5×ATR": the losing stop is current price − 5×ATR, per §7.2 and the ST-03 contract correction.
+- "e.g., 2 = High − 2×ATR": the code uses current price.
+- The "e.g." framing no longer fits fixed values.
+
+**Scope**
+- Replace the four helper lines with §6/§7.2-accurate text. Update `settings.md` §1 and the Playwright text assertions.
+
+**Acceptance Criteria**
+- [ ] Each helper line matches `strategy_rules.md` §6/§7.2 wording; covered by Playwright (wording-only, FI-P3-02 may apply)
+
+---
+
+### BLG-FE-202 — Positions with no ATR available are never shown to the user
+**Priority:** P3 (Low)
+**Type:** Frontend / Backend / Transparency
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** ST-01/ST-02/ST-04 (EPIC-01, cycle `2026-10-06__release-v9.10`) — agent-mediated Product Owner review of the EPIC-01 PR — 2026-10-06 (ST-02 AC 2 met only in the analyze response)
+**Effort:** S (~1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-02 keeps the stored stop when no ATR is available and sets `atr_unavailable: true`, but only on the `GET /positions/analyze` response. Nothing stores it, `GET /positions` does not return it, and no `src/` code reads it. When the nightly job hits the same case, it skips the position ("ATR unavailable") and raises no flag. The user cannot see that a position's stop is frozen for lack of ATR.
+
+**Scope**
+- Expose an ATR-unavailable indicator on `GET /positions`, stored or derived, and show it in the Positions stop cell (ties in with ST-06's provenance line).
+
+**Acceptance Criteria**
+- [ ] A position whose last recompute had no ATR shows a visible indicator on Positions (Playwright). Contract and OpenAPI updated in the same commit.
+
+---

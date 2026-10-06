@@ -2,7 +2,12 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.17.0
+  version: 3.20.0
+  # v3.20.0 (2026-10-06, ST-01, EPIC-01, v9.10): GET /positions' Position schema
+  # gains stop_calculation_source (BLG-BE-138). No new endpoint. (3.19.0 is
+  # EPIC-03's ST-12 on its own branch; skipped so versions stay distinct.)
+  # v3.18.0 (2026-10-06, ST-02, EPIC-01, v9.10): GET /positions' Position schema
+  # gains atr_source (BLG-BE-139) -- no new endpoint, existing response schema only.
   # v3.17.0 (2026-10-01, ST-01, EPIC-01, v9.9): GET /positions' Position schema
   # gains atr_calculated_at, stop_calculated_at, active_atr_multiplier
   # (BLG-BE-135) -- no new endpoint, existing response schema only.
@@ -1746,6 +1751,9 @@ paths:
         - Recalculates stops
         - Checks market regime
         - Recommends HOLD/EXIT actions
+        Not read-only: each call persists prices and stops, and the §7.3
+        ratchet makes a raised stop irreversible. See position_endpoints.md
+        (GET /positions/analyze, Side effects).
       responses:
         "200":
           $ref: "#/components/responses/OkPositionAnalysis"
@@ -6390,6 +6398,16 @@ components:
               type: number
               nullable: true
               description: v9.9 ST-01 (BLG-BE-135) — the ATR multiplier used to produce the current stop (2 while profitable, 5 at a loss, per strategy_rules.md §7.2). Null during grace period or if never recomputed since this field was added.
+            atr_source:
+              type: string
+              enum: [fetched, user, fallback]
+              nullable: true
+              description: v9.10 ST-02 (BLG-BE-139) — where atr_value came from. fetched = computed from market data; user = typed at entry; fallback = no ATR could be fetched at entry, so 2% of the entry price was substituted. Null for positions entered before this field was added and not freshly recomputed since.
+            stop_calculation_source:
+              type: string
+              enum: [on_load, nightly]
+              nullable: true
+              description: v9.10 ST-01 (BLG-BE-138) — which path last recalculated the stop against ATR (GET /positions/analyze or the nightly job). Set together with stop_calculated_at. Null until the first post-grace recompute after DS-26.
             fx_rate: { type: number }
             live_fx_rate: { type: number }
             entry_note: { type: string, nullable: true }
