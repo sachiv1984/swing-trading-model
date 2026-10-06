@@ -5,7 +5,8 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "../ui/select";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Info } from "lucide-react";
+import { getExitCondition, exitPreselectNote, EXIT_REASON_MANUAL } from "../../lib/exitCondition";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 import { cn } from "../../lib/utils";
@@ -21,17 +22,20 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
     exit_date: new Date().toISOString().split("T")[0],
     exit_note: "" // ✅ NEW: Exit note field
   });
+  const [preselectedReason, setPreselectedReason] = useState(null);
 
   // Seed/reset when position changes
   useEffect(() => {
     if (!position) return;
+    const preselected = getExitCondition(position).reason;
+    setPreselectedReason(preselected);
     setExitData({
       shares: String(position.shares ?? ""),
       // Use current_price_native for display (shows USD for US stocks, GBP for UK)
       exit_price: String(
         position.current_price_native ?? position.current_price ?? ""
       ),
-      exit_reason: "Manual Exit",
+      exit_reason: preselected || EXIT_REASON_MANUAL,
       exit_fx_rate:
         position.market === "US"
           ? position.live_fx_rate ?? position.fx_rate ?? 1.27
@@ -349,7 +353,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                       setExitData({ ...exitData, exit_reason: value })
                     }
                   >
-                    <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white h-9">
+                    <SelectTrigger aria-label="Exit reason" data-testid="exit-reason-select" className="bg-slate-800/50 border-slate-700 text-white h-9">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-800 border-slate-700">
@@ -361,6 +365,15 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                       <SelectItem value="Partial Profit Taking">Partial Profit Taking</SelectItem>
                     </SelectContent>
                   </Select>
+                  {preselectedReason && exitData.exit_reason === preselectedReason && (
+                    <p
+                      data-testid="exit-reason-preselect-note"
+                      className="flex items-start gap-1 text-xs text-slate-600 dark:text-slate-400"
+                    >
+                      <Info className="w-3 h-3 mt-0.5 shrink-0" aria-hidden="true" />
+                      <span>{exitPreselectNote(position)}</span>
+                    </p>
+                  )}
                 </div>
 
                 {/* ✅ NEW: Exit Note Field */}
