@@ -579,9 +579,10 @@ def run_nightly_trailing_stop_update() -> Dict:
     """
     Nightly job: recompute trailing stop for every open position and store result.
 
-    Strategy (production_strategy.py profit-lock logic):
-      - In profit: new_stop = current_price − (PROFIT_ATR_MULT × ATR)
-      - Not in profit: new_stop = entry_price − (INITIAL_ATR_MULT × ATR)
+    Strategy (strategy_rules.md §7.2, via calculate_trailing_stop):
+      - In profit: new_stop = max(current_price − (PROFIT_ATR_MULT × ATR), entry_price)
+      - Not in profit: new_stop = current_price − (INITIAL_ATR_MULT × ATR)
+        (current price, not entry: entry − 5 × ATR is the §5 initial stop)
       - Ratchet: stored stop only ever moves up — max(current_stop, new_stop)
 
     Constants:

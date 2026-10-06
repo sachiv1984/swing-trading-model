@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.8.0
-**Last Updated:** 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — GET /positions gains atr_source; GET /positions/analyze keeps the stored stop when ATR is unavailable and flags the action atr_unavailable); prior — 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — GET /positions gains atr_calculated_at, stop_calculated_at, active_atr_multiplier); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /positions); prior history retained — see prior entries in version control.
+**Version:** 2.8.1
+**Last Updated:** 2026-10-06 (ST-03, EPIC-01, v9.10, BLG-SPEC-187 — losing-stop formula corrected to current price − 5×ATR; GET /positions/analyze's persistent side effects stated); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — GET /positions gains atr_source; analyze keeps the stored stop when ATR is unavailable); prior — 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — GET /positions gains atr_calculated_at, stop_calculated_at, active_atr_multiplier); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.8.1 | 2026-10-06 | ST-03 (BLG-SPEC-187, EPIC-01, v9.10): The losing-stop formula is corrected to `current price − 5×ATR` (§7.2) in the `current_trailing_stop` field note, and `POST /positions/nightly-stop-update` gains a stop-formula block, so a displayed stop can be reproduced from the contract. `GET /positions/analyze` no longer says "Safe to refresh": a new Side effects subsection lists its persistent writes and the irreversible §7.3 ratchet. Documentation only; no behaviour change. |
 | 2.8.0 | 2026-10-06 | ST-02 (BLG-BE-139, EPIC-01, v9.10): `GET /positions` gains `atr_source` (`fetched` / `user` / `fallback` / `null`, DS-25). `GET /positions/analyze`: when no ATR is available, the stored stop is kept instead of being moved to entry, and the action carries `atr_unavailable: true`. The old move-to-entry produced a stop-breach EXIT for losing positions that §7.2's wide stop would not. |
 | 2.6.2 | 2026-09-18 | ST-29 (BLG-SPEC-142, EPIC-04, v9.5): Added a "Lifecycle diagram" cross-reference to `docs/specs/data_model.md §Position & Trade Plan Lifecycle State Diagram`, canonical for `status`/`position_state` transitions. No functional change — documentation only. |
 | 2.6.1 | 2026-09-18 | ST-25 (BLG-SPEC-133, EPIC-04, v9.5): `GET /positions` example JSON's `current_trailing_stop_native` (764.00) did not reconcile with `current_trailing_stop × live_fx_rate` (560.50 × 1.3650 = 765.08, within the rounding tolerance already used by the other native-currency example fields). Corrected to 765.08. No functional change — example-payload fix only. |
@@ -149,7 +150,7 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
 | `sector` | string \| `null`. GICS-style sector classification for the ticker, used by `GET /portfolio/sector-weights` and `GET /portfolio/concentration-status` |
 | `industry` | string \| `null`. Finer-grained classification than `sector` |
 | `tags` | Array of tag strings. Empty array if no tags set |
-| `current_trailing_stop` | The computed trailing stop in GBP (profit-lock logic: profit → `price − 2×ATR`, else `entry − 5×ATR`, ratcheted). Always present and non-zero after the first nightly update. `0` if no stop has been computed yet. Unlike `stop_price`, this field is always non-zero — it is informational even during the grace period. (v6.2 ST-01 BLG-FEAT-46) |
+| `current_trailing_stop` | The computed trailing stop in GBP (`strategy_rules.md` §7.2: profitable → `max(current price − 2×ATR, entry)`, losing or breakeven → `current price − 5×ATR`; then ratcheted per §7.3, so it never moves down). Always present and non-zero after the first nightly update. `0` if no stop has been computed yet. Unlike `stop_price`, this field is always non-zero — it is informational even during the grace period. (v6.2 ST-01 BLG-FEAT-46) |
 | `current_trailing_stop_native` | Native-currency counterpart of `current_trailing_stop` above — same value, unconverted for US-market positions (identical to `current_trailing_stop` for UK positions, where native == GBP). Frontend consumers pairing a stop value with the native currency symbol (derived from `market`) must use this field, not `current_trailing_stop` — using the GBP-converted field with the native symbol was BLG-BE-103, a currency-basis defect fixed in v8.9 ST-02. (v8.9 ST-02 BLG-BE-103) |
 | `risk_off_exit` | `boolean`. `true` when the position's market index (SPY for US, FTSE for UK) is below its 200-day MA. Cleared to `false` when the index recovers. Set nightly by `POST /positions/risk-off-alerts`. (v6.2 ST-05 BLG-FEAT-49) |
 | `pnl_percent` | Percentage P&L relative to entry cost. Same value as would be seen in `pnl_pct` in trade records. Both field names exist in the system for compatibility; `pnl_percent` is the canonical name in position responses |
@@ -194,6 +195,12 @@ Recomputes the trailing stop for every open position using the profit-lock strat
 - `INITIAL_ATR_MULT = 5` — wide stop when position is not in profit
 - `PROFIT_ATR_MULT = 2` — tight stop when position is in profit
 - `ATR_PERIOD = 14` — 14-day ATR
+
+**Stop formula (`strategy_rules.md` §7.2):**
+- Profitable: `new_stop = max(current_price − PROFIT_ATR_MULT × ATR, entry_price)`
+- Losing or breakeven: `new_stop = current_price − INITIAL_ATR_MULT × ATR`
+
+Both use the **current** price. The losing stop is not `entry − 5×ATR`; that is the §5 initial stop at entry, stored separately as `initial_stop`. To reproduce a displayed stop: take the position's `atr_value` and `active_atr_multiplier`, compute `current_price − multiplier × atr_value` (floored at entry when profitable), then take the max with the previous stop.
 
 **Ratchet invariant:** `stored_stop = max(previous_stop, newly_calculated_stop)` — stop only ever moves up.
 
@@ -291,9 +298,9 @@ Runs deterministic daily monitoring logic across open positions and returns an a
 
 - `GET /positions/analyze`
 
-**Idempotency**
+**Side effects (persistent)**
 
-- Safe to refresh. Deterministic recomputation on every call.
+This is a `GET`, but it is **not** read-only and should not be described as "safe to refresh". Each call, for every open position with a live price, writes `current_price`, `current_stop`, `holding_days`, `pnl` and `pnl_pct`. Past grace, it also writes `stop_calculated_at` and `active_atr_multiplier`. When the stored ATR is missing and a fresh one is fetched, it writes `atr`, `atr_calculated_at` and `atr_source`. The §7.3 ratchet makes the stop write irreversible: a stop raised by one call is never lowered by a later one, even if the price falls back. Repeated calls with unchanged market data converge on the same stored values. Calls made at different prices can each ratchet the stop higher.
 
 ### Request
 

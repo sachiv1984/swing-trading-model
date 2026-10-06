@@ -1748,6 +1748,9 @@ paths:
         - Recalculates stops
         - Checks market regime
         - Recommends HOLD/EXIT actions
+        Not read-only: each call persists prices and stops, and the §7.3
+        ratchet makes a raised stop irreversible. See position_endpoints.md
+        (GET /positions/analyze, Side effects).
       responses:
         "200":
           $ref: "#/components/responses/OkPositionAnalysis"
