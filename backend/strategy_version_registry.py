@@ -16,9 +16,21 @@ canonical Change Log was chosen over a new schema/migration to avoid
 introducing storage for data that is already recorded, in a different shape,
 in strategy_rules.md itself).
 
-Maintenance obligation: this list must be updated in the same commit as any
-new row added to strategy_rules.md's Change Log table (mirrors the living-
-reference obligation on docs/specs/frontend/design_system.md).
+Coverage rule (Strategy Rules & System Intent Owner ruling, 2026-10-06,
+ST-05/BLG-BE-137, v9.10, ESC-EXEC-20261006-02): register **only** versions
+that change behaviour or parameters. The registry groups trades by the
+strategy that produced them (SI-04). A documentation-only version produces
+identical trades, so registering it would split comparable trades into
+separate cohorts. Every strategy_rules.md Change Log row must therefore be
+either a registry entry (behavioural) or listed in
+DOCUMENTATION_ONLY_VERSIONS below, in the same commit as the row is added.
+tests/test_strategy_version_registry.py derives the version list from the
+Change Log and fails on any version that is neither.
+
+Grandfathered: 1.1 ("No behavioural rules changed") predates the ruling and
+stays registered. Its window is zero-width (1.2 superseded it the same
+day), so removing it would change no attribution. It is not listed in
+DOCUMENTATION_ONLY_VERSIONS.
 
 Attribution rule (Strategy Rules & System Intent Owner decision, 2026-07-23,
 v7.7 ST-01 sprint execution): each version's window is
@@ -40,14 +52,31 @@ STRATEGY_VERSION_REGISTRY = [
     {"version": "1.4", "effective_date": date(2026, 5, 20)},
 ]
 
+# Change Log versions classified as documentation-only under the 2026-10-06
+# coverage rule. Each one's own Change Log summary states that no rule,
+# parameter or live behaviour changed.
+DOCUMENTATION_ONLY_VERSIONS = frozenset({
+    "1.5",   # §13.4 continuity note
+    "1.6",   # §13.5 re-attestation cadence
+    "1.7",   # §13.5 roster row (ST-06 debrief)
+    "1.8",   # §4.1.8 worked example
+    "1.9",   # §12.2 trigger, §13.6, §15, §16 process sections
+    "1.10",  # §7.2 breakeven floor documented (live since v8.9; no live change)
+    "1.11",  # §13.5 roster row (PO-05)
+    "1.12",  # §7.1 ATR ruling: formulas unchanged, duplicate copies consolidated
+    "1.13",  # §12.3 cross-reference to the parameter ledger
+    "1.14",  # §13.3 gap-risk wording clarified
+})
+
 
 def get_current_strategy_version() -> str:
     """Return the version label of the currently active (latest) strategy version.
 
     ST-01 (EPIC-01, v8.0, BLG-SPEC-78): used to stamp `strategy_version_at_entry`
-    on trade_plans/positions at row-creation time — the registry's last entry is
-    always the current version since it is maintained in the same commit as any
-    new strategy_rules.md Change Log row (see module docstring).
+    on trade_plans/positions at row-creation time. The registry's last entry is the
+    current *behavioural* version: documentation-only versions are not registered
+    (2026-10-06 coverage rule, module docstring), so trades stamped "1.4" were
+    produced by the same rules as every later documentation-only version.
     """
     return STRATEGY_VERSION_REGISTRY[-1]["version"]
 

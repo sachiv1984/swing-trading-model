@@ -39,4 +39,7 @@ Last Updated: 2026-10-06
 - **Unblock criteria:** A dated ruling (1) or (2), recorded in this escalation's resolution. The engine then aligns the registry docstring, DS-11 and `strategy_version_comparison_contract.md` Implementation Note 2, and replaces the hard-coded `len == 5` test with one derived from the Change Log.
 - **SLA due-by:** 2026-10-09T15:08:11Z (72h — Strategy)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-06T17:40:37Z
+- **Resolved by:** Strategy Rules & System Intent Owner (direct user ruling, 2026-10-06: "Go with behaviour-only for ST-05, build it")
+- **Resolution summary:** Option (1), behaviour/parameter-changing versions only. The registry stays at 1.0–1.4, and 1.5–1.14 are classified documentation-only in `DOCUMENTATION_ONLY_VERSIONS`. 1.1 is grandfathered (zero-width window). The classification sits beside the registry rather than as a tag on `strategy_rules.md`'s Change Log rows, because that file is outside Sprint Execution's write scope. The test enforces the same rule either way. No `strategy_version_at_entry` stamping or SI-04 attribution changes.

@@ -4,7 +4,7 @@
 **Class:** Class 1
 **Status:** Canonical
 **Version:** 2.51
-**Last Updated:** 2026-10-06 (DS-25 and DS-26 confirmed applied live on staging and production, verification output recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — new DS-26: positions.stop_calculation_source; settings strategy-parameter columns no longer read by any stop path, ruling (a)); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — new DS-25: positions.atr_source records fetched / user / fallback ATR provenance; Fields row and CREATE TABLE block updated; pending live application); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior — 2026-10-06 (DS-25 and DS-26 confirmed applied live on staging and production, verification output recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — new DS-26: positions.stop_calculation_source; settings strategy-parameter columns no longer read by any stop path, ruling (a)); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1692,7 +1692,7 @@ Reversible: `DROP TABLE IF EXISTS sector_regime_history;`
 
 **Story:** ST-01 (EPIC-01, v8.0) — BLG-SPEC-78
 
-Adds one nullable column to each of `trade_plans` and `positions`, stamped at row-creation time with the currently active strategy version label (`backend/strategy_version_registry.py::get_current_strategy_version()`, which returns the last entry of `STRATEGY_VERSION_REGISTRY` — maintained in the same commit as any new `strategy_rules.md` Change Log row). This is a direct, unambiguous version tag on newly created rows, distinct from the derived-window attribution approach `strategy_version_registry.resolve_version_window()` provides for historical `trade_history` rows that predate this field (SI-04, v7.7 ST-01) — that derivation remains the only attribution mechanism for pre-v8.0 rows.
+Adds one nullable column to each of `trade_plans` and `positions`, stamped at row-creation time with the currently active strategy version label (`backend/strategy_version_registry.py::get_current_strategy_version()`, which returns the last entry of `STRATEGY_VERSION_REGISTRY`). **Coverage rule (Strategy Rules & System Intent Owner ruling, 2026-10-06, ST-05/`BLG-BE-137`, v9.10):** only versions that change behaviour or parameters are registered. Documentation-only versions are listed in `DOCUMENTATION_ONLY_VERSIONS` instead, in the same commit as their Change Log row. The stamped label is therefore the latest *behavioural* version: rows stamped `"1.4"` after v1.5–v1.14 are correct, because those versions changed no rule. `tests/test_strategy_version_registry.py` fails on any Change Log version that is neither registered nor classified. This is a direct, unambiguous version tag on newly created rows, distinct from the derived-window attribution approach `strategy_version_registry.resolve_version_window()` provides for historical `trade_history` rows that predate this field (SI-04, v7.7 ST-01) — that derivation remains the only attribution mechanism for pre-v8.0 rows.
 
 ### Up Migration (v2.19 → v2.20)
 
