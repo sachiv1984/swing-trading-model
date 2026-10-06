@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-01T11:01:34Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-05T09:30:49Z",
+  "last_updated_utc": "2026-10-05T14:40:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -488,11 +488,11 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1891,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-30__release-v9.9/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "tests/test_state_execution_path_consistency.py",
@@ -502,45 +502,61 @@
       "stories": {
         "ST-19": {
           "title": "Conduct the overdue 90-day AI feature usage review (BLG-GOV-74/140/141/142 cluster)",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 1867,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "979f0126c224f44432d7ecfc195771ed1fa45ff7",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-01T15:10:44Z",
           "unblock_criteria": "Human with production access conducts (or supplies data for) the 90-day AI feature usage review; see ESC-EXEC-20261001-02.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T12:38:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/ai_feature_usage_review_2026-09-24.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Escalated: no production credential in this sandbox (RISK-03). See ESC-EXEC-20261001-02."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team; PMO Lead (review); Product Owner (human) decision",
+            "date": "2026-10-05"
+          },
+          "notes": "Escalated: no production credential in this sandbox (RISK-03). See ESC-EXEC-20261001-02. | Reclassified delegated_decision -> autonomous on unblock. Unblocked in-session: Product Owner ran the 3 read-only production queries and pasted results (2026-10-05). Review filed; Product Owner decision to clear the gate and build the AI features; all 8 gated items dispositioned in backlog.md under PO authorisation. ESC-EXEC-20261001-02 Resolved. No spec deviation."
         },
         "ST-20": {
           "title": "gap_risk_service.py (BLG-FEAT-65) shipped without a recorded S13 review or S13.5 roster row",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 1868,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "90b43b53e4d6ac5f51a443fb1dc7d3103c4f58b9",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-01T15:10:44Z",
           "unblock_criteria": "Head of Specs Team / Strategy Rules & System Intent Owner records a dated §13 determination; see ESC-EXEC-20261001-03.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T12:05:45Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md",
+            "claude/strategy/strategy_rules.md#13.3",
+            "claude/strategy/strategy_rules.md#13.5"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Escalated: §13 boundary determination requires named-authority judgement, not mechanical execution. See ESC-EXEC-20261001-03."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Strategy Rules & System Intent Owner; Head of Specs Team",
+            "date": "2026-10-05"
+          },
+          "notes": "Escalated: §13 boundary determination requires named-authority judgement, not mechanical execution. See ESC-EXEC-20261001-03. | Reclassified delegated_decision -> autonomous on unblock. Unblocked: ESC-EXEC-20261001-03 Resolved — agent-mediated Strategy Rules & System Intent Owner + Head of Specs Team §13 determination, CONDITIONAL (earnings trigger outside §13.3; weekend-hold trigger a genuine gap, disposition due 2027-02-06). 9 binding conditions; remediation BLG-BE-136, BLG-SPEC-179, BLG-GOV-359, BLG-GOV-360 (strategy_rules.md §13.3/§13.5 wording, outside write scope). No spec deviation filed — remediation items are backlog items, not DEV-* records (§5.3 step 5 / BLG-GOV-73). | 2026-10-05: BLG-GOV-360 applied in ST-20 on the user's explicit instruction — strategy_rules.md v1.13->v1.14 (§13.3 clarification, §13.5 roster row), wording per an independent second-pass Strategy Rules & System Intent Owner review (Approved with amendments). §15 version cross-reference grep re-run: 0 actionable."
         },
         "ST-21": {
           "title": "Split roadmap_prompt.md into a core plus an appendix so it fits a single read",
@@ -620,24 +636,31 @@
         },
         "ST-24": {
           "title": "Five near-duplicate 'AI adoption window' gate-criteria texts should be one canonical shared reference",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "Head of Specs Team",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 1872,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "64e7525cf1a0798312c6aa6e1dca99826cd1ee81",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-01T13:05:00Z",
           "unblock_criteria": "Head of Specs Team decides canonical gate-reference location and either edits backlog.md/current_roadmap.md directly or authorises this engine to do so, citing ESC-EXEC-20261001-01.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T12:05:17Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/backlog/backlog.md#Shared Gate References"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Reclassified from autonomous: AC requires edits to claude/roadmap/* and existing backlog.md item content, both outside Sprint Execution's declared write scope. See ESC-EXEC-20261001-01."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "date": "2026-10-05"
+          },
+          "notes": "Reclassified from autonomous: AC requires edits to claude/roadmap/* and existing backlog.md item content, both outside Sprint Execution's declared write scope. See ESC-EXEC-20261001-01. | Reclassified delegated_decision -> autonomous on unblock. Unblocked: ESC-EXEC-20261001-01 Resolved by agent-mediated Head of Specs Team write-scope ruling (2026-10-05, user direction). Canonical gate statement in backlog.md '## Shared Gate References'; 5 items cite it with a 'due 2026-09-24' token (scanner: 130 gated / 14 lapsed unchanged). Filed BLG-GOV-361, BLG-GOV-362. No spec deviation."
         },
         "ST-25": {
           "title": "Rebalance diagnostic tallies (STEP 2.4/7.1/7.2) are recomputed by hand each cycle",
@@ -662,28 +685,36 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.complete",
           "sign_off_record": null,
-          "notes": "STEP 2.4 reproduced exactly against the cited 2026-09-30__scheduled reading (U=16/G=41/D=109/P=4 of 170, window v9.4-v9.8 -> 0.094). STEP 7.1's cited 83.7% rolling-3-cycle figure is NOT reproduced exactly by the script's default U/G/D/P-proxy formula (script computes 84.0% from the identical v9.6-v9.8 window -- 94.9%+82.1%+75.0% averaged). Intent-check advisory (LL-v3.4-P3-03) applied: this is disclosed as a probable small pre-existing hand-calculation drift in the cited figure, not a script defect -- the arithmetic is independently verifiable (tests/test_compute_rebalance_diagnostics.py) and the whole point of this story is that hand computation is error-prone. Recorded as a notes-only deviation per the advisory, not a formal DEV-* record (no canonical spec value is being overridden; roadmap_prompt.md's manual procedure remains authoritative and the new cross-reference text says so explicitly). STEP 7.2 already has its own script (scripts/compute_role_share_history.py, pre-existing) -- not duplicated here."
+          "notes": "STEP 2.4 reproduced exactly against the cited 2026-09-30__scheduled reading (U=16/G=41/D=109/P=4 of 170, window v9.4-v9.8 -> 0.094). STEP 7.1's cited 83.7% rolling-3-cycle figure is NOT reproduced exactly by the script's default U/G/D/P-proxy formula (script computes 84.8% -- 84/99 pooled, the formula §7.1 defines -- from the identical v9.6-v9.8 window; corrected 2026-10-05 from a mis-recorded 84.0%, which was a plain average of the per-cycle figures 94.9%+82.1%+75.0% that the script never computes, per the agent-mediated DoQ review F-1; gap to the cited 83.7% is 1.1pp, not 0.3pp). Intent-check advisory (LL-v3.4-P3-03) applied: this is disclosed as a probable small pre-existing hand-calculation drift in the cited figure, not a script defect -- the arithmetic is independently verifiable (tests/test_compute_rebalance_diagnostics.py) and the whole point of this story is that hand computation is error-prone. Recorded as a notes-only deviation per the advisory, not a formal DEV-* record (no canonical spec value is being overridden; roadmap_prompt.md's manual procedure remains authoritative and the new cross-reference text says so explicitly). STEP 7.2 already has its own script (scripts/compute_role_share_history.py, pre-existing) -- not duplicated here."
         },
         "ST-26": {
           "title": "role_share_history.md has no governance-authorized home under claude/roadmap/",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 1874,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "3e0f61e8474e2e243cf7910244c69cac3464f908",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-01T15:10:44Z",
           "unblock_criteria": "Head of Specs Team decides canonical home for role_share_history.md and either edits claude/roadmap/* directly or authorises this engine to do so, citing ESC-EXEC-20261001-04.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T12:09:05Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/roadmap/role_share_history.md",
+            "claude/system/roadmap_prompt.md#7.2 Cross-Role Workload Balance Check"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Escalated: claude/roadmap/* is outside Sprint Execution write scope beyond the workforce_capacity.md exception (RISK-02). See ESC-EXEC-20261001-04."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "date": "2026-10-05"
+          },
+          "notes": "Escalated: claude/roadmap/* is outside Sprint Execution write scope beyond the workforce_capacity.md exception (RISK-02). See ESC-EXEC-20261001-04. | Reclassified delegated_decision -> autonomous on unblock. Unblocked: ESC-EXEC-20261001-04 Resolved by agent-mediated Head of Specs Team write-scope ruling. Canonical file created (v9.8 row: 39 stories, HoST 12; rolling 18/102 = 17.6%, matches cycle_record); roadmap_prompt.md v9.30 §7.2 reads it; §6 checklist complete (OG v4.218, incl. backfilled v4.217 SELF-DRIFT). No spec deviation."
         },
         "ST-27": {
           "title": ".claude_current_state.json's execution_state_path points to the prior cycle, not the active one",
@@ -708,14 +739,20 @@
           "sign_off_record": null,
           "notes": ""
         }
+      },
+      "merged_via": {
+        "pr_number": 1886,
+        "merge_commit": "362ff619",
+        "retroactive_gate": "doq_signed_off_pending_po",
+        "note": "Done stories ST-21/22/23/25/27 reached main via EPIC-02 PR #1886 without an EPIC-04 merge gate (process deviation). Retroactive gate per user direction 2026-10-05: qa_evidence_EPIC-04.md written, DoQ sign-off + PO acceptance pending (human). Update 2026-10-05: agent-mediated Director of Quality sign-off recorded in qa_evidence_EPIC-04.md (user-authorised, option 2); Product Owner acceptance still pending on the EPIC-04 PR."
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1892,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-09-30__release-v9.9/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_check_data_model_drift.py"
@@ -747,69 +784,88 @@
         "ST-29": {
           "title": "Drop 4 confirmed-orphaned, always-NULL columns from the live positions table",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 1877,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "bd89ed4935e931f369f2711e1a41092f5e31bb69",
           "delegation_record_id": "DEL-20261001-02",
           "blocked_since_utc": "2026-10-01T15:25:04Z",
           "unblock_criteria": "Data Model & Domain Schema Owner drops the 4 orphaned columns live (staging then production) and confirms via SELECT. See DEL-20261001-02.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-05T12:45:37Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/data_model.md"
+            "docs/specs/data_model.md#DS-24"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Data Model & Domain Schema Owner (content); live application by the user",
+            "date": "2026-10-05"
+          },
+          "notes": "Unblocked in-session: user ran the pre-check, drop and verification on staging (2 rows) and production (27 rows), all values NULL, 0 columns remaining. Recorded as DS-24 (data_model.md v2.47). DEL-20261001-02 Unblocked. No spec deviation."
         },
         "ST-30": {
           "title": "Reconcile positions.fees_paid NOT NULL constraint (re-apply live, or confirm nullable is intentional)",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 1878,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "425dcd897f24b80a2cca805507ebee20fe75e838",
           "delegation_record_id": "DEL-20261001-03",
           "blocked_since_utc": "2026-10-01T15:25:04Z",
-          "unblock_criteria": "Data Model & Domain Schema Owner records a binding disposition (re-apply NOT NULL, or confirm nullable intentional) with stated reason. See DEL-20261001-03.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": "Data Model & Domain Schema Owner (human, write credential) runs DS-23's pre-check (0 NULL rows), Up Migration and Verification on staging and production; output recorded in data_model.md DS-23 and the Fields row flipped to NO (stage 2).",
+          "completed_utc": "2026-10-05T12:55:48Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/data_model.md"
+            "docs/specs/data_model.md#DS-23",
+            "docs/specs/data_model_positions_dictionary.md#fees_paid"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Data Model & Domain Schema Owner (disposition); live application and default decision by the user",
+            "date": "2026-10-05"
+          },
+          "notes": " | 2026-10-05: disposition decided — re-apply NOT NULL (agent-mediated Data Model & Domain Schema Owner, §5.3, user direction). Stage 1 committed a8a90c77 (data_model.md v2.46, DS-23 pending live; BLG-SPEC-180 filed). Still blocked_backend on the live ALTER only. | Unblocked in-session: user applied DS-23 on staging and production (pre-check 0/0; now NOT NULL, no default). Documented DEFAULT 0 found never to exist live; PO chose no default (option A); data_model.md v2.48, dictionary v0.2 and manual chart seed corrected. DEL-20261001-03 Unblocked. No spec deviation (doc corrected to match decided intent)."
         },
         "ST-31": {
           "title": "Cross-reference current_roadmap.md's SI-02 field to the canonical 'linked trade plan' definition",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "Head of Specs Team",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 1879,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "13e33563142ccb0a5360dcb3aa3017c77e26680d",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-01T15:17:20Z",
           "unblock_criteria": "Head of Specs Team edits claude/roadmap/current_roadmap.md directly or authorises this engine to do so, citing ESC-EXEC-20261001-05.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-05T12:10:21Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics/si02_drift_score.md#2.4 Canonical \"Linked Trade Plan\" Count",
+            "claude/roadmap/current_roadmap.md#SI-02 gate confirmation status"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Reclassified from autonomous: AC requires editing claude/roadmap/current_roadmap.md, outside Sprint Execution write scope (same gap as ST-26). Content already decided by ST-23/v9.7 (si02_drift_score.md §2.4); only the write-scope authorisation is outstanding. See ESC-EXEC-20261001-05."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.complete",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "role": "Head of Specs Team",
+            "date": "2026-10-05"
+          },
+          "notes": "Reclassified from autonomous: AC requires editing claude/roadmap/current_roadmap.md, outside Sprint Execution write scope (same gap as ST-26). Content already decided by ST-23/v9.7 (si02_drift_score.md §2.4); only the write-scope authorisation is outstanding. See ESC-EXEC-20261001-05. | Reclassified delegated_decision -> autonomous on unblock. Unblocked: ESC-EXEC-20261001-05 Resolved by agent-mediated Head of Specs Team write-scope ruling (2026-10-05, user direction). SI-02 block cross-references si02_drift_score.md §2.4; §2.4's stale deferred note replaced. ST-23 (v9.7) AC now fully met. No spec deviation."
         },
         "ST-32": {
           "title": "data_model.md DS-19 'Verification status' still says the migration was never run against a live PostgreSQL",
@@ -837,45 +893,57 @@
         "ST-33": {
           "title": "Correct the BLG-BE-128 citation to BLG-BE-129 for the latency_ms composition decision",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1881,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "3677d86e4101fb5ee106f56f795efde4e365509b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-01T15:16:25Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md",
+            "docs/ops/external_api_dependency_register.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commit landed on main via PR #1886 (2026-10-01) but execution_state was never updated; backfilled 2026-10-05 after re-verifying AC on main (no BLG-BE-128 citation left where BLG-BE-129 is meant; BLG-BE-128's own references untouched). No deviation."
         },
         "ST-34": {
           "title": "Correct notifications.md and the alert-thresholds empty-state scenario doc to the no-trailing-period headings now shipped",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1882,
           "branch": "exec/2026-09-30__release-v9.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "ebc23c147d0b09aa449d37b4bb7209e26322088a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-01T15:16:34Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/notifications.md",
+            "docs/testing/alert_thresholds_empty_state_scenarios.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Commit landed on main via PR #1886 (2026-10-01) but execution_state was never updated; backfilled 2026-10-05 after re-verifying AC on main (both headings now have no trailing period; DEV-v9.7-ST05-01 marked Resolved citing ST-34/BLG-SPEC-169). Resolving-commit deviation-closure discipline (step 10a) met in the same commit. No new deviation."
         }
+      },
+      "merged_via": {
+        "pr_number": 1886,
+        "merge_commit": "362ff619",
+        "retroactive_gate": "doq_signed_off_pending_po",
+        "note": "Done stories ST-28/32/33/34 reached main via EPIC-02 PR #1886 without an EPIC-05 merge gate (process deviation). Retroactive gate per user direction 2026-10-05: qa_evidence_EPIC-05.md written, DoQ sign-off + PO acceptance pending (human). Update 2026-10-05: agent-mediated Director of Quality sign-off recorded in qa_evidence_EPIC-05.md (user-authorised, option 2); Product Owner acceptance still pending on the EPIC-05 PR."
       }
     },
     "EPIC-06": {
@@ -923,15 +991,7 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [
-    "ST-19",
-    "ST-20",
-    "ST-24",
-    "ST-26",
-    "ST-29",
-    "ST-30",
-    "ST-31"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -949,6 +1009,7 @@
     "ST-27",
     "ST-28",
     "ST-32",
+    "ST-35",
     "ST-10",
     "ST-16",
     "ST-15",
@@ -958,15 +1019,17 @@
     "ST-11",
     "ST-17",
     "ST-14",
-    "ST-35"
+    "ST-24",
+    "ST-20",
+    "ST-26",
+    "ST-19",
+    "ST-33",
+    "ST-34",
+    "ST-31",
+    "ST-29",
+    "ST-30"
   ],
-  "open_escalations": [
-    "ESC-EXEC-20261001-01",
-    "ESC-EXEC-20261001-02",
-    "ESC-EXEC-20261001-03",
-    "ESC-EXEC-20261001-04",
-    "ESC-EXEC-20261001-05"
-  ],
+  "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
@@ -982,8 +1045,11 @@
   },
   "process_notes": [
     "EPIC-01 PR #1884: all CI checks green, mergeable=MERGEABLE, mergeStateStatus=BLOCKED (no reviews yet). STEP 4 merge gate conditions unmet: 'QA sign-off comment from Director of Quality on PR' and 'Product Owner acceptance' are both outstanding -- always-human gates (execution_prompt.md §5.3), not self-approvable. Per 'park and continue other items', proceeding to EPIC-04 (next in sprint_backlog.md's merge order) rather than stalling the sprint on this EPIC's human sign-off wait.",
+    "2026-10-05 resume: PR #1886 (EPIC-02) merged 19 EPIC-04/EPIC-05 commits (12 [EPIC-04], 7 [EPIC-05]; corrected 2026-10-05 from a mis-stated 17, per the PR #1891 review) into main alongside ST-06-ST-09, because EPIC-02's branch was cut on top of the EPIC-04/05 linear history. CLAUDE.md §2 branch-matching deviation, plus bypass of the STEP 4 merge gate for those EPICs. Per user direction: retroactive gate. Recorded in qa_evidence_EPIC-02/04/05.md, EPIC-04/05 marked in_progress with merged_via.retroactive_gate=pending. execution_state.json had also left EPIC-04/05 at not_started and ST-33/ST-34 at not_started despite their commits being on main; corrected.",
     "2026-10-05: EPIC-06 PR #1889 merged (576b27df, 2026-10-05T09:05:04Z). Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-06 empty -- nothing to reconcile.",
-    "2026-10-05 resume (run sprint): local main was 20 commits behind origin/main at session start -- pulled before reading state (LL-v7.2-P3-01). Merge-gate resume sync (LL-v3.9-P3-1): EPIC-03 PR #1888 found MERGED (mergedAt 2026-10-05T09:25:32Z, merge commit e502f2aa) while execution_state.json still recorded pr_status=open; EPIC-03 moved to epics_merged, status/pr_status=merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-03 empty -- nothing to reconcile. Block re-evaluation: ESC-EXEC-20261001-01..05 still Open (all past SLA and open >=72h; non-blocking, so advisory only per shared_standards.md §16.4.1) and DEL-20261001-02/03 still Open with no [EPIC-05][ST-29]/[ST-30] commits -- ST-19/20/24/26/29/30/31 remain blocked."
+    "2026-10-05 resume (run sprint): local main was 20 commits behind origin/main at session start -- pulled before reading state (LL-v7.2-P3-01). Merge-gate resume sync (LL-v3.9-P3-1): EPIC-03 PR #1888 found MERGED (mergedAt 2026-10-05T09:25:32Z, merge commit e502f2aa) while execution_state.json still recorded pr_status=open; EPIC-03 moved to epics_merged, status/pr_status=merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/.../EPIC-03 empty -- nothing to reconcile. Block re-evaluation: ESC-EXEC-20261001-01..05 still Open (all past SLA and open >=72h; non-blocking, so advisory only per shared_standards.md §16.4.1) and DEL-20261001-02/03 still Open with no [EPIC-05][ST-29]/[ST-30] commits -- ST-19/20/24/26/29/30/31 remain blocked.",
+    "2026-10-05: EPIC-04 PR #1891 opened after agent-mediated DoQ sign-off (user chose agent-mediated sign-offs). The first EPIC-05 DoQ subagent launch was refused by Claude Code's auto-mode classifier as self-approval; the user then explicitly chose agent-mediated sign-offs (option 2) and the review was re-run with their approval. Branch execution_state.json/execution_escalations.md were synced between EPIC-04 and EPIC-05 (per-story data from each owning branch, summary arrays recomputed) so the two PRs do not conflict on them.",
+    "2026-10-05: EPIC-05 PR #1892 opened after agent-mediated DoQ sign-off (Approved; full tests/ 2054 passed). Merge order: #1891 (EPIC-04) first, then #1892; backlog.md will need CLAUDE.md §8 conflict resolution on #1892 after #1891 merges."
   ],
   "sealed": false,
   "sealed_utc": null

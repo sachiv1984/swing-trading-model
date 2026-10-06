@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.29
-**Last Updated:** 2026-10-01 (ST-25, EPIC-04, v9.9, BLG-GOV-352 — STEP 2.4 and STEP 7.1 each gain an "Optional acceleration" cross-reference to the new `scripts/compute_rebalance_diagnostics.py`, which mechanically reproduces the U/G/D/P-tag-based default forms of both figures from `docs/product/changelog.md`; the manual procedure remains authoritative, script is non-dependency); prior — 2026-10-01 (ST-21, EPIC-04, v9.9, BLG-GOV-343 — split into this core file plus `roadmap_prompt_appendix.md`: core now covers Sections 1–8 through STEP 8.5 in one single read (under 25,000 tokens); STEP 9–12 plus closing Invariants/Completion Condition continue in the appendix's Part A; detailed historical rationale for compacted rules moved to the appendix's Part B. No procedural step lost — diff-verified against the pre-split file's full heading set); prior — 2026-09-30 (roadmap rebalance `2026-09-30__scheduled` STEP 11 meta-review, 1 action-now patch — STEP -1.6 gains a standalone pre-run exception: a same-session standalone `run ideas` window's fresh unprocessed submissions satisfy this step without requiring a second inline window); prior history retained — see prior entries in version control.
+**Version:** 9.30
+**Last Updated:** 2026-10-05 (ST-26, EPIC-04, v9.9, BLG-GOV-353 — §7.2 step 1 now reads the new canonical `claude/roadmap/role_share_history.md` (appending the newest shipped cycle's row via `scripts/compute_role_share_history.py` first) instead of re-parsing `sprint_backlog.md` Owner fields by hand, with a by-hand fallback; §4 write scope gains `role_share_history.md` and, retroactively, `product_value_ratio_history.md` — Head of Specs Team ruling ESC-EXEC-20261001-04); prior — 2026-10-01 (ST-25, EPIC-04, v9.9, BLG-GOV-352 — STEP 2.4 and STEP 7.1 each gain an "Optional acceleration" cross-reference to the new `scripts/compute_rebalance_diagnostics.py`, which mechanically reproduces the U/G/D/P-tag-based default forms of both figures from `docs/product/changelog.md`; the manual procedure remains authoritative, script is non-dependency); prior — 2026-10-01 (ST-21, EPIC-04, v9.9, BLG-GOV-343 — split into this core file plus `roadmap_prompt_appendix.md`: core now covers Sections 1–8 through STEP 8.5 in one single read (under 25,000 tokens); STEP 9–12 plus closing Invariants/Completion Condition continue in the appendix's Part A; detailed historical rationale for compacted rules moved to the appendix's Part B. No procedural step lost — diff-verified against the pre-split file's full heading set); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -64,6 +64,8 @@ Agent definitions: `claude/agents/*.md`. Switch agent perspective explicitly whe
 - `claude/roadmap/current_roadmap.md`
 - `claude/roadmap/initiative_register.md`
 - `claude/roadmap/workforce_capacity.md`
+- `claude/roadmap/product_value_ratio_history.md` (STEP 2.4 — append History row, refresh sparkline; listed retroactively, Head of Specs Team ruling ESC-EXEC-20261001-04)
+- `claude/roadmap/role_share_history.md` (§7.2 — append the newest shipped cycle's row and breakdown only; ESC-EXEC-20261001-04)
 - `claude/roadmap/decision_log.md`
 - `claude/backlog/backlog.md`
 - `claude/cycles/<cycle_id>/*`
@@ -581,14 +583,14 @@ Write: `claude/roadmap/workforce_capacity.md` and/or `claude/economics/workforce
 Distinct from §7.1's Skill-Silo Alert, which classifies story *shape* (governance-heavy vs execution-heavy) — this check tallies story *ownership by named role* (the `**Owner:**` field on each ST item in `sprint_backlog.md`), to catch a single role silently carrying a disproportionate share of delivery across consecutive cycles even when the governance/execution shape ratio itself looks healthy.
 
 **Method:**
-1. For each of the last 3 shipped cycles (same rolling window as §7.1, for consistency), read `sprint_backlog.md` and tally the count of ST items per `**Owner:**` role.
+1. Read `claude/roadmap/role_share_history.md` — the structured per-cycle role-share record (raw-tally method: each ST item's `**Owner:**` string tallied verbatim, compound multi-role strings as their own bucket). If the most recently shipped cycle has no row yet, first run `python3 scripts/compute_role_share_history.py claude/cycles/<that cycle_id>/sprint_backlog.md` and append its History row and Full Per-Role Breakdown section to the file (same table formats; update the rolling-aggregate line) in this run's commit. Then take the last 3 shipped cycles (same rolling window as §7.1, for consistency) from the file — do not re-parse `sprint_backlog.md` Owner fields by hand for cycles already recorded there. **Fallback:** if the file is missing or unreadable, tally each cycle's `sprint_backlog.md` `**Owner:**` fields directly (the pre-v9.30 method) and record the fallback in `run_manifest.md`. (Structured history source added ST-26, BLG-GOV-353, EPIC-04, v9.9.)
 2. Compute each role's share: role's story count ÷ total stories across the 3-cycle window × 100.
 3. **> 40% Ceiling (mirrors §7.1's ceiling):** if any single role's rolling 3-cycle share exceeds 40%, surface as an advisory: "⚠ Cross-role workload balance: `<role>` owned N% of stories across the last 3 cycles (v<X>–v<Z>)." Record in `## STEP 8`, alongside the Skill-Silo Alert output.
 4. This check is **advisory only** — it does not gate release scope and has no mandatory-pull-forward escalation (unlike §7.1's sustained-failure clause). Its purpose is visibility for the Product Owner and Director of HR to consider when scoping future releases (e.g. deliberately routing more stories to underrepresented roles' domains), not a hard rebalancing rule — role-story-count concentration can legitimately reflect the release's actual thematic focus (e.g. a governance-heavy debt-clearance cycle naturally skews toward Head of Specs Team) rather than a genuine bottleneck.
 
 **Formal threshold review (ST-37, EPIC-04, v9.2, BLG-GOV-300):** reviewed against mirroring §7.1's mandatory-pull-forward escalation. **Decision: retain advisory-only, no mandatory escalation added** — role concentration can legitimately reflect a release's genuine thematic focus, unlike §7.1's product-value lens. Full rationale and sign-off: `roadmap_prompt_appendix.md` §STEP 7.2.
 
-Write: same target as §7.1 (`claude/roadmap/workforce_capacity.md` and/or `claude/economics/workforce_economics.md`).
+Write: same target as §7.1 (`claude/roadmap/workforce_capacity.md` and/or `claude/economics/workforce_economics.md`), plus `claude/roadmap/role_share_history.md` (append-only, step 1).
 
 #### 7.3 Ready-Pool Capacity Gap Trend (added — post-ship closure `2026-09-14__release-v9.4`, `LL-v9.4-Release-Carry-03`)
 

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-05 (ESC-CLOSE-20260930-01 Product Owner ruling confirmed — 1 new item added: BLG-GOV-364 (rule on reduced-roster idea-intake windows)); prior — 2026-10-05 (Head of Specs Team ruling on ESC-CLOSE-20260930-02, agent-mediated, user-directed — 1 new item added: BLG-GOV-363 (script the execution_state.json read-back check from execution_prompt.md v3.81 §9.2)); prior — 2026-10-05 (PR #1888/#1889 agent-mediated DoQ + PO review — 4 new items added: BLG-QA-210 (ST-12 sizing property lacks a lower bound), BLG-QA-211 (real-bound modules cached across the session), BLG-OPS-178 (test-only deps in the production build), BLG-FE-194 (zero-P&L badge glyph)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-05 (PR #1891 agent-mediated Director of Quality + Product Owner review — 6 new items added: BLG-QA-212 (tests for compute_role_share_history.py), BLG-GOV-365 (§13.3 carve-out: UK earnings / pre-open timing), BLG-BE-137 (strategy version registry stuck at v1.4), BLG-GOV-366 (track the next AI usage review, 2027-01-03), BLG-GOV-367 (Skill-Silo series mixes two formulas), BLG-SPEC-182 (refresh the Gap Risk Flag decision record to v1.14)); prior — 2026-10-05 (ESC-CLOSE-20260930-01 Product Owner ruling confirmed — 1 new item added: BLG-GOV-364 (rule on reduced-roster idea-intake windows)); prior — 2026-10-05 (sprint execution EPIC-04/ST-20 — BLG-GOV-360 resolved: strategy_rules.md v1.14 §13.3/§13.5 wording applied); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-09-30 (cycle 2026-09-30__scheduled — DL-082; 0 active initiatives, CPS=N/A (15th consecutive); idea intake IW-20260930-01 (4 submissions, 2-agent disclosed reduced scope, run standalone pre-run per idea_intake_prompt.md §2), consolidated into BLG-BE-135 (ungated) + BLG-FE-193 (gate-conditional on BLG-BE-135); IDEA-director-of-hr-20260919-02 resolved at 3-cycle park hard cap → Backlog (ungated), BLG-GOV-357; new §13-boundary finding filed, BLG-GOV-358; PVR 0.094 🔴 Alert (5th consecutive, marginal improvement, U=16/G=41/D=109/P=4 of 170, window v9.4–v9.8) — PO Modify, BLG-BE-135/BLG-FE-193 named as recommended candidate; Skill-Silo 83.7% (2nd consecutive improving reading) — advisory only, no mandatory pull-forward; STEP 8.1 Option (b) defer, 8th consecutive; STEP 11.4 meta-review due and actioned, 0 action-now from the meta-review itself, 1 action-now patch from live STEP -1.6 friction)
 
 > ⚠️ Standing Notice
@@ -263,7 +263,7 @@ No schema exists for user-authored free-text annotations on individual trades, d
 **Source:** IDEA-financial-reporting-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** M (~1–2 days)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** AI adoption window verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence) — Financial Reporting & Records Owner to confirm usage patterns have stabilised before this clears. A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; re-verify against the 2026-09-24 review's actual finding.
+**Gate cleared (2026-10-05, ST-19):** the 90-day AI feature usage review was conducted (`docs/ops/ai_feature_usage_review_2026-09-24.md`: 31 AI calls and ≈$0.17 in 102 days, 74% of them in launch week). Product Owner decision 2026-10-05: gate removed — build regardless of current low engagement, since more features may help increase it.
 
 **Problem**
 Monthly P&L (shipped v2.x) is a fixed-format report. An optional AI-generated narrative commentary could add interpretive value, but adding it before existing AI features (daily briefing, chat) are validated risks compounding unvalidated AI surface area onto a financial-reporting document specifically.
@@ -274,7 +274,7 @@ Monthly P&L (shipped v2.x) is a fixed-format report. An optional AI-generated na
 
 **Acceptance Criteria**
 - Narrative section renders as optional/dismissible
-- Gate condition (AI adoption window) verified by Financial Reporting & Records Owner before sprint planning
+- Gate condition (AI adoption window) verified by Financial Reporting & Records Owner before sprint planning — satisfied 2026-10-05: gate removed by Product Owner decision (see Gate cleared note)
 
 ---
 
@@ -285,7 +285,7 @@ Monthly P&L (shipped v2.x) is a fixed-format report. An optional AI-generated na
 **Source:** IDEA-metrics-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** S (~0.5–1 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** AI adoption window verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence) — Metrics Definitions & Analytics Owner to confirm usage patterns have stabilised before this clears. A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; re-verify against the 2026-09-24 review's actual finding.
+**Gate cleared (2026-10-05, ST-19):** the 90-day AI feature usage review was conducted (`docs/ops/ai_feature_usage_review_2026-09-24.md`: 31 AI calls and ≈$0.17 in 102 days, 74% of them in launch week). Product Owner decision 2026-10-05: gate removed — build regardless of current low engagement, since more features may help increase it. Recommended to sequence early so the engagement effect of new AI features can be measured against the review's baseline.
 
 **Problem**
 No metric tracks AI chat engagement (sessions per week, questions per session, response acceptance rate). Defining the metric before usage patterns stabilise risks needing early revision.
@@ -296,7 +296,7 @@ No metric tracks AI chat engagement (sessions per week, questions per session, r
 
 **Acceptance Criteria**
 - Metric set defined and documented
-- Gate condition (AI adoption window) verified before sprint planning
+- Gate condition (AI adoption window) verified before sprint planning — satisfied 2026-10-05: gate removed by Product Owner decision (see Gate cleared note)
 
 ---
 
@@ -710,7 +710,7 @@ No formal assessment of current React bundle size or heavy dependencies has been
 **Source:** IDEA-head-of-ux-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** AI adoption window verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence) — Head of UX & Design to confirm usage patterns have stabilised before this clears. A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; re-verify against the 2026-09-24 review's actual finding.
+**Gate cleared (2026-10-05, ST-19):** the 90-day AI feature usage review was conducted (`docs/ops/ai_feature_usage_review_2026-09-24.md`: 31 AI calls and ≈$0.17 in 102 days, 74% of them in launch week). Product Owner decision 2026-10-05: gate removed — build regardless of current low engagement, since more features may help increase it.
 
 **Problem**
 No structured protocol exists to study how the AI chat advisor is actually used. Designing one before interaction patterns stabilise risks studying patterns that later shift.
@@ -721,7 +721,7 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 
 **Acceptance Criteria**
 - Protocol document produced
-- Gate condition (AI adoption window) verified before use
+- Gate condition (AI adoption window) verified before use — satisfied 2026-10-05: gate removed by Product Owner decision (see Gate cleared note)
 
 ---
 
@@ -1835,9 +1835,9 @@ When sprint planning seals scope, there is no step to cross-reference the change
 **Owner:** Strategy Rules & System Intent Owner; AI Compliance & Governance Officer
 **Source:** IDEA-strategy-owner-20260626-02 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
 **Effort:** S (~0.5 day)
-**Provisional-Target:** Gate-conditional — first review due 2026-09-24, not yet due
+**Provisional-Target:** TBD
 
-**Gate criteria:** First review due 2026-09-24 (90 days post-v6.2 ship 2026-06-25). Quarterly cadence thereafter.
+**Gate cleared (2026-10-05, ST-19):** the 90-day post-v6.2 date (2026-09-24) has passed and the 90-day AI feature usage review is filed (`docs/ops/ai_feature_usage_review_2026-09-24.md`). The first-review date has passed, so this item is ready to schedule; the checklist itself is still to be written. Product Owner authorised.
 
 > **Product Owner note (2026-08-21, post-ship closure `2026-08-17__release-v8.9` STEP 12 review):** This item was flagged by `groom backlog`'s Deferral Age Validation as a stale-target/kill candidate because its `Provisional-Target` field still read the leftover placeholder `v6.3` (long since shipped). That flag was a false positive — the item's own `Gate criteria` field is the actual operative schedule, and 2026-09-24 has not yet arrived. Not neglected, not a kill candidate. `Provisional-Target` corrected above to avoid re-triggering the same false-positive check at the next groom run.
 
@@ -1862,9 +1862,9 @@ v6.2 AI chat advisor and daily briefing are now live. §13 requires AI advisory 
 **Owner:** AI Compliance & Governance Officer; Infrastructure & Operations Owner
 **Source:** IDEA-ai-compliance-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
 **Effort:** S (~0.5 day)
-**Provisional-Target:** Gate-conditional — schedule within 90 days of v6.2 ship, due 2026-09-24, not yet due
+**Provisional-Target:** TBD
 
-**Gate criteria:** Schedule within 90 days of v6.2 ship (by 2026-09-24).
+**Gate cleared (2026-10-05, ST-19):** the 90-day post-v6.2 date (2026-09-24) has passed and the 90-day AI feature usage review is filed (`docs/ops/ai_feature_usage_review_2026-09-24.md`). Still to be done and ready to schedule. The review found `database.create_claude_audit_entry()` swallows insert errors (`except Exception: pass`), so a failed log write is silent — this audit should cover that. Product Owner authorised.
 
 > **Product Owner note (2026-08-21, post-ship closure `2026-08-17__release-v8.9` STEP 12 review):** This item was flagged by `groom backlog`'s Deferral Age Validation as a stale-target/kill candidate because its `Provisional-Target` field still read the leftover placeholder `v6.3` (long since shipped). That flag was a false positive — the item's own `Gate criteria` field is the actual operative schedule, and 2026-09-24 has not yet arrived. Not neglected, not a kill candidate. `Provisional-Target` corrected above to avoid re-triggering the same false-positive check at the next groom run.
 
@@ -1892,7 +1892,7 @@ v6.2 AI features (briefing, chat) should be logging all AI responses with model 
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** 2026-09-24 (90 days post-v6.2 ship). Assess: adoption rate of AI briefing and chat features, cost per use (Anthropic API cost / sessions), and whether usage data justifies continued investment.
+**Resolved (2026-10-05, ST-19):** this assessment is `docs/ops/ai_feature_usage_review_2026-09-24.md` — adoption rate (31 calls, 5 of 15 weeks active, 3 of 6 AI features never used), cost per use ($0.0017–$0.0080; ≈$0.17 total), continue/modify recommendation, and the Product Owner decision (continue building; gate removed). Archive at the next `groom backlog`.
 
 **Problem**
 v6.2 AI features have a per-use cost (Anthropic API call for each briefing and chat interaction). Without a formal ROI assessment at 3 months, there is no trigger to reconsider the feature investment if adoption is low or costs are disproportionate. The assessment is a formal governance checkpoint, not a presumption of cancellation.
@@ -2315,16 +2315,17 @@ No evidence yet of a dangling (unlinked/broken) DoQ sign-off claim, but none has
 **Source:** IDEA-finops-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** Bundle with the existing scheduled 90-day AI cost review (due 2026-09-24) — no standalone signal yet indicates the current dyno tier is mismatched.
+**Gate criteria:** A Render resource alert (memory or CPU) on the backend service, or a sustained backend latency breach.
+**Gate change (ST-19, Product Owner authorised):** unbundled on 2026-10-05 from the 90-day AI usage review (`docs/ops/ai_feature_usage_review_2026-09-24.md`), which found AI load negligible (31 calls in 102 days) and so gives no dyno-sizing signal.
 
 **Problem**
 The 2 AI endpoints are only 8 days live as of this idea's submission; no cost/performance signal yet indicates a right-sizing need.
 
 **Scope**
-- Review dyno tier alongside the 2026-09-24 AI cost review
+- Review dyno tier when the gate fires (a Render resource alert or latency breach), using Render metrics rather than AI usage
 
 **Acceptance Criteria**
-- Review conducted at or after the 2026-09-24 gate date
+- Review conducted after the gate fires, citing the triggering alert or breach
 
 ---
 
@@ -2475,7 +2476,7 @@ No signal currently indicates Facilitator workload is a bottleneck; formal track
 **Source:** IDEA-financial-reporting-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** Same AI-adoption gate as BLG-FEAT-59 — verification due at the 2026-09-24 AI feature usage review (BLG-GOV-74 cadence). A lapsed date alone (the prior ~2026-07-25 estimate) is not a clearance; track disposition on BLG-FEAT-59.
+**Gate cleared (2026-10-05, ST-19):** the 90-day AI feature usage review was conducted (`docs/ops/ai_feature_usage_review_2026-09-24.md`: 31 AI calls and ≈$0.17 in 102 days, 74% of them in launch week). Product Owner decision 2026-10-05: gate removed — build regardless of current low engagement, since more features may help increase it. Follows BLG-FEAT-59.
 
 **Problem**
 This cost estimate directly feeds BLG-FEAT-59, which is itself gated on the AI-adoption window; estimating cost ahead of that gate is premature.
@@ -4448,6 +4449,279 @@ ST-35 (BLG-FE-192) made the `RecentTradesWidget` icon badge's colour neutral for
 
 ---
 
+### BLG-GOV-361 — BLG-SPEC-65 still carries a stale sixth copy of the AI adoption window gate text
+**Priority:** P4 (Backlog)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Data Model & Domain Schema Owner
+**Source:** ST-24 (BLG-GOV-350), EPIC-04, cycle `2026-09-30__release-v9.9` — out-of-scope finding in the Head of Specs Team write-scope ruling for ESC-EXEC-20261001-01 — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-24 replaced the restated AI adoption window gate text on its 5 named items (BLG-FEAT-59/60/63, BLG-FE-84, BLG-OPS-88) with a pointer to the new `## Shared Gate References` → "90-Day AI Feature Usage Review Gate" statement at the top of this file. BLG-SPEC-65 (AI interaction history data model) has a sixth variant of the same clause — "…AND AI adoption window clears ~2026-07-25" — that still cites the superseded 2026-07-25 date. It was not one of BLG-GOV-350's five items, so ST-24's ruling did not authorise editing it.
+
+**Scope**
+- Point BLG-SPEC-65's adoption-window half at the canonical "90-Day AI Feature Usage Review Gate" statement (keeping a `due 2026-09-24` token so `scan_backlog_gate_conditions.py` still detects it), leaving its §13 / BLG-FEAT-55 half unchanged — or have BLG-GOV-356 (the review itself) disposition it directly
+
+**Update (2026-10-05, ST-19):** the 90-day review is now filed (`docs/ops/ai_feature_usage_review_2026-09-24.md`) and the `## Shared Gate References` section has been removed, since no item cites it any more. BLG-SPEC-65's adoption-window half is therefore met; the fix is to drop that half from its gate line (keeping the §13 / BLG-FEAT-55 half), not to point it at the removed section.
+
+**Acceptance Criteria**
+- No backlog item restates the AI adoption window gate or cites the 2026-07-25 date; BLG-SPEC-65 references the canonical statement or carries an explicit disposition
+
+---
+
+### BLG-GOV-362 — Make "the sealed plan names this file" a standing Sprint Execution write-scope rule for claude/roadmap/* and existing backlog item fields
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; Product Owner
+**Source:** Head of Specs Team write-scope ruling for ESC-EXEC-20261001-01/-04/-05 (ST-24, ST-26, ST-31), cycle `2026-09-30__release-v9.9` — recommendation section — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Three escalations this cycle (ESC-EXEC-20261001-01/-04/-05) had the same root cause: a sealed AC named a `claude/roadmap/*` file or an existing `backlog.md` item's field, but `execution_prompt.md` §7 only carves out `workforce_capacity.md` (BLG-GOV-337), so each needed a one-off Head of Specs Team ruling. The same gap was hit at v9.8 (ESC-EXEC-20260930-02), v9.7 (ST-23's deferred SI-02 cross-reference) and v8.5 (ST-22 created `product_value_ratio_history.md` out of scope, unflagged). Sprint Planning also classified ST-24 and ST-31 `autonomous` despite both needing out-of-scope writes.
+
+**Scope**
+- Consider widening BLG-GOV-337's exception in `execution_prompt.md` §7 to a general "plan-authorised named-file" rule: Sprint Execution may write a `claude/roadmap/*` file, or edit an existing `backlog.md` item's non-priority fields, when the sealed AC names that exact file and field — keeping the existing prioritisation/scope/capacity exclusions
+- Consider a Sprint Planning check that classifies any AC naming a `claude/roadmap/*` path or existing-item `backlog.md` content as `delegated_decision` with a RISK entry at seal, rather than `autonomous`
+- Apply the CLAUDE.md §6 checklist to each prompt changed
+
+**Acceptance Criteria**
+- A ruling is recorded on both proposals; any adopted change ships with the full CLAUDE.md §6 checklist
+
+---
+
+### BLG-BE-136 — Gap risk flag: disposition the standalone weekend-hold trigger (§13.3) and align trigger-timing label/spec with code
+**Priority:** P2 (Medium)
+**Type:** Backend + Frontend / §13 Remediation
+**Owner:** Head of Engineering; Head of UX & Design; Strategy Rules & System Intent Owner (disposition sign-off)
+**Source:** §13 retroactive review of the Gap Risk Flag (ST-20, EPIC-04, v9.9; `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`, Binding Conditions 6 and 8, Remediation Item 1); escalation ESC-EXEC-20261001-03
+**Effort:** S (~1–2 days)
+**Provisional-Target:** No later than the first §13.5 semi-annual re-attestation (2027-02-06) — hard deadline per Binding Condition 6
+
+**Problem**
+`backend/services/gap_risk_service.py:117-119` adds `"weekend_hold"` to every open position's flag whenever the server date is a Friday (`_is_weekend_hold`, `:40-43`). That flags the whole book identically every week, regardless of ticker or event. The §13 review found this standalone trigger falls within `strategy_rules.md` §13.3's "noise without enabling a decision" rationale, and it is the only binding condition the shipped code does not meet. Separately, the reason label "Weekend hold (flagged at Friday close)" (`src/pages/Positions.js:466`, `src/components/positions/PositionCard.js:19`), `docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md:76` and `docs/specs/frontend/pages/positions.md:484` all describe the flag as raised "at Friday close", but the code flags it all day Friday (server date). The earnings window is also measured in calendar days (`_EARNINGS_NEXT_SESSION_WINDOW_DAYS = 1`, `:37`, `:114`), so viewed on a Friday it does not flag Monday-morning earnings. Today the weekend trigger covers that case incidentally.
+
+**Scope**
+- Default (recommended): remove the standalone `weekend_hold` trigger. Make the earnings trigger aware of trading sessions ("earnings before the position's next trading session", per the original AC-01), so that a Friday view flags Monday earnings. When an earnings flag spans a weekend, the tooltip may still show the historical *weekend* gap statistic as context (Binding Condition 4).
+- Alternative (only with sign-off): the Product Owner and the Strategy Rules & System Intent Owner record a position-specific justification for keeping a weekend trigger, and §13.3's clarification is extended to cover it. Without that, the default applies.
+- Whichever option is chosen, align the reason label, `ux_spec.md` §5 and `positions.md` §Gap Risk Badge with the actual trigger timing (no "at Friday close" wording unless the code implements it).
+- Add a citation of the §13 review record to `gap_risk_service.py`'s module docstring (Binding Condition 8; currently `:11-12` cites only "§13, AC-04").
+- Update `tests/test_gap_risk.py` (e.g. `test_flagged_for_weekend_hold_on_friday`, `:79-88`, and `test_both_reasons_stack_when_earnings_and_weekend_coincide`, `:91`) and `tests/e2e/gap-risk-flag.spec.js` to match. Update `docs/specs/api_contracts/position_endpoints.md` and `docs/reference/openapi.yaml` if the `reasons` enum changes (CLAUDE.md §2 same-commit rule).
+
+**Acceptance Criteria**
+- No flag trigger in `gap_risk_service.py` fires identically for all open positions independent of ticker or event (Binding Condition 6), or a signed alternative disposition is recorded in the §13 review record's Known Deviations / disposition section
+- A position viewed on a Friday with earnings on the following Monday is flagged with reason `earnings`
+- Label, UX spec, frontend spec and code agree on trigger timing
+- Module docstring cites the §13 review record
+- Unit and Playwright tests updated and passing; contract/OpenAPI updated if the `reasons` enum changes
+- Strategy Rules & System Intent Owner sign-off recorded confirming Binding Conditions 1–8 still hold after the change
+
+---
+
+### BLG-SPEC-179 — positions.md Gap Risk Badge names the wrong data source (GET /positions field vs dedicated gap-risk endpoint)
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Frontend Spec Drift
+**Owner:** Head of Specs Team; Frontend Specification Owner
+**Source:** §13 retroactive review of the Gap Risk Flag (ST-20, EPIC-04, v9.9; `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`, Remediation Item 2)
+**Effort:** XS (<0.5 day)
+**Provisional-Target:** TBD (may be folded into BLG-BE-136 if that lands first)
+
+**Problem**
+`docs/specs/frontend/pages/positions.md:482` states the Gap Risk Badge's data source is "`gap_risk` object from `GET /positions` (new field…)". The shipped implementation uses a dedicated, lazily fetched `GET /positions/{position_id}/gap-risk` endpoint (`backend/main.py:1759`; `src/hooks/useGapRisk.js:23`). This alternative was pre-authorised and is already documented in `docs/specs/api_contracts/position_endpoints.md` (2.4.0 changelog row, `:37`; implementation note in the endpoint section). The frontend spec was never updated to match.
+
+**Scope**
+- Update `positions.md` §Gap Risk Badge's Data source line to name `GET /positions/{position_id}/gap-risk` (lazily fetched per position, independent per-cell loading state), with a version bump and changelog row per the document lifecycle guide
+
+**Acceptance Criteria**
+- `positions.md` §Gap Risk Badge names the shipped endpoint; no remaining reference claims a `gap_risk` field on `GET /positions`
+
+---
+
+### BLG-GOV-359 — §13 sign-off ACs must cite every §13 clause that names the feature's subject matter
+**Priority:** P3 (Low)
+**Type:** Governance Process / §13 Gate Quality
+**Owner:** Head of Specs Team; Strategy Rules & System Intent Owner
+**Source:** §13 retroactive review of the Gap Risk Flag (ST-20, EPIC-04, v9.9; `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`, Critical Boundary Question 4 / Remediation Item 3)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+BLG-FEAT-65's v6.9 AC-04 was framed only as "no prediction of gap direction or magnitude" (`claude/cycles/2026-07-10__release-v6.9/stage4_backlog_slice.md:75`), a §13.2 test. So the agent-mediated sign-off (`qa_evidence_EPIC-02.md:33-39`) answered only that question. Nobody asked about `strategy_rules.md` §13.3, which names gap risk monitoring explicitly as excluded, until an unrelated idea-intake window noticed it roughly 12 weeks later (`claude/ideas/window_summary_IW-20260930-01.md:101`). The cycle's "expected fast pass given SI-01 precedent" framing (`cycle_summary.md:32` of that cycle) likely reduced scrutiny.
+
+**Scope**
+- Add a check to the governing prompt(s) that author §13 sign-off ACs (release planning and/or sprint planning; owning prompt to be confirmed by the Head of Specs Team). When drafting a §13 AC, search `strategy_rules.md` §13 for the feature's subject terms, and have the AC cite every §13 clause that names that subject explicitly (not only §13.2's generic prediction test)
+- Apply the CLAUDE.md §6 governance-file edit checklist to whichever prompt is changed
+
+**Acceptance Criteria**
+- The governing prompt requires §13 ACs to cite each §13 clause that names the feature's subject, with a worked example referencing this gap-risk case
+- CLAUDE.md §6 checklist complete (version bump, OPERATIONAL_GUIDE §14 + phase header, prompt_change_log row)
+
+---
+
+### BLG-GOV-360 — Apply the §13.3 gap-risk clarification and §13.5 roster row for the Gap Risk Flag to strategy_rules.md
+**Priority:** P2 (Medium)
+**Type:** Governance Process / Strategy Boundary
+**Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
+**Source:** §13 retroactive review of the Gap Risk Flag (ST-20, EPIC-04, v9.9; `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`, Binding Condition 9); escalation ESC-EXEC-20261001-03 — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** Next routine or session with `claude/strategy/` write scope (e.g. post-ship closure `2026-09-30__release-v9.9`); before the first §13.5 re-attestation (2027-02-06) at the latest
+
+**Resolved (2026-10-05, ST-20):** applied to `strategy_rules.md` v1.14 in ST-20's own commit on the user's explicit instruction, using the wording as amended by an independent second-pass Strategy Rules & System Intent Owner review (carve-out limited to canonically recognised events — today only earnings; weekend-hold trigger recorded in §13.3 as a time-boxed deviation, BLG-BE-136; re-attestation step added to the roster row). The original Provisional-Target (post-ship closure) was not a valid route — `post_ship_closure.md` §5 forbids `strategy_rules.md` edits. Archive at the next `groom backlog`.
+
+**Problem**
+The ST-20 determination (CONDITIONAL) finds §13.3's literal text ("Exposing a gap risk metric would increase noise…") contradicts the shipped, reviewed earnings-triggered flag on its face, and the feature is missing from §13.5's re-attestation roster. Sprint Execution may not write `claude/strategy/strategy_rules.md` (`execution_prompt.md` §7), so the decision record was filed alone (sufficient for ST-20's AC) and the canonical-text edits were left as exact proposed wording in the record's appendix.
+
+**Scope**
+- Apply the §13.3 clarification and the §13.5 roster row verbatim from the appendix "Proposed strategy_rules.md Wording" of `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`
+- Bump `strategy_rules.md` (v1.13→v1.14 if still current, else next free version — CLAUDE.md §8 step 2a), add its Change Log row and `**Last Updated:**` entry; documentation-only per §12.3/§16; re-run the §15 version cross-reference grep
+
+**Acceptance Criteria**
+- §13.3 distinguishes standing/real-time gap risk monitoring (excluded) from a display-only, on-request, position-specific dated-event flag, and cites the decision record
+- §13.5's roster lists the Gap Risk Flag as CONDITIONAL with the 2027-02-06 weekend-hold disposition deadline
+
+---
+
+### BLG-QA-212 — Add unit tests for scripts/compute_role_share_history.py now that roadmap §7.2 depends on it
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner; PMO Lead
+**Source:** PR #1891 agent-mediated Director of Quality review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`roadmap_prompt.md` v9.30 §7.2 step 1 now requires running `scripts/compute_role_share_history.py` to append each shipped cycle's row to `claude/roadmap/role_share_history.md`. The script has no tests (`git grep compute_role_share_history -- tests` returns nothing). It silently drops any ST block that has no `**Owner:**` line, which understates the total. It also matches only `#### ST-` headings. Today its totals equal the ST-heading counts for every cycle from v7.6 to v9.9, but nothing would catch a format drift in a future `sprint_backlog.md`. The same gap exists for STEP 7.1 in `compute_rebalance_diagnostics.py`: only STEP 2.4 is pinned against the real changelog, and a 7.1 pin would have caught the 84.0%/84.8% misstatement (finding F-1).
+
+**Scope**
+- Add `tests/test_compute_role_share_history.py` covering:
+  - a fixture with simple and compound Owner strings
+  - a story with no Owner line, which should produce a warning or non-zero exit rather than a silent drop
+  - the `--json` output shape
+  - a regression pin against `claude/cycles/2026-09-28__release-v9.8/sprint_backlog.md` (39 stories, Head of Specs Team 12)
+- Make the script report stories it found but could not attribute, rather than dropping them silently
+- Add a STEP 7.1 real-changelog pin to `tests/test_compute_rebalance_diagnostics.py` (v9.6–v9.8 window → 84/99 = 84.8%)
+
+**Acceptance Criteria**
+- New test file passes in CI Phase B and covers compound owners, a missing Owner line and the v9.8 regression pin
+- The script's total equals the number of ST headings, or it reports the difference
+- The STEP 7.1 real-changelog figure is pinned in a test
+
+---
+
+### BLG-GOV-365 — Gap Risk Flag §13.3 carve-out: rule on UK-ticker earnings flags and day-0 pre-open earnings timing
+**Priority:** P2 (Medium)
+**Type:** Governance Process / Strategy Boundary
+**Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
+**Source:** PR #1891 agent-mediated Director of Quality review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** S (~0.5 day ruling, plus any scope folded into BLG-BE-136)
+**Provisional-Target:** TBD (before the first §13.5 re-attestation, 2027-02-06)
+
+**Problem**
+`strategy_rules.md` v1.14 §13.3 (`:504`) permits a display-only flag only for an event "already recognised as a gap-risk event by a canonical rule". It names a scheduled earnings date per §4.2.3 as the only such event. Two shipped behaviours fall outside that text, and the retroactive §13 review did not examine either:
+1. **UK tickers.** §4.2.3 is US-only (`strategy_rules.md:273`), and pre-entry validation skips non-US tickers (`pre_entry_validation.py:168-174`). `gap_risk_service.get_gap_risk` applies the earnings trigger to every market (`:110-115`, with UK mapped to `.L`).
+2. **Day-0 timing.** The trigger fires at `days_until_earnings == 0`. For a before-market-open release the gap has already happened, so the flag reacts after the gap, which §13.3 `:502` excludes. The code cannot tell before-open from after-close releases (`gap_risk_service.py:31-37`). The decision record's "0–1 calendar days before" (`:129`) does not hold in that case.
+
+**Scope**
+- SRSIO ruling on each point, recorded as an addendum to `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`. For UK, either restrict the trigger to US or extend the canonical recognition with its own justification. For day 0, either drop day 0, or accept it with a stated rationale.
+- Fold any resulting code change into BLG-BE-136's session-aware rework, with the CLAUDE.md §2 contract and OpenAPI rules applying if the response changes
+- If §13.3 or §4.2.3 wording changes, bump `strategy_rules.md` with its Change Log row and the §15 grep
+
+**Acceptance Criteria**
+- A dated ruling on UK tickers and on day-0 timing is recorded in the decision record
+- The code, `strategy_rules.md` §13.3/§4.2.3 and the decision record agree on which markets and which day offsets the earnings trigger covers
+- Tests in `tests/test_gap_risk.py` pin the ruled behaviour, covering a UK position and the day-0 case
+
+---
+
+### BLG-BE-137 — strategy_version_registry.py stuck at v1.4 while strategy_rules.md is at v1.14
+**Priority:** P3 (Low)
+**Type:** Backend / Spec–Code Drift
+**Owner:** Strategy Rules & System Intent Owner; Backend Engineering Patterns Owner
+**Source:** PR #1891 agent-mediated Director of Quality review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`backend/strategy_version_registry.py`'s docstring (`:19-21`) and `docs/specs/data_model.md:1689` (DS-11) both say `STRATEGY_VERSION_REGISTRY` is updated "in the same commit as any new `strategy_rules.md` Change Log row". The registry ends at 1.4 (`:35-41`), but `strategy_rules.md` has Change Log rows from 1.5 to 1.14. Ten versions have gone unregistered since v8.1, including this PR's v1.14. As a result, `get_current_strategy_version()` stamps `strategy_version_at_entry = "1.4"` on new trade plans and positions, and the SI-04 comparison view attributes every trade since 2026-05-20 to 1.4. That may be the intended behaviour, since 1.5–1.14 are documentation-only, but nothing records it as a rule. Either the obligation is being silently breached, or there is an undocumented exemption.
+
+**Scope**
+- SRSIO ruling: either register only versions that change behaviour or parameters, or register all versions
+- If behaviour-only: amend the registry docstring, DS-11 text and `strategy_version_comparison_contract.md` Implementation Note 2 to state the exemption, and add a Change Log tag or column in `strategy_rules.md` that marks each version as behavioural or documentation-only
+- If all versions: add 1.5–1.14 with effective dates, and assess the effect on `strategy_version_at_entry` and comparison-view attribution
+- Add a test that checks the registry against `strategy_rules.md`'s Change Log under whichever rule is chosen, replacing the hardcoded `len == 5` in `tests/test_strategy_version_registry.py:13`
+
+**Acceptance Criteria**
+- A ruling is recorded, and the registry, docstring, DS-11 and contract all agree with it
+- A test fails if a qualifying `strategy_rules.md` Change Log row is added without a matching registry entry
+
+---
+
+### BLG-GOV-366 — Track the next AI feature usage review (2027-01-03) now that every AI gate the trigger relied on is cleared
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** PR #1891 agent-mediated Product Owner review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`docs/ops/ai_feature_usage_review_2026-09-24.md:116-118` sets the next review for 2027-01-03, to repeat the same three production queries and test the Product Owner's hypothesis that building more AI features raises engagement (baseline: 31 calls / 102 days). Nothing schedules it. BLG-GOV-74 (the quarterly cadence) is archived. Post-ship STEP 12.6 (`claude/system/post_ship_closure.md:722-736`) fires only on `DATE-LAPSED` backlog gate text that matches AI-review keywords, and ST-19 removed that gate text from every item. The review's recommendation to sequence BLG-FEAT-60 (engagement metric) early is likewise not recorded anywhere release planning will read it as a constraint. Without a tracked trigger, the PO's build-anyway bet will go unmeasured.
+
+**Scope**
+- File a dated, gate-scanner-detectable item for the 2027-01-03 review, in the form STEP 12.6 recognises (e.g. a `**Gate criteria:**` line containing "AI feature usage review … due 2027-01-03"), so the existing trigger mechanism fires without a prompt change
+- Record on BLG-FEAT-60 (or in the next release-planning input) that it should ship before or alongside the first newly built AI feature, so the engagement effect is measurable
+
+**Acceptance Criteria**
+- `python3 scripts/scan_backlog_gate_conditions.py --as-of 2027-01-04` reports the 2027-01-03 AI usage review as lapsed and matches STEP 12.6's keyword filter
+- BLG-FEAT-60 carries an explicit sequencing note referencing the 2026-10-05 review baseline
+
+---
+
+### BLG-GOV-367 — Skill-Silo rolling-3-cycle series mixes a plain per-cycle average with §7.1's pooled formula
+**Priority:** P3 (Low)
+**Type:** Governance Process / Metrics Integrity
+**Owner:** Metrics Definitions & Analytics Owner; Head of Specs Team
+**Source:** PR #1891 agent-mediated Product Owner review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`roadmap_prompt.md:563` defines Governance story % as a pooled ratio: (G+D+P) ÷ total stories over the last 3 cycles. The recorded series in `claude/roadmap/decision_log.md` is labelled "rolling-3-cycle avg" and matches a plain mean of the per-cycle percentages. For example, 85.7% = mean(100.0, 75.0, 82.1). ST-25's `scripts/compute_rebalance_diagnostics.py` computes the pooled form (84.8% for v9.6–v9.8, against the recorded 83.7%). Once rebalances adopt the script, the "improving/worsening" comparison against prior readings mixes the two methods. That comparison drives §7.1's mandatory pull-forward after 3 consecutive worsening readings, so a change of method could flip a trend reading that the data does not support.
+
+**Scope**
+- Confirm which method §7.1 intends (pooled per its formula, or plain mean per the recorded series) and state it explicitly in §7.1
+- Restate the recent readings (at least the last 4) under the chosen method, or record an explicit method-break note the next rebalance must honour when judging trend direction
+- Align `compute_rebalance_diagnostics.py`'s output (or add a flag) with the chosen method; apply the CLAUDE.md §6 checklist if `roadmap_prompt.md` changes
+
+**Acceptance Criteria**
+- §7.1 names one aggregation method unambiguously
+- The next rebalance's trend comparison uses readings computed by that single method, or cites the recorded method-break note
+
+---
+
+### BLG-SPEC-182 — Refresh the Gap Risk Flag §13 decision record to match strategy_rules.md v1.14 as applied
+**Priority:** P3 (Low)
+**Type:** Spec Debt / §13 Record Integrity
+**Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
+**Source:** PR #1891 agent-mediated Product Owner review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD (before the first §13.5 re-attestation, 2027-02-06)
+
+**Problem**
+`docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` was updated only in its appendix after the v1.14 wording was applied. The body's write-scope note (`:11`) and Binding Condition 9 (`:175`) still state that Sprint Execution cannot write `strategy_rules.md` and that registration is pending. Remediation Item 4 (`:188`) still reads as open. Binding Condition 6 (`:172`) permits any "known, dated event specific to the position's ticker", which is wider than the second-pass-amended §13.3 (`strategy_rules.md:504`: only events already recognised as gap-risk events by a canonical rule — today only earnings). The 2027-02-06 re-attestation will read this record's binding conditions as the operative terms.
+
+**Scope**
+- Update the write-scope note, Binding Condition 9 and Remediation Item 4 to record that registration was completed in `strategy_rules.md` v1.14 (`a5d4dbd2`, BLG-GOV-360 resolved)
+- Narrow Binding Condition 6's wording to match §13.3 as applied, or add an explicit note that §13.3 v1.14 supersedes it where they differ
+- Bump the record's `**Last Updated:**` per the 3-entry rule
+
+**Acceptance Criteria**
+- No statement in the record's body contradicts `strategy_rules.md` v1.14 §13.3/§13.5 or describes BLG-GOV-360 as pending
+- Binding Condition 6's permitted-trigger scope equals §13.3's carve-out
+
+---
+
 ### BLG-GOV-363 — Script the execution_state.json read-back check introduced by execution_prompt.md v3.81 §9.2
 **Priority:** P3 (Low)
 **Type:** Governance Tooling
@@ -4486,6 +4760,52 @@ ST-35 (BLG-FE-192) made the `RecentTradesWidget` icon badge's colour neutral for
 
 **Acceptance Criteria**
 - A recorded ruling; any adopted change ships with the full CLAUDE.md §6 checklist
+
+---
+
+## Release Slice — v9.9 (ephemeral — remove at next `groom backlog` per Placement Rule)
+
+<!-- release-plan-marker: RP:v9.9:2026-09-30__release-v9.9 -->
+
+35 items selected into `2026-09-30__release-v9.9` scope (27.85 estimated days, full capacity). Full acceptance criteria: `claude/cycles/2026-09-30__release-v9.9/stage4_backlog_slice.md`. Selection method: 0 ready P1 items; all 4 ready P2 items seated first per §1.4c, then category-balanced round-robin oldest-first for the remaining P3/P4, from a 53-item / 36.20-day ready pool. Excluded as gate-blocked: `BLG-FEAT-73`, `BLG-FEAT-76`, `BLG-FE-193` (gated on `BLG-BE-135` shipping).
+
+| ST-ID | Item | EPIC |
+|-------|------|------|
+| ST-01 | BLG-BE-135 | EPIC-01 |
+| ST-02 | BLG-BE-131 | EPIC-01 |
+| ST-03 | BLG-BE-132 | EPIC-01 |
+| ST-04 | BLG-BE-133 | EPIC-01 |
+| ST-05 | BLG-BE-134 | EPIC-01 |
+| ST-06 | BLG-SEC-40 | EPIC-02 |
+| ST-07 | BLG-OPS-172 | EPIC-02 |
+| ST-08 | BLG-OPS-173 | EPIC-02 |
+| ST-09 | BLG-OPS-174 | EPIC-02 |
+| ST-10 | BLG-QA-203 | EPIC-03 |
+| ST-11 | BLG-QA-185 | EPIC-03 |
+| ST-12 | BLG-QA-186 | EPIC-03 |
+| ST-13 | BLG-QA-189 | EPIC-03 |
+| ST-14 | BLG-QA-190 | EPIC-03 |
+| ST-15 | BLG-QA-191 | EPIC-03 |
+| ST-16 | BLG-QA-192 | EPIC-03 |
+| ST-17 | BLG-QA-193 | EPIC-03 |
+| ST-18 | BLG-QA-194 | EPIC-03 |
+| ST-19 | BLG-GOV-356 | EPIC-04 |
+| ST-20 | BLG-GOV-358 | EPIC-04 |
+| ST-21 | BLG-GOV-343 | EPIC-04 |
+| ST-22 | BLG-GOV-344 | EPIC-04 |
+| ST-23 | BLG-GOV-347 | EPIC-04 |
+| ST-24 | BLG-GOV-350 | EPIC-04 |
+| ST-25 | BLG-GOV-352 | EPIC-04 |
+| ST-26 | BLG-GOV-353 | EPIC-04 |
+| ST-27 | BLG-GOV-354 | EPIC-04 |
+| ST-28 | BLG-SPEC-157 | EPIC-05 |
+| ST-29 | BLG-SPEC-164 | EPIC-05 |
+| ST-30 | BLG-SPEC-165 | EPIC-05 |
+| ST-31 | BLG-SPEC-166 | EPIC-05 |
+| ST-32 | BLG-SPEC-167 | EPIC-05 |
+| ST-33 | BLG-SPEC-168 | EPIC-05 |
+| ST-34 | BLG-SPEC-169 | EPIC-05 |
+| ST-35 | BLG-FE-192 | EPIC-06 |
 
 ---
 

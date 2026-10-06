@@ -1,0 +1,78 @@
+Owner: Director of Quality
+Class: Planning Document (Class 4)
+Status: Active
+Last Updated: 2026-10-05
+
+# QA Evidence Log — EPIC-04
+
+**EPIC:** EPIC-04 — Governance Process & Strategy Boundary
+**Cycle:** 2026-09-30__release-v9.9
+**Sprint goal:** Ship a single canonical ATR/stop-recalculation implementation with timestamp visibility on `GET /positions` (`BLG-BE-135`), while clearing the queued backend, security, QA, governance, spec, and frontend debt items that make up the rest of v9.9's full-capacity scope.
+**Test scenarios used:** `tests/test_state_execution_path_consistency.py`, `tests/test_scan_backlog_gate_conditions_date_disambiguation.py`, `tests/test_compute_rebalance_diagnostics.py`
+
+## Process Deviation — Merged to main via EPIC-02's PR without its own merge gate
+
+This EPIC's story commits were never merged through an EPIC-04 PR. They were made on a single linear branch history that EPIC-02's branch was later cut on top of, so PR #1886 (`[EPIC-02] Operational Reliability & Security Hardening`, merged as `362ff619`) carried them into `main` together with EPIC-05's commits. PR #1886's body and `qa_evidence_EPIC-02.md` named only ST-06–ST-09, so none of this EPIC's work received a Director of Quality review or Product Owner acceptance before reaching `main`.
+
+- **Commits affected (this EPIC):** `018f5c1c` (ST-27), `d260e98b` (ST-23), `002a2dc5`/`1ef2ae8d` (ST-24 escalation), `94de0a0b` (ST-21), `ae17d5de` (ST-22), `57de1411` (ST-25), `53842d71` (ST-19/ST-20/ST-26 escalations), plus their `execution_state.json` record commits.
+- **Rule breached:** CLAUDE.md §2 — story commits must land on the branch matching their EPIC prefix; never merge a PR without QA sign-off and Product Owner acceptance (Section 13 / STEP 4 merge gate).
+- **Disposition (user direction, 2026-10-05):** retroactive merge gate. The code stays on `main`; this log is written after the fact, and the sign-off block below is left blank for the Director of Quality. Product Owner acceptance must also be recorded before this EPIC is treated as `merged`. Also recorded in `qa_evidence_EPIC-02.md` and `qa_evidence_EPIC-05.md`.
+- **Retroactive re-verification (2026-10-05):** all three test files above re-run on `main` at `6accd183` — passing. `roadmap_prompt.md` core re-measured at ~16k tokens (63,937 chars), within ST-21's ≤25,000-token AC.
+
+| ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
+|---------|----------------|----------------|---------------------|--------|------------|
+| ST-19 | `docs/ops/ai_feature_usage_review_2026-09-24.md` | 90-day AI feature usage review, from production data supplied in-session by the Product Owner (3 read-only queries): 31 AI calls and ≈$0.17 over 102 days, 74% in launch week; briefing unused since 2026-06-30, chat since 2026-08-17; 3 of 6 AI features never used. Weekly and per-feature results reconcile (31 calls both ways). Product Owner decision recorded: clear the gate and build the AI items anyway. All 8 gated items dispositioned in `backlog.md` under PO authorisation (4 features + GOV-140/141 ungated; OPS-88 re-gated on a Render alert; GOV-142 resolved); the now-uncited shared gate statement removed. | Covers AC-01 (dated review artefact: adoption, cost per use, continued-investment judgement), AC-02 (explicit disposition for all 8 items, on the items and in the review) | Pass | None (ESC-EXEC-20261001-02 Resolved) |
+| ST-20 | `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`, `claude/strategy/strategy_rules.md#13.3`, `#13.5` | Retroactive §13 review of the Gap Risk Flag (agent-mediated Strategy Rules & System Intent Owner + Head of Specs Team): CONDITIONAL — earnings trigger outside §13.3's exclusion; standalone weekend-hold trigger a genuine gap (remediation BLG-BE-136, due 2027-02-06); 9 binding conditions; remediation items BLG-BE-136, BLG-SPEC-179, BLG-GOV-359 filed. `strategy_rules.md` v1.13→v1.14 (§13.3 clarification, §13.5 roster row) applied on the user's explicit instruction, with wording amended by an independent second-pass review (BLG-GOV-360 resolved); §15 version cross-reference grep: 0 actionable. | Covers AC-01 (dated determination recorded — decision record plus the §13.3/§13.5 wording update), AC-02 (CONDITIONAL → binding conditions and remediation items filed) | Pass | None (ESC-EXEC-20261001-03 Resolved) |
+| ST-21 | `claude/system/roadmap_prompt.md`, `claude/system/roadmap_prompt_appendix.md` | Split `roadmap_prompt.md` into a core plus `roadmap_prompt_appendix.md`; CLAUDE.md §6 checklist applied in the same commit (version bump, `OPERATIONAL_GUIDE.md` §14 + source-prompt header, `prompt_change_log.md`, changelog). | Covers AC-01 (core ≤25,000 tokens), AC-02 (no procedural step lost, diff-verified), AC-03 (CLAUDE.md §6 checklist complete) | Pass | None |
+| ST-22 | `docs/governance/strategy_parameter_change_ledger.md`, `claude/strategy/strategy_rules.md#12.3` | New parameter-change ledger backfilled from `strategy_rules.md`'s change log (v1.0–v1.12; none of §11's 4 parameters has changed since v1.0). §12.3 now cross-references it (`strategy_rules.md` v1.12→v1.13), with an agent-mediated Strategy Rules & System Intent Owner sign-off (§5.3) before the write. | Covers AC-01 (ledger backfilled), AC-02 (§12.3 references it) | Pass | None |
+| ST-23 | `scripts/scan_backlog_gate_conditions.py` | Date-disambiguation fix: a `gate_condition` with an early future date and a later past date is now flagged correctly rather than resolved wrong. | Covers AC-01 (mixed-date case flagged), AC-02 (test file passes — `tests/test_scan_backlog_gate_conditions_date_disambiguation.py`) | Pass | None |
+| ST-24 | `claude/backlog/backlog.md` | Canonical "90-Day AI Feature Usage Review Gate" statement created and the 5 items' Gate criteria lines pointed at it (Head of Specs Team write-scope ruling ESC-EXEC-20261001-01); gate scanner verified (130 gated / 14 lapsed unchanged; 4 items' lapse date corrected to 2026-09-24). Later the same day ST-19 dispositioned all citing items, so the statement was removed per its own text; ST-24's AC was met at `64e7525c`. Filed BLG-GOV-361, BLG-GOV-362. | Covers AC-01 (single canonical statement existed), AC-02 (all 5 items referenced it) — subsequently superseded by ST-19's dispositions, as the statement itself prescribed | Pass with notes — canonical statement intentionally retired after ST-19 dispositioned every citing item | None (ESC-EXEC-20261001-01 Resolved) |
+| ST-25 | `scripts/compute_rebalance_diagnostics.py`, `claude/system/roadmap_prompt.md#STEP 2.4`, `#7.1` | New script computes the STEP 2.4/7.1 tallies; `roadmap_prompt.md` cites it as an optional acceleration. STEP 2.4 reproduced exactly (U=16/G=41/D=109/P=4 of 170 → 0.094). STEP 7.1's cited 83.7% comes out as 84.8% (84/99, the pooled formula §7.1 defines) from the same v9.6–v9.8 window — corrected 2026-10-05 from a mis-recorded 84.0% (a plain average of the per-cycle figures, which the script never computes), per DoQ review finding F-1. This is disclosed as a probable hand-calculation drift in the cited figure, not a script defect (intent-check advisory LL-v3.4-P3-03). | Covers AC-01 (reproduces cited STEP 2.4/7.1 figures), AC-02 (optional, not hard dependency) | Pass with notes — STEP 7.1 off by 1.1pp vs the hand-computed figure (see execution_state notes) | None (notes-only, no canonical value overridden) |
+| ST-26 | `claude/roadmap/role_share_history.md`, `claude/system/roadmap_prompt.md#7.2 Cross-Role Workload Balance Check` | Canonical `role_share_history.md` created (interim v9.8 copy migrated, v9.8 row from `scripts/compute_role_share_history.py`: 39 stories, Head of Specs Team 12; rolling v9.6–v9.8 18/102 = 17.6%, matching `2026-09-30__scheduled/cycle_record.md` §7.2). `roadmap_prompt.md` v9.29→v9.30: §7.2 reads the file; §4 write scope adds it and, retroactively, `product_value_ratio_history.md`. CLAUDE.md §6 checklist complete (OPERATIONAL_GUIDE.md v4.218, incl. backfilled v4.217 self-drift and roadmap changelog v9.29 row). | Covers AC-01 (file exists, seeded with backfill), AC-02 (§7.2 reads it), AC-03 (interim file kept as dated snapshot) | Pass | None (ESC-EXEC-20261001-04 Resolved) |
+| ST-27 | `claude/schemas/state_field_owners.json#execution_state_path` | Corrected `.claude_current_state.json`'s stale `execution_state_path`, corrected the field's ownership record, and added a consistency test so it can't drift silently again. | Covers AC-01 (path matches active cycle), AC-02 (root cause identified and guarded — `tests/test_state_execution_path_consistency.py`) | Pass | None |
+
+**QA test coverage:**
+- Scenarios run: `tests/test_state_execution_path_consistency.py` (ST-27), `tests/test_scan_backlog_gate_conditions_date_disambiguation.py` (ST-23), `tests/test_compute_rebalance_diagnostics.py` (ST-25). Re-run retroactively 2026-10-05 together with EPIC-05's `tests/test_check_data_model_drift.py`: 22 passed.
+- Regression areas checked: governance prompts (`roadmap_prompt.md` split + appendix), `strategy_rules.md` §12.3, backlog gate-scan tooling, state-pointer consistency
+- Known deviations: None found — all 9 stories' deviation checks completed with nothing to file. Process deviation above (merge-gate bypass) recorded separately; it is not a spec deviation.
+- Re-run 2026-10-05 on `exec/2026-09-30__release-v9.9/EPIC-04` @ `a5d4dbd2`: the 3 EPIC test files plus `tests/test_check_orphaned_specs.py` and `tests/test_generate_spec_debt_dashboard.py` — 48 passed; `scripts/scan_backlog_gate_conditions.py --as-of 2026-10-05` — 123 gated / 6 lapsed, no AI-review item due.
+- Governance self-consistency (LL-v8.5-P3-01, run because ST-26 bumped `OPERATIONAL_GUIDE.md`): header / §14 self-row / Change Log top row all 4.218; §14 and source-prompt headers vs. prompt files — 0 drift.
+- Same-EPIC cross-story testing-gap check (AUD-2026-09-28-002): no story in this EPIC filed a testing-gap backlog item, so no sibling story owes an equivalent one. ST-19/20/24/26 are documentation/governance deliverables with no executable behaviour to test; ST-24's and ST-19's backlog edits were verified with the real gate scanner.
+- Frontend testing gate: N/A — no file under `src/` changed in this EPIC.
+- Story-level authority sign-offs (BLG-GOV-14 consolidation), all cleared: ST-19 — Product Owner (human) continued-investment decision and backlog-edit authorisation; review drafted agent-mediated (Head of Specs Team; PMO Lead). ST-20 — Strategy Rules & System Intent Owner + Head of Specs Team determination (agent-mediated), plus an independent second-pass Strategy Rules & System Intent Owner review of the v1.14 wording (Approved with amendments); `strategy_rules.md` edit on the user's explicit instruction. ST-22 — Strategy Rules & System Intent Owner (agent-mediated). ST-24, ST-26 — Head of Specs Team write-scope rulings (agent-mediated).
+
+---
+
+## Standard Sign-Off Block
+
+> Autonomous class (BLG-GOV-19) not applicable: Criterion 1 is unmet — ST-19 relied on live production data, and ST-20/24/26 were `delegated_decision` items resolved by named-authority rulings. The merge-gate bypass above is reviewed here as part of the retroactive gate. Agent-mediated Director of Quality sign-off authorised by the user on 2026-10-05 ("go ahead with the sign-offs and PRs"), superseding the earlier note that left this block for a human reviewer; Product Owner acceptance remains with the human Product Owner.
+
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no frontend-visible change in this EPIC
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-10-05
+- Comments:
+  Agent-mediated DoQ sign-off (user-authorised 2026-10-05), retroactive merge gate for PR #1886. I verified all 9 stories' ACs against the delivered artefacts, not just the log.
+
+  - ST-19: review arithmetic reconciles; all 8 gated items carry dispositions in `backlog.md`.
+  - ST-20: `strategy_rules.md` v1.14 §13.3/§13.5 text matches the decision-record appendix verbatim; 9 binding conditions and the remediation items exist; §15 grep shows 0 actionable.
+  - ST-21: core is 65,284 chars (≈16k tokens), and all 41 STEP ids survive the split.
+  - ST-22: ledger exists and §12.3 cites it.
+  - ST-23: test file passes and CI Phase B passed on PR #1886.
+  - ST-24: 5 citing items at `64e7525c`; scanner 130/14 unchanged.
+  - ST-25: STEP 2.4 reproduced exactly; STEP 7.1 script = 84.8% pooled (canonical formula) vs the cited 83.7% hand figure — row corrected from 84.0% in `7f316477`/`3cc572d6` (finding F-1, re-verified by re-running the script).
+  - ST-26: 18/102 = 17.6% re-derived; §7.2 reads the file.
+  - ST-27: path matches `active_cycle`.
+
+  Tests: 17/17 EPIC tests and 48/48 extended set passed. OPERATIONAL_GUIDE self-consistency is 4.218 in all 3 places, with 0 §14 drift. Frontend gate N/A (0 `src/` files across all 21 `[EPIC-04]` commits). No open escalations, and no P0/P1 deviations.
+
+  Non-blocking:
+  - `prompt_change_log.md:19` repeats the 84.0% figure (append-only; note at the next edit).
+  - The AI usage review's "none in July / 7 since July" wording contradicted its own 2026-07-02 first-use date — corrected in `3cc572d6`.
+  - ST-24's spec anchor was retired by ST-19 by design.
+  - The ST-20 decision record's write-scope note, Binding Condition 9 and line references are outdated.
+  - ST-20's `strategy_rules.md` edit was made under user instruction, outside the normal Sprint Execution scope; flagged for PO acceptance.
+
+  Product Owner acceptance is still required before EPIC-04 is treated as merged.
