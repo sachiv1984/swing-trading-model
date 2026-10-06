@@ -10,6 +10,7 @@ import { useGapRisk } from "../../hooks/useGapRisk";
 import { apiFetch } from "../../api/base44Client";
 import { toast } from "sonner";
 import TrailingStopExplainerIcon from "./TrailingStopExplainerIcon";
+import { StopProvenanceLine, StopDetailsTrigger } from "./StopProvenance";
 import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -232,7 +233,10 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
             <TrailingStopExplainerIcon />
           </p>
           <p className="text-sm font-semibold text-rose-400 flex items-center gap-1">
-            {formatCurrency(displayTrailStop, { currency })}
+            {/* ST-06 (BLG-FE-193, v9.10): per-row stop details tooltip */}
+            <StopDetailsTrigger position={position} currency={currency}>
+              {formatCurrency(displayTrailStop, { currency })}
+            </StopDetailsTrigger>
             {trailBreached && (
               <AlertTriangle
                 className="w-3.5 h-3.5 flex-shrink-0"
@@ -242,6 +246,8 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
               />
             )}
           </p>
+          {/* ST-06 (BLG-FE-193, v9.10): always-visible stop provenance line */}
+          <StopProvenanceLine position={position} currency={currency} />
         </div>
       </div>
 

@@ -32,6 +32,7 @@ import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import { formatCurrency, formatPercent, formatR, currencyForMarket } from "../lib/format";
 import ComplianceRecheckModal from "../components/positions/ComplianceRecheckModal";
 import TrailingStopExplainerIcon from "../components/positions/TrailingStopExplainerIcon";
+import { StopProvenanceLine, StopDetailsTrigger } from "../components/positions/StopProvenance";
 import {
   DataTable,
   TableHeader,
@@ -956,9 +957,10 @@ export default function Positions() {
                         Init: {formatCurrency(position.initial_stop, { currency })}
                       </span>
                       <div className="flex items-center gap-1.5">
-                        <span>
+                        {/* ST-06 (BLG-FE-193, v9.10): per-row stop details tooltip */}
+                        <StopDetailsTrigger position={position} currency={currency}>
                           {trailStopNative > 0 ? formatCurrency(trailStopNative, { currency }) : formatCurrency(displayStopPrice, { currency })}
-                        </span>
+                        </StopDetailsTrigger>
                         {/* ST-09 (v7.0, BLG-FE-96): breach badge — visible when price <= trailing stop, spec colour/label */}
                         {trailBreached && (
                           <span
@@ -971,6 +973,8 @@ export default function Positions() {
                           </span>
                         )}
                       </div>
+                      {/* ST-06 (BLG-FE-193, v9.10): always-visible stop provenance line */}
+                      <StopProvenanceLine position={position} currency={currency} />
                     </div>
                   </TableCell>
 

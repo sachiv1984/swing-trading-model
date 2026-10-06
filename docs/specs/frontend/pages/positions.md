@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.11
-**Last Updated:** 2026-10-06 (v9.10 design gate — ST-06/ST-08/ST-09/ST-12/ST-14: stop provenance line and per-row stop details, exit-dialog pre-selection and `?exit=` deep link, GRACE calendar-days label and UNKNOWN reasons, gap-risk reason labels); prior — 2026-09-28 (ST-05, EPIC-01, v9.8, BLG-SPEC-158 — §Responsive Behavior corrected to match actual implementation: the Table view does not collapse to cards, it scrolls horizontally); prior — 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §Keyboard Navigation Requirements); prior history retained — see prior entries in version control
+**Version:** 2.12
+**Last Updated:** 2026-10-06 (ST-06, EPIC-02, v9.10, BLG-FE-193 — stop provenance section finalised against the shipped `stop_calculation_source` contract and `StopProvenance.js`); prior — 2026-10-06 (v9.10 design gate — ST-06/ST-08/ST-09/ST-12/ST-14: stop provenance line and per-row stop details, exit-dialog pre-selection and `?exit=` deep link, GRACE calendar-days label and UNKNOWN reasons, gap-risk reason labels); prior — 2026-09-28 (ST-05, EPIC-01, v9.8, BLG-SPEC-158 — §Responsive Behavior corrected to match actual implementation: the Table view does not collapse to cards, it scrolls horizontally); prior history retained — see prior entries in version control
 **Design Source (v9.10 additions):** docs/design/2026-10-06__release-v9.10/stop-cell-provenance/decision_record.md, docs/design/2026-10-06__release-v9.10/exit-condition-surfacing/decision_record.md, docs/design/2026-10-06__release-v9.10/lifecycle-badge-grace-calendar-days/decision_record.md, docs/design/2026-10-06__release-v9.10/gap-risk-trigger-label-alignment/decision_record.md
 **Design Source (v8.2 additions):** docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md
 **Design Source (v7.9 additions):** docs/design/2026-07-27__release-v7.9/trailing-stop-explainer-tooltip/ux_spec.md
@@ -25,6 +25,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.12 | 2026-10-06 | ST-06 (BLG-FE-193, EPIC-02, v9.10): §Stop Provenance Line and Per-Row Stop Details finalised. The recalculation-source field is `stop_calculation_source` (`on_load` \| `nightly` \| `null`, `position_endpoints.md` v2.10.0, shipped with ST-01). Implementation: `src/components/positions/StopProvenance.js`, used by both views. Playwright: `tests/e2e/stop-cell-provenance.spec.js` (SC-SCP-01..07). |
 | 2.11 | 2026-10-06 | v9.10 design gate. (ST-06, BLG-FE-193) §Trailing Stop Column: always-visible provenance line (`{mult}× ATR {atr}`) and per-row "How this stop was set" tooltip (ATR, multiplier, §7.2 formula, §7.3 ratchet, last-recalculated time + source); header explainer drops the static "recalculated daily" claim. Needs a new on-load/nightly source field on `GET /positions`. (ST-08/ST-09, BLG-FE-198/199) New §Exit Dialog Pre-Selection and Deep Link: shared `getExitCondition` predicate, Exit Reason pre-selection with a one-line note, `?exit={id}` deep link. (ST-12, BLG-FE-196) §Position Lifecycle State Badge: GRACE takes precedence during grace; label `GRACE — {grace_days_remaining}d left`; calendar-day tooltip; UNKNOWN tooltip by backend reason; §Grace Period Alert Zone days-left basis is `grace_days_remaining`, with no "trading day" wording. (ST-14, BLG-BE-136) §Gap Risk Badge: earnings label "Earnings due by next trading session"; weekend label conditional on the ST-14 disposition. Design sources: v9.10 additions listed above. Head of UX & Design sign-off: 2026-10-06. Product Owner approved: 2026-10-06. Head of Specs Team confirmed. |
 | 2.10 | 2026-09-28 | ST-05 (BLG-SPEC-158, EPIC-01, v9.8): §Responsive Behavior corrected to match `src/components/ui/DataTable.js`'s actual implementation — Table view scrolls horizontally (no card collapse, no column-hiding); Grid view is the view that reflows to cards (CSS Grid breakpoints, unchanged). Documentation-only; no implementation change. |
 | 2.9 | 2026-09-04 | v9.1 ST-07 (BLG-SPEC-99, EPIC-01): added §Keyboard Navigation Requirements — documentation-only baseline covering View Switcher, Table View row/control tab order, Trail Stop Modal / Compliance Recheck Panel focus trap and restoration, Grid/Journal View tab order, Paper Account Panel, and focus-indicator contrast. No implementation change. |
@@ -463,7 +464,9 @@ No API dependency — static client-side text, no loading/error state.
 
 **Design source:** `docs/design/2026-10-06__release-v9.10/stop-cell-provenance/decision_record.md`
 
-**Data sources:** `atr_value`, `active_atr_multiplier`, `stop_calculated_at` (v9.9, `BLG-BE-135`); `atr_source` (ST-02, optional); a new nullable recalculation-source field distinguishing on-load and nightly recalculation (working name `stop_calculation_source`: `on_load` | `nightly`, contract owned by execution).
+**Data sources:** `atr_value`, `active_atr_multiplier`, `stop_calculated_at` (v9.9, `BLG-BE-135`); `atr_source` (ST-02, optional); `stop_calculation_source` (`on_load` | `nightly` | `null`; `position_endpoints.md` v2.10.0, ST-01 BLG-BE-138), which records which path last recalculated the stop.
+
+**Implementation:** `src/components/positions/StopProvenance.js` (`StopProvenanceLine`, `StopDetailsTrigger`), shared by Table View (`Positions.js`) and Grid View (`PositionCard.js`). The tooltip's formula row is omitted when the multiplier is null. Multipliers at or below the §11 profit multiplier (2×) are described as profitable; higher ones as losing or flat. Timestamps are shown in the viewer's local time.
 
 **Provenance line** (Table View, under the trailing-stop value; Grid View, under the Stop tile value): `text-xs text-slate-600 dark:text-slate-400`, `data-testid="stop-provenance"`.
 
