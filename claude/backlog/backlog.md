@@ -4763,6 +4763,28 @@ The ST-20 determination (CONDITIONAL) finds §13.3's literal text ("Exposing a g
 
 ---
 
+### BLG-GOV-368 — Pre-PR check that an EPIC branch carries no other EPIC's commits
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Sprint close, cycle `2026-09-30__release-v9.9` — EPIC-02 PR #1886 / `execution_state.json` process_notes (2026-10-05) — 2026-10-06
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+EPIC-02's branch was cut on top of the EPIC-04/EPIC-05 linear history rather than from `main`, so merging PR #1886 also brought 19 commits from other EPICs into `main` (12 `[EPIC-04]`, 7 `[EPIC-05]`). Those stories skipped their own STEP 4 merge gate, which breaks the CLAUDE.md §2 branch-matching rule. EPIC-04 and EPIC-05 then needed retroactive gates (qa_evidence written after the fact, agent-mediated DoQ sign-off, Product Owner acceptance through PRs #1891/#1892). `execution_prompt.md` STEP 2 step 3 says "verify it is based on `main`", but nothing checks the branch's actual commit set before the PR opens. A branch based on `main` plus unrelated commits passes that wording.
+
+**Scope**
+- Add a hard pre-PR check to `execution_prompt.md` STEP 3.2.B: run `git log origin/main..HEAD --format='%H %s'` and halt if any commit is tagged with an EPIC other than this one (`[GOVERNANCE]` merge-resolution commits excepted)
+- Consider the same check in `quality_gate.yml` so a PR cannot pass CI with another EPIC's commits
+- Apply the CLAUDE.md §6 checklist to any prompt changed
+
+**Acceptance Criteria**
+- An EPIC PR whose branch carries another EPIC's `[EPIC-yy]` commit is stopped before the PR opens (prompt) or fails CI (if the workflow option is adopted)
+- The full CLAUDE.md §6 checklist ships with any prompt change
+
+---
+
 ### BLG-SPEC-180 — Correct metrics_definitions.md's claim that a NULL positions.fees_paid yields a silently-zero trade_history fee leg
 **Priority:** P4 (Trivial)
 **Type:** Spec Debt / Metrics

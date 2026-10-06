@@ -1,9 +1,37 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.51
-**Last Updated:** 2026-09-30 (delivery verification 2026-09-28__release-v9.8 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation); prior — 2026-09-30 (sprint close 2026-09-28__release-v9.8 — new Sprint section added); prior — 2026-09-25 (delivery verification 2026-09-23__release-v9.7 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation); prior history retained — see prior entries in version control.
+**Version:** 4.52
+**Last Updated:** 2026-10-06 (sprint close 2026-09-30__release-v9.9 — new Sprint section added); prior — 2026-09-30 (delivery verification 2026-09-28__release-v9.8 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation); prior — 2026-09-30 (sprint close 2026-09-28__release-v9.8 — new Sprint section added); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-09-30__release-v9.9
+**Date:** 2026-10-06
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | One canonical ATR/stop-recalculation implementation. Stop/ATR recalculation timestamps and the active ATR multiplier are persisted and exposed on `GET /positions` (ST-01, BLG-BE-135). `GET /reports/monthly-pnl` `year` gets a bounds check (ST-02). The remaining hardcoded timeouts in `gemini_service.py`, `utils/pricing.py` and `alpaca_paper_sync_service.py` now use `utils.upstream_call` (ST-03–ST-05) | `position_endpoints.md#GET /positions`; `data_model.md#DS-22`; `strategy_rules.md#7.1`; `reports_endpoints.md#GET /reports/monthly-pnl` | None (ST-01 Pass_with_deviation within its AC, per `st01_atr_consolidation_ruling.md`) |
+| EPIC-02 | Two residual gaps in the non-registry dependency guard closed (ST-06). Double-submit de-duplication for `POST /ai/check-daily-cost`, `POST /ai/check-endpoint-anomalies` and `POST /price-alerts` (ST-07–ST-09) | `scripts/check_non_registry_dependencies.py`; `alerts_endpoints.md#POST /price-alerts` | None |
+| EPIC-03 | `GET /reports/tax-year` fixture 500 fixed (ST-10). Strategy-rule → test traceability matrix for §4–§8 (ST-11). Property-based stop-ratchet/sizing tests (ST-12). Real-Postgres reflection-reminder test (ST-13). Test-isolation fixes (ST-14, ST-16). CI-script I/O-boundary tests (ST-15). Non-registry check live-fire (ST-17). UI-copy lint hardening (ST-18) | `docs/testing/strategy_rule_test_traceability_matrix.md`; `strategy_rules.md#7.3`/`#4.1.4`; `docs/ops/non_registry_dependency_check_live_fire_2026-10-05.md` | None |
+| EPIC-04 | 90-day AI feature usage review, with all 8 gated items dispositioned (ST-19). Retroactive §13 review of the Gap Risk Flag: CONDITIONAL (ST-20). `roadmap_prompt.md` split into core + appendix (ST-21). Strategy parameter-change ledger (ST-22). Date-disambiguation fix in `scan_backlog_gate_conditions.py` (ST-23). AI-adoption gate text consolidation (ST-24). Scripted rebalance diagnostics (ST-25). Canonical `role_share_history.md` (ST-26). `execution_state_path` pointer fix (ST-27) | `docs/ops/ai_feature_usage_review_2026-09-24.md`; `decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`; `strategy_rules.md#13.3`/`#13.5`; `roadmap_prompt.md`; `docs/governance/strategy_parameter_change_ledger.md` | None |
+| EPIC-05 | Read-only live-schema vs `data_model.md` drift detector (ST-28). 4 orphaned `positions` columns dropped live (ST-29, DS-24). `positions.fees_paid NOT NULL` re-applied live (ST-30, DS-23). SI-02 linked-trade-plan cross-reference (ST-31). DS-19 verification status corrected (ST-32). Citation and empty-state wording corrections (ST-33, ST-34) | `scripts/check_data_model_drift.py`; `data_model.md#DS-23`/`#DS-24`/`#DS-19`; `si02_drift_score.md#2.4`; `notifications.md` | None (ST-34 closes `DEV-v9.7-ST05-01`) |
+| EPIC-06 | Recent Trades icon-background badge uses neutral colour for a zero-P&L trade (ST-35) | `design_system.md#Data States` | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| None | All 35 scoped items delivered within the sprint | — |
+
+### Verification inputs ready
+- QA evidence logs: `qa_evidence_EPIC-01.md`, `qa_evidence_EPIC-02.md`, `qa_evidence_EPIC-03.md`, `qa_evidence_EPIC-04.md`, `qa_evidence_EPIC-05.md`, `qa_evidence_EPIC-06.md`
+- Deviations filed: None (no new canonical-spec `DEV-*`). `DEV-v9.7-ST05-01` closed by ST-34
+- Test scenarios referenced: `tests/test_reports_integration.py`, `tests/test_upstream_call_helper.py`, `tests/test_atr_consolidation.py`, `tests/test_position_atr_timestamp_persistence.py`, `tests/test_non_registry_dependency_check.py`, `tests/test_daily_cost_alert.py`, `tests/test_ai_endpoint_anomaly_service.py`, `tests/test_price_alerts_service.py`, `tests/test_api_contracts.py`, `tests/test_null_fee_trade_audit.py`, `tests/test_ci_scripts_io_boundary.py`, `tests/test_strategy_invariants_property.py`, `tests/test_reflection_reminder_postgres.py`, `tests/test_ui_copy_forbidden_phrases.py`, `tests/test_state_execution_path_consistency.py`, `tests/test_scan_backlog_gate_conditions_date_disambiguation.py`, `tests/test_compute_rebalance_diagnostics.py`, `tests/test_check_data_model_drift.py`, `tests/e2e/recent-trades-zero-pnl-badge.spec.js`
 
 ---
 
