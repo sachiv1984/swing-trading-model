@@ -1,7 +1,7 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-10-06
+**Last Updated:** 2026-10-06 (Cybersecurity & Trust Lead sign-off recorded); prior — 2026-10-06 (triage record created)
 **Source:** GitHub issue #1885 (`dependency-vuln-rescan.yml`, 2026-10-01 scheduled run) — `[GOVERNANCE]` hotfix, out-of-cycle (`2026-09-30__release-v9.9` Closed)
 
 # Monthly Rescan npm audit Findings — Triage (October 2026)
@@ -65,5 +65,18 @@ Repo-wide grep confirms none of the five is imported by any file in `src/`.
 - [x] 7 fixed (lockfile bump + one patch-level override), verified via install, build and serve
 - [x] 5 accept-risk with owner, rationale and review-by date recorded
 - [x] Durable fix path filed as a backlog item
-- Signed off by: PENDING — Cybersecurity & Trust Lead review on PR
-- Date: PENDING
+- Signed off by: Cybersecurity & Trust Lead — **Approved** (agent-mediated, acting in role at Product Owner's request)
+- Date: 2026-10-06
+
+**Sign-off review.** The accept-risk rationale rests on the claim that none of the five packages executes in a reachable context. Re-verified independently of the triage author before approving, rather than accepted as written:
+
+- **No deployed dev server.** `render.yaml`'s frontend service (`trading-assistant-staging`) is a static site — `buildCommand: CI=false npm run build`, `staticPublishPath: ./build`; GitHub Pages deploys the same static bundle (`deploy.yml`). No workflow or deploy path runs `npm start`. `webpack-dev-server` / `webpack-dev-middleware` therefore never run in any deployed environment.
+- **CI does not run the dev server either.** `playwright.config.js` `webServer.command` uses `npm run build && npx serve -s build` under `CI`; `npm start` is the local-only branch.
+- **`node-forge` code path is dormant.** It is reached only via `selfsigned` when the dev server runs in HTTPS mode; no `.env*` file sets `HTTPS`/`SSL_CRT_FILE`, so it does not execute even locally.
+- **`svgo` has no input.** No file in `src/` imports an `.svg` (no `ReactComponent` SVG imports), so the `@svgr` → `svgo` pipeline processes nothing; the `removeScripts` sanitisation advisories have no untrusted SVG to act on.
+- **`braces` input is repo-controlled.** Expanded patterns come from `tailwind.config.js` `content` globs and webpack/jest config — no user-supplied input.
+- **Fix verification.** The 7 fixed packages were confirmed by the rescan's own analysis script (`new_finding_count=0`) and the full PR #1893 CI run (31/31 checks, including all 8 Playwright E2E shards, smoke and visual snapshots) on the updated lockfile.
+
+**Residual risk accepted** is confined to a developer's machine while `npm start` is running. One addition to §3.2's developer guidance: CRA's dev server binds to all interfaces by default, so on an untrusted network (shared Wi-Fi) run it with `HOST=localhost npm start` to keep the dev-server advisories off the LAN.
+
+**Conditions of acceptance:** (1) review-by 2027-02-16 stands — this approval does not extend it; (2) if `braces` or `node-forge` publish a patched release before then, it is applied at the next monthly rescan triage rather than waiting for the review date; (3) BLG-TECH-21 (CRA → Vite) remains the expected closure path — a third consecutive rescan triage dominated by `react-scripts`-pinned findings without BLG-TECH-21 scheduled should be raised with Head of Engineering as a prioritisation concern.
