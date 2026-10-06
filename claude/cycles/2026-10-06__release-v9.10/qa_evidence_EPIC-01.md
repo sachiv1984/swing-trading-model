@@ -100,4 +100,4 @@ No AC 6 correction decision is owed, because AC 6 applies only to positions "who
   - Traceability row C6.3-02 corrected from Asserted to Partial.
   - Filed as backlog: `BLG-BE-143` (in-grace on-load vs nightly behaviour), `BLG-BE-144` (Settings create NULLs and trade-plan snapshot), `BLG-BE-145` (US NULL `fill_price`, pre-existing), `BLG-QA-214` (alerts grace behaviour test).
   - The Product Owner review (agent-mediated, Approved with Comments) filed `BLG-FE-201`, `BLG-FE-202` and `BLG-API-07`.
-  - CI has not yet run on this branch. It runs on PR open, and a green run must be confirmed before merge.
+  - **Post-open CI fix (LL-v8.5-P4-01):** PR #1915's first CI run failed only Service Layer Coverage (ST-13), on both runs: `ImportError: cannot load module more than once per process` (numpy). `grace_service` imported `utils.strategy_parameters`, and `utils/__init__.py` eagerly imports pricing → yfinance → numpy. Fixed in `a352fc54` by moving the module to `backend/strategy_parameters.py`. The CI command was reproduced locally: it failed before the move and passed after it (18 tests, 100% coverage). **Final CI on head `a352fc54`: all 41 checks green.**
