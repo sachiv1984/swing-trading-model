@@ -34,6 +34,6 @@ Format per `claude/system/shared_standards.md §4`.
 | Escalated to | Head of Specs Team |
 | Reason | Ruling needed on whether `release_planning_prompt.md §-1.2` should require the cited Option(b) record to postdate the *immediately prior* release-planning cycle (forcing a fresh rebalance every 2 releases at minimum), or whether unlimited reuse until the next rebalance runs is the intended design. Not actioned in this closure — no unambiguous fix wording exists yet, unlike Friction Item 1 (applied same-cycle, see `prompt_change_log.md` 2026-09-28 entry). |
 | Tracking | SLA 2026-10-01 (72h from filing) |
-| Disposition | Open |
+| Disposition | Resolved — 2026-10-05, Head of Specs Team ruling (agent-mediated, §5.3, user-directed). A STEP 8.1 Option(b) record clears `release_planning_prompt.md` §-1.2 for one release only. It must have been created after the `release_plan.md` of the most recent `Published` release; otherwise §-1.2 halts and a scheduled rebalance must run first. Unlimited reuse is not the intended design. Applied as `release_planning_prompt.md` v2.58→v2.59 (see `prompt_change_log.md` 2026-10-05). Was not triggered at v9.8 or v9.9, because both cited fresh same-day rebalance records. |
 
 ---
