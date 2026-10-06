@@ -28,6 +28,8 @@ Last Updated: 2026-10-06 (EPIC-02 consolidation, STEP 3.2.A; DoQ sign-off pendin
 
 **Environment-parity sub-clause (LL-v8.3-P3-02):** ST-06's tooltip opens on keyboard focus after the shared 200 ms delay (SC-SCP-02..06), and ST-08 pre-selects the exit reason when the dialog opens (SC-EXD-01..05). Both are interaction-timing ACs, so the DoQ comments must cite a real GitHub Actions CI run with these scenarios passing, not only the local runs.
 
+**Real CI confirmation (pre-PR, branch push):** Playwright E2E Acceptance Tests run [37533932013](https://github.com/sachiv1984/swing-trading-model/actions/runs/37533932013), head `e5df8e65` (all EPIC-02 code; later commits are state/evidence only): **success**. Also green: Critical-Path Smoke Tests, CI Pytest Suite, Service Layer Coverage, Golden Output Regression, Portfolio Integration and Endpoint Coverage on `b4517138`. Re-confirm on the PR's own CI before merge.
+
 **Same-EPIC cross-story testing-gap consistency check:** no story in EPIC-02 filed a testing-gap backlog item. Nothing to propagate.
 
 ---
