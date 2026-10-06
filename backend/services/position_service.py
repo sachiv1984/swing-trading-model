@@ -61,6 +61,13 @@ from utils.calculations import (
 )
 
 from utils.formatting import decimal_to_float
+from strategy_parameters import (
+    GRACE_PERIOD_DAYS,
+    INITIAL_ATR_MULTIPLIER,
+    PROFIT_ATR_MULTIPLIER,
+    ATR_PERIOD_DAYS,
+    stop_multiplier_settings,
+)
 
 
 # ============================================================================
@@ -145,13 +152,13 @@ def get_positions_with_prices() -> List[Dict]:
         
         # Calculate holding days and grace period
         holding_days = calculate_holding_days(str(pos['entry_date']))
-        grace_period = holding_days < 10
+        grace_period = holding_days < GRACE_PERIOD_DAYS
         
         # Stop price handling
         if grace_period:
             # During grace period: No stop shown
             stop_price_native = 0
-            print(f"   🆕 Grace period: {holding_days}/10 days - No stop active")
+            print(f"   🆕 Grace period: {holding_days}/{GRACE_PERIOD_DAYS} days - No stop active")
         else:
             # After grace period: Show stop from database (already in native currency)
             stop_price_native = pos.get('current_stop', pos.get('initial_stop', 0))
@@ -176,7 +183,7 @@ def get_positions_with_prices() -> List[Dict]:
         else:
             display_status = LOSING
 
-        grace_period = holding_days < 10
+        grace_period = holding_days < GRACE_PERIOD_DAYS
         grace_days_remaining = compute_grace_days_remaining(
         grace_period=grace_period,
         holding_days=holding_days,
@@ -213,6 +220,14 @@ def get_positions_with_prices() -> List[Dict]:
         atr_calculated_at = pos.get('atr_calculated_at')
         atr_calculated_at = atr_calculated_at.isoformat() if atr_calculated_at else None
         active_atr_multiplier = pos.get('active_atr_multiplier')
+
+        # ST-02 (BLG-BE-139, EPIC-01, v9.10): where the stored ATR came from --
+        # 'fetched' / 'user' / 'fallback' (DS-25). NULL for positions entered
+        # before the column existed and never freshly recomputed since.
+        atr_source = pos.get('atr_source')
+        # ST-01 (BLG-BE-138, v9.10): 'on_load' / 'nightly' (DS-26); NULL until
+        # the first recompute after the column was added.
+        stop_calculation_source = pos.get('stop_calculation_source')
 
         # Build position dict
         positions_list.append({
@@ -256,11 +271,13 @@ def get_positions_with_prices() -> List[Dict]:
             "exit_reason": None,
             "grace_period": grace_period,
             "grace_days_remaining": grace_days_remaining,
-            "stop_reason": f"Grace period ({holding_days}/10 days)" if grace_period else "Active",
+            "stop_reason": f"Grace period ({holding_days}/{GRACE_PERIOD_DAYS} days)" if grace_period else "Active",
             "atr_value": pos.get('atr', 0),
             "atr_calculated_at": atr_calculated_at,
             "stop_calculated_at": stop_calculated_at,
             "active_atr_multiplier": active_atr_multiplier,
+            "atr_source": atr_source,
+            "stop_calculation_source": stop_calculation_source,
             "fx_rate": pos.get('fx_rate', 1.0),
             "live_fx_rate": live_fx_rate,
             "total_cost": round(pos.get('total_cost', 0), 2),
@@ -336,9 +353,9 @@ def analyze_positions() -> Dict:
     print(f"   SPY: {'🟢 Risk On' if market_regime['spy_risk_on'] else '🔴 Risk Off'}")
     print(f"   FTSE: {'🟢 Risk On' if market_regime['ftse_risk_on'] else '🔴 Risk Off'}")
     
-    # Get settings for stop calculations
-    settings_list = get_settings()
-    settings_dict = settings_list[0] if settings_list else {}
+    # ST-01 (BLG-BE-138, v9.10, ruling (a)): stop multipliers come from the
+    # fixed §11 source, never from the editable settings row.
+    stop_settings = stop_multiplier_settings()
     
     actions = []
     total_value_gbp = 0
@@ -411,13 +428,14 @@ def analyze_positions() -> Dict:
         current_stop_native = pos.get('current_stop', pos.get('initial_stop', 0))
         
         # Check grace period
-        grace_period = holding_days < 10
+        grace_period = holding_days < GRACE_PERIOD_DAYS
+        atr_unavailable = False
         
         # Calculate trailing stop
         if grace_period:
             trailing_stop_native = current_stop_native
             display_stop_native = 0
-            stop_reason = f"Grace period ({holding_days}/10 days)"
+            stop_reason = f"Grace period ({holding_days}/{GRACE_PERIOD_DAYS} days)"
             atr_mult = 0
             print(f"   🆕 Grace period active - no stop loss")
         else:
@@ -433,6 +451,8 @@ def analyze_positions() -> Dict:
                         # ST-01 (BLG-BE-135, EPIC-01, v9.9): stamp when ATR was
                         # actually freshly computed, not merely read from cache.
                         'atr_calculated_at': datetime.now(timezone.utc),
+                        # ST-02 (BLG-BE-139, EPIC-01, v9.10): provenance.
+                        'atr_source': 'fetched',
                     })
                     print(f"   💾 Stored calculated ATR: {atr_value:.2f}")
             
@@ -447,7 +467,7 @@ def analyze_positions() -> Dict:
                     is_profitable=(pnl_native > 0),
                     current_stop=current_stop_native,
                     entry_price=entry_price_native,
-                    settings=settings_dict
+                    settings=stop_settings
                 )
                 
                 display_stop_native = trailing_stop_native
@@ -458,13 +478,17 @@ def analyze_positions() -> Dict:
                 else:
                     print(f"   📊 Stop unchanged: {currency_symbol}{trailing_stop_native:.2f}")
             else:
-                # No ATR available, use entry price as stop
-                entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
-                trailing_stop_native = max(current_stop_native, entry_price_native)
+                # ST-02 (BLG-BE-139, EPIC-01, v9.10): no ATR available. Keep the
+                # stored stop and flag the position. The previous behaviour
+                # moved the stop up to entry, which for a losing position put
+                # it above the current price and produced a stop-breach signal
+                # that §7.2's wide-stop rule would not.
+                trailing_stop_native = current_stop_native
                 display_stop_native = trailing_stop_native
-                stop_reason = "No ATR - stop at entry"
+                stop_reason = "ATR unavailable - stop unchanged"
                 atr_mult = 0
-                print(f"   ⚠️  No ATR value available, stop at entry level")
+                atr_unavailable = True
+                print(f"   ⚠️  No ATR value available, stop left unchanged")
         
         # Determine action
         is_uk = pos['market'] == 'UK'
@@ -475,7 +499,7 @@ def analyze_positions() -> Dict:
             stop_price=trailing_stop_native,
             holding_days=holding_days,
             market_risk_on=market_risk_on,
-            grace_period_days=10
+            grace_period_days=GRACE_PERIOD_DAYS
         )
         
         if should_exit:
@@ -508,6 +532,8 @@ def analyze_positions() -> Dict:
             if not grace_period and atr_mult:
                 position_updates['stop_calculated_at'] = datetime.now(timezone.utc)
                 position_updates['active_atr_multiplier'] = atr_mult
+                # ST-01 (v9.10, DS-26): which path last recalculated the stop.
+                position_updates['stop_calculation_source'] = 'on_load'
             update_position(str(pos['id']), position_updates)
         
         # Add to actions
@@ -524,7 +550,8 @@ def analyze_positions() -> Dict:
             "current_stop": round(display_stop_native, 2),
             "holding_days": holding_days,
             "stop_reason": stop_reason,
-            "grace_period": grace_period
+            "grace_period": grace_period,
+            "atr_unavailable": atr_unavailable,
         })
     
     exit_count = len([a for a in actions if a['action'] == 'EXIT'])
@@ -555,19 +582,21 @@ def analyze_positions() -> Dict:
 # NIGHTLY TRAILING STOP UPDATE (ST-01 / BLG-FEAT-46)
 # ============================================================================
 
-# Production strategy constants — must match production_strategy.py exactly
-_INITIAL_ATR_MULT = 5.0   # Wide stop when position not in profit
-_PROFIT_ATR_MULT = 2.0    # Tight stop when position in profit
-_ATR_PERIOD = 14          # 14-day ATR
+# ST-01 (BLG-BE-138, v9.10): aliases of the single §11 source, kept so the
+# nightly job's existing references and tests read unchanged.
+_INITIAL_ATR_MULT = INITIAL_ATR_MULTIPLIER
+_PROFIT_ATR_MULT = PROFIT_ATR_MULTIPLIER
+_ATR_PERIOD = ATR_PERIOD_DAYS
 
 
 def run_nightly_trailing_stop_update() -> Dict:
     """
     Nightly job: recompute trailing stop for every open position and store result.
 
-    Strategy (production_strategy.py profit-lock logic):
-      - In profit: new_stop = current_price − (PROFIT_ATR_MULT × ATR)
-      - Not in profit: new_stop = entry_price − (INITIAL_ATR_MULT × ATR)
+    Strategy (strategy_rules.md §7.2, via calculate_trailing_stop):
+      - In profit: new_stop = max(current_price − (PROFIT_ATR_MULT × ATR), entry_price)
+      - Not in profit: new_stop = current_price − (INITIAL_ATR_MULT × ATR)
+        (current price, not entry: entry − 5 × ATR is the §5 initial stop)
       - Ratchet: stored stop only ever moves up — max(current_stop, new_stop)
 
     Constants:
@@ -575,10 +604,7 @@ def run_nightly_trailing_stop_update() -> Dict:
 
     Returns summary dict with per-position results.
     """
-    _SETTINGS = {
-        'atr_multiplier_trailing': _PROFIT_ATR_MULT,
-        'atr_multiplier_initial': _INITIAL_ATR_MULT,
-    }
+    _SETTINGS = stop_multiplier_settings()
 
     portfolio = get_portfolio()
     if not portfolio:
@@ -605,6 +631,7 @@ def run_nightly_trailing_stop_update() -> Dict:
 
         # Recalculate ATR at _ATR_PERIOD to ensure freshness
         atr_value = calculate_atr(pos['ticker'], period=_ATR_PERIOD)
+        atr_fresh = bool(atr_value)
         if not atr_value or atr_value == 0:
             atr_value = pos.get('atr', 0)
         if not atr_value or atr_value == 0:
@@ -632,7 +659,7 @@ def run_nightly_trailing_stop_update() -> Dict:
         )
 
         now_utc = datetime.now(timezone.utc)
-        update_position(position_id, {
+        nightly_updates = {
             'current_stop': round(new_stop_native, 2),
             'current_price': round(live_price, 4),
             'atr': round(atr_value, 4),
@@ -641,9 +668,20 @@ def run_nightly_trailing_stop_update() -> Dict:
             # freshly recomputes both ATR and the stop in the same pass, so
             # both timestamps are stamped together here.
             'stop_calculated_at': now_utc,
-            'atr_calculated_at': now_utc,
             'active_atr_multiplier': atr_mult,
-        })
+            # ST-01 (v9.10, DS-26): which path last recalculated the stop.
+            'stop_calculation_source': 'nightly',
+        }
+        # ST-02 (BLG-BE-139, EPIC-01, v9.10): a freshly fetched ATR is
+        # 'fetched'. When the fetch failed and the stored ATR was reused, its
+        # existing provenance is left as it was.
+        if atr_fresh:
+            nightly_updates['atr_source'] = 'fetched'
+            # Only a fresh fetch moves atr_calculated_at ("freshly recomputed,
+            # not merely read from cache", DS-22). A reused stored ATR keeps
+            # its original timestamp.
+            nightly_updates['atr_calculated_at'] = now_utc
+        update_position(position_id, nightly_updates)
 
         results.append({
             "ticker": pos['ticker'],
@@ -858,17 +896,23 @@ def add_position(
             f"Insufficient funds. Need £{total_cost_gbp:.2f}, have £{current_cash:.2f}"
         )
     
-    # Get or calculate ATR
-    if not atr_value or atr_value == 0:
+    # Get or calculate ATR.
+    # ST-02 (BLG-BE-139, EPIC-01, v9.10): record where the ATR came from, so
+    # the invented 2%-of-entry substitute is no longer silent (DS-25).
+    if atr_value and atr_value > 0:
+        atr_source = 'user'
+    else:
         print(f"   Calculating ATR for {ticker}...")
         atr_value = calculate_atr(ticker)
+        atr_source = 'fetched'
         if not atr_value:
             # Use default 2% of entry price if can't calculate
             atr_value = entry_price_native * 0.02
+            atr_source = 'fallback'
             print(f"   ⚠️  Using default ATR (2% of entry): {atr_value:.2f}")
     
     # Calculate initial stop
-    initial_stop_native = calculate_initial_stop(entry_price_native, atr_value, multiplier=5.0)
+    initial_stop_native = calculate_initial_stop(entry_price_native, atr_value, multiplier=INITIAL_ATR_MULTIPLIER)
     
     print(f"   Entry price: {entry_price_native:.2f}")
     print(f"   ATR: {atr_value:.2f}")
@@ -891,6 +935,7 @@ def add_position(
         'current_stop': initial_stop_native,
         'current_price': entry_price_native,
         'atr': atr_value,
+        'atr_source': atr_source,
         'holding_days': 0,
         'pnl': 0,
         'pnl_pct': 0,

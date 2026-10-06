@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.3.2
-**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /settings); prior — 2026-08-07
+**Version:** 1.4.0
+**Last Updated:** 2026-10-06 (ST-03, EPIC-01, v9.10, BLG-SPEC-187 — the four strategy-parameter fields are stored only; changing them affects no stop, per the ST-01 ruling (a)); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /settings); prior — 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # settings_endpoints.md
@@ -89,10 +89,10 @@ Response uses the standard success envelope from **conventions.md**.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `min_hold_days` | integer | `10` | Grace period duration in days. Stop losses are not enforced during this window (days 0–9 inclusive) |
-| `atr_multiplier_initial` | float | `5.0` | ATR multiplier for **losing** positions (wide stop, room to recover) |
-| `atr_multiplier_trailing` | float | `2.0` | ATR multiplier for **profitable** positions (tight trailing stop, protect gains) |
-| `atr_period` | integer | `14` | Rolling window in days for ATR calculation |
+| `min_hold_days` | integer | `10` | Stored only, not read by any stop path since v9.10 (see Strategy parameter context). The live grace period is the fixed §11 value, 10 days (days 0–9 inclusive) |
+| `atr_multiplier_initial` | float | `5.0` | Stored only, not read by any stop path since v9.10. The live losing/initial multiplier is the fixed §11 value, 5× |
+| `atr_multiplier_trailing` | float | `2.0` | Stored only, not read by any stop path since v9.10. The live profitable multiplier is the fixed §11 value, 2× |
+| `atr_period` | integer | `14` | Stored only, not read by any stop path since v9.10. The live ATR period is the fixed §11 value, 14 days |
 | `default_currency` | string | `"GBP"` | Portfolio base currency (display only) |
 | `theme` | string | `"dark"` | UI theme preference (`"dark"` or `"light"`) |
 | `uk_commission` | float | `9.95` | Fixed commission per UK trade in GBP |
@@ -108,7 +108,7 @@ Response uses the standard success envelope from **conventions.md**.
 
 **Strategy parameter context:**
 
-The default values (`min_hold_days: 10`, `atr_multiplier_initial: 5.0`, `atr_multiplier_trailing: 2.0`) reflect the backtest-optimised parameters that produced 26.37% CAGR, 1.29 Sharpe Ratio, and −25.38% maximum drawdown. These are configurable but changes affect all future stop calculations.
+The default values (`min_hold_days: 10`, `atr_multiplier_initial: 5.0`, `atr_multiplier_trailing: 2.0`) reflect the backtest-optimised parameters that produced 26.37% CAGR, 1.29 Sharpe Ratio, and −25.38% maximum drawdown. **Effect of changing them on open positions (v9.10, ST-03 / ST-01, `BLG-BE-138`): none.** Under the ST-01 parameter-authority ruling (a), 2026-10-06 (`ESC-EXEC-20261006-01`), the stop parameters are fixed by `strategy_rules.md` §11 and read from `backend/strategy_parameters.py`. No stop path reads these columns: not `GET /positions/analyze`, not `POST /positions/nightly-stop-update`, not the exit decision, grace countdown or alerts. `POST /settings` and `PATCH /settings/{settings_id}` still accept and store `min_hold_days`, `atr_period`, `atr_multiplier_initial` and `atr_multiplier_trailing` for compatibility, but a stored value changes no stop, grace window or exit signal, for open or new positions. The Settings page shows them read-only and no longer sends them (`settings.md` §Strategy Parameter Presentation). Changing a §11 value is a §12.3 strategy change, not a settings edit. See `position_endpoints.md` (`GET /positions/analyze`, Side effects) for how stops are recalculated.
 
 ### Errors
 
@@ -334,6 +334,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4.0 | 2026-10-06 | ST-03 (BLG-SPEC-187, EPIC-01, v9.10), following the ST-01 parameter-authority ruling (a): `min_hold_days`, `atr_period`, `atr_multiplier_initial` and `atr_multiplier_trailing` are stored only. No stop path reads them, so changing them affects no open or new position. The Strategy parameter context and field notes now say so and cross-reference `position_endpoints.md`. The request and response shapes are unchanged. No new endpoints. |
 | 1.3.1 | 2026-08-07 | ST-03 (BLG-SPEC-112, EPIC-02, v8.4): `GET /settings` example was missing `created_at`/`updated_at`, both of which the live response includes. Added with representative ISO-8601 values, plus field notes rows. Authority: API Contracts & Documentation Owner. |
 | 1.3.0 | 2026-06-03 | Add `concentration_position_threshold_pct` (default 15%) and `concentration_sector_threshold_pct` (default 30%) to all endpoints. DB columns added via `ensure_settings_concentration_columns` migration. Read by `GET /portfolio/concentration-status`. Settings page gains Risk Limits section. |
 | 1.2.0 | 2026-03-18 | (prior update) |
