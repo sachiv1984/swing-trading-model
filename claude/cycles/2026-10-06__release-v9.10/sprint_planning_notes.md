@@ -39,7 +39,7 @@ Ruling given by the user acting as **Head of Specs Team**, the escalation's owni
 - **ST-20 delivery:** ST-20 edits `claude/roadmap/current_roadmap.md`'s PO-05 wording directly, in-sprint, within its sealed AC 2. It does not route through the Roadmap Rebalance Engine. ST-20 is classified `delegated_decision`, and RISK-03 stays on it as the tracking risk. This is the planning-time pre-seal classification check from `BLG-GOV-362` proposal 2, applied as practice now.
 - **Not covered:** edits to fields of existing `backlog.md` items. Release Planning §1.3a's in-place gate-text edits are also not covered. Both stay out of scope, recorded in manifests only, until `BLG-GOV-362`'s prompt patches ship.
 - **Prompt patches:** the `execution_prompt.md` §7 exception and the `sprint_planning_prompt.md` pre-seal check are **not** applied by this routine. Governance files are outside its write scope. They ship through `BLG-GOV-362`, with the full CLAUDE.md §6 checklist. Until then, this ruling is the cited authority for ST-20's `current_roadmap.md` write. Sprint Execution should quote it in ST-20's commit and QA evidence.
-- **Escalation record:** the disposition in `claude/cycles/2026-09-30__release-v9.9/closure_escalations.md` and the `open_escalations` entry in `.claude_current_state.json` are both outside this routine's write scope. They are still recorded as `Open`, and their SLA is due 2026-10-09T00:00Z. That is a non-blocking outstanding action; see below.
+- **Escalation record:** the disposition in `claude/cycles/2026-09-30__release-v9.9/closure_escalations.md` and the `open_escalations` entry in `.claude_current_state.json` are both outside this routine's write scope. Both were set to `Resolved` on 2026-10-06 in a follow-up `[GOVERNANCE]` commit.
 
 There are no other unresolved pre-sprint decisions.
 
@@ -162,7 +162,7 @@ Every story's AC in `stage4_backlog_slice.md` meets the §7 standard: observable
 
 | Action | Owner | Required Before Seal? |
 |--------|-------|----------------------|
-| Record `ESC-CLOSE-20261006-01`'s disposition as Resolved (named-file ruling, 2026-10-06) in `closure_escalations.md` and in `.claude_current_state.json` `open_escalations`. Both are outside Sprint Planning's write scope. | Head of Specs Team | No — ruling is recorded here and SLA is due 2026-10-09 |
+| Record `ESC-CLOSE-20261006-01`'s disposition as Resolved (named-file ruling, 2026-10-06) in `closure_escalations.md` and in `.claude_current_state.json` `open_escalations`. Both are outside Sprint Planning's write scope. | Head of Specs Team | No — **Done 2026-10-06** (both records set to Resolved) |
 | Ship `BLG-GOV-362`'s prompt patches (`execution_prompt.md` §7 named-file exception; `sprint_planning_prompt.md` pre-seal classification check) with the CLAUDE.md §6 checklist | Head of Specs Team | No |
 | Raise the RISK-01 production `settings` read Human-Delegation at sprint start | Infrastructure & Operations Owner | No — phased at execution |
 | Rulings for ST-01, ST-05, ST-11 and ST-13, raised at sprint start | Strategy Rules & System Intent Owner | No — phased at execution |

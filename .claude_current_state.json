@@ -206,7 +206,11 @@
     "ESC-CLOSE-20261006-01": {
       "summary": "claude/roadmap/* / existing-backlog.md-item write-scope boundary fired 3x at v9.9 (ESC-EXEC-20261001-01/-04/-05) — lessons_learnt_prompt.md §3.7 recurrence of v9.8 Phase 3 FI-2; ruling needed on BLG-GOV-362 options (also covers the workforce_capacity.md worked example, 2nd carry)",
       "owner": "Head of Specs Team",
-      "sla_due_utc": "2026-10-09T00:00:00Z"
+      "sla_due_utc": "2026-10-09T00:00:00Z",
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-06T14:49:32Z",
+      "resolved_by": "Head of Specs Team (user ruling under that role during plan sprint, 2026-10-06__release-v9.10)",
+      "resolution_summary": "Named-file rule adopted. A sealed AC naming an exact claude/roadmap/* file may be written in-sprint, and such stories are classified delegated_decision with a RISK entry (v9.10 ST-20/RISK-03). Existing backlog.md item-field edits and Release Planning §1.3a in-place gate edits are not covered. Prompt patches and the workforce_capacity.md worked example remain with BLG-GOV-362. See claude/cycles/2026-09-30__release-v9.9/closure_escalations.md and claude/cycles/2026-10-06__release-v9.10/sprint_planning_notes.md."
     }
   },
   "deferred_escalations": {

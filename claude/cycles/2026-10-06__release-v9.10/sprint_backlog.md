@@ -457,7 +457,7 @@ Full detail: `sprint_planning_notes.md § Shared-File Ownership Advisory`.
 
 | Action | Owner | Blocker? |
 |--------|-------|---------|
-| Record `ESC-CLOSE-20261006-01` as Resolved in `closure_escalations.md` and `.claude_current_state.json` `open_escalations` (outside Sprint Planning's write scope) | Head of Specs Team | No |
+| Record `ESC-CLOSE-20261006-01` as Resolved in `closure_escalations.md` and `.claude_current_state.json` `open_escalations` (outside Sprint Planning's write scope) | Head of Specs Team | No — Done 2026-10-06 |
 | Ship `BLG-GOV-362` prompt patches with the CLAUDE.md §6 checklist | Head of Specs Team | No |
 | Raise Human-Delegation for the ST-01 production read and the ST-18 live fire (ST-16 if needed) at sprint start | Infrastructure & Operations Owner | No |
 | Rulings for ST-01, ST-05, ST-11 and ST-13, raised at sprint start | Strategy Rules & System Intent Owner | No |
