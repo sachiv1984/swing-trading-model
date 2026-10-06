@@ -58,23 +58,43 @@ const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 // ---------------------------------------------------------------------------
 
 const LIFECYCLE_CONFIG = {
-  GRACE:      { label: "GRACE",      bg: "bg-blue-600",   tip: "Exits grace when position moves > 0.5 ATR or after 10 trading days" },
+  GRACE:      { label: "GRACE",      bg: "bg-blue-600",   tip: "The stop is tracked but not enforced until the grace period ends (10 calendar days, §6)." },
   LOSING:     { label: "LOSING",     bg: "bg-red-600",    tip: "Exits when price rises above entry by 0.5 ATR" },
   PROFITABLE: { label: "PROFITABLE", bg: "bg-green-700",  tip: "Advances to Exit Zone when P&L reaches 2R target" },
   "EXIT ZONE":{ label: "EXIT ZONE",  bg: "bg-violet-600", tip: "Position has reached R-target. Review stop or exit." },
-  UNKNOWN:    { label: "UNKNOWN",    bg: "bg-gray-500",   tip: "Set a stop and R-target on the linked trade plan to enable lifecycle tracking." },
+  UNKNOWN:    { label: "UNKNOWN",    bg: "bg-gray-500",   tip: "No lifecycle state is available for this position." },
 };
 
-function LifecycleBadge({ state, daysInState }) {
+// ST-12 (BLG-FE-196, v9.10): UNKNOWN tooltip by the backend's lifecycle_reason
+// (positions.md §Grace Precedence and UNKNOWN Reasons).
+const UNKNOWN_REASON_TIPS = {
+  missing_data: "No lifecycle state: ATR or price data is missing for this position.",
+  flat_after_grace: "No lifecycle state: the grace period has ended and the price is within 0.5 ATR of entry.",
+};
+
+function LifecycleBadge({ state, daysInState, graceDaysRemaining, lifecycleReason }) {
   const cfg = LIFECYCLE_CONFIG[state] || LIFECYCLE_CONFIG.UNKNOWN;
-  const label = state === "GRACE" && daysInState != null
-    ? `GRACE — ${daysInState}d`
-    : cfg.label;
+  // ST-12: GRACE shows calendar days of grace left, not days in state.
+  const hasGraceDays = state === "GRACE" && graceDaysRemaining != null;
+  const label = hasGraceDays ? `GRACE — ${graceDaysRemaining}d left` : cfg.label;
+  let tip = cfg.tip;
+  let ariaLabel = `Position state: ${state}${daysInState != null ? `, ${daysInState} days in state` : ""}`;
+  if (state === "GRACE") {
+    tip = hasGraceDays
+      ? `Grace period: ${graceDaysRemaining} calendar day${graceDaysRemaining !== 1 ? "s" : ""} left. ${cfg.tip}`
+      : `Grace period. ${cfg.tip}`;
+    ariaLabel = hasGraceDays
+      ? `Position state: GRACE, ${graceDaysRemaining} calendar days of grace left`
+      : "Position state: GRACE";
+  } else if (!LIFECYCLE_CONFIG[state] || state === "UNKNOWN") {
+    tip = UNKNOWN_REASON_TIPS[lifecycleReason] || LIFECYCLE_CONFIG.UNKNOWN.tip;
+  }
   return (
     <span
+      data-testid="lifecycle-badge"
       className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold text-white whitespace-nowrap", cfg.bg)}
-      title={cfg.tip}
-      aria-label={`Position state: ${state}${daysInState != null ? `, ${daysInState} days in state` : ""}`}
+      title={tip}
+      aria-label={ariaLabel}
     >
       {label}
     </span>
@@ -117,10 +137,12 @@ function GracePeriodAlertZone() {
   return (
     <div role="alert" aria-live="polite" className="space-y-3">
       {visible.map((alert) => {
-        const daysLeft = 10 - alert.days_in_state;
+        // ST-12 (BLG-FE-196, v9.10): calendar days left from the backend's
+        // grace_days_remaining, replacing 10 − days_in_state (calendar days, §6.2).
+        const daysLeft = alert.grace_days_remaining ?? Math.max(0, 10 - alert.days_in_state);
         const bodyText = alert.days_in_state >= 10
           ? "Grace period has ended. Your position will transition to LOSING or PROFITABLE on next refresh."
-          : `Your grace period ends in ${daysLeft} trading day${daysLeft !== 1 ? "s" : ""}. Review your original thesis before the window closes.`;
+          : `Your grace period ends in ${daysLeft} day${daysLeft !== 1 ? "s" : ""}. Review your original thesis before the window closes.`;
         const tp = alert.trade_plan_summary;
 
         return (
@@ -1002,6 +1024,8 @@ export default function Positions() {
                       <LifecycleBadge
                         state={position.lifecycle_state || position.position_state}
                         daysInState={position.days_in_state}
+                        graceDaysRemaining={position.grace_days_remaining}
+                        lifecycleReason={position.lifecycle_reason}
                       />
                     ) : (
                       <span className="text-slate-600 text-xs">—</span>

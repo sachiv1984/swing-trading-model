@@ -1,8 +1,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Spec (Class 5)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-08-06
+**Version:** 1.1
+**Last Updated:** 2026-10-06 (ST-12, EPIC-03, v9.10, BLG-FE-196 — GRACE row now calendar days with grace precedence, matching the code; UNKNOWN reason); prior — 2026-08-06
 **Cycle:** 2026-08-05__release-v8.3 (ST-07 — BLG-BE-67)
 
 ---
@@ -22,8 +22,10 @@ Five states, defined by `backend/services/position_lifecycle_service.py::compute
 | `EXIT ZONE` | Price >= entry + 2R (R = entry − initial_stop) |
 | `PROFITABLE` | Price > entry + 0.5 × ATR |
 | `LOSING` | Price < entry − 0.5 × ATR |
-| `GRACE` | Trading days since entry <= 10 AND price within ±0.5 ATR |
-| `UNKNOWN` | Missing ATR or ambiguous zone after grace period |
+| `GRACE` | Fewer than 10 calendar days since entry (`strategy_rules.md` §6.2), whatever the price. Checked first. (v9.10 ST-12: previously ≤ 10 weekdays and only within ±0.5 ATR) |
+| `UNKNOWN` | Missing data, or within ±0.5 ATR of entry after grace. The reason is returned as `lifecycle_reason` (v9.10 ST-12) |
+
+Whether post-grace states should follow these ±0.5 ATR bands or `strategy_rules.md` §9's LOSING/PROFITABLE split is ST-11's ruling (`BLG-SPEC-185`), not yet made.
 
 ## Backend Registry
 

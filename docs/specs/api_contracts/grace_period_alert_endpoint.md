@@ -1,7 +1,7 @@
 # Grace Period Alert Endpoint Contract
 
-**Version:** 1.0.0
-**Last Updated:** 2026-05-12
+**Version:** 1.1.0
+**Last Updated:** 2026-10-06 (ST-12, EPIC-03, v9.10, BLG-FE-196 — adds grace_days_remaining; days_in_state fallback counts calendar days); prior — 2026-05-12
 **Spec Owner:** Engineering
 **Governed by:** docs/specs/api_contracts/conventions.md
 
@@ -32,6 +32,7 @@ None.
       "ticker": "AAPL",
       "market": "US",
       "days_in_state": 9,
+      "grace_days_remaining": 1,
       "trade_plan_id": "uuid or null",
       "trade_plan_summary": {
         "setup_thesis": "string excerpt or null",
@@ -51,7 +52,8 @@ None.
 | `position_id` | string (UUID) | Matches `id` in `GET /positions`. |
 | `ticker` | string | Display ticker (no `.L` suffix for UK stocks). |
 | `market` | string | `"UK"` or `"US"`. |
-| `days_in_state` | integer | Days since `state_entered_at` (or approximated from `entry_date` if unavailable). |
+| `days_in_state` | integer | Days since `state_entered_at`. If that is unavailable, calendar days since `entry_date` (weekdays before v9.10). |
+| `grace_days_remaining` | integer \| null | Calendar days of grace left: `max(0, 10 − calendar days since entry_date)`, the same rule as `GET /positions`' `grace_days_remaining` (`strategy_rules.md` §6.2). `null` if `entry_date` is unreadable. The Positions page alert text uses this, not `10 − days_in_state`. (v9.10 ST-12 BLG-FE-196) |
 | `trade_plan_id` | string (UUID) \| null | Linked trade plan, `null` if none. |
 | `trade_plan_summary` | object \| null | Excerpt of linked plan fields; `null` if no plan linked. |
 

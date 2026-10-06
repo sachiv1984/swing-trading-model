@@ -5,8 +5,9 @@ Tests all 5 state transition paths:
   EXIT ZONE  — price >= entry + 2R
   PROFITABLE — price > entry + 0.5 ATR
   LOSING     — price < entry - 0.5 ATR
-  GRACE      — trading days <= 10 and price within ±0.5 ATR
-  UNKNOWN    — missing ATR or post-grace neutral zone
+  GRACE      — fewer than 10 calendar days since entry, whatever the price
+               (ST-12, BLG-FE-196, v9.10: grace precedence, calendar days)
+  UNKNOWN    — missing data or post-grace neutral zone, with lifecycle_reason
 
 No database calls — CI-safe. Uses date offsets relative to today.
 """
@@ -21,8 +22,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend" / "services"))
 
 from services.position_lifecycle_service import (
     compute_position_state,
+    compute_lifecycle_reason,
     compute_days_in_state,
-    _count_trading_days,
+    _count_calendar_days,
 )
 
 
@@ -38,22 +40,23 @@ def _pos(entry_price, current_price_native, atr, days_ago=0, initial_stop=None):
     }
 
 
-class TestCountTradingDays(unittest.TestCase):
+class TestCountCalendarDays(unittest.TestCase):
 
     def test_zero_for_today(self):
         entry = date.today().isoformat()
-        self.assertEqual(_count_trading_days(entry), 0)
+        self.assertEqual(_count_calendar_days(entry), 0)
 
-    def test_counts_weekdays_not_weekends(self):
-        # 7 calendar days always includes ≥ 5 and ≤ 5 weekdays
+    def test_counts_calendar_days_including_weekends(self):
         entry = (date.today() - timedelta(days=7)).isoformat()
-        result = _count_trading_days(entry)
-        self.assertGreaterEqual(result, 4)
-        self.assertLessEqual(result, 7)
+        self.assertEqual(_count_calendar_days(entry), 7)
 
     def test_future_date_returns_zero(self):
         future = (date.today() + timedelta(days=5)).isoformat()
-        self.assertEqual(_count_trading_days(future), 0)
+        self.assertEqual(_count_calendar_days(future), 0)
+
+    def test_unparseable_returns_none(self):
+        self.assertIsNone(_count_calendar_days(None))
+        self.assertIsNone(_count_calendar_days("not-a-date"))
 
 
 class TestComputePositionState(unittest.TestCase):
@@ -66,15 +69,15 @@ class TestComputePositionState(unittest.TestCase):
         self.assertEqual(compute_position_state(pos), "GRACE")
 
     def test_grace_day_5_neutral(self):
-        """Day 5 (3 trading days), price within ±0.5 ATR → GRACE."""
+        """Day 5, price within ±0.5 ATR → GRACE."""
         pos = _pos(100.0, 100.5, 2.0, days_ago=5)
         self.assertEqual(compute_position_state(pos), "GRACE")
 
     # --- PROFITABLE ---
 
     def test_profitable_beyond_0_5_atr(self):
-        """Price above entry + 0.5 ATR → PROFITABLE (any age)."""
-        pos = _pos(100.0, 102.0, 2.0, days_ago=3)  # 2.0 > 0.5×2.0=1.0
+        """Post-grace, price above entry + 0.5 ATR → PROFITABLE."""
+        pos = _pos(100.0, 102.0, 2.0, days_ago=10)  # 2.0 > 0.5×2.0=1.0
         self.assertEqual(compute_position_state(pos), "PROFITABLE")
 
     def test_profitable_after_grace_window(self):
@@ -85,8 +88,8 @@ class TestComputePositionState(unittest.TestCase):
     # --- LOSING ---
 
     def test_losing_below_0_5_atr(self):
-        """Price below entry - 0.5 ATR → LOSING (even in grace window)."""
-        pos = _pos(100.0, 98.0, 2.0, days_ago=3)  # 98 < 100 - 1.0 = 99
+        """Post-grace (day 10), price below entry - 0.5 ATR → LOSING."""
+        pos = _pos(100.0, 98.0, 2.0, days_ago=10)  # 98 < 100 - 1.0 = 99
         self.assertEqual(compute_position_state(pos), "LOSING")
 
     def test_losing_after_grace(self):
@@ -120,13 +123,13 @@ class TestComputePositionState(unittest.TestCase):
     # --- UNKNOWN ---
 
     def test_unknown_missing_atr(self):
-        """No ATR → UNKNOWN."""
-        pos = _pos(100.0, 100.0, None, days_ago=3)
+        """Post-grace, no ATR → UNKNOWN."""
+        pos = _pos(100.0, 100.0, None, days_ago=12)
         self.assertEqual(compute_position_state(pos), "UNKNOWN")
 
     def test_unknown_missing_price(self):
         """No current price → UNKNOWN."""
-        entry_date = (date.today() - timedelta(days=3)).isoformat()
+        entry_date = (date.today() - timedelta(days=12)).isoformat()
         pos = {
             "entry_price": 100.0,
             "current_price_native": None,
@@ -136,11 +139,11 @@ class TestComputePositionState(unittest.TestCase):
         self.assertEqual(compute_position_state(pos), "UNKNOWN")
 
     def test_unknown_post_grace_neutral_zone(self):
-        """After grace (>10 trading days), price within ±0.5 ATR → UNKNOWN."""
+        """After grace (day 10+), price within ±0.5 ATR → UNKNOWN."""
         pos = _pos(100.0, 100.3, 2.0, days_ago=20)  # within ±1.0 ATR band
         self.assertEqual(compute_position_state(pos), "UNKNOWN")
 
-    # --- Priority: EXIT ZONE > PROFITABLE > LOSING > GRACE ---
+    # --- Priority: GRACE > EXIT ZONE > PROFITABLE > LOSING ---
 
     def test_exit_zone_beats_profitable(self):
         """EXIT ZONE takes priority over PROFITABLE."""
@@ -148,15 +151,43 @@ class TestComputePositionState(unittest.TestCase):
         pos = _pos(100.0, 115.0, 2.0, days_ago=20, initial_stop=95.0)
         self.assertEqual(compute_position_state(pos), "EXIT ZONE")
 
-    def test_losing_overrides_grace(self):
-        """LOSING beats GRACE even within 10 trading days."""
+    def test_grace_overrides_losing(self):
+        """ST-12: in grace, a position > 0.5 ATR below entry is still GRACE."""
         pos = _pos(100.0, 97.0, 2.0, days_ago=3)
-        self.assertEqual(compute_position_state(pos), "LOSING")
+        self.assertEqual(compute_position_state(pos), "GRACE")
 
-    def test_profitable_overrides_grace(self):
-        """PROFITABLE beats GRACE even within 10 trading days."""
-        pos = _pos(100.0, 102.0, 2.0, days_ago=3)
-        self.assertEqual(compute_position_state(pos), "PROFITABLE")
+    def test_grace_overrides_profitable_and_exit_zone(self):
+        """ST-12: in grace, a position at 2R is still GRACE."""
+        pos = _pos(100.0, 115.0, 2.0, days_ago=3, initial_stop=95.0)
+        self.assertEqual(compute_position_state(pos), "GRACE")
+
+    def test_grace_boundary_day_9_vs_day_10(self):
+        """ST-12: matches GET /positions' grace_period (holding_days < 10)."""
+        self.assertEqual(compute_position_state(_pos(100.0, 97.0, 2.0, days_ago=9)), "GRACE")
+        self.assertEqual(compute_position_state(_pos(100.0, 97.0, 2.0, days_ago=10)), "LOSING")
+
+    def test_grace_without_atr_is_grace(self):
+        """ST-12: missing ATR does not override grace."""
+        self.assertEqual(compute_position_state(_pos(100.0, 100.0, None, days_ago=2)), "GRACE")
+
+
+class TestLifecycleReason(unittest.TestCase):
+    """ST-12: the reason an UNKNOWN badge is UNKNOWN."""
+
+    def test_missing_atr_after_grace(self):
+        self.assertEqual(compute_lifecycle_reason(_pos(100.0, 100.0, None, days_ago=12)), "missing_data")
+
+    def test_missing_entry_date(self):
+        pos = _pos(100.0, 100.0, 2.0)
+        pos["entry_date"] = None
+        self.assertEqual(compute_lifecycle_reason(pos), "missing_data")
+
+    def test_flat_after_grace(self):
+        self.assertEqual(compute_lifecycle_reason(_pos(100.0, 100.3, 2.0, days_ago=20)), "flat_after_grace")
+
+    def test_null_for_known_states(self):
+        self.assertIsNone(compute_lifecycle_reason(_pos(100.0, 97.0, 2.0, days_ago=3)))
+        self.assertIsNone(compute_lifecycle_reason(_pos(100.0, 97.0, 2.0, days_ago=20)))
 
 
 class TestComputeDaysInState(unittest.TestCase):

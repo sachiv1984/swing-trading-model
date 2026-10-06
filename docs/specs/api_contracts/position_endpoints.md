@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.7.0
-**Last Updated:** 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — GET /positions gains atr_calculated_at, stop_calculated_at, active_atr_multiplier); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /positions); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /positions/nightly-stop-update); prior history retained — see prior entries in version control.
+**Version:** 2.9.0
+**Last Updated:** 2026-10-06 (ST-12, EPIC-03, v9.10, BLG-FE-196 — GET /positions and GET /positions/{position_id} gain lifecycle_reason; position_state GRACE now follows the calendar-day grace window first); prior — 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — GET /positions gains atr_calculated_at, stop_calculated_at, active_atr_multiplier); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /positions); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /positions/nightly-stop-update); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.9.0 | 2026-10-06 | ST-12 (BLG-FE-196, EPIC-03, v9.10): `position_state` is now GRACE whenever `grace_period` is true (calendar days, §6.2), whatever the price; it previously checked the ±0.5 ATR bands first and counted weekdays. `GET /positions` and `GET /positions/{position_id}` gain `lifecycle_reason` (`missing_data` / `flat_after_grace` / `null`), set only for UNKNOWN. (2.8.x is EPIC-01's ST-02/ST-03 on its own branch; this skips it so each change keeps a distinct version at merge.) |
 | 2.6.2 | 2026-09-18 | ST-29 (BLG-SPEC-142, EPIC-04, v9.5): Added a "Lifecycle diagram" cross-reference to `docs/specs/data_model.md §Position & Trade Plan Lifecycle State Diagram`, canonical for `status`/`position_state` transitions. No functional change — documentation only. |
 | 2.6.1 | 2026-09-18 | ST-25 (BLG-SPEC-133, EPIC-04, v9.5): `GET /positions` example JSON's `current_trailing_stop_native` (764.00) did not reconcile with `current_trailing_stop × live_fx_rate` (560.50 × 1.3650 = 765.08, within the rounding tolerance already used by the other native-currency example fields). Corrected to 765.08. No functional change — example-payload fix only. |
 | 2.6.0 | 2026-08-17 | ST-02 (BLG-BE-103, EPIC-01, v8.9): Added `current_trailing_stop_native` field to `GET /positions` response — the native-currency counterpart of `current_trailing_stop` (which is GBP-converted for US-market positions). Fixes a currency-basis defect where the frontend rendered the GBP-converted value next to the native currency symbol. `initial_stop` and `stop_price_native` were already native; this closes the gap for the third stop field. |
@@ -123,7 +124,8 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
     "last_reviewed_at": "2026-07-01T09:00:00+00:00",
     "position_state": "PROFITABLE",
     "state_entered_at": "2026-07-01T09:00:00+00:00",
-    "days_in_state": 14
+    "days_in_state": 14,
+    "lifecycle_reason": null
   }
 ]
 ```
@@ -156,6 +158,7 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
 | `position_state` | `string`. One of `"GRACE"`, `"PROFITABLE"`, `"LOSING"`, `"EXIT ZONE"`, `"UNKNOWN"`. Server-computed lifecycle state, distinct from `display_status` — recalculated and persisted (with transition history) on each `GET /positions` call. `"UNKNOWN"` when required inputs (entry price, current price, ATR, entry date) are unavailable. (v7.10 ST-14 BLG-SPEC-103) |
 | `state_entered_at` | ISO-8601 timestamp \| `null`. Timestamp of the most recent transition into the current `position_state`. `null` only in the `position_state = "UNKNOWN"` fallback case. (v7.10 ST-14 BLG-SPEC-103) |
 | `days_in_state` | `integer`. Whole days elapsed since `state_entered_at`. `0` on the day of transition or when `state_entered_at` is `null`. (v7.10 ST-14 BLG-SPEC-103) |
+| `lifecycle_reason` | `string` \| `null`. Why the position is `"UNKNOWN"`: `"missing_data"` (no ATR, entry price, current price or entry date) or `"flat_after_grace"` (past grace and within ±0.5 ATR of entry). `null` for every other state. While `grace_period` is true, `position_state` is `"GRACE"` whatever the price, using the same calendar-day rule as `grace_period`. (v9.10 ST-12 BLG-FE-196) |
 | `atr_calculated_at` | ISO-8601 timestamp \| `null`. When `atr_value` was last freshly recomputed (not merely read from cache) — written by the on-load recompute path (`GET /positions/analyze`) and `POST /positions/nightly-stop-update`. `null` if never recomputed since this field was added. See `strategy_rules.md` §7.1. (v9.9 ST-01 BLG-BE-135) |
 | `stop_calculated_at` | ISO-8601 timestamp \| `null`. When `current_trailing_stop`/`stop_price` was last recalculated against ATR (not the grace-period carry-over, which leaves this unchanged). `null` if never recomputed since this field was added. (v9.9 ST-01 BLG-BE-135) |
 | `active_atr_multiplier` | `number` \| `null`. The ATR multiplier used to produce the current stop — `2` while profitable (tight trail), `5` while at a loss (wide stop), per `strategy_rules.md` §7.2. `null` during the grace period (no real recompute has run) or if never recomputed since this field was added. (v9.9 ST-01 BLG-BE-135) |
@@ -828,7 +831,8 @@ Returns the position object enriched with live price data and Arc 3 lifecycle fi
 | `market` | string | `"UK"` or `"US"` |
 | `position_state` | string \| null | Arc 3 state: `EXIT ZONE`, `PROFITABLE`, `LOSING`, `GRACE`, `UNKNOWN` |
 | `state_entered_at` | string \| null | ISO 8601 timestamp when current state was entered |
-| `days_in_state` | integer \| null | Trading days in current state |
+| `days_in_state` | integer \| null | Calendar days in current state (whole days since `state_entered_at`) |
+| `lifecycle_reason` | string \| null | `missing_data` or `flat_after_grace` when `position_state` is `UNKNOWN`, otherwise `null`. See `GET /positions` field notes. (v9.10 ST-12) |
 | `current_price` | number | Live price in GBP |
 | `pnl` | number | Unrealised P&L in GBP |
 | `pnl_percent` | number | P&L as percentage |

@@ -146,7 +146,7 @@ Displays each open position as a row with:
 
 - **Grace precedence:** while `grace_period` is true, the state is GRACE regardless of price relative to entry. The backend classifies grace first, using the same calendar-day rule as `grace_period`; the frontend does not re-derive it.
 - **`aria-label` (GRACE):** "Position state: GRACE, {n} calendar days of grace left".
-- **UNKNOWN tooltip**, by the backend reason field (working name `lifecycle_reason`; finalised in `position_endpoints.md`/`openapi.yaml` by ST-12):
+- **UNKNOWN tooltip**, by the backend reason field `lifecycle_reason` (finalised in `position_endpoints.md` v2.9.0 / `openapi.yaml` by ST-12):
 
 | Reason | Tooltip |
 |--------|---------|

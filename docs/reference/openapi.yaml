@@ -2,7 +2,12 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.17.0
+  version: 3.19.0
+  # v3.19.0 (2026-10-06, ST-12, EPIC-03, v9.10): GET /positions and
+  # GET /positions/{position_id} gain lifecycle_reason; GET
+  # /positions/grace-period-alerts gains grace_days_remaining (BLG-FE-196).
+  # No new endpoint. (3.18.0 is EPIC-01's ST-02 atr_source on its own branch;
+  # this bump skips it so the two changes keep distinct versions at merge.)
   # v3.17.0 (2026-10-01, ST-01, EPIC-01, v9.9): GET /positions' Position schema
   # gains atr_calculated_at, stop_calculated_at, active_atr_multiplier
   # (BLG-BE-135) -- no new endpoint, existing response schema only.
@@ -1789,6 +1794,11 @@ paths:
                     nullable: true
                   days_in_state:
                     type: integer
+                  lifecycle_reason:
+                    type: string
+                    enum: [missing_data, flat_after_grace]
+                    nullable: true
+                    description: v9.10 ST-12 (BLG-FE-196) — why the position is UNKNOWN. missing_data = no ATR, entry price, current price or entry date; flat_after_grace = past grace and within ±0.5 ATR of entry. Null for every other state.
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -2154,6 +2164,10 @@ paths:
                           enum: [US, UK]
                         days_in_state:
                           type: integer
+                        grace_days_remaining:
+                          type: integer
+                          nullable: true
+                          description: v9.10 ST-12 (BLG-FE-196) — calendar days of grace left, max(0, 10 − calendar days since entry). Same rule as GET /positions' grace_days_remaining.
                         trade_plan_id:
                           type: string
                           format: uuid
@@ -6402,6 +6416,11 @@ components:
               format: date-time
               nullable: true
               description: v7.0 ST-15 (BLG-FEAT-68) — null means never marked reviewed. Set by PATCH /positions/{id}/mark-reviewed.
+            lifecycle_reason:
+              type: string
+              enum: [missing_data, flat_after_grace]
+              nullable: true
+              description: v9.10 ST-12 (BLG-FE-196) — why the position is UNKNOWN. missing_data = no ATR, entry price, current price or entry date; flat_after_grace = past grace and within ±0.5 ATR of entry. Null for every other state.
 
     PortfolioSnapshot:
       type: object
