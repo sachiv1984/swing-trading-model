@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical — Implemented v7.7 EPIC-01 ST-01
-**Version:** 0.2.0
-**Last Updated:** 2026-07-23
+**Version:** 0.2.1
+**Last Updated:** 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — Implementation Note 2 states the behaviour-only registry coverage rule); prior — 2026-07-23
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Cycle:** 2026-06-01__release-v4.8 (ST-07 — BLG-SPEC-43); implemented 2026-07-21__release-v7.7 (ST-01, EPIC-01, BLG-FEAT-75)
 **SI Initiative:** SI-04 — Strategy Version Performance Comparison
@@ -130,7 +130,7 @@ GET /analytics/strategy-version-comparison
 
 1. **Strategy version attribution (resolved v7.7 ST-01 — no `strategy_version` column added):** trades are attributed to a version by `entry_date` falling within that version's active date window, not a per-trade column. Each version's window is `[effective_date, next_version_effective_date)` per `claude/strategy/strategy_rules.md`'s own Change Log table. Two versions sharing an effective date (1.1 and 1.2, both 2026-02-18) correctly yield a zero-width window for the earlier one.
 
-2. **Version registry:** implemented as `backend/strategy_version_registry.py` — a hardcoded list mirroring `strategy_rules.md`'s Change Log (version label + effective date), not a database table or new schema. Living-reference maintenance obligation: update this file in the same commit as any new Change Log row in `strategy_rules.md`.
+2. **Version registry:** implemented as `backend/strategy_version_registry.py`, a hardcoded list of version labels and effective dates taken from `strategy_rules.md`'s Change Log, not a database table or new schema. **Coverage rule (Strategy Rules & System Intent Owner ruling, 2026-10-06, ST-05/`BLG-BE-137`, v9.10):** only versions that change behaviour or parameters are registered. Every other Change Log row is listed in `DOCUMENTATION_ONLY_VERSIONS`, in the same commit as the row is added. A documentation-only version produces identical trades, so it gets no window of its own, and its trades are attributed to the preceding behavioural version. As of 2026-10-06 the registry is 1.0–1.4; 1.5–1.14 are documentation-only. 1.1 stays registered (grandfathered; zero-width window). `tests/test_strategy_version_registry.py` derives the version list from the Change Log and fails on any unclassified version.
 
 3. **Comparison direction:** `performance_delta` on `version_to_metrics` represents `version_to.avg_R - version_from.avg_R`. Positive = improvement. `avg_R` uses the canonical per-trade R-multiple formula (`metrics_definitions.md` v1.7.0) via `positions.initial_stop`; trades without a determinable stop are excluded from `avg_R` but still counted in `trade_count`/`win_rate`.
 
@@ -163,5 +163,6 @@ None. Implementation matches this contract (v0.2.0) at v7.7 ST-01.
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 0.2.1 | 2026-10-06 | Sprint Execution Engine | ST-05 (BLG-BE-137, EPIC-01, v9.10): Implementation Note 2 records the behaviour-only coverage rule (Strategy Rules & System Intent Owner ruling, 2026-10-06). Documentation only; no response-shape or attribution change, since 1.5–1.14 were never registered. |
 | 0.2.0 | 2026-07-23 | Sprint Execution Engine | Implemented (v7.7, ST-01, EPIC-01, BLG-FEAT-75). Added `compliance_rate` field to `version_from_metrics`/`version_to_metrics` (Strategy Rules & System Intent Owner sourcing decision — Arc 5 composite score, generalised to an arbitrary date range). Resolved the strategy-version-attribution dependency via date-range windows sourced from `strategy_rules.md`'s Change Log (`backend/strategy_version_registry.py`), not a new `strategy_version` column. `comparison_summary.assessment` rule made explicit (Improved when `avg_R_delta >= 0`, else Degraded). Status: Draft — Pre-Sprint → Canonical. |
 | 0.1.0 | 2026-06-01 | Sprint Execution Engine | Initial pre-sprint contract draft. Response schema, query parameters, error cases, §13 binding conditions. SI-04 strategy version comparison endpoint. |

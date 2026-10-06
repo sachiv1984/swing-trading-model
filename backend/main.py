@@ -1650,7 +1650,8 @@ def get_position_by_id_endpoint(position_id: str):
             live_fx_rate=live_fx_rate,
         )
         holding_days = calculate_holding_days(str(pos["entry_date"]))
-        grace_period = holding_days < 10
+        from strategy_parameters import GRACE_PERIOD_DAYS
+        grace_period = holding_days < GRACE_PERIOD_DAYS
         grace_days_remaining = compute_grace_days_remaining(
             grace_period=grace_period, holding_days=holding_days
         )
