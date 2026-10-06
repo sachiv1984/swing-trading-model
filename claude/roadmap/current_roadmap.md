@@ -466,6 +466,16 @@ Today you find stocks through external research and add them to the watchlist ma
 | `BLG-FE-193` — stop-loss cell ATR/multiplier/recalculation-source display | §7.1 sustained-failure pull-forward (PO-committed build-and-ship U-item). Gate met: `BLG-BE-135` shipped v9.9. | P2 | M (~4-6 days) |
 | `BLG-FE-198` — exit dialog pre-selects the known exit reason | §7.1 sustained-failure pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | S (~1 day) |
 
+<!-- roadmap-annotation-marker: RA:v9.10:2026-10-06__release-v9.10 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-10-06__release-v9.10
+- Plan published: 2026-10-06
+- Cycle folder: claude/cycles/2026-10-06__release-v9.10/
+- Backlog slice: claude/cycles/2026-10-06__release-v9.10/stage4_backlog_slice.md
+- Status at annotation: Committed (sealed to Published later in the same session)
+- All three committed items seated: `BLG-BE-138` (ST-01), `BLG-FE-193` (ST-06), `BLG-FE-198` (ST-08). Full release: 21 items across 4 EPICs, 27.90 days (top of the ~24–28 day band, "use full capacity"). Design gate required.
+
 <!-- roadmap-annotation-marker: RA:v7.4:2026-07-17__release-v7.4 -->
 
 -----

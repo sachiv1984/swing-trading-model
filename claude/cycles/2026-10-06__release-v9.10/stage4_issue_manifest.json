@@ -1,0 +1,317 @@
+[
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-01",
+    "story_id": "ST-01",
+    "s2_id": "S2-01",
+    "source": "BLG-BE-138",
+    "title": "One source for §11 stop parameters across the on-load and nightly stop paths",
+    "priority": "P1",
+    "effort": "M (~3-5d; 4.0d midpoint, includes a ruling sub-step and a production data check)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-01",
+    "story_id": "ST-02",
+    "s2_id": "S2-02",
+    "source": "BLG-BE-139",
+    "title": "Remove silent ATR fallbacks and record ATR provenance",
+    "priority": "P2",
+    "effort": "M (~2-3d)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-01",
+    "story_id": "ST-03",
+    "s2_id": "S2-03",
+    "source": "BLG-SPEC-187",
+    "title": "Contract corrections: losing-stop formula, analyze side effects, settings-change effect",
+    "priority": "P2",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-01",
+    "story_id": "ST-04",
+    "s2_id": "S2-04",
+    "source": "BLG-QA-207",
+    "title": "Unit-test the live exit decision and grace-period behaviour",
+    "priority": "P2",
+    "effort": "S (~1d)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-01",
+    "story_id": "ST-05",
+    "s2_id": "S2-05",
+    "source": "BLG-BE-137",
+    "title": "Rule on strategy-version registry coverage and enforce it with a test",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-02",
+    "story_id": "ST-06",
+    "s2_id": "S2-06",
+    "source": "BLG-FE-193",
+    "title": "Show ATR, active multiplier and recalculation source in the stop-loss cell",
+    "priority": "P2",
+    "effort": "M (~4-6d; 5.0d midpoint)",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-02",
+    "story_id": "ST-07",
+    "s2_id": "S2-07",
+    "source": "BLG-FE-197",
+    "title": "Trade Entry shows the stop and risk the system will actually store",
+    "priority": "P2",
+    "effort": "M (~2-3d)",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-02",
+    "story_id": "ST-08",
+    "s2_id": "S2-08",
+    "source": "BLG-FE-198",
+    "title": "Exit dialog pre-selects the exit reason the system already knows",
+    "priority": "P2",
+    "effort": "S (~1d)",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-02",
+    "story_id": "ST-09",
+    "s2_id": "S2-09",
+    "source": "BLG-FE-199",
+    "title": "Morning briefing card for §8 exit recommendations",
+    "priority": "P2",
+    "effort": "S (~1-1.5d; 1.25d midpoint)",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-02",
+    "story_id": "ST-10",
+    "s2_id": "S2-10",
+    "source": "BLG-FE-194",
+    "title": "Recent Trades badge shows a neutral glyph for a break-even trade",
+    "priority": "P4",
+    "effort": "XS (<1h)",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-03",
+    "story_id": "ST-11",
+    "s2_id": "S2-11",
+    "source": "BLG-SPEC-185",
+    "title": "Reconcile the lifecycle-state registry with strategy_rules.md §9",
+    "priority": "P2",
+    "effort": "S (~1d)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-03",
+    "story_id": "ST-12",
+    "s2_id": "S2-12",
+    "source": "BLG-FE-196",
+    "title": "Positions lifecycle badge agrees with the §6 grace window, in calendar days",
+    "priority": "P2",
+    "effort": "S (~1-2d; 1.5d midpoint)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-03",
+    "story_id": "ST-13",
+    "s2_id": "S2-13",
+    "source": "BLG-GOV-365",
+    "title": "Gap Risk Flag §13.3 ruling on UK-ticker earnings flags and day-0 timing",
+    "priority": "P2",
+    "effort": "S (~0.5d ruling)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-03",
+    "story_id": "ST-14",
+    "s2_id": "S2-14",
+    "source": "BLG-BE-136",
+    "title": "Gap risk flag: disposition the standalone weekend-hold trigger and align trigger-timing label/spec with code",
+    "priority": "P2",
+    "effort": "S (~1-2d; 1.5d midpoint)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-04",
+    "story_id": "ST-15",
+    "s2_id": "S2-15",
+    "source": "BLG-GOV-140",
+    "title": "AI chat advisory §13 quarterly self-audit checklist",
+    "priority": "P2",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-04",
+    "story_id": "ST-16",
+    "s2_id": "S2-16",
+    "source": "BLG-GOV-141",
+    "title": "AI model output logging completeness audit",
+    "priority": "P2",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-04",
+    "story_id": "ST-17",
+    "s2_id": "S2-17",
+    "source": "BLG-OPS-92",
+    "title": "Quarterly dependency update review",
+    "priority": "P2",
+    "effort": "S (~1d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-04",
+    "story_id": "ST-18",
+    "s2_id": "S2-18",
+    "source": "BLG-OPS-171",
+    "title": "Confirm the stale-staging-deploy alert fires on a real stale-staging condition",
+    "priority": "P3",
+    "effort": "S (~0.5d; calibrated up one tier from XS for live-environment verification, ST-35 rule)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-04",
+    "story_id": "ST-19",
+    "s2_id": "S2-19",
+    "source": "BLG-QA-195",
+    "title": "Add the Reports and Notifications pages to the axe accessibility scan",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-04",
+    "story_id": "ST-20",
+    "s2_id": "S2-20",
+    "source": "BLG-SPEC-171",
+    "title": "Correct the PO-05 pre-assessment and replay page spec wording",
+    "priority": "P3",
+    "effort": "S (~0.5d)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  },
+  {
+    "cycle": "2026-10-06__release-v9.10",
+    "epic": "EPIC-04",
+    "story_id": "ST-21",
+    "s2_id": "S2-21",
+    "source": "BLG-GOV-357",
+    "title": "Sign-off single-point-of-failure matrix",
+    "priority": "P3",
+    "effort": "S (~1-2d; 1.5d midpoint)",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-10-06__release-v9.10"
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "cycle_id": "2026-10-06__release-v9.10",
+  "release": "v9.10",
+  "txn_id": "BLTX-20261006-01",
+  "state": "committed",
+  "prepared_utc": "2026-10-06T12:30:00Z",
+  "committed_utc": "2026-10-06T12:32:00Z",
+  "marker": "RP:v9.10:2026-10-06__release-v9.10",
+  "target_file": "claude/backlog/backlog.md",
+  "notes": "Idempotency search: marker not present in claude/backlog/backlog.md. Release slice written to claude/cycles/2026-10-06__release-v9.10/stage4_backlog_slice.md, which carries the marker, following the v9.8/v9.9 practice. No global reprioritisation and no edits to existing backlog.md items (see run_manifest.md Friction Item 2 and ESC-CLOSE-20261006-01)."
+}

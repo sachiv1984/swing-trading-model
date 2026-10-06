@@ -1,17 +1,17 @@
 {
-  "active_cycle": "2026-09-30__release-v9.9",
-  "cycle_name": "v9.9 — Full-Capacity Debt Clearance",
-  "status": "Closed",
-  "prior_status": "Verified_with_deviations",
-  "engine": "Post-Ship Closure",
-  "last_updated_utc": "2026-10-06T11:56:33Z",
+  "active_cycle": "2026-10-06__release-v9.10",
+  "cycle_name": "v9.10 — Stop-Parameter Correctness & Exit Transparency",
+  "status": "Release_Planning_Complete",
+  "prior_status": "Closed",
+  "engine": "Release Planning",
+  "last_updated_utc": "2026-10-06T12:55:00Z",
   "execution_state_path": "claude/cycles/2026-09-30__release-v9.9/execution_state.json",
-  "backlog_slice_path": "claude/cycles/2026-09-30__release-v9.9/stage4_backlog_slice.md",
+  "backlog_slice_path": "claude/cycles/2026-10-06__release-v9.10/stage4_backlog_slice.md",
   "design_gate_required": true,
-  "design_gate_status": "Passed",
-  "design_gate_record": "claude/cycles/2026-09-30__release-v9.9/design_gate.md",
-  "design_gate_completed_utc": "2026-10-01T00:00:00Z",
-  "sprint_sealed": true,
+  "design_gate_status": "not_started",
+  "design_gate_record": "",
+  "design_gate_completed_utc": "",
+  "sprint_sealed": false,
   "_sprint_sealed_note": "Set true at Sprint Planning STEP 7 for 2026-09-28__release-v9.8 — sign-off gate (STEP 6.2) passed, no [AC REQUIRED]/[ESTIMATE REQUIRED] placeholders, no Blocker? Yes outstanding actions, RISK-01/RISK-02 resolved via delegated_decision classification + internal design-decision-sub-step sequencing (ST-17, ST-38) rather than ST-ID phasing (backlog slice defines them as single sealed items). Owned exclusively by sprint_planning_prompt.md's own seal for this cycle.",
   "sprint_goal_path": "claude/cycles/2026-09-30__release-v9.9/sprint_goal.md",
   "sprint_backlog_path": "claude/cycles/2026-09-30__release-v9.9/sprint_backlog.md",
@@ -38,7 +38,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-10-06T10:19:22Z",
-  "last_sync_utc": "2026-10-06T11:56:33Z",
+  "last_sync_utc": "2026-10-06T12:55:00Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-09-28T00:00:00Z",
   "deviation_consolidation_review_cycle_count": 2,
@@ -253,29 +253,27 @@
     }
   },
   "release_plan": {
-    "release_plan_path": "claude/cycles/2026-09-30__release-v9.9/release_plan.md",
-    "cycle_id": "2026-09-30__release-v9.9",
-    "published_utc": "2026-09-30T18:20:00Z",
+    "release_plan_path": "claude/cycles/2026-10-06__release-v9.10/release_plan.md",
+    "cycle_id": "2026-10-06__release-v9.10",
+    "published_utc": "2026-10-06T12:55:00Z",
     "epics": [
       "EPIC-01",
       "EPIC-02",
       "EPIC-03",
-      "EPIC-04",
-      "EPIC-05",
-      "EPIC-06"
+      "EPIC-04"
     ],
-    "story_items": 35,
-    "story_items_firm": 35,
+    "story_items": 21,
+    "story_items_firm": 21,
     "story_items_conditional": 0,
-    "scope_items": 35,
+    "scope_items": 21,
     "capacity_check": "pass",
     "design_gate_required": true,
-    "state_json": "claude/cycles/2026-09-30__release-v9.9/state.json",
-    "scope_doc": "docs/product/scope/scope--2026-09-30__release-v9.9.md"
+    "state_json": "claude/cycles/2026-10-06__release-v9.10/state.json",
+    "scope_doc": "docs/product/scope/scope--2026-10-06__release-v9.10.md"
   },
   "prior_release_plan": {
-    "release_plan_path": "claude/cycles/2026-09-28__release-v9.8/release_plan.md",
-    "cycle_id": "2026-09-28__release-v9.8",
-    "published_utc": "2026-09-28T11:20:00Z"
+    "release_plan_path": "claude/cycles/2026-09-30__release-v9.9/release_plan.md",
+    "cycle_id": "2026-09-30__release-v9.9",
+    "published_utc": "2026-09-30T18:20:00Z"
   }
 }
