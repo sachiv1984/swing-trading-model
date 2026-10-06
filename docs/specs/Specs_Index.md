@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 — §47 Test Coverage Gaps v9.7 section added, 0 new gaps requiring a backlog item, TSG sweep 0 Open, endpoint coverage drift 0 gap; see Changelog table for full history)
+**Last Updated:** 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 — §49 Test Coverage Gaps v9.9 section added, 4 gaps each already tracked by an in-cycle backlog item, TSG sweep 0 Open, endpoint coverage drift 0 gap; see Changelog table for full history)
 
 ---
 
@@ -1209,6 +1209,55 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 ---
 
+## 49. Test Coverage Gaps — v9.9 (2026-09-30__release-v9.9)
+
+Identified during delivery verification (`verification_report.md §6`): **4 test coverage weaknesses, each already tracked by a backlog item filed in-cycle during PR review** — no new backlog items were needed. All 19 referenced `test_scenarios` files across the 6 EPICs exist on disk and were confirmed run against their `qa_evidence_EPIC-xx.md` records.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| TSG-v9.9-01 | EPIC-01 | `test_position_atr_timestamp_persistence.py` does not mock `get_settings()`, so its `active_atr_multiplier` assertions do not confirm production values | backlog_item_created — `BLG-QA-204` |
+| TSG-v9.9-02 | EPIC-03 | ST-12's valid-input sizing property checks only an upper bound | backlog_item_created — `BLG-QA-210` |
+| TSG-v9.9-03 | EPIC-04 | `scripts/compute_role_share_history.py` has no unit tests, although `roadmap_prompt.md` §7.2 now depends on it | backlog_item_created — `BLG-QA-212` |
+| TSG-v9.9-04 | EPIC-05 | No automated regression guard for the re-applied `positions.fees_paid NOT NULL` invariant (entry flow and SQL seeds) | backlog_item_created — `BLG-QA-213` |
+
+### 49.1 TSG-v9.9-01 — EPIC-01: `test_position_atr_timestamp_persistence.py` does not mock `get_settings()`
+
+**Identified:** 2026-10-06 (delivery verification 2026-09-30__release-v9.9; first raised at PR #1884 review)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** `test_position_atr_timestamp_persistence.py` does not mock `get_settings()`, so its `active_atr_multiplier` assertions do not confirm production values. Qualifying reason: Core user journey: stop/ATR display on `GET /positions`.
+**Backlog item:** BLG-QA-204
+
+### 49.2 TSG-v9.9-02 — EPIC-03: ST-12's valid-input sizing property checks only an upper bound
+
+**Identified:** 2026-10-06 (delivery verification 2026-09-30__release-v9.9; first raised at PR #1888 review)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** ST-12's valid-input sizing property checks only an upper bound. Qualifying reason: Spec section partly uncovered: `strategy_rules.md` §4.1.4.
+**Backlog item:** BLG-QA-210
+
+### 49.3 TSG-v9.9-03 — EPIC-04: `scripts/compute_role_share_history.py` has no unit tests
+
+**Identified:** 2026-10-06 (delivery verification 2026-09-30__release-v9.9; first raised at PR #1891 review)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** `scripts/compute_role_share_history.py` has no unit tests, although `roadmap_prompt.md` §7.2 now depends on it. Qualifying reason: No scenario coverage for a governance-critical script.
+**Backlog item:** BLG-QA-212
+
+### 49.4 TSG-v9.9-04 — EPIC-05: No automated regression guard for the re-applied `positions.fees_paid NOT NULL` invariant (entry flow and SQL seeds)
+
+**Identified:** 2026-10-06 (delivery verification 2026-09-30__release-v9.9; first raised at PR #1892 review)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** No automated regression guard for the re-applied `positions.fees_paid NOT NULL` invariant (entry flow and SQL seeds). Qualifying reason: Spec section uncovered: `data_model.md` DS-23.
+**Backlog item:** BLG-QA-213
+
+**Endpoint coverage drift check (STEP 6 advisory):** Post-ship closure re-ran `scripts/check_api_performance_baseline_drift.py` — PASSED, no new drift detected (147 normalised `openapi.yaml` endpoints, 0 missing from `api_performance_baseline.md`). No new backend routes this cycle (ST-01 added response fields to the existing `GET /positions`), so no `SystemStatus.js` `categorizeEndpoint()` follow-up is needed.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep):** Scanned all 26 pre-existing `### N.N TSG-*` entries for literal `**Status:** Open` before adding §49. 0 Open entries found, 0 resolved. The 4 new §49 entries are added as Open; their backlog items remain open.
+
+---
+
 ## 12. Guiding Principle
 
 > Specs explain decisions.
@@ -1222,6 +1271,7 @@ Identified during delivery verification (`verification_report.md §6`): **0 new 
 
 | Date | Change |
 |------|--------|
+| 2026-10-06 | Post-ship closure `2026-09-30__release-v9.9` — §49 Test Coverage Gaps (v9.9) added: 4 gaps (TSG-v9.9-01..04), each already tracked by a backlog item filed in-cycle during PR review (`BLG-QA-204`/`210`/`212`/`213`); endpoint coverage drift check PASSED, 0 gaps, no new routes; full-document TSG reconciliation sweep found 0 Open entries. Header `**Last Updated:**` corrected — it had not been advanced at the 2026-09-30 v9.8 closure. |
 | 2026-09-30 | Post-ship closure `2026-09-28__release-v9.8` — §48 Test Coverage Gaps (v9.8) added, 0 new gaps requiring a backlog item this cycle (TSG-v9.8-01/02 both not_applicable); endpoint coverage drift check (`check_api_performance_baseline_drift.py`) PASSED, 0 gaps, no new routes this cycle; full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-28 | Post-ship closure `2026-09-23__release-v9.7` — §47 Test Coverage Gaps (v9.7) added, 0 new gaps requiring a backlog item this cycle (TSG-v9.7-01/02 both not_applicable); endpoint coverage drift check found 0 gaps (147 normalised endpoints; new `POST /replay/run` already registered in `api_performance_baseline.md` same-PR); `SystemStatus.js` `/replay` categorisation gap flagged and filed as `BLG-FE-191`; full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-23 | Post-ship closure `2026-09-21__release-v9.6` — §46 Test Coverage Gaps (v9.6) added, 0 new gaps this cycle; endpoint coverage drift check found 0 gaps (146 normalised endpoints, no new routes this cycle); full-document TSG reconciliation sweep found 0 Open entries. |

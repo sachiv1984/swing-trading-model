@@ -3,11 +3,71 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 — v9.8 entry added); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 — v9.7 entry added); prior — 2026-09-23 (post-ship closure 2026-09-21__release-v9.6 — v9.6 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 — v9.9 entry added); prior — 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 — v9.8 entry added); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 — v9.7 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.9 — Full-Capacity Debt Clearance — 2026-10-06
+Cycle: 2026-09-30__release-v9.9
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-09-30__release-v9.9/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Backend Reliability & Data Integrity — the duplicated close-to-close ATR copies consolidated into one canonical `compute_atr_close_approximation` (live stop-loss and screener formulas deliberately kept distinct per the RISK-01 Owner ruling), `stop_calculated_at`/`atr_calculated_at`/`active_atr_multiplier` persisted on both the on-load and nightly recompute paths (DS-22, live on staging and production) and exposed on `GET /positions`, a year bounds check on `GET /reports/monthly-pnl`, and the last 3 hardcoded-timeout call sites (Gemini daily-cost alert, ATR Yahoo fallback, Alpaca paper sync) migrated to the shared upstream-call helper | — | `claude/strategy/strategy_rules.md#7.1`; `docs/specs/data_model.md#DS-22`; `docs/specs/api_contracts/position_endpoints.md#GET /positions`; `docs/reference/openapi.yaml`; `docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl`; `docs/product/decisions/st01_atr_consolidation_ruling.md` |
+| EPIC-02 | Operational Reliability & Security Hardening — two residual gaps closed in the non-registry dependency guard, and de-duplication guards added against double-submitted `POST /ai/check-daily-cost`, `POST /ai/check-endpoint-anomalies` and `POST /price-alerts` requests | Submitting the same price alert twice in quick succession no longer creates a duplicate alert. | `scripts/check_non_registry_dependencies.py`; `docs/specs/api_contracts/alerts_endpoints.md#POST /price-alerts` |
+| EPIC-03 | QA & Test Coverage — `GET /reports/tax-year` 500-against-its-own-fixture fixed, a strategy-rule → test traceability matrix for `strategy_rules.md` §4–§8, property-based tests for the stop-never-decreases and sizing-validity rules, a real-Postgres reflection-reminder integration test, the remaining unrestored `sys.modules` swap test files converted, I/O-boundary tests for the staleness/CI-usage scripts, the `inspect.getsource()` stub failure fixed, a live-fire proof that the non-registry dependency check fails a real PR, and the UI-copy boundary lint hardened against obfuscated and cross-node phrase splits | — | `docs/testing/strategy_rule_test_traceability_matrix.md`; `claude/strategy/strategy_rules.md#7.3`, `#4.1.4`; `docs/ops/non_registry_dependency_check_live_fire_2026-10-05.md`; `scripts/check_ui_copy_forbidden_phrases.py` |
+| EPIC-04 | Governance Process & Strategy Boundary — the overdue 90-day AI feature usage review conducted, a retroactive §13 review for the Gap Risk Flag, `roadmap_prompt.md` split into core plus appendix, a strategy parameter-change ledger, a `scan_backlog_gate_conditions.py` date-disambiguation fix, one canonical shared AI-adoption gate reference, scripted rebalance diagnostic tallies, a governance-authorised home for `role_share_history.md`, and the stale `execution_state_path` pointer fixed | — | `docs/ops/ai_feature_usage_review_2026-09-24.md`; `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`; `claude/strategy/strategy_rules.md#13.3`, `#13.5`, `#12.3`; `claude/system/roadmap_prompt.md`; `claude/system/roadmap_prompt_appendix.md`; `docs/governance/strategy_parameter_change_ledger.md`; `claude/roadmap/role_share_history.md`; `claude/schemas/state_field_owners.json` |
+| EPIC-05 | Spec & Data-Model Debt Clearance — a read-only live-schema vs `data_model.md` drift detector, 4 orphaned always-NULL `positions` columns dropped live (DS-24), `positions.fees_paid NOT NULL` re-applied live (DS-23), the SI-02 roadmap field cross-referenced to the canonical linked-trade-plan definition, DS-19 verification status corrected, the BLG-BE-128→129 citation corrected, and the empty-state heading wording aligned with what shipped (closes `DEV-v9.7-ST05-01`) | — | `docs/specs/data_model.md#DS-19`, `#DS-23`, `#DS-24`; `docs/specs/data_model_positions_dictionary.md#fees_paid`; `docs/specs/metrics/si02_drift_score.md#2.4`; `docs/specs/api_contracts/ai_endpoints.md`; `docs/specs/frontend/pages/notifications.md` |
+| EPIC-06 | Frontend & UX Debt — `RecentTradesWidget`'s icon-background badge moved from two-way (>=0) to three-way colour logic so zero-P&L trades take the neutral tone | Break-even trades in the Recent Trades widget now show a neutral badge colour instead of the profit colour. | `docs/specs/frontend/design_system.md#Data States` |
+
+### Deviations accepted
+1 minor deviation (QA-evidence-classified, P3-default per `verification_report.md §2.1` — not a formal canonical-spec `DEV-*` record) — see `verification_report.md §4`: ST-01 ATR consolidation limited to the duplicated close-to-close copies; the live stop-loss and screener formulas stay distinct by design per `docs/product/decisions/st01_atr_consolidation_ruling.md` (no remainder to track). One pre-existing deviation closed: `DEV-v9.7-ST05-01` (P4, ST-34). No P0–P2 deviations.
+
+### Tech backlog items shipped
+- [ST-01] [U] Canonical ATR/stop recalculation with timestamps exposed on GET /positions (BLG-BE-135)
+- [ST-02] [D] GET /reports/monthly-pnl year bounds check
+- [ST-03] [D] Gemini daily-cost alert timeout via the shared upstream-call helper
+- [ST-04] [D] ATR Yahoo-fallback timeout via the shared upstream-call helper
+- [ST-05] [D] Alpaca paper-sync timeouts via the shared upstream-call helper
+- [ST-06] [D] Two residual non-registry dependency guard gaps closed
+- [ST-07] [D] POST /ai/check-daily-cost de-duplication guard
+- [ST-08] [D] POST /ai/check-endpoint-anomalies de-duplication guard
+- [ST-09] [D] POST /price-alerts de-duplication guard
+- [ST-10] [D] GET /reports/tax-year 500 against its own fixture fixed
+- [ST-11] [D] Strategy-rule → test traceability matrix (§4–§8)
+- [ST-12] [D] Property-based tests: stop never decreases; sizing validity
+- [ST-13] [D] Real-Postgres reflection-reminder integration test
+- [ST-14] [D] Remaining unrestored sys.modules swap test files converted
+- [ST-15] [D] I/O-boundary tests for staleness/CI-usage scripts
+- [ST-16] [D] test_null_fee_trade_audit.py inspect.getsource() stub failure fixed
+- [ST-17] [D] Non-registry dependency check live-fire proof; required-check state recorded
+- [ST-18] [D] UI-copy boundary lint hardened against obfuscated/cross-node splits
+- [ST-19] [G] 90-day AI feature usage review conducted
+- [ST-20] [G] Gap Risk Flag retroactive §13 review
+- [ST-21] [G] roadmap_prompt.md split into core plus appendix
+- [ST-22] [G] Strategy parameter-change ledger
+- [ST-23] [G] scan_backlog_gate_conditions.py date-disambiguation fix
+- [ST-24] [G] Canonical shared AI-adoption gate reference
+- [ST-25] [G] Scripted rebalance diagnostic tallies
+- [ST-26] [G] Governance-authorised home for role_share_history.md
+- [ST-27] [G] execution_state_path stale pointer fixed
+- [ST-28] [D] Live-schema vs data_model.md drift detector
+- [ST-29] [D] 4 orphaned positions columns dropped live (DS-24)
+- [ST-30] [D] positions.fees_paid NOT NULL re-applied live (DS-23)
+- [ST-31] [D] SI-02 linked-trade-plan cross-reference
+- [ST-32] [D] DS-19 verification status corrected
+- [ST-33] [D] BLG-BE-128 → BLG-BE-129 citation corrected
+- [ST-34] [D] Empty-state heading wording aligned with shipped UI
+- [ST-35] [U] RecentTradesWidget zero-P&L badge takes the neutral tone
+
+Sign-off: Product Owner (agent-mediated, §5.3) — 2026-10-06
+QA sign-off: Director of Quality (agent-mediated, §5.3) — 2026-10-06
 
 ---
 

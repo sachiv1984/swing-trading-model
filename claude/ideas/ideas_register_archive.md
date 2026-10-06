@@ -1,11 +1,25 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-12 (43 rows archived — post-ship closure 2026-08-11__release-v8.6: 1 Promoted-Added, 42 Promoted-Backlog; 1 non-terminal row kept — `IDEA-challenger-20260809-02`, Rejected but present in `rejected_but_strong.md`); prior — 2026-07-28 (44 rows archived — post-ship closure 2026-07-27__release-v7.9: 21 Promoted-Backlog, 23 Rejected (not strong, confirmed absent from rejected_but_strong.md); 0 non-terminal rows kept — register empty); prior — 2026-07-27 (44 rows archived — post-ship closure 2026-07-24__release-v7.8: 35 Promoted-Backlog, 9 Rejected (not strong, confirmed absent from rejected_but_strong.md); 0 non-terminal rows kept — register empty); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
+**Last Updated:** 2026-10-06 (5 rows archived — post-ship closure 2026-09-30__release-v9.9: 5 Promoted-Backlog; 1 non-terminal row kept — `IDEA-challenger-20260809-02`, Rejected-but-strong); prior — 2026-08-12 (43 rows archived — post-ship closure 2026-08-11__release-v8.6: 1 Promoted-Added, 42 Promoted-Backlog; 1 non-terminal row kept — `IDEA-challenger-20260809-02`, Rejected but present in `rejected_but_strong.md`); prior — 2026-07-28 (44 rows archived — post-ship closure 2026-07-27__release-v7.9: 21 Promoted-Backlog, 23 Rejected (not strong, confirmed absent from rejected_but_strong.md); 0 non-terminal rows kept — register empty); prior history retained — see prior entries in version control.
 
 # Ideas Register Archive — Momentum Trading Assistant
 
 Permanent record of terminal ideas rows retired from `claude/ideas/ideas_register.md`. Append-only — do not edit existing entries.
+
+---
+
+## Archived 2026-10-06 (ideas_housekeeping — post-ship closure 2026-09-30__release-v9.9)
+
+*Terminal classification: Promoted-Backlog (5) — 4 from window IW-20260930-01 (consolidated into BLG-BE-135, shipped v9.9, and BLG-FE-193, gate now met) plus `IDEA-director-of-hr-20260919-02` (IW-20260919-01, 3-cycle park hard cap reached 2026-09-30, filed as BLG-GOV-357). `IDEA-challenger-20260809-02` kept (present in `rejected_but_strong.md`).*
+
+| Idea ID | Title | Submitter | Window | Submitted At | Status | Park Count | Park Rationale | Step 4 | Step 5 |
+|---------|-------|-----------|--------|--------------|--------|------------|----------------|--------|--------|
+| IDEA-head-of-ux-20260930-01 | Show ATR value, stop multiplier, and recalculation source inline on every open-position stop-loss cell | Head of UX & Design | IW-20260930-01 | 2026-09-30 | Promoted-Backlog | — | — | Backlog (ungated, consolidated) — filed as BLG-FE-193 (with IDEA-head-of-ux-20260930-02), gate-conditional on BLG-BE-135 | N/A |
+| IDEA-head-of-ux-20260930-02 | Replace the static "ATR recalculated daily" explainer tooltip with copy sourced from the position's actual last-recalculation event | Head of UX & Design | IW-20260930-01 | 2026-09-30 | Promoted-Backlog | — | — | Backlog (ungated, consolidated) — filed as BLG-FE-193 (with IDEA-head-of-ux-20260930-01), gate-conditional on BLG-BE-135 | N/A |
+| IDEA-head-of-engineering-20260930-01 | Consolidate the 4 duplicate ATR calculation implementations into one canonical source; remove the dead `position_manager.py` script | Head of Engineering | IW-20260930-01 | 2026-09-30 | Promoted-Backlog | — | — | Backlog (ungated, consolidated) — filed as BLG-BE-135 (with IDEA-head-of-engineering-20260930-02) | N/A |
+| IDEA-head-of-engineering-20260930-02 | Persist stop/ATR recalculation timestamp, expose `atr`/multiplier/timestamp on `GET /positions`, and reconcile `strategy_rules.md` §7.1 "recalculated daily" wording against the actual on-load recompute cadence | Head of Engineering | IW-20260930-01 | 2026-09-30 | Promoted-Backlog | — | — | Backlog (ungated, consolidated) — filed as BLG-BE-135 (with IDEA-head-of-engineering-20260930-01) | N/A |
+| IDEA-director-of-hr-20260919-02 | Sign-off single-point-of-failure matrix: per governance gate, which roles can sign, flagging gates where one agent-mediated role is the sole signer | Director of HR | IW-20260919-01 | 2026-09-19 | Promoted-Backlog | 2 | 3-cycle park hard cap reached 2026-09-30 (§4.5) — re-parking not permitted; resolved to Backlog (ungated), filed as BLG-GOV-357 | Backlog (ungated) — 3-cycle hard cap reached (§4.5), filed as BLG-GOV-357 | N/A |
 
 ---
 
