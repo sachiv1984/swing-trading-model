@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-06T19:28:30Z",
+  "last_updated_utc": "2026-10-06T19:29:24Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -16,8 +16,8 @@
     "EPIC-01": {
       "status": "done",
       "branch": "exec/2026-10-06__release-v9.10/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1915,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -580,7 +580,8 @@
     "all_merged": false
   },
   "process_notes": [
-    "EPIC-01 DoQ sign-off agent-mediated (Director of Quality role, §5.3) on explicit user direction 2026-10-06; Product Owner review agent-mediated, comment only. Merge gate still requires human QA comment and PO acceptance."
+    "EPIC-01 DoQ sign-off agent-mediated (Director of Quality role, §5.3) on explicit user direction 2026-10-06; Product Owner review agent-mediated, comment only. Merge gate still requires human QA comment and PO acceptance.",
+    "EPIC-01 PR #1915 opened 2026-10-06; combined agent-mediated DoQ + PO review comment posted (both Approved with Comments). Awaiting CI, human QA sign-off comment and PO acceptance."
   ],
   "sealed": false,
   "sealed_utc": null
