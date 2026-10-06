@@ -77,6 +77,10 @@ def test_real_changelog_reproduces_cited_pvr_figure():
     U=16/G=41/D=109/P=4 of 170, window v9.4-v9.8 -> user_value_ratio = 0.094."""
     changelog = Path(__file__).resolve().parent.parent / "docs" / "product" / "changelog.md"
     cycles = parse_cycles(changelog.read_text())
-    result = pvr_diagnostic(cycles, window=5)
+    # Pin the window to the cited v9.4-v9.8 range: the live changelog gains a new
+    # newest cycle at every post-ship closure, which would otherwise shift window=5.
+    start = next(i for i, c in enumerate(cycles) if c["cycle"].endswith("release-v9.8"))
+    result = pvr_diagnostic(cycles[start:], window=5)
+    assert result["window_cycles"][-1].endswith("release-v9.4")
     assert (result["U"], result["G"], result["D"], result["P"], result["total"]) == (16, 41, 109, 4, 170)
     assert result["user_value_ratio"] == 0.094
