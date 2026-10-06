@@ -375,6 +375,47 @@ Two consecutive npm-audit triages (2026-08-16, 2026-10-06) have been dominated b
 
 ---
 
+### BLG-TECH-22 — Batch the in-range dependency patch/minor bumps from the October 2026 quarterly review
+**Priority:** P3 (Low)
+**Type:** Platform / Technical Debt
+**Owner:** Infrastructure & Operations Owner; Head of Engineering
+**Source:** ST-17 (BLG-OPS-92), EPIC-04, cycle `2026-10-06__release-v9.10` — `docs/security/dependency_update_review_2026-10-06.md` — 2026-10-06
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The quarterly review found 8 backend and 20 frontend direct dependencies behind their latest patch/minor release, with no known vulnerabilities. They were not applied in-story because each lockfile or requirements change needs its own full CI run. yfinance (1.3.0 → 1.7.0) matters most: it tracks Yahoo's changing endpoints, so falling behind risks silent price/ATR fetch failures.
+
+**Scope**
+- Backend: fastapi + starlette, pandas, numpy, pydantic, psycopg2-binary, hypothesis, yfinance, at the versions in the review's §3
+- Frontend: every row marked "Batch" in the review's §4–§5 (`npm update` within the existing ranges, plus eslint 9.39.5)
+
+**Acceptance Criteria**
+- [ ] Bumps applied in one PR. The full pytest suite and all Playwright shards pass in CI, including the focus-restoration specs, because `@radix-ui/react-dialog` changes.
+- [ ] A staging check confirms yfinance price and ATR fetches still work for one US and one UK ticker
+
+---
+
+### BLG-TECH-23 — Assess major/breaking dependency upgrades from the October 2026 quarterly review
+**Priority:** P3 (Low)
+**Type:** Platform / Technical Debt
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-17 (BLG-OPS-92), EPIC-04, cycle `2026-10-06__release-v9.10` — `docs/security/dependency_update_review_2026-10-06.md` — 2026-10-06
+**Effort:** M (~2-3 days across items; assess first, then split)
+**Provisional-Target:** TBD
+
+**Problem**
+Several direct dependencies are a major version, or a breaking minor series, behind: anthropic 0.105 → 1.11 (used by 3 AI services), SQLAlchemy 2.0 → 2.1, reportlab 4 → 5 (PDF export), uvicorn 0.24 → 0.54, framer-motion 12 → 14, lucide-react 0.563 → 1.x (renamed icons), eslint 9 → 10. `moment` is deprecated, and `date-fns` is already a dependency. None carries a known vulnerability today, so these are maintainability risks, not security ones.
+
+**Scope**
+- For each package, record breaking changes that affect this codebase, the effort, and an upgrade-or-hold decision. File a separate story for each upgrade worth doing.
+- tailwindcss 4 is excluded and stays with BLG-TECH-21.
+
+**Acceptance Criteria**
+- [ ] A dated assessment covers all 8 packages, with a decision for each and a backlog item for each upgrade it approves
+
+---
+
 ## 3. Frontend & UX Backlog
 
 ---
