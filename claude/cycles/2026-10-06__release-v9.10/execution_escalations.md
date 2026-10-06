@@ -22,3 +22,18 @@ Last Updated: 2026-10-06
 - **SLA due-by:** 2026-10-09T16:00:46Z (72h — Strategy)
 - **Blocks execution:** No
 - **Disposition:** Open
+
+## ESC-EXEC-20261006-06
+
+- **Raised at:** 2026-10-06T16:04:53Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-10-06__release-v9.10
+- **Step:** STEP 3.1.A step 11 (sign-off gate), EPIC-04
+- **ST/EPIC item:** ST-15 / EPIC-04 (BLG-GOV-140)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-15 AC 3 requires sign-off from the Product Owner and from the Strategy Rules & System Intent Owner on `docs/ops/ai_chat_section13_quarterly_self_audit_checklist.md`. The SRSIO half was attempted agent-mediated (§5.3); see `execution_state.json` ST-15 `sign_off_record`. The Product Owner half cannot be agent-mediated and needs the human Product Owner.
+- **Owning authority:** Product Owner
+- **Unblock criteria:** The Product Owner confirms the checklist (including the first review on 2026-11-03 and the BLG-AI-09 baseline exception), recorded in the checklist's §5 Sign-off and in ST-15's QA evidence.
+- **SLA due-by:** 2026-10-07T16:04:53Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Open

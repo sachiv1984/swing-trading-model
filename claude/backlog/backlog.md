@@ -428,7 +428,8 @@ Several direct dependencies are a major version, or a breaking minor series, beh
 AI governance policy requires model ID, prompt hash, response length and timestamp on every logged AI response. `claude_audit_log` has no prompt-hash column and no response-length column (only `output_tokens`), so `POST /ai/daily-briefing` and `POST /ai/chat` cannot meet the policy. A model call that fails after retries writes no audit row at all.
 
 **Scope**
-- Add nullable `prompt_hash` (SHA-256 hex of the system prompt plus the user message; hash only, per the `gemini_audit_log` hygiene precedent) and `response_length` (characters) columns. This needs a `data_model.md` DS entry and live application on staging and production.
+- Add nullable `prompt_hash` (SHA-256 of the system prompt plus the user message, truncated to 16 hex characters, matching `gemini_audit_log` and `docs/ops/claude_api_log_hygiene_policy.md` §3.2) and `response_length` (characters) columns. This needs a `data_model.md` DS entry and live application on staging and production.
+- Amend `claude_api_log_hygiene_policy.md` (lines 72 and 104, §1/§2.3/§3.3), which currently says `claude_audit_log` stores no prompt representation.
 - Populate both in `ai_service.py` for both endpoints.
 - On a model-call failure, write a row with a failure marker (for example `compliance_check_result = 'model_call_failed'`, or a dedicated nullable status column) so failed calls are auditable.
 
@@ -436,6 +437,27 @@ AI governance policy requires model ID, prompt hash, response length and timesta
 - [ ] Successful briefing and chat calls write `prompt_hash` and `response_length`. Unit tests cover both endpoints.
 - [ ] A failed model call writes an audit row marked as failed
 - [ ] Migration recorded in `data_model.md` and applied live, with verification output
+
+---
+
+### BLG-AI-09 — Daily briefing system prompt does not state that output is advisory
+**Priority:** P3 (Low)
+**Type:** AI Governance / §13 Compliance
+**Owner:** Strategy Rules & System Intent Owner; AI Compliance & Governance Officer
+**Source:** ST-15 (BLG-GOV-140), EPIC-04, cycle `2026-10-06__release-v9.10` — agent-mediated review of `docs/ops/ai_chat_section13_quarterly_self_audit_checklist.md` (check A1) — 2026-10-06
+**Effort:** XS (<0.5 day plus golden-fixture update)
+**Provisional-Target:** TBD
+
+**Problem**
+The `POST /ai/chat` system prompt tells the model its output is advisory only and that it cannot execute trades. The `POST /ai/daily-briefing` prompt (`ai_service.py` `generate_daily_briefing`) says neither, and it asks for `EXIT`/`ENTER` action types with no "recommendation" framing. The response payload carries `advisory: true` and the UI shows `AiDisclaimer`, so the user-facing boundary holds. The model-facing instruction does not, so the §13 self-audit's check A1 fails against the briefing prompt at baseline.
+
+**Scope**
+- Add an advisory-only / no-execution statement to the briefing system prompt, and frame action items as recommendations for the user to decide.
+- Update the AI prompt golden fixtures in the same change, and record the `prompt_version` bump.
+
+**Acceptance Criteria**
+- [ ] The briefing system prompt states advisory-only and no execution; golden-fixture tests pass
+- [ ] Self-audit checklist A1 passes for both prompts
 
 ## 3. Frontend & UX Backlog
 

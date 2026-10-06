@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-06T16:01:09Z",
+  "last_updated_utc": "2026-10-06T16:05:12Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -263,14 +263,14 @@
         "ST-15": {
           "title": "AI chat advisory §13 quarterly self-audit checklist",
           "classification": "delegated_decision",
-          "status": "in_progress",
-          "assigned_to": "engine",
+          "status": "blocked_decision",
+          "assigned_to": "Product Owner",
           "github_issue": 1908,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
           "commit_sha": "6b6f8af3cf6099c2f5fd6b3a5c461e880fe92747",
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-10-06T16:05:12Z",
+          "unblock_criteria": "ESC-EXEC-20261006-06: human Product Owner sign-off on the checklist",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -280,13 +280,20 @@
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": "3.1.A.push",
-          "sign_off_record": null,
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "cleared_utc": "2026-10-06T16:05:12Z",
+            "retries": 2,
+            "notes": "SRSIO half cleared on retry 2; Product Owner half pending (always human). BLG-AI-09 filed."
+          },
           "notes": ""
         },
         "ST-16": {
           "title": "AI model output logging completeness audit",
           "classification": "delegated_decision",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1909,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
@@ -294,18 +301,25 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-06T15:59:14Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/ops/ai_output_logging_completeness_audit_2026-10-06.md",
             "tests/test_claude_audit_entry_failure_logging.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.push",
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.11",
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "cleared_utc": "2026-10-06T16:05:12Z",
+            "retries": 1,
+            "notes": "Retry 1 Approved after corrections (function name, P2a/P8a, BLG-AI-08 hash spec). Correction commit follows ef167325."
+          },
+          "notes": "Gaps filed BLG-AI-08; silent-failure fixed. Deviation check: none."
         },
         "ST-17": {
           "title": "Quarterly dependency update review",
@@ -556,6 +570,7 @@
     "ST-11",
     "ST-13",
     "ST-14",
+    "ST-15",
     "ST-20"
   ],
   "delegated_items": [
@@ -565,6 +580,7 @@
   "completed_items": [
     "ST-04",
     "ST-12",
+    "ST-16",
     "ST-17",
     "ST-19",
     "ST-21"
@@ -574,7 +590,8 @@
     "ESC-EXEC-20261006-02",
     "ESC-EXEC-20261006-03",
     "ESC-EXEC-20261006-04",
-    "ESC-EXEC-20261006-05"
+    "ESC-EXEC-20261006-05",
+    "ESC-EXEC-20261006-06"
   ],
   "merge_gate": {
     "epics_merged": [],
