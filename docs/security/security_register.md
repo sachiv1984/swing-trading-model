@@ -1,8 +1,8 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-06-08
+**Version:** 1.3
+**Last Updated:** 2026-10-06 (Remediation 002 added — npm rescan triage, issue #1885); prior — 2026-06-08
 **Cycle:** 2026-06-08__release-v5.2 (ST-10/ST-11 — BLG-GOV-98/BLG-GOV-99)
 
 ---
@@ -279,3 +279,39 @@ The endpoint uses a bare `@router.post` decorator with no authentication depende
 ---
 
 **Cybersecurity & Trust Lead sign-off:** Sprint Execution Engine (autonomous class), 2026-06-08
+
+---
+
+### Remediation 002 — npm Rescan HIGH/CRITICAL Remediation (issue #1885)
+
+**Date:** 2026-10-06
+**Cycle:** Out-of-cycle `[GOVERNANCE]` hotfix (`2026-09-30__release-v9.9` Closed) — PR #1893
+**Conducted by:** Sprint Execution Engine (Cybersecurity & Trust Lead)
+**Action:** Triage of `dependency-vuln-rescan.yml` findings (`shared_standards.md` §20, Tier 3)
+
+---
+
+#### Remediation Steps
+
+1. **Initial state:** 83 vulnerabilities (3 critical, 64 high, 12 moderate, 4 low) — 12 packages with HIGH/CRITICAL advisory IDs not in `docs/security/dependency_vuln_baseline.json`
+2. **Step 1 — `npm audit fix --legacy-peer-deps`:** lockfile-only, non-breaking; fixed `brace-expansion`, `fast-uri`, `js-yaml` (HIGH paths), `http-proxy-middleware`, `proxy-addr`, `source-map-js`, and cleared previously-baselined `shell-quote`, `websocket-driver`, `ws`, `form-data`
+3. **Step 2 — npm `overrides`:** added `"compression": ">=1.8.2"` (`serve` 14.2.6 pins 1.8.1 — GHSA-vc2v-76pw-4v95)
+4. **Step 3 — accept-risk:** `svgo`, `webpack-dev-server`, `webpack-dev-middleware`, `node-forge`, `braces` — build/dev toolchain only, no non-breaking fix; recorded in `docs/security/npm_audit_rescan_triage_2026-10-06.md`, review-by 2027-02-16
+
+---
+
+#### Result
+
+| Check | Before | After |
+|-------|--------|-------|
+| Critical vulnerabilities | 3 | **0** |
+| HIGH vulnerabilities | 64 | 55 (all inherit from 6 accept-risk toolchain packages) |
+| New-vs-baseline findings (rescan script) | 12 | **0** |
+| Production runtime impact | None | None |
+
+Build, `serve`, full backend suite and full Playwright E2E verified on PR #1893. Durable fix: BLG-TECH-21 (CRA → Vite migration).
+
+---
+
+**Cybersecurity & Trust Lead sign-off:** Sprint Execution Engine (agent-mediated, Cybersecurity & Trust Lead role), 2026-10-06
+
