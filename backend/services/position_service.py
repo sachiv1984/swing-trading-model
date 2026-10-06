@@ -214,6 +214,11 @@ def get_positions_with_prices() -> List[Dict]:
         atr_calculated_at = atr_calculated_at.isoformat() if atr_calculated_at else None
         active_atr_multiplier = pos.get('active_atr_multiplier')
 
+        # ST-02 (BLG-BE-139, EPIC-01, v9.10): where the stored ATR came from --
+        # 'fetched' / 'user' / 'fallback' (DS-25). NULL for positions entered
+        # before the column existed and never freshly recomputed since.
+        atr_source = pos.get('atr_source')
+
         # Build position dict
         positions_list.append({
             "id": str(pos['id']),
@@ -261,6 +266,7 @@ def get_positions_with_prices() -> List[Dict]:
             "atr_calculated_at": atr_calculated_at,
             "stop_calculated_at": stop_calculated_at,
             "active_atr_multiplier": active_atr_multiplier,
+            "atr_source": atr_source,
             "fx_rate": pos.get('fx_rate', 1.0),
             "live_fx_rate": live_fx_rate,
             "total_cost": round(pos.get('total_cost', 0), 2),
@@ -412,6 +418,7 @@ def analyze_positions() -> Dict:
         
         # Check grace period
         grace_period = holding_days < 10
+        atr_unavailable = False
         
         # Calculate trailing stop
         if grace_period:
@@ -433,6 +440,8 @@ def analyze_positions() -> Dict:
                         # ST-01 (BLG-BE-135, EPIC-01, v9.9): stamp when ATR was
                         # actually freshly computed, not merely read from cache.
                         'atr_calculated_at': datetime.now(timezone.utc),
+                        # ST-02 (BLG-BE-139, EPIC-01, v9.10): provenance.
+                        'atr_source': 'fetched',
                     })
                     print(f"   💾 Stored calculated ATR: {atr_value:.2f}")
             
@@ -458,13 +467,17 @@ def analyze_positions() -> Dict:
                 else:
                     print(f"   📊 Stop unchanged: {currency_symbol}{trailing_stop_native:.2f}")
             else:
-                # No ATR available, use entry price as stop
-                entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
-                trailing_stop_native = max(current_stop_native, entry_price_native)
+                # ST-02 (BLG-BE-139, EPIC-01, v9.10): no ATR available. Keep the
+                # stored stop and flag the position. The previous behaviour
+                # moved the stop up to entry, which for a losing position put
+                # it above the current price and produced a stop-breach signal
+                # that §7.2's wide-stop rule would not.
+                trailing_stop_native = current_stop_native
                 display_stop_native = trailing_stop_native
-                stop_reason = "No ATR - stop at entry"
+                stop_reason = "ATR unavailable - stop unchanged"
                 atr_mult = 0
-                print(f"   ⚠️  No ATR value available, stop at entry level")
+                atr_unavailable = True
+                print(f"   ⚠️  No ATR value available, stop left unchanged")
         
         # Determine action
         is_uk = pos['market'] == 'UK'
@@ -524,7 +537,8 @@ def analyze_positions() -> Dict:
             "current_stop": round(display_stop_native, 2),
             "holding_days": holding_days,
             "stop_reason": stop_reason,
-            "grace_period": grace_period
+            "grace_period": grace_period,
+            "atr_unavailable": atr_unavailable,
         })
     
     exit_count = len([a for a in actions if a['action'] == 'EXIT'])
@@ -605,6 +619,7 @@ def run_nightly_trailing_stop_update() -> Dict:
 
         # Recalculate ATR at _ATR_PERIOD to ensure freshness
         atr_value = calculate_atr(pos['ticker'], period=_ATR_PERIOD)
+        atr_fresh = bool(atr_value)
         if not atr_value or atr_value == 0:
             atr_value = pos.get('atr', 0)
         if not atr_value or atr_value == 0:
@@ -632,7 +647,7 @@ def run_nightly_trailing_stop_update() -> Dict:
         )
 
         now_utc = datetime.now(timezone.utc)
-        update_position(position_id, {
+        nightly_updates = {
             'current_stop': round(new_stop_native, 2),
             'current_price': round(live_price, 4),
             'atr': round(atr_value, 4),
@@ -643,7 +658,13 @@ def run_nightly_trailing_stop_update() -> Dict:
             'stop_calculated_at': now_utc,
             'atr_calculated_at': now_utc,
             'active_atr_multiplier': atr_mult,
-        })
+        }
+        # ST-02 (BLG-BE-139, EPIC-01, v9.10): a freshly fetched ATR is
+        # 'fetched'. When the fetch failed and the stored ATR was reused, its
+        # existing provenance is left as it was.
+        if atr_fresh:
+            nightly_updates['atr_source'] = 'fetched'
+        update_position(position_id, nightly_updates)
 
         results.append({
             "ticker": pos['ticker'],
@@ -858,13 +879,19 @@ def add_position(
             f"Insufficient funds. Need £{total_cost_gbp:.2f}, have £{current_cash:.2f}"
         )
     
-    # Get or calculate ATR
-    if not atr_value or atr_value == 0:
+    # Get or calculate ATR.
+    # ST-02 (BLG-BE-139, EPIC-01, v9.10): record where the ATR came from, so
+    # the invented 2%-of-entry substitute is no longer silent (DS-25).
+    if atr_value and atr_value > 0:
+        atr_source = 'user'
+    else:
         print(f"   Calculating ATR for {ticker}...")
         atr_value = calculate_atr(ticker)
+        atr_source = 'fetched'
         if not atr_value:
             # Use default 2% of entry price if can't calculate
             atr_value = entry_price_native * 0.02
+            atr_source = 'fallback'
             print(f"   ⚠️  Using default ATR (2% of entry): {atr_value:.2f}")
     
     # Calculate initial stop
@@ -891,6 +918,7 @@ def add_position(
         'current_stop': initial_stop_native,
         'current_price': entry_price_native,
         'atr': atr_value,
+        'atr_source': atr_source,
         'holding_days': 0,
         'pnl': 0,
         'pnl_pct': 0,

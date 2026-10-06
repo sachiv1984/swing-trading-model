@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.7.0
-**Last Updated:** 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — GET /positions gains atr_calculated_at, stop_calculated_at, active_atr_multiplier); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /positions); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to POST /positions/nightly-stop-update); prior history retained — see prior entries in version control.
+**Version:** 2.8.0
+**Last Updated:** 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — GET /positions gains atr_source; GET /positions/analyze keeps the stored stop when ATR is unavailable and flags the action atr_unavailable); prior — 2026-10-01 (ST-01, EPIC-01, v9.9, BLG-BE-135 — GET /positions gains atr_calculated_at, stop_calculated_at, active_atr_multiplier); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /positions); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.8.0 | 2026-10-06 | ST-02 (BLG-BE-139, EPIC-01, v9.10): `GET /positions` gains `atr_source` (`fetched` / `user` / `fallback` / `null`, DS-25). `GET /positions/analyze`: when no ATR is available, the stored stop is kept instead of being moved to entry, and the action carries `atr_unavailable: true`. The old move-to-entry produced a stop-breach EXIT for losing positions that §7.2's wide stop would not. |
 | 2.6.2 | 2026-09-18 | ST-29 (BLG-SPEC-142, EPIC-04, v9.5): Added a "Lifecycle diagram" cross-reference to `docs/specs/data_model.md §Position & Trade Plan Lifecycle State Diagram`, canonical for `status`/`position_state` transitions. No functional change — documentation only. |
 | 2.6.1 | 2026-09-18 | ST-25 (BLG-SPEC-133, EPIC-04, v9.5): `GET /positions` example JSON's `current_trailing_stop_native` (764.00) did not reconcile with `current_trailing_stop × live_fx_rate` (560.50 × 1.3650 = 765.08, within the rounding tolerance already used by the other native-currency example fields). Corrected to 765.08. No functional change — example-payload fix only. |
 | 2.6.0 | 2026-08-17 | ST-02 (BLG-BE-103, EPIC-01, v8.9): Added `current_trailing_stop_native` field to `GET /positions` response — the native-currency counterpart of `current_trailing_stop` (which is GBP-converted for US-market positions). Fixes a currency-basis defect where the frontend rendered the GBP-converted value next to the native currency symbol. `initial_stop` and `stop_price_native` were already native; this closes the gap for the third stop field. |
@@ -107,6 +108,7 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
     "atr_calculated_at": "2026-10-01T06:00:00+00:00",
     "stop_calculated_at": "2026-10-01T06:00:00+00:00",
     "active_atr_multiplier": 2.0,
+    "atr_source": "fetched",
     "fx_rate": 1.3642,
     "live_fx_rate": 1.3650,
     "current_trailing_stop": 560.50,
@@ -159,6 +161,7 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
 | `atr_calculated_at` | ISO-8601 timestamp \| `null`. When `atr_value` was last freshly recomputed (not merely read from cache) — written by the on-load recompute path (`GET /positions/analyze`) and `POST /positions/nightly-stop-update`. `null` if never recomputed since this field was added. See `strategy_rules.md` §7.1. (v9.9 ST-01 BLG-BE-135) |
 | `stop_calculated_at` | ISO-8601 timestamp \| `null`. When `current_trailing_stop`/`stop_price` was last recalculated against ATR (not the grace-period carry-over, which leaves this unchanged). `null` if never recomputed since this field was added. (v9.9 ST-01 BLG-BE-135) |
 | `active_atr_multiplier` | `number` \| `null`. The ATR multiplier used to produce the current stop — `2` while profitable (tight trail), `5` while at a loss (wide stop), per `strategy_rules.md` §7.2. `null` during the grace period (no real recompute has run) or if never recomputed since this field was added. (v9.9 ST-01 BLG-BE-135) |
+| `atr_source` | `string` \| `null`. Where `atr_value` came from: `"fetched"` (computed from market data), `"user"` (typed at entry) or `"fallback"` (no ATR could be fetched at entry, so 2% of the entry price was substituted). Written at entry and whenever a recompute freshly fetches ATR; a recompute that reuses the stored ATR leaves it unchanged. `null` for positions entered before DS-25 and not freshly recomputed since. (v9.10 ST-02 BLG-BE-139) |
 
 > **Note:** For a summary view of open positions alongside portfolio totals, use `GET /portfolio`. This endpoint returns the full enriched position object including native prices, stop context, and journal fields; `GET /portfolio` returns a lighter position shape.
 
@@ -331,7 +334,8 @@ Response uses the standard success envelope from **conventions.md**.
       "current_stop": 607.50,
       "holding_days": 14,
       "grace_period": false,
-      "stop_reason": "Trailing (profitable)"
+      "stop_reason": "Trailing (profitable)",
+      "atr_unavailable": false
     },
     {
       "ticker": "AAPL",
@@ -345,11 +349,18 @@ Response uses the standard success envelope from **conventions.md**.
       "current_stop": 171.00,
       "holding_days": 8,
       "grace_period": true,
-      "stop_reason": "Market regime"
+      "stop_reason": "Market regime",
+      "atr_unavailable": false
     }
   ]
 }
 ```
+
+#### Action fields
+
+| Field | Notes |
+|-------|-------|
+| `atr_unavailable` | `boolean`. `true` when the position is past grace, has no stored ATR, and none could be fetched. The stored stop is then left unchanged (`stop_reason` `"ATR unavailable - stop unchanged"`) rather than moved to entry, so the missing ATR cannot itself create a stop-breach EXIT. A risk-off EXIT still applies. (v9.10 ST-02 BLG-BE-139) |
 
 #### Action types
 

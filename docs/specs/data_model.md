@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.49
-**Last Updated:** 2026-10-05 (PR #1892 review corrections — DS-23's fee-reconstruction note no longer assumes entry_price is GBP or ignores partial exits; the chart-QA seed is noted as also run by seed-preview.yml, not only by hand); prior — 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — DS-23 applied live on staging and production: positions.fees_paid now NOT NULL; documented DEFAULT 0 corrected to no default (never present live); Fields row, CREATE TABLE block and disposition note updated); prior — 2026-10-05 (ST-29, EPIC-05, v9.9, BLG-SPEC-164 — new DS-24: 4 orphaned, always-NULL positions columns dropped from staging and production after a NULL pre-check; orphaned-column note replaced with a pointer to DS-24); prior history retained — see prior entries in version control.
+**Version:** 2.50
+**Last Updated:** 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — new DS-25: positions.atr_source records fetched / user / fallback ATR provenance; Fields row and CREATE TABLE block updated; pending live application); prior — 2026-10-05 (PR #1892 review corrections — DS-23's fee-reconstruction note no longer assumes entry_price is GBP or ignores partial exits; the chart-QA seed is noted as also run by seed-preview.yml, not only by hand); prior — 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — DS-23 applied live on staging and production: positions.fees_paid now NOT NULL); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -93,7 +93,8 @@ CREATE TABLE positions (
     state_history JSONB NOT NULL DEFAULT '[]'::JSONB,
     stop_calculated_at TIMESTAMPTZ,
     atr_calculated_at TIMESTAMPTZ,
-    active_atr_multiplier DECIMAL(4, 2)
+    active_atr_multiplier DECIMAL(4, 2),
+    atr_source VARCHAR(10) CHECK (atr_source IN ('fetched', 'user', 'fallback'))
 );
 
 CREATE INDEX idx_positions_portfolio ON positions(portfolio_id);
@@ -141,6 +142,7 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | stop_calculated_at | TIMESTAMPTZ | YES | Timestamp of the most recent `current_stop` recalculation, written by both `analyze_positions()` (on-load) and `run_nightly_trailing_stop_update()` (nightly). `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
 | atr_calculated_at | TIMESTAMPTZ | YES | Timestamp of the most recent `atr` recalculation, written whenever `atr` itself is freshly computed (not merely read from cache). `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
 | active_atr_multiplier | DECIMAL(4,2) | YES | The ATR multiplier (`calculate_trailing_stop()`'s own `atr_multiplier` return value — currently 2 or 5, depending on profitability) used to produce the current `current_stop`. `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
+| atr_source | VARCHAR(10) | YES | Where the stored `atr` came from: `fetched` (computed from market data), `user` (typed at entry), or `fallback` (no ATR could be fetched at entry, so 2% of the entry price was substituted). `NULL` for positions entered before this column was added and not freshly recomputed since. Written at entry and whenever ATR is freshly fetched on recompute. Added v2.50 (DS-25). |
 
 **No `exit_note` column (ST-24, EPIC-06, v9.7, BLG-SPEC-149):** this table has no live `exit_note` column, despite an earlier version of this document claiming one. A closed position's exit journal note is stored on `trade_history.exit_note` (§3 below), not here — confirmed via a live (readonly staging) schema query, per the §Live schema verification note above this table.
 
@@ -2632,6 +2634,45 @@ Result: **0 rows** on both staging and production.
 
 ---
 
-**Document Version:** 2.49
+## DS-25 — Add atr_source to positions (v2.50, 2026-10-06)
+
+**Story:** ST-02 (EPIC-01, v9.10) — `BLG-BE-139`. Delegation `DEL-20261006-02`.
+
+**Rationale:** `add_position()` substitutes `entry_price × 0.02` when no ATR can be fetched, and stored the result exactly like a real ATR. Neither the user nor the Positions stop cell (ST-06, `BLG-FE-193`) could tell a fetched, a typed and an invented ATR apart. `atr_source` records which one it is. Written by `add_position()` at entry and by both recompute paths when they freshly fetch ATR. When a recompute reuses the stored ATR, the existing value is left alone. Exposed on `GET /positions` per `position_endpoints.md`.
+
+**RISK (no live DB write access in this execution environment):** as with DS-22 to DS-24, the sandbox `DATABASE_URL` is staging and read-only. The Up Migration must be run against **both staging and production** by the Data Model & Domain Schema Owner before EPIC-01 merges: `add_position()`'s INSERT names the column, so a deploy without it fails every new position. **Status: PENDING APPLICATION** (`DEL-20261006-02`).
+
+### Up Migration (v2.49 → v2.50)
+
+```sql
+ALTER TABLE positions
+    ADD COLUMN IF NOT EXISTS atr_source VARCHAR(10)
+    CHECK (atr_source IN ('fetched', 'user', 'fallback'));
+```
+
+Additive and nullable, with no default and no backfill. Existing rows get `NULL`. Their provenance is unknown, and inventing one would repeat the defect this column fixes. A row becomes `fetched` the next time either recompute path freshly fetches its ATR.
+
+### Down Migration (v2.50 → v2.49)
+
+```sql
+ALTER TABLE positions DROP COLUMN IF EXISTS atr_source;
+```
+
+### Verification
+
+```sql
+SELECT column_name, data_type, character_maximum_length, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'positions' AND column_name = 'atr_source';
+```
+
+Expect 1 row: `atr_source`, `character varying`, `10`, `YES`.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: migration content to be reviewed before application. Additive, nullable and reversible; no pre-check needed, because no existing row can violate the constraint.
+
+---
+
+**Document Version:** 2.50
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-05 (PR #1892 review corrections to DS-23 and the fees_paid note; header/footer version kept in sync); prior — 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — DS-23 live confirmation; fees_paid default corrected; header/footer version kept in sync); prior — 2026-10-05 (ST-29, EPIC-05, v9.9, BLG-SPEC-164 — DS-24 orphaned positions columns dropped live; header/footer version kept in sync); prior history retained — see prior entries in version control.
+**Last Review:** 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — DS-25 atr_source; header/footer version kept in sync); prior — 2026-10-05 (PR #1892 review corrections to DS-23 and the fees_paid note; header/footer version kept in sync); prior — 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — DS-23 live confirmation; fees_paid default corrected; header/footer version kept in sync); prior history retained — see prior entries in version control.

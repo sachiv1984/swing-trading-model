@@ -115,7 +115,11 @@ def test_create_position_passes_strategy_version_at_entry_to_insert():
     args, _ = mock_cursor.execute.call_args
     sql, params = args
     assert "strategy_version_at_entry" in sql
-    assert params[-1] == "1.4"
+    # Look the value up by column position rather than assuming it is last
+    # (ST-02, v9.10, appended atr_source after it).
+    columns = [c.strip() for c in sql.split("INSERT INTO positions (")[1].split(")")[0].split(",")]
+    assert params[columns.index("strategy_version_at_entry")] == "1.4"
+    assert params[columns.index("atr_source")] is None
 
 
 def test_ensure_strategy_version_at_entry_columns_is_idempotent_ddl():
