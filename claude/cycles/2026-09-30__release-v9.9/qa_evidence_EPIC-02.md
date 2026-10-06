@@ -35,3 +35,12 @@ Last Updated: 2026-10-05
 - Signed off by: Sprint Execution Engine (autonomous class)
 - Date: 2026-10-05
 - Comments: Autonomous class sign-off — all four qualifying criteria met. This EPIC-level block does not itself satisfy the STEP 4 merge gate's separate "QA sign-off comment from Director of Quality on PR" and "Product Owner acceptance" rows — both remain always-human per `execution_prompt.md` §5.3 and are expected to halt at STEP 4 pending human action.
+
+---
+
+## Process Deviation — PR #1886 also carried EPIC-04 and EPIC-05 commits (recorded 2026-10-05)
+
+This EPIC's branch was cut on top of a linear history that already held EPIC-04's commits (ST-19–ST-27, `018f5c1c`..`53842d71`) and EPIC-05's (ST-28–ST-34, `3677d86e`..`9bc5b07e`). When PR #1886 merged (`362ff619`), those 19 commits (12 `[EPIC-04]`, 7 `[EPIC-05]`; corrected 2026-10-05 from a mis-stated 17, per the PR #1891 review) went into `main` with it. The PR body and this log listed only ST-06–ST-09, so the autonomous-class sign-off above covers **only** ST-06–ST-09. It does not extend to any EPIC-04 or EPIC-05 content.
+
+- **Rule breached:** CLAUDE.md §2 — story commits must land on the branch matching their EPIC prefix (documented here and in both other EPICs' QA logs, per that rule).
+- **Disposition (user direction, 2026-10-05):** retroactive merge gate. The code stays on `main`; `qa_evidence_EPIC-04.md` and `qa_evidence_EPIC-05.md` record the bypass and carry blank Director of Quality sign-off blocks for after-the-fact review. ST-06–ST-09's own evidence and result above are unaffected.
