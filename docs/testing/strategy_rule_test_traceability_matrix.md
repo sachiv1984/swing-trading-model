@@ -1,7 +1,7 @@
 **Owner:** Director of Quality; QA & Testing Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-10-05 (ST-11, BLG-QA-185, EPIC-03, v9.9 — initial matrix for `strategy_rules.md` §4–§8)
+**Last Updated:** 2026-10-06 (ST-04, BLG-QA-207, EPIC-01, v9.10 — 9 §5/§6/§8 rows moved to Asserted by `tests/test_live_exit_decision.py`); prior — 2026-10-05 (ST-11, BLG-QA-185, EPIC-03, v9.9 — initial matrix for `strategy_rules.md` §4–§8)
 **Source:** ST-11 (BLG-QA-185, EPIC-03, cycle `2026-09-30__release-v9.9`)
 
 ---
@@ -28,20 +28,20 @@
 
 | | Clauses | Share |
 |---|---:|---:|
-| Asserted | 25 | **51.0%** |
-| Partial | 9 | 18.4% |
-| None | 15 | 30.6% |
+| Asserted | 34 | **69.4%** |
+| Partial | 4 | 8.2% |
+| None | 11 | 22.4% |
 | **Total normative clauses** | **49** | |
-| Asserted or partial | 34 | 69.4% |
+| Asserted or partial | 38 | 77.6% |
 
-**% of clauses with an asserting test: 51.0% (25/49)** — 69.4% counting partial coverage.
+**% of clauses with an asserting test: 69.4% (34/49)** — 77.6% counting partial coverage. (Was 51.0% before ST-04, v9.10.)
 
 Where coverage is strong: the backend sizing arithmetic (§4.1.1–§4.1.4), the pre-entry advisory checks (§4.2.1–§4.2.5), and the stop formulas and ratchet (§5, §7.2, §7.3). The last two are covered by golden tests, reconciliation tests and, since ST-12, property-based tests.
 
 Where it is weak:
 - §4.1.7's sizing-widget UI behaviours: debounce, loading state, no-overwrite / "use this", no auto-fill on invalid or insufficient-cash results, and non-blocking submission.
 - The backend §4.1.6 cash-constraint result and §4.1.5 FX defaulting.
-- The live exit decision (`utils/calculations.py::should_exit_position`) behind §6.3 and §8. No CI test calls the real function; only the replay engine's equivalent logic is tested.
+- The on-load half of §7.1-02: the on-load path reuses the stored ATR rather than refetching it. (The live exit decision behind §6.3 and §8 was a gap until ST-04, v9.10, added `tests/test_live_exit_decision.py`.)
 
 Follow-ups for every Partial/None clause are filed, grouped by area, as `BLG-QA-205`–`BLG-QA-208` (see the last column).
 
@@ -98,23 +98,23 @@ Follow-ups for every Partial/None clause are filed, grouped by area, as `BLG-QA-
 | ID | Clause | Status | Asserting test(s) | Follow-up |
 |----|--------|--------|-------------------|-----------|
 | C5-01 | `InitialStop = EntryPrice − (InitialATRMultiplier × ATR)` | Asserted | `tests/test_golden_outputs.py::TestStopLossSpecFormulas::test_SL01_initial_stop`; `tests/test_stop_reconciliation.py::test_SL01_initial_stop_reconciles` | — |
-| C5-02 | The stop exists immediately and is stored/tracked from day one | Partial | `tests/test_position_atr_timestamp_persistence.py` (grace-period write path) — no test asserts a stop is persisted at entry | BLG-QA-207 |
+| C5-02 | The stop exists immediately and is stored/tracked from day one | Asserted | `tests/test_live_exit_decision.py::TestEntryPersistsInitialStop` (`add_position` writes `initial_stop` and `current_stop`) | — |
 
 ### §6 Grace period
 
 | ID | Clause | Status | Asserting test(s) | Follow-up |
 |----|--------|--------|-------------------|-----------|
 | C6.2 | Grace period is 10 calendar days (days 0–9) | Asserted | `tests/test_portfolio_integration.py::test_grace_period_when_holding_days_lt_10`; `tests/test_stop_reconciliation.py::test_grace_period_days` | — |
-| C6.3-01 | During grace: stop-loss enforcement disabled; no stop-based exit recommendation | Partial | `tests/test_service_layer_direct_coverage.py::test_grace_period_returns_none` (compliance view only); live `should_exit_position` grace branch not called by any test | BLG-QA-207 |
-| C6.3-02 | During grace: the stop price is still calculated and stored | Partial | `tests/test_position_atr_timestamp_persistence.py::test_grace_period_write_omits_stop_calculated_at` (asserts the timestamp, not the stored stop) | BLG-QA-207 |
-| C6.3-03 | During grace: manual exit is always permitted | None | — | BLG-QA-207 |
+| C6.3-01 | During grace: stop-loss enforcement disabled; no stop-based exit recommendation | Asserted | `tests/test_live_exit_decision.py::TestGraceBoundary` (live `should_exit_position`, day 9 vs day 10), `::TestGracePeriodStillStoresStop`; `tests/test_service_layer_direct_coverage.py::test_grace_period_returns_none` | — |
+| C6.3-02 | During grace: the stop price is still calculated and stored | Asserted | `tests/test_live_exit_decision.py::TestGracePeriodStillStoresStop` (in-grace `analyze_positions` write keeps the stored stop); `tests/test_live_exit_decision.py::TestEntryPersistsInitialStop` (the stop is calculated at entry) | — |
+| C6.3-03 | During grace: manual exit is always permitted | Asserted | `tests/test_live_exit_decision.py::TestManualExitInsideGrace` (days 0, 3, 9) | — |
 
 ### §7 Trailing stop-loss framework
 
 | ID | Clause | Status | Asserting test(s) | Follow-up |
 |----|--------|--------|-------------------|-----------|
 | C7.1-01 | ATR period: 14 days (rolling) | Asserted | `tests/test_stop_reconciliation.py::test_atr_period_days`; `tests/test_replay_service.py::test_atr_warm_up_boundary_14_rows_is_the_minimum` | — |
-| C7.1-02 | ATR recalculated daily, via on-load recompute and a nightly job | Partial | `tests/test_nightly_computations.py` (nightly path); on-load recompute cadence not asserted | BLG-QA-207 |
+| C7.1-02 | ATR recalculated daily, via on-load recompute and a nightly job | Partial | `tests/test_live_exit_decision.py::TestNightlyRecomputesAtr` (nightly job fetches a fresh ATR); `tests/test_live_exit_decision.py::TestOnLoadRecompute` (on-load recomputes the stop); `tests/test_nightly_computations.py`. The on-load path reuses the stored ATR and only fetches one when it is missing, so the on-load half of the clause is a behaviour gap, not a test gap | ST-06 (BLG-FE-193, tooltip claim) |
 | C7.1-03 | RISK-01: backtest/signal ATR copies delegate to the one canonical close-approximation | Asserted | `tests/test_atr_consolidation.py` | — |
 | C7.2-01 | Losing/breakeven: `Stop = CurrentPrice − (InitialATRMultiplier × ATR)` | Asserted | `tests/test_golden_outputs.py::test_SL02_losing_trailing_stop`; `tests/test_nightly_computations.py::test_TS04_losing_wide_stop_applied`; `tests/test_trailing_stop_breakeven_floor.py::test_losing_position_not_floored_at_entry` | — |
 | C7.2-02 | Profitable: `Stop = max(CurrentPrice − (ProfitATRMultiplier × ATR), EntryPrice)` | Asserted | `tests/test_golden_outputs.py::test_SL03_profitable_trailing_stop`, `::test_SL08_profitable_floor_binds`; `tests/test_trailing_stop_breakeven_floor.py`; ST-12 property test | — |
@@ -125,11 +125,11 @@ Follow-ups for every Partial/None clause are filed, grouped by area, as `BLG-QA-
 
 | ID | Clause | Status | Asserting test(s) | Follow-up |
 |----|--------|--------|-------------------|-----------|
-| C8-00 | A position may exit under exactly three conditions | None | — | BLG-QA-207 |
-| C8.1-01 | Stop-loss trigger active only after grace; fires when price breaches the trailing stop | Partial | `tests/test_replay_service.py::test_stop_exit_on_a_sharp_crash` (replay engine); live `should_exit_position` not tested | BLG-QA-207 |
-| C8.1-02 | Stop exit is recommended and requires manual confirmation | None | — | BLG-QA-207 |
-| C8.2 | Risk-off (200-day MA of the relevant index) → exit regardless of stop | Partial | `tests/test_replay_service.py::test_risk_off_exit_on_a_regime_dip`; `tests/test_screener_batch_service.py::test_fetch_regime_returns_risk_off_when_price_below_ma`; Playwright `SC-RO-*` badges (mocked API). Live `should_exit_position` risk-off branch not tested | BLG-QA-207 |
-| C8.3 | Manual exit is user-initiated and available at any time | None | — | BLG-QA-207 |
+| C8-00 | A position may exit under exactly three conditions | Asserted | `tests/test_live_exit_decision.py::TestClosedSetOfExitReasons` (automated decision returns only Stop Loss Hit / Risk-Off Signal); `::TestManualExitInsideGrace` (manual exit) | — |
+| C8.1-01 | Stop-loss trigger active only after grace; fires when price breaches the trailing stop | Asserted | `tests/test_live_exit_decision.py::TestGraceBoundary`, `::TestPriceVersusStop` (at/below/above stop); `tests/test_replay_service.py::test_stop_exit_on_a_sharp_crash` | — |
+| C8.1-02 | Stop exit is recommended and requires manual confirmation | Asserted | `tests/test_live_exit_decision.py::TestStopExitNeedsManualConfirmation` (`analyze_positions` returns EXIT without writing a trade or closing the position) | — |
+| C8.2 | Risk-off (200-day MA of the relevant index) → exit regardless of stop | Asserted | `tests/test_live_exit_decision.py::TestRiskOffOverrides` (overrides grace and stop), `::TestStopExitNeedsManualConfirmation::test_risk_off_recommends_exit_inside_grace`; `tests/test_replay_service.py::test_risk_off_exit_on_a_regime_dip`; `tests/test_screener_batch_service.py::test_fetch_regime_returns_risk_off_when_price_below_ma` | — |
+| C8.3 | Manual exit is user-initiated and available at any time | Asserted | `tests/test_live_exit_decision.py::TestManualExitInsideGrace` | — |
 
 ## Follow-up items
 
@@ -137,7 +137,7 @@ Follow-ups for every Partial/None clause are filed, grouped by area, as `BLG-QA-
 |------|------|---------|
 | BLG-QA-205 | Backend sizing: FX default/override/echo and §4.1.6 cash-constraint result | C4.1.5-01, C4.1.5-02, C4.1.5-03, C4.1.6-01, C4.1.6-02 |
 | BLG-QA-206 | Playwright coverage of §4.1.7 sizing-widget behaviours | C4.1.7-01, C4.1.7-02, C4.1.7-03, C4.1.7-05, C4.1.7-06, C4.1.7-07, C4.1.7-08 |
-| BLG-QA-207 | Live exit decision and grace-period behaviour (`should_exit_position`, stop persistence at entry) | C5-02, C6.3-01, C6.3-02, C6.3-03, C7.1-02, C8-00, C8.1-01, C8.1-02, C8.2, C8.3 |
+| BLG-QA-207 | Live exit decision and grace-period behaviour (`should_exit_position`, stop persistence at entry). **Done** in ST-04, v9.10; C7.1-02 stays Partial for a behaviour reason, see its row | C5-02, C6.3-01, C6.3-02, C6.3-03, C7.1-02, C8-00, C8.1-01, C8.1-02, C8.2, C8.3 |
 | BLG-QA-208 | Entry required-field set and advisory panel non-blocking at the UI | C4-01, C4.2.6 |
 
 ## Maintenance
