@@ -18,7 +18,7 @@ Last Updated: 2026-10-06
 - **Spec reference:** `claude/strategy/strategy_rules.md` §11; `stage4_backlog_slice.md#ST-01` AC 1 and AC 6
 - **Unblock criteria:** Both outputs recorded in `qa_evidence_EPIC-01.md` under ST-01. If query (1) shows multipliers other than 5/2 or a hold length other than 10, any open position recomputed with those values gets a Product Owner correction decision (AC 6). Under §7.3 a stop is never silently loosened.
 - **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-10-06__release-v9.10/EPIC-01`
-- **Status:** Open
+- **Status:** Unblocked — 2026-10-06T17:34:46Z. Unblocked in-session: both production query outputs were supplied by the user (human, with production access), in the same session as the delegation. The settings row equals §11 (10/14/5.00/2.00, unchanged since 2026-06-03). None of the 4 open positions (MU, SNDK, WDC, DELL) has a diverged stop, so no AC 6 correction is owed. Recorded in `qa_evidence_EPIC-01.md` §ST-01.
 
 ## DEL-20261006-02
 

@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-06T17:31:03Z",
+  "last_updated_utc": "2026-10-06T17:34:46Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -29,15 +29,15 @@
       "stories": {
         "ST-01": {
           "title": "One source for §11 stop parameters across the on-load and nightly stop paths",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "Infrastructure & Operations Owner",
+          "classification": "delegated_backend",
+          "status": "blocked_backend",
+          "assigned_to": "Data Model & Domain Schema Owner",
           "github_issue": 1894,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-01",
           "commit_sha": "0aa254c534092181921f3d183155fb26f4a0b4ff",
-          "delegation_record_id": "DEL-20261006-01",
-          "blocked_since_utc": "2026-10-06T17:31:01Z",
-          "unblock_criteria": "AC2 ruling done (a). Remaining: AC1 production read (DEL-20261006-01); AC6 PO correction decision only if production drifted; DS-26 live application (DEL-20261006-04)",
+          "delegation_record_id": "DEL-20261006-04",
+          "blocked_since_utc": "2026-10-06T17:34:46Z",
+          "unblock_criteria": "DS-26 applied on staging and production (DEL-20261006-04). All six ACs otherwise met: AC1 production read recorded; AC2 ruling (a); AC3-5 in 0aa254c5; AC6 no diverged stops.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -50,7 +50,7 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": {
             "role": "Strategy Rules & System Intent Owner",
@@ -59,7 +59,7 @@
             "cleared_utc": "2026-10-06T17:31:01Z",
             "notes": "Ruling (a) by direct user instruction 2026-10-06"
           },
-          "notes": ""
+          "notes": "Reclassified delegated_decision -> delegated_backend (LL-v2.3-EX-02): the ruling is made and production read done (DEL-20261006-01 unblocked in-session); the only remaining blocker is the DS-26 live migration. Deviation check: none."
         },
         "ST-02": {
           "title": "Remove silent ATR fallbacks and record ATR provenance",
@@ -544,10 +544,10 @@
     }
   },
   "blocked_items": [
-    "ST-01",
     "ST-05"
   ],
   "delegated_items": [
+    "ST-01",
     "ST-02"
   ],
   "completed_items": [
