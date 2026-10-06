@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-06T21:14:46Z",
+  "last_updated_utc": "2026-10-06T21:26:48Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -466,7 +466,9 @@
         "tests/e2e/recent-trades-zero-pnl-badge.spec.js",
         "tests/e2e/exit-condition-surfacing.spec.js",
         "tests/e2e/stop-cell-provenance.spec.js",
-        "tests/e2e/trailing-stop-explainer-tooltip.spec.js"
+        "tests/e2e/trailing-stop-explainer-tooltip.spec.js",
+        "tests/e2e/trade-entry-system-stop.spec.js",
+        "tests/test_add_position_stop_handling.py"
       ],
       "stories": {
         "ST-06": {
@@ -497,25 +499,28 @@
         "ST-07": {
           "title": "Trade Entry shows the stop and risk the system will actually store",
           "classification": "autonomous",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1900,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "e5df8e65cb9898a1159833d1a0df328621d09b6b",
           "delegation_record_id": null,
-          "blocked_since_utc": "2026-10-06T16:16:25Z",
-          "unblock_criteria": "Dependency: ST-01 ruling ESC-EXEC-20261006-01 (single fallback-multiplier source)",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-10-06T21:26:38Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/components/position_form.md"
+            "docs/specs/frontend/components/position_form.md#Initial Stop (set by system) (v1.7 — ST-07, replaces Stop Price)",
+            "docs/design/2026-10-06__release-v9.10/trade-entry-system-stop/decision_record.md",
+            "tests/e2e/trade-entry-system-stop.spec.js",
+            "tests/test_add_position_stop_handling.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Unblocked: ESC-EXEC-20261006-01 resolved (ruling (a)), EPIC-01 merged. AC1 Playwright SC-TES-01 (risk = (entry − system stop) × shares); AC2 SC-TES-02 (no stop input, no stop_price in payload); AC3 SC-TES-03; AC4 tests/test_add_position_stop_handling.py (5 pass). 13 Trade Entry specs 82/82 locally. Deviation check: none."
         },
         "ST-08": {
           "title": "Exit dialog pre-selects the exit reason the system already knows",
@@ -595,8 +600,7 @@
     "ST-11",
     "ST-13",
     "ST-14",
-    "ST-20",
-    "ST-07"
+    "ST-20"
   ],
   "delegated_items": [
     "ST-18"
@@ -612,6 +616,7 @@
     "ST-19",
     "ST-21",
     "ST-06",
+    "ST-07",
     "ST-08",
     "ST-09",
     "ST-10"
