@@ -123,6 +123,129 @@ These values define the core risk model, stop logic, and position sizing default
 
 ---
 
+### 2. Commission & Fees
+
+These fields define the fee assumptions used in Trade Entry and Exit previews.
+
+**Fields:**
+
+- **UK Commission (£)**
+  - Type: number, step `0.01`
+  - Default: `9.95`
+
+- **US Commission ($)**
+  - Type: number, step `0.01`
+  - Default: `0`
+
+- **UK Stamp Duty Rate**
+  - Type: number, step `0.001`
+  - Default: `0.005` (0.5%)
+  - Helper text: "Default: 0.005 (0.5%)"
+
+- **US FX Fee Rate**
+  - Type: number, step `0.0001`
+  - Default: `0.0015` (0.15%)
+  - Helper text: "Default: 0.0015 (0.15%)"
+
+> Fee changes apply to new transactions only. Existing trade history is not recalculated.
+
+---
+
+### 3. Preferences
+
+Preferences control how the interface is presented.
+
+**Fields:**
+
+- **Theme**
+  - Type: select
+  - Options: `dark`, `light`
+  - Default: `dark`
+
+> **`default_currency`** is a stored field (`GBP` only) that is not user-configurable via this UI. Multi-currency support is position-level (USD positions are tracked in native currency), not portfolio-level. The backend will reject any value other than `"GBP"` if submitted.
+
+---
+
+### 4. Risk Limits
+
+Configures the concentration alert thresholds shown on the Positions page. When a breach is detected, a warning banner appears with a link back to this section.
+
+**Fields:**
+
+- **Position Concentration Limit (%)**
+  - Type: number, integer, `min=1`, `max=100`
+  - Default: `15`
+  - Helper text: "Alert when 1 position exceeds this % of total portfolio heat (default: 15%)"
+  - Maps to `concentration_position_threshold_pct` in settings. Read by `GET /portfolio/concentration-status`.
+
+- **Sector Concentration Limit (%)**
+  - Type: number, integer, `min=1`, `max=100`
+  - Default: `30`
+  - Helper text: "Alert when 1 sector exceeds this % of total portfolio heat (default: 30%)"
+  - Maps to `concentration_sector_threshold_pct` in settings. Read by `GET /portfolio/concentration-status`.
+
+> Threshold changes take effect on the next poll of `GET /portfolio/concentration-status` (every 2 minutes on the Positions page).
+
+---
+
+### 5. Analytics
+
+Configures when analytics become meaningful enough to display.
+
+**Fields:**
+
+- **Minimum Trades for Analytics**
+  - Type: number, integer, `min=1`
+  - Default: `10`
+  - Helper text: "Minimum number of closed trades required to display analytics"
+
+Analytics views show only once this threshold is met, avoiding misleading statistics on very small samples.
+
+> **Analytics page default period note:** The Analytics page explicitly passes `period=last_month` on initial load as a UX decision — it does not rely on the API's default (`all_time`). This is intentional: `last_month` presents a meaningful recent window rather than the full historical dataset on first view. `all_time` remains available as a user-selectable option on the Analytics page. This note is here because the `min_trades_for_analytics` threshold applies across all period selections; a user who has enough trades all-time may not meet the threshold for `last_month`.
+
+---
+
+### 6. Claude API Usage & Costs (v7.6 — ST-07, BLG-FEAT-77)
+
+**Design source:** docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md (v1.1 addendum)
+
+**Reframed per `ESC-EXEC-20260720-01`:** the original design assumed Gemini and Claude were two separate cost-generating providers, sourced from `gemini_audit_log` and a Claude equivalent respectively, summed into a "Combined Total." Tracing the actual implementation during sprint execution found this codebase integrates only the Anthropic Claude API — `gemini_service.py` (despite its filename) calls only `anthropic`, and no `google-generativeai` package or `GEMINI_API_KEY` exists anywhere in the codebase. `gemini_audit_log` and `claude_audit_log` both log the *same* Claude spend event per call, not two providers' independent costs. The original design would have double-counted one real cost stream as two. This section now shows a single Claude API total.
+
+A **read-only** section showing Claude API spend for the current calendar month. Unlike sections 1–5, this section has no form fields and does not participate in the `Save Settings` mutation — it loads via its own independent query and is excluded from the Save button's scope.
+
+**Fields (read-only):**
+
+| Row | Source | Format |
+|-----|--------|--------|
+| Claude API spend (current month) | `GET /ai/monthly-cost` — aggregates `claude_audit_log.cost_usd` for the current calendar month | `$X.XX`, bold |
+
+**Loading:** inline skeleton within the card only — does not block the rest of the Settings page.
+**Error:** card shows "AI cost data unavailable" — no numeric fallback is rendered (never shown as `$0.00` or `—`); rest of the page is unaffected.
+
+#### 6a. AI Spend Trend Chart (v7.8 — ST-06, EPIC-06, BLG-FEAT-82)
+
+**Design source:** docs/design/2026-07-24__release-v7.8/ai-spend-trend-chart/ux_spec.md
+
+Added directly below the current-month figure, inside the same card — not a new top-level section. A bar chart showing Claude API spend for the last 6 release cycles (or fewer if less history exists — no zero-padding), following the same fixed-pattern bar chart convention as `analytics.md` §12 Win Rate by Month.
+
+| Element | Value |
+|---------|-------|
+| X-axis | Release cycle labels (e.g. "v7.3" … "v7.8"), oldest to newest |
+| Y-axis | Spend (USD), auto-scaled to the max value shown (no fixed ceiling) |
+| Bar value | Total Claude API spend for that cycle's date window |
+| Bar colour | Single accent — `bg-blue-500` dark / `bg-blue-600` light (informational-monitoring accent; the emerald/rose profit-loss convention does not apply to a cost-only metric) |
+| Tooltip | On hover/focus per bar: cycle label + exact spend (`$X.XX`) |
+| Reference line | None (spend has no natural target/threshold) |
+
+**Loading:** inline skeleton within the chart area only.
+**Error:** "AI spend trend unavailable" in place of the chart; independent of the current-month figure's own query/error state above.
+
+**Naming note:** the backlog title says "Gemini/Claude" but this codebase integrates only the Claude API (per this section's v1.5 reframing above) — the chart shows Claude spend only, consistent with the single-total figure it extends.
+
+**Backend dependency:** requires a new endpoint/query-param to aggregate `claude_audit_log.cost_usd` by release-cycle window (`GET /ai/monthly-cost` only covers the current calendar month today) — not new data collection, but a new aggregation endpoint. Implementation detail for sprint execution; API contract entry required in `docs/specs/api_contracts/` in the same commit.
+
+---
+
 ## Data Behavior
 
 ### Loading Existing Settings
