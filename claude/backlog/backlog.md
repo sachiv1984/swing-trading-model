@@ -4718,3 +4718,21 @@ A closed trade records prices and fees but not the multiplier, ATR and grace len
 - [ ] `idea_intake_prompt.md` role list matches the agent files.
 
 ---
+
+### BLG-FE-200 — Reports and Notifications pages fail WCAG colour contrast in the light theme
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** ST-19 (BLG-QA-195), EPIC-04, cycle `2026-10-06__release-v9.10` — first axe scan of these pages in both themes, 2026-10-06
+**Effort:** M (~2-3 days)
+**Provisional-Target:** TBD
+
+**Problem**
+The axe-core scan added by ST-19 finds serious `color-contrast` violations on the Reports page and on the Notification Preferences and History pages in the **light** theme only. The dark theme passes. Reports' Monthly tab (restated month expanded) has 25 nodes, and its Tax Year tab has 14. The pages hard-code dark-theme classes (`bg-slate-800/50` cards, `text-white`, `text-slate-200`, `text-emerald-400` / `text-rose-400`) with no light variant, so text lands at contrast ratios of 1.1–3.4:1. Notification History has 2 nodes: the active tab link (`text-cyan-400` on `#f1f5f9`) and the type-filter value (`text-white`). Notification Preferences has 3: the same tab link and two `text-white` section headings. `docs/frontend/design_system.md` (line 200) says light mode is not implemented and defines no light-mode tokens. ST-19's AC requires fixes to use existing tokens, so these could not be fixed in-story.
+
+**Scope**
+- Decide whether light mode is a supported theme (the Layout toggle exists). If it is, add light-mode colour tokens to `design_system.md`.
+- Apply them to Reports (Monthly, Tax Year) and Notification Preferences and History, and remove the `color-contrast` entries from the light-theme `KNOWN_VIOLATIONS` baseline in `tests/e2e/accessibility-axe-scan.spec.js` in the same commit.
+
+**Acceptance Criteria**
+- [ ] The light-theme Reports and Notifications axe scans pass with no `color-contrast` baseline entry

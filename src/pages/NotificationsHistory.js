@@ -202,7 +202,7 @@ export default function NotificationsHistory() {
       <div className="flex justify-end items-center gap-3">
         <span className="text-sm text-slate-600 dark:text-slate-400">Filter by type:</span>
         <Select value={filterType} onValueChange={setFilterType}>
-          <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white w-52">
+          <SelectTrigger aria-label="Filter by alert type" className="bg-slate-800/50 border-slate-700 text-white w-52">
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="bg-slate-800 border-slate-700">
