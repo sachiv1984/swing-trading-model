@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Activity, TrendingUp, TrendingDown } from "lucide-react";
+import { Activity, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import { formatCurrency } from "../../../lib/format";
 
@@ -42,7 +42,13 @@ export default function RecentTradesWidget({ positions }) {
                         : "bg-slate-500/20 text-slate-300"
                   )}
                 >
-                  {(trade.pnl || 0) >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                  {(trade.pnl || 0) > 0 ? (
+                    <TrendingUp className="w-4 h-4" data-testid="recent-trade-glyph-up" aria-hidden="true" />
+                  ) : (trade.pnl || 0) < 0 ? (
+                    <TrendingDown className="w-4 h-4" data-testid="recent-trade-glyph-down" aria-hidden="true" />
+                  ) : (
+                    <Minus className="w-4 h-4" data-testid="recent-trade-glyph-neutral" aria-hidden="true" />
+                  )}
                 </div>
                 <div>
                   <p className="font-medium text-slate-900 dark:text-white">{trade.ticker?.replace(".L", "")}</p>
