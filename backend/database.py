@@ -2719,8 +2719,13 @@ def create_claude_audit_entry(
                     (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, compliance_check_result, latency_ms),
                 )
             conn.commit()
-    except Exception:
-        pass
+    except Exception as e:
+        # ST-16 (BLG-GOV-141, EPIC-04, v9.10): still non-blocking -- an audit
+        # write must never fail the AI response -- but no longer silent. A
+        # dropped row now leaves a warning naming the endpoint and model.
+        logger.warning(
+            "claude_audit_log insert failed for %s (model %s): %s", endpoint, model_id, e
+        )
 
 
 # ---------------------------------------------------------------------------

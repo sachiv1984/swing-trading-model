@@ -416,6 +416,27 @@ Several direct dependencies are a major version, or a breaking minor series, beh
 
 ---
 
+### BLG-AI-08 — claude_audit_log: add prompt_hash and response_length, and log failed model calls
+**Priority:** P2 (Medium)
+**Type:** AI Governance / Audit Logging
+**Owner:** AI Compliance & Governance Officer; Head of Engineering; Data Model & Domain Schema Owner
+**Source:** ST-16 (BLG-GOV-141), EPIC-04, cycle `2026-10-06__release-v9.10` — `docs/ops/ai_output_logging_completeness_audit_2026-10-06.md` — 2026-10-06
+**Effort:** S (~1 day plus a live migration)
+**Provisional-Target:** TBD
+
+**Problem**
+AI governance policy requires model ID, prompt hash, response length and timestamp on every logged AI response. `claude_audit_log` has no prompt-hash column and no response-length column (only `output_tokens`), so `POST /ai/daily-briefing` and `POST /ai/chat` cannot meet the policy. A model call that fails after retries writes no audit row at all.
+
+**Scope**
+- Add nullable `prompt_hash` (SHA-256 hex of the system prompt plus the user message; hash only, per the `gemini_audit_log` hygiene precedent) and `response_length` (characters) columns. This needs a `data_model.md` DS entry and live application on staging and production.
+- Populate both in `ai_service.py` for both endpoints.
+- On a model-call failure, write a row with a failure marker (for example `compliance_check_result = 'model_call_failed'`, or a dedicated nullable status column) so failed calls are auditable.
+
+**Acceptance Criteria**
+- [ ] Successful briefing and chat calls write `prompt_hash` and `response_length`. Unit tests cover both endpoints.
+- [ ] A failed model call writes an audit row marked as failed
+- [ ] Migration recorded in `data_model.md` and applied live, with verification output
+
 ## 3. Frontend & UX Backlog
 
 ---
