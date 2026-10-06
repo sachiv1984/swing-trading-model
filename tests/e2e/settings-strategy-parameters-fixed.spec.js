@@ -9,6 +9,7 @@
  *   SC-SPF-02  The fixed caption is present and none of the four renders as an <input>
  *   SC-SPF-03  A stored row with the old wrong values (5 / 2 / 3) still shows the §11 values
  *   SC-SPF-04  Saving omits the four fixed fields; Default Risk % is still sent
+ *   SC-SPF-05  Trade Entry suggested stop uses 5× ATR regardless of the stored row
  *
  * Infrastructure: page.route() network interception — no live backend required.
  */
@@ -87,4 +88,21 @@ test('SC-SPF-04: saving omits the fixed fields and still sends Default Risk %', 
     expect(sent).not.toHaveProperty(field);
   }
   expect(sent.default_risk_percent).toBe(1.5);
+});
+
+// ---------------------------------------------------------------------------
+// Trade Entry suggested stop uses the fixed 5x initial multiplier (ST-01 AC 4).
+// It previously fell back to 2x when no settings row loaded.
+// ---------------------------------------------------------------------------
+
+test('SC-SPF-05: Trade Entry suggests entry − 5×ATR even when a stored row says 2×', async ({ page }) => {
+  await stubSettings(page, [{ id: 'settings-1', atr_multiplier_initial: 2, default_risk_percent: 1.0 }]);
+  await page.goto('/#/TradeEntry');
+  await expect(page.locator('input[placeholder*="AAPL"]')).toBeVisible({ timeout: 10000 });
+  await page.locator('input[placeholder="0.00"]').first().fill('100');
+  await page.getByPlaceholder('For stop suggestion').fill('4');
+  const hint = page.getByText(/Suggested stop:/);
+  await expect(hint).toBeVisible();
+  await expect(hint).toContainText('(5× ATR)');
+  await expect(hint).toContainText('80.00'); // 100 − 5 × 4
 });
