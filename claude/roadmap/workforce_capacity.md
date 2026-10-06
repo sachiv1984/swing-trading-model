@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-28 (rebalance 2026-09-28__scheduled — Standard tier, no FTE changes; new "Rebalance 2026-09-28__scheduled" section; Skill-Silo Alert 85.7%, 1st improving reading after 5 consecutive worsening; STEP 7.2 max role share 12.4%; Product Value Ratio 0.089 🔴 Alert, improved from 0.046 low); prior — 2026-09-23 (ST-29, EPIC-07, v9.6, BLG-GOV-328 — new "Sprint Capacity Band Utilisation Review" section: full utilisation history reconstructed, recommendation to reconfirm the band recorded, hold/raise/reconfirm disposition explicitly left to the Product Owner); prior — 2026-09-19 (rebalance 2026-09-19__scheduled — Standard tier, no FTE changes; new "Rebalance 2026-09-19__scheduled" section; first real row added to the Cost-Per-Cycle Wall-Clock Rollup; Skill-Silo Alert 98.8%, 5th consecutive worsening reading — mandatory pull-forward satisfied; STEP 7.2 max role share 15.3%; Product Value Ratio 0.046 🔴 Alert); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-06 (rebalance 2026-10-06__scheduled — new "Rebalance 2026-10-06__scheduled" section: Skill-Silo 91.2% pooled, worsened, §7.1 sustained-failure pull-forward applied (BLG-FE-193 + BLG-FE-198 → v9.10); §7.3 re-measured, gap narrowing, runway ≈1 cycle); prior — 2026-09-30 (rebalance 2026-09-30__scheduled — "Rebalance 2026-09-30__scheduled" section appended; header not refreshed at the time); prior — 2026-09-28 (rebalance 2026-09-28__scheduled — Standard tier, no FTE changes; new "Rebalance 2026-09-28__scheduled" section; Skill-Silo Alert 85.7%, 1st improving reading after 5 consecutive worsening; STEP 7.2 max role share 12.4%; Product Value Ratio 0.089 🔴 Alert, improved from 0.046 low); prior history retained — see prior entries in version control
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -813,3 +813,21 @@ Both approved candidates (`BLG-FEAT-52` ungated/descoped, new `BLG-FEAT-71`) are
 **Sprint capacity:** Not re-evaluated this cycle; held unchanged at ~24–28 working-day-equivalent units (per the 2026-09-23 Sprint Capacity Band Utilisation Review above).
 
 **Workforce constraints:** None new.
+
+---
+
+## Rebalance 2026-10-06__scheduled
+
+**Skill-Silo Alert (STEP 7.1):** window v9.7–v9.9 (U/G/D/P proxy; `scripts/compute_rebalance_diagnostics.py`). **Pooled (§7.1's stated formula): 93/102 = 91.2%**; plain per-cycle mean: 90.4% (v9.7 82.1%, v9.8 94.9%, v9.9 94.3%). **Method-break note (per `BLG-GOV-367`):** the recorded series up to 2026-09-30 is a plain mean (83.7%, 85.7%); the pooled equivalent of the prior window was 84.8%. On either method this reading **worsened** (pooled 84.8% → 91.2%; plain mean, recorded 83.7% → 90.4%). The ceiling has been exceeded at every reading since at least 2026-08-11. **§7.1 sustained-failure clause applied** ("worsened or remained unresolved for 3 or more consecutive readings"): the Product Owner commits 2 build-and-ship U-items to v9.10 — `BLG-FE-193` (gate met, `BLG-BE-135` shipped v9.9) and `BLG-FE-198` (new, ungated). Both passed LP-05 gate verification and the live-status cross-check. The 2026-09-30 reading recorded the clause as "not triggered" on a narrower reading of the same text; this run's `lessons_learnt.md` records the disagreement.
+
+**Cross-Role Workload Balance (STEP 7.2):** read from `claude/roadmap/role_share_history.md` after appending the v9.9 row via `scripts/compute_role_share_history.py`. Window v9.7–v9.9, 105 stories: Head of Specs Team (solo bucket) highest at **16.2%** (17/105). Every v9.9 Owner value was compound, so v9.9 adds nothing to solo buckets (`BLG-GOV-372` tracks a split-credit tally). Below the 40% ceiling — **no advisory.**
+
+**Ready-Pool Capacity Gap Trend (STEP 7.3):** re-measured from the v9.6–v9.9 Release Planning run manifests (the 2026-09-28 and 2026-09-30 rebalances recorded it as "not re-measured — no `plan release` since v9.5", but v9.6–v9.9 release planning had each recorded the figures). Gap = ready-pool days − 28-day ceiling: v9.6 33.75 → v9.7 33.35 → v9.8 18.70 → v9.9 8.20 — **narrowing for 3 consecutive releases**; the mandatory-review trigger (3 consecutive *widening* releases) does not apply. **Runway:** leftover after selection v9.8 18.70 d, v9.9 8.35 d; trailing-3 net change (−12.40, −2.65, −10.35) averages −8.47 d/cycle → **≈1.0 cycle until the pre-intake ready pool empties.** This cycle's intake adds 26 backlog items (~25 days, most ungated), so v9.10 planning will have a pool again. `metrics_definitions.md` Appendix F was not updated: it is outside this engine's write scope (§4) although §7.3 tells the engine to update it; tracked by `BLG-GOV-374`.
+
+**Product Value Ratio (STEP 2.4):** 0.096 🔴 Alert (window v9.5–v9.9, U=17/G=43/D=114/P=3/177) — 6th consecutive Alert-tier reading, flat. PO response: **Modify** — commitments, not recommendations: `BLG-FE-193` + `BLG-FE-198` in the v9.10 Now section. See `product_value_ratio_history.md`.
+
+**v9.10 capacity outlook:** committed so far: `BLG-BE-138` (M ~3-5 d, STEP 8.0 fast-track), `BLG-FE-193` (M ~4-6 d), `BLG-FE-198` (S ~1 d) ≈ 8-12 days of the ~24–28-day band. Release Planning fills the rest. Read first: the 5 date-lapsed items (`BLG-FEAT-55`, `BLG-SPEC-65`, `BLG-GOV-121`, `BLG-FEAT-62`, `BLG-OPS-92`); further ungated build-and-ship candidates from this cycle (`BLG-FE-196`, `BLG-FE-197`, `BLG-FE-199`; `BLG-FE-195` once `BLG-BE-138`'s ruling lands); `BLG-FEAT-59` (gate removed by PO 2026-10-05).
+
+**Sprint capacity:** not re-evaluated; held at ~24–28 working-day-equivalent units.
+
+**Workforce constraints:** none new.

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.36
-**Last Updated:** 2026-09-30 (sprint execution 2026-09-28__release-v9.8 EPIC-06/ST-34, BLG-GOV-342 — new §24 `.claude_current_state.json` `last_updated_utc` Write Convention); prior — 2026-09-24 (sprint execution 2026-09-23__release-v9.7 EPIC-05/ST-21, BLG-GOV-331 — new §23 ensure_ascii=False Convention for Governance JSON Writes); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 Outstanding Action #4 resolution — new §16.4.1 Non-Blocking SLA-Breach Advisory Surfacing); prior history retained — see prior entries in version control.
+**Version:** 3.37
+**Last Updated:** 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` STEP -1.5 — §16.11 gains the canonical role-name rule for `**Owner:**` values; condition-gated deferred patch from `2026-09-14__scheduled` applied on its stated trigger); prior — 2026-09-30 (sprint execution 2026-09-28__release-v9.8 EPIC-06/ST-34, BLG-GOV-342 — new §24 `.claude_current_state.json` `last_updated_utc` Write Convention); prior — 2026-09-24 (sprint execution 2026-09-23__release-v9.7 EPIC-05/ST-21, BLG-GOV-331 — new §23 ensure_ascii=False Convention for Governance JSON Writes); prior history retained — see prior entries in version control
 
 # Shared Standards — All Governed Routines
 
@@ -938,6 +938,8 @@ Original / Amended — <file path used>
 **Signed off by:** Product Owner
 **Date:** [AWAITING SIGN-OFF]
 ```
+
+**Owner field values (canonical role names — roadmap rebalance `2026-10-06__scheduled`, deferred patch from `2026-09-14__scheduled`, applied when its "next `2026-1[0-2]` scheduled rebalance" condition fired):** every `**Owner:**` value in this file, on an EPIC or an ST item, must be one or more role names copied exactly from a `**Role:**` line in `claude/agents/*.md` (trailing whitespace ignored). A shared story joins two or more such names with `; ` (semicolon and one space). Do not add qualifiers inside the field — no parenthetical notes such as `(disposition)`, no abbreviations, no variant spellings such as `Metrics Definitions & Analytics Canonical Owner` for `Metrics Definitions & Analytics Owner`. Put any division of labour in **Notes:**. Why: `roadmap_prompt.md` §7.2 tallies this field verbatim through `scripts/compute_role_share_history.py`, so a variant spelling or an inline qualifier creates a separate bucket and splits one role's count. A write-time check is tracked as `BLG-GOV-375`; until it lands, Sprint Planning applies this rule by inspection at STEP 6.
 
 **Status transition:** `Active` → `Sealed` when sign-off gate (STEP 6.2) passes. `sprint_sealed = true` in `.claude_current_state.json` must be set concurrently. Phase 3 may not invoke while status is `Active`.
 

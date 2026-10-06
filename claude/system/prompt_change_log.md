@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-10-01
+**Last Updated:** 2026-10-06
 
 # Prompt Change Log
 
@@ -13,6 +13,10 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-10-06 | `claude/system/OPERATIONAL_GUIDE.md` | v4.222→v4.223 | `roadmap_prompt.md` v9.31 bumped in this same session (see row below) — header Version 4.222→4.223; §6 source-prompt header and §14 Roadmap Engine Source row v9.30→v9.31; §14 self-row 4.222→4.223; Change Log row added. | Head of Specs Team (Roadmap Engine `2026-10-06__scheduled`, agent-mediated) |
+| 2026-10-06 | `claude/system/roadmap_prompt.md` | v9.30→v9.31 | Roadmap rebalance `2026-10-06__scheduled` STEP 11 Friction Item 1 (action-now): §7.3 step 1 names where the ready-pool figure lives and forbids an unexplained "not re-measured"; the runway paragraph no longer instructs a write to `metrics_definitions.md` Appendix F (outside §4 write scope) — record in `workforce_capacity.md`, Appendix F tracked by `BLG-GOV-374`. | Head of Specs Team (Roadmap Engine `2026-10-06__scheduled`, agent-mediated) |
+| 2026-10-06 | `claude/system/OPERATIONAL_GUIDE.md` | v4.221→v4.222 | `shared_standards.md` v3.37 bumped in this same session (see row below) — header Version 4.221→4.222; §14 Shared Standards row v3.36→v3.37; §14 self-row Version 4.221→4.222; Change Log row added. | Head of Specs Team (Roadmap Engine `2026-10-06__scheduled`, agent-mediated) |
+| 2026-10-06 | `claude/system/shared_standards.md` | v3.36→v3.37 | Roadmap rebalance `2026-10-06__scheduled` STEP -1.5: §16.11 canonical role-name rule for `sprint_backlog.md` `**Owner:**` values. Condition-gated deferred patch carried since `2026-09-14__scheduled`, applied on its stated trigger (first `2026-1[0-2]` scheduled rebalance). Write-time lint → `BLG-GOV-375`. | Head of Specs Team (Roadmap Engine `2026-10-06__scheduled`, agent-mediated) |
 | 2026-10-06 | `claude/system/OPERATIONAL_GUIDE.md` | v4.220→v4.221 | §8 source-prompt header and §14 Execution Engine Source row updated for execution_prompt.md v3.82; §14 self-row and header 4.220→4.221. | Head of Specs Team (Post-Ship Closure Engine, `2026-09-30__release-v9.9` STEP 8) |
 | 2026-10-06 | `claude/system/execution_prompt.md` | v3.81→v3.82 | LL-v9.9-P3-01 (BLG-GOV-368): §3.2.B hard cross-EPIC commit pre-PR check (`git log origin/main..HEAD` must carry no other EPIC's `[EPIC-yy]` commit; `[GOVERNANCE]` exempt) — PR #1886 root cause. LL-v9.9-P4-02: §3.2.A one-line cross-reference to `qa_evidence_template.md`'s agent-mediated signer-format rule — closes the v9.7→v9.9 carried item. | Head of Specs Team (Post-Ship Closure Engine, `2026-09-30__release-v9.9` STEP 8, immediate lessons-learnt action) |
 | 2026-10-05 | `claude/system/OPERATIONAL_GUIDE.md` | v4.219→v4.220 | §5 source-prompt header, §13 Artefact Register row and §14 Idea Intake Engine row updated for idea_intake_prompt.md v2.10; §14 self-row and Change Log updated. | Product Owner ruling ESC-CLOSE-20260930-01 (agent-mediated §5.3, independently reviewed; human Product Owner confirmed 2026-10-05); applied by Head of Specs Team (Sprint Execution Engine, agent-mediated) |
