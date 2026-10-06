@@ -105,11 +105,12 @@ def create_position(portfolio_id: str, position_data: Dict) -> Dict:
                     fill_price, fill_currency, fx_rate, shares, total_cost,
                     fees_paid, fee_type, initial_stop, current_stop, current_price,
                     atr, holding_days, pnl, pnl_pct, status,
-                    entry_note, tags, user_fill_price, strategy_version_at_entry
+                    entry_note, tags, user_fill_price, strategy_version_at_entry,
+                    atr_source
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                    %s, %s, %s, %s
+                    %s, %s, %s, %s, %s
                 )
                 RETURNING *
             """, (
@@ -137,6 +138,7 @@ def create_position(portfolio_id: str, position_data: Dict) -> Dict:
                 position_data.get('tags'),
                 position_data.get('user_fill_price'),
                 position_data.get('strategy_version_at_entry'),
+                position_data.get('atr_source'),
             ))
             return cur.fetchone()
 

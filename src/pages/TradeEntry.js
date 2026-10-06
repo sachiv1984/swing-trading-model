@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { base44, apiFetch, api } from "../api/base44Client";
+import { INITIAL_ATR_MULTIPLIER } from "../lib/strategyParameters";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
@@ -92,7 +93,6 @@ export default function TradeEntry() {
   });
 
   const currentSettings = settings?.[0] || {
-    atr_multiplier_initial: 2,
     uk_commission: 9.95,
     us_commission: 0,
     stamp_duty_rate: 0.005,
@@ -226,7 +226,8 @@ export default function TradeEntry() {
     const totalCost = grossValueGBP + commission + stampDuty + fxFee;
 
     // ATR-derived stop hint — shown as a suggestion in the UI only
-    const suggestedStop = atr > 0 ? price - (atr * currentSettings.atr_multiplier_initial) : 0;
+    // ST-01 (BLG-BE-138, v9.10): the backend's fixed §11 initial multiplier, not the settings row.
+    const suggestedStop = atr > 0 ? price - (atr * INITIAL_ATR_MULTIPLIER) : 0;
 
     // Risk calculation uses the user's manually entered stop_price if set,
     // otherwise falls back to the ATR-derived suggestion
@@ -429,7 +430,7 @@ export default function TradeEntry() {
                   <span className="text-rose-400">
                     {formatCurrency(costs.suggestedStop, { currency: currencyForMarket(formData.market) })}
                   </span>{" "}
-                  ({currentSettings.atr_multiplier_initial}× ATR)
+                  ({INITIAL_ATR_MULTIPLIER}× ATR)
                 </p>
               )}
             </div>

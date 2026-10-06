@@ -25,6 +25,7 @@ from database import (
 
 from utils.pricing import get_current_price, get_live_fx_rate, check_market_regime
 from services.grace_service import compute_grace_days_remaining
+from strategy_parameters import GRACE_PERIOD_DAYS
 from utils.formatting import decimal_to_float
 from utils.position_lifecycle_states import GRACE, PROFITABLE, LOSING
 
@@ -159,14 +160,14 @@ def get_portfolio_summary() -> Dict:
 
             holding_days = pos.get('holding_days', 0)
 
-            if holding_days < 10:
+            if holding_days < GRACE_PERIOD_DAYS:
                 display_status = GRACE
             elif pnl_gbp > 0:
                 display_status = PROFITABLE
             else:
                 display_status = LOSING
 
-            grace_period = holding_days < 10
+            grace_period = holding_days < GRACE_PERIOD_DAYS
             grace_days_remaining = compute_grace_days_remaining(
                 grace_period=grace_period,
                 holding_days=holding_days,

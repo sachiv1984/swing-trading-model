@@ -12,6 +12,10 @@ import { api } from "../api/base44Client";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
 import AiSpendTrendChart from "../components/charts/AiSpendTrendChart";
+import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS, INITIAL_ATR_MULTIPLIER, PROFIT_ATR_MULTIPLIER } from "../lib/strategyParameters";
+
+// ST-01 (BLG-BE-138, v9.10, ruling (a)): fixed by strategy_rules.md §11, not user settings.
+const FIXED_STRATEGY_FIELDS = ["min_hold_days", "atr_period", "atr_multiplier_initial", "atr_multiplier_trailing"];
 
 export default function Settings() {
   const queryClient = useQueryClient();
@@ -40,10 +44,10 @@ export default function Settings() {
   });
 
   const defaults = {
-    min_hold_days: 5,
-    atr_multiplier_initial: 2,
-    atr_multiplier_trailing: 3,
-    atr_period: 14,
+    min_hold_days: GRACE_PERIOD_DAYS,
+    atr_multiplier_initial: INITIAL_ATR_MULTIPLIER,
+    atr_multiplier_trailing: PROFIT_ATR_MULTIPLIER,
+    atr_period: ATR_PERIOD_DAYS,
     default_risk_percent: 1.0,       // NEW — pre-populates position sizing calculator
     default_currency: "GBP",
     theme: "dark",
@@ -122,7 +126,9 @@ export default function Settings() {
   };
 
   const handleSave = () => {
-    saveMutation.mutate(formData);
+    const payload = { ...formData };
+    FIXED_STRATEGY_FIELDS.forEach((f) => delete payload[f]);
+    saveMutation.mutate(payload);
   };
 
   if (isLoading || !formData) {
@@ -190,56 +196,30 @@ export default function Settings() {
         iconColor="bg-cyan-500/20 text-cyan-400"
       >
         <div className="space-y-6">
-          {/* Row 1 — ATR Period (solo, matching existing layout) */}
+          <p data-testid="strategy-params-fixed-caption" className="text-xs text-slate-600 dark:text-slate-400">
+            These parameters are fixed by the strategy rules (§11) and are shown for reference.
+          </p>
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="settings-min-hold-days" className="text-slate-600 dark:text-slate-400">Minimum Hold Days</Label>
-              <Input
-                id="settings-min-hold-days"
-                type="number"
-                value={formData.min_hold_days}
-                onChange={(e) => handleChange("min_hold_days", parseInt(e.target.value))}
-                className="bg-slate-800/50 border-slate-700 text-white"
-              />
+            <div className="space-y-2" data-testid="strategy-param-min-hold-days">
+              <p className="text-sm text-slate-600 dark:text-slate-400">Minimum Hold Days</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white">{GRACE_PERIOD_DAYS}</p>
               <p className="text-xs text-slate-600 dark:text-slate-400">Days before stop can trail</p>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="settings-atr-period" className="text-slate-600 dark:text-slate-400">ATR Period</Label>
-              <Input
-                id="settings-atr-period"
-                type="number"
-                value={formData.atr_period}
-                onChange={(e) => handleChange("atr_period", parseInt(e.target.value))}
-                className="bg-slate-800/50 border-slate-700 text-white"
-              />
+            <div className="space-y-2" data-testid="strategy-param-atr-period">
+              <p className="text-sm text-slate-600 dark:text-slate-400">ATR Period</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white">{ATR_PERIOD_DAYS}</p>
               <p className="text-xs text-slate-600 dark:text-slate-400">Lookback for ATR calculation</p>
             </div>
           </div>
-
-          {/* Row 2 — ATR Multipliers */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="settings-atr-multiplier-initial" className="text-slate-600 dark:text-slate-400">Initial Stop (ATR Multiple)</Label>
-              <Input
-                id="settings-atr-multiplier-initial"
-                type="number"
-                step="0.1"
-                value={formData.atr_multiplier_initial}
-                onChange={(e) => handleChange("atr_multiplier_initial", parseFloat(e.target.value))}
-                className="bg-slate-800/50 border-slate-700 text-white"
-              />
+            <div className="space-y-2" data-testid="strategy-param-atr-multiplier-initial">
+              <p className="text-sm text-slate-600 dark:text-slate-400">Initial Stop (ATR Multiple)</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white">{INITIAL_ATR_MULTIPLIER.toFixed(1)}</p>
               <p className="text-xs text-slate-600 dark:text-slate-400">e.g., 5 = Entry − 5×ATR (wide stop for losing positions)</p>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="settings-atr-multiplier-trailing" className="text-slate-600 dark:text-slate-400">Trailing Stop (ATR Multiple)</Label>
-              <Input
-                id="settings-atr-multiplier-trailing"
-                type="number"
-                step="0.1"
-                value={formData.atr_multiplier_trailing}
-                onChange={(e) => handleChange("atr_multiplier_trailing", parseFloat(e.target.value))}
-                className="bg-slate-800/50 border-slate-700 text-white"
-              />
+            <div className="space-y-2" data-testid="strategy-param-atr-multiplier-trailing">
+              <p className="text-sm text-slate-600 dark:text-slate-400">Trailing Stop (ATR Multiple)</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white">{PROFIT_ATR_MULTIPLIER.toFixed(1)}</p>
               <p className="text-xs text-slate-600 dark:text-slate-400">e.g., 2 = High − 2×ATR (tight trailing stop for profitable positions)</p>
             </div>
           </div>
