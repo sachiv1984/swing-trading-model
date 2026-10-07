@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-07 (BLG-OPS-180 and BLG-GOV-362 marked ✅ COMPLETE — OPS-180 by Infrastructure & Operations Owner (secret set, run 37602589130; AC 2 waived), GOV-362 by Head of Specs Team ruling + Product Owner acknowledgement); prior — 2026-10-07 (groom backlog post-ship closure 2026-10-06__release-v9.10 — 21 items archived (v9.10 shipped); 0 ephemeral sections; 0 gate/effort/field-completeness/duplicate-ID issues; spec-debt deep review run (0 candidates); 3 governance-prompt duplicate candidates flagged for owner review (BLG-GOV-355, BLG-GOV-362, BLG-GOV-368); BLG-OPS-180 surfaced as ambiguous (resolved in-session, no COMPLETE banner)); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — 21 shipped items marked ✅ COMPLETE (pending archival at STEP 12); 0 Phase 4 additions needed); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-07 (session — 4 new item(s) added: BLG-BE-150, BLG-QA-217, BLG-BE-151, BLG-QA-218 from PR #1921 review); prior — 2026-10-07 (BLG-OPS-180 and BLG-GOV-362 marked ✅ COMPLETE — OPS-180 by Infrastructure & Operations Owner (secret set, run 37602589130; AC 2 waived), GOV-362 by Head of Specs Team ruling + Product Owner acknowledgement); prior — 2026-10-07 (groom backlog post-ship closure 2026-10-06__release-v9.10 — 21 items archived (v9.10 shipped); 0 ephemeral sections; 0 gate/effort/field-completeness/duplicate-ID issues; spec-debt deep review run (0 candidates); 3 governance-prompt duplicate candidates flagged for owner review (BLG-GOV-355, BLG-GOV-362, BLG-GOV-368); BLG-OPS-180 surfaced as ambiguous (resolved in-session, no COMPLETE banner)); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4749,5 +4749,91 @@ ST-18's failing run (37598457966) was dispatched on the EPIC-04 branch: staging 
 
 **Acceptance Criteria**
 - All 8 Reports/Notifications axe tests assert the applied theme before scanning, and pass in CI
+
+---
+
+### BLG-BE-150 — Verify AI features after the sampling-hook import fix, and review the escaped defect
+**Priority:** P1 (High)
+**Type:** Backend Engineering / Escaped Defect
+**Owner:** Backend Engineering Patterns Owner; QA & Testing Owner
+**Source:** Agent-mediated PR #1921 review (Director of Quality and Product Owner roles), fix for ST-23 (EPIC-05, `2026-09-14__release-v9.4`) — 2026-10-07
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.11
+
+**Problem**
+ST-23 (commit `75c80869`, 2026-09-15) added `from ai_output_sampling_service import maybe_sample_output` at six call sites. That import only resolves when `backend/services/` is on `sys.path`, and it never is in production. From the v9.4 deploy until PR #1921, every AI generation that reached the hook failed. The post-trade debrief, generate-plan and generate-thesis returned the `No module named 'ai_output_sampling_service'` error. Journal summary, daily briefing and chat caught the error in a broad `except` and showed a generic "unavailable" message, so for about three weeks they failed with no visible error. CI passed throughout, because several test files put `backend/services/` on `sys.path` for the whole pytest run. This also means AI-output sampling (BLG-AI-06) has captured nothing in production since it shipped.
+
+**Scope**
+- After PR #1921 deploys, run each of the six AI features on staging: post-trade debrief, journal summary, daily briefing, chat, generate-plan and generate-thesis.
+- Confirm AI-output sampling now records samples when opted in.
+- Write a short escaped-defect note: why ST-23's QA evidence and DoQ sign-off did not catch a production-only import failure, and which follow-up items cover the gap (BLG-QA-217, BLG-BE-151, BLG-QA-218).
+
+**Acceptance Criteria**
+- A dated staging run shows all six AI features returning generated content, not an error or the generic "unavailable" message
+- At least one sampled output is recorded after opting in, or the sampling path is confirmed working by another recorded check
+- The escaped-defect note is filed and linked from this item
+
+---
+
+### BLG-QA-217 — Add a test that imports every backend module with only backend/ on the path
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated PR #1921 review (Director of Quality role) — 2026-10-07
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+PR #1921 added a static check (`tests/test_backend_service_import_paths.py`) for one class of bug: importing a `backend/services` module without its `services.` prefix. A bare import of anything else that only resolves through a test-only `sys.path` entry would still pass CI and fail in production. Function-level (lazy) imports are the riskiest case. They only run when a request reaches that code path, so app startup does not catch them.
+
+**Scope**
+- Add a test that starts a clean subprocess with only `backend/` on `sys.path`, the way production runs, and imports every backend module.
+- Statically resolve every function-level `import`/`from ... import` in `backend/` against that same path, since a module import does not run lazy imports.
+
+**Acceptance Criteria**
+- Reintroducing the `ai_output_sampling_service` bare import makes the new test fail
+- The test passes on `main` and runs in CI Phase A
+
+---
+
+### BLG-BE-151 — Keep the AI-output sampling hook from breaking or hiding errors in user-facing AI responses
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner
+**Source:** Agent-mediated PR #1921 review (Director of Quality role) — 2026-10-07
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`maybe_sample_output` is an observability hook and is meant to never affect the response. Its own body does catch its errors. Each caller, however, imports it outside any guard, inside the user-facing success path. When that import failed, the debrief, generate-plan and generate-thesis returned errors. In `ai_service.py`, journal summary, daily briefing and chat fell into broad `except` blocks. Daily briefing and chat do not log what they catch, so a whole class of failure produced no log line.
+
+**Scope**
+- Move the sampling hook's import out of the six user-facing call sites. One option is a module-level import, if no circular import prevents it. The other is a single wrapper that keeps a hook failure from changing the response. Either way, keep import errors loud in CI (BLG-QA-217).
+- Log the exception, with `exc_info`, in the daily-briefing and chat `except` blocks in `ai_service.py`.
+
+**Acceptance Criteria**
+- A test shows that a failure inside the sampling hook, including at import, leaves each AI endpoint's response unchanged
+- Daily briefing and chat log the exception when they return their fallback message
+
+---
+
+### BLG-QA-218 — Stop test files from adding backend/services/ to sys.path
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated PR #1921 review (Director of Quality role) — 2026-10-07
+**Effort:** M (~1–2d)
+**Provisional-Target:** TBD
+
+**Problem**
+Nine test files still add `backend/services/` to `sys.path` so they can load a service module by bare name without running `services/__init__.py`. Among them are `test_plan_vs_reality.py`, `test_alerts_service.py` and `test_watchlist_service.py`. pytest runs every file in one process, so that entry stays active for the whole run. Code under test can then resolve imports that fail in production, which is exactly how the ST-23 bare import passed CI (BLG-BE-150).
+
+**Scope**
+- Change those files to load modules by file path (`importlib.util.spec_from_file_location`) or through `services.<module>`, without changing `sys.path`.
+- Add a guard (conftest or lint) that fails if a test adds `backend/services` to `sys.path`.
+
+**Acceptance Criteria**
+- No file under `tests/` adds `backend/services` to `sys.path`, and the guard enforces it
+- The full suite still passes
 
 ---
