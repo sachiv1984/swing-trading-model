@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-07T06:44:19Z",
+  "last_updated_utc": "2026-10-07T06:48:09Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -456,11 +456,11 @@
       }
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-06__release-v9.10/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-02.md",
       "test_scenarios": [
         "tests/e2e/recent-trades-zero-pnl-badge.spec.js",
@@ -593,6 +593,15 @@
           "sign_off_record": null,
           "notes": "SC-RTB-01..05 pass locally. Deviation check: none."
         }
+      },
+      "sign_off_record": {
+        "status": "cleared",
+        "role": "Director of Quality",
+        "method": "agent_mediated_user_directed",
+        "signed_utc": "2026-10-07T06:48:09Z",
+        "verdict": "Approved with Comments",
+        "evidence": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-02.md",
+        "notes": "Agent-mediated on explicit user direction 2026-10-07; pending human confirmation. Merge gate still needs human QA comment and PO acceptance."
       }
     }
   },
@@ -642,7 +651,8 @@
     "EPIC-01 DoQ sign-off agent-mediated (Director of Quality role, §5.3) on explicit user direction 2026-10-06; Product Owner review agent-mediated, comment only. Merge gate still requires human QA comment and PO acceptance.",
     "EPIC-01 PR #1915 opened 2026-10-06; combined agent-mediated DoQ + PO review comment posted (both Approved with Comments). Awaiting CI, human QA sign-off comment and PO acceptance.",
     "Resume sync 2026-10-06T21:01:55Z: PR #1915 (EPIC-01) found merged at 2026-10-06T21:00:45Z (mergedAt) — pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-01 is empty — nothing to reconcile.",
-    "2026-10-07T06:44:19Z: EPIC-02 pre-PR review run on user direction: agent-mediated Director of Quality and Product Owner, both Approved with Comments. Filed BLG-BE-146, BLG-FE-203, BLG-QA-215, BLG-FE-204 (backlog.md new-item exception, §7). The review comment is drafted for posting when the PR opens. DoQ sign-off block still blank, so the PR is not opened (§3.2.B)."
+    "2026-10-07T06:44:19Z: EPIC-02 pre-PR review run on user direction: agent-mediated Director of Quality and Product Owner, both Approved with Comments. Filed BLG-BE-146, BLG-FE-203, BLG-QA-215, BLG-FE-204 (backlog.md new-item exception, §7). The review comment is drafted for posting when the PR opens. DoQ sign-off block still blank, so the PR is not opened (§3.2.B).",
+    "2026-10-07T06:48:09Z: EPIC-02 DoQ sign-off agent-mediated (Director of Quality role, §5.3) on explicit user direction; qa_signed_off set in the same commit (DF-02)."
   ],
   "sealed": false,
   "sealed_utc": null
