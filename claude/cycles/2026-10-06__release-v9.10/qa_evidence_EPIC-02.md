@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-06 (EPIC-02 consolidation, STEP 3.2.A; DoQ sign-off pending)
+Last Updated: 2026-10-07 (pre-PR agent-mediated review findings recorded; DoQ sign-off pending); prior — 2026-10-06 (EPIC-02 consolidation, STEP 3.2.A)
 
 # QA Evidence — EPIC-02 — Stop & Exit Transparency (build-and-ship)
 
@@ -30,7 +30,9 @@ Last Updated: 2026-10-06 (EPIC-02 consolidation, STEP 3.2.A; DoQ sign-off pendin
 
 **Real CI confirmation (pre-PR, branch push):** Playwright E2E Acceptance Tests run [37533932013](https://github.com/sachiv1984/swing-trading-model/actions/runs/37533932013), head `e5df8e65` (all EPIC-02 code; later commits are state/evidence only): **success**. Also green: Critical-Path Smoke Tests, CI Pytest Suite, Service Layer Coverage, Golden Output Regression, Portfolio Integration and Endpoint Coverage on `b4517138`. Re-confirm on the PR's own CI before merge.
 
-**Same-EPIC cross-story testing-gap consistency check:** no story in EPIC-02 filed a testing-gap backlog item. Nothing to propagate.
+**Same-EPIC cross-story testing-gap consistency check:** the pre-PR review filed one testing gap, BLG-QA-215: ST-06's tooltip time is never asserted under a non-UTC browser timezone. No other EPIC-02 story renders a server timestamp in local time. ST-08/ST-09 use no timestamps, ST-07 none, and ST-10 shows only P&L. Nothing to propagate.
+
+**Pre-PR agent-mediated review (2026-10-07, on behalf of Director of Quality and Product Owner, §5.3 / OA-6, pending human confirmation):** both verdicts ⚠️ Approved with Comments. Non-blocking findings, filed: BLG-BE-146 (no pre-save ATR preview, so sizing needs a typed ATR, ST-07), BLG-FE-203 (ATR field unit and plausibility check, ST-07), BLG-QA-215 (timezone test, ST-06), BLG-FE-204 (rounding edge in the break-even glyph, ST-10). None narrows or leaves unmet an AC. This review does not fill the sign-off block below.
 
 ---
 
