@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-07 (session — 4 new item(s) added: BLG-GOV-376 (EPIC-03 ST-13/ST-14 execution), BLG-BE-147, BLG-BE-148, BLG-BE-149 (EPIC-03 agent-mediated pre-PR review)); prior — 2026-10-07 (session — 4 new item(s) added: BLG-BE-146, BLG-FE-203, BLG-QA-215, BLG-FE-204, from the EPIC-02 agent-mediated pre-PR review); prior — 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` — 25 items added from idea intake `IW-20261006-01` (BLG-BE-138–142, BLG-FE-195–199, BLG-SPEC-185–188, BLG-SEC-41/42, BLG-GOV-369–374, BLG-OPS-179, BLG-FEAT-99, BLG-FR-06) plus BLG-GOV-375 (STEP -1.5 Owner-field lint); BLG-BE-138 P1 Correctness Fast-Track → v9.10; BLG-FE-193 gate met, Provisional-Target → v9.10); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-07 (session — 1 new item(s) added: BLG-OPS-180 (EPIC-04 ST-18 execution, missing STAGING_API_URL secret)); prior — 2026-10-07 (session — 4 new item(s) added: BLG-GOV-376 (EPIC-03 ST-13/ST-14 execution), BLG-BE-147, BLG-BE-148, BLG-BE-149 (EPIC-03 agent-mediated pre-PR review)); prior — 2026-10-07 (session — 4 new item(s) added: BLG-BE-146, BLG-FE-203, BLG-QA-215, BLG-FE-204, from the EPIC-02 agent-mediated pre-PR review); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5155,5 +5155,27 @@ The per-row "How this stop was set" tooltip formats `stop_calculated_at` in the 
 
 **Acceptance Criteria**
 - A trade with `pnl: 0.004` renders the neutral glyph and neutral colour; `pnl: 0.01` still renders the up arrow (`recent-trades-zero-pnl-badge.spec.js`, Playwright)
+
+---
+
+### BLG-OPS-180 — Set the missing STAGING_API_URL secret so the staging smoke suite actually runs
+**Priority:** P1 (High)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** Sprint Execution, ST-18 / EPIC-04, cycle `2026-10-06__release-v9.10` (out-of-scope finding while checking ST-18's unblock criteria) — 2026-10-07
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.11
+**Blocks:** ST-18 live fire (`DEL-20261006-03`) cannot produce a meaningful `STALE STAGING DEPLOY` result until this is fixed.
+
+**Problem**
+The `STAGING_API_URL` GitHub Actions secret is not set. All 126 recorded runs of `staging-smoke-test.yml` (scheduled, 2026-09-20 onward, latest run 37572337355 on 2026-10-07) failed with `::error::STAGING_API_URL environment variable is not set.`, and the smoke step of `staging-deploy.yml` fails the same way (latest 2026-10-07T08:06Z). The staging smoke suite, including BLG-OPS-169's stale-deploy check, has never actually run against staging. The failure alert fires on every run, so the noise hides any real staging failure.
+
+**Scope**
+- Set `STAGING_API_URL` (and confirm `STAGING_API_KEY`) as repository secrets, per `docs/ops/github_actions_secrets_ownership_map.md`.
+- Trigger `staging-smoke-test.yml` via `workflow_dispatch` and confirm it passes.
+
+**Acceptance Criteria**
+- One green `staging-smoke-test.yml` run URL recorded against this item
+- The next scheduled run after the fix also passes (no `STAGING_API_URL ... not set` error)
 
 ---

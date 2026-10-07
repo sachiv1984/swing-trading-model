@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-07T08:25:00Z",
+  "last_updated_utc": "2026-10-07T08:10:30Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -440,7 +440,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "2026-10-07 resume: still blocked. Prerequisite found: STAGING_API_URL secret is unset, so every staging-smoke-test.yml run (126 since 2026-09-20) fails before any check runs. The live fire needs that secret set first. Filed BLG-OPS-180."
         },
         "ST-19": {
           "title": "Add the Reports and Notifications pages to the axe accessibility scan",
@@ -738,7 +738,8 @@
     "2026-10-07: EPIC-03 PR #1917 opened. Combined agent-mediated DoQ + PO review comment posted (both Approved with Comments), plus merge-gate QA sign-off and PO acceptance comments, recorded by the engine on the human owner's explicit in-session direction (OA-6 labelling). Merge left to the human.",
     "2026-10-07: Mid-session re-sync (AUD-2026-08-21-010): PR #1917 (EPIC-03) merged by the human at 2026-10-07T08:06:08Z (ef4088b4); pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-03 is empty.",
     "2026-10-07T07:36:55Z: ESC-EXEC-20261006-05 resolved by Strategy Rules & System Intent Owner acknowledgement (agent-mediated, §5.3, user-directed). ST-20 reclassified delegated_decision -> autonomous and completed in 50dc7154. current_roadmap.md edited under ESC-CLOSE-20261006-01's named-file ruling. No DEL record existed for this escalation-only block. BLG-GOV-377 filed.",
-    "2026-10-07: Post-merge sibling sync (STEP 4 3c): main (EPIC-03 merged, PR #1917) merged into EPIC-04. execution_state.json resolved per CLAUDE.md §8: EPIC-01/02/03 records from main, EPIC-04 records from the branch, union of completed items, no done->blocked reversion, summaries recomputed. No shared-field shape drift (2b). backlog.md and execution_escalations.md conflicts were both additive, resolved by union."
+    "2026-10-07: Post-merge sibling sync (STEP 4 3c): main (EPIC-03 merged, PR #1917) merged into EPIC-04. execution_state.json resolved per CLAUDE.md §8: EPIC-01/02/03 records from main, EPIC-04 records from the branch, union of completed items, no done->blocked reversion, summaries recomputed. No shared-field shape drift (2b). backlog.md and execution_escalations.md conflicts were both additive, resolved by union.",
+    "2026-10-07: run sprint resume. Block re-evaluation (s10.1): ST-15 still blocked on ESC-EXEC-20261006-06 (human Product Owner sign-off); ST-18 still blocked on DEL-20261006-03 (no [ST-18] commit since delegation). Out-of-scope finding: STAGING_API_URL secret unset, all 126 staging-smoke-test.yml runs fail at the env check, so the ST-18 live fire cannot work until it is set. Filed BLG-OPS-180 (P1)."
   ],
   "sealed": false,
   "sealed_utc": null
