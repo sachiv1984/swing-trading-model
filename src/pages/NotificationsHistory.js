@@ -222,7 +222,12 @@ export default function NotificationsHistory() {
             Unable to load alert history. Please refresh.
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div
+            className="overflow-x-auto focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            tabIndex={0}
+            role="region"
+            aria-label="Alert history"
+          >
             <table className="w-full">
               <thead>
                 <tr className="border-b border-slate-700/50">
