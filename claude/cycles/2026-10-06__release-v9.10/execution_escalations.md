@@ -58,7 +58,10 @@ Last Updated: 2026-10-06
 - **Unblock criteria:** A dated acknowledgement of F1, F2 and F4 and the chosen caption text, recorded here and in ST-20's QA evidence. The engine then applies AC 2 and AC 3 and cites `ESC-CLOSE-20261006-01` in the commit that edits `current_roadmap.md`.
 - **SLA due-by:** 2026-10-09T16:00:46Z (72h — Strategy)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-07T07:40:00Z
+- **Resolved by:** Strategy Rules & System Intent Owner (agent-mediated, `execution_prompt.md` §5.3, on the user's explicit direction 2026-10-07)
+- **Resolution summary:** F1, F2 and F4 acknowledged as stated in the scope note, dated 2026-10-07, in `po05_section13_preassessment.md` §v9.10 Corrections. The PASS determination is unchanged. Caption decided, more specific than the engine recommendation so the reader is not left to guess (role charter §8): **"Simulated with the backtest engine's exit rules, which differ from live stop handling: no breakeven floor, close-only ATR, and the stop is checked before risk-off."** F4's fourth difference (entry fee) is omitted because the replay applies no entry cost (wire contract D1). AC 2 and AC 3 follow in the same commit. `current_roadmap.md` is edited under `ESC-CLOSE-20261006-01`. The `strategy_rules.md` §13.5 roster wording is filed as BLG-GOV-377 (outside write scope).
 
 ## ESC-EXEC-20261006-06
 

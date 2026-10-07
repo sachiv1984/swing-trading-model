@@ -4245,6 +4245,26 @@ EPIC-02's branch was cut on top of the EPIC-04/EPIC-05 linear history rather tha
 
 ---
 
+### BLG-GOV-377 — strategy_rules.md §13.5 roster row still says PO-05 reuses IT-06's paper-trading mechanics
+**Priority:** P3 (Low)
+**Type:** Governance Process / Strategy Text Alignment
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** ST-20 (EPIC-04, cycle `2026-10-06__release-v9.10`) — 2026-10-07
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD (before the first §13.5 re-attestation, 2027-02-06)
+
+**Problem**
+ST-20 corrected the PO-05 pre-assessment, the roadmap and `replay_mode.md` after the Strategy Rules & System Intent Owner acknowledged findings F1, F2 and F4 (ESC-EXEC-20261006-05). `strategy_rules.md` v1.14 §13.5's PO-05 roster row still says the PASS "explicitly reuses IT-06's paper-trading mechanics under IT-06's own binding conditions". PO-05 runs on `strategy_engine.py` and makes no Alpaca call. Sprint Execution cannot write `claude/strategy/strategy_rules.md` (`execution_prompt.md` §7), so the row was left as is.
+
+**Scope**
+- Replace that clause with: "runs on the strategy backtest engine with no Alpaca call, so Binding Condition 5's isolation is met by construction (v9.10 corrections, `po05_section13_preassessment.md`)".
+- Change Log row (documentation only) and §15 grep. Can share a commit with BLG-GOV-376.
+
+**Acceptance Criteria**
+- [ ] §13.5's PO-05 row no longer says PO-05 reuses IT-06.
+
+---
+
 ### BLG-SPEC-180 — Correct metrics_definitions.md's claim that a NULL positions.fees_paid yields a silently-zero trade_history fee leg
 **Priority:** P4 (Trivial)
 **Type:** Spec Debt / Metrics
