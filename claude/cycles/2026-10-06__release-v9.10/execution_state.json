@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-07T10:21:58Z",
+  "last_updated_utc": "2026-10-07T10:23:57Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -750,7 +750,8 @@
     "2026-10-07T09:54:31Z: STEP 3.2.A for EPIC-04. Real-CI check found ST-19's own axe test failing (scrollable-region-focusable) on every EPIC-04 code commit; fixed in b8ced55f, all 8 workflows green. qa_evidence_EPIC-04.md consolidated; DoQ sign-off block awaiting the Director of Quality.",
     "2026-10-07T10:06:14Z: EPIC-04 DoQ sign-off agent-mediated (Director of Quality role, §5.3, user-directed): Blocked on first pass (ST-18/ST-20 rows over-stated), Approved with Comments on retry 1. BLG-OPS-182 filed. qa_signed_off set in the same commit as the sign-off block.",
     "2026-10-07T10:06:47Z: STEP 3.2.B: PR #1918 opened for EPIC-04 after pre-PR checks (API baseline drift PASSED; cross-EPIC commit check: no foreign commits; 0 behind main). Merge gate awaits human Director of Quality QA comment and Product Owner acceptance.",
-    "2026-10-07T10:21:58Z: User-requested agent-mediated PR #1918 review (Director of Quality + Product Owner, OA-6 labelled, pending human confirmation) posted as issuecomment-6035920931. Both verdicts Approved with Comments. Filed BLG-QA-216. Not merged."
+    "2026-10-07T10:21:58Z: User-requested agent-mediated PR #1918 review (Director of Quality + Product Owner, OA-6 labelled, pending human confirmation) posted as issuecomment-6035920931. Both verdicts Approved with Comments. Filed BLG-QA-216. Not merged.",
+    "2026-10-07T10:23:57Z: Merge-gate QA sign-off (issuecomment-6035946582) and Product Owner acceptance (issuecomment-6035946942) posted on PR #1918, agent-mediated and recorded on the explicit direction of the human repository owner. Merge left to the human; CI on the final head must be green first."
   ],
   "sealed": false,
   "sealed_utc": null
