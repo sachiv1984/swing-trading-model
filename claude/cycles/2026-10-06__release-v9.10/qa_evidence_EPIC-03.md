@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-07 (EPIC-03 consolidation, STEP 3.2.A — DoQ sign-off pending)
+Last Updated: 2026-10-07 (pre-PR review findings recorded); prior — 2026-10-07 (EPIC-03 consolidation, STEP 3.2.A — DoQ sign-off pending)
 
 # QA Evidence — EPIC-03 — Lifecycle & Gap-Risk Strategy Rulings
 
@@ -27,7 +27,16 @@ Last Updated: 2026-10-07 (EPIC-03 consolidation, STEP 3.2.A — DoQ sign-off pen
 
 **Frontend testing gate (CLAUDE.md §2, LL-v3.1-EX-01):** every observable AC is covered by a named Playwright scenario: the LOSING tooltip by SC-LBG-05, the UNKNOWN tooltips by SC-LBG-04, the gap-risk label in both views by SC-GR-04/06/08, and the absence of a weekend label by SC-GR-03. The tooltip changes are wording-only (FI-P3-02). No AC is "code review only". No focus or interaction-timing AC is introduced, so the environment-parity sub-clause does not apply. CI confirmation will be recorded once the branch's GitHub Actions run completes.
 
-**Same-EPIC cross-story testing-gap consistency check:** no story in this EPIC filed a testing-gap backlog item. Nothing to propagate.
+**Same-EPIC cross-story testing-gap consistency check:** no story in this EPIC filed a testing-gap backlog item. BLG-BE-147 (below) is a behaviour gap specific to ST-12's alert path, and no sibling story shares it. Nothing to propagate.
+
+**Real CI confirmation (pre-PR, branch push):** all workflows green on `05ad3ecf` (code head), including Playwright E2E Acceptance Tests, CI Pytest Suite, Critical-Path Smoke, Service Layer Coverage, Golden Output Regression, Portfolio Integration and Endpoint Coverage. Also green on `ab73ad2f` (state and evidence only).
+
+**Pre-PR agent-mediated review (2026-10-07, on behalf of Director of Quality and Product Owner, §5.3 / OA-6, pending human confirmation):** both verdicts ⚠️ Approved with Comments, with no blocking defects. Non-blocking findings, filed:
+- **BLG-BE-147** (P2): the grace alert filter, the "Day N of 10" label and review-cadence suppression still use `days_in_state`, not calendar days since entry. A post-deploy state reset can hide the day-8/9 alert.
+- **BLG-BE-148** (P3): the gap-risk next session is weekday-only in UTC. It misses a flag before a Monday holiday and in the 00:00–05:00 UTC window, failing safe.
+- **BLG-BE-149** (P3): the Risk page's `display_status` uses GBP P&L, while the badge uses native P&L.
+
+Product Owner comments: the v9.10 changelog should state the visible gap-flag changes (no UK flag, no Friday-only flag, no day-0 flag). The human should confirm the UK and day-0 rulings, which were agent-mediated. BLG-GOV-376 tracks the stale §13.3 text. The combined comment is drafted for posting when the PR opens. The DoQ sign-off block is still blank, so the PR is not opened (§3.2.B).
 
 ---
 
