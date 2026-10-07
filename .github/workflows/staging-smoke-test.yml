@@ -33,6 +33,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # ST-18 (BLG-OPS-171, EPIC-04, v9.10): full history, so the stale-deploy
+          # check can find the latest main commit that touches a staging-deploy
+          # path and compare staging against that, not against main's tip.
+          fetch-depth: 0
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5

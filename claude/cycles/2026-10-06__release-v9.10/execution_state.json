@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-07T08:16:06Z",
+  "last_updated_utc": "2026-10-07T09:01:13Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -331,7 +331,8 @@
       "test_scenarios": [
         "tests/e2e/accessibility-axe-scan.spec.js",
         "tests/test_claude_audit_entry_failure_logging.py",
-        "tests/e2e/replay-mode.spec.js"
+        "tests/e2e/replay-mode.spec.js",
+        "tests/test_staging_smoke_test.py"
       ],
       "stories": {
         "ST-15": {
@@ -433,14 +434,15 @@
           "acceptance_verified": false,
           "spec_references": [
             "scripts/staging_smoke_test.py",
-            ".github/workflows/staging-smoke-test.yml"
+            ".github/workflows/staging-smoke-test.yml",
+            "tests/test_staging_smoke_test.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "2026-10-07 resume: still blocked. Prerequisite found: STAGING_API_URL secret is unset, so every staging-smoke-test.yml run (126 since 2026-09-20) fails before any check runs. The live fire needs that secret set first. Filed BLG-OPS-180."
+          "notes": "Still blocked on DEL-20261006-03 (live fire). 2026-10-07: the Infrastructure & Operations Owner set STAGING_API_URL (BLG-OPS-180's fix; that item can close at grooming). Dispatch run 37596800197 then reported STALE STAGING DEPLOY, but it was a false positive: main's tip 1639c956 is governance-only, and staging-deploy.yml never redeploys for it. The engine fixed the comparison target (latest staging-deploying commit, ancestor-aware) in this story's files. The live fire must run after EPIC-04 merges, because scheduled and dispatch runs on main use main's copy of the workflow."
         },
         "ST-19": {
           "title": "Add the Reports and Notifications pages to the axe accessibility scan",
@@ -737,7 +739,8 @@
     "2026-10-07T07:36:55Z: ESC-EXEC-20261006-05 resolved by Strategy Rules & System Intent Owner acknowledgement (agent-mediated, §5.3, user-directed). ST-20 reclassified delegated_decision -> autonomous and completed in 50dc7154. current_roadmap.md edited under ESC-CLOSE-20261006-01's named-file ruling. No DEL record existed for this escalation-only block. BLG-GOV-377 filed.",
     "2026-10-07: Post-merge sibling sync (STEP 4 3c): main (EPIC-03 merged, PR #1917) merged into EPIC-04. execution_state.json resolved per CLAUDE.md §8: EPIC-01/02/03 records from main, EPIC-04 records from the branch, union of completed items, no done->blocked reversion, summaries recomputed. No shared-field shape drift (2b). backlog.md and execution_escalations.md conflicts were both additive, resolved by union.",
     "2026-10-07: run sprint resume. Block re-evaluation (s10.1): ST-15 still blocked on ESC-EXEC-20261006-06 (human Product Owner sign-off); ST-18 still blocked on DEL-20261006-03 (no [ST-18] commit since delegation). Out-of-scope finding: STAGING_API_URL secret unset, all 126 staging-smoke-test.yml runs fail at the env check, so the ST-18 live fire cannot work until it is set. Filed BLG-OPS-180 (P1).",
-    "2026-10-07T08:16:06Z: ESC-EXEC-20261006-06 resolved by the human Product Owner in session (checklist approved, including the 2026-11-03 first review and the BLG-AI-09 exception). ST-15 marked done. No DEL record existed for this escalation-only block."
+    "2026-10-07T08:16:06Z: ESC-EXEC-20261006-06 resolved by the human Product Owner in session (checklist approved, including the 2026-11-03 first review and the BLG-AI-09 exception). ST-15 marked done. No DEL record existed for this escalation-only block.",
+    "2026-10-07: ST-18 dispatch run 37596800197 failed with a false-positive STALE STAGING DEPLOY (main tip 1639c956 is governance-only, so it never triggers staging-deploy.yml). Engine fixed scripts/staging_smoke_test.py + staging-smoke-test.yml to compare against the latest staging-deploying commit. Not used as AC 1 evidence: AC 1 needs a deliberately introduced divergence."
   ],
   "sealed": false,
   "sealed_utc": null
