@@ -48,7 +48,7 @@ Last Updated: 2026-10-06
 - **Spec reference:** `scripts/staging_smoke_test.py` stale-deploy check (BLG-OPS-169, v9.8 ST-17); `.github/workflows/staging-smoke-test.yml`
 - **Unblock criteria:** Both run URLs recorded in `qa_evidence_EPIC-04.md` under ST-18: a failing run showing `STALE STAGING DEPLOY` for a real divergence, and a passing run after restore.
 - **Commit format required:** `[EPIC-04][ST-18] <description>` pushed to `exec/2026-10-06__release-v9.10/EPIC-04`
-- **Status:** Open
+- **Status:** Unblocked — 2026-10-07T09:45:20Z. Unblocked in-session: the user (human, acting for the Infrastructure & Operations Owner) set the missing `STAGING_API_URL` secret (BLG-OPS-180), then ran the live fire. Failing run https://github.com/sachiv1984/swing-trading-model/actions/runs/37598457966 (EPIC-04 branch, fixed check) reported `STALE STAGING DEPLOY` (staging `ef4088b4` lacked EPIC-04's deploy-path commit `d6644b25`), and the Telegram alert arrived (message 1252). After a manual Render deploy put staging on `main`'s tip `1639c956`, passing run https://github.com/sachiv1984/swing-trading-model/actions/runs/37602589130. Sign-off cleared; recorded in `qa_evidence_EPIC-04.md` ST-18.
 
 ## DEL-20261006-04
 

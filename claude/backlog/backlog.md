@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-07 (session — 1 new item(s) added: BLG-OPS-180 (EPIC-04 ST-18 execution, missing STAGING_API_URL secret)); prior — 2026-10-07 (session — 4 new item(s) added: BLG-GOV-376 (EPIC-03 ST-13/ST-14 execution), BLG-BE-147, BLG-BE-148, BLG-BE-149 (EPIC-03 agent-mediated pre-PR review)); prior — 2026-10-07 (session — 4 new item(s) added: BLG-BE-146, BLG-FE-203, BLG-QA-215, BLG-FE-204, from the EPIC-02 agent-mediated pre-PR review); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-07 (session — 1 new item(s) added: BLG-OPS-181 (EPIC-04 ST-18 live fire, staging hook deploy did not go live)); prior — 2026-10-07 (session — 1 new item(s) added: BLG-OPS-180 (EPIC-04 ST-18 execution, missing STAGING_API_URL secret)); prior — 2026-10-07 (session — 4 new item(s) added: BLG-GOV-376 (EPIC-03 ST-13/ST-14 execution), BLG-BE-147, BLG-BE-148, BLG-BE-149 (EPIC-03 agent-mediated pre-PR review)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5177,5 +5177,26 @@ The `STAGING_API_URL` GitHub Actions secret is not set. All 126 recorded runs of
 **Acceptance Criteria**
 - One green `staging-smoke-test.yml` run URL recorded against this item
 - The next scheduled run after the fix also passes (no `STAGING_API_URL ... not set` error)
+
+---
+
+### BLG-OPS-181 — Find out why a staging-deploy.yml hook deploy of a governance-only main commit never went live
+**Priority:** P3 (Low)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** Sprint Execution, ST-18 / EPIC-04, cycle `2026-10-06__release-v9.10` — 2026-10-07
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`staging-deploy.yml` run 37600608347 (`workflow_dispatch`, `main` at `1639c956`, a commit touching only `claude/`) got HTTP 200 and deploy `dep-db310hp42hec7387gh90` from the Render deploy hook. Staging stayed on `ef4088b4` for the whole 480s wait, and the job failed. A manual "Deploy latest commit" from the Render dashboard then went live on `1639c956`. The cause is unconfirmed: a dashboard-only Build Filter skipping hook deploys, a failed build, or a slow build. If hook deploys are silently skipped, `workflow_dispatch` of `staging-deploy.yml` can't be used to bring staging level with `main`.
+
+**Scope**
+- Check `dep-db310hp42hec7387gh90`'s final state and the staging backend's Settings → Build Filters in the Render dashboard.
+- If a filter skips hook deploys, either document it in `docs/ops/staging_deploy_notes.md` or change the filter.
+
+**Acceptance Criteria**
+- The cause is recorded against this item
+- If it is a filter: the staging deploy notes say whether a `workflow_dispatch` deploy of a non-code commit is expected to go live
 
 ---

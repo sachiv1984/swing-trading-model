@@ -213,7 +213,7 @@ def check_deployed_commit(base_url: str, api_key: str, expected_sha: str) -> str
     if deployed_sha != expected_sha and not _is_ancestor(expected_sha, deployed_sha):
         return (
             f"STALE STAGING DEPLOY: staging is running commit {deployed_sha!r} but "
-            f"the latest staging-deploying commit on main is {expected_sha!r} -- a merge did not "
+            f"the latest staging-deploying commit is {expected_sha!r} -- a merge did not "
             f"redeploy staging (or the deploy has not completed yet)"
         )
 
@@ -241,8 +241,8 @@ def main() -> int:
         main_tip = expected_commit_sha
         expected_commit_sha = latest_deploy_commit(main_tip)
         if expected_commit_sha != main_tip:
-            print(f"main's tip {main_tip} does not touch a staging-deploy path; "
-                  f"comparing against the latest commit that does.")
+            print(f"{main_tip} does not touch a staging-deploy path; "
+                  f"comparing against the latest commit before it that does.")
         print(f"Checking staging's deployed commit against {expected_commit_sha} ...")
         deploy_check_result = check_deployed_commit(base_url, api_key, expected_commit_sha)
         if deploy_check_result:
