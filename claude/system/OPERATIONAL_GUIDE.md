@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.226
-**Last Updated:** 2026-10-07 (post-ship closure `2026-10-06__release-v9.10` STEP 8 — execution_prompt.md v3.83→v3.84, delivery_verification_prompt.md v3.13→v3.14, post_ship_closure.md v2.37→v2.38; §8/§9/§10 source-prompt headers and §14 rows updated); prior — 2026-10-07 (BLG-GOV-362 Product Owner review condition — sprint_planning_prompt.md v3.20→v3.21 (§6.2 Named-file write disclosure); §7 source-prompt header and §14 row updated); prior — 2026-10-07 (BLG-GOV-362 Head of Specs Team ruling — execution_prompt.md v3.82→v3.83 and sprint_planning_prompt.md v3.19→v3.20; §7 and §8 source-prompt headers and §14 rows updated); prior history retained — see prior entries in version control
+**Version:** 4.227
+**Last Updated:** 2026-10-07 (ESC-CLOSE-20261007-01 — release_planning_prompt.md v2.59→v2.60; §6B source-prompt header and §14 row updated); prior — 2026-10-07 (post-ship closure `2026-10-06__release-v9.10` STEP 8 — execution_prompt.md v3.83→v3.84, delivery_verification_prompt.md v3.13→v3.14, post_ship_closure.md v2.37→v2.38; §8/§9/§10 source-prompt headers and §14 rows updated); prior — 2026-10-07 (BLG-GOV-362 Product Owner review condition — sprint_planning_prompt.md v3.20→v3.21 (§6.2 Named-file write disclosure); §7 source-prompt header and §14 row updated); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -622,7 +622,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.59)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.60)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1368,7 +1368,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.226 |
+| Version | 4.227 |
 | Last Updated | 2026-10-07 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.10 |
@@ -1379,7 +1379,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.31 (+ `roadmap_prompt_appendix.md`) |
 | Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.0 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.59 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.60 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.21 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.84 |
@@ -1504,6 +1504,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.227 | 2026-10-07 | **ESC-CLOSE-20261007-01 resolution, Head of Specs Team ruling (agent-mediated, user-directed) — release_planning_prompt.md v2.59→v2.60.** §7 gains a §1.3a gate-field carve-out; §1.3a gains bounds on the date-lapsed clear/re-gate edit (Gate criteria field only, same underlying condition, ACs listed not edited, every edit disclosed). §6B source-prompt header and §14 Release Engine Source row updated; §14 self-row and header 4.226→4.227. |
 | 4.226 | 2026-10-07 | **Post-ship closure `2026-10-06__release-v9.10` STEP 8, immediate lessons-learnt actions — 3 source prompts bumped.** `execution_prompt.md` v3.83→v3.84: §3.1.A step 4c Playwright CI conclusion before `done` (LL-v9.10-P3-03); §3.1.B step 2a workflow-viability pre-check for live-fire delegations (LL-v9.10-P3-01); §3.2.A `Pass_with_deviation` self-check before DoQ sign-off (LL-v9.10-P3-02); STEP 5.1 `spec_references` path-existence check (LL-v9.10-P4-01). `delivery_verification_prompt.md` v3.13→v3.14: STEP 2.1/2.3 `Pass_with_deviation` no-remainder variant (carried LL-v9.9-P4-01). `post_ship_closure.md` v2.37→v2.38: STEP 1.5 digest command runnable as written (venv + `PYTHONPATH=backend`, carried v9.9 closure action); STEP 5.1 scan broadened and active-backlog-reference check added (seventh deviation consolidation review). §8/§9/§10 source-prompt headers and §14 rows updated; §14 self-row and header 4.225→4.226. |
 | 4.225 | 2026-10-07 | **BLG-GOV-362 Product Owner review condition — sprint_planning_prompt.md v3.20→v3.21.** §6.2 Sign-Off Gate gains a Named-file write disclosure: every STEP 3.1 named-file write is listed in the sign-off summary, and edits to an existing backlog item's Scope, Acceptance Criteria or Gate criteria need explicit Product Owner confirmation before seal. §7 source-prompt header and §14 Sprint Planning Engine row v3.20→v3.21; §14 self-row 4.224→4.225. |
 | 4.224 | 2026-10-07 | **BLG-GOV-362 resolution — Head of Specs Team ruling (agent-mediated, user-directed; Product Owner co-owner acknowledgement pending) — 2 source prompts bumped.** `execution_prompt.md` v3.82→v3.83: §7 gains the plan-authorised named-file rule (a sealed AC naming an exact `claude/roadmap/*` file, or an exact `backlog.md` item ID plus a descriptive field, authorises that write in-sprint; prioritisation/scope/capacity decisions and Priority/Status/Owner/Effort/Provisional-Target/Type/Source stay excluded), codifying `ESC-CLOSE-20261006-01`. `sprint_planning_prompt.md` v3.19→v3.20: STEP 3.1 named-file write check (name the exact target, or redraft the AC / classify `delegated_decision` with a RISK entry). §7/§8 source-prompt headers and §14 rows updated; §14 self-row 4.223→4.224. Also fixed (opportunistic, in-file): Change Log rows 4.221–4.223 restored to descending order (4.221 had been left above 4.223/4.222). |

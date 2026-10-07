@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-07 (groom backlog post-ship closure 2026-10-06__release-v9.10 — 21 items archived (v9.10 shipped); 0 ephemeral sections; 0 gate/effort/field-completeness/duplicate-ID issues; spec-debt deep review run (0 candidates); 3 governance-prompt duplicate candidates flagged for owner review (BLG-GOV-355, BLG-GOV-362, BLG-GOV-368); BLG-OPS-180 surfaced as ambiguous (resolved in-session, no COMPLETE banner)); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — 21 shipped items marked ✅ COMPLETE (pending archival at STEP 12); 0 Phase 4 additions needed); prior — 2026-10-07 (session — 1 new item(s) added: BLG-QA-216 (PR #1918 agent-mediated review, axe theme assertion)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-07 (BLG-OPS-180 and BLG-GOV-362 marked ✅ COMPLETE — OPS-180 by Infrastructure & Operations Owner (secret set, run 37602589130; AC 2 waived), GOV-362 by Head of Specs Team ruling + Product Owner acknowledgement); prior — 2026-10-07 (groom backlog post-ship closure 2026-10-06__release-v9.10 — 21 items archived (v9.10 shipped); 0 ephemeral sections; 0 gate/effort/field-completeness/duplicate-ID issues; spec-debt deep review run (0 candidates); 3 governance-prompt duplicate candidates flagged for owner review (BLG-GOV-355, BLG-GOV-362, BLG-GOV-368); BLG-OPS-180 surfaced as ambiguous (resolved in-session, no COMPLETE banner)); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — 21 shipped items marked ✅ COMPLETE (pending archival at STEP 12); 0 Phase 4 additions needed); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -3771,6 +3771,7 @@ ST-24 replaced the restated AI adoption window gate text on its 5 named items (B
 ---
 
 ### BLG-GOV-362 — Make "the sealed plan names this file" a standing Sprint Execution write-scope rule for claude/roadmap/* and existing backlog item fields
+**✅ COMPLETE — 2026-10-07 — resolved out-of-sprint by Head of Specs Team ruling: `execution_prompt.md` v3.83 §7 plan-authorised named-file rule (proposal 1, adopted), `sprint_planning_prompt.md` v3.20/v3.21 STEP 3.1 named-file write check and §6.2 disclosure (proposal 2, adopted modified), commits `0a123c52` and `090bb0ea`; Product Owner co-owner acknowledgement given 2026-10-07 by user direction. Archive at next `groom backlog`.**
 **Priority:** P3 (Low)
 **Type:** Governance Process
 **Owner:** Head of Specs Team; Product Owner
@@ -4667,6 +4668,7 @@ The per-row "How this stop was set" tooltip formats `stop_calculated_at` in the 
 ---
 
 ### BLG-OPS-180 — Set the missing STAGING_API_URL secret so the staging smoke suite actually runs
+**✅ COMPLETE — 2026-10-07 — closed by Infrastructure & Operations Owner (agent-mediated per `execution_prompt.md` §5.3, on explicit user direction 2026-10-07): the `STAGING_API_URL` secret was set in-session during cycle `2026-10-06__release-v9.10` (DEL-20261006-03 unblock). AC 1 met: green `staging-smoke-test.yml` run 37602589130 (workflow_dispatch, 2026-10-07T09:43Z). AC 2 (next scheduled run passes) waived by the owner: the secret is confirmed set, and the same workflow has already passed with it. Archive at next `groom backlog`.**
 **Priority:** P1 (High)
 **Type:** Operations / Infrastructure
 **Owner:** Infrastructure & Operations Owner

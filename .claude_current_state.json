@@ -218,7 +218,10 @@
       "owner": "Head of Specs Team",
       "sla_due_utc": "2026-10-10T12:00:00Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-07T12:20:35Z",
+      "resolved_by": "Head of Specs Team (agent-mediated per execution_prompt.md §5.3, user-directed 2026-10-07)",
+      "resolution_summary": "Option (a) narrowed: release_planning_prompt.md v2.60 — §7 gate-field carve-out; §1.3a bounds (Gate criteria field + dated note only, date-lapsed items read this run, same underlying condition on re-gate, ACs listed not edited, every edit disclosed). Also settles v9.10 RP Friction Item 3 (no AC edits)."
     }
   },
   "deferred_escalations": {
