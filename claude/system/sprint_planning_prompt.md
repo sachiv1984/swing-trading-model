@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.19
-**Last Updated:** 2026-09-24 (sprint execution 2026-09-23__release-v9.7 EPIC-05/ST-22, BLG-GOV-333 — STEP -1 Hard Gates 1-2 reconciled against shared_standards.md §10.1: Gate 1's stale Published/Validated/Committed enum replaced with a direct §10.1 Sprint Planning row citation; Gate 2 clarified as a distinct, uncovered-by-§10.1 check on state.json's own release-plan state machine, cross-referenced to release_planning_prompt.md STEP 8/9 instead of restated independently); prior — 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-03/ST-14, BLG-QA-103 — STEP -1 advisory 6 now also appends to docs/ops/pip_audit_trend_log.md); prior history retained — see prior entries in version control.
+**Version:** 3.20
+**Last Updated:** 2026-10-07 (BLG-GOV-362, Head of Specs Team ruling, agent-mediated, user-directed — STEP 3.1 gains a named-file write check: an AC needing a `claude/roadmap/*` or existing-`backlog.md`-item write must name the exact target, or the item is redrafted or classified `delegated_decision` with a RISK entry); prior — 2026-09-24 (sprint execution 2026-09-23__release-v9.7 EPIC-05/ST-22, BLG-GOV-333 — STEP -1 Hard Gates 1-2 reconciled against shared_standards.md §10.1); prior — 2026-09-08 (sprint execution 2026-09-07__release-v9.2 EPIC-03/ST-14, BLG-QA-103 — STEP -1 advisory 6 now also appends to docs/ops/pip_audit_trend_log.md); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -371,6 +371,10 @@ Classify each item:
 **Delegation class assignment (set at planning time — §12 invariant):** For every `include` item, determine the delegation class for the sprint backlog:
 - `autonomous` — fully implementable by the execution engine; no UX change; no human decision or mid-task sign-off required
 - `delegated_backend` / `delegated_frontend` / `delegated_qa` / `delegated_decision` — requires human review, decision, or execution at a specific step
+
+**Named-file write check (BLG-GOV-362, v3.20; Head of Specs Team ruling, 2026-10-07 — codifies `ESC-CLOSE-20261006-01`):** For every `include` item whose AC requires writing a `claude/roadmap/*` file or editing an existing `claude/backlog/backlog.md` item, confirm before seal that the write falls under `execution_prompt.md` §7's plan-authorised named-file rule:
+- **Named exactly:** the AC names the exact `claude/roadmap/*` path (and section/row where relevant), or the exact `BLG-xx` ID plus a permitted descriptive field (`Problem`, `Scope`, `Acceptance Criteria`, gate-criteria text, cross-reference/`Notes` lines). The write is authorised by the sealed plan, and it does not by itself change the delegation class. Record one line per item in `sprint_planning_notes.md`: `Named-file write: <path or BLG-ID + field> — authorised under execution_prompt.md §7 named-file rule`.
+- **Not named exactly, or targeting an excluded field or file:** either redraft the AC in STEP 4 so that it names the exact target, or classify the item `delegated_decision` and add a RISK entry naming the write-scope ruling needed. Excluded targets are `backlog.md` `Priority`/`Status`/`Owner`/`Effort`/`Provisional-Target`/`Type`/`Source`, section moves, Release Slice/capacity tables, any prioritisation or capacity decision in a roadmap file, `strategy_rules.md`, and governance files. Do not seal an `autonomous` item whose AC needs an out-of-scope write that the named-file rule does not cover. This is the failure behind ST-24 and ST-31 at `2026-09-30__release-v9.9`.
 
 **LL-v1.10-P3-3 — Autonomous heuristic:** "Refactor to call existing client-side API with no UX change" = `autonomous`. Conservative `delegated_frontend` is valid but must be explicitly justified — over-classification adds unnecessary handoff.
 

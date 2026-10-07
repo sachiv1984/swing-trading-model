@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-10-06
+**Last Updated:** 2026-10-07
 
 # Prompt Change Log
 
@@ -13,6 +13,9 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-10-07 | `claude/system/OPERATIONAL_GUIDE.md` | v4.223→v4.224 | §7 and §8 source-prompt headers and §14 Sprint Planning Engine / Execution Engine Source rows updated for sprint_planning_prompt.md v3.20 and execution_prompt.md v3.83; §14 self-row and header 4.223→4.224; Change Log row added. Also fixed (opportunistic, in-file): Change Log rows 4.221–4.223 restored to descending order. | Head of Specs Team (BLG-GOV-362 ruling, agent-mediated per execution_prompt.md §5.3, user-directed 2026-10-07; Product Owner co-owner acknowledgement pending) |
+| 2026-10-07 | `claude/system/execution_prompt.md` | v3.82→v3.83 | BLG-GOV-362 (proposal 1, adopted): §7 plan-authorised named-file rule. A sealed AC naming an exact `claude/roadmap/*` file, or an exact `BLG-xx` ID plus a descriptive field (Problem/Scope/AC/gate-criteria/cross-reference), authorises that write in-sprint. Prioritisation, scope and capacity decisions, and Priority/Status/Owner/Effort/Provisional-Target/Type/Source/section moves, stay excluded; the commit must cite the AC line. Codifies `ESC-CLOSE-20261006-01`; `workforce_capacity.md` (BLG-GOV-337) becomes one instance. | Head of Specs Team (BLG-GOV-362 ruling, agent-mediated per execution_prompt.md §5.3, user-directed 2026-10-07; Product Owner co-owner acknowledgement pending) |
+| 2026-10-07 | `claude/system/sprint_planning_prompt.md` | v3.19→v3.20 | BLG-GOV-362 (proposal 2, adopted in modified form): STEP 3.1 named-file write check. An AC needing a `claude/roadmap/*` or existing-`backlog.md`-item write must name the exact target (recorded in `sprint_planning_notes.md`). Otherwise the AC is redrafted in STEP 4, or the item is classified `delegated_decision` with a RISK entry. A named target no longer forces `delegated_decision`. | Head of Specs Team (BLG-GOV-362 ruling, agent-mediated per execution_prompt.md §5.3, user-directed 2026-10-07; Product Owner co-owner acknowledgement pending) |
 | 2026-10-06 | `claude/system/OPERATIONAL_GUIDE.md` | v4.222→v4.223 | `roadmap_prompt.md` v9.31 bumped in this same session (see row below) — header Version 4.222→4.223; §6 source-prompt header and §14 Roadmap Engine Source row v9.30→v9.31; §14 self-row 4.222→4.223; Change Log row added. | Head of Specs Team (Roadmap Engine `2026-10-06__scheduled`, agent-mediated) |
 | 2026-10-06 | `claude/system/roadmap_prompt.md` | v9.30→v9.31 | Roadmap rebalance `2026-10-06__scheduled` STEP 11 Friction Item 1 (action-now): §7.3 step 1 names where the ready-pool figure lives and forbids an unexplained "not re-measured"; the runway paragraph no longer instructs a write to `metrics_definitions.md` Appendix F (outside §4 write scope) — record in `workforce_capacity.md`, Appendix F tracked by `BLG-GOV-374`. | Head of Specs Team (Roadmap Engine `2026-10-06__scheduled`, agent-mediated) |
 | 2026-10-06 | `claude/system/OPERATIONAL_GUIDE.md` | v4.221→v4.222 | `shared_standards.md` v3.37 bumped in this same session (see row below) — header Version 4.221→4.222; §14 Shared Standards row v3.36→v3.37; §14 self-row Version 4.221→4.222; Change Log row added. | Head of Specs Team (Roadmap Engine `2026-10-06__scheduled`, agent-mediated) |
