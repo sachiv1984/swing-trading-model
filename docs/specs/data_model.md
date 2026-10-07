@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.51
-**Last Updated:** 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior — 2026-10-06 (DS-25 and DS-26 confirmed applied live on staging and production, verification output recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — new DS-26: positions.stop_calculation_source; settings strategy-parameter columns no longer read by any stop path, ruling (a)); prior history retained — see prior entries in version control.
+**Version:** 2.52
+**Last Updated:** 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior — 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior — 2026-10-06 (DS-25 and DS-26 confirmed applied live on staging and production, verification output recorded); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -643,22 +643,24 @@ Plain-text equivalent (for non-rendering contexts): `draft` → (optionally) `re
 stateDiagram-v2
     [*] --> open: POST /positions (via add_position(), optionally auto-linking a trade_plans row)
     state open {
-        [*] --> GRACE: trading_days <= 10, price within +-0.5 ATR
-        GRACE --> PROFITABLE: price > entry + 0.5 x ATR
-        GRACE --> LOSING: price < entry - 0.5 x ATR
-        GRACE --> UNKNOWN: grace period elapsed, still ambiguous
+        [*] --> GRACE: fewer than 10 calendar days since entry (any price)
+        GRACE --> PROFITABLE: grace elapsed, price > entry
+        GRACE --> LOSING: grace elapsed, price <= entry
+        GRACE --> EXIT_ZONE: grace elapsed, price >= entry + 2R
         PROFITABLE --> EXIT_ZONE: price >= entry + 2R (R = entry - initial_stop)
-        PROFITABLE --> LOSING
-        LOSING --> PROFITABLE
+        EXIT_ZONE --> PROFITABLE: price < entry + 2R
+        PROFITABLE --> LOSING: price <= entry
+        LOSING --> PROFITABLE: price > entry
         LOSING --> EXIT_ZONE
-        UNKNOWN --> PROFITABLE
-        UNKNOWN --> LOSING
+        UNKNOWN --> GRACE: data restored
+        UNKNOWN --> PROFITABLE: data restored
+        UNKNOWN --> LOSING: data restored
     }
     open --> closed: POST /positions/{id}/exit (creates a trade_history row)
     closed --> [*]
 ```
 
-Plain-text equivalent: `positions.status` is `open` or `closed` — a position row is never deleted, just transitioned (the "Lifecycle note" at the top of the Positions Table section above). While `open`, `position_state` (DS-05) is recomputed on every `GET /positions` call by `PositionLifecycleService.compute_position_state()` (`backend/services/position_lifecycle_service.py`) in priority order `EXIT ZONE` → `PROFITABLE` → `LOSING` → `GRACE` → `UNKNOWN`; the diagram above shows the state-to-state transitions this priority order actually permits between consecutive recomputations (e.g. `GRACE` can resolve to any of `PROFITABLE`/`LOSING`/`UNKNOWN`, but never back to `GRACE` once the grace window elapses — trading days only increase). `state_history` (DS-05) is an append-only audit trail of every transition, never truncated. `EXIT ZONE` and `UNKNOWN` are both display-only — §13: no automated action is taken on any `position_state` value. On `open` → `closed`, `POST /positions/{id}/exit` creates the corresponding `trade_history` row (§3 above) — the position row itself is retained, not deleted, matching the Positions Table's own "serves both open and closed positions" convention.
+Plain-text equivalent: `positions.status` is `open` or `closed` — a position row is never deleted, just transitioned (the "Lifecycle note" at the top of the Positions Table section above). While `open`, `position_state` (DS-05) is recomputed on every `GET /positions` call by `PositionLifecycleService.compute_position_state()` (`backend/services/position_lifecycle_service.py`) in priority order `GRACE` (fewer than 10 calendar days, any price — v9.10 ST-12) → `LOSING` (native price ≤ entry) → `EXIT ZONE` (price ≥ entry + 2R) → `PROFITABLE` (price > entry), with `UNKNOWN` only when entry price, current price or entry date is missing. Post-grace states follow `strategy_rules.md` §9's P&L sign; `EXIT ZONE` is a display sub-state of §9 PROFITABLE (v9.10 ST-11, BLG-SPEC-185, `docs/specs/position_lifecycle_states_registry.md`). The diagram above shows the transitions this order permits between consecutive recomputations; a position never returns to `GRACE` once the grace window elapses (calendar days only increase), except from `UNKNOWN` if the missing data is restored while still in grace. `state_history` (DS-05) is an append-only audit trail of every transition, never truncated. `EXIT ZONE` and `UNKNOWN` are both display-only — §13: no automated action is taken on any `position_state` value. On `open` → `closed`, `POST /positions/{id}/exit` creates the corresponding `trade_history` row (§3 above) — the position row itself is retained, not deleted, matching the Positions Table's own "serves both open and closed positions" convention.
 
 ### How the two lifecycles connect
 

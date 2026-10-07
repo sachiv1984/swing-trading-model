@@ -3,19 +3,29 @@ Position Lifecycle Service (Arc 3 — IT-01)
 
 Deterministic state machine for open positions.
 
-States (priority order checked in compute_position_state):
-    EXIT ZONE  — price >= entry + 2R (R = entry - initial_stop)
-    PROFITABLE — price > entry + 0.5 × ATR
-    LOSING     — price < entry - 0.5 × ATR
-    GRACE      — trading days since entry <= 10 AND price within ±0.5 ATR
-    UNKNOWN    — missing ATR or ambiguous zone after grace period
+A display overlay that defers to strategy_rules.md §9 (ST-11, BLG-SPEC-185,
+v9.10 — Strategy Rules & System Intent Owner ruling, ESC-EXEC-20261006-03).
+
+States (priority order checked in classify_position):
+    GRACE      — fewer than 10 calendar days since entry (strategy_rules.md
+                 §6.2), regardless of price. Same rule as GET /positions'
+                 grace_period flag (ST-12, BLG-FE-196, v9.10).
+    EXIT ZONE  — post-grace and price >= entry + 2R (R = entry - initial_stop).
+                 A display sub-state of §9 PROFITABLE, never of LOSING.
+    PROFITABLE — post-grace, native P&L > 0 (price > entry), §9
+    LOSING     — post-grace, native P&L <= 0 (price <= entry), §9
+    UNKNOWN    — missing data only. The reason is returned as lifecycle_reason.
+
+The P&L test is the same one that picks the §7.2 stop multiplier
+(position_service.py: is_profitable = pnl_native > 0), so the badge and the
+stop never disagree on which state a position is in.
 
 §13 compliance: state is display-only. No automated action generated.
 Service callable on demand; never mutates state autonomously.
 """
 
 from datetime import datetime, date
-from typing import Optional
+from typing import Optional, Tuple
 
 from database import (
     get_portfolio,
@@ -27,78 +37,79 @@ from database import (
 from utils.formatting import decimal_to_float
 from utils.position_lifecycle_states import EXIT_ZONE, PROFITABLE, LOSING, GRACE, UNKNOWN
 
+# strategy_rules.md §6.2 / §11: grace is 10 calendar days (days 0-9).
+GRACE_PERIOD_DAYS = 10
 
-def _count_trading_days(entry_date_str: str) -> int:
-    """Count weekday (Mon–Fri) trading days from entry_date to today, exclusive of entry day."""
+# lifecycle_reason value, set only when the state is UNKNOWN (ST-12).
+# ST-11 (v9.10) removed "flat_after_grace": §9 has no neutral post-grace zone.
+REASON_MISSING_DATA = "missing_data"
+
+
+def _count_calendar_days(entry_date_str: str) -> Optional[int]:
+    """Calendar days from entry_date to today (0 on the entry day), or None if unparseable.
+
+    ST-12 (BLG-FE-196, v9.10): replaces a weekday count, which let the badge's
+    grace boundary drift from the calendar-day grace_period flag.
+    """
     try:
         entry = date.fromisoformat(str(entry_date_str).split("T")[0].split(" ")[0])
     except (ValueError, AttributeError):
-        return 0
-    today = date.today()
-    if today <= entry:
-        return 0
-    count = 0
-    current = entry
-    while current < today:
-        current = date.fromordinal(current.toordinal() + 1)
-        if current.weekday() < 5:  # Mon=0 … Fri=4
-            count += 1
-    return count
+        return None
+    return max(0, (date.today() - entry).days)
+
+
+def classify_position(position: dict) -> Tuple[str, Optional[str]]:
+    """Return (state, lifecycle_reason). The reason is non-null only for UNKNOWN."""
+    days_held = _count_calendar_days(position.get("entry_date"))
+    if days_held is None:
+        return UNKNOWN, REASON_MISSING_DATA
+
+    # Grace precedence (ST-12): in grace the badge is GRACE whatever the price.
+    if days_held < GRACE_PERIOD_DAYS:
+        return GRACE, None
+
+    entry_price = position.get("entry_price")
+    current_price = (
+        position.get("current_price_native")
+        or position.get("current_price")
+    )
+    if not entry_price or not current_price:
+        return UNKNOWN, REASON_MISSING_DATA
+
+    entry_price = float(entry_price)
+    current_price = float(current_price)
+
+    # §9: post-grace, P&L <= 0 is LOSING, whatever the distance from entry.
+    if current_price <= entry_price:
+        return LOSING, None
+
+    # EXIT ZONE: a PROFITABLE position at or beyond entry + 2R (needs initial_stop).
+    initial_stop = position.get("initial_stop")
+    if initial_stop:
+        r_value = entry_price - float(initial_stop)
+        if r_value > 0 and current_price >= entry_price + 2 * r_value:
+            return EXIT_ZONE, None
+
+    return PROFITABLE, None
 
 
 def compute_position_state(position: dict) -> str:
     """Determine lifecycle state from position data.
 
     Args:
-        position: dict with at minimum entry_price, current_price (native),
-                  atr, entry_date, and optionally initial_stop.
+        position: dict with at minimum entry_price, current_price (native)
+                  and entry_date, and optionally initial_stop. ATR is not
+                  used (ST-11, v9.10).
 
     Returns:
         One of: 'EXIT ZONE', 'PROFITABLE', 'LOSING', 'GRACE', 'UNKNOWN'
     """
-    entry_price = position.get("entry_price")
-    # Prefer native price for state computation (price in trade currency)
-    current_price = (
-        position.get("current_price_native")
-        or position.get("current_price")
-    )
-    atr = position.get("atr") or position.get("atr_value")
-    initial_stop = position.get("initial_stop")
-    entry_date_str = position.get("entry_date")
+    return classify_position(position)[0]
 
-    if not all([entry_price, current_price, entry_date_str]):
-        return UNKNOWN
 
-    entry_price = float(entry_price)
-    current_price = float(current_price)
-
-    if not atr:
-        return UNKNOWN
-
-    atr = float(atr)
-    trading_days = _count_trading_days(str(entry_date_str))
-
-    # EXIT ZONE: price >= entry + 2R (requires valid initial_stop)
-    if initial_stop:
-        initial_stop = float(initial_stop)
-        r_value = entry_price - initial_stop
-        if r_value > 0 and current_price >= entry_price + 2 * r_value:
-            return EXIT_ZONE
-
-    # PROFITABLE: moved up by more than 0.5 ATR
-    if current_price > entry_price + 0.5 * atr:
-        return PROFITABLE
-
-    # LOSING: moved down by more than 0.5 ATR
-    if current_price < entry_price - 0.5 * atr:
-        return LOSING
-
-    # Within ±0.5 ATR of entry
-    if trading_days <= 10:
-        return GRACE
-
-    # After grace, price still in entry zone — insufficient data for direction
-    return UNKNOWN
+def compute_lifecycle_reason(position: dict) -> Optional[str]:
+    """Why a position is UNKNOWN ('missing_data'), else None."""
+    return classify_position(position)[1]
 
 
 def compute_days_in_state(state_entered_at) -> int:
@@ -119,7 +130,7 @@ def compute_days_in_state(state_entered_at) -> int:
 
 def _build_lifecycle_fields(position: dict) -> dict:
     """Compute lifecycle state fields for a position dict (no DB write)."""
-    new_state = compute_position_state(position)
+    new_state, lifecycle_reason = classify_position(position)
     stored_state = position.get("position_state")
     state_entered_at = position.get("state_entered_at")
 
@@ -133,6 +144,7 @@ def _build_lifecycle_fields(position: dict) -> dict:
         "position_state": new_state,
         "state_entered_at": state_entered_at.isoformat() if hasattr(state_entered_at, "isoformat") else str(state_entered_at),
         "days_in_state": days_in_state,
+        "lifecycle_reason": lifecycle_reason,
     }
 
 
@@ -218,7 +230,8 @@ def get_lifecycle_fields_for_position(position: dict) -> dict:
     """
     position_id = str(position.get("id") or "")
     if not position_id:
-        return {"position_state": UNKNOWN, "state_entered_at": None, "days_in_state": 0}
+        return {"position_state": UNKNOWN, "state_entered_at": None, "days_in_state": 0,
+                "lifecycle_reason": REASON_MISSING_DATA}
 
     try:
         updated = refresh_position_lifecycle(position_id, prefetched_position=position)
@@ -229,6 +242,9 @@ def get_lifecycle_fields_for_position(position: dict) -> dict:
                 "position_state": updated.get("position_state", UNKNOWN),
                 "state_entered_at": state_entered_at.isoformat() if hasattr(state_entered_at, "isoformat") else str(state_entered_at) if state_entered_at else None,
                 "days_in_state": compute_days_in_state(state_entered_at),
+                # ST-12 (BLG-FE-196, v9.10): why an UNKNOWN badge is UNKNOWN.
+                # Derived from the same inputs as the state just persisted.
+                "lifecycle_reason": compute_lifecycle_reason(position),
             }
     except Exception:
         pass

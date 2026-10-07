@@ -1,8 +1,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Spec (Class 5)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-08-06
+**Version:** 1.2
+**Last Updated:** 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — the badge is a display overlay that defers to strategy_rules.md §9; post-grace LOSING/PROFITABLE follow §9's P&L sign, ±0.5 ATR bands and flat_after_grace removed); prior — 2026-10-06 (ST-12, EPIC-03, v9.10, BLG-FE-196 — GRACE row now calendar days with grace precedence, matching the code; UNKNOWN reason); prior — 2026-08-06
 **Cycle:** 2026-08-05__release-v8.3 (ST-07 — BLG-BE-67)
 
 ---
@@ -15,15 +15,28 @@
 
 ## Canonical Values
 
-Five states, defined by `backend/services/position_lifecycle_service.py::compute_position_state()` (Arc 3 / IT-01 lifecycle state machine):
+Five values, defined by `backend/services/position_lifecycle_service.py::classify_position()` (Arc 3 / IT-01 lifecycle badge):
 
-| Value | Meaning |
-|---|---|
-| `EXIT ZONE` | Price >= entry + 2R (R = entry − initial_stop) |
-| `PROFITABLE` | Price > entry + 0.5 × ATR |
-| `LOSING` | Price < entry − 0.5 × ATR |
-| `GRACE` | Trading days since entry <= 10 AND price within ±0.5 ATR |
-| `UNKNOWN` | Missing ATR or ambiguous zone after grace period |
+| Value | Meaning | §9 state it displays |
+|---|---|---|
+| `GRACE` | Fewer than 10 calendar days since entry (`strategy_rules.md` §6.2), whatever the price. Checked first. | GRACE |
+| `LOSING` | Past grace, native current price at or below entry (P&L ≤ 0) | LOSING |
+| `PROFITABLE` | Past grace, native current price above entry (P&L > 0), and below entry + 2R | PROFITABLE |
+| `EXIT ZONE` | Past grace, price ≥ entry + 2R (R = entry − initial_stop). Only reachable from a profitable position. | PROFITABLE (display sub-state) |
+| `UNKNOWN` | Entry price, current price or entry date missing. `lifecycle_reason` is `missing_data`. | none: a data fallback, not a state |
+
+`strategy_rules.md` §9's EXITED is not a badge value: the badge is shown only for open positions.
+
+## Relationship to strategy_rules.md §9
+
+**Ruling (ST-11, `BLG-SPEC-185`, 2026-10-07):** the lifecycle badge is a **display overlay that defers to §9**. It is not a second state machine, and §9 is not amended.
+
+- After grace, LOSING and PROFITABLE are decided by §9's P&L sign alone. The test is the one that picks the §7.2 stop multiplier (`position_service.py`: `is_profitable = pnl_native > 0`), so the badge and the stop always agree on which state a position is in. The earlier ±0.5 ATR bands, and the post-grace `UNKNOWN` neutral zone (`flat_after_grace`) they created, are removed.
+- `EXIT ZONE` is a refinement of PROFITABLE, shown when the 2R target is reached. It changes nothing in §7 or §8 and never applies to a losing position. §9's "exactly one state" holds: an EXIT ZONE position is in the PROFITABLE state.
+- `UNKNOWN` is a missing-data fallback, not a §9 state.
+- If §9 changes, this table changes with it. The overlay may add display sub-states of a §9 state; it may not split, merge or redefine §9 states without a §9 amendment under §16.
+
+Ruled by the Strategy Rules & System Intent Owner (agent-mediated, `execution_prompt.md` §5.3, on the user's explicit direction): `claude/cycles/2026-10-06__release-v9.10/execution_escalations.md` `ESC-EXEC-20261006-03`.
 
 ## Backend Registry
 

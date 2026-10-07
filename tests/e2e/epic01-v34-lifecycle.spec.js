@@ -3,7 +3,7 @@
  *
  * ST-01 (IT-01) — Position lifecycle state badge
  *   SC-LS-01  Lifecycle "State" column header present in table view
- *   SC-LS-02  GRACE badge renders with days_in_state suffix "GRACE — Nd"
+ *   SC-LS-02  GRACE badge renders calendar days of grace left "GRACE — Nd left" (v9.10 ST-12)
  *   SC-LS-03  PROFITABLE, EXIT ZONE, LOSING, UNKNOWN badges render in correct colours
  *   SC-LS-04  No badge rendered when lifecycle_state is null (flag off / legacy position)
  *
@@ -108,12 +108,13 @@ test.describe('ST-01 — Position lifecycle state badge', () => {
     await expect(page.locator('th', { hasText: 'State' })).toBeVisible();
   });
 
-  test('SC-LS-02: GRACE badge renders with days_in_state suffix', async ({ page }) => {
+  test('SC-LS-02: GRACE badge renders calendar days of grace left', async ({ page }) => {
+    // v9.10 ST-12 (BLG-FE-196): days left from grace_days_remaining, not days_in_state.
     await stubCommon(page);
-    await setupPositions(page, [makePosition({ lifecycle_state: 'GRACE', days_in_state: 5 })]);
+    await setupPositions(page, [makePosition({ lifecycle_state: 'GRACE', days_in_state: 5, holding_days: 5, grace_days_remaining: 5 })]);
     await goToTableView(page);
     await expect(page.getByText('NVDA')).toBeVisible({ timeout: 8000 });
-    await expect(page.getByText('GRACE — 5d')).toBeVisible();
+    await expect(page.getByText('GRACE — 5d left')).toBeVisible();
   });
 
   test('SC-LS-03: PROFITABLE badge renders', async ({ page }) => {
@@ -148,6 +149,7 @@ test.describe('ST-02 — Grace period alert card', () => {
       ticker: 'NVDA',
       market: 'US',
       days_in_state: 8,
+      grace_days_remaining: 2,
       trade_plan_id: null,
       trade_plan_summary: null,
       ...overrides,
@@ -172,7 +174,8 @@ test.describe('ST-02 — Grace period alert card', () => {
     );
     await page.goto('/#/Positions');
     await expect(page.getByText(/day 8 of 10/i)).toBeVisible({ timeout: 8000 });
-    await expect(page.getByText(/grace period ends in 2 trading day/i)).toBeVisible();
+    // v9.10 ST-12: calendar days from grace_days_remaining; "trading" removed.
+    await expect(page.getByText(/grace period ends in 2 days\./i)).toBeVisible();
   });
 
   test('SC-GP-03: Alert card dismissed on ✕ click', async ({ page }) => {
