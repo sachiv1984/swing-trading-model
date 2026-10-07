@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-07 (session — 4 new item(s) added: BLG-GOV-376 (EPIC-03 ST-13/ST-14 execution), BLG-BE-147, BLG-BE-148, BLG-BE-149 (EPIC-03 agent-mediated pre-PR review)); prior — 2026-10-07 (session — 4 new item(s) added: BLG-BE-146, BLG-FE-203, BLG-QA-215, BLG-FE-204, from the EPIC-02 agent-mediated pre-PR review); prior — 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` — 25 items added from idea intake `IW-20261006-01` (BLG-BE-138–142, BLG-FE-195–199, BLG-SPEC-185–188, BLG-SEC-41/42, BLG-GOV-369–374, BLG-OPS-179, BLG-FEAT-99, BLG-FR-06) plus BLG-GOV-375 (STEP -1.5 Owner-field lint); BLG-BE-138 P1 Correctness Fast-Track → v9.10; BLG-FE-193 gate met, Provisional-Target → v9.10); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-07 (session — 1 new item(s) added: BLG-QA-216 (PR #1918 agent-mediated review, axe theme assertion)); prior — 2026-10-07 (session — 1 new item(s) added: BLG-OPS-182 (EPIC-04 ST-18 AC 1 narrowed, live fire from main after merge)); prior — 2026-10-07 (session — 1 new item(s) added: BLG-OPS-181 (EPIC-04 ST-18 live fire, staging hook deploy did not go live)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -543,6 +543,90 @@ After ST-01 (ruling (a)), `POST /settings` and `PATCH /settings/{settings_id}` s
 - [ ] A write that includes any of the four fields is rejected or flagged in the response, and documented
 
 ---
+
+### BLG-TECH-22 — Batch the in-range dependency patch/minor bumps from the October 2026 quarterly review
+**Priority:** P3 (Low)
+**Type:** Platform / Technical Debt
+**Owner:** Infrastructure & Operations Owner; Head of Engineering
+**Source:** ST-17 (BLG-OPS-92), EPIC-04, cycle `2026-10-06__release-v9.10` — `docs/security/dependency_update_review_2026-10-06.md` — 2026-10-06
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The quarterly review found 8 backend and 20 frontend direct dependencies behind their latest patch/minor release, with no known vulnerabilities. They were not applied in-story because each lockfile or requirements change needs its own full CI run. yfinance (1.3.0 → 1.7.0) matters most: it tracks Yahoo's changing endpoints, so falling behind risks silent price/ATR fetch failures.
+
+**Scope**
+- Backend: fastapi + starlette, pandas, numpy, pydantic, psycopg2-binary, hypothesis, yfinance, at the versions in the review's §3
+- Frontend: every row marked "Batch" in the review's §4–§5 (`npm update` within the existing ranges, plus eslint 9.39.5)
+
+**Acceptance Criteria**
+- [ ] Bumps applied in one PR. The full pytest suite and all Playwright shards pass in CI, including the focus-restoration specs, because `@radix-ui/react-dialog` changes.
+- [ ] A staging check confirms yfinance price and ATR fetches still work for one US and one UK ticker
+
+---
+
+### BLG-TECH-23 — Assess major/breaking dependency upgrades from the October 2026 quarterly review
+**Priority:** P3 (Low)
+**Type:** Platform / Technical Debt
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** ST-17 (BLG-OPS-92), EPIC-04, cycle `2026-10-06__release-v9.10` — `docs/security/dependency_update_review_2026-10-06.md` — 2026-10-06
+**Effort:** M (~2-3 days across items; assess first, then split)
+**Provisional-Target:** TBD
+
+**Problem**
+Several direct dependencies are a major version, or a breaking minor series, behind: anthropic 0.105 → 1.11 (used by 3 AI services), SQLAlchemy 2.0 → 2.1, reportlab 4 → 5 (PDF export), uvicorn 0.24 → 0.54, framer-motion 12 → 14, lucide-react 0.563 → 1.x (renamed icons), eslint 9 → 10. `moment` is deprecated, and `date-fns` is already a dependency. None carries a known vulnerability today, so these are maintainability risks, not security ones.
+
+**Scope**
+- For each package, record breaking changes that affect this codebase, the effort, and an upgrade-or-hold decision. File a separate story for each upgrade worth doing.
+- tailwindcss 4 is excluded and stays with BLG-TECH-21.
+
+**Acceptance Criteria**
+- [ ] A dated assessment covers all 8 packages, with a decision for each and a backlog item for each upgrade it approves
+
+---
+
+### BLG-AI-08 — claude_audit_log: add prompt_hash and response_length, and log failed model calls
+**Priority:** P2 (Medium)
+**Type:** AI Governance / Audit Logging
+**Owner:** AI Compliance & Governance Officer; Head of Engineering; Data Model & Domain Schema Owner
+**Source:** ST-16 (BLG-GOV-141), EPIC-04, cycle `2026-10-06__release-v9.10` — `docs/ops/ai_output_logging_completeness_audit_2026-10-06.md` — 2026-10-06
+**Effort:** S (~1 day plus a live migration)
+**Provisional-Target:** TBD
+
+**Problem**
+AI governance policy requires model ID, prompt hash, response length and timestamp on every logged AI response. `claude_audit_log` has no prompt-hash column and no response-length column (only `output_tokens`), so `POST /ai/daily-briefing` and `POST /ai/chat` cannot meet the policy. A model call that fails after retries writes no audit row at all.
+
+**Scope**
+- Add nullable `prompt_hash` (SHA-256 of the system prompt plus the user message, truncated to 16 hex characters, matching `gemini_audit_log` and `docs/ops/claude_api_log_hygiene_policy.md` §3.2) and `response_length` (characters) columns. This needs a `data_model.md` DS entry and live application on staging and production.
+- Amend `claude_api_log_hygiene_policy.md` (lines 72 and 104, §1/§2.3/§3.3), which currently says `claude_audit_log` stores no prompt representation.
+- Populate both in `ai_service.py` for both endpoints.
+- On a model-call failure, write a row with a failure marker (for example `compliance_check_result = 'model_call_failed'`, or a dedicated nullable status column) so failed calls are auditable.
+
+**Acceptance Criteria**
+- [ ] Successful briefing and chat calls write `prompt_hash` and `response_length`. Unit tests cover both endpoints.
+- [ ] A failed model call writes an audit row marked as failed
+- [ ] Migration recorded in `data_model.md` and applied live, with verification output
+
+---
+
+### BLG-AI-09 — Daily briefing system prompt does not state that output is advisory
+**Priority:** P3 (Low)
+**Type:** AI Governance / §13 Compliance
+**Owner:** Strategy Rules & System Intent Owner; AI Compliance & Governance Officer
+**Source:** ST-15 (BLG-GOV-140), EPIC-04, cycle `2026-10-06__release-v9.10` — agent-mediated review of `docs/ops/ai_chat_section13_quarterly_self_audit_checklist.md` (check A1) — 2026-10-06
+**Effort:** XS (<0.5 day plus golden-fixture update)
+**Provisional-Target:** TBD
+
+**Problem**
+The `POST /ai/chat` system prompt tells the model its output is advisory only and that it cannot execute trades. The `POST /ai/daily-briefing` prompt (`ai_service.py` `generate_daily_briefing`) says neither, and it asks for `EXIT`/`ENTER` action types with no "recommendation" framing. The response payload carries `advisory: true` and the UI shows `AiDisclaimer`, so the user-facing boundary holds. The model-facing instruction does not, so the §13 self-audit's check A1 fails against the briefing prompt at baseline.
+
+**Scope**
+- Add an advisory-only / no-execution statement to the briefing system prompt, and frame action items as recommendations for the user to decide.
+- Update the AI prompt golden fixtures in the same change, and record the `prompt_version` bump.
+
+**Acceptance Criteria**
+- [ ] The briefing system prompt states advisory-only and no execution; golden-fixture tests pass
+- [ ] Self-audit checklist A1 passes for both prompts
 
 ## 3. Frontend & UX Backlog
 
@@ -4229,6 +4313,26 @@ EPIC-02's branch was cut on top of the EPIC-04/EPIC-05 linear history rather tha
 
 ---
 
+### BLG-GOV-377 — strategy_rules.md §13.5 roster row still says PO-05 reuses IT-06's paper-trading mechanics
+**Priority:** P3 (Low)
+**Type:** Governance Process / Strategy Text Alignment
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** ST-20 (EPIC-04, cycle `2026-10-06__release-v9.10`) — 2026-10-07
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD (before the first §13.5 re-attestation, 2027-02-06)
+
+**Problem**
+ST-20 corrected the PO-05 pre-assessment, the roadmap and `replay_mode.md` after the Strategy Rules & System Intent Owner acknowledged findings F1, F2 and F4 (ESC-EXEC-20261006-05). `strategy_rules.md` v1.14 §13.5's PO-05 roster row still says the PASS "explicitly reuses IT-06's paper-trading mechanics under IT-06's own binding conditions". PO-05 runs on `strategy_engine.py` and makes no Alpaca call. Sprint Execution cannot write `claude/strategy/strategy_rules.md` (`execution_prompt.md` §7), so the row was left as is.
+
+**Scope**
+- Replace that clause with: "runs on the strategy backtest engine with no Alpaca call, so Binding Condition 5's isolation is met by construction (v9.10 corrections, `po05_section13_preassessment.md`)".
+- Change Log row (documentation only) and §15 grep. Can share a commit with BLG-GOV-376.
+
+**Acceptance Criteria**
+- [ ] §13.5's PO-05 row no longer says PO-05 reuses IT-06.
+
+---
+
 ### BLG-SPEC-180 — Correct metrics_definitions.md's claim that a NULL positions.fees_paid yields a silently-zero trade_history fee leg
 **Priority:** P4 (Trivial)
 **Type:** Spec Debt / Metrics
@@ -4888,6 +4992,26 @@ A closed trade records prices and fees but not the multiplier, ATR and grace len
 
 ---
 
+### BLG-FE-200 — Reports and Notifications pages fail WCAG colour contrast in the light theme
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** ST-19 (BLG-QA-195), EPIC-04, cycle `2026-10-06__release-v9.10` — first axe scan of these pages in both themes, 2026-10-06
+**Effort:** M (~2-3 days)
+**Provisional-Target:** TBD
+
+**Problem**
+The axe-core scan added by ST-19 finds serious `color-contrast` violations on the Reports page and on the Notification Preferences and History pages in the **light** theme only. The dark theme passes. Reports' Monthly tab (restated month expanded) has 25 nodes, and its Tax Year tab has 14. The pages hard-code dark-theme classes (`bg-slate-800/50` cards, `text-white`, `text-slate-200`, `text-emerald-400` / `text-rose-400`) with no light variant, so text lands at contrast ratios of 1.1–3.4:1. Notification History has 2 nodes: the active tab link (`text-cyan-400` on `#f1f5f9`) and the type-filter value (`text-white`). Notification Preferences has 3: the same tab link and two `text-white` section headings. `docs/frontend/design_system.md` (line 200) says light mode is not implemented and defines no light-mode tokens. ST-19's AC requires fixes to use existing tokens, so these could not be fixed in-story.
+
+**Scope**
+- Decide whether light mode is a supported theme (the Layout toggle exists). If it is, add light-mode colour tokens to `design_system.md`.
+- Apply them to Reports (Monthly, Tax Year) and Notification Preferences and History, and remove the `color-contrast` entries from the light-theme `KNOWN_VIOLATIONS` baseline in `tests/e2e/accessibility-axe-scan.spec.js` in the same commit.
+
+**Acceptance Criteria**
+- [ ] The light-theme Reports and Notifications axe scans pass with no `color-contrast` baseline entry
+
+---
+
 ### BLG-GOV-376 — Update strategy_rules.md §13.3 now that the Gap Risk Flag's weekend-hold trigger is removed
 **Priority:** P3 (Low)
 **Type:** Governance Process / Strategy Text Alignment
@@ -5031,5 +5155,89 @@ The per-row "How this stop was set" tooltip formats `stop_calculated_at` in the 
 
 **Acceptance Criteria**
 - A trade with `pnl: 0.004` renders the neutral glyph and neutral colour; `pnl: 0.01` still renders the up arrow (`recent-trades-zero-pnl-badge.spec.js`, Playwright)
+
+---
+
+### BLG-OPS-180 — Set the missing STAGING_API_URL secret so the staging smoke suite actually runs
+**Priority:** P1 (High)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** Sprint Execution, ST-18 / EPIC-04, cycle `2026-10-06__release-v9.10` (out-of-scope finding while checking ST-18's unblock criteria) — 2026-10-07
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.11
+**Blocks:** ST-18 live fire (`DEL-20261006-03`) cannot produce a meaningful `STALE STAGING DEPLOY` result until this is fixed.
+
+**Problem**
+The `STAGING_API_URL` GitHub Actions secret is not set. All 126 recorded runs of `staging-smoke-test.yml` (scheduled, 2026-09-20 onward, latest run 37572337355 on 2026-10-07) failed with `::error::STAGING_API_URL environment variable is not set.`, and the smoke step of `staging-deploy.yml` fails the same way (latest 2026-10-07T08:06Z). The staging smoke suite, including BLG-OPS-169's stale-deploy check, has never actually run against staging. The failure alert fires on every run, so the noise hides any real staging failure.
+
+**Scope**
+- Set `STAGING_API_URL` (and confirm `STAGING_API_KEY`) as repository secrets, per `docs/ops/github_actions_secrets_ownership_map.md`.
+- Trigger `staging-smoke-test.yml` via `workflow_dispatch` and confirm it passes.
+
+**Acceptance Criteria**
+- One green `staging-smoke-test.yml` run URL recorded against this item
+- The next scheduled run after the fix also passes (no `STAGING_API_URL ... not set` error)
+
+---
+
+### BLG-OPS-181 — Find out why a staging-deploy.yml hook deploy of a governance-only main commit never went live
+**Priority:** P3 (Low)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** Sprint Execution, ST-18 / EPIC-04, cycle `2026-10-06__release-v9.10` — 2026-10-07
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`staging-deploy.yml` run 37600608347 (`workflow_dispatch`, `main` at `1639c956`, a commit touching only `claude/`) got HTTP 200 and deploy `dep-db310hp42hec7387gh90` from the Render deploy hook. Staging stayed on `ef4088b4` for the whole 480s wait, and the job failed. A manual "Deploy latest commit" from the Render dashboard then went live on `1639c956`. The cause is unconfirmed: a dashboard-only Build Filter skipping hook deploys, a failed build, or a slow build. If hook deploys are silently skipped, `workflow_dispatch` of `staging-deploy.yml` can't be used to bring staging level with `main`.
+
+**Scope**
+- Check `dep-db310hp42hec7387gh90`'s final state and the staging backend's Settings → Build Filters in the Render dashboard.
+- If a filter skips hook deploys, either document it in `docs/ops/staging_deploy_notes.md` or change the filter.
+
+**Acceptance Criteria**
+- The cause is recorded against this item
+- If it is a filter: the staging deploy notes say whether a `workflow_dispatch` deploy of a non-code commit is expected to go live
+
+---
+
+### BLG-OPS-182 — Live-fire the stale-staging check from main against a deliberate staging/main divergence
+**Priority:** P3 (Low)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** Sprint Execution, ST-18 / EPIC-04, cycle `2026-10-06__release-v9.10` (agent-mediated Director of Quality review; ST-18 AC 1 narrowed) — 2026-10-07
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.11
+**Depends on:** EPIC-04 (v9.10) merged to `main`
+
+**Problem**
+ST-18's failing run (37598457966) was dispatched on the EPIC-04 branch: staging `ef4088b4` lacked the branch's deploy-path commit `d6644b25`. It proved the check and the Telegram alert fire on a real divergence, but not a deliberately introduced staging/`main` divergence as AC 1 worded it. The new comparison target in `scripts/staging_smoke_test.py` (latest staging-deploying commit, ancestor-aware) has not yet run from `main`'s copy of the workflow.
+
+**Scope**
+- After EPIC-04 merges, deliberately put staging behind `main` on a deploy-path commit (e.g. hold a code commit's deploy, or redeploy an older commit from the Render dashboard).
+- Run `staging-smoke-test.yml` on `main`, then restore staging and run it again.
+
+**Acceptance Criteria**
+- A failing `main` run URL showing `STALE STAGING DEPLOY` for the deliberate divergence, with the Telegram alert received
+- A passing `main` run URL after staging is restored
+
+---
+
+### BLG-QA-216 — Assert the applied theme in every Reports/Notifications axe scan, not just Reports Monthly
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated PR #1918 review (Director of Quality role), EPIC-04 ST-19, cycle `2026-10-06__release-v9.10` — 2026-10-07
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/e2e/accessibility-axe-scan.spec.js` sets the theme through the localStorage key `Layout.js` reads. It confirms the theme applied (`html` has, or lacks, `.dark`) only in the Reports Monthly test (around line 306). The Tax Year, Notification Preferences and Notification History tests scan without that check. If theme application broke, their "light" runs would silently become second dark runs. The `:light` baseline entries (BLG-FE-200) would then grandfather nothing real, and light-theme regressions would go unscanned.
+
+**Scope**
+- Move the theme assertion into a shared helper used by all four tests in each theme, or into the `beforeEach`.
+
+**Acceptance Criteria**
+- All 8 Reports/Notifications axe tests assert the applied theme before scanning, and pass in CI
 
 ---

@@ -35,6 +35,21 @@ Last Updated: 2026-10-06
 - **Commit format required:** `[EPIC-01][ST-02] <description>` pushed to `exec/2026-10-06__release-v9.10/EPIC-01`
 - **Status:** Unblocked — 2026-10-06T17:38:42Z. Unblocked in-session: the user (human, with live write access, acting for the Data Model & Domain Schema Owner) applied DS-25 and DS-26 on staging, then production. The Verification query returned `atr_source` and `stop_calculation_source` (`character varying`, `10`, `YES`) in both environments. Sign-off cleared; recorded in `data_model.md` DS-25 Live Confirmation.
 
+## DEL-20261006-03
+
+- **ST Item:** ST-18 — Confirm the stale-staging-deploy alert fires on a real stale-staging condition
+- **EPIC:** EPIC-04
+- **Classification:** delegated_backend (live Render/GitHub Actions control; RISK-04)
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1911
+- **Branch:** exec/2026-10-06__release-v9.10/EPIC-04
+- **Delegated at:** 2026-10-06T16:00:56Z
+- **What is needed:** (1) Make staging fall one commit behind `main`: pause Render auto-deploy for the staging backend, then let any commit land on `main`, or redeploy an older commit from the Render dashboard. (2) Trigger `staging-smoke-test.yml` via `workflow_dispatch` (GitHub Actions UI or `gh workflow run staging-smoke-test.yml`). Confirm the run fails with the `STALE STAGING DEPLOY` message from `scripts/staging_smoke_test.py` and that the Telegram alert arrives. (3) Re-enable auto-deploy, or redeploy the current `main` commit, then re-run the workflow and confirm it passes. Paste both run URLs back.
+- **Spec reference:** `scripts/staging_smoke_test.py` stale-deploy check (BLG-OPS-169, v9.8 ST-17); `.github/workflows/staging-smoke-test.yml`
+- **Unblock criteria:** Both run URLs recorded in `qa_evidence_EPIC-04.md` under ST-18: a failing run showing `STALE STAGING DEPLOY` for a real divergence, and a passing run after restore.
+- **Commit format required:** `[EPIC-04][ST-18] <description>` pushed to `exec/2026-10-06__release-v9.10/EPIC-04`
+- **Status:** Unblocked — 2026-10-07T09:45:20Z. Unblocked in-session: the user (human, acting for the Infrastructure & Operations Owner) set the missing `STAGING_API_URL` secret (BLG-OPS-180), then ran the live fire. Failing run https://github.com/sachiv1984/swing-trading-model/actions/runs/37598457966 (EPIC-04 branch, fixed check) reported `STALE STAGING DEPLOY` (staging `ef4088b4` lacked EPIC-04's deploy-path commit `d6644b25`), and the Telegram alert arrived (message 1252). After a manual Render deploy put staging on `main`'s tip `1639c956`, passing run https://github.com/sachiv1984/swing-trading-model/actions/runs/37602589130. Sign-off cleared; recorded in `qa_evidence_EPIC-04.md` ST-18.
+
 ## DEL-20261006-04
 
 - **ST Item:** ST-01 — One source for §11 stop parameters across the on-load and nightly stop paths

@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-07T08:20:00Z",
+  "last_updated_utc": "2026-10-07T10:23:57Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -322,44 +322,53 @@
       "merged_utc": "2026-10-07T08:06:08Z"
     },
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1918,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "tests/e2e/accessibility-axe-scan.spec.js",
-        "tests/test_claude_audit_entry_failure_logging.py"
+        "tests/test_claude_audit_entry_failure_logging.py",
+        "tests/e2e/replay-mode.spec.js",
+        "tests/test_staging_smoke_test.py"
       ],
       "stories": {
         "ST-15": {
           "title": "AI chat advisory §13 quarterly self-audit checklist",
           "classification": "delegated_decision",
-          "status": "in_progress",
-          "assigned_to": "engine",
+          "status": "done",
+          "assigned_to": "Product Owner",
           "github_issue": 1908,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
-          "commit_sha": "6b6f8af3cf6099c2f5fd6b3a5c461e880fe92747",
+          "commit_sha": "b84b12fb5dc230bab52569a7233ad63c64e14133",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-07T08:16:24Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/ops/ai_chat_section13_quarterly_self_audit_checklist.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.push",
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "cleared_utc": "2026-10-07T08:16:06Z",
+            "retries": 2,
+            "notes": "SRSIO half cleared agent-mediated on retry 2 (2026-10-06T16:05:12Z). Product Owner half cleared by the human Product Owner in session 2026-10-07 (ESC-EXEC-20261006-06 resolved). BLG-AI-09 filed."
+          },
+          "notes": "Done. Work commit 6b6f8af3, corrections in 0d67a4ff. Both sign-offs cleared; the Product Owner approval is recorded in checklist §5. Deviation check: none (the checklist is the governing artefact)."
         },
         "ST-16": {
           "title": "AI model output logging completeness audit",
           "classification": "delegated_decision",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1909,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
@@ -367,18 +376,25 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-06T15:59:14Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/ops/ai_output_logging_completeness_audit_2026-10-06.md",
             "tests/test_claude_audit_entry_failure_logging.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.push",
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.11",
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "cleared_utc": "2026-10-06T16:05:12Z",
+            "retries": 1,
+            "notes": "Retry 1 Approved after corrections (function name, P2a/P8a, BLG-AI-08 hash spec). Correction commit follows ef167325."
+          },
+          "notes": "Gaps filed BLG-AI-08; silent-failure fixed. Deviation check: none."
         },
         "ST-17": {
           "title": "Quarterly dependency update review",
@@ -406,26 +422,33 @@
         "ST-18": {
           "title": "Confirm the stale-staging-deploy alert fires on a real stale-staging condition",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1911,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "51269188b5e5004b6882277c2b552300c9cdb191",
           "delegation_record_id": "DEL-20261006-03",
-          "blocked_since_utc": "2026-10-06T16:01:09Z",
-          "unblock_criteria": "Failing run URL with STALE STAGING DEPLOY and passing run URL after restore",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-10-07T09:45:36Z",
+          "acceptance_verified": true,
           "spec_references": [
             "scripts/staging_smoke_test.py",
-            ".github/workflows/staging-smoke-test.yml"
+            ".github/workflows/staging-smoke-test.yml",
+            "tests/test_staging_smoke_test.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "method": "human",
+            "status": "cleared",
+            "cleared_utc": "2026-10-07T09:45:20Z",
+            "notes": "Live fire run by the user in session 2026-10-07: failing run 37598457966 (STALE STAGING DEPLOY + Telegram alert), passing run 37602589130 after restore."
+          },
+          "notes": "Done. Failing run 37598457966: the fixed check on the EPIC-04 branch reported STALE STAGING DEPLOY (staging ef4088b4 lacked d6644b25), Telegram alert received. Passing run 37602589130 on main after a manual Render deploy to 1639c956. Engine fix to the comparison target in 23c6810f. Implementation note (intent check, not a deviation): AC 1's divergence was staging vs the EPIC-04 branch, not vs main; it is a real code divergence and exercises the same check and alert. Also observed: the staging-deploy.yml hook deploy dep-db310hp42hec7387gh90 for governance-only 1639c956 did not go live within 480s; a manual dashboard deploy did. Filed BLG-OPS-181."
         },
         "ST-19": {
           "title": "Add the Reports and Notifications pages to the axe accessibility scan",
@@ -434,11 +457,11 @@
           "assigned_to": "engine",
           "github_issue": 1912,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
-          "commit_sha": "14f9cef04b150e7840cd3c8d557ea5c2618c6fc3",
+          "commit_sha": "b8ced55f918ac16d0ae1a61bf73c7ebaeefdd1a8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": "2026-10-06T15:52:42Z",
+          "completed_utc": "2026-10-07T09:49:12Z",
           "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/accessibility-axe-scan.spec.js"
@@ -448,28 +471,40 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "12/12 axe tests pass locally. button-name fixed; light-theme color-contrast filed BLG-FE-200 (baseline per page:theme). Deviation check: none."
+          "notes": "12/12 axe tests pass locally. button-name fixed; light-theme color-contrast filed BLG-FE-200 (baseline per page:theme). Deviation check: none. 2026-10-07: real CI (Playwright run 37591771271) failed the Notification History scans on scrollable-region-focusable; fixed in b8ced55f (now the story's commit_sha; original work 14f9cef0). All 8 workflows green on b8ced55f."
         },
         "ST-20": {
           "title": "Correct the PO-05 pre-assessment and replay page spec wording",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1913,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "50dc7154d4a5516cb6855e9a6549cd540aff3359",
           "delegation_record_id": null,
-          "blocked_since_utc": "2026-10-06T16:01:09Z",
-          "unblock_criteria": "ESC-EXEC-20261006-05: F1/F2/F4 acknowledgement + caption wording",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-10-07T07:36:55Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/po05_section13_preassessment.md#v9.10 Corrections (Strategy Rules & System Intent Owner Acknowledgement)",
+            "docs/specs/frontend/pages/replay_mode.md#§13 Boundary (binding — do not implement around this)",
+            "docs/product/decisions/po05_replay_scope_confirmation.md",
+            "claude/roadmap/current_roadmap.md",
+            "tests/e2e/replay-mode.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "cleared_utc": "2026-10-07T07:36:55Z",
+            "notes": "ESC-EXEC-20261006-05: F1/F2/F4 acknowledged; caption decided. User-directed 2026-10-07."
+          },
+          "notes": "Reclassified delegated_decision -> autonomous on acknowledgement. AC1 escalation + pre-assessment corrections; AC2 roadmap (ESC-CLOSE-20261006-01) + two other docs; AC3 consistent across pre-assessment/roadmap/replay_mode.md. Caption asserted in replay-mode.spec.js. BLG-GOV-377 filed. QA evidence entry goes in qa_evidence_EPIC-04.md at EPIC consolidation (STEP 3.2.A). Deviation check: none."
         },
         "ST-21": {
           "title": "Sign-off single-point-of-failure matrix",
@@ -654,12 +689,8 @@
       "merged_utc": "2026-10-07T06:59:46Z"
     }
   },
-  "blocked_items": [
-    "ST-20"
-  ],
-  "delegated_items": [
-    "ST-18"
-  ],
+  "blocked_items": [],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -675,13 +706,15 @@
     "ST-12",
     "ST-13",
     "ST-14",
+    "ST-15",
+    "ST-16",
     "ST-17",
+    "ST-18",
     "ST-19",
+    "ST-20",
     "ST-21"
   ],
-  "open_escalations": [
-    "ESC-EXEC-20261006-05"
-  ],
+  "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
@@ -707,7 +740,18 @@
     "2026-10-07T08:00:00Z: EPIC-03 pre-PR review run on user direction: agent-mediated Director of Quality and Product Owner, both Approved with Comments. Filed BLG-BE-147, BLG-BE-148, BLG-BE-149 (backlog.md new-item exception, §7). Combined review comment drafted for posting when the PR opens. DoQ sign-off block still blank, so the PR is not opened (§3.2.B). Branch CI green on 05ad3ecf/ab73ad2f.",
     "2026-10-07: EPIC-03 DoQ sign-off agent-mediated (Director of Quality role, §5.3) on explicit user direction; qa_signed_off set in the same commit (DF-02).",
     "2026-10-07: EPIC-03 PR #1917 opened. Combined agent-mediated DoQ + PO review comment posted (both Approved with Comments), plus merge-gate QA sign-off and PO acceptance comments, recorded by the engine on the human owner's explicit in-session direction (OA-6 labelling). Merge left to the human.",
-    "2026-10-07: Mid-session re-sync (AUD-2026-08-21-010): PR #1917 (EPIC-03) merged by the human at 2026-10-07T08:06:08Z (ef4088b4); pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-03 is empty."
+    "2026-10-07: Mid-session re-sync (AUD-2026-08-21-010): PR #1917 (EPIC-03) merged by the human at 2026-10-07T08:06:08Z (ef4088b4); pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-03 is empty.",
+    "2026-10-07T07:36:55Z: ESC-EXEC-20261006-05 resolved by Strategy Rules & System Intent Owner acknowledgement (agent-mediated, §5.3, user-directed). ST-20 reclassified delegated_decision -> autonomous and completed in 50dc7154. current_roadmap.md edited under ESC-CLOSE-20261006-01's named-file ruling. No DEL record existed for this escalation-only block. BLG-GOV-377 filed.",
+    "2026-10-07: Post-merge sibling sync (STEP 4 3c): main (EPIC-03 merged, PR #1917) merged into EPIC-04. execution_state.json resolved per CLAUDE.md §8: EPIC-01/02/03 records from main, EPIC-04 records from the branch, union of completed items, no done->blocked reversion, summaries recomputed. No shared-field shape drift (2b). backlog.md and execution_escalations.md conflicts were both additive, resolved by union.",
+    "2026-10-07: run sprint resume. Block re-evaluation (s10.1): ST-15 still blocked on ESC-EXEC-20261006-06 (human Product Owner sign-off); ST-18 still blocked on DEL-20261006-03 (no [ST-18] commit since delegation). Out-of-scope finding: STAGING_API_URL secret unset, all 126 staging-smoke-test.yml runs fail at the env check, so the ST-18 live fire cannot work until it is set. Filed BLG-OPS-180 (P1).",
+    "2026-10-07T08:16:06Z: ESC-EXEC-20261006-06 resolved by the human Product Owner in session (checklist approved, including the 2026-11-03 first review and the BLG-AI-09 exception). ST-15 marked done. No DEL record existed for this escalation-only block.",
+    "2026-10-07: ST-18 dispatch run 37596800197 failed with a false-positive STALE STAGING DEPLOY (main tip 1639c956 is governance-only, so it never triggers staging-deploy.yml). Engine fixed scripts/staging_smoke_test.py + staging-smoke-test.yml to compare against the latest staging-deploying commit. Not used as AC 1 evidence: AC 1 needs a deliberately introduced divergence.",
+    "2026-10-07T09:45:20Z: DEL-20261006-03 unblocked in-session (user, for the Infrastructure & Operations Owner). ST-18 done: failing run 37598457966, passing run 37602589130. EPIC-04: all 7 stories done.",
+    "2026-10-07T09:54:31Z: STEP 3.2.A for EPIC-04. Real-CI check found ST-19's own axe test failing (scrollable-region-focusable) on every EPIC-04 code commit; fixed in b8ced55f, all 8 workflows green. qa_evidence_EPIC-04.md consolidated; DoQ sign-off block awaiting the Director of Quality.",
+    "2026-10-07T10:06:14Z: EPIC-04 DoQ sign-off agent-mediated (Director of Quality role, §5.3, user-directed): Blocked on first pass (ST-18/ST-20 rows over-stated), Approved with Comments on retry 1. BLG-OPS-182 filed. qa_signed_off set in the same commit as the sign-off block.",
+    "2026-10-07T10:06:47Z: STEP 3.2.B: PR #1918 opened for EPIC-04 after pre-PR checks (API baseline drift PASSED; cross-EPIC commit check: no foreign commits; 0 behind main). Merge gate awaits human Director of Quality QA comment and Product Owner acceptance.",
+    "2026-10-07T10:21:58Z: User-requested agent-mediated PR #1918 review (Director of Quality + Product Owner, OA-6 labelled, pending human confirmation) posted as issuecomment-6035920931. Both verdicts Approved with Comments. Filed BLG-QA-216. Not merged.",
+    "2026-10-07T10:23:57Z: Merge-gate QA sign-off (issuecomment-6035946582) and Product Owner acceptance (issuecomment-6035946942) posted on PR #1918, agent-mediated and recorded on the explicit direction of the human repository owner. Merge left to the human; CI on the final head must be green first."
   ],
   "sealed": false,
   "sealed_utc": null

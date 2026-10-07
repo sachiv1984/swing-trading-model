@@ -294,9 +294,11 @@ export default function Replay() {
 
               {skipped.length > 0 && <SkippedNotice skipped={skipped} />}
 
-              {/* FX-basis caption (scope note §7 item 2) */}
+              {/* FX-basis caption (scope note §7 item 2), with the engine-rules
+                  sentence decided by the Strategy Rules & System Intent Owner
+                  (v9.10 ST-20, ESC-EXEC-20261006-05; findings F4) */}
               <p data-testid="replay-fx-basis-caption" className="text-xs text-slate-600 dark:text-slate-400">
-                GBP figures use each trade's recorded entry exchange rate.
+                GBP figures use each trade's recorded entry exchange rate. Simulated with the backtest engine's exit rules, which differ from live stop handling: no breakeven floor, close-only ATR, and the stop is checked before risk-off.
               </p>
 
               {/* Results table */}

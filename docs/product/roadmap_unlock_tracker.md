@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-08-13
+**Last Updated:** 2026-10-07 (v9.10 ST-20, BLG-SPEC-171 — PO-05 row notes the IT-06 premise was wrong); prior — 2026-08-13
 **Story:** ST-19 (BLG-GOV-303, EPIC-07, v8.7)
 **Cross-referenced from:** `claude/roadmap/current_roadmap.md` §6 — **pending** (see "Write-scope note" below)
 
@@ -33,7 +33,7 @@
 | Strategy Decay Detection | PS-04 | Gate: 18+ months of trade history | **NOT MET** — system live since ~2026-03 (v1.5), well under 18 months as of 2026-08 | **Group C — elapsed time** |
 | Personal Benchmark Comparison | PS-05 | Gate: 12+ months of history | **NOT MET** — under 12 months as of 2026-08 | Group C |
 | Journal Pattern Recognition | PO-02 | Requires 6+ months of AI-summarised journal entries (`BLG-FEAT-16` live and actively used) | **Not independently re-verified this pass** — a distinct data axis (journal-entry volume/duration, not trade count); no structured field tracks this the way SI-02's does. Flagged as a tracking gap (§3) rather than asserted met/unmet without evidence. | Not grouped — distinct axis |
-| Lightweight Replay Mode | PO-05 | States "Requires Alpaca paper trading foundation (IT-06)" — **IT-06 already shipped v3.5 (2026-05-15)** | **Ambiguous.** The Arc 4 feature table names no gate beyond IT-06, which is met — but PO-05 is referenced elsewhere (`current_roadmap.md` rebalance prose, v8.4-era) as still "gate-blocked" alongside SI-02 frontend, with no restated numeric condition. Flagged as a tracking gap (§3): either PO-05's true gate needs to be stated explicitly (likely a trade-volume threshold, unstated), or the "still gate-blocked" characterisation is itself stale now that IT-06 shipped. | Not grouped — needs clarification |
+| Lightweight Replay Mode | PO-05 | States "Requires Alpaca paper trading foundation (IT-06)" — **IT-06 already shipped v3.5 (2026-05-15)**. (v9.10 correction, ST-20: that premise was wrong. PO-05 does not use IT-06, and the roadmap row no longer says it does.) | **Ambiguous.** The Arc 4 feature table names no gate beyond IT-06, which is met — but PO-05 is referenced elsewhere (`current_roadmap.md` rebalance prose, v8.4-era) as still "gate-blocked" alongside SI-02 frontend, with no restated numeric condition. Flagged as a tracking gap (§3): either PO-05's true gate needs to be stated explicitly (likely a trade-volume threshold, unstated), or the "still gate-blocked" characterisation is itself stale now that IT-06 shipped. | Not grouped — needs clarification |
 
 **Excluded (already shipped, not gated):** SI-01 (v3.8), SI-03 (v3.9), IT-06 (v3.5), PO-01 (v3.5–v3.6). **SI-04** (Strategy Version Comparison) shipped in full at v7.7 (`BLG-FEAT-75`) — the Arc 5 feature table's own gate-condition text ("Requires version-tagged trade history from Arc 2 onwards") was never updated after shipment and is stale; SI-04 does not belong in a "still gated" list. Not corrected in `current_roadmap.md` by this story (`claude/roadmap/*` is outside `execution_prompt.md` §7's write scope for Sprint Execution) — flagged here for `manage roadmap`'s next pass.
 

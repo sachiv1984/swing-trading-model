@@ -2,7 +2,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-09-16
+**Last Updated:** 2026-10-07 (v9.10 ST-20, BLG-SPEC-171 — PO-05 note no longer names IT-06 as its gate); prior — 2026-09-16
 **Story:** ST-15 (BLG-QA-59, EPIC-03, v9.5 sprint execution)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -178,7 +178,7 @@ await page.route(`${API}/analytics/reflection-outcome-correlation`, async (route
 
 - PO-03 and PO-04 are both transitively gated on PO-02 shipping first (PO-03 explicitly; PO-04 on "PO-01 + PO-02 data foundation"). Test-strategy pre-design for PO-03/PO-04 is therefore necessarily more speculative than PO-02's — flagged throughout §4.2/§4.3 rather than presented with false confidence.
 - The §3.4/§3.5 data-capture gaps in `arc4_data_requirements.md` (`confidence_at_entry`, `deviation_note`, `thesis_confirmed`, `exit_quality`) are a build-order prerequisite, not merely a nice-to-have — several of the scenarios in §4 assume these fields exist. Whoever picks up PO-02 sprint planning should re-check `arc4_data_requirements.md`'s status before assuming this test strategy's scenarios are directly implementable.
-- This document does not attempt to pre-design PO-05 (Lightweight Replay Mode) — that feature's own gate (IT-06 Alpaca paper trading, already shipped) and shape are sufficiently different (a replay/simulation surface, not an AI-text-analysis surface) that its mock strategy is unlikely to extend BLG-QA-37 in the same way; out of this story's scope (PO-02/03/04 only, per AC).
+- This document does not attempt to pre-design PO-05 (Lightweight Replay Mode) — that feature's own gate and shape (v9.10 correction, ST-20: PO-05 does not depend on IT-06 Alpaca paper trading; it runs on the strategy backtest engine) are sufficiently different (a replay/simulation surface, not an AI-text-analysis surface) that its mock strategy is unlikely to extend BLG-QA-37 in the same way; out of this story's scope (PO-02/03/04 only, per AC).
 
 ---
 

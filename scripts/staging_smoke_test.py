@@ -25,16 +25,26 @@ deployed_commit_sha matches it, catching a merge to main that should have
 redeployed staging but did not. See check_deployed_commit()'s docstring for
 this check's documented known limits.
 
+ST-18 (BLG-OPS-171, EPIC-04, v9.10): the comparison target is the latest
+commit at or before EXPECTED_COMMIT_SHA that touches a staging-deploy path
+(staging-deploy.yml's on.push.paths), not main's tip. A commit outside those
+paths never redeploys staging, so comparing against the tip reported every
+governance-only commit as a stale deploy. Staging running a descendant of
+the target (e.g. after a manual staging-deploy.yml dispatch) also counts as
+current.
+
 Exit code: 0 if all checks pass, 1 if any fails (same convention as
 scripts/check_api_performance_baseline_drift.py /
 scripts/check_deploy_path_filter_drift.py).
 """
 import json
 import os
+import subprocess
 import sys
 import time
 import urllib.error
 import urllib.request
+from pathlib import Path
 
 # Render free-tier services spin down after inactivity and take ~30-60s to
 # cold-start on the next request (same constraint class as
@@ -125,6 +135,42 @@ def run_checks(base_url: str, api_key: str) -> list:
     return failures
 
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _git(*args: str):
+    """Run a git command; return (returncode, stdout), or (None, "") if git
+    itself can't run (no git binary, not a checkout)."""
+    try:
+        r = subprocess.run(["git", "-C", str(REPO_ROOT), *args], capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return None, ""
+    return r.returncode, r.stdout.strip()
+
+
+def latest_deploy_commit(ref: str) -> str:
+    """Return the latest commit at or before `ref` that touches a
+    staging-deploy path, or `ref` itself if that can't be worked out
+    (no git history, unparseable workflow). Falling back to `ref` keeps the
+    old, stricter behaviour rather than silently skipping the check."""
+    try:
+        from check_deploy_path_filter_drift import _parse_staging_filter_paths
+        paths = _parse_staging_filter_paths()
+    except Exception:  # noqa: BLE001 -- any failure means "fall back to ref"
+        return ref
+    if not paths:
+        return ref
+    rc, out = _git("log", "-1", "--format=%H", ref, "--", *paths)
+    return out if rc == 0 and out else ref
+
+
+def _is_ancestor(ancestor: str, descendant: str):
+    """True/False from `git merge-base --is-ancestor`; None if git can't tell
+    (e.g. the deployed commit isn't in this checkout's history)."""
+    rc, _ = _git("merge-base", "--is-ancestor", ancestor, descendant)
+    return {0: True, 1: False}.get(rc)
+
+
 def check_deployed_commit(base_url: str, api_key: str, expected_sha: str) -> str:
     """Compare GET /health/detailed's deployed_commit_sha (ST-17, BLG-OPS-169,
     EPIC-04, v9.8) against expected_sha (the merged commit on `main` this run
@@ -168,10 +214,10 @@ def check_deployed_commit(base_url: str, api_key: str, expected_sha: str) -> str
             "(null/missing) -- cannot confirm staging is running the merged commit"
         )
 
-    if deployed_sha != expected_sha:
+    if deployed_sha != expected_sha and not _is_ancestor(expected_sha, deployed_sha):
         return (
             f"STALE STAGING DEPLOY: staging is running commit {deployed_sha!r} but "
-            f"the latest merged commit on main is {expected_sha!r} -- a merge did not "
+            f"the latest staging-deploying commit is {expected_sha!r} -- a merge did not "
             f"redeploy staging (or the deploy has not completed yet)"
         )
 
@@ -196,6 +242,11 @@ def main() -> int:
     failures = run_checks(base_url, api_key)
 
     if expected_commit_sha:
+        main_tip = expected_commit_sha
+        expected_commit_sha = latest_deploy_commit(main_tip)
+        if expected_commit_sha != main_tip:
+            print(f"{main_tip} does not touch a staging-deploy path; "
+                  f"comparing against the latest commit before it that does.")
         print(f"Checking staging's deployed commit against {expected_commit_sha} ...")
         deploy_check_result = check_deployed_commit(base_url, api_key, expected_commit_sha)
         if deploy_check_result:

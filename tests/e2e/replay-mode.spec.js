@@ -227,6 +227,9 @@ test('SC-REP-06: populated success shows summary, independence note, FX caption,
   await expect(page.getByTestId('replay-summary-trade-count')).toHaveText('3');
   await expect(page.getByTestId('replay-independence-note')).toContainText('replayed independently');
   await expect(page.getByTestId('replay-fx-basis-caption')).toContainText("entry exchange rate");
+  // v9.10 ST-20 (BLG-SPEC-171): engine-versus-live rule caption (wording-only, FI-P3-02).
+  await expect(page.getByTestId('replay-fx-basis-caption')).toContainText(
+    "Simulated with the backtest engine's exit rules, which differ from live stop handling: no breakeven floor, close-only ATR, and the stop is checked before risk-off.");
 
   const table = page.getByTestId('replay-results-table');
   await expect(table).toBeVisible();

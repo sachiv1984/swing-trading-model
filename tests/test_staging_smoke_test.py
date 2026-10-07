@@ -246,3 +246,67 @@ class TestCheckDeployedCommit:
         with patch("staging_smoke_test.urllib.request.urlopen", return_value=mock_resp):
             result = smoke.check_deployed_commit("http://fake", "test-key", "abc123")
         assert "not valid JSON" in result
+
+
+class TestStaleCheckTarget:
+    """ST-18 (BLG-OPS-171, EPIC-04, v9.10): the stale-deploy check compares
+    staging against the latest commit that redeploys staging, not main's tip.
+    Run 37596800197 reported STALE STAGING DEPLOY because main's tip was a
+    governance-only commit that staging-deploy.yml's path filter never deploys."""
+
+    def test_latest_deploy_commit_skips_non_deploy_commits(self):
+        def _fake_git(*args):
+            assert args[:3] == ("log", "-1", "--format=%H")
+            assert args[3] == "tip-sha"
+            assert "backend/**" in args[5:]
+            return 0, "deploy-sha"
+        with patch("staging_smoke_test._git", side_effect=_fake_git):
+            assert smoke.latest_deploy_commit("tip-sha") == "deploy-sha"
+
+    def test_latest_deploy_commit_falls_back_to_ref_when_git_unavailable(self):
+        with patch("staging_smoke_test._git", return_value=(None, "")):
+            assert smoke.latest_deploy_commit("tip-sha") == "tip-sha"
+
+    def test_latest_deploy_commit_falls_back_to_ref_when_git_finds_nothing(self):
+        with patch("staging_smoke_test._git", return_value=(0, "")):
+            assert smoke.latest_deploy_commit("tip-sha") == "tip-sha"
+
+    def test_staging_ahead_of_expected_commit_is_not_stale(self):
+        """e.g. a manual staging-deploy.yml dispatch deployed main's tip."""
+        with patch("staging_smoke_test.urllib.request.urlopen") as mock_urlopen, \
+                patch("staging_smoke_test._git", return_value=(0, "")):
+            mock_urlopen.return_value = _mock_response(200, {"deployed_commit_sha": "newer-sha"})
+            assert smoke.check_deployed_commit("http://fake", "k", "deploy-sha") == ""
+
+    def test_staging_behind_expected_commit_is_stale(self):
+        with patch("staging_smoke_test.urllib.request.urlopen") as mock_urlopen, \
+                patch("staging_smoke_test._git", return_value=(1, "")):
+            mock_urlopen.return_value = _mock_response(200, {"deployed_commit_sha": "older-sha"})
+            assert "STALE STAGING DEPLOY" in smoke.check_deployed_commit("http://fake", "k", "deploy-sha")
+
+    def test_unknown_deployed_commit_is_stale(self):
+        """git can't place the deployed commit (rc 128): keep the strict result."""
+        with patch("staging_smoke_test.urllib.request.urlopen") as mock_urlopen, \
+                patch("staging_smoke_test._git", return_value=(128, "")):
+            mock_urlopen.return_value = _mock_response(200, {"deployed_commit_sha": "unknown-sha"})
+            assert "STALE STAGING DEPLOY" in smoke.check_deployed_commit("http://fake", "k", "deploy-sha")
+
+    def test_main_uses_latest_deploy_commit_as_target(self, monkeypatch):
+        monkeypatch.setenv("STAGING_API_URL", "http://fake")
+        monkeypatch.setenv("STAGING_API_KEY", "test-key")
+        monkeypatch.setenv("EXPECTED_COMMIT_SHA", "tip-sha")
+        with patch("staging_smoke_test._wake_up", return_value=True), \
+                patch("staging_smoke_test.run_checks", return_value=[]), \
+                patch("staging_smoke_test.latest_deploy_commit", return_value="deploy-sha"), \
+                patch("staging_smoke_test.check_deployed_commit", return_value="") as mock_check:
+            assert smoke.main() == 0
+        mock_check.assert_called_once_with("http://fake", "test-key", "deploy-sha")
+
+    def test_real_repo_history_resolves_governance_commit_to_deploy_commit(self):
+        """Against this repo's real history: 1639c956 (governance-only) must
+        resolve to an earlier commit, the false positive in run 37596800197."""
+        rc, _ = smoke._git("cat-file", "-e", "1639c956^{commit}")
+        if rc != 0:
+            import pytest
+            pytest.skip("commit 1639c956 not in this checkout's history")
+        assert not smoke.latest_deploy_commit("1639c956").startswith("1639c956")

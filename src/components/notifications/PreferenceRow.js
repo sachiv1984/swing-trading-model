@@ -25,6 +25,7 @@ export default function PreferenceRow({ label, description, enabled, saved, erro
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{description}</p>
         </div>
         <Switch
+          aria-label={label}
           checked={enabled}
           onCheckedChange={onToggle}
           className="data-[state=checked]:bg-cyan-500"

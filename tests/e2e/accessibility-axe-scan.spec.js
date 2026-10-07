@@ -64,6 +64,21 @@ const KNOWN_VIOLATIONS = {
   // reading. Fixed at the scan level (runAxeScan waits out the entrance
   // animation), confirmed with 5 consecutive clean local runs.
   Settings: new Set([]),
+  // ST-19 (BLG-QA-195, EPIC-04, v9.10): pages added to the scan, keyed
+  // "<page>:<theme>". The scan's button-name findings (unlabelled Select
+  // triggers on Reports and Notification History, unlabelled preference
+  // Switches) were fixed in the same story. The light-theme color-contrast findings are BLG-FE-200: the pages
+  // use dark-only classes and design_system.md defines no light-mode tokens,
+  // so they could not be fixed in-story. Remove those entries when
+  // BLG-FE-200 closes. The dark theme has no baseline entries.
+  'ReportsMonthly:dark': new Set([]),
+  'ReportsTaxYear:dark': new Set([]),
+  'NotificationPreferences:dark': new Set([]),
+  'NotificationsHistory:dark': new Set([]),
+  'ReportsMonthly:light': new Set(['color-contrast']), // BLG-FE-200
+  'ReportsTaxYear:light': new Set(['color-contrast']), // BLG-FE-200
+  'NotificationPreferences:light': new Set(['color-contrast']), // BLG-FE-200
+  'NotificationsHistory:light': new Set(['color-contrast']), // BLG-FE-200
 };
 
 async function mockRoutes(page) {
@@ -207,3 +222,114 @@ test.describe('Standalone axe-core Accessibility Scan (ST-21)', () => {
     await runAxeScan(page, 'Settings');
   });
 });
+
+// ---------------------------------------------------------------------------
+// ST-19 (BLG-QA-195, EPIC-04, v9.10): Reports and Notifications pages, in
+// dark and light themes. Reports is scanned in the states the story names:
+// the Monthly tab with a restated month expanded, and the Tax Year tab with
+// the restated-months notice. Theme is set through the same localStorage
+// "theme" key Layout.js reads on mount.
+// ---------------------------------------------------------------------------
+
+const RESTATED_MONTH = {
+  year: 2026, month: 5, realised_pnl_gbp: 175, trade_count: 4, null_fee_trade_count: 0,
+  snapshotted: true, restated: true, snapshot_realised_pnl_gbp: 150, restated_diff_gbp: 25,
+};
+const PLAIN_MONTH = {
+  year: 2026, month: 4, realised_pnl_gbp: -60, trade_count: 3, null_fee_trade_count: 0,
+  snapshotted: true, restated: false, snapshot_realised_pnl_gbp: -60, restated_diff_gbp: 0,
+};
+
+const { TD_PREFS_ALL_ON: ALL_PREFS } = require('./mocks/notifications-mock-data');
+
+const HISTORY = {
+  status: 'ok',
+  data: {
+    total: 2,
+    evaluations: [
+      {
+        id: 'eval-1', evaluation_timestamp: '2026-10-05T08:00:00Z', rule_type: 'stop_loss_approach', symbol: 'AAPL',
+        triggered: true, notification_sent: true,
+        values_compared: { stop_price: 42.1, current_price: 43.5, gap_pct: 3.3, threshold_pct: 5.0 },
+      },
+      {
+        id: 'eval-2', evaluation_timestamp: '2026-10-05T07:00:00Z', rule_type: 'grace_period_warning', symbol: 'VOD',
+        triggered: false, notification_sent: false, values_compared: {},
+      },
+    ],
+  },
+};
+
+async function mockSt19Routes(page) {
+  await page.route(new RegExp(`${API}/reports/monthly-pnl(?!\\?format=csv)`), (route) =>
+    route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ status: 'ok', data: [RESTATED_MONTH, PLAIN_MONTH], estimated_unrealised_pnl: null, unrealised_note: null, compliance_summary: null }),
+    })
+  );
+  await page.route(new RegExp(`${API}/reports/tax-year(?!\\?format=csv)`), (route) =>
+    route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'ok',
+        data: {
+          tax_year_label: '2026/27',
+          summary: { total_realised_pnl: 115, total_gross_profit: 175, total_gross_loss: -60, win_rate: 50, total_closed_trades: 7, restated_month_count: 1 },
+          trades: [], estimated_unrealised_pnl: 0, unrealised_note: null,
+        },
+      }),
+    })
+  );
+  await page.route(/\/notifications\/preferences/, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ALL_PREFS) })
+  );
+  await page.route(/\/alerts\/history/, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(HISTORY) })
+  );
+}
+
+for (const theme of ['dark', 'light']) {
+  test.describe(`Reports and Notifications axe scan — ${theme} theme (ST-19)`, () => {
+    test.beforeEach(async ({ page }) => {
+      await page.addInitScript((t) => window.localStorage.setItem('theme', t), theme);
+      await mockRoutes(page);
+      await mockSt19Routes(page);
+    });
+
+    test(`Reports Monthly tab with a restated month expanded (${theme})`, async ({ page }) => {
+      await page.goto('/#/Reports');
+      await page.getByRole('button', { name: /monthly p&l/i }).click();
+      const marker = page.getByTestId('monthly-restated-marker');
+      await expect(marker).toBeVisible({ timeout: 10000 });
+      await marker.click();
+      await expect(page.getByTestId('monthly-restatement-detail')).toBeVisible();
+      // Confirm the theme actually applied, so a light run is not a second dark run.
+      if (theme === 'dark') {
+        await expect(page.locator('html')).toHaveClass(/\bdark\b/);
+      } else {
+        await expect(page.locator('html')).not.toHaveClass(/\bdark\b/);
+      }
+      await runAxeScan(page, `ReportsMonthly:${theme}`);
+    });
+
+    test(`Reports Tax Year tab with the restated-months notice (${theme})`, async ({ page }) => {
+      await page.goto('/#/Reports');
+      await page.getByRole('button', { name: /tax year p&l/i }).click();
+      await expect(page.getByTestId('taxyear-restated-notice')).toBeVisible({ timeout: 10000 });
+      await runAxeScan(page, `ReportsTaxYear:${theme}`);
+    });
+
+    test(`Notification preferences (${theme})`, async ({ page }) => {
+      await page.goto('/#/notifications/preferences');
+      await expect(page.getByText('Stop Loss Approach').first()).toBeVisible({ timeout: 10000 });
+      await runAxeScan(page, `NotificationPreferences:${theme}`);
+    });
+
+    test(`Notification history (${theme})`, async ({ page }) => {
+      await page.goto('/#/notifications/history');
+      await page.waitForLoadState('networkidle');
+      await expect(page.getByText('AAPL').first()).toBeVisible({ timeout: 10000 });
+      await runAxeScan(page, `NotificationsHistory:${theme}`);
+    });
+  });
+}

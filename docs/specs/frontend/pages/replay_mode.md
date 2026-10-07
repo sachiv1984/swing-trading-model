@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.2
-**Last Updated:** 2026-09-25 (ST-01c, EPIC-01, v9.7, BLG-FEAT-74 — implementation lands: wire contract referenced, §13 item 5 IT-06 premise corrected, route/column-label corrections, FX-basis caption and independence/skipped-trade notice added); prior — 2026-09-23 (v9.7 design gate — ST-01/BLG-FEAT-74: new page, V1 shape)
+**Version:** 0.3
+**Last Updated:** 2026-10-07 (ST-20, EPIC-04, v9.10, BLG-SPEC-171 — determinism guarantee and engine-versus-live rule divergences stated; results caption gains the engine-rules sentence); prior — 2026-09-25 (ST-01c, EPIC-01, v9.7, BLG-FEAT-74 — implementation lands: wire contract referenced, §13 item 5 IT-06 premise corrected, route/column-label corrections, FX-basis caption and independence/skipped-trade notice added); prior — 2026-09-23 (v9.7 design gate — ST-01/BLG-FEAT-74: new page, V1 shape)
 **Design Source:** docs/design/2026-09-23__release-v9.7/po05-replay-mode/decision_record.md
 **Wire Contract:** docs/product/decisions/po05_replay_scope_confirmation.md (rev 3); implemented as `docs/specs/api_contracts/replay_endpoints.md` v1.0
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -18,7 +18,7 @@ capable of, predicting future performance.
 
 Users can:
 - Select a historical date range, or a specific set of their own closed trades
-- Run a deterministic replay of that scope under the current strategy rule set
+- Run a deterministic replay of that scope under the current strategy rule set, as applied by the strategy backtest engine (see §13 item 5)
 - View a clearly retrospective-labelled summary and per-trade result
 
 ---
@@ -55,6 +55,17 @@ the wire contract's Finding F1:
    `trade_history` and public price history; it writes nothing anywhere. See the wire
    contract's Finding F1 for the full correction and rationale — this is a stronger
    isolation guarantee than the v0.1 wording implied, not a weaker one.
+   **Determinism (v0.3, Finding F2):** there is no randomness, model or adaptive state.
+   The guarantee is fingerprint-checkable, not unconditional: the same request, the
+   same code and dependency versions, and the same `price_data_fingerprint` give
+   byte-identical results (wire contract D6). `yfinance` history can be revised, so
+   the same request on a later day may differ.
+   **Rule fidelity (v0.3, Finding F4):** the engine differs from live stop handling
+   (`strategy_rules.md` §7.2): it has no breakeven floor on a profitable position's
+   stop, its ATR is close-only, and it checks the stop before risk-off. Its fourth
+   difference (entry fee in the entry price) does not apply here, because the replay
+   applies no entry cost (wire contract D1). The results caption states this (§Output
+   View item 5).
 
 Any change to this page that touches one of the 5 conditions above requires a fresh
 §13 review before merge, not just a design-gate pass.
@@ -97,8 +108,10 @@ Rendered below the selector after a run completes. Order is fixed:
    when `run.skipped` is non-empty: a muted amber line naming how many trades could
    not be replayed and why (grouped by reason). `data-testid="replay-skipped-notice"`.
 5. **FX-basis caption** (v0.2 addition, wire contract §7 item 2) — a muted line:
-   *"GBP figures use each trade's recorded entry exchange rate."*
-   `data-testid="replay-fx-basis-caption"`.
+   *"GBP figures use each trade's recorded entry exchange rate. Simulated with the backtest engine's exit rules, which differ from live stop handling: no breakeven floor, close-only ATR, and the stop is checked before risk-off."*
+   `data-testid="replay-fx-basis-caption"`. The second sentence was added in v0.3
+   (ST-20); its wording was decided by the Strategy Rules & System Intent Owner
+   (`ESC-EXEC-20261006-05`). Wording-only, inside the existing element.
 6. **Results table** — one row per replayed trade: Ticker, **Entry Date** (corrected
    from v0.1's "Simulated Entry Date" — entry is always the trade's real, recorded
    entry; only the exit is simulated), Simulated Exit Date, Simulated P&L (GBP), Exit
@@ -156,5 +169,6 @@ the Trade Set checkbox list itself (ticker, exit date, toggling).
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3 | 2026-10-07 | ST-20 (EPIC-04, v9.10, BLG-SPEC-171): §13 item 5 states the fingerprint-checkable determinism guarantee (F2) and the engine-versus-live rule divergences (F4). §Output View item 5 caption gains the engine-rules sentence decided by the Strategy Rules & System Intent Owner (`ESC-EXEC-20261006-05`). Wording-only (FI-P3-02); asserted in `replay-mode.spec.js`. |
 | 0.2 | 2026-09-25 | ST-01c (EPIC-01, BLG-FEAT-74): implementation. §13 item 5 corrected — no IT-06/Alpaca reuse, per the wire contract's Finding F1. Route corrected `/replay` → `/Replay` (actual `pages.config.js` convention). Results table column corrected "Simulated Entry Date" → "Entry Date" (entry is never simulated). Added the independence note, skipped-trades notice, and FX-basis caption (wire contract §7 items 2–3). API Reference filled in. Design source and V1 shape otherwise unchanged. Authority: Sprint Execution Engine (agent-mediated, Frontend Specifications & UX Documentation Owner role — §5.3), on the user's explicit direction. |
 | 0.1 | 2026-09-23 | v9.7 design gate — ST-01 (EPIC-01, BLG-FEAT-74): new page, V1 shape (selector, output view, §13 boundary, states). Design source: `docs/design/2026-09-23__release-v9.7/po05-replay-mode/decision_record.md`. Design Only — Implementation Pending (no backend endpoint yet). Authority: Head of Specs Team. |

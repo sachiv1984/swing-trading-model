@@ -177,7 +177,7 @@ function TaxYearReport({ onViewMonthly }) {
             value={String(selectedYear)}
             onValueChange={(v) => setSelectedYear(Number(v))}
           >
-            <SelectTrigger className="w-36 bg-slate-800/50 border-slate-700 text-white h-9">
+            <SelectTrigger aria-label="Tax year" className="w-36 bg-slate-800/50 border-slate-700 text-white h-9">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-slate-800 border-slate-700">
@@ -622,7 +622,7 @@ function ReconciliationReport() {
             value={String(selectedYear)}
             onValueChange={(v) => setSelectedYear(Number(v))}
           >
-            <SelectTrigger className="w-36 bg-slate-800/50 border-slate-700 text-white h-9">
+            <SelectTrigger aria-label="Tax year" className="w-36 bg-slate-800/50 border-slate-700 text-white h-9">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-slate-800 border-slate-700">
@@ -789,7 +789,7 @@ function MonthlyPnlTable({ initialYear }) {
           value={String(selectedYear)}
           onValueChange={(v) => setSelectedYear(Number(v))}
         >
-          <SelectTrigger data-testid="monthly-tax-year-filter" className="w-36 bg-slate-800/50 border-slate-700 text-white h-9">
+          <SelectTrigger data-testid="monthly-tax-year-filter" aria-label="Tax year" className="w-36 bg-slate-800/50 border-slate-700 text-white h-9">
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="bg-slate-800 border-slate-700">
@@ -1137,7 +1137,7 @@ export default function Reports() {
           activeTab === "performance" ? (
             <div className="flex items-center gap-3">
               <Select value={period} onValueChange={setPeriod}>
-                <SelectTrigger className="w-40 bg-slate-800/50 border-slate-700 text-white">
+                <SelectTrigger aria-label="Performance period" className="w-40 bg-slate-800/50 border-slate-700 text-white">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-800 border-slate-700">

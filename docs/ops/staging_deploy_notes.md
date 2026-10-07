@@ -2,7 +2,7 @@
 **Class:** Supporting Document (Class 2)
 **Status:** Active
 **Version:** 1.2
-**Last Updated:** 2026-09-29 (ST-17, EPIC-04, v9.8, BLG-OPS-169 — added §7, stale-staging detection via `staging-smoke-test.yml` + `deployed_commit_sha`); prior — 2026-08-21 (ST-13, EPIC-03, v9.0, BLG-OPS-25 — added post-deploy smoke test suite to `deploy-staging`, plus a new independent scheduled smoke test workflow; §3 build minute assessment updated)
+**Last Updated:** 2026-10-07 (ST-18, EPIC-04, v9.10, BLG-OPS-171 — §7 stale-deploy check now compares staging against the latest staging-deploying commit, not main's tip); prior — 2026-09-29 (ST-17, EPIC-04, v9.8, BLG-OPS-169 — added §7, stale-staging detection via `staging-smoke-test.yml` + `deployed_commit_sha`); prior — 2026-08-21 (ST-13, EPIC-03, v9.0, BLG-OPS-25 — added post-deploy smoke test suite to `deploy-staging`, plus a new independent scheduled smoke test workflow; §3 build minute assessment updated); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -99,6 +99,7 @@ on:
 1. `backend/services/health_service.py`'s `get_deployed_commit_sha()` reads Render's `RENDER_GIT_COMMIT` environment variable (auto-set for every Render service, no `render.yaml` change needed), falling back to a local `git rev-parse HEAD` for non-Render environments. Exposed as `deployed_commit_sha` on `GET /health/detailed` (contract: `docs/specs/api_contracts/health_endpoints.md` v1.7).
 2. `staging-smoke-test.yml` passes `EXPECTED_COMMIT_SHA: ${{ github.sha }}` (the tip of `main` this scheduled run checked out) to `scripts/staging_smoke_test.py`.
 3. `staging_smoke_test.py`'s `check_deployed_commit()` compares the two. A mismatch fails the job (same Telegram-alert mechanism as any other smoke-test failure, §5) with a `STALE STAGING DEPLOY` message naming both SHAs.
+4. **Comparison target (ST-18, BLG-OPS-171, v9.10):** the script first narrows `EXPECTED_COMMIT_SHA` to the latest commit at or before it that touches a `staging-deploy.yml` `on.push.paths` entry (`latest_deploy_commit()`; the workflow checks out with `fetch-depth: 0` for this). A commit outside those paths, such as a governance-only commit, never redeploys staging, so comparing against `main`'s tip reported a false `STALE STAGING DEPLOY` (run 37596800197, 2026-10-07). Staging running a descendant of the target (e.g. after a manual `staging-deploy.yml` dispatch) also counts as current (`git merge-base --is-ancestor`). If git cannot resolve either step, the check falls back to the strict tip comparison. Known limit: the ancestor check accepts any descendant of the target, so a staging deploy of an unmerged branch commit built on top of it also passes.
 
 **Known limits (what can't be verified from the repo alone):**
 - **Detection lag:** bounded by the scheduled workflow's 6-hour cadence, not immediate — a stale deploy can go undetected for up to ~6 hours after the merge that should have redeployed staging.
