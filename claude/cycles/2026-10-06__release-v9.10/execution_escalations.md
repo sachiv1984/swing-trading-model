@@ -59,7 +59,7 @@ Last Updated: 2026-10-06
 - **SLA due-by:** 2026-10-09T16:00:46Z (72h — Strategy)
 - **Blocks execution:** No
 - **Disposition:** Resolved
-- **Resolved at:** 2026-10-07T07:40:00Z
+- **Resolved at:** 2026-10-07T07:36:55Z
 - **Resolved by:** Strategy Rules & System Intent Owner (agent-mediated, `execution_prompt.md` §5.3, on the user's explicit direction 2026-10-07)
 - **Resolution summary:** F1, F2 and F4 acknowledged as stated in the scope note, dated 2026-10-07, in `po05_section13_preassessment.md` §v9.10 Corrections. The PASS determination is unchanged. Caption decided, more specific than the engine recommendation so the reader is not left to guess (role charter §8): **"Simulated with the backtest engine's exit rules, which differ from live stop handling: no breakeven floor, close-only ATR, and the stop is checked before risk-off."** F4's fourth difference (entry fee) is omitted because the replay applies no entry cost (wire contract D1). AC 2 and AC 3 follow in the same commit. `current_roadmap.md` is edited under `ESC-CLOSE-20261006-01`. The `strategy_rules.md` §13.5 roster wording is filed as BLG-GOV-377 (outside write scope).
 

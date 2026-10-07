@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-07T07:00:08Z",
+  "last_updated_utc": "2026-10-07T07:40:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -289,7 +289,8 @@
       "qa_evidence_log": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "tests/e2e/accessibility-axe-scan.spec.js",
-        "tests/test_claude_audit_entry_failure_logging.py"
+        "tests/test_claude_audit_entry_failure_logging.py",
+        "tests/e2e/replay-mode.spec.js"
       ],
       "stories": {
         "ST-15": {
@@ -425,24 +426,36 @@
         },
         "ST-20": {
           "title": "Correct the PO-05 pre-assessment and replay page spec wording",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1913,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "50dc7154d4a5516cb6855e9a6549cd540aff3359",
           "delegation_record_id": null,
-          "blocked_since_utc": "2026-10-06T16:01:09Z",
-          "unblock_criteria": "ESC-EXEC-20261006-05: F1/F2/F4 acknowledgement + caption wording",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-10-07T07:36:55Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/po05_section13_preassessment.md#v9.10 Corrections (Strategy Rules & System Intent Owner Acknowledgement)",
+            "docs/specs/frontend/pages/replay_mode.md#§13 Boundary (binding — do not implement around this)",
+            "docs/product/decisions/po05_replay_scope_confirmation.md",
+            "claude/roadmap/current_roadmap.md",
+            "tests/e2e/replay-mode.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "cleared_utc": "2026-10-07T07:36:55Z",
+            "notes": "ESC-EXEC-20261006-05: F1/F2/F4 acknowledged; caption decided. User-directed 2026-10-07."
+          },
+          "notes": "Reclassified delegated_decision -> autonomous on acknowledgement. AC1 escalation + pre-assessment corrections; AC2 roadmap (ESC-CLOSE-20261006-01) + two other docs; AC3 consistent across pre-assessment/roadmap/replay_mode.md. Caption asserted in replay-mode.spec.js. BLG-GOV-377 filed. QA evidence entry goes in qa_evidence_EPIC-04.md at EPIC consolidation (STEP 3.2.A). Deviation check: none."
         },
         "ST-21": {
           "title": "Sign-off single-point-of-failure matrix",
@@ -631,8 +644,7 @@
     "ST-11",
     "ST-13",
     "ST-14",
-    "ST-15",
-    "ST-20"
+    "ST-15"
   ],
   "delegated_items": [
     "ST-18"
@@ -643,21 +655,21 @@
     "ST-03",
     "ST-04",
     "ST-05",
-    "ST-12",
-    "ST-16",
-    "ST-17",
-    "ST-19",
-    "ST-21",
     "ST-06",
     "ST-07",
     "ST-08",
     "ST-09",
-    "ST-10"
+    "ST-10",
+    "ST-12",
+    "ST-16",
+    "ST-17",
+    "ST-19",
+    "ST-20",
+    "ST-21"
   ],
   "open_escalations": [
     "ESC-EXEC-20261006-03",
     "ESC-EXEC-20261006-04",
-    "ESC-EXEC-20261006-05",
     "ESC-EXEC-20261006-06"
   ],
   "merge_gate": {
@@ -680,7 +692,8 @@
     "2026-10-07T06:48:09Z: EPIC-02 DoQ sign-off agent-mediated (Director of Quality role, §5.3) on explicit user direction; qa_signed_off set in the same commit (DF-02).",
     "2026-10-07T06:49:18Z: EPIC-02 PR #1916 opened; combined agent-mediated DoQ + PO review comment posted (both Approved with Comments). Awaiting PR CI, human QA sign-off comment and PO acceptance.",
     "2026-10-07T06:51:57Z: EPIC-02 merge-gate QA sign-off and PO acceptance comments posted on PR #1916, recorded by the engine on the human owner's explicit in-session direction (OA-6 labelling). Merge left to the human.",
-    "2026-10-07T07:00:08Z: Mid-session re-sync (AUD-2026-08-21-010): PR #1916 (EPIC-02) merged by the human at 2026-10-07T06:59:46Z (fd350899); pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-02 is empty."
+    "2026-10-07T07:00:08Z: Mid-session re-sync (AUD-2026-08-21-010): PR #1916 (EPIC-02) merged by the human at 2026-10-07T06:59:46Z (fd350899); pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-02 is empty.",
+    "2026-10-07T07:36:55Z: ESC-EXEC-20261006-05 resolved by Strategy Rules & System Intent Owner acknowledgement (agent-mediated, §5.3, user-directed). ST-20 reclassified delegated_decision -> autonomous and completed in 50dc7154. current_roadmap.md edited under ESC-CLOSE-20261006-01's named-file ruling. No DEL record existed for this escalation-only block. BLG-GOV-377 filed."
   ],
   "sealed": false,
   "sealed_utc": null
