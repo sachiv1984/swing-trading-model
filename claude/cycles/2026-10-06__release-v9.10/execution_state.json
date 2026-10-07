@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-07T09:45:20Z",
+  "last_updated_utc": "2026-10-07T09:54:31Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -457,11 +457,11 @@
           "assigned_to": "engine",
           "github_issue": 1912,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
-          "commit_sha": "14f9cef04b150e7840cd3c8d557ea5c2618c6fc3",
+          "commit_sha": "b8ced55f918ac16d0ae1a61bf73c7ebaeefdd1a8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": "2026-10-06T15:52:42Z",
+          "completed_utc": "2026-10-07T09:49:12Z",
           "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/accessibility-axe-scan.spec.js"
@@ -471,7 +471,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "12/12 axe tests pass locally. button-name fixed; light-theme color-contrast filed BLG-FE-200 (baseline per page:theme). Deviation check: none."
+          "notes": "12/12 axe tests pass locally. button-name fixed; light-theme color-contrast filed BLG-FE-200 (baseline per page:theme). Deviation check: none. 2026-10-07: real CI (Playwright run 37591771271) failed the Notification History scans on scrollable-region-focusable; fixed in b8ced55f (now the story's commit_sha; original work 14f9cef0). All 8 workflows green on b8ced55f."
         },
         "ST-20": {
           "title": "Correct the PO-05 pre-assessment and replay page spec wording",
@@ -746,7 +746,8 @@
     "2026-10-07: run sprint resume. Block re-evaluation (s10.1): ST-15 still blocked on ESC-EXEC-20261006-06 (human Product Owner sign-off); ST-18 still blocked on DEL-20261006-03 (no [ST-18] commit since delegation). Out-of-scope finding: STAGING_API_URL secret unset, all 126 staging-smoke-test.yml runs fail at the env check, so the ST-18 live fire cannot work until it is set. Filed BLG-OPS-180 (P1).",
     "2026-10-07T08:16:06Z: ESC-EXEC-20261006-06 resolved by the human Product Owner in session (checklist approved, including the 2026-11-03 first review and the BLG-AI-09 exception). ST-15 marked done. No DEL record existed for this escalation-only block.",
     "2026-10-07: ST-18 dispatch run 37596800197 failed with a false-positive STALE STAGING DEPLOY (main tip 1639c956 is governance-only, so it never triggers staging-deploy.yml). Engine fixed scripts/staging_smoke_test.py + staging-smoke-test.yml to compare against the latest staging-deploying commit. Not used as AC 1 evidence: AC 1 needs a deliberately introduced divergence.",
-    "2026-10-07T09:45:20Z: DEL-20261006-03 unblocked in-session (user, for the Infrastructure & Operations Owner). ST-18 done: failing run 37598457966, passing run 37602589130. EPIC-04: all 7 stories done."
+    "2026-10-07T09:45:20Z: DEL-20261006-03 unblocked in-session (user, for the Infrastructure & Operations Owner). ST-18 done: failing run 37598457966, passing run 37602589130. EPIC-04: all 7 stories done.",
+    "2026-10-07T09:54:31Z: STEP 3.2.A for EPIC-04. Real-CI check found ST-19's own axe test failing (scrollable-region-focusable) on every EPIC-04 code commit; fixed in b8ced55f, all 8 workflows green. qa_evidence_EPIC-04.md consolidated; DoQ sign-off block awaiting the Director of Quality."
   ],
   "sealed": false,
   "sealed_utc": null
