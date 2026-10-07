@@ -115,4 +115,7 @@ Last Updated: 2026-10-06
 - **Unblock criteria:** The Product Owner confirms the checklist (including the first review on 2026-11-03 and the BLG-AI-09 baseline exception), recorded in the checklist's §5 Sign-off and in ST-15's QA evidence.
 - **SLA due-by:** 2026-10-07T16:04:53Z (24h — Lifecycle)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-07T08:16:06Z
+- **Resolved by:** Product Owner (human, confirmed in session 2026-10-07)
+- **Resolution summary:** The Product Owner approved the checklist, including the first review on 2026-11-03 and the BLG-AI-09 baseline exception. Recorded in the checklist's §5 Sign-off. ST-15's QA evidence entry in `qa_evidence_EPIC-04.md` (created at STEP 3.2.A) carries the same record. ST-15 is done.

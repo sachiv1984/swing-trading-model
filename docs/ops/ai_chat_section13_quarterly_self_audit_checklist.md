@@ -72,5 +72,5 @@ Record a Pass, Fail or N/A for each item, with evidence (file and line, command 
 
 ## 5. Sign-off (checklist adoption)
 
-- Product Owner: _pending_ (always human; `ESC-EXEC-20261006-06`)
+- Product Owner: **Approved** 2026-10-07. Human Product Owner, confirmed in session on the Sprint Execution Engine's prompt, including the first review on 2026-11-03 and the BLG-AI-09 baseline exception. Resolves `ESC-EXEC-20261006-06`.
 - Strategy Rules & System Intent Owner: **Approved** 2026-10-06. Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role — §5.3). Blocked twice before approval: wrong function name, an untrue A1 premise and a breach-rule contradiction, all corrected. Pending human confirmation.

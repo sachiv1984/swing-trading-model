@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-07T08:10:30Z",
+  "last_updated_utc": "2026-10-07T08:16:06Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -337,32 +337,32 @@
         "ST-15": {
           "title": "AI chat advisory §13 quarterly self-audit checklist",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Product Owner",
           "github_issue": 1908,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
           "commit_sha": "6b6f8af3cf6099c2f5fd6b3a5c461e880fe92747",
           "delegation_record_id": null,
-          "blocked_since_utc": "2026-10-06T16:05:12Z",
-          "unblock_criteria": "ESC-EXEC-20261006-06: human Product Owner sign-off on the checklist",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
             "docs/ops/ai_chat_section13_quarterly_self_audit_checklist.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.push",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": {
             "role": "Strategy Rules & System Intent Owner",
             "method": "agent_mediated",
             "status": "cleared",
-            "cleared_utc": "2026-10-06T16:05:12Z",
+            "cleared_utc": "2026-10-07T08:16:06Z",
             "retries": 2,
-            "notes": "SRSIO half cleared on retry 2; Product Owner half pending (always human). BLG-AI-09 filed."
+            "notes": "SRSIO half cleared agent-mediated on retry 2 (2026-10-06T16:05:12Z). Product Owner half cleared by the human Product Owner in session 2026-10-07 (ESC-EXEC-20261006-06 resolved). BLG-AI-09 filed."
           },
-          "notes": ""
+          "notes": "Done. Work commit 6b6f8af3, corrections in 0d67a4ff. Both sign-offs cleared; the Product Owner approval is recorded in checklist §5. Deviation check: none (the checklist is the governing artefact)."
         },
         "ST-16": {
           "title": "AI model output logging completeness audit",
@@ -681,9 +681,7 @@
       "merged_utc": "2026-10-07T06:59:46Z"
     }
   },
-  "blocked_items": [
-    "ST-15"
-  ],
+  "blocked_items": [],
   "delegated_items": [
     "ST-18"
   ],
@@ -702,15 +700,14 @@
     "ST-12",
     "ST-13",
     "ST-14",
+    "ST-15",
     "ST-16",
     "ST-17",
     "ST-19",
     "ST-20",
     "ST-21"
   ],
-  "open_escalations": [
-    "ESC-EXEC-20261006-06"
-  ],
+  "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
@@ -739,7 +736,8 @@
     "2026-10-07: Mid-session re-sync (AUD-2026-08-21-010): PR #1917 (EPIC-03) merged by the human at 2026-10-07T08:06:08Z (ef4088b4); pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-03 is empty.",
     "2026-10-07T07:36:55Z: ESC-EXEC-20261006-05 resolved by Strategy Rules & System Intent Owner acknowledgement (agent-mediated, §5.3, user-directed). ST-20 reclassified delegated_decision -> autonomous and completed in 50dc7154. current_roadmap.md edited under ESC-CLOSE-20261006-01's named-file ruling. No DEL record existed for this escalation-only block. BLG-GOV-377 filed.",
     "2026-10-07: Post-merge sibling sync (STEP 4 3c): main (EPIC-03 merged, PR #1917) merged into EPIC-04. execution_state.json resolved per CLAUDE.md §8: EPIC-01/02/03 records from main, EPIC-04 records from the branch, union of completed items, no done->blocked reversion, summaries recomputed. No shared-field shape drift (2b). backlog.md and execution_escalations.md conflicts were both additive, resolved by union.",
-    "2026-10-07: run sprint resume. Block re-evaluation (s10.1): ST-15 still blocked on ESC-EXEC-20261006-06 (human Product Owner sign-off); ST-18 still blocked on DEL-20261006-03 (no [ST-18] commit since delegation). Out-of-scope finding: STAGING_API_URL secret unset, all 126 staging-smoke-test.yml runs fail at the env check, so the ST-18 live fire cannot work until it is set. Filed BLG-OPS-180 (P1)."
+    "2026-10-07: run sprint resume. Block re-evaluation (s10.1): ST-15 still blocked on ESC-EXEC-20261006-06 (human Product Owner sign-off); ST-18 still blocked on DEL-20261006-03 (no [ST-18] commit since delegation). Out-of-scope finding: STAGING_API_URL secret unset, all 126 staging-smoke-test.yml runs fail at the env check, so the ST-18 live fire cannot work until it is set. Filed BLG-OPS-180 (P1).",
+    "2026-10-07T08:16:06Z: ESC-EXEC-20261006-06 resolved by the human Product Owner in session (checklist approved, including the 2026-11-03 first review and the BLG-AI-09 exception). ST-15 marked done. No DEL record existed for this escalation-only block."
   ],
   "sealed": false,
   "sealed_utc": null
