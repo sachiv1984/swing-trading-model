@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-07 (session — 1 new item(s) added: BLG-OPS-182 (EPIC-04 ST-18 AC 1 narrowed, live fire from main after merge)); prior — 2026-10-07 (session — 1 new item(s) added: BLG-OPS-181 (EPIC-04 ST-18 live fire, staging hook deploy did not go live)); prior — 2026-10-07 (session — 1 new item(s) added: BLG-OPS-180 (EPIC-04 ST-18 execution, missing STAGING_API_URL secret)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-07 (session — 1 new item(s) added: BLG-QA-216 (PR #1918 agent-mediated review, axe theme assertion)); prior — 2026-10-07 (session — 1 new item(s) added: BLG-OPS-182 (EPIC-04 ST-18 AC 1 narrowed, live fire from main after merge)); prior — 2026-10-07 (session — 1 new item(s) added: BLG-OPS-181 (EPIC-04 ST-18 live fire, staging hook deploy did not go live)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5220,5 +5220,24 @@ ST-18's failing run (37598457966) was dispatched on the EPIC-04 branch: staging 
 **Acceptance Criteria**
 - A failing `main` run URL showing `STALE STAGING DEPLOY` for the deliberate divergence, with the Telegram alert received
 - A passing `main` run URL after staging is restored
+
+---
+
+### BLG-QA-216 — Assert the applied theme in every Reports/Notifications axe scan, not just Reports Monthly
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated PR #1918 review (Director of Quality role), EPIC-04 ST-19, cycle `2026-10-06__release-v9.10` — 2026-10-07
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/e2e/accessibility-axe-scan.spec.js` sets the theme through the localStorage key `Layout.js` reads. It confirms the theme applied (`html` has, or lacks, `.dark`) only in the Reports Monthly test (around line 306). The Tax Year, Notification Preferences and Notification History tests scan without that check. If theme application broke, their "light" runs would silently become second dark runs. The `:light` baseline entries (BLG-FE-200) would then grandfather nothing real, and light-theme regressions would go unscanned.
+
+**Scope**
+- Move the theme assertion into a shared helper used by all four tests in each theme, or into the `beforeEach`.
+
+**Acceptance Criteria**
+- All 8 Reports/Notifications axe tests assert the applied theme before scanning, and pass in CI
 
 ---
