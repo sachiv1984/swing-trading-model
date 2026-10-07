@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` — 25 items added from idea intake `IW-20261006-01` (BLG-BE-138–142, BLG-FE-195–199, BLG-SPEC-185–188, BLG-SEC-41/42, BLG-GOV-369–374, BLG-OPS-179, BLG-FEAT-99, BLG-FR-06) plus BLG-GOV-375 (STEP -1.5 Owner-field lint); BLG-BE-138 P1 Correctness Fast-Track → v9.10; BLG-FE-193 gate met, Provisional-Target → v9.10); prior — 2026-10-06 (session — 1 new item(s) added: BLG-TECH-21); prior — 2026-10-06 (groom backlog post-ship closure 2026-09-30__release-v9.9 — 35 items archived (v9.9 shipped); 2 duplicate ephemeral `## Release Slice — v9.9` sections removed; 0 gate/effort/field-completeness/duplicate-ID issues; 2 governance-prompt duplicate candidates flagged for owner review (BLG-GOV-355, BLG-GOV-368)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-07 (session — 4 new item(s) added: BLG-BE-146, BLG-FE-203, BLG-QA-215, BLG-FE-204, from the EPIC-02 agent-mediated pre-PR review); prior — 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` — 25 items added from idea intake `IW-20261006-01` (BLG-BE-138–142, BLG-FE-195–199, BLG-SPEC-185–188, BLG-SEC-41/42, BLG-GOV-369–374, BLG-OPS-179, BLG-FEAT-99, BLG-FR-06) plus BLG-GOV-375 (STEP -1.5 Owner-field lint); BLG-BE-138 P1 Correctness Fast-Track → v9.10; BLG-FE-193 gate met, Provisional-Target → v9.10); prior — 2026-10-06 (session — 1 new item(s) added: BLG-TECH-21); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4963,5 +4963,87 @@ ST-02 keeps the stored stop when no ATR is available and sets `atr_unavailable: 
 
 **Acceptance Criteria**
 - [ ] A position whose last recompute had no ATR shows a visible indicator on Positions (Playwright). Contract and OpenAPI updated in the same commit.
+
+---
+
+### BLG-BE-146 — Add an ATR preview so Trade Entry can show the stop, risk and size before save
+**Priority:** P3 (Low)
+**Type:** Backend / Frontend — Trade Entry
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner
+**Source:** Agent-mediated pre-PR review of EPIC-02 (Director of Quality + Product Owner roles), cycle `2026-10-06__release-v9.10`, finding on ST-07 (BLG-FE-197) — 2026-10-07
+**Effort:** S (~1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Since ST-07, Trade Entry shows only the stop the backend will store: entry − 5× ATR. When the ATR field is blank, the backend fetches ATR only at save. Until then the Initial Stop, Risk (to stop) and the Position Sizing widget all show "Calculated on save" or an empty state. A user who does not know the ticker's ATR can no longer size a position before submitting it. Previously they could type a stop. No endpoint exposes the `calculate_atr()` value that `add_position()` uses.
+
+**Scope**
+- A read-only endpoint (e.g. `GET /market/atr/{ticker}?market=`) returning the 14-day ATR from the same `calculate_atr()` path `add_position()` uses, with a `null` result when unavailable. Contract, `openapi.yaml`, `backend/routers/test.py` and SystemStatus count updated per CLAUDE.md §2.
+- Trade Entry calls it once the ticker and market are known and the ATR field is blank, and uses the result for the system stop, risk and sizing preview, labelled as fetched. A typed ATR still takes precedence.
+
+**Acceptance Criteria**
+- With a ticker and entry price entered and ATR blank, Trade Entry shows a numeric system stop, risk and suggested shares before save (Playwright, mocked endpoint)
+- The stop shown before save equals the `initial_stop` returned by `POST /portfolio/position` for the same inputs (backend test)
+- When the endpoint returns no ATR, the existing "Calculated on save" states remain
+
+---
+
+### BLG-FE-203 — Show the currency unit on Trade Entry's ATR field and reject implausible typed ATRs
+**Priority:** P3 (Low)
+**Type:** Frontend / Backend Validation
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** Agent-mediated pre-PR review of EPIC-02 (Director of Quality + Product Owner roles), cycle `2026-10-06__release-v9.10`, finding on ST-07 (BLG-FE-197) — 2026-10-07
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The ATR field ("ATR (14-day)") shows no unit, while the backend treats a typed ATR as native currency (pounds for UK, dollars for US). Since ST-07 the typed ATR alone sets the stored initial stop. A UK user who types ATR in pence, the unit UK quotes are often read in, gets a stop 100× too far below entry. It is stored with `atr_source = user` and nothing checks it.
+
+**Scope**
+- Show the market's currency symbol on the ATR field label, as the old Stop Price field did (e.g. "ATR (14-day, £)").
+- In `add_position()`, reject a typed ATR that is implausible relative to entry (e.g. ATR ≥ 20% of entry, or 5× ATR ≥ entry so the stop would be ≤ 0) with a clear 400 message. Trade Entry shows the same warning inline before submit.
+
+**Acceptance Criteria**
+- The ATR label shows £ for UK and $ for US (Playwright)
+- A typed ATR whose 5× multiple meets or exceeds the entry price is rejected by the API with a 400 and an explanatory message (backend test)
+- Trade Entry shows the warning inline and disables submit for that input (Playwright)
+
+---
+
+### BLG-QA-215 — Assert the stop-details tooltip time under a non-UTC browser timezone
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated pre-PR review of EPIC-02 (Director of Quality + Product Owner roles), cycle `2026-10-06__release-v9.10`, finding on ST-06 (BLG-FE-193) — 2026-10-07
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+The per-row "How this stop was set" tooltip formats `stop_calculated_at` in the viewer's local time. The API returns it as an offset ISO string (TIMESTAMPTZ). The SC-SCP Playwright cases use offset-less timestamps, so they pass in any timezone and never exercise the UTC-to-local conversion a UK user sees during BST.
+
+**Scope**
+- Add a case to `tests/e2e/stop-cell-provenance.spec.js` using an offset timestamp (e.g. `2026-10-05T21:15:00+00:00`) with `test.use({ timezoneId: 'Europe/London' })`, asserting the BST-local time.
+
+**Acceptance Criteria**
+- New SC-SCP case asserts "Last recalculated 5 Oct 2026, 22:15 — nightly update" for a `21:15+00:00` input under Europe/London, passing in CI
+
+---
+
+### BLG-FE-204 — Recent Trades glyph and colour should treat a P&L that rounds to £0.00 as break-even
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated pre-PR review of EPIC-02 (Director of Quality + Product Owner roles), cycle `2026-10-06__release-v9.10`, finding on ST-10 (BLG-FE-194) — 2026-10-07
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`RecentTradesWidget.js` picks the up/down/neutral glyph and colour from the raw `trade.pnl` sign, but displays the value rounded to 2 dp. A trade with |P&L| below £0.005 shows "+£0.00" or "−£0.00" with a green up or red down arrow. That contradicts ST-10's intent that a break-even trade shows the neutral glyph.
+
+**Scope**
+- Derive the glyph and colour from the P&L rounded to 2 dp, the same value that is displayed.
+
+**Acceptance Criteria**
+- A trade with `pnl: 0.004` renders the neutral glyph and neutral colour; `pnl: 0.01` still renders the up arrow (`recent-trades-zero-pnl-badge.spec.js`, Playwright)
 
 ---

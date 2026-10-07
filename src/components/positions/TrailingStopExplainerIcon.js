@@ -2,7 +2,7 @@ import { Info } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../ui/tooltip";
 
 const EXPLAINER_TEXT =
-  "Your stop tightens as a position becomes profitable and stays wide while it's losing or flat — this locks in gains without cutting winners short on noise. ATR is recalculated daily (14-day period). Once tightened, a stop never loosens, even if the position gives back some profit.";
+  "Your stop tightens as a position becomes profitable and stays wide while it's losing or flat — this locks in gains without cutting winners short on noise. ATR (14-day) is recalculated when positions load and by a nightly update. Each stop's details show when it was last recalculated. Once tightened, a stop never loosens, even if the position gives back some profit.";
 
 export default function TrailingStopExplainerIcon() {
   return (

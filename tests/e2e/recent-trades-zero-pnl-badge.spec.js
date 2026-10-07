@@ -11,6 +11,8 @@
  *   SC-RTB-02  pnl > 0    -> emerald badge (unchanged)
  *   SC-RTB-03  pnl < 0    -> rose badge (unchanged)
  *   SC-RTB-04  missing pnl (null) is treated as 0 -> neutral badge
+ *   SC-RTB-05  glyph: zero/missing pnl -> neutral Minus; winner -> TrendingUp; loser -> TrendingDown
+ *              (ST-10, BLG-FE-194, EPIC-02, cycle 2026-10-06__release-v9.10)
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
  *
@@ -83,5 +85,16 @@ test.describe('Recent Trades icon badge colour', () => {
     await expect(badge).toBeVisible({ timeout: 8000 });
     await expect(badge).toHaveClass(/bg-slate-500\/20/);
     await expect(badge).not.toHaveClass(/emerald|rose/);
+  });
+
+  test('SC-RTB-05: the glyph is neutral for break-even and missing P&L, arrows for winners and losers', async ({ page }) => {
+    await gotoDashboardWithTrades(page);
+    const glyph = (id, kind) => page.getByTestId(`recent-trade-badge-${id}`).getByTestId(`recent-trade-glyph-${kind}`);
+    await expect(glyph('rt-zero', 'neutral')).toBeVisible({ timeout: 8000 });
+    await expect(glyph('rt-zero', 'up')).toHaveCount(0);
+    await expect(glyph('rt-null', 'neutral')).toBeVisible();
+    await expect(glyph('rt-win', 'up')).toBeVisible();
+    await expect(glyph('rt-win', 'neutral')).toHaveCount(0);
+    await expect(glyph('rt-loss', 'down')).toBeVisible();
   });
 });
