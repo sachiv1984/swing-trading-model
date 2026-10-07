@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.224
-**Last Updated:** 2026-10-07 (BLG-GOV-362 Head of Specs Team ruling — execution_prompt.md v3.82→v3.83 (§7 plan-authorised named-file rule) and sprint_planning_prompt.md v3.19→v3.20 (STEP 3.1 named-file write check); §7 and §8 source-prompt headers and §14 rows updated); prior — 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` STEP 11 — roadmap_prompt.md v9.30→v9.31 and shared_standards.md v3.36→v3.37; §6 source-prompt header and §14 rows updated); prior — 2026-10-06 (post-ship closure `2026-09-30__release-v9.9` STEP 8 — execution_prompt.md v3.81→v3.82; §8 source-prompt header and §14 Execution Engine Source row updated); prior history retained — see prior entries in version control.
+**Version:** 4.225
+**Last Updated:** 2026-10-07 (BLG-GOV-362 Product Owner review condition — sprint_planning_prompt.md v3.20→v3.21 (§6.2 Named-file write disclosure); §7 source-prompt header and §14 row updated); prior — 2026-10-07 (BLG-GOV-362 Head of Specs Team ruling — execution_prompt.md v3.82→v3.83 and sprint_planning_prompt.md v3.19→v3.20; §7 and §8 source-prompt headers and §14 rows updated); prior — 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` STEP 11 — roadmap_prompt.md v9.30→v9.31 and shared_standards.md v3.36→v3.37; §6 source-prompt header and §14 rows updated); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -767,7 +767,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.20)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.21)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1368,7 +1368,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.224 |
+| Version | 4.225 |
 | Last Updated | 2026-10-07 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.10 |
@@ -1380,7 +1380,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.31 (+ `roadmap_prompt_appendix.md`) |
 | Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.59 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.20 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.21 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.83 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.17 |
@@ -1504,6 +1504,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.225 | 2026-10-07 | **BLG-GOV-362 Product Owner review condition — sprint_planning_prompt.md v3.20→v3.21.** §6.2 Sign-Off Gate gains a Named-file write disclosure: every STEP 3.1 named-file write is listed in the sign-off summary, and edits to an existing backlog item's Scope, Acceptance Criteria or Gate criteria need explicit Product Owner confirmation before seal. §7 source-prompt header and §14 Sprint Planning Engine row v3.20→v3.21; §14 self-row 4.224→4.225. |
 | 4.224 | 2026-10-07 | **BLG-GOV-362 resolution — Head of Specs Team ruling (agent-mediated, user-directed; Product Owner co-owner acknowledgement pending) — 2 source prompts bumped.** `execution_prompt.md` v3.82→v3.83: §7 gains the plan-authorised named-file rule (a sealed AC naming an exact `claude/roadmap/*` file, or an exact `backlog.md` item ID plus a descriptive field, authorises that write in-sprint; prioritisation/scope/capacity decisions and Priority/Status/Owner/Effort/Provisional-Target/Type/Source stay excluded), codifying `ESC-CLOSE-20261006-01`. `sprint_planning_prompt.md` v3.19→v3.20: STEP 3.1 named-file write check (name the exact target, or redraft the AC / classify `delegated_decision` with a RISK entry). §7/§8 source-prompt headers and §14 rows updated; §14 self-row 4.223→4.224. Also fixed (opportunistic, in-file): Change Log rows 4.221–4.223 restored to descending order (4.221 had been left above 4.223/4.222). |
 | 4.223 | 2026-10-06 | **Roadmap rebalance `2026-10-06__scheduled` STEP 11 (Friction Item 1, action-now) — roadmap_prompt.md v9.30→v9.31.** §7.3 step 1 names where the ready-pool figure lives (newest release `run_manifest.md`, Scope Construction `**Result:**` line) and forbids recording "not re-measured" without naming the manifest checked — the 2026-09-28 and 2026-09-30 rebalances both skipped §7.3 although v9.6–v9.9 release planning had recorded the figures. The runway paragraph no longer tells the engine to update `metrics_definitions.md` Appendix F (outside §4 write scope); the reading is recorded in `workforce_capacity.md`, and Appendix F's maintenance is tracked by `BLG-GOV-374`. §6 source-prompt header and §14 Roadmap Engine Source row v9.30→v9.31; §14 self-row 4.222→4.223. Authority: Head of Specs Team (Roadmap Engine, agent-mediated, STEP 11.2 action-now). |
 | 4.222 | 2026-10-06 | **Roadmap rebalance `2026-10-06__scheduled` STEP -1.5 — shared_standards.md v3.36→v3.37.** §16.11 gains the canonical role-name rule for `sprint_backlog.md` `**Owner:**` values (exact `**Role:**` strings from `claude/agents/`, compound values joined by `; `, no inline qualifiers). Applies the condition-gated deferred patch carried since `2026-09-14__scheduled`, whose trigger ("the next `2026-1[0-2]` scheduled rebalance") fired at this run. §14 Shared Standards row v3.36→v3.37; §14 self-row Version 4.221→4.222. The write-time lint is tracked as `BLG-GOV-375`. Authority: Head of Specs Team (Roadmap Engine, agent-mediated, roadmap_prompt.md §4 STEP 11 / STEP -1.5). |
