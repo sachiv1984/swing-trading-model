@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.10.0
-**Last Updated:** 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — GET /positions gains stop_calculation_source; both stop paths use the fixed §11 parameters); prior — 2026-10-06 (ST-03, EPIC-01, v9.10, BLG-SPEC-187 — losing-stop formula corrected; analyze side effects stated); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — GET /positions gains atr_source); prior history retained — see prior entries in version control.
+**Version:** 2.12.0
+**Last Updated:** 2026-10-07 (ST-13/ST-14, EPIC-03, v9.10, BLG-GOV-365/BLG-BE-136 — GET /positions/{position_id}/gap-risk: weekend_hold removed from reasons; earnings trigger US-only, after today and on or before the next trading day); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — post-grace position_state follows strategy_rules.md §9's P&L sign; lifecycle_reason loses flat_after_grace); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — GET /positions gains stop_calculation_source; both stop paths use the fixed §11 parameters); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,7 +28,10 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.12.0 | 2026-10-07 | ST-13/ST-14 (BLG-GOV-365/BLG-BE-136, EPIC-03, v9.10): `GET /positions/{position_id}/gap-risk` — `reasons` enum shrinks to `["earnings"]`: the standalone `weekend_hold` trigger, which flagged every position on Fridays, is removed under §13 Binding Condition 6. The earnings trigger now applies to US positions only (`strategy_rules.md` §4.2.3), and fires when earnings fall after today and on or before the next trading day (weekday calendar), so a Friday view flags Monday earnings and day 0 is no longer flagged. Strategy Rules & System Intent Owner ruling, `ESC-EXEC-20261006-04`. |
+| 2.11.0 | 2026-10-07 | ST-11 (BLG-SPEC-185, EPIC-03, v9.10): after grace, `position_state` follows `strategy_rules.md` §9: `LOSING` when the native price is at or below entry, `PROFITABLE` above it, with `EXIT ZONE` a sub-state of `PROFITABLE` at entry + 2R. The ±0.5 ATR bands and the post-grace `UNKNOWN` neutral zone are removed, and ATR is no longer an input. `lifecycle_reason` loses `flat_after_grace`; `missing_data` is now its only value. Strategy Rules & System Intent Owner ruling, `ESC-EXEC-20261006-03`. |
 | 2.10.0 | 2026-10-06 | ST-01 (BLG-BE-138, EPIC-01, v9.10): `GET /positions` gains `stop_calculation_source` (`on_load` / `nightly` / `null`, DS-26). Parameter-authority ruling (a): `GET /positions/analyze` and `POST /positions/nightly-stop-update` both use the fixed `strategy_rules.md` §11 values (5×/2× ATR, 10-day grace) from one backend source. The on-load path no longer reads the editable `settings` row. (2.9.0 is EPIC-03's ST-12 on its own branch; skipped so versions stay distinct at merge.) |
+| 2.9.0 | 2026-10-06 | ST-12 (BLG-FE-196, EPIC-03, v9.10): `position_state` is now GRACE whenever `grace_period` is true (calendar days, §6.2), whatever the price; it previously checked the ±0.5 ATR bands first and counted weekdays. `GET /positions` and `GET /positions/{position_id}` gain `lifecycle_reason` (`missing_data` / `flat_after_grace` / `null`), set only for UNKNOWN. (2.8.x is EPIC-01's ST-02/ST-03 on its own branch; this skips it so each change keeps a distinct version at merge.) |
 | 2.8.1 | 2026-10-06 | ST-03 (BLG-SPEC-187, EPIC-01, v9.10): The losing-stop formula is corrected to `current price − 5×ATR` (§7.2) in the `current_trailing_stop` field note, and `POST /positions/nightly-stop-update` gains a stop-formula block, so a displayed stop can be reproduced from the contract. `GET /positions/analyze` no longer says "Safe to refresh": a new Side effects subsection lists its persistent writes and the irreversible §7.3 ratchet. Documentation only; no behaviour change. |
 | 2.8.0 | 2026-10-06 | ST-02 (BLG-BE-139, EPIC-01, v9.10): `GET /positions` gains `atr_source` (`fetched` / `user` / `fallback` / `null`, DS-25). `GET /positions/analyze`: when no ATR is available, the stored stop is kept instead of being moved to entry, and the action carries `atr_unavailable: true`. The old move-to-entry produced a stop-breach EXIT for losing positions that §7.2's wide stop would not. |
 | 2.6.2 | 2026-09-18 | ST-29 (BLG-SPEC-142, EPIC-04, v9.5): Added a "Lifecycle diagram" cross-reference to `docs/specs/data_model.md §Position & Trade Plan Lifecycle State Diagram`, canonical for `status`/`position_state` transitions. No functional change — documentation only. |
@@ -128,7 +131,8 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
     "last_reviewed_at": "2026-07-01T09:00:00+00:00",
     "position_state": "PROFITABLE",
     "state_entered_at": "2026-07-01T09:00:00+00:00",
-    "days_in_state": 14
+    "days_in_state": 14,
+    "lifecycle_reason": null
   }
 ]
 ```
@@ -158,9 +162,10 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
 | `pnl_percent` | Percentage P&L relative to entry cost. Same value as would be seen in `pnl_pct` in trade records. Both field names exist in the system for compatibility; `pnl_percent` is the canonical name in position responses |
 | `grace_days_remaining` | `integer` when `grace_period = true`; `null` when `grace_period = false`. Derived server-side as `max(0, 10 - holding_days)` during the grace period. Represents the number of days remaining in the grace window. On day 10, `grace_period` becomes `false` and this field returns `null` — not `0`. Intended display format: `"Day {holding_days + 1} of 10"`. Always present in the response object. |
 | `last_reviewed_at` | ISO-8601 timestamp \| `null`. `null` means the position has never been marked reviewed. Set by `PATCH /positions/{id}/mark-reviewed`. (v7.0 ST-15 BLG-FEAT-68) |
-| `position_state` | `string`. One of `"GRACE"`, `"PROFITABLE"`, `"LOSING"`, `"EXIT ZONE"`, `"UNKNOWN"`. Server-computed lifecycle state, distinct from `display_status` — recalculated and persisted (with transition history) on each `GET /positions` call. `"UNKNOWN"` when required inputs (entry price, current price, ATR, entry date) are unavailable. (v7.10 ST-14 BLG-SPEC-103) |
+| `position_state` | `string`. One of `"GRACE"`, `"PROFITABLE"`, `"LOSING"`, `"EXIT ZONE"`, `"UNKNOWN"`. Server-computed lifecycle state, distinct from `display_status` — recalculated and persisted (with transition history) on each `GET /positions` call. `"UNKNOWN"` when required inputs (entry price, current price, entry date) are unavailable. After grace, `"LOSING"` when the native current price is at or below entry and `"PROFITABLE"` above it (`strategy_rules.md` §9; `"EXIT ZONE"` is a `"PROFITABLE"` position at or beyond entry + 2R). (v7.10 ST-14 BLG-SPEC-103; v9.10 ST-11 BLG-SPEC-185) |
 | `state_entered_at` | ISO-8601 timestamp \| `null`. Timestamp of the most recent transition into the current `position_state`. `null` only in the `position_state = "UNKNOWN"` fallback case. (v7.10 ST-14 BLG-SPEC-103) |
 | `days_in_state` | `integer`. Whole days elapsed since `state_entered_at`. `0` on the day of transition or when `state_entered_at` is `null`. (v7.10 ST-14 BLG-SPEC-103) |
+| `lifecycle_reason` | `string` \| `null`. Why the position is `"UNKNOWN"`: `"missing_data"` (no entry price, current price or entry date). `null` for every other state. (`"flat_after_grace"` was removed by v9.10 ST-11: §9 has no post-grace neutral zone.) While `grace_period` is true, `position_state` is `"GRACE"` whatever the price, using the same calendar-day rule as `grace_period`. (v9.10 ST-12 BLG-FE-196) |
 | `atr_calculated_at` | ISO-8601 timestamp \| `null`. When `atr_value` was last freshly recomputed (not merely read from cache) — written by the on-load recompute path (`GET /positions/analyze`) and `POST /positions/nightly-stop-update`. `null` if never recomputed since this field was added. See `strategy_rules.md` §7.1. (v9.9 ST-01 BLG-BE-135) |
 | `stop_calculated_at` | ISO-8601 timestamp \| `null`. When `current_trailing_stop`/`stop_price` was last recalculated against ATR (not the grace-period carry-over, which leaves this unchanged). `null` if never recomputed since this field was added. (v9.9 ST-01 BLG-BE-135) |
 | `active_atr_multiplier` | `number` \| `null`. The ATR multiplier used to produce the current stop — `2` while profitable (tight trail), `5` while at a loss (wide stop), per `strategy_rules.md` §7.2. `null` during the grace period (no real recompute has run) or if never recomputed since this field was added. (v9.9 ST-01 BLG-BE-135) |
@@ -849,7 +854,8 @@ Returns the position object enriched with live price data and Arc 3 lifecycle fi
 | `market` | string | `"UK"` or `"US"` |
 | `position_state` | string \| null | Arc 3 state: `EXIT ZONE`, `PROFITABLE`, `LOSING`, `GRACE`, `UNKNOWN` |
 | `state_entered_at` | string \| null | ISO 8601 timestamp when current state was entered |
-| `days_in_state` | integer \| null | Trading days in current state |
+| `days_in_state` | integer \| null | Calendar days in current state (whole days since `state_entered_at`) |
+| `lifecycle_reason` | string \| null | `missing_data` when `position_state` is `UNKNOWN`, otherwise `null`. See `GET /positions` field notes. (v9.10 ST-12; ST-11) |
 | `current_price` | number | Live price in GBP |
 | `pnl` | number | Unrealised P&L in GBP |
 | `pnl_percent` | number | P&L as percentage |
@@ -985,7 +991,9 @@ Errors use the standard error envelope from **conventions.md**.
 **Purpose**
 
 Returns the overnight/weekend gap risk flag for a single open position, combining
-the DS-04 earnings calendar with historical OHLCV gap statistics.
+the DS-04 earnings calendar with historical OHLCV gap statistics. Governed by
+`docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`
+(CONDITIONAL) and its v9.10 addendum.
 
 **Scope constraint (§13):** Display-only. Surfaces a known calendar event (earnings
 date) and a historical statistic (average gap magnitude) — does not predict gap
@@ -1026,7 +1034,7 @@ Response uses the standard success envelope from **conventions.md**.
 ```json
 {
   "flagged": true,
-  "reasons": ["earnings", "weekend_hold"],
+  "reasons": ["earnings"],
   "avg_gap_pct": 2.3,
   "event_count": 14,
   "insufficient_history": false
@@ -1037,13 +1045,13 @@ Response uses the standard success envelope from **conventions.md**.
 
 | Field | Notes |
 |-------|-------|
-| `flagged` | `boolean`. `true` when either an earnings date falls before the position's next trading session, or it is a weekend-hold position at Friday close. |
-| `reasons` | Array, subset of `["earnings", "weekend_hold"]`, in that order. Empty when `flagged = false`. Both can be present simultaneously (e.g. Friday close + Monday earnings). |
-| `avg_gap_pct` | `float \| null`. Historical average overnight or weekend gap magnitude for the ticker (whichever gap type applies — weekend takes precedence when both reasons apply, per the ux_spec.md §4 combined example). `null` when `insufficient_history = true`. |
+| `flagged` | `boolean`. `true` when the position is a US position and its next earnings date falls after today and on or before its next trading day. Always `false` for a UK position. (v9.10 ST-13/ST-14) |
+| `reasons` | Array: `["earnings"]` when `flagged = true`, empty otherwise. (`weekend_hold` was removed in v9.10 ST-14, BLG-BE-136.) |
+| `avg_gap_pct` | `float \| null`. Historical average gap magnitude for the ticker: the weekend gap (Friday close to Monday open) when viewed Friday to Sunday, the overnight gap otherwise. `null` when `insufficient_history = true`. |
 | `event_count` | `integer`. Number of historical gap events used to compute `avg_gap_pct`. |
 | `insufficient_history` | `boolean`. `true` when fewer than the backend-defined minimum event count (currently 10) is available. The flag is still shown when `true` — insufficient history does not suppress the flag, only the numeric average. |
 
-**Determinism note:** Earnings proximity uses a same-day-or-next-day calendar window (`days_until_earnings` in `[0, 1]`) as "before the position's next trading session" — a deterministic calendar check only; no attempt is made to infer before/after-market release timing, which the upstream earnings data source does not reliably expose. Weekend-hold is a pure day-of-week check (Friday), computed server-side; the frontend renders the flag as returned with no client-side day-of-week logic.
+**Determinism note (v9.10, ST-13 ruling):** "Before the position's next trading session" is `days_until_earnings` in `[1, d]`, where `d` is the calendar days to the next weekday (3 on Friday, 2 on Saturday, otherwise 1). A Friday view therefore flags Monday earnings. Day 0 (earnings today) is not flagged: a before-open release has already gapped, and the upstream earnings data does not reliably say whether a release is before the open or after the close. The previous session's view already flagged that date. Exchange holidays are not modelled. The trigger applies to `market = "US"` only, matching `strategy_rules.md` §4.2.3; no earnings lookup is made for a UK position. All of this is computed server-side; the frontend renders the flag as returned.
 
 ### Errors
 

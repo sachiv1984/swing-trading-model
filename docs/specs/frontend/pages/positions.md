@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.12
-**Last Updated:** 2026-10-06 (ST-06, EPIC-02, v9.10, BLG-FE-193 — stop provenance section finalised against the shipped `stop_calculation_source` contract and `StopProvenance.js`); prior — 2026-10-06 (v9.10 design gate — ST-06/ST-08/ST-09/ST-12/ST-14: stop provenance line and per-row stop details, exit-dialog pre-selection and `?exit=` deep link, GRACE calendar-days label and UNKNOWN reasons, gap-risk reason labels); prior — 2026-09-28 (ST-05, EPIC-01, v9.8, BLG-SPEC-158 — §Responsive Behavior corrected to match actual implementation: the Table view does not collapse to cards, it scrolls horizontally); prior history retained — see prior entries in version control
+**Version:** 2.14
+**Last Updated:** 2026-10-07 (ST-13/ST-14, EPIC-03, v9.10, BLG-GOV-365/BLG-BE-136 — §Gap Risk Badge: weekend_hold removed; earnings label and ruled trigger timing stated; data source corrected); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — §Position Lifecycle State Badge: post-grace LOSING/PROFITABLE follow strategy_rules.md §9's P&L sign; LOSING tooltip corrected; flat_after_grace removed); prior — 2026-10-06 (ST-06, EPIC-02, v9.10, BLG-FE-193 — stop provenance section finalised against the shipped `stop_calculation_source` contract and `StopProvenance.js`); prior history retained — see prior entries in version control.
 **Design Source (v9.10 additions):** docs/design/2026-10-06__release-v9.10/stop-cell-provenance/decision_record.md, docs/design/2026-10-06__release-v9.10/exit-condition-surfacing/decision_record.md, docs/design/2026-10-06__release-v9.10/lifecycle-badge-grace-calendar-days/decision_record.md, docs/design/2026-10-06__release-v9.10/gap-risk-trigger-label-alignment/decision_record.md
 **Design Source (v8.2 additions):** docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md
 **Design Source (v7.9 additions):** docs/design/2026-07-27__release-v7.9/trailing-stop-explainer-tooltip/ux_spec.md
@@ -26,6 +26,8 @@
 | Version | Date | Change |
 |---------|------|--------|
 | 2.12 | 2026-10-06 | ST-06 (BLG-FE-193, EPIC-02, v9.10): §Stop Provenance Line and Per-Row Stop Details finalised. The recalculation-source field is `stop_calculation_source` (`on_load` \| `nightly` \| `null`, `position_endpoints.md` v2.10.0, shipped with ST-01). Implementation: `src/components/positions/StopProvenance.js`, used by both views. Playwright: `tests/e2e/stop-cell-provenance.spec.js` (SC-SCP-01..07). |
+| 2.14 | 2026-10-07 | v9.10 sprint execution (ST-13/ST-14, BLG-GOV-365/BLG-BE-136): §Gap Risk Badge — `weekend_hold` removed (trigger removed under §13 Binding Condition 6; no replacement label). Earnings label "Earnings due by next trading session", with the ruled scope: US positions only, earnings after today and on or before the next trading day, no day 0 (Strategy Rules & System Intent Owner ruling, `ESC-EXEC-20261006-04`). Data source line corrected to the dedicated `GET /positions/{position_id}/gap-risk` endpoint. Playwright SC-GR-03/04/06/08. |
+| 2.13 | 2026-10-07 | v9.10 sprint execution (ST-11, BLG-SPEC-185): §Position Lifecycle State Badge — the badge defers to `strategy_rules.md` §9 (Strategy Rules & System Intent Owner ruling, `ESC-EXEC-20261006-03`). Post-grace LOSING/PROFITABLE follow the P&L sign; EXIT ZONE is a display sub-state of PROFITABLE. LOSING tooltip corrected (the ±0.5 ATR exit rule it described no longer exists). `flat_after_grace` removed; `missing_data` tooltip no longer names ATR. Wording-only (FI-P3-02); Playwright SC-LBG-04/05. |
 | 2.11 | 2026-10-06 | v9.10 design gate. (ST-06, BLG-FE-193) §Trailing Stop Column: always-visible provenance line (`{mult}× ATR {atr}`) and per-row "How this stop was set" tooltip (ATR, multiplier, §7.2 formula, §7.3 ratchet, last-recalculated time + source); header explainer drops the static "recalculated daily" claim. Needs a new on-load/nightly source field on `GET /positions`. (ST-08/ST-09, BLG-FE-198/199) New §Exit Dialog Pre-Selection and Deep Link: shared `getExitCondition` predicate, Exit Reason pre-selection with a one-line note, `?exit={id}` deep link. (ST-12, BLG-FE-196) §Position Lifecycle State Badge: GRACE takes precedence during grace; label `GRACE — {grace_days_remaining}d left`; calendar-day tooltip; UNKNOWN tooltip by backend reason; §Grace Period Alert Zone days-left basis is `grace_days_remaining`, with no "trading day" wording. (ST-14, BLG-BE-136) §Gap Risk Badge: earnings label "Earnings due by next trading session"; weekend label conditional on the ST-14 disposition. Design sources: v9.10 additions listed above. Head of UX & Design sign-off: 2026-10-06. Product Owner approved: 2026-10-06. Head of Specs Team confirmed. |
 | 2.10 | 2026-09-28 | ST-05 (BLG-SPEC-158, EPIC-01, v9.8): §Responsive Behavior corrected to match `src/components/ui/DataTable.js`'s actual implementation — Table view scrolls horizontally (no card collapse, no column-hiding); Grid view is the view that reflows to cards (CSS Grid breakpoints, unchanged). Documentation-only; no implementation change. |
 | 2.9 | 2026-09-04 | v9.1 ST-07 (BLG-SPEC-99, EPIC-01): added §Keyboard Navigation Requirements — documentation-only baseline covering View Switcher, Table View row/control tab order, Trail Stop Modal / Compliance Recheck Panel focus trap and restoration, Grid/Journal View tab order, Paper Account Panel, and focus-indicator contrast. No implementation change. |
@@ -132,7 +134,7 @@ Displays each open position as a row with:
 | State | Tooltip |
 |-------|---------|
 | GRACE | ~~"Exits grace when position moves > 0.5 ATR or after 10 trading days"~~ → (v9.10) "Grace period: {n} calendar day(s) left. The stop is tracked but not enforced until the grace period ends (10 calendar days, §6)." |
-| LOSING | "Exits when price rises above entry by 0.5 ATR" |
+| LOSING | ~~"Exits when price rises above entry by 0.5 ATR"~~ → (v9.10 ST-11) "Past grace with P&L at or below zero: wide stop (§7.2). Becomes PROFITABLE when the price rises above entry." |
 | PROFITABLE | "Advances to Exit Zone when P&L reaches 2R target" |
 | EXIT ZONE | "Position has reached R-target. Review stop or exit." |
 | UNKNOWN | (v9.10) By backend reason. See §Grace Precedence and UNKNOWN Reasons below. The prior "Set a stop and R-target…" copy is retired. |
@@ -145,14 +147,15 @@ Displays each open position as a row with:
 
 **Grace Precedence and UNKNOWN Reasons (v9.10 — ST-12, BLG-FE-196).** Design source: `docs/design/2026-10-06__release-v9.10/lifecycle-badge-grace-calendar-days/decision_record.md`.
 
+- **Post-grace states follow §9 (v9.10 — ST-11, BLG-SPEC-185):** after grace the badge is LOSING when the native price is at or below entry and PROFITABLE above it, the same test that selects the §7.2 stop multiplier. EXIT ZONE is a PROFITABLE position at or beyond entry + 2R. There is no neutral zone. See `docs/specs/position_lifecycle_states_registry.md` §Relationship to strategy_rules.md §9.
 - **Grace precedence:** while `grace_period` is true, the state is GRACE regardless of price relative to entry. The backend classifies grace first, using the same calendar-day rule as `grace_period`; the frontend does not re-derive it.
 - **`aria-label` (GRACE):** "Position state: GRACE, {n} calendar days of grace left".
-- **UNKNOWN tooltip**, by the backend reason field (working name `lifecycle_reason`; finalised in `position_endpoints.md`/`openapi.yaml` by ST-12):
+- **UNKNOWN tooltip**, by the backend reason field `lifecycle_reason` (finalised in `position_endpoints.md` v2.9.0 / `openapi.yaml` by ST-12):
 
 | Reason | Tooltip |
 |--------|---------|
-| `missing_data` | "No lifecycle state: ATR or price data is missing for this position." |
-| `flat_after_grace` | "No lifecycle state: the grace period has ended and the price is within 0.5 ATR of entry." (Dormant, and dropped from the contract, if ST-11 rules that §9's LOSING/PROFITABLE split governs post-grace.) |
+| `missing_data` | "No lifecycle state: price or entry data is missing for this position." (v9.10 ST-11: ATR is no longer an input, so it is not named.) |
+| ~~`flat_after_grace`~~ | Removed (v9.10 ST-11). §9 governs post-grace, so this case no longer occurs and the value is dropped from the contract. An unrecognised reason falls back to the null/absent tooltip. |
 | null / absent | "No lifecycle state is available for this position." |
 
 **Review-cadence is not a lifecycle state (v7.1 — ST-04, BLG-BE-61):** The position review-cadence nudge (`last_reviewed_at`, §Last Reviewed Column) is a metadata annotation only — a display flag tracking when a human last looked at a position — and does not participate in this state machine. The lifecycle state machine remains exactly the 4 states above (GRACE → LOSING → PROFITABLE → EXIT ZONE, with UNKNOWN as a display fallback for null/pending back-fill, not a 5th reachable state). A stale/flagged review status has no bearing on `position_state` or `days_in_state`, does not gate any transition between the 4 states, and is computed and stored entirely independently (`last_reviewed_at` on the `positions` row vs. `position_state`/`days_in_state` derived from price/stop logic).
@@ -518,9 +521,9 @@ No alert: dash ("—").
 
 **Design source:** docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md
 
-**Data source:** `gap_risk` object from `GET /positions` (new field; server-computed from DS-04 earnings calendar + historical OHLCV).
+**Data source:** `GET /positions/{position_id}/gap-risk`, fetched per position (`src/hooks/useGapRisk.js`); server-computed from the DS-04 earnings calendar and historical OHLCV. (v9.10: corrected from "`gap_risk` object from `GET /positions`", which was never shipped.)
 
-Shown when `gap_risk.flagged = true` — trigger is either an earnings date before the position's next trading session, or a weekend hold flagged at Friday close. **(v9.10 — ST-13/ST-14: trigger timing and the weekend trigger's existence are governed by the ST-13 ruling and ST-14 disposition. See §Gap Risk Reason Labels below.)**
+Shown when `gap_risk.flagged = true`. The only trigger is an earnings date that falls after today and on or before the position's next trading day, for a US position (v9.10 — ST-13 ruling, ST-14). The weekend-hold trigger was removed. See §Gap Risk Reason Labels below.
 
 | Element | Spec |
 |---------|------|
@@ -536,7 +539,7 @@ Shown when `gap_risk.flagged = true` — trigger is either an earnings date befo
 
 **Grid View badge placement (v7.0 — ST-01):** RISK OFF and GAP RISK badges render in a dedicated alert row within the position card — below the ticker/market header, above the Entry/Current/Trail Stop stat tiles. This is the "alert-icon row" referenced elsewhere in this document (see §Grid View and §Last Reviewed Column). When both badges apply to the same position, they stack vertically in this row per the Stacked-state spacing rule above (RISK OFF above GAP RISK, `4px` minimum gap, full-width wrap rather than truncation). When neither applies, the alert row is omitted entirely (no reserved space, no dash placeholder — unlike the Table View's Alerts column, which always renders a dash when empty). Same visual treatment (colour, label, pill shape) as Table View — no Grid-View-specific styling variant.
 
-**Tooltip / expanded detail:** Hover or focus reveals earnings date and/or weekend-hold reason plus historical average gap magnitude for the ticker (`gap_risk.avg_gap_pct`, `gap_risk.event_count`), or "insufficient history" when `gap_risk.insufficient_history = true`. Tooltip content is also exposed via `aria-describedby` for keyboard/screen-reader access.
+**Tooltip / expanded detail:** Hover or focus reveals the earnings reason plus historical average gap magnitude for the ticker (`gap_risk.avg_gap_pct`, `gap_risk.event_count`), or "insufficient history" when `gap_risk.insufficient_history = true`. Tooltip content is also exposed via `aria-describedby` for keyboard/screen-reader access.
 
 **No alert:** dash ("—"), consistent with existing Alerts column convention.
 
@@ -546,12 +549,12 @@ Shown when `gap_risk.flagged = true` — trigger is either an earnings date befo
 
 | `reasons` value | Label (Table and Grid View) |
 |-----------------|-----------------------------|
-| `earnings` | "Earnings due by next trading session". Covers a Friday view of Monday earnings. Day-0 and market coverage follow the ST-13 ruling, and the ruled offsets/markets are stated here by ST-14's commit. |
-| `weekend_hold` | **Conditional on the ST-14 disposition.** Trigger removed: the value and label are removed (enum shrinks in `position_endpoints.md`/`openapi.yaml` in the same commit). Retained under a signed alternative: "Held over the weekend (applies to every position on Fridays)". |
+| `earnings` | "Earnings due by next trading session". Shown for a US position when earnings fall after today and on or before the next trading day: tomorrow on Monday to Thursday, Monday on Friday to Sunday. Earnings today (day 0) are not flagged. UK positions are never flagged (ST-13 ruling; `strategy_rules.md` §4.2.3 is US-only). |
+| ~~`weekend_hold`~~ | Removed (v9.10 ST-14 disposition: trigger removed). The value and label are gone, and the enum shrank in `position_endpoints.md` v2.12.0 / `openapi.yaml` 3.22.0. |
 
 Tooltip structure, `aria-label` pattern, colour, stacking and clearing are unchanged.
 
-**Alert clearing:** Fully server-driven (earnings date passes, or Monday session opens for weekend holds). No manual dismiss.
+**Alert clearing:** Fully server-driven: the flag clears on the earnings day itself (day 0 is not flagged). No manual dismiss.
 
 **§13 constraint:** Display-only. Surfaces a known calendar event and historical statistic — no prediction of gap direction or magnitude.
 

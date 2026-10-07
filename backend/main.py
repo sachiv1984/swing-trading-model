@@ -1505,6 +1505,18 @@ def search_positions_by_tags_endpoint(tags: str):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="Internal server error")
 
+def _calendar_days_since(entry):
+    """Calendar days from an entry date (date or ISO string) to today, or None."""
+    from datetime import date
+    if not entry:
+        return None
+    try:
+        entry_d = date.fromisoformat(str(entry).split("T")[0].split(" ")[0]) if isinstance(entry, str) else entry
+        return max(0, (date.today() - entry_d).days)
+    except (ValueError, TypeError, AttributeError):
+        return None
+
+
 @app.get("/positions/grace-period-alerts")
 def get_grace_period_alerts_endpoint():
     """
@@ -1557,21 +1569,15 @@ def get_grace_period_alerts_endpoint():
                     state_entered_at = state_entered_at.replace(tzinfo=timezone.utc)
                 days_in_state = (datetime.now(timezone.utc) - state_entered_at).days
             else:
-                # Fallback: count trading days from entry_date as days_in_state approximation
-                from datetime import date
-                entry = row.get("entry_date")
-                if entry:
-                    entry_d = date.fromisoformat(str(entry).split("T")[0].split(" ")[0]) if isinstance(entry, str) else entry
-                    today = date.today()
-                    count = 0
-                    current = entry_d
-                    while current < today:
-                        current = date.fromordinal(current.toordinal() + 1)
-                        if current.weekday() < 5:
-                            count += 1
-                    days_in_state = count
-                else:
-                    days_in_state = 0
+                # Fallback: calendar days from entry_date (ST-12, v9.10:
+                # was a weekday count, which disagreed with §6.2's calendar days)
+                days_in_state = _calendar_days_since(row.get("entry_date")) or 0
+
+            # ST-12 (BLG-FE-196, v9.10): calendar days of grace left, the same
+            # rule as GET /positions' grace_days_remaining. The alert copy
+            # uses this instead of 10 - days_in_state.
+            days_held = _calendar_days_since(row.get("entry_date"))
+            grace_days_remaining = max(0, 10 - days_held) if days_held is not None else None
 
             if days_in_state < 8:
                 continue
@@ -1595,6 +1601,7 @@ def get_grace_period_alerts_endpoint():
                 "ticker": ticker,
                 "market": row.get("market"),
                 "days_in_state": days_in_state,
+                "grace_days_remaining": grace_days_remaining,
                 "trade_plan_id": str(row["trade_plan_id"]) if row.get("trade_plan_id") else None,
                 "trade_plan_summary": trade_plan_summary,
             })

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-07 (session — 4 new item(s) added: BLG-BE-146, BLG-FE-203, BLG-QA-215, BLG-FE-204, from the EPIC-02 agent-mediated pre-PR review); prior — 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` — 25 items added from idea intake `IW-20261006-01` (BLG-BE-138–142, BLG-FE-195–199, BLG-SPEC-185–188, BLG-SEC-41/42, BLG-GOV-369–374, BLG-OPS-179, BLG-FEAT-99, BLG-FR-06) plus BLG-GOV-375 (STEP -1.5 Owner-field lint); BLG-BE-138 P1 Correctness Fast-Track → v9.10; BLG-FE-193 gate met, Provisional-Target → v9.10); prior — 2026-10-06 (session — 1 new item(s) added: BLG-TECH-21); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-07 (session — 4 new item(s) added: BLG-GOV-376 (EPIC-03 ST-13/ST-14 execution), BLG-BE-147, BLG-BE-148, BLG-BE-149 (EPIC-03 agent-mediated pre-PR review)); prior — 2026-10-07 (session — 4 new item(s) added: BLG-BE-146, BLG-FE-203, BLG-QA-215, BLG-FE-204, from the EPIC-02 agent-mediated pre-PR review); prior — 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` — 25 items added from idea intake `IW-20261006-01` (BLG-BE-138–142, BLG-FE-195–199, BLG-SPEC-185–188, BLG-SEC-41/42, BLG-GOV-369–374, BLG-OPS-179, BLG-FEAT-99, BLG-FR-06) plus BLG-GOV-375 (STEP -1.5 Owner-field lint); BLG-BE-138 P1 Correctness Fast-Track → v9.10; BLG-FE-193 gate met, Provisional-Target → v9.10); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -435,6 +435,74 @@ After ST-01 (ruling (a)), the Settings page no longer sends `min_hold_days`, `at
 
 **Acceptance Criteria**
 - [ ] A NULL `fill_price` US position recomputes without error on both paths. Both test files include a US case.
+
+---
+
+### BLG-BE-147 — Grace alert filter and "Day N of 10" label count days in state, not calendar days since entry
+**Priority:** P2 (Medium)
+**Type:** Backend / Frontend Consistency
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** ST-12 (EPIC-03, cycle `2026-10-06__release-v9.10`) — agent-mediated Director of Quality / Product Owner pre-PR review of the EPIC-03 branch — 2026-10-07
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-12 moved the grace countdown to calendar days since entry (`grace_days_remaining`), but three nearby readings still use `days_in_state`, the time since `state_entered_at`:
+- `GET /positions/grace-period-alerts` includes a position only when `days_in_state >= 8` (`backend/main.py`, `get_grace_period_alerts_endpoint`).
+- The alert card prints `Day {alert.days_in_state} of 10` (`src/pages/Positions.js`, `GracePeriodAlertZone`).
+- The review-cadence suppression uses `days_in_state >= 8` (`Positions.js`, `GRACE_SUPPRESSION_DAYS_IN_STATE`).
+
+`state_entered_at` resets whenever the stored state changes. That happens after a missing-data UNKNOWN interlude, and on the first `GET /positions` after ST-12 deploys, for every in-grace position whose stored state was LOSING or PROFITABLE under the old ±0.5 ATR bands. Those positions miss the day-8/day-9 alert, or show a card that contradicts itself (e.g. "Day 2 of 10" next to "ends in 1 day").
+
+**Scope**
+- Filter and label on calendar days held (`10 − grace_days_remaining`, or the same `_calendar_days_since(entry_date)`), not `days_in_state`, in the endpoint, the alert card and the suppression rule.
+- Update `grace_period_alert_endpoint.md` and `positions.md` §Grace Period Alert Zone in the same change.
+
+**Acceptance Criteria**
+- [ ] A day-8 position whose `state_entered_at` is today still appears in the alert list, labelled "Day 9 of 10" with 2 days left (unit test + Playwright).
+- [ ] No grace reading on the Positions page uses `days_in_state`.
+
+---
+
+### BLG-BE-148 — Gap-risk "next trading session" ignores exchange holidays and the US market date
+**Priority:** P3 (Low)
+**Type:** Backend / Correctness
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** ST-13/ST-14 (EPIC-03, cycle `2026-10-06__release-v9.10`) — agent-mediated Director of Quality / Product Owner pre-PR review of the EPIC-03 branch — 2026-10-07
+**Effort:** S (~1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`gap_risk_service._days_to_next_trading_day` uses a weekday calendar and the server's `date.today()` (UTC), as the ST-13 addendum discloses. Two cases miss an actionable flag:
+1. **Holidays.** Viewed Friday before a Monday market holiday, Tuesday earnings are 4 days away and are not flagged. On Monday no session exists, so the last actionable session goes unflagged.
+2. **Date basis.** Between 00:00 and about 05:00 UTC the US trading date is still the previous day. In that window, earnings due the next US session read as day 0 and are not flagged.
+
+**Scope**
+- Use the US exchange calendar (holidays, the `America/New_York` date) for "today" and the next session. Keep it deterministic, with no network call at request time.
+- If this changes Ruling 3's stated rule, record a dated addendum note in the §13 review record (Strategy Rules & System Intent Owner).
+
+**Acceptance Criteria**
+- [ ] A Friday view before a Monday holiday flags Tuesday earnings (unit test).
+- [ ] A 02:00 UTC view uses the US market date (unit test).
+
+---
+
+### BLG-BE-149 — Risk page `display_status` decides LOSING/PROFITABLE on GBP P&L; the lifecycle badge uses native P&L
+**Priority:** P3 (Low)
+**Type:** Backend / Spec–Code Consistency
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** ST-11 (EPIC-03, cycle `2026-10-06__release-v9.10`) — agent-mediated Director of Quality / Product Owner pre-PR review of the EPIC-03 branch — 2026-10-07
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-11 ruled that post-grace LOSING/PROFITABLE follow §9's P&L sign, on the native price against entry, which is the test that picks the §7.2 stop multiplier (`is_profitable = pnl_native > 0`). `display_status` in `position_service.py` and `portfolio_service.py` uses `pnl_gbp > 0`, which includes FX movement. It is shown on the Risk page (`PositionRiskTable.js`). A US position that is up in dollars but down in sterling (or the reverse) therefore shows LOSING on one page and PROFITABLE on the other, contrary to role charter §5 ("UI, backend logic, and analytics interpret states consistently").
+
+**Scope**
+- Derive `display_status` from the same native test, or from `position_state`, and state the basis in `position_endpoints.md` / `portfolio_endpoints.md`.
+
+**Acceptance Criteria**
+- [ ] For a US position with native P&L > 0 and GBP P&L < 0, `display_status` and `position_state` agree (unit test).
 
 ---
 
@@ -4817,6 +4885,28 @@ A closed trade records prices and fees but not the multiplier, ATR and grace len
 **Acceptance Criteria**
 - [ ] A non-canonical Owner value fails the check; all v9.9 Owner values pass.
 - [ ] `idea_intake_prompt.md` role list matches the agent files.
+
+---
+
+### BLG-GOV-376 — Update strategy_rules.md §13.3 now that the Gap Risk Flag's weekend-hold trigger is removed
+**Priority:** P3 (Low)
+**Type:** Governance Process / Strategy Text Alignment
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** ST-13/ST-14 (EPIC-03, cycle `2026-10-06__release-v9.10`) — 2026-10-07
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD (before the first §13.5 re-attestation, 2027-02-06)
+
+**Problem**
+ST-14 removed the Gap Risk Flag's standalone `weekend_hold` trigger, and ST-13 ruled that the earnings trigger covers US positions only, from the day after today up to the next trading day. `strategy_rules.md` v1.14 §13.3's third paragraph still describes the weekend-hold trigger as a live, time-boxed deviation due by 2027-02-06. The behaviour now meets §13.3. Only this descriptive text is stale. Sprint Execution cannot write `claude/strategy/strategy_rules.md` (`execution_prompt.md` §7).
+
+**Scope**
+- Replace §13.3's third paragraph with the text in the v9.10 addendum of `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` ("Proposed §13.3 third paragraph").
+- Update the §13.5 roster row's weekend-hold clause to record Binding Condition 6 as met (v9.10).
+- Bump the version, add the Change Log row (documentation only, per ST-05's behaviour-only registry rule) and run the §15 grep.
+
+**Acceptance Criteria**
+- [ ] §13.3 and the §13.5 roster row no longer describe the weekend-hold trigger as live.
+- [ ] Change Log row and §15 grep recorded.
 
 ---
 

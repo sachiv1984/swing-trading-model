@@ -12,12 +12,12 @@
  *
  *   SC-GR-01  No flag — Alerts column shows "—"
  *   SC-GR-02  Earnings-flagged — "GAP RISK" badge shown, amber-600 background
- *   SC-GR-03  Weekend-hold-flagged — "GAP RISK" badge shown
+ *   SC-GR-03  No weekend-hold label anywhere (v9.10 ST-14: trigger removed)
  *   SC-GR-04  Tooltip / aria-label exposes reason + historical average gap
  *   SC-GR-05  Insufficient history — badge still shown; tooltip shows "insufficient history"
- *   SC-GR-06  Both reasons present — tooltip lists both reasons
+ *   SC-GR-06  Earnings label states the ruled timing (v9.10 ST-14), Table View
  *   SC-GR-07  Risk-Off and Gap Risk badges stack in the same Alerts cell
- *   SC-GR-08  Grid View — Gap Risk badge shown on the position card
+ *   SC-GR-08  Grid View — Gap Risk badge shown on the position card, with the same label
  *
  * Spec refs:
  *   docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md
@@ -58,8 +58,6 @@ function makePosition(overrides = {}) {
 
 const NO_FLAG = { flagged: false, reasons: [], avg_gap_pct: null, event_count: 0, insufficient_history: false };
 const EARNINGS_FLAG = { flagged: true, reasons: ['earnings'], avg_gap_pct: 2.3, event_count: 14, insufficient_history: false };
-const WEEKEND_FLAG = { flagged: true, reasons: ['weekend_hold'], avg_gap_pct: 1.1, event_count: 31, insufficient_history: false };
-const BOTH_FLAG = { flagged: true, reasons: ['earnings', 'weekend_hold'], avg_gap_pct: 3.0, event_count: 20, insufficient_history: false };
 const INSUFFICIENT_FLAG = { flagged: true, reasons: ['earnings'], avg_gap_pct: null, event_count: 3, insufficient_history: true };
 
 async function stubPositionsPage(page, positions, gapRiskPayload) {
@@ -121,11 +119,17 @@ test('SC-GR-02: Earnings-flagged position shows "GAP RISK" badge with amber-600 
   await expect(badge).toHaveCSS('background-color', 'rgb(217, 119, 6)'); // #D97706
 });
 
-test('SC-GR-03: Weekend-hold-flagged position shows "GAP RISK" badge', async ({ page }) => {
+// v9.10 ST-14 (BLG-BE-136): the standalone weekend_hold trigger is removed, so no
+// view renders a weekend-hold label (design record gap-risk-trigger-label-alignment §5).
+test('SC-GR-03: No weekend-hold label is rendered', async ({ page }) => {
   const pos = makePosition();
-  await gotoPositionsTable(page, [pos], WEEKEND_FLAG);
+  await gotoPositionsTable(page, [pos], EARNINGS_FLAG);
 
-  await expect(page.locator('[data-testid="gap-risk-badge"]').first()).toBeVisible({ timeout: 5000 });
+  const badge = page.locator('[data-testid="gap-risk-badge"]').first();
+  await expect(badge).toBeVisible({ timeout: 5000 });
+  await expect(badge).not.toHaveAttribute('aria-label', /weekend/i);
+  await expect(badge).not.toHaveAttribute('title', /weekend/i);
+  await expect(page.locator('[title*="Friday close" i], [aria-label*="Friday close" i]')).toHaveCount(0);
 });
 
 test('SC-GR-04: Tooltip / aria-label exposes reason and historical average gap', async ({ page }) => {
@@ -134,7 +138,7 @@ test('SC-GR-04: Tooltip / aria-label exposes reason and historical average gap',
 
   const badge = page.locator('[data-testid="gap-risk-badge"]').first();
   await expect(badge).toBeVisible({ timeout: 5000 });
-  await expect(badge).toHaveAttribute('aria-label', /Earnings before next session/);
+  await expect(badge).toHaveAttribute('aria-label', /Earnings due by next trading session/);
   await expect(badge).toHaveAttribute('aria-label', /2\.3/);
   await expect(badge).toHaveAttribute('title', /2\.3/);
 });
@@ -148,14 +152,14 @@ test('SC-GR-05: Insufficient history — badge still shown, tooltip shows "insuf
   await expect(badge).toHaveAttribute('aria-label', /insufficient history/);
 });
 
-test('SC-GR-06: Both reasons present — tooltip lists both reasons', async ({ page }) => {
+test('SC-GR-06: Earnings label states the ruled trigger timing (Table View)', async ({ page }) => {
   const pos = makePosition();
-  await gotoPositionsTable(page, [pos], BOTH_FLAG);
+  await gotoPositionsTable(page, [pos], EARNINGS_FLAG);
 
   const badge = page.locator('[data-testid="gap-risk-badge"]').first();
   await expect(badge).toBeVisible({ timeout: 5000 });
-  await expect(badge).toHaveAttribute('aria-label', /Earnings before next session/);
-  await expect(badge).toHaveAttribute('aria-label', /Weekend hold/);
+  await expect(badge).toHaveAttribute('title', /Earnings due by next trading session/);
+  await expect(badge).not.toHaveAttribute('title', /Earnings before next session/);
 });
 
 test('SC-GR-07: Risk-Off and Gap Risk badges stack in the same Alerts cell', async ({ page }) => {
@@ -174,5 +178,8 @@ test('SC-GR-08: Grid View — Gap Risk badge shown on the position card', async 
   await page.goto('/#/Positions');
   await page.waitForSelector(`text=${pos.ticker}`, { timeout: 8000 });
 
-  await expect(page.locator('[data-testid="gap-risk-badge"]').first()).toBeVisible({ timeout: 5000 });
+  const badge = page.locator('[data-testid="gap-risk-badge"]').first();
+  await expect(badge).toBeVisible({ timeout: 5000 });
+  await expect(badge).toHaveAttribute('aria-label', /Earnings due by next trading session/);
+  await expect(badge).not.toHaveAttribute('aria-label', /weekend/i);
 });
