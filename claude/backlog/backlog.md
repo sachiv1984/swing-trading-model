@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-07 (session — 4 new item(s) added: BLG-BE-150, BLG-QA-217, BLG-BE-151, BLG-QA-218 from PR #1921 review); prior — 2026-10-07 (BLG-OPS-180 and BLG-GOV-362 marked ✅ COMPLETE — OPS-180 by Infrastructure & Operations Owner (secret set, run 37602589130; AC 2 waived), GOV-362 by Head of Specs Team ruling + Product Owner acknowledgement); prior — 2026-10-07 (groom backlog post-ship closure 2026-10-06__release-v9.10 — 21 items archived (v9.10 shipped); 0 ephemeral sections; 0 gate/effort/field-completeness/duplicate-ID issues; spec-debt deep review run (0 candidates); 3 governance-prompt duplicate candidates flagged for owner review (BLG-GOV-355, BLG-GOV-362, BLG-GOV-368); BLG-OPS-180 surfaced as ambiguous (resolved in-session, no COMPLETE banner)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-07 (session — 3 new item(s) added: BLG-BE-152, BLG-FE-205, BLG-GOV-378 from debrief production testing; BLG-BE-150 progress note); prior — 2026-10-07 (session — 4 new item(s) added: BLG-BE-150, BLG-QA-217, BLG-BE-151, BLG-QA-218 from PR #1921 review); prior — 2026-10-07 (BLG-OPS-180 and BLG-GOV-362 marked ✅ COMPLETE — OPS-180 by Infrastructure & Operations Owner (secret set, run 37602589130; AC 2 waived), GOV-362 by Head of Specs Team ruling + Product Owner acknowledgement); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4773,6 +4773,8 @@ ST-23 (commit `75c80869`, 2026-09-15) added `from ai_output_sampling_service imp
 - At least one sampled output is recorded after opting in, or the sampling path is confirmed working by another recorded check
 - The escaped-defect note is filed and linked from this item
 
+**Progress (2026-10-07):** Post-trade debrief verified in production by the user after #1921 deployed. A focus area that passed the compliance check generated and saved, and Regenerate worked on an earlier trade. The other five AI features are still unverified. Correction to the Problem above: the debrief failed only when the focus-area sentence passed the check. A fallback debrief skipped the broken import, so production debriefs sometimes worked before the fix.
+
 ---
 
 ### BLG-QA-217 — Add a test that imports every backend module with only backend/ on the path
@@ -4835,5 +4837,81 @@ Nine test files still add `backend/services/` to `sys.path` so they can load a s
 **Acceptance Criteria**
 - No file under `tests/` adds `backend/services` to `sys.path`, and the guard enforces it
 - The full suite still passes
+
+---
+
+### BLG-BE-152 — Give the post-trade debrief the derived figures it needs: R achieved, the trailing stop at exit, and entry slippage
+**Priority:** P1 (High)
+**Type:** Backend Engineering / AI Output Quality
+**Owner:** Backend Engineering Patterns Owner; AI Compliance Governance Officer
+**Source:** User testing of the post-trade debrief in production after PR #1921 — 2026-10-07
+**Effort:** M (~1–2d)
+**Provisional-Target:** v9.11
+
+**Problem**
+The debrief only receives raw trade fields. `r_achieved` is hard-coded to "not recorded" (`debrief_service.py`, `generate_trade_debrief`), and the trailing stop at exit is never read. The model may only state numbers it is given (Condition 2), so its most useful observations get blocked, or it reasons wrongly from partial data. Three production examples from 2026-10-07:
+- (1) Trade exited at +2.24R against a 2.2R target. The focus area failed the numeric check (the fallback was shown).
+- (2) Trade exited at 0.86R against a 2.2R target. The model compared "8.64% gain" with "2.2R", mixing units, because it could not state 0.86R.
+- (3) On regenerate, trade (1) produced: *"exited at a profit of 15.8% despite being marked as 'Stop Loss Hit,' which contradicts the exit reason recorded in the system."* This is false: the trailing stop had moved above entry. The debrief told the user that correct data is wrong.
+
+The deterministic summary has the same gaps. It also reads poorly: no currency, a repeated entry price when the plan matched, and fragments joined by full stops.
+
+**Scope**
+- In `debrief_service.py`, calculate in code: initial risk per share (entry − planned/initial stop), R achieved, R achieved vs target, entry slippage vs plan, and the stop at exit from `positions.current_stop` (via `get_position_by_id`) vs `positions.initial_stop`. Also derive whether the exit was a trailing stop above entry.
+- Pass these to the focus-area prompt, including holding days, which is allowed but not currently sent. Add them to `source_values` so the numeric check accepts them.
+- Rewrite `_build_summary_text` in plain language, for example: "Entered at the planned 926.80 and exited at 1,058.60 when the trailing stop (raised from 868.00 to X) was hit after 16 days: +2.24R against a 2.2R target (+217.56, +15.80%)." State the currency where it is known.
+- Bump `PROMPT_VERSION`. AI Compliance Governance Officer to confirm that numbers derived deterministically in code, then cross-checked, still meet Condition 2 of the §13 review (`decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`).
+
+**Acceptance Criteria**
+- For examples (1)–(3), the summary states R achieved vs target and the stop at exit, and correctly describes a profitable stop-out as a trailing stop
+- A focus area that cites R achieved (e.g. "2.24R") passes the numeric check. A number not derived from source data still fails
+- A test shows that a profitable "Stop Loss Hit" trade's prompt includes the trailing stop at exit, so the model has the context to avoid calling it a contradiction
+- AI Compliance Governance Officer sign-off on the Condition 2 interpretation is recorded
+
+---
+
+### BLG-FE-205 — Make the debrief Regenerate button recognisable, and show when regeneration fails or changes nothing
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; QA & Testing Owner
+**Source:** User testing of the post-trade debrief in production — 2026-10-07 ("it is there, but you would not know you needed to click it", dark mode)
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Regenerate (`src/components/trades/TradeDebrief.js:134`) is a `ghost` button: tiny text, no border, no background, and a grey text colour (`text-slate-600` / `dark:text-slate-400`) on an always-dark card (`bg-slate-800/50`). The user did not recognise it as a button in dark mode. In light theme it is dark grey on dark, which likely fails WCAG AA contrast. The Playwright check (`trade-debrief.spec.js:172`, `toBeVisible`) passes because it checks rendering, not readability. Also, `generateMutation` never checks `res.ok` and has no error state for an existing debrief, so a failed regenerate (e.g. the 500s before #1921) silently leaves the old debrief in place. A regenerate that yields the same fallback looks identical, with no sign anything happened.
+
+**Scope**
+- Restyle Regenerate as a visible secondary action, matching the `outline` style of the "Generate Debrief" button, with readable colours in both themes.
+- Check `res.ok` in the mutation. Show an inline error when regenerate fails, and keep the existing debrief.
+- Show when the debrief was generated (e.g. "Generated 7 Oct, 17:32") so a regenerate gives visible feedback.
+- Add the expanded debrief section to the axe accessibility scan in both themes.
+
+**Acceptance Criteria**
+- Playwright: Regenerate has a visible border/background in both themes, and the axe scan of the debrief section reports no colour-contrast violations
+- Playwright: a mocked 500 on POST shows an error message and keeps the existing debrief
+- Playwright: after a successful regenerate, the generated timestamp updates
+
+---
+
+### BLG-GOV-378 — Decide whether the debrief focus area may be longer than one strictly restating sentence
+**Priority:** P3 (Low)
+**Type:** Governance / AI Compliance
+**Owner:** AI Compliance Governance Officer; Product Owner
+**Source:** User testing of the post-trade debrief in production — 2026-10-07 ("Not really sure that is an AI debrief")
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Depends on:** BLG-BE-152 (derived figures), so the decision is made against improved output, not the current one
+
+**Problem**
+The §13 review limits the model's output to one observational sentence, which may only restate given numbers. Users see a summary built in code plus, at best, one sentence that largely repeats it, and question whether the feature is an AI debrief at all. Some of this is fixed by better inputs (BLG-BE-152). The remaining limit, one sentence about how execution differed from plan, leaves little to say on trades that went to plan.
+
+**Scope**
+- Once BLG-BE-152 ships, review a sample of real debriefs.
+- Decide whether to keep the current limits, or to allow 2–3 observational sentences (still non-prescriptive and number-checked) covering what went well as well as what differed.
+- If changed, record the ruling as an amendment to the §13 review and file the implementation item.
+
+**Acceptance Criteria**
+- A recorded decision (keep or amend), with rationale, from the AI Compliance Governance Officer and Product Owner
 
 ---
