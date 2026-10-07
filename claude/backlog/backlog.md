@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-07 (session — 1 new item(s) added: BLG-OPS-181 (EPIC-04 ST-18 live fire, staging hook deploy did not go live)); prior — 2026-10-07 (session — 1 new item(s) added: BLG-OPS-180 (EPIC-04 ST-18 execution, missing STAGING_API_URL secret)); prior — 2026-10-07 (session — 4 new item(s) added: BLG-GOV-376 (EPIC-03 ST-13/ST-14 execution), BLG-BE-147, BLG-BE-148, BLG-BE-149 (EPIC-03 agent-mediated pre-PR review)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-07 (session — 1 new item(s) added: BLG-OPS-182 (EPIC-04 ST-18 AC 1 narrowed, live fire from main after merge)); prior — 2026-10-07 (session — 1 new item(s) added: BLG-OPS-181 (EPIC-04 ST-18 live fire, staging hook deploy did not go live)); prior — 2026-10-07 (session — 1 new item(s) added: BLG-OPS-180 (EPIC-04 ST-18 execution, missing STAGING_API_URL secret)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5198,5 +5198,27 @@ The `STAGING_API_URL` GitHub Actions secret is not set. All 126 recorded runs of
 **Acceptance Criteria**
 - The cause is recorded against this item
 - If it is a filter: the staging deploy notes say whether a `workflow_dispatch` deploy of a non-code commit is expected to go live
+
+---
+
+### BLG-OPS-182 — Live-fire the stale-staging check from main against a deliberate staging/main divergence
+**Priority:** P3 (Low)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** Sprint Execution, ST-18 / EPIC-04, cycle `2026-10-06__release-v9.10` (agent-mediated Director of Quality review; ST-18 AC 1 narrowed) — 2026-10-07
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.11
+**Depends on:** EPIC-04 (v9.10) merged to `main`
+
+**Problem**
+ST-18's failing run (37598457966) was dispatched on the EPIC-04 branch: staging `ef4088b4` lacked the branch's deploy-path commit `d6644b25`. It proved the check and the Telegram alert fire on a real divergence, but not a deliberately introduced staging/`main` divergence as AC 1 worded it. The new comparison target in `scripts/staging_smoke_test.py` (latest staging-deploying commit, ancestor-aware) has not yet run from `main`'s copy of the workflow.
+
+**Scope**
+- After EPIC-04 merges, deliberately put staging behind `main` on a deploy-path commit (e.g. hold a code commit's deploy, or redeploy an older commit from the Render dashboard).
+- Run `staging-smoke-test.yml` on `main`, then restore staging and run it again.
+
+**Acceptance Criteria**
+- A failing `main` run URL showing `STALE STAGING DEPLOY` for the deliberate divergence, with the Telegram alert received
+- A passing `main` run URL after staging is restored
 
 ---

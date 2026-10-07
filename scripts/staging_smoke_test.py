@@ -44,6 +44,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from pathlib import Path
 
 # Render free-tier services spin down after inactivity and take ~30-60s to
 # cold-start on the next request (same constraint class as
@@ -134,11 +135,14 @@ def run_checks(base_url: str, api_key: str) -> list:
     return failures
 
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
 def _git(*args: str):
     """Run a git command; return (returncode, stdout), or (None, "") if git
     itself can't run (no git binary, not a checkout)."""
     try:
-        r = subprocess.run(["git", *args], capture_output=True, text=True, timeout=30)
+        r = subprocess.run(["git", "-C", str(REPO_ROOT), *args], capture_output=True, text=True, timeout=30)
     except (OSError, subprocess.SubprocessError):
         return None, ""
     return r.returncode, r.stdout.strip()
