@@ -48,9 +48,13 @@ export default function PositionSizingWidget({
     sharesRef.current = shares;
   }, [shares]);
 
+  // ST-07 (BLG-FE-197, v9.10): Trade Entry passes stopPrice = null until the
+  // system stop is known (entry price and ATR both present).
+  const inputsMissing = entryPrice === "" || entryPrice == null || stopPrice === "" || stopPrice == null;
+
   // Debounced API call — fires 300ms after entryPrice, stopPrice, market, fxRate, or riskPercent change
-  const { sizingResult, sizingLoading } = useDebouncedSizing(
-    () => !(entryPrice === "" || entryPrice == null || stopPrice === "" || stopPrice == null),
+  const { sizingResult: fetchedResult, sizingLoading } = useDebouncedSizing(
+    () => !inputsMissing,
     () => {
       const body = {
         entry_price: entryPrice,
@@ -87,6 +91,9 @@ export default function PositionSizingWidget({
       setUsedSuggestion(true);
     }
   };
+
+  // A result fetched for an earlier stop is not shown once the stop is unknown again.
+  const sizingResult = inputsMissing ? null : fetchedResult;
 
   // Derived display values
   const isValid = sizingResult?.valid;
@@ -179,6 +186,12 @@ export default function PositionSizingWidget({
         <p className="flex items-start gap-1.5 text-amber-600 dark:text-amber-400 text-xs">
           <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
           <span>{sizingResult.concentration_reason}</span>
+        </p>
+      )}
+
+      {inputsMissing && (
+        <p className="text-slate-600 dark:text-slate-400 text-xs" data-testid="sizing-empty-hint">
+          Enter an entry price and ATR to size this position.
         </p>
       )}
 

@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-06T21:01:55Z",
+  "last_updated_utc": "2026-10-07T07:00:08Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -281,91 +281,104 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/accessibility-axe-scan.spec.js",
+        "tests/test_claude_audit_entry_failure_logging.py"
+      ],
       "stories": {
         "ST-15": {
           "title": "AI chat advisory §13 quarterly self-audit checklist",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 1908,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "6b6f8af3cf6099c2f5fd6b3a5c461e880fe92747",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/ops/ai_chat_section13_quarterly_self_audit_checklist.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
           "notes": ""
         },
         "ST-16": {
           "title": "AI model output logging completeness audit",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 1909,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "ef167325e5a112704b672c9251507ce71a1f6bb7",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/ops/ai_output_logging_completeness_audit_2026-10-06.md",
+            "tests/test_claude_audit_entry_failure_logging.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
           "notes": ""
         },
         "ST-17": {
           "title": "Quarterly dependency update review",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1910,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "05600e77bf5909698f472e732173618acd2fbffb",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-06T15:56:01Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/security/dependency_update_review_2026-10-06.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case B. 17+38 deps reviewed; rescan 0 new; upgrades filed BLG-TECH-22/23 (none applied in-story). Deviation check: none."
         },
         "ST-18": {
           "title": "Confirm the stale-staging-deploy alert fires on a real stale-staging condition",
           "classification": "delegated_backend",
-          "status": "not_started",
-          "assigned_to": "engine",
+          "status": "blocked_backend",
+          "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1911,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20261006-03",
+          "blocked_since_utc": "2026-10-06T16:01:09Z",
+          "unblock_criteria": "Failing run URL with STALE STAGING DEPLOY and passing run URL after restore",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "scripts/staging_smoke_test.py",
+            ".github/workflows/staging-smoke-test.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
@@ -376,37 +389,37 @@
         "ST-19": {
           "title": "Add the Reports and Notifications pages to the axe accessibility scan",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1912,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "14f9cef04b150e7840cd3c8d557ea5c2618c6fc3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-06T15:52:42Z",
+          "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/accessibility-axe-scan.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "12/12 axe tests pass locally. button-name fixed; light-theme color-contrast filed BLG-FE-200 (baseline per page:theme). Deviation check: none."
         },
         "ST-20": {
           "title": "Correct the PO-05 pre-assessment and replay page spec wording",
           "classification": "delegated_decision",
-          "status": "not_started",
-          "assigned_to": "engine",
+          "status": "blocked_decision",
+          "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1913,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-10-06T16:01:09Z",
+          "unblock_criteria": "ESC-EXEC-20261006-05: F1/F2/F4 acknowledgement + caption wording",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -420,186 +433,237 @@
         "ST-21": {
           "title": "Sign-off single-point-of-failure matrix",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1914,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "d87aa8d131cb4ceb4eb0da9f29fd6987c81be8a3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-06T15:57:47Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/sign_off_single_point_of_failure_matrix.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case B. 16 sole-signer SPOF gates flagged. Deviation check: none."
         }
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "merged",
       "branch": "exec/2026-10-06__release-v9.10/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1916,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/recent-trades-zero-pnl-badge.spec.js",
+        "tests/e2e/exit-condition-surfacing.spec.js",
+        "tests/e2e/stop-cell-provenance.spec.js",
+        "tests/e2e/trailing-stop-explainer-tooltip.spec.js",
+        "tests/e2e/trade-entry-system-stop.spec.js",
+        "tests/test_add_position_stop_handling.py"
+      ],
       "stories": {
         "ST-06": {
           "title": "Show ATR, active multiplier and recalculation source in the stop-loss cell",
           "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
+          "status": "done",
+          "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1899,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "b1921fd1d31dc4963112bc67637b2dccd7c0a1ba",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-06T21:14:27Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/positions.md"
+            "docs/specs/frontend/pages/positions.md#Stop Provenance Line and Per-Row Stop Details (v9.10 — ST-06, BLG-FE-193)",
+            "docs/design/2026-10-06__release-v9.10/stop-cell-provenance/decision_record.md",
+            "tests/e2e/stop-cell-provenance.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Unblocked: ESC-EXEC-20261006-01 resolved (ruling (a)) and EPIC-01 merged (PR #1915). AC1-3 met; Playwright SC-SCP-01..07 + SC-TSE-01..05 pass locally; 10 stop-cell specs 86/86. Displayed multiplier is the row's stored active_atr_multiplier (written from backend/strategy_parameters.py). Deviation check: none."
         },
         "ST-07": {
           "title": "Trade Entry shows the stop and risk the system will actually store",
           "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
+          "status": "done",
+          "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 1900,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "e5df8e65cb9898a1159833d1a0df328621d09b6b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-06T21:26:38Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/components/position_form.md"
+            "docs/specs/frontend/components/position_form.md#Initial Stop (set by system) (v1.7 — ST-07, replaces Stop Price)",
+            "docs/design/2026-10-06__release-v9.10/trade-entry-system-stop/decision_record.md",
+            "tests/e2e/trade-entry-system-stop.spec.js",
+            "tests/test_add_position_stop_handling.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Unblocked: ESC-EXEC-20261006-01 resolved (ruling (a)), EPIC-01 merged. AC1 Playwright SC-TES-01 (risk = (entry − system stop) × shares); AC2 SC-TES-02 (no stop input, no stop_price in payload); AC3 SC-TES-03; AC4 tests/test_add_position_stop_handling.py (5 pass). 13 Trade Entry specs 82/82 locally. Deviation check: none."
         },
         "ST-08": {
           "title": "Exit dialog pre-selects the exit reason the system already knows",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1901,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "1d7b7a2466c0a98cc33f6fb36658575264006601",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-06T16:16:11Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/positions.md"
+            "docs/specs/frontend/pages/positions.md#Exit Dialog Pre-Selection and Deep Link",
+            "tests/e2e/exit-condition-surfacing.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "SC-EXD-01..05 + SC-ECP-01..04 pass locally. Deviation check: none."
         },
         "ST-09": {
           "title": "Morning briefing card for §8 exit recommendations",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1902,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "1d7b7a2466c0a98cc33f6fb36658575264006601",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-06T16:16:11Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/dashboard.md"
+            "docs/specs/frontend/pages/dashboard.md#Exit Conditions Met Row",
+            "tests/e2e/exit-condition-surfacing.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "SC-EXC-01..02 pass locally; UI copy lint passes. Deviation check: none."
         },
         "ST-10": {
           "title": "Recent Trades badge shows a neutral glyph for a break-even trade",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1903,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "89f16aa494d2a0e1add0fafd7ee5b8654b56cfa5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-06T16:03:19Z",
+          "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/recent-trades-zero-pnl-badge.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "SC-RTB-01..05 pass locally. Deviation check: none."
         }
-      }
+      },
+      "sign_off_record": {
+        "status": "cleared",
+        "role": "Director of Quality",
+        "method": "agent_mediated_user_directed",
+        "signed_utc": "2026-10-07T06:48:09Z",
+        "verdict": "Approved with Comments",
+        "evidence": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-02.md",
+        "notes": "Agent-mediated on explicit user direction 2026-10-07; pending human confirmation. Merge gate still needs human QA comment and PO acceptance."
+      },
+      "merge_gate_record": {
+        "qa_signoff_comment": "https://github.com/sachiv1984/swing-trading-model/pull/1916#issuecomment-6032631463",
+        "po_acceptance_comment": "https://github.com/sachiv1984/swing-trading-model/pull/1916#issuecomment-6032631796",
+        "method": "agent_recorded_on_explicit_human_direction",
+        "recorded_utc": "2026-10-07T06:51:57Z",
+        "merge": "human, 2026-10-07T06:59:46Z, merge commit fd350899"
+      },
+      "merged_utc": "2026-10-07T06:59:46Z"
     }
   },
   "blocked_items": [
     "ST-11",
     "ST-13",
-    "ST-14"
+    "ST-14",
+    "ST-20"
   ],
-  "delegated_items": [],
+  "delegated_items": [
+    "ST-18"
+  ],
   "completed_items": [
     "ST-01",
     "ST-02",
     "ST-03",
     "ST-04",
     "ST-05",
-    "ST-12"
+    "ST-12",
+    "ST-17",
+    "ST-19",
+    "ST-21",
+    "ST-06",
+    "ST-07",
+    "ST-08",
+    "ST-09",
+    "ST-10"
   ],
   "open_escalations": [
     "ESC-EXEC-20261006-03",
-    "ESC-EXEC-20261006-04"
+    "ESC-EXEC-20261006-04",
+    "ESC-EXEC-20261006-05"
   ],
   "merge_gate": {
     "epics_merged": [
-      "EPIC-01"
+      "EPIC-01",
+      "EPIC-02"
     ],
     "epics_pending": [
       "EPIC-03",
-      "EPIC-04",
-      "EPIC-02"
+      "EPIC-04"
     ],
     "all_merged": false
   },
   "process_notes": [
     "EPIC-01 DoQ sign-off agent-mediated (Director of Quality role, §5.3) on explicit user direction 2026-10-06; Product Owner review agent-mediated, comment only. Merge gate still requires human QA comment and PO acceptance.",
     "EPIC-01 PR #1915 opened 2026-10-06; combined agent-mediated DoQ + PO review comment posted (both Approved with Comments). Awaiting CI, human QA sign-off comment and PO acceptance.",
-    "Resume sync 2026-10-06T21:01:55Z: PR #1915 (EPIC-01) found merged at 2026-10-06T21:00:45Z (mergedAt) — pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-01 is empty — nothing to reconcile."
+    "Resume sync 2026-10-06T21:01:55Z: PR #1915 (EPIC-01) found merged at 2026-10-06T21:00:45Z (mergedAt) — pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-01 is empty — nothing to reconcile.",
+    "ST-06/ST-07 (autonomous) held as blocked_decision on dependency ST-01's ruling (ESC-EXEC-20261006-01); classification unchanged, they resume as autonomous once ruled.",
+    "2026-10-07T06:44:19Z: EPIC-02 pre-PR review run on user direction: agent-mediated Director of Quality and Product Owner, both Approved with Comments. Filed BLG-BE-146, BLG-FE-203, BLG-QA-215, BLG-FE-204 (backlog.md new-item exception, §7). The review comment is drafted for posting when the PR opens. DoQ sign-off block still blank, so the PR is not opened (§3.2.B).",
+    "2026-10-07T06:48:09Z: EPIC-02 DoQ sign-off agent-mediated (Director of Quality role, §5.3) on explicit user direction; qa_signed_off set in the same commit (DF-02).",
+    "2026-10-07T06:49:18Z: EPIC-02 PR #1916 opened; combined agent-mediated DoQ + PO review comment posted (both Approved with Comments). Awaiting PR CI, human QA sign-off comment and PO acceptance.",
+    "2026-10-07T06:51:57Z: EPIC-02 merge-gate QA sign-off and PO acceptance comments posted on PR #1916, recorded by the engine on the human owner's explicit in-session direction (OA-6 labelling). Merge left to the human.",
+    "2026-10-07T07:00:08Z: Mid-session re-sync (AUD-2026-08-21-010): PR #1916 (EPIC-02) merged by the human at 2026-10-07T06:59:46Z (fd350899); pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-02 is empty."
   ],
   "sealed": false,
   "sealed_utc": null

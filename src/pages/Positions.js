@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEarnings } from "../hooks/useEarnings";
 import { useGapRisk } from "../hooks/useGapRisk";
@@ -32,6 +32,7 @@ import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import { formatCurrency, formatPercent, formatR, currencyForMarket } from "../lib/format";
 import ComplianceRecheckModal from "../components/positions/ComplianceRecheckModal";
 import TrailingStopExplainerIcon from "../components/positions/TrailingStopExplainerIcon";
+import { StopProvenanceLine, StopDetailsTrigger } from "../components/positions/StopProvenance";
 import {
   DataTable,
   TableHeader,
@@ -43,7 +44,7 @@ import {
 import { cn } from "../lib/utils";
 import { friendlyErrorMessage } from "../lib/apiError";
 import { differenceInDays } from "date-fns";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import MetricsStalenessIndicator from "../components/analytics/MetricsStalenessIndicator";
 import StrategyCompliancePanel from "../components/positions/StrategyCompliancePanel";
@@ -642,6 +643,7 @@ export default function Positions() {
   const [recheckingPosition, setRecheckingPosition] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
 
   // ST-15 (v7.0, BLG-FEAT-68): shares the queryKey with DrawdownReviewPrompt's
@@ -665,6 +667,16 @@ export default function Positions() {
       return result;
     },
   });
+
+  // ST-08 (BLG-FE-198, v9.10): /#/Positions?exit={id} opens the exit dialog for
+  // that open position, then drops the parameter. Unknown or closed ids are ignored.
+  useEffect(() => {
+    const exitId = new URLSearchParams(location.search).get("exit");
+    if (!exitId || !Array.isArray(positions)) return;
+    const target = positions.find((p) => String(p.id) === exitId && p.status !== "closed");
+    if (target) setExitingPosition(target);
+    navigate(location.pathname, { replace: true });
+  }, [location.search, location.pathname, positions, navigate]);
 
   const { data: availableTags = [] } = useQuery({
     queryKey: ["position-tags"],
@@ -967,9 +979,10 @@ export default function Positions() {
                         Init: {formatCurrency(position.initial_stop, { currency })}
                       </span>
                       <div className="flex items-center gap-1.5">
-                        <span>
+                        {/* ST-06 (BLG-FE-193, v9.10): per-row stop details tooltip */}
+                        <StopDetailsTrigger position={position} currency={currency}>
                           {trailStopNative > 0 ? formatCurrency(trailStopNative, { currency }) : formatCurrency(displayStopPrice, { currency })}
-                        </span>
+                        </StopDetailsTrigger>
                         {/* ST-09 (v7.0, BLG-FE-96): breach badge — visible when price <= trailing stop, spec colour/label */}
                         {trailBreached && (
                           <span
@@ -982,6 +995,8 @@ export default function Positions() {
                           </span>
                         )}
                       </div>
+                      {/* ST-06 (BLG-FE-193, v9.10): always-visible stop provenance line */}
+                      <StopProvenanceLine position={position} currency={currency} />
                     </div>
                   </TableCell>
 
@@ -1105,6 +1120,7 @@ export default function Positions() {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+                        aria-label={`Exit ${position.ticker}`}
                         onClick={() => setExitingPosition(position)}
                       >
                         <LogOut className="w-4 h-4" />

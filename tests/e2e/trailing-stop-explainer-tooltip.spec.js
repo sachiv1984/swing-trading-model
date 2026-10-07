@@ -115,7 +115,8 @@ test('SC-TSE-02: Hovering the icon reveals the explainer tooltip text', async ({
   await icon.hover();
 
   await expect(page.getByText(/tightens as a position becomes profitable/i)).toBeVisible({ timeout: 5000 });
-  await expect(page.getByText(/atr is recalculated daily/i)).toBeVisible();
+  await expect(page.getByText(/recalculated when positions load and by a nightly update/i)).toBeVisible();
+  await expect(page.getByText(/recalculated daily/i)).toHaveCount(0);
   await expect(page.getByText(/once tightened, a stop never loosens/i)).toBeVisible();
 });
 
