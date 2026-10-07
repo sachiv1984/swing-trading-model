@@ -426,11 +426,11 @@
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1911,
           "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "51269188b5e5004b6882277c2b552300c9cdb191",
           "delegation_record_id": "DEL-20261006-03",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-10-07T09:45:36Z",
           "acceptance_verified": true,
           "spec_references": [
             "scripts/staging_smoke_test.py",
