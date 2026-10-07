@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-07T08:15:00Z",
+  "last_updated_utc": "2026-10-07T08:20:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -177,10 +177,10 @@
       "merged_utc": "2026-10-06T21:00:45Z"
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-06__release-v9.10/EPIC-03",
       "pr_number": 1917,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -318,7 +318,8 @@
           },
           "notes": "Disposition: weekend_hold removed (BC 6). Friday->Monday earnings flagged; label aligned; docstring cites record (BC 8). BLG-GOV-376 filed for strategy_rules.md §13.3 text. Deviation check: none."
         }
-      }
+      },
+      "merged_utc": "2026-10-07T08:06:08Z"
     },
     "EPIC-04": {
       "status": "in_progress",
@@ -684,10 +685,10 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
+      "EPIC-03",
       "EPIC-02"
     ],
     "epics_pending": [
-      "EPIC-03",
       "EPIC-04"
     ],
     "all_merged": false
@@ -705,7 +706,8 @@
     "2026-10-07T07:31:51Z: ESC-EXEC-20261006-03/04 resolved by Strategy Rules & System Intent Owner rulings (agent-mediated, §5.3, user-directed). ST-11/ST-13/ST-14 reclassified delegated_decision -> autonomous and completed in 05ad3ecf. No DEL records existed for these escalation-only blocks, so there is no delegation-log terminal write. BLG-GOV-376 filed (strategy_rules.md §13.3 text, outside write scope). EPIC-03 status done; PR pending DoQ sign-off (§3.2.B).",
     "2026-10-07T08:00:00Z: EPIC-03 pre-PR review run on user direction: agent-mediated Director of Quality and Product Owner, both Approved with Comments. Filed BLG-BE-147, BLG-BE-148, BLG-BE-149 (backlog.md new-item exception, §7). Combined review comment drafted for posting when the PR opens. DoQ sign-off block still blank, so the PR is not opened (§3.2.B). Branch CI green on 05ad3ecf/ab73ad2f.",
     "2026-10-07: EPIC-03 DoQ sign-off agent-mediated (Director of Quality role, §5.3) on explicit user direction; qa_signed_off set in the same commit (DF-02).",
-    "2026-10-07: EPIC-03 PR #1917 opened. Combined agent-mediated DoQ + PO review comment posted (both Approved with Comments), plus merge-gate QA sign-off and PO acceptance comments, recorded by the engine on the human owner's explicit in-session direction (OA-6 labelling). Merge left to the human."
+    "2026-10-07: EPIC-03 PR #1917 opened. Combined agent-mediated DoQ + PO review comment posted (both Approved with Comments), plus merge-gate QA sign-off and PO acceptance comments, recorded by the engine on the human owner's explicit in-session direction (OA-6 labelling). Merge left to the human.",
+    "2026-10-07: Mid-session re-sync (AUD-2026-08-21-010): PR #1917 (EPIC-03) merged by the human at 2026-10-07T08:06:08Z (ef4088b4); pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-03 is empty."
   ],
   "sealed": false,
   "sealed_utc": null
