@@ -1,13 +1,40 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-28 (post-ship closure 2026-09-23__release-v9.7, manage roadmap STEP 11 — PO-05 Lightweight Replay Mode retired: shipped v9.7, `BLG-FEAT-74`); prior — 2026-07-27 (post-ship closure 2026-07-24__release-v7.8, manage roadmap STEP 11 — RA:Gated-carry-forward-2026-07-27 retired: BLG-FEAT-73/BLG-FEAT-74 removed from current_roadmap.md §3 per PO perennial-return disposition, Option (b); not shipped, not killed, remain open in backlog.md); prior — 2026-07-24 (post-ship closure 2026-07-21__release-v7.7 — RA:v7.7 retired, partial: 5/7 items shipped; 2 unblocked-but-still-gated items (`BLG-FEAT-73`, `BLG-FEAT-74`) re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
+**Last Updated:** 2026-10-07 (post-ship closure 2026-10-06__release-v9.10, manage roadmap STEP 11 — "v9.10 — Committed items" Now-horizon section retired: BLG-BE-138, BLG-FE-193, BLG-FE-198 shipped v9.10); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7, manage roadmap STEP 11 — PO-05 Lightweight Replay Mode retired: shipped v9.7, `BLG-FEAT-74`); prior — 2026-07-27 (post-ship closure 2026-07-24__release-v7.8, manage roadmap STEP 11 — RA:Gated-carry-forward-2026-07-27 retired: BLG-FEAT-73/BLG-FEAT-74 removed from current_roadmap.md §3 per PO perennial-return disposition, Option (b); not shipped, not killed, remain open in backlog.md); prior history retained — see prior entries in version control
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v9.10 — Committed items (Now horizon)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-10-07
+**Shipped version:** v9.10
+**Cycle reference:** 2026-10-06__release-v9.10
+**Verification report:** claude/cycles/2026-10-06__release-v9.10/verification_report.md
+**Decision log reference:** DL-083 (roadmap rebalance `2026-10-06__scheduled` — committed the three items; not a kill/defer decision)
+**Retirement confirmed by:** Product Owner (acceptance recorded in `verification_report.md` §9, agent-mediated per §5.3)
+
+### Original Roadmap Entry
+
+### v9.10 — Committed items (roadmap rebalance `2026-10-06__scheduled`, DL-083) — ✅ Complete — Shipped 2026-10-07 — cycle: 2026-10-06__release-v9.10
+
+*Added by the rebalance, not by Release Planning: the release's full scope, capacity fit and story breakdown are set at `plan release v9.10`. These three items are committed to it.*
+
+**✅ Complete — 2026-10-07 — cycle `2026-10-06__release-v9.10`:** all three committed items shipped — `BLG-BE-138` (ST-01, PR #1915), `BLG-FE-193` (ST-06, PR #1916), `BLG-FE-198` (ST-08, PR #1916). Verified_with_deviations (2 P3-default QA-evidence deviations, neither on these three items). See `docs/product/changelog.md#v9.10`.
+
+| Item | Why it is here | Priority | Effort |
+|------|----------------|----------|--------|
+| `BLG-BE-138` — one source for §11 stop parameters (on-load analyze path vs nightly job) | STEP 8.0 Production Correctness Fast-Track: the on-load stop path reads the user-editable settings row while the nightly job hard-codes 5×/2×, so a live stop can differ from `strategy_rules.md` §7.2. Live impact unverified (production settings row not readable from the governed environment) — checking it is the item's first AC. No PO safety override: stop levels feed exit decisions. | P1 | M (~3-5 days) |
+| `BLG-FE-193` — stop-loss cell ATR/multiplier/recalculation-source display | §7.1 sustained-failure pull-forward (PO-committed build-and-ship U-item). Gate met: `BLG-BE-135` shipped v9.9. | P2 | M (~4-6 days) |
+| `BLG-FE-198` — exit dialog pre-selects the known exit reason | §7.1 sustained-failure pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | S (~1 day) |
 
 ---
 

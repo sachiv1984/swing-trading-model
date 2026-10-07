@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.225
-**Last Updated:** 2026-10-07 (BLG-GOV-362 Product Owner review condition — sprint_planning_prompt.md v3.20→v3.21 (§6.2 Named-file write disclosure); §7 source-prompt header and §14 row updated); prior — 2026-10-07 (BLG-GOV-362 Head of Specs Team ruling — execution_prompt.md v3.82→v3.83 and sprint_planning_prompt.md v3.19→v3.20; §7 and §8 source-prompt headers and §14 rows updated); prior — 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` STEP 11 — roadmap_prompt.md v9.30→v9.31 and shared_standards.md v3.36→v3.37; §6 source-prompt header and §14 rows updated); prior history retained — see prior entries in version control.
+**Version:** 4.226
+**Last Updated:** 2026-10-07 (post-ship closure `2026-10-06__release-v9.10` STEP 8 — execution_prompt.md v3.83→v3.84, delivery_verification_prompt.md v3.13→v3.14, post_ship_closure.md v2.37→v2.38; §8/§9/§10 source-prompt headers and §14 rows updated); prior — 2026-10-07 (BLG-GOV-362 Product Owner review condition — sprint_planning_prompt.md v3.20→v3.21 (§6.2 Named-file write disclosure); §7 source-prompt header and §14 row updated); prior — 2026-10-07 (BLG-GOV-362 Head of Specs Team ruling — execution_prompt.md v3.82→v3.83 and sprint_planning_prompt.md v3.19→v3.20; §7 and §8 source-prompt headers and §14 rows updated); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -888,7 +888,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.83)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.84)
 
 ### 8.1 Invocation
 
@@ -977,7 +977,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.13)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.14)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1063,7 +1063,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.37)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.38)
 **Process document:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); `claude/system/post_ship_closure.md` is the sole authority.
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1368,7 +1368,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.225 |
+| Version | 4.226 |
 | Last Updated | 2026-10-07 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.10 |
@@ -1382,11 +1382,11 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.59 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.21 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.83 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.84 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.17 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.13 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.14 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.37 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.38 |
 | Shared Standards | `claude/system/shared_standards.md` v3.37 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.15 |
@@ -1504,6 +1504,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.226 | 2026-10-07 | **Post-ship closure `2026-10-06__release-v9.10` STEP 8, immediate lessons-learnt actions — 3 source prompts bumped.** `execution_prompt.md` v3.83→v3.84: §3.1.A step 4c Playwright CI conclusion before `done` (LL-v9.10-P3-03); §3.1.B step 2a workflow-viability pre-check for live-fire delegations (LL-v9.10-P3-01); §3.2.A `Pass_with_deviation` self-check before DoQ sign-off (LL-v9.10-P3-02); STEP 5.1 `spec_references` path-existence check (LL-v9.10-P4-01). `delivery_verification_prompt.md` v3.13→v3.14: STEP 2.1/2.3 `Pass_with_deviation` no-remainder variant (carried LL-v9.9-P4-01). `post_ship_closure.md` v2.37→v2.38: STEP 1.5 digest command runnable as written (venv + `PYTHONPATH=backend`, carried v9.9 closure action); STEP 5.1 scan broadened and active-backlog-reference check added (seventh deviation consolidation review). §8/§9/§10 source-prompt headers and §14 rows updated; §14 self-row and header 4.225→4.226. |
 | 4.225 | 2026-10-07 | **BLG-GOV-362 Product Owner review condition — sprint_planning_prompt.md v3.20→v3.21.** §6.2 Sign-Off Gate gains a Named-file write disclosure: every STEP 3.1 named-file write is listed in the sign-off summary, and edits to an existing backlog item's Scope, Acceptance Criteria or Gate criteria need explicit Product Owner confirmation before seal. §7 source-prompt header and §14 Sprint Planning Engine row v3.20→v3.21; §14 self-row 4.224→4.225. |
 | 4.224 | 2026-10-07 | **BLG-GOV-362 resolution — Head of Specs Team ruling (agent-mediated, user-directed; Product Owner co-owner acknowledgement pending) — 2 source prompts bumped.** `execution_prompt.md` v3.82→v3.83: §7 gains the plan-authorised named-file rule (a sealed AC naming an exact `claude/roadmap/*` file, or an exact `backlog.md` item ID plus a descriptive field, authorises that write in-sprint; prioritisation/scope/capacity decisions and Priority/Status/Owner/Effort/Provisional-Target/Type/Source stay excluded), codifying `ESC-CLOSE-20261006-01`. `sprint_planning_prompt.md` v3.19→v3.20: STEP 3.1 named-file write check (name the exact target, or redraft the AC / classify `delegated_decision` with a RISK entry). §7/§8 source-prompt headers and §14 rows updated; §14 self-row 4.223→4.224. Also fixed (opportunistic, in-file): Change Log rows 4.221–4.223 restored to descending order (4.221 had been left above 4.223/4.222). |
 | 4.223 | 2026-10-06 | **Roadmap rebalance `2026-10-06__scheduled` STEP 11 (Friction Item 1, action-now) — roadmap_prompt.md v9.30→v9.31.** §7.3 step 1 names where the ready-pool figure lives (newest release `run_manifest.md`, Scope Construction `**Result:**` line) and forbids recording "not re-measured" without naming the manifest checked — the 2026-09-28 and 2026-09-30 rebalances both skipped §7.3 although v9.6–v9.9 release planning had recorded the figures. The runway paragraph no longer tells the engine to update `metrics_definitions.md` Appendix F (outside §4 write scope); the reading is recorded in `workforce_capacity.md`, and Appendix F's maintenance is tracked by `BLG-GOV-374`. §6 source-prompt header and §14 Roadmap Engine Source row v9.30→v9.31; §14 self-row 4.222→4.223. Authority: Head of Specs Team (Roadmap Engine, agent-mediated, STEP 11.2 action-now). |

@@ -3,11 +3,55 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 — v9.9 entry added); prior — 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 — v9.8 entry added); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 — v9.7 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — v9.10 entry added); prior — 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 — v9.9 entry added); prior — 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 — v9.8 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.10 — Stop-Parameter Correctness & Exit Transparency — 2026-10-07
+Cycle: 2026-10-06__release-v9.10
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-10-06__release-v9.10/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Stop-Parameter Correctness & ATR Integrity — the on-load (`GET /positions/analyze`) and nightly stop paths, grace, compliance, exit and alerts logic now read `strategy_rules.md` §11 parameters from one source (`backend/strategy_parameters.py`), with Settings presenting them as fixed values and a parity test guarding both paths (BLG-BE-138, production `settings` row read: no diverged stops); the silent 2%-of-entry ATR fallback and stop-to-entry jump removed, with ATR and stop-calculation provenance persisted (DS-25 `atr_source`, DS-26 `stop_calculation_source`, live on staging and production) and exposed on `GET /positions`; contract corrections for the losing-stop formula, analyze side effects and the settings-change effect; unit tests for the live exit decision and grace period; and a strategy-version registry coverage ruling enforced by a test | Settings now shows the stop-loss multipliers and grace period as the fixed strategy values, and every stop is calculated with those same values whichever screen or overnight job updates it. | `claude/strategy/strategy_rules.md#11`; `docs/specs/data_model.md#DS-25`, `#DS-26`, `#DS-11`; `docs/specs/api_contracts/position_endpoints.md#GET /positions`; `docs/specs/api_contracts/settings_endpoints.md`; `docs/specs/frontend/settings.md#Strategy Parameter Presentation`; `docs/testing/strategy_rule_test_traceability_matrix.md` |
+| EPIC-02 | Stop & Exit Transparency — the Positions stop-loss cell shows the ATR, active multiplier and recalculation source with per-row stop details (BLG-FE-193); Trade Entry shows the system-set initial stop and risk in place of a Stop Price input; the exit dialog pre-selects the exit reason the system already knows (post-grace stop breach or risk-off) with a deep link (BLG-FE-198); a morning-briefing row lists positions whose §8 exit conditions are met; and Recent Trades shows a neutral glyph for a break-even trade | Each position's stop now shows the volatility figure, multiplier and update source behind it. Trade Entry shows the stop and risk that will actually be saved, the exit dialog starts on the exit reason that already applies, the morning briefing lists positions that meet an exit condition, and break-even trades show a neutral icon. | `docs/specs/frontend/positions.md#Stop Provenance Line and Per-Row Stop Details`, `#Exit Dialog Pre-Selection and Deep Link`; `docs/specs/frontend/position_form.md#Initial Stop (set by system)`; `docs/specs/frontend/dashboard.md#Exit Conditions Met Row` |
+| EPIC-03 | Lifecycle & Gap-Risk Strategy Boundary — the lifecycle-state registry reconciled with `strategy_rules.md` §9 (post-grace classification by P&L sign; the ±0.5 ATR bands and `flat_after_grace` removed); the Positions lifecycle badge uses the §6 grace window in calendar days; a §13.3 ruling that the Gap Risk Flag earnings trigger is US-only and day 0 is not flagged; and the standalone `weekend_hold` trigger removed, with the earnings window running to the next trading session | The lifecycle badge on Positions now counts the grace period in calendar days, matching the strategy rules. The gap-risk flag reads "Earnings due by next trading session" and no longer appears for weekend holds alone. | `docs/specs/position_lifecycle_states_registry.md#Relationship to strategy_rules.md §9`; `docs/specs/frontend/positions.md#Grace Precedence and UNKNOWN Reasons`, `#Gap Risk Reason Labels`; `docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id}/gap-risk`; `claude/strategy/strategy_rules.md#4.2.3`, `#13.3`; gap-risk §13 review `#Addendum — v9.10 Rulings` |
+| EPIC-04 | AI Governance, Ops & QA Hygiene — an AI chat advisory §13 quarterly self-audit checklist; an AI model output logging completeness audit with a failure-logging test; the quarterly dependency update review; the stale-staging-deploy check retargeted to the latest staging-deploying commit and live-fired with a real Telegram alert; Reports and Notifications added to the axe accessibility scan in both themes; the PO-05 pre-assessment and replay page spec wording corrected; and a sign-off single-point-of-failure matrix | The Replay page caption now describes accurately what replay does and does not reuse from paper trading. | `docs/ops/ai_chat_section13_quarterly_self_audit_checklist.md`; `docs/ops/ai_output_logging_completeness_audit_2026-10-06.md`; `docs/security/dependency_update_review_2026-10-06.md`; `scripts/staging_smoke_test.py`; `docs/specs/frontend/replay_mode.md#§13 Boundary`; `docs/ops/sign_off_single_point_of_failure_matrix.md` |
+
+### Deviations accepted
+2 minor deviations (QA-evidence-classified, P3-default per `verification_report.md §2.1` — not formal canonical-spec `DEV-*` records) — see `verification_report.md §4`: ST-18 AC 1 narrowed (the live fire diverged staging from the EPIC-04 branch rather than `main`; tracked as `BLG-OPS-182`), and ST-20 AC 2 partly met (`strategy_rules.md` §13.5's PO-05 roster row still states the IT-06 premise; tracked as `BLG-GOV-377`). No P0–P2 deviations.
+
+### Tech backlog items shipped
+- [ST-01] [U] One source for §11 stop parameters across the on-load and nightly stop paths (BLG-BE-138)
+- [ST-02] [D] Silent ATR fallbacks removed; ATR provenance recorded (BLG-BE-139)
+- [ST-03] [D] Contract corrections: losing-stop formula, analyze side effects, settings-change effect (BLG-SPEC-187)
+- [ST-04] [D] Unit tests for the live exit decision and grace-period behaviour (BLG-QA-207)
+- [ST-05] [D] Strategy-version registry coverage ruling, enforced by a test (BLG-BE-137)
+- [ST-06] [U] Stop-loss cell shows ATR, active multiplier and recalculation source (BLG-FE-193)
+- [ST-07] [U] Trade Entry shows the stop and risk the system will actually store (BLG-FE-197)
+- [ST-08] [U] Exit dialog pre-selects the exit reason the system already knows (BLG-FE-198)
+- [ST-09] [U] Morning briefing row for §8 exit recommendations (BLG-FE-199)
+- [ST-10] [U] Recent Trades neutral glyph for a break-even trade (BLG-FE-194)
+- [ST-11] [D] Lifecycle-state registry reconciled with strategy_rules.md §9 (BLG-SPEC-185)
+- [ST-12] [U] Positions lifecycle badge agrees with the §6 grace window, in calendar days (BLG-FE-196)
+- [ST-13] [G] Gap Risk Flag §13.3 ruling on UK-ticker earnings flags and day-0 timing (BLG-GOV-365)
+- [ST-14] [U] Gap risk flag: weekend-hold trigger removed; trigger-timing label aligned with code (BLG-BE-136)
+- [ST-15] [G] AI chat advisory §13 quarterly self-audit checklist (BLG-GOV-140)
+- [ST-16] [D] AI model output logging completeness audit (BLG-GOV-141)
+- [ST-17] [D] Quarterly dependency update review (BLG-OPS-92)
+- [ST-18] [D] Stale-staging-deploy alert confirmed on a real stale-staging condition (BLG-OPS-171)
+- [ST-19] [D] Reports and Notifications added to the axe accessibility scan (BLG-QA-195)
+- [ST-20] [D] PO-05 pre-assessment and replay page spec wording corrected (BLG-SPEC-171)
+- [ST-21] [G] Sign-off single-point-of-failure matrix (BLG-GOV-357)
+
+Sign-off: Product Owner — 2026-10-07
+QA sign-off: Director of Quality — 2026-10-07
 
 ---
 

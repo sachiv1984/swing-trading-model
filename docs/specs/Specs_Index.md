@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 — §49 Test Coverage Gaps v9.9 section added, 4 gaps each already tracked by an in-cycle backlog item, TSG sweep 0 Open, endpoint coverage drift 0 gap; see Changelog table for full history)
+**Last Updated:** 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — §50 Test Coverage Gaps v9.10 section added, 3 gaps each already tracked by an in-cycle backlog item, TSG sweep 4 Open checked / 0 resolved, endpoint coverage drift 0 gap; see Changelog table for history)
 
 ---
 
@@ -1258,6 +1258,46 @@ Identified during delivery verification (`verification_report.md §6`): **4 test
 
 ---
 
+## 50. Test Coverage Gaps — v9.10 (2026-10-06__release-v9.10)
+
+Identified during delivery verification (`verification_report.md §6`): **3 test coverage weaknesses, each already tracked by a backlog item filed in-cycle during PR review**, so no new backlog items were needed. All 22 referenced `test_scenarios` files exist on disk and were confirmed run.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| TSG-v9.10-01 | EPIC-01 | No behaviour test that the alerts grace warning ignores `settings.min_hold_days` | backlog_item_created — `BLG-QA-214` |
+| TSG-v9.10-02 | EPIC-02 | ST-06's stop-details tooltip time is never asserted under a non-UTC browser timezone | backlog_item_created — `BLG-QA-215` |
+| TSG-v9.10-03 | EPIC-04 | Only the Reports Monthly light-theme axe test asserts the applied theme; the other three light-theme scans could silently run in dark mode | backlog_item_created — `BLG-QA-216` |
+
+### 50.1 TSG-v9.10-01 — EPIC-01: No behaviour test that the alerts grace warning ignores `settings.min_hold_days`
+
+**Identified:** 2026-10-07 (delivery verification 2026-10-06__release-v9.10; first raised at PR #1915 review)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** No behaviour test confirms that the alerts grace warning ignores `settings.min_hold_days` now that §11 parameters come from one source. Qualifying reason: Spec section partly uncovered: `strategy_rules.md` §6 grace window on the alerts path.
+**Backlog item:** BLG-QA-214
+
+### 50.2 TSG-v9.10-02 — EPIC-02: Stop-details tooltip time not asserted under a non-UTC browser timezone
+
+**Identified:** 2026-10-07 (delivery verification 2026-10-06__release-v9.10; first raised at the EPIC-02 pre-PR review)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** ST-06's stop-details tooltip time is never asserted under a non-UTC browser timezone. Qualifying reason: Core user journey: stop provenance on the Positions page.
+**Backlog item:** BLG-QA-215
+
+### 50.3 TSG-v9.10-03 — EPIC-04: Three of four light-theme axe scans do not assert the applied theme
+
+**Identified:** 2026-10-07 (delivery verification 2026-10-06__release-v9.10; first raised at PR #1918 review)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** Only the Reports Monthly light-theme axe test asserts the applied theme, so the other three light-theme scans could silently run in dark mode. Qualifying reason: Partial coverage of ST-19's both-themes AC.
+**Backlog item:** BLG-QA-216
+
+**Endpoint coverage drift check (STEP 6 advisory):** Post-ship closure re-ran `scripts/check_api_performance_baseline_drift.py`: PASSED, no new drift (147 normalised `openapi.yaml` endpoints, 0 missing from `api_performance_baseline.md`, no new routes or path prefixes this cycle).
+
+**TSG backlog reconciliation (§7.3 — full-document sweep):** Scanned all 30 pre-existing `### N.N TSG-*` entries for `**Status:** Open` before adding §50. 4 Open entries found (TSG-v9.9-01..04). Their backlog items (`BLG-QA-204`, `BLG-QA-210`, `BLG-QA-212`, `BLG-QA-213`) are all still open, so 0 were resolved. The 3 new §50 entries are added as Open.
+
+---
+
 ## 12. Guiding Principle
 
 > Specs explain decisions.
@@ -1271,6 +1311,7 @@ Identified during delivery verification (`verification_report.md §6`): **4 test
 
 | Date | Change |
 |------|--------|
+| 2026-10-07 | Post-ship closure `2026-10-06__release-v9.10` — §50 Test Coverage Gaps (v9.10) added: 3 gaps (TSG-v9.10-01..03), each already tracked by a backlog item filed in-cycle during PR review (`BLG-QA-214`/`215`/`216`); endpoint coverage drift check PASSED, 0 gaps, no new routes; full-document TSG sweep: 4 Open entries checked (TSG-v9.9-01..04), 0 resolved; §6/§7: 0 open items, none resolved this cycle. |
 | 2026-10-06 | Post-ship closure `2026-09-30__release-v9.9` — §49 Test Coverage Gaps (v9.9) added: 4 gaps (TSG-v9.9-01..04), each already tracked by a backlog item filed in-cycle during PR review (`BLG-QA-204`/`210`/`212`/`213`); endpoint coverage drift check PASSED, 0 gaps, no new routes; full-document TSG reconciliation sweep found 0 Open entries. Header `**Last Updated:**` corrected — it had not been advanced at the 2026-09-30 v9.8 closure. |
 | 2026-09-30 | Post-ship closure `2026-09-28__release-v9.8` — §48 Test Coverage Gaps (v9.8) added, 0 new gaps requiring a backlog item this cycle (TSG-v9.8-01/02 both not_applicable); endpoint coverage drift check (`check_api_performance_baseline_drift.py`) PASSED, 0 gaps, no new routes this cycle; full-document TSG reconciliation sweep found 0 Open entries. |
 | 2026-09-28 | Post-ship closure `2026-09-23__release-v9.7` — §47 Test Coverage Gaps (v9.7) added, 0 new gaps requiring a backlog item this cycle (TSG-v9.7-01/02 both not_applicable); endpoint coverage drift check found 0 gaps (147 normalised endpoints; new `POST /replay/run` already registered in `api_performance_baseline.md` same-PR); `SystemStatus.js` `/replay` categorisation gap flagged and filed as `BLG-FE-191`; full-document TSG reconciliation sweep found 0 Open entries. |

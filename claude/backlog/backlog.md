@@ -1,11 +1,11 @@
 # Product Backlog — Momentum Trading Assistant
 
-<!-- last-spec-debt-deep-review: 2026-09-23__release-v9.7 -->
+<!-- last-spec-debt-deep-review: 2026-10-06__release-v9.10 -->
 
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-07 (session — 1 new item(s) added: BLG-QA-216 (PR #1918 agent-mediated review, axe theme assertion)); prior — 2026-10-07 (session — 1 new item(s) added: BLG-OPS-182 (EPIC-04 ST-18 AC 1 narrowed, live fire from main after merge)); prior — 2026-10-07 (session — 1 new item(s) added: BLG-OPS-181 (EPIC-04 ST-18 live fire, staging hook deploy did not go live)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-07 (groom backlog post-ship closure 2026-10-06__release-v9.10 — 21 items archived (v9.10 shipped); 0 ephemeral sections; 0 gate/effort/field-completeness/duplicate-ID issues; spec-debt deep review run (0 candidates); 3 governance-prompt duplicate candidates flagged for owner review (BLG-GOV-355, BLG-GOV-362, BLG-GOV-368); BLG-OPS-180 surfaced as ambiguous (resolved in-session, no COMPLETE banner)); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — 21 shipped items marked ✅ COMPLETE (pending archival at STEP 12); 0 Phase 4 additions needed); prior — 2026-10-07 (session — 1 new item(s) added: BLG-QA-216 (PR #1918 agent-mediated review, axe theme assertion)); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -2107,61 +2107,6 @@ When sprint planning seals scope, there is no step to cross-reference the change
 
 ---
 
-### BLG-GOV-140 — AI chat advisory §13 quarterly self-audit checklist
-**Priority:** P2 (Medium)
-**Type:** Governance Process / §13 Compliance
-**Owner:** Strategy Rules & System Intent Owner; AI Compliance & Governance Officer
-**Source:** IDEA-strategy-owner-20260626-02 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Gate cleared (2026-10-05, ST-19):** the 90-day post-v6.2 date (2026-09-24) has passed and the 90-day AI feature usage review is filed (`docs/ops/ai_feature_usage_review_2026-09-24.md`). The first-review date has passed, so this item is ready to schedule; the checklist itself is still to be written. Product Owner authorised.
-
-> **Product Owner note (2026-08-21, post-ship closure `2026-08-17__release-v8.9` STEP 12 review):** This item was flagged by `groom backlog`'s Deferral Age Validation as a stale-target/kill candidate because its `Provisional-Target` field still read the leftover placeholder `v6.3` (long since shipped). That flag was a false positive — the item's own `Gate criteria` field is the actual operative schedule, and 2026-09-24 has not yet arrived. Not neglected, not a kill candidate. `Provisional-Target` corrected above to avoid re-triggering the same false-positive check at the next groom run.
-
-**Problem**
-v6.2 AI chat advisor and daily briefing are now live. §13 requires AI advisory outputs to remain advisory-only and not cross into automated decision-making. Periodic self-audit confirms this boundary is maintained as prompts and response handling evolve. Without a scheduled review, §13 compliance depends on individual vigilance rather than a governed cadence.
-
-**Scope**
-- Author §13 self-audit checklist document covering: output advisory language confirmation, no-automated-action verification, disclaimer visibility check, prompt injection risk review
-- Schedule first review 2026-09-24; quarterly cadence thereafter
-- Owner: Strategy Rules & System Intent Owner; co-reviewer: AI Compliance & Governance Officer
-
-**Acceptance Criteria**
-- Checklist document produced and filed
-- First review date scheduled (2026-09-24)
-- Product Owner and Strategy Rules owner sign-off
-
----
-
-### BLG-GOV-141 — AI model output logging completeness audit
-**Priority:** P2 (Medium)
-**Type:** Governance Process / §13 Compliance
-**Owner:** AI Compliance & Governance Officer; Infrastructure & Operations Owner
-**Source:** IDEA-ai-compliance-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Gate cleared (2026-10-05, ST-19):** the 90-day post-v6.2 date (2026-09-24) has passed and the 90-day AI feature usage review is filed (`docs/ops/ai_feature_usage_review_2026-09-24.md`). Still to be done and ready to schedule. The review found `database.create_claude_audit_entry()` swallows insert errors (`except Exception: pass`), so a failed log write is silent — this audit should cover that. Product Owner authorised.
-
-> **Product Owner note (2026-08-21, post-ship closure `2026-08-17__release-v8.9` STEP 12 review):** This item was flagged by `groom backlog`'s Deferral Age Validation as a stale-target/kill candidate because its `Provisional-Target` field still read the leftover placeholder `v6.3` (long since shipped). That flag was a false positive — the item's own `Gate criteria` field is the actual operative schedule, and 2026-09-24 has not yet arrived. Not neglected, not a kill candidate. `Provisional-Target` corrected above to avoid re-triggering the same false-positive check at the next groom run.
-
-**Problem**
-v6.2 AI features (briefing, chat) should be logging all AI responses with model ID, prompt hash, and response length per AI governance policy. A completeness audit verifies the logging is in place and complete. Without this audit, log completeness is assumed rather than verified.
-
-**Scope**
-- Review claude_audit_log (or equivalent) for completeness: all POST /ai/daily-briefing and POST /ai/chat responses logged
-- Verify fields: model_id, prompt_hash, response_length, timestamp
-- If gaps found: file remediation items
-- Schedule review by 2026-09-24
-
-**Acceptance Criteria**
-- Audit completed before 2026-09-24
-- Logging completeness confirmed or gaps filed as remediation backlog items
-- AI Compliance Officer sign-off
-
----
-
 ### BLG-GOV-142 — AI feature ROI assessment at 3-month post-ship mark
 **Priority:** P2 (Medium)
 **Type:** Governance Process / Value Assessment
@@ -2807,26 +2752,6 @@ CI suite runtime has not been reported as a bottleneck at the current spec-file 
 
 ---
 
-### BLG-OPS-92 — Dependency update review
-**Priority:** P2 (Medium)
-**Type:** Operations / Security Hygiene
-**Owner:** Head of Engineering
-**Source:** IDEA-head-of-engineering-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
-**Effort:** S (~1 day)
-**Provisional-Target:** Unscheduled
-**Gate criteria:** A new CVE or deprecation warning surfaces on a project dependency, OR the next quarterly hygiene cadence (~2026-10-06, 3 months post v4.0 starlette remediation).
-
-**Problem**
-No known CVE or deprecation warning is currently outstanding since the v4.0 starlette remediation; a full review now would be opportunistic rather than urgent.
-
-**Scope**
-- Full dependency update review triggered by either a new CVE/deprecation signal or the quarterly cadence, whichever comes first
-
-**Acceptance Criteria**
-- Review conducted at or after the gate condition (signal or cadence date)
-
----
-
 ### BLG-FE-90 — Open Positions panel visual consistency check
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
@@ -3300,49 +3225,6 @@ The read-only credential available to sprint-execution sessions is for **staging
 
 ---
 
-### BLG-QA-195 — Add the Reports and Notifications pages to the axe accessibility scan, with light-theme contrast coverage
-**Priority:** P3 (Low)
-**Type:** QA / Test Automation
-**Owner:** QA & Testing Owner; Frontend Specifications & UX Documentation Owner
-**Source:** PR #1802 review (agent-mediated DoQ), ST-03/ST-04/ST-05/ST-06/EPIC-02, cycle 2026-09-23__release-v9.7 — 2026-09-24
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`tests/e2e/accessibility-axe-scan.spec.js` scans only DashboardHome, Positions and TradePlan. EPIC-02 (v9.7) added new interactive markup to `Reports.js` — the "Restated" button (`aria-expanded`/`aria-controls`, whose target id does not exist while collapsed), an `aria-label` on a table cell, a `dl` detail row and amber/cyan text tones — and changed two Notifications headings. None of it has automated accessibility or light-theme contrast coverage, so the new elements' contrast and ARIA validity were reasoned about, not measured.
-
-**Scope**
-- Add the Reports page (Monthly tab with a restated month expanded, and the Tax Year tab with the restated-months notice) and the Notifications preferences/history pages to the axe scan
-- Run the new scans in both dark and light themes, evaluating the settled state per the design-system motion-vs-contrast guideline
-- Fix or file any findings
-
-**Acceptance Criteria**
-- The axe scan covers the Reports (both tabs, restated row expanded) and Notifications pages in dark and light themes
-- Any serious/critical finding is fixed or has its own filed item
-
----
-
-### BLG-SPEC-171 — Correct the PO-05 pre-assessment, roadmap and replay page spec: replay does not reuse IT-06's Alpaca mechanics, determinism wording, engine-versus-live rule divergences
-**Priority:** P3 (Low)
-**Type:** Spec Debt
-**Owner:** Strategy Rules & System Intent Owner; Frontend Specifications & UX Documentation Owner
-**Source:** ST-01a/EPIC-01, cycle 2026-09-23__release-v9.7 — `docs/product/decisions/po05_replay_scope_confirmation.md` §1 (F1, F2, F4) and its independent review — 2026-09-24
-**Effort:** S (~0.5d)
-**Provisional-Target:** TBD
-
-**Problem**
-`po05_section13_preassessment.md`, `current_roadmap.md` (PO-05), `docs/specs/frontend/pages/replay_mode.md` §13 item 5 and the sealed `sprint_backlog.md` (ST-01b) say the replay "reuses IT-06's paper-trading mechanics". In code IT-06 is a real-time Alpaca mirror of position events that cannot replay history; the replay is built on the deterministic `strategy_engine.py` and makes no Alpaca call. The pre-assessment also states byte-identical output unconditionally, which does not hold for a `yfinance`-fed float pipeline (the scope note restates it as a fingerprint-checkable guarantee), and it assumes the replay applies the live rule set, whereas the engine differs from `strategy_rules.md` §7.2 (no breakeven floor, close-only ATR, stop evaluated before risk-off, entry-fee treatment). The scope note takes precedence for the build, but the source documents still carry the inaccurate wording, and the approved banner says "the current rules".
-
-**Scope**
-- The Strategy Rules & System Intent Owner acknowledges F1, F2 and F4 and decides the results-view caption wording (for example "Simulated with the strategy backtest engine's exit rules.")
-- Correct the IT-06 reuse premise and the determinism wording in the pre-assessment and roadmap, and `replay_mode.md` §13 item 5 (the last in the frontend implementation change)
-
-**Acceptance Criteria**
-- No governed document other than sealed artefacts (which the scope note supersedes for the build) still states that PO-05 reuses IT-06's Alpaca paper-trading mechanics; the roadmap correction is routed through the Roadmap Rebalance Engine, which owns that file
-- The determinism guarantee and the engine-versus-live rule divergences are stated consistently across the pre-assessment, the roadmap and the replay page spec
-
----
-
 ### BLG-QA-196 — Extend the axe accessibility scan to the new Replay page
 **Priority:** P3 (Low)
 **Type:** QA / Test Automation
@@ -3466,30 +3348,6 @@ The ST-15 mutation-testing pilot (`docs/testing/mutation_testing_pilot_sizing_an
 
 ---
 
-### BLG-FE-193 — Stop-loss cell ATR/multiplier/recalculation-source display; live-event explainer tooltip
-**Priority:** P2 (High)
-**Type:** Frontend / UX Trust & Transparency
-**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
-**Source:** `IDEA-head-of-ux-20260930-01`, `IDEA-head-of-ux-20260930-02` (consolidated, `IW-20260930-01`), roadmap rebalance `2026-09-30__scheduled`
-**Gate criteria:** `BLG-BE-135`'s `atr`/active-multiplier/`stop_calculated_at` fields shipped and available on `GET /positions` — **met** (`BLG-BE-135` shipped v9.9; confirmed archived at roadmap rebalance `2026-10-06__scheduled` STEP 8.2)
-**Effort:** M (~4-6 days)
-**Provisional-Target:** v9.10 (Now horizon — PO-committed build-and-ship U-item, `DL-083`, §7.1 sustained-failure pull-forward)
-
-**Problem**
-User-reported loss of confidence in the displayed stop-loss for open positions: the stop-loss cell (`src/pages/Positions.js`, `PositionCard.js`) shows only the final Init/Trailing prices — no ATR, no multiplier, no source event — so the user cannot independently verify a displayed stop. `strategy_rules.md` §5 (Initial stop calculation) states its purpose is "to make downside risk visible... to reduce reactive decision-making"; a stop the user cannot verify produces the opposite effect. Separately, `TrailingStopExplainerIcon.js`'s tooltip states "ATR is recalculated daily (14-day period)," but the live system recalculates on every `GET /positions` page load as well as nightly — the copy is a hardcoded claim, not a reflection of what actually happened for the row it sits next to, undermining `strategy_rules.md` §3's "decision support only" trust model independent of whether the underlying number is correct.
-
-**Scope**
-- Add ATR value, the active multiplier (2× profitable / 5× losing, per §7.2), and a recalculation source line to the stop-loss cell/tooltip, checkable against the §5/§7.2 formula without leaving the page
-- Source the explainer tooltip copy from the row's actual last-recalculation event/timestamp (e.g. "Recalculated when you opened this page at 09:14" / "Recalculated by the nightly job at 22:30 UTC") instead of a hardcoded cadence claim
-- A first increment (removing the false "daily" claim from the tooltip) may ship independently if full live-event sourcing is not yet available
-
-**Acceptance Criteria**
-- Stop-loss cell/tooltip displays ATR value, active multiplier, and calculation source, checkable against the documented formula without leaving the page
-- Explainer tooltip copy reflects the actual last-recalculation event (on-load timestamp or nightly-job timestamp) rather than a hardcoded "daily" claim
-- Depends on `BLG-BE-135` shipping first — do not begin implementation until the backend fields are available on `GET /positions`
-
----
-
 ### BLG-SPEC-173 — Column provenance annotations in data_model.md (user-entered / derived / system-stamped)
 **Priority:** P3 (Low)
 **Type:** Spec Debt
@@ -3529,28 +3387,6 @@ User-reported loss of confidence in the displayed stop-loss for open positions: 
 **Acceptance Criteria**
 - A real, queryable count of AI-assisted monthly P&L narrative generations exists
 - The `BLG-FEAT-59` gate criteria is updated to cite this count as its evidence source instead of an estimate
-
----
-
-### BLG-OPS-171 — Confirm the stale-staging-deploy alert fires on a real stale-staging condition
-**Priority:** P3 (Low)
-**Type:** Operations / QA
-**Owner:** Infrastructure & Operations Owner; Director of Quality
-**Source:** ST-17/EPIC-04 (BLG-OPS-169), cycle 2026-09-28__release-v9.8 — staging-only AC deferred at PR-open time per sprint_backlog.md ST-17 Notes — 2026-09-29
-**Effort:** XS (<1h)
-**Provisional-Target:** TBD
-
-**Problem**
-ST-17 (BLG-OPS-169) added a stale-deploy check to `staging-smoke-test.yml` (compares `GET /health/detailed`'s `deployed_commit_sha` against the merged commit on `main`) and unit-tested the comparison logic in isolation (`tests/test_staging_smoke_test.py`), but confirming the check actually produces a visible failure/alert against a *real* stale-staging condition cannot be reproduced in CI or this sandbox — there is no way to genuinely desynchronize a real staging deploy from `main` without either withholding a real deploy or reverting staging to an old commit, both of which require live Render/GitHub Actions access this environment does not have.
-
-**Scope**
-- Deliberately let (or force) staging fall behind `main` by one commit (e.g. temporarily pause auto-deploy, or manually redeploy an older commit via the Render dashboard)
-- Confirm the next `staging-smoke-test.yml` scheduled run (or a manual `workflow_dispatch`) reports the `STALE STAGING DEPLOY` failure and the Telegram alert fires
-- Restore staging to the current `main` commit afterward and confirm the check reports a pass
-
-**Acceptance Criteria**
-- A recorded failing CI run (run URL) showing the `STALE STAGING DEPLOY` message for a real, deliberately-introduced staging/main divergence
-- A recorded passing run (run URL) after staging is restored to the current `main` commit
 
 ---
 
@@ -3661,28 +3497,6 @@ ST-21 extended `scripts/check_contract_example_freshness.py` to validate documen
 
 **Acceptance Criteria**
 - `DELETE /trade-plans/{id}`'s documented response and its live behaviour agree with each other, and conventions.md §12 either lists this endpoint as an explicit exception or the endpoint is migrated to the standard DELETE envelope
-
----
-
-### BLG-GOV-357 — Sign-off single-point-of-failure matrix (per governance gate, which roles can sign)
-**Priority:** P3 (Low)
-**Type:** Governance Process
-**Owner:** Head of Specs Team; Director of HR
-**Source:** `IDEA-director-of-hr-20260919-02` (3-cycle park hard cap reached, resolved to terminal disposition), roadmap rebalance `2026-09-30__scheduled`
-**Effort:** S (~1-2 days)
-**Provisional-Target:** TBD
-
-**Problem**
-No document currently maps which roles are authorised to sign off each governance gate across this system's routines, or flags where a single agent-mediated role is the sole signer for a given gate — a concentration risk that would be invisible without deliberately enumerating it. Originally submitted 2026-09-19, parked twice (rationale: `BLG-GOV-335`/`337`'s signer-topology effect not yet observable with only 2 sprints of post-ruling data) and reached the 3-cycle park hard cap this cycle, at which point re-parking is no longer a valid outcome per `roadmap_prompt.md §4.5`.
-
-**Scope**
-- Enumerate the governance gates across all governed routines (roadmap, release planning, sprint planning, sprint execution, delivery verification, post-ship closure) and the role(s) authorised to sign each, per each routine's own prompt file
-- Flag any gate where only one agent-mediated role can sign, as a concentration risk worth Product Owner/Director of HR awareness
-- A follow-up note on whether concentration is an observed live risk (the originally-deferred question) may be added once more sprints of `BLG-GOV-335`/`337`-era data accrue — the matrix's existence does not depend on that data being available yet
-
-**Acceptance Criteria**
-- A published matrix (governance gate × authorised signer role(s)) exists in an appropriate location (e.g. `docs/ops/` or `claude/roadmap/`)
-- Gates with a sole authorised signer are explicitly flagged in the matrix
 
 ---
 
@@ -3812,27 +3626,6 @@ The traceability matrix found most of `strategy_rules.md` §4.1.7's Position Siz
 
 ---
 
-### BLG-QA-207 — The live exit decision (should_exit_position) and grace-period behaviour are not called by any CI test
-**Priority:** P2 (Medium)
-**Type:** QA / Test Automation
-**Owner:** Director of Quality; QA & Testing Owner
-**Source:** ST-11/EPIC-03, cycle `2026-09-30__release-v9.9` — strategy-rule → test traceability matrix (`docs/testing/strategy_rule_test_traceability_matrix.md`) — 2026-10-05
-**Effort:** S (~1d)
-**Provisional-Target:** TBD
-
-**Problem**
-The traceability matrix found §6.3 and §8 asserted only on the replay engine's equivalent logic or a compliance view, never against `backend/utils/calculations.py::should_exit_position` (tests only stub it): C6.3-01 no stop-based exit during grace (Partial), C8.1-01 stop trigger after grace (Partial), C8.2 risk-off exit regardless of stop (Partial), C8-00 exactly three exit conditions, C8.1-02 manual confirmation, C8.3 / C6.3-03 manual exit always permitted (None). Also partial: C5-02 stop persisted from day one, C6.3-02 stop calculated and stored during grace, C7.1-02 on-load ATR recompute cadence.
-
-**Scope**
-- Unit-test `should_exit_position` directly: grace boundary (day 9 vs day 10), price at/below/above stop, risk-off overriding both grace and stop, the closed set of exit reasons
-- Assert the entry write path persists an initial stop, and the grace-period path still stores the calculated stop
-- Assert manual exit is accepted inside the grace period
-
-**Acceptance Criteria**
-- Each listed clause asserted by a CI-run test; matrix rows updated
-
----
-
 ### BLG-QA-208 — Entry required-field set and the advisory panel's non-blocking rule are untested at their boundary
 **Priority:** P4 (Backlog)
 **Type:** QA / Test Automation
@@ -3956,27 +3749,6 @@ ST-14's `real_database_imports()` restores `sys.modules["database"]` after its b
 
 ---
 
-### BLG-FE-194 — Recent Trades badge still shows an up-trend glyph for a break-even trade
-**Priority:** P4 (Backlog)
-**Type:** Frontend / UX
-**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
-**Source:** PR #1889 (EPIC-06/ST-35, cycle `2026-09-30__release-v9.9`) agent-mediated Product Owner / Director of Quality review — 2026-10-05
-**Effort:** XS (<1h)
-**Provisional-Target:** TBD
-
-**Problem**
-ST-35 (BLG-FE-192) made the `RecentTradesWidget` icon badge's colour neutral for `pnl === 0`, as scoped. The glyph inside it still uses the old two-way `>= 0` split (`src/components/dashboard/widgets/RecentTradesWidget.js:45`), so a break-even trade shows a neutral-coloured badge with a `TrendingUp` arrow, which still signals a gain.
-
-**Scope**
-- Use a neutral glyph (e.g. lucide `Minus`) for `pnl === 0` / missing pnl, keeping `TrendingUp`/`TrendingDown` for > 0 / < 0
-- Extend `tests/e2e/recent-trades-zero-pnl-badge.spec.js` to assert the glyph
-
-**Acceptance Criteria**
-- A zero-P&L trade renders a neutral glyph; winners and losers keep their arrows
-- Playwright scenario passes in CI
-
----
-
 ### BLG-GOV-361 — BLG-SPEC-65 still carries a stale sixth copy of the AI adoption window gate text
 **Priority:** P4 (Backlog)
 **Type:** Governance Process
@@ -4016,34 +3788,6 @@ Three escalations this cycle (ESC-EXEC-20261001-01/-04/-05) had the same root ca
 
 **Acceptance Criteria**
 - A ruling is recorded on both proposals; any adopted change ships with the full CLAUDE.md §6 checklist
-
----
-
-### BLG-BE-136 — Gap risk flag: disposition the standalone weekend-hold trigger (§13.3) and align trigger-timing label/spec with code
-**Priority:** P2 (Medium)
-**Type:** Backend + Frontend / §13 Remediation
-**Owner:** Head of Engineering; Head of UX & Design; Strategy Rules & System Intent Owner (disposition sign-off)
-**Source:** §13 retroactive review of the Gap Risk Flag (ST-20, EPIC-04, v9.9; `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`, Binding Conditions 6 and 8, Remediation Item 1); escalation ESC-EXEC-20261001-03
-**Effort:** S (~1–2 days)
-**Provisional-Target:** No later than the first §13.5 semi-annual re-attestation (2027-02-06) — hard deadline per Binding Condition 6
-
-**Problem**
-`backend/services/gap_risk_service.py:117-119` adds `"weekend_hold"` to every open position's flag whenever the server date is a Friday (`_is_weekend_hold`, `:40-43`). That flags the whole book identically every week, regardless of ticker or event. The §13 review found this standalone trigger falls within `strategy_rules.md` §13.3's "noise without enabling a decision" rationale, and it is the only binding condition the shipped code does not meet. Separately, the reason label "Weekend hold (flagged at Friday close)" (`src/pages/Positions.js:466`, `src/components/positions/PositionCard.js:19`), `docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md:76` and `docs/specs/frontend/pages/positions.md:484` all describe the flag as raised "at Friday close", but the code flags it all day Friday (server date). The earnings window is also measured in calendar days (`_EARNINGS_NEXT_SESSION_WINDOW_DAYS = 1`, `:37`, `:114`), so viewed on a Friday it does not flag Monday-morning earnings. Today the weekend trigger covers that case incidentally.
-
-**Scope**
-- Default (recommended): remove the standalone `weekend_hold` trigger. Make the earnings trigger aware of trading sessions ("earnings before the position's next trading session", per the original AC-01), so that a Friday view flags Monday earnings. When an earnings flag spans a weekend, the tooltip may still show the historical *weekend* gap statistic as context (Binding Condition 4).
-- Alternative (only with sign-off): the Product Owner and the Strategy Rules & System Intent Owner record a position-specific justification for keeping a weekend trigger, and §13.3's clarification is extended to cover it. Without that, the default applies.
-- Whichever option is chosen, align the reason label, `ux_spec.md` §5 and `positions.md` §Gap Risk Badge with the actual trigger timing (no "at Friday close" wording unless the code implements it).
-- Add a citation of the §13 review record to `gap_risk_service.py`'s module docstring (Binding Condition 8; currently `:11-12` cites only "§13, AC-04").
-- Update `tests/test_gap_risk.py` (e.g. `test_flagged_for_weekend_hold_on_friday`, `:79-88`, and `test_both_reasons_stack_when_earnings_and_weekend_coincide`, `:91`) and `tests/e2e/gap-risk-flag.spec.js` to match. Update `docs/specs/api_contracts/position_endpoints.md` and `docs/reference/openapi.yaml` if the `reasons` enum changes (CLAUDE.md §2 same-commit rule).
-
-**Acceptance Criteria**
-- No flag trigger in `gap_risk_service.py` fires identically for all open positions independent of ticker or event (Binding Condition 6), or a signed alternative disposition is recorded in the §13 review record's Known Deviations / disposition section
-- A position viewed on a Friday with earnings on the following Monday is flagged with reason `earnings`
-- Label, UX spec, frontend spec and code agree on trigger timing
-- Module docstring cites the §13 review record
-- Unit and Playwright tests updated and passing; contract/OpenAPI updated if the `reasons` enum changes
-- Strategy Rules & System Intent Owner sign-off recorded confirming Binding Conditions 1–8 still hold after the change
 
 ---
 
@@ -4134,54 +3878,6 @@ The ST-20 determination (CONDITIONAL) finds §13.3's literal text ("Exposing a g
 - New test file passes in CI Phase B and covers compound owners, a missing Owner line and the v9.8 regression pin
 - The script's total equals the number of ST headings, or it reports the difference
 - The STEP 7.1 real-changelog figure is pinned in a test
-
----
-
-### BLG-GOV-365 — Gap Risk Flag §13.3 carve-out: rule on UK-ticker earnings flags and day-0 pre-open earnings timing
-**Priority:** P2 (Medium)
-**Type:** Governance Process / Strategy Boundary
-**Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
-**Source:** PR #1891 agent-mediated Director of Quality review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
-**Effort:** S (~0.5 day ruling, plus any scope folded into BLG-BE-136)
-**Provisional-Target:** TBD (before the first §13.5 re-attestation, 2027-02-06)
-
-**Problem**
-`strategy_rules.md` v1.14 §13.3 (`:504`) permits a display-only flag only for an event "already recognised as a gap-risk event by a canonical rule". It names a scheduled earnings date per §4.2.3 as the only such event. Two shipped behaviours fall outside that text, and the retroactive §13 review did not examine either:
-1. **UK tickers.** §4.2.3 is US-only (`strategy_rules.md:273`), and pre-entry validation skips non-US tickers (`pre_entry_validation.py:168-174`). `gap_risk_service.get_gap_risk` applies the earnings trigger to every market (`:110-115`, with UK mapped to `.L`).
-2. **Day-0 timing.** The trigger fires at `days_until_earnings == 0`. For a before-market-open release the gap has already happened, so the flag reacts after the gap, which §13.3 `:502` excludes. The code cannot tell before-open from after-close releases (`gap_risk_service.py:31-37`). The decision record's "0–1 calendar days before" (`:129`) does not hold in that case.
-
-**Scope**
-- SRSIO ruling on each point, recorded as an addendum to `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`. For UK, either restrict the trigger to US or extend the canonical recognition with its own justification. For day 0, either drop day 0, or accept it with a stated rationale.
-- Fold any resulting code change into BLG-BE-136's session-aware rework, with the CLAUDE.md §2 contract and OpenAPI rules applying if the response changes
-- If §13.3 or §4.2.3 wording changes, bump `strategy_rules.md` with its Change Log row and the §15 grep
-
-**Acceptance Criteria**
-- A dated ruling on UK tickers and on day-0 timing is recorded in the decision record
-- The code, `strategy_rules.md` §13.3/§4.2.3 and the decision record agree on which markets and which day offsets the earnings trigger covers
-- Tests in `tests/test_gap_risk.py` pin the ruled behaviour, covering a UK position and the day-0 case
-
----
-
-### BLG-BE-137 — strategy_version_registry.py stuck at v1.4 while strategy_rules.md is at v1.14
-**Priority:** P3 (Low)
-**Type:** Backend / Spec–Code Drift
-**Owner:** Strategy Rules & System Intent Owner; Backend Engineering Patterns Owner
-**Source:** PR #1891 agent-mediated Director of Quality review (EPIC-04, cycle `2026-09-30__release-v9.9`) — 2026-10-05
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Problem**
-`backend/strategy_version_registry.py`'s docstring (`:19-21`) and `docs/specs/data_model.md:1689` (DS-11) both say `STRATEGY_VERSION_REGISTRY` is updated "in the same commit as any new `strategy_rules.md` Change Log row". The registry ends at 1.4 (`:35-41`), but `strategy_rules.md` has Change Log rows from 1.5 to 1.14. Ten versions have gone unregistered since v8.1, including this PR's v1.14. As a result, `get_current_strategy_version()` stamps `strategy_version_at_entry = "1.4"` on new trade plans and positions, and the SI-04 comparison view attributes every trade since 2026-05-20 to 1.4. That may be the intended behaviour, since 1.5–1.14 are documentation-only, but nothing records it as a rule. Either the obligation is being silently breached, or there is an undocumented exemption.
-
-**Scope**
-- SRSIO ruling: either register only versions that change behaviour or parameters, or register all versions
-- If behaviour-only: amend the registry docstring, DS-11 text and `strategy_version_comparison_contract.md` Implementation Note 2 to state the exemption, and add a Change Log tag or column in `strategy_rules.md` that marks each version as behavioural or documentation-only
-- If all versions: add 1.5–1.14 with effective dates, and assess the effect on `strategy_version_at_entry` and comparison-view attribution
-- Add a test that checks the registry against `strategy_rules.md`'s Change Log under whichever rule is chosen, replacing the hardcoded `len == 5` in `tests/test_strategy_version_registry.py:13`
-
-**Acceptance Criteria**
-- A ruling is recorded, and the registry, docstring, DS-11 and contract all agree with it
-- A test fails if a qualifying `strategy_rules.md` Change Log row is added without a matching registry entry
 
 ---
 
@@ -4443,65 +4139,6 @@ DS-23 (`docs/specs/data_model.md:2517`) re-applied `NOT NULL` with no default on
 
 ---
 
-### BLG-BE-138 — One source for §11 stop parameters: the on-load stop path reads the editable settings row, the nightly job hard-codes 5×/2×
-**Priority:** P1 (High) — correctness: can produce a live stop that differs from `strategy_rules.md` §7.2
-**Type:** Backend / Strategy Correctness
-**Owner:** Head of Engineering; Strategy Rules & System Intent Owner (parameter-authority ruling)
-**Source:** `IDEA-head-of-engineering-20261006-01`, `IDEA-infra-ops-20261006-01`, `IDEA-backend-engineering-20261006-02`, `IDEA-qa-testing-20261006-01`, `IDEA-strategy-owner-20261006-01` (consolidated, `IW-20261006-01`), roadmap rebalance `2026-10-06__scheduled` — STEP 8.0 Correctness Fast-Track Promotion (`DL-083`)
-**Effort:** M (~3-5 days; includes a ruling sub-step and a production data check)
-**Provisional-Target:** v9.10 (Now horizon — Correctness Fast-Track)
-
-**Problem**
-Two code paths write `positions.current_stop`, and they take the ATR multipliers from different places:
-- `analyze_positions()` (`backend/services/position_service.py:338-341, 444-451`), served by `GET /positions/analyze`, passes the user-editable `settings` row to `calculate_trailing_stop`. The frontend calls this endpoint on every page that renders market regime (`src/api/base44Client.js:315`), and `daily-snapshot.yml` calls it at 16:00 UTC on weekdays.
-- `run_nightly_trailing_stop_update()` (`:558-581`, `nightly-stop-update.yml`, 22:30 UTC) uses constants 5.0 / 2.0.
-
-`strategy_rules.md` §11 fixes 5× (losing) and 2× (profitable), and requires them to be consistent across live logic. The Settings form (`src/pages/Settings.js:42-46`) pre-fills `atr_multiplier_initial: 2`, `atr_multiplier_trailing: 3`, `min_hold_days: 5` when no settings row exists, and saving writes them. `TradeEntry.js:94-95` falls back to 2× as well. If the settings row holds anything other than 5/2, the on-load path writes a stop that is not the §7.2 stop, and §7.3's ratchet (`max(current, new)`) keeps any tighter value permanently. A losing position given a 2× stop instead of 5× can be told to exit on ordinary volatility, which is what §2.2-§2.3 exist to prevent.
-
-The grace length has the same problem: §6.2 says 10 calendar days, written as a literal in four places, while `alerts_service.py` reads `settings.min_hold_days`.
-
-**Not verified:** the production `settings` row could not be read from the governed environment, so whether live stops have actually diverged is unknown. Checking it is the first acceptance criterion.
-
-**Scope**
-- Read the production `settings` row (read-only) and record its multiplier and hold-day values.
-- Strategy Rules & System Intent Owner ruling: are §11 parameters (a) fixed, so Settings shows them read-only; (b) a sanctioned personal override recorded in §12 and honoured by every path; or (c) changeable only through a §12.3 change record?
-- Make both stop paths, and the grace logic, read one source that implements the ruling. Correct the Settings and Trade Entry fallback values to §11.
-- If the production row was not 5/2: identify open positions whose stored stop was ratcheted from a non-§11 multiplier and record a correction decision with the Product Owner (the §7.3 never-loosen rule applies, so a correction needs an explicit ruling, not a silent rewrite).
-- Parity test: for identical inputs, `analyze_positions` and `run_nightly_trailing_stop_update` produce the same stop (refines `BLG-QA-204`).
-
-**Acceptance Criteria**
-- [ ] Production `settings` multiplier and hold-day values recorded in the story's QA evidence, read-only.
-- [ ] Parameter-authority ruling recorded with Strategy Rules & System Intent Owner sign-off; `strategy_rules.md` §12 updated if option (b) or (c) is chosen.
-- [ ] One source of stop multipliers and grace length used by `analyze_positions`, `run_nightly_trailing_stop_update`, `grace_service`, `compliance_service`, `should_exit_position` and `alerts_service`.
-- [ ] Settings and Trade Entry fallbacks equal §11 (5, 2, 10, 14).
-- [ ] Parity test passes and fails if either path is given a different parameter source.
-- [ ] Any already-diverged open position has a recorded Product Owner correction decision.
-
----
-
-### BLG-BE-139 — Remove silent ATR fallbacks (invented 2%-of-entry ATR; stop jumps to entry when ATR is missing) and record ATR provenance
-**Priority:** P2 (High)
-**Type:** Backend / Data Integrity
-**Owner:** Backend Engineering Patterns Owner; Data Model & Domain Schema Owner
-**Source:** `IDEA-backend-engineering-20261006-01`, `IDEA-data-model-20261006-01` (consolidated, `IW-20261006-01`), roadmap rebalance `2026-10-06__scheduled`
-**Effort:** M (~2-3 days)
-**Provisional-Target:** TBD
-
-**Problem**
-`add_position()` replaces an unavailable ATR with `entry_price × 0.02` and stores the resulting §5 stop with no flag. `analyze_positions()` handles a missing ATR by setting `stop = max(current_stop, entry)`; for a losing position that puts the stop above the current price and produces a stop-breach signal that §7.2's wide-stop rule would not. `positions.atr_value` stores fetched, user-typed and invented values identically, so neither the user nor BLG-FE-193's ATR display can tell them apart.
-
-**Scope**
-- Add `positions.atr_source` (`fetched` / `user` / `fallback`), nullable for history; write it at entry and on recompute; expose it on `GET /positions`.
-- When ATR is unavailable during recompute, keep the stored stop and flag the position, instead of moving the stop to entry.
-- Data-model, contract and OpenAPI updates for the new field.
-
-**Acceptance Criteria**
-- [ ] New positions record `atr_source`; `GET /positions` returns it.
-- [ ] A missing ATR during recompute leaves the stop unchanged and does not create a stop-breach signal.
-- [ ] Tests cover both fallbacks.
-
----
-
 ### BLG-BE-140 — Read-only market-regime source, so rendering regime no longer runs the stop-writing `GET /positions/analyze`
 **Priority:** P3 (Low)
 **Type:** Backend / Performance & Side-Effect Hygiene
@@ -4586,113 +4223,6 @@ Model IDs are literals in 4 files. `ai_service.py` pins `claude-haiku-4-5-202510
 
 ---
 
-### BLG-FE-196 — Positions: make the lifecycle badge agree with the §6 grace window, and say calendar days
-**Priority:** P2 (High)
-**Type:** Frontend / Strategy Conformance (build-and-ship)
-**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
-**Source:** `IDEA-head-of-ux-20261006-01`, `IDEA-frontend-specs-20261006-02` (consolidated, `IW-20261006-01`), roadmap rebalance `2026-10-06__scheduled`
-**Effort:** S (~1-2 days)
-**Provisional-Target:** TBD
-
-**Problem**
-On `src/pages/Positions.js`, the Grace column (`grace_days_remaining`, calendar days, `grace_service.py`) can show days remaining while the lifecycle badge shows LOSING or PROFITABLE, because the badge's GRACE requires price within ±0.5 ATR and counts trading days (`position_lifecycle_service.py`). The GRACE tooltip (line 61) and the Grace Period Alert (line 123) say 'trading days'; §6 says 10 calendar days, during which the stop is not enforced. The UNKNOWN tooltip (line 65) only mentions a missing plan stop/R-target, although UNKNOWN also means 'flat after grace'.
-
-**Scope**
-- While the §6 grace window is active, show GRACE with calendar days remaining.
-- Tooltip and alert text say calendar days; the UNKNOWN tooltip reflects the reason the backend returned.
-- Post-grace badge semantics follow `BLG-SPEC-185` once ruled (not required for this item).
-
-**Acceptance Criteria**
-- [ ] An in-grace position outside ±0.5 ATR shows GRACE, not LOSING/PROFITABLE (Playwright).
-- [ ] No 'trading days' wording for the grace period remains.
-- [ ] UNKNOWN tooltip distinguishes 'missing ATR/plan' from 'flat after grace'.
-
----
-
-### BLG-FE-197 — Trade Entry: show the stop and risk the system will actually store
-**Priority:** P2 (High)
-**Type:** Frontend / Strategy Conformance (build-and-ship)
-**Owner:** Frontend Specifications & UX Documentation Owner; QA & Testing Owner
-**Source:** `IDEA-frontend-specs-20261006-01`, `IDEA-qa-testing-20261006-02` (consolidated, `IW-20261006-01`), roadmap rebalance `2026-10-06__scheduled`
-**Effort:** M (~2-3 days)
-**Provisional-Target:** TBD
-
-**Problem**
-`src/pages/TradeEntry.js` collects a 'Stop Price', computes 'Risk (to stop)' from it and sends `stop_price`; `add_position()` ignores the field and stores `entry − 5×ATR` (§5). When settings have not loaded, the suggested stop uses a hard-coded 2×. The ATR input is labelled '(Optional)' although §4 lists ATR as required at entry (the backend fetches it when missing). The risk the user sees at entry is not the risk the system then manages.
-
-**Scope**
-- Preview the §5 stop the backend will store, and the ATR it will use (the backend already fetches ATR when the field is empty), as the authoritative figures.
-- Remove the Stop Price input or relabel it as a note that does not set the stop; fix the fallback multiplier to §11.
-- Backend test pinning the chosen `stop_price` behaviour.
-
-**Acceptance Criteria**
-- [ ] The risk shown at entry equals the risk implied by the stored initial stop (Playwright or recorded staging run).
-- [ ] No input suggests it sets the stop unless it does.
-- [ ] `add_position` stop handling is pinned by a test.
-
----
-
-### BLG-FE-198 — Exit dialog pre-selects the exit reason the system already knows (stop breach after grace, or risk-off)
-**Priority:** P2 (High)
-**Type:** Frontend / Product Feature (build-and-ship)
-**Owner:** Product Owner; Frontend Specifications & UX Documentation Owner
-**Source:** `IDEA-product-owner-20261006-01` (`IW-20261006-01`), roadmap rebalance `2026-10-06__scheduled` — PO-committed v9.10 U-item (`DL-083`, §7.1 sustained-failure pull-forward)
-**Effort:** S (~1 day)
-**Provisional-Target:** v9.10 (Now horizon — PO-committed build-and-ship U-item)
-
-**Problem**
-`src/components/positions/ExitModal.js` defaults the reason to 'Manual Exit' for every exit (lines 19, 34). When the user exits because the system recommended it — the §8.2 risk-off flag already on the position (`risk_off_exit`) or a §8.1 stop breach after grace — the trade is recorded as manual unless they change it, so exit history understates how often the strategy's own exit conditions fired.
-
-**Scope**
-- Pre-select 'Risk-Off Signal' when `risk_off_exit` is true, and 'Stop Loss Hit' when the post-grace price is at or below the stop; show a one-line reason for the pre-selection; the user can change it.
-
-**Acceptance Criteria**
-- [ ] Risk-off and stop-breach positions open the dialog with the matching reason selected and the reason shown (Playwright).
-- [ ] Other positions still default to 'Manual Exit'.
-
----
-
-### BLG-FE-199 — Morning briefing card for §8 exit recommendations (post-grace stop breach, risk-off)
-**Priority:** P2 (High)
-**Type:** Frontend / Product Feature (build-and-ship)
-**Owner:** Product Owner; Head of UX & Design
-**Source:** `IDEA-product-owner-20261006-02` (`IW-20261006-01`), roadmap rebalance `2026-10-06__scheduled`
-**Effort:** S (~1-1.5 days)
-**Provisional-Target:** TBD
-
-**Problem**
-The morning briefing (`src/components/dashboard/home/morning/`) has cards for Exit Zone (an R-target overlay, not a §8 condition), compliance, earnings, red flags and screener hits, but none for the two system exit recommendations §8.1/§8.2 define. The user has to open Positions to learn an exit is recommended.
-
-**Scope**
-- A card listing positions with a post-grace stop breach or `risk_off_exit`, each linking to the exit dialog; hidden when empty.
-
-**Acceptance Criteria**
-- [ ] Card renders for qualifying positions and is absent otherwise (Playwright).
-- [ ] §13: display-only, no automated action.
-
----
-
-### BLG-SPEC-185 — Reconcile the lifecycle-state registry (5 states, trading days, ±0.5 ATR) with `strategy_rules.md` §9 (4 states, calendar days)
-**Priority:** P2 (High)
-**Type:** Spec Debt / Strategy Boundary
-**Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
-**Source:** `IDEA-head-of-specs-20261006-01`, `IDEA-strategy-owner-20261006-02` (consolidated, `IW-20261006-01`), roadmap rebalance `2026-10-06__scheduled`
-**Effort:** S (~1 day)
-**Provisional-Target:** TBD
-
-**Problem**
-§9 defines GRACE (days 0–9), LOSING, PROFITABLE, EXITED. `docs/specs/position_lifecycle_states_registry.md` (line 25) and `position_lifecycle_service.py` define GRACE as ≤10 trading days and within ±0.5 ATR, and add EXIT ZONE and UNKNOWN. §1 says §9 prevails, so the registry currently contradicts the canonical strategy.
-
-**Scope**
-- Ruling: is the lifecycle badge a §9 state machine or a display overlay that defers to §9?
-- Update the registry; amend §9 under §16's change-justification template if the overlay becomes canonical.
-
-**Acceptance Criteria**
-- [ ] Ruling recorded with Strategy Rules & System Intent Owner sign-off.
-- [ ] Registry and §9 no longer conflict.
-
----
-
 ### BLG-SPEC-186 — Define the allowed exit reasons and map each to one of §8's three exit conditions
 **Priority:** P3 (Low)
 **Type:** Spec Debt / Data Model
@@ -4710,28 +4240,6 @@ The morning briefing (`src/components/dashboard/home/morning/`) has cards for Ex
 **Acceptance Criteria**
 - [ ] Every stored value maps to exactly one §8 condition.
 - [ ] Constraint rejects unlisted values; existing rows backfilled.
-
----
-
-### BLG-SPEC-187 — Contract corrections: losing-stop formula, `GET /positions/analyze` side effects, settings-change effect on open positions
-**Priority:** P2 (High)
-**Type:** Spec Debt / API Contract
-**Owner:** API Contracts & Documentation Owner
-**Source:** `IDEA-api-contracts-20261006-01`, `IDEA-api-contracts-20261006-02` (consolidated, `IW-20261006-01`), roadmap rebalance `2026-10-06__scheduled`
-**Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
-
-**Problem**
-- `position_endpoints.md:150` documents the losing stop as `entry − 5×ATR`; the code and §7.2 use `current price − 5×ATR`. The nightly job's docstring repeats the error.
-- `GET /positions/analyze` is documented as 'Safe to refresh', but it persists stops and timestamps for every open position, and the §7.3 ratchet makes that irreversible.
-- `settings_endpoints.md` says multiplier changes do not affect open positions; the next analyze call applies them to every open position.
-
-**Scope**
-- Correct all three texts (and the docstring); cross-reference `BLG-BE-138`'s ruling. No new endpoints.
-
-**Acceptance Criteria**
-- [ ] A reader can reproduce a displayed stop from the contract.
-- [ ] The analyze contract states its persistent side effects.
 
 ---
 

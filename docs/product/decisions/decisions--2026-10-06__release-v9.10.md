@@ -1,9 +1,11 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.10
 Cycle: 2026-10-06__release-v9.10
-Last Updated: 2026-10-06
+Last Updated: 2026-10-07
+
+Superseded by: v9.10 ship — 2026-10-07 — see docs/product/changelog.md#v9.10, cycle 2026-10-06__release-v9.10
 
 ## Planning Decisions — v9.10
 
@@ -34,6 +36,6 @@ None.
 ### Supersession note
 *To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
+Superseded by: v9.10 ship — 2026-10-07
+Changelog: docs/product/changelog.md#v9.10
 Cycle: 2026-10-06__release-v9.10

@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.4
-**Last Updated:** 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 — v9.9 row added, rolling average window advanced to v9.4–v9.9); prior — 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 — v9.8 row added, rolling average window advanced to v9.3–v9.8); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 — v9.7 row added, rolling average window advanced to v9.2–v9.7); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — v9.10 row added, rolling average window advanced to v9.5–v9.10); prior — 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 — v9.9 row added, rolling average window advanced to v9.4–v9.9); prior — 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 — v9.8 row added, rolling average window advanced to v9.3–v9.8); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -116,7 +116,9 @@
 
 | v9.9  | 35      | 35        | 1.00     | All 35 stories done across 6 EPICs (backend reliability & data integrity, operational reliability & security hardening, QA & test coverage, governance process & strategy boundary, spec & data-model debt clearance, frontend & UX debt), sized to 27.85 days (near the top of capacity band); anchor build-and-ship item `BLG-BE-135` (ST-01, canonical ATR/stop recalculation with timestamps on `GET /positions`, DS-22 live) shipped alongside category-balanced debt clearance; 2 live schema changes (DS-23, DS-24) and 3 delegations all unblocked in-cycle; 1 process deviation (PR #1886 cross-EPIC merge, retroactive gates complete, `BLG-GOV-368`). Verified_with_deviations — 0 formal spec deviations, 1 P3-default QA-evidence item (ST-01). |
 
-**Rolling 6-cycle average (v9.4–v9.9):** 1.00
+| v9.10 | 21      | 21        | 1.00     | All 21 stories done across 4 EPICs (stop-parameter correctness & ATR integrity, stop & exit transparency build-and-ship, lifecycle & gap-risk strategy boundary, AI governance/ops/QA hygiene), sized to 27.90 days (top of capacity band, "use full capacity"); 8 build-and-ship items carried 19.25d (69%) per the rebalance §7.1 pull-forward; P1 Correctness Fast-Track item `BLG-BE-138` shipped; 0 returned, 0 blocked; 4 delegations all unblocked in-session; Verified_with_deviations (2 P3-default QA-evidence deviations, ST-18 and ST-20) |
+
+**Rolling 6-cycle average (v9.5–v9.10):** 1.00
 
 ---
 

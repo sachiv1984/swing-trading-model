@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v9.10
 Cycle: 2026-10-06__release-v9.10
-Last Updated: 2026-10-06
+Last Updated: 2026-10-07
+
+Superseded by: v9.10 ship — 2026-10-07
+Changelog: docs/product/changelog.md#v9.10
+Verification report: claude/cycles/2026-10-06__release-v9.10/verification_report.md
+Cycle: 2026-10-06__release-v9.10
 
 ## Release Scope — v9.10
 
@@ -50,6 +55,6 @@ Last Updated: 2026-10-06
 ### Supersession note
 *To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
+Superseded by: v9.10 ship — 2026-10-07
+Changelog: docs/product/changelog.md#v9.10
 Cycle: 2026-10-06__release-v9.10

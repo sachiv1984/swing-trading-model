@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.37
-**Last Updated:** 2026-10-05 (ESC-CLOSE-20260930-03, Head of Specs Team ruling, agent-mediated per execution_prompt.md §5.3, user-directed — §5 canonical-spec carve-out and STEP 5 item 1 now cover a wholly missing Known Deviations entry/section routed from Delivery Verification STEP 3); prior — 2026-09-30 (ST-38, EPIC-06, v9.8, BLG-GOV-351 — new STEP 12.6, 90-Day AI Feature Usage Review Trigger Check, runs on every cycle close alongside STEPs 11/12/12.5); prior — 2026-09-21 (governance-drift fix, Head of Specs Team direct action — header `Process Reference` line pointed at a file deleted 2026-03-13 and is replaced by a retirement note; no procedural change); prior history retained — see prior entries in version control.
+**Version:** 2.38
+**Last Updated:** 2026-10-07 (post-ship closure `2026-10-06__release-v9.10` STEP 8, immediate lessons-learnt actions — STEP 1.5 digest command now runnable as written (venv + `PYTHONPATH=backend`, carried v9.9 closure action); STEP 5.1 scan broadened to bold-paragraph and Known Deviations table-row records, plus an active-backlog-reference check for open records (seventh consolidation review Findings 1–2)); prior — 2026-10-05 (ESC-CLOSE-20260930-03, Head of Specs Team ruling, agent-mediated per execution_prompt.md §5.3, user-directed — §5 canonical-spec carve-out and STEP 5 item 1 now cover a wholly missing Known Deviations entry/section routed from Delivery Verification STEP 3); prior — 2026-09-30 (ST-38, EPIC-06, v9.8, BLG-GOV-351 — new STEP 12.6, 90-Day AI Feature Usage Review Trigger Check, runs on every cycle close alongside STEPs 11/12/12.5); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); this prompt is the sole authority for the Post-Ship Closure Engine.
@@ -304,10 +304,10 @@ After the changelog entry (STEP 1) is written and committed to `docs/product/cha
 Run:
 
 ```bash
-python3 scripts/send_changelog_digest.py --version "v<X.Y>"
+PYTHONPATH=backend backend/.venv/bin/python3 scripts/send_changelog_digest.py --version "v<X.Y>"
 ```
 
-substituting the actual version being shipped (e.g. `--version "v7.8"`). The script prints a result dict (`{"sent": true/false, ...}`) and always exits `0`.
+substituting the actual version being shipped (e.g. `--version "v7.8"`). The script prints a result dict (`{"sent": true/false, ...}`) and always exits `0`. **Interpreter and import path (v2.38, carried v9.9 closure action):** run the script with the project virtualenv and `PYTHONPATH=backend`, per CLAUDE.md §9. Under system `python3`, the script fails at import (`ModuleNotFoundError: No module named 'psycopg2'`) before it can attempt a send. That failure was seen at both the `2026-09-30__release-v9.9` and `2026-10-06__release-v9.10` closures. If `backend/.venv` is absent (for example, on a fresh CI runner), install `backend/requirements.txt` first.
 
 **Hard rule — non-blocking:** A failed send (missing `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID`, Telegram API error, network failure) must **NOT** block Post-Ship Closure. `send_changelog_digest()` (`backend/services/changelog_digest_service.py`) never raises — log the printed result and continue to STEP 2 regardless of `sent` value. Do not retry manually beyond the script's own built-in retry (2 retries, 30s/60s backoff, inherited from the SI-05 Telegram send helper) and do not treat a failed send as a reason to halt or re-run this step.
 
@@ -453,8 +453,8 @@ Unlike STEP 5 above (which only checks *this cycle's* newly-filed deviations for
 **Cadence:** Run this sub-step every 3rd Post-Ship Closure invocation (tracked via `.claude_current_state.json` — add a `last_deviation_consolidation_review_utc` / `deviation_consolidation_review_cycle_count` pair analogous to the existing `run audit` 3-cycle cadence tracking). On cycles where it does not fire, log "Deviation consolidation review: not due (N of 3 cycles since last run)."
 
 **When due:**
-1. Scan canonical spec files, QA evidence logs, and verification reports for `## DEV-*` / `### DEV-*` headings (the `Known Deviations` section convention).
-2. Build a consolidated register: DEV ID, spec file, priority, status, target/resolved release.
+1. Scan canonical spec files, supporting spec and testing docs, QA evidence logs, and verification reports for `DEV-*` records in every format in use. That means `## DEV-*` / `### DEV-*` headings, and also bold-paragraph entries (`**DEV-…**`) and `## Known Deviations` table rows. A heading-only scan misses the other two. **Broadened v2.38 (seventh run, `docs/governance/deviation_consolidation_review_2026-10-07.md` Finding 2):** that run found 6 canonical-spec records omitted from every earlier register for this reason.
+2. Build a consolidated register: DEV ID, spec file, priority, status, target/resolved release. **Active-reference check (v2.38, seventh run Finding 1):** for every record that is not Resolved, Won't-fix or Accepted, confirm that its backlog reference still resolves to an *active* `claude/backlog/backlog.md` item, not one in `backlog_archive.md`. An open deviation whose only tracking item was archived without shipping has no active tracking. Record it as an Outstanding Action for the spec owner. The seventh run found `DEV-REPORTS-ST06-01`'s `BLG-SPEC-87` archived at `2026-08-03__release-v8.1` without shipping.
 3. Check for recurring patterns: same spec file/component deviating repeatedly, same root-cause category, stale target-release dates (named target release more than 2 releases behind current), and resolution-status drift between a spec's own Known Deviations entry and any QA/test-scenario doc that separately tracked the same deviation to resolution.
 4. Produce `docs/governance/deviation_consolidation_review_<date>.md` per the template in `docs/governance/deviation_consolidation_review_2026-08-03.md` (first run, ST-12).
 5. Director of Quality sign-off required on the produced review.
