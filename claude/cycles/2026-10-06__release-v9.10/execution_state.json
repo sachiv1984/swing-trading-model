@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-07T09:54:31Z",
+  "last_updated_utc": "2026-10-07T10:06:14Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -326,7 +326,7 @@
       "branch": "exec/2026-10-06__release-v9.10/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "tests/e2e/accessibility-axe-scan.spec.js",
@@ -747,7 +747,8 @@
     "2026-10-07T08:16:06Z: ESC-EXEC-20261006-06 resolved by the human Product Owner in session (checklist approved, including the 2026-11-03 first review and the BLG-AI-09 exception). ST-15 marked done. No DEL record existed for this escalation-only block.",
     "2026-10-07: ST-18 dispatch run 37596800197 failed with a false-positive STALE STAGING DEPLOY (main tip 1639c956 is governance-only, so it never triggers staging-deploy.yml). Engine fixed scripts/staging_smoke_test.py + staging-smoke-test.yml to compare against the latest staging-deploying commit. Not used as AC 1 evidence: AC 1 needs a deliberately introduced divergence.",
     "2026-10-07T09:45:20Z: DEL-20261006-03 unblocked in-session (user, for the Infrastructure & Operations Owner). ST-18 done: failing run 37598457966, passing run 37602589130. EPIC-04: all 7 stories done.",
-    "2026-10-07T09:54:31Z: STEP 3.2.A for EPIC-04. Real-CI check found ST-19's own axe test failing (scrollable-region-focusable) on every EPIC-04 code commit; fixed in b8ced55f, all 8 workflows green. qa_evidence_EPIC-04.md consolidated; DoQ sign-off block awaiting the Director of Quality."
+    "2026-10-07T09:54:31Z: STEP 3.2.A for EPIC-04. Real-CI check found ST-19's own axe test failing (scrollable-region-focusable) on every EPIC-04 code commit; fixed in b8ced55f, all 8 workflows green. qa_evidence_EPIC-04.md consolidated; DoQ sign-off block awaiting the Director of Quality.",
+    "2026-10-07T10:06:14Z: EPIC-04 DoQ sign-off agent-mediated (Director of Quality role, §5.3, user-directed): Blocked on first pass (ST-18/ST-20 rows over-stated), Approved with Comments on retry 1. BLG-OPS-182 filed. qa_signed_off set in the same commit as the sign-off block."
   ],
   "sealed": false,
   "sealed_utc": null
