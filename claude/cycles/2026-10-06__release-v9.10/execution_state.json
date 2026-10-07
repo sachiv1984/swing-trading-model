@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-10-06__release-v9.10/stage4_backlog_slice.md",
   "invoked_utc": "2026-10-06T15:03:24Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-10-07T10:31:56Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-10-07T10:42:44Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-03",
@@ -24,7 +24,9 @@
         "tests/test_live_exit_decision.py",
         "tests/test_atr_provenance.py",
         "tests/test_strategy_parameter_parity.py",
-        "tests/e2e/settings-strategy-parameters-fixed.spec.js"
+        "tests/e2e/settings-strategy-parameters-fixed.spec.js",
+        "tests/test_strategy_version_registry.py",
+        "tests/test_strategy_version_at_entry.py"
       ],
       "stories": {
         "ST-01": {
@@ -188,7 +190,8 @@
         "tests/e2e/lifecycle-badge-grace-calendar-days.spec.js",
         "tests/e2e/epic01-v34-lifecycle.spec.js",
         "tests/test_gap_risk.py",
-        "tests/e2e/gap-risk-flag.spec.js"
+        "tests/e2e/gap-risk-flag.spec.js",
+        "tests/test_position_lifecycle_states_registry.py"
       ],
       "stories": {
         "ST-11": {
@@ -529,7 +532,8 @@
           "sign_off_record": null,
           "notes": "Case B. 16 sole-signer SPOF gates flagged. Deviation check: none."
         }
-      }
+      },
+      "merged_utc": "2026-10-07T10:31:10Z"
     },
     "EPIC-02": {
       "status": "merged",
@@ -751,8 +755,9 @@
     "2026-10-07T10:06:47Z: STEP 3.2.B: PR #1918 opened for EPIC-04 after pre-PR checks (API baseline drift PASSED; cross-EPIC commit check: no foreign commits; 0 behind main). Merge gate awaits human Director of Quality QA comment and Product Owner acceptance.",
     "2026-10-07T10:21:58Z: User-requested agent-mediated PR #1918 review (Director of Quality + Product Owner, OA-6 labelled, pending human confirmation) posted as issuecomment-6035920931. Both verdicts Approved with Comments. Filed BLG-QA-216. Not merged.",
     "2026-10-07T10:23:57Z: Merge-gate QA sign-off (issuecomment-6035946582) and Product Owner acceptance (issuecomment-6035946942) posted on PR #1918, agent-mediated and recorded on the explicit direction of the human repository owner. Merge left to the human; CI on the final head must be green first.",
-    "2026-10-07T10:31:56Z: Mid-session re-sync (AUD-2026-08-21-010): PR #1918 (EPIC-04) merged by the human at 2026-10-07T10:31:10Z (52ce7f83); pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-04 is empty. merge_gate.all_merged = true; no sibling branches pending (3c not needed)."
+    "2026-10-07T10:31:56Z: Mid-session re-sync (AUD-2026-08-21-010): PR #1918 (EPIC-04) merged by the human at 2026-10-07T10:31:10Z (52ce7f83); pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-04 is empty. merge_gate.all_merged = true; no sibling branches pending (3c not needed).",
+    "2026-10-07T10:42:44Z: STEP 5 sprint close. 5.0: 4/4 DEL records terminal. 5.0A: PRs #1915-#1918 all MERGED. 5.1: 21/21 acceptance_verified + deviations_filed + spec_references; item count 21=21; QA sign-off dates non-blank; no unpushed commits. LL-v9.0-P4-02 backstop: test_scenarios backfilled (EPIC-01 +test_strategy_version_registry.py, +test_strategy_version_at_entry.py; EPIC-03 +test_position_lifecycle_states_registry.py); EPIC-04 merged_utc backfilled. sprint_close.md, SSR v4.53 section, Phase 3 lessons learnt written. Sealed."
   ],
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-10-07T10:42:44Z"
 }

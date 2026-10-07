@@ -1,9 +1,35 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.52
-**Last Updated:** 2026-10-06 (delivery verification 2026-09-30__release-v9.9 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation); prior — 2026-10-06 (sprint close 2026-09-30__release-v9.9 — new Sprint section added); prior — 2026-09-30 (delivery verification 2026-09-28__release-v9.8 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation); prior history retained — see prior entries in version control.
+**Version:** 4.53
+**Last Updated:** 2026-10-07 (sprint close 2026-10-06__release-v9.10 — new Sprint section added); prior — 2026-10-06 (delivery verification 2026-09-30__release-v9.9 — status line updated Sprint_Complete → Verified_with_deviations, STEP 6 reconciliation); prior — 2026-10-06 (sprint close 2026-09-30__release-v9.9 — new Sprint section added); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-10-06__release-v9.10
+**Date:** 2026-10-07
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | The on-load and nightly stop paths read §11 parameters from one source, `utils/strategy_parameters.py` (ST-01, BLG-BE-138). The silent ATR fallbacks are removed, and ATR and stop-calculation provenance are persisted (DS-25 `atr_source`, DS-26 `stop_calculation_source`) and exposed on `GET /positions` (ST-02). Contract corrections for the losing-stop formula, analyze side effects and the settings-change effect (ST-03). Live exit decision and grace-period unit tests (ST-04). Strategy-version registry coverage ruling, enforced by a test (ST-05) | `strategy_rules.md#11`; `data_model.md#DS-25`/`#DS-26`/`#DS-11`; `position_endpoints.md#GET /positions`; `settings_endpoints.md`; `settings.md#Strategy Parameter Presentation` | None |
+| EPIC-02 | The Positions stop-loss cell shows the ATR, the active multiplier and the recalculation source (ST-06, BLG-FE-193). Trade Entry shows the system-set stop and risk instead of a Stop Price input (ST-07). The exit dialog pre-selects the exit reason the system already knows, and the morning briefing shows a §8 exit-conditions row (ST-08, ST-09, BLG-FE-198). Recent Trades shows a neutral glyph for a break-even trade (ST-10) | `positions.md#Stop Provenance Line and Per-Row Stop Details`/`#Exit Dialog Pre-Selection and Deep Link`; `position_form.md#Initial Stop (set by system)`; `dashboard.md#Exit Conditions Met Row` | None |
+| EPIC-03 | The lifecycle-state registry is reconciled with `strategy_rules.md` §9 (ST-11). The Positions lifecycle badge uses the §6 grace window in calendar days (ST-12). §13.3 ruling: the Gap Risk Flag earnings trigger is US-only and day 0 is not flagged (ST-13). The standalone `weekend_hold` trigger is removed, and the window runs to the next trading session, labelled "Earnings due by next trading session" (ST-14) | `position_lifecycle_states_registry.md`; `positions.md#Grace Precedence and UNKNOWN Reasons`/`#Gap Risk Reason Labels`; `position_endpoints.md#GET /positions/{position_id}/gap-risk`; gap-risk §13 review addendum | None |
+| EPIC-04 | AI chat §13 quarterly self-audit checklist (ST-15). AI output logging completeness audit (ST-16). Quarterly dependency review (ST-17). The stale-staging-deploy check now compares against the latest staging-deploying commit, and it was live-fired with a real Telegram alert (ST-18). Reports and Notifications are added to the axe scan (ST-19). PO-05 pre-assessment and replay caption corrected (ST-20). Sign-off single-point-of-failure matrix (ST-21) | `docs/ops/ai_chat_section13_quarterly_self_audit_checklist.md`; `docs/ops/ai_output_logging_completeness_audit_2026-10-06.md`; `docs/security/dependency_update_review_2026-10-06.md`; `scripts/staging_smoke_test.py`; `replay_mode.md#§13 Boundary`; `docs/ops/sign_off_single_point_of_failure_matrix.md` | None (ST-18 and ST-20 Pass_with_deviation, tracked as BLG-OPS-182 and BLG-GOV-377) |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| None | All 21 scoped items delivered within the sprint | — |
+
+### Verification inputs ready
+- QA evidence logs: `qa_evidence_EPIC-01.md`, `qa_evidence_EPIC-02.md`, `qa_evidence_EPIC-03.md`, `qa_evidence_EPIC-04.md`
+- Deviations filed: None (no new canonical-spec `DEV-*`). ST-18 and ST-20 are Pass_with_deviation (BLG-OPS-182, BLG-GOV-377)
+- Test scenarios referenced: `tests/test_live_exit_decision.py`, `tests/test_atr_provenance.py`, `tests/test_strategy_parameter_parity.py`, `tests/test_strategy_version_registry.py`, `tests/test_strategy_version_at_entry.py`, `tests/test_add_position_stop_handling.py`, `tests/test_position_lifecycle.py`, `tests/test_position_lifecycle_states_registry.py`, `tests/test_gap_risk.py`, `tests/test_claude_audit_entry_failure_logging.py`, `tests/test_staging_smoke_test.py`, `tests/e2e/settings-strategy-parameters-fixed.spec.js`, `tests/e2e/stop-cell-provenance.spec.js`, `tests/e2e/trailing-stop-explainer-tooltip.spec.js`, `tests/e2e/trade-entry-system-stop.spec.js`, `tests/e2e/exit-condition-surfacing.spec.js`, `tests/e2e/recent-trades-zero-pnl-badge.spec.js`, `tests/e2e/lifecycle-badge-grace-calendar-days.spec.js`, `tests/e2e/epic01-v34-lifecycle.spec.js`, `tests/e2e/gap-risk-flag.spec.js`, `tests/e2e/accessibility-axe-scan.spec.js`, `tests/e2e/replay-mode.spec.js`
 
 ---
 
