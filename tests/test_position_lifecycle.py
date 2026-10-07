@@ -18,7 +18,6 @@ from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
-sys.path.insert(0, str(Path(__file__).parent.parent / "backend" / "services"))
 
 from services.position_lifecycle_service import (
     compute_position_state,
