@@ -3,15 +3,22 @@ Position Lifecycle Service (Arc 3 — IT-01)
 
 Deterministic state machine for open positions.
 
+A display overlay that defers to strategy_rules.md §9 (ST-11, BLG-SPEC-185,
+v9.10 — Strategy Rules & System Intent Owner ruling, ESC-EXEC-20261006-03).
+
 States (priority order checked in classify_position):
     GRACE      — fewer than 10 calendar days since entry (strategy_rules.md
                  §6.2), regardless of price. Same rule as GET /positions'
                  grace_period flag (ST-12, BLG-FE-196, v9.10).
-    EXIT ZONE  — price >= entry + 2R (R = entry - initial_stop)
-    PROFITABLE — price > entry + 0.5 × ATR
-    LOSING     — price < entry - 0.5 × ATR
-    UNKNOWN    — missing data, or flat (within ±0.5 ATR) after grace. The
-                 reason is returned as lifecycle_reason.
+    EXIT ZONE  — post-grace and price >= entry + 2R (R = entry - initial_stop).
+                 A display sub-state of §9 PROFITABLE, never of LOSING.
+    PROFITABLE — post-grace, native P&L > 0 (price > entry), §9
+    LOSING     — post-grace, native P&L <= 0 (price <= entry), §9
+    UNKNOWN    — missing data only. The reason is returned as lifecycle_reason.
+
+The P&L test is the same one that picks the §7.2 stop multiplier
+(position_service.py: is_profitable = pnl_native > 0), so the badge and the
+stop never disagree on which state a position is in.
 
 §13 compliance: state is display-only. No automated action generated.
 Service callable on demand; never mutates state autonomously.
@@ -33,9 +40,9 @@ from utils.position_lifecycle_states import EXIT_ZONE, PROFITABLE, LOSING, GRACE
 # strategy_rules.md §6.2 / §11: grace is 10 calendar days (days 0-9).
 GRACE_PERIOD_DAYS = 10
 
-# lifecycle_reason values, set only when the state is UNKNOWN (ST-12).
+# lifecycle_reason value, set only when the state is UNKNOWN (ST-12).
+# ST-11 (v9.10) removed "flat_after_grace": §9 has no neutral post-grace zone.
 REASON_MISSING_DATA = "missing_data"
-REASON_FLAT_AFTER_GRACE = "flat_after_grace"
 
 
 def _count_calendar_days(entry_date_str: str) -> Optional[int]:
@@ -66,36 +73,33 @@ def classify_position(position: dict) -> Tuple[str, Optional[str]]:
         position.get("current_price_native")
         or position.get("current_price")
     )
-    atr = position.get("atr") or position.get("atr_value")
-    if not all([entry_price, current_price, atr]):
+    if not entry_price or not current_price:
         return UNKNOWN, REASON_MISSING_DATA
 
     entry_price = float(entry_price)
     current_price = float(current_price)
-    atr = float(atr)
-    initial_stop = position.get("initial_stop")
 
-    # EXIT ZONE: price >= entry + 2R (requires valid initial_stop)
+    # §9: post-grace, P&L <= 0 is LOSING, whatever the distance from entry.
+    if current_price <= entry_price:
+        return LOSING, None
+
+    # EXIT ZONE: a PROFITABLE position at or beyond entry + 2R (needs initial_stop).
+    initial_stop = position.get("initial_stop")
     if initial_stop:
         r_value = entry_price - float(initial_stop)
         if r_value > 0 and current_price >= entry_price + 2 * r_value:
             return EXIT_ZONE, None
 
-    if current_price > entry_price + 0.5 * atr:
-        return PROFITABLE, None
-    if current_price < entry_price - 0.5 * atr:
-        return LOSING, None
-
-    # After grace, price still within ±0.5 ATR of entry.
-    return UNKNOWN, REASON_FLAT_AFTER_GRACE
+    return PROFITABLE, None
 
 
 def compute_position_state(position: dict) -> str:
     """Determine lifecycle state from position data.
 
     Args:
-        position: dict with at minimum entry_price, current_price (native),
-                  atr, entry_date, and optionally initial_stop.
+        position: dict with at minimum entry_price, current_price (native)
+                  and entry_date, and optionally initial_stop. ATR is not
+                  used (ST-11, v9.10).
 
     Returns:
         One of: 'EXIT ZONE', 'PROFITABLE', 'LOSING', 'GRACE', 'UNKNOWN'
@@ -104,7 +108,7 @@ def compute_position_state(position: dict) -> str:
 
 
 def compute_lifecycle_reason(position: dict) -> Optional[str]:
-    """Why a position is UNKNOWN ('missing_data' / 'flat_after_grace'), else None."""
+    """Why a position is UNKNOWN ('missing_data'), else None."""
     return classify_position(position)[1]
 
 

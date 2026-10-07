@@ -4820,6 +4820,28 @@ A closed trade records prices and fees but not the multiplier, ATR and grace len
 
 ---
 
+### BLG-GOV-376 — Update strategy_rules.md §13.3 now that the Gap Risk Flag's weekend-hold trigger is removed
+**Priority:** P3 (Low)
+**Type:** Governance Process / Strategy Text Alignment
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** ST-13/ST-14 (EPIC-03, cycle `2026-10-06__release-v9.10`) — 2026-10-07
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD (before the first §13.5 re-attestation, 2027-02-06)
+
+**Problem**
+ST-14 removed the Gap Risk Flag's standalone `weekend_hold` trigger, and ST-13 ruled that the earnings trigger covers US positions only, from the day after today up to the next trading day. `strategy_rules.md` v1.14 §13.3's third paragraph still describes the weekend-hold trigger as a live, time-boxed deviation due by 2027-02-06. The behaviour now meets §13.3. Only this descriptive text is stale. Sprint Execution cannot write `claude/strategy/strategy_rules.md` (`execution_prompt.md` §7).
+
+**Scope**
+- Replace §13.3's third paragraph with the text in the v9.10 addendum of `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` ("Proposed §13.3 third paragraph").
+- Update the §13.5 roster row's weekend-hold clause to record Binding Condition 6 as met (v9.10).
+- Bump the version, add the Change Log row (documentation only, per ST-05's behaviour-only registry rule) and run the §15 grep.
+
+**Acceptance Criteria**
+- [ ] §13.3 and the §13.5 roster row no longer describe the weekend-hold trigger as live.
+- [ ] Change Log row and §15 grep recorded.
+
+---
+
 ### BLG-FE-201 — Settings helper text for the fixed strategy parameters contradicts §6 and §7.2
 **Priority:** P3 (Low)
 **Type:** Frontend / UX Copy

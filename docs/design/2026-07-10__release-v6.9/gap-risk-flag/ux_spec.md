@@ -1,8 +1,8 @@
 **Owner:** Head of UX & Design
 **Class:** Design Artefact (Class 5)
 **Status:** Approved
-**Version:** 1.0
-**Last Updated:** 2026-07-10
+**Version:** 1.1
+**Last Updated:** 2026-10-07 (v9.10 ST-14, BLG-BE-136 — §3–§6 trigger and timing aligned with the code after the ST-13 ruling: weekend-hold trigger removed; earnings US-only, after today and on or before the next trading day); prior — 2026-07-10
 **Approved by:** Product Owner — 2026-07-10
 **Story:** ST-02 — Overnight/weekend gap risk flag for open positions (BLG-FEAT-65)
 **Cycle:** 2026-07-10__release-v6.9
@@ -29,7 +29,7 @@ Swing positions held overnight/over weekends are exposed to gap risk from earnin
 
 | Element | Spec |
 |---------|------|
-| Trigger | Either (a) an earnings date falls before the position's next trading session, or (b) it is a weekend-hold position flagged at Friday close |
+| Trigger | An earnings date falls after today and on or before the position's next trading day, for a US position (see §5). ~~Or a weekend-hold position flagged at Friday close~~ — removed v9.10 (ST-14). |
 | Label | "GAP RISK" |
 | Background | `#D97706` (amber-600) |
 | Text colour | White |
@@ -50,13 +50,9 @@ Earnings: 2026-07-14 (before next session)
 Avg overnight gap: ±2.3% (14 historical events)
 ```
 
-or, for weekend-only holds with no earnings proximity:
+~~or, for weekend-only holds with no earnings proximity~~ — removed v9.10 (ST-14): there is no weekend-only flag. A Friday-to-Sunday view of Monday earnings shows the weekend gap statistic instead of the overnight one.
 
-```
-Gap Risk — AAPL
-Weekend hold (flagged at Friday close)
-Avg weekend gap: ±1.1% (31 historical events)
-```
+As shipped, the reason line reads "Earnings due by next trading session" (v9.10 label, `docs/design/2026-10-06__release-v9.10/gap-risk-trigger-label-alignment/decision_record.md`).
 
 or, when history is insufficient:
 
@@ -72,17 +68,17 @@ Avg gap: insufficient history (< N events)
 
 | Trigger | When flag appears |
 |---------|-------------------|
-| Earnings proximity | As soon as the earnings date falls before the position's next trading session (per DS-04 calendar) |
-| Weekend hold | At Friday close (server-computed; frontend renders the flag as returned — no client-side day-of-week logic) |
+| Earnings proximity | When the earnings date (DS-04 calendar) is after today and on or before the next trading day: tomorrow when viewed Monday to Thursday, the following Monday when viewed Friday to Sunday. Not on the earnings day itself (day 0). US positions only. Server-computed; the frontend renders the flag as returned, with no client-side day-of-week logic. |
+| ~~Weekend hold~~ | Removed v9.10 (ST-14, BLG-BE-136): it flagged every position each Friday, contrary to §13 Binding Condition 6. |
 
-Both conditions are independent and can co-occur (e.g. Friday close + earnings Monday morning) — tooltip lists both reasons stacked when applicable.
+v9.10 (ST-13 ruling, `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` addendum): day 0 is excluded because a before-open release has already gapped and the data cannot tell before-open from after-close; UK tickers are excluded because `strategy_rules.md` §4.2.3 is US-only.
 
 ## 6. States
 
 | State | Alerts Column (Gap Risk) |
 |-------|---------------------------|
 | No flag | "—" |
-| Flagged (earnings and/or weekend) | "GAP RISK" amber badge, tooltip with reason(s) + historical stat |
+| Flagged (earnings) | "GAP RISK" amber badge, tooltip with reason + historical stat |
 | Insufficient history | Badge still shown (flag condition is independent of history availability); tooltip shows "insufficient history" in place of the average |
 | Loading | Skeleton cell (shared with existing Alerts column loading state) |
 

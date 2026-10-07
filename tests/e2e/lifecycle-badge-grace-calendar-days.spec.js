@@ -11,6 +11,7 @@
  *   SC-LBG-02  GRACE tooltip and aria-label use calendar days
  *   SC-LBG-03  No element or tooltip on the page says "trading day"
  *   SC-LBG-04  Each UNKNOWN lifecycle_reason renders its own tooltip
+ *   SC-LBG-05  LOSING tooltip states the §9 P&L rule (ST-11), with no 0.5 ATR band
  *
  * Infrastructure: page.route() network interception — no live backend required.
  * ROUTING NOTE: App uses HashRouter. ALL navigation via page.goto('/#/Positions')
@@ -118,8 +119,9 @@ test.describe('ST-12 — lifecycle badge grace window in calendar days', () => {
   });
 
   const unknownCases = [
-    ['missing_data', 'No lifecycle state: ATR or price data is missing for this position.'],
-    ['flat_after_grace', 'No lifecycle state: the grace period has ended and the price is within 0.5 ATR of entry.'],
+    ['missing_data', 'No lifecycle state: price or entry data is missing for this position.'],
+    // ST-11 (v9.10): flat_after_grace removed from the contract; an unknown value falls back.
+    ['flat_after_grace', 'No lifecycle state is available for this position.'],
     [null, 'No lifecycle state is available for this position.'],
   ];
   for (const [reason, tip] of unknownCases) {
@@ -133,4 +135,17 @@ test.describe('ST-12 — lifecycle badge grace window in calendar days', () => {
       await expect(badge).toHaveAttribute('title', tip);
     });
   }
+
+  // ST-11 (BLG-SPEC-185, v9.10): post-grace LOSING/PROFITABLE follow §9's P&L sign.
+  test('SC-LBG-05: LOSING tooltip states the §9 P&L rule, with no 0.5 ATR band', async ({ page }) => {
+    await setup(page, [makePosition({
+      lifecycle_state: 'LOSING', position_state: 'LOSING', lifecycle_reason: null,
+      grace_period: false, grace_days_remaining: null, holding_days: 20,
+    })]);
+    const badge = page.getByTestId('lifecycle-badge');
+    await expect(badge).toContainText('LOSING');
+    await expect(badge).toHaveAttribute('title',
+      'Past grace with P&L at or below zero: wide stop (§7.2). Becomes PROFITABLE when the price rises above entry.');
+    await expect(page.locator('[title*="0.5 ATR"]')).toHaveCount(0);
+  });
 });

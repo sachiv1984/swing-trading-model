@@ -1,7 +1,7 @@
 **Owner:** Strategy Rules & System Intent Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active — CONDITIONAL
-**Last Updated:** 2026-10-05 (appendix: wording as applied to strategy_rules.md v1.14 via BLG-GOV-360, after an amended second-pass review); prior — 2026-10-05 (created)
+**Last Updated:** 2026-10-07 (v9.10 addendum: ST-13 rulings on UK tickers and day-0 timing; ST-14 weekend-hold disposition and Binding Conditions 1–8 re-confirmation); prior — 2026-10-05 (appendix: wording as applied to strategy_rules.md v1.14 via BLG-GOV-360, after an amended second-pass review); prior — 2026-10-05 (created)
 **Cycle:** 2026-09-30__release-v9.9
 **Story:** ST-20 (EPIC-04)
 **Backlog ref:** BLG-GOV-358 (this review) / BLG-FEAT-65 (feature reviewed, shipped v6.9)
@@ -242,3 +242,72 @@ The shipped Overnight/Weekend Gap Risk Flag (BLG-FEAT-65, v6.9) is governed by `
 ```
 | Overnight/Weekend Gap Risk Flag (BLG-FEAT-65) | `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` | v6.9 shipped; retroactive §13 review v9.9 (**CONDITIONAL** — 9 binding conditions; reviewed against §13.3 as well as §13.1/§13.2, so re-attestation must also confirm its §13.3 standing; earnings trigger cleared as outside §13.3's exclusion; standalone weekend-hold trigger found within §13.3's noise rationale and must be dispositioned per Binding Condition 6 / `BLG-BE-136` by this cadence's first review date, 2027-02-06 — if it has not been, record that re-attestation's outcome as escalated, not unchanged. Original v6.9 AC-04 sign-off, `claude/cycles/2026-07-10__release-v6.9/qa_evidence_EPIC-02.md`, covered §13.2 only) |
 ```
+
+---
+
+## Addendum — v9.10 Rulings on Market Scope, Day-0 Timing and the Weekend-Hold Trigger
+
+**Date:** 2026-10-07
+**Cycle:** 2026-10-06__release-v9.10
+**Stories:** ST-13 (EPIC-03, BLG-GOV-365) ruling; ST-14 (EPIC-03, BLG-BE-136) implementation
+**Escalation ref:** ESC-EXEC-20261006-04
+**Ruled by:** Strategy Rules & System Intent Owner (agent-mediated, `claude/system/execution_prompt.md` §5.3, Sprint Execution Engine under the user's explicit direction, 2026-10-07)
+
+This addendum rules on two shipped behaviours §13.3 did not cover (BLG-GOV-365), records the disposition of the standalone weekend-hold trigger that Binding Condition 6 required (BLG-BE-136), and re-confirms Binding Conditions 1–8 against the changed code. It adds no new event type or trigger, so no new §13 review is needed.
+
+### Ruling 1 — UK tickers: the earnings trigger applies to US positions only
+
+§13.3 permits this flag only for an event "already recognised as a gap-risk event by a canonical rule". The only such event is a scheduled earnings date per §4.2.3, and §4.2.3 applies to US tickers only. Pre-entry validation already skips non-US tickers for the same reason. A UK flag would therefore rest on no canonical rule, which §13.3 does not allow. Extending §4.2.3 to UK tickers is a strategy change in its own right, with its own data-quality question, and is not made here.
+
+**Ruled:** `gap_risk_service` evaluates the earnings trigger only when `market = "US"`. A UK position is never flagged, and no earnings lookup is made for it.
+
+### Ruling 2 — Day 0: earnings today are not flagged
+
+The trigger used to fire when `days_until_earnings == 0`. For a before-open release, the gap has already happened by the time the user can act, so the flag would react to a gap after it occurs. §13.3 and Binding Condition 3 exclude that. The code cannot tell a before-open release from an after-close one, so day 0 cannot be split by release time.
+
+Dropping day 0 loses no actionable notice. Every earnings date is flagged on the previous trading session's view (Ruling 3), which is the last session in which a manual exit (§8.3) can happen before either kind of release. The one case it misses is a position opened on the earnings day itself, which §4.2.3's entry check already warns about.
+
+**Ruled:** day 0 is not flagged.
+
+### Ruling 3 — The window runs to the next trading day
+
+"Before that position's next trading session" (§13.3) means the earnings date is after today and on or before the next trading day: `1 ≤ days_until_earnings ≤ d`, where `d` is the calendar days to the next weekday (3 on Friday, 2 on Saturday, otherwise 1). A Friday view therefore flags Monday earnings, as ST-14 AC 2 requires. Exchange holidays are not modelled; the deterministic weekday calendar is the rule.
+
+### Neither ruling changes strategy_rules.md
+
+Rulings 1–3 apply §4.2.3 and §13.3 as written. No §13.3 or §4.2.3 wording change is needed, so no `strategy_rules.md` Change Log row or §15 grep is triggered by them.
+
+### Weekend-Hold Trigger Disposition (ST-14, Binding Condition 6)
+
+**Disposition: removed.** The standalone `weekend_hold` trigger flagged every open position each Friday, whatever its ticker or events. No position-specific justification was found that would meet §13.3, so the trigger was removed rather than retained. `reasons` is now `["earnings"]` or empty, and the enum shrank in `position_endpoints.md` v2.12.0 and `openapi.yaml` 3.22.0. The weekend gap statistic remains, but only alongside an earnings flag viewed Friday to Sunday, where the gap ahead is the weekend gap.
+
+This meets Binding Condition 6 ahead of its 2027-02-06 deadline. `strategy_rules.md` §13.3's third paragraph still describes the weekend-hold trigger as a live, time-boxed deviation. Sprint Execution cannot write that file (`execution_prompt.md` §7), so the replacement text is recorded below and tracked as BLG-GOV-376. Until it lands, this addendum is the record that the deviation is closed.
+
+**Proposed §13.3 third paragraph (for a routine or human with `claude/strategy/` write access):**
+
+```
+The shipped Overnight/Weekend Gap Risk Flag (BLG-FEAT-65, v6.9) is governed by `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md` (CONDITIONAL, 2026-10-05; v9.10 addendum 2026-10-07). Its earnings trigger is cleared under the paragraph above, for US positions only (§4.2.3), from the day after today up to the next trading day. Its standalone weekend-hold trigger, which flagged every open position each Friday, was removed in v9.10 (BLG-BE-136). Any extension towards background evaluation, notification, realised-gap detection or forward-looking gap estimates requires a new §13 review.
+```
+
+### Binding Conditions 1–8 Re-Confirmed After the Change (ST-14 AC 6)
+
+| # | Condition | Holds after ST-14? | Evidence |
+|---|-----------|--------------------|----------|
+| 1 | Display-only, with no automated action | Yes | `gap_risk_service.py` has no write path and no caller other than `GET /positions/{position_id}/gap-risk` (`main.py`). It does not touch stops, exits, states, SI-01, SI-02 or PT-04. |
+| 2 | On-request computation only | Yes | Still computed only on that GET, fetched by `useGapRisk.js`. No scheduler, notification or dispatch path was added. |
+| 3 | No realised-gap or intraday detection | Yes, strengthened | Dropping day 0 (Ruling 2) removes the one case where the flag could show after a before-open gap. |
+| 4 | Retrospective, contextual statistic only | Yes | `_compute_gap_stats` is unchanged: a historical mean with its event count, shown only alongside an earnings flag. |
+| 5 | Non-prescriptive copy | Yes | The new label "Earnings due by next trading session" states a fact. No imperative wording. |
+| 6 | Every trigger is specific to the position | Yes, now met | The uniform `weekend_hold` trigger is removed. `tests/test_gap_risk.py::test_no_trigger_flags_every_position_identically` checks that no position without an event is flagged on any weekday. |
+| 7 | No downstream consumption without review | Yes | No new consumer. `grep -rn gap_risk backend/` shows only the service and its route. |
+| 8 | Code-level citation | Yes, now met | The module docstring cites this record and this addendum. Checked by `test_module_docstring_cites_section13_review_record`. |
+
+Binding Condition 9 (canonical registration) was met at v1.14. The §13.3 paragraph update above is a follow-on text correction, not a new registration.
+
+### Addendum Sign-Off
+
+**Signed off by:** Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role — §5.3), on the user's explicit direction to resolve ST-13
+**Date:** 2026-10-07
+**Determination:** Rulings 1–3 as above. Weekend-hold trigger removed. Binding Conditions 1–8 hold. The feature stays **CONDITIONAL** on the §13.5 roster until the 2027-02-06 re-attestation confirms it, and that re-attestation should record Binding Condition 6 as met.
+**Comments (Strategy Rules & System Intent Owner):** Both rulings take §13.3 and §4.2.3 at their word, which is the conservative reading. The flag is allowed because it tells a human about a known event while they can still act. It is not allowed to show a gap that has already happened, or to warn about markets where no canonical rule recognises the event. The weekend-hold trigger is gone because it gave every position the same warning, which is noise rather than information about a specific position.
+

@@ -1,15 +1,30 @@
 """
 Gap Risk Flag Service — ST-02 (BLG-FEAT-65, v6.9)
 
-Computes overnight/weekend gap risk flags for open positions by combining:
-  - Earnings proximity (DS-04 earnings calendar via earnings_service.get_earnings)
-  - Weekend-hold detection (Friday close, server-computed day-of-week — frontend
-    renders the flag as returned, no client-side day-of-week logic per ux_spec.md §5)
-  - Historical overnight/weekend gap statistics from daily OHLCV (yfinance), matching
-    the existing yfinance-direct pattern used by earnings_service.py / sector_service.py
+Governed by the §13 review record
+docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md
+(CONDITIONAL, Binding Conditions 1-9) and its v9.10 addendum (ST-13, BLG-GOV-365).
 
-Deterministic only — surfaces a known calendar event and a historical statistic;
-does not predict gap direction or magnitude for the upcoming event (§13, AC-04).
+Flags an open position when one known, dated event specific to its ticker falls
+before its next trading session. The only such event is a scheduled earnings
+date (strategy_rules.md §4.2.3, §13.3). Shown with a historical overnight or
+weekend gap statistic from daily OHLCV (yfinance), matching the yfinance-direct
+pattern used by earnings_service.py / sector_service.py.
+
+Trigger rules (Strategy Rules & System Intent Owner ruling, v9.10 ST-13):
+  - US positions only, as §4.2.3 is US-only. A UK position is never flagged.
+  - The earnings date is after today and on or before the next trading day
+    (weekday calendar). A Friday view flags Monday earnings. Earnings today
+    (day 0) are not flagged: a before-open release has already gapped, which
+    §13.3 and Binding Condition 3 exclude, and yfinance cannot tell before-open
+    from after-close. The previous session's view already flagged that date.
+
+The standalone weekend-hold trigger, which flagged every position each Friday,
+was removed in v9.10 (ST-14, BLG-BE-136) under Binding Condition 6.
+
+Display-only and computed on request (Binding Conditions 1-2). Surfaces a known
+calendar event and a historical statistic; does not predict gap direction or
+magnitude for the upcoming event (§13, AC-04).
 
 Spec: docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id}/gap-risk
       docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md
@@ -29,18 +44,30 @@ MIN_HISTORICAL_EVENTS = 10
 
 _HISTORY_PERIOD = "2y"
 
-# Earnings dates within this many days are treated as "before the position's
-# next trading session" (AC-01). 0 = earnings today (commonly released after
-# close, affecting tomorrow's session); 1 = earnings tomorrow. Deterministic
-# calendar check only — no attempt to infer before/after-market timing, which
-# yfinance does not reliably expose.
-_EARNINGS_NEXT_SESSION_WINDOW_DAYS = 1
+# Markets whose earnings dates are a canonical gap-risk event (strategy_rules.md
+# §4.2.3 is US-only; ST-13 ruling, v9.10).
+_EARNINGS_TRIGGER_MARKETS = ("US",)
 
 
-def _is_weekend_hold(today: Optional[date] = None) -> bool:
-    """True when today is Friday — every open position is a weekend hold, flagged at Friday close."""
-    d = today or date.today()
-    return d.weekday() == 4  # Monday=0 ... Friday=4
+def _days_to_next_trading_day(today: date) -> int:
+    """Calendar days from today to the next weekday (Fri -> 3, Sat -> 2, else 1).
+
+    Weekday calendar only: exchange holidays are not modelled, so the day after a
+    holiday-shortened week is treated as the next session.
+    """
+    weekday = today.weekday()  # Monday=0 ... Sunday=6
+    if weekday == 4:
+        return 3
+    if weekday == 5:
+        return 2
+    return 1
+
+
+def _earnings_before_next_session(days_until: Optional[int], today: date) -> bool:
+    """True when earnings fall after today and on or before the next trading day (no day 0)."""
+    if days_until is None:
+        return False
+    return 1 <= days_until <= _days_to_next_trading_day(today)
 
 
 def _compute_gap_stats(ticker: str, market: str, weekend: bool) -> Dict:
@@ -94,29 +121,26 @@ def _compute_gap_stats(ticker: str, market: str, weekend: bool) -> Dict:
         return {"avg_gap_pct": None, "event_count": 0, "insufficient_history": True}
 
 
-def get_gap_risk(ticker: str, market: str) -> Dict:
+def get_gap_risk(ticker: str, market: str, today: Optional[date] = None) -> Dict:
     """
     Compute the gap_risk object for a single position.
 
     Returns:
       {
         "flagged": bool,
-        "reasons": [...] subset of ["earnings", "weekend_hold"], in that order,
+        "reasons": [] or ["earnings"],
         "avg_gap_pct": float | None,
         "event_count": int,
         "insufficient_history": bool
       }
     """
+    today = today or date.today()
     reasons = []
 
-    earnings = get_earnings(ticker, market)
-    days_until = earnings.get("days_until_earnings")
-    if days_until is not None and 0 <= days_until <= _EARNINGS_NEXT_SESSION_WINDOW_DAYS:
-        reasons.append("earnings")
-
-    weekend_hold = _is_weekend_hold()
-    if weekend_hold:
-        reasons.append("weekend_hold")
+    if market in _EARNINGS_TRIGGER_MARKETS:
+        earnings = get_earnings(ticker, market)
+        if _earnings_before_next_session(earnings.get("days_until_earnings"), today):
+            reasons.append("earnings")
 
     if not reasons:
         return {
@@ -127,9 +151,9 @@ def get_gap_risk(ticker: str, market: str) -> Dict:
             "insufficient_history": False,
         }
 
-    # When both reasons apply, the weekend gap is the rarer/larger event and is
-    # shown per ux_spec.md §4's combined example (Friday close + Monday earnings).
-    stats = _compute_gap_stats(ticker, market, weekend=weekend_hold)
+    # From Friday to Sunday the gap ahead is the Friday-close to Monday-open
+    # weekend gap, so show the weekend statistic then.
+    stats = _compute_gap_stats(ticker, market, weekend=today.weekday() >= 4)
 
     return {
         "flagged": True,

@@ -2,7 +2,12 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.20.0
+  version: 3.22.0
+  # v3.22.0 (2026-10-07, ST-13/ST-14, EPIC-03, v9.10): GET /positions/{position_id}/gap-risk
+  # reasons enum drops weekend_hold (BLG-BE-136). No new endpoint.
+  # v3.21.0 (2026-10-07, ST-11, EPIC-03, v9.10): lifecycle_reason enum drops
+  # flat_after_grace; post-grace position_state follows strategy_rules.md §9
+  # (BLG-SPEC-185). No new endpoint.
   # v3.20.0 (2026-10-06, ST-01, EPIC-01, v9.10): GET /positions' Position schema
   # gains stop_calculation_source (BLG-BE-138). No new endpoint. (3.19.0 is
   # EPIC-03's ST-12 on its own branch; skipped so versions stay distinct.)
@@ -1804,9 +1809,9 @@ paths:
                     type: integer
                   lifecycle_reason:
                     type: string
-                    enum: [missing_data, flat_after_grace]
+                    enum: [missing_data]
                     nullable: true
-                    description: v9.10 ST-12 (BLG-FE-196) — why the position is UNKNOWN. missing_data = no ATR, entry price, current price or entry date; flat_after_grace = past grace and within ±0.5 ATR of entry. Null for every other state.
+                    description: v9.10 ST-12 (BLG-FE-196) — why the position is UNKNOWN. missing_data = no entry price, current price or entry date. Null for every other state. v9.10 ST-11 (BLG-SPEC-185) removed flat_after_grace — post-grace states follow strategy_rules.md §9's P&L sign.
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -2064,6 +2069,10 @@ paths:
         combining the DS-04 earnings calendar with historical OHLCV gap statistics.
         §13 display-only — surfaces a known calendar event and historical statistic,
         no gap direction/magnitude prediction. (v6.9 ST-02, BLG-FEAT-65)
+        v9.10 (ST-13/ST-14, BLG-GOV-365/BLG-BE-136): earnings is the only reason.
+        US positions only; earnings after today and on or before the next trading
+        day (a Friday view flags Monday earnings; day 0 is not flagged). The
+        weekend_hold trigger was removed.
       parameters:
         - in: path
           name: position_id
@@ -2092,7 +2101,7 @@ paths:
                         type: array
                         items:
                           type: string
-                          enum: [earnings, weekend_hold]
+                          enum: [earnings]
                       avg_gap_pct:
                         type: number
                         nullable: true
@@ -6436,9 +6445,9 @@ components:
               description: v7.0 ST-15 (BLG-FEAT-68) — null means never marked reviewed. Set by PATCH /positions/{id}/mark-reviewed.
             lifecycle_reason:
               type: string
-              enum: [missing_data, flat_after_grace]
+              enum: [missing_data]
               nullable: true
-              description: v9.10 ST-12 (BLG-FE-196) — why the position is UNKNOWN. missing_data = no ATR, entry price, current price or entry date; flat_after_grace = past grace and within ±0.5 ATR of entry. Null for every other state.
+              description: v9.10 ST-12 (BLG-FE-196) — why the position is UNKNOWN. missing_data = no entry price, current price or entry date. Null for every other state. v9.10 ST-11 (BLG-SPEC-185) removed flat_after_grace — post-grace states follow strategy_rules.md §9's P&L sign.
 
     PortfolioSnapshot:
       type: object

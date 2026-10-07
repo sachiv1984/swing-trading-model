@@ -15,9 +15,11 @@ import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/form
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
+// v9.10 ST-14 (BLG-BE-136): earnings is the only trigger (US positions, after
+// today and on or before the next trading day; ST-13 ruling). The weekend_hold
+// trigger and its label were removed under §13 Binding Condition 6.
 const GAP_RISK_REASON_LABELS = {
-  earnings: "Earnings before next session",
-  weekend_hold: "Weekend hold (flagged at Friday close)",
+  earnings: "Earnings due by next trading session",
 };
 
 // ST-02 (v6.9, BLG-FEAT-65) — Gap Risk badge

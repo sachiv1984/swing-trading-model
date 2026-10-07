@@ -3,11 +3,11 @@ Unit tests for PositionLifecycleService (EPIC-01, ST-02).
 
 Tests all 5 state transition paths:
   EXIT ZONE  — price >= entry + 2R
-  PROFITABLE — price > entry + 0.5 ATR
-  LOSING     — price < entry - 0.5 ATR
+  PROFITABLE — post-grace, price > entry (strategy_rules.md §9, ST-11 v9.10)
+  LOSING     — post-grace, price <= entry (§9, ST-11 v9.10)
   GRACE      — fewer than 10 calendar days since entry, whatever the price
                (ST-12, BLG-FE-196, v9.10: grace precedence, calendar days)
-  UNKNOWN    — missing data or post-grace neutral zone, with lifecycle_reason
+  UNKNOWN    — missing data only, with lifecycle_reason
 
 No database calls — CI-safe. Uses date offsets relative to today.
 """
@@ -69,31 +69,31 @@ class TestComputePositionState(unittest.TestCase):
         self.assertEqual(compute_position_state(pos), "GRACE")
 
     def test_grace_day_5_neutral(self):
-        """Day 5, price within ±0.5 ATR → GRACE."""
+        """Day 5, price just above entry → GRACE."""
         pos = _pos(100.0, 100.5, 2.0, days_ago=5)
         self.assertEqual(compute_position_state(pos), "GRACE")
 
     # --- PROFITABLE ---
 
-    def test_profitable_beyond_0_5_atr(self):
-        """Post-grace, price above entry + 0.5 ATR → PROFITABLE."""
-        pos = _pos(100.0, 102.0, 2.0, days_ago=10)  # 2.0 > 0.5×2.0=1.0
+    def test_profitable_above_entry(self):
+        """Post-grace (day 10), price above entry → PROFITABLE (§9)."""
+        pos = _pos(100.0, 102.0, 2.0, days_ago=10)
         self.assertEqual(compute_position_state(pos), "PROFITABLE")
 
     def test_profitable_after_grace_window(self):
-        """Price above threshold, opened 20 days ago → PROFITABLE."""
+        """Price above entry, opened 20 days ago → PROFITABLE."""
         pos = _pos(100.0, 102.0, 2.0, days_ago=20)
         self.assertEqual(compute_position_state(pos), "PROFITABLE")
 
     # --- LOSING ---
 
-    def test_losing_below_0_5_atr(self):
-        """Post-grace (day 10), price below entry - 0.5 ATR → LOSING."""
-        pos = _pos(100.0, 98.0, 2.0, days_ago=10)  # 98 < 100 - 1.0 = 99
+    def test_losing_below_entry(self):
+        """Post-grace (day 10), price below entry → LOSING (§9)."""
+        pos = _pos(100.0, 98.0, 2.0, days_ago=10)
         self.assertEqual(compute_position_state(pos), "LOSING")
 
     def test_losing_after_grace(self):
-        """Price below threshold, opened 20 days ago → LOSING."""
+        """Price below entry, opened 20 days ago → LOSING."""
         pos = _pos(100.0, 97.0, 2.0, days_ago=20)
         self.assertEqual(compute_position_state(pos), "LOSING")
 
@@ -122,10 +122,9 @@ class TestComputePositionState(unittest.TestCase):
 
     # --- UNKNOWN ---
 
-    def test_unknown_missing_atr(self):
-        """Post-grace, no ATR → UNKNOWN."""
-        pos = _pos(100.0, 100.0, None, days_ago=12)
-        self.assertEqual(compute_position_state(pos), "UNKNOWN")
+    def test_missing_atr_post_grace_still_classified(self):
+        """ST-11: post-grace, no ATR → classified by §9's P&L sign, not UNKNOWN."""
+        self.assertEqual(compute_position_state(_pos(100.0, 101.0, None, days_ago=12)), "PROFITABLE")
 
     def test_unknown_missing_price(self):
         """No current price → UNKNOWN."""
@@ -138,10 +137,10 @@ class TestComputePositionState(unittest.TestCase):
         }
         self.assertEqual(compute_position_state(pos), "UNKNOWN")
 
-    def test_unknown_post_grace_neutral_zone(self):
-        """After grace (day 10+), price within ±0.5 ATR → UNKNOWN."""
-        pos = _pos(100.0, 100.3, 2.0, days_ago=20)  # within ±1.0 ATR band
-        self.assertEqual(compute_position_state(pos), "UNKNOWN")
+    def test_no_post_grace_neutral_zone(self):
+        """ST-11: after grace, a price within ±0.5 ATR of entry follows §9, not UNKNOWN."""
+        pos = _pos(100.0, 100.3, 2.0, days_ago=20)
+        self.assertEqual(compute_position_state(pos), "PROFITABLE")
 
     # --- Priority: GRACE > EXIT ZONE > PROFITABLE > LOSING ---
 
@@ -171,19 +170,58 @@ class TestComputePositionState(unittest.TestCase):
         self.assertEqual(compute_position_state(_pos(100.0, 100.0, None, days_ago=2)), "GRACE")
 
 
+class TestSection9PostGrace(unittest.TestCase):
+    """ST-11 (BLG-SPEC-185, v9.10): post-grace states follow strategy_rules.md §9's P&L sign."""
+
+    def test_within_half_atr_above_entry_is_profitable(self):
+        self.assertEqual(compute_position_state(_pos(100.0, 100.3, 2.0, days_ago=20)), "PROFITABLE")
+
+    def test_within_half_atr_below_entry_is_losing(self):
+        self.assertEqual(compute_position_state(_pos(100.0, 99.7, 2.0, days_ago=20)), "LOSING")
+
+    def test_breakeven_is_losing(self):
+        """§9: P&L <= 0 is LOSING, so exactly at entry is LOSING."""
+        self.assertEqual(compute_position_state(_pos(100.0, 100.0, 2.0, days_ago=20)), "LOSING")
+
+    def test_one_tick_above_entry_is_profitable(self):
+        self.assertEqual(compute_position_state(_pos(100.0, 100.01, 2.0, days_ago=20)), "PROFITABLE")
+
+    def test_matches_stop_path_profitability_test(self):
+        """The badge state agrees with the stop path's is_profitable = pnl_native > 0."""
+        for price in (95.0, 99.99, 100.0, 100.01, 105.0):
+            state = compute_position_state(_pos(100.0, price, 2.0, days_ago=20))
+            is_profitable = (price - 100.0) > 0
+            self.assertEqual(state == "PROFITABLE", is_profitable, price)
+
+    def test_exit_zone_never_below_entry(self):
+        """EXIT ZONE is a sub-state of PROFITABLE: a losing position is never EXIT ZONE."""
+        # Malformed initial_stop above entry gives R <= 0: no EXIT ZONE.
+        self.assertEqual(compute_position_state(_pos(100.0, 99.0, 2.0, days_ago=20, initial_stop=120.0)), "LOSING")
+
+    def test_never_unknown_post_grace_with_prices(self):
+        for price in (90.0, 99.5, 100.0, 100.5, 130.0):
+            self.assertNotEqual(compute_position_state(_pos(100.0, price, 2.0, days_ago=20, initial_stop=95.0)), "UNKNOWN")
+
+
 class TestLifecycleReason(unittest.TestCase):
     """ST-12: the reason an UNKNOWN badge is UNKNOWN."""
 
-    def test_missing_atr_after_grace(self):
-        self.assertEqual(compute_lifecycle_reason(_pos(100.0, 100.0, None, days_ago=12)), "missing_data")
+    def test_missing_atr_after_grace_is_not_unknown(self):
+        """ST-11: §9 classifies on P&L sign, so a missing ATR no longer makes the state UNKNOWN."""
+        self.assertIsNone(compute_lifecycle_reason(_pos(100.0, 100.0, None, days_ago=12)))
+        self.assertEqual(compute_position_state(_pos(100.0, 100.0, None, days_ago=12)), "LOSING")
 
     def test_missing_entry_date(self):
         pos = _pos(100.0, 100.0, 2.0)
         pos["entry_date"] = None
         self.assertEqual(compute_lifecycle_reason(pos), "missing_data")
 
-    def test_flat_after_grace(self):
-        self.assertEqual(compute_lifecycle_reason(_pos(100.0, 100.3, 2.0, days_ago=20)), "flat_after_grace")
+    def test_missing_current_price_after_grace(self):
+        self.assertEqual(compute_lifecycle_reason(_pos(100.0, None, 2.0, days_ago=12)), "missing_data")
+
+    def test_no_flat_after_grace_reason(self):
+        """ST-11: §9 has no neutral post-grace zone, so a near-entry price has no reason."""
+        self.assertIsNone(compute_lifecycle_reason(_pos(100.0, 100.3, 2.0, days_ago=20)))
 
     def test_null_for_known_states(self):
         self.assertIsNone(compute_lifecycle_reason(_pos(100.0, 97.0, 2.0, days_ago=3)))

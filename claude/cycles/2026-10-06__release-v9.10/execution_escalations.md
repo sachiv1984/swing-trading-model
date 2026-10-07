@@ -59,7 +59,10 @@ Last Updated: 2026-10-06
 - **Dependants:** ST-12 post-grace copy (`flat_after_grace` is dropped from the contract if §9 governs); ST-05 (registry entry if §9 changes).
 - **SLA due-by:** 2026-10-09T15:37:51Z (72h — Strategy)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-07T07:22:44Z
+- **Resolved by:** Strategy Rules & System Intent Owner (agent-mediated, `execution_prompt.md` §5.3, on the user's explicit direction 2026-10-07: "act as strategy_rules_system_intent_owner and resolve ST-11, ST-13 and ST-20")
+- **Resolution summary:** Engine recommendation accepted. The lifecycle badge is a display overlay that defers to §9; §9 is not amended. After grace, LOSING (native price ≤ entry) and PROFITABLE (price > entry) follow §9's P&L sign. That is the same test that picks the §7.2 stop multiplier (`position_service.py`: `is_profitable = pnl_native > 0`), so badge and stop cannot disagree. The ±0.5 ATR bands and `flat_after_grace` are removed. EXIT ZONE stays as a display sub-state of PROFITABLE, never reachable from a losing position. UNKNOWN is a missing-data fallback only. Recorded in `docs/specs/position_lifecycle_states_registry.md` v1.2 §Relationship to strategy_rules.md §9. No §9 change, so ST-05's registry rule is not triggered.
 
 ## ESC-EXEC-20261006-04
 
@@ -75,4 +78,7 @@ Last Updated: 2026-10-06
 - **Unblock criteria:** A dated addendum to the v9.9 §13 review record with both rulings. If either ruling changes `strategy_rules.md` §13.3/§4.2.3 wording, the ruling authorises that edit, its Change Log row and the §15 grep. ST-14 then implements the ruled behaviour, its weekend-hold disposition and the label alignment. ST-14 AC 6 also needs this owner's sign-off that Binding Conditions 1–8 still hold.
 - **SLA due-by:** 2026-10-09T15:37:51Z (72h — Strategy)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolved at:** 2026-10-07T07:22:44Z
+- **Resolved by:** Strategy Rules & System Intent Owner (agent-mediated, `execution_prompt.md` §5.3, on the user's explicit direction 2026-10-07)
+- **Resolution summary:** Engine recommendation accepted, recorded as the v9.10 addendum to `docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md`. (1) The earnings trigger applies to US positions only, matching §4.2.3. (2) Day 0 is not flagged. (3) The window is `1 ≤ days_until_earnings ≤ d`, where `d` is the calendar days to the next weekday, so a Friday view flags Monday earnings. Neither ruling changes `strategy_rules.md` wording. ST-14's weekend-hold disposition is "removed". Binding Conditions 1–8 are re-confirmed in the same addendum (ST-14 AC 6). The stale §13.3 weekend-hold sentence is filed as BLG-GOV-376, because `strategy_rules.md` is outside Sprint Execution's write scope.

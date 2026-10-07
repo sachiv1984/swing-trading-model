@@ -60,17 +60,17 @@ const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
 const LIFECYCLE_CONFIG = {
   GRACE:      { label: "GRACE",      bg: "bg-blue-600",   tip: "The stop is tracked but not enforced until the grace period ends (10 calendar days, §6)." },
-  LOSING:     { label: "LOSING",     bg: "bg-red-600",    tip: "Exits when price rises above entry by 0.5 ATR" },
+  LOSING:     { label: "LOSING",     bg: "bg-red-600",    tip: "Past grace with P&L at or below zero: wide stop (§7.2). Becomes PROFITABLE when the price rises above entry." },
   PROFITABLE: { label: "PROFITABLE", bg: "bg-green-700",  tip: "Advances to Exit Zone when P&L reaches 2R target" },
   "EXIT ZONE":{ label: "EXIT ZONE",  bg: "bg-violet-600", tip: "Position has reached R-target. Review stop or exit." },
   UNKNOWN:    { label: "UNKNOWN",    bg: "bg-gray-500",   tip: "No lifecycle state is available for this position." },
 };
 
 // ST-12 (BLG-FE-196, v9.10): UNKNOWN tooltip by the backend's lifecycle_reason
-// (positions.md §Grace Precedence and UNKNOWN Reasons).
+// (positions.md §Grace Precedence and UNKNOWN Reasons). ST-11 (v9.10) removed
+// flat_after_grace: post-grace states follow strategy_rules.md §9's P&L sign.
 const UNKNOWN_REASON_TIPS = {
-  missing_data: "No lifecycle state: ATR or price data is missing for this position.",
-  flat_after_grace: "No lifecycle state: the grace period has ended and the price is within 0.5 ATR of entry.",
+  missing_data: "No lifecycle state: price or entry data is missing for this position.",
 };
 
 function LifecycleBadge({ state, daysInState, graceDaysRemaining, lifecycleReason }) {
@@ -484,9 +484,11 @@ function PositionEarningsCell({ ticker, market }) {
 // ST-02 (v6.9, BLG-FEAT-65) — Gap Risk badge, stacked in the Alerts column
 // ---------------------------------------------------------------------------
 
+// v9.10 ST-14 (BLG-BE-136): earnings is the only trigger (US positions, after
+// today and on or before the next trading day; ST-13 ruling). The weekend_hold
+// trigger and its label were removed under §13 Binding Condition 6.
 const GAP_RISK_REASON_LABELS = {
-  earnings: "Earnings before next session",
-  weekend_hold: "Weekend hold (flagged at Friday close)",
+  earnings: "Earnings due by next trading session",
 };
 
 function GapRiskBadge({ ticker, gapRisk }) {
