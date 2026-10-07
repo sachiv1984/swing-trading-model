@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-07 (pre-PR review findings recorded); prior — 2026-10-07 (EPIC-03 consolidation, STEP 3.2.A — DoQ sign-off pending)
+Last Updated: 2026-10-07 (agent-mediated DoQ sign-off, user-directed); prior — 2026-10-07 (pre-PR review findings recorded); prior — 2026-10-07 (EPIC-03 consolidation, STEP 3.2.A)
 
 # QA Evidence — EPIC-03 — Lifecycle & Gap-Risk Strategy Rulings
 
@@ -42,10 +42,10 @@ Product Owner comments: the v9.10 changelog should state the visible gap-flag ch
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object (N/A: no new URL construction)
-- Signed off by:
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object (N/A: no new URL construction; `useGapRisk.js` and the Positions page fetches are unchanged)
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-10-07
+- Comments: Performed on the user's explicit direction (2026-10-07) to sign off EPIC-03 as Director of Quality; pending human confirmation. Verdict: **⚠️ Approved with Comments**, with no blocking defects. All ACs across ST-11 to ST-14 pass. Every observable AC is covered by a named Playwright scenario (SC-LBG-01..05, SC-LS-02, SC-GP-02, SC-GR-01..08), and every backend rule by a unit test (`test_position_lifecycle.py`, `test_gap_risk.py`). None is code-review only. There are no focus or interaction-timing ACs, so the environment-parity sub-clause does not apply. Real CI is green on `05ad3ecf` (code head), including Playwright E2E Acceptance Tests and CI Pytest Suite. Later commits (`ab73ad2f`, `f9408cad`) are state, evidence and backlog only. Story-level Strategy Rules & System Intent Owner sign-offs (ST-11, ST-13, ST-14 AC 6) were agent-mediated and are cleared (BLG-GOV-14). Non-blocking follow-ups: BLG-BE-147 (P2, grace alert basis), BLG-BE-148 (P3, holiday/US-date calendar), BLG-BE-149 (P3, Risk page `display_status` basis), BLG-GOV-376 (`strategy_rules.md` §13.3 text). The governance-drift self-consistency check is N/A: no story bumped `OPERATIONAL_GUIDE.md`.

@@ -181,7 +181,7 @@
       "branch": "exec/2026-10-06__release-v9.10/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-06__release-v9.10/qa_evidence_EPIC-03.md",
       "test_scenarios": [
         "tests/test_position_lifecycle.py",
@@ -703,7 +703,8 @@
     "2026-10-07T06:51:57Z: EPIC-02 merge-gate QA sign-off and PO acceptance comments posted on PR #1916, recorded by the engine on the human owner's explicit in-session direction (OA-6 labelling). Merge left to the human.",
     "2026-10-07T07:00:08Z: Mid-session re-sync (AUD-2026-08-21-010): PR #1916 (EPIC-02) merged by the human at 2026-10-07T06:59:46Z (fd350899); pr_status/status set to merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-10-06__release-v9.10/EPIC-02 is empty.",
     "2026-10-07T07:31:51Z: ESC-EXEC-20261006-03/04 resolved by Strategy Rules & System Intent Owner rulings (agent-mediated, §5.3, user-directed). ST-11/ST-13/ST-14 reclassified delegated_decision -> autonomous and completed in 05ad3ecf. No DEL records existed for these escalation-only blocks, so there is no delegation-log terminal write. BLG-GOV-376 filed (strategy_rules.md §13.3 text, outside write scope). EPIC-03 status done; PR pending DoQ sign-off (§3.2.B).",
-    "2026-10-07T08:00:00Z: EPIC-03 pre-PR review run on user direction: agent-mediated Director of Quality and Product Owner, both Approved with Comments. Filed BLG-BE-147, BLG-BE-148, BLG-BE-149 (backlog.md new-item exception, §7). Combined review comment drafted for posting when the PR opens. DoQ sign-off block still blank, so the PR is not opened (§3.2.B). Branch CI green on 05ad3ecf/ab73ad2f."
+    "2026-10-07T08:00:00Z: EPIC-03 pre-PR review run on user direction: agent-mediated Director of Quality and Product Owner, both Approved with Comments. Filed BLG-BE-147, BLG-BE-148, BLG-BE-149 (backlog.md new-item exception, §7). Combined review comment drafted for posting when the PR opens. DoQ sign-off block still blank, so the PR is not opened (§3.2.B). Branch CI green on 05ad3ecf/ab73ad2f.",
+    "2026-10-07: EPIC-03 DoQ sign-off agent-mediated (Director of Quality role, §5.3) on explicit user direction; qa_signed_off set in the same commit (DF-02)."
   ],
   "sealed": false,
   "sealed_utc": null
