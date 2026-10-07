@@ -193,9 +193,9 @@ test('PATH-1: add trade — form submits and POST /portfolio/position fires', { 
   const entryPriceInput = page.getByPlaceholder('0.00').first();
   await entryPriceInput.fill('2.45');
 
-  // Stop price (last placeholder="0.00" input)
-  const stopPriceInput = page.getByPlaceholder('0.00').last();
-  await stopPriceInput.fill('2.15');
+  // ATR — the system initial stop is entry − 5× ATR = 2.45 − 0.30 = 2.15
+  // (ST-07, BLG-FE-197, v9.10: the Stop Price input was removed).
+  await page.getByPlaceholder('Fetched automatically if blank').fill('0.06');
 
   // ── Wait for PositionSizingWidget to auto-fill shares ──────────────────
   // Widget debounces ~300ms, then calls POST /portfolio/size.

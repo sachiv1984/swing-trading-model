@@ -40,7 +40,6 @@ export default function TradeEntry() {
     shares: planPrefill?.quantity != null ? String(planPrefill.quantity) : "",
     entry_price: planPrefill?.entry_price != null ? String(planPrefill.entry_price) : (prefill?.entry_price || ""),
     fill_price: "",
-    stop_price: planPrefill?.stop_price != null ? String(planPrefill.stop_price) : (prefill?.stop_price || ""),
     fx_rate: prefillMarket === "US" ? "1.27" : "1",
     atr_value: "",
     entry_note: "",
@@ -117,10 +116,14 @@ export default function TradeEntry() {
       // class of bug, same fix, found and applied there in this pass as well).
       queryClient.invalidateQueries({ queryKey: ["portfolioApi"] });
       queryClient.invalidateQueries({ queryKey: ["portfolio"] });
+      // ST-07 (BLG-FE-197, v9.10): confirm the stop the backend actually stored.
+      const storedStop = response?.initial_stop != null
+        ? ` Initial stop ${formatCurrency(response.initial_stop, { currency: currencyForMarket(formData.market) })}.`
+        : "";
       if (response?.trade_plan_linked) {
-        toast.success(`Linked to trade plan for ${response.ticker}.`);
+        toast.success(`Linked to trade plan for ${response.ticker}.${storedStop}`);
       } else {
-        toast.info("No matching plan found — logged unlinked.");
+        toast.info(`No matching plan found — logged unlinked.${storedStop}`);
       }
       // If opened from watchlist, delete the watchlist entry then go to Positions
       if (prefill?.id) {
@@ -225,16 +228,17 @@ export default function TradeEntry() {
 
     const totalCost = grossValueGBP + commission + stampDuty + fxFee;
 
-    // ATR-derived stop hint — shown as a suggestion in the UI only
-    // ST-01 (BLG-BE-138, v9.10): the backend's fixed §11 initial multiplier, not the settings row.
-    const suggestedStop = atr > 0 ? price - (atr * INITIAL_ATR_MULTIPLIER) : 0;
+    // ST-07 (BLG-FE-197, v9.10): the stop add_position() will store —
+    // entry − 5× ATR (§5), multiplier from the fixed §11 source (ST-01). The
+    // backend ignores any submitted stop, so no input may set it. Unknown
+    // (null) until both entry price and ATR are present; the backend fetches
+    // ATR on save when the field is blank.
+    const systemStop = price > 0 && atr > 0 ? price - (atr * INITIAL_ATR_MULTIPLIER) : null;
 
-    // Risk calculation uses the user's manually entered stop_price if set,
-    // otherwise falls back to the ATR-derived suggestion
-    const effectiveStop = parseFloat(formData.stop_price) || suggestedStop;
-    const riskPerShare = effectiveStop > 0 ? price - effectiveStop : 0;
-    const totalRisk = riskPerShare * shares;
-    const totalRiskGBP = formData.market === "US" ? totalRisk / fxRate : totalRisk;
+    // Risk is computed from the system stop only.
+    const riskPerShare = systemStop != null ? price - systemStop : null;
+    const totalRisk = riskPerShare != null ? riskPerShare * shares : null;
+    const totalRiskGBP = totalRisk == null ? null : (formData.market === "US" ? totalRisk / fxRate : totalRisk);
 
     return {
       grossValue,
@@ -243,7 +247,7 @@ export default function TradeEntry() {
       stampDuty,
       fxFee,
       totalCost,
-      suggestedStop,
+      systemStop,
       riskPerShare,
       totalRisk: totalRiskGBP,
       currencySymbol: formData.market === "UK" ? "£" : "$",
@@ -257,7 +261,8 @@ export default function TradeEntry() {
     if (!isFormValid) return;
 
     // Note: fees are NOT passed here — the backend calculates authoritative fees
-    // via POST /portfolio/position. stop_price uses the user's manual input.
+    // via POST /portfolio/position. No stop is sent: the backend sets the
+    // initial stop from entry and ATR (ST-07, BLG-FE-197).
     createMutation.mutate({
       ticker: formData.ticker,
       market: formData.market,
@@ -268,7 +273,6 @@ export default function TradeEntry() {
       current_price: parseFloat(formData.entry_price),
       fx_rate: parseFloat(formData.fx_rate),
       atr_value: parseFloat(formData.atr_value) || null,
-      stop_price: parseFloat(formData.stop_price) || null,
       status: "open",
       entry_note: formData.entry_note || null,
       tags: formData.tags.length > 0 ? formData.tags : null,
@@ -412,38 +416,46 @@ export default function TradeEntry() {
             </div>
           )}
 
-          {/* ATR & Stop Price */}
+          {/* ATR & system initial stop (ST-07, BLG-FE-197, v9.10 — position_form.md §ATR (14-day), §Initial Stop) */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">ATR Value (Optional)</Label>
+              <Label htmlFor="trade-entry-atr" className="text-slate-600 dark:text-slate-400">ATR (14-day)</Label>
               <Input
+                id="trade-entry-atr"
                 type="number"
                 step="0.01"
                 value={formData.atr_value}
                 onChange={(e) => handleChange("atr_value", e.target.value)}
-                placeholder="For stop suggestion"
+                placeholder="Fetched automatically if blank"
                 className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400"
               />
-              {formData.atr_value && costs.suggestedStop > 0 && (
-                <p className="text-xs text-slate-600 dark:text-slate-400">
-                  Suggested stop:{" "}
-                  <span className="text-rose-400">
-                    {formatCurrency(costs.suggestedStop, { currency: currencyForMarket(formData.market) })}
-                  </span>{" "}
-                  ({INITIAL_ATR_MULTIPLIER}× ATR)
+            </div>
+            <div className="space-y-2" data-testid="system-initial-stop">
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Initial Stop (set by system)</p>
+              {costs.systemStop != null ? (
+                <>
+                  <p className="text-sm font-semibold text-rose-400" data-testid="system-initial-stop-value">
+                    {formatCurrency(costs.systemStop, { currency: currencyForMarket(formData.market) })}
+                  </p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                    Entry − {INITIAL_ATR_MULTIPLIER}× ATR (§5). This is the stop that will be stored.
+                  </p>
+                </>
+              ) : parseFloat(formData.entry_price) > 0 ? (
+                <>
+                  <p className="text-sm font-semibold text-slate-300" data-testid="system-initial-stop-value">Calculated on save</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                    The system fetches the 14-day ATR for {formData.ticker || "this ticker"} and sets the stop at Entry − {INITIAL_ATR_MULTIPLIER}× ATR.
+                  </p>
+                </>
+              ) : (
+                <p className="text-sm font-semibold text-slate-300" data-testid="system-initial-stop-value">—</p>
+              )}
+              {planPrefill?.stop_price != null && (
+                <p className="text-xs text-slate-600 dark:text-slate-400" data-testid="plan-stop-reference">
+                  Trade plan stop: {formatCurrency(planPrefill.stop_price, { currency: currencyForMarket(formData.market) })}. Shown for reference; the stored stop follows the strategy formula.
                 </p>
               )}
-            </div>
-            <div className="space-y-2">
-              <Label className="text-slate-600 dark:text-slate-400">Stop Price ({costs.currencySymbol})</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.stop_price}
-                onChange={(e) => handleChange("stop_price", e.target.value)}
-                placeholder="0.00"
-                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400"
-              />
             </div>
           </div>
 
@@ -451,7 +463,7 @@ export default function TradeEntry() {
           {/* DEF-002 / DEF-003 fix: pass null only when field is empty string, not when value is 0 */}
           <PositionSizingWidget
             entryPrice={formData.entry_price === "" ? null : parseFloat(formData.entry_price)}
-            stopPrice={formData.stop_price === "" ? null : parseFloat(formData.stop_price)}
+            stopPrice={costs.systemStop}
             market={formData.market}
             fxRate={parseFloat(formData.fx_rate) || null}
             shares={formData.shares}
@@ -606,14 +618,15 @@ export default function TradeEntry() {
                 </span>
               </div>
             </div>
-            {costs.riskPerShare > 0 && (
-              <div className="pt-3 border-t border-slate-700">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600 dark:text-slate-400">Risk (to stop)</span>
-                  <span className="text-rose-400 font-medium">{formatCurrency(costs.totalRisk)}</span>
-                </div>
+            {/* ST-07 (BLG-FE-197, v9.10): risk to the system stop only */}
+            <div className="pt-3 border-t border-slate-700">
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600 dark:text-slate-400">Risk (to stop)</span>
+                <span className="text-rose-400 font-medium" data-testid="risk-to-stop">
+                  {costs.totalRisk != null ? formatCurrency(costs.totalRisk) : "Calculated on save"}
+                </span>
               </div>
-            )}
+            </div>
           </div>
         </motion.div>
       )}

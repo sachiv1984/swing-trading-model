@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.7
-**Last Updated:** 2026-10-06 (v9.10 design gate — ST-07/BLG-FE-197: Stop Price input replaced by a read-only system initial stop; ATR field relabelled; risk and sizing driven only by the system stop); prior — 2026-09-15 (v9.4 sprint execution — ST-28/BLG-FEAT-95: swapped the advisory's icon from AlertTriangle to Info after CI found it collided with an unrelated test's icon-absence assertion); prior — 2026-09-15 (v9.4 sprint execution — ST-28/BLG-FEAT-95: Trade Plan Linkage Advisory implementation confirmed in TradeEntry.js, required Playwright coverage added); prior history retained — see prior entries in version control
+**Version:** 1.8
+**Last Updated:** 2026-10-06 (ST-07, EPIC-02, v9.10, BLG-FE-197 — §Initial Stop implemented in TradeEntry.js; Output no longer lists a submitted stop price; sizing empty-state copy and test references added); prior — 2026-10-06 (v9.10 design gate — ST-07/BLG-FE-197: Stop Price input replaced by a read-only system initial stop; ATR field relabelled; risk and sizing driven only by the system stop); prior — 2026-09-15 (v9.4 sprint execution — ST-28/BLG-FEAT-95: swapped the advisory's icon from AlertTriangle to Info after CI found it collided with an unrelated test's icon-absence assertion); prior history retained — see prior entries in version control
 **Design Source (v1.7):** docs/design/2026-10-06__release-v9.10/trade-entry-system-stop/decision_record.md
 **Design Source (v1.4):** docs/design/2026-09-14__release-v9.4/trade-plan-required-nudge/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -65,6 +65,7 @@ Users rely on this form to:
 - **Trade plan prefill:** a plan `stop_price` is not placed into any input. A muted note under this panel (`data-testid="plan-stop-reference"`): "Trade plan stop: {value}. Shown for reference; the stored stop follows the strategy formula."
 - **Risk (to stop)** summary row: computed from this system stop only. Shows "Calculated on save" when ATR is blank.
 - **On save:** the success toast appends "Initial stop {value}." from the response's `initial_stop` (existing toast-timing standard).
+- **Implemented (v1.8, ST-07):** `src/pages/TradeEntry.js`. The submitted payload carries no `stop_price`. A Watchlist prefill's stop is likewise not placed into any input. The Position Sizing widget's empty state (`data-testid="sizing-empty-hint"`) reads "Enter an entry price and ATR to size this position." and does not show a result fetched for an earlier stop. Playwright: `tests/e2e/trade-entry-system-stop.spec.js` (SC-TES-01..06). Backend pin: `tests/test_add_position_stop_handling.py`.
 
 ### Position Sizing Calculator (always visible)
 See **Position Sizing Calculator** section below.
@@ -290,8 +291,8 @@ After successful validation and confirmation:
   - Shares
   - Entry price
   - FX rate (US only)
-  - ATR value
-  - Stop price
+  - ATR value (blank → fetched by the backend)
+  - No stop price: the backend stores `initial_stop = entry − 5× ATR` (v1.8, ST-07)
   - Entry note
   - Tags
 - Fees and total cost are calculated and returned
