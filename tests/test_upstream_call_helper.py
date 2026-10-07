@@ -24,12 +24,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
-# ai_service.py's success path does a bare `from ai_output_sampling_service
-# import maybe_sample_output` (backend/services/ai_output_sampling_service.py),
-# which only resolves if backend/services itself is on sys.path -- same
-# setup already used by tests/test_plan_vs_reality.py and
-# tests/test_position_lifecycle.py for the same reason.
-sys.path.insert(0, str(Path(__file__).parent.parent / "backend" / "services"))
 
 from utils.upstream_call import (  # noqa: E402
     UPSTREAM_RETRY_BUDGETS,
