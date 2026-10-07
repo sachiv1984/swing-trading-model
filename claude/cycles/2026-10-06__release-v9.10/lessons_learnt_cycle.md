@@ -34,3 +34,27 @@ The v9.9 Friction Item 2 deferred patch (`BLG-GOV-362`) is a §3.7 recurrence es
 | `claude/roadmap/*` / existing-`backlog.md`-item write-scope boundary needs a per-story or per-cycle ruling whenever a sealed AC names such a file | 2026-09-28__release-v9.8 (earlier single instances at v9.7 and v8.5, per `BLG-GOV-362`) | Ruling given (`ESC-CLOSE-20261006-01`, named-file ruling, 2026-10-06), but the `BLG-GOV-362` prompt patches (`execution_prompt.md` §7 exception; `sprint_planning_prompt.md` pre-seal check) are still unapplied after 2 carries. The Sprint Planning outstanding action "Ship `BLG-GOV-362` prompt patches" has no target date | Head of Specs Team |
 
 ---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-10-06__release-v9.10
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-10-07
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-09-30__release-v9.9 (`lessons_learnt_cycle.md` `## Phase 4`). It filed 2 friction items. Each was re-checked against `prompt_change_log.md` as of this run, by patch ID and by reading the named target files directly:
+1. **`Pass_with_deviation` "no remainder" path (STEP 2.1/2.3).** Not yet applied. `delivery_verification_prompt.md` is still v3.13, and its STEP 2.1/2.3 text is unchanged. The v9.9 closure record lists it as an open action for the Head of Specs Team, target "next revision". This is the 1st carry, so it is not yet a §3.7 escalation. It did not recur this cycle: both `Pass_with_deviation` results (ST-18, ST-20) have a genuine remainder and a backlog item.
+2. **Agent-mediated signer-format mandate in `execution_prompt.md` §3.2.A.** **Applied:** `execution_prompt.md` v3.81→v3.82 (2026-10-06, `LL-v9.9-P4-02`), as a cross-reference to `qa_evidence_template.md`. All 4 v9.10 signer fields match their actual review method. Closed.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| ST-01's parameter module moved from `backend/utils/strategy_parameters.py` to `backend/strategy_parameters.py` in a post-open CI fix (`a352fc54`, PR #1915). The new location was recorded in `qa_evidence_EPIC-01.md`, but ST-01's `spec_references` in `execution_state.json`, the `sprint_close.md` spec-reference table and the System Status Report EPIC-01 row all kept the old path. Sprint close's STEP 5.1 spec-reference check confirms the field is populated, not that each path still resolves. Verification caught it. It corrected the System Status Report (a permitted write) and recorded the live path in its own matrix, but the two sealed records keep the stale path. | Phase 4 | Type A — Governance Drift: A documented rule or header requirement was ignored or missed | defer | Recommend that the Head of Specs Team add a path-existence check to `execution_prompt.md` STEP 5.1: every file-path `spec_references` entry (before any `#anchor`) must exist on disk at sprint close. This could reuse the `LL-v8.4-P4-01a` post-seal re-trigger clause. Low blast radius: one stale pointer per occurrence, and no behaviour impact. | Head of Specs Team | Next `execution_prompt.md` revision touching STEP 5.1 |
+
+**Recurrence Notes:**
+Gate sequencing was clean. All 4 QA evidence logs were signed and dated before invocation. The pre-seal gate (`LL-v2.4-DV-01`) held: the report was assembled with blank §9 dates, and the run stopped until the user chose agent-mediated DoQ and PO sign-off (2026-10-07). This is the 3rd consecutive cycle (v9.8, v9.9, v9.10) where verification sign-off was agent-mediated on user direction. The pattern is consistent and disclosed. `docs/ops/sign_off_single_point_of_failure_matrix.md` (ST-21) now records the related single-point-of-failure gates, so no separate friction item is filed.
+
+No severity calls were contested: 0 P0/P1/P2, and two P3-default `Pass_with_deviation` results. The EPIC-04 DoQ first-pass Block (over-stated evidence rows) is a Phase 3 friction item and is not re-recorded here. The v3.13 Known Deviations sync scope was applied directly from the prompt text, with no interpretation needed.
+
+The 3 test-coverage weaknesses were all caught and backlogged by the cycle's own PR reviews (`BLG-QA-214`/`215`/`216`) before verification, as in v9.9. Verification only had to register them.
+
+v9.9 Phase 4 Item 2 is closed (v3.82). v9.9 Phase 4 Item 1 is carried for the 1st time. One new item this phase.
