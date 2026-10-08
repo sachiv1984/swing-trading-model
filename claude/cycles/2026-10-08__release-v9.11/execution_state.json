@@ -272,7 +272,11 @@
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-02.md",
       "test_scenarios": [
         "tests/test_portfolio_price_integrity.py",
-        "tests/e2e/risk-price-integrity.spec.js"
+        "tests/e2e/risk-price-integrity.spec.js",
+        "tests/test_grace_alert_calendar_days.py",
+        "tests/e2e/epic01-v34-lifecycle.spec.js",
+        "tests/e2e/position-review-cadence-nudge.spec.js",
+        "tests/test_portfolio_integration.py"
       ],
       "stories": {
         "ST-10": {
@@ -354,23 +358,28 @@
         "ST-13": {
           "title": "Stop Dist % computed in native currency for US positions",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1937,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "f74e45dc37d53722dd23b84d5f59c5e8d664d8dd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:13:20Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio",
+            "docs/specs/frontend/pages/risk_dashboard.md#6.2 Display",
+            "tests/test_portfolio_price_integrity.py",
+            "tests/e2e/risk-price-integrity.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 tests/test_portfolio_price_integrity.py::TestStopDistanceNative (100/92/1.27/1.35 -> 8.0). AC2 Playwright SC-RPI-03a. AC3 risk_dashboard.md §6 (design gate), portfolio_endpoints.md 2.10.0 and openapi.yaml 3.24.0 together. ci_pending: 37782662654. Deviation check: none."
         },
         "ST-14": {
           "title": "Grace alert filter and \"Day N of 10\" label use calendar days since entry",
@@ -1075,7 +1084,8 @@
     "ST-09",
     "ST-10",
     "ST-11",
-    "ST-12"
+    "ST-12",
+    "ST-13"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",

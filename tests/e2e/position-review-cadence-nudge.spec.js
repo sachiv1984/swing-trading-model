@@ -8,7 +8,7 @@
  *   SC-RCN-01  Table View — "Reviewed {N}d ago" shown for a position with last_reviewed_at set
  *   SC-RCN-02  Table View — "Not yet reviewed" shown when last_reviewed_at is null
  *   SC-RCN-03  Table View — flagged (amber text + clock icon) when days_since_review >= 14
- *   SC-RCN-04  Table View — flag suppressed when GRACE state with days_in_state >= 8 (AC-04)
+ *   SC-RCN-04  Table View — flag suppressed when GRACE with grace_days_remaining <= 2 (AC-04; v9.11 ST-14 predicate)
  *   SC-RCN-05  Table View — flag suppressed when portfolio drawdown threshold is breached (AC-04)
  *   SC-RCN-06  Table View — clicking "Mark Reviewed" fires PATCH /positions/{id}/mark-reviewed
  *   SC-RCN-07  Grid View — Last Reviewed row shown in card footer with the same text/flag logic
@@ -153,14 +153,17 @@ test('SC-RCN-03: Table View flags (amber + clock icon) when days_since_review >=
   await expect(cell.locator('svg.lucide-clock')).toBeVisible();
 });
 
-test('SC-RCN-04: Table View suppresses flag when GRACE state with days_in_state >= 8 (AC-04)', async ({ page }) => {
+test('SC-RCN-04: Table View suppresses flag when GRACE with grace_days_remaining <= 2 (AC-04)', async ({ page }) => {
   const twentyDaysAgo = new Date();
   twentyDaysAgo.setDate(twentyDaysAgo.getDate() - 20);
   const pos = makePosition({
     last_reviewed_at: twentyDaysAgo.toISOString(),
     lifecycle_state: 'GRACE',
     position_state: 'GRACE',
-    days_in_state: 8,
+    // v9.11 ST-14 (BLG-BE-147): suppression uses the alert trigger's calendar-day
+    // predicate. days_in_state 0 (state_entered_at rewritten today) must not undo it.
+    days_in_state: 0,
+    grace_days_remaining: 2,
   });
   await gotoPositionsTable(page, [pos]);
 

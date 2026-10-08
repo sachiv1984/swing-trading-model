@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.24.0
+  version: 3.24.1
+  # v3.24.1 (2026-10-08, ST-14, EPIC-02, v9.11): GET /positions/grace-period-alerts selection rule
+  # described as grace_days_remaining <= 2 (BLG-BE-147). Description only.
   # v3.24.0 (2026-10-08, ST-13, EPIC-02, v9.11): PositionSummary gains stop_distance_pct
   # (GET /portfolio; BLG-BE-155). No new endpoint.
   # v3.23.1 (2026-10-08, ST-11, EPIC-02, v9.11): PositionSummary entry_price description corrected
@@ -2157,8 +2159,9 @@ paths:
       tags: [Positions]
       summary: Grace period alerts
       description: >
-        Returns positions in GRACE lifecycle state where days_in_state >= 8 (nearing end of grace
-        period). Includes linked trade plan summary if available.
+        Returns positions in GRACE lifecycle state with grace_days_remaining <= 2 (at least 8 calendar
+        days since entry; v9.11 ST-14, BLG-BE-147 — was days_in_state >= 8). Includes linked trade
+        plan summary if available.
         §13 display-only — system surfaces context; human decides next action.
         Spec: docs/specs/api_contracts/grace_period_alert_endpoint.md
       responses:

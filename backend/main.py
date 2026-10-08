@@ -1522,8 +1522,9 @@ def get_grace_period_alerts_endpoint():
     """
     GET /positions/grace-period-alerts
 
-    Returns positions in GRACE lifecycle state where days_in_state >= 8 (nearing end of grace
-    period). Includes linked trade plan summary if available.
+    Returns positions in GRACE lifecycle state with grace_days_remaining <= 2, i.e. at least 8
+    calendar days since entry (ST-14, v9.11; previously days_in_state >= 8). Includes linked
+    trade plan summary if available.
 
     Response fields per alert:
       - position_id, ticker, days_in_state
@@ -1579,7 +1580,15 @@ def get_grace_period_alerts_endpoint():
             days_held = _calendar_days_since(row.get("entry_date"))
             grace_days_remaining = max(0, 10 - days_held) if days_held is not None else None
 
-            if days_in_state < 8:
+            # ST-14 (BLG-BE-147, v9.11): select on calendar days since entry
+            # (grace_days_remaining <= 2, i.e. >= 8 calendar days held), not on
+            # days_in_state, which restarts whenever state_entered_at is rewritten
+            # and could drop a day-8 position from the list.
+            # (grace-alert-calendar-days decision record §2.)
+            if grace_days_remaining is not None:
+                if grace_days_remaining > 2:
+                    continue
+            elif days_in_state < 8:
                 continue
 
             trade_plan_summary = None
