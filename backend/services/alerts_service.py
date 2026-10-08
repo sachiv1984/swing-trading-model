@@ -28,6 +28,7 @@ from uuid import uuid4
 
 from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 from strategy_parameters import GRACE_PERIOD_DAYS
+from utils.calculations import live_holding_days
 from database import get_db, get_portfolio, get_positions, get_settings
 from utils.pricing import check_market_regime, get_current_price
 
@@ -665,7 +666,8 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
             # --- grace_period_warning ---
             if "grace_period_warning" in rules:
                 for pos in positions:
-                    holding_days = pos["holding_days"] or 0
+                    # ST-12 (BLG-BE-153, v9.11): live calendar days, not the stored column.
+                    holding_days = live_holding_days(pos)
                     ticker = pos["ticker"]
                     condition_met = (holding_days >= min_hold_days - 2) and (holding_days < min_hold_days)
                     triggered = False

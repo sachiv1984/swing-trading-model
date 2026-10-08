@@ -178,6 +178,9 @@ def _load_real_utils_submodule(name: str) -> types.ModuleType:
 
 _position_lifecycle_states_stub = _load_real_utils_submodule("position_lifecycle_states")
 _retry_stub = _load_real_utils_submodule("retry")
+# ST-12 (BLG-BE-153, v9.11): alerts_service derives holding days from
+# entry_date with the real helper, so the stub carries the real function.
+_calcs_stub.live_holding_days = _load_real_utils_submodule("calculations").live_holding_days
 
 # Register utils as a package and its submodules
 _utils_stub = types.ModuleType("utils")
@@ -214,6 +217,9 @@ evaluate_alerts = alerts_service.evaluate_alerts
 # Helpers — build fake DB rows as dicts
 # ---------------------------------------------------------------------------
 
+from datetime import date as _date, timedelta as _timedelta
+
+
 def _rule(type_, enabled=True, threshold=None):
     return {"type": type_, "enabled": enabled, "threshold_percent": threshold}
 
@@ -225,7 +231,8 @@ def _position(ticker="AAPL", holding_days=5, current_stop=None, current_price=No
         "holding_days": holding_days,
         "current_stop": current_stop,
         "current_price": current_price,
-        "entry_date": "2026-03-01",
+        # ST-12 (v9.11): the live value comes from entry_date, so keep them consistent.
+        "entry_date": (_date.today() - _timedelta(days=holding_days)).isoformat(),
         "status": "open",
     }
 

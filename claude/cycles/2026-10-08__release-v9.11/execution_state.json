@@ -304,23 +304,27 @@
         "ST-11": {
           "title": "Position Risk table: GBP entry prices, and grace-period stops shown as not enforced",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1935,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "31fa13edcb27bf46b1a86065cd203b467d6bc9b7",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:04:27Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#6.2a Grace-Period Stops (v0.1.12 — ST-11)",
+            "docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md",
+            "tests/e2e/risk-price-integrity.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1/AC2 Playwright SC-RPI-02a-c (GBP entry, Not enforced (grace) with no distance colour, grace sort), passing locally. AC3 risk_dashboard.md §6 confirmed against what ships (no change needed). Opportunistic: header Status->State per §6.2; portfolio_endpoints/openapi entry_price currency note corrected. ci_pending: 37781530649. Deviation check: none."
         },
         "ST-12": {
           "title": "GET /portfolio computes holding_days live from entry_date",
@@ -1065,7 +1069,8 @@
     "ST-07",
     "ST-08",
     "ST-09",
-    "ST-10"
+    "ST-10",
+    "ST-11"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",

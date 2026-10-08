@@ -26,6 +26,7 @@ from database import (
 from utils.pricing import get_current_price, get_live_fx_rate, check_market_regime
 from services.grace_service import compute_grace_days_remaining
 from strategy_parameters import GRACE_PERIOD_DAYS
+from utils.calculations import live_holding_days
 from utils.formatting import decimal_to_float
 from utils.position_lifecycle_states import GRACE, PROFITABLE, LOSING
 
@@ -159,7 +160,9 @@ def get_portfolio_summary() -> Dict:
                 entry_price_gbp = round(entry_price, 2)
                 current_stop_gbp = round(pos.get("current_stop", 0), 2)
 
-            holding_days = pos.get('holding_days', 0)
+            # ST-12 (BLG-BE-153, v9.11): live calendar days from entry_date, not the
+            # stored column, which lags until the next stop recompute writes it.
+            holding_days = live_holding_days(pos)
 
             if holding_days < GRACE_PERIOD_DAYS:
                 display_status = GRACE

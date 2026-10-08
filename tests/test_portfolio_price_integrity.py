@@ -74,3 +74,53 @@ class TestStalePriceFallback:
         from pathlib import Path
         src = Path(portfolio_service.__file__).read_text()
         assert "1.38" not in src
+
+
+class TestHoldingDaysComputedLive:
+    """ST-12 (BLG-BE-153): GET /portfolio computes holding_days from entry_date."""
+
+    def test_stale_stored_holding_days_does_not_keep_a_position_in_grace(self):
+        entry = (date.today() - timedelta(days=10)).isoformat()
+        pos = _us_position(entry_date=entry, holding_days=9)
+        row = _summary([pos], live_price=130.0)["positions"][0]
+        assert row["holding_days"] == 10
+        assert row["grace_period"] is False
+        assert row["display_status"] == "PROFITABLE"
+        assert row["grace_days_remaining"] is None
+
+    def test_day_nine_is_still_grace(self):
+        entry = (date.today() - timedelta(days=9)).isoformat()
+        row = _summary([_us_position(entry_date=entry, holding_days=3)], live_price=130.0)["positions"][0]
+        assert row["holding_days"] == 9
+        assert row["display_status"] == "GRACE"
+        assert row["grace_days_remaining"] == 1
+
+
+class TestLiveHoldingDaysHelper:
+    def test_date_object_string_and_datetime(self):
+        from datetime import datetime
+        from utils.calculations import live_holding_days
+        d = date.today() - timedelta(days=4)
+        assert live_holding_days({"entry_date": d}) == 4
+        assert live_holding_days({"entry_date": d.isoformat()}) == 4
+        assert live_holding_days({"entry_date": datetime.combine(d, datetime.min.time())}) == 4
+        assert live_holding_days({"entry_date": f"{d.isoformat()}T00:00:00Z"}) == 4
+
+    def test_falls_back_to_stored_value_only_without_entry_date(self):
+        from utils.calculations import live_holding_days
+        assert live_holding_days({"entry_date": None, "holding_days": 7}) == 7
+        assert live_holding_days({"entry_date": "not-a-date", "holding_days": 3}) == 3
+
+    def test_other_readers_no_longer_read_the_stored_column(self):
+        """The other stored-holding_days readers named in BLG-BE-153 use the live value."""
+        from pathlib import Path
+        root = Path(portfolio_service.__file__).parent
+        for name, stored_read in [
+            ("alerts_service.py", 'holding_days = pos["holding_days"]'),
+            ("compliance_service.py", 'holding_days = int(pos.get("holding_days")'),
+            ("ai_service.py", 'holding_days = p.get("holding_days"'),
+            ("portfolio_service.py", "holding_days = pos.get('holding_days'"),
+        ]:
+            src = (root / name).read_text()
+            assert stored_read not in src, name
+            assert "live_holding_days(" in src, name

@@ -20,6 +20,7 @@ from typing import Optional
 from fastapi import HTTPException
 
 from strategy_parameters import GRACE_PERIOD_DAYS
+from utils.calculations import live_holding_days
 from utils.upstream_call import anthropic_retryable_exceptions, bounded_upstream_call, get_timeout
 
 logger = logging.getLogger(__name__)
@@ -205,7 +206,8 @@ def generate_daily_briefing() -> dict:
             price = p.get("current_price", 0) or 0
             stop = p.get("current_stop", 0) or 0
             pnl_pct = p.get("pnl_pct", 0) or 0
-            holding_days = p.get("holding_days", 0) or 0
+            # ST-12 (BLG-BE-153, v9.11): live calendar days, not the stored column.
+            holding_days = live_holding_days(p)
             risk_off = bool(p.get("risk_off_exit", False))
             grace = holding_days > 0 and holding_days < GRACE_PERIOD_DAYS
             grace_days_left = max(0, GRACE_PERIOD_DAYS - holding_days) if grace else None

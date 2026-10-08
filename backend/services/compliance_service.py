@@ -38,6 +38,7 @@ DEFAULT_RISK_PERCENT = 1.0
 
 # Grace period length: the single §11 source (ST-01, v9.10).
 from strategy_parameters import GRACE_PERIOD_DAYS  # noqa: E402
+from utils.calculations import live_holding_days
 
 
 def _compute_stop_compliance(
@@ -179,7 +180,8 @@ def get_position_compliance() -> Dict:
     for pos in raw_positions:
         pos = decimal_to_float(pos)
 
-        holding_days = int(pos.get("holding_days") or 0)
+        # ST-12 (BLG-BE-153, v9.11): live calendar days, not the stored column.
+        holding_days = live_holding_days(pos)
         in_grace = holding_days < GRACE_PERIOD_DAYS
 
         entry_price = float(pos.get("entry_price") or 0)
