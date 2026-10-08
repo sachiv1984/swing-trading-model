@@ -38,9 +38,11 @@ function NotEnforced() {
   );
 }
 
+// ST-13 (EPIC-02, v9.11, BLG-BE-155): Stop Dist % comes from the API, which
+// computes it in native currency. The browser no longer derives it from GBP
+// figures that mix entry and live FX (risk_dashboard.md §6.2).
 function stopDistancePct(pos) {
-  if (!pos.current_price || !pos.current_stop || pos.current_price === 0) return null;
-  return ((pos.current_price - pos.current_stop) / pos.current_price) * 100;
+  return typeof pos.stop_distance_pct === "number" ? pos.stop_distance_pct : null;
 }
 
 export default function PositionRiskTable({ positions = [], error }) {

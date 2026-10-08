@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.23.1
+  version: 3.24.0
+  # v3.24.0 (2026-10-08, ST-13, EPIC-02, v9.11): PositionSummary gains stop_distance_pct
+  # (GET /portfolio; BLG-BE-155). No new endpoint.
   # v3.23.1 (2026-10-08, ST-11, EPIC-02, v9.11): PositionSummary entry_price description corrected
   # to GBP (GET /portfolio). Documentation only.
   # v3.23.0 (2026-10-08, ST-10, EPIC-02, v9.11): PositionSummary gains price_is_stale
@@ -6408,6 +6410,12 @@ components:
           description: >
             GET /portfolio only (v9.11 ST-10, BLG-BE-154). True when the live price fetch failed and
             current_price is the last stored native price converted at live_fx_rate (no FX estimate).
+        stop_distance_pct:
+          type: number
+          nullable: true
+          description: >
+            GET /portfolio only (v9.11 ST-13, BLG-BE-155). (current price - current stop) / current price x 100,
+            in native currency, 2 d.p. Null when there is no current stop or price; negative below the stop.
 
     Position:
       allOf:

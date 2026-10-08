@@ -124,3 +124,29 @@ class TestLiveHoldingDaysHelper:
             src = (root / name).read_text()
             assert stored_read not in src, name
             assert "live_holding_days(" in src, name
+
+
+class TestStopDistanceNative:
+    """ST-13 (BLG-BE-155): stop_distance_pct is computed in native currency."""
+
+    def test_us_example_from_the_acceptance_criteria(self):
+        # Native price 100, native stop 92, entry FX 1.27, live FX 1.35 -> 8.0.
+        pos = _us_position(fx_rate=1.27, current_stop=92.0)
+        row = _summary([pos], live_price=100.0)["positions"][0]
+        assert row["stop_distance_pct"] == 8.0
+        # The GBP figures the browser used would have given a different answer.
+        gbp_based = (row["current_price"] - row["current_stop"]) / row["current_price"] * 100
+        assert round(gbp_based, 1) != 8.0
+
+    def test_uk_position(self):
+        pos = _us_position(market="UK", fill_price=None, entry_price=5.0, current_stop=4.5, fx_rate=1.0)
+        row = _summary([pos], live_price=5.0)["positions"][0]
+        assert row["stop_distance_pct"] == 10.0
+
+    def test_null_when_no_stop(self):
+        row = _summary([_us_position(current_stop=None)], live_price=100.0)["positions"][0]
+        assert row["stop_distance_pct"] is None
+
+    def test_negative_when_price_below_stop(self):
+        row = _summary([_us_position(current_stop=105.0)], live_price=100.0)["positions"][0]
+        assert row["stop_distance_pct"] == -5.0

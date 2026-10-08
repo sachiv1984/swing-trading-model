@@ -151,14 +151,24 @@ def get_portfolio_summary() -> Dict:
 
             pnl_pct = ((current_price_native - entry_price) / entry_price) * 100 if entry_price > 0 else 0
 
+            # ST-13 (BLG-BE-155, v9.11): stop distance in native currency, so it moves
+            # with price, not FX. The GBP figures below mix the entry FX (stop) and
+            # the live FX (price), which skewed the browser-derived percentage for
+            # US positions. Null when there is no price or no stop.
+            stop_native = float(pos.get("current_stop") or 0)
+            if current_price_native and stop_native > 0:
+                stop_distance_pct = round((current_price_native - stop_native) / current_price_native * 100, 2)
+            else:
+                stop_distance_pct = None
+
             # Convert entry_price and current_stop to GBP for display
             # Spec: risk_dashboard.md §6.2 — all price columns in GBP
             if market == 'US':
                 entry_price_gbp = round(entry_price / stored_fx_rate, 2)
-                current_stop_gbp = round(pos.get("current_stop", 0) / stored_fx_rate, 2)
+                current_stop_gbp = round(stop_native / stored_fx_rate, 2)
             else:
                 entry_price_gbp = round(entry_price, 2)
-                current_stop_gbp = round(pos.get("current_stop", 0), 2)
+                current_stop_gbp = round(stop_native, 2)
 
             # ST-12 (BLG-BE-153, v9.11): live calendar days from entry_date, not the
             # stored column, which lags until the next stop recompute writes it.
@@ -220,6 +230,8 @@ def get_portfolio_summary() -> Dict:
                 # ST-10 (BLG-BE-154, v9.11): true when the live price fetch failed
                 # and current_price is the last stored native price at today's FX.
                 "price_is_stale": price_is_stale,
+                # ST-13 (BLG-BE-155, v9.11): native-currency stop distance, %.
+                "stop_distance_pct": stop_distance_pct,
             })
 
         total_value = cash + total_positions_value_gbp

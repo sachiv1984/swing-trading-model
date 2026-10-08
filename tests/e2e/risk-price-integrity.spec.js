@@ -8,6 +8,8 @@
  *              Risk Dashboard and the stale notice on the Dashboard; price_is_stale=false shows neither
  *   SC-RPI-02: ST-11 (BLG-FE-206) — a US row's Entry renders "£" with the GET /portfolio GBP value; a GRACE
  *              row shows "Not enforced (grace)" in Stop and Stop Dist % with no rose/amber colour
+ *   SC-RPI-03: ST-13 (BLG-BE-155) — the Stop Dist % cell shows the API's stop_distance_pct, not a value
+ *              derived in the browser from GBP figures
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/…').
@@ -139,5 +141,25 @@ test.describe('SC-RPI-02 — GBP entry prices and grace stops (ST-11, BLG-FE-206
     await gotoRisk(page);
     const tickers = page.locator('tbody tr td:first-child');
     await expect(tickers).toHaveText(['BBB', 'AAA']);
+  });
+});
+
+test.describe('SC-RPI-03 — Stop Dist % from the API (ST-13, BLG-BE-155)', () => {
+  test('SC-RPI-03a: the table shows the API stop_distance_pct, not a browser-derived value', async ({ page }) => {
+    // GBP figures alone would give (74.07 - 72.44) / 74.07 = 2.2%; the API's native value is 8.0%.
+    await mockAll(page, [
+      position({ id: 'a', ticker: 'MU', current_price: 74.07, current_stop: 72.44, stop_distance_pct: 8.0 }),
+      position({ id: 'b', ticker: 'WDC', current_price: 50, current_stop: 49, stop_distance_pct: 4.2 }),
+      position({ id: 'c', ticker: 'DELL', current_price: 50, current_stop: 40, stop_distance_pct: null }),
+    ]);
+    await gotoRisk(page);
+    const distOf = (t) => page.locator('tr', { hasText: t }).locator('td').nth(5);
+    await expect(distOf('MU')).toHaveText('8.0%');
+    await expect(distOf('MU')).toHaveClass(/text-amber-400/);
+    await expect(distOf('WDC')).toHaveText('4.2%');
+    await expect(distOf('WDC')).toHaveClass(/text-rose-400/);
+    await expect(distOf('DELL')).toHaveText('—');
+    // Within PROFITABLE, smallest API distance first.
+    await expect(page.locator('tbody tr td:first-child')).toHaveText(['WDC', 'MU', 'DELL']);
   });
 });

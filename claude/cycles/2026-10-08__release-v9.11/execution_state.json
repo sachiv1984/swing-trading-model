@@ -329,23 +329,27 @@
         "ST-12": {
           "title": "GET /portfolio computes holding_days live from entry_date",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1936,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "1a95c78e593d6716cb5c0310e943aea69e486f2d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:09:13Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio",
+            "backend/utils/calculations.py",
+            "tests/test_portfolio_price_integrity.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 tests/test_portfolio_price_integrity.py::TestHoldingDaysComputedLive (stored 9 / entry 10 days ago -> post-grace, grace_period false). AC2 alerts_service, compliance_service and ai_service fixed (live_holding_days), not filed. Full suite 2212 passed. Deviation check: none."
         },
         "ST-13": {
           "title": "Stop Dist % computed in native currency for US positions",
@@ -1070,7 +1074,8 @@
     "ST-08",
     "ST-09",
     "ST-10",
-    "ST-11"
+    "ST-11",
+    "ST-12"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",

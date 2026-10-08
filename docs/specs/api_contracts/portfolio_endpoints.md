@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.9.2
-**Last Updated:** 2026-10-08 (ST-12, EPIC-02, v9.11, BLG-BE-153 — holding_days computed live from entry_date); prior — 2026-10-08 (ST-11, EPIC-02, v9.11, BLG-FE-206 — field note corrected: entry_price and current_stop are GBP for every market); prior — 2026-10-08 (ST-10, EPIC-02, v9.11, BLG-BE-154 — GET /portfolio positions gain price_is_stale; ×1.38 US price fallback removed); prior history retained — see prior entries in version control
+**Version:** 2.10.0
+**Last Updated:** 2026-10-08 (ST-13, EPIC-02, v9.11, BLG-BE-155 — GET /portfolio positions gain native-currency stop_distance_pct); prior — 2026-10-08 (ST-12, EPIC-02, v9.11, BLG-BE-153 — holding_days computed live from entry_date); prior — 2026-10-08 (ST-11, EPIC-02, v9.11, BLG-FE-206 — field note corrected: entry_price and current_stop are GBP for every market); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -95,7 +95,8 @@ Response uses the standard success envelope from **conventions.md**.
       "grace_period": false,
       "grace_days_remaining": null,
       "live_fx_rate": 1.2750,
-      "price_is_stale": false
+      "price_is_stale": false,
+      "stop_distance_pct": 6.38
     }
   ]
 }
@@ -131,6 +132,8 @@ The position objects returned here are a **summary shape**. Key omissions versus
 **`current_price`** is always expressed in GBP, regardless of the instrument's native currency. For US positions, the live USD price is converted to GBP using `live_fx_rate` at time of call. If the live price fetch fails, `current_price` is the last stored native price (`positions.current_price`, or the native entry price when none is stored) converted at `live_fx_rate`, and `price_is_stale` is `true`. There is no FX estimate: the previous fallback, which multiplied a US stored price below 500 by a hard-coded 1.38, was removed in v9.11 (ST-10, BLG-BE-154).
 
 **`holding_days`** *(v9.11 — ST-12, BLG-BE-153)* is computed on every call as calendar days from `entry_date` to today (0 on the entry day), not read from the stored `positions.holding_days` column, which only changes when a stop recompute writes the row. `grace_period`, `grace_days_remaining` and `display_status` all follow from it, so a position whose 10th calendar day has arrived is post-grace here even if the stored column still says 9, matching `GET /positions`' lifecycle state.
+
+**`stop_distance_pct`** *(number or null, v9.11 — ST-13, BLG-BE-155)* is `(current price − current stop) / current price × 100` computed in the **native currency** (USD for US, GBP for UK), rounded to 2 d.p. It moves with price, not FX: deriving it from the GBP `current_price` (live FX) and `current_stop` (entry FX) would mix two rates. `null` when there is no current stop or no price. Negative when the price is below the stop. The Risk Dashboard's Stop Dist % column shows this value (`risk_dashboard.md` §6.2).
 
 **`price_is_stale`** *(boolean, v9.11 — ST-10, BLG-BE-154)* is `true` when the live price fetch failed for this position and `current_price` (and the values derived from it: `current_value`, `pnl`, `pnl_pct`, and the portfolio-level totals) uses the last stored price. `false` when a live price was used. The Risk Dashboard and Dashboard show a stale marker for it (`risk_dashboard.md` §6.6, `dashboard.md` §4 Card 2). `entry_price` and `current_stop` are in GBP for every market: for US positions they are the native values divided by the entry `fx_rate` (`portfolio_service.py`, `risk_dashboard.md` §6.2). *(Corrected v9.11, ST-11: this note previously said `entry_price` was native currency, which the code has not returned.)* `fx_rate` is the stored rate at time of entry; `live_fx_rate` is the rate used for the current price conversion.
 
@@ -654,6 +657,7 @@ Errors use the standard error envelope from **conventions.md**.
 | 2.9.0 | 2026-10-08 | ST-10 (EPIC-02, v9.11, BLG-BE-154): `GET /portfolio` position objects gain `price_is_stale`; the ×1.38 US price fallback is removed (stored native price at live FX instead). |
 | 2.9.1 | 2026-10-08 | ST-11 (EPIC-02, v9.11, BLG-FE-206): Field note corrected — `GET /portfolio` returns `entry_price` and `current_stop` in GBP for every market (the note said native currency). Documentation only; no response change. |
 | 2.9.2 | 2026-10-08 | ST-12 (EPIC-02, v9.11, BLG-BE-153): `holding_days` on `GET /portfolio` is computed live from `entry_date`, so `grace_period` and `display_status` no longer lag the stored column. No shape change. |
+| 2.10.0 | 2026-10-08 | ST-13 (EPIC-02, v9.11, BLG-BE-155): `GET /portfolio` position objects gain `stop_distance_pct`, computed in native currency. A position with a null `current_stop` no longer fails the request. |
 
 ---
 
