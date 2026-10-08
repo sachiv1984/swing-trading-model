@@ -119,7 +119,8 @@ class TestCreatePriceAlertValidation(unittest.TestCase):
 
             result = create_price_alert("portfolio-1", {"ticker": "aapl", "condition": "above", "threshold_price": 150.0})
 
-            insert_call = cur.execute.call_args_list[-1]
+            # ST-20 (v9.11): the INSERT now runs inside a savepoint, so it is not the last execute.
+            insert_call = next(c for c in cur.execute.call_args_list if "INSERT INTO price_alerts" in c[0][0])
             self.assertEqual(insert_call[0][1][1], "AAPL")
             self.assertEqual(result["ticker"], "AAPL")
 

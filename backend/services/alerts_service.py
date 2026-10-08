@@ -20,6 +20,7 @@ are re-enqueued.
 Contract: docs/specs/api_contracts/alerts_endpoints.md v0.1
 """
 
+import psycopg2
 import logging
 import re
 from datetime import datetime, timezone
@@ -423,12 +424,33 @@ def create_price_alert(portfolio_id: str, data: Dict) -> Dict:
             if cur.fetchone()["cnt"] >= PRICE_ALERT_CAP:
                 raise ValueError("You've reached the maximum number of active price alerts.")
 
-            cur.execute("""
-                INSERT INTO price_alerts (portfolio_id, ticker, condition, threshold_price)
-                VALUES (%s, %s, %s, %s)
-                RETURNING *
-            """, (portfolio_id, ticker, condition, float(threshold_price)))
-            return _price_alert_row(cur.fetchone())
+            # ST-20 (BLG-OPS-175, EPIC-03, v9.11): the SELECT above is not race-safe.
+            # Two concurrent requests can both pass it; the partial unique index
+            # idx_price_alerts_active_unique (data_model.md DS-28) then rejects the
+            # second INSERT. Absorb that here: roll back to the savepoint and return
+            # the active alert the other request created, so a concurrent
+            # double-submit behaves exactly like a sequential one.
+            cur.execute("SAVEPOINT price_alert_insert")
+            try:
+                cur.execute("""
+                    INSERT INTO price_alerts (portfolio_id, ticker, condition, threshold_price)
+                    VALUES (%s, %s, %s, %s)
+                    RETURNING *
+                """, (portfolio_id, ticker, condition, float(threshold_price)))
+                created = cur.fetchone()
+            except psycopg2.IntegrityError as exc:
+                if getattr(exc, "pgcode", None) != "23505":  # unique_violation only
+                    raise
+                cur.execute("ROLLBACK TO SAVEPOINT price_alert_insert")
+                cur.execute(
+                    """SELECT * FROM price_alerts
+                       WHERE portfolio_id = %s AND ticker = %s AND condition = %s
+                         AND threshold_price = %s AND active = TRUE""",
+                    (portfolio_id, ticker, condition, float(threshold_price)),
+                )
+                return _price_alert_row(cur.fetchone())
+            cur.execute("RELEASE SAVEPOINT price_alert_insert")
+            return _price_alert_row(created)
 
 
 def delete_price_alert(portfolio_id: str, alert_id: str) -> Dict:

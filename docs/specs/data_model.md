@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.52
-**Last Updated:** 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior — 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior — 2026-10-06 (DS-25 and DS-26 confirmed applied live on staging and production, verification output recorded); prior history retained — see prior entries in version control.
+**Version:** 2.54
+**Last Updated:** 2026-10-08 (ST-20, EPIC-03, v9.11, BLG-OPS-175 — DS-28: partial unique index idx_price_alerts_active_unique on active price alerts; 2.53 is EPIC-01's DS-27); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior — 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -586,7 +586,14 @@ CREATE TABLE price_alerts (
 );
 
 CREATE INDEX idx_price_alerts_portfolio_active ON price_alerts(portfolio_id, active);
+
+-- DS-28 (v2.54, ST-20): at most one ACTIVE alert per (portfolio, ticker, condition, threshold).
+CREATE UNIQUE INDEX idx_price_alerts_active_unique
+    ON price_alerts (portfolio_id, ticker, condition, threshold_price)
+    WHERE active = TRUE;
 ```
+
+**Uniqueness of active alerts (v2.54 — ST-20, BLG-OPS-175):** the partial unique index `idx_price_alerts_active_unique` allows only one **active** alert per `(portfolio_id, ticker, condition, threshold_price)`. Inactive (triggered or deactivated) rows are not constrained, so the same alert can be created again after it fires. `create_price_alert()` already returns the existing active alert for a sequential double-submit (ST-09, v9.9); the index closes the concurrent case, and the service absorbs the resulting unique violation by returning the alert the other request created. Migration: DS-28.
 
 ### Fields
 
@@ -2725,8 +2732,83 @@ Expect 1 row: `stop_calculation_source`, `character varying`, `10`, `YES`.
 - Data Model & Domain Schema Owner: migration content is additive, nullable and reversible; no pre-check needed. Applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner).
 - **Live Confirmation, applied 2026-10-06:** applied alongside DS-25 on staging, then production. The combined Verification output was identical in both environments (see DS-25's Live Confirmation): `stop_calculation_source`, `character varying`, `10`, `YES`. `DEL-20261006-04` unblocked in-session.
 
+## DS-28 — Partial unique index on active price alerts (v2.54, 2026-10-08)
+
+**Story:** ST-20 (EPIC-03, v9.11) — `BLG-OPS-175`. Delegation `DEL-20261008-04`. (DS-27 is EPIC-01's ST-06 on its own branch; this skips it so each change keeps a distinct number and version at merge.)
+
+**Rationale:** `create_price_alert()` de-duplicates with a SELECT before its INSERT (ST-09, `BLG-OPS-174`, v9.9). Two genuinely concurrent requests can both pass that SELECT and create two identical active alerts. A partial unique index rejects the second INSERT at the database, mirroring DS-17 (`idx_positions_open_ticker_entry_date_unique`). The service runs the INSERT under a savepoint and, on a unique violation, returns the active alert the other request created.
+
+**RISK (no live DB write access in this execution environment):** the sandbox `DATABASE_URL` is staging and read-only. The Up Migration is applied to **staging and production** by the Data Model & Domain Schema Owner. Deploy order is not a hard risk: without the index the service behaves exactly as before (the savepoint is harmless), and with it the concurrent case is closed. **Status: PENDING LIVE APPLICATION** (`DEL-20261008-04`).
+
+### Up Migration (v2.53 → v2.54)
+
+```sql
+BEGIN;
+
+-- Pre-check: fail loudly, listing the groups, if any active duplicate already
+-- exists. Do not apply the constraint over live duplicate data.
+DO $$
+DECLARE
+    dup_count INTEGER;
+    dup_report TEXT;
+BEGIN
+    SELECT COUNT(*) INTO dup_count
+    FROM (
+        SELECT portfolio_id, ticker, condition, threshold_price
+        FROM price_alerts
+        WHERE active = TRUE
+        GROUP BY portfolio_id, ticker, condition, threshold_price
+        HAVING COUNT(*) > 1
+    ) dups;
+
+    IF dup_count > 0 THEN
+        SELECT string_agg(format('  - portfolio %s / %s %s %s (%s rows)', portfolio_id, ticker, condition, threshold_price, cnt), E'\n')
+        INTO dup_report
+        FROM (
+            SELECT portfolio_id, ticker, condition, threshold_price, COUNT(*) AS cnt
+            FROM price_alerts
+            WHERE active = TRUE
+            GROUP BY portfolio_id, ticker, condition, threshold_price
+            HAVING COUNT(*) > 1
+        ) t;
+
+        RAISE EXCEPTION E'DS-28 migration aborted: % active duplicate price-alert group(s) found -- deactivate the extras before applying this constraint:\n%', dup_count, dup_report;
+    END IF;
+END $$;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_price_alerts_active_unique
+    ON price_alerts (portfolio_id, ticker, condition, threshold_price)
+    WHERE active = TRUE;
+
+COMMIT;
+```
+
+### Down Migration (v2.54 → v2.53)
+
+```sql
+BEGIN;
+DROP INDEX IF EXISTS idx_price_alerts_active_unique;
+COMMIT;
+```
+
+### Verification
+
+```sql
+SELECT indexname, indexdef
+FROM pg_indexes
+WHERE tablename = 'price_alerts'
+  AND indexname = 'idx_price_alerts_active_unique';
+```
+
+Expect 1 row: `CREATE UNIQUE INDEX idx_price_alerts_active_unique ON public.price_alerts USING btree (portfolio_id, ticker, condition, threshold_price) WHERE (active = true)`.
+
+**Enforcement test:** `tests/test_price_alert_db_uniqueness.py` applies this Up Migration (read from this section) to a scratch schema on a real Postgres and runs a genuinely concurrent double-submit: one transaction inserts and holds its lock, `create_price_alert()` races it, blocks on the index, then absorbs the unique violation and returns the first alert. One active row results. The test runs in CI Phase B (real Postgres service) and skips where no database is reachable.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: migration content is a partial unique index with a duplicate pre-check, reversible; live application pending (`DEL-20261008-04`).
+
 ---
 
-**Document Version:** 2.51
+**Document Version:** 2.54
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — DS-26 stop_calculation_source; header/footer version kept in sync); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — DS-25 atr_source); prior history retained — see prior entries in version control.
+**Last Review:** 2026-10-08 (ST-20, EPIC-03, v9.11, BLG-OPS-175 — DS-28 partial unique index on active price alerts; footer brought level with the header); prior — 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — DS-26 stop_calculation_source; header/footer version kept in sync); prior history retained — see prior entries in version control.
