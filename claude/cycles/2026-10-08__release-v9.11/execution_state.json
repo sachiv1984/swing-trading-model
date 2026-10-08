@@ -899,23 +899,25 @@
         "ST-24": {
           "title": "Define the AI chat engagement metric set",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1948,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "ffa4a311820d9908ce28b61edd71fdabda9b8916",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:46:46Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#AI Chat Engagement"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 metric set (sessions/week, questions/session, response-acceptance rate) defined in metrics_definitions.md v1.27.0 § AI Chat Engagement; acceptance rate not instrumented -> BLG-FE-208 filed. AC2 gate satisfied (PO 2026-10-05). Deviation check: none."
         },
         "ST-25": {
           "title": "AI-assisted monthly P&L narrative",
@@ -983,23 +985,26 @@
         "ST-28": {
           "title": "Track the 2027-01-03 AI feature usage review",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1952,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "ffa4a311820d9908ce28b61edd71fdabda9b8916",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:46:46Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/backlog/backlog.md",
+            "scripts/scan_backlog_gate_conditions.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 BLG-GOV-382 filed; scan --as-of 2027-01-04 reports DATE-LAPSED 2027-01-03; STEP 12.6 keyword filter matches (checked). AC2 sequencing note in slice + sprint_backlog.md Merge Order (planning). Deviation check: none."
         }
       }
     },
@@ -1127,7 +1132,10 @@
     "ST-18",
     "ST-19",
     "ST-21",
-    "ST-22"
+    "ST-22",
+    "ST-23",
+    "ST-24",
+    "ST-28"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",
