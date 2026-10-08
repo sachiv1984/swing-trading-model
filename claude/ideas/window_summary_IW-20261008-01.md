@@ -8,8 +8,8 @@
 
 ## Window Status: Closed
 
-Opened: 2026-10-08T08:47:00Z
-Closed: 2026-10-08T09:05:00Z
+Opened: 2026-10-08T08:45:41Z (session start; window opened in-session — no separate timestamp captured)
+Closed: 2026-10-08T08:48:43Z (intake commit time)
 
 Invoked inline as STEP -1.6 of `run roadmap --reason "scheduled"` (`2026-10-08__scheduled`). The register held 0 open ideas, below the 20 threshold. Mode: `standard`.
 

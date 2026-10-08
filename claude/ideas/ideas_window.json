@@ -1,6 +1,6 @@
 {
   "window_id": "IW-20261008-01",
-  "opened_utc": "2026-10-08T08:47:00Z",
+  "opened_utc": "2026-10-08T08:45:41Z",
   "opened_by": "PMO Lead",
   "status": "Closed",
   "mode": "standard",
@@ -19,7 +19,7 @@
   ],
   "register_path": "claude/ideas/ideas_register.md",
   "parked_ideas_surfaced": 0,
-  "closed_utc": "2026-10-08T09:05:00Z",
+  "closed_utc": "2026-10-08T08:48:43Z",
   "total_submissions": 8,
   "agents_submitted": ["product-owner", "head-of-ux", "head-of-engineering", "frontend-specs"],
   "agents_not_submitted": [],

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-07 (session — 3 new item(s) added: BLG-BE-152, BLG-FE-205, BLG-GOV-378 from debrief production testing; BLG-BE-150 progress note); prior — 2026-10-07 (session — 4 new item(s) added: BLG-BE-150, BLG-QA-217, BLG-BE-151, BLG-QA-218 from PR #1921 review); prior — 2026-10-07 (BLG-OPS-180 and BLG-GOV-362 marked ✅ COMPLETE — OPS-180 by Infrastructure & Operations Owner (secret set, run 37602589130; AC 2 waived), GOV-362 by Head of Specs Team ruling + Product Owner acknowledgement); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior — 2026-10-07 (session — 3 new item(s) added: BLG-BE-152, BLG-FE-205, BLG-GOV-378 from debrief production testing; BLG-BE-150 progress note); prior — 2026-10-07 (session — 4 new item(s) added: BLG-BE-150, BLG-QA-217, BLG-BE-151, BLG-QA-218 from PR #1921 review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4913,5 +4913,138 @@ The §13 review limits the model's output to one observational sentence, which m
 
 **Acceptance Criteria**
 - A recorded decision (keep or amend), with rationale, from the AI Compliance Governance Officer and Product Owner
+
+---
+
+### BLG-FE-206 — Position Risk table: label US entry prices in GBP and show grace-period stops as not enforced
+**Priority:** P2 (Medium)
+**Type:** Frontend / Spec–Code Consistency
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** Idea intake `IW-20261008-01` — consolidates `IDEA-head-of-ux-20261008-01` and `IDEA-product-owner-20261008-01` (same component, same cells); roadmap rebalance `2026-10-08__scheduled` STEP 4 (Backlog, ungated); committed to v9.11 under the §7.1 sustained-failure pull-forward (DL-084)
+**Effort:** S (~0.75-1 day)
+**Provisional-Target:** v9.11
+
+**Problem**
+Two cells on the Risk Dashboard's Position Risk table (`src/components/risk/PositionRiskTable.js`) misstate what the system does:
+- **Entry Price currency.** `GET /portfolio` returns US `entry_price` already converted to GBP (`portfolio_service.py`: `entry_price / stored_fx_rate`). The table formats it with `currencyForMarket(market)`, which prints "$" for US rows. `risk_dashboard.md` §6.2 specifies GBP for every price column. A $100.00 entry at 1.27 shows as "$78.74".
+- **Grace-period stop.** For GRACE rows, the table shows the stored `current_stop` and a red/amber "Stop Dist %". `strategy_rules.md` §5 and §6.3 say the stop is not enforced during grace, and the Positions page (`GET /positions`) returns `stop_price = 0` for grace positions. The two pages disagree, and the Risk page implies an exit level the system will not act on.
+
+**Scope**
+- Format the Entry Price cell as GBP, matching the Current and Stop columns and §6.2.
+- For rows where `display_status = "GRACE"`, show "Not enforced (grace)" in the Stop Price and Stop Dist % cells, with neutral colouring, and keep the existing sort (GRACE first).
+- Update `risk_dashboard.md` §6.2 and §6.4 to state the grace-row behaviour.
+
+**Acceptance Criteria**
+- [ ] Playwright: a US row's Entry Price renders with "£" and the GBP value returned by `GET /portfolio`
+- [ ] Playwright: a GRACE row shows "Not enforced (grace)" in Stop Price and Stop Dist %, with no rose/amber distance colour
+- [ ] `risk_dashboard.md` §6 documents both behaviours
+
+---
+
+### BLG-FE-207 — Grace Period panel: link each row to its position, and align text and date format with the spec
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Product Owner
+**Source:** Idea intake `IW-20261008-01` — consolidates `IDEA-product-owner-20261008-02` and `IDEA-head-of-ux-20261008-02` (same component, `GracePeriodPanel.js`); roadmap rebalance `2026-10-08__scheduled` STEP 4 (Backlog, ungated)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The Risk Dashboard's Grace Period panel (`src/components/risk/GracePeriodPanel.js`) lists grace positions with no route to the position, where notes, thesis and exit detail live. Its text has also drifted from `risk_dashboard.md` §5.2: the heading is "Grace Period" (spec: "Grace Period Positions"), the badge reads "N positions" (spec: "N positions in grace period"), and entry dates render `dd MMM yy` (spec: DD MMM YYYY).
+
+**Scope**
+- Make each grace row a link to the Positions page for that position.
+- Align the heading, badge text and entry-date format with §5.2, or amend §5.2 if the Product Owner prefers the shipped text.
+
+**Acceptance Criteria**
+- [ ] Playwright: clicking a grace row opens the Positions page showing that position
+- [ ] Heading, badge and date format match `risk_dashboard.md` §5.2 (wording-only ACs may be code-reviewed per FI-P3-02)
+
+---
+
+### BLG-BE-153 — `GET /portfolio` should compute `holding_days` live from `entry_date`, like `GET /positions`
+**Priority:** P2 (Medium)
+**Type:** Backend / Correctness
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** Idea intake `IW-20261008-01` — `IDEA-head-of-engineering-20261008-01`; roadmap rebalance `2026-10-08__scheduled` STEP 4 (Backlog, ungated)
+**Effort:** S (~1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`portfolio_service.py` reads `holding_days` from the stored `positions` row (`pos.get('holding_days', 0)`). Only `GET /positions/analyze` refreshes it. `GET /positions` and `GET /positions/{id}` compute `calculate_holding_days(entry_date)` live. On a day when the analyze path has not yet run, the Risk Dashboard's GRACE/LOSING/PROFITABLE status, its "Held" column and its grace countdown lag the Positions page. On the day-10 boundary of `strategy_rules.md` §6, one page can show GRACE while the other shows post-grace.
+
+**Scope**
+- Compute `holding_days` with `calculate_holding_days(str(entry_date))` in `portfolio_service.py`.
+- List the other stored-`holding_days` readers (`alerts_service.py`, `compliance_service.py`, `ai_service.py`). Fix them in the same change, or file each as a follow-up with its reason.
+
+**Acceptance Criteria**
+- [ ] Unit test: a position whose stored `holding_days` is 9 but whose `entry_date` is 10 calendar days ago returns `display_status` post-grace and `grace_period: false` from `GET /portfolio`
+- [ ] The other stored readers are fixed or listed as follow-ups in this item
+
+---
+
+### BLG-BE-154 — Remove the hard-coded ×1.38 US price fallback from `GET /portfolio`, and flag stale prices
+**Priority:** P2 (Medium)
+**Type:** Backend / Correctness
+**Owner:** Head of Engineering; API Contracts & Documentation Owner
+**Source:** Idea intake `IW-20261008-01` — `IDEA-head-of-engineering-20261008-02`; roadmap rebalance `2026-10-08__scheduled` STEP 4 (Backlog, ungated); committed to v9.11 under the §7.1 sustained-failure pull-forward (DL-084)
+**Effort:** M (~1-1.5 days)
+**Provisional-Target:** v9.11
+
+**Problem**
+When the live price fetch fails, `portfolio_service.py` (lines ~118-124) treats a stored US price below 500 as GBP and multiplies it by a hard-coded 1.38 to "estimate USD". The guessed price feeds position value, P&L, total portfolio value, drawdown and portfolio heat on the Dashboard and Risk pages, and nothing on screen marks it as estimated. 1.38 is an undocumented FX constant (`strategy_rules.md` §11: no hidden parameters). v9.10 ST-02 removed the same class of silent fallback for ATR.
+
+**Scope**
+- Fall back to the stored native price (or entry price), with no FX guess.
+- Add a `price_is_stale` boolean per position to `GET /portfolio` (`portfolio_endpoints.md` and `openapi.yaml` in the same commit).
+- Show a stale marker on affected rows on the Risk Dashboard and Dashboard.
+
+**Acceptance Criteria**
+- [ ] Unit test: with the live fetch mocked to fail, a US position's `current_price` equals its stored native price converted at the live FX rate, never `stored × 1.38`, and `price_is_stale` is `true`
+- [ ] `grep -n "1.38" backend/services/portfolio_service.py` returns nothing
+- [ ] Playwright: a stale position shows the stale marker
+- [ ] Contract and `openapi.yaml` document `price_is_stale`
+
+---
+
+### BLG-BE-155 — Stop Dist % for US positions mixes the live FX rate with the entry FX rate; compute it in native currency
+**Priority:** P2 (Medium)
+**Type:** Backend / Frontend Correctness
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** Idea intake `IW-20261008-01` — `IDEA-frontend-specs-20261008-01`; roadmap rebalance `2026-10-08__scheduled` STEP 4 (Backlog, ungated)
+**Effort:** S (~1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /portfolio` converts `current_price` to GBP at the live FX rate and `current_stop` at the stored entry FX rate. `PositionRiskTable.js` computes Stop Dist % as `(current_price − current_stop) / current_price` from those two figures. For US positions, the distance therefore includes the FX move since entry. At entry 1.27 and live 1.35, a true 8% distance shows as about 2.2%, and it can turn negative. The table also sorts "most at risk first" on this figure.
+
+**Scope**
+- Return `stop_distance_pct` from `GET /portfolio`, computed in native currency (`(current_price_native − current_stop_native) / current_price_native × 100`), and render it in the table.
+- Define the field in `risk_dashboard.md` §6 and in `portfolio_endpoints.md`/`openapi.yaml`.
+- Does not change the GRACE-row display (see BLG-FE-206).
+
+**Acceptance Criteria**
+- [ ] Unit test: US position, native price 100, native stop 92, entry FX 1.27, live FX 1.35 → `stop_distance_pct` = 8.0
+- [ ] Playwright: the table shows the API's `stop_distance_pct`
+- [ ] Spec, contract and `openapi.yaml` updated together
+
+---
+
+### BLG-SPEC-189 — Reconcile `risk_dashboard.md` §5.1/§6.1 data-source wording with the shipped `GET /portfolio` fields
+**Priority:** P3 (Low)
+**Type:** Spec / Documentation Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Idea intake `IW-20261008-01` — `IDEA-frontend-specs-20261008-02`; roadmap rebalance `2026-10-08__scheduled` STEP 4 (Backlog, ungated)
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`risk_dashboard.md` §5.1 says the grace panel uses "positions where `status = "GRACE"`". `GET /portfolio` returns `status: "open"` for every position, plus a `grace_period` boolean and a `display_status` field, and `GracePeriodPanel.js` filters on `grace_period`. The spec names a field value that never occurs.
+
+**Scope**
+- Amend §5.1 and §6.1 to name `grace_period` and `display_status` as the sources.
+
+**Acceptance Criteria**
+- [ ] §5.1 and §6.1 name only fields that `GET /portfolio` returns
 
 ---

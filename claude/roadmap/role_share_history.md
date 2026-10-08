@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` §7.2 — v9.9 row and breakdown appended via `scripts/compute_role_share_history.py`; rolling aggregate advanced to v9.7–v9.9); prior — 2026-10-05 (created — ST-26, EPIC-04, v9.9, BLG-GOV-353, ESC-EXEC-20261001-04; migrated from interim claude/cycles/2026-09-28__release-v9.8/role_share_history.md, v9.8 row appended)
+**Last Updated:** 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` §7.2 — v9.10 row and breakdown appended via `scripts/compute_role_share_history.py`; rolling aggregate advanced to v9.8–v9.10); prior — 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` §7.2 — v9.9 row and breakdown appended via `scripts/compute_role_share_history.py`; rolling aggregate advanced to v9.7–v9.9); prior — 2026-10-05 (created — ST-26, EPIC-04, v9.9, BLG-GOV-353, ESC-EXEC-20261001-04; migrated from interim claude/cycles/2026-09-28__release-v9.8/role_share_history.md, v9.8 row appended)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-33 (BLG-GOV-341, EPIC-06, v9.8) — interim; migrated to this canonical home by ST-26 (BLG-GOV-353, EPIC-04, v9.9)
 
@@ -31,8 +31,11 @@ Migrated verbatim from the interim cycle-scoped copy `claude/cycles/2026-09-28__
 | 2026-09-23__release-v9.7 | 2026-09-23 | 31 | Head of Engineering | 7 | 22.6% |
 | 2026-09-28__release-v9.8 | 2026-09-28 | 39 | Head of Specs Team | 12 | 30.8% |
 | 2026-09-30__release-v9.9 | 2026-09-30 | 35 | Director of Quality; QA & Testing Owner — tied with Head of Specs Team; PMO Lead | 9 | 25.7% |
+| 2026-10-06__release-v9.10 | 2026-10-06 | 21 | Frontend Specifications & UX Documentation Owner; Head of UX & Design | 3 | 14.3% |
 
 **Rolling 3-cycle aggregate (v9.7–v9.9, 105 total stories — appended by roadmap rebalance `2026-10-06__scheduled`):** Head of Specs Team (solo bucket) leads at 17 stories (16.2%) — 5 (v9.7) + 12 (v9.8) + 0 (v9.9). Next: Director of Quality 13 (12.4%), Frontend Specifications & UX Documentation Owner 11 (10.5%), Head of Specs Team; PMO Lead 10 (9.5%), Director of Quality; QA & Testing Owner 9 (8.6%). Raw-tally method. Below the 40% advisory ceiling — no advisory required. **Method note:** every one of v9.9's 35 Owner values is a compound string, so v9.9 contributes nothing to any solo bucket; the raw tally under-reports single-role load for that cycle. A split-credit secondary tally is tracked as `BLG-GOV-372`.
+
+**Rolling 3-cycle aggregate (v9.8–v9.10, 95 total stories — appended by roadmap rebalance `2026-10-08__scheduled`):** Head of Specs Team (solo bucket) leads at 12 stories (12.6%) — 12 (v9.8) + 0 (v9.9) + 0 (v9.10). Next: Head of Specs Team; PMO Lead 11 (11.6%), Director of Quality; QA & Testing Owner 9 (9.5%), Director of Quality 8 (8.4%), Frontend Specifications & UX Documentation Owner 6 (6.3%). Raw-tally method. Below the 40% advisory ceiling — no advisory required. 19 of v9.10's 21 Owner values are compound strings (`BLG-GOV-372` tracks a split-credit tally).
 
 *Prior window, kept for reference:* v9.6–v9.8 (102 total stories): Head of Specs Team leads at 18 stories (17.6%), as used by the `2026-09-30__scheduled` rebalance. Below the 40% advisory ceiling.
 
@@ -124,3 +127,27 @@ Migrated verbatim from the interim cycle-scoped copy `claude/cycles/2026-09-28__
 | Head of Engineering; Backend Engineering Patterns Owner | 5 | 14.3% |
 | Infrastructure & Operations Owner; Cybersecurity & Trust Lead | 4 | 11.4% |
 | Head of UX & Design; Frontend Specifications & UX Documentation Owner | 1 | 2.9% |
+
+### 2026-10-06__release-v9.10 (21 stories)
+
+| Role | Count | Share |
+|------|-------|-------|
+| Frontend Specifications & UX Documentation Owner; Head of UX & Design | 3 | 14.3% |
+| Head of Engineering; Strategy Rules & System Intent Owner (ruling); Infrastructure & Operations Owner (production read) | 1 | 4.8% |
+| Head of Engineering; Backend Engineering Patterns Owner | 1 | 4.8% |
+| API Contracts & Documentation Owner; Head of Engineering | 1 | 4.8% |
+| QA & Testing Owner; Head of Engineering | 1 | 4.8% |
+| Strategy Rules & System Intent Owner (ruling); Backend Engineering Patterns Owner | 1 | 4.8% |
+| Strategy Rules & System Intent Owner (ruling); Head of Specs Team | 1 | 4.8% |
+| Head of UX & Design; Head of Engineering | 1 | 4.8% |
+| Strategy Rules & System Intent Owner (ruling) | 1 | 4.8% |
+| Head of Engineering; Head of UX & Design; Strategy Rules & System Intent Owner (sign-off) | 1 | 4.8% |
+| AI Compliance & Governance Officer; Product Owner and Strategy Rules & System Intent Owner (sign-off) | 1 | 4.8% |
+| AI Compliance & Governance Officer (sign-off); Head of Engineering | 1 | 4.8% |
+| Infrastructure & Operations Owner; Cybersecurity & Trust Lead | 1 | 4.8% |
+| Infrastructure & Operations Owner | 1 | 4.8% |
+| QA & Testing Owner | 1 | 4.8% |
+| Head of Specs Team; Strategy Rules & System Intent Owner (acknowledgement) | 1 | 4.8% |
+| Head of Specs Team; PMO Lead | 1 | 4.8% |
+| Frontend Specifications & UX Documentation Owner; Head of Engineering | 1 | 4.8% |
+| Frontend Specifications & UX Documentation Owner | 1 | 4.8% |
