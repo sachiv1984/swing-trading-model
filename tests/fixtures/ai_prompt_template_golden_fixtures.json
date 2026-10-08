@@ -7,8 +7,8 @@
     "daily-briefing (POST /ai/daily-briefing)": {
       "file": "backend/services/ai_service.py",
       "function": "generate_daily_briefing",
-      "prompt_version": "v1.0",
-      "sha256": "3586e32cb122fc6bf527fa1dbeede75626622635365dbcfb77bb32c482d7c657"
+      "prompt_version": "v1.1",
+      "sha256": "4a83328a852202f8c7005e1791170e0500ed7854f80e70072834e4e3cfeb61f8"
     },
     "chat (POST /ai/chat)": {
       "file": "backend/services/ai_service.py",

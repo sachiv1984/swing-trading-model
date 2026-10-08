@@ -50,6 +50,14 @@ def _create_message(api_key: str, **create_kwargs):
 MODEL_VERSION = "claude-haiku-4-5-20251001"
 MODEL_BRIEFING = "claude-sonnet-4-6"
 
+# Prompt template versions, logged to claude_audit_log and pinned by
+# tests/fixtures/ai_prompt_template_golden_fixtures.json. Bump the matching
+# constant whenever that system_prompt's text changes.
+# Briefing v1.1 (ST-07, BLG-AI-09, v9.11): states advisory-only / no
+# execution and frames actions as recommendations.
+BRIEFING_PROMPT_VERSION = "v1.1"
+CHAT_PROMPT_VERSION = "v1.0"
+
 # BLG-SEC-01: context_opts.ticker is interpolated into the ai_chat() system prompt.
 # Reject anything outside this charset (in particular \n / \r, which could otherwise
 # forge additional system-prompt lines) before it reaches the prompt.
@@ -244,9 +252,11 @@ def generate_daily_briefing() -> dict:
 
     system_prompt = (
         "You are a trading assistant for a disciplined momentum strategy. "
+        "Your output is advisory only: you cannot execute trades, and nothing you write is acted on automatically. "
+        "The user reviews your briefing and makes every trading decision. "
         "You receive a daily portfolio snapshot and must produce: "
         "(1) a plain-English summary (2-4 sentences) of the key portfolio state, "
-        "(2) an ordered action list in JSON. "
+        "(2) an ordered list of recommended actions in JSON, each one a recommendation for the user to decide on, never an instruction. "
         "Action types: EXIT for stop breach or risk-off regime, ENTER for strong new signals, "
         "MONITOR for near-stop positions, HOLD for stable positions. "
         "Respond with JSON only, no markdown fences, in this exact shape: "
@@ -277,7 +287,7 @@ def generate_daily_briefing() -> dict:
             create_claude_audit_entry(
                 endpoint="POST /ai/daily-briefing",
                 model_id=MODEL_BRIEFING,
-                prompt_version="v1.0",
+                prompt_version=BRIEFING_PROMPT_VERSION,
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
                 cost_usd=cost_usd,
@@ -443,7 +453,7 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
             create_claude_audit_entry(
                 endpoint="POST /ai/chat",
                 model_id=MODEL_BRIEFING,
-                prompt_version="v1.0",
+                prompt_version=CHAT_PROMPT_VERSION,
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
                 cost_usd=cost_usd,

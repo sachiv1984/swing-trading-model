@@ -109,23 +109,26 @@
         "ST-04": {
           "title": "Test that every backend module imports with only backend/ on the path",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1928,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "7e4ebd111467a31a29f0a27658191ce306b952c7",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T11:11:16Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_backend_import_path_isolation.py",
+            ".github/workflows/ci-tests.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1: reintroducing the bare ai_output_sampling_service import fails test 2 (shown locally). AC2: passes on the branch and added to ci-tests.yml Phase A. Deviation check: none (Case C test-authoring)."
         },
         "ST-05": {
           "title": "Make the debrief Regenerate button recognisable, and show failures and the generated time",
@@ -1022,7 +1025,9 @@
     "ST-42"
   ],
   "completed_items": [
-    "ST-01"
+    "ST-01",
+    "ST-03",
+    "ST-04"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",
