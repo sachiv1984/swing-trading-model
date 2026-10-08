@@ -96,6 +96,8 @@ jobs:
             tests/test_ai_audit_service.py \
             tests/test_api_contracts.py \
             tests/test_service_coverage.py \
+            tests/test_backend_import_path_isolation.py \
+            tests/test_ai_sampling_failsafe.py \
             -v --tb=short
 
       - name: Run mock harness smoke tests (BLG-QA-08)

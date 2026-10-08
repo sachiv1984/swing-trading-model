@@ -24,7 +24,9 @@
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/test_debrief_service.py",
-        "tests/test_ai_prompt_template_golden_fixtures.py"
+        "tests/test_ai_prompt_template_golden_fixtures.py",
+        "tests/test_ai_sampling_failsafe.py",
+        "tests/test_backend_import_path_isolation.py"
       ],
       "stories": {
         "ST-01": {
@@ -82,23 +84,27 @@
         "ST-03": {
           "title": "Keep the AI-output sampling hook from breaking or hiding errors in AI responses",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1927,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "6151c0c016a0c6358f36a7419c788ee6d76fcf89",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T11:11:03Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#AI Output Boundary-Language Sampling Hook (ST-23, BLG-AI-06, v9.4)",
+            "backend/utils/ai_sampling.py",
+            "tests/test_ai_sampling_failsafe.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1: tests/test_ai_sampling_failsafe.py (each of 6 endpoints unchanged when sampling fails at import or in the hook; 8/10 fail on pre-change code). AC2: briefing/chat log fallback with exc_info, asserted. Deviation check: none."
         },
         "ST-04": {
           "title": "Test that every backend module imports with only backend/ on the path",
