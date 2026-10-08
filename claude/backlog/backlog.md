@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-07 (session — 3 new item(s) added: BLG-BE-152, BLG-FE-205, BLG-GOV-378 from debrief production testing; BLG-BE-150 progress note); prior — 2026-10-07 (session — 4 new item(s) added: BLG-BE-150, BLG-QA-217, BLG-BE-151, BLG-QA-218 from PR #1921 review); prior — 2026-10-07 (BLG-OPS-180 and BLG-GOV-362 marked ✅ COMPLETE — OPS-180 by Infrastructure & Operations Owner (secret set, run 37602589130; AC 2 waived), GOV-362 by Head of Specs Team ruling + Product Owner acknowledgement); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior — 2026-10-07 (session — 3 new item(s) added: BLG-BE-152, BLG-FE-205, BLG-GOV-378 from debrief production testing; BLG-BE-150 progress note); prior — 2026-10-07 (session — 4 new item(s) added: BLG-BE-150, BLG-QA-217, BLG-BE-151, BLG-QA-218 from PR #1921 review); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -195,7 +195,8 @@ No metric tracks whether entries were executed within the planned entry zone. `e
 **Source:** IDEA-product-owner-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** M (~2–3 days)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** ≥30 days of AI chat usage (v6.2 shipped 2026-06-25; clears ~2026-07-25) AND a §13 review opened and passed for persistence design (chat is currently stateless per SRB-v1.7).
+**Gate criteria:** A §13 review opened and passed for persistence design (chat is currently stateless per SRB-v1.7). The ≥30-days-of-AI-chat-usage limb is met (see note).
+**Gate note (2026-10-08):** (Release Planning `2026-10-08__release-v9.11`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. The usage limb is met: AI chat has been live since v6.2, and `docs/ops/ai_feature_usage_review_2026-09-24.md` (filed 2026-10-05, ST-19) reviewed its usage. The §13 limb is unchanged and not met (no review opened). AC 3 ("Gate condition (30 days usage) verified by Product Owner") names the met limb and is listed here, not edited.
 
 **Problem**
 POST /ai/chat (shipped v6.2) is stateless — no conversation history persists across sessions. Users who want to continue a prior chat thread cannot. Persisting history is a genuine schema and §13 boundary question (stored AI conversation content) that should not be designed ahead of both an established usage pattern and a formal boundary review.
@@ -1803,7 +1804,8 @@ Governance engine prompts have grown complex over 33 cycles. Without periodic co
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** claude_audit_log table 6+ months old (~Nov 2026, since v4.0 ship 2026-05-22). BLG-OPS-31 (Render log retention policy) shipped v4.7; this extends scope to Supabase query logs and claude_audit_log.
+**Gate criteria:** claude_audit_log table 6+ months old — clears 2026-11-22 (6 months after the v4.0 ship). BLG-OPS-31 (Render log retention policy) shipped v4.7; this extends scope to Supabase query logs and claude_audit_log.
+**Gate note (2026-10-08):** (Release Planning `2026-10-08__release-v9.11`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. The embedded date (2026-05-22) was the start of the 6-month count, so the scan reported a false-positive lapse; the concrete clearance date is now stated. AC 3 ("6+ months of audit log data") restates the same condition and is listed here, not edited.
 
 > ⚠️ **Partially pre-met (backlog audit 2026-08-13):** `docs/governance/ai_audit_log_retention_policy.md` already defines a 12-month rolling retention period with an automated purge function — satisfying the `claude_audit_log` half of this item's scope verbatim (the item's own example: "12 months rolling"). The Supabase-query-log retention definition and archiving-trigger scope remain open. Recommend Product Owner narrow this item to the Supabase-log sub-scope at next `groom backlog`/`plan release`.
 
@@ -2017,7 +2019,8 @@ Arc 5 is functionally near-complete (SI-01/02/03 shipped; SI-04 pre-planned; SI-
 **Source:** IDEA-strategy-owner-20260610-02 — Promoted-Backlog rebalance 2026-06-10__scheduled (DL-044)
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** 2026-07-04 SI-05 effectiveness review output (BLG-GOV-113) complete AND Phase 2 activation decision made
+**Gate criteria:** SI-05 Phase 1 effectiveness review output (BLG-GOV-113 protocol) filed AND Phase 2 activation decision made
+**Gate note (2026-10-08):** (Release Planning `2026-10-08__release-v9.11`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. 2026-07-04 was the review's scheduled date, not a clearance date. No Phase 2 activation decision is recorded, so the gate is not met. No AC names the gate's date or gating item.
 
 **Problem**
 SI-05 Phase 2 integrates drift signals (SI-02) with the Telegram digest. Before Phase 2 activates, a targeted §13 review should confirm that incorporating drift signals into an automated notification remains compliant with the "not an automated trading system" and "human-in-the-loop" principles. Phase 1 cleared §13 (notification of compliance scores + red flags). Phase 2 adds drift-signal interpretation — this boundary warrants formal pre-clearance.
@@ -2307,7 +2310,8 @@ No automated check compares frontend page specs against deployed routes to detec
 **Source:** IDEA-data-model-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** M (~2 days)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** Same gate as BLG-FEAT-55 — §13 review opened and passed for chat persistence AND AI adoption window clears ~2026-07-25.
+**Gate criteria:** Same gate as BLG-FEAT-55 — §13 review opened and passed for chat persistence. The AI adoption-window limb is met (see note).
+**Gate note (2026-10-08):** (Release Planning `2026-10-08__release-v9.11`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. The adoption-window limb is met: the 90-day AI feature usage review was filed 2026-10-05 (`docs/ops/ai_feature_usage_review_2026-09-24.md`, ST-19), and the Product Owner removed that gate from its sibling items. This also meets `BLG-GOV-361`'s scope (drop the adoption-window half and keep the §13 half). No AC names the gate's date or gating item.
 
 **Problem**
 Companion spec item to BLG-FEAT-55 (chat persistence). §13-compliant schema design for persisting user chat sessions must not precede the boundary review itself.
@@ -2414,7 +2418,8 @@ DS-07 (screener → watchlist promotion) has been unchanged since v3.0 with no r
 **Source:** IDEA-product-owner-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** M (~2 days)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** ≥20 closed trades captured post-PT-04 (2026-06-23) with sufficient `setup_type` diversity to justify presets (at least 3 distinct setup types with ≥3 trades each).
+**Gate criteria:** ≥20 closed trades captured since PT-04 shipped, with sufficient `setup_type` diversity to justify presets (at least 3 distinct setup types with ≥3 trades each).
+**Gate note (2026-10-08):** (Release Planning `2026-10-08__release-v9.11`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. The embedded date (2026-06-23, PT-04 ship) was the start of the trade count, not a clearance date, so the scan reported a false-positive lapse. Not verified as met: no production read this session. No AC names the gate's date.
 
 **Problem**
 PT-04 (Setup Quality Score) is live, but trade volume since its gate clearance is too low to know which setup-type presets would actually be useful.
@@ -3163,7 +3168,8 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Effort:** M (~2d)
 **Provisional-Target:** Unscheduled
 **Depends on:** BLG-FEAT-30 (shares the same underlying attribution linkage; Product Owner/Head of Specs Team to confirm whether this is a sub-scope of BLG-FEAT-30 or a genuinely separate item before either enters sprint planning)
-**Gate criteria:** Inherits `BLG-FEAT-30`'s gate (screener live ≥60 days AND ≥60 closed trades with attribution) — track disposition there. Reconciled as a sub-scope of `BLG-FEAT-30` at the Product Owner's `2026-09-03__release-v9.1` decision (reaffirmed each cycle since, most recently `decisions--2026-09-07__release-v9.2.md`); this field added `2026-09-09` (post-ship closure `2026-09-07__release-v9.2` outstanding-actions resolution, Head of Specs Team direct action per the new Gate-Inheritance Field-Completeness Scan, `backlog_management_prompt.md` v1.17) so future rebalance/release-planning sessions no longer need to re-locate a prior cycle's decisions document to confirm this item's exclusion — 4 consecutive cycles (v8.9–v9.2) required that manual lookup before this fix.
+**Gate criteria:** Inherits `BLG-FEAT-30`'s gate (screener live ≥60 days AND ≥60 closed trades with attribution) — track disposition there.
+**Gate note (2026-10-08):** (Release Planning `2026-10-08__release-v9.11`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. The dates in the former gate text were history, not clearance dates, so the scan reported a false-positive lapse. That history is preserved here: Reconciled as a sub-scope of `BLG-FEAT-30` at the Product Owner's `2026-09-03__release-v9.1` decision (reaffirmed each cycle since, most recently `decisions--2026-09-07__release-v9.2.md`); this field added `2026-09-09` (post-ship closure `2026-09-07__release-v9.2` outstanding-actions resolution, Head of Specs Team direct action per the new Gate-Inheritance Field-Completeness Scan, `backlog_management_prompt.md` v1.17) so future rebalance/release-planning sessions no longer need to re-locate a prior cycle's decisions document to confirm this item's exclusion — 4 consecutive cycles (v8.9–v9.2) required that manual lookup before this fix.
 
 **Problem**
 The full pipeline (screener hit → watchlist → research → trade plan → position → close) exists end-to-end, but there is no aggregate view of where candidates drop off at each stage, or what fraction of screener hits ever convert into a trade — let alone a profitable one. Without this, it isn't possible to tell whether the screener's complexity and cost are earning their keep, and every other planned analytics feature building on screener attribution (`BLG-FEAT-30` and its consolidated items) is downstream of having this instrumentation in place.
@@ -4913,5 +4919,138 @@ The §13 review limits the model's output to one observational sentence, which m
 
 **Acceptance Criteria**
 - A recorded decision (keep or amend), with rationale, from the AI Compliance Governance Officer and Product Owner
+
+---
+
+### BLG-FE-206 — Position Risk table: label US entry prices in GBP and show grace-period stops as not enforced
+**Priority:** P2 (Medium)
+**Type:** Frontend / Spec–Code Consistency
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** Idea intake `IW-20261008-01` — consolidates `IDEA-head-of-ux-20261008-01` and `IDEA-product-owner-20261008-01` (same component, same cells); roadmap rebalance `2026-10-08__scheduled` STEP 4 (Backlog, ungated); committed to v9.11 under the §7.1 sustained-failure pull-forward (DL-084)
+**Effort:** S (~0.75-1 day)
+**Provisional-Target:** v9.11
+
+**Problem**
+Two cells on the Risk Dashboard's Position Risk table (`src/components/risk/PositionRiskTable.js`) misstate what the system does:
+- **Entry Price currency.** `GET /portfolio` returns US `entry_price` already converted to GBP (`portfolio_service.py`: `entry_price / stored_fx_rate`). The table formats it with `currencyForMarket(market)`, which prints "$" for US rows. `risk_dashboard.md` §6.2 specifies GBP for every price column. A $100.00 entry at 1.27 shows as "$78.74".
+- **Grace-period stop.** For GRACE rows, the table shows the stored `current_stop` and a red/amber "Stop Dist %". `strategy_rules.md` §5 and §6.3 say the stop is not enforced during grace, and the Positions page (`GET /positions`) returns `stop_price = 0` for grace positions. The two pages disagree, and the Risk page implies an exit level the system will not act on.
+
+**Scope**
+- Format the Entry Price cell as GBP, matching the Current and Stop columns and §6.2.
+- For rows where `display_status = "GRACE"`, show "Not enforced (grace)" in the Stop Price and Stop Dist % cells, with neutral colouring, and keep the existing sort (GRACE first).
+- Update `risk_dashboard.md` §6.2 and §6.4 to state the grace-row behaviour.
+
+**Acceptance Criteria**
+- [ ] Playwright: a US row's Entry Price renders with "£" and the GBP value returned by `GET /portfolio`
+- [ ] Playwright: a GRACE row shows "Not enforced (grace)" in Stop Price and Stop Dist %, with no rose/amber distance colour
+- [ ] `risk_dashboard.md` §6 documents both behaviours
+
+---
+
+### BLG-FE-207 — Grace Period panel: link each row to its position, and align text and date format with the spec
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Product Owner
+**Source:** Idea intake `IW-20261008-01` — consolidates `IDEA-product-owner-20261008-02` and `IDEA-head-of-ux-20261008-02` (same component, `GracePeriodPanel.js`); roadmap rebalance `2026-10-08__scheduled` STEP 4 (Backlog, ungated)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The Risk Dashboard's Grace Period panel (`src/components/risk/GracePeriodPanel.js`) lists grace positions with no route to the position, where notes, thesis and exit detail live. Its text has also drifted from `risk_dashboard.md` §5.2: the heading is "Grace Period" (spec: "Grace Period Positions"), the badge reads "N positions" (spec: "N positions in grace period"), and entry dates render `dd MMM yy` (spec: DD MMM YYYY).
+
+**Scope**
+- Make each grace row a link to the Positions page for that position.
+- Align the heading, badge text and entry-date format with §5.2, or amend §5.2 if the Product Owner prefers the shipped text.
+
+**Acceptance Criteria**
+- [ ] Playwright: clicking a grace row opens the Positions page showing that position
+- [ ] Heading, badge and date format match `risk_dashboard.md` §5.2 (wording-only ACs may be code-reviewed per FI-P3-02)
+
+---
+
+### BLG-BE-153 — `GET /portfolio` should compute `holding_days` live from `entry_date`, like `GET /positions`
+**Priority:** P2 (Medium)
+**Type:** Backend / Correctness
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** Idea intake `IW-20261008-01` — `IDEA-head-of-engineering-20261008-01`; roadmap rebalance `2026-10-08__scheduled` STEP 4 (Backlog, ungated)
+**Effort:** S (~1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`portfolio_service.py` reads `holding_days` from the stored `positions` row (`pos.get('holding_days', 0)`). Only `GET /positions/analyze` refreshes it. `GET /positions` and `GET /positions/{id}` compute `calculate_holding_days(entry_date)` live. On a day when the analyze path has not yet run, the Risk Dashboard's GRACE/LOSING/PROFITABLE status, its "Held" column and its grace countdown lag the Positions page. On the day-10 boundary of `strategy_rules.md` §6, one page can show GRACE while the other shows post-grace.
+
+**Scope**
+- Compute `holding_days` with `calculate_holding_days(str(entry_date))` in `portfolio_service.py`.
+- List the other stored-`holding_days` readers (`alerts_service.py`, `compliance_service.py`, `ai_service.py`). Fix them in the same change, or file each as a follow-up with its reason.
+
+**Acceptance Criteria**
+- [ ] Unit test: a position whose stored `holding_days` is 9 but whose `entry_date` is 10 calendar days ago returns `display_status` post-grace and `grace_period: false` from `GET /portfolio`
+- [ ] The other stored readers are fixed or listed as follow-ups in this item
+
+---
+
+### BLG-BE-154 — Remove the hard-coded ×1.38 US price fallback from `GET /portfolio`, and flag stale prices
+**Priority:** P2 (Medium)
+**Type:** Backend / Correctness
+**Owner:** Head of Engineering; API Contracts & Documentation Owner
+**Source:** Idea intake `IW-20261008-01` — `IDEA-head-of-engineering-20261008-02`; roadmap rebalance `2026-10-08__scheduled` STEP 4 (Backlog, ungated); committed to v9.11 under the §7.1 sustained-failure pull-forward (DL-084)
+**Effort:** M (~1-1.5 days)
+**Provisional-Target:** v9.11
+
+**Problem**
+When the live price fetch fails, `portfolio_service.py` (lines ~118-124) treats a stored US price below 500 as GBP and multiplies it by a hard-coded 1.38 to "estimate USD". The guessed price feeds position value, P&L, total portfolio value, drawdown and portfolio heat on the Dashboard and Risk pages, and nothing on screen marks it as estimated. 1.38 is an undocumented FX constant (`strategy_rules.md` §11: no hidden parameters). v9.10 ST-02 removed the same class of silent fallback for ATR.
+
+**Scope**
+- Fall back to the stored native price (or entry price), with no FX guess.
+- Add a `price_is_stale` boolean per position to `GET /portfolio` (`portfolio_endpoints.md` and `openapi.yaml` in the same commit).
+- Show a stale marker on affected rows on the Risk Dashboard and Dashboard.
+
+**Acceptance Criteria**
+- [ ] Unit test: with the live fetch mocked to fail, a US position's `current_price` equals its stored native price converted at the live FX rate, never `stored × 1.38`, and `price_is_stale` is `true`
+- [ ] `grep -n "1.38" backend/services/portfolio_service.py` returns nothing
+- [ ] Playwright: a stale position shows the stale marker
+- [ ] Contract and `openapi.yaml` document `price_is_stale`
+
+---
+
+### BLG-BE-155 — Stop Dist % for US positions mixes the live FX rate with the entry FX rate; compute it in native currency
+**Priority:** P2 (Medium)
+**Type:** Backend / Frontend Correctness
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** Idea intake `IW-20261008-01` — `IDEA-frontend-specs-20261008-01`; roadmap rebalance `2026-10-08__scheduled` STEP 4 (Backlog, ungated)
+**Effort:** S (~1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /portfolio` converts `current_price` to GBP at the live FX rate and `current_stop` at the stored entry FX rate. `PositionRiskTable.js` computes Stop Dist % as `(current_price − current_stop) / current_price` from those two figures. For US positions, the distance therefore includes the FX move since entry. At entry 1.27 and live 1.35, a true 8% distance shows as about 2.2%, and it can turn negative. The table also sorts "most at risk first" on this figure.
+
+**Scope**
+- Return `stop_distance_pct` from `GET /portfolio`, computed in native currency (`(current_price_native − current_stop_native) / current_price_native × 100`), and render it in the table.
+- Define the field in `risk_dashboard.md` §6 and in `portfolio_endpoints.md`/`openapi.yaml`.
+- Does not change the GRACE-row display (see BLG-FE-206).
+
+**Acceptance Criteria**
+- [ ] Unit test: US position, native price 100, native stop 92, entry FX 1.27, live FX 1.35 → `stop_distance_pct` = 8.0
+- [ ] Playwright: the table shows the API's `stop_distance_pct`
+- [ ] Spec, contract and `openapi.yaml` updated together
+
+---
+
+### BLG-SPEC-189 — Reconcile `risk_dashboard.md` §5.1/§6.1 data-source wording with the shipped `GET /portfolio` fields
+**Priority:** P3 (Low)
+**Type:** Spec / Documentation Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Idea intake `IW-20261008-01` — `IDEA-frontend-specs-20261008-02`; roadmap rebalance `2026-10-08__scheduled` STEP 4 (Backlog, ungated)
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`risk_dashboard.md` §5.1 says the grace panel uses "positions where `status = "GRACE"`". `GET /portfolio` returns `status: "open"` for every position, plus a `grace_period` boolean and a `display_status` field, and `GracePeriodPanel.js` filters on `grace_period`. The spec names a field value that never occurs.
+
+**Scope**
+- Amend §5.1 and §6.1 to name `grace_period` and `display_status` as the sources.
+
+**Acceptance Criteria**
+- [ ] §5.1 and §6.1 name only fields that `GET /portfolio` returns
 
 ---

@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-07 (post-ship closure 2026-10-06__release-v9.10, manage roadmap STEP 11 — §3 "v9.10 — Committed items" section retired to roadmap_archive.md (all three items shipped); its RA:v9.10 execution-notes block moved to §1 alongside the other release annotations); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — v9.10 marked ✅ Complete in §1 and §3; §1 headers updated (Current Version → v9.10, Next planned release → [TBD] — unscoped, `next_release` equals the release just shipped); §8 Release Summary row added); prior — 2026-10-07 (v9.10 ST-20, BLG-SPEC-171 — PO-05 and IT-06 rows no longer say PO-05 uses IT-06's Alpaca paper trading; named-file ruling `ESC-CLOSE-20261006-01`); prior history retained — see prior entries in version control
-**Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — Standard tier, CPS=N/A (0 active initiatives, 16th consecutive cycle); STEP 8.0 Correctness Fast-Track promoted BLG-BE-138 (P1 — on-load stop path reads the editable settings row while the nightly job hard-codes 5×/2×; live impact unverified) to a new v9.10 Now section; 🔴 Product Value Ratio 0.096 (U=17/G=43/D=114/P=3 of 177, v9.5–v9.9) — 6th consecutive Alert; Skill-Silo 91.2% pooled (v9.7–v9.9), worsened — §7.1 sustained-failure clause applied: PO commits BLG-FE-193 + BLG-FE-198 to v9.10; STEP 8.1 does not fire (v9.10 section added); idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected; DL-083)
+**Last Updated:** 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — §1 Next planned release → v9.11; §3 Now horizon gains a `v9.11` section: BLG-BE-152 (STEP 8.0 Correctness Fast-Track, P1), BLG-BE-150 (P1 escaped-defect verification), BLG-FE-206 and BLG-BE-154 (PO-committed build-and-ship items, §7.1 pull-forward), DL-084); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10, manage roadmap STEP 11 — §3 "v9.10 — Committed items" section retired to roadmap_archive.md (all three items shipped); its RA:v9.10 execution-notes block moved to §1 alongside the other release annotations); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — v9.10 marked ✅ Complete in §1 and §3; §1 headers updated (Current Version → v9.10, Next planned release → [TBD] — unscoped, `next_release` equals the release just shipped); §8 Release Summary row added); prior history retained — see prior entries in version control
+**Last rebalance:** 2026-10-08 (cycle 2026-10-08__scheduled — Standard tier, CPS=N/A (0 active initiatives, 17th consecutive cycle); STEP 8.0 Correctness Fast-Track promoted BLG-BE-152 (P1 — post-trade debrief lacks R achieved and the stop at exit, and told a user correct trade data was contradictory) to a new v9.11 Now section; 🔴 Product Value Ratio 0.161 (U=25/G=36/D=94/P=0 of 155, v9.6–v9.10) — 7th consecutive Alert, improving; Skill-Silo 87.4% pooled (v9.8–v9.10), improved but above the 40% ceiling — §7.1 pull-forward applied: BLG-FE-206 + BLG-BE-154 committed to v9.11; STEP 8.1 Option (a) — v9.11 section added; reduced-roster idea intake IW-20261008-01 (8 submissions, 4 user-facing roles, user-approved) → 6 backlog items; DL-084)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -11,7 +11,7 @@
 ## 1. Current Version
 
 **v9.10** — Stop-Parameter Correctness & Exit Transparency — ✅ Complete — Shipped 2026-10-07 — cycle: 2026-10-06__release-v9.10
-**Next planned release:** [TBD]
+**Next planned release:** v9.11 — scope set at `plan release v9.11`; committed items in §3 (roadmap rebalance `2026-10-08__scheduled`, DL-084)
 
 <!-- roadmap-annotation-marker: RA:v9.10:2026-10-06__release-v9.10 -->
 
@@ -467,6 +467,27 @@ Today you find stocks through external research and add them to the watchlist ma
 *RA:Gated-carry-forward-2026-07-27 retired — see roadmap_archive.md 2026-07-27 (post-ship closure 2026-07-24__release-v7.8; BLG-FEAT-73/BLG-FEAT-74 removed, not shipped/killed — PO disposition).*
 
 *RA:v9.10-committed-items retired — see roadmap_archive.md 2026-10-07 (post-ship closure 2026-10-06__release-v9.10; all three committed items shipped in v9.10).*
+
+### v9.11 — Committed items (roadmap rebalance `2026-10-08__scheduled`, DL-084)
+
+*Added by the rebalance, not by Release Planning: the release's full scope, capacity fit and story breakdown are set at `plan release v9.11`. These four items are committed to it.*
+
+| Item | Why it is here | Priority | Effort |
+|------|----------------|----------|--------|
+| `BLG-BE-152` — post-trade debrief gets R achieved, the stop at exit and entry slippage | STEP 8.0 Production Correctness Fast-Track: the debrief cannot state R achieved and never reads the trailing stop at exit, and in production it told the user a correct profitable stop-out "contradicts the exit reason recorded in the system". | P1 | M (~1-2 days) |
+| `BLG-BE-150` — verify all six AI features after the PR #1921 import fix; escaped-defect note | P1 escaped defect: every AI generation that reached the sampling hook failed from v9.4 until PR #1921. The debrief is verified; five features are not. | P1 | S (~0.5 day) |
+| `BLG-FE-206` — Position Risk table: GBP entry-price label; grace stops shown as not enforced | §7.1 sustained-failure pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | S (~0.75-1 day) |
+| `BLG-BE-154` — remove the ×1.38 US price fallback from `GET /portfolio`; flag stale prices | §7.1 sustained-failure pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | M (~1-1.5 days) |
+
+<!-- roadmap-annotation-marker: RA:v9.11:2026-10-08__release-v9.11 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-10-08__release-v9.11
+- Plan published: 2026-10-08
+- Cycle folder: claude/cycles/2026-10-08__release-v9.11/
+- Backlog slice: claude/cycles/2026-10-08__release-v9.11/stage4_backlog_slice.md
+- Status at annotation: Committed (sealed to Published later in the same session)
+- All four committed items seated: `BLG-BE-152` (ST-01), `BLG-BE-150` (ST-02), `BLG-BE-154` (ST-10), `BLG-FE-206` (ST-11). Full release: 43 items across 6 EPICs, 27.975 days (top of the ~24–28 day band, "use full capacity"). Design gate required.
 
 <!-- roadmap-annotation-marker: RA:v7.4:2026-07-17__release-v7.4 -->
 
