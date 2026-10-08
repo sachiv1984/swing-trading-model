@@ -29,7 +29,8 @@
         "tests/test_backend_import_path_isolation.py",
         "tests/test_ai_prompt_advisory_statements.py",
         "tests/test_ai_stop_recalculation_time.py",
-        "tests/test_ai_model_ids_pinned.py"
+        "tests/test_ai_model_ids_pinned.py",
+        "tests/test_claude_audit_log_prompt_hash.py"
       ],
       "stories": {
         "ST-01": {
@@ -157,26 +158,27 @@
         "ST-06": {
           "title": "claude_audit_log: add prompt_hash and response_length, and log failed model calls",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "AI Compliance & Governance Officer; Data Model & Domain Schema Owner",
           "github_issue": 1930,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-01",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20261008-03",
+          "blocked_since_utc": "2026-10-08T12:20:00Z",
+          "unblock_criteria": "DS-27 Up Migration applied on staging and production with verification output recorded",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "docs/specs/data_model.md",
-            "docs/ops/claude_api_log_hygiene_policy.md"
+            "docs/specs/data_model.md#DS-27",
+            "docs/ops/claude_api_log_hygiene_policy.md",
+            "tests/test_claude_audit_log_prompt_hash.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "code_committed",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Code, tests, data_model.md DS-27 and hygiene policy v1.2 done; AC1 and AC2 met by tests/test_claude_audit_log_prompt_hash.py. AC3 live migration delegated (DEL-20261008-03)."
         },
         "ST-07": {
           "title": "State in the daily-briefing system prompt that output is advisory and cannot execute trades",
@@ -230,23 +232,26 @@
         "ST-09": {
           "title": "Pin every Claude model ID in one backend module",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1933,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "e4ed97eb9658ff6c125438d116481bfc8e002fe4",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T11:16:08Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/ai_models.py",
+            "tests/test_ai_model_ids_pinned.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC: no claude- model literal outside backend/ai_models.py and no unpinned alias in production code; tests/test_ai_model_ids_pinned.py fails if reintroduced (shown by test_reintroduced_literal_is_detected). Deviation check: none."
         }
       }
     },
@@ -1032,12 +1037,16 @@
     "ST-25"
   ],
   "delegated_items": [
+    "ST-06",
     "ST-42"
   ],
   "completed_items": [
     "ST-01",
     "ST-03",
-    "ST-04"
+    "ST-04",
+    "ST-07",
+    "ST-08",
+    "ST-09"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",

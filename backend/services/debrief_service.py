@@ -33,6 +33,7 @@ fallback ("real-time generation, or on-demand if real-time isn't
 feasible") — implemented as the lower-risk, self-contained path rather
 than threading debrief generation into the live trade-close call chain.
 """
+import hashlib
 import os
 import re
 import time
@@ -539,6 +540,15 @@ def generate_trade_debrief(trade_id: str) -> dict:
         except Exception as exc:
             generation_status = "ai_unavailable"
             omitted_reason = f"generation_error: {str(exc)[:120]}"
+            # ST-06 (BLG-AI-08, v9.11): a failed model call is auditable too.
+            create_claude_audit_entry(
+                endpoint=_ENDPOINT,
+                model_id=MODEL_VERSION,
+                prompt_version=PROMPT_VERSION,
+                compliance_check_result="model_call_failed",
+                latency_ms=int((time.time() - t0) * 1000),
+                prompt_hash=hashlib.sha256(f"{_FOCUS_AREA_SYSTEM}\n{user_prompt}".encode()).hexdigest()[:16],
+            )
             break
 
         usage_for_audit = usage

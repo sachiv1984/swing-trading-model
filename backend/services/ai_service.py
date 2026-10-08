@@ -8,6 +8,7 @@ or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
 """
 
+import hashlib
 import logging
 import os
 import json
@@ -65,6 +66,31 @@ CHAT_PROMPT_VERSION = "v1.1"
 # Reject anything outside this charset (in particular \n / \r, which could otherwise
 # forge additional system-prompt lines) before it reaches the prompt.
 _CONTEXT_TICKER_PATTERN = re.compile(r'[A-Z0-9.:/-]{1,20}')
+
+
+def _prompt_hash(system_prompt: str, user_message: str) -> str:
+    """ST-06 (BLG-AI-08, v9.11): SHA-256 of the system prompt plus the user
+    message, first 16 hex characters. Non-reversible, the same form as
+    gemini_audit_log.input_hash (claude_api_log_hygiene_policy.md §3.2)."""
+    return hashlib.sha256(f"{system_prompt}\n{user_message}".encode()).hexdigest()[:16]
+
+
+def _audit_failed_model_call(create_claude_audit_entry, endpoint: str, prompt_version: str,
+                             prompt_hash: str, t0: float) -> None:
+    """ST-06 (BLG-AI-08, v9.11): a model call that fails after retries still
+    writes an audit row, marked compliance_check_result='model_call_failed'.
+    Never raises: the endpoint's own fallback path continues."""
+    try:
+        create_claude_audit_entry(
+            endpoint=endpoint,
+            model_id=MODEL_BRIEFING,
+            prompt_version=prompt_version,
+            compliance_check_result="model_call_failed",
+            latency_ms=int((time.time() - t0) * 1000),
+            prompt_hash=prompt_hash,
+        )
+    except Exception:
+        logger.warning("failed-call audit row not written for %s", endpoint, exc_info=True)
 
 
 def _stop_recalculated_label(position: dict) -> str:
@@ -285,15 +311,20 @@ def generate_daily_briefing() -> dict:
         '{"summary": "...", "actions": [{"type": "EXIT|ENTER|MONITOR|HOLD", "ticker": "...", "description": "..."}]}'
     )
 
+    prompt_hash = _prompt_hash(system_prompt, context)
     try:
         t0 = time.time()
-        response = _create_message(
-            api_key,
-            model=MODEL_BRIEFING,
-            max_tokens=1024,
-            system=system_prompt,
-            messages=[{"role": "user", "content": context}],
-        )
+        try:
+            response = _create_message(
+                api_key,
+                model=MODEL_BRIEFING,
+                max_tokens=1024,
+                system=system_prompt,
+                messages=[{"role": "user", "content": context}],
+            )
+        except Exception:
+            _audit_failed_model_call(create_claude_audit_entry, "POST /ai/daily-briefing", BRIEFING_PROMPT_VERSION, prompt_hash, t0)
+            raise
         # ST-13 (BLG-BE-128, v9.7): includes retry backoff sleep time by design -- see ai_endpoints.md Implementation constraints
         elapsed_ms = int((time.time() - t0) * 1000)
 
@@ -314,6 +345,8 @@ def generate_daily_briefing() -> dict:
                 output_tokens=output_tokens,
                 cost_usd=cost_usd,
                 latency_ms=elapsed_ms,
+                prompt_hash=prompt_hash,
+                response_length=len(content) if content else 0,
             )
         except Exception:
             pass
@@ -454,15 +487,20 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
         f"Portfolio context:\n{portfolio_context}"
     )
 
+    prompt_hash = _prompt_hash(system_prompt, question)
     try:
         t0 = time.time()
-        response = _create_message(
-            api_key,
-            model=MODEL_BRIEFING,
-            max_tokens=512,
-            system=system_prompt,
-            messages=[{"role": "user", "content": question}],
-        )
+        try:
+            response = _create_message(
+                api_key,
+                model=MODEL_BRIEFING,
+                max_tokens=512,
+                system=system_prompt,
+                messages=[{"role": "user", "content": question}],
+            )
+        except Exception:
+            _audit_failed_model_call(create_claude_audit_entry, "POST /ai/chat", CHAT_PROMPT_VERSION, prompt_hash, t0)
+            raise
         # ST-13 (BLG-BE-128, v9.7): includes retry backoff sleep time by design -- see ai_endpoints.md Implementation constraints
         elapsed_ms = int((time.time() - t0) * 1000)
 
@@ -483,6 +521,8 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
                 output_tokens=output_tokens,
                 cost_usd=cost_usd,
                 latency_ms=elapsed_ms,
+                prompt_hash=prompt_hash,
+                response_length=len(content) if content else 0,
             )
         except Exception:
             pass

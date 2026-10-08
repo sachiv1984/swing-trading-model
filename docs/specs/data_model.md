@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.52
-**Last Updated:** 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior — 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior — 2026-10-06 (DS-25 and DS-26 confirmed applied live on staging and production, verification output recorded); prior history retained — see prior entries in version control.
+**Version:** 2.53
+**Last Updated:** 2026-10-08 (ST-06, EPIC-01, v9.11, BLG-AI-08 — DS-27: claude_audit_log gains prompt_hash and response_length; failed model calls logged as model_call_failed); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior — 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -2725,8 +2725,50 @@ Expect 1 row: `stop_calculation_source`, `character varying`, `10`, `YES`.
 - Data Model & Domain Schema Owner: migration content is additive, nullable and reversible; no pre-check needed. Applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner).
 - **Live Confirmation, applied 2026-10-06:** applied alongside DS-25 on staging, then production. The combined Verification output was identical in both environments (see DS-25's Live Confirmation): `stop_calculation_source`, `character varying`, `10`, `YES`. `DEL-20261006-04` unblocked in-session.
 
+## DS-27 — Add prompt_hash and response_length to claude_audit_log (v2.53, 2026-10-08)
+
+**Story:** ST-06 (EPIC-01, v9.11) — `BLG-AI-08`. Delegation `DEL-20261008-03`.
+
+**Rationale:** AI governance policy requires the model ID, a prompt hash, the response length and a timestamp on every logged AI response. `claude_audit_log` had no prompt-hash or response-length column, so `POST /ai/daily-briefing` and `POST /ai/chat` could not meet it, and a model call that failed after retries wrote no row at all.
+
+- `prompt_hash` — SHA-256 of the system prompt plus the user message (joined by a newline), first 16 hex characters. Non-reversible; the same form as `gemini_audit_log.input_hash` (`docs/ops/claude_api_log_hygiene_policy.md` §3.2). Written by the briefing and chat calls (success and failure rows) and by the debrief's failure row.
+- `response_length` — the response text length in characters. Written on successful briefing and chat calls.
+- **Failed calls:** a model call that raises after retries now writes a row with `compliance_check_result = 'model_call_failed'` (no token or cost values), from the briefing, chat and debrief paths. No new column is needed for the marker.
+
+**RISK (no live DB write access in this execution environment):** the sandbox `DATABASE_URL` is staging and read-only. `create_claude_audit_entry()` runs `ensure_claude_audit_log_prompt_hash_columns()` before each insert, so the app adds the columns itself where its role may run DDL. The audit write is non-blocking either way (a failed insert logs a warning and never fails the AI response). The Up Migration is still applied explicitly to **staging and production** by the Data Model & Domain Schema Owner, with verification output (ST-06 AC 3). **Status: PENDING LIVE APPLICATION** (`DEL-20261008-03`).
+
+### Up Migration (v2.52 → v2.53)
+
+```sql
+ALTER TABLE claude_audit_log ADD COLUMN IF NOT EXISTS prompt_hash VARCHAR(16);
+ALTER TABLE claude_audit_log ADD COLUMN IF NOT EXISTS response_length INTEGER;
+```
+
+Additive and nullable, with no default and no backfill. Existing rows keep `NULL`: their prompts were never hashed, and inventing a value would misstate the record.
+
+### Down Migration (v2.53 → v2.52)
+
+```sql
+ALTER TABLE claude_audit_log DROP COLUMN IF EXISTS response_length;
+ALTER TABLE claude_audit_log DROP COLUMN IF EXISTS prompt_hash;
+```
+
+### Verification
+
+```sql
+SELECT column_name, data_type, character_maximum_length, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'claude_audit_log' AND column_name IN ('prompt_hash', 'response_length')
+ORDER BY column_name;
+```
+
+Expect 2 rows: `prompt_hash`, `character varying`, `16`, `YES`; `response_length`, `integer`, `NULL`, `YES`.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: migration content is additive, nullable and reversible; no pre-check needed. Live application pending (`DEL-20261008-03`).
+
 ---
 
-**Document Version:** 2.51
+**Document Version:** 2.53
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — DS-26 stop_calculation_source; header/footer version kept in sync); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — DS-25 atr_source); prior history retained — see prior entries in version control.
+**Last Review:** 2026-10-08 (ST-06, EPIC-01, v9.11, BLG-AI-08 — DS-27 claude_audit_log prompt_hash/response_length; footer brought level with the header); prior — 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — DS-26 stop_calculation_source; header/footer version kept in sync); prior history retained — see prior entries in version control.

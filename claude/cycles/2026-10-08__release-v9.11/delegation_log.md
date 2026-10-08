@@ -36,3 +36,31 @@ Last Updated: 2026-10-08
 - **Unblock criteria:** The `gh api` read lists the new context under `protection.required_status_checks`, and one later PR that does not touch dependency files shows the check completing. Both recorded in `qa_evidence_EPIC-06.md` under ST-42.
 - **Commit format required:** `[EPIC-06][ST-42] <description>` pushed to `exec/2026-10-08__release-v9.11/EPIC-06`
 - **Status:** Pending
+
+## DEL-20261008-03
+
+- **ST Item:** ST-06 — claude_audit_log: add prompt_hash and response_length, and log failed model calls
+- **EPIC:** EPIC-01
+- **Classification:** delegated_backend (live migration, Human-Delegation, RISK-03; DS-17/DS-25 precedent)
+- **Assigned to:** Data Model & Domain Schema Owner (with Infrastructure & Operations Owner)
+- **GitHub Issue:** #1930
+- **Branch:** exec/2026-10-08__release-v9.11/EPIC-01
+- **Delegated at:** 2026-10-08T12:20:00Z
+- **What is needed:** Run the DS-27 Up Migration on **staging, then production** (the sandbox `DATABASE_URL` is staging and read-only to this engine):
+  ```sql
+  ALTER TABLE claude_audit_log ADD COLUMN IF NOT EXISTS prompt_hash VARCHAR(16);
+  ALTER TABLE claude_audit_log ADD COLUMN IF NOT EXISTS response_length INTEGER;
+  ```
+  Then run the Verification query in each environment and paste both outputs back:
+  ```sql
+  SELECT column_name, data_type, character_maximum_length, is_nullable
+  FROM information_schema.columns
+  WHERE table_name = 'claude_audit_log' AND column_name IN ('prompt_hash', 'response_length')
+  ORDER BY column_name;
+  ```
+  Expected in each: `prompt_hash`, `character varying`, `16`, `YES`; `response_length`, `integer`, `NULL`, `YES`.
+- **Workflow viability (LL-v9.10-P3-01):** Not a workflow dispatch; a manual SQL run in the Supabase SQL editor.
+- **Spec reference:** `docs/specs/data_model.md#DS-27`; `stage4_backlog_slice.md#ST-06` AC 3
+- **Unblock criteria:** Both verification outputs recorded in `data_model.md` DS-27 (Live Confirmation) and in `qa_evidence_EPIC-01.md` under ST-06. The code is already on the branch: `create_claude_audit_entry()` also adds the columns idempotently, and the audit write never blocks an AI response, so deploy order is not a hard risk.
+- **Commit format required:** `[EPIC-01][ST-06] <description>` pushed to `exec/2026-10-08__release-v9.11/EPIC-01`
+- **Status:** Pending

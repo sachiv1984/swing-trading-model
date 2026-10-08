@@ -1,8 +1,8 @@
 Owner: Infrastructure & Operations Owner
 Class: Operational Policy (Class 2)
 Status: Active
-Version: 1.1
-Last Updated: 2026-09-15 (ST-23, EPIC-05, v9.4, BLG-AI-06 — added §2.4 Sampling-Store Exception, disclosing ai_output_boundary_samples' deliberate full-text storage); prior — 2026-05-28 (initial version)
+Version: 1.2
+Last Updated: 2026-10-08 (ST-06, EPIC-01, v9.11, BLG-AI-08 — claude_audit_log now stores prompt_hash and response_length and logs failed model calls; §2.4, §3.2, §3.3 and §4.2 amended); prior — 2026-09-15 (ST-23, EPIC-05, v9.4, BLG-AI-06 — added §2.4 Sampling-Store Exception, disclosing ai_output_boundary_samples' deliberate full-text storage); prior — 2026-05-28 (initial version)
 Lifecycle Guide: claude/charter/document_lifecycle_guide.md
 
 ---
@@ -69,7 +69,7 @@ Production deployments (Render staging and production environments) must be conf
 §2.2 above restricts full prompt/response text to DEBUG-only log *streams*. The new `ai_output_boundary_samples` database table (`docs/specs/data_model.md` DS-18) is a **deliberate, narrow, disclosed exception** to that principle — not a loosening of it:
 
 - **It is DB storage, not a log stream.** §2.2's restriction governs what appears in platform log output; it does not by itself forbid a database table from storing full text. This exception exists so the restriction's *purpose* (avoid casually exposing full AI response text) is still honoured even though the letter of §2.2 doesn't directly reach a DB table.
-- **Scope is intentionally narrow:** every other AI-call audit table in this document retains no scannable prompt/response text, precisely because of this policy's text-avoidance principle — `gemini_audit_log` stores only `input_hash`/`output_hash` (non-reversible references), while `claude_audit_log` stores no representation of the prompt/response content at all (hash or text — see §1's table above: "No prompt or response text stored"). `ai_output_boundary_samples` is the one deliberate exception, made only because §13.2 boundary-language compliance auditing genuinely requires scanning the actual text — neither a hash nor an absent field can be scanned for prescriptive/prediction-language drift.
+- **Scope is intentionally narrow:** every other AI-call audit table in this document retains no scannable prompt/response text, precisely because of this policy's text-avoidance principle — `gemini_audit_log` stores only `input_hash`/`output_hash` (non-reversible references), while `claude_audit_log` stores a non-reversible `prompt_hash` (16 hex characters) and the response length in characters, and no prompt or response text (from v9.11, DS-27; before that it held no prompt/response representation at all). `ai_output_boundary_samples` is the one deliberate exception, made only because §13.2 boundary-language compliance auditing genuinely requires scanning the actual text — neither a hash nor an absent field can be scanned for prescriptive/prediction-language drift.
 - **The exception is bounded on three axes**, so it never becomes the same thing as unconditionally logging every response:
   1. **Opt-in, default off** — `AI_OUTPUT_SAMPLING_ENABLED` must be explicitly set truthy; nothing is captured otherwise.
   2. **Sampling-rate-bounded** — even when enabled, only `AI_OUTPUT_SAMPLING_RATE` (default 10%) of calls are captured, never every response.
@@ -96,12 +96,14 @@ The following rules are mandatory and non-negotiable:
 - Rationale: Prompts include ticker identifiers, signal scores, and momentum metrics that are proprietary operational data.
 - Permitted: `input_hash` (SHA-256 truncated to 16 hex chars) may appear at INFO level as a non-reversible reference.
 
+- `claude_audit_log.prompt_hash` (ST-06, BLG-AI-08, v9.11) follows the same rule: SHA-256 of the system prompt plus the user message, truncated to 16 hex characters. It identifies a prompt without storing it.
+
 ### 3.3 Full Response Text
 
 - Full AI response text must not appear at INFO level in any log stream.
 - Permitted: The first 100 characters of the response text may be logged at INFO for operational diagnostics.
 - Permitted: `output_hash` (SHA-256 truncated to 16 hex chars) may appear at INFO level.
-- Permanent record: The full response text is not stored in `gemini_audit_log` (only hashes and token counts are persisted there) or in `claude_audit_log` (which persists no prompt/response representation at all, hash or text — token counts and cost only). This is the correct design.
+- Permanent record: The full response text is not stored in `gemini_audit_log` (only hashes and token counts are persisted there) or in `claude_audit_log` (token counts, cost, a non-reversible `prompt_hash` and `response_length` only — from v9.11, DS-27). This is the correct design.
 
 ### 3.4 Journal Note Content
 
@@ -126,7 +128,7 @@ The platform log stream is ephemeral and operational. It is not the primary comp
 | Table | Retention | Notes |
 |-------|-----------|-------|
 | `gemini_audit_log` | Permanent (no TTL) | Contains model version, prompt version, token counts, cost per call, input/output hashes. No prompt or response text stored. |
-| `claude_audit_log` | Permanent (no TTL) | Contains endpoint, model, prompt version, token counts, cost per call. No prompt or response text stored. |
+| `claude_audit_log` | Permanent (no TTL) | Contains endpoint, model, prompt version, token counts, cost per call, latency, compliance-check result, and from v9.11 (DS-27, ST-06) `prompt_hash` (SHA-256 of system prompt + user message, first 16 hex characters, non-reversible) and `response_length` (characters). A model call that fails after retries writes a row with `compliance_check_result = 'model_call_failed'`. No prompt or response text stored. |
 | `ai_summary_audit_log` | Permanent (no TTL) | Contains journal summary metadata: trade IDs, date range, trade count, model version, and the summary text itself. |
 
 ### 4.3 Pre-SI-02 Review Trigger
