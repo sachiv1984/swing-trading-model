@@ -32,6 +32,7 @@ import time
 from typing import Optional
 
 from utils.ai_sampling import sample_ai_output
+from ai_models import CLAUDE_HAIKU_4_5
 from utils.upstream_call import anthropic_retryable_exceptions, bounded_upstream_call, get_timeout
 
 CLAUDE_COST_PER_INPUT_TOKEN = 1.00 / 1_000_000
@@ -43,7 +44,7 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 # for the lazy-import/graceful-degradation rationale (unchanged from this
 # module's own pre-ST-13 local copy of the same logic).
 _RETRYABLE_CLAUDE_EXCEPTIONS = anthropic_retryable_exceptions()
-MODEL_VERSION = "claude-haiku-4-5"
+MODEL_VERSION = CLAUDE_HAIKU_4_5  # pinned snapshot (ST-09, v9.11); was the floating alias
 PROMPT_VERSION = "v3.0"
 
 # ST-22 (BLG-SEC-33, EPIC-05, v8.8): split into a trusted `system` prompt

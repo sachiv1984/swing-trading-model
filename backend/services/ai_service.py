@@ -21,6 +21,7 @@ from fastapi import HTTPException
 
 from strategy_parameters import GRACE_PERIOD_DAYS
 from utils.ai_sampling import sample_ai_output
+from ai_models import CLAUDE_HAIKU_4_5, CLAUDE_SONNET_4_6
 from utils.upstream_call import anthropic_retryable_exceptions, bounded_upstream_call, get_timeout
 
 logger = logging.getLogger(__name__)
@@ -47,8 +48,8 @@ def _create_message(api_key: str, **create_kwargs):
     return client.messages.create(**create_kwargs)
 
 
-MODEL_VERSION = "claude-haiku-4-5-20251001"
-MODEL_BRIEFING = "claude-sonnet-4-6"
+MODEL_VERSION = CLAUDE_HAIKU_4_5
+MODEL_BRIEFING = CLAUDE_SONNET_4_6
 
 # Prompt template versions, logged to claude_audit_log and pinned by
 # tests/fixtures/ai_prompt_template_golden_fixtures.json. Bump the matching
@@ -168,7 +169,7 @@ def summarise_journal_notes(
 
 def generate_daily_briefing() -> dict:
     """
-    Assembles portfolio context and calls claude-sonnet-4-6 to produce a
+    Assembles portfolio context and calls the briefing model (MODEL_BRIEFING) to produce a
     plain-English daily briefing with ordered action list.
     Returns: { summary, actions, generated_at, advisory, model }
     Advisory-only — SRB-v1.7.

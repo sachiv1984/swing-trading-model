@@ -28,7 +28,8 @@
         "tests/test_ai_sampling_failsafe.py",
         "tests/test_backend_import_path_isolation.py",
         "tests/test_ai_prompt_advisory_statements.py",
-        "tests/test_ai_stop_recalculation_time.py"
+        "tests/test_ai_stop_recalculation_time.py",
+        "tests/test_ai_model_ids_pinned.py"
       ],
       "stories": {
         "ST-01": {
@@ -205,23 +206,26 @@
         "ST-08": {
           "title": "AI briefing and chat state when a quoted stop was last recalculated",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1932,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "a3cbdc740019ccc4ac3ee6de1ba4bb64bd64fa63",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T11:13:59Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing",
+            "tests/test_ai_stop_recalculation_time.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC: briefing/chat context carries stop_calculated_at per position and prompts instruct the model to state it (tests/test_ai_stop_recalculation_time.py). Prompt-side control: a response omitting the time is not rejected (documented in ai_endpoints.md). Deviation check: none."
         },
         "ST-09": {
           "title": "Pin every Claude model ID in one backend module",

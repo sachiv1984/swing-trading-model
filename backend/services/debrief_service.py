@@ -49,9 +49,10 @@ from database import (
 )
 from utils.formatting import decimal_to_float
 from utils.ai_sampling import sample_ai_output
+from ai_models import CLAUDE_HAIKU_4_5
 from utils.upstream_call import anthropic_retryable_exceptions, bounded_upstream_call, get_timeout
 
-MODEL_VERSION = "claude-haiku-4-5"
+MODEL_VERSION = CLAUDE_HAIKU_4_5  # pinned snapshot (ST-09, v9.11); was the floating alias
 # v1.1 (ST-01, BLG-BE-152, v9.11): the focus-area prompt now receives
 # figures derived in code (R achieved, stop at exit, entry slippage, holding
 # days). AI Compliance & Governance Officer Condition 2 ruling, 2026-10-08

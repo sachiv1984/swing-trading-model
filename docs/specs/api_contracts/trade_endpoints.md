@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.6.0
-**Last Updated:** 2026-10-08 (ST-01, EPIC-01, v9.11, BLG-BE-152 — debrief `summary_text` states R achieved vs target and the stop at exit; focus-area prompt receives code-derived figures; `prompt_version` v1.1); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /trades); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to POST /trades/{trade_id}/reflection, PATCH /trades/{trade_id}/costs, POST /trades/{trade_id}/debrief); prior history retained — see prior entries in version control.
+**Version:** 2.6.1
+**Last Updated:** 2026-10-08 (ST-09, EPIC-01, v9.11, BLG-BE-142 — model IDs pinned in backend/ai_models.py; examples show the pinned Haiku 4.5 snapshot claude-haiku-4-5-20251001); prior — 2026-10-08 (ST-01, EPIC-01, v9.11, BLG-BE-152 — debrief `summary_text` states R achieved vs target and the stop at exit; focus-area prompt receives code-derived figures; `prompt_version` v1.1); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /trades); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -436,7 +436,7 @@ Returns the existing AI-generated post-trade debrief for a closed trade, if one 
     "summary_text": "Entered at the planned $926.80 and exited at $1,058.60 when the trailing stop (raised from $868.00 to $1,055.00) was hit after 16 days. Result: +2.24R against a 2.2R target (+£217.56, +15.80%). The plan set a stop at $868.00.",
     "focus_area_text": "This trade exited at 2.24R when the trailing stop at 1055.00 was hit.",
     "generation_status": "ok",
-    "model_version": "claude-haiku-4-5",
+    "model_version": "claude-haiku-4-5-20251001",
     "prompt_version": "v1.1",
     "generated_at": "2026-08-20T09:00:00Z"
   }
@@ -503,6 +503,8 @@ Same shape as `GET /trades/{trade_id}/debrief` above.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.6.1 | 2026-10-08 | ST-09 (EPIC-01, v9.11, BLG-BE-142): Debrief `model_version` example shows the pinned snapshot `claude-haiku-4-5-20251001` (`backend/ai_models.py`). |
+| 2.6.0 | 2026-10-08 | ST-01 (EPIC-01, v9.11, BLG-BE-152): Debrief `summary_text` states R achieved vs target and the stop at exit in plain language; focus-area prompt receives code-derived figures; `prompt_version` v1.1. |
 | 2.5.1 | 2026-08-21 | ST-03 (EPIC-01, v9.0, BLG-BE-108): Clarified "linked journal entries" sourcing for GET/POST /trades/{trade_id}/debrief — draws on both `entry_note`/`exit_note` and Red Flag Journal events, per Product Owner decision resolving `ESC-EXEC-20260821-01`. No request/response schema change — `backend/services/debrief_service.py::_journal_context_for_trade` internal implementation only. |
 | 2.5.0 | 2026-08-20 | ST-06 (EPIC-02, v8.9, BLG-FEAT-90): Add GET /trades/{trade_id}/debrief and POST /trades/{trade_id}/debrief — Automated AI Post-Trade Debrief. New table `trade_debriefs` (data_model.md#DS-16). §13 review CONDITIONAL (9 binding conditions): `docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md`. AI Compliance & Governance Officer sign-off recorded in `qa_evidence_EPIC-02.md`. |
 | 1.8.4 | 2026-02-17 | Initial spec — GET /trades, GET /trades/export/csv. Both `pnl_pct` and `pnl_percent` fields documented for backward compatibility |

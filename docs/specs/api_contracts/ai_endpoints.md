@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.19
-**Last Updated:** 2026-10-08 (ST-08, EPIC-01, v9.11, BLG-BE-141 — briefing and chat context carry each stop's stop_calculated_at and the prompts instruct the model to state it; briefing v1.2, chat v1.1); prior — 2026-10-08 (ST-07, EPIC-01, v9.11, BLG-AI-09 — daily briefing system prompt states advisory-only / no execution, actions framed as recommendations; briefing prompt_version v1.1); prior — 2026-10-08 (ST-03, EPIC-01, v9.11, BLG-BE-151 — every AI call site reaches the sampling hook through `utils/ai_sampling.py::sample_ai_output()`, so a sampling failure, including at import, can no longer replace a generated response; daily briefing and chat log their fallback with `exc_info`); prior history retained — see prior entries in version control
+**Version:** 1.20
+**Last Updated:** 2026-10-08 (ST-09, EPIC-01, v9.11, BLG-BE-142 — model IDs pinned in backend/ai_models.py; examples show the pinned Haiku 4.5 snapshot claude-haiku-4-5-20251001); prior — 2026-10-08 (ST-08, EPIC-01, v9.11, BLG-BE-141 — briefing and chat context carry each stop's stop_calculated_at and the prompts instruct the model to state it; briefing v1.2, chat v1.1); prior — 2026-10-08 (ST-07, EPIC-01, v9.11, BLG-AI-09 — daily briefing system prompt states advisory-only / no execution, actions framed as recommendations; briefing prompt_version v1.1); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -483,7 +483,7 @@ Omitting `endpoint`, `date_from`, and `date_to` preserves the original unfiltere
       {
         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "endpoint": "POST /trade-plans/generate-plan",
-        "model_id": "claude-haiku-4-5",
+        "model_id": "claude-haiku-4-5-20251001",
         "prompt_version": "v3.0",
         "input_tokens": 312,
         "output_tokens": 94,
@@ -500,7 +500,7 @@ Omitting `endpoint`, `date_from`, and `date_to` preserves the original unfiltere
 |-------|------|-------------|
 | `id` | string (UUID) | Unique row identifier. |
 | `endpoint` | string | The API endpoint that triggered the Claude call (e.g. `POST /trade-plans/generate-plan`). |
-| `model_id` | string | The Claude model ID used (e.g. `claude-haiku-4-5`). |
+| `model_id` | string | The Claude model ID used (e.g. `claude-haiku-4-5-20251001`, pinned in `backend/ai_models.py` — ST-09, v9.11). |
 | `prompt_version` | string | Internal prompt version tag (e.g. `v3.0`). |
 | `input_tokens` | integer or null | Prompt token count from Claude usage response. |
 | `output_tokens` | integer or null | Completion token count from Claude usage response. |
@@ -859,6 +859,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.20 | 2026-10-08 | ST-09 (EPIC-01, v9.11, BLG-BE-142): Every Claude model ID is pinned in `backend/ai_models.py` (`CLAUDE_HAIKU_4_5` = `claude-haiku-4-5-20251001`, `CLAUDE_SONNET_4_6` = `claude-sonnet-4-6`); `tests/test_ai_model_ids_pinned.py` fails on a model literal elsewhere. Debrief and trade-plan generation move from the floating alias `claude-haiku-4-5` to the pinned snapshot, so `model_id`/`model_version` values recorded from v9.11 carry the dated ID. |
 | 1.19 | 2026-10-08 | ST-08 (EPIC-01, v9.11, BLG-BE-141): Briefing and chat context state each stop's last recalculation time (`stop_calculated_at`) and both prompts instruct the model to quote it; `BRIEFING_PROMPT_VERSION` v1.2, `CHAT_PROMPT_VERSION` v1.1. No request/response change. |
 | 1.18 | 2026-10-08 | ST-07 (EPIC-01, v9.11, BLG-AI-09): Daily briefing system prompt states advisory-only / no execution and frames actions as recommendations; `BRIEFING_PROMPT_VERSION` v1.0 → v1.1 (`claude_audit_log.prompt_version`). No request/response change. |
 | 1.17 | 2026-10-08 | ST-03 (EPIC-01, v9.11, BLG-BE-151): Sampling hook failure isolation — all 6 call sites go through `utils/ai_sampling.py::sample_ai_output()`, which guards the import and the call and logs failures with `exc_info`; daily briefing and chat log the exception behind their fallback message. No endpoint or response-shape change. |
