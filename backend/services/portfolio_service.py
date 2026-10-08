@@ -112,17 +112,18 @@ def get_portfolio_summary() -> Dict:
                     live_price = live_price / 100
                     print(f"   ✓ Converted {pos['ticker']} from pence to pounds: {live_price}")
                 current_price_native = live_price
+                price_is_stale = False
                 print(f"   ✓ Live price: {current_price_native:.2f}")
             else:
-                # Fallback to stored price
-                print(f"   ⚠️  Using stored price for {pos['ticker']}")
-                stored_price = pos.get('current_price', pos['entry_price'])
-                if pos['market'] == 'US' and stored_price < 500:
-                    # Appears to be GBP, convert back to USD estimate
-                    current_price_native = stored_price * 1.38
-                    print(f"   ⚠️  Stored price appears to be GBP, estimated USD: {current_price_native:.2f}")
-                else:
-                    current_price_native = stored_price
+                # ST-10 (BLG-BE-154, v9.11): fall back to the stored price, which
+                # positions.current_price holds in native currency (data_model.md),
+                # then the native entry price. No FX guess: the previous fallback
+                # treated a US price below 500 as GBP and multiplied it by a
+                # hard-coded constant. The position is flagged price_is_stale.
+                print(f"   ⚠️  Live price unavailable for {pos['ticker']}; using stored native price")
+                native_entry = (pos.get('fill_price') or pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
+                current_price_native = pos.get('current_price') or native_entry
+                price_is_stale = True
 
             shares = pos['shares']
             market = pos['market']
@@ -213,6 +214,9 @@ def get_portfolio_summary() -> Dict:
                 "grace_period": grace_period,
                 "grace_days_remaining": grace_days_remaining,
                 "live_fx_rate": live_fx_rate,
+                # ST-10 (BLG-BE-154, v9.11): true when the live price fetch failed
+                # and current_price is the last stored native price at today's FX.
+                "price_is_stale": price_is_stale,
             })
 
         total_value = cash + total_positions_value_gbp

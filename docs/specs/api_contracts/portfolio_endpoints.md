@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.8.2
-**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /portfolio); prior — 2026-08-19 (ST-04 correction, EPIC-02, v8.9, BLG-BE-104 — fixed concentration_reason example/field-note text mislabeling sector % of portfolio value as "% of portfolio heat"); prior — 2026-08-18 (ST-05, EPIC-02, v8.9, BLG-FEAT-91 — POST /portfolio/size gains heat_impact_percent response field); prior history retained — see prior entries in version control.
+**Version:** 2.9.0
+**Last Updated:** 2026-10-08 (ST-10, EPIC-02, v9.11, BLG-BE-154 — GET /portfolio positions gain price_is_stale; ×1.38 US price fallback removed); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /portfolio); prior — 2026-08-19 (ST-04 correction, EPIC-02, v8.9, BLG-BE-104 — fixed concentration_reason example/field-note text mislabeling sector % of portfolio value as "% of portfolio heat"); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -94,7 +94,8 @@ Response uses the standard success envelope from **conventions.md**.
       "fx_rate": 1.2650,
       "grace_period": false,
       "grace_days_remaining": null,
-      "live_fx_rate": 1.2750
+      "live_fx_rate": 1.2750,
+      "price_is_stale": false
     }
   ]
 }
@@ -127,7 +128,9 @@ The position objects returned here are a **summary shape**. Key omissions versus
 
 **`pnl_pct`** is the percentage P&L field in this position summary object — the percentage return relative to entry price, expressed as a signed percentage. In trade history responses (`GET /trades`), the same value appears as both `pnl_pct` and `pnl_percent` for backward compatibility; in position objects only `pnl_pct` is returned.
 
-**`current_price`** is always expressed in GBP, regardless of the instrument's native currency. For US positions, the live USD price is converted to GBP using `live_fx_rate` at time of call. `entry_price` is in native currency (USD for US, GBP for UK). `fx_rate` is the stored rate at time of entry; `live_fx_rate` is the rate used for the current price conversion.
+**`current_price`** is always expressed in GBP, regardless of the instrument's native currency. For US positions, the live USD price is converted to GBP using `live_fx_rate` at time of call. If the live price fetch fails, `current_price` is the last stored native price (`positions.current_price`, or the native entry price when none is stored) converted at `live_fx_rate`, and `price_is_stale` is `true`. There is no FX estimate: the previous fallback, which multiplied a US stored price below 500 by a hard-coded 1.38, was removed in v9.11 (ST-10, BLG-BE-154).
+
+**`price_is_stale`** *(boolean, v9.11 — ST-10, BLG-BE-154)* is `true` when the live price fetch failed for this position and `current_price` (and the values derived from it: `current_value`, `pnl`, `pnl_pct`, and the portfolio-level totals) uses the last stored price. `false` when a live price was used. The Risk Dashboard and Dashboard show a stale marker for it (`risk_dashboard.md` §6.6, `dashboard.md` §4 Card 2). `entry_price` is in native currency (USD for US, GBP for UK). `fx_rate` is the stored rate at time of entry; `live_fx_rate` is the rate used for the current price conversion.
 
 ### Errors
 
@@ -646,6 +649,7 @@ Errors use the standard error envelope from **conventions.md**.
 | 2.7.0 | 2026-08-18 | ST-04 (EPIC-02, v8.9, BLG-BE-104): `POST /portfolio/size` gains optional request field `ticker` and response fields `concentration_adjusted` (boolean) and `concentration_reason` (string or null) — reflects the user's existing open-position sector concentration in the suggested size, reusing (not redefining) `strategy_rules.md §4.2.2`'s canonical 30% threshold. See `trade_plan.md §10.7` for the frontend display contract. |
 | 2.8.0 | 2026-08-18 | ST-05 (EPIC-02, v8.9, BLG-FEAT-91): `POST /portfolio/size` gains response field `heat_impact_percent` (number or null) — incremental portfolio heat impact of the suggested position, reusing `GET /portfolio/prospective-heat`'s calculation (`services/portfolio_service.py::calculate_prospective_heat`, extracted this story) rather than a second endpoint call. Feeds the new What-If Sizing Preview panel (`trade_plan.md §5d`) and `PositionSizingWidget` (§10.7). |
 | 2.8.1 | 2026-08-19 | ST-04 correction (EPIC-02, v8.9, BLG-BE-104): fixed `concentration_reason`'s example/field-note text, which mislabeled the sector's share of total portfolio *value* as "% of portfolio heat" — a distinct, already-defined metric on this same endpoint (`heat_impact_percent`, ST-05 above). Found by agent-mediated Director of Quality review of PR #1453. No response shape or calculation change — text only, matching the corrected `backend/services/sizing_service.py` wording. |
+| 2.9.0 | 2026-10-08 | ST-10 (EPIC-02, v9.11, BLG-BE-154): `GET /portfolio` position objects gain `price_is_stale`; the ×1.38 US price fallback is removed (stored native price at live FX instead). |
 
 ---
 

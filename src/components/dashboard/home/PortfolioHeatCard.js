@@ -21,6 +21,8 @@ export default function PortfolioHeatCard() {
 
   const portfolio = data?.portfolio ?? data?.data ?? data;
   const heat = portfolio?.portfolio_heat_percent;
+  // ST-10 (EPIC-02, v9.11, BLG-BE-154): count positions whose live price fetch failed.
+  const staleCount = (portfolio?.positions ?? []).filter((p) => p?.price_is_stale === true).length;
 
   return (
     <DashboardCard
@@ -39,6 +41,15 @@ export default function PortfolioHeatCard() {
       <p className="text-sm text-slate-600 dark:text-slate-400">
         {heat != null && (heat < 15 ? "Heat within safe range" : heat <= 25 ? "Heat elevated — monitor closely" : "Heat critical — review positions")}
       </p>
+      {staleCount > 0 && (
+        <p
+          className="text-xs text-amber-400 mt-1"
+          data-testid="dashboard-price-stale-notice"
+          title="Live price unavailable. Showing the last stored price converted at today's FX rate."
+        >
+          ⚠ {staleCount} position price{staleCount === 1 ? "" : "s"} stale
+        </p>
+      )}
     </DashboardCard>
   );
 }

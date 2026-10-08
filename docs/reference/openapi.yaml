@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.22.0
+  version: 3.23.0
+  # v3.23.0 (2026-10-08, ST-10, EPIC-02, v9.11): PositionSummary gains price_is_stale
+  # (GET /portfolio; BLG-BE-154). No new endpoint.
   # v3.22.0 (2026-10-07, ST-13/ST-14, EPIC-03, v9.10): GET /positions/{position_id}/gap-risk
   # reasons enum drops weekend_hold (BLG-BE-136). No new endpoint.
   # v3.21.0 (2026-10-07, ST-11, EPIC-03, v9.10): lifecycle_reason enum drops
@@ -6399,6 +6401,11 @@ components:
         grace_period: { type: boolean }
         grace_days_remaining: { type: integer, nullable: true }
         live_fx_rate: { type: number, description: "FX rate used for current price conversion" }
+        price_is_stale:
+          type: boolean
+          description: >
+            GET /portfolio only (v9.11 ST-10, BLG-BE-154). True when the live price fetch failed and
+            current_price is the last stored native price converted at live_fx_rate (no FX estimate).
 
     Position:
       allOf:
