@@ -278,23 +278,28 @@
         "ST-10": {
           "title": "Remove the hard-coded ×1.38 US price fallback from GET /portfolio, and flag stale prices",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1934,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "2269fe38e00051d6ebfaf64ed660c69ebfef0225",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:00:45Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio",
+            "docs/specs/frontend/pages/risk_dashboard.md#6.6 Stale Price Marker (v0.1.12 — ST-10)",
+            "tests/test_portfolio_price_integrity.py",
+            "tests/e2e/risk-price-integrity.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1/AC2 tests/test_portfolio_price_integrity.py (stored native at live FX, never ×1.38; price_is_stale true; '1.38' absent). AC3 SC-RPI-01a-d (Risk Dashboard marker + Dashboard Card 2 notice per design gate), passing locally. AC4 portfolio_endpoints.md 2.9.0 + openapi.yaml 3.23.0 same commit. ci_pending: 37781054800. Deviation check: none."
         },
         "ST-11": {
           "title": "Position Risk table: GBP entry prices, and grace-period stops shown as not enforced",
@@ -1059,7 +1064,8 @@
     "ST-05",
     "ST-07",
     "ST-08",
-    "ST-09"
+    "ST-09",
+    "ST-10"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",

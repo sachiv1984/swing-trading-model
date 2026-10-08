@@ -1,6 +1,6 @@
 import { cn } from "../../lib/utils";
 import { ArrowDown, AlertCircle, Clock } from "lucide-react";
-import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
+import { formatCurrency, formatPercent } from "../../lib/format";
 
 const STATUS_ORDER = { GRACE: 0, LOSING: 1, PROFITABLE: 2 };
 
@@ -27,6 +27,17 @@ function StaleMarker() {
   );
 }
 
+// ST-11 (EPIC-02, v9.11, BLG-FE-206): risk_dashboard.md §6.2a.
+const GRACE_STOP_TEXT = "Stops are not enforced during the 10-day grace period. See strategy rules §6.";
+
+function NotEnforced() {
+  return (
+    <span className="text-xs text-slate-600 dark:text-slate-400" data-testid="stop-not-enforced" title={GRACE_STOP_TEXT}>
+      Not enforced (grace)
+    </span>
+  );
+}
+
 function stopDistancePct(pos) {
   if (!pos.current_price || !pos.current_stop || pos.current_price === 0) return null;
   return ((pos.current_price - pos.current_stop) / pos.current_price) * 100;
@@ -40,6 +51,10 @@ export default function PositionRiskTable({ positions = [], error }) {
       const sA = STATUS_ORDER[a.display_status] ?? 9;
       const sB = STATUS_ORDER[b.display_status] ?? 9;
       if (sA !== sB) return sA - sB;
+      // ST-11: within GRACE, stop distance does not apply (§6.4) -- fewest grace days first.
+      if (a.display_status === "GRACE") {
+        return (a.grace_days_remaining ?? Infinity) - (b.grace_days_remaining ?? Infinity);
+      }
       // ascending = smallest distance first = most at risk
       return (a._stopDist ?? Infinity) - (b._stopDist ?? Infinity);
     });
@@ -82,7 +97,7 @@ export default function PositionRiskTable({ positions = [], error }) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-700/30">
-              {["Ticker", "Status", "Entry Price", "Current (GBP)", "Stop Price", "Stop Dist %", "Held"].map((h) => (
+              {["Ticker", "State", "Entry (GBP)", "Current (GBP)", "Stop (GBP)", "Stop Dist %", "Held"].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                   {h}
                 </th>
@@ -92,6 +107,7 @@ export default function PositionRiskTable({ positions = [], error }) {
           <tbody>
             {sorted.map((pos, i) => {
               const dist = pos._stopDist;
+              const inGrace = pos.display_status === "GRACE";
               const distColor = dist === null ? "text-slate-600 dark:text-slate-400"
                 : dist <= 5 ? "text-rose-400"
                 : dist <= 15 ? "text-amber-400"
@@ -109,17 +125,18 @@ export default function PositionRiskTable({ positions = [], error }) {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-slate-300 tabular-nums">
-                    {pos.entry_price != null ? formatCurrency(pos.entry_price, { currency: currencyForMarket(pos.market) }) : "—"}
+                    {/* ST-11: GET /portfolio returns entry_price in GBP for every market. */}
+                    {pos.entry_price != null ? formatCurrency(pos.entry_price) : "—"}
                   </td>
                   <td className="px-4 py-3 text-slate-300 tabular-nums">
                     {pos.current_price != null ? formatCurrency(pos.current_price) : "—"}
                     {pos.price_is_stale === true && <StaleMarker />}
                   </td>
                   <td className="px-4 py-3 text-slate-300 tabular-nums">
-                    {pos.current_stop ? formatCurrency(pos.current_stop) : "—"}
+                    {inGrace ? <NotEnforced /> : pos.current_stop ? formatCurrency(pos.current_stop) : "—"}
                   </td>
-                  <td className={cn("px-4 py-3 tabular-nums font-medium", distColor)}>
-                    {dist === null ? "—" : formatPercent(dist)}
+                  <td className={cn("px-4 py-3 tabular-nums font-medium", inGrace ? "" : distColor)}>
+                    {inGrace ? <NotEnforced /> : dist === null ? "—" : formatPercent(dist)}
                   </td>
                   <td className="px-4 py-3 text-slate-600 dark:text-slate-400 tabular-nums">
                     {pos.holding_days != null ? `${pos.holding_days}d` : "—"}

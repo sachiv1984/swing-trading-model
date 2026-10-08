@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.23.0
+  version: 3.23.1
+  # v3.23.1 (2026-10-08, ST-11, EPIC-02, v9.11): PositionSummary entry_price description corrected
+  # to GBP (GET /portfolio). Documentation only.
   # v3.23.0 (2026-10-08, ST-10, EPIC-02, v9.11): PositionSummary gains price_is_stale
   # (GET /portfolio; BLG-BE-154). No new endpoint.
   # v3.22.0 (2026-10-07, ST-13/ST-14, EPIC-03, v9.10): GET /positions/{position_id}/gap-risk
@@ -6379,7 +6381,7 @@ components:
         Portfolio position summary object as returned by GET /portfolio.
         v1.9.0 field list per docs/specs/api_contracts/portfolio_endpoints.md.
         current_price is always GBP (USD converted via live_fx_rate for US positions).
-        entry_price is in the instrument's native currency (USD for US, GBP for UK).
+        entry_price and current_stop are GBP for every market (US native values / entry fx_rate) on GET /portfolio.
         pnl_pct is the percentage return relative to entry price (signed %).
         grace_days_remaining is max(0, 10 - holding_days) when grace_period is true; null otherwise.
       properties:
@@ -6387,7 +6389,7 @@ components:
         ticker: { type: string }
         market: { type: string, enum: [US, UK] }
         entry_date: { type: string, format: date }
-        entry_price: { type: number }
+        entry_price: { type: number, description: "GET /portfolio: GBP for every market (v9.11 ST-11 documentation correction)" }
         shares: { type: number }
         current_price: { type: number, description: "Always GBP regardless of instrument currency" }
         current_value: { type: number, description: "current_price × shares, in GBP" }

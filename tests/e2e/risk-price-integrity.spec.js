@@ -6,6 +6,8 @@
  * Covers:
  *   SC-RPI-01: ST-10 (BLG-BE-154) — a position with price_is_stale=true shows the stale marker on the
  *              Risk Dashboard and the stale notice on the Dashboard; price_is_stale=false shows neither
+ *   SC-RPI-02: ST-11 (BLG-FE-206) — a US row's Entry renders "£" with the GET /portfolio GBP value; a GRACE
+ *              row shows "Not enforced (grace)" in Stop and Stop Dist % with no rose/amber colour
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/…').
@@ -96,5 +98,46 @@ test.describe('SC-RPI-01 — Stale price marker (ST-10, BLG-BE-154)', () => {
     await expect(page.getByText('Portfolio Heat')).toBeVisible({ timeout: 15000 });
     await expect(page.getByText('8.5%').first()).toBeVisible({ timeout: 15000 });
     await expect(page.getByTestId('dashboard-price-stale-notice')).toHaveCount(0);
+  });
+});
+
+test.describe('SC-RPI-02 — GBP entry prices and grace stops (ST-11, BLG-FE-206)', () => {
+  test('SC-RPI-02a: a US row\'s Entry cell shows the GBP value from GET /portfolio', async ({ page }) => {
+    await mockAll(page, [position({ id: 'a', ticker: 'MU', market: 'US', entry_price: 78.74 })]);
+    await gotoRisk(page);
+    await expect(page.locator('th', { hasText: 'Entry (GBP)' })).toBeVisible();
+    await expect(page.locator('th', { hasText: 'Stop (GBP)' })).toBeVisible();
+    const entryCell = page.locator('tr', { hasText: 'MU' }).locator('td').nth(2);
+    await expect(entryCell).toHaveText('£78.74');
+  });
+
+  test('SC-RPI-02b: a GRACE row shows "Not enforced (grace)" in Stop and Stop Dist % with no distance colour', async ({ page }) => {
+    await mockAll(page, [
+      position({ id: 'g', ticker: 'SNDK', display_status: 'GRACE', grace_period: true, grace_days_remaining: 4,
+        holding_days: 6, current_price: 50.0, current_stop: 49.5 }),
+      position({ id: 'p', ticker: 'MU' }),
+    ]);
+    await gotoRisk(page);
+    const row = page.locator('tr', { hasText: 'SNDK' });
+    const cells = row.getByTestId('stop-not-enforced');
+    await expect(cells).toHaveCount(2);
+    await expect(cells.first()).toHaveText('Not enforced (grace)');
+    await expect(cells.first()).toHaveAttribute('title', 'Stops are not enforced during the 10-day grace period. See strategy rules §6.');
+    // Stop Dist % cell (6th column) carries no rose/amber distance colour.
+    const distCell = row.locator('td').nth(5);
+    await expect(distCell).not.toHaveClass(/text-rose-400|text-amber-400/);
+    await expect(distCell.locator('.text-rose-400, .text-amber-400')).toHaveCount(0);
+    // A post-grace row still shows its stop price.
+    await expect(page.locator('tr', { hasText: 'MU' }).getByTestId('stop-not-enforced')).toHaveCount(0);
+  });
+
+  test('SC-RPI-02c: GRACE rows sort by grace days remaining, fewest first', async ({ page }) => {
+    await mockAll(page, [
+      position({ id: 'g1', ticker: 'AAA', display_status: 'GRACE', grace_period: true, grace_days_remaining: 7 }),
+      position({ id: 'g2', ticker: 'BBB', display_status: 'GRACE', grace_period: true, grace_days_remaining: 2 }),
+    ]);
+    await gotoRisk(page);
+    const tickers = page.locator('tbody tr td:first-child');
+    await expect(tickers).toHaveText(['BBB', 'AAA']);
   });
 });
