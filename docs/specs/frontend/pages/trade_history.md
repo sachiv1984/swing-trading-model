@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.14
-**Last Updated:** 2026-09-28 (ST-05, EPIC-01, v9.8, BLG-SPEC-158 — §Responsive Behavior corrected to match `TradeHistoryTable.js`'s actual implementation: the table does not collapse to cards, it scrolls horizontally); prior — 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §Keyboard Navigation Requirements)
+**Version:** 1.15
+**Last Updated:** 2026-10-08 (v9.11 design gate — ST-05/BLG-FE-205: §Post-Trade Debrief Regenerate button made recognisable, generated time shown, regenerate failure message); prior — 2026-09-28 (ST-05, EPIC-01, v9.8, BLG-SPEC-158 — §Responsive Behavior corrected to match `TradeHistoryTable.js`); prior — 2026-09-04 (v9.1 ST-07, BLG-SPEC-99: added §Keyboard Navigation Requirements)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Design Source (v1.15 Debrief Regenerate):** docs/design/2026-10-08__release-v9.11/debrief-regenerate-feedback/decision_record.md
 **Design Source (v2.8 AI Journal Summary):** docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md
 **Design Source (v2.6 UX polish):** docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md
 **Design Source (v2.1 slippage):** docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md
@@ -385,12 +386,14 @@ Shows “No debrief generated yet for this trade.” and a **Generate Debrief** 
 - **Summary text:** the deterministic, non-AI factual plan-vs-reality summary — always present.
 - **Focus area** (labelled “Focus area”, italic): the one AI-generated pattern-surfacing sentence, shown only when `focus_area_text` is non-null.
 - When `focus_area_text` is null: a muted italic message explains why (`generation_status`-dependent — either AI generation was unavailable, or the §13 Condition 9 output-side compliance check failed twice and fell back). The summary still renders.
-- A **Regenerate** button (`data-testid="regenerate-debrief-btn"`) re-runs `POST /trades/{id}/debrief`, overwriting the prior debrief.
+- A **Regenerate** button (`data-testid="regenerate-debrief-btn"`) re-runs `POST /trades/{id}/debrief`, overwriting the prior debrief. *(v1.15 — ST-05, BLG-FE-205)* It uses the `outline` variant at `size="sm"`, the same as **Generate Debrief**, so it has a visible border and background in both themes. While pending it reads "Regenerating…" and is disabled. It is still the only action in the section (§13 Condition 4).
+- **Generated time** *(v1.15 — ST-05)*: on the same row as Regenerate, to its left, muted `text-xs`: "Generated {relative time}" (for example "Generated 3 min ago"), from `generated_at`. The `title` attribute holds the absolute local date and time. `data-testid="debrief-generated-at"`. Omitted when `generated_at` is null. Updates after a successful regenerate.
 
 #### Loading / Error
 
 - On row expand (API in flight): single-line skeleton placeholder for the section.
 - On generation failure: an inline error message; the empty-state Generate button remains available to retry.
+- *(v1.15 — ST-05)* On **regenerate** failure (any non-2xx response from `POST /trades/{id}/debrief` in the populated state): the existing debrief stays on screen unchanged, and an inline message appears under the action row in `text-rose-400 text-xs`: "Could not regenerate the debrief. The previous version is still shown. Try again shortly." `data-testid="debrief-regenerate-error"`, `role="status"`. It clears on the next Regenerate click.
 
 #### API Dependency
 
@@ -556,6 +559,7 @@ Documentation-only requirements baseline for this table-based page — no implem
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.15 | 2026-10-08 | v9.11 design gate (ST-05, EPIC-01, BLG-FE-205): §Post-Trade Debrief — Regenerate uses the `outline` variant; "Generated {relative time}" label from `generated_at`; regenerate failure keeps the existing debrief and shows an inline error. Design source: `docs/design/2026-10-08__release-v9.11/debrief-regenerate-feedback/decision_record.md`. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |
 | 1.14 | 2026-09-28 | ST-05 (BLG-SPEC-158, EPIC-01, v9.8): §Responsive Behavior corrected to match `TradeHistoryTable.js`'s actual implementation — the table scrolls horizontally (no card collapse, no column-hiding); journal expansion is an in-table expanded row, not a card panel. Documentation-only; no implementation change. |
 | 1.13 | 2026-09-04 | v9.1 ST-07 (BLG-SPEC-99, EPIC-01): added §Keyboard Navigation Requirements — documentation-only baseline covering Trade History Table row/expand tab order, Expandable Journal Row / Plan vs Reality / Post-Trade Debrief control tab order, Filters (incl. Saved Filter Presets), Calendar View day-cell keyboard activation, and focus-indicator contrast. No implementation change. |
 | 1.12 | 2026-08-20 | v8.9 (ST-06, EPIC-02, BLG-FEAT-90): Post-Trade Debrief section added to Expandable Journal Row — 5th section, rendered for every closed trade (not conditional on a linked plan, unlike Plan vs Reality); deterministic summary text always shown, one AI-generated pattern-surfacing "focus area" sentence shown when present; on-demand Generate/Regenerate action (`POST /trades/{id}/debrief`) since generation is not hooked into the live trade-close event path; §13 review CONDITIONAL (9 binding conditions) — Condition 4 requires no other action affordance in this section. Design decision documented directly in this spec (no separate ux_spec.md — component mirrors the existing Plan vs Reality precedent closely enough that a dedicated design artefact was not required). Approved: Product Owner 2026-08-20 (agent-mediated). |

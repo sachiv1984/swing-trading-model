@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.14
-**Last Updated:** 2026-10-07 (ST-13/ST-14, EPIC-03, v9.10, BLG-GOV-365/BLG-BE-136 — §Gap Risk Badge: weekend_hold removed; earnings label and ruled trigger timing stated; data source corrected); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — §Position Lifecycle State Badge: post-grace LOSING/PROFITABLE follow strategy_rules.md §9's P&L sign; LOSING tooltip corrected; flat_after_grace removed); prior — 2026-10-06 (ST-06, EPIC-02, v9.10, BLG-FE-193 — stop provenance section finalised against the shipped `stop_calculation_source` contract and `StopProvenance.js`); prior history retained — see prior entries in version control.
+**Version:** 2.15
+**Last Updated:** 2026-10-08 (v9.11 design gate — ST-14/BLG-BE-147: §Grace Period Alert Zone trigger, "Day N of 10" label and ended state, and the §Last Reviewed Column suppression rule, use calendar days via `grace_days_remaining` instead of `days_in_state`); prior — 2026-10-07 (ST-13/ST-14, EPIC-03, v9.10, BLG-GOV-365/BLG-BE-136 — §Gap Risk Badge: weekend_hold removed; earnings label and ruled trigger timing stated; data source corrected); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — §Position Lifecycle State Badge: post-grace LOSING/PROFITABLE follow strategy_rules.md §9's P&L sign); prior history retained — see prior entries in version control.
+**Design Source (v9.11 additions):** docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md
 **Design Source (v9.10 additions):** docs/design/2026-10-06__release-v9.10/stop-cell-provenance/decision_record.md, docs/design/2026-10-06__release-v9.10/exit-condition-surfacing/decision_record.md, docs/design/2026-10-06__release-v9.10/lifecycle-badge-grace-calendar-days/decision_record.md, docs/design/2026-10-06__release-v9.10/gap-risk-trigger-label-alignment/decision_record.md
 **Design Source (v8.2 additions):** docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md
 **Design Source (v7.9 additions):** docs/design/2026-07-27__release-v7.9/trailing-stop-explainer-tooltip/ux_spec.md
@@ -25,6 +26,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.15 | 2026-10-08 | v9.11 design gate (ST-14, EPIC-02, BLG-BE-147): §Grace Period Alert Zone — trigger is `grace_days_remaining ≤ 2` (≥ 8 calendar days since entry), sub-label "Day {min(11 − grace_days_remaining, 10)} of 10", ended state at `grace_days_remaining = 0`, no `days_in_state` fallback. §Last Reviewed Column suppression rule uses the same predicate. Design source: `docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md`. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |
 | 2.12 | 2026-10-06 | ST-06 (BLG-FE-193, EPIC-02, v9.10): §Stop Provenance Line and Per-Row Stop Details finalised. The recalculation-source field is `stop_calculation_source` (`on_load` \| `nightly` \| `null`, `position_endpoints.md` v2.10.0, shipped with ST-01). Implementation: `src/components/positions/StopProvenance.js`, used by both views. Playwright: `tests/e2e/stop-cell-provenance.spec.js` (SC-SCP-01..07). |
 | 2.14 | 2026-10-07 | v9.10 sprint execution (ST-13/ST-14, BLG-GOV-365/BLG-BE-136): §Gap Risk Badge — `weekend_hold` removed (trigger removed under §13 Binding Condition 6; no replacement label). Earnings label "Earnings due by next trading session", with the ruled scope: US positions only, earnings after today and on or before the next trading day, no day 0 (Strategy Rules & System Intent Owner ruling, `ESC-EXEC-20261006-04`). Data source line corrected to the dedicated `GET /positions/{position_id}/gap-risk` endpoint. Playwright SC-GR-03/04/06/08. |
 | 2.13 | 2026-10-07 | v9.10 sprint execution (ST-11, BLG-SPEC-185): §Position Lifecycle State Badge — the badge defers to `strategy_rules.md` §9 (Strategy Rules & System Intent Owner ruling, `ESC-EXEC-20261006-03`). Post-grace LOSING/PROFITABLE follow the P&L sign; EXIT ZONE is a display sub-state of PROFITABLE. LOSING tooltip corrected (the ±0.5 ATR exit rule it described no longer exists). `flat_after_grace` removed; `missing_data` tooltip no longer names ATR. Wording-only (FI-P3-02); Playwright SC-LBG-04/05. |
@@ -263,15 +265,15 @@ Two distinct empty states:
 
 **Placement:** Above the View Switcher, at the top of the Positions page. A dedicated Alert Zone with amber background (`#FEF3C7`) and left border (`#D97706`, 4px).
 
-**Trigger:** One or more open positions with `position_state = 'GRACE'` AND `days_in_state ≥ 8`. Data source: `GET /positions/grace-period-alerts`.
+**Trigger:** One or more open positions with `position_state = 'GRACE'` AND `grace_days_remaining ≤ 2` (8 or more calendar days since entry). Data source: `GET /positions/grace-period-alerts`. *(v2.15 — ST-14, BLG-BE-147: was `days_in_state ≥ 8`. `days_in_state` counts days in the current lifecycle state, so a reset `state_entered_at` dropped a day-8 position from the list. No grace reading on this page uses `days_in_state`.)*
 
 **One alert card per qualifying position.** Cards stack vertically in the Alert Zone.
 
 ### Alert Card Contents
 
-- Header: "⚠ Grace Period Alert — {TICKER}" + "Day {days_in_state} of 10" sub-label + Dismiss (✕) button
+- Header: "⚠ Grace Period Alert — {TICKER}" + "Day {min(11 − grace_days_remaining, 10)} of 10" sub-label + Dismiss (✕) button *(v2.15 — ST-14: 1-based calendar day, the same convention as §Days in Grace. Example: entered 8 calendar days ago → `grace_days_remaining = 2` → "Day 9 of 10". When `grace_days_remaining` is null, the sub-label and the days-left sentence are omitted; there is no fallback to `days_in_state`.)*
 - Body: "Your grace period ends in {grace_days_remaining} day(s). Review your original thesis before the window closes." (v9.10, ST-12: days-left basis changed from `10 − days_in_state` to the calendar-day `grace_days_remaining`; the word "trading" is removed.)
-  - When `days_in_state = 10`: "Grace period has ended. Your position will transition to LOSING or PROFITABLE on next refresh."
+  - When `grace_days_remaining = 0` *(v2.15 — ST-14; was `days_in_state = 10`)*: "Grace period has ended. Your position will transition to LOSING or PROFITABLE on next refresh."
 - Trade plan context block (when `trade_plan_id` present): Thesis (first 120 chars), Entry zone, Stop, R-target
 - "View Trade Plan →" text link (when `trade_plan_id` present)
 
@@ -602,7 +604,7 @@ Tooltip structure, `aria-label` pattern, colour, stacking and clearing are uncha
 
 **Mark Reviewed action:** Small inline checkmark icon-button next to the text (not a full Actions-column button). Click → `PATCH /positions/{id}/mark-reviewed` (sets `last_reviewed_at = now()` server-side) → text resets to "Reviewed 0d ago", flagged state clears immediately (optimistic update). No confirmation modal.
 
-**Suppression rule (AC-04):** The flagged/amber state does not fire when the position is already surfaced by the Grace Period Alert Zone (`position_state = 'GRACE'` AND `days_in_state ≥ 8`) or the Drawdown Review Prompt (position included in the portfolio-level drawdown banner's position count). The "Last Reviewed" text still renders in both cases (informational); only the amber/flagged styling is suppressed. `days_since_review` continues counting underneath — if the position later exits GRACE/drawdown scope while still stale, the flag can fire on the next refresh.
+**Suppression rule (AC-04):** The flagged/amber state does not fire when the position is already surfaced by the Grace Period Alert Zone (`position_state = 'GRACE'` AND `grace_days_remaining ≤ 2` — the same predicate as the Alert Zone trigger, v2.15 ST-14) or the Drawdown Review Prompt (position included in the portfolio-level drawdown banner's position count). The "Last Reviewed" text still renders in both cases (informational); only the amber/flagged styling is suppressed. `days_since_review` continues counting underneath — if the position later exits GRACE/drawdown scope while still stale, the flag can fire on the next refresh.
 
 **§13 constraint:** Display-only. No automated action beyond timestamp update on explicit user click.
 
