@@ -876,23 +876,25 @@
         "ST-23": {
           "title": "Cost estimate for the AI monthly P&L narrative",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1947,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "4dd2f672a52dc0d3a6e9a325d9fe0b27e060162d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:44:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/ai_monthly_pnl_narrative_cost_estimate_2026-10-08.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC: cost estimate produced before ST-25 is built (docs/ops/ai_monthly_pnl_narrative_cost_estimate_2026-10-08.md). Deviation check: none (Case B doc artefact)."
         },
         "ST-24": {
           "title": "Define the AI chat engagement metric set",

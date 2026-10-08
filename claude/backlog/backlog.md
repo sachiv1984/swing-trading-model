@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior — 2026-10-07 (session — 3 new item(s) added: BLG-BE-152, BLG-FE-205, BLG-GOV-378 from debrief production testing; BLG-BE-150 progress note); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-08 (session — 2 new item(s) added: BLG-FE-208, BLG-GOV-382, from ST-24/ST-28, EPIC-04, v9.11); prior — 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5124,5 +5124,50 @@ When the live price fetch fails, `portfolio_service.py` (lines ~118-124) treats 
 - The appendix exists with a Class 6 header and is registered in OPERATIONAL_GUIDE.md §13 and §14.
 - No mandatory STEP is moved out of the core (every STEP heading in the pre-split file is either still in the core or reached by an explicit pointer from it).
 - `governance-drift` reports all versions in sync.
+
+---
+
+### BLG-FE-208 — Add a useful / not-useful rating to each AI chat answer
+**Priority:** P3 (Low)
+**Type:** Frontend / UX — AI Advisory Measurement
+**Owner:** Metrics Definitions & Analytics Owner; Frontend Specifications & UX Documentation Owner
+**Source:** ST-24 (BLG-FEAT-60), EPIC-04, cycle `2026-10-08__release-v9.11` — out-of-scope finding while defining the AI chat engagement metrics — 2026-10-08
+**Effort:** S (~0.5d plus a live migration if a new column or table is needed)
+**Provisional-Target:** TBD
+
+**Problem**
+`metrics_definitions.md` § AI Chat Engagement (v1.27.0) defines a Response Acceptance Rate: chat answers rated useful ÷ chat answers rated. The chat widget has no rating control and nothing stores a rating, so the measure is "not instrumented" and the 2027-01-03 AI feature usage review cannot report it.
+
+**Scope**
+- Add a useful / not-useful control to each AI chat answer, following the trade-plan thesis feedback pattern (DS-09 `thesis_feedback`)
+- Store each rating against the answer it rates (for example, a row keyed to the `claude_audit_log` call), with a `data_model.md` DS entry and live migration
+- Document the query that computes the rate in `metrics_definitions.md` § AI Chat Engagement and drop its "not instrumented" status
+
+**Acceptance Criteria**
+- A user can rate each chat answer once, and the rating persists (Playwright + unit test)
+- The Response Acceptance Rate query returns a value from stored ratings, and `null` when none exist
+
+---
+
+### BLG-GOV-382 — Run the 2027-01-03 AI feature usage review
+**Priority:** P3 (Low)
+**Type:** Governance Process — AI Feature Review Cadence
+**Owner:** Metrics Definitions & Analytics Owner; Product Owner
+**Source:** ST-28 (BLG-GOV-366), EPIC-04, cycle `2026-10-08__release-v9.11` — new gated tracking item; `BLG-FEAT-60` is not edited — 2026-10-08
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Gate criteria:** AI feature usage review due 2027-01-03 (90 days after the 2026-10-05 baseline review, `docs/ops/ai_feature_usage_review_2026-09-24.md`). Not actionable before that date.
+
+**Problem**
+The 2026-10-05 review found 31 AI calls in 102 days, and the Product Owner chose to build more AI features to try to raise engagement. v9.11 adds the first of them (the monthly P&L narrative, ST-25) and defines the measures to judge it (ST-24 AI chat engagement, ST-26 narrative usage count). Nothing schedules the follow-up review, so it would surface only when someone happens to notice the date.
+
+**Scope**
+- On or after 2027-01-03, query production `claude_audit_log` read-only for the period since 2026-10-05
+- Report the AI chat engagement measures (`metrics_definitions.md` § AI Chat Engagement: sessions per week, questions per session, response acceptance rate if `BLG-FE-208` has shipped) and the monthly P&L narrative usage count (ST-26), each against the 2026-09-24 review baseline
+- File the review as `docs/ops/ai_feature_usage_review_2027-01-03.md` and record a Product Owner decision on further AI investment
+
+**Acceptance Criteria**
+- The review artefact exists with the measures above, compared with the baseline
+- A dated Product Owner decision on further AI investment is recorded in it
 
 ---

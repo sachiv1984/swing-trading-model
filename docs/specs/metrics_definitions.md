@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.26.0
-**Last Updated:** 2026-09-30 (ST-31, EPIC-06, v9.8, BLG-GOV-339 — added Appendix F's PVR Measurement Package: Effort-Weighted PVR (backfilled + cross-validated for the last 5 windows), User-Protective/Hygiene D-Split definition, and Leading U-Pool Indicator definition; roadmap_prompt.md STEP 2.4/§7.1 unchanged, per BLG-GOV-339's own proposal-only restriction); prior — 2026-09-30 (ST-32, EPIC-06, v9.8, BLG-GOV-340 — added Appendix F's Delivery Lead Time by Priority Band and Ready-Pool Runway Forecast metric definitions, backfilled for the last 5 shipped cycles); prior — 2026-09-24 (ST-19, EPIC-05, v9.7, BLG-GOV-327 — added Appendix F's Quarterly Governance Overhead Ratio metric definition and first baseline reading); prior history retained — see prior entries in version control
+**Version:** 1.27.0
+**Last Updated:** 2026-10-08 (ST-24, EPIC-04, v9.11, BLG-FEAT-60 — added AI Chat Engagement: sessions per week, questions per session, response acceptance rate); prior — 2026-09-30 (ST-31, EPIC-06, v9.8, BLG-GOV-339 — added Appendix F's PVR Measurement Package: Effort-Weighted PVR (backfilled + cross-validated for the last 5 windows), User-Protective/Hygiene D-Split definition, and Leading U-Pool Indicator definition; roadmap_prompt.md STEP 2.4/§7.1 unchanged, per BLG-GOV-339's own proposal-only restriction); prior — 2026-09-30 (ST-32, EPIC-06, v9.8, BLG-GOV-340 — added Appendix F's Delivery Lead Time by Priority Band and Ready-Pool Runway Forecast metric definitions, backfilled for the last 5 shipped cycles); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1136,6 +1136,89 @@ The rate itself is bounded by construction (`0.0`–`1.0`, or `null` per the Ret
 
 ---
 
+## AI Chat Engagement
+
+**Added:** v1.27.0 — ST-24 (EPIC-04, v9.11, BLG-FEAT-60)
+
+Three measures of how much the AI chat advisor (`POST /ai/chat`) is used and whether its answers are useful. They are defined before the first new AI feature of v9.11 (the monthly P&L narrative, ST-25) ships, so that feature's effect on engagement can be read against the 2026-09-24 usage review baseline (`docs/ops/ai_feature_usage_review_2026-09-24.md`; sequencing per `BLG-GOV-366`).
+
+### Data Source
+
+`claude_audit_log` rows with `endpoint = 'POST /ai/chat'` (one row per question, written by `ai_service.ai_chat`). From v9.11 (ST-06, DS-27) a model call that fails after retries also writes a row, with `compliance_check_result = 'model_call_failed'`. A failed call still counts as a question asked; it never counts as an accepted response. The chat is stateless and single-user (no per-user column), so the measures are portfolio-wide.
+
+### Chat Session (building block)
+
+A **session** is a run of chat questions where each question follows the previous one by **30 minutes or less**. A gap of more than 30 minutes starts a new session. A session belongs to the ISO week (Monday 00:00 UTC) in which its first question was asked.
+
+```sql
+WITH q AS (
+  SELECT generated_at,
+         CASE WHEN generated_at - LAG(generated_at) OVER (ORDER BY generated_at) <= INTERVAL '30 minutes'
+              THEN 0 ELSE 1 END AS new_session
+  FROM claude_audit_log
+  WHERE endpoint = 'POST /ai/chat'
+), s AS (
+  SELECT generated_at, SUM(new_session) OVER (ORDER BY generated_at) AS session_id FROM q
+)
+SELECT session_id, MIN(generated_at) AS started_at, COUNT(*) AS questions
+FROM s GROUP BY session_id;
+```
+
+The 30-minute gap is the conventional web-analytics session timeout. It is a definition, not a measured property of this app. Revisit it if most sessions turn out to be single questions separated by just over 30 minutes.
+
+### 1. Chat Sessions per Week
+
+```
+chat_sessions_per_week = COUNT(sessions started in the ISO week)
+```
+
+Reported per week, and as a trailing 4-week mean. Returns `0` (not `null`) for a week with no questions.
+
+### 2. Questions per Session
+
+```
+questions_per_session = COUNT(questions in sessions started in the window) / COUNT(sessions started in the window)
+```
+
+Reported as the mean and the median over a trailing 4-week window. Returns `null` when the window has no sessions.
+
+### 3. Response Acceptance Rate
+
+```
+response_acceptance_rate = COUNT(chat responses the user marked useful)
+                           / COUNT(chat responses the user rated)
+```
+
+- **Numerator:** successful chat responses (not `model_call_failed`) rated "useful".
+- **Denominator:** successful chat responses rated "useful" or "not useful". Unrated responses are excluded, the same convention as the trade-plan thesis feedback (`trade_plans.thesis_feedback`, DS-09).
+- **Returns:** `null` when no response has been rated.
+
+**Instrumentation status: not yet measurable.** The chat widget has no per-response rating control and nothing stores one, so this measure has no data today. It needs a useful / not-useful control on each chat answer and a place to store it, following the DS-09 `thesis_feedback` pattern. That is filed as a backlog item (see Appendix E). Until it ships, report this measure as "not instrumented", never as 0.
+
+### Baseline (from the 2026-09-24 usage review)
+
+| Measure | Baseline, 2026-06-25 to 2026-10-05 (102 days) | Basis |
+|---|---|---|
+| Chat sessions per week | ≈ 0.2 (at most 3 sessions in 14.6 weeks) | 10 chat calls on 3 active days. Per-call timestamps were not in the review's output, so 1 session per active day is assumed; the true count is between 3 and 10 |
+| Questions per session | ≈ 3.3 (10 questions / 3 sessions) | Same assumption. 1.0 if every question was its own session |
+| Response acceptance rate | Not instrumented | No rating control existed |
+
+The next real reading is due at the 2027-01-03 AI feature usage review (tracked by ST-28).
+
+### Validation Tolerances
+
+| Condition | Bound | Interpretation |
+|---|---|---|
+| Insufficient sample | Fewer than 5 sessions in the 4-week window | Report "insufficient data" for questions per session; do not compare with the baseline |
+| Stale capture | No `POST /ai/chat` row for more than 30 days while the endpoint is deployed | Either no use (the 2026-09-24 pattern) or audit logging is broken. Check `create_claude_audit_entry` warnings before reading it as zero use |
+| Acceptance rate sample | Fewer than 10 rated responses | Report "insufficient data" |
+
+### Sign-off
+
+- **Metrics Definitions & Analytics Owner:** defined at ST-24 (v9.11). Review against the first quarter of real data at the 2027-01-03 review.
+
+---
+
 ## Realized / Unrealized P&L Split
 
 **Added:** v1.16.0 — ST-06 (EPIC-03, v7.1, BLG-SPEC-83)
@@ -1258,6 +1341,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-10-08 | 1.27.0 | ST-24 (EPIC-04, v9.11, BLG-FEAT-60): Added AI Chat Engagement — chat session (30-minute gap) and three measures: sessions per week, questions per session, response acceptance rate (not yet instrumented; rating control filed as a backlog item). Baseline from the 2026-09-24 usage review. | Metrics Definitions & Analytics Owner |
 | 2026-09-30 | 1.26.0 | ST-31 (EPIC-06, v9.8, BLG-GOV-339): Added the PVR Measurement Package to Appendix F — (1) Effort-Weighted PVR, backfilled and cross-validated against `product_value_ratio_history.md`'s recorded counts for the last 5 windows (v7.5–v9.7), via new `scripts/compute_effort_weighted_pvr.py`; the two ratios diverge meaningfully in places (e.g. `v9.1–v9.5`: 0.046 story-count vs 0.021 effort-weighted, since that window's U-items ran disproportionately small); (2) a definitions-only user-protective vs. hygiene split of the `D` bucket, forward-looking, no historical re-tag; (3) a definitions-only "ungated build-and-ship U-pool" leading indicator, to be first computed at the next rebalance. `roadmap_prompt.md` STEP 2.4/§7.1 unchanged — `BLG-GOV-339`'s own scope note restricts any live tagging/computation change there to proposal-only pending Head of Specs Team + Product Owner sign-off. Metrics Definitions & Analytics Canonical Owner sign-off cleared 2026-09-30. | Metrics Definitions & Analytics Canonical Owner |
 | 2026-09-30 | 1.25.0 | ST-32 (EPIC-06, v9.8, BLG-GOV-340): Added two delivery-flow metrics to Appendix F — Delivery Lead Time by Priority Band (median filed→shipped days, from `backlog_archive.md`'s `**Source:**`/`**Retired:**` fields, with an honest 2-tier filed-date convention and a 3-item disclosed exclusion) and Ready-Pool Runway Forecast ("cycles until empty", rolling-3-cycle trailing net-change average against §7.3's existing leftover-pool figures). Both backfilled for the last 5 shipped cycles (v9.3–v9.7); 4 of the 5 runway readings report "N/A — pool growing" rather than a fabricated cycle-count, with the first finite reading (~4.0 cycles) at v9.7. Metrics Definitions & Analytics Canonical Owner sign-off cleared 2026-09-30. | Metrics Definitions & Analytics Canonical Owner |
 | 2026-09-24 | 1.24.0 | ST-19 (EPIC-05, v9.7, BLG-GOV-327): Added the Quarterly Governance Overhead Ratio metric to Appendix F — governance-side wall-clock time ÷ total wall-clock time, per `shared_standards.md` §22's logging convention. First baseline reading recorded as "not yet meaningfully computable" (3 governance-side readings totaling 1h53m42s found; 0 shipped-side/Sprint Execution readings exist yet, since only `roadmap_prompt.md` is currently wired to capture Session start/end) rather than a fabricated ratio. Metrics Definitions & Analytics Canonical Owner sign-off cleared 2026-09-24. | Metrics Definitions & Analytics Canonical Owner |
