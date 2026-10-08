@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.37
-**Date:** 2026-09-25
+**Version:** 2.38
+**Date:** 2026-10-08
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration; ST-09 (v9.4 EPIC-03, BLG-OPS-151) — POST /ai/check-endpoint-anomalies registration; ST-09/ST-06 (v9.5 EPIC-02, BLG-OPS-156/BLG-OPS-153) — GET /positions/{id}, GET /ai/spend-trend-by-feature registration; ST-01b (v9.7 EPIC-01, BLG-FEAT-74) — POST /replay/run registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -2108,10 +2108,38 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 47. GET /market/regime (ST-19, EPIC-03, v9.11, BLG-BE-140)
+
+**Date:** 2026-10-08
+**Story:** ST-19 (EPIC-03, v9.11, BLG-BE-140) — registered before the EPIC's PR opens, per the API Performance Baseline Drift Detection CI gate.
+
+### 47.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /market/regime | v9.11 | Read — pending live timing run | 5–30ms (est., cache hit) | 1,500–4,000ms (est., cache miss) | Pending next baseline re-run |
+
+**Estimation methodology:** the endpoint only calls `check_market_regime()`, which is cached for 5 minutes (BLG-BE-25), and does no database or FX work. A cache hit returns in-process. A cache miss performs the same two Yahoo Finance 200-day history fetches (SPY, ^FTSE, with retry) as `GET /market/status`, so its p95 is estimated from that endpoint's network-bound profile. This replaces the Dashboard's previous use of `GET /positions/analyze` for regime, which also fetched prices and ATR for every open position.
+
+### 47.2 Sign-Off
+
+```
+ST-19 (v9.11 EPIC-03, BLG-BE-140) — Baseline Registration
+
+AC: api_performance_baseline.md has a row for GET /market/regime. PASS (§47.1)
+Registered before PR open, per the API Performance Baseline Drift Detection CI gate. PASS
+Estimation methodology documented; no live timing run in this execution environment.
+
+Registered by: Sprint Execution Engine — 2026-10-08. Infrastructure & Operations Owner review pending (next baseline re-run).
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.38 | 2026-10-08 | Sprint Execution Engine | ST-19 (v9.11 EPIC-03, BLG-BE-140): §47 added — GET /market/regime registered pending live timing run (cache-hit and cache-miss estimates). Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the `/market/regime` path in the same commit. |
 | 2.37 | 2026-09-25 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-01b (v9.7 EPIC-01, BLG-FEAT-74): §46 added — POST /replay/run registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained this path in the same PR. |
 | 2.36 | 2026-09-16 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner + FinOps & Resource Architect roles — §5.3) | ST-09 (v9.5 EPIC-02, BLG-OPS-156) / ST-06 (v9.5 EPIC-02, BLG-OPS-153): §45 added — `GET /positions/{id}` registered (closes the `KNOWN_GAPS`-grandfathered gap open since v6.8; removed from `scripts/check_api_performance_baseline_drift.py`'s `KNOWN_GAPS` in the same commit) and `GET /ai/spend-trend-by-feature` registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the latter path in the same PR. |
 | 2.35 | 2026-09-14 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-09 (v9.4 EPIC-03, BLG-OPS-151): §44 added — POST /ai/check-endpoint-anomalies registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained this path in the same PR. |

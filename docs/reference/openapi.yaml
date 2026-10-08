@@ -2,7 +2,8 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.22.0
+  version: 3.25.0
+  # v3.25.0 (2026-10-08, ST-19, EPIC-03, v9.11): new GET /market/regime (BLG-BE-140).
   # v3.22.0 (2026-10-07, ST-13/ST-14, EPIC-03, v9.10): GET /positions/{position_id}/gap-risk
   # reasons enum drops weekend_hold (BLG-BE-136). No new endpoint.
   # v3.21.0 (2026-10-07, ST-11, EPIC-03, v9.10): lifecycle_reason enum drops
@@ -3980,6 +3981,34 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/OkMarketStatus"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /market/regime:
+    get:
+      tags: [Market]
+      summary: Get read-only market regime
+      description: |
+        v9.11 ST-19 (BLG-BE-140). US/UK risk-on/risk-off for display, from the cached
+        check_market_regime() result. No position analysis, no writes, no FX call.
+        Canonical contract: docs/specs/api_contracts/market_endpoints.md v0.2
+      responses:
+        "200":
+          description: Market regime retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, enum: [ok] }
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        market: { type: string, enum: [US, UK] }
+                        status: { type: string, enum: [risk_on, risk_off] }
+                  as_of: { type: string, format: date-time, nullable: true }
         "500":
           $ref: "#/components/responses/InternalError"
 

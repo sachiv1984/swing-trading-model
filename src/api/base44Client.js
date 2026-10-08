@@ -311,14 +311,12 @@ export const base44 = {
     },
     MarketRegime: {
       list: async () => {
+        // ST-19 (BLG-BE-140, v9.11): read-only GET /market/regime. This used to
+        // call /positions/analyze, which fetches prices and ATR for every open
+        // position and writes stops, so viewing the regime could move a stop.
         try {
-          const analysis = await api.positions.analyze();
-          if (analysis && analysis.market_regime) {
-            return [
-              { market: 'US', status: analysis.market_regime.spy_risk_on ? 'risk_on' : 'risk_off' },
-              { market: 'UK', status: analysis.market_regime.ftse_risk_on ? 'risk_on' : 'risk_off' },
-            ];
-          }
+          const regimes = await api.market.getRegime();
+          if (Array.isArray(regimes) && regimes.length) return regimes;
         } catch (e) {
           console.error('Failed to get market regime', e);
         }
@@ -480,6 +478,8 @@ export const api = {
 
   market: {
     getStatus: async () => doFetch('/market/status'),
+    // ST-19 (BLG-BE-140, v9.11): read-only regime, no position analysis.
+    getRegime: async () => doFetch('/market/regime'),
   },
 
   signals: {

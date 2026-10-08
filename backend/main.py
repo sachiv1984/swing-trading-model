@@ -1163,6 +1163,36 @@ def generate_signals_endpoint(
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="Internal server error")
 
+@app.get("/market/regime")
+def get_market_regime():
+    """
+    GET /market/regime (ST-19, BLG-BE-140, EPIC-03, v9.11)
+
+    Read-only US/UK market regime for display (Dashboard regime widgets).
+    The frontend previously read regime from GET /positions/analyze, which
+    fetches live prices and ATR for every open position and writes stops, so
+    simply viewing the regime could move a stop. This endpoint only reads
+    check_market_regime()'s cached result (5-minute cache, the same source
+    /positions/analyze and /market/status use): no position read, no write,
+    no FX call. Contract: docs/specs/api_contracts/market_endpoints.md.
+    """
+    try:
+        regime = check_market_regime()
+        as_of = regime.get("date")
+        return {
+            "status": "ok",
+            "data": [
+                {"market": "US", "status": "risk_on" if regime["spy_risk_on"] else "risk_off"},
+                {"market": "UK", "status": "risk_on" if regime["ftse_risk_on"] else "risk_off"},
+            ],
+            "as_of": as_of.isoformat() if hasattr(as_of, "isoformat") else as_of,
+        }
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
 @app.get("/market/status")
 def get_market_status():
     """

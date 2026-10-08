@@ -442,7 +442,10 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-03.md",
       "test_scenarios": [
-        "tests/test_post_grace_stop_health.py"
+        "tests/test_post_grace_stop_health.py",
+        "tests/test_market_regime_endpoint.py",
+        "tests/e2e/market-regime-readonly.spec.js",
+        "tests/e2e/system-status.spec.js"
       ],
       "stories": {
         "ST-16": {
@@ -492,23 +495,27 @@
         "ST-18": {
           "title": "Post-deploy synthetic check for post-grace stops and §11 multipliers",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1942,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "1d43460c8b75cc4f68465dfe2b3adafcd6c28b84",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:23:02Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_post_grace_stop_health.py",
+            ".github/workflows/post-deploy-stop-health.yml",
+            "tests/test_post_grace_stop_health.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC: tests/test_post_grace_stop_health.py fails the monitor on a non-§11 multiplier fixture and a missing post-grace stop fixture; workflow alerts via the existing Telegram path (asserted). Live Telegram receipt not named in the AC (sprint note). Deviation check: none."
         },
         "ST-19": {
           "title": "Read-only market-regime source, so viewing regime no longer runs the stop-writing analyze call",
@@ -1098,7 +1105,8 @@
     "ST-12",
     "ST-13",
     "ST-14",
-    "ST-15"
+    "ST-15",
+    "ST-18"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",
