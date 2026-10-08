@@ -31,8 +31,8 @@
     "debrief focus_area system (POST /trades/{id}/debrief)": {
       "file": "backend/services/debrief_service.py",
       "constant": "_FOCUS_AREA_SYSTEM",
-      "prompt_version": "v1.0",
-      "sha256": "c9f557e8c611a6015d45dc273020729c75b179248963967c1dd93d072a795899"
+      "prompt_version": "v1.1",
+      "sha256": "a00224225602523b7b6a08d5918a11db67cce78142fae6efc1d86202cb71864d"
     }
   }
 }

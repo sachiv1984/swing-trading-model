@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.5.3
-**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /trades); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to POST /trades/{trade_id}/reflection, PATCH /trades/{trade_id}/costs, POST /trades/{trade_id}/debrief); prior — 2026-08-21 (BLG-BE-108, ST-03, v9.0: clarified "linked journal entries" sourcing for POST/GET /trades/{trade_id}/debrief — resolves ESC-EXEC-20260821-01); prior history retained — see prior entries in version control.
+**Version:** 2.6.0
+**Last Updated:** 2026-10-08 (ST-01, EPIC-01, v9.11, BLG-BE-152 — debrief `summary_text` states R achieved vs target and the stop at exit; focus-area prompt receives code-derived figures; `prompt_version` v1.1); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /trades); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to POST /trades/{trade_id}/reflection, PATCH /trades/{trade_id}/costs, POST /trades/{trade_id}/debrief); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -433,11 +433,11 @@ Returns the existing AI-generated post-trade debrief for a closed trade, if one 
   "status": "ok",
   "data": {
     "available": true,
-    "summary_text": "Entered at 100.0, exited at 108.5. P&L: +8.50 (+8.50%). Exit reason: Target Reached. Held 12 day(s). Plan called for entry at 100.0, planned stop 95.0, R target 2.0",
-    "focus_area_text": "Your exit was 3 days earlier than the 15-day median holding period across your last 5 closed trades in this setup type.",
+    "summary_text": "Entered at the planned $926.80 and exited at $1,058.60 when the trailing stop (raised from $868.00 to $1,055.00) was hit after 16 days. Result: +2.24R against a 2.2R target (+£217.56, +15.80%). The plan set a stop at $868.00.",
+    "focus_area_text": "This trade exited at 2.24R when the trailing stop at 1055.00 was hit.",
     "generation_status": "ok",
     "model_version": "claude-haiku-4-5",
-    "prompt_version": "v1.0",
+    "prompt_version": "v1.1",
     "generated_at": "2026-08-20T09:00:00Z"
   }
 }
@@ -448,11 +448,11 @@ Returns the existing AI-generated post-trade debrief for a closed trade, if one 
 | Field | Type | Description |
 |-------|------|--------------|
 | available | boolean | Always true when a debrief exists (404 otherwise) |
-| summary_text | string | Deterministic, non-AI factual plan-vs-reality summary — computed from `trade_history`/`trade_plans`, never model-generated (§13 Condition 2) |
+| summary_text | string | Deterministic, non-AI factual plan-vs-reality summary — computed from `trade_history`/`trade_plans`/`positions`, never model-generated (§13 Condition 2). From v9.11 (ST-01, BLG-BE-152) it states, in plain language: entry and exit (prices in the market's currency, the entry price not repeated when it matched the plan), the stop at exit (`positions.current_stop`), a profitable stop-out described as a trailing stop raised from `positions.initial_stop`, R achieved against the plan's R target, and P&L in GBP. R achieved uses the canonical formula (exit − entry) / (entry − initial_stop), rounded to 2 dp; when the initial stop is missing or not below entry it is stated as not recorded |
 | focus_area_text | string \| null | The one AI-generated pattern-surfacing sentence, or null if omitted — see `generation_status` |
 | generation_status | string | `"ok"` (focus area present), `"fallback_no_focus_area"` (§13 Condition 9 compliance check failed twice — summary still shown), or `"ai_unavailable"` (no `ANTHROPIC_API_KEY`, or the `anthropic` package is absent, or a generation error occurred) |
 | model_version | string | Model used to generate `focus_area_text` |
-| prompt_version | string | Prompt template version |
+| prompt_version | string | Prompt template version. `v1.1` from v9.11 (ST-01): the focus-area prompt also receives holding days, the initial stop, the stop at exit, whether the exit was a trailing stop above entry, entry slippage vs plan, R achieved and R achieved minus target. Figures marked "(computed)" are derived in code and added to the Condition 9 numeric cross-check source values (AI Compliance & Governance Officer Condition 2 ruling, 2026-10-08). A number written as an R multiple must also equal R achieved, R target or their difference exactly; a value equal to another R figure is a known limitation of the value-only check |
 | generated_at | ISO 8601 datetime | When this debrief was last (re)generated |
 
 ### Errors

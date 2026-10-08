@@ -22,7 +22,10 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_debrief_service.py",
+        "tests/test_ai_prompt_template_golden_fixtures.py"
+      ],
       "stories": {
         "ST-01": {
           "title": "Give the post-trade debrief R achieved, the stop at exit and entry slippage",
@@ -37,11 +40,15 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/api_contracts/trade_endpoints.md#POST /trades/{trade_id}/debrief",
+            "docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md",
+            "tests/test_debrief_service.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": "condition2_signoff",
+          "last_completed_substep": "3.1.A.2",
           "sign_off_record": {
             "role": "AI Compliance & Governance Officer",
             "method": "agent_mediated",

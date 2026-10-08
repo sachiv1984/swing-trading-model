@@ -94,7 +94,8 @@ class TestBuildSummaryText:
         summary = _build_summary_text(trade, plan)
         assert "99.0" in summary
         assert "95.0" in summary
-        assert "2.0" in summary
+        # ST-01 (v9.11): the target is stated as an R multiple.
+        assert "2R target" in summary
 
 
 # ─── ST-04 (BLG-TECH-17, v9.0) — prompt no longer encourages unverifiable
@@ -299,3 +300,167 @@ class TestGenerateTradeDebriefSequencing:
     def test_unknown_trade_raises_value_error(self, mock_get_trade):
         with pytest.raises(ValueError):
             generate_trade_debrief("does-not-exist")
+
+
+# ─── ST-01 (BLG-BE-152, v9.11) — derived figures: R achieved, stop at exit,
+#     entry slippage. Condition 2 ruling (AI Compliance & Governance Officer,
+#     agent-mediated, 2026-10-08) binding conditions 1-8. ─────────────────
+
+from services.debrief_service import derive_trade_figures, r_value_check  # noqa: E402
+
+# The three 2026-10-07 production examples (BLG-BE-152 Problem section).
+_EX1_TRADE = {
+    "id": "t-ex1", "portfolio_id": "pf-1", "position_id": "pos-ex1", "ticker": "MU",
+    "market": "US", "entry_price": 926.80, "exit_price": 1058.60, "pnl": 217.56,
+    "pnl_pct": 15.80, "exit_reason": "Stop Loss Hit", "holding_days": 16,
+}
+_EX1_PLAN = {"planned_entry_price": 926.80, "planned_stop_price": 868.00, "r_target": 2.2, "status": "completed"}
+_EX1_POSITION = {"initial_stop": 868.00, "current_stop": 1055.00}
+
+_EX2_TRADE = {
+    "id": "t-ex2", "portfolio_id": "pf-1", "position_id": "pos-ex2", "ticker": "WDC",
+    "market": "US", "entry_price": 100.00, "exit_price": 108.64, "pnl": 64.10,
+    "pnl_pct": 8.64, "exit_reason": "Stop Loss Hit", "holding_days": 14,
+}
+_EX2_PLAN = {"planned_entry_price": 100.00, "planned_stop_price": 90.00, "r_target": 2.2, "status": "completed"}
+_EX2_POSITION = {"initial_stop": 90.00, "current_stop": 108.00}
+
+
+class TestDeriveTradeFigures:
+    def test_example_1_r_achieved_and_trailing_stop(self):
+        f = derive_trade_figures(_EX1_TRADE, _EX1_PLAN, _EX1_POSITION)
+        assert f["r_achieved"] == 2.24
+        assert f["r_vs_target"] == 0.04
+        assert f["stop_at_exit"] == 1055.00
+        assert f["trailing_stop_exit"] is True
+        assert f["entry_slippage_pct"] == 0.0
+
+    def test_example_2_r_achieved_below_target(self):
+        f = derive_trade_figures(_EX2_TRADE, _EX2_PLAN, _EX2_POSITION)
+        assert f["r_achieved"] == 0.86
+        assert f["r_vs_target"] == -1.34
+
+    def test_missing_initial_stop_leaves_r_not_computed(self):
+        # Binding condition 2: no R when entry - initial_stop is unavailable.
+        f = derive_trade_figures(_EX1_TRADE, _EX1_PLAN, None)
+        assert f["r_achieved"] is None and f["r_vs_target"] is None
+
+    def test_stop_at_or_above_entry_as_initial_stop_leaves_r_not_computed(self):
+        f = derive_trade_figures(_EX1_TRADE, _EX1_PLAN, {"initial_stop": 926.80, "current_stop": 1000.0})
+        assert f["r_achieved"] is None
+
+    def test_losing_stop_out_is_not_a_trailing_stop(self):
+        trade = dict(_EX2_TRADE, exit_price=90.0, pnl=-100.0, pnl_pct=-10.0)
+        f = derive_trade_figures(trade, _EX2_PLAN, {"initial_stop": 90.0, "current_stop": 90.0})
+        assert f["trailing_stop_exit"] is False
+        assert f["r_achieved"] == -1.0
+
+    def test_entry_slippage_against_plan(self):
+        trade = dict(_EX2_TRADE, entry_price=101.0)
+        f = derive_trade_figures(trade, _EX2_PLAN, _EX2_POSITION)
+        assert f["entry_slippage_pct"] == 1.0
+
+
+class TestSummaryStatesRAndStopAtExit:
+    def test_example_1_states_r_vs_target_and_trailing_stop(self):
+        f = derive_trade_figures(_EX1_TRADE, _EX1_PLAN, _EX1_POSITION)
+        summary = _build_summary_text(_EX1_TRADE, _EX1_PLAN, f)
+        assert "+2.24R against a 2.2R target" in summary
+        assert "trailing stop (raised from $868.00 to $1,055.00) was hit" in summary
+        assert "Entered at the planned $926.80" in summary
+        # The entry price is not repeated when it matched the plan.
+        assert summary.count("926.80") == 1
+        assert "+£217.56" in summary and "+15.80%" in summary
+        assert "after 16 days" in summary
+
+    def test_example_2_states_r_below_target(self):
+        f = derive_trade_figures(_EX2_TRADE, _EX2_PLAN, _EX2_POSITION)
+        summary = _build_summary_text(_EX2_TRADE, _EX2_PLAN, f)
+        assert "+0.86R against a 2.2R target" in summary
+        assert "trailing stop" in summary
+
+    def test_example_3_profitable_stop_loss_hit_is_described_as_trailing_stop(self):
+        f = derive_trade_figures(_EX1_TRADE, _EX1_PLAN, _EX1_POSITION)
+        summary = _build_summary_text(_EX1_TRADE, _EX1_PLAN, f)
+        assert "trailing stop" in summary
+        assert "contradict" not in summary.lower()
+
+    def test_r_not_recorded_is_stated_when_initial_stop_missing(self):
+        f = derive_trade_figures(_EX1_TRADE, _EX1_PLAN, None)
+        summary = _build_summary_text(_EX1_TRADE, _EX1_PLAN, f)
+        assert "R achieved is not recorded" in summary
+        assert "R against" not in summary
+
+
+class TestNumericCheckAcceptsDerivedR:
+    _SOURCE = {
+        "entry_price": 926.80, "exit_price": 1058.60, "pnl": 217.56, "pnl_pct": 15.80,
+        "holding_days": 16, "planned_entry_price": 926.80, "planned_stop_price": 868.00,
+        "r_target": 2.2, "initial_stop": 868.00, "stop_at_exit": 1055.00,
+        "r_achieved": 2.24, "r_vs_target": 0.04, "entry_slippage_pct": 0.0,
+    }
+
+    def test_focus_area_citing_r_achieved_passes(self):
+        text = "This trade exited at 2.24R against a 2.2R target when the trailing stop at 1055.00 was hit."
+        assert numeric_cross_check(text, self._SOURCE)
+        assert r_value_check(text, self._SOURCE)
+
+    def test_fabricated_r_value_still_fails(self):
+        # Binding condition 4.
+        text = "This trade exited at 2.5R."
+        assert not (numeric_cross_check(text, self._SOURCE) and r_value_check(text, self._SOURCE))
+
+    def test_coarse_rounding_of_r_fails_r_check(self):
+        # Binding condition 8: "2R" would pass the value-only check via the
+        # 0 dp rounding of 2.24, but an R multiple must match exactly.
+        text = "This trade exited at 2R."
+        assert numeric_cross_check(text, self._SOURCE)
+        assert not r_value_check(text, self._SOURCE)
+
+    def test_known_limitation_r_equal_to_target_value_passes(self):
+        # Binding condition 8, recorded known limitation: the check compares
+        # values, so "achieved 2.2R" passes because 2.2 is the target.
+        assert r_value_check("This trade achieved 2.2R.", self._SOURCE)
+
+
+class TestPromptIncludesTrailingStopContext:
+    @patch("services.debrief_service.create_claude_audit_entry")
+    @patch("services.debrief_service.create_trade_debrief")
+    @patch("services.debrief_service.get_red_flag_events", return_value={"items": []})
+    @patch("services.debrief_service.get_position_by_id")
+    @patch("services.debrief_service.get_trade_plans_by_position")
+    @patch("services.debrief_service.get_trade_by_id")
+    @patch("services.debrief_service.ANTHROPIC_API_KEY", "fake-key")
+    def test_profitable_stop_loss_hit_prompt_includes_trailing_stop_at_exit(
+        self, mock_get_trade, mock_get_plans, mock_get_position, mock_red_flags, mock_create_debrief, mock_audit
+    ):
+        mock_get_trade.return_value = dict(_EX1_TRADE)
+        mock_get_plans.return_value = [dict(_EX1_PLAN)]
+        mock_get_position.return_value = dict(_EX1_POSITION)
+        mock_create_debrief.return_value = {
+            "summary_text": "x", "focus_area_text": "y", "generation_status": "ok",
+            "model_version": "m", "prompt_version": "v1.1", "generated_at": None,
+        }
+        captured = {}
+
+        def fake_call(system, user, *a, **k):
+            captured["system"], captured["user"] = system, user
+            return ("This trade exited at 2.24R when the trailing stop at 1055.00 was hit.",
+                    MagicMock(input_tokens=1, output_tokens=1))
+
+        with patch("services.debrief_service._call_claude", side_effect=fake_call):
+            generate_trade_debrief("t-ex1")
+
+        user = captured["user"]
+        assert "Exit reason: Stop Loss Hit" in user
+        assert "Stop at exit: 1055.0" in user
+        assert "Initial stop: 868.0" in user
+        assert "Exit was a trailing stop above entry (computed): yes" in user
+        assert "R achieved (computed): 2.24" in user
+        assert "Holding days: 16" in user
+        assert "trailing stop that locked in a profit" in captured["system"]
+        # The position read is read-only (binding condition 6) and the
+        # derived R reaches the persisted debrief's compliance outcome.
+        mock_get_position.assert_called_once_with("pos-ex1")
+        assert mock_audit.call_args.kwargs["compliance_check_result"] == "pass"
+        assert mock_audit.call_args.kwargs["prompt_version"] == "v1.1"
