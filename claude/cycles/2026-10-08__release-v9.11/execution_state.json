@@ -30,16 +30,16 @@
         "ST-01": {
           "title": "Give the post-trade debrief R achieved, the stop at exit and entry slippage",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "Backend Engineering Patterns Owner; AI Compliance & Governance Officer",
           "github_issue": 1925,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8ef4c07bd7e9ce86e40b27b04b515b818684dafc",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-08T11:06:25Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/trade_endpoints.md#POST /trades/{trade_id}/debrief",
             "docs/product/decisions/decisions--2026-08-17__release-v8.9--ST-06-section13-review.md",
@@ -47,8 +47,8 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.2",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": {
             "role": "AI Compliance & Governance Officer",
             "method": "agent_mediated",
@@ -56,7 +56,7 @@
             "cleared_utc": "2026-10-08T11:03:10Z",
             "notes": "Condition 2 interpretation approved: figures derived deterministically in code from recorded trade data, passed into the prompt as labelled values and added to source_values, are 'sourced verbatim'. Binding conditions: (1) one rounded value (R to 2 dp) used in both prompt and source_values; (2) no R when entry-initial_stop missing/<=0 -> 'not recorded', excluded from source_values; (3) derived inputs labelled '(computed)'; (4) test with fabricated R (e.g. 2.5R) still fails; (5) Condition 1 prescriptive scan unchanged; (6) positions read-only; (7) PROMPT_VERSION bump logged to claude_audit_log; (8) collision test: 'achieved 2.2R' vs actual 2.24 with target 2.2, or record as known limitation. Evidence cited: debrief_service.py lines 54, 108-133, 155, 314, 330; section13 review lines 160, 174-177."
           },
-          "notes": "Reclassified delegated_decision -> autonomous after the Condition 2 sub-step cleared (agent-mediated, §5.3)."
+          "notes": "Reclassified delegated_decision -> autonomous after the Condition 2 sub-step cleared (agent-mediated, §5.3). Done. AC1-AC3 by fixture tests (summary is deterministic, so CI covers AC1's summary wording for the three 2026-10-07 examples; live focus-area wording is model output). AC4 Condition 2 sign-off cleared (agent-mediated) and PROMPT_VERSION v1.1. Deviation check: none (contract updated in same commit)."
         },
         "ST-02": {
           "title": "Verify all six AI features after the PR #1921 import fix, and file the escaped-defect note",
@@ -1015,7 +1015,9 @@
   "delegated_items": [
     "ST-42"
   ],
-  "completed_items": [],
+  "completed_items": [
+    "ST-01"
+  ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",
     "ESC-EXEC-20261008-02",

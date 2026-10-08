@@ -20,6 +20,7 @@ from typing import Optional
 from fastapi import HTTPException
 
 from strategy_parameters import GRACE_PERIOD_DAYS
+from utils.ai_sampling import sample_ai_output
 from utils.upstream_call import anthropic_retryable_exceptions, bounded_upstream_call, get_timeout
 
 logger = logging.getLogger(__name__)
@@ -124,8 +125,7 @@ def summarise_journal_notes(
         )
         summary_text = response.content[0].text if response.content else None
         if summary_text:
-            from services.ai_output_sampling_service import maybe_sample_output
-            maybe_sample_output("journal-summary (POST /ai/journal-summary)", summary_text, model)
+            sample_ai_output("journal-summary (POST /ai/journal-summary)", summary_text, model)
         return {"summary": summary_text, "model": model, "message": None}
     except Exception as exc:
         logger.error("summarise_journal_notes failed: %s", exc, exc_info=True)
@@ -288,8 +288,7 @@ def generate_daily_briefing() -> dict:
 
         parsed = json.loads(content)
         if content and content != "{}":
-            from services.ai_output_sampling_service import maybe_sample_output
-            maybe_sample_output("daily-briefing (POST /ai/daily-briefing)", content, MODEL_BRIEFING)
+            sample_ai_output("daily-briefing (POST /ai/daily-briefing)", content, MODEL_BRIEFING)
         return {
             "summary": parsed.get("summary", ""),
             "actions": parsed.get("actions", []),
@@ -298,6 +297,9 @@ def generate_daily_briefing() -> dict:
             "model": MODEL_BRIEFING,
         }
     except Exception:
+        # ST-03 (BLG-BE-151, v9.11): log the cause before returning the
+        # fallback, so a failure is no longer hidden behind the generic text.
+        logger.error("generate_daily_briefing failed; returning fallback message", exc_info=True)
         return _briefing_error("AI briefing temporarily unavailable. Please try again.", now)
 
 
@@ -451,8 +453,9 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
             pass
 
         if content and content != "I was unable to generate a response.":
-            from services.ai_output_sampling_service import maybe_sample_output
-            maybe_sample_output("chat (POST /ai/chat)", content, MODEL_BRIEFING)
+            sample_ai_output("chat (POST /ai/chat)", content, MODEL_BRIEFING)
         return {"response": content, "advisory": True, "model": MODEL_BRIEFING}
     except Exception:
+        # ST-03 (BLG-BE-151, v9.11): log the cause before returning the fallback.
+        logger.error("ai_chat failed; returning fallback message", exc_info=True)
         return {"response": "Unable to get a response. Please try again.", "advisory": True}

@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.16
-**Last Updated:** 2026-10-01 (ST-33, EPIC-05, v9.9, BLG-SPEC-168 — corrected 4 citations of the `latency_ms` composition decision from `BLG-BE-128` to the correct `BLG-BE-129`; `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites), documentation only); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to all 5 POST endpoints in this file; flagged undefined double-submit alert-duplication behaviour on check-daily-cost/check-endpoint-anomalies as BLG-OPS-172/173); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 STEP 5.1 remediation — Known Deviations section corrected from stale "None at v1.10" to a proper `DEV-v9.7-ST13-01` entry for the already-disclosed BLG-BE-129 won't-fix; no normative change); prior history retained — see prior entries in version control
+**Version:** 1.17
+**Last Updated:** 2026-10-08 (ST-03, EPIC-01, v9.11, BLG-BE-151 — every AI call site reaches the sampling hook through `utils/ai_sampling.py::sample_ai_output()`, so a sampling failure, including at import, can no longer replace a generated response; daily briefing and chat log their fallback with `exc_info`); prior — 2026-10-01 (ST-33, EPIC-05, v9.9, BLG-SPEC-168 — corrected 4 citations of the `latency_ms` composition decision from `BLG-BE-128` to the correct `BLG-BE-129`; `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites), documentation only); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to all 5 POST endpoints in this file; flagged undefined double-submit alert-duplication behaviour on check-daily-cost/check-endpoint-anomalies as BLG-OPS-172/173); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -815,7 +815,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 **Purpose:** lets `scripts/run_ai_output_boundary_sample_audit.py` draw a genuine, non-illustrative sample of real AI-generated output text for §13.2 boundary-language auditing (`claude/strategy/strategy_rules.md`), rather than the hand-authored illustrative examples used for the Q3 2026 audit (`BLG-GOV-178`, `docs/ops/ai_output_boundary_sample_audit_20260910.md`).
 
-**Mechanism:** `backend/services/ai_output_sampling_service.py::maybe_sample_output(feature, output_text, model_version)` is called immediately after every successful generation call across all 5 real call sites this contract governs plus the two trade-plan generation endpoints (`gemini_service.py`):
+**Mechanism:** `backend/services/ai_output_sampling_service.py::maybe_sample_output(feature, output_text, model_version)` is reached, through the fail-safe wrapper `backend/utils/ai_sampling.py::sample_ai_output()` (v9.11), immediately after every successful generation call across all 5 real call sites this contract governs plus the two trade-plan generation endpoints (`gemini_service.py`):
 
 | Feature | Call site |
 |---------|-----------|
@@ -825,6 +825,8 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 | `POST /trades/{id}/debrief` (`focus_area_text` only — `summary_text` is template-built, not AI-generated) | `debrief_service.py::generate_trade_debrief()` |
 | `POST /trade-plans/generate-plan` (`setup_thesis`/`entry_rationale`/`early_exit_conditions`) | `gemini_service.py::generate_full_plan()` |
 | `POST /trade-plans/{plan_id}/generate-thesis` (legacy) | `gemini_service.py::generate_setup_thesis()` |
+
+**Failure isolation (ST-03, BLG-BE-151, v9.11):** sampling must never change an AI endpoint's response. Call sites do not import the sampling service themselves; `sample_ai_output()` imports it inside its own guard, and any failure (at import or inside the hook) is logged at WARNING with `exc_info` and returns `False`. Before v9.11 the import sat inside each endpoint's own `try`, so the PR #1921 import defect replaced good generated responses with the endpoint's generic fallback message, with nothing logged. `POST /ai/daily-briefing` and `POST /ai/chat` now also log the underlying exception (ERROR, `exc_info`) whenever they return their fallback message. Asserted per endpoint by `tests/test_ai_sampling_failsafe.py`.
 
 **Gating (AC 1–2):** default **off** — sampling only happens when `AI_OUTPUT_SAMPLING_ENABLED` is explicitly truthy. Even when enabled, only a bounded fraction (`AI_OUTPUT_SAMPLING_RATE`, default `0.1` = 10%, clamped to `[0, 1]`) of calls are actually written — this is not full-content logging of every response.
 
@@ -853,6 +855,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.17 | 2026-10-08 | ST-03 (EPIC-01, v9.11, BLG-BE-151): Sampling hook failure isolation — all 6 call sites go through `utils/ai_sampling.py::sample_ai_output()`, which guards the import and the call and logs failures with `exc_info`; daily briefing and chat log the exception behind their fallback message. No endpoint or response-shape change. |
 | 1.16 | 2026-10-01 | ST-33 (EPIC-05, v9.9, BLG-SPEC-168): Corrected 4 citations of the `latency_ms` composition decision (Implementation constraints note, Backlog reference line, this Changelog's own v1.14 row, and the header `Last Updated` chain) from `BLG-BE-128` to the correct `BLG-BE-129`. `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites not yet on the shared upstream helper) — its own legitimate references elsewhere are untouched. Documentation only; no code or behavioural change. |
 | 1.14 | 2026-09-24 | ST-13 (EPIC-03, v9.7, BLG-BE-129): Reviewed whether `latency_ms` (recorded around retried Anthropic calls in `ai_service.py`, `gemini_service.py`, `debrief_service.py`) should exclude retry backoff sleep time. Disposition: **won't fix, documented as intentional** — the combined figure (full retried-call duration, including backoff) is the more useful signal for this endpoint's anomaly-detection purpose, since retry-driven backoff growth is itself a symptom of upstream degradation. No code change; no `openapi.yaml` change. |
 | 1.13 | 2026-09-16 | ST-13 (EPIC-02, v9.5, BLG-OPS-161): `POST /ai/check-endpoint-anomalies` latency is now real-data — `claude_audit_log` gained a `latency_ms` column (populated by every `create_claude_audit_entry()` call site going forward), `latency_data_source` now reports `"claude_audit_log"` instead of `"not_available_pending_BLG-OPS-161"`. No `openapi.yaml` schema change (response shape unchanged, only field-value semantics). Infrastructure & Operations Owner sign-off. |

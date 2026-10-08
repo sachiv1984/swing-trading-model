@@ -48,6 +48,7 @@ from database import (
     create_claude_audit_entry,
 )
 from utils.formatting import decimal_to_float
+from utils.ai_sampling import sample_ai_output
 from utils.upstream_call import anthropic_retryable_exceptions, bounded_upstream_call, get_timeout
 
 MODEL_VERSION = "claude-haiku-4-5"
@@ -581,8 +582,7 @@ def generate_trade_debrief(trade_id: str) -> dict:
         )
 
     if focus_area_text:
-        from services.ai_output_sampling_service import maybe_sample_output
-        maybe_sample_output("debrief focus_area_text (POST /trades/{id}/debrief)", focus_area_text, MODEL_VERSION)
+        sample_ai_output("debrief focus_area_text (POST /trades/{id}/debrief)", focus_area_text, MODEL_VERSION)
 
     record = create_trade_debrief(trade_id, str(portfolio_id), {
         "summary_text": summary_text,
