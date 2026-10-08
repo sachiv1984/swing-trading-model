@@ -68,23 +68,26 @@
         "ST-02": {
           "title": "Verify all six AI features after the PR #1921 import fix, and file the escaped-defect note",
           "classification": "delegated_qa",
-          "status": "in_progress",
+          "status": "blocked_qa",
           "assigned_to": "AI Compliance & Governance Officer; Infrastructure & Operations Owner",
           "github_issue": 1926,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-01",
           "commit_sha": null,
           "delegation_record_id": "DEL-20261008-01",
-          "blocked_since_utc": null,
+          "blocked_since_utc": "2026-10-08T12:55:32Z",
           "unblock_criteria": "Dated six-feature staging run and sampling evidence recorded in qa_evidence_EPIC-01.md",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/testing/escaped_defect_note_ai_sampling_import_2026-10-08.md",
+            "docs/specs/api_contracts/ai_endpoints.md#AI Output Boundary-Language Sampling Hook (ST-23, BLG-AI-06, v9.4)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.C.3",
           "sign_off_record": null,
-          "notes": "Staging run delegated at sprint start (DEL-20261008-01); escaped-defect note is engine work after ST-03/ST-04."
+          "notes": "AC3 escaped-defect note filed (docs/testing/escaped_defect_note_ai_sampling_import_2026-10-08.md), citing ST-03, ST-04, BLG-QA-218. AC1/AC2 await the staging run (DEL-20261008-01)."
         },
         "ST-03": {
           "title": "Keep the AI-output sampling hook from breaking or hiding errors in AI responses",
@@ -138,23 +141,27 @@
         "ST-05": {
           "title": "Make the debrief Regenerate button recognisable, and show failures and the generated time",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1929,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "ac85987b222e818666effbf6173945ab5576a807",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T12:53:49Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_history.md#Post-Trade Debrief",
+            "docs/design/2026-10-08__release-v9.11/debrief-regenerate-feedback/decision_record.md",
+            "tests/e2e/trade-debrief.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1-AC3 Playwright SC-DBF-06a (dark+light), 07a, 08a in tests/e2e/trade-debrief.spec.js, all passing locally. ci_pending: 37780192461 (Playwright E2E run on ac85987b; STEP 3.2.A must confirm success before DoQ). Axe check scoped to the debrief section lives in trade-debrief.spec.js, not accessibility-axe-scan.spec.js (sprint note said shared; no conflict with ST-37). Deviation check: none."
         },
         "ST-06": {
           "title": "claude_audit_log: add prompt_hash and response_length, and log failed model calls",
@@ -1038,6 +1045,7 @@
     "ST-25"
   ],
   "delegated_items": [
+    "ST-02",
     "ST-06",
     "ST-42"
   ],
@@ -1045,6 +1053,7 @@
     "ST-01",
     "ST-03",
     "ST-04",
+    "ST-05",
     "ST-07",
     "ST-08",
     "ST-09"
