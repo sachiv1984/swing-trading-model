@@ -1,0 +1,88 @@
+name: Escalation SLA Reminder
+
+# [GOVERNANCE] AUD-2026-10-08-003 (v9.9 Phase 3 Friction Item 3, deferred to the
+# lifecycle audit). shared_standards.md §16.4.1's SLA-breach advisory only fires
+# when an engine is invoked, so a breach between sessions reaches no one. This
+# job reads .claude_current_state.json.open_escalations daily and keeps a single
+# `escalation-sla` issue open while any non-terminal escalation is past
+# sla_due_utc. Same idempotent open/update/close pattern as
+# audit-cadence-reminder.yml.
+
+on:
+  schedule:
+    - cron: '23 7 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check-escalation-sla:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure escalation-sla label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "escalation-sla" --color "d93f0b" \
+            --description "An open governance escalation is past its SLA" \
+            --repo "${{ github.repository }}" 2>/dev/null || true
+
+      - name: Reconcile the reminder issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          python3 - <<'PYEOF'
+          import json, os, subprocess
+          from datetime import datetime, timezone
+
+          TERMINAL = {"Resolved", "Closed", "Withdrawn"}
+          state = json.load(open(".claude_current_state.json"))
+          now = datetime.now(timezone.utc)
+          breached = []
+          for esc_id, esc in (state.get("open_escalations") or {}).items():
+              if esc.get("disposition") in TERMINAL:
+                  continue
+              due = esc.get("sla_due_utc")
+              if not due:
+                  continue
+              due_dt = datetime.fromisoformat(due.replace("Z", "+00:00"))
+              if due_dt < now:
+                  hours = int((now - due_dt).total_seconds() // 3600)
+                  breached.append(
+                      f"- `{esc_id}` — {esc.get('owning_authority', '?')} — "
+                      f"{hours}h past SLA ({due}) — {esc.get('summary', '')[:160]}"
+                  )
+
+          repo = os.environ["REPO"]
+          raw = subprocess.run(
+              ["gh", "issue", "list", "--repo", repo, "--label", "escalation-sla",
+               "--state", "open", "--json", "number", "--limit", "5"],
+              capture_output=True, text=True).stdout
+          existing = json.loads(raw) if raw.strip() else []
+
+          if breached:
+              body = ("Open governance escalations past `sla_due_utc` "
+                      f"(cycle `{state.get('active_cycle')}`):\n\n" + "\n".join(breached) +
+                      "\n\nResolve via the owning authority, or re-invoke the active engine. "
+                      "Maintained by .github/workflows/escalation-sla-reminder.yml; "
+                      "closes itself when no breach remains.")
+              if existing:
+                  subprocess.run(["gh", "issue", "comment", str(existing[0]["number"]),
+                                  "--repo", repo, "--body", body], check=False)
+              else:
+                  subprocess.run(["gh", "issue", "create", "--repo", repo,
+                                  "--title", f"[GOVERNANCE] {len(breached)} escalation(s) past SLA",
+                                  "--body", body, "--label", "escalation-sla"], check=False)
+          else:
+              print("No open escalation past SLA.")
+              for issue in existing:
+                  subprocess.run(["gh", "issue", "close", str(issue["number"]), "--repo", repo,
+                                  "--comment", "No open escalation is past SLA — closing."],
+                                 check=False)
+          PYEOF

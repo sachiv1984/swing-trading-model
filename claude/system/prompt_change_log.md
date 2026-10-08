@@ -1,11 +1,11 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-10-07
+**Version:** 1.1
+**Last Updated:** 2026-10-08 (AUD-2026-10-08-007 — header pins the insertion point: newest rows directly below the table header); prior — 2026-10-07; prior history retained — see prior entries in version control
 
 # Prompt Change Log
 
-This file records all changes to governance prompts (Class 6 documents) and related governance artefacts. Append-only.
+This file records all changes to governance prompts (Class 6 documents) and related governance artefacts. Append-only. **Insertion point (AUD-2026-10-08-007):** add new rows directly below the table header row (newest first). Rows below the newest-first block pre-date this rule and are ordered oldest-first. To find the latest row for a file, use the date-scan method in `shared_standards.md` §11.1, never file position.
 
 ---
 
@@ -13,6 +13,11 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-10-08 | `claude/system/prompt_change_log.md` | v1.0→v1.1 | AUD-2026-10-08-007: header pins the insertion point — new rows go directly below the table header (newest first); lower block is legacy oldest-first; use the `shared_standards.md` §11.1 date-scan, never file position. | Head of Specs Team (lifecycle audit AUD-2026-10-08; agent-mediated, user-directed) |
+| 2026-10-08 | `claude/system/OPERATIONAL_GUIDE.md` | v4.227→v4.228 | AUD-2026-10-08-005: §13 gains 9 artefact rows and the Roadmap Rebalance Prompt row drops its stale `(v9.10)`; §14 gains rows for 5 `claude/system/shared/*.md` modules. §10 source-prompt header and §14 rows updated for the 3 prompt bumps below; §14 self-row and Change Log row added. | Head of Specs Team (lifecycle audit AUD-2026-10-08; agent-mediated, user-directed) |
+| 2026-10-08 | `claude/system/lessons_learnt_prompt.md` | v1.15→v1.16 | AUD-2026-10-08-004: §3.7 row-completeness reconciliation for the prior cycle's Outstanding deferred patches table (carry, or disposition as Applied / Withdrawn / Folded into `<ID>`). | Head of Specs Team (lifecycle audit AUD-2026-10-08; agent-mediated, user-directed) |
+| 2026-10-08 | `claude/system/shared_standards.md` | v3.37→v3.38 | AUD-2026-10-08-002: §11 engine prompt size budget (68,500 bytes). AUD-2026-10-08-006: §13 dry-run rows for `run ideas` and `amend cycle` marked not implemented. Size budget applied to this bump: file is ~95,500 bytes, split filed as `BLG-GOV-380`. | Head of Specs Team (lifecycle audit AUD-2026-10-08; agent-mediated, user-directed) |
+| 2026-10-08 | `claude/system/post_ship_closure.md` | v2.38→v2.39 | AUD-2026-10-08-001: STEP 8.5 reads `lessons_learnt_prompt.md` §3.5 and §5; closure Friction Log entries use the §5 Friction Item block. Size budget applied to this bump: file is ~70,600 bytes, split filed as `BLG-GOV-381`. | Head of Specs Team (lifecycle audit AUD-2026-10-08; agent-mediated, user-directed) |
 | 2026-10-07 | `claude/system/OPERATIONAL_GUIDE.md` | v4.226→v4.227 | §6B source-prompt header and §14 Release Engine Source row updated for release_planning_prompt.md v2.60; §14 self-row and header 4.226→4.227; Change Log row added. | Head of Specs Team (`ESC-CLOSE-20261007-01` ruling, agent-mediated per execution_prompt.md §5.3, user-directed 2026-10-07) |
 | 2026-10-07 | `claude/system/release_planning_prompt.md` | v2.59→v2.60 | §7 §1.3a gate-field carve-out; §1.3a bounds on date-lapsed clear/re-gate edits (Gate criteria field only; same underlying condition; ACs listed not edited; disclosure in run_manifest.md and PO sign-off summary). | Head of Specs Team (`ESC-CLOSE-20261007-01` ruling, agent-mediated per execution_prompt.md §5.3, user-directed 2026-10-07) |
 | 2026-10-07 | `claude/system/OPERATIONAL_GUIDE.md` | v4.225→v4.226 | §8, §9 and §10 source-prompt headers and §14 Execution / Verification / Post-Ship Closure rows updated for execution_prompt.md v3.84, delivery_verification_prompt.md v3.14 and post_ship_closure.md v2.38; §14 self-row and header 4.225→4.226; Change Log row added. | Head of Specs Team (post-ship closure `2026-10-06__release-v9.10` STEP 8 immediate lessons-learnt action, `post_ship_closure.md` §5 write scope) |

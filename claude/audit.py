@@ -25,16 +25,16 @@ AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
 PRIOR_AUDIT_ID = "AUD-2026-10-08"
-PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-10-08-001", "AUD-2026-10-08-002", "AUD-2026-10-08-003",
-    "AUD-2026-10-08-004", "AUD-2026-10-08-005", "AUD-2026-10-08-006",
-    "AUD-2026-10-08-007",
-]
-  # None applied in the filing session: each touches a governance file (CLAUDE.md §2) or CI and
-  # needs its owner's sign-off. Report: claude/cycles/2026-10-08__release-v9.11/
-  # audit_report_AUD-2026-10-08.md. Execution Reliability (73) and Governance Integrity (46) were
-  # re-based this run (R3/R5 re-derived; §13 checked by inventory diff), so their trend vs. the
-  # prior 53/100 is not comparable.
+PRIOR_AUDIT_OPEN_ITEMS = []
+  # All 7 improvements filed at AUD-2026-10-08 were applied post-publication, same session, on explicit
+  # user direction ("Apply the 7 fixes") as agent-mediated Head of Specs Team rulings (003: PMO Lead).
+  # 001 post_ship_closure.md v2.39; 002 shared_standards.md v3.38 §11 size budget + this file's Stage 5
+  # formula; 003 .github/workflows/escalation-sla-reminder.yml; 004 lessons_learnt_prompt.md v1.16;
+  # 005 OPERATIONAL_GUIDE.md v4.228 §13/§14; 006 shared_standards.md §13 rows; 007 prompt_change_log.md
+  # v1.1 + this file's Phase 1 load. Follow-ons: BLG-GOV-379/380/381 (prompt splits). Execution
+  # Reliability (73) and Governance Integrity (46) were re-based this run, so their trend vs. the prior
+  # 53/100 is not comparable. See claude/cycles/2026-10-08__release-v9.11/audit_report_AUD-2026-10-08.md
+  # §5 post-publication note.
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
@@ -134,7 +134,7 @@ STAGE_CHECKLIST = [
         "load": [
             "claude/system/shared_standards.md",       # §13 dry-run table — field-level
             "claude/system/OPERATIONAL_GUIDE.md",      # §14 governance table — field-level
-            "claude/system/prompt_change_log.md",      # last 10 entries only
+            "claude/system/prompt_change_log.md",      # 10 latest-DATED entries (date-scan per shared_standards §11.1 — not file position)
             "claude/cycles/",                          # ALL cycles: lessons_learnt files — friction count + type only
             "claude/agents/",                          # file count only
         ],
@@ -381,7 +381,9 @@ STAGE_CHECKLIST = [
             "\n"
             "| Engine | Lines | ~Tokens | Preflight files (N) | ~Preflight tokens | Inline blocks (N) | ~Block tokens | Total/invoke | Invoke/cycle | Cycle cost | Confidence |\n"
             "\n"
-            "Formula: tokens = lines × 8 | preflight = Σ(file_lines × 8) | total = prompt + preflight + blocks\n"
+            "Formula: tokens = bytes ÷ 2.74 (calibrated AUD-2026-10-08 from BLG-GOV-343's measured 93,813 bytes ≈ 34,214 tokens;\n"
+            "  lines × 8 understated these long-line prompts 1.4–3.5×) | preflight = Σ(file_bytes ÷ 2.74) | total = prompt + preflight + blocks\n"
+            "Flag any engine prompt over 68,500 bytes (≈25k tokens) as exceeding the single-read cap.\n"
             "\n"
             "METHODOLOGY FOOTNOTE (mandatory — print this exactly):\n"
             "⚠ This table does not capture in-run context accumulation. For execution_prompt.md,\n"

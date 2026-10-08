@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.227
-**Last Updated:** 2026-10-07 (ESC-CLOSE-20261007-01 — release_planning_prompt.md v2.59→v2.60; §6B source-prompt header and §14 row updated); prior — 2026-10-07 (post-ship closure `2026-10-06__release-v9.10` STEP 8 — execution_prompt.md v3.83→v3.84, delivery_verification_prompt.md v3.13→v3.14, post_ship_closure.md v2.37→v2.38; §8/§9/§10 source-prompt headers and §14 rows updated); prior — 2026-10-07 (BLG-GOV-362 Product Owner review condition — sprint_planning_prompt.md v3.20→v3.21 (§6.2 Named-file write disclosure); §7 source-prompt header and §14 row updated); prior history retained — see prior entries in version control
+**Version:** 4.228
+**Last Updated:** 2026-10-08 (lifecycle audit AUD-2026-10-08 fixes — post_ship_closure.md v2.38→v2.39, shared_standards.md v3.37→v3.38, lessons_learnt_prompt.md v1.15→v1.16; §13 gains 9 artefact rows and drops a stale embedded version; §14 gains 5 shared-module rows; §10 source-prompt header and §14 rows updated); prior — 2026-10-07 (ESC-CLOSE-20261007-01 — release_planning_prompt.md v2.59→v2.60; §6B source-prompt header and §14 row updated); prior — 2026-10-07 (post-ship closure `2026-10-06__release-v9.10` STEP 8 — execution_prompt.md v3.83→v3.84, delivery_verification_prompt.md v3.13→v3.14, post_ship_closure.md v2.37→v2.38; §8/§9/§10 source-prompt headers and §14 rows updated); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1063,7 +1063,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.38)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.39)
 **Process document:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); `claude/system/post_ship_closure.md` is the sole authority.
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1278,7 +1278,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v9.10) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 (v2.10) | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1359,6 +1359,15 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Amended Backlog Slice | `claude/cycles/<id>/amendments/<AMD-id>/amended_backlog_slice.md` | 4 | PMO Lead | Amendment |
 | Amendment Lessons | `claude/cycles/<id>/amendments/<AMD-id>/amendment_lessons.md` | 3 | PMO Lead | Amendment |
 | Displacement Debt Register | `claude/roadmap/displacement_debt_register.md` | 4 | Head of Specs Team | 1 |
+| Roadmap Rebalance Prompt Appendix | `claude/system/roadmap_prompt_appendix.md` | 6 | Head of Specs Team | Governance |
+| Lifecycle State Machine Schema | `claude/system/lifecycle_schema.json` | — | Head of Specs Team | Governance |
+| State File Structural Schema | `claude/system/state_schema.json` | — | Head of Specs Team | Governance |
+| Role Share History | `claude/roadmap/role_share_history.md` | 3 | PMO Lead | 1 |
+| Product Value Ratio History | `claude/roadmap/product_value_ratio_history.md` | 3 | Metrics Definitions & Analytics Owner | 1 |
+| Governance Bypass Log | `claude/roadmap/governance_bypass_log.md` | 3 | PMO Lead | Governance |
+| Roadmap Transaction | `claude/cycles/<id>/roadmap_txn.json` | — | PMO Lead | 1B |
+| Stage 4 Issue Manifest | `claude/cycles/<id>/stage4_issue_manifest.json` | — | PMO Lead | 1B |
+| Scheduled Rebalance Cycle Record | `claude/cycles/<id>/cycle_record.md` | 3 | PMO Lead | 1 |
 
 ---
 
@@ -1368,8 +1377,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.227 |
-| Last Updated | 2026-10-07 |
+| Version | 4.228 |
+| Last Updated | 2026-10-08 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.10 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1377,6 +1386,11 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.18 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.10 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
+| Shared Escalation Subroutine | `claude/system/shared/escalation_subroutine.md` v1.0 |
+| Shared Governance Stack | `claude/system/shared/governance_stack.md` v1.0 |
+| Shared Lock Recovery Procedure | `claude/system/shared/lock_recovery_procedure.md` v1.0 |
+| Shared Preflight Common Checks | `claude/system/shared/preflight_common.md` v1.1 |
+| Shared Publish Gate | `claude/system/shared/publish_gate.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.31 (+ `roadmap_prompt_appendix.md`) |
 | Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.60 |
@@ -1386,10 +1400,10 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.17 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.14 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.38 |
-| Shared Standards | `claude/system/shared_standards.md` v3.37 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.39 |
+| Shared Standards | `claude/system/shared_standards.md` v3.38 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
-| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.15 |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.16 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | GitHub Issue Template | `claude/system/gh_issue_template.md` v1.0 |
 | PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.3 |
@@ -1504,6 +1518,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.228 | 2026-10-08 | **Lifecycle audit `AUD-2026-10-08`, Head of Specs Team ruling (agent-mediated, user-directed: "Apply the 7 fixes") — 3 source prompts bumped, 2 register tables extended.** `post_ship_closure.md` v2.38→v2.39 (AUD-2026-10-08-001: STEP 8.5 reads `lessons_learnt_prompt.md` §3.5 and §5; closure Friction Log entries use the §5 Friction Item block). `shared_standards.md` v3.37→v3.38 (AUD-2026-10-08-002: §11 engine prompt size budget, 68,500 bytes; AUD-2026-10-08-006: §13 dry-run rows for `run ideas` and `amend cycle` marked not implemented). `lessons_learnt_prompt.md` v1.15→v1.16 (AUD-2026-10-08-004: §3.7 row-completeness reconciliation). This file (AUD-2026-10-08-005): §13 gains 9 rows (`roadmap_prompt_appendix.md`, `lifecycle_schema.json`, `state_schema.json`, `role_share_history.md`, `product_value_ratio_history.md`, `governance_bypass_log.md`, `roadmap_txn.json`, `stage4_issue_manifest.json`, `cycle_record.md`) and the Roadmap Rebalance Prompt row drops its stale `(v9.10)`; §14 gains rows for 5 `claude/system/shared/*.md` modules. §10 source-prompt header v2.38→v2.39; §14 rows and self-row updated. |
 | 4.227 | 2026-10-07 | **ESC-CLOSE-20261007-01 resolution, Head of Specs Team ruling (agent-mediated, user-directed) — release_planning_prompt.md v2.59→v2.60.** §7 gains a §1.3a gate-field carve-out; §1.3a gains bounds on the date-lapsed clear/re-gate edit (Gate criteria field only, same underlying condition, ACs listed not edited, every edit disclosed). §6B source-prompt header and §14 Release Engine Source row updated; §14 self-row and header 4.226→4.227. |
 | 4.226 | 2026-10-07 | **Post-ship closure `2026-10-06__release-v9.10` STEP 8, immediate lessons-learnt actions — 3 source prompts bumped.** `execution_prompt.md` v3.83→v3.84: §3.1.A step 4c Playwright CI conclusion before `done` (LL-v9.10-P3-03); §3.1.B step 2a workflow-viability pre-check for live-fire delegations (LL-v9.10-P3-01); §3.2.A `Pass_with_deviation` self-check before DoQ sign-off (LL-v9.10-P3-02); STEP 5.1 `spec_references` path-existence check (LL-v9.10-P4-01). `delivery_verification_prompt.md` v3.13→v3.14: STEP 2.1/2.3 `Pass_with_deviation` no-remainder variant (carried LL-v9.9-P4-01). `post_ship_closure.md` v2.37→v2.38: STEP 1.5 digest command runnable as written (venv + `PYTHONPATH=backend`, carried v9.9 closure action); STEP 5.1 scan broadened and active-backlog-reference check added (seventh deviation consolidation review). §8/§9/§10 source-prompt headers and §14 rows updated; §14 self-row and header 4.225→4.226. |
 | 4.225 | 2026-10-07 | **BLG-GOV-362 Product Owner review condition — sprint_planning_prompt.md v3.20→v3.21.** §6.2 Sign-Off Gate gains a Named-file write disclosure: every STEP 3.1 named-file write is listed in the sign-off summary, and edits to an existing backlog item's Scope, Acceptance Criteria or Gate criteria need explicit Product Owner confirmation before seal. §7 source-prompt header and §14 Sprint Planning Engine row v3.20→v3.21; §14 self-row 4.224→4.225. |

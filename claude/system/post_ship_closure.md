@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.38
-**Last Updated:** 2026-10-07 (post-ship closure `2026-10-06__release-v9.10` STEP 8, immediate lessons-learnt actions — STEP 1.5 digest command now runnable as written (venv + `PYTHONPATH=backend`, carried v9.9 closure action); STEP 5.1 scan broadened to bold-paragraph and Known Deviations table-row records, plus an active-backlog-reference check for open records (seventh consolidation review Findings 1–2)); prior — 2026-10-05 (ESC-CLOSE-20260930-03, Head of Specs Team ruling, agent-mediated per execution_prompt.md §5.3, user-directed — §5 canonical-spec carve-out and STEP 5 item 1 now cover a wholly missing Known Deviations entry/section routed from Delivery Verification STEP 3); prior — 2026-09-30 (ST-38, EPIC-06, v9.8, BLG-GOV-351 — new STEP 12.6, 90-Day AI Feature Usage Review Trigger Check, runs on every cycle close alongside STEPs 11/12/12.5); prior history retained — see prior entries in version control
+**Version:** 2.39
+**Last Updated:** 2026-10-08 (AUD-2026-10-08-001 — STEP 8.5 now reads lessons_learnt_prompt.md §3.5 and §5, and closure Friction Log entries must use the §5 Friction Item block); prior — 2026-10-07 (post-ship closure `2026-10-06__release-v9.10` STEP 8, immediate lessons-learnt actions — STEP 1.5 digest command now runnable as written (venv + `PYTHONPATH=backend`, carried v9.9 closure action); STEP 5.1 scan broadened to bold-paragraph and Known Deviations table-row records, plus an active-backlog-reference check for open records (seventh consolidation review Findings 1–2)); prior — 2026-10-05 (ESC-CLOSE-20260930-03, Head of Specs Team ruling, agent-mediated per execution_prompt.md §5.3, user-directed — §5 canonical-spec carve-out and STEP 5 item 1 now cover a wholly missing Known Deviations entry/section routed from Delivery Verification STEP 3); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); this prompt is the sole authority for the Post-Ship Closure Engine.
@@ -569,7 +569,7 @@ Produce a consolidated action summary:
 
 ## STEP 8.5 — Produce Lessons Learnt Closure Record
 
-Invoke `lessons_learnt_prompt.md §3.5` — **read: §3.5 only** — using the consolidated action summary produced in STEP 8 as input.
+Invoke `lessons_learnt_prompt.md §3.5` — **read: §3.5 and §5 (Record Structure)** — using the consolidated action summary produced in STEP 8 as input. Every Friction Log entry in `lessons_learnt_closure.md` (including each closure-phase finding) uses the §5 `### Friction Item <n>` block, with a verbatim Type A–E Classification line. Unstructured bold-title prose findings are non-compliant (AUD-2026-10-08-001).
 
 > **Note (sequencing):** `closure_record.md` is produced in STEP 9 — it does not yet exist at the time STEP 8.5 executes. The input to `lessons_learnt_prompt.md §3.5` is the STEP 8 consolidated action summary (immediate actions applied, deferred items list, and any escalations). The §6 Outstanding Actions table in `closure_record.md` is derived from the same deferred items list. Do not wait for `closure_record.md` before producing `lessons_learnt_closure.md`.
 

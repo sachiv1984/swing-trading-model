@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.37
-**Last Updated:** 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` STEP -1.5 — §16.11 gains the canonical role-name rule for `**Owner:**` values; condition-gated deferred patch from `2026-09-14__scheduled` applied on its stated trigger); prior — 2026-09-30 (sprint execution 2026-09-28__release-v9.8 EPIC-06/ST-34, BLG-GOV-342 — new §24 `.claude_current_state.json` `last_updated_utc` Write Convention); prior — 2026-09-24 (sprint execution 2026-09-23__release-v9.7 EPIC-05/ST-21, BLG-GOV-331 — new §23 ensure_ascii=False Convention for Governance JSON Writes); prior history retained — see prior entries in version control
+**Version:** 3.38
+**Last Updated:** 2026-10-08 (AUD-2026-10-08-002 and -006 — §11 engine prompt size budget (68,500 bytes); §13 dry-run rows for `run ideas` and `amend cycle` marked not implemented); prior — 2026-10-06 (roadmap rebalance `2026-10-06__scheduled` STEP -1.5 — §16.11 gains the canonical role-name rule for `**Owner:**` values; condition-gated deferred patch from `2026-09-14__scheduled` applied on its stated trigger); prior — 2026-09-30 (sprint execution 2026-09-28__release-v9.8 EPIC-06/ST-34, BLG-GOV-342 — new §24 `.claude_current_state.json` `last_updated_utc` Write Convention); prior history retained — see prior entries in version control
 
 # Shared Standards — All Governed Routines
 
@@ -379,6 +379,8 @@ Any increment to a governance prompt version **must** be accompanied by an entry
 
 **Companion per-file changelog rule (v3.17, `2026-07-17__scheduled` Friction Item 1):** Each Class 6 prompt's standalone `claude/system/changelogs/<prompt>_changelog.md` file exists to hold "full history" for that prompt (per each such file's own stated purpose) and must be updated in the **same commit** as any version bump, alongside `prompt_change_log.md`. It is not a substitute for `prompt_change_log.md` (the canonical, cross-prompt log) but a derived per-file view — both must stay in sync. Found this cycle: `roadmap_prompt.md` had advanced to v9.1 with correct `prompt_change_log.md` and `OPERATIONAL_GUIDE.md` §14 entries, but `changelogs/roadmap_prompt_changelog.md` had fallen 3 versions behind (missing 8.9, 9.0, 9.1) because no rule named it as a required companion write. Engines applying an action-now prompt patch must update both files in the same commit going forward.
 
+**Engine prompt size budget (AUD-2026-10-08-002):** At any version bump of an engine prompt in `claude/system/` (including a core/appendix pair's core), measure the file with `wc -c`. If it exceeds **68,500 bytes** (≈25,000 tokens at the 2.74 bytes/token ratio calibrated from `BLG-GOV-343`, the single-read cap), file a split item via `/backlog-add` if none is already open for that file, and cite it in the bump's `prompt_change_log.md` row. New rationale-only text belongs in the file's appendix, not the core. Line count is not a valid proxy: these files use long single-line paragraphs.
+
 ### 11.1 STEP -1.7-Class Prompt Change Log Gap Detection (date-scan method, v3.24, BLG-GOV-257)
 
 Any STEP-numbered check across the governance prompts that needs to find "the most recently logged transition for file X" in `prompt_change_log.md` (the pattern used at Sprint Planning STEP -1.7 and equivalent hygiene advisories elsewhere) **must** use the date-scan method below, not a file-position shortcut.
@@ -438,11 +440,11 @@ The following engines support `--dry-run`. The guarantee is identical in all cas
 | `groom backlog` | Change plan — items to archive, items to flag |
 | `run design-gate` | Design gate preview — classification table, gap list, required design artefacts; no gate record, no state write, no commit |
 | `run roadmap` | Rebalance preview — capacity analysis, displacement candidates, scoring matrix, backlog impact |
-| `run ideas` | Submission window summary — counts per agent, ideas available for STEP 4 |
+| `run ideas` | **Not implemented** — `idea_intake_prompt.md` has no `--dry-run` handling (AUD-2026-10-08-006). Do not invoke with `--dry-run` until it does. Intended output: submission window summary — counts per agent, ideas available for STEP 4 |
 | `run ideas housekeeping` | Housekeeping preview — terminal rows to archive, rejected-but-strong revival candidates, pipeline health advisory; no ideas_register.md writes, no archive writes |
 | `plan release --dry-run` | Scope extraction preview — roadmap item, tentative EPIC/ST structure, artefacts that would be created (release_plan.md, backlog_slice, design_gate.md if required); no artefact writes, no state updates |
 | `run delivery verification --dry-run` | Verification plan — list of all STEP checks with their precondition sources; no verification_report.md written, no .claude_current_state.json update |
-| `amend cycle --dry-run` | Amendment preview — proposed backlog slice delta, scope changes, authority ratification requirements; no state.json writes, no slice artefact created |
+| `amend cycle --dry-run` | **Not implemented** — `amendment_cycle_prompt.md` has no `--dry-run` handling (AUD-2026-10-08-006). Do not invoke with `--dry-run` until it does. Intended output: amendment preview — proposed backlog slice delta, scope changes, authority ratification requirements; no state.json writes, no slice artefact created |
 | `run audit` | N/A — `claude/audit.py` is read-only by design (produces a report + a PATCH manifest for Claude Code to apply separately); no `--dry-run` flag needed, no writes occur during the audit run itself |
 
 **Scope of read operations:** Read operations (file reads, git queries, pip-audit scans) are always permitted in dry-run mode. A dry-run that cannot read required inputs should halt with a standard halt report, not silently produce an empty plan.

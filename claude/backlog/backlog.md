@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior — 2026-10-07 (session — 3 new item(s) added: BLG-BE-152, BLG-FE-205, BLG-GOV-378 from debrief production testing; BLG-BE-150 progress note); prior — 2026-10-07 (session — 4 new item(s) added: BLG-BE-150, BLG-QA-217, BLG-BE-151, BLG-QA-218 from PR #1921 review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior — 2026-10-07 (session — 3 new item(s) added: BLG-BE-152, BLG-FE-205, BLG-GOV-378 from debrief production testing; BLG-BE-150 progress note); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5052,5 +5052,77 @@ When the live price fetch fails, `portfolio_service.py` (lines ~118-124) treats 
 
 **Acceptance Criteria**
 - [ ] §5.1 and §6.1 name only fields that `GET /portfolio` returns
+
+---
+
+### BLG-GOV-379 — Split `execution_prompt.md` into a core plus an appendix so it fits a single read
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** Lifecycle audit AUD-2026-10-08, improvement AUD-2026-10-08-002 (`claude/cycles/2026-10-08__release-v9.11/audit_report_AUD-2026-10-08.md` Stage 5); filed under the `shared_standards.md` §11 engine prompt size budget — 2026-10-08
+**Effort:** L (~3–5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`claude/system/execution_prompt.md` is 133,341 bytes (≈48.6k tokens), over the 68,500-byte single-read cap that `shared_standards.md` §11 now sets (≈25k tokens at the 2.74 bytes/token ratio calibrated from `BLG-GOV-343`). Every `run sprint` invocation needs at least two reads to load it, and it is the largest engine prompt by a wide margin. A session that reads only the first page can miss later STEPs, including write-safety and commit steps. That failure mode was recorded at `2026-10-06__scheduled` Friction Item 4 (Type D) for `roadmap_prompt.md`.
+
+**Scope**
+- Split `execution_prompt.md` into a core plus an appendix, following the `BLG-GOV-343` method (rationale and detail to the appendix; mandatory process steps stay in the core with one-line pointers).
+- Update every reference to the moved sections, CLAUDE.md §1 if the load instruction changes, and the OPERATIONAL_GUIDE.md §13 and §14 rows for the new appendix file.
+- Apply the CLAUDE.md §6 checklist.
+
+**Acceptance Criteria**
+- `wc -c claude/system/execution_prompt.md` is at most 68,500 bytes.
+- The appendix exists with a Class 6 header and is registered in OPERATIONAL_GUIDE.md §13 and §14.
+- No mandatory STEP is moved out of the core (every STEP heading in the pre-split file is either still in the core or reached by an explicit pointer from it).
+- `governance-drift` reports all versions in sync.
+
+---
+
+### BLG-GOV-380 — Split `shared_standards.md` into a core plus an appendix so it fits a single read
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** Lifecycle audit AUD-2026-10-08, improvement AUD-2026-10-08-002 (`claude/cycles/2026-10-08__release-v9.11/audit_report_AUD-2026-10-08.md` Stage 5); filed under the `shared_standards.md` §11 engine prompt size budget — 2026-10-08
+**Effort:** M (~1–2d)
+**Provisional-Target:** TBD
+
+**Problem**
+`claude/system/shared_standards.md` is about 95,500 bytes (≈34.9k tokens), over the 68,500-byte single-read cap that `shared_standards.md` §11 now sets (≈25k tokens at the 2.74 bytes/token ratio calibrated from `BLG-GOV-343`). Every engine cites it, and §16's embedded templates and mixed heading levels already make heading-based navigation unreliable. A session that reads only the first page can miss later STEPs, including write-safety and commit steps. That failure mode was recorded at `2026-10-06__scheduled` Friction Item 4 (Type D) for `roadmap_prompt.md`.
+
+**Scope**
+- Split `shared_standards.md` into a core plus an appendix, following the `BLG-GOV-343` method (rationale and detail to the appendix; mandatory process steps stay in the core with one-line pointers).
+- Update every reference to the moved sections, CLAUDE.md §1 if the load instruction changes, and the OPERATIONAL_GUIDE.md §13 and §14 rows for the new appendix file.
+- Apply the CLAUDE.md §6 checklist.
+
+**Acceptance Criteria**
+- `wc -c claude/system/shared_standards.md` is at most 68,500 bytes.
+- The appendix exists with a Class 6 header and is registered in OPERATIONAL_GUIDE.md §13 and §14.
+- No mandatory STEP is moved out of the core (every STEP heading in the pre-split file is either still in the core or reached by an explicit pointer from it).
+- `governance-drift` reports all versions in sync.
+
+---
+
+### BLG-GOV-381 — Trim or split `post_ship_closure.md` so it fits a single read
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** Lifecycle audit AUD-2026-10-08, improvement AUD-2026-10-08-002 (`claude/cycles/2026-10-08__release-v9.11/audit_report_AUD-2026-10-08.md` Stage 5); filed under the `shared_standards.md` §11 engine prompt size budget — 2026-10-08
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`claude/system/post_ship_closure.md` is about 70,600 bytes (≈25.8k tokens), over the 68,500-byte single-read cap that `shared_standards.md` §11 now sets (≈25k tokens at the 2.74 bytes/token ratio calibrated from `BLG-GOV-343`). It is only marginally over, so moving rationale-only text to an appendix may be enough. A session that reads only the first page can miss later STEPs, including write-safety and commit steps. That failure mode was recorded at `2026-10-06__scheduled` Friction Item 4 (Type D) for `roadmap_prompt.md`.
+
+**Scope**
+- Split `post_ship_closure.md` into a core plus an appendix, following the `BLG-GOV-343` method (rationale and detail to the appendix; mandatory process steps stay in the core with one-line pointers).
+- Update every reference to the moved sections, CLAUDE.md §1 if the load instruction changes, and the OPERATIONAL_GUIDE.md §13 and §14 rows for the new appendix file.
+- Apply the CLAUDE.md §6 checklist.
+
+**Acceptance Criteria**
+- `wc -c claude/system/post_ship_closure.md` is at most 68,500 bytes.
+- The appendix exists with a Class 6 header and is registered in OPERATIONAL_GUIDE.md §13 and §14.
+- No mandatory STEP is moved out of the core (every STEP heading in the pre-split file is either still in the core or reached by an explicit pointer from it).
+- `governance-drift` reports all versions in sync.
 
 ---

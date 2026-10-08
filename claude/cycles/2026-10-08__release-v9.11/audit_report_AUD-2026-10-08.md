@@ -1,7 +1,7 @@
 Owner: Head of Specs Team
 Class: Governance Artefact (Class 3)
 Status: Active
-Last Updated: 2026-10-08 (initial filing)
+Last Updated: 2026-10-08 (post-publication note — all 7 improvements applied same session); prior — 2026-10-08 (initial filing)
 Cycle: 2026-10-08__release-v9.11 (active cycle at time of run — governance-wide audit, not cycle-scoped)
 
 # Claude Lifecycle Audit — AUD-2026-10-08
@@ -748,6 +748,8 @@ PATCH 2:
   anchor: "            \"claude/system/prompt_change_log.md\",      # last 10 entries only"
   content: |
                 "claude/system/prompt_change_log.md",      # 10 latest-DATED entries (date-scan per shared_standards §11.1 — not file position)
+
+*(Post-publication update, 2026-10-08: all 7 improvements were applied the same session on explicit user direction ("Apply the 7 fixes"), as Head of Specs Team rulings (agent-mediated, per CLAUDE.md §5.3; 003's owner, PMO Lead, likewise agent-mediated). Where an improvement offered an alternative (001, 007), the drafted option was taken. Files: `post_ship_closure.md` v2.38→v2.39 (-001); `shared_standards.md` v3.37→v3.38 (-002 PATCH 1, -006); `claude/audit.py` Stage 5 formula and Phase 1 load (-002 PATCH 2, -007 PATCH 2); `.github/workflows/escalation-sla-reminder.yml` created (-003; dry-run against the live state with a stubbed `gh`: 0 breaches → no issue; one synthetic breach → one issue); `lessons_learnt_prompt.md` v1.15→v1.16 (-004); `OPERATIONAL_GUIDE.md` v4.227→v4.228 (-005, plus the §6 checklist for the 3 prompt bumps); `prompt_change_log.md` v1.0→v1.1 (-007 PATCH 1). The new §11 size budget applied to this session's own bumps: `post_ship_closure.md` (70,643 bytes) and `shared_standards.md` (~95,500 bytes) are over 68,500, so splits were filed as `BLG-GOV-381` and `BLG-GOV-380`, with `BLG-GOV-379` for `execution_prompt.md` (the report's named first split). Not done here, and left to their owners: re-filing the two dropped `workforce_capacity.md` patches (-004), and implementing dry-run in `idea_intake_prompt.md` and `amendment_cycle_prompt.md` (-006's long-term fix). `claude/audit.py` `PRIOR_AUDIT_OPEN_ITEMS` set to `[]` and `.claude_current_state.json.last_audit_open_items` to `0`.)*
 
 ---
 
