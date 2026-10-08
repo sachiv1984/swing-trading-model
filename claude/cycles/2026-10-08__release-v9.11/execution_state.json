@@ -30,7 +30,8 @@
         "tests/test_ai_prompt_advisory_statements.py",
         "tests/test_ai_stop_recalculation_time.py",
         "tests/test_ai_model_ids_pinned.py",
-        "tests/test_claude_audit_log_prompt_hash.py"
+        "tests/test_claude_audit_log_prompt_hash.py",
+        "tests/e2e/trade-debrief.spec.js"
       ],
       "stories": {
         "ST-01": {
@@ -164,7 +165,7 @@
           "branch": "exec/2026-10-08__release-v9.11/EPIC-01",
           "commit_sha": null,
           "delegation_record_id": "DEL-20261008-03",
-          "blocked_since_utc": "2026-10-08T12:20:00Z",
+          "blocked_since_utc": "2026-10-08T11:18:41Z",
           "unblock_criteria": "DS-27 Up Migration applied on staging and production with verification output recorded",
           "completed_utc": null,
           "acceptance_verified": false,
@@ -1065,7 +1066,9 @@
     ],
     "all_merged": false
   },
-  "process_notes": [],
+  "process_notes": [
+    "2026-10-08: ST-06 blocked_since_utc and DEL-20261008-03 'Delegated at' were first written as 2026-10-08T12:20:00Z, an estimate, not the real time (BLG-GOV-309). Corrected the same session to 2026-10-08T11:18:41Z (the delegation commit 5c753cbc's authored time). This is the only edit made to an earlier delegation_log.md entry, and it corrects a factual value in an entry written minutes earlier."
+  ],
   "sealed": false,
   "sealed_utc": null
 }

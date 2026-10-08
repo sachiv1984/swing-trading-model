@@ -66,3 +66,19 @@ export function formatR(value, { target = false } = {}) {
   if (target) return `${signOf(n, 2, false)}${Number(Math.abs(n).toFixed(2))}R`;
   return `${signOf(n, 2, true)}${Math.abs(n).toFixed(2)}R`;
 }
+
+// ST-05 (EPIC-01, v9.11, BLG-FE-205): relative time for "Generated 3 min ago"
+// labels (debrief-regenerate-feedback decision record §2.2). Returns null for
+// a missing or unparseable timestamp so the caller can omit the label.
+export function formatRelativeTime(isoString, now = Date.now()) {
+  if (!isoString) return null;
+  const then = new Date(isoString).getTime();
+  if (Number.isNaN(then)) return null;
+  const mins = Math.floor((now - then) / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} min ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+  const days = Math.floor(hours / 24);
+  return `${days} day${days === 1 ? "" : "s"} ago`;
+}

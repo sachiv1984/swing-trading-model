@@ -45,7 +45,7 @@ Last Updated: 2026-10-08
 - **Assigned to:** Data Model & Domain Schema Owner (with Infrastructure & Operations Owner)
 - **GitHub Issue:** #1930
 - **Branch:** exec/2026-10-08__release-v9.11/EPIC-01
-- **Delegated at:** 2026-10-08T12:20:00Z
+- **Delegated at:** 2026-10-08T11:18:41Z
 - **What is needed:** Run the DS-27 Up Migration on **staging, then production** (the sandbox `DATABASE_URL` is staging and read-only to this engine):
   ```sql
   ALTER TABLE claude_audit_log ADD COLUMN IF NOT EXISTS prompt_hash VARCHAR(16);
