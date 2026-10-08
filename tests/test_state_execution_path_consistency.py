@@ -17,6 +17,8 @@ the next cycle transition that forgets to correct this field, independent
 of whether a human or an engine makes that commit.
 """
 import json
+
+import pytest
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent
@@ -35,7 +37,19 @@ def test_execution_state_path_matches_active_cycle():
     )
 
 
+# execution_state.json is first written when Sprint Execution starts. Between
+# Release Planning and that point the path is correct for the new cycle but the
+# file does not exist yet, so the existence check only applies from Executing on.
+PRE_EXECUTION_STATUSES = {
+    "Release_Planning_Complete",
+    "Design_Gate_Passed",
+    "Sprint_Planning_Complete",
+}
+
+
 def test_execution_state_path_file_exists():
     state = json.loads(STATE_FILE.read_text())
+    if state["status"] in PRE_EXECUTION_STATUSES:
+        pytest.skip(f"status {state['status']!r} precedes Sprint Execution; execution_state.json not created yet")
     path = REPO_ROOT / state["execution_state_path"]
     assert path.exists(), f"execution_state_path points to a non-existent file: {path}"

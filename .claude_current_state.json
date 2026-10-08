@@ -5,7 +5,7 @@
   "prior_status": "Closed",
   "engine": "Release Planning",
   "last_updated_utc": "2026-10-08T09:05:10Z",
-  "execution_state_path": "claude/cycles/2026-10-06__release-v9.10/execution_state.json",
+  "execution_state_path": "claude/cycles/2026-10-08__release-v9.11/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-10-08__release-v9.11/stage4_backlog_slice.md",
   "design_gate_required": true,
   "design_gate_status": "not_started",
