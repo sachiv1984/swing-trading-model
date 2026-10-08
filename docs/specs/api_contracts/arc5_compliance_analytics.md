@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.2.0
-**Last Updated:** 2026-09-09 (ST-04, EPIC-01, v9.3 — `total_closed_trades` is now nullable: `null` distinguishes a missing/broken `trade_history` table from a genuine zero-trades portfolio); prior — 2026-09-07 (ST-01, EPIC-01, v9.2 — added `total_closed_trades` field, backs the low-trade-volume advisory)
+**Version:** 1.2.1
+**Last Updated:** 2026-10-08 (ST-32, EPIC-05, v9.11, BLG-SPEC-175 — error example corrected to the canonical {status, message} envelope the code returns); prior — 2026-09-09 (ST-04, EPIC-01, v9.3 — `total_closed_trades` is now nullable: `null` distinguishes a missing/broken `trade_history` table from a genuine zero-trades portfolio); prior — 2026-09-07 (ST-01, EPIC-01, v9.2 — added `total_closed_trades` field, backs the low-trade-volume advisory); prior history retained — see prior entries in version control
 **Shipped:** v4.0 — ST-01, EPIC-01, cycle 2026-05-22__release-v4.0
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -141,9 +141,12 @@ If a source table does not exist in the database (e.g. `pre_entry_validation_log
 
 ```json
 {
-  "detail": "Arc 5 compliance metrics failed: <exception message>"
+  "status": "error",
+  "message": "Arc 5 compliance metrics failed: <exception message>"
 }
 ```
+
+The route returns this standard error envelope directly (`backend/routers/analytics.py`, `conventions.md` §13.1). *(Example corrected v9.11, ST-32, BLG-SPEC-175: it previously showed a `{"detail": ...}` body.)*
 
 Raised for unexpected server-side failures unrelated to missing tables (e.g. database connection error, configuration error).
 
@@ -153,6 +156,7 @@ Raised for unexpected server-side failures unrelated to missing tables (e.g. dat
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2.1 | 2026-10-08 | ST-32 (EPIC-05, v9.11, BLG-SPEC-175): 500 example corrected to the standard error envelope the route returns. Documentation only. |
 | 1.2.0 | 2026-09-09 | ST-04 (EPIC-01, v9.3, BLG-BE-111): `total_closed_trades` is now nullable — `null` on a `trade_history` schema error (`UndefinedColumn`/`UndefinedTable`), `0` reserved for a genuine zero-trades portfolio. Previously both cases returned `0`, indistinguishable to the frontend. Fixed in `database.get_arc5_trade_plan_adherence_rate()`; no other field changed. See Frontend note under the field table re: `arc5_compliance_section.md`'s low-trade-volume advisory not yet branching on this distinction. |
 | 1.1.0 | 2026-09-07 | Added `total_closed_trades` field (all-time closed trade count, `trade_plan_adherence_rate`'s own denominator) — ST-01, EPIC-01, v9.2, BLG-FEAT-44. Backs the frontend low-trade-volume advisory. No breaking change to existing fields. |
 | 1.0.0 | 2026-05-25 | Initial contract — ST-01, EPIC-01, v4.0. |

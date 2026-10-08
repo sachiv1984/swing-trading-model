@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.16
-**Last Updated:** 2026-10-01 (ST-33, EPIC-05, v9.9, BLG-SPEC-168 — corrected 4 citations of the `latency_ms` composition decision from `BLG-BE-128` to the correct `BLG-BE-129`; `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites), documentation only); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to all 5 POST endpoints in this file; flagged undefined double-submit alert-duplication behaviour on check-daily-cost/check-endpoint-anomalies as BLG-OPS-172/173); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7 STEP 5.1 remediation — Known Deviations section corrected from stale "None at v1.10" to a proper `DEV-v9.7-ST13-01` entry for the already-disclosed BLG-BE-129 won't-fix; no normative change); prior history retained — see prior entries in version control
+**Version:** 1.21
+**Last Updated:** 2026-10-08 (ST-32, EPIC-05, v9.11, BLG-SPEC-175 — POST /ai/journal-summary 'LLM unreachable' heading corrected from 503 to 200; 1.17-1.20 are EPIC-01's); prior — 2026-10-01 (ST-33, EPIC-05, v9.9, BLG-SPEC-168 — corrected 4 citations of the `latency_ms` composition decision from `BLG-BE-128` to the correct `BLG-BE-129`; `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites), documentation only); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to all 5 POST endpoints in this file; flagged undefined double-submit alert-duplication behaviour on check-daily-cost/check-endpoint-anomalies as BLG-OPS-172/173); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -85,9 +85,9 @@ Only closed trades (with `exit_date` set) are included in the summary. If no mat
 | `cached` | boolean | Reserved for future caching; always `false` in v1.0. |
 | `message` | string or null | Informational message when `summary` is null (e.g. "No journal notes found for the selected trades."). |
 
-### Response — 503 Service Unavailable (LLM unreachable)
+### Response — 200 OK when the LLM is unreachable
 
-When the external LLM API is unreachable or returns an error, the endpoint returns HTTP 200 with `summary: null` and a `message` field — it does NOT propagate a 500.
+When the external LLM API is unreachable or returns an error, the endpoint returns HTTP 200 with `summary: null` and a `message` field. It does not propagate a server error.
 
 ```json
 {
@@ -98,6 +98,8 @@ When the external LLM API is unreachable or returns an error, the endpoint retur
   "message": "AI summarisation is currently unavailable. Please try again later."
 }
 ```
+
+*(Heading corrected v9.11, ST-32, BLG-SPEC-175: it previously named a 503 status, but the endpoint returns HTTP 200 with this body. This is an informational response, not an error envelope.)*
 
 ### Error responses
 
@@ -853,6 +855,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.21 | 2026-10-08 | ST-32 (EPIC-05, v9.11, BLG-SPEC-175): `POST /ai/journal-summary` 'LLM unreachable' heading corrected from 503 to 200 (the endpoint returns 200). Documentation only. (1.17–1.20 are EPIC-01's ST-03/07/08/09.) |
 | 1.16 | 2026-10-01 | ST-33 (EPIC-05, v9.9, BLG-SPEC-168): Corrected 4 citations of the `latency_ms` composition decision (Implementation constraints note, Backlog reference line, this Changelog's own v1.14 row, and the header `Last Updated` chain) from `BLG-BE-128` to the correct `BLG-BE-129`. `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites not yet on the shared upstream helper) — its own legitimate references elsewhere are untouched. Documentation only; no code or behavioural change. |
 | 1.14 | 2026-09-24 | ST-13 (EPIC-03, v9.7, BLG-BE-129): Reviewed whether `latency_ms` (recorded around retried Anthropic calls in `ai_service.py`, `gemini_service.py`, `debrief_service.py`) should exclude retry backoff sleep time. Disposition: **won't fix, documented as intentional** — the combined figure (full retried-call duration, including backoff) is the more useful signal for this endpoint's anomaly-detection purpose, since retry-driven backoff growth is itself a symptom of upstream degradation. No code change; no `openapi.yaml` change. |
 | 1.13 | 2026-09-16 | ST-13 (EPIC-02, v9.5, BLG-OPS-161): `POST /ai/check-endpoint-anomalies` latency is now real-data — `claude_audit_log` gained a `latency_ms` column (populated by every `create_claude_audit_entry()` call site going forward), `latency_data_source` now reports `"claude_audit_log"` instead of `"not_available_pending_BLG-OPS-161"`. No `openapi.yaml` schema change (response shape unchanged, only field-value semantics). Infrastructure & Operations Owner sign-off. |
