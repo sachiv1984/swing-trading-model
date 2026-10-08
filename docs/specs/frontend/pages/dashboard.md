@@ -3,11 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 3.7
-**Last Updated:** 2026-10-06 (v9.10 design gate — ST-09/BLG-FE-199: conditional Exit Conditions Met row in the Morning Briefing; ST-10/BLG-FE-194: Recent Activity neutral glyph for break-even trades); prior — 2026-10-01 (v9.9 design gate — ST-35/BLG-FE-192: Card 5 Recent Activity icon-badge colour logic corrected to the three-way neutral-zero pattern); prior — 2026-09-14 (v9.4 design gate — ST-22/BLG-AI-05: Advisory Label now cites the shared `AdvisoryBadge` component; ST-25/BLG-FE-174: confirmed conformant with the canonical loading-skeleton pattern, no content change); prior history retained — see prior entries in version control
+**Version:** 3.8
+**Last Updated:** 2026-10-08 (v9.11 design gate — ST-10/BLG-BE-154: Card 2 stale-price sub-line; ST-15/BLG-FE-204: Recent Activity treats a P&L that rounds to £0.00 as break-even); prior — 2026-10-06 (v9.10 design gate — ST-09/BLG-FE-199: conditional Exit Conditions Met row; ST-10/BLG-FE-194: Recent Activity neutral glyph); prior — 2026-10-01 (v9.9 design gate — ST-35/BLG-FE-192: Card 5 icon-badge colour three-way); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v8.8
 **EPIC:** EPIC-03
+**Design Source (v3.8):** docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md (ST-10 stale-price sub-line); `design_system.md` §Consistency Rules → Number and Currency Formatting (v1.21) for ST-15 — pre-existing canonical rule, no new design artefact
 **Design Source (v3.6):** `design_system.md` §Consistency Rules → Number and Currency Formatting (v1.21) — pre-existing canonical rule ("zero renders unsigned in the neutral tone"); no new design artefact authored, applied to a second element (icon badge) within an already-conforming component (the card's own P&L value text already used the same three-way logic)
 **Design Source (v3.5):** docs/design/2026-09-14__release-v9.4/ai-advisory-disclosure-badge/decision_record.md (BLG-AI-05)
 **Design Source (v3.4):** docs/design/2026-09-03__release-v9.1/dashboardhome-ai-advisory-badge-contrast/decision_record.md (BLG-FE-165)
@@ -159,6 +160,7 @@ All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In 
   - < 15%: green
   - 15–25%: amber
   - > 25%: red
+- **Stale-price sub-line (v3.8 — ST-10, BLG-BE-154):** when one or more open positions in `GET /portfolio` have `price_is_stale = true`, an extra line appears under the value: "⚠ {N} position price(s) stale", `text-xs text-amber-400`, `data-testid="dashboard-price-stale-notice"`. Tooltip: "Live price unavailable. Showing the last stored price converted at today's FX rate." It does not change the colour coding or the click target. The per-row markers are on `/risk` (`risk_dashboard.md` §6.6).
 - **Source:** `GET /portfolio`
 - **Click target:** navigates to `/risk`
 
@@ -196,6 +198,8 @@ All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In 
 - **Icon badge colour (v3.6 — ST-35, BLG-FE-192):** the entry icon's background/foreground colour is three-way, matching the adjacent P&L value text — emerald for `pnl > 0`, rose for `pnl < 0`, neutral slate for `pnl === 0` — per `design_system.md` §Consistency Rules → Number and Currency Formatting (zero renders in the neutral tone). Previously used two-way (`>= 0`) logic, which incorrectly rendered zero-P&L entries in the emerald (win) colour.
 
 - **Icon glyph (v3.7 — ST-10, BLG-FE-194):** the glyph is three-way as well: `TrendingUp` for `pnl > 0`, `TrendingDown` for `pnl < 0`, `Minus` for `pnl === 0` (null treated as 0), decorative (`aria-hidden`). Design source: `docs/design/2026-10-06__release-v9.10/recent-trades-neutral-glyph/decision_record.md`.
+
+- **Zero means "displays as £0.00" (v3.8 — ST-15, BLG-FE-204):** the three-way glyph and badge colour test the P&L **as displayed**, rounded to 2 decimal places, not the raw value. A `pnl` of `0.004` displays as "£0.00", so it gets the neutral `Minus` glyph and slate colour. A `pnl` of `0.01` still gets `TrendingUp` and emerald. This is the `design_system.md` v1.21 rule ("zero renders unsigned in the neutral tone") applied to the displayed figure, so the glyph never disagrees with the adjacent "£0.00" text.
 
 If no recent activity: show “No recent trade activity”
 
@@ -439,6 +443,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.8 | 2026-10-08 | v9.11 design gate — (ST-10, EPIC-02, BLG-BE-154) §4 Card 2 stale-price sub-line from `price_is_stale`; design source `docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md`. (ST-15, EPIC-02, BLG-FE-204) §4 Card 5 three-way glyph and colour test the P&L rounded to 2 dp, so a value that displays as £0.00 is break-even; pre-existing `design_system.md` v1.21 rule, no new decision record. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |
 | 3.7 | 2026-10-06 | v9.10 design gate — (ST-09, EPIC-02, BLG-FE-199) §1A new conditional "Exit Conditions Met" full-width row above the five-card grid, sharing the `getExitCondition` predicate with the Positions exit dialog; each row links to `/#/Positions?exit={id}`. (ST-10, EPIC-02, BLG-FE-194) §4 Card 5 icon glyph made three-way (`Minus` for break-even). Head of UX & Design sign-off: 2026-10-06. Product Owner approved: 2026-10-06. Head of Specs Team confirmed. |
 | 3.6 | 2026-10-01 | v9.9 design gate — Card 5 Recent Activity icon-badge colour fix (ST-35, EPIC-06, BLG-FE-192): icon background/foreground changed from two-way (`>= 0`) to three-way colour logic, giving `pnl === 0` a neutral slate treatment instead of the emerald (win) colour, matching the card's own P&L value text and `design_system.md`'s existing zero-neutral rule (§Consistency Rules → Number and Currency Formatting, v1.21). Design source: pre-existing canonical rule, no new decision record required — see Design Source (v3.6) above. Head of UX & Design sign-off: 2026-10-01. Product Owner approved: 2026-10-01. Head of Specs Team confirmed. |
 | 3.5 | 2026-09-14 | v9.4 design gate — (ST-22, EPIC-05, BLG-AI-05): §5 Advisory Label now cites the new shared `AdvisoryBadge` component (`design_system.md` §Shared UI Components) as its first applied instance — no markup/visual change, page-local prose replaced with a component citation. (ST-25, EPIC-06, BLG-FE-174): confirmed this page's card-level loading skeletons already conform to the canonical loading-skeleton pattern (shared `Skeleton` primitive) — no content change. Design sources: `docs/design/2026-09-14__release-v9.4/ai-advisory-disclosure-badge/decision_record.md`, `docs/design/2026-09-14__release-v9.4/loading-skeleton-standardisation/decision_record.md`. Head of UX & Design sign-off: 2026-09-14. Product Owner approved: 2026-09-14. Head of Specs Team confirmed. |

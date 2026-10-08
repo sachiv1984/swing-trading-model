@@ -1,9 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.11
-**Last Updated:** 2026-07-27
+**Version:** 0.1.12
+**Last Updated:** 2026-10-08 (v9.11 design gate — ST-10/ST-11/ST-13: §6 Position Risk table stale-price marker, GBP entry prices, grace stops shown as not enforced, stop distance from the API); prior — 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Design Source (v0.1.12):** docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md
 **Design Source (v0.1.11 correction):** §8b.1 data-dependency premise corrected at implementation — see Metrics Definitions & Analytics Owner amendment recorded in `execution_state.json` for ST-02, EPIC-02, v7.9.
 **Design Source (v0.1.10):** docs/design/2026-07-27__release-v7.9/sector-regime-exposure-trend/ux_spec.md
 **Design Source (v0.1.9):** docs/design/2026-06-22__release-v6.1/sector-heatmap/ux_spec.md
@@ -162,7 +163,7 @@ Ascending by `grace_days_remaining` (most urgent / fewest days remaining first).
 ### 6.1 Data
 
 - **Source:** `GET /portfolio` → all open positions
-- **Fields:** `ticker`, `status`, `display_status`, `entry_price`, `current_price`, `current_stop`, `holding_days`, `pnl_pct`
+- **Fields:** `ticker`, `status`, `display_status`, `entry_price`, `current_price`, `current_stop`, `holding_days`, `pnl_pct`, `price_is_stale` *(v0.1.12 — ST-10)*, `stop_distance_pct` *(v0.1.12 — ST-13)*, `grace_days_remaining`
 
 ### 6.2 Display
 
@@ -173,13 +174,17 @@ Ascending by `grace_days_remaining` (most urgent / fewest days remaining first).
 |--------|--------|--------|
 | Ticker | `ticker` | Uppercase string |
 | State | `status` | Badge — see §6.3 |
-| Entry Price | `entry_price` | GBP, 2 decimal places |
-| Current Price | `current_price` | GBP, 2 decimal places |
-| Stop Price | `current_stop` | GBP, 2 decimal places |
-| Stop Distance | Derived | `(current_stop − current_price) / current_price × 100`, 1 decimal place, prefixed `−` |
-| Holding Days | `holding_days` | Integer |
+| Entry (GBP) | `entry_price` | GBP, 2 decimal places, for every market. A US row shows "£" and the GBP value `GET /portfolio` returns, never the native-currency symbol *(v0.1.12 — ST-11)* |
+| Current (GBP) | `current_price` | GBP, 2 decimal places. Followed by the stale marker when `price_is_stale` is true (§6.6) |
+| Stop (GBP) | `current_stop` | GBP, 2 decimal places. GRACE rows: "Not enforced (grace)" (§6.2a) |
+| Stop Dist % | `stop_distance_pct` | 1 decimal place followed by "%". Taken from the API, which computes it in native currency; the browser does not derive it *(v0.1.12 — ST-13)*. "—" when null. GRACE rows: "Not enforced (grace)" (§6.2a). Colour: ≤ 5% rose, ≤ 15% amber, otherwise default text |
+| Held | `holding_days` | Integer followed by "d" |
 
-Stop Distance derivation is purely presentational (display arithmetic on backend-provided values — not a new calculation). The underlying stop price is always sourced from the backend.
+**Currency (v0.1.12 — ST-11):** every money column is GBP and its header says so.
+
+#### 6.2a Grace-Period Stops (v0.1.12 — ST-11)
+
+Stops are not enforced during the 10-day grace period (`strategy_rules.md` §6). For a row whose `display_status = "GRACE"`, the Stop and Stop Dist % cells both show **"Not enforced (grace)"** in `text-xs text-slate-600 dark:text-slate-400`, with no rose or amber distance colour. Tooltip: "Stops are not enforced during the 10-day grace period. See strategy rules §6." `data-testid="stop-not-enforced"` on each cell.
 
 ### 6.3 State Badges
 
@@ -192,7 +197,7 @@ Stop Distance derivation is purely presentational (display arithmetic on backend
 ### 6.4 Sort Order
 
 Primary: status group order — GRACE first, then LOSING, then PROFITABLE.
-Secondary within group: ascending by stop distance (tightest/smallest distance first = most at risk).
+Secondary within group: ascending by `stop_distance_pct` (tightest/smallest distance first = most at risk). Within the GRACE group, stop distance does not apply, so rows sort by `grace_days_remaining` ascending, the same as §5.4 *(v0.1.12 — ST-11)*.
 
 ### 6.5 States
 
@@ -202,6 +207,10 @@ Secondary within group: ascending by stop distance (tightest/smallest distance f
 | Loaded | Table renders |
 | Loading | Skeleton rows |
 | Error | "Unable to load position data" |
+
+### 6.6 Stale Price Marker (v0.1.12 — ST-10)
+
+When a position's `price_is_stale` is `true` (the live price fetch failed and `GET /portfolio` returned the last stored native price converted at the live FX rate), the Current (GBP) cell shows the price followed by a `Clock` icon (lucide, `w-3.5 h-3.5`) and the word "stale", both `text-amber-400` / `text-xs`. `data-testid="price-stale-marker"`. Tooltip and `aria-label`: "Live price unavailable. Showing the last stored price converted at today's FX rate." Nothing is shown when the field is false, null or absent.
 
 ---
 
@@ -424,6 +433,7 @@ The following deviations were identified at v1.8 sprint execution and accepted f
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.12 | 2026-10-08 | v9.11 design gate. (ST-10, BLG-BE-154) new §6.6 Stale Price Marker driven by `price_is_stale`. (ST-11, BLG-FE-206) §6.2 Entry Price in GBP for every market, money headers state "(GBP)", new §6.2a grace-period stops shown as "Not enforced (grace)" with no distance colour, §6.4 GRACE group sorted by `grace_days_remaining`. (ST-13, BLG-BE-155) Stop Dist % taken from the API's native-currency `stop_distance_pct`. Design source: `docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md`. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |
 | 0.1.11 | 2026-07-27 | ST-02 (BLG-FEAT-67, EPIC-02, v7.9) implementation: corrected §8b.1's data-dependency premise (Metrics Definitions & Analytics Owner amendment, agent-mediated) — no historical sector/regime data ever existed to aggregate; `sector_regime_history` is a new table, populated going forward only, no retroactive backfill. `insufficient_history: true` is the expected day-one state, not a fallback. Contract: `portfolio_endpoints.md` v2.5.0. |
 | 0.1.10 | 2026-07-27 | v7.9 design gate — §8b Sector & Regime Exposure Trend added (ST-02, BLG-FEAT-67): new full-width panel inserted between §8a Sector Concentration Heat Map and §7 Prospective Heat Indicator; sector concentration trend chart (weekly buckets, top 5 sectors + Other) and US/UK regime status timeline strip; new `GET /portfolio/sector-regime-trend` endpoint; insufficient-history state (<8 weeks); display-only. Corrects the backlog item's stated placement ("Positions or Reports page") to this page, where `SectorHeatMap` actually renders — see §8b placement note. Design source: sector-regime-exposure-trend/ux_spec.md. Approved: Product Owner 2026-07-27. Head of Specs Team confirmed. |
 | 0.1.9 | 2026-06-22 | v6.1 design gate — §8a Sector Concentration Heat Map added (ST-06, BLG-FE-76): new full-width panel inserted between §6 Position Risk and §7 Prospective Heat; tile grid by sector, exposure % + position count per tile, amber colour-coding ≥ 40% concentration threshold, alert bar when concentration_alert: true; uses new GET /portfolio/sector-weights endpoint; display-only MVP. §2 Layout updated to four full-width rows. Design source: sector-heatmap/ux_spec.md. Approved: Product Owner 2026-06-22. Head of Specs Team confirmed. |
