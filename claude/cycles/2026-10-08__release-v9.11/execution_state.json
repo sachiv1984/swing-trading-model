@@ -447,7 +447,8 @@
         "tests/e2e/market-regime-readonly.spec.js",
         "tests/e2e/system-status.spec.js",
         "tests/test_price_alert_db_uniqueness.py",
-        "tests/test_price_alerts_service.py"
+        "tests/test_price_alerts_service.py",
+        "tests/test_ai_endpoint_anomaly_service.py"
       ],
       "stories": {
         "ST-16": {

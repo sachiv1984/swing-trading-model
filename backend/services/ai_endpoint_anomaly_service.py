@@ -210,10 +210,14 @@ def run_scheduled_anomaly_check(
     alert_sent = False
     if firing and send_alert:
         alert_sent = _send_anomaly_telegram_alert_deduped(firing)
-    elif not firing:
+    elif not firing and send_alert:
         # Nothing firing now -- clear any stored fingerprint so a future
         # recurrence (even with an identical signature to a past alert)
         # is treated as new, not silently suppressed forever (ST-08).
+        # ST-21 (BLG-OPS-176, v9.11): gated on send_alert, like the send path,
+        # so a call with send_alert=False (a preview or status read) has no
+        # side effect on the persisted dedup state. The scheduled check, which
+        # alerts, still clears the fingerprint whenever nothing is firing.
         _clear_anomaly_alert_fingerprint()
 
     return {
