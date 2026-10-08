@@ -597,23 +597,26 @@
         "ST-22": {
           "title": "Guard POST /trade-plans against a double-submitted duplicate plan",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1946,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "5c750c97c6efd4eb7a4cebee00393e5b2a6192ed",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:43:41Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/trade_plan_endpoints.md#POST /trade-plans",
+            "tests/e2e/trade-plan.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. Disposition: client-side submit guard (TradePlan.js in-flight flag + switch to update after create), recorded in trade_plan_endpoints.md. Playwright SC-TP-30 (fails on old code: 2 POSTs). No PO accepted-risk line needed (default disposition). ci_pending: check at 3.2.A. Deviation check: none."
         }
       }
     },
@@ -1120,7 +1123,9 @@
     "ST-14",
     "ST-15",
     "ST-18",
-    "ST-19"
+    "ST-19",
+    "ST-21",
+    "ST-22"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",
