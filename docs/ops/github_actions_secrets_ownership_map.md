@@ -1,7 +1,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Reference Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-09-22 (ST-15, BLG-OPS-163, EPIC-04, v9.6 — initial version)
+**Last Updated:** 2026-10-08 (ST-18, EPIC-03, v9.11, BLG-OPS-179 — post-deploy-stop-health.yml added to the API_URL, API_KEY and Telegram rows); prior — 2026-09-22 (ST-15, BLG-OPS-163, EPIC-04, v9.6 — initial version)
 
 ---
 
@@ -19,8 +19,8 @@ Every `secrets.*` reference across `.github/workflows/*.yml`, current as of this
 
 | Secret | Consuming workflow(s) | Environment | Required access level |
 |---|---|---|---|
-| `API_KEY` | `ai-endpoint-anomaly-check.yml`, `alert-evaluation.yml`, `api-key-cross-environment-check.yml`, `backtest.yml`, `daily-snapshot.yml`, `nightly-stop-update-staleness-check.yml`, `nightly-stop-update.yml`, `rebalance-exit.yml`, `risk-off-alerts.yml`, `screener-refresh.yml`, `si05-weekly-digest.yml` | Production | Read-write — the production `X-API-Key`; several consumers call mutating `POST` endpoints (e.g. `nightly-stop-update.yml`, `rebalance-exit.yml`) |
-| `API_URL` | `ai-endpoint-anomaly-check.yml`, `alert-evaluation.yml`, `api-key-cross-environment-check.yml`, `backtest.yml`, `daily-snapshot.yml`, `health-check-alert.yml`, `nightly-stop-update-staleness-check.yml`, `nightly-stop-update.yml`, `rebalance-exit.yml`, `risk-off-alerts.yml`, `screener-refresh.yml`, `si05-weekly-digest.yml`, `st08-proxy-ip-verification.yml` | Production | N/A — a config value (the production API base URL), not a credential; stored as a secret only to avoid publishing the internal hostname |
+| `API_KEY` | `ai-endpoint-anomaly-check.yml`, `alert-evaluation.yml`, `api-key-cross-environment-check.yml`, `backtest.yml`, `daily-snapshot.yml`, `nightly-stop-update-staleness-check.yml`, `nightly-stop-update.yml`, `post-deploy-stop-health.yml`, `rebalance-exit.yml`, `risk-off-alerts.yml`, `screener-refresh.yml`, `si05-weekly-digest.yml` | Production | Read-write — the production `X-API-Key`; several consumers call mutating `POST` endpoints (e.g. `nightly-stop-update.yml`, `rebalance-exit.yml`) |
+| `API_URL` | `ai-endpoint-anomaly-check.yml`, `alert-evaluation.yml`, `api-key-cross-environment-check.yml`, `backtest.yml`, `daily-snapshot.yml`, `health-check-alert.yml`, `nightly-stop-update-staleness-check.yml`, `nightly-stop-update.yml`, `post-deploy-stop-health.yml`, `rebalance-exit.yml`, `risk-off-alerts.yml`, `screener-refresh.yml`, `si05-weekly-digest.yml`, `st08-proxy-ip-verification.yml` | Production | N/A — a config value (the production API base URL), not a credential; stored as a secret only to avoid publishing the internal hostname |
 | `DATABASE_URL` | *(none live — see Aliasing note)* | — | Retired alias; superseded by `PROD_DATABASE_URL` |
 | `GITHUB_TOKEN` | `audit-cadence-reminder.yml`, `deploy.yml`, `execution-state-schema-check.yml`, `governance_sync.yml`, `secret-scanning.yml`, `update-visual-snapshots.yml` | N/A (GitHub-internal) | Auto-provisioned per run by GitHub Actions; scope is set per-workflow via that workflow's own `permissions:` block (e.g. `governance_sync.yml`: `issues: write`; `deploy.yml`: `contents: write`, `pages: write`, `id-token: write`) — not manually managed or rotated |
 | `GITLEAKS_LICENSE` | `secret-scanning.yml` | N/A | License key (Gitleaks Pro) — no data access; loss of this secret degrades scan coverage, not a security exposure |
@@ -32,7 +32,7 @@ Every `secrets.*` reference across `.github/workflows/*.yml`, current as of this
 | `STAGING_API_KEY` | `api-key-cross-environment-check.yml`, `api-performance-baseline-measurement.yml`, `staging-deploy.yml`, `staging-smoke-test.yml` | Staging | Read-write — the staging `X-API-Key` |
 | `STAGING_API_URL` | `staging-deploy.yml`, `staging-smoke-test.yml` | Staging | N/A — config value (staging API base URL), not a credential |
 | `STAGING_DATABASE_URL` | `reset-and-seed-staging.yml`, `seed-preview.yml` (also consumed outside GitHub Actions by `scripts/reset_staging_db.sh`) | Staging | Read-write — both consuming workflows run destructive resets and seed inserts/updates against the staging schema |
-| `TELEGRAM_BOT_TOKEN` | `api-key-cross-environment-check.yml`, `backtest.yml`, `csv-export-content-regression-check.yml`, `health-check-alert.yml`, `nightly-stop-update-staleness-check.yml`, `si05-digest-staleness-check.yml`, `staging-deploy-drift-check.yml`, `staging-smoke-test.yml` | N/A (Telegram) | Write-only to the Telegram Bot API — sends alert messages; no read access to any application data |
+| `TELEGRAM_BOT_TOKEN` | `api-key-cross-environment-check.yml`, `backtest.yml`, `csv-export-content-regression-check.yml`, `health-check-alert.yml`, `nightly-stop-update-staleness-check.yml`, `post-deploy-stop-health.yml`, `si05-digest-staleness-check.yml`, `staging-deploy-drift-check.yml`, `staging-smoke-test.yml` | N/A (Telegram) | Write-only to the Telegram Bot API — sends alert messages; no read access to any application data |
 | `TELEGRAM_CHAT_ID` | *(same consumer list as `TELEGRAM_BOT_TOKEN`)* | N/A (Telegram) | N/A — a destination chat identifier, not a credential |
 
 ## Aliasing relationships

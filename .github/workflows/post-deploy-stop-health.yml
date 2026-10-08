@@ -1,0 +1,80 @@
+# .github/workflows/post-deploy-stop-health.yml
+name: Post-Deploy Stop Health Check
+
+# ST-18 (BLG-OPS-179, EPIC-03, v9.11): after each production deploy (and once a
+# day as a backstop), check that every post-grace open position has a stop and
+# an active_atr_multiplier in the strategy_rules.md §11 set
+# (scripts/check_post_grace_stop_health.py). A failure alerts through the same
+# Telegram path as health-check-alert.yml, with the same ::warning:: fallback
+# when the Telegram secrets are not configured. Regression-tested by
+# tests/test_post_grace_stop_health.py against fixtures.
+
+on:
+  workflow_run:
+    workflows: ["Deploy to GitHub Pages"]
+    types: [completed]
+  schedule:
+    - cron: '30 7 * * 1-5'  # weekdays 07:30 UTC, after the nightly stop update
+  workflow_dispatch:
+
+concurrency:
+  group: post-deploy-stop-health
+  cancel-in-progress: true
+
+jobs:
+  stop-health:
+    name: Post-grace stops and §11 multipliers
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Wait for the backend deploy to go live
+        # The backend deploys on Render from the same push to main; give it time
+        # to replace the running service before reading GET /positions.
+        if: github.event_name == 'workflow_run'
+        run: sleep 300
+
+      - name: Run stop health check
+        id: check
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          set +e
+          python3 scripts/check_post_grace_stop_health.py --api-url "$API_URL" --api-key "$API_KEY" | tee result.txt
+          rc=${PIPESTATUS[0]}
+          echo "rc=${rc}" >> "$GITHUB_OUTPUT"
+          {
+            echo 'summary<<EOF'
+            head -c 3000 result.txt
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Send alert on stop-health violation or check failure
+        if: steps.check.outputs.rc != '0'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SUMMARY: ${{ steps.check.outputs.summary }}
+        run: |
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          MESSAGE="Post-deploy stop health check failed (exit ${{ steps.check.outputs.rc }}): ${SUMMARY} ${RUN_URL}"
+          echo "$MESSAGE"
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -sS --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+              --data-urlencode "text=${MESSAGE}"
+          else
+            echo "::warning::TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not configured as repo secrets — alert not sent. Message would have been: ${MESSAGE}"
+          fi
+          exit 1
