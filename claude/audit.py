@@ -24,32 +24,30 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-09-28"
-PRIOR_AUDIT_OPEN_ITEMS = []
-  # All 3 improvements filed at AUD-2026-09-28 were actioned post-publication, same session, per
-  # explicit user direction ("apply the 3 improvements") and a Head of Specs Team ruling on the 2
-  # items that needed one (agent-mediated per CLAUDE.md §5.3, user-directed to act as that role).
-  # 001: lessons_learnt_prompt.md v1.14->v1.15 (§5 scope narrowed to Roadmap Rebalance + Post-Ship
-  # Closure; Release Planning's lightweight format confirmed as its own intended variant). 002:
-  # execution_prompt.md v3.79->v3.80 (§3.2.A gains the same-EPIC cross-story testing-gap consistency
-  # check; also resolves ESC-CLOSE-20260928-01). 003: OPERATIONAL_GUIDE.md §13 gains a scope note
-  # ruling CLAUDE.md/README.md/audit.py intentionally excluded as entry-point/meta-documents.
-  # OPERATIONAL_GUIDE.md v4.207->v4.208 for the §8 header, §14 rows/self-row, and §13 note. Companion
-  # changelogs and 3 new prompt_change_log.md rows added. See claude/cycles/2026-09-23__release-v9.7/
-  # audit_report_AUD-2026-09-28.md §5 post-publication note.
+PRIOR_AUDIT_ID = "AUD-2026-10-08"
+PRIOR_AUDIT_OPEN_ITEMS = [
+    "AUD-2026-10-08-001", "AUD-2026-10-08-002", "AUD-2026-10-08-003",
+    "AUD-2026-10-08-004", "AUD-2026-10-08-005", "AUD-2026-10-08-006",
+    "AUD-2026-10-08-007",
+]
+  # None applied in the filing session: each touches a governance file (CLAUDE.md §2) or CI and
+  # needs its owner's sign-off. Report: claude/cycles/2026-10-08__release-v9.11/
+  # audit_report_AUD-2026-10-08.md. Execution Reliability (73) and Governance Integrity (46) were
+  # re-based this run (R3/R5 re-derived; §13 checked by inventory diff), so their trend vs. the
+  # prior 53/100 is not comparable.
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
-    "token_efficiency":      100,
-    "governance_integrity":  100,
-    "execution_reliability": 53,
-    "friction_load":         39,
+    "token_efficiency":      84,
+    "governance_integrity":  46,
+    "execution_reliability": 73,
+    "friction_load":         42,
     "document_hygiene":      100,
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 84  # current completed_cycle_count at AUD-2026-09-28
+COMPLETED_CYCLES = 87  # current completed_cycle_count at AUD-2026-10-08
 
 # -------------------------
 # MISSING FILE RULE
