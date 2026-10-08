@@ -32,6 +32,7 @@ A recurring `Unavailable` reading (the same environment gap appearing 2+ consecu
 
 | Cycle | Date | Dependencies scanned | Result | Resolution status | Notes |
 |-------|------|----------------------|--------|--------------------|-------|
+| `2026-10-08__release-v9.11` | 2026-10-08 | 60 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/pip-audit`). Same 60-dependency count as v9.10. |
 | `2026-10-06__release-v9.10` | 2026-10-06 | 60 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/pip-audit`). The scan covers 60 resolved dependencies, up from 58, which reflects transitive resolution and is not a new direct requirement. The v9.9 reading recorded in that cycle's `sprint_planning_notes.md` (clean, 58) has no row here; it was not backfilled. |
 | `2026-09-28__release-v9.8` | 2026-09-28 | 58 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/python3 -m pip_audit`); the bare `pip-audit` command is not on the system `PATH` in this environment (CLAUDE.md §9 pattern), so this is not an `Unavailable` reading. |
 | `2026-09-23__release-v9.7` | 2026-09-23 | 58 | Clean | — | Sprint planning STEP -1.6. Run via the project virtualenv (`backend/.venv/bin/python3 -m pip_audit`); the bare `pip-audit` command is not on the system `PATH` in this environment (CLAUDE.md §9 pattern), so this is not an `Unavailable` reading. |
