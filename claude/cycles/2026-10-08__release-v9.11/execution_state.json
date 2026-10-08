@@ -448,7 +448,8 @@
         "tests/e2e/system-status.spec.js",
         "tests/test_price_alert_db_uniqueness.py",
         "tests/test_price_alerts_service.py",
-        "tests/test_ai_endpoint_anomaly_service.py"
+        "tests/test_ai_endpoint_anomaly_service.py",
+        "tests/e2e/trade-plan.spec.js"
       ],
       "stories": {
         "ST-16": {
@@ -572,23 +573,26 @@
         "ST-21": {
           "title": "Make the anomaly-check fingerprint-clear path respect send_alert, or document why not",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1945,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "23b84fac3c8cf6aa34ba7f776d718ed40d18953e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:35:21Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/services/ai_endpoint_anomaly_service.py",
+            "tests/test_ai_endpoint_anomaly_service.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. Disposition: clear path gated on send_alert (symmetric). AC2 two explicit tests in tests/test_ai_endpoint_anomaly_service.py. Deviation check: none."
         },
         "ST-22": {
           "title": "Guard POST /trade-plans against a double-submitted duplicate plan",

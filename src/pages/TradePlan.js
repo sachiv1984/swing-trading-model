@@ -586,6 +586,14 @@ export default function TradePlan() {
     enabled: !!positionId && !editId,
   });
 
+  // ST-22 (BLG-API-06, EPIC-03, v9.11): double-submit guard. POST /trade-plans
+  // has no uniqueness rule (several plans per ticker is legitimate), so the
+  // client prevents a duplicate: a synchronous in-flight flag stops a second
+  // click that lands before React re-renders the disabled button, and after a
+  // successful create the page switches to updating that plan.
+  const submitInFlight = useRef(false);
+  const [createdId, setCreatedId] = useState(null);
+
   const createMutation = useMutation({
     mutationFn: (data) =>
       apiFetch(`${API_BASE}/trade-plans`, {
@@ -593,9 +601,13 @@ export default function TradePlan() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       }).then((r) => r.json()),
-    onSuccess: () => {
+    onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["tradePlans"] });
+      if (res?.data?.id) setCreatedId(res.data.id);
       setSaved(true);
+    },
+    onSettled: () => {
+      submitInFlight.current = false;
     },
   });
 
@@ -610,6 +622,9 @@ export default function TradePlan() {
       queryClient.invalidateQueries({ queryKey: ["tradePlans"] });
       hasUnsavedAiChanges.current = false;
       setSaved(true);
+    },
+    onSettled: () => {
+      submitInFlight.current = false;
     },
   });
 
@@ -661,6 +676,8 @@ export default function TradePlan() {
   };
 
   const handleSubmit = () => {
+    if (submitInFlight.current) return;
+    submitInFlight.current = true;
     const toNum = (v, parse) => (v === "" || v == null ? null : (n => isNaN(n) ? null : n)(parse(v)));
     const payload = {
       ...form,
@@ -671,8 +688,9 @@ export default function TradePlan() {
       planned_stop_price: toNum(form.planned_stop_price, parseFloat),
       is_ai_draft: isClaudeDraft,
     };
-    if (editId) {
-      updateMutation.mutate({ id: editId, data: payload });
+    const targetId = editId || createdId;
+    if (targetId) {
+      updateMutation.mutate({ id: targetId, data: payload });
     } else {
       createMutation.mutate(payload);
     }
@@ -1216,7 +1234,7 @@ export default function TradePlan() {
               className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0"
             >
               <Save className="w-4 h-4 mr-2" />
-              {isPending ? "Saving…" : editId ? "Update Plan" : "Save Plan"}
+              {isPending ? "Saving…" : (editId || createdId) ? "Update Plan" : "Save Plan"}
             </Button>
           </div>
         )}

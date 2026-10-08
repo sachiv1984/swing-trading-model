@@ -995,3 +995,46 @@ test('SC-TP-28: Tag suggestion is selectable via keyboard (Tab + Enter), not jus
   await expect(page.getByTestId('trade-plan-tags')).toContainText('momentum');
   await expect(page.getByTestId('trade-plan-tag-remove-momentum')).toBeVisible();
 });
+
+// ---------------------------------------------------------------------------
+// SC-TP-30 — Double-submit guard (ST-22, BLG-API-06, EPIC-03, v9.11)
+// POST /trade-plans has no uniqueness rule, so the page prevents a duplicate:
+// a double-click sends one POST, and Save after a successful create updates
+// that plan (PUT) instead of creating a second one.
+// ---------------------------------------------------------------------------
+
+test('SC-TP-30: a double-click on Save sends one POST; a later Save updates the created plan', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await mockByPosition(page, NO_PLAN_FOR_POSITION);
+  let posts = 0;
+  const puts = [];
+  await page.route(`${API}/trade-plans`, async (route) => {
+    if (route.request().method() === 'POST') {
+      posts += 1;
+      await new Promise((r) => setTimeout(r, 400)); // keep the first request in flight
+      return route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(TRADE_PLAN_SAVED) });
+    }
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) });
+  });
+  await page.route(new RegExp(`${API}/trade-plans/[^/]+$`), (route) => {
+    if (route.request().method() === 'PUT') {
+      puts.push(route.request().url());
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(TRADE_PLAN_SAVED) });
+    }
+    return route.fallback();
+  });
+  await gotoTradePlan(page, { ticker: 'AAPL', market: 'US' });
+
+  // Two clicks in the same task, before React can re-render the button as disabled.
+  await page.getByRole('button', { name: /save plan/i }).evaluate((el) => { el.click(); el.click(); });
+  await expect(page.locator('[class*="emerald"]').filter({ hasText: /saved successfully/i })).toBeVisible({ timeout: 8000 });
+  expect(posts).toBe(1);
+
+  const update = page.getByRole('button', { name: /update plan/i });
+  await expect(update).toBeVisible();
+  await update.click();
+  await expect.poll(() => puts.length).toBe(1);
+  expect(puts[0]).toContain(`/trade-plans/${TRADE_PLAN_SAVED.data.id}`);
+  expect(posts).toBe(1);
+});
