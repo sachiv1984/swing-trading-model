@@ -26,7 +26,9 @@
         "tests/test_debrief_service.py",
         "tests/test_ai_prompt_template_golden_fixtures.py",
         "tests/test_ai_sampling_failsafe.py",
-        "tests/test_backend_import_path_isolation.py"
+        "tests/test_backend_import_path_isolation.py",
+        "tests/test_ai_prompt_advisory_statements.py",
+        "tests/test_ai_stop_recalculation_time.py"
       ],
       "stories": {
         "ST-01": {
@@ -178,23 +180,27 @@
         "ST-07": {
           "title": "State in the daily-briefing system prompt that output is advisory and cannot execute trades",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1931,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8f3f836d10b1be46154bde4326f500882c11e768",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T11:12:55Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing",
+            "docs/ops/ai_chat_section13_quarterly_self_audit_checklist.md",
+            "tests/test_ai_prompt_advisory_statements.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1: briefing prompt states advisory-only/no execution and recommendation framing; golden fixtures pass; BRIEFING_PROMPT_VERSION v1.0->v1.1. AC2: self-audit A1 Pass for both prompts (tests/test_ai_prompt_advisory_statements.py), checklist updated. Deviation check: none."
         },
         "ST-08": {
           "title": "AI briefing and chat state when a quoted stop was last recalculated",

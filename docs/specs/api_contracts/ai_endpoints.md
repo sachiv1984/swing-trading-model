@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.18
-**Last Updated:** 2026-10-08 (ST-07, EPIC-01, v9.11, BLG-AI-09 — daily briefing system prompt states advisory-only / no execution, actions framed as recommendations; briefing prompt_version v1.1); prior — 2026-10-08 (ST-03, EPIC-01, v9.11, BLG-BE-151 — every AI call site reaches the sampling hook through `utils/ai_sampling.py::sample_ai_output()`, so a sampling failure, including at import, can no longer replace a generated response; daily briefing and chat log their fallback with `exc_info`); prior — 2026-10-01 (ST-33, EPIC-05, v9.9, BLG-SPEC-168 — corrected 4 citations of the `latency_ms` composition decision from `BLG-BE-128` to the correct `BLG-BE-129`; `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites), documentation only); prior history retained — see prior entries in version control
+**Version:** 1.19
+**Last Updated:** 2026-10-08 (ST-08, EPIC-01, v9.11, BLG-BE-141 — briefing and chat context carry each stop's stop_calculated_at and the prompts instruct the model to state it; briefing v1.2, chat v1.1); prior — 2026-10-08 (ST-07, EPIC-01, v9.11, BLG-AI-09 — daily briefing system prompt states advisory-only / no execution, actions framed as recommendations; briefing prompt_version v1.1); prior — 2026-10-08 (ST-03, EPIC-01, v9.11, BLG-BE-151 — every AI call site reaches the sampling hook through `utils/ai_sampling.py::sample_ai_output()`, so a sampling failure, including at import, can no longer replace a generated response; daily briefing and chat log their fallback with `exc_info`); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -122,7 +122,9 @@ Assembles a read-only context object from live portfolio state and calls `claude
 
 **§13 Status:** PASS — SRB-v1.7. LLM output is advisory-only, display-only. Does not modify positions, signals, or trade plans. See `docs/product/decisions/decisions--2026-06-24__release-v6.2--BLG-FEAT-50-51-section13-review.md`.
 
-**System prompt (`BRIEFING_PROMPT_VERSION` v1.1, ST-07, BLG-AI-09, v9.11):** the model-facing instruction states that the output is advisory only, that the model cannot execute trades and nothing it writes is acted on automatically, and that each action item is a recommendation for the user to decide on, never an instruction. Before v1.1 only the response payload (`advisory: true`) and the UI (`AiDisclaimer`) carried the boundary. The version is logged to `claude_audit_log.prompt_version` and pinned by `tests/fixtures/ai_prompt_template_golden_fixtures.json`; the chat prompt is versioned separately (`CHAT_PROMPT_VERSION`).
+**System prompt (`BRIEFING_PROMPT_VERSION` v1.1, ST-07, BLG-AI-09, v9.11; v1.2, ST-08):** the model-facing instruction states that the output is advisory only, that the model cannot execute trades and nothing it writes is acted on automatically, and that each action item is a recommendation for the user to decide on, never an instruction. Before v1.1 only the response payload (`advisory: true`) and the UI (`AiDisclaimer`) carried the boundary. The version is logged to `claude_audit_log.prompt_version` and pinned by `tests/fixtures/ai_prompt_template_golden_fixtures.json`; the chat prompt is versioned separately (`CHAT_PROMPT_VERSION`).
+
+**Stop recalculation time (ST-08, BLG-BE-141, v9.11; briefing v1.2, chat v1.1):** each position line in the briefing and chat context carries the time its stop was last recalculated (`positions.stop_calculated_at`, DS-22; "stop not recalculated since entry" when NULL), and both system prompts tell the model to state that time whenever it mentions a stop or a stop breach. This is a prompt-side control: a model response that omits the time is not rejected. Asserted by `tests/test_ai_stop_recalculation_time.py`.
 
 **Story:** ST-06 (BLG-FEAT-50, EPIC-02, v6.2)
 
@@ -278,7 +280,7 @@ Each call is independent — the backend loads fresh portfolio and signal state 
 ### Context injected into system prompt
 
 - Portfolio cash and open position count
-- Per-position: ticker, market, current price, trailing stop, risk-off flag, P&L
+- Per-position: ticker, market, current price, trailing stop with its last recalculation time (`stop_calculated_at`, or "not recalculated since entry" when NULL — ST-08, v9.11), risk-off flag, P&L
 - Latest top-5 momentum signals
 - Optional: focused ticker from `context.ticker`
 
@@ -857,6 +859,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.19 | 2026-10-08 | ST-08 (EPIC-01, v9.11, BLG-BE-141): Briefing and chat context state each stop's last recalculation time (`stop_calculated_at`) and both prompts instruct the model to quote it; `BRIEFING_PROMPT_VERSION` v1.2, `CHAT_PROMPT_VERSION` v1.1. No request/response change. |
 | 1.18 | 2026-10-08 | ST-07 (EPIC-01, v9.11, BLG-AI-09): Daily briefing system prompt states advisory-only / no execution and frames actions as recommendations; `BRIEFING_PROMPT_VERSION` v1.0 → v1.1 (`claude_audit_log.prompt_version`). No request/response change. |
 | 1.17 | 2026-10-08 | ST-03 (EPIC-01, v9.11, BLG-BE-151): Sampling hook failure isolation — all 6 call sites go through `utils/ai_sampling.py::sample_ai_output()`, which guards the import and the call and logs failures with `exc_info`; daily briefing and chat log the exception behind their fallback message. No endpoint or response-shape change. |
 | 1.16 | 2026-10-01 | ST-33 (EPIC-05, v9.9, BLG-SPEC-168): Corrected 4 citations of the `latency_ms` composition decision (Implementation constraints note, Backlog reference line, this Changelog's own v1.14 row, and the header `Last Updated` chain) from `BLG-BE-128` to the correct `BLG-BE-129`. `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites not yet on the shared upstream helper) — its own legitimate references elsewhere are untouched. Documentation only; no code or behavioural change. |

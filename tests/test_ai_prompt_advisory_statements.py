@@ -55,4 +55,4 @@ def test_briefing_audit_row_records_bumped_prompt_version(_db):
          patch.object(ai_service, "_get_regime_data", return_value=None), \
          patch.dict("os.environ", {"ANTHROPIC_API_KEY": "k"}):
         ai_service.generate_daily_briefing()
-    assert _db.create_claude_audit_entry.call_args.kwargs["prompt_version"] == ai_service.BRIEFING_PROMPT_VERSION == "v1.1"
+    assert _db.create_claude_audit_entry.call_args.kwargs["prompt_version"] == ai_service.BRIEFING_PROMPT_VERSION

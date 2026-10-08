@@ -55,13 +55,31 @@ MODEL_BRIEFING = "claude-sonnet-4-6"
 # constant whenever that system_prompt's text changes.
 # Briefing v1.1 (ST-07, BLG-AI-09, v9.11): states advisory-only / no
 # execution and frames actions as recommendations.
-BRIEFING_PROMPT_VERSION = "v1.1"
-CHAT_PROMPT_VERSION = "v1.0"
+# Briefing v1.2 / chat v1.1 (ST-08, BLG-BE-141, v9.11): each quoted stop
+# carries its recalculation time, and the model is told to state it.
+BRIEFING_PROMPT_VERSION = "v1.2"
+CHAT_PROMPT_VERSION = "v1.1"
 
 # BLG-SEC-01: context_opts.ticker is interpolated into the ai_chat() system prompt.
 # Reject anything outside this charset (in particular \n / \r, which could otherwise
 # forge additional system-prompt lines) before it reaches the prompt.
 _CONTEXT_TICKER_PATTERN = re.compile(r'[A-Z0-9.:/-]{1,20}')
+
+
+def _stop_recalculated_label(position: dict) -> str:
+    """ST-08 (BLG-BE-141, v9.11): when the quoted stop was last recalculated
+    (`positions.stop_calculated_at`, DS-22). NULL means the stop has not
+    been recalculated since entry (for example, during the grace period)."""
+    ts = position.get("stop_calculated_at")
+    if not ts:
+        return "stop not recalculated since entry"
+    if isinstance(ts, str):
+        try:
+            ts = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        except ValueError:
+            return f"stop last recalculated {ts}"
+    return f"stop last recalculated {ts.strftime('%Y-%m-%d %H:%M')} UTC"
+
 
 
 def _validate_context_ticker(context_opts: Optional[dict]) -> None:
@@ -228,7 +246,8 @@ def generate_daily_briefing() -> dict:
                 alerts.append("RISK-OFF-EXIT-FLAGGED")
             alert_str = f" [{', '.join(alerts)}]" if alerts else ""
             context_lines.append(
-                f"  - {ticker} ({market}): price £{price:.2f}, trailing stop £{stop:.2f},"
+                f"  - {ticker} ({market}): price £{price:.2f}, trailing stop £{stop:.2f}"
+                f" ({_stop_recalculated_label(p)}),"
                 f" P&L {pnl_pct:+.1f}%{alert_str}"
             )
     else:
@@ -259,6 +278,8 @@ def generate_daily_briefing() -> dict:
         "(2) an ordered list of recommended actions in JSON, each one a recommendation for the user to decide on, never an instruction. "
         "Action types: EXIT for stop breach or risk-off regime, ENTER for strong new signals, "
         "MONITOR for near-stop positions, HOLD for stable positions. "
+        "Whenever you mention a position's stop or a stop breach, state when that stop was last "
+        "recalculated, using the time given for that position in the snapshot. "
         "Respond with JSON only, no markdown fences, in this exact shape: "
         '{"summary": "...", "actions": [{"type": "EXIT|ENTER|MONITOR|HOLD", "ticker": "...", "description": "..."}]}'
     )
@@ -396,7 +417,8 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
             risk_off = bool(p.get("risk_off_exit", False))
             pnl = p.get("pnl", 0) or 0
             context_lines.append(
-                f"  {ticker} ({market}): price £{price:.2f}, stop £{stop:.2f}, "
+                f"  {ticker} ({market}): price £{price:.2f}, stop £{stop:.2f} "
+                f"({_stop_recalculated_label(p)}), "
                 f"P&L £{pnl:+.0f}, risk_off={risk_off}"
             )
 
@@ -425,6 +447,8 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
         "You have access to the user's live portfolio snapshot below. "
         "Answer the user's question concisely and accurately based on the data provided. "
         "Do not fabricate data. Your responses are advisory only — you cannot execute trades. "
+        "Whenever you mention a position's stop or a stop breach, state when that stop was last "
+        "recalculated, using the time given for that position in the snapshot. "
         "Keep responses to 2-4 sentences unless more detail is genuinely needed.\n\n"
         f"Portfolio context:\n{portfolio_context}"
     )
