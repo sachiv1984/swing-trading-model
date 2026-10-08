@@ -276,7 +276,8 @@
         "tests/test_grace_alert_calendar_days.py",
         "tests/e2e/epic01-v34-lifecycle.spec.js",
         "tests/e2e/position-review-cadence-nudge.spec.js",
-        "tests/test_portfolio_integration.py"
+        "tests/test_portfolio_integration.py",
+        "tests/e2e/recent-trades-zero-pnl-badge.spec.js"
       ],
       "stories": {
         "ST-10": {
@@ -384,23 +385,28 @@
         "ST-14": {
           "title": "Grace alert filter and \"Day N of 10\" label use calendar days since entry",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1938,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "e22b6ff4539c7f777929271b141d51331e58c337",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:18:53Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/grace_period_alert_endpoint.md",
+            "docs/specs/frontend/pages/positions.md#Grace Period Alert Zone (v3.3 — ST-05 IT-02)",
+            "tests/test_grace_alert_calendar_days.py",
+            "tests/e2e/epic01-v34-lifecycle.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 unit tests/test_grace_alert_calendar_days.py + Playwright SC-GP-04 (Day 9 of 10, 2 days left) and SC-GP-05 (Day 10 of 10 ended, design-gate assertion). AC2 no grace reading uses days_in_state (Positions.js alert + suppression, PositionCard.js); grace_period_alert_endpoint.md 1.2.0; positions.md §Grace Period Alert Zone (design gate) + data-source row. ci_pending: 37783382571. Deviation check: none."
         },
         "ST-15": {
           "title": "Recent Trades glyph treats a P&L that rounds to £0.00 as break-even",
@@ -1085,7 +1091,8 @@
     "ST-10",
     "ST-11",
     "ST-12",
-    "ST-13"
+    "ST-13",
+    "ST-14"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",
