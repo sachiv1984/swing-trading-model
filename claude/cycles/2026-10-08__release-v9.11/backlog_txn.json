@@ -1,0 +1,11 @@
+{
+  "cycle_id": "2026-10-08__release-v9.11",
+  "release": "v9.11",
+  "txn_id": "BLTX-20261008-01",
+  "state": "committed",
+  "prepared_utc": "2026-10-08T09:01:31Z",
+  "marker": "RP:v9.11:2026-10-08__release-v9.11",
+  "target_file": "claude/backlog/backlog.md",
+  "committed_utc": "2026-10-08T09:01:44Z",
+  "notes": "Idempotency search: marker RP:v9.11:2026-10-08__release-v9.11 not present in claude/backlog/backlog.md (0 matches). Release slice written to claude/cycles/2026-10-08__release-v9.11/stage4_backlog_slice.md, which carries the marker (v9.8\u2013v9.10 practice). No global reprioritisation. The only backlog.md edits this run are the 6 \u00a71.3a Gate criteria re-gates (STEP 1, ESC-CLOSE-20261007-01 bounds), listed in run_manifest.md."
+}

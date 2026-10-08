@@ -195,7 +195,8 @@ No metric tracks whether entries were executed within the planned entry zone. `e
 **Source:** IDEA-product-owner-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** M (~2–3 days)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** ≥30 days of AI chat usage (v6.2 shipped 2026-06-25; clears ~2026-07-25) AND a §13 review opened and passed for persistence design (chat is currently stateless per SRB-v1.7).
+**Gate criteria:** A §13 review opened and passed for persistence design (chat is currently stateless per SRB-v1.7). The ≥30-days-of-AI-chat-usage limb is met (see note).
+**Gate note (2026-10-08):** (Release Planning `2026-10-08__release-v9.11`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. The usage limb is met: AI chat has been live since v6.2, and `docs/ops/ai_feature_usage_review_2026-09-24.md` (filed 2026-10-05, ST-19) reviewed its usage. The §13 limb is unchanged and not met (no review opened). AC 3 ("Gate condition (30 days usage) verified by Product Owner") names the met limb and is listed here, not edited.
 
 **Problem**
 POST /ai/chat (shipped v6.2) is stateless — no conversation history persists across sessions. Users who want to continue a prior chat thread cannot. Persisting history is a genuine schema and §13 boundary question (stored AI conversation content) that should not be designed ahead of both an established usage pattern and a formal boundary review.
@@ -1803,7 +1804,8 @@ Governance engine prompts have grown complex over 33 cycles. Without periodic co
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** claude_audit_log table 6+ months old (~Nov 2026, since v4.0 ship 2026-05-22). BLG-OPS-31 (Render log retention policy) shipped v4.7; this extends scope to Supabase query logs and claude_audit_log.
+**Gate criteria:** claude_audit_log table 6+ months old — clears 2026-11-22 (6 months after the v4.0 ship). BLG-OPS-31 (Render log retention policy) shipped v4.7; this extends scope to Supabase query logs and claude_audit_log.
+**Gate note (2026-10-08):** (Release Planning `2026-10-08__release-v9.11`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. The embedded date (2026-05-22) was the start of the 6-month count, so the scan reported a false-positive lapse; the concrete clearance date is now stated. AC 3 ("6+ months of audit log data") restates the same condition and is listed here, not edited.
 
 > ⚠️ **Partially pre-met (backlog audit 2026-08-13):** `docs/governance/ai_audit_log_retention_policy.md` already defines a 12-month rolling retention period with an automated purge function — satisfying the `claude_audit_log` half of this item's scope verbatim (the item's own example: "12 months rolling"). The Supabase-query-log retention definition and archiving-trigger scope remain open. Recommend Product Owner narrow this item to the Supabase-log sub-scope at next `groom backlog`/`plan release`.
 
@@ -2017,7 +2019,8 @@ Arc 5 is functionally near-complete (SI-01/02/03 shipped; SI-04 pre-planned; SI-
 **Source:** IDEA-strategy-owner-20260610-02 — Promoted-Backlog rebalance 2026-06-10__scheduled (DL-044)
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** 2026-07-04 SI-05 effectiveness review output (BLG-GOV-113) complete AND Phase 2 activation decision made
+**Gate criteria:** SI-05 Phase 1 effectiveness review output (BLG-GOV-113 protocol) filed AND Phase 2 activation decision made
+**Gate note (2026-10-08):** (Release Planning `2026-10-08__release-v9.11`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. 2026-07-04 was the review's scheduled date, not a clearance date. No Phase 2 activation decision is recorded, so the gate is not met. No AC names the gate's date or gating item.
 
 **Problem**
 SI-05 Phase 2 integrates drift signals (SI-02) with the Telegram digest. Before Phase 2 activates, a targeted §13 review should confirm that incorporating drift signals into an automated notification remains compliant with the "not an automated trading system" and "human-in-the-loop" principles. Phase 1 cleared §13 (notification of compliance scores + red flags). Phase 2 adds drift-signal interpretation — this boundary warrants formal pre-clearance.
@@ -2307,7 +2310,8 @@ No automated check compares frontend page specs against deployed routes to detec
 **Source:** IDEA-data-model-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
 **Effort:** M (~2 days)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** Same gate as BLG-FEAT-55 — §13 review opened and passed for chat persistence AND AI adoption window clears ~2026-07-25.
+**Gate criteria:** Same gate as BLG-FEAT-55 — §13 review opened and passed for chat persistence. The AI adoption-window limb is met (see note).
+**Gate note (2026-10-08):** (Release Planning `2026-10-08__release-v9.11`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. The adoption-window limb is met: the 90-day AI feature usage review was filed 2026-10-05 (`docs/ops/ai_feature_usage_review_2026-09-24.md`, ST-19), and the Product Owner removed that gate from its sibling items. This also meets `BLG-GOV-361`'s scope (drop the adoption-window half and keep the §13 half). No AC names the gate's date or gating item.
 
 **Problem**
 Companion spec item to BLG-FEAT-55 (chat persistence). §13-compliant schema design for persisting user chat sessions must not precede the boundary review itself.
@@ -2414,7 +2418,8 @@ DS-07 (screener → watchlist promotion) has been unchanged since v3.0 with no r
 **Source:** IDEA-product-owner-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** M (~2 days)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** ≥20 closed trades captured post-PT-04 (2026-06-23) with sufficient `setup_type` diversity to justify presets (at least 3 distinct setup types with ≥3 trades each).
+**Gate criteria:** ≥20 closed trades captured since PT-04 shipped, with sufficient `setup_type` diversity to justify presets (at least 3 distinct setup types with ≥3 trades each).
+**Gate note (2026-10-08):** (Release Planning `2026-10-08__release-v9.11`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. The embedded date (2026-06-23, PT-04 ship) was the start of the trade count, not a clearance date, so the scan reported a false-positive lapse. Not verified as met: no production read this session. No AC names the gate's date.
 
 **Problem**
 PT-04 (Setup Quality Score) is live, but trade volume since its gate clearance is too low to know which setup-type presets would actually be useful.
@@ -3163,7 +3168,8 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Effort:** M (~2d)
 **Provisional-Target:** Unscheduled
 **Depends on:** BLG-FEAT-30 (shares the same underlying attribution linkage; Product Owner/Head of Specs Team to confirm whether this is a sub-scope of BLG-FEAT-30 or a genuinely separate item before either enters sprint planning)
-**Gate criteria:** Inherits `BLG-FEAT-30`'s gate (screener live ≥60 days AND ≥60 closed trades with attribution) — track disposition there. Reconciled as a sub-scope of `BLG-FEAT-30` at the Product Owner's `2026-09-03__release-v9.1` decision (reaffirmed each cycle since, most recently `decisions--2026-09-07__release-v9.2.md`); this field added `2026-09-09` (post-ship closure `2026-09-07__release-v9.2` outstanding-actions resolution, Head of Specs Team direct action per the new Gate-Inheritance Field-Completeness Scan, `backlog_management_prompt.md` v1.17) so future rebalance/release-planning sessions no longer need to re-locate a prior cycle's decisions document to confirm this item's exclusion — 4 consecutive cycles (v8.9–v9.2) required that manual lookup before this fix.
+**Gate criteria:** Inherits `BLG-FEAT-30`'s gate (screener live ≥60 days AND ≥60 closed trades with attribution) — track disposition there.
+**Gate note (2026-10-08):** (Release Planning `2026-10-08__release-v9.11`, §1.3a date-lapsed disposition, within the ESC-CLOSE-20261007-01 bounds) Re-gated (b) on the same condition. The dates in the former gate text were history, not clearance dates, so the scan reported a false-positive lapse. That history is preserved here: Reconciled as a sub-scope of `BLG-FEAT-30` at the Product Owner's `2026-09-03__release-v9.1` decision (reaffirmed each cycle since, most recently `decisions--2026-09-07__release-v9.2.md`); this field added `2026-09-09` (post-ship closure `2026-09-07__release-v9.2` outstanding-actions resolution, Head of Specs Team direct action per the new Gate-Inheritance Field-Completeness Scan, `backlog_management_prompt.md` v1.17) so future rebalance/release-planning sessions no longer need to re-locate a prior cycle's decisions document to confirm this item's exclusion — 4 consecutive cycles (v8.9–v9.2) required that manual lookup before this fix.
 
 **Problem**
 The full pipeline (screener hit → watchlist → research → trade plan → position → close) exists end-to-end, but there is no aggregate view of where candidates drop off at each stage, or what fraction of screener hits ever convert into a trade — let alone a profitable one. Without this, it isn't possible to tell whether the screener's complexity and cost are earning their keep, and every other planned analytics feature building on screener attribution (`BLG-FEAT-30` and its consolidated items) is downstream of having this instrumentation in place.

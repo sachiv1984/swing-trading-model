@@ -479,6 +479,16 @@ Today you find stocks through external research and add them to the watchlist ma
 | `BLG-FE-206` — Position Risk table: GBP entry-price label; grace stops shown as not enforced | §7.1 sustained-failure pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | S (~0.75-1 day) |
 | `BLG-BE-154` — remove the ×1.38 US price fallback from `GET /portfolio`; flag stale prices | §7.1 sustained-failure pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | M (~1-1.5 days) |
 
+<!-- roadmap-annotation-marker: RA:v9.11:2026-10-08__release-v9.11 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-10-08__release-v9.11
+- Plan published: 2026-10-08
+- Cycle folder: claude/cycles/2026-10-08__release-v9.11/
+- Backlog slice: claude/cycles/2026-10-08__release-v9.11/stage4_backlog_slice.md
+- Status at annotation: Committed (sealed to Published later in the same session)
+- All four committed items seated: `BLG-BE-152` (ST-01), `BLG-BE-150` (ST-02), `BLG-BE-154` (ST-10), `BLG-FE-206` (ST-11). Full release: 43 items across 6 EPICs, 27.975 days (top of the ~24–28 day band, "use full capacity"). Design gate required.
+
 <!-- roadmap-annotation-marker: RA:v7.4:2026-07-17__release-v7.4 -->
 
 -----
