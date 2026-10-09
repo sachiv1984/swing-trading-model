@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-08 (session — 2 new item(s) added: BLG-FE-209, BLG-FE-210, from ST-37, EPIC-06, v9.11); prior — 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-08 (session — 1 new item added: BLG-GOV-383, from ST-35, EPIC-06, v9.11); prior — 2026-10-08 (session — 2 new item(s) added: BLG-FE-209, BLG-FE-210, from ST-37, EPIC-06, v9.11); prior — 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5165,5 +5165,27 @@ White 12px bold text on `bg-amber-600` measures 3.18:1 (axe `color-contrast`, se
 **Acceptance Criteria**
 - No `bg-amber-600 text-white` pair remains in `src/`
 - The affected specs pass; an axe scan of each changed component reports no `color-contrast` finding on the badge
+
+---
+
+### BLG-GOV-383 — Split `release_planning_prompt.md` so it fits a single read
+**Priority:** P3 (Low)
+**Type:** Governance Process — Prompt Size Budget
+**Owner:** Head of Specs Team
+**Source:** ST-35 (BLG-GOV-359), EPIC-06, cycle `2026-10-08__release-v9.11` — required by `shared_standards.md` §11's engine prompt size budget at the v2.60→v2.61 bump — 2026-10-08
+**Effort:** M (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+`claude/system/release_planning_prompt.md` is 84,469 bytes at v2.61, above `shared_standards.md` §11's 68,500-byte engine prompt budget (≈25,000 tokens, the single-read cap). An engine that cannot read its prompt in one pass risks acting on a partial read. `BLG-GOV-381` tracks the same problem for `post_ship_closure.md`.
+
+**Scope**
+- Move rationale, history and worked examples into a new `claude/system/release_planning_prompt_appendix.md`, following the `roadmap_prompt.md` / `roadmap_prompt_appendix.md` pattern, leaving every mandatory STEP in the core or reached by an explicit pointer
+- Register the appendix in `OPERATIONAL_GUIDE.md` §13 and §14 under the CLAUDE.md §6 checklist
+
+**Acceptance Criteria**
+- The core file is at or under 68,500 bytes (`wc -c`)
+- No mandatory STEP is moved out of the core (every STEP heading in the pre-split file is still in the core or reached by an explicit pointer from it)
+- `governance-drift` reports all versions in sync
 
 ---
