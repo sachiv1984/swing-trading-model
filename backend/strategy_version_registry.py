@@ -66,6 +66,7 @@ DOCUMENTATION_ONLY_VERSIONS = frozenset({
     "1.12",  # §7.1 ATR ruling: formulas unchanged, duplicate copies consolidated
     "1.13",  # §12.3 cross-reference to the parameter ledger
     "1.14",  # §13.3 gap-risk wording clarified
+    "1.16",  # §13.5 roster row (ST-25 monthly P&L narrative)
 })
 
 

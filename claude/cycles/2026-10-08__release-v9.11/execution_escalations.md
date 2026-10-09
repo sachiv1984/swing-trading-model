@@ -37,7 +37,8 @@ Last Updated: 2026-10-08
 - **Dependants:** ST-26 (usage counter).
 - **SLA due-by:** 2026-10-11T11:01:30Z (72h — Strategy)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution (2026-10-09):** Strategy Rules & System Intent Owner determination, agent-mediated per `execution_prompt.md` §5.3 (user-directed), dated 2026-10-09: **CONDITIONAL**, a confirmation (no full §13 review needed). Recorded in `docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md` with 12 binding conditions. It cites §13.1, §13.2, §13.3, §13.4 and §13.5 (and checks §13.6) under the ST-35 citation rule. It records that no §13 clause names financial reporting, a question controlled by Condition 5 (kept out of every export, snapshot and figure, SRB-v1.7) and Condition 6. Key conditions beyond the engine recommendation: a direction check for signed figures alongside the value cross-check, and test coverage of every output-side control before DoQ. Review: first pass Blocked (2 blocking findings), second pass Approved. §13.5 roster row added in the same commit (`strategy_rules.md` v1.14 → v1.16, documentation only; numbered 1.16 because EPIC-03's v1.15 merges first). ST-25 continues with addendum steps 2–3.
 
 ## ESC-EXEC-20261008-03
 
