@@ -39,11 +39,19 @@ def test_returns_latest_registry_entry():
 
 
 def test_returns_a_string_matching_current_strategy_rules_version():
-    # strategy_rules.md header **Version:** 1.4 at time of writing (v8.0 ST-01).
-    # This test intentionally couples to the registry's last entry, not a
-    # hardcoded literal, so it does not go stale when a new version is added
-    # (registry maintenance obligation is documented in the module docstring).
-    assert get_current_strategy_version() == "1.4"
+    # The current behavioural version is the newest strategy_rules.md Change
+    # Log row that is not documentation-only (2026-10-06 coverage rule). Read
+    # from the file rather than a literal, so it does not go stale (it pinned
+    # "1.4" until ST-16, v9.11, registered 1.15).
+    import re
+    from pathlib import Path
+    from strategy_version_registry import DOCUMENTATION_ONLY_VERSIONS
+
+    rules = (Path(__file__).parent.parent / "claude" / "strategy" / "strategy_rules.md").read_text()
+    logged = re.findall(r"^\| (\d+\.\d+) \|", rules, re.MULTILINE)
+    behavioural = [v for v in logged if v not in DOCUMENTATION_ONLY_VERSIONS]
+    newest = max(behavioural, key=lambda v: tuple(int(x) for x in v.split(".")))
+    assert get_current_strategy_version() == newest
 
 
 # ---------------------------------------------------------------------------

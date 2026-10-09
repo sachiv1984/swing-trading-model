@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior — 2026-10-07 (session — 3 new item(s) added: BLG-BE-152, BLG-FE-205, BLG-GOV-378 from debrief production testing; BLG-BE-150 progress note); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-09 (session — 2 new item(s) added: BLG-BE-160, BLG-BE-161, from ST-16, EPIC-03, v9.11); prior — 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5126,3 +5126,39 @@ When the live price fetch fails, `portfolio_service.py` (lines ~118-124) treats 
 - `governance-drift` reports all versions in sync.
 
 ---
+
+### BLG-BE-160 — Rounding the stored stop to 2 dp can lower it, breaching the §7.3 ratchet
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** ST-16 (BLG-BE-143), EPIC-03, cycle `2026-10-08__release-v9.11` — raised in the Strategy Rules & System Intent Owner's ruling on `ESC-EXEC-20261008-01` (2026-10-09)
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`add_position()` stores `initial_stop` and `current_stop` unrounded in `DECIMAL(10,4)` columns. The post-grace stop writes, `analyze_positions()` (`'current_stop': round(trailing_stop_native, 2)`) and `run_nightly_trailing_stop_update()` (`round(new_stop_native, 2)`), round to 2 dp after the `max()`. When `calculate_trailing_stop` keeps the stored stop (no rise), rounding can lower it by up to 0.005. `strategy_rules.md` §7.3 says stops "must never move downwards" and that the rule is absolute. ST-16 removed the in-grace write, so this now affects only positions past grace.
+
+**Scope**
+- Write the stop at the column's own precision (4 dp), or round only a genuinely new stop and never round below the stored value
+
+**Acceptance Criteria**
+- A test with a 4-dp stored stop that the recompute keeps shows the written value is never below the stored one, on both the on-load and nightly paths
+
+---
+
+### BLG-BE-161 — Standalone `position_manager.py` still ratchets the stop during grace
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Strategy alignment
+**Owner:** Strategy Rules & System Intent Owner; Head of Engineering
+**Source:** ST-16 (BLG-BE-143), EPIC-03, cycle `2026-10-08__release-v9.11` — raised in the Strategy Rules & System Intent Owner's ruling on `ESC-EXEC-20261008-01` (2026-10-09)
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`strategy_rules.md` §6.3 (v1.15) says the stored stop is not recalculated or ratcheted during the 10-day grace period. The live paths, `services/strategy_engine.py` and `services/replay_service.py` all follow this. The legacy standalone tool `backend/position_manager.py` does not: in grace it applies `max(current_stop, current_price − 5 × ATR)`. It is not on the live path, and is already an accepted exception for §7.2's multipliers.
+
+**Scope**
+- Either align it with §6.3 (no trailing during grace) or record it as an explicit exception next to the existing §7.2 one
+
+**Acceptance Criteria**
+- `position_manager.py` matches §6.3, or `strategy_rules.md` names it as an exception with the Owner's sign-off

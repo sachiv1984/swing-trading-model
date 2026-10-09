@@ -2,7 +2,8 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.25.0
+  version: 3.25.1
+  # v3.25.1 (2026-10-09, ST-16, EPIC-03, v9.11): POST /positions/nightly-stop-update description — in-grace positions skipped (BLG-BE-143).
   # v3.25.0 (2026-10-08, ST-19, EPIC-03, v9.11): new GET /market/regime (BLG-BE-140).
   # v3.22.0 (2026-10-07, ST-13/ST-14, EPIC-03, v9.10): GET /positions/{position_id}/gap-risk
   # reasons enum drops weekend_hold (BLG-BE-136). No new endpoint.
@@ -1673,9 +1674,12 @@ paths:
       tags: [Positions]
       summary: Recompute trailing stops for all open positions (ST-01 v6.2 BLG-FEAT-46)
       description: |
-        Nightly job: recalculates trailing stop for every open position using
-        profit-lock logic (INITIAL_ATR_MULT=5, PROFIT_ATR_MULT=2, ATR_PERIOD=14)
-        and stores result. Stop only ever moves up (ratchet invariant).
+        Nightly job: recalculates trailing stop for every open position past the
+        10-day grace period using profit-lock logic (INITIAL_ATR_MULT=5,
+        PROFIT_ATR_MULT=2, ATR_PERIOD=14) and stores result. Stop only ever moves
+        up (ratchet invariant). In-grace positions keep their stored stop and are
+        reported as skipped with reason "grace period" (strategy_rules.md §6.3
+        v1.15, ST-16 v9.11).
         Result accessible via GET /positions as current_trailing_stop field.
       responses:
         "200":

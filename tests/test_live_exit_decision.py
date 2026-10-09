@@ -12,8 +12,9 @@ Partial because no CI test called the live code path:
     overriding both grace and stop, and the closed set of exit reasons.
   - C5-02: add_position() persists an initial stop (initial_stop and
     current_stop) on the entry write.
-  - C6.3-02: analyze_positions() still writes a stop for an in-grace position
-    (the stored stop is carried, never zeroed or dropped).
+  - C6.3-02: during grace neither analyze_positions() nor the nightly job
+    recalculates or rewrites the stored stop; both trail from day 10 (ST-16,
+    v9.11, strategy_rules.md §6.3 v1.15 -- TestInGraceStopParity).
   - C8.1-02: analyze_positions() recommends EXIT but never closes the
     position itself — the exit needs a separate, user-confirmed call.
   - C6.3-03 / C8.3: exit_position() accepts a manual exit inside the grace
@@ -219,18 +220,100 @@ class _AnalyzeRun(_Patcher):
         return result, mock_update, mock_trade
 
 
-class TestGracePeriodStillStoresStop(_AnalyzeRun):
-    """C6.3-02 / C6.3-01: during grace the stop is still stored, and no stop exit is recommended."""
+STOP_FIELDS = ("current_stop", "stop_calculated_at", "active_atr_multiplier", "stop_calculation_source")
 
-    def test_in_grace_write_keeps_the_stored_stop(self):
-        position = _open_position(entry_date=date.today() - timedelta(days=3), current_stop=80.0)
-        result, mock_update, _ = self._run_analyze(position, price=75.0)  # below stop
 
-        updates = mock_update.call_args.args[1]
-        assert updates["current_stop"] == pytest.approx(80.0)
+class TestInGraceStopParity(_AnalyzeRun):
+    """C6.3-02 / C6.3-01 (ST-16, BLG-BE-143, v9.11; strategy_rules.md §6.3 v1.15):
+    during grace neither the on-load path nor the nightly job recalculates,
+    ratchets or rewrites the stored stop; both start trailing on day 10.
+
+    The price spike (100 -> 150 with ATR 5) would raise a recalculated stop to
+    150 - 2 x 5 = 140, far above the stored stop, so a path that still trailed
+    during grace would write it."""
+
+    def _run_nightly(self, position, price):
+        self._use_real_calcs("calculate_holding_days")
+        mock_trail = self._patch("calculate_trailing_stop", wraps=real_calcs.calculate_trailing_stop)
+        self._patch("get_portfolio", return_value={"id": "portfolio-1"})
+        self._patch("get_positions", return_value=[position])
+        self._patch("get_live_fx_rate", return_value=1.0)
+        self._patch("get_current_price", return_value=price)
+        self._patch("calculate_atr", return_value=5.0)
+        mock_update = self._patch("update_position")
+        result = position_service.run_nightly_trailing_stop_update()
+        return result, mock_update, mock_trail
+
+    @staticmethod
+    def _written(mock_update):
+        written = {}
+        for call in mock_update.call_args_list:
+            written.update(call.args[1])
+        return written
+
+    @pytest.mark.parametrize("days_held", [0, 5, 9])
+    def test_on_load_leaves_the_stored_stop_untouched_in_grace(self, days_held):
+        position = _open_position(entry_date=date.today() - timedelta(days=days_held),
+                                  current_stop=80.0, initial_stop=80.0)
+        result, mock_update, _ = self._run_analyze(position, price=150.0)
+
+        written = self._written(mock_update)
+        assert written, "on-load should still refresh the non-stop fields"
+        for field in STOP_FIELDS:
+            assert field not in written
+        assert written["current_price"] == pytest.approx(150.0)
         action = result["actions"][0]
         assert action["action"] == "HOLD"
         assert action["grace_period"] is True
+
+    @pytest.mark.parametrize("days_held", [0, 5, 9])
+    def test_nightly_leaves_the_stored_stop_untouched_in_grace(self, days_held):
+        position = _open_position(entry_date=date.today() - timedelta(days=days_held),
+                                  current_stop=80.0, initial_stop=80.0)
+        result, mock_update, mock_trail = self._run_nightly(position, price=150.0)
+
+        mock_trail.assert_not_called()
+        written = self._written(mock_update)
+        for field in STOP_FIELDS:
+            assert field not in written
+        assert written["current_price"] == pytest.approx(150.0)
+        assert written["atr"] == pytest.approx(5.0)
+        assert result["results"] == [
+            {"ticker": "VOD.L", "market": "UK", "status": "skipped", "reason": "grace period"}
+        ]
+        assert result["skipped"] == 1 and result["updated"] == 0
+
+    def test_an_already_raised_in_grace_stop_is_never_rewritten(self):
+        # Raised above the initial stop by the pre-v1.15 nightly ratchet: kept
+        # as it is (§7.3), not reset to initial_stop and not rounded.
+        position = _open_position(entry_date=date.today() - timedelta(days=4),
+                                  current_stop=96.1234, initial_stop=80.0)
+        _, on_load_update, _ = self._run_analyze(position, price=150.0)
+        self.teardown_method(); self.setup_method()
+        _, nightly_update, _ = self._run_nightly(position, price=150.0)
+
+        assert "current_stop" not in self._written(on_load_update)
+        assert "current_stop" not in self._written(nightly_update)
+
+    def test_both_paths_recalculate_and_stamp_from_day_10(self):
+        position = _open_position(entry_date=date.today() - timedelta(days=10),
+                                  current_stop=80.0, initial_stop=80.0)
+        _, on_load_update, _ = self._run_analyze(position, price=150.0)
+        on_load = self._written(on_load_update)
+        self.teardown_method(); self.setup_method()
+        result, nightly_update, mock_trail = self._run_nightly(position, price=150.0)
+        nightly = self._written(nightly_update)
+
+        mock_trail.assert_called_once()
+        # Profitable: 150 - 2 x 5 = 140 on both paths
+        assert on_load["current_stop"] == pytest.approx(140.0)
+        assert nightly["current_stop"] == pytest.approx(140.0)
+        assert on_load["stop_calculation_source"] == "on_load"
+        assert nightly["stop_calculation_source"] == "nightly"
+        for written in (on_load, nightly):
+            assert "stop_calculated_at" in written
+            assert written["active_atr_multiplier"] == pytest.approx(2.0)
+        assert result["results"][0]["status"] == "updated"
 
 
 class TestStopExitNeedsManualConfirmation(_AnalyzeRun):

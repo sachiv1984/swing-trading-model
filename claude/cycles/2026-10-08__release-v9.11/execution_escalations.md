@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-08
+Last Updated: 2026-10-09
 
 # Execution Escalations — 2026-10-08__release-v9.11
 
@@ -20,7 +20,8 @@ Last Updated: 2026-10-08
 - **Dependants:** ST-17 (the grace ruling may affect the recorded parameter source).
 - **SLA due-by:** 2026-10-11T11:01:30Z (72h — Strategy)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution (2026-10-09T10:34:23Z):** Strategy Rules & System Intent Owner ruling, agent-mediated per `execution_prompt.md` §5.3 (user-directed), dated 2026-10-09: **option (b), with two changes.** During grace the stored stop is the §5 initial stop; neither the on-load path nor the nightly job recalculates, ratchets or rewrites it, and trailing starts on day 10. The changes: a stop already raised during grace before v1.15 is kept, never lowered (§7.3); and the nightly job skips only the stop calculation and stop fields for in-grace positions, still refreshing price, holding days and ATR. Grounds: §7 is headed "post-grace" and both §7.1's recompute and §7.3's ratchet sit inside it; §5 ("The stop is stored and tracked from day one. The stop is not enforced during the grace period"); §6.4's purpose; §11/§12.3 backtest parity (`strategy_engine.py` and `replay_service.py` already skip trailing during grace). `strategy_rules.md` §6.3 clarified under the Owner's authority (v1.14 → v1.15, Change Log row in §16 form; registered as behavioural in `strategy_version_registry.py`). Implemented in ST-16 (EPIC-03) with `tests/test_live_exit_decision.py::TestInGraceStopParity`; C6.3-02 moved to Asserted. Follow-ups filed: `BLG-BE-160` (2-dp stop rounding can lower a stop), `BLG-BE-161` (`position_manager.py` still ratchets in grace). ST-17 unblocked: it should record `strategy_parameters.py` as the shared parameter source.
 
 ## ESC-EXEC-20261008-02
 
