@@ -4739,6 +4739,29 @@ ST-18's failing run (37598457966) was dispatched on the EPIC-04 branch: staging 
 
 ---
 
+### BLG-OPS-183 — Make the daily AI cost alert count Claude calls, not only Gemini calls
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** Sprint Execution, ST-25 / EPIC-04, cycle `2026-10-08__release-v9.11` (agent-mediated Cybersecurity & Trust Lead review of the ST-25 AI endpoint security checklist) — 2026-10-09
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.12
+
+**Problem**
+`POST /ai/check-daily-cost` → `check_and_alert_daily_cost()` → `database.get_daily_ai_cost()` sums `estimated_cost_usd` from `gemini_audit_log` only. `gemini_audit_log` is written only by `gemini_service._log_audit`, for plan and thesis generation. Every Claude-calling feature (daily briefing, chat, journal summary, post-trade debrief, and ST-25's monthly P&L narrative) logs to `claude_audit_log`, so its spend is never counted, and the $1.00 `AI_DAILY_COST_THRESHOLD` alert can never fire for it. `docs/ops/ai_monthly_pnl_narrative_cost_estimate_2026-10-08.md` (ST-23) relies on this alert ("fires well before this"), as did the first draft of ST-25's security checklist. The per-endpoint anomaly check (`check-endpoint-anomalies`, reading `claude_audit_log`) and `GET /ai/monthly-cost-by-feature` do cover Claude spend.
+
+**Scope**
+- Make `get_daily_ai_cost()` sum today's `claude_audit_log.cost_usd` only, and alert on that. `gemini_service._log_audit` writes both tables on every plan and thesis call, so summing both would count those calls twice; `claude_audit_log` already holds every call.
+- Confirm which scheduler calls `POST /ai/check-daily-cost` and that it runs.
+- Add a correction note to the ST-23 cost estimate's runaway row.
+
+**Acceptance Criteria**
+- A pytest showing a `claude_audit_log` row counted in the daily total, a plan-generation call counted once, and the alert firing when Claude spend passes the threshold
+- The scheduler that calls `POST /ai/check-daily-cost` named in `ai_endpoints.md`, with its last successful run recorded
+- The ST-23 cost estimate notes the corrected coverage
+
+---
+
 ### BLG-QA-216 — Assert the applied theme in every Reports/Notifications axe scan, not just Reports Monthly
 **Priority:** P3 (Low)
 **Type:** QA / Test Automation

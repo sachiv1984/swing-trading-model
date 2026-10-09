@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-09T13:28:39Z",
+  "last_updated_utc": "2026-10-09T13:35:44Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -929,16 +929,18 @@
           "commit_sha": null,
           "delegation_record_id": "ESC-EXEC-20261008-02",
           "blocked_since_utc": "2026-10-08T11:01:30Z",
-          "unblock_criteria": "See ESC-EXEC-20261008-02 unblock criteria",
+          "unblock_criteria": "Product Owner approval of docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md (always-human), then the reports.md v0.21 §AI Summary update. No implementation commit before both are recorded.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md"
+            "docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md",
+            "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/ai_endpoint_security_checklist.md",
+            "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": "addendum_step1_s13_determination",
+          "last_completed_substep": "addendum_step3_design_record_role_signoffs",
           "sign_off_record": {
             "role": "Strategy Rules & System Intent Owner",
             "method": "agent_mediated",
@@ -949,7 +951,37 @@
             "signed_utc": "2026-10-09T13:28:39Z",
             "note": "Agent-mediated per execution_prompt.md §5.3 at the user's direction (2026-10-09). First pass Blocked (2 blocking findings), second pass Approved. Addendum step 1 only; steps 2-3 still to record."
           },
-          "notes": "Addendum step 1 done: §13 CONDITIONAL recorded (ESC-EXEC-20261008-02 resolved, 2026-10-09), §13.5 roster row added (strategy_rules.md v1.16). Next: step 2 security checklist, step 3 design record + PO approval + reports.md, before any implementation commit."
+          "notes": "Addendum step 1 done: §13 CONDITIONAL recorded (ESC-EXEC-20261008-02 resolved), §13.5 roster row (strategy_rules.md v1.16). Step 2 done: AI endpoint security checklist PASS x3 (agent-mediated Cybersecurity & Trust Lead; first pass Blocked, second Approved); found the daily cost alert ignores claude_audit_log, filed BLG-OPS-183. Step 3 in progress: design record approved by Head of UX & Design and Financial Reporting & Records Owner (agent-mediated; UX first pass Blocked, second Approved); awaiting Product Owner approval, then reports.md v0.21. Ship gate: EPIC-01 ST-06 must be on main first (security checklist sequencing gate).",
+          "sign_off_records_additional": [
+            {
+              "role": "Cybersecurity & Trust Lead",
+              "method": "agent_mediated",
+              "status": "cleared",
+              "record": "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/ai_endpoint_security_checklist.md",
+              "signed_utc": "2026-10-09T13:35:44Z"
+            },
+            {
+              "role": "Head of UX & Design",
+              "method": "agent_mediated",
+              "status": "cleared",
+              "record": "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md",
+              "signed_utc": "2026-10-09T13:35:44Z"
+            },
+            {
+              "role": "Financial Reporting & Records Owner",
+              "method": "agent_mediated",
+              "status": "cleared",
+              "record": "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md",
+              "signed_utc": "2026-10-09T13:35:44Z"
+            },
+            {
+              "role": "Product Owner",
+              "method": "human",
+              "status": "pending",
+              "record": "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md",
+              "signed_utc": null
+            }
+          ]
         },
         "ST-26": {
           "title": "Usage counter for the AI monthly P&L narrative",
