@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-08 (session — 1 new item added: BLG-GOV-383, from ST-35, EPIC-06, v9.11); prior — 2026-10-08 (session — 2 new item(s) added: BLG-FE-209, BLG-FE-210, from ST-37, EPIC-06, v9.11); prior — 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-08 (session — 2 new item(s) added: BLG-BE-157, BLG-BE-158, from ST-39, EPIC-06, v9.11); prior — 2026-10-08 (session — 1 new item added: BLG-GOV-383, from ST-35, EPIC-06, v9.11); prior — 2026-10-08 (session — 2 new item(s) added: BLG-FE-209, BLG-FE-210, from ST-37, EPIC-06, v9.11); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5187,5 +5187,47 @@ White 12px bold text on `bg-amber-600` measures 3.18:1 (axe `color-contrast`, se
 - The core file is at or under 68,500 bytes (`wc -c`)
 - No mandatory STEP is moved out of the core (every STEP heading in the pre-split file is still in the core or reached by an explicit pointer from it)
 - `governance-drift` reports all versions in sync
+
+---
+
+### BLG-BE-157 — Batch signal sizing gives a zero-ATR signal a 5% allocation
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** ST-39 (BLG-QA-199), EPIC-06, cycle `2026-10-08__release-v9.11` — found while writing mutation-testing cases for `size_batch_inv_vol` — 2026-10-08
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`sizing_service.size_batch_inv_vol()` (used by `signal_service.py` for every new signal's suggested shares) gives a signal with `atr_value` 0 or missing an inverse-ATR weight of 0, then clamps every weight to the 5% minimum, so that signal still receives 5% of available cash (before renormalisation) and a non-zero share count. Its own docstring says "Signals with atr_value == 0 get 0 shares". Reproduced 2026-10-08: signals with ATR 1, 0 and 2 and £10,000 cash gave the zero-ATR signal a weight of 0.111 and 22 shares. `tests/test_signal_sizing.py::test_zero_atr_produces_zero_shares` passes only because it uses a batch where every ATR is 0, which takes the early-exit branch; the mixed case is untested.
+
+**Scope**
+- Exclude zero/missing-ATR signals from the clamp and renormalisation, and give them 0 shares with a reason
+- Add a mixed-batch test (some zero-ATR, some valid)
+
+**Acceptance Criteria**
+- In a mixed batch, a zero-ATR signal gets `suggested_shares` 0, `inv_vol_weight` 0 and a reason, and the other signals' weights sum to 1.0
+- The existing all-zero and capping tests still pass
+
+---
+
+### BLG-BE-158 — Batch signal sizing never adds entry fees to total cost
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering; Financial Reporting & Records Owner
+**Source:** ST-39 (BLG-QA-199), EPIC-06, cycle `2026-10-08__release-v9.11` — found while writing mutation-testing cases for `size_batch_inv_vol` — 2026-10-08
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** TBD
+
+**Problem**
+`sizing_service.size_batch_inv_vol()` reads the fee as `calculate_uk_entry_fees(...).get('total_fee', 0)` (and the same for US), but both fee functions return the key `total`, not `total_fee`. The fee is therefore always 0, and every signal's `total_cost` is the gross cost only: no stamp duty or commission for UK, no FX fee for US. Reproduced 2026-10-08: a UK signal of 44 shares at £100 showed `total_cost` 4,400.00 with no fees. Signal costs on the Signals page are understated, and cash checks based on them are optimistic. Note also that `gross_cost` uses `current_price` (native) for US signals while `allocation_gbp` is GBP; confirm the intended currency when fixing.
+
+**Scope**
+- Read the fee functions' `total` key, and confirm the currency basis of `gross_cost` / `total_cost` for US signals
+- Add tests asserting UK and US fees are included
+
+**Acceptance Criteria**
+- A UK batch signal's `total_cost` equals gross cost plus stamp duty and commission; a US signal's includes the FX fee in the documented currency
+- `signal_endpoints.md` states the currency of `total_cost`
 
 ---
