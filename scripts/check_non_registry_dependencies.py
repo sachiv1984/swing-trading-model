@@ -14,7 +14,7 @@ exact code that ships is whatever the referenced ref/path/URL happened to contai
 install time, not a reproducible, auditable release.
 
 Scans:
-- backend/requirements.txt (pip) -- also flags `-r`/`--requirement` includes, since
+- backend/requirements.txt and backend/requirements-dev.txt (pip) -- also flags `-r`/`--requirement` includes, since
   they pull in a second file this guard does not itself scan.
 - package.json (npm)
 - package-lock.json (npm) -- flags any resolved package whose "resolved" URL is not
@@ -31,6 +31,8 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent
 REQUIREMENTS_TXT = REPO_ROOT / "backend" / "requirements.txt"
+# ST-43 (BLG-OPS-178, EPIC-06, v9.11): test-only packages moved here; same rules.
+REQUIREMENTS_DEV_TXT = REPO_ROOT / "backend" / "requirements-dev.txt"
 PACKAGE_JSON = REPO_ROOT / "package.json"
 PACKAGE_LOCK_JSON = REPO_ROOT / "package-lock.json"
 
@@ -89,7 +91,7 @@ def _strip_pip_comment(line: str) -> str:
     return line.split("#", 1)[0].strip()
 
 
-def check_requirements_txt(text: str) -> list:
+def check_requirements_txt(text: str, label: str = "backend/requirements.txt") -> list:
     violations = []
     for lineno, raw_line in enumerate(text.splitlines(), start=1):
         stripped = raw_line.strip()
@@ -100,7 +102,7 @@ def check_requirements_txt(text: str) -> list:
             continue
         if _PIP_INCLUDE_RE.search(matchable):
             violations.append(
-                f"backend/requirements.txt:{lineno}: -r/--requirement include bypasses "
+                f"{label}:{lineno}: -r/--requirement include bypasses "
                 f"this guard's scan of the referenced file: {stripped!r}"
             )
             continue
@@ -113,7 +115,7 @@ def check_requirements_txt(text: str) -> list:
             or _PIP_BARE_DOT_PATH_RE.search(matchable)
         ):
             violations.append(
-                f"backend/requirements.txt:{lineno}: non-registry dependency specifier: {stripped!r}"
+                f"{label}:{lineno}: non-registry dependency specifier: {stripped!r}"
             )
     return violations
 
@@ -189,6 +191,8 @@ def main() -> int:
     violations = []
     if REQUIREMENTS_TXT.exists():
         violations += check_requirements_txt(REQUIREMENTS_TXT.read_text())
+    if REQUIREMENTS_DEV_TXT.exists():
+        violations += check_requirements_txt(REQUIREMENTS_DEV_TXT.read_text(), "backend/requirements-dev.txt")
     if PACKAGE_JSON.exists():
         violations += check_package_json(PACKAGE_JSON.read_text())
     if PACKAGE_LOCK_JSON.exists():

@@ -633,7 +633,8 @@
         "tests/test_toast_notification_timing_regression.py",
         "tests/e2e/reports-performance-tab.spec.js",
         "tests/e2e/accessibility-axe-scan.spec.js",
-        "tests/e2e/replay-mode.spec.js"
+        "tests/e2e/replay-mode.spec.js",
+        "tests/test_non_registry_dependency_check.py"
       ],
       "stories": {
         "ST-33": {
@@ -723,23 +724,26 @@
         "ST-37": {
           "title": "Extend the axe accessibility scan to the Replay page",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1961,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "61632a595f2b663de4505c3c7b5d7efba8d96815",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T08:18:29Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/accessibility-axe-scan.spec.js",
+            "src/pages/Replay.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 Replay scanned in both selector modes + populated result, dark and light (6 scans). AC2 dark finding fixed (Risk-Off badge amber-700); light findings filed BLG-FE-209 (baselined); sibling badges filed BLG-FE-210. ci_pending: check at 3.2.A. Deviation check: none."
         },
         "ST-38": {
           "title": "Fix SC-REP-04a's signed \"+£0.00\" expectation",

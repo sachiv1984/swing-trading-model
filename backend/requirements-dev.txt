@@ -1,0 +1,7 @@
+# Test-only packages (ST-43, BLG-OPS-178, EPIC-06, v9.11). Not installed by the
+# production build (render.yaml: pip install -r requirements.txt). CI test jobs
+# install both files: pip install -r requirements.txt -r requirements-dev.txt.
+# No -r include here: scripts/check_non_registry_dependencies.py rejects one.
+pytest==9.1.1
+pytest-cov==7.1.0
+hypothesis==6.168.4
