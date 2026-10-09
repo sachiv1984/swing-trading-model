@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-09T12:52:01Z",
+  "last_updated_utc": "2026-10-09T12:58:36Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -488,16 +488,16 @@
         "ST-17": {
           "title": "Snapshot the strategy parameters in force onto each closed trade",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Financial Reporting & Records Owner; Data Model & Domain Schema Owner",
           "github_issue": 1941,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "b8cd2f7398c7f08290b8c5daf5a53220c151cce0",
           "delegation_record_id": "DEL-20261009-01",
           "blocked_since_utc": "2026-10-09T12:51:19Z",
           "unblock_criteria": "DS-29 Up Migration applied on staging and production with verification output recorded",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-09T12:58:25Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/data_model.md#DS-29 — Snapshot the strategy parameters in force onto trade_history (v2.56, 2026-10-09)",
             "tests/test_trade_parameter_snapshot.py"
@@ -505,9 +505,15 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "code_committed",
-          "sign_off_record": null,
-          "notes": "Code, DS-29 and tests done (81135387). AC1 shown by tests/test_trade_parameter_snapshot.py (6 tests, real exit_position() with the DB layer mocked, plus the INSERT column/bind check). AC2 live migration delegated (DEL-20261009-01). Deviation check: none. Implementation note: an in-grace exit with no stamped multiplier records the §5 initial multiplier (5), per the ST-16 grace-freeze ruling; a post-grace exit with none stamped stays NULL. commit_sha is set when the live-migration confirmation commit lands."
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "signed_utc": "2026-10-09T12:58:25Z",
+            "note": "User (human, live write access) applied DS-29 on staging and production and supplied identical Verification output for both; recorded in data_model.md DS-29 Live Confirmation."
+          },
+          "notes": "Done. AC1: tests/test_trade_parameter_snapshot.py (6 tests) — code commit 81135387. AC2: DS-29 documented in data_model.md v2.56 and applied live on staging and production, verification output recorded (b8cd2f73); DEL-20261009-01 unblocked in-session. Deviation check: none. Implementation note: an in-grace exit with no stamped multiplier records the §5 initial multiplier (5), per the ST-16 grace-freeze ruling; a post-grace exit with none stamped stays NULL."
         },
         "ST-18": {
           "title": "Post-deploy synthetic check for post-grace stops and §11 multipliers",
@@ -1191,7 +1197,6 @@
   "delegated_items": [
     "ST-02",
     "ST-06",
-    "ST-17",
     "ST-20",
     "ST-42"
   ],
@@ -1210,6 +1215,7 @@
     "ST-14",
     "ST-15",
     "ST-16",
+    "ST-17",
     "ST-18",
     "ST-19",
     "ST-21",
