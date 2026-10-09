@@ -406,7 +406,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC1 unit tests/test_grace_alert_calendar_days.py + Playwright SC-GP-04 (Day 9 of 10, 2 days left) and SC-GP-05 (Day 10 of 10 ended, design-gate assertion). AC2 no grace reading uses days_in_state (Positions.js alert + suppression, PositionCard.js); grace_period_alert_endpoint.md 1.2.0; positions.md §Grace Period Alert Zone (design gate) + data-source row. ci_pending: 37783382571. Deviation check: none."
+          "notes": "Done. AC1 unit tests/test_grace_alert_calendar_days.py + Playwright SC-GP-04 (Day 9 of 10, 2 days left) and SC-GP-05 (Day 10 of 10 ended, design-gate assertion). AC2 no grace reading uses days_in_state (Positions.js alert + suppression, PositionCard.js); grace_period_alert_endpoint.md 1.2.0; positions.md §Grace Period Alert Zone (design gate) + data-source row. Playwright CI success: run 37783382571. Deviation check: none."
         },
         "ST-15": {
           "title": "Recent Trades glyph treats a P&L that rounds to £0.00 as break-even",
@@ -430,7 +430,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC: SC-RTB-06 (0.004 -> neutral glyph and colour; 0.01 -> up arrow) in tests/e2e/recent-trades-zero-pnl-badge.spec.js, passing locally. ci_pending: 37783658772. Deviation check: none."
+          "notes": "Done. AC: SC-RTB-06 (0.004 -> neutral glyph and colour; 0.01 -> up arrow) in tests/e2e/recent-trades-zero-pnl-badge.spec.js, passing locally. Playwright CI success: run 37783658772. Deviation check: none."
         }
       }
     },
@@ -641,21 +641,25 @@
         "ST-33": {
           "title": "Write-time check that sprint_backlog.md Owner values use canonical role names",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1957,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "dbcf6e58fb4ed3ad4bcb97201c28180a3415c48b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T08:28:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_sprint_backlog_owners.py",
+            "claude/system/shared_standards.md#16.11 sprint_backlog.md Schema",
+            "tests/test_check_sprint_backlog_owners.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": {
             "role": "Head of Specs Team",
             "method": "agent_mediated",
@@ -663,7 +667,7 @@
             "cleared_utc": "2026-10-09T08:28:00Z",
             "notes": "Approved. AC1 ruling (c): v9.10's sealed sprint_backlog.md carries 10 parenthetical-qualifier Owner values (one also uses 'and' instead of '; ') written after the §16.11 rule landed; the strict check correctly reports them. AC1's 'all v9.10 Owner values pass' clause is narrowed to 'v9.10 qualifier values are reported as non-compliant'; record as Pass_with_deviation with this ruling as the record, no remainder. Rejected (a) weaken check (contradicts §16.11) and (b) edit sealed record. AC2 met; §6 checklist verified line-by-line (OG 4.231)."
           },
-          "notes": ""
+          "notes": "Done — Pass_with_deviation per Head of Specs Team ruling (c): AC1 negative half met; 'all v9.10 Owner values pass' narrowed (10 v9.10 sealed qualifier values correctly reported, no remainder). AC2 met. Deviation check: AC narrowing recorded via the ruling, no spec deviation."
         },
         "ST-34": {
           "title": "Give the effort-weighted PVR column its home in product_value_ratio_history.md",
@@ -793,23 +797,25 @@
         "ST-39": {
           "title": "Mutation-test the US-market and batch-sizing paths",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1963,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "bbb4a5cf129d47ac89f1cb48eb99695daba0a836",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T10:02:23Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 TestSizePositionUSMarket (5) and TestSizeBatchInvVol (6) in the pilot test file. AC2 rerun score recorded (size_position 72.8%, size_batch_inv_vol 64.6%, trailing stop 100%, 0 timeouts). Deviation check: none; two batch defects filed earlier (BLG-BE-157/158, 4db05229). Harness nesting trap fixed in conftest + .gitignore."
         },
         "ST-40": {
           "title": "Make the ceiling/count regression tests read the source they claim to verify",
@@ -1092,23 +1098,26 @@
         "ST-30": {
           "title": "Column provenance annotations in data_model.md",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1954,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "94a14fa708b69a1cb8f0e0d7b78312c4aef0794b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T08:53:59Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#2. Positions Table",
+            "docs/specs/data_model.md#DS-04 — Trade Plan Object (v2.5, 2026-04-30)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Executed early with user approval (2026-10-09): the AC covers only positions and trade_plans, which none of ST-06/ST-17/ST-20 touch, so waiting for their columns added nothing. Findings filed: BLG-BE-159 (Trail Stop apply calls a non-existent PATCH /positions/{id}; add-position stop_price ignored), BLG-SPEC-190 (positions dictionary still says entry_price is native). Done. AC1 every positions (40) and trade_plans (35) field tagged user-entered/derived/system-stamped. AC2 mixed fields carry explicit notes; no field ambiguous. Deviation check: implementation-vs-spec mismatch (entry_price currency) corrected in data_model.md; dictionary remainder filed BLG-SPEC-190."
         },
         "ST-31": {
           "title": "Correct the TradePlan status enum in openapi.yaml",
@@ -1191,14 +1200,20 @@
     "ST-19",
     "ST-21",
     "ST-22",
+    "ST-33",
+    "ST-35",
+    "ST-37",
     "ST-38",
+    "ST-39",
     "ST-40",
     "ST-41",
+    "ST-43",
     "ST-23",
     "ST-24",
     "ST-27",
     "ST-28",
     "ST-29",
+    "ST-30",
     "ST-31",
     "ST-32"
   ],
