@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-08 (session — 2 new item(s) added: BLG-BE-157, BLG-BE-158, from ST-39, EPIC-06, v9.11); prior — 2026-10-08 (session — 1 new item added: BLG-GOV-383, from ST-35, EPIC-06, v9.11); prior — 2026-10-08 (session — 2 new item(s) added: BLG-FE-209, BLG-FE-210, from ST-37, EPIC-06, v9.11); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-09 (session — 2 new item(s) added: BLG-GOV-384, BLG-SPEC-191, from ST-34, EPIC-06, v9.11); prior — 2026-10-08 (session — 2 new item(s) added: BLG-BE-157, BLG-BE-158, from ST-39, EPIC-06, v9.11); prior — 2026-10-08 (session — 1 new item added: BLG-GOV-383, from ST-35, EPIC-06, v9.11); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5229,5 +5229,49 @@ White 12px bold text on `bg-amber-600` measures 3.18:1 (axe `color-contrast`, se
 **Acceptance Criteria**
 - A UK batch signal's `total_cost` equals gross cost plus stamp duty and commission; a US signal's includes the FX fee in the documented currency
 - `signal_endpoints.md` states the currency of `total_cost`
+
+---
+
+### BLG-GOV-384 — Let compute_effort_weighted_pvr.py take the window as an argument
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** ST-34 (BLG-GOV-355), EPIC-06, cycle 2026-10-08__release-v9.11 — Head of Specs Team / Product Owner review of ESC-EXEC-20261008-03 — 2026-10-09
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.12
+
+**Problem**
+`scripts/compute_effort_weighted_pvr.py` hard-codes its `VERSION_TO_FOLDER` and `WINDOWS` maps, which stop at v9.7. `roadmap_prompt.md` v9.32 STEP 2.4 now records the effort-weighted PVR at every rebalance, but `scripts/` is outside the roadmap engine's §4 write scope, so the script can only be used for windows already in its maps and every new rebalance falls back to the by-hand method.
+
+**Scope**
+- Add a `--window vA-vB` argument; derive each version's cycle folder from `claude/cycles/*__release-<v>` instead of the hard-coded map
+- Keep the current no-argument run reproducing Appendix F's 5 backfilled readings
+- Update STEP 2.4's script sentence via the CLAUDE.md §6 checklist once the script no longer needs editing per window
+
+**Acceptance Criteria**
+- `python3 scripts/compute_effort_weighted_pvr.py --window v9.6-v9.10` prints 0.327 with 155/155 coverage, with no source edit
+- The no-argument run still prints 0.457 / 0.115 / 0.109 / 0.021 / 0.093
+
+---
+
+### BLG-SPEC-191 — Align Appendix F's effort-weighted PVR table and status with the script and STEP 2.4
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** ST-34 (BLG-GOV-355), EPIC-06, cycle 2026-10-08__release-v9.11 — Head of Specs Team review of ESC-EXEC-20261008-03 (findings N4, N5) — 2026-10-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+`docs/specs/metrics_definitions.md` Appendix F's effort normalisation table has no row for hour-scale bands (`XS (<1h)`), which `scripts/compute_effort_weighted_pvr.py` weights at 0.15, and the script matches a `VS` band that has no midpoint. A by-hand run under `roadmap_prompt.md` STEP 2.4 (which excludes values the table does not cover) can therefore exclude a story the script weights. Appendix F's Status and "Authoritative computation (once adopted) … (not yet wired)" lines are also stale for the effort-weighted sub-metric now that v9.32 STEP 2.4 records it.
+
+**Scope**
+- Add the `<1h → 0.15` row to the normalisation table (or remove the script's extra cases), and resolve the `VS` match
+- Update Appendix F's Status / authoritative-computation lines for the effort-weighted sub-metric only; the D-split and U-pool indicator stay proposal-only
+- Changelog row in `metrics_definitions.md`
+
+**Acceptance Criteria**
+- The table and the script weight exactly the same set of effort values
+- Appendix F names `roadmap_prompt.md` STEP 2.4 (v9.32) as where the effort-weighted reading is recorded; the other two sub-metrics still read proposal-only
 
 ---
