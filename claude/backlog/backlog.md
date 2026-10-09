@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-08 (session — 1 new item added: BLG-BE-156, from ST-29, EPIC-05, v9.11); prior — 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-08 (session — 2 new item(s) added: BLG-BE-159, BLG-SPEC-190, from ST-30, EPIC-05, v9.11); prior — 2026-10-08 (session — 1 new item added: BLG-BE-156, from ST-29, EPIC-05, v9.11); prior — 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5145,5 +5145,48 @@ When the live price fetch fails, `portfolio_service.py` (lines ~118-124) treats 
 **Acceptance Criteria**
 - With the snapshot read mocked to fail, `GET /reports/monthly-pnl` returns 200 with realised P&L for every month and no `restated` field (unit test)
 - Playwright: that response shows the table and "Restatement check unavailable."
+
+---
+
+### BLG-BE-159 — Trail Stop "apply" calls an endpoint that does not exist, and add-position ignores a supplied stop
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** ST-30 (BLG-SPEC-173), EPIC-05, cycle `2026-10-08__release-v9.11` — found while tracing which code path writes each `positions` field — 2026-10-08
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** TBD
+
+**Problem**
+1. The Positions page's Trail Stop modal applies a recommended stop with `PATCH /positions/{id}` and body `{stop_price}` (`src/pages/Positions.js`, `updateStopMutation`). No such route exists: the backend has only `PATCH /positions/{id}/note`, `/tags` and `/mark-reviewed`, and no contract or `openapi.yaml` entry documents it. Every apply therefore fails and shows "Failed to update stop". `GET /positions/{id}/stop-trail` and the trail-stop recommendation log assume the user can act on the recommendation.
+2. `POST /portfolio/position` accepts `stop_price` (`AddPositionRequest`), and `add_position()`'s docstring says it is used "if provided", but the code always stores `entry − 5 × ATR` as `initial_stop`, so a supplied stop is silently dropped.
+
+**Scope**
+- Decide (Strategy Rules & System Intent Owner) whether a user may set or raise a stop manually, given `strategy_rules.md` §7.3's ratchet. Then either add the route (contract, `openapi.yaml`, `routers/test.py`, ratchet-only validation) or remove the apply action from the modal.
+- Either honour `stop_price` at entry (with validation) or remove it from the request model and docstring
+
+**Acceptance Criteria**
+- The Trail Stop modal's action succeeds against a real route, or the action is gone; a Playwright test covers whichever ships
+- A supplied entry stop is either stored or rejected with a clear error, never silently ignored
+
+---
+
+### BLG-SPEC-190 — Positions data dictionary states `entry_price` is native currency; the code stores GBP
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-30 (BLG-SPEC-173), EPIC-05, cycle `2026-10-08__release-v9.11` — 2026-10-08
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`add_position()` stores `positions.entry_price` as the entry price **in GBP** (native ÷ `fx_rate` for US positions), and stores the native entry price in `fill_price`; the user's broker fill goes in `user_fill_price`. `data_model.md` §2 was corrected at v2.55 (ST-30). `docs/specs/data_model_positions_dictionary.md` (the canonical field dictionary) still says `entry_price` is native and `fill_price` is the actual execution fill, and its §derivation formulas (`total_cost`, `pnl`) use `entry_price` as if it were native.
+
+**Scope**
+- Correct the dictionary's `entry_price`, `fill_price` and `user_fill_price` rows and the derivation formulas to match the code
+- Check other specs that describe `positions.entry_price` as native
+
+**Acceptance Criteria**
+- The dictionary and `data_model.md` §2 agree with `add_position()` for every price field
+- No spec describes `positions.entry_price` as native currency for US positions
 
 ---

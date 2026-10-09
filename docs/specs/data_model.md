@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.52
-**Last Updated:** 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior — 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior — 2026-10-06 (DS-25 and DS-26 confirmed applied live on staging and production, verification output recorded); prior history retained — see prior entries in version control.
+**Version:** 2.55
+**Last Updated:** 2026-10-08 (ST-30, EPIC-05, v9.11, BLG-SPEC-173 — provenance (user-entered / derived / system-stamped) on every positions and trade_plans field; positions gains 3 missing rows, trade_plans field reference rebuilt to all 35 live columns and 7 statuses; entry_price/fill_price currency corrected; 2.53/2.54 are EPIC-01's DS-27 and EPIC-03's DS-28); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior — 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -106,45 +106,50 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 
 ### Fields
 
-| Field | Type | Nullable | Description |
-|-------|------|----------|-------------|
-| id | UUID | NO | Primary key |
-| portfolio_id | UUID | NO | FK to portfolios |
-| ticker | VARCHAR(20) | NO | Stock symbol (e.g., "PLTR", "FRES.L") |
-| market | VARCHAR(5) | NO | "US" or "UK" |
-| entry_date | DATE | NO | Position entry date |
-| entry_price | DECIMAL(10,4) | NO | Entry price in native currency (USD for US, GBP for UK) |
-| fill_price | DECIMAL(10,4) | YES | Actual fill price in native currency |
-| fill_currency | VARCHAR(3) | YES | "GBP" or "USD" |
-| fx_rate | DECIMAL(10,6) | YES | GBP/USD rate at time of entry (US stocks) |
-| shares | DECIMAL(10,4) | NO | Number of shares (fractional allowed) |
-| total_cost | DECIMAL(12,2) | NO | Total cost including fees in GBP |
-| fees_paid | DECIMAL(10,2) | NO | Total entry fees in GBP (commission + stamp duty for UK, FX fee + commission for US), reduced proportionally on partial exit. Every write path supplies a value. **`NOT NULL`, no default** — re-applied live on staging and production 2026-10-05 (DS-23). An insert that omits it fails rather than recording an unknown fee as £0 (see note below). |
-| fee_type | VARCHAR(20) | YES | Fee calculation method applied |
-| initial_stop | DECIMAL(10,4) | YES | Stop price at entry |
-| current_stop | DECIMAL(10,4) | YES | Current trailing stop price |
-| current_price | DECIMAL(10,4) | YES | Last known price in native currency |
-| atr | DECIMAL(10,4) | YES | ATR value at entry |
-| holding_days | INTEGER | NO | Calendar days held (updated daily) |
-| pnl | DECIMAL(12,2) | NO | Unrealised (open) or realised (closed) P&L in GBP |
-| pnl_pct | DECIMAL(10,2) | NO | P&L as percentage of entry cost. Also returned as `pnl_percent` by the API |
-| status | VARCHAR(20) | NO | `'open'` or `'closed'` |
-| exit_date | DATE | YES | Exit date (null while open) |
-| exit_price | DECIMAL(10,4) | YES | Exit price in native currency (null while open) |
-| exit_reason | VARCHAR(50) | YES | Reason for exit (null while open) |
-| entry_note | TEXT | YES | Journal note at entry |
-| tags | TEXT[] | YES | Strategy/classification tags |
-| user_fill_price | DECIMAL(10,4) | YES | User-provided actual broker fill price in native currency (optional). Used to compute slippage. Null when not provided (pre-v2.1 trades). |
-| created_at | TIMESTAMP | NO | Record creation timestamp |
-| updated_at | TIMESTAMP | NO | Last update timestamp |
-| position_state | VARCHAR(20) | YES | Lifecycle state: `GRACE`, `LOSING`, `PROFITABLE`, `EXIT ZONE`, `UNKNOWN`. Null for closed positions. Computed by `PositionLifecycleService`. Added v2.6. |
-| state_entered_at | TIMESTAMP | YES | Timestamp when current `position_state` was assigned. Updated on each state transition. Null for closed positions. Added v2.6. |
-| state_history | JSONB | NO | Ordered array of `{state, entered_at}` objects recording all state transitions. Default `[]`. Never truncated — full audit trail. Added v2.6. |
-| stop_calculated_at | TIMESTAMPTZ | YES | Timestamp of the most recent `current_stop` recalculation, written by both `analyze_positions()` (on-load) and `run_nightly_trailing_stop_update()` (nightly). `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
-| atr_calculated_at | TIMESTAMPTZ | YES | Timestamp of the most recent `atr` recalculation, written whenever `atr` itself is freshly computed (not merely read from cache). `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
-| active_atr_multiplier | DECIMAL(4,2) | YES | The ATR multiplier (`calculate_trailing_stop()`'s own `atr_multiplier` return value — currently 2 or 5, depending on profitability) used to produce the current `current_stop`. `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
-| atr_source | VARCHAR(10) | YES | Where the stored `atr` came from: `fetched` (computed from market data), `user` (typed at entry), or `fallback` (no ATR could be fetched at entry, so 2% of the entry price was substituted). `NULL` for positions entered before this column was added and not freshly recomputed since. Written at entry and whenever ATR is freshly fetched on recompute. Added v2.50 (DS-25). |
-| stop_calculation_source | VARCHAR(10) | YES | Which path last recalculated `current_stop` against ATR: `on_load` (`GET /positions/analyze`) or `nightly` (`POST /positions/nightly-stop-update`). Written together with `stop_calculated_at`; the grace-period carry-over writes neither. `NULL` until the first recompute after this column was added. Added v2.51 (DS-26). |
+| Field | Type | Nullable | Provenance | Description |
+|-------|------|----------|------------|-------------|
+| id | UUID | NO | system-stamped | Primary key |
+| portfolio_id | UUID | NO | system-stamped | FK to portfolios |
+| ticker | VARCHAR(20) | NO | user-entered | Stock symbol (e.g., "PLTR", "FRES.L") |
+| market | VARCHAR(5) | NO | user-entered | "US" or "UK" |
+| entry_date | DATE | NO | user-entered | Position entry date |
+| entry_price | DECIMAL(10,4) | NO | derived | Entry price **in GBP** for every market: the user's entry price divided by `fx_rate` for US positions, the price itself for UK (`add_position()` stores `entry_price_gbp`). *(v2.55 — ST-30: previously documented as native currency, which the code has not stored for US positions; the native entry price is `fill_price`.)* |
+| fill_price | DECIMAL(10,4) | YES | user-entered | The user's entry price in **native** currency (USD for US, GBP for UK), copied from the request's `entry_price`. Stop and P&L calculations read it as the native entry. Not the broker fill: that is `user_fill_price`. *(Description corrected v2.55 — ST-30.)* |
+| fill_currency | VARCHAR(3) | YES | derived | `"GBP"` or `"USD"`, set from `market` |
+| fx_rate | DECIMAL(10,6) | YES | user-entered | GBP/USD rate at entry. User-entered when supplied; otherwise the system stores the live rate at entry (1.0 for UK) — **user-entered or system-stamped**, see note |
+| shares | DECIMAL(10,4) | NO | user-entered | Number of shares (fractional allowed); user-entered at entry, reduced by the system on a partial exit |
+| total_cost | DECIMAL(12,2) | NO | derived | Total cost including fees in GBP |
+| fees_paid | DECIMAL(10,2) | NO | derived | Total entry fees in GBP (commission + stamp duty for UK, FX fee + commission for US), reduced proportionally on partial exit. Every write path supplies a value. **`NOT NULL`, no default** — re-applied live on staging and production 2026-10-05 (DS-23). An insert that omits it fails rather than recording an unknown fee as £0 (see note below). |
+| fee_type | VARCHAR(20) | YES | derived | Fee calculation method (`stamp_duty` for UK, `fx_fee` for US), set from `market` |
+| initial_stop | DECIMAL(10,4) | YES | derived | Stop price at entry, native currency: entry − 5 × ATR (`strategy_rules.md` §5/§11). Always computed; the `stop_price` the add-position request accepts is not used *(see note, v2.55)* |
+| current_stop | DECIMAL(10,4) | YES | derived | Current trailing stop, native currency. Written only by the stop recompute paths (on-load and nightly); no API lets a user set it *(see note, v2.55)* |
+| current_price | DECIMAL(10,4) | YES | system-stamped | Last known price in native currency: the entry price at entry, then the last live price fetched by the on-load recompute |
+| atr | DECIMAL(10,4) | YES | user-entered | ATR value. **User-entered or derived**: typed at entry (`atr_source = 'user'`), fetched from market data (`fetched`) or the 2%-of-entry fallback (`fallback`); `atr_source` says which |
+| holding_days | INTEGER | NO | system-stamped | Calendar days held, written by the stop recompute paths. Can lag a day or more: `GET /portfolio` and the alert, compliance and AI readers compute it live from `entry_date` instead (v9.11, ST-12) |
+| pnl | DECIMAL(12,2) | NO | derived | Unrealised (open) or realised (closed) P&L in GBP |
+| pnl_pct | DECIMAL(10,2) | NO | derived | P&L as percentage of entry cost. Also returned as `pnl_percent` by the API |
+| status | VARCHAR(20) | NO | system-stamped | `'open'` or `'closed'`; set to `'closed'` by the exit flow |
+| exit_date | DATE | YES | user-entered | Exit date (null while open); user-entered at exit, defaulting to today |
+| exit_price | DECIMAL(10,4) | YES | user-entered | Exit price in native currency (null while open) |
+| exit_reason | VARCHAR(50) | YES | user-entered | Reason for exit (null while open); user-chosen at exit, defaulting to `Manual Exit` |
+| entry_note | TEXT | YES | user-entered | Journal note at entry |
+| tags | TEXT[] | YES | user-entered | Strategy/classification tags |
+| user_fill_price | DECIMAL(10,4) | YES | user-entered | User-provided actual broker fill price in native currency (optional). Used to compute slippage. Null when not provided (pre-v2.1 trades). |
+| created_at | TIMESTAMP | NO | system-stamped | Record creation timestamp |
+| updated_at | TIMESTAMP | NO | system-stamped | Last update timestamp |
+| position_state | VARCHAR(20) | YES | derived | Lifecycle state: `GRACE`, `LOSING`, `PROFITABLE`, `EXIT ZONE`, `UNKNOWN`. Null for closed positions. Computed by `PositionLifecycleService`. Added v2.6. |
+| state_entered_at | TIMESTAMP | YES | system-stamped | Timestamp when current `position_state` was assigned. Updated on each state transition. Null for closed positions. Added v2.6. |
+| state_history | JSONB | NO | system-stamped | Ordered array of `{state, entered_at}` objects recording all state transitions. Default `[]`. Never truncated — full audit trail. Added v2.6. |
+| stop_calculated_at | TIMESTAMPTZ | YES | system-stamped | Timestamp of the most recent `current_stop` recalculation, written by both `analyze_positions()` (on-load) and `run_nightly_trailing_stop_update()` (nightly). `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
+| atr_calculated_at | TIMESTAMPTZ | YES | system-stamped | Timestamp of the most recent `atr` recalculation, written whenever `atr` itself is freshly computed (not merely read from cache). `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
+| active_atr_multiplier | DECIMAL(4,2) | YES | derived | The ATR multiplier (`calculate_trailing_stop()`'s own `atr_multiplier` return value — currently 2 or 5, depending on profitability) used to produce the current `current_stop`. `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
+| atr_source | VARCHAR(10) | YES | system-stamped | Where the stored `atr` came from: `fetched` (computed from market data), `user` (typed at entry), or `fallback` (no ATR could be fetched at entry, so 2% of the entry price was substituted). `NULL` for positions entered before this column was added and not freshly recomputed since. Written at entry and whenever ATR is freshly fetched on recompute. Added v2.50 (DS-25). |
+| stop_calculation_source | VARCHAR(10) | YES | system-stamped | Which path last recalculated `current_stop` against ATR: `on_load` (`GET /positions/analyze`) or `nightly` (`POST /positions/nightly-stop-update`). Written together with `stop_calculated_at`; the grace-period carry-over writes neither. `NULL` until the first recompute after this column was added. Added v2.51 (DS-26). |
+| strategy_version_at_entry | VARCHAR(10) | YES | system-stamped | Active `strategy_rules.md` version at entry (`get_current_strategy_version()`), forward-only. Added v8.0 (ST-01). *(Row added v2.55 — ST-30; the column was live but missing from this table.)* |
+| risk_off_exit | BOOLEAN | YES | derived | Risk-off exit alert flag, set and cleared by the nightly risk-off job from the market regime (ST-05). *(Row added v2.55 — ST-30.)* |
+| last_reviewed_at | TIMESTAMPTZ | YES | system-stamped | When the user last marked the position reviewed (`PATCH /positions/{id}/mark-reviewed`); null if never. The timestamp is system-stamped; the action is the user's. *(Row added v2.55 — ST-30.)* |
+
+**Provenance (v2.55 — ST-30, BLG-SPEC-173):** every field above is tagged **user-entered** (the value comes from what the user typed or chose), **derived** (computed by the system from other fields or market data) or **system-stamped** (identifiers, timestamps, lifecycle markers and provenance flags written by the system). Fields that are genuinely mixed carry the qualifier in their description: `fx_rate` (user-entered when supplied, otherwise the live rate), `atr` (user, fetched or fallback, recorded in `atr_source`) and `shares` (user-entered, reduced on partial exit). Two findings surfaced while annotating, both filed: the add-position request's `stop_price` is accepted but never stored (the initial stop is always 5 × ATR), and the Trail Stop modal's apply action calls `PATCH /positions/{id}`, which does not exist, so no path lets a user set `current_stop` (`BLG-BE-159`). The `entry_price`/`fill_price` currency descriptions were corrected to match `add_position()`; `data_model_positions_dictionary.md` still carries the old native-currency wording (`BLG-SPEC-190`).
 
 **No `exit_note` column (ST-24, EPIC-06, v9.7, BLG-SPEC-149):** this table has no live `exit_note` column, despite an earlier version of this document claiming one. A closed position's exit journal note is stored on `trade_history.exit_note` (§3 below), not here — confirmed via a live (readonly staging) schema query, per the §Live schema verification note above this table.
 
@@ -1058,25 +1063,45 @@ WHERE table_schema = 'public' AND table_name = 'trade_plans';
 
 ### Field Reference
 
-| Field | Type | Nullable | Description |
-|-------|------|----------|-------------|
-| `id` | UUID | NO | Primary key |
-| `portfolio_id` | UUID | NO | Foreign key to `portfolios` |
-| `position_id` | UUID | YES | Foreign key to `positions` — null if plan exists before position is opened |
-| `ticker` | VARCHAR(20) | NO | Ticker symbol |
-| `market` | VARCHAR(10) | NO | `US` or `UK` |
-| `created_at` | TIMESTAMPTZ | NO | Creation timestamp |
-| `updated_at` | TIMESTAMPTZ | NO | Last update timestamp |
-| `setup_thesis` | TEXT | YES | High-level setup thesis |
-| `entry_rationale` | TEXT | YES | Specific entry rationale |
-| `regime_context_at_entry` | VARCHAR(50) | YES | Regime status at time of plan creation (e.g. `risk_on`, `risk_off`) |
-| `r_target` | NUMERIC(8,2) | YES | Target R-multiple for the trade |
-| `early_exit_conditions` | TEXT | YES | Conditions that would prompt early exit |
-| `confirmation_criteria` | TEXT | YES | Criteria needed before executing entry |
-| `checklist_completed` | BOOLEAN | NO | Whether pre-entry checklist is signed off |
-| `checklist_items` | JSONB | NO | Array of checklist items `[{item, checked}]` |
-| `status` | VARCHAR(20) | NO | `draft`, `active`, `closed`, or `abandoned` |
-| `abandonment_reason` | VARCHAR(500) | YES | Required when status=`abandoned`; enforced at API layer |
+| Field | Type | Nullable | Provenance | Description |
+|-------|------|----------|------------|-------------|
+| `id` | UUID | NO | system-stamped | Primary key |
+| `portfolio_id` | UUID | NO | system-stamped | Foreign key to `portfolios` |
+| `position_id` | UUID | YES | user-entered | Foreign key to `positions`; null until a position is opened. **User-entered or derived:** set by the user's "Start Trade from Plan" flow, or linked by the system at entry to the most recent unlinked draft for the ticker (BLG-BE-46) |
+| `ticker` | VARCHAR(20) | NO | user-entered | Ticker symbol |
+| `market` | VARCHAR(10) | NO | user-entered | `US` or `UK` |
+| `created_at` | TIMESTAMPTZ | NO | system-stamped | Creation timestamp |
+| `updated_at` | TIMESTAMPTZ | NO | system-stamped | Last update timestamp |
+| `setup_type` | VARCHAR(50) | YES | user-entered | Setup category (enum in `openapi.yaml`) |
+| `setup_thesis` | TEXT | YES | user-entered | High-level setup thesis. User-entered, or AI-drafted and then accepted or edited by the user; `thesis_model_version` is set only while the text is unedited AI output |
+| `entry_rationale` | TEXT | YES | user-entered | Specific entry rationale (user-entered or accepted AI draft, as `setup_thesis`) |
+| `confirmation_criteria` | TEXT | YES | user-entered | Criteria needed before executing entry (user-entered or accepted AI draft) |
+| `early_exit_conditions` | TEXT | YES | user-entered | Conditions that would prompt early exit (user-entered or accepted AI draft) |
+| `invalidation_condition` | TEXT | YES | user-entered | Condition that would invalidate the setup |
+| `regime_context_at_entry` | VARCHAR(50) | YES | user-entered | Regime status at plan creation (e.g. `risk_on`). Stored as submitted; the form pre-fills it from `GET /market/status` and the user can change it |
+| `r_target` | NUMERIC(8,2) | YES | user-entered | Target R-multiple |
+| `planned_entry_price` | NUMERIC(20,6) | YES | user-entered | Planned entry price, native currency |
+| `planned_stop_price` | NUMERIC(20,6) | YES | user-entered | Planned stop price, native currency |
+| `planned_quantity` | INTEGER | YES | user-entered | Planned share count |
+| `risk_percent_used` | NUMERIC(4,2) | YES | user-entered | Risk % the plan was sized with, as submitted by the client |
+| `checklist_completed` | BOOLEAN | NO | user-entered | Whether the pre-entry checklist is complete (the form sets it when every item is ticked) |
+| `checklist_items` | JSONB | NO | user-entered | Checklist items `[{item, checked}]` |
+| `trade_tags` | TEXT[] | YES | user-entered | Plan tags |
+| `status` | VARCHAR(20) | NO | user-entered | Workflow status, one of the 7 values in DS-21 (`draft`, `research_pending`, `research_complete`, `entry_conditions_set`, `active`, `closed`, `abandoned`). Set by the user; the API rejects `active` without a linked position |
+| `abandonment_reason` | VARCHAR(500) | YES | user-entered | Required when status=`abandoned`; enforced at API layer |
+| `pre_entry_override_acknowledged` | BOOLEAN | YES | user-entered | The user acknowledged a pre-entry validation warning |
+| `pre_entry_validation_snapshot` | JSONB | YES | derived | Pre-entry validation result at plan time, computed by the system and submitted by the client |
+| `signal_id` | UUID | YES | system-stamped | The signal the plan was created from, passed through by the client; null for manual plans |
+| `triggered_by_price_alert_id` | UUID | YES | system-stamped | The price alert whose notification created the plan; null otherwise |
+| `is_ai_draft` | BOOLEAN | YES | system-stamped | Whether the plan was drafted by AI generation (set by the client from the generate-plan flow) |
+| `thesis_model_version` | VARCHAR(50) | YES | system-stamped | AI model ID that produced the narrative fields; cleared when the user edits any of them |
+| `thesis_prompt_version` | VARCHAR(20) | YES | system-stamped | Prompt version of that AI generation; cleared with `thesis_model_version` |
+| `thesis_feedback` | VARCHAR(20) | YES | user-entered | `useful` / `not_useful` rating of the AI thesis (DS-09) |
+| `portfolio_value_at_entry` | NUMERIC(12,2) | YES | system-stamped | Portfolio value from the latest snapshot, captured by the backend at plan creation (SI-02 DS-07) |
+| `effective_settings_snapshot` | JSONB | YES | system-stamped | Settings in force at plan creation, captured by the backend (SI-02 DS-07) |
+| `strategy_version_at_entry` | VARCHAR(10) | YES | system-stamped | Active `strategy_rules.md` version at plan creation (`get_current_strategy_version()`) |
+
+**Provenance (v2.55 — ST-30, BLG-SPEC-173):** tags as for `positions` (§2). This table previously listed 16 of the 35 live columns and 4 of the 7 statuses; it now lists every column in `ensure_trade_plans_table()`, its `ALTER TABLE … ADD COLUMN` migrations in `database.py`, and `abandonment_reason`'s migration here, with the types those define. Two fields are explicitly mixed: `position_id` (user-linked or system auto-linked) and the four narrative fields (user-entered or an accepted AI draft, distinguished by `thesis_model_version`). `pre_entry_validation_snapshot`, `signal_id`, `is_ai_draft` and `risk_percent_used` arrive in the request body: the provenance tag names who produces the value, not who sends it.
 
 ### Down Migration
 
@@ -2727,6 +2752,6 @@ Expect 1 row: `stop_calculation_source`, `character varying`, `10`, `YES`.
 
 ---
 
-**Document Version:** 2.51
+**Document Version:** 2.55
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — DS-26 stop_calculation_source; header/footer version kept in sync); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — DS-25 atr_source); prior history retained — see prior entries in version control.
+**Last Review:** 2026-10-08 (ST-30, EPIC-05, v9.11, BLG-SPEC-173 — field provenance for positions and trade_plans; footer brought level with the header); prior — 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — DS-26 stop_calculation_source; header/footer version kept in sync); prior history retained — see prior entries in version control.
