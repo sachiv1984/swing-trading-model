@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-09 (session — 1 new item added: BLG-BE-162, from the ST-02 staging run, EPIC-01, v9.11); prior — 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-09 (session — 1 new item added: BLG-BE-163, from the ST-02 staging run, EPIC-01, v9.11); prior — 2026-10-09 (session — 1 new item added: BLG-BE-162, from the ST-02 staging run, EPIC-01, v9.11); prior — 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5148,5 +5148,30 @@ When the live price fetch fails, `portfolio_service.py` (lines ~118-124) treats 
 - A journal summary requested from Trade History on staging returns generated content
 - The run is written to `ai_audit_log` with the UUID trade IDs
 - A backend test posting UUID `trade_ids` passes; integer IDs are rejected with 422
+
+---
+
+### BLG-BE-163 — Retire the unused POST /trade-plans/{plan_id}/generate-thesis endpoint
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Technical Debt
+**Owner:** Backend Engineering Patterns Owner; AI Compliance & Governance Officer
+**Source:** ST-02 staging run (EPIC-01, cycle `2026-10-08__release-v9.11`) — 2026-10-09
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.12
+
+**Problem**
+"Improve with AI" moved from `generate-thesis` to `POST /trade-plans/generate-plan` on 2026-05-25 (`f91a718a`), which fills every plan field, including the thesis, and works before the plan is saved. No UI calls `generate-thesis` now; the "Generate thesis" button is a deliberate no-model template (`trade_plan.md` §5b). The endpoint still makes paid Claude calls, carries a rate limit, audit and cost tracking, and appears in the endpoint test list, and its contract is duplicated in `ai_thesis_generation.md` and `gemini_thesis_generation.md`.
+
+**Scope**
+- Remove the route and `generate_setup_thesis()` (or keep the function only if another caller is found)
+- Remove its `openapi.yaml` path and contract section, and merge the duplicate contract files into one
+- Remove its entry from `backend/routers/test.py`, update the `SystemStatus.js` fallback count and `SC-SS-01b`
+- Update or remove the tests and golden fixtures that reference it
+- Record the retirement in `api_changelog.md`
+
+**Acceptance Criteria**
+- `POST /trade-plans/{plan_id}/generate-thesis` returns 404, and the OpenAPI drift gate passes
+- "Improve with AI" and the template "Generate thesis" button behave as before (Playwright `trade-plan.spec.js` passes)
+- One thesis-generation contract file remains, documenting `generate-plan`
 
 ---
