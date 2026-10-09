@@ -68,6 +68,25 @@ MONTH_NAMES = [
 ]
 
 
+# ─── Usage count (ST-26, EPIC-04, v9.11, BLG-SPEC-174) ──────────────────────
+# A generation is one completed request that produced a new stored summary.
+# Each one ends with exactly one audit row carrying a terminal result; an
+# intermediate "fail_regenerate:" row, a "model_call_failed" row (no summary
+# stored) and a stored-text return (no model call, no row) are not
+# generations. database.count_monthly_pnl_narrative_generations() applies the
+# same rule in SQL; metrics_definitions.md § AI Monthly P&L Narrative Usage.
+TERMINAL_RESULTS = ("pass", "pass_on_regenerate")
+TERMINAL_FALLBACK_PREFIX = "fail_fallback:"
+
+
+def is_generation_row(endpoint: str, compliance_check_result: Optional[str]) -> bool:
+    """True if this claude_audit_log row marks one completed generation."""
+    if endpoint != ENDPOINT or not compliance_check_result:
+        return False
+    return (compliance_check_result in TERMINAL_RESULTS
+            or compliance_check_result.startswith(TERMINAL_FALLBACK_PREFIX))
+
+
 class NarrativeCapReached(Exception):
     """The daily model-call cap is reached; no model call was made."""
 

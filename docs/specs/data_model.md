@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.57
-**Last Updated:** 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — DS-30 monthly_pnl_narratives; numbered 2.57/DS-30 because EPIC-01/03/05 hold 2.53–2.56 and DS-27–DS-29 on their branches); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior — 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior history retained — see prior entries in version control
+**Version:** 2.58
+**Last Updated:** 2026-10-09 (ST-26, EPIC-04, v9.11, BLG-SPEC-174 — DS-30 documents the narrative usage count query; no schema change); prior — 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — DS-30 monthly_pnl_narratives; numbered 2.57/DS-30 because EPIC-01/03/05 hold 2.53–2.56 and DS-27–DS-29 on their branches); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -2781,13 +2781,25 @@ ORDER BY ordinal_position;
 
 Expect 10 rows, `id` through `generated_at`, with only `compliance_check_result` nullable.
 
-**Usage count (ST-26):** the number of generations is the number of times a row is written. ST-26 decides how that is counted. A `claude_audit_log` row count measures model calls, not generations.
+**Usage count (ST-26, v2.58):** generations are counted from `claude_audit_log`, not from this table. This table keeps only the latest summary per tax year, so its row count is not a usage count. A generation is one completed request, which ends with exactly one audit row carrying a terminal result:
+
+```sql
+SELECT COUNT(*) AS generations
+FROM claude_audit_log
+WHERE endpoint = 'POST /reports/monthly-pnl/narrative'
+  AND (compliance_check_result IN ('pass', 'pass_on_regenerate')
+       OR compliance_check_result LIKE 'fail\_fallback:%');
+```
+
+- Implemented as `database.count_monthly_pnl_narrative_generations(date_from, date_to)`, which also returns the `ai`/`fallback` split.
+- Defined in `metrics_definitions.md` § AI Monthly P&L Narrative Usage, the evidence named by the 2027-01-03 AI feature usage review (`BLG-GOV-382`).
+- No new table or column: it reads `claude_audit_log`'s existing `endpoint`, `compliance_check_result` (ST-06, v8.9) and `generated_at`. So there is no migration.
 
 **Sign-off:**
 - Data Model & Domain Schema Owner: new, self-contained table, reversible. No foreign key, so no impact on existing tables. Created at runtime by an idempotent ensure-function.
 
 ---
 
-**Document Version:** 2.57
+**Document Version:** 2.58
 **Maintained By:** Data Model & Domain Schema Owner
 **Last Review:** 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — DS-26 stop_calculation_source; header/footer version kept in sync); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — DS-25 atr_source); prior history retained — see prior entries in version control.

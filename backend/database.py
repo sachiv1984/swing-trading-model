@@ -3525,6 +3525,47 @@ def upsert_monthly_pnl_narrative(portfolio_id: str, tax_year: int, data: dict) -
     return dict(row)
 
 
+def count_monthly_pnl_narrative_generations(date_from=None, date_to=None) -> Dict:
+    """Usage count for the AI monthly P&L narrative (ST-26, EPIC-04, v9.11,
+    BLG-SPEC-174; metrics_definitions.md § AI Monthly P&L Narrative Usage).
+
+    Counts generations, not model calls: one claude_audit_log row per
+    completed request, the one with the terminal result ('pass',
+    'pass_on_regenerate' or 'fail_fallback:...'). Same rule as
+    monthly_pnl_narrative_service.is_generation_row(). date_from is
+    inclusive, date_to exclusive (dates or timestamps, UTC); None means open.
+
+    Returns {"generations": int, "ai": int, "fallback": int}.
+    """
+    ensure_claude_audit_log_table()
+    ensure_claude_audit_log_compliance_check_column()
+    sql = (
+        "SELECT COUNT(*) AS generations, "
+        "COUNT(*) FILTER (WHERE compliance_check_result IN ('pass', 'pass_on_regenerate')) AS ai, "
+        "COUNT(*) FILTER (WHERE compliance_check_result LIKE 'fail\\_fallback:%%') AS fallback "
+        "FROM claude_audit_log "
+        "WHERE endpoint = 'POST /reports/monthly-pnl/narrative' "
+        "AND (compliance_check_result IN ('pass', 'pass_on_regenerate') "
+        "OR compliance_check_result LIKE 'fail\\_fallback:%%')"
+    )
+    params = []
+    if date_from is not None:
+        sql += " AND generated_at >= %s"
+        params.append(date_from)
+    if date_to is not None:
+        sql += " AND generated_at < %s"
+        params.append(date_to)
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, tuple(params))
+            row = cur.fetchone()
+    return {
+        "generations": int(row["generations"]) if row else 0,
+        "ai": int(row["ai"]) if row else 0,
+        "fallback": int(row["fallback"]) if row else 0,
+    }
+
+
 def count_claude_audit_entries_today(endpoint: str) -> int:
     """Count today's (UTC) claude_audit_log rows for one endpoint tag.
 

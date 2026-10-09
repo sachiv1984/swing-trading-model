@@ -445,3 +445,52 @@ class TestS13BoundarySuite:
             out = generate_narrative(YEAR)
         assert set(out) == {"year", "narrative", "source", "generated_at", "advisory"}
         assert out["advisory"] is True and out["source"] in ("ai", "fallback")
+
+
+# ─── Usage count (ST-26): one counted row per completed generation ────────
+
+class TestUsageCountRule:
+    @pytest.mark.parametrize("result,counted", [
+        ("pass", True), ("pass_on_regenerate", True), ("fail_fallback:numeric_cross_check_failed", True),
+        ("fail_regenerate:prescriptive_language", False), ("model_call_failed", False), (None, False),
+    ])
+    def test_is_generation_row(self, result, counted):
+        assert svc.is_generation_row(ENDPOINT, result) is counted
+
+    def test_other_endpoints_never_count(self):
+        assert not svc.is_generation_row("POST /ai/chat", "pass")
+        assert not svc.is_generation_row("POST /trades/{trade_id}/debrief", "fail_fallback:x")
+
+    @pytest.mark.parametrize("responses", [
+        [GOOD_TEXT],                                            # pass first time
+        ["You should trade less. £300.25", GOOD_TEXT],          # pass on regenerate
+        ["June 2025 was a gain of £120.40.", "Next month will be better."],  # fallback
+    ])
+    def test_each_completed_request_writes_exactly_one_counted_row(self, flow, responses):
+        it = iter([(t, _usage()) for t in responses])
+        with patch.object(svc, "_call_claude", side_effect=lambda *a, **k: next(it)):
+            generate_narrative(YEAR)
+        rows = [c.kwargs for c in flow["audit"].call_args_list]
+        assert len(rows) == len(responses)  # every model call is audited
+        assert sum(svc.is_generation_row(r["endpoint"], r["compliance_check_result"]) for r in rows) == 1
+
+    def test_a_failed_model_call_writes_no_counted_row(self, flow):
+        with patch.object(svc, "_call_claude", side_effect=RuntimeError("x")), pytest.raises(NarrativeUnavailable):
+            generate_narrative(YEAR)
+        rows = [c.kwargs for c in flow["audit"].call_args_list]
+        assert not any(svc.is_generation_row(r["endpoint"], r["compliance_check_result"]) for r in rows)
+
+    def test_a_stored_return_writes_no_row(self, flow):
+        flow["get_stored"].return_value = {"narrative_text": "stored", "source": "ai", "generated_at": None}
+        generate_narrative(YEAR)
+        flow["audit"].assert_not_called()
+
+    def test_sql_uses_the_same_endpoint_and_results(self):
+        # Read from the file: tests/conftest.py replaces the database module with stubs.
+        text = (Path(__file__).parent.parent / "backend" / "database.py").read_text()
+        start = text.index("def count_monthly_pnl_narrative_generations(")
+        src = text[start:text.index("\ndef ", start + 1)]
+        assert f"'{ENDPOINT}'" in src
+        for r in svc.TERMINAL_RESULTS:
+            assert f"'{r}'" in src
+        assert "fail\\\\_fallback:%%" in src

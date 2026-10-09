@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.27.0
-**Last Updated:** 2026-10-08 (ST-24, EPIC-04, v9.11, BLG-FEAT-60 — added AI Chat Engagement: sessions per week, questions per session, response acceptance rate); prior — 2026-09-30 (ST-31, EPIC-06, v9.8, BLG-GOV-339 — added Appendix F's PVR Measurement Package: Effort-Weighted PVR (backfilled + cross-validated for the last 5 windows), User-Protective/Hygiene D-Split definition, and Leading U-Pool Indicator definition; roadmap_prompt.md STEP 2.4/§7.1 unchanged, per BLG-GOV-339's own proposal-only restriction); prior — 2026-09-30 (ST-32, EPIC-06, v9.8, BLG-GOV-340 — added Appendix F's Delivery Lead Time by Priority Band and Ready-Pool Runway Forecast metric definitions, backfilled for the last 5 shipped cycles); prior history retained — see prior entries in version control
+**Version:** 1.28.0
+**Last Updated:** 2026-10-09 (ST-26, EPIC-04, v9.11, BLG-SPEC-174 — added AI Monthly P&L Narrative Usage: the generation count named as evidence for the 2027-01-03 AI feature usage review, BLG-GOV-382); prior — 2026-10-08 (ST-24, EPIC-04, v9.11, BLG-FEAT-60 — added AI Chat Engagement: sessions per week, questions per session, response acceptance rate); prior — 2026-09-30 (ST-31, EPIC-06, v9.8, BLG-GOV-339 — added Appendix F's PVR Measurement Package: Effort-Weighted PVR (backfilled + cross-validated for the last 5 windows), User-Protective/Hygiene D-Split definition, and Leading U-Pool Indicator definition; roadmap_prompt.md STEP 2.4/§7.1 unchanged, per BLG-GOV-339's own proposal-only restriction); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1219,6 +1219,56 @@ The next real reading is due at the 2027-01-03 AI feature usage review (tracked 
 
 ---
 
+## AI Monthly P&L Narrative Usage
+
+**Added:** v1.28.0 — ST-26 (EPIC-04, v9.11, BLG-SPEC-174)
+
+How often the AI summary on the Monthly P&L report (ST-25, `BLG-FEAT-59`; `reports.md` §AI Summary) is generated. This is the narrative usage count that the 2027-01-03 AI feature usage review (`BLG-GOV-382`, tracked by ST-28) names as its evidence for this feature. It is read alongside AI Chat Engagement above, against the 2026-09-24 usage review baseline.
+
+### Generation (unit counted)
+
+A **generation** is one completed request that wrote a new summary: a `POST /reports/monthly-pnl/narrative` that called the model and stored either model text (`source = 'ai'`) or the code-written fallback (`source = 'fallback'`). These are **not** generations:
+- a request answered from the stored summary (no model call);
+- a request refused by the rate limit or the daily cap (429), or that failed (503);
+- the first, failed attempt inside a request that then regenerated (that request is one generation, not two).
+
+Each generation ends with exactly one `claude_audit_log` row carrying a terminal check result. A model-call count (every audit row) over-counts by the regenerations and failed calls, and so is not this measure. That matters for the cost cap (`ai_endpoint_security_checklist.md`, ST-25), which counts calls, not generations.
+
+### Data Source and Query
+
+`claude_audit_log` rows with `endpoint = 'POST /reports/monthly-pnl/narrative'` and a terminal `compliance_check_result`:
+
+```sql
+SELECT COUNT(*) AS generations,
+       COUNT(*) FILTER (WHERE compliance_check_result IN ('pass', 'pass_on_regenerate')) AS ai,
+       COUNT(*) FILTER (WHERE compliance_check_result LIKE 'fail\_fallback:%') AS fallback
+FROM claude_audit_log
+WHERE endpoint = 'POST /reports/monthly-pnl/narrative'
+  AND (compliance_check_result IN ('pass', 'pass_on_regenerate')
+       OR compliance_check_result LIKE 'fail\_fallback:%')
+  AND generated_at >= :from AND generated_at < :to;
+```
+
+The same rule is implemented in code as `database.count_monthly_pnl_narrative_generations(date_from, date_to)` and `monthly_pnl_narrative_service.is_generation_row()`. `tests/test_monthly_pnl_narrative.py::TestUsageCountRule` and `tests/test_monthly_pnl_narrative_db.py` (real Postgres, CI Phase B) keep the two in agreement. Rows are kept for 730 days (`POST /ops/purge-audit-logs`), which covers the review window.
+
+### Measures
+
+```
+narrative_generations(window) = COUNT(generations in window)
+narrative_months_used(window) = COUNT(DISTINCT calendar month (UTC) of generations in window)
+narrative_fallback_rate(window) = fallback / generations   # null when generations = 0
+```
+
+- `narrative_generations` is the headline usage count. It returns `0` (not `null`) for a window with none.
+- `narrative_months_used` is the measure the Product Owner's success test uses (design record `docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md` §9): **keep the feature if the summary is generated in at least 3 of the calendar months between launch and the 2027-01-03 review, or if AI usage outside launch week rises.**
+- `narrative_fallback_rate` is a quality signal, not usage. A high rate means the output checks are rejecting most model text, so users mostly see the code-written summary.
+
+**Baseline:** none. The feature did not exist at the 2026-09-24 review, so the first window starts at the ST-25 deploy.
+
+**Not measured:** views of a stored summary, Hide/Show use and per-user counts. The product is single-user, and storage is per browser.
+
+---
+
 ## Realized / Unrealized P&L Split
 
 **Added:** v1.16.0 — ST-06 (EPIC-03, v7.1, BLG-SPEC-83)
@@ -1341,6 +1391,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-10-09 | 1.28.0 | ST-26 (EPIC-04, v9.11, BLG-SPEC-174): Added AI Monthly P&L Narrative Usage. A generation is one completed request that stored a new summary (one terminal `claude_audit_log` row), not a model call. Defines the SQL query and three measures (generations, distinct months used, fallback rate); the months-used measure carries the Product Owner's success test. Named as evidence for the 2027-01-03 review (BLG-GOV-382). | Metrics Definitions & Analytics Owner |
 | 2026-10-08 | 1.27.0 | ST-24 (EPIC-04, v9.11, BLG-FEAT-60): Added AI Chat Engagement — chat session (30-minute gap) and three measures: sessions per week, questions per session, response acceptance rate (not yet instrumented; rating control filed as a backlog item). Baseline from the 2026-09-24 usage review. | Metrics Definitions & Analytics Owner |
 | 2026-09-30 | 1.26.0 | ST-31 (EPIC-06, v9.8, BLG-GOV-339): Added the PVR Measurement Package to Appendix F — (1) Effort-Weighted PVR, backfilled and cross-validated against `product_value_ratio_history.md`'s recorded counts for the last 5 windows (v7.5–v9.7), via new `scripts/compute_effort_weighted_pvr.py`; the two ratios diverge meaningfully in places (e.g. `v9.1–v9.5`: 0.046 story-count vs 0.021 effort-weighted, since that window's U-items ran disproportionately small); (2) a definitions-only user-protective vs. hygiene split of the `D` bucket, forward-looking, no historical re-tag; (3) a definitions-only "ungated build-and-ship U-pool" leading indicator, to be first computed at the next rebalance. `roadmap_prompt.md` STEP 2.4/§7.1 unchanged — `BLG-GOV-339`'s own scope note restricts any live tagging/computation change there to proposal-only pending Head of Specs Team + Product Owner sign-off. Metrics Definitions & Analytics Canonical Owner sign-off cleared 2026-09-30. | Metrics Definitions & Analytics Canonical Owner |
 | 2026-09-30 | 1.25.0 | ST-32 (EPIC-06, v9.8, BLG-GOV-340): Added two delivery-flow metrics to Appendix F — Delivery Lead Time by Priority Band (median filed→shipped days, from `backlog_archive.md`'s `**Source:**`/`**Retired:**` fields, with an honest 2-tier filed-date convention and a 3-item disclosed exclusion) and Ready-Pool Runway Forecast ("cycles until empty", rolling-3-cycle trailing net-change average against §7.3's existing leftover-pool figures). Both backfilled for the last 5 shipped cycles (v9.3–v9.7); 4 of the 5 runway readings report "N/A — pool growing" rather than a fabricated cycle-count, with the first finite reading (~4.0 cycles) at v9.7. Metrics Definitions & Analytics Canonical Owner sign-off cleared 2026-09-30. | Metrics Definitions & Analytics Canonical Owner |
