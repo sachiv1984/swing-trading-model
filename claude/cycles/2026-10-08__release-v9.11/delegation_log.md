@@ -84,7 +84,7 @@ Last Updated: 2026-10-08
 - **Spec reference:** `docs/specs/data_model.md#DS-28`; `stage4_backlog_slice.md#ST-20` AC 2
 - **Unblock criteria:** Both verification outputs recorded in `data_model.md` DS-28 (Live Confirmation) and in `qa_evidence_EPIC-03.md` under ST-20. AC 1 (concurrent double-submit absorbed at the DB layer) is already shown by `tests/test_price_alert_db_uniqueness.py` against a real Postgres (CI Phase B). Deploy order is not a hard risk: without the index the service behaves as before.
 - **Commit format required:** `[EPIC-03][ST-20] <description>` pushed to `exec/2026-10-08__release-v9.11/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked — 2026-10-09T13:06:08Z. Unblocked in-session: the user (human, with live write access, acting for the Data Model & Domain Schema Owner) applied DS-28 on staging, then production; the duplicate pre-check passed in both. The Verification query returned `idx_price_alerts_active_unique` with the expected partial unique definition in both environments. Sign-off cleared; recorded in `data_model.md` DS-28 Live Confirmation, and carried into `qa_evidence_EPIC-03.md` §ST-20 when that file is created at EPIC completion.
 
 ## DEL-20261009-01
 

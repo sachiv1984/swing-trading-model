@@ -4,7 +4,7 @@
 **Class:** Class 1
 **Status:** Canonical
 **Version:** 2.56
-**Last Updated:** 2026-10-09 (ST-17, EPIC-03, v9.11, BLG-FR-06 — DS-29: trade_history snapshots the strategy parameters in force at exit, confirmed applied live on staging and production; 2.55 is EPIC-05's ST-30); prior — 2026-10-08 (ST-20, EPIC-03, v9.11, BLG-OPS-175 — DS-28: partial unique index idx_price_alerts_active_unique on active price alerts; 2.53 is EPIC-01's DS-27); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-09 (ST-17 and ST-20, EPIC-03, v9.11, BLG-FR-06/BLG-OPS-175 — DS-29: trade_history snapshots the strategy parameters in force at exit; DS-29 and DS-28 confirmed applied live on staging and production; 2.55 is EPIC-05's ST-30); prior — 2026-10-08 (ST-20, EPIC-03, v9.11, BLG-OPS-175 — DS-28: partial unique index idx_price_alerts_active_unique on active price alerts; 2.53 is EPIC-01's DS-27); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -2746,7 +2746,7 @@ Expect 1 row: `stop_calculation_source`, `character varying`, `10`, `YES`.
 
 **Rationale:** `create_price_alert()` de-duplicates with a SELECT before its INSERT (ST-09, `BLG-OPS-174`, v9.9). Two genuinely concurrent requests can both pass that SELECT and create two identical active alerts. A partial unique index rejects the second INSERT at the database, mirroring DS-17 (`idx_positions_open_ticker_entry_date_unique`). The service runs the INSERT under a savepoint and, on a unique violation, returns the active alert the other request created.
 
-**RISK (no live DB write access in this execution environment):** the sandbox `DATABASE_URL` is staging and read-only. The Up Migration is applied to **staging and production** by the Data Model & Domain Schema Owner. Deploy order is not a hard risk: without the index the service behaves exactly as before (the savepoint is harmless), and with it the concurrent case is closed. **Status: PENDING LIVE APPLICATION** (`DEL-20261008-04`).
+**RISK (no live DB write access in this execution environment):** the sandbox `DATABASE_URL` is staging and read-only. The Up Migration is applied to **staging and production** by the Data Model & Domain Schema Owner. Deploy order is not a hard risk: without the index the service behaves exactly as before (the savepoint is harmless), and with it the concurrent case is closed. **Status: CONFIRMED APPLIED, 2026-10-09** (staging and production; see Live Confirmation below).
 
 ### Up Migration (v2.53 → v2.54)
 
@@ -2813,7 +2813,16 @@ Expect 1 row: `CREATE UNIQUE INDEX idx_price_alerts_active_unique ON public.pric
 **Enforcement test:** `tests/test_price_alert_db_uniqueness.py` applies this Up Migration (read from this section) to a scratch schema on a real Postgres and runs a genuinely concurrent double-submit: one transaction inserts and holds its lock, `create_price_alert()` races it, blocks on the index, then absorbs the unique violation and returns the first alert. One active row results. The test runs in CI Phase B (real Postgres service) and skips where no database is reachable.
 
 **Sign-off:**
-- Data Model & Domain Schema Owner: migration content is a partial unique index with a duplicate pre-check, reversible; live application pending (`DEL-20261008-04`).
+- Data Model & Domain Schema Owner: migration content is a partial unique index with a duplicate pre-check, reversible. Applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner).
+- **Live Confirmation, applied 2026-10-09:** the Up Migration was run on staging, then production. Both returned "Success. No rows returned" (the duplicate pre-check found no active duplicates). The Verification query was then run in each environment, and the output was pasted into the execution session. Both environments returned identical results:
+
+```json
+[
+  {"indexname": "idx_price_alerts_active_unique", "indexdef": "CREATE UNIQUE INDEX idx_price_alerts_active_unique ON public.price_alerts USING btree (portfolio_id, ticker, condition, threshold_price) WHERE (active = true)"}
+]
+```
+
+`DEL-20261008-04` unblocked in-session.
 
 ---
 
