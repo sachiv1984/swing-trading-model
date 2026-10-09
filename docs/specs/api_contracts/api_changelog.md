@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.14.0
-**Last Updated:** 2026-09-25 (ST-01b, EPIC-01, v9.7, BLG-FEAT-74 — v9.7.0 entry: new file replay_endpoints.md v1.0, POST /replay/run); prior — 2026-09-22 (ST-10, EPIC-03, v9.6, BLG-BE-118 — v9.6.0 entry: strategy_benchmark_endpoints.md v1.3, `offset` param + 400 INVALID_PARAMS validation on GET /strategy/backtest-rule-change/runs); prior — 2026-09-22 (ST-07 + ST-08, EPIC-02, v9.6, BLG-FR-04 + BLG-FR-05 — v9.6.0 entry: reports_endpoints.md v0.13, null_fee_trade_count field plus month-end snapshot/restatement-diff fields); prior history retained — see prior entries in version control.
+**Version:** 1.15.0
+**Last Updated:** 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — v9.11.0 entry: GET and POST /reports/monthly-pnl/narrative); prior — 2026-09-25 (ST-01b, EPIC-01, v9.7, BLG-FEAT-74 — v9.7.0 entry: new file replay_endpoints.md v1.0, POST /replay/run); prior — 2026-09-22 (ST-10, EPIC-03, v9.6, BLG-BE-118 — v9.6.0 entry: strategy_benchmark_endpoints.md v1.3, `offset` param + 400 INVALID_PARAMS validation on GET /strategy/backtest-rule-change/runs); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -37,6 +37,18 @@ Rules:
 **Sign-off:** Head of Specs Team — Approved. Formalising an already-consistently-used structure (rather than introducing a new one requiring migration) is the right scope for this story — the conformance check confirms there was nothing to migrate. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
 
 ---
+
+## v9.11.0 (2026-10-09 — Release v9.11)
+
+### reports_endpoints.md — v0.17 (UPDATED)
+
+**EPIC:** EPIC-04
+**ST:** ST-25
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /reports/monthly-pnl/narrative | Returns the stored AI summary of one tax year's Monthly P&L figures if it was written from the current figures; never calls the model (BLG-FEAT-59). |
+| New endpoint: POST /reports/monthly-pnl/narrative | Returns the stored summary or generates one: output checks, regenerate once, code-written fallback, 10/min/IP rate limit, 40-call daily cap (429), fail-closed 503, `advisory: true`. §13 CONDITIONAL (BLG-FEAT-59). |
 
 ## v9.7.0 (2026-09-25 — Release v9.7)
 

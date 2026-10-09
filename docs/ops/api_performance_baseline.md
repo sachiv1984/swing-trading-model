@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.37
-**Date:** 2026-09-25
+**Version:** 2.39
+**Date:** 2026-10-09
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration; ST-09 (v9.4 EPIC-03, BLG-OPS-151) — POST /ai/check-endpoint-anomalies registration; ST-09/ST-06 (v9.5 EPIC-02, BLG-OPS-156/BLG-OPS-153) — GET /positions/{id}, GET /ai/spend-trend-by-feature registration; ST-01b (v9.7 EPIC-01, BLG-FEAT-74) — POST /replay/run registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -2108,10 +2108,47 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 48. GET and POST /reports/monthly-pnl/narrative (v9.11)
+
+**Date:** 2026-10-09
+**Story:** ST-25 (EPIC-04, v9.11, BLG-FEAT-59). Registered before this EPIC's PR opens, as the API Performance Baseline Drift Detection CI gate requires. Numbered §48 because EPIC-03's `GET /market/regime` holds §47.
+
+### 48.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /reports/monthly-pnl/narrative | v9.11 | Read (runs the Monthly P&L query for one tax year, then one indexed lookup) — pending live timing run | 400–1,200ms (est.) | 900–2,500ms (est.) | — |
+| POST /reports/monthly-pnl/narrative | v9.11 | Write — stored path: same as GET; generating path: one Claude Haiku 4.5 call (worst case two) — pending live timing run | stored: 400–1,200ms; generating: 3,000–6,000ms (est.) | generating: 6,000–12,000ms (est.) | ⚠ High-latency by design when generating — see characteristics |
+
+**Endpoint characteristics:**
+- Both run `get_monthly_pnl_report(year)` first: the same tax-year query as `GET /reports/monthly-pnl?year=`, including its one-time closed-month snapshot inserts. The estimate follows that endpoint's profile plus one primary-key-style lookup on `monthly_pnl_narratives` (unique on `portfolio_id, tax_year`).
+- **POST, stored path** (a summary exists for the current figures and `regenerate` is false): no model call; same profile as GET.
+- **POST, generating path:** one daily-cap `COUNT` on `claude_audit_log` (endpoint and day filter), one Claude Haiku 4.5 call of about 1,650 input and up to 400 output tokens, local regex/number checks, one audit-row insert per call and one upsert. On a failed output check, a second model call is made (the §13 regenerate-once rule), so worst case is two model calls. This follows the same high-latency-by-design pattern as `POST /trades/{trade_id}/debrief` (§41), with a longer output.
+- **Estimation methodology:** no live database or model call is possible in this execution environment, consistent with §41 and §46. **A real staging or production timing run is required before this estimate is used for alerting thresholds**, flagged for the next Infrastructure & Operations Owner baseline re-run.
+
+### 48.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-25 (v9.11 EPIC-04, BLG-FEAT-59) — Baseline Registration Sign-Off
+
+AC: api_performance_baseline.md has a row for GET and POST
+    /reports/monthly-pnl/narrative. ✅ PASS (§48.1)
+AC: registered before PR open, per the API Performance Baseline Drift
+    Detection CI gate. ✅ PASS
+Estimation methodology documented, consistent with §41/§46 precedent
+    (no live database/model measurement in this execution environment). ✅ PASS
+Entry format consistent with existing baseline rows. ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-10-09
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.39 | 2026-10-09 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-25 (v9.11 EPIC-04, BLG-FEAT-59): §48 added — `GET` and `POST /reports/monthly-pnl/narrative` registered pending live timing run; the POST's generating path is flagged high-latency by design (one Claude Haiku 4.5 call, worst case two). Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the path in the same PR. Numbered 2.39 and §48 because EPIC-03's §47 holds 2.38. |
 | 2.37 | 2026-09-25 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-01b (v9.7 EPIC-01, BLG-FEAT-74): §46 added — POST /replay/run registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained this path in the same PR. |
 | 2.36 | 2026-09-16 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner + FinOps & Resource Architect roles — §5.3) | ST-09 (v9.5 EPIC-02, BLG-OPS-156) / ST-06 (v9.5 EPIC-02, BLG-OPS-153): §45 added — `GET /positions/{id}` registered (closes the `KNOWN_GAPS`-grandfathered gap open since v6.8; removed from `scripts/check_api_performance_baseline_drift.py`'s `KNOWN_GAPS` in the same commit) and `GET /ai/spend-trend-by-feature` registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained the latter path in the same PR. |
 | 2.35 | 2026-09-14 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-09 (v9.4 EPIC-03, BLG-OPS-151): §44 added — POST /ai/check-endpoint-anomalies registered pending live timing run. Required by the API Performance Baseline Drift Detection CI gate after `openapi.yaml` gained this path in the same PR. |

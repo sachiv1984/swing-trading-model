@@ -2,7 +2,10 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.22.0
+  version: 3.27.0
+  # v3.27.0 (2026-10-09, ST-25, EPIC-04, v9.11): new GET and POST
+  # /reports/monthly-pnl/narrative — AI-assisted Monthly P&L summary (BLG-FEAT-59).
+  # Numbered 3.27.0 because 3.23–3.26 are taken by EPIC-02/03/05 on their branches.
   # v3.22.0 (2026-10-07, ST-13/ST-14, EPIC-03, v9.10): GET /positions/{position_id}/gap-risk
   # reasons enum drops weekend_hold (BLG-BE-136). No new endpoint.
   # v3.21.0 (2026-10-07, ST-11, EPIC-03, v9.10): lifecycle_reason enum drops
@@ -971,6 +974,175 @@ paths:
                         example: sector_concentration
         "400":
           description: format query parameter present and not csv
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /reports/monthly-pnl/narrative:
+    get:
+      tags: [Reports]
+      summary: Get the stored AI summary for a tax year's Monthly P&L
+      description: >
+        Returns the stored AI summary for the given UK tax year if one was written from
+        the current figures; otherwise narrative, source and generated_at are null.
+        Never calls the model. Advisory only (§13 CONDITIONAL,
+        decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md).
+        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.17. ST-25 (v9.11, BLG-FEAT-59).
+      parameters:
+        - in: query
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: UK tax-year start year (e.g. 2025 for 2025/26).
+      responses:
+        "200":
+          description: Stored summary for the current figures, or nulls
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      year:
+                        type: integer
+                        example: 2025
+                        description: Echo of the requested tax year; the UI discards a response for a different year.
+                      narrative:
+                        type: string
+                        nullable: true
+                        description: The summary text, or null when none is stored for the current figures.
+                      source:
+                        type: string
+                        nullable: true
+                        enum: [ai, fallback]
+                        description: ai, or fallback (code-written summary after the AI text failed its checks twice).
+                      generated_at:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      advisory:
+                        type: boolean
+                        example: true
+                        description: Always true (§13 SRB-v1.7 advisory-only constraint).
+        "400":
+          description: year not a four-digit integer, or the tax year has not started
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Reports]
+      summary: Generate the AI summary for a tax year's Monthly P&L
+      description: >
+        Returns the stored summary when one exists for the current figures and
+        regenerate is false (no model call). Otherwise calls the model, checks the
+        output (numbers, direction, prescriptive/forward/tax language), regenerates
+        once on failure, and falls back to a code-written summary. Rate limit:
+        10 requests/minute/IP. Daily cap: 40 model calls (UTC day); fails closed (503)
+        if the cap cannot be checked. Canonical contract:
+        docs/specs/api_contracts/reports_endpoints.md v0.17. ST-25 (v9.11, BLG-FEAT-59).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [year]
+              properties:
+                year:
+                  type: integer
+                  example: 2025
+                regenerate:
+                  type: boolean
+                  default: false
+      responses:
+        "200":
+          description: Stored or newly generated summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      year:
+                        type: integer
+                        example: 2025
+                        description: Echo of the requested tax year; the UI discards a response for a different year.
+                      narrative:
+                        type: string
+                        nullable: true
+                        description: The summary text, or null when none is stored for the current figures.
+                      source:
+                        type: string
+                        nullable: true
+                        enum: [ai, fallback]
+                        description: ai, or fallback (code-written summary after the AI text failed its checks twice).
+                      generated_at:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      advisory:
+                        type: boolean
+                        example: true
+                        description: Always true (§13 SRB-v1.7 advisory-only constraint).
+        "400":
+          description: year not a four-digit integer, or the tax year has not started
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: No closed trades in this tax year
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+        "429":
+          description: >
+            Rate limit exceeded (10 req/min/IP), or the daily cap of 40 model calls is
+            reached ("Daily limit for AI summaries reached. Try again tomorrow."; Retry-After
+            is the seconds until 00:00 UTC). The body carries no narrative.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait before retrying.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+        "503":
+          description: AI summary is unavailable right now (model unavailable, model call failed, or the daily cap could not be checked).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
         "500":
           $ref: "#/components/responses/InternalError"
 

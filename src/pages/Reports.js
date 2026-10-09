@@ -30,6 +30,7 @@ import PerformanceSummary from "../components/reports/PerformanceSummary";
 import PortfolioGrowthChart from "../components/reports/PortfolioGrowthChart";
 import TradeBreakdown from "../components/reports/TradeBreakdown";
 import ExportModal from "../components/reports/ExportModal";
+import MonthlyNarrativeCard from "../components/reports/MonthlyNarrativeCard";
 import { motion } from "framer-motion";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -960,6 +961,10 @@ function MonthlyPnlTable({ initialYear }) {
           Realised P&L is net of recorded fees.
         </p>
       </div>
+
+      {/* ST-25 (BLG-FEAT-59, EPIC-04, v9.11): optional, on-request AI summary — a separate card
+          below the table so it cannot be read as part of the record (reports.md §AI Summary). */}
+      {rows.length > 0 && <MonthlyNarrativeCard year={selectedYear} />}
 
       {/* ST-14 (BLG-FEAT-70, v7.0): Unrealised P&L Card — reuses the Tax Year tab's approved pattern verbatim */}
       {estimatedUnrealisedPnl != null && (

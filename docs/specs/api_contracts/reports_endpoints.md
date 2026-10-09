@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.15
-**Last Updated:** 2026-10-01 (ST-02, EPIC-01, v9.9, BLG-BE-131 — `GET /reports/monthly-pnl`'s `year` param documented as requiring a four-digit integer, matching the bounds check now enforced to mirror `GET /reports/tax-year`); prior — 2026-09-28 (ST-03, EPIC-01, v9.8, BLG-FE-190 — `GET /reports/monthly-pnl` gains an optional `year` query param to scope results to a UK tax year instead of the default rolling window; also documented the pre-existing, previously-undocumented `format` param in the same edit); prior — 2026-09-22 (ST-07 + ST-08, EPIC-02, v9.6, BLG-FR-04 + BLG-FR-05 — added `null_fee_trade_count` and month-end snapshot/restatement fields to `GET /reports/monthly-pnl`'s per-month response objects, plus a derived restated-month notice on `GET /reports/tax-year`); prior history retained — see prior entries in version control.
+**Version:** 0.17
+**Last Updated:** 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — new `GET` and `POST /reports/monthly-pnl/narrative`, the AI-assisted Monthly P&L summary; 0.16 is EPIC-05's ST-29 entry); prior — 2026-10-01 (ST-02, EPIC-01, v9.9, BLG-BE-131 — `GET /reports/monthly-pnl`'s `year` param documented as requiring a four-digit integer, matching the bounds check now enforced to mirror `GET /reports/tax-year`); prior — 2026-09-28 (ST-03, EPIC-01, v9.8, BLG-FE-190 — `GET /reports/monthly-pnl` gains an optional `year` query param to scope results to a UK tax year instead of the default rolling window; also documented the pre-existing, previously-undocumented `format` param in the same edit); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -27,6 +27,8 @@ Global response envelopes, error shape, and conventions are defined in **convent
 
 - [GET /reports/tax-year](#get-reportstax-year)
 - [GET /reports/monthly-pnl](#get-reportsmonthly-pnl)
+- [GET /reports/monthly-pnl/narrative](#get-reportsmonthly-pnlnarrative)
+- [POST /reports/monthly-pnl/narrative](#post-reportsmonthly-pnlnarrative)
 - [GET /reports/daily-pnl](#get-reportsdaily-pnl)
 - [GET /reports/reconciliation](#get-reportsreconciliation)
 
@@ -562,6 +564,129 @@ GET /reports/monthly-pnl?format=csv
 
 ---
 
+## GET /reports/monthly-pnl/narrative
+
+**Purpose**
+
+Returns the stored AI summary of one UK tax year's Monthly P&L figures, if one was written from the current figures (ST-25, EPIC-04, v9.11, BLG-FEAT-59). Advisory only: §13 CONDITIONAL, `docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md`. Frontend: `reports.md` §AI Summary (Monthly P&L Narrative).
+
+**Method & Path**
+
+- `GET /reports/monthly-pnl/narrative?year={year}`
+
+**Idempotency**
+
+- Safe to refresh (read-only). Never calls the model.
+
+### Request
+
+| Query Parameter | Type | Required | Description |
+|------------------|------|----------|-------------|
+| `year` | integer | Yes | UK tax-year start year, four digits (e.g. `2025` for 2025/26) |
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "year": 2025,
+    "narrative": "In the 2025/26 tax year you closed 9 trades with realised P&L of £259.85 across 3 months. …",
+    "source": "ai",
+    "generated_at": "2026-07-01T09:14:02+00:00",
+    "advisory": true
+  }
+}
+```
+
+When nothing is stored for the current figures (or the tax year has no closed trades): `narrative`, `source` and `generated_at` are `null`, and `year` and `advisory` are still present.
+
+#### Field definitions
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data.year` | integer | Echo of the requested tax year. The UI discards a response whose `year` differs from the selected tax year. |
+| `data.narrative` | string \| null | The summary text. `null` when no summary is stored for the current figures (`GET` only). |
+| `data.source` | `"ai"` \| `"fallback"` \| null | `ai`: model text that passed every output check. `fallback`: a summary written by code from the same figures, after the model text failed its checks twice. |
+| `data.generated_at` | ISO 8601 datetime \| null | When the stored summary was written. |
+| `data.advisory` | boolean | Always `true` (§13 Condition 6; SRB-v1.7 advisory-only constraint). |
+
+**Storage:** one row per tax year in `monthly_pnl_narratives` (`data_model.md` DS-30), keyed on a hash of the exact figures it was written from. A restatement changes the hash, so text describing superseded figures is never returned.
+
+### Error Responses
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `400` | `year` not a four-digit integer, or the tax year has not started |
+| `500` | Internal server error |
+
+### Example Request
+
+```
+GET /reports/monthly-pnl/narrative?year=2025
+```
+
+---
+
+## POST /reports/monthly-pnl/narrative
+
+**Purpose**
+
+Returns the stored summary for the tax year's current figures, or generates one. Calls the AI model only when nothing is stored for the current figures or `regenerate` is `true`.
+
+**Method & Path**
+
+- `POST /reports/monthly-pnl/narrative`
+
+**Idempotency**
+
+- With `regenerate: false`, repeating the request returns the same stored summary (no model call). With `regenerate: true`, each request may call the model and overwrites the stored summary. A double-submit can make up to two model calls; both count toward the daily cap.
+
+### Request
+
+```json
+{ "year": 2025, "regenerate": false }
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `year` | integer | Yes | UK tax-year start year, four digits |
+| `regenerate` | boolean | No (default `false`) | `true` always generates a new summary |
+
+### Behaviour
+
+1. **Inputs (§13 Condition 2):** only the selected tax year's monthly figures from `GET /reports/monthly-pnl?year=` (`year`, `month`, `realised_pnl_gbp`, `trade_count`, `null_fee_trade_count`, `restated`, `restated_diff_gbp`), range figures computed in code (total, trades, month count, best and worst month, profitable and losing month counts, trades without fees), the tax-year label and the net-of-fees basis. They are sent as a JSON data block in the user message; the system prompt is static.
+2. **Stored summary:** if one exists for the current figures and `regenerate` is `false`, it is returned. No model call, no cap check.
+3. **Daily cap:** 40 model calls per UTC day, counted from `claude_audit_log` rows for `POST /reports/monthly-pnl/narrative`. At the cap: `429`, no model call. If the count cannot be read: `503` (fails closed).
+4. **Output checks (§13 Conditions 3 and 4):** every number must be one of the given figures (0–2 dp, sign-agnostic value check); signed money figures must be described in the right direction; no prescriptive, forward-looking or tax-advice wording. On a failure the model is called once more and re-checked; a second failure stores and returns the code-written summary (`source: "fallback"`). One regeneration covers every failure type.
+5. **Audit (§13 Condition 8):** every model call writes a `claude_audit_log` row with the check result (`pass`, `pass_on_regenerate`, `fail_regenerate:<reasons>`, `fail_fallback:<reasons>`, `model_call_failed`).
+6. **Never part of the financial record (§13 Condition 5):** the summary is not included in any export (Monthly CSV, Tax Year CSV, Tax Year PDF), never written to `monthly_pnl_snapshots`, and never used to compute, alter or annotate any figure.
+
+### Response (200)
+
+Same shape as `GET /reports/monthly-pnl/narrative`, with `narrative`, `source` and `generated_at` always populated.
+
+### Error Responses
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `400` | `year` not a four-digit integer, or the tax year has not started |
+| `404` | No closed trades in this tax year (`"No closed trades in this tax year."`) |
+| `429` | Rate limit exceeded (10 requests/minute/IP; `"Rate limit exceeded. Try again later."`), or the daily cap is reached (`"Daily limit for AI summaries reached. Try again tomorrow."`, `Retry-After` = seconds until 00:00 UTC). The body carries no narrative. `Retry-After` is always set. |
+| `503` | `"AI summary is unavailable right now."` — no API key, the model call failed, or the daily cap could not be checked. Nothing is stored. |
+| `500` | Internal server error |
+
+Error bodies use the standard envelope: `{"status": "error", "message": "..."}`.
+
+### Example Request
+
+```
+POST /reports/monthly-pnl/narrative
+{"year": 2025, "regenerate": true}
+```
+
+---
+
 ## GET /reports/daily-pnl
 
 **Purpose**
@@ -697,6 +822,7 @@ GET /reports/reconciliation?year=2025
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.17 | 2026-10-09 | ST-25 (EPIC-04, v9.11, BLG-FEAT-59): Added `## GET /reports/monthly-pnl/narrative` and `## POST /reports/monthly-pnl/narrative` — the AI-assisted Monthly P&L summary: stored per tax year and input hash, daily cap of 40 model calls (429), fail-closed 503, output checks with a code-written fallback, `advisory: true`. §13 CONDITIONAL (`decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md`). Numbered 0.17 because EPIC-05's ST-29 holds 0.16. |
 | 0.13 | 2026-09-22 | ST-07 + ST-08 (v9.6, EPIC-02, BLG-FR-04 + BLG-FR-05): **ST-07** added `null_fee_trade_count` to `GET /reports/monthly-pnl`'s per-month `data[]` objects — count of that month's closed trades with `entry_fees` or `exit_fees` NULL in `trade_history` (audit signal only; does not change `realised_pnl_gbp`). **ST-08** added month-end immutable snapshotting: per-month `snapshotted`/`restated`/`snapshot_realised_pnl_gbp`/`restated_diff_gbp` fields on `GET /reports/monthly-pnl`, and a derived `summary.restated_month_count`/`restated_months_notice` pair on `GET /reports/tax-year` (backed by the new `monthly_pnl_snapshots` table, `data_model.md` DS-20 — no live action currently triggers a restatement, see DS-20's disclosure). None of these fields are added to either endpoint's `format=csv` export — CSV byte shape unchanged. |
 | 0.12 | 2026-08-07 | ST-31 (v8.4, EPIC-01, BLG-FEAT-78): Added `trade_origin` field (`"Signal"` / `"Manual"`) to `GET /reports/tax-year`'s `trades[]` array and its CSV export (`Trade Origin`, 18th/last column — additive, no breaking-change bump per this doc's own analytics/convenience-export versioning note). Derived from `trade_plans.signal_id` via the two-hop `trade_history.position_id = positions.id = trade_plans.position_id` relationship (`data_model.md`). **Scope correction (`ESC-EXEC-20260807-01`, resolved):** the backlog item's original "trigger-source"/alert-triggered framing was found to have no underlying schema linkage — `price_alerts` (`BLG-FE-116`) never tags a resulting trade — so the AC was reinterpreted, with Product Owner approval, to the real, already-wired `signal_id` distinction (momentum-screener signals) rather than shipping a column that would misrepresent trade provenance in a tax-relevant export. Not added to the PDF export (CSV-only per AC). |
 | 0.11 | 2026-08-04 | ST-01 (v8.2, EPIC-01, BLG-FEAT-88): Added `## GET /reports/reconciliation` — P&L / tax record reconciliation report comparing the Tax Year report's system total against an independently re-derived export-side sum. Reuses `get_tax_year_report`'s `total_realised_pnl` for the system side; new `get_trade_history_pnl_sum_by_tax_year` DB function (server-side SQL SUM) for the export side, per the design gate's requirement for a genuinely separate query path. |

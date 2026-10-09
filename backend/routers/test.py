@@ -156,6 +156,10 @@ async def test_all_endpoints(request: Request):
 
         # Reports (v3.1 / ST-11)
         {"name": "GET /reports/monthly-pnl", "method": "GET", "url": f"{base_url}/reports/monthly-pnl", "critical": False},
+        # ST-25 (EPIC-04, v9.11, BLG-FEAT-59): the POST uses year 9999, a tax year that has not
+        # started, so it returns 400 before any model call -- a live test run never spends on the model.
+        {"name": "GET /reports/monthly-pnl/narrative", "method": "GET", "url": f"{base_url}/reports/monthly-pnl/narrative?year=2025", "critical": False},
+        {"name": "POST /reports/monthly-pnl/narrative", "method": "POST", "url": f"{base_url}/reports/monthly-pnl/narrative", "body": {"year": 9999}, "critical": False},
 
         # Pre-Trade Research (v3.1 / ST-05)
         {"name": "GET /research/AAPL", "method": "GET", "url": f"{base_url}/research/AAPL?market=US", "critical": False},

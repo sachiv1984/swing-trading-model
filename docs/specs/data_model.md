@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.52
-**Last Updated:** 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior — 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior — 2026-10-06 (DS-25 and DS-26 confirmed applied live on staging and production, verification output recorded); prior history retained — see prior entries in version control.
+**Version:** 2.57
+**Last Updated:** 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — DS-30 monthly_pnl_narratives; numbered 2.57/DS-30 because EPIC-01/03/05 hold 2.53–2.56 and DS-27–DS-29 on their branches); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior — 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -2727,6 +2727,67 @@ Expect 1 row: `stop_calculation_source`, `character varying`, `10`, `YES`.
 
 ---
 
-**Document Version:** 2.51
+## DS-30 — Add monthly_pnl_narratives (v2.57, 2026-10-09)
+
+**Story:** ST-25 (EPIC-04, v9.11) — `BLG-FEAT-59`. No delegation needed (see Deploy order).
+
+**Rationale:** the AI-assisted Monthly P&L summary (`reports.md` §AI Summary; `reports_endpoints.md` §GET/§POST /reports/monthly-pnl/narrative) is stored so a repeat view makes no model call (security checklist §2, ST-23 cost estimate). One row per portfolio and tax year, overwritten on each generation. `input_hash` is a SHA-256 of the exact figures the text was written from. A row is returned only when it matches the current figures, so a restatement makes stale text unreachable. This is its own table, deliberately not `monthly_pnl_snapshots` (DS-20): §13 Condition 5 keeps the narrative out of the financial record (`docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md`).
+
+**Deploy order:** not a risk. `database.ensure_monthly_pnl_narratives_table()` runs the Up Migration's `CREATE TABLE IF NOT EXISTS` on first use, the same pattern as `trade_debriefs` (DS-16). Applying it ahead of deploy is optional. The Verification query confirms it either way.
+
+### Up Migration (v2.56 → v2.57)
+
+```sql
+CREATE TABLE IF NOT EXISTS monthly_pnl_narratives (
+    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id            UUID NOT NULL,
+    tax_year                INTEGER NOT NULL,
+    input_hash              VARCHAR(64) NOT NULL,
+    narrative_text          TEXT NOT NULL,
+    source                  VARCHAR(10) NOT NULL,
+    compliance_check_result TEXT,
+    model_version           TEXT NOT NULL,
+    prompt_version          TEXT NOT NULL,
+    generated_at            TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_monthly_pnl_narratives_year UNIQUE (portfolio_id, tax_year),
+    CONSTRAINT ck_monthly_pnl_narratives_source CHECK (source IN ('ai', 'fallback'))
+);
+```
+
+| Column | Meaning |
+|--------|---------|
+| `tax_year` | UK tax-year start year (2025 = 2025/26) |
+| `input_hash` | SHA-256 hex of the figures the text was written from |
+| `narrative_text` | The text shown: model text that passed every output check, or the code-written fallback |
+| `source` | `ai` or `fallback` |
+| `compliance_check_result` | The final check outcome (`pass`, `pass_on_regenerate`, `fail_fallback:<reasons>`), as also logged per call in `claude_audit_log` |
+
+### Down Migration (v2.57 → v2.56)
+
+```sql
+DROP TABLE IF EXISTS monthly_pnl_narratives;
+```
+
+Only stored summaries are lost. The next request regenerates them; no figure is affected.
+
+### Verification
+
+```sql
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'monthly_pnl_narratives'
+ORDER BY ordinal_position;
+```
+
+Expect 10 rows, `id` through `generated_at`, with only `compliance_check_result` nullable.
+
+**Usage count (ST-26):** the number of generations is the number of times a row is written. ST-26 decides how that is counted. A `claude_audit_log` row count measures model calls, not generations.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: new, self-contained table, reversible. No foreign key, so no impact on existing tables. Created at runtime by an idempotent ensure-function.
+
+---
+
+**Document Version:** 2.57
 **Maintained By:** Data Model & Domain Schema Owner
 **Last Review:** 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — DS-26 stop_calculation_source; header/footer version kept in sync); prior — 2026-10-06 (ST-02, EPIC-01, v9.10, BLG-BE-139 — DS-25 atr_source); prior history retained — see prior entries in version control.

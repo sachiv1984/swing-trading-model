@@ -229,7 +229,11 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     // GET /ai/spend-trend-by-feature.
     // +1 (124 -> 125) from v9.7 EPIC-01 ST-01b (BLG-FEAT-74), which added
     // POST /replay/run.
-    await expect(page.getByText(/tests 125 endpoints/i)).toBeVisible({ timeout: 8000 });
+    // +2 (125 -> 127) from v9.11 EPIC-04 ST-25 (BLG-FEAT-59), which added
+    // GET /reports/monthly-pnl/narrative and POST /reports/monthly-pnl/narrative.
+    // EPIC-03's ST-19 (+1, GET /market/regime) is counted on its own branch;
+    // re-derive at merge (CLAUDE.md §8).
+    await expect(page.getByText(/tests 127 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {
