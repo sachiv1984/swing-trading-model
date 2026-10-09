@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.231
-**Last Updated:** 2026-10-08 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-33, BLG-GOV-375 — sprint_planning_prompt.md v3.21→v3.22, idea_intake_prompt.md v2.10→v2.11, shared_standards.md v3.38→v3.39: canonical Owner role-name write-time check); prior — 2026-10-08 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-35, BLG-GOV-359 — release_planning_prompt.md v2.60→v2.61 and design_gate_prompt.md v1.10→v1.11: §13 clause-citation rule); prior — 2026-10-08 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-36, BLG-GOV-370 — qa_evidence_template.md v1.17→v1.18: conditional strategy-values DoQ line); prior history retained — see prior entries in version control
+**Version:** 4.232
+**Last Updated:** 2026-10-09 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-34, BLG-GOV-355 — roadmap_prompt.md v9.31→v9.32: STEP 2.4 records the effort-weighted PVR reading); prior — 2026-10-08 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-33, BLG-GOV-375 — sprint_planning_prompt.md v3.21→v3.22, idea_intake_prompt.md v2.10→v2.11, shared_standards.md v3.38→v3.39: canonical Owner role-name write-time check); prior — 2026-10-08 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-35, BLG-GOV-359 — release_planning_prompt.md v2.60→v2.61 and design_gate_prompt.md v1.10→v1.11: §13 clause-citation rule); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -398,7 +398,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.31) + `claude/system/roadmap_prompt_appendix.md` (STEP 9 onward, plus detailed rationale for the core's compacted rules)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.32) + `claude/system/roadmap_prompt_appendix.md` (STEP 9 onward, plus detailed rationale for the core's compacted rules)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1377,8 +1377,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.231 |
-| Last Updated | 2026-10-08 |
+| Version | 4.232 |
+| Last Updated | 2026-10-09 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.11 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1391,7 +1391,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Shared Lock Recovery Procedure | `claude/system/shared/lock_recovery_procedure.md` v1.0 |
 | Shared Preflight Common Checks | `claude/system/shared/preflight_common.md` v1.1 |
 | Shared Publish Gate | `claude/system/shared/publish_gate.md` v1.1 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.31 (+ `roadmap_prompt_appendix.md`) |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.32 (+ `roadmap_prompt_appendix.md`) |
 | Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.61 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.22 |
@@ -1518,6 +1518,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.232 | 2026-10-09 | **Sprint execution `2026-10-08__release-v9.11` EPIC-06/ST-34 (BLG-GOV-355) — roadmap_prompt.md v9.31→v9.32: effort-weighted PVR reading.** STEP 2.4 also fills `product_value_ratio_history.md`'s `Effort-weighted Ratio` column at each rebalance; diagnostic only, no tier. §6 phase header and §14 row updated. `BLG-GOV-339` sign-off: Head of Specs Team + Product Owner, agent-mediated, user-directed (`ESC-EXEC-20261008-03`). |
 | 4.231 | 2026-10-08 | **Sprint execution `2026-10-08__release-v9.11` EPIC-06/ST-33 (BLG-GOV-375) — 3 source prompts bumped: canonical Owner role names.** `sprint_planning_prompt.md` v3.21→v3.22: STEP 6.2 seal condition — `scripts/check_sprint_backlog_owners.py` exits 0. `shared_standards.md` v3.38→v3.39: §16.11 names that check, replacing 'by inspection'. `idea_intake_prompt.md` v2.10→v2.11: §4 list and §6 slug table use `Metrics Definitions & Analytics Owner` (the agent file's `**Role:**` line). §5 (Idea Intake) and §7 (Sprint Planning) source-prompt headers and three §14 rows updated; §14 self-row and header bumped. Authority: Head of Specs Team (Sprint Execution Engine, ST-33 sealed AC). |
 | 4.230 | 2026-10-08 | **Sprint execution `2026-10-08__release-v9.11` EPIC-06/ST-35 (BLG-GOV-359) — 2 source prompts bumped: §13 clause-citation rule.** `release_planning_prompt.md` v2.60→v2.61: STEP 4 requires an AC that calls for a §13 review, determination or sign-off to cite every `strategy_rules.md` §13 clause naming the feature's subject, not only §13.2, with the gap-risk (§13.3) worked example. `design_gate_prompt.md` v1.10→v1.11: the §13 pre-check applies the same rule. §6B and §6.5 source-prompt headers and §14 Release Engine Source / Design Gate Engine rows updated; §14 self-row and header bumped. Release prompt is over the 68,500-byte budget (shared_standards.md §11): split item BLG-GOV-383 filed. Authority: Head of Specs Team (Sprint Execution Engine, ST-35 sealed AC). |
 | 4.229 | 2026-10-08 | **Sprint execution `2026-10-08__release-v9.11` EPIC-06/ST-36 (BLG-GOV-370) — qa_evidence_template.md v1.17→v1.18: conditional Strategy-Values DoQ line.** §14 QA Evidence Template v1.17→v1.18. §14 self-row Version/Last Updated updated. Change: the Standard Sign-Off Block gains a conditional line requiring every story that touches stop, grace, ATR, exit or position-sizing logic to have its values and formulas checked against `strategy_rules.md` §5–§11, with the sections cited; new 'Strategy-Values DoQ Line' section explains when it applies. No phase-section source-prompt header exists for this template (same as the 1.16 and 1.17 entries), so none was touched. Authority: Head of Specs Team (Sprint Execution Engine, ST-36 sealed AC). |
