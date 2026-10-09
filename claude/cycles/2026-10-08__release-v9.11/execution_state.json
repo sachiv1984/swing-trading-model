@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-09T12:53:30Z",
+  "last_updated_utc": "2026-10-09T17:44:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -671,27 +671,34 @@
         },
         "ST-34": {
           "title": "Give the effort-weighted PVR column its home in product_value_ratio_history.md",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "Head of Specs Team; Metrics Definitions & Analytics Owner",
           "github_issue": 1958,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "3bdb52e54902aa77815e2ba18dae29da3b0fb78b",
           "delegation_record_id": "ESC-EXEC-20261008-03",
           "blocked_since_utc": "2026-10-08T11:01:30Z",
           "unblock_criteria": "See ESC-EXEC-20261008-03 unblock criteria",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-09T17:43:17Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/roadmap/product_value_ratio_history.md#History",
-            "docs/specs/metrics_definitions.md#PVR Measurement Package — Effort-Weighted PVR, User-Protective/Hygiene D-Split, Leading U-Pool Indicator (ST-31, EPIC-06, v9.8, BLG-GOV-339)"
+            "docs/specs/metrics_definitions.md#PVR Measurement Package — Effort-Weighted PVR, User-Protective/Hygiene D-Split, Leading U-Pool Indicator (ST-31, EPIC-06, v9.8, BLG-GOV-339)",
+            "claude/system/roadmap_prompt.md#STEP 2.4 — Product Value Ratio Diagnostic (Mandatory)"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "AC1_committed",
-          "sign_off_record": null,
-          "notes": "AC1 done (named-file write, §7 rule case (a)): product_value_ratio_history.md ## History gains the effort-weighted ratio, 5 windows backfilled from metrics_definitions.md Appendix F (scripts/compute_effort_weighted_pvr.py reproduces all 5). AC2 (roadmap_prompt.md STEP 2.4) still blocked on BLG-GOV-339 sign-off (ESC-EXEC-20261008-03)."
+          "deviations_filed": true,
+          "last_completed_substep": "AC2_committed",
+          "sign_off_record": {
+            "role": "Head of Specs Team; Product Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "cleared_utc": "2026-10-09T17:43:06Z",
+            "notes": "BLG-GOV-339 sign-off, ESC-EXEC-20261008-03, user-directed. Both Blocked first pass (draft directed a scripts/ edit outside roadmap_prompt.md §4 write scope); Approved second pass with HoST replacement paragraph. HoST evidence: method reproduces Appendix F 0.457/0.115/0.109/0.021/0.093; v9.6-v9.10 = 0.327 effort-weighted vs 0.161 story-count, 155/155 coverage. PO sign-off scoped to the effort-weighted reading only (not D-split or U-pool indicator). Full statements in execution_escalations.md and qa_evidence_EPIC-06.md."
+          },
+          "notes": "AC1 done (named-file write, §7 rule case (a)): product_value_ratio_history.md ## History gains the effort-weighted ratio, 5 windows backfilled from metrics_definitions.md Appendix F (scripts/compute_effort_weighted_pvr.py reproduces all 5). AC2 (roadmap_prompt.md STEP 2.4) still blocked on BLG-GOV-339 sign-off (ESC-EXEC-20261008-03). AC2 done 2026-10-09 (3bdb52e5): ESC-EXEC-20261008-03 resolved, both sign-offs recorded; reclassified delegated_decision -> autonomous on resolution (execution_prompt.md §3.1.D). AC1 commit e8ca73b0; AC2 commit is commit_sha."
         },
         "ST-35": {
           "title": "§13 sign-off ACs must cite every §13 clause that names the feature's subject",
@@ -1173,7 +1180,6 @@
   },
   "blocked_items": [
     "ST-16",
-    "ST-34",
     "ST-25"
   ],
   "delegated_items": [
@@ -1216,12 +1222,12 @@
     "ST-29",
     "ST-30",
     "ST-31",
-    "ST-32"
+    "ST-32",
+    "ST-34"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",
-    "ESC-EXEC-20261008-02",
-    "ESC-EXEC-20261008-03"
+    "ESC-EXEC-20261008-02"
   ],
   "merge_gate": {
     "epics_merged": [],
@@ -1237,7 +1243,8 @@
   },
   "process_notes": [
     "2026-10-08: ST-06 blocked_since_utc and DEL-20261008-03 'Delegated at' were first written as 2026-10-08T12:20:00Z, an estimate, not the real time (BLG-GOV-309). Corrected the same session to 2026-10-08T11:18:41Z (the delegation commit 5c753cbc's authored time). This is the only edit made to an earlier delegation_log.md entry, and it corrects a factual value in an entry written minutes earlier.",
-    "2026-10-08: execution_state.json is carried on every EPIC branch (EPIC-01 is the owner per sprint_backlog.md Merge Order). Each branch commits the same, monotonically growing copy, so a CLAUDE.md §8 conflict resolves by taking the newer copy (a superset)."
+    "2026-10-08: execution_state.json is carried on every EPIC branch (EPIC-01 is the owner per sprint_backlog.md Merge Order). Each branch commits the same, monotonically growing copy, so a CLAUDE.md §8 conflict resolves by taking the newer copy (a superset).",
+    "2026-10-09: this branch copy still shows ST-16/ST-25 blocked and ESC-EXEC-20261008-01/-02 open; both were resolved on the EPIC-03 and EPIC-04 branches (their own copies). Reconcile by union per CLAUDE.md §8 at merge; not edited here to avoid recording another branch's evidence on EPIC-06."
   ],
   "sealed": false,
   "sealed_utc": null
