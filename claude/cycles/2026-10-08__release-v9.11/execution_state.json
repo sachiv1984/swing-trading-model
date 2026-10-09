@@ -634,7 +634,8 @@
         "tests/e2e/reports-performance-tab.spec.js",
         "tests/e2e/accessibility-axe-scan.spec.js",
         "tests/e2e/replay-mode.spec.js",
-        "tests/test_non_registry_dependency_check.py"
+        "tests/test_non_registry_dependency_check.py",
+        "tests/test_check_sprint_backlog_owners.py"
       ],
       "stories": {
         "ST-33": {
@@ -655,7 +656,13 @@
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "cleared_utc": "2026-10-09T08:28:00Z",
+            "notes": "Approved. AC1 ruling (c): v9.10's sealed sprint_backlog.md carries 10 parenthetical-qualifier Owner values (one also uses 'and' instead of '; ') written after the §16.11 rule landed; the strict check correctly reports them. AC1's 'all v9.10 Owner values pass' clause is narrowed to 'v9.10 qualifier values are reported as non-compliant'; record as Pass_with_deviation with this ruling as the record, no remainder. Rejected (a) weaken check (contradicts §16.11) and (b) edit sealed record. AC2 met; §6 checklist verified line-by-line (OG 4.231)."
+          },
           "notes": ""
         },
         "ST-34": {

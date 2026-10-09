@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.10
-**Last Updated:** 2026-10-05 (ESC-CLOSE-20260930-01 Product Owner ruling, agent-mediated and confirmed by the human Product Owner 2026-10-05 — §2.1 step 2a build-and-ship candidate requirement and reduced-roster rule; STEP 4 Notes tally line); prior — 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` STEP 11 Friction Item 2 — §2.0 step 6 codebase overlap check); prior — 2026-07-27; prior history retained — see prior entries in version control.
+**Version:** 2.11
+**Last Updated:** 2026-10-08 (ST-33, EPIC-06, v9.11, BLG-GOV-375 — canonical Owner role names: write-time check scripts/check_sprint_backlog_owners.py); prior — 2026-10-05 (ESC-CLOSE-20260930-01 Product Owner ruling, agent-mediated and confirmed by the human Product Owner 2026-10-05 — §2.1 step 2a build-and-ship candidate requirement and reduced-roster rule; STEP 4 Notes tally line); prior — 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` STEP 11 Friction Item 2 — §2.0 step 6 codebase overlap check); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -77,7 +77,7 @@ The following agent roles are eligible and expected to submit ideas (all roles d
 - Head of Specs Team
 - Head of UX & Design
 - Infrastructure & Operations Owner
-- Metrics Definitions & Analytics Canonical Owner
+- Metrics Definitions & Analytics Owner
 - PMO Lead
 - Product Owner
 - QA Lead
@@ -144,7 +144,7 @@ Where:
 | Head of Specs Team | `head-of-specs` |
 | Head of UX & Design | `head-of-ux` |
 | Infrastructure & Operations Owner | `infra-ops` |
-| Metrics Definitions & Analytics Canonical Owner | `metrics` |
+| Metrics Definitions & Analytics Owner | `metrics` |
 | PMO Lead | `pmo-lead` |
 | Product Owner | `product-owner` |
 | QA Lead | `qa-lead` |
