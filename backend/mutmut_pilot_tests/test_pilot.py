@@ -10,7 +10,7 @@ its own isolated conftest.py rather than reusing tests/conftest.py.
 Deliberately standalone (does not import from the repo's tests/ package) --
 see mutmut_pilot_tests/conftest.py's own docstring for why.
 """
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -163,6 +163,46 @@ def _mock_snapshot(total_value):
     return {"total_value": total_value}
 
 
+class _Unconfigured:
+    """Return value of a database mock a test did not configure. Any use
+    raises, so a test that forgets one of the three mocks fails loudly
+    instead of inheriting another test's stale return_value (ST-41,
+    BLG-QA-201, v9.11)."""
+
+    def __init__(self, name):
+        self._name = name
+
+    def _fail(self, *_a, **_k):
+        raise AssertionError(f"database.{self._name} was not configured by this test")
+
+    __bool__ = __getitem__ = __iter__ = __len__ = get = _fail
+
+    def __getattr__(self, attr):
+        self._fail()
+
+
+_DB_MOCKS = ("get_portfolio", "get_latest_snapshot", "get_settings")
+
+
+@pytest.fixture(autouse=True)
+def _fresh_database_mocks():
+    """Each test gets fresh, unconfigured mocks for the three database reads
+    size_position makes, restored after the test (ST-41, BLG-QA-201). They
+    were previously assigned on the session-wide stub with no reset, so a
+    test inherited whatever the previous test had set."""
+    patches = []
+    for name in _DB_MOCKS:
+        mock = MagicMock(return_value=_Unconfigured(name))
+        # sizing_service imported these by name, so patch both bindings with
+        # the same mock; tests configure it through database.<name>.
+        patches += [patch.object(database, name, mock), patch.object(sizing_service, name, mock)]
+    for p in patches:
+        p.start()
+    yield
+    for p in reversed(patches):
+        p.stop()
+
+
 @pytest.fixture(autouse=True)
 def _no_heat_impact():
     # Isolates size_position's pure sizing arithmetic from
@@ -230,3 +270,17 @@ class TestSizePositionGoldenVectors:
         assert result["valid"] is True
         assert result["cash_sufficient"] is False
         assert "max_affordable_shares" in result
+
+
+class TestDatabaseMockIsolation:
+    """ST-41 (BLG-QA-201, v9.11): the golden-vector tests are order-independent."""
+
+    def test_unconfigured_mock_fails_loudly(self):
+        with pytest.raises(AssertionError, match="database.get_portfolio was not configured"):
+            size_position(entry_price=100.0, stop_price=95.0, risk_percent=1.0, market="UK")
+
+    def test_a_test_sees_fresh_mocks_not_another_tests_values(self):
+        assert isinstance(database.get_portfolio.return_value, _Unconfigured)
+        assert isinstance(database.get_latest_snapshot.return_value, _Unconfigured)
+        assert isinstance(database.get_settings.return_value, _Unconfigured)
+
