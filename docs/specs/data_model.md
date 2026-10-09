@@ -4,7 +4,7 @@
 **Class:** Class 1
 **Status:** Canonical
 **Version:** 2.56
-**Last Updated:** 2026-10-09 (ST-17, EPIC-03, v9.11, BLG-FR-06 — DS-29: trade_history snapshots the strategy parameters in force at exit; 2.55 is EPIC-05's ST-30); prior — 2026-10-08 (ST-20, EPIC-03, v9.11, BLG-OPS-175 — DS-28: partial unique index idx_price_alerts_active_unique on active price alerts; 2.53 is EPIC-01's DS-27); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-09 (ST-17, EPIC-03, v9.11, BLG-FR-06 — DS-29: trade_history snapshots the strategy parameters in force at exit, confirmed applied live on staging and production; 2.55 is EPIC-05's ST-30); prior — 2026-10-08 (ST-20, EPIC-03, v9.11, BLG-OPS-175 — DS-28: partial unique index idx_price_alerts_active_unique on active price alerts; 2.53 is EPIC-01's DS-27); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -2823,7 +2823,7 @@ Expect 1 row: `CREATE UNIQUE INDEX idx_price_alerts_active_unique ON public.pric
 
 **Rationale:** a closed trade recorded its prices and fees but not the multiplier, ATR and grace length that produced its stops. `active_atr_multiplier` exists on open positions only (DS-22), so a result could not be tied to the rules behind it once §11 or the strategy version changes. `exit_position()` now copies all four values onto the `trade_history` row it writes (`position_service.strategy_parameter_snapshot()`); partial exits carry them too. Field meanings are in §3's Fields table.
 
-**RISK (no live DB write access in this execution environment):** as with DS-25 to DS-28, the sandbox `DATABASE_URL` is read-only staging. `create_trade_history()`'s INSERT names the four columns, so a deploy without them fails every exit. The Up Migration must be applied to **staging and production** before EPIC-03 deploys. **Status: pending (`DEL-20261009-01`).**
+**RISK (no live DB write access in this execution environment):** as with DS-25 to DS-28, the sandbox `DATABASE_URL` is read-only staging. `create_trade_history()`'s INSERT names the four columns, so a deploy without them fails every exit. The Up Migration must be applied to **staging and production** before EPIC-03 deploys. **Status: CONFIRMED APPLIED, 2026-10-09** (staging and production; see Live Confirmation below).
 
 ### Up Migration (v2.55 → v2.56)
 
@@ -2862,7 +2862,19 @@ Expect 4 rows, all `is_nullable = YES`: `active_atr_multiplier` numeric(4,2); `a
 **Enforcement test:** `tests/test_trade_parameter_snapshot.py` runs the real `exit_position()` (DB layer mocked) and checks the written row for post-grace, in-grace, unknown-multiplier, missing-ATR and partial exits. It also checks that `create_trade_history()`'s INSERT names and binds all four columns.
 
 **Sign-off:**
-- Data Model & Domain Schema Owner: migration content is additive, nullable and reversible; no pre-check needed. Live application pending (`DEL-20261009-01`).
+- Data Model & Domain Schema Owner: migration content is additive, nullable and reversible; no pre-check needed. Applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner).
+- **Live Confirmation, applied 2026-10-09:** the Up Migration was run on staging, then production. The Verification query was then run in each environment, and the output was pasted into the execution session. Both environments returned identical results:
+
+```json
+[
+  {"column_name": "active_atr_multiplier", "data_type": "numeric", "numeric_precision": 4, "numeric_scale": 2, "character_maximum_length": null, "is_nullable": "YES"},
+  {"column_name": "atr", "data_type": "numeric", "numeric_precision": 10, "numeric_scale": 4, "character_maximum_length": null, "is_nullable": "YES"},
+  {"column_name": "grace_period_days", "data_type": "integer", "numeric_precision": 32, "numeric_scale": 0, "character_maximum_length": null, "is_nullable": "YES"},
+  {"column_name": "parameter_source", "data_type": "character varying", "numeric_precision": null, "numeric_scale": null, "character_maximum_length": 40, "is_nullable": "YES"}
+]
+```
+
+`DEL-20261009-01` unblocked in-session.
 
 ---
 
