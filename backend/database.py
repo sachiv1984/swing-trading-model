@@ -559,11 +559,12 @@ def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
                     shares, entry_price, exit_price, total_cost, gross_proceeds,
                     net_proceeds, entry_fees, exit_fees, pnl, pnl_pct,
                     holding_days, exit_reason, entry_fx_rate, exit_fx_rate,
-                    entry_note, exit_note, tags, fill_price, planned_entry_price
+                    entry_note, exit_note, tags, fill_price, planned_entry_price,
+                    active_atr_multiplier, atr, grace_period_days, parameter_source
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                    %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s
                 )
                 RETURNING *
             """, (
@@ -592,6 +593,11 @@ def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
                 trade_data.get('tags'),
                 trade_data.get('fill_price'),
                 trade_data.get('planned_entry_price'),
+                # ST-17 (BLG-FR-06, v9.11, DS-29): strategy parameters in force at exit.
+                trade_data.get('active_atr_multiplier'),
+                trade_data.get('atr'),
+                trade_data.get('grace_period_days'),
+                trade_data.get('parameter_source'),
             ))
             return cur.fetchone()
 

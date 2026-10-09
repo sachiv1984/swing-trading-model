@@ -1046,6 +1046,36 @@ def add_position(
 # EXIT POSITION
 # ============================================================================
 
+def strategy_parameter_snapshot(position: Dict, holding_days: int) -> Dict:
+    """The strategy parameters in force on a position at exit (ST-17, BLG-FR-06,
+    EPIC-03, v9.11; data_model.md DS-29).
+
+    Copied onto the trade_history row so a closed trade can be tied to the rules
+    that produced its stops, even if strategy_rules.md §11 changes later.
+
+    - active_atr_multiplier: the multiplier behind the stop in force. Taken from
+      the position's own active_atr_multiplier (stamped on every post-grace
+      recompute). A position exited in grace with none stamped is still on its
+      §5 initial stop (frozen in grace, strategy_rules.md §6.3 v1.15), so the
+      initial multiplier applies. Otherwise unknown: NULL, never invented.
+    - atr: the position's stored ATR.
+    - grace_period_days: the §6.2 / §11 grace length.
+    - parameter_source: where the multiplier and grace length come from. Since
+      the v9.10 ruling they are the fixed §11 values, so this records the
+      strategy version in force (strategy_version_registry).
+    """
+    multiplier = position.get('active_atr_multiplier')
+    if multiplier is None and holding_days < GRACE_PERIOD_DAYS:
+        multiplier = INITIAL_ATR_MULTIPLIER
+    atr = position.get('atr')
+    return {
+        'active_atr_multiplier': float(multiplier) if multiplier is not None else None,
+        'atr': float(atr) if atr is not None else None,
+        'grace_period_days': GRACE_PERIOD_DAYS,
+        'parameter_source': f"strategy_rules_s11_v{get_current_strategy_version()}",
+    }
+
+
 def exit_position(
     position_id: str,
     exit_price: float,
@@ -1270,6 +1300,7 @@ def exit_position(
         'tags': position.get('tags'),
         'fill_price': position.get('user_fill_price'),
         'planned_entry_price': planned_entry_price,
+        **strategy_parameter_snapshot(position, holding_days),
     }
     
     print(f"   💾 Creating trade history record...")

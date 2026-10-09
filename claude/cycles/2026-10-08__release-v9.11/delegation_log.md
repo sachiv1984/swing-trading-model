@@ -85,3 +85,27 @@ Last Updated: 2026-10-08
 - **Unblock criteria:** Both verification outputs recorded in `data_model.md` DS-28 (Live Confirmation) and in `qa_evidence_EPIC-03.md` under ST-20. AC 1 (concurrent double-submit absorbed at the DB layer) is already shown by `tests/test_price_alert_db_uniqueness.py` against a real Postgres (CI Phase B). Deploy order is not a hard risk: without the index the service behaves as before.
 - **Commit format required:** `[EPIC-03][ST-20] <description>` pushed to `exec/2026-10-08__release-v9.11/EPIC-03`
 - **Status:** Pending
+
+## DEL-20261009-01
+
+- **ST Item:** ST-17 — Snapshot the strategy parameters in force onto each closed trade
+- **EPIC:** EPIC-03
+- **Classification:** delegated_backend (live migration, Human-Delegation, RISK-03; DS-25/DS-26 precedent)
+- **Assigned to:** Data Model & Domain Schema Owner (with Financial Reporting & Records Owner)
+- **GitHub Issue:** #1941
+- **Branch:** exec/2026-10-08__release-v9.11/EPIC-03
+- **Delegated at:** 2026-10-09T12:51:19Z
+- **What is needed:** Run the DS-29 Up Migration (`docs/specs/data_model.md` § DS-29) on **staging, then production**:
+  ```sql
+  ALTER TABLE trade_history
+      ADD COLUMN IF NOT EXISTS active_atr_multiplier NUMERIC(4, 2),
+      ADD COLUMN IF NOT EXISTS atr NUMERIC(10, 4),
+      ADD COLUMN IF NOT EXISTS grace_period_days INTEGER,
+      ADD COLUMN IF NOT EXISTS parameter_source VARCHAR(40);
+  ```
+  Then run the DS-29 Verification query in each environment and paste both outputs back. Expected: 4 rows, all nullable — `active_atr_multiplier` numeric(4,2), `atr` numeric(10,4), `grace_period_days` integer, `parameter_source` character varying(40).
+- **Workflow viability (LL-v9.10-P3-01):** Not a workflow dispatch; a manual SQL run in the Supabase SQL editor.
+- **Spec reference:** `docs/specs/data_model.md#DS-29`; `stage4_backlog_slice.md#ST-17` AC 2
+- **Unblock criteria:** Both verification outputs recorded in `data_model.md` DS-29 (Live Confirmation) and in `qa_evidence_EPIC-03.md` under ST-17. AC 1 (new closed trades carry the four fields) is shown by `tests/test_trade_parameter_snapshot.py`. **Deploy order is a hard risk:** `create_trade_history()`'s INSERT names the new columns, so EPIC-03 must not deploy before the migration is applied in that environment, or every exit fails.
+- **Commit format required:** `[EPIC-03][ST-17] <description>` pushed to `exec/2026-10-08__release-v9.11/EPIC-03`
+- **Status:** Pending

@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.54
-**Last Updated:** 2026-10-08 (ST-20, EPIC-03, v9.11, BLG-OPS-175 — DS-28: partial unique index idx_price_alerts_active_unique on active price alerts; 2.53 is EPIC-01's DS-27); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior — 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior history retained — see prior entries in version control
+**Version:** 2.56
+**Last Updated:** 2026-10-09 (ST-17, EPIC-03, v9.11, BLG-FR-06 — DS-29: trade_history snapshots the strategy parameters in force at exit; 2.55 is EPIC-05's ST-30); prior — 2026-10-08 (ST-20, EPIC-03, v9.11, BLG-OPS-175 — DS-28: partial unique index idx_price_alerts_active_unique on active price alerts; 2.53 is EPIC-01's DS-27); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -186,6 +186,10 @@ CREATE TABLE public.trade_history (
     tags TEXT[] NULL,
     position_id UUID NULL REFERENCES positions(id),
     fill_price NUMERIC(10, 4) NULL,
+    active_atr_multiplier NUMERIC(4, 2) NULL,
+    atr NUMERIC(10, 4) NULL,
+    grace_period_days INTEGER NULL,
+    parameter_source VARCHAR(40) NULL,
     CONSTRAINT trade_history_pkey PRIMARY KEY (id)
 );
 
@@ -225,6 +229,10 @@ CREATE INDEX idx_trade_history_position_id ON public.trade_history USING btree (
 | tags | TEXT[] | YES | Tags copied from position at exit time |
 | position_id | UUID | YES | FK to originating position |
 | fill_price | NUMERIC(10,4) | YES | Actual broker fill price copied from `positions.user_fill_price` at exit. Null when user did not provide a fill price at entry. Used to compute `slippage_pct` in the API response. Added by v1.9→v2.0 migration — confirmed present in Supabase DB (2026-04-02). |
+| active_atr_multiplier | NUMERIC(4,2) | YES | ATR multiplier behind the stop in force at exit: copied from `positions.active_atr_multiplier`. An exit during grace with none stamped records the §5 initial multiplier (5), since the stop is frozen at the initial stop during grace (`strategy_rules.md` §6.3 v1.15). `NULL` when unknown (a post-grace position never recomputed since DS-22). Added v2.56 (DS-29). |
+| atr | NUMERIC(10,4) | YES | The position's stored ATR at exit (`positions.atr`). Added v2.56 (DS-29). |
+| grace_period_days | INTEGER | YES | Grace length in force at exit (§6.2 / §11: 10). Added v2.56 (DS-29). |
+| parameter_source | VARCHAR(40) | YES | Where the multiplier and grace length came from: `strategy_rules_s11_v<version>`, the fixed §11 values of the strategy version in force at exit (`strategy_version_registry.py`). Added v2.56 (DS-29). |
 
 ### Exit Reason Values
 
@@ -2809,6 +2817,55 @@ Expect 1 row: `CREATE UNIQUE INDEX idx_price_alerts_active_unique ON public.pric
 
 ---
 
-**Document Version:** 2.54
+## DS-29 — Snapshot the strategy parameters in force onto trade_history (v2.56, 2026-10-09)
+
+**Story:** ST-17 (EPIC-03, v9.11) — `BLG-FR-06`. Delegation `DEL-20261009-01`. (v2.55 is EPIC-05's ST-30 on its own branch; this skips it so each change keeps a distinct version at merge.)
+
+**Rationale:** a closed trade recorded its prices and fees but not the multiplier, ATR and grace length that produced its stops. `active_atr_multiplier` exists on open positions only (DS-22), so a result could not be tied to the rules behind it once §11 or the strategy version changes. `exit_position()` now copies all four values onto the `trade_history` row it writes (`position_service.strategy_parameter_snapshot()`); partial exits carry them too. Field meanings are in §3's Fields table.
+
+**RISK (no live DB write access in this execution environment):** as with DS-25 to DS-28, the sandbox `DATABASE_URL` is read-only staging. `create_trade_history()`'s INSERT names the four columns, so a deploy without them fails every exit. The Up Migration must be applied to **staging and production** before EPIC-03 deploys. **Status: pending (`DEL-20261009-01`).**
+
+### Up Migration (v2.55 → v2.56)
+
+```sql
+ALTER TABLE trade_history
+    ADD COLUMN IF NOT EXISTS active_atr_multiplier NUMERIC(4, 2),
+    ADD COLUMN IF NOT EXISTS atr NUMERIC(10, 4),
+    ADD COLUMN IF NOT EXISTS grace_period_days INTEGER,
+    ADD COLUMN IF NOT EXISTS parameter_source VARCHAR(40);
+```
+
+Additive and nullable, with no default and no backfill. Rows closed before this migration keep `NULL`: the parameters behind them were not recorded, and inferring them now would be invention, not a snapshot. `trade_history` stays write-once; the columns are set at INSERT only.
+
+### Down Migration (v2.56 → v2.55)
+
+```sql
+ALTER TABLE trade_history
+    DROP COLUMN IF EXISTS active_atr_multiplier,
+    DROP COLUMN IF EXISTS atr,
+    DROP COLUMN IF EXISTS grace_period_days,
+    DROP COLUMN IF EXISTS parameter_source;
+```
+
+### Verification
+
+```sql
+SELECT column_name, data_type, numeric_precision, numeric_scale, character_maximum_length, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'trade_history'
+  AND column_name IN ('active_atr_multiplier', 'atr', 'grace_period_days', 'parameter_source')
+ORDER BY column_name;
+```
+
+Expect 4 rows, all `is_nullable = YES`: `active_atr_multiplier` numeric(4,2); `atr` numeric(10,4); `grace_period_days` integer; `parameter_source` character varying(40).
+
+**Enforcement test:** `tests/test_trade_parameter_snapshot.py` runs the real `exit_position()` (DB layer mocked) and checks the written row for post-grace, in-grace, unknown-multiplier, missing-ATR and partial exits. It also checks that `create_trade_history()`'s INSERT names and binds all four columns.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: migration content is additive, nullable and reversible; no pre-check needed. Live application pending (`DEL-20261009-01`).
+
+---
+
+**Document Version:** 2.56
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-08 (ST-20, EPIC-03, v9.11, BLG-OPS-175 — DS-28 partial unique index on active price alerts; footer brought level with the header); prior — 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — DS-26 stop_calculation_source; header/footer version kept in sync); prior history retained — see prior entries in version control.
+**Last Review:** 2026-10-09 (ST-17, EPIC-03, v9.11, BLG-FR-06 — DS-29 strategy-parameter snapshot on trade_history); prior — 2026-10-08 (ST-20, EPIC-03, v9.11, BLG-OPS-175 — DS-28 partial unique index on active price alerts; footer brought level with the header); prior — 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior history retained — see prior entries in version control.
