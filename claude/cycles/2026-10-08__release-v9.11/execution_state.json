@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-09T14:58:00Z",
+  "last_updated_utc": "2026-10-09T14:48:00Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -873,7 +873,8 @@
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "tests/e2e/monthly-pnl-narrative.spec.js",
-        "tests/test_monthly_pnl_narrative.py"
+        "tests/test_monthly_pnl_narrative.py",
+        "tests/test_monthly_pnl_narrative_db.py"
       ],
       "stories": {
         "ST-23": {
@@ -1005,23 +1006,28 @@
         "ST-26": {
           "title": "Usage counter for the AI monthly P&L narrative",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1950,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "259d04859f4fa3185b65895936236db595426a59",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T14:45:51Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#AI Monthly P&L Narrative Usage",
+            "docs/specs/data_model.md#DS-30",
+            "tests/test_monthly_pnl_narrative.py",
+            "tests/test_monthly_pnl_narrative_db.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done (259d0485). AC1: database.count_monthly_pnl_narrative_generations() counts generations (one terminal claude_audit_log row per completed request), documented in data_model.md v2.58 DS-30; no new table, so no live-migration delegation was needed (sprint_backlog.md ST-26 note). AC2: metrics_definitions.md v1.28.0 § AI Monthly P&L Narrative Usage defines the count that BLG-GOV-382 already names ('the monthly P&L narrative usage count (ST-26)'), plus the PO success measure (months used). BLG-GOV-382 is not edited: the AC does not name its ID, so the §7 named-file rule (b) does not apply. Tests: TestUsageCountRule; tests/test_monthly_pnl_narrative_db.py (real Postgres, CI Phase B; passed locally on PG 18). Backend 2280 passed. Deviation check: none."
         },
         "ST-27": {
           "title": "AI chat UI interaction study protocol",
@@ -1200,7 +1206,8 @@
     "ST-24",
     "ST-27",
     "ST-28",
-    "ST-25"
+    "ST-25",
+    "ST-26"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",
