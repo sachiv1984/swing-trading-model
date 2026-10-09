@@ -35,7 +35,7 @@ Last Updated: 2026-10-08
 - **Spec reference:** `.github/workflows/non-registry-dependency-check.yml`; `stage4_backlog_slice.md#ST-42`
 - **Unblock criteria:** The `gh api` read lists the new context under `protection.required_status_checks`, and one later PR that does not touch dependency files shows the check completing. Both recorded in `qa_evidence_EPIC-06.md` under ST-42.
 - **Commit format required:** `[EPIC-06][ST-42] <description>` pushed to `exec/2026-10-08__release-v9.11/EPIC-06`
-- **Status:** Pending
+- **Status:** Pending — partially actioned 2026-10-09: the user added the context to `main`'s required status checks; AC1 read-back recorded in `qa_evidence_EPIC-06.md` under ST-42. Awaiting the AC2 evidence (check completing on the first later PR that does not touch dependency files).
 
 ## DEL-20261008-03
 
