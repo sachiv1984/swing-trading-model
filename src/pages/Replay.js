@@ -40,7 +40,9 @@ const RETROSPECTIVE_NOTICE_FALLBACK =
 // date, so it renders as plain text (replay_endpoints.md's own field note).
 const EXIT_REASON_BADGE = {
   Stop: { label: "Stop", cls: "bg-red-600 text-white" },
-  "Risk-Off": { label: "Risk-Off", cls: "bg-amber-600 text-white" },
+  // ST-37 (BLG-QA-196, v9.11): amber-700, not amber-600 — white 12px bold text on
+  // amber-600 is 3.18:1 (axe color-contrast); amber-700 passes (same fix as BLG-FE-165).
+  "Risk-Off": { label: "Risk-Off", cls: "bg-amber-700 text-white" },
 };
 
 function ExitReasonBadge({ reason }) {

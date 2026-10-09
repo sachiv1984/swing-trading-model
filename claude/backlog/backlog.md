@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior — 2026-10-07 (session — 3 new item(s) added: BLG-BE-152, BLG-FE-205, BLG-GOV-378 from debrief production testing; BLG-BE-150 progress note); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-08 (session — 2 new item(s) added: BLG-FE-209, BLG-FE-210, from ST-37, EPIC-06, v9.11); prior — 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5124,5 +5124,46 @@ When the live price fetch fails, `portfolio_service.py` (lines ~118-124) treats 
 - The appendix exists with a Class 6 header and is registered in OPERATIONAL_GUIDE.md §13 and §14.
 - No mandatory STEP is moved out of the core (every STEP heading in the pre-split file is either still in the core or reached by an explicit pointer from it).
 - `governance-drift` reports all versions in sync.
+
+---
+
+### BLG-FE-209 — Replay page fails WCAG colour contrast in the light theme
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** ST-37 (BLG-QA-196), EPIC-06, cycle `2026-10-08__release-v9.11` — first axe scan of the Replay page in both themes — 2026-10-08
+**Effort:** S (~0.5-1 day, or as part of BLG-FE-200)
+**Provisional-Target:** TBD
+
+**Problem**
+The axe scan added by ST-37 finds serious `color-contrast` violations on the Replay page (`src/pages/Replay.js`) in the **light** theme only: in Date Range mode (3 nodes), Trade Set mode (5 nodes) and the populated result (20 nodes). The page uses dark-only classes (`bg-slate-800/50` cards, `text-white`/`text-slate-300` text, `text-emerald-400`/`text-rose-400` P&L) that sit on a mid-grey background in the light theme, giving ratios from 1.2:1 to 3.25:1. This is the same gap as `BLG-FE-200` (Reports and Notifications), which `design_system.md` cannot fix without light-mode tokens. The dark theme passes.
+
+**Scope**
+- Apply the light-mode tokens `BLG-FE-200` introduces (or define them, if this lands first) to the Replay page
+- Remove the three `Replay*:light` `color-contrast` entries from `KNOWN_VIOLATIONS` in `tests/e2e/accessibility-axe-scan.spec.js` in the same commit
+
+**Acceptance Criteria**
+- The light-theme Replay axe scans (Date Range, Trade Set, populated result) pass with no `color-contrast` baseline entry
+
+---
+
+### BLG-FE-210 — White text on amber-600 badges fails WCAG contrast outside Replay
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-37 (BLG-QA-196), EPIC-06, cycle `2026-10-08__release-v9.11` — out-of-scope finding while fixing the Replay Risk-Off badge — 2026-10-08
+**Effort:** XS (<1h plus test updates)
+**Provisional-Target:** TBD
+
+**Problem**
+White 12px bold text on `bg-amber-600` measures 3.18:1 (axe `color-contrast`, serious; 4.5:1 needed). ST-37 fixed the Replay page's Risk-Off badge by moving it to `bg-amber-700` (the `BLG-FE-165` precedent). The same class pair remains in pages the axe scan does not cover: `StrategyBenchmark.js` (Risk-Off badges, lines 26–27), `AiChatWidget.js` (line 70) and `AiDailyBriefing.js` (`MONITOR` action, line 14).
+
+**Scope**
+- Move those badges to `bg-amber-700` (or the design-system token for an amber badge with white text)
+- Update any Playwright assertion that names `bg-amber-600` for them
+
+**Acceptance Criteria**
+- No `bg-amber-600 text-white` pair remains in `src/`
+- The affected specs pass; an axe scan of each changed component reports no `color-contrast` finding on the badge
 
 ---

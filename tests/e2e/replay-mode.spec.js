@@ -241,13 +241,14 @@ test('SC-REP-06: populated success shows summary, independence note, FX caption,
 
   const riskOffRow = page.getByTestId(`replay-result-row-${SAMPLE_TRADE_RISKOFF.trade_id}`);
   const riskOffBadge = riskOffRow.locator('span', { hasText: 'Risk-Off' });
-  await expect(riskOffBadge).toHaveClass(/bg-amber-600/);
+  // ST-37 (v9.11): amber-700 for WCAG contrast (was amber-600).
+  await expect(riskOffBadge).toHaveClass(/bg-amber-700/);
   await expect(riskOffRow).toContainText('−£15.72');
 
   // "Actual Exit" is deliberately not in the badge map -- rendered as plain text.
   const actualExitRow = page.getByTestId(`replay-result-row-${SAMPLE_TRADE_ACTUAL_EXIT.trade_id}`);
   await expect(actualExitRow).toContainText('Actual Exit');
-  await expect(actualExitRow.locator('span.bg-red-600, span.bg-amber-600')).toHaveCount(0);
+  await expect(actualExitRow.locator('span.bg-red-600, span.bg-amber-700')).toHaveCount(0);
 });
 
 // ---------------------------------------------------------------------------

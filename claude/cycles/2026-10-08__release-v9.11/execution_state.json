@@ -630,7 +630,10 @@
       "test_scenarios": [
         "backend/mutmut_pilot_tests/test_pilot.py",
         "tests/test_motion_timing_500ms_ceiling_regression.py",
-        "tests/test_toast_notification_timing_regression.py"
+        "tests/test_toast_notification_timing_regression.py",
+        "tests/e2e/reports-performance-tab.spec.js",
+        "tests/e2e/accessibility-axe-scan.spec.js",
+        "tests/e2e/replay-mode.spec.js"
       ],
       "stories": {
         "ST-33": {
@@ -741,23 +744,26 @@
         "ST-38": {
           "title": "Fix SC-REP-04a's signed \"+£0.00\" expectation",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1962,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "e485b0579e1bceccd57ba829ccebc194aad9a831",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T07:25:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/reports-performance-tab.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done — AC pre-met on main (LL-v2.4-P4-02 pre-met path): SC-REP-04a already asserts the unsigned '£0.00' (fixed by e485b057, v9.8 EPIC-01 ST-01, to unblock that PR's CI). Verified 2026-10-09: SC-REP-04a/b/c pass locally (3 passed) and main's latest Playwright run (52ce7f83) succeeded. completed_utc is the prior commit's authored time. qa_evidence_EPIC-06.md entry required at EPIC close. BLG-QA-197 itself is still listed open in backlog.md (grooming item, not edited here). Deviation check: none.",
+          "pre_met": true
         },
         "ST-39": {
           "title": "Mutation-test the US-market and batch-sizing paths",
@@ -783,23 +789,26 @@
         "ST-40": {
           "title": "Make the ceiling/count regression tests read the source they claim to verify",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1964,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "634c7232f65e521a0fa1fd77c00dcd2cb949fe81",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T07:53:31Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_motion_timing_500ms_ceiling_regression.py",
+            "tests/test_toast_notification_timing_regression.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 scratch edit (duration 0.45) fails each component's ceiling test independently (4/4), sources restored. AC2 no test asserts purely on unrelated literals (count tests replaced by a source check). Deviation check: none."
         },
         "ST-41": {
           "title": "Reset the pilot test file's shared database mocks between tests",
@@ -1153,9 +1162,16 @@
     "ST-19",
     "ST-21",
     "ST-22",
+    "ST-38",
+    "ST-40",
+    "ST-41",
     "ST-23",
     "ST-24",
-    "ST-28"
+    "ST-27",
+    "ST-28",
+    "ST-29",
+    "ST-31",
+    "ST-32"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",
