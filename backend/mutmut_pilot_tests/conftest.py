@@ -40,12 +40,21 @@ def _discover_database_stub_functions(backend_dir: Path) -> list:
     pulls in transitively (not just sizing_service.py's own 3 names) resolves
     to a MagicMock rather than a real DB connection."""
     names = set()
-    exclude = {".venv", "venv", "__pycache__"}
+    # ST-39 (BLG-QA-199, v9.11): also skip mutmut's own `mutants/` output.
+    # mutmut copies everything under source_paths (".") into mutants/, a stale
+    # mutants/ included, so each run nested a further copy; parsing every
+    # nested mutated sizing_service.py (~3s each) pushed each test process
+    # near mutmut's CPU limit and turned killed mutants into timeouts. Parts
+    # are taken relative to backend_dir, which is itself mutants/ during a run.
+    exclude = {".venv", "venv", "__pycache__", "mutants"}
     for py_file in backend_dir.rglob("*.py"):
-        if any(part in exclude for part in py_file.parts):
+        if any(part in exclude for part in py_file.relative_to(backend_dir).parts):
+            continue
+        source = py_file.read_text()
+        if "from database import" not in source:
             continue
         try:
-            tree = ast.parse(py_file.read_text(), filename=str(py_file))
+            tree = ast.parse(source, filename=str(py_file))
         except SyntaxError:
             continue
         for node in ast.walk(tree):

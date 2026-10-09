@@ -1,7 +1,7 @@
 **Owner:** QA Lead; Director of Quality
 **Class:** Operational Record (Class 3)
 **Status:** Complete
-**Last Updated:** 2026-09-29 (ST-15, BLG-QA-184, EPIC-03, v9.8 — BLG-QA-198 resolved, real mutation score recorded); prior — 2026-09-29 (initial investigation, blocked on BLG-QA-198)
+**Last Updated:** 2026-10-09 (ST-39, BLG-QA-199, EPIC-06, v9.11 — US-market and batch-sizing cases added, rerun score recorded, nested-mutants timeout trap fixed); prior — 2026-09-29 (ST-15, BLG-QA-184, EPIC-03, v9.8 — BLG-QA-198 resolved, real mutation score recorded); prior — 2026-09-29 (initial investigation, blocked on BLG-QA-198); prior history retained — see prior entries in version control
 **Source:** ST-15 (BLG-QA-184, EPIC-03, v9.8 sprint execution)
 
 ---
@@ -58,10 +58,33 @@ Confirmed via a real coverage run rather than assumed: `python3 -m coverage run 
 
 **1 timeout** (`_apply_concentration_adjustment__mutmut_100`) — not investigated further in this pilot; noted for whoever next runs a full (not scoped-to-two-files) mutation pass, since a mutation-induced infinite loop or pathological slowdown is itself sometimes an interesting finding, but pinning down which specific mutation caused it is out of this pilot's scope.
 
+## Update: US-market and batch-sizing paths (ST-39, BLG-QA-199, v9.11)
+
+**Cases added** to `backend/mutmut_pilot_tests/test_pilot.py` (now 30 tests): `TestSizePositionUSMarket`, 5 cases (explicit FX override, live FX when none is given, a UK case that must never read live FX, custom US fee settings, and the cash-limited max-affordable path that uses FX and the FX fee), and `TestSizeBatchInvVol`, 6 cases (weight cap then renormalisation, the minimum-weight floor, whole shares floored not rounded, a missing price getting zero shares with a reason, an allocation too small for one share, and no valid ATR sizing nothing). ST-41 (v9.11) had already made the mocks fresh per test.
+
+**Rerun (2026-10-09, `cd backend && python3 -m mutmut run`, mutmut 3.8.0):** 892 mutants: 411 killed, 301 survived, 180 no tests, **0 timeouts**.
+
+| Function | Killed | Survived | Total | Score | Baseline (v9.8) |
+|---|---|---|---|---|---|
+| `calculate_trailing_stop` | 33 | 0 | 33 | **100%** | 100% (35 mutants; mutmut 3.8.0 now generates 33 for the same code) |
+| `_floor_4dp` | 5 | 0 | 5 | **100%** | 100% |
+| `size_position` | 179 | 67 | 246 | **72.8%** | 51.6% |
+| `size_batch_inv_vol` | 128 | 70 | 198 | **64.6%** | not covered |
+| `_apply_concentration_adjustment` / `_calculate_heat_impact` | 7 | 139 | 146 | 4.8%* | unchanged — same pilot-scope artifact (`ticker=None`) as above |
+
+`calculate_us_entry_fees` (25 of 32 killed) and `_round_half_up` (10 of 13) are now partly exercised as a side effect of the US cases.
+
+**Survivor triage on the two new paths** (a sample of every fifteenth survivor read with `mutmut show`):
+- **Batch fee mutants survive because of a real defect:** mutating the US-market check or the `total_fee` key in `size_batch_inv_vol` changes nothing, because the batch path reads the fee as `.get('total_fee', 0)` while `calculate_uk_entry_fees()`/`calculate_us_entry_fees()` return it under `total`, so the fee added to `total_cost` is always 0 and the market check that chooses between them has no effect. No batch case uses a US signal for the same reason: until that is fixed there is no observable US-specific output to assert. That is `BLG-BE-158`, filed while writing these cases. Similarly `BLG-BE-157` (a zero-ATR signal gets a 5% allocation) was found here. Tests for the intended behaviour belong with those fixes, not in this pilot.
+- **Remaining survivors are test-strength gaps, not defects:** response key names the tests don't assert (`"concentration_adjusted"` → `"CONCENTRATION_ADJUSTED"`), default literals overridden by every case (`uk_commission` default 9.95), boundaries no case sits on (`portfolio_value <= 0` → `< 0`; `whole_shares > 0` → `> 1`), and rounding precision (`round(…, 2)` → `round(…, 3)`). None of these changes a value that `strategy_rules.md` §4.1 constrains in a way the pilot's inputs reach. They are left as the next increment if this pilot is extended.
+
+**Timeout trap found and fixed (ST-39):** mutmut copies everything under `source_paths = .` into `backend/mutants/`, including a `mutants/` left by an earlier run, so each run nested another copy (five levels and 1.9 GB here). The pilot conftest's AST scan for `from database import` then parsed every nested mutated `sizing_service.py` (about 3s each), each test process approached mutmut's CPU limit, and killed mutants were recorded as timeouts at random. Even `calculate_trailing_stop` showed 33 of 33 timeouts. Fixes: the conftest skips any `mutants/` path and parses only files containing `from database import` (pilot run 26s → 4s); `backend/mutants/` is git-ignored. **Delete `backend/mutants/` before every run** (step added below).
+
 ## Reproducing this pilot
 
 ```bash
 cd backend
+rm -rf mutants                 # a stale mutants/ gets copied into the next run (ST-39)
 python3 -m pip install mutmut   # not a pinned dependency; install ad hoc
 python3 -m mutmut run           # uses backend/setup.cfg's [mutmut] section
 python3 -m mutmut results --all true
