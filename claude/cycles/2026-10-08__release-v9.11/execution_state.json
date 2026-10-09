@@ -455,21 +455,24 @@
         "ST-16": {
           "title": "Rule on and test stop recalculation during grace",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner; Head of Engineering",
           "github_issue": 1940,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "a7d46a5f2f8ab2f258117ec40ce69f4cba7410d1",
           "delegation_record_id": "ESC-EXEC-20261008-01",
           "blocked_since_utc": "2026-10-08T11:01:30Z",
           "unblock_criteria": "See ESC-EXEC-20261008-01 unblock criteria",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T10:36:35Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#6.3 Behaviour during the grace period",
+            "docs/specs/api_contracts/position_endpoints.md#POST /positions/nightly-stop-update"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": {
             "role": "Strategy Rules & System Intent Owner",
             "method": "agent_mediated",
@@ -479,7 +482,7 @@
             "signed_utc": "2026-10-09T10:34:23Z",
             "note": "Agent-mediated per execution_prompt.md §5.3 at the user's direction (2026-10-09)."
           },
-          "notes": ""
+          "notes": "Done. AC1 ruling recorded (ESC-EXEC-20261008-01 resolved, option (b) with two changes); on-load and nightly paths behave the same during grace, asserted by TestInGraceStopParity. AC2 C6.3-02 moved to Asserted with that test. Deviation check: none; follow-ups BLG-BE-160, BLG-BE-161 filed per the ruling. Ruling to be carried into qa_evidence_EPIC-03.md with the ST-36 strategy-values line."
         },
         "ST-17": {
           "title": "Snapshot the strategy parameters in force onto each closed trade",
@@ -1180,7 +1183,6 @@
     }
   },
   "blocked_items": [
-    "ST-16",
     "ST-34",
     "ST-25"
   ],
@@ -1204,6 +1206,7 @@
     "ST-13",
     "ST-14",
     "ST-15",
+    "ST-16",
     "ST-18",
     "ST-19",
     "ST-21",
