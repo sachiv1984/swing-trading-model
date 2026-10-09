@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-08T11:04:00Z",
+  "last_updated_utc": "2026-10-09T12:52:37Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -964,23 +964,25 @@
         "ST-27": {
           "title": "AI chat UI interaction study protocol",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1951,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "b387108ca7b86b4a7f8432c2765fed496b14d4df",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:47:40Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/ux/ai_chat_interaction_study_protocol.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done (reconciled at resume, execution_prompt.md §10 step 3a: commit b387108c was already pushed while this branch still recorded not_started). AC1: protocol document with 5 study questions (Q1–Q5, §3) and method, data and analysis sections. AC2: gate removed by Product Owner decision 2026-10-05, no action. Documentation-creation story (Case B): spec_references is the created protocol. Deviation check: none."
         },
         "ST-28": {
           "title": "Track the 2027-01-03 AI feature usage review",
@@ -1135,6 +1137,7 @@
     "ST-22",
     "ST-23",
     "ST-24",
+    "ST-27",
     "ST-28"
   ],
   "open_escalations": [
@@ -1156,7 +1159,8 @@
   },
   "process_notes": [
     "2026-10-08: ST-06 blocked_since_utc and DEL-20261008-03 'Delegated at' were first written as 2026-10-08T12:20:00Z, an estimate, not the real time (BLG-GOV-309). Corrected the same session to 2026-10-08T11:18:41Z (the delegation commit 5c753cbc's authored time). This is the only edit made to an earlier delegation_log.md entry, and it corrects a factual value in an entry written minutes earlier.",
-    "2026-10-08: execution_state.json is carried on every EPIC branch (EPIC-01 is the owner per sprint_backlog.md Merge Order). Each branch commits the same, monotonically growing copy, so a CLAUDE.md §8 conflict resolves by taking the newer copy (a superset)."
+    "2026-10-08: execution_state.json is carried on every EPIC branch (EPIC-01 is the owner per sprint_backlog.md Merge Order). Each branch commits the same, monotonically growing copy, so a CLAUDE.md §8 conflict resolves by taking the newer copy (a superset).",
+    "2026-10-09: ST-27 (EPIC-04) reconciled at resume per execution_prompt.md §10 step 3a. Its commit b387108c was on origin/exec/.../EPIC-04, but the branch copy of execution_state.json still recorded not_started. Status, commit_sha and completed_utc were written from the pushed commit, not re-executed."
   ],
   "sealed": false,
   "sealed_utc": null
