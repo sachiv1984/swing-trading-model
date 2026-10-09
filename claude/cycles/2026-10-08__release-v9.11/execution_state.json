@@ -1017,7 +1017,9 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-05.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_trade_plan_status_enum_parity.py"
+      ],
       "stories": {
         "ST-29": {
           "title": "Reconcile the Monthly Restatement Marker spec with GET /reports/monthly-pnl",
@@ -1085,23 +1087,26 @@
         "ST-32": {
           "title": "Fix the 5 error-response examples that diverge from the canonical envelope",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1956,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "342a58fcf75228134c41f51e6e96da0618d8be9f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:49:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/conventions.md#13.1 Standard Error Envelope",
+            "scripts/check_contract_example_freshness.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 all 5 resolved (4 documentation corrected to the envelope the code returns, 1 heading label corrected). AC2 check_contract_example_freshness.py reports 0 error-envelope violations. Deviation check: none."
         }
       }
     }

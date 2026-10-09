@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.22.0
+  version: 3.26.0
+  # v3.26.0 (2026-10-08, ST-31, EPIC-05, v9.11): TradePlan status enum matches data_model.md DS-04 /
+  # DS-21's live CHECK constraint (7 values) at all 4 sites (BLG-SPEC-177). No new endpoint.
   # v3.22.0 (2026-10-07, ST-13/ST-14, EPIC-03, v9.10): GET /positions/{position_id}/gap-risk
   # reasons enum drops weekend_hold (BLG-BE-136). No new endpoint.
   # v3.21.0 (2026-10-07, ST-11, EPIC-03, v9.10): lifecycle_reason enum drops
@@ -5007,7 +5009,7 @@ paths:
                 confirmation_criteria: { type: string, nullable: true }
                 checklist_completed: { type: boolean, default: false }
                 checklist_items: { type: array, items: { type: object } }
-                status: { type: string, enum: [draft, active, closed], default: draft }
+                status: { type: string, enum: [draft, research_pending, research_complete, entry_conditions_set, active, closed, abandoned], default: draft }
                 pre_entry_override_acknowledged: { type: boolean, nullable: true }
                 idempotency_key: { type: string, maxLength: 200, nullable: true }
       responses:
@@ -5028,7 +5030,7 @@ paths:
         - name: status
           in: query
           required: false
-          schema: { type: string, enum: [draft, active, closed] }
+          schema: { type: string, enum: [draft, research_pending, research_complete, entry_conditions_set, active, closed, abandoned] }
         - name: cursor
           in: query
           required: false
@@ -5074,7 +5076,7 @@ paths:
                 setup_type: { type: string, nullable: true, enum: [Breakout, "Pullback to MA", "Momentum Continuation", "Mean Reversion", "Catalyst-driven", Other] }
                 setup_thesis: { type: string, nullable: true }
                 entry_rationale: { type: string, nullable: true }
-                status: { type: string, enum: [draft, active, closed] }
+                status: { type: string, enum: [draft, research_pending, research_complete, entry_conditions_set, active, closed, abandoned] }
                 pre_entry_override_acknowledged: { type: boolean, nullable: true }
       responses:
         "200":
@@ -7093,7 +7095,7 @@ components:
             properties:
               item: { type: string }
               checked: { type: boolean }
-        status: { type: string, enum: [draft, active, closed] }
+        status: { type: string, enum: [draft, research_pending, research_complete, entry_conditions_set, active, closed, abandoned] }
         pre_entry_override_acknowledged: { type: boolean }
         trade_tags:
           type: array
