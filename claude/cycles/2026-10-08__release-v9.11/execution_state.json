@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-08T11:04:00Z",
+  "last_updated_utc": "2026-10-09T12:53:30Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -726,25 +726,25 @@
         "ST-36": {
           "title": "DoQ sign-off line for stories touching stop, grace, ATR or exit logic",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1960,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": "323a1859",
+          "commit_sha": "323a1859eecde5fe2bec9e6abc614f2c1e47a7a6",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-09T08:21:14Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/system/templates/qa_evidence_template.md#Strategy-Values DoQ Line (ST-36, BLG-GOV-370, EPIC-06, v9.11)"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "template_committed",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC1 template updated (323a1859, §6 checklist complete). AC2 pending: the first qualifying story's DoQ sign-off (EPIC-02 ST-10-ST-14 or EPIC-03 ST-16-ST-18) must complete the line; mark done then."
+          "notes": "Done. AC1: qa_evidence_template.md gains the conditional Strategy-Values DoQ line (323a1859, CLAUDE.md §6 checklist complete). AC2: the first qualifying story signed off after the template change is ST-30 (EPIC-05). qa_evidence_EPIC-05.md (commit 4cde85cf, dated 2026-10-09, autonomous class) completes the line: ST-30's stated stop and grace values were checked against strategy_rules.md §5, §6.2, §7.2/§7.3 and §11, with sections cited; ST-29/31/32 are recorded as not touching that logic. EPIC-02's DoQ block also carries a drafted line for ST-10 to ST-15, which is pending its own sign-off. Deviation check: none."
         },
         "ST-37": {
           "title": "Extend the axe accessibility scan to the Replay page",
@@ -1202,6 +1202,7 @@
     "ST-22",
     "ST-33",
     "ST-35",
+    "ST-36",
     "ST-37",
     "ST-38",
     "ST-39",
