@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-08T11:04:00Z",
+  "last_updated_utc": "2026-10-09T12:53:19Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1059,11 +1059,11 @@
       }
     },
     "EPIC-05": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_trade_plan_status_enum_parity.py"
@@ -1233,7 +1233,8 @@
   },
   "process_notes": [
     "2026-10-08: ST-06 blocked_since_utc and DEL-20261008-03 'Delegated at' were first written as 2026-10-08T12:20:00Z, an estimate, not the real time (BLG-GOV-309). Corrected the same session to 2026-10-08T11:18:41Z (the delegation commit 5c753cbc's authored time). This is the only edit made to an earlier delegation_log.md entry, and it corrects a factual value in an entry written minutes earlier.",
-    "2026-10-08: execution_state.json is carried on every EPIC branch (EPIC-01 is the owner per sprint_backlog.md Merge Order). Each branch commits the same, monotonically growing copy, so a CLAUDE.md §8 conflict resolves by taking the newer copy (a superset)."
+    "2026-10-08: execution_state.json is carried on every EPIC branch (EPIC-01 is the owner per sprint_backlog.md Merge Order). Each branch commits the same, monotonically growing copy, so a CLAUDE.md §8 conflict resolves by taking the newer copy (a superset).",
+    "2026-10-09: EPIC-05 qa_signed_off set true and EPIC status set done. The autonomous-class DoQ sign-off (qa_evidence_EPIC-05.md, dated 2026-10-09, commit 4cde85cf) was committed without the same-commit qa_signed_off write that execution_prompt.md §3.2.A requires (OA-1/ST-01). Corrected at the next resume."
   ],
   "sealed": false,
   "sealed_utc": null
