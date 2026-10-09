@@ -18,7 +18,9 @@ runtime-observable-only behaviour): read each component's actual source
 text and confirm the exact `delay`/`duration` expressions ST-41 put in
 place are still there, then independently recompute max(delay) + duration
 for each to confirm the 500ms ceiling itself, not just the presence of a
-particular string.
+particular string. From v9.11 (ST-40, BLG-QA-200) the ceiling tests read
+every delay, cap, list bound and duration from the source; before that they
+restated them as literals.
 """
 import re
 from pathlib import Path
@@ -28,9 +30,39 @@ SRC_DIR = REPO_ROOT / "src"
 
 CEILING_SECONDS = 0.5
 
+# ST-40 (BLG-QA-200, EPIC-06, v9.11): the ceiling tests below used to restate
+# the delay/duration values as Python literals, so they passed whatever the
+# component said. They now read every number from the source.
+_NUM = r"(\d+(?:\.\d+)?)"
+
 
 def _read(rel_path: str) -> str:
     return (SRC_DIR / rel_path).read_text()
+
+
+def _transitions(source: str):
+    """Every `transition={{ delay: <expr>, duration: <n> }}` in the source, as
+    (delay_expression, duration_seconds)."""
+    return [
+        (m.group(1).strip(), float(m.group(2)))
+        for m in re.finditer(r"transition=\{\{\s*delay:\s*((?:[^,(){}]|\([^)]*\))+?),\s*duration:\s*" + _NUM + r"\s*\}\}", source)
+    ]
+
+
+def _max_delay(expr: str, index_bound: int = None) -> float:
+    """Largest value a stagger delay expression can take: a literal, a capped
+    `Math.min(index, K) * step`, or `idx * step` with the list bounded to
+    `index_bound` items (the caller reads that bound from the source)."""
+    m = re.fullmatch(_NUM, expr)
+    if m:
+        return float(m.group(1))
+    m = re.fullmatch(r"Math\.min\(\s*\w+,\s*(\d+)\s*\)\s*\*\s*" + _NUM, expr)
+    if m:
+        return int(m.group(1)) * float(m.group(2))
+    m = re.fullmatch(r"\w+\s*\*\s*" + _NUM, expr)
+    if m and index_bound is not None:
+        return (index_bound - 1) * float(m.group(1))
+    raise AssertionError(f"unbounded or unrecognised delay expression: {expr!r}")
 
 
 class TestRecentTradesWidget:
@@ -42,11 +74,13 @@ class TestRecentTradesWidget:
         assert match, "RecentTradesWidget.js: expected `{ delay: idx * 0.05, duration: 0.3 }` transition not found"
 
     def test_max_combined_time_to_full_opacity_within_ceiling(self):
-        # slice(0, 5) bounds idx to 0-4 -> max delay = 4 * 0.05 = 0.2
-        assert _read(self.FILE).count("slice(0, 5)") >= 1, "expected list still capped at 5 items"
-        max_delay = 4 * 0.05
-        duration = 0.3
-        assert max_delay + duration <= CEILING_SECONDS
+        source = _read(self.FILE)
+        bound = re.search(r"\.slice\(0,\s*(\d+)\)", source)
+        assert bound, "expected the trades list to be capped by .slice(0, N)"
+        transitions = [t for t in _transitions(source) if "idx" in t[0]]
+        assert transitions, "stagger transition not found"
+        for expr, duration in transitions:
+            assert _max_delay(expr, int(bound.group(1))) + duration <= CEILING_SECONDS
 
 
 class TestReportsTaxYearReport:
@@ -60,9 +94,10 @@ class TestReportsTaxYearReport:
             assert re.search(pattern, source), f"Reports.js: expected explicit duration:0.3 for delay {delay} not found"
 
     def test_max_combined_time_to_full_opacity_within_ceiling(self):
-        duration = 0.3
-        for delay in self.DELAYS:
-            assert delay + duration <= CEILING_SECONDS
+        transitions = [t for t in _transitions(_read(self.FILE)) if re.fullmatch(_NUM, t[0])]
+        assert len(transitions) >= len(self.DELAYS), "stat-card transitions not found"
+        for expr, duration in transitions:
+            assert _max_delay(expr) + duration <= CEILING_SECONDS, f"Reports.js: delay {expr} + {duration} > 0.5s"
 
 
 class TestSignalsPageStagger:
@@ -77,9 +112,10 @@ class TestSignalsPageStagger:
         assert match, "Signals.js: expected `Math.min(index, 3) * 0.05` fixed stagger cap not found"
 
     def test_max_combined_time_to_full_opacity_within_ceiling(self):
-        max_delay = 3 * 0.05
-        duration = 0.3
-        assert max_delay + duration <= CEILING_SECONDS
+        transitions = [t for t in _transitions(_read(self.FILE)) if "index" in t[0]]
+        assert transitions, "Signals.js: stagger transition not found"
+        for expr, duration in transitions:
+            assert _max_delay(expr) + duration <= CEILING_SECONDS, f"Signals.js: {expr} + {duration} > 0.5s"
 
 
 class TestSystemStatusPageStaggers:
@@ -102,9 +138,25 @@ class TestSystemStatusPageStaggers:
         assert match, "SystemStatus.js: expected `Math.min(index, 3) * 0.05` fixed stagger cap not found (validations list)"
 
     def test_max_combined_time_to_full_opacity_within_ceiling_both_lists(self):
-        duration = 0.3
-        assert (9 * 0.02) + duration <= CEILING_SECONDS
-        assert (3 * 0.05) + duration <= CEILING_SECONDS
+        transitions = [t for t in _transitions(_read(self.FILE)) if "index" in t[0]]
+        assert len(transitions) >= 2, "SystemStatus.js: both stagger transitions expected"
+        for expr, duration in transitions:
+            assert _max_delay(expr) + duration <= CEILING_SECONDS, f"SystemStatus.js: {expr} + {duration} > 0.5s"
+
+
+class TestCeilingHelpers:
+    """The helpers the ceiling tests rely on reject the defect shapes."""
+
+    def test_uncapped_index_stagger_is_rejected(self):
+        import pytest
+        with pytest.raises(AssertionError, match="unbounded"):
+            _max_delay("index * 0.05")
+
+    def test_values_are_read_not_assumed(self):
+        assert _transitions("transition={{ delay: Math.min(index, 3) * 0.05, duration: 0.45 }}") == [
+            ("Math.min(index, 3) * 0.05", 0.45)
+        ]
+        assert _max_delay("Math.min(index, 3) * 0.05") + 0.45 > CEILING_SECONDS
 
 
 class TestNoUnboundedIndexScaledDelayRegresses:

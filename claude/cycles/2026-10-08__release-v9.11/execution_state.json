@@ -628,7 +628,9 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-06.md",
       "test_scenarios": [
-        "backend/mutmut_pilot_tests/test_pilot.py"
+        "backend/mutmut_pilot_tests/test_pilot.py",
+        "tests/test_motion_timing_500ms_ceiling_regression.py",
+        "tests/test_toast_notification_timing_regression.py"
       ],
       "stories": {
         "ST-33": {
@@ -802,23 +804,25 @@
         "ST-41": {
           "title": "Reset the pilot test file's shared database mocks between tests",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1965,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "55edf9d81f19f54692583f62b79ee40a347815a4",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T07:48:16Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/mutmut_pilot_tests/test_pilot.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 each golden-vector test passes alone and in 3 shuffled orders. AC2 unconfigured mock raises AssertionError (TestDatabaseMockIsolation). Deviation check: none."
         },
         "ST-42": {
           "title": "Make the Non-Registry Dependency Check a required status check on main",
