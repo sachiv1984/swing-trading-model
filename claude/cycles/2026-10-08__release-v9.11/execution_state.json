@@ -671,40 +671,46 @@
           "unblock_criteria": "See ESC-EXEC-20261008-03 unblock criteria",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "claude/roadmap/product_value_ratio_history.md#History",
+            "docs/specs/metrics_definitions.md#PVR Measurement Package — Effort-Weighted PVR, User-Protective/Hygiene D-Split, Leading U-Pool Indicator (ST-31, EPIC-06, v9.8, BLG-GOV-339)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "AC1_committed",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 done (named-file write, §7 rule case (a)): product_value_ratio_history.md ## History gains the effort-weighted ratio, 5 windows backfilled from metrics_definitions.md Appendix F (scripts/compute_effort_weighted_pvr.py reproduces all 5). AC2 (roadmap_prompt.md STEP 2.4) still blocked on BLG-GOV-339 sign-off (ESC-EXEC-20261008-03)."
         },
         "ST-35": {
           "title": "§13 sign-off ACs must cite every §13 clause that names the feature's subject",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1959,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "c299a1cee709194992c4477af93c8943b0408aaf",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T08:24:42Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/release_planning_prompt.md#STEP 4 — Backlog Slice (commitment)",
+            "claude/system/design_gate_prompt.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": {
             "role": "Head of Specs Team",
             "method": "agent_mediated",
             "status": "cleared",
-            "cleared_utc": "2026-10-09T10:20:00Z",
+            "cleared_utc": "2026-10-09T08:24:42Z",
             "notes": "Owning prompt confirmed: release_planning_prompt.md STEP 4 (slice ACs authored and sealed there; v6.9 defect was in slice AC wording); design_gate_prompt.md pointer correct secondary placement. Worked-example facts verified against decision record :33/:35/:161 and strategy_rules.md:502/:504; 82 days ship-to-review. §6 checklist verified line-by-line. Non-blocking: change-summary row order fixed before commit; size budget handled by BLG-GOV-383."
           },
-          "notes": ""
+          "notes": "Done. AC1 release_planning_prompt.md STEP 4 rule + gap-risk worked example; design gate pointer. AC2 §6 checklist complete (verified by agent-mediated Head of Specs Team review). Deviation check: none."
         },
         "ST-36": {
           "title": "DoQ sign-off line for stories touching stop, grace, ATR or exit logic",

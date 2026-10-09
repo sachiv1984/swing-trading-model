@@ -1,8 +1,8 @@
 **Owner:** Metrics Definitions & Analytics Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-10-08 (roadmap rebalance 2026-10-08__scheduled — appended row for DL-084, refreshed sparkline (0.161, min/max unchanged)); prior — 2026-10-06 (roadmap rebalance 2026-10-06__scheduled — appended row for DL-083, refreshed sparkline (0.096, min/max unchanged)); prior — 2026-09-30 (roadmap rebalance 2026-09-30__scheduled — appended row for DL-082, refreshed sparkline (0.094, min/max unchanged)); prior history retained — see prior entries in version control.
+**Version:** 1.1
+**Last Updated:** 2026-10-08 (ST-34, EPIC-06, v9.11, BLG-GOV-355 — History table gains the effort-weighted ratio, backfilled for the 5 windows computed in metrics_definitions.md Appendix F); prior — 2026-10-08 (roadmap rebalance 2026-10-08__scheduled — appended row for DL-084, refreshed sparkline (0.161, min/max unchanged)); prior — 2026-10-06 (roadmap rebalance 2026-10-06__scheduled — appended row for DL-083, refreshed sparkline (0.096, min/max unchanged)); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-22 (BLG-FEAT-72, EPIC-06, v8.5)
 
@@ -24,30 +24,32 @@ This file is the structured, durable record going forward: one row per rebalance
 
 ## History
 
-| Cycle | Date | Ratio | Tier | U | G | D | P | Total | Window | Decision Log Ref |
-|-------|------|-------|------|---|---|---|---|-------|--------|-------------------|
-| 2026-06-26__scheduled | 2026-06-26 | 0.37 | Advisory | — | — | — | — | — | IW-20260626-01 (breakdown not recorded in decision_log.md prose this cycle) | DL-057 |
-| 2026-07-01__scheduled | 2026-07-01 | 0.36 | Advisory | 21 | 15 | 21 | 2 | 59 | — | DL-058 |
-| 2026-07-02__scheduled | 2026-07-02 | 0.344 | Advisory | 21 | 15 | 23 | 2 | 61 | IW-20260702-01 | DL-059 |
-| 2026-07-03__scheduled | 2026-07-03 | 0.328 | Advisory | 19 | 15 | 24 | 0 | 58 | v6.1–v6.5 | DL-060 |
-| 2026-07-06__scheduled | 2026-07-06 | 0.302 | Advisory | 16 | 12 | 25 | 0 | 53 | v6.2–v6.6 | DL-061 |
-| 2026-07-08__scheduled | 2026-07-08 | 0.26 | 🔴 Alert (first time below 0.30 floor) | 12 | 14 | 21 | 0 | 47 | v6.3–v6.7 | DL-062 |
-| 2026-07-10__scheduled | 2026-07-10 | 0.18 | 🔴 Alert | 9 | 16 | 24 | 0 | 49 | v6.4-window | DL-063 |
-| 2026-07-12__scheduled | 2026-07-12 | 0.21 | 🔴 Alert | 8 | 9 | 21 | 0 | 38 | v6.5–v6.9 | DL-064 |
-| 2026-07-13__scheduled | 2026-07-13 | 0.33 | Advisory | 15 | 6 | 24 | 0 | 45 | v6.6-window | DL-065 |
-| 2026-07-15__scheduled | 2026-07-15 | 0.31 | Advisory | 15 | 6 | 27 | 0 | 48 | v6.7-window | DL-066 |
-| 2026-07-16__scheduled | 2026-07-16 | 0.28 | 🔴 Alert | 13 | 2 | 28 | 3 | 46 | rolling | DL-067 |
-| 2026-07-17__scheduled | 2026-07-17 | 0.39 | Advisory | 14 | 0 | 15 | 7 | 36 | v6.9-window | DL-070 |
-| 2026-07-24__scheduled | 2026-07-24 | 0.42 | Advisory (improved from 0.39) | — | — | — | — | — | — (breakdown not recorded in decision_log.md prose this cycle) | DL-075 |
-| 2026-07-27__scheduled | 2026-07-27 | 0.42 | Advisory (unchanged tier) | — | — | — | — | — | v7.4-v7.8 (breakdown not recorded in decision_log.md prose this cycle) | DL-076 |
-| 2026-07-28__scheduled | 2026-07-28 | 0.38 | Advisory (down from 0.42) | — | — | — | — | — | v7.5-v7.9 (breakdown not recorded in decision_log.md prose this cycle) | DL-077 |
-| 2026-08-11__scheduled | 2026-08-11 | 0.110 | 🔴 Alert (first time below 0.30 floor since 2026-07-12) | 14 | 30 | 80 | 3 | 127 | v8.1-v8.5 | DL-078 |
-| 2026-09-14__scheduled | 2026-09-14 | 0.092 | 🔴 Alert (2nd consecutive Alert-tier reading, new low) | 16 | 48 | 110 | 0 | 174 | v8.9-v9.3 | DL-079 |
-| 2026-09-19__scheduled | 2026-09-19 | 0.046 | 🔴 Alert (3rd consecutive Alert-tier reading, new low) | 9 | 60 | 122 | 4 | 195 | v9.1-v9.5 | DL-080 |
-| 2026-09-28__scheduled | 2026-09-28 | 0.089 | 🔴 Alert (4th consecutive Alert-tier reading, improved from prior low) | 14 | 36 | 104 | 4 | 158 | v9.3-v9.7 | DL-081 |
-| 2026-09-30__scheduled | 2026-09-30 | 0.094 | 🔴 Alert (5th consecutive Alert-tier reading, marginal further improvement) | 16 | 41 | 109 | 4 | 170 | v9.4-v9.8 | DL-082 |
-| 2026-10-06__scheduled | 2026-10-06 | 0.096 | 🔴 Alert (6th consecutive Alert-tier reading, flat) | 17 | 43 | 114 | 3 | 177 | v9.5-v9.9 | DL-083 |
-| 2026-10-08__scheduled | 2026-10-08 | 0.161 | 🔴 Alert (7th consecutive Alert-tier reading, improving) | 25 | 36 | 94 | 0 | 155 | v9.6-v9.10 | DL-084 |
+| Cycle | Date | Ratio | Effort-weighted Ratio | Tier | U | G | D | P | Total | Window | Decision Log Ref |
+|-------|------|-------|-----------------------|------|---|---|---|---|-------|--------|-------------------|
+| 2026-06-26__scheduled | 2026-06-26 | 0.37 | — | Advisory | — | — | — | — | — | IW-20260626-01 (breakdown not recorded in decision_log.md prose this cycle) | DL-057 |
+| 2026-07-01__scheduled | 2026-07-01 | 0.36 | — | Advisory | 21 | 15 | 21 | 2 | 59 | — | DL-058 |
+| 2026-07-02__scheduled | 2026-07-02 | 0.344 | — | Advisory | 21 | 15 | 23 | 2 | 61 | IW-20260702-01 | DL-059 |
+| 2026-07-03__scheduled | 2026-07-03 | 0.328 | — | Advisory | 19 | 15 | 24 | 0 | 58 | v6.1–v6.5 | DL-060 |
+| 2026-07-06__scheduled | 2026-07-06 | 0.302 | — | Advisory | 16 | 12 | 25 | 0 | 53 | v6.2–v6.6 | DL-061 |
+| 2026-07-08__scheduled | 2026-07-08 | 0.26 | — | 🔴 Alert (first time below 0.30 floor) | 12 | 14 | 21 | 0 | 47 | v6.3–v6.7 | DL-062 |
+| 2026-07-10__scheduled | 2026-07-10 | 0.18 | — | 🔴 Alert | 9 | 16 | 24 | 0 | 49 | v6.4-window | DL-063 |
+| 2026-07-12__scheduled | 2026-07-12 | 0.21 | — | 🔴 Alert | 8 | 9 | 21 | 0 | 38 | v6.5–v6.9 | DL-064 |
+| 2026-07-13__scheduled | 2026-07-13 | 0.33 | — | Advisory | 15 | 6 | 24 | 0 | 45 | v6.6-window | DL-065 |
+| 2026-07-15__scheduled | 2026-07-15 | 0.31 | — | Advisory | 15 | 6 | 27 | 0 | 48 | v6.7-window | DL-066 |
+| 2026-07-16__scheduled | 2026-07-16 | 0.28 | — | 🔴 Alert | 13 | 2 | 28 | 3 | 46 | rolling | DL-067 |
+| 2026-07-17__scheduled | 2026-07-17 | 0.39 | — | Advisory | 14 | 0 | 15 | 7 | 36 | v6.9-window | DL-070 |
+| 2026-07-24__scheduled | 2026-07-24 | 0.42 | — | Advisory (improved from 0.39) | — | — | — | — | — | — (breakdown not recorded in decision_log.md prose this cycle) | DL-075 |
+| 2026-07-27__scheduled | 2026-07-27 | 0.42 | — | Advisory (unchanged tier) | — | — | — | — | — | v7.4-v7.8 (breakdown not recorded in decision_log.md prose this cycle) | DL-076 |
+| 2026-07-28__scheduled | 2026-07-28 | 0.38 | 0.457 | Advisory (down from 0.42) | — | — | — | — | — | v7.5-v7.9 (breakdown not recorded in decision_log.md prose this cycle) | DL-077 |
+| 2026-08-11__scheduled | 2026-08-11 | 0.110 | 0.115 | 🔴 Alert (first time below 0.30 floor since 2026-07-12) | 14 | 30 | 80 | 3 | 127 | v8.1-v8.5 | DL-078 |
+| 2026-09-14__scheduled | 2026-09-14 | 0.092 | 0.109 | 🔴 Alert (2nd consecutive Alert-tier reading, new low) | 16 | 48 | 110 | 0 | 174 | v8.9-v9.3 | DL-079 |
+| 2026-09-19__scheduled | 2026-09-19 | 0.046 | 0.021 | 🔴 Alert (3rd consecutive Alert-tier reading, new low) | 9 | 60 | 122 | 4 | 195 | v9.1-v9.5 | DL-080 |
+| 2026-09-28__scheduled | 2026-09-28 | 0.089 | 0.093 | 🔴 Alert (4th consecutive Alert-tier reading, improved from prior low) | 14 | 36 | 104 | 4 | 158 | v9.3-v9.7 | DL-081 |
+| 2026-09-30__scheduled | 2026-09-30 | 0.094 | — | 🔴 Alert (5th consecutive Alert-tier reading, marginal further improvement) | 16 | 41 | 109 | 4 | 170 | v9.4-v9.8 | DL-082 |
+| 2026-10-06__scheduled | 2026-10-06 | 0.096 | — | 🔴 Alert (6th consecutive Alert-tier reading, flat) | 17 | 43 | 114 | 3 | 177 | v9.5-v9.9 | DL-083 |
+| 2026-10-08__scheduled | 2026-10-08 | 0.161 | — | 🔴 Alert (7th consecutive Alert-tier reading, improving) | 25 | 36 | 94 | 0 | 155 | v9.6-v9.10 | DL-084 |
+
+**Effort-weighted Ratio column (ST-34, BLG-GOV-355, v9.11):** effort-days of U stories ÷ effort-days of U+G+D+P stories over the same window, defined in `docs/specs/metrics_definitions.md` Appendix F (PVR Measurement Package, `BLG-GOV-339`). The 5 readings shown are the backfill computed and cross-validated there (`scripts/compute_effort_weighted_pvr.py`), placed on the rows whose `Window` they cover; v7.5–v7.9 has no breakdown on its row but its story-count reading reconstructs to the recorded 0.38. "—" means not computed for that row. Future rows carry both readings once `roadmap_prompt.md` STEP 2.4 is updated to append them (pending `BLG-GOV-339`'s Head of Specs Team + Product Owner sign-off, `ESC-EXEC-20261008-03`).
 
 **Consecutive Advisory-tier streak (broken 2026-08-11):** The prior 3-reading Advisory streak (2026-07-24, 2026-07-27, 2026-07-28) ended this reading — not because it improved to Healthy, but because it dropped through Advisory straight into 🔴 Alert. Per `roadmap_prompt.md` STEP 2.4's Alert-tier rule (stronger than the sustained-Advisory clause), this reading independently mandates a pull-forward with explicit PO written response — see `cycle_record.md` 2026-08-11__scheduled STEP 2.4/STEP 7.1 for the combined response (this reading's root cause is the same one driving the concurrent Skill-Silo mandatory-pull-forward trigger).
 
