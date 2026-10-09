@@ -863,23 +863,27 @@
         "ST-43": {
           "title": "Move test-only Python packages out of the production build",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1967,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "cb9d97cd7a2b57f8b2b7b06935988bf224e58fe3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T08:20:03Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/requirements-dev.txt",
+            "render.yaml",
+            "tests/test_non_registry_dependency_check.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 render.yaml buildCommand installs requirements.txt only, which now carries no test-only package (asserted by test); deploy-log confirmation is the staging-only part. AC2 CI test workflows updated to install requirements-dev.txt; ci_pending: confirm all CI test workflows green at 3.2.A. Deviation check: none."
         }
       }
     },

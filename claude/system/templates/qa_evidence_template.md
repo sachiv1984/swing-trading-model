@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.17
-**Last Updated:** 2026-09-29 (Sprint execution 2026-09-28__release-v9.8 EPIC-03/ST-14, BLG-QA-183 — added an AI-Touching Story Evidence Addendum: standard evidence shape recording prompt-template version and a boundary-language sample, closing the gap where AI-touching stories like BLG-AI-06 reached sign-off with no fixed place to look for this); prior — 2026-09-22 (Sprint execution 2026-09-21__release-v9.6 EPIC-05/ST-19, BLG-QA-172 — added a Flaky-Test Disposition Addendum: retry/quarantine/fix-now decision framework, cross-referenced against the existing quarantine mechanism and tracking item); prior — 2026-09-15 (post-ship closure 2026-09-14__release-v9.4 STEP 8, LL-v9.4-P4-01, same-cycle application — added a disambiguation note distinguishing `Pass, escalation open` (a named open ESC-* record) from a plain `Pass` with an incidental backlog-item finding); prior history retained — see prior entries in version control.
+**Version:** 1.18
+**Last Updated:** 2026-10-08 (Sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-36, BLG-GOV-370 — added the conditional 'Strategy values checked' DoQ line: stop/grace/ATR/exit/sizing values and formulas checked against strategy_rules.md §5–§11, sections cited); prior — 2026-09-29 (Sprint execution 2026-09-28__release-v9.8 EPIC-03/ST-14, BLG-QA-183 — added an AI-Touching Story Evidence Addendum: standard evidence shape recording prompt-template version and a boundary-language sample, closing the gap where AI-touching stories like BLG-AI-06 reached sign-off with no fixed place to look for this); prior — 2026-09-22 (Sprint execution 2026-09-21__release-v9.6 EPIC-05/ST-19, BLG-QA-172 — added a Flaky-Test Disposition Addendum: retry/quarantine/fix-now decision framework, cross-referenced against the existing quarantine mechanism and tracking item); prior history retained — see prior entries in version control
 
 # QA Evidence Template
 
@@ -66,6 +66,7 @@ Last Updated: <date>
 - [x] No unresolved P0 or P1 deviations
 - [x] Regression areas checked
 - [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
+- [ ] **Strategy values checked (conditional — ST-36, BLG-GOV-370, v9.11):** for every story in this EPIC that touches stop, grace, ATR, exit or position-sizing logic, each value and formula it uses or displays was checked against `claude/strategy/strategy_rules.md` §5–§11. Sections cited: <e.g. ST-xx — §6.2 grace length, §7.2 multipliers, §11 parameters>. If no story touches that logic, write `N/A — no stop/grace/ATR/exit/sizing logic touched`.
 - Signed off by: Director of Quality
 - Date: <fill in — must be non-blank>
 - Comments:
@@ -82,6 +83,12 @@ Last Updated: <date>
 > - Date: YYYY-MM-DD
 >
 > Both variants are valid. The `Date:` field must be non-blank in both formats before the PR can be opened and before the merge gate runs. The EPIC-level DoQ block is always required even when per-story sign-offs have been collected — it represents the Director of Quality's acknowledgement of the aggregate evidence.
+
+---
+
+## Strategy-Values DoQ Line (ST-36, BLG-GOV-370, EPIC-06, v9.11)
+
+The Standard Sign-Off Block's **Strategy values checked** line is conditional: it is completed whenever any story in the EPIC touches stop, grace, ATR, exit or position-sizing logic (code, a displayed value, a test oracle, or a spec that states one). For each such story, name the `strategy_rules.md` section(s) its values and formulas were checked against (§5 initial stop, §6 grace, §7 trailing stop, §8 exits, §9 lifecycle states, §10 risk, §11 production parameters, as applicable). It exists because v9.9's ST-01 consolidated the ATR code without anyone noticing the on-load path read editable multipliers: nothing in the sign-off asked for the values to be compared with the rules. Leave the line as `N/A — no stop/grace/ATR/exit/sizing logic touched` when no story qualifies; never delete it. The same line applies to the BLG-GOV-19 autonomous-class block below when its EPIC qualifies.
 
 ---
 
