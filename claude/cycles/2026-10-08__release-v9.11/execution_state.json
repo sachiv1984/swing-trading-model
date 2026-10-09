@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-09T12:58:36Z",
+  "last_updated_utc": "2026-10-09T13:06:21Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -568,26 +568,32 @@
         "ST-20": {
           "title": "DB-level unique constraint for active price alerts",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Data Model & Domain Schema Owner; Infrastructure & Operations Owner",
           "github_issue": 1944,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "0a2618bdae98a2c8f923aba8d2486c7fd167c488",
           "delegation_record_id": "DEL-20261008-04",
           "blocked_since_utc": "2026-10-08T13:34:42Z",
           "unblock_criteria": "DS-28 Up Migration applied on staging and production with verification output recorded",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-09T13:06:08Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/data_model.md#DS-28",
             "tests/test_price_alert_db_uniqueness.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "code_committed",
-          "sign_off_record": null,
-          "notes": "Code, DS-28 and tests done. AC1 shown by tests/test_price_alert_db_uniqueness.py (real Postgres: concurrent submit blocks on the index and is absorbed; passed locally against a throwaway Postgres 18, runs in CI Phase B). AC2 live migration delegated (DEL-20261008-04)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "signed_utc": "2026-10-09T13:06:08Z",
+            "note": "User (human, live write access) applied DS-28 on staging and production (pre-check passed) and supplied identical Verification output for both; recorded in data_model.md DS-28 Live Confirmation."
+          },
+          "notes": "Done. AC1: tests/test_price_alert_db_uniqueness.py (real Postgres concurrent double-submit absorbed; CI Phase B) — code commit 2c2b9e01. AC2: DS-28 applied live on staging and production, verification output recorded (0a2618bd); DEL-20261008-04 unblocked in-session. Deviation check: none."
         },
         "ST-21": {
           "title": "Make the anomaly-check fingerprint-clear path respect send_alert, or document why not",
@@ -1197,7 +1203,6 @@
   "delegated_items": [
     "ST-02",
     "ST-06",
-    "ST-20",
     "ST-42"
   ],
   "completed_items": [
@@ -1218,6 +1223,7 @@
     "ST-17",
     "ST-18",
     "ST-19",
+    "ST-20",
     "ST-21",
     "ST-22",
     "ST-33",
