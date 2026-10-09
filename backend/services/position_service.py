@@ -1060,9 +1060,10 @@ def strategy_parameter_snapshot(position: Dict, holding_days: int) -> Dict:
       initial multiplier applies. Otherwise unknown: NULL, never invented.
     - atr: the position's stored ATR.
     - grace_period_days: the §6.2 / §11 grace length.
-    - parameter_source: where the multiplier and grace length come from. Since
-      the v9.10 ruling they are the fixed §11 values, so this records the
-      strategy version in force (strategy_version_registry).
+    - parameter_source: where the multiplier and grace length come from:
+      strategy_parameters.py, the single source of the fixed §11 values since
+      the v9.10 ruling (named by the ST-16 ruling, ESC-EXEC-20261008-01), with
+      the strategy version in force (strategy_version_registry).
     """
     multiplier = position.get('active_atr_multiplier')
     if multiplier is None and holding_days < GRACE_PERIOD_DAYS:
@@ -1072,7 +1073,7 @@ def strategy_parameter_snapshot(position: Dict, holding_days: int) -> Dict:
         'active_atr_multiplier': float(multiplier) if multiplier is not None else None,
         'atr': float(atr) if atr is not None else None,
         'grace_period_days': GRACE_PERIOD_DAYS,
-        'parameter_source': f"strategy_rules_s11_v{get_current_strategy_version()}",
+        'parameter_source': f"strategy_parameters.py@{get_current_strategy_version()}",
     }
 
 

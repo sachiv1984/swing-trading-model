@@ -63,7 +63,7 @@ class TestClosedTradeCarriesParameters:
         assert row["active_atr_multiplier"] == 2.0
         assert row["atr"] == 3.25
         assert row["grace_period_days"] == GRACE_PERIOD_DAYS == 10
-        assert row["parameter_source"] == f"strategy_rules_s11_v{get_current_strategy_version()}"
+        assert row["parameter_source"] == f"strategy_parameters.py@{get_current_strategy_version()}"
 
     def test_in_grace_exit_records_the_initial_multiplier(self):
         # Stop frozen at the §5 initial stop during grace (strategy_rules.md §6.3 v1.15).

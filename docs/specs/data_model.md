@@ -232,7 +232,7 @@ CREATE INDEX idx_trade_history_position_id ON public.trade_history USING btree (
 | active_atr_multiplier | NUMERIC(4,2) | YES | ATR multiplier behind the stop in force at exit: copied from `positions.active_atr_multiplier`. An exit during grace with none stamped records the §5 initial multiplier (5), since the stop is frozen at the initial stop during grace (`strategy_rules.md` §6.3 v1.15). `NULL` when unknown (a post-grace position never recomputed since DS-22). Added v2.56 (DS-29). |
 | atr | NUMERIC(10,4) | YES | The position's stored ATR at exit (`positions.atr`). Added v2.56 (DS-29). |
 | grace_period_days | INTEGER | YES | Grace length in force at exit (§6.2 / §11: 10). Added v2.56 (DS-29). |
-| parameter_source | VARCHAR(40) | YES | Where the multiplier and grace length came from: `strategy_rules_s11_v<version>`, the fixed §11 values of the strategy version in force at exit (`strategy_version_registry.py`). Added v2.56 (DS-29). |
+| parameter_source | VARCHAR(40) | YES | Where the multiplier and grace length came from: `strategy_parameters.py@<version>` — `backend/strategy_parameters.py`, the single source of the fixed §11 values (named by the ST-16 ruling, `ESC-EXEC-20261008-01`), with the strategy version in force at exit (`strategy_version_registry.py`), e.g. `strategy_parameters.py@1.15`. Added v2.56 (DS-29). |
 
 ### Exit Reason Values
 
