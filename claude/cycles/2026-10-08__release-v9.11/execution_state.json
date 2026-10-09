@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-09T13:35:44Z",
+  "last_updated_utc": "2026-10-09T13:54:55Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -921,26 +921,27 @@
         },
         "ST-25": {
           "title": "AI-assisted monthly P&L narrative",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "in_progress",
           "assigned_to": "Financial Reporting & Records Owner; Strategy Rules & System Intent Owner; Head of UX & Design",
           "github_issue": 1949,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
           "commit_sha": null,
           "delegation_record_id": "ESC-EXEC-20261008-02",
           "blocked_since_utc": "2026-10-08T11:01:30Z",
-          "unblock_criteria": "Product Owner approval of docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md (always-human), then the reports.md v0.21 §AI Summary update. No implementation commit before both are recorded.",
+          "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
             "docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md",
             "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/ai_endpoint_security_checklist.md",
-            "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md"
+            "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md",
+            "docs/specs/frontend/pages/reports.md#AI Summary (Monthly P&L Narrative)"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": "addendum_step3_design_record_role_signoffs",
+          "last_completed_substep": "addendum_steps_1-3_complete",
           "sign_off_record": {
             "role": "Strategy Rules & System Intent Owner",
             "method": "agent_mediated",
@@ -951,7 +952,7 @@
             "signed_utc": "2026-10-09T13:28:39Z",
             "note": "Agent-mediated per execution_prompt.md §5.3 at the user's direction (2026-10-09). First pass Blocked (2 blocking findings), second pass Approved. Addendum step 1 only; steps 2-3 still to record."
           },
-          "notes": "Addendum step 1 done: §13 CONDITIONAL recorded (ESC-EXEC-20261008-02 resolved), §13.5 roster row (strategy_rules.md v1.16). Step 2 done: AI endpoint security checklist PASS x3 (agent-mediated Cybersecurity & Trust Lead; first pass Blocked, second Approved); found the daily cost alert ignores claude_audit_log, filed BLG-OPS-183. Step 3 in progress: design record approved by Head of UX & Design and Financial Reporting & Records Owner (agent-mediated; UX first pass Blocked, second Approved); awaiting Product Owner approval, then reports.md v0.21. Ship gate: EPIC-01 ST-06 must be on main first (security checklist sequencing gate).",
+          "notes": "Addendum step 1 done: §13 CONDITIONAL recorded (ESC-EXEC-20261008-02 resolved), §13.5 roster row (strategy_rules.md v1.16). Step 2 done: AI endpoint security checklist PASS x3 (agent-mediated Cybersecurity & Trust Lead; first pass Blocked, second Approved); found the daily cost alert ignores claude_audit_log, filed BLG-OPS-183. Step 3 in progress: design record approved by Head of UX & Design and Financial Reporting & Records Owner (agent-mediated; UX first pass Blocked, second Approved); awaiting Product Owner approval, then reports.md v0.21. Ship gate: EPIC-01 ST-06 must be on main first (security checklist sequencing gate). Step 3 done: Product Owner approved 2026-10-09 (human, with success-measure and effort trade-off notes); reports.md v0.21 §AI Summary added, Head of Specs Team lifecycle confirmed (agent-mediated). Addendum steps 1-3 complete, so ST-25 is reclassified delegated_decision -> autonomous for the build (LL-v2.3-EX-02). For QA evidence: the PO changed the fallback note wording after the Head of UX & Design approved the record; flag it for UX awareness. Effort risk: the build is 2.5-3d against a 1.5d estimate.",
           "sign_off_records_additional": [
             {
               "role": "Cybersecurity & Trust Lead",
@@ -977,9 +978,18 @@
             {
               "role": "Product Owner",
               "method": "human",
-              "status": "pending",
+              "status": "cleared",
               "record": "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md",
-              "signed_utc": null
+              "signed_utc": "2026-10-09T13:54:55Z",
+              "note": "Human, in session, approved with two notes (success measure for the 2027-01-03 review; move ST-25+ST-26 to v9.12 whole rather than cut §13 controls if they cannot fit) and a fallback wording change; after an agent-mediated PO recommendation."
+            },
+            {
+              "role": "Head of Specs Team",
+              "method": "agent_mediated",
+              "status": "cleared",
+              "record": "docs/specs/frontend/pages/reports.md v0.21",
+              "signed_utc": "2026-10-09T13:54:55Z",
+              "note": "Lifecycle confirmation; first pass Blocked (states table differed from the record), second Approved."
             }
           ]
         },
@@ -1151,8 +1161,7 @@
   },
   "blocked_items": [
     "ST-16",
-    "ST-34",
-    "ST-25"
+    "ST-34"
   ],
   "delegated_items": [
     "ST-02",

@@ -1,6 +1,6 @@
 **Owner:** Head of UX & Design
 **Class:** Design Decision Record
-**Status:** Awaiting Product Owner approval
+**Status:** Approved
 **Cycle:** 2026-10-08__release-v9.11
 **Story:** ST-25 (EPIC-04, BLG-FEAT-59) — `stage4_backlog_slice_addendum.md` §ST-25 step 3
 
@@ -66,7 +66,7 @@ Three records constrain the design:
 ### 2.6 Standard summary (fallback)
 
 When the generated text fails its checks twice, the API returns a summary written by code from the same figures (`source: "fallback"`, §13 Condition 4).
-- It renders in the populated layout, with one muted line above the text: **"The AI summary did not pass its accuracy checks, so a standard summary is shown."** (`data-testid="monthly-narrative-fallback-note"`).
+- It renders in the populated layout, with one muted line above the text: **"The AI summary couldn't be checked against your figures, so a standard summary is shown."** (`data-testid="monthly-narrative-fallback-note"`).
 - The badge and caption stay, because the section is still the AI feature.
 - **Fixed template:** `{Tax year} so far` covers the in-progress tax year; a past tax year drops "so far".
 
@@ -212,4 +212,7 @@ Backend tests (pytest) cover:
 
 Head of UX & Design: confirmed, 2026-10-09. Sprint Execution Engine (agent-mediated, Head of UX & Design role — §5.3), user-directed. First pass Blocked (no `AdvisoryBadge` component exists; bare `text-rose-400` fails light-theme contrast at ~2.8:1). Second pass Approved: the `AiDisclaimer` badge variant's hard-coded caption, existing `testId` prop and the Unrealised card's shell/heading tokens were checked against the code; the AC "optional and dismissible (Playwright)" is fully testable through §8 tests 1, 2 and 4, with edge cases in tests 5 and 8.
 Financial Reporting & Records Owner: confirmed, 2026-10-09. Sprint Execution Engine (agent-mediated, Financial Reporting & Records Owner role — §5.3), user-directed. Approved on both passes. §2.11 names every record surface the text must stay out of, with pytest coverage. Two April rows per tax year were confirmed in `get_monthly_pnl_by_tax_year` and handled by year-qualified month names. The extra capital-gains terms, the fixed fallback template and ST-26's generation count cover the tax-related risks.
-Product Owner: pending
+Product Owner: approved, 2026-10-09 (human, in session, after an agent-mediated Product Owner recommendation). Approved with two notes and one wording change:
+- **Success measure (for the 2027-01-03 AI usage review, ST-28, using ST-26's generation count):** keep the feature if the summary is generated in at least 3 of the months between launch and the review, *or* overall AI usage outside launch week rises. Otherwise, consider removing it or replacing it with the deterministic summary alone. This tests the 2026-10-05 gate-removal premise that more AI features may raise engagement.
+- **Effort trade-off:** the approved build is larger than the 1.5-day estimate (realistically 2.5–3 days) in a sprint planned at 99.9% of capacity. If ST-25 and ST-26 cannot fit, both move to v9.12 complete. No §13 control is cut to make them fit.
+- **Wording:** the §2.6 fallback note changed from "did not pass its accuracy checks" to "couldn't be checked against your figures".

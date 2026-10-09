@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.20
-**Last Updated:** 2026-09-28 — v9.8 design gate, ST-03 (EPIC-01, BLG-FE-190): §Summary Bar restated-months notice link now carries the selected tax year; new §Monthly Financial Table Tax Year Filter; prior — 2026-09-24 (ST-04, EPIC-02, v9.7 sprint execution: added Known Deviation DEV-v9.7-ST04-01, deviation documentation only, no spec wording changed); prior — 2026-09-23 (v9.7 design gate: Monthly P&L fees-not-recorded and restatement-diff field names corrected to match the live API/contract (ST-03/BLG-FE-187, ST-04/BLG-FE-188)); prior history retained — see prior entries in version control
+**Version:** 0.21
+**Last Updated:** 2026-10-09 — v9.11 sprint execution, ST-25 (EPIC-04, BLG-FEAT-59): new §AI Summary (Monthly P&L Narrative) under §Monthly P&L Report; prior — 2026-09-28 — v9.8 design gate, ST-03 (EPIC-01, BLG-FE-190): §Summary Bar restated-months notice link now carries the selected tax year; new §Monthly Financial Table Tax Year Filter; prior — 2026-09-24 (ST-04, EPIC-02, v9.7 sprint execution: added Known Deviation DEV-v9.7-ST04-01, deviation documentation only, no spec wording changed); prior history retained — see prior entries in version control
+**Design Source (v0.21 AI summary):** docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md
 **Design Source (v0.20 restated-notice year-scoped link):** docs/design/2026-09-28__release-v9.8/tax-year-restated-notice-year-scoped-link/decision_record.md
 **Design Source (v0.19 fees-not-recorded field-name correction):** docs/design/2026-09-23__release-v9.7/monthly-pnl-fees-surfacing/decision_record.md
 **Design Source (v0.19 restatement field-name correction):** docs/design/2026-09-23__release-v9.7/monthly-pnl-restatement-surfacing/decision_record.md
@@ -337,6 +338,70 @@ A closed month (calendar month ended, UK time) has an **immutable, read-only sna
 
 ---
 
+### AI Summary (Monthly P&L Narrative)
+
+**Added:** v0.21 (ST-25, EPIC-04, v9.11, BLG-FEAT-59)
+**Design source:** `docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md` (Product Owner approved 2026-10-09)
+**§13:** `docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md` (CONDITIONAL, 12 binding conditions)
+**Security:** `docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/ai_endpoint_security_checklist.md`
+
+An optional, on-request, AI-written plain-language summary of the months in the selected tax year. It is advisory only and never part of the financial record.
+
+**Placement and shell**
+- A separate card, `data-testid="monthly-narrative-card"`, directly below the Monthly Realised P&L table card and its basis caption, above the Unrealised P&L Card.
+- Shell: the same light+dark pair as the Unrealised P&L Card.
+- Rendered only when the table has at least one row.
+
+**Header**
+- Heading: "AI summary".
+- Badge: the `AiDisclaimer` badge variant labelled "AI Advisory" (`data-testid="monthly-narrative-badge"`), with the non-dismissible caption **"Describes your recorded figures only. Not a forecast, recommendation or tax advice."** (`monthly-narrative-caption`). The caption is supplied through a new optional `caption` prop. The prop's default keeps the existing "All actions require your confirmation" text, so the Dashboard briefing is unchanged.
+- Hide: an icon button (`X`, `ghost`, `size="icon"`), `aria-label="Hide AI summary"`, `monthly-narrative-hide`.
+- The heading, badge, caption and Hide button appear in every visible state.
+
+**States**
+
+| State | Body | Actions | Message |
+|-------|------|---------|---------|
+| Not generated (default) | "Get a short written summary of these months." | **Generate summary** (`monthly-narrative-generate`), Hide | — |
+| Generating (first) | 3-bar skeleton (`bg-slate-300/60 dark:bg-slate-700/60`, `aria-hidden`) | Generating… (disabled), Hide | — |
+| Regenerating | previous text kept | Regenerating… (disabled), Hide | — |
+| Populated | summary text (`monthly-narrative-text`); "Generated {relative time}" | Regenerate, Hide | — |
+| Fallback (`source: "fallback"`) | note **"The AI summary couldn't be checked against your figures, so a standard summary is shown."** (`monthly-narrative-fallback-note`), then the standard summary; "Generated {relative time}" | Regenerate, Hide | — |
+| Failed (non-2xx, network, 503) | previous body unchanged | Generate/Regenerate, Hide | "Could not write the summary. Try again shortly." |
+| Limited (429) | previous body unchanged | Generate/Regenerate, Hide | the API's `message` |
+| Hidden | — | **Show AI summary** (`monthly-narrative-show`) | — |
+
+- "Generated {relative time}" carries the absolute local time in a `title`.
+- Error and limit messages: `text-xs text-rose-700 dark:text-rose-400`, `role="status"`, `monthly-narrative-error`. Cleared on the next Generate or Regenerate press.
+
+**Behaviour**
+- **Load:** on page load and on every tax-year change, the page calls `GET /reports/monthly-pnl/narrative?year=YYYY`. A stored summary for the current figures renders at once with no `POST`.
+- **Generation:** generation happens only on Generate or Regenerate (`POST`). There is no automatic, scheduled or background generation and no notification.
+- **Stale responses:** responses echo `year`. A response whose `year` differs from the selected tax year is discarded.
+- **Hiding:** Hide/Show is remembered per browser in `localStorage` (`reports.monthlyNarrative.hidden`). If storage is blocked or throws, the card is visible. Hiding deletes nothing.
+- **Month names:** every month is named with its year. A tax year can contain two Aprils.
+- **No other affordances (§13 Condition 7):** apart from Generate/Regenerate and Hide/Show, the card has no buttons, links or prompts. Nothing in it creates a plan, changes a setting or edits a record.
+
+**Standard summary template** (code-written; used when the AI text fails its checks twice):
+
+> "{Tax year}[ so far]: realised P&L of {total} across {trades} closed trades in {months} months. Highest month: {month year}, {value}. Lowest month: {month year}, {value}. {profitable} months ended above zero and {losing} below."
+
+- "so far" appears only for the in-progress tax year. Signed values use the canonical money format (`design_system.md` §Number and Currency Formatting) with a minus sign.
+- When any month has `null_fee_trade_count > 0`, the table notice's sentence is appended verbatim:
+  - "1 closed trade has no fees recorded, so these figures may not reflect its costs."
+  - "{N} closed trades have no fees recorded, so these figures may not reflect their costs."
+
+**Kept out of the record (§13 Condition 5).** The summary is never included in, written to, or used to compute, alter or annotate any of these:
+- the Monthly CSV, the Tax Year CSV or the Tax Year PDF;
+- `monthly_pnl_snapshots` (DS-20) or any stored figure;
+- the Tax Year tab, the Reconciliation tab, the Dashboard or notifications.
+
+The table's figures stay authoritative.
+
+**API:** `GET` and `POST /reports/monthly-pnl/narrative`. The response carries `year`, `narrative`, `source` (`"ai"` | `"fallback"`), `generated_at` and `advisory: true`. The contract (`reports_endpoints.md`) and `openapi.yaml` entry are added in the implementation commit.
+
+---
+
 ### Monthly CSV Export (v7.8 — ST-05, BLG-FEAT-81)
 
 **Design source:** `docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md`
@@ -497,6 +562,7 @@ A new **"Reconciliation"** tab (4th tab in the page's tab navigation, alongside 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.21 | 2026-10-09 | v9.11 sprint execution — ST-25 (EPIC-04, BLG-FEAT-59): new §AI Summary (Monthly P&L Narrative). An optional, on-request, dismissible AI summary card below the Monthly Realised P&L table: AiDisclaimer badge with a new `caption` prop; states including a code-written fallback; kept out of every export, snapshot and stored figure; `GET`/`POST /reports/monthly-pnl/narrative`. Design source: `docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md`. §13 CONDITIONAL (`decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md`). Head of UX & Design and Financial Reporting & Records Owner (agent-mediated) confirmed 2026-10-09. Product Owner approved 2026-10-09. Head of Specs Team lifecycle confirmation (agent-mediated) 2026-10-09. |
 | 0.20 | 2026-09-28 | v9.8 design gate — ST-03 (EPIC-01, BLG-FE-190): §Summary Bar restated-months notice now carries the Tax Year tab's selected year through its Monthly tab link; new §Monthly Financial Table Tax Year Filter (default: current tax year; pre-set from the notice link) so the linked-to view always contains the months the notice counted, including non-current tax years. Design source: `docs/design/2026-09-28__release-v9.8/tax-year-restated-notice-year-scoped-link/decision_record.md`. Authority: Head of Specs Team. |
 | 0.19 | 2026-09-23 | v9.7 design gate — ST-03 (EPIC-02, BLG-FE-187): §Fees-Not-Recorded Visibility field names corrected from the v9.6 design's `fees_missing_count`/`fees_missing_total` to the live API's `null_fee_trade_count` (per-month; no top-level aggregate field — aggregate notice now documented as a client-side sum across loaded months). ST-04 (EPIC-02, BLG-FE-188): §Monthly Restatement Marker corrected from a nested `restatement` object to the live API's flat `snapshotted`/`restated`/`snapshot_realised_pnl_gbp`/`restated_diff_gbp` fields; detail row reduced to Realised P&L only (no snapshot trade-count field exists) with a new muted fallback line for the trade-count-only-restatement edge case (`restated=true`, `restated_diff_gbp=0`). Neither correction changes previously-approved UX beyond the new fallback line. Design sources: `docs/design/2026-09-23__release-v9.7/monthly-pnl-fees-surfacing/decision_record.md`, `.../monthly-pnl-restatement-surfacing/decision_record.md`. Authority: Head of Specs Team. |
 | 0.18 | 2026-09-21 | v9.6 design gate — ST-07 (EPIC-02, BLG-FR-04): Monthly P&L gains §Fees-Not-Recorded Visibility — aggregate Info notice, per-month "k no fees" indicator in the Trades cell, and a mandatory net/gross basis caption; additive `fees_missing_count`/`fees_missing_total` API fields; CSV unchanged. ST-08 (EPIC-02, BLG-FR-05): §Monthly Restatement Marker — immutable month-end snapshot, amber "Restated" marker with expandable snapshot-vs-live detail, no acknowledge action, failure fallback line; Tax Year Summary Bar gains an API-supplied restated-months notice (no second snapshot store); exports stay live. Design sources under `docs/design/2026-09-21__release-v9.6/`. Authority: Head of Specs Team. |
