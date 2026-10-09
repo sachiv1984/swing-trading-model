@@ -1066,23 +1066,27 @@
         "ST-31": {
           "title": "Correct the TradePlan status enum in openapi.yaml",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1955,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "f19a2689086f684720e3e97c5313853faaeb73cc",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T07:44:48Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/reference/openapi.yaml",
+            "docs/specs/data_model.md#DS-21 — trade_plans_status_check extended to the 7-value workflow status list (v2.43, 2026-09-29)",
+            "tests/test_trade_plan_status_enum_parity.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 4 TradePlan status enum sites = DS-21's 7 values; parity test. AC2 check_openapi_drift passes; freshness check no new finding (pre-existing key drift unchanged; 0 envelope violations). Deviation check: none."
         },
         "ST-32": {
           "title": "Fix the 5 error-response examples that diverge from the canonical envelope",
