@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-09T13:06:21Z",
+  "last_updated_utc": "2026-10-09T13:13:14Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -435,7 +435,7 @@
       }
     },
     "EPIC-03": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
@@ -513,7 +513,7 @@
             "signed_utc": "2026-10-09T12:58:25Z",
             "note": "User (human, live write access) applied DS-29 on staging and production and supplied identical Verification output for both; recorded in data_model.md DS-29 Live Confirmation."
           },
-          "notes": "Done. AC1: tests/test_trade_parameter_snapshot.py (6 tests) — code commit 81135387. AC2: DS-29 documented in data_model.md v2.56 and applied live on staging and production, verification output recorded (b8cd2f73); DEL-20261009-01 unblocked in-session. Deviation check: none. Implementation note: an in-grace exit with no stamped multiplier records the §5 initial multiplier (5), per the ST-16 grace-freeze ruling; a post-grace exit with none stamped stays NULL."
+          "notes": "Done. AC1: tests/test_trade_parameter_snapshot.py (6 tests) — code commit 81135387. AC2: DS-29 documented in data_model.md v2.56 and applied live on staging and production, verification output recorded (b8cd2f73); DEL-20261009-01 unblocked in-session. Deviation check: none. Implementation note: an in-grace exit with no stamped multiplier records the §5 initial multiplier (5), per the ST-16 grace-freeze ruling; a post-grace exit with none stamped stays NULL. Follow-up commit e470b1b3: parameter_source is strategy_parameters.py@<version>, as the ST-16 ruling directs."
         },
         "ST-18": {
           "title": "Post-deploy synthetic check for post-grace stops and §11 multipliers",
@@ -563,7 +563,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC1 Playwright SC-MRR-01a (no /positions/analyze call when rendering regime) + unit test. AC2 contract ## heading, openapi, routers/test.py, SystemStatus 126, SC-SS-01b all in 41bd5b93. ci_pending: check at 3.2.A. Deviation check: none."
+          "notes": "Done. AC1 Playwright SC-MRR-01a (no /positions/analyze call when rendering regime) + unit test. AC2 contract ## heading, openapi, routers/test.py, SystemStatus 126, SC-SS-01b all in 41bd5b93. Playwright CI passed: run 37784740710 on 41bd5b93 (ci_pending cleared at 3.2.A). Deviation check: none."
         },
         "ST-20": {
           "title": "DB-level unique constraint for active price alerts",
@@ -641,7 +641,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. Disposition: client-side submit guard (TradePlan.js in-flight flag + switch to update after create), recorded in trade_plan_endpoints.md. Playwright SC-TP-30 (fails on old code: 2 POSTs). No PO accepted-risk line needed (default disposition). ci_pending: check at 3.2.A. Deviation check: none."
+          "notes": "Done. Disposition: client-side submit guard (TradePlan.js in-flight flag + switch to update after create), recorded in trade_plan_endpoints.md. Playwright SC-TP-30 (fails on old code: 2 POSTs). No PO accepted-risk line needed (default disposition). Playwright CI passed: run 37786658704 on 5c750c97 (ci_pending cleared at 3.2.A). Deviation check: none."
         }
       }
     },
