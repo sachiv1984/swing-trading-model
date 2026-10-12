@@ -72,12 +72,17 @@ class TestErrorToastsCarryDuration8000:
                 missing.append(f"{rel_path}: {needle!r}")
         assert not missing, "Error toast(s) missing `duration: 8000`:\n" + "\n".join(missing)
 
-    def test_exactly_8_error_call_sites_covered(self):
-        assert len(self.CASES) == 8
-
-
-class TestNineSitesTotalAccountedFor:
-    def test_nine_call_sites_covered_between_info_and_error_classes(self):
-        # 1 info toast (no override) + 8 error toasts (duration: 8000) = the
-        # 9 call sites ST-42 brought into conformance.
-        assert 1 + len(TestErrorToastsCarryDuration8000.CASES) == 9
+    def test_each_message_identifies_exactly_one_toast_error_call(self):
+        # ST-40 (BLG-QA-200, v9.11): replaces two tautological count tests
+        # (len() of this list against a literal). This one reads the source:
+        # each message must sit inside exactly one toast.error(...) call, so the
+        # duration check above cannot be satisfied by some other call that
+        # happens to contain the same text.
+        problems = []
+        for rel_path, needle in self.CASES:
+            source = _read(rel_path)
+            calls = [m.start() for m in re.finditer(r"toast\.error\(", source)
+                     if needle in source[m.start(): m.start() + 200]]
+            if len(calls) != 1:
+                problems.append(f"{rel_path}: {needle!r} found in {len(calls)} toast.error() calls")
+        assert not problems, "\n".join(problems)
