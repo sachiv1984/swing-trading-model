@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-12 (session — 7 new item(s) added: BLG-BE-164, BLG-BE-165, BLG-BE-166, BLG-FE-211, BLG-FE-212, BLG-AI-11, BLG-AI-12, from the PR #1968 review, EPIC-01, v9.11); prior — 2026-10-12 (session — 1 new item added: BLG-AI-10, from EPIC-01 DoQ consolidation (ST-08), v9.11); prior — 2026-10-09 (session — 1 new item added: BLG-BE-163, from the ST-02 staging run, EPIC-01, v9.11); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (session — 7 new item(s) added: BLG-BE-167, BLG-BE-168, BLG-BE-169, BLG-FE-213, BLG-FE-214, BLG-QA-220, BLG-SPEC-192, from the PR #1969 review, EPIC-02, v9.11); prior — 2026-10-12 (session — 7 new item(s) added: BLG-BE-164, BLG-BE-165, BLG-BE-166, BLG-FE-211, BLG-FE-212, BLG-AI-11, BLG-AI-12, from the PR #1968 review, EPIC-01, v9.11); prior — 2026-10-12 (session — 1 new item added: BLG-AI-10, from EPIC-01 DoQ consolidation (ST-08), v9.11); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4846,6 +4846,25 @@ Nine test files still add `backend/services/` to `sys.path` so they can load a s
 
 ---
 
+### BLG-QA-220 — Behavioural tests for live holding days in the compliance and AI briefing readers
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner
+**Source:** PR #1969 agent-mediated Director of Quality review (EPIC-02, cycle `2026-10-08__release-v9.11`) — 2026-10-12
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+ST-12 moved the compliance and AI-briefing readers to `live_holding_days()`, but they are guarded only by a source-scan test (`test_other_readers_no_longer_read_the_stored_column`); only the portfolio and alerts paths have behavioural tests.
+
+**Scope**
+- Tests for `compliance_service` position compliance and the `ai_service` daily-briefing context
+
+**Acceptance Criteria**
+- With stored `holding_days` 9 and `entry_date` 10 days ago, compliance reports the position out of grace and the AI context marks it not in grace
+
+---
+
 ### BLG-BE-152 — Give the post-trade debrief the derived figures it needs: R achieved, the trailing stop at exit, and entry slippage
 **Priority:** P1 (High)
 **Type:** Backend Engineering / AI Output Quality
@@ -5055,6 +5074,25 @@ When the live price fetch fails, `portfolio_service.py` (lines ~118-124) treats 
 
 ---
 
+### BLG-SPEC-192 — Make review-cadence grace suppression and the grace alert agree in the ended-grace state
+**Priority:** P3 (Low)
+**Type:** Specification / Consistency
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** PR #1969 agent-mediated Director of Quality review (EPIC-02, cycle `2026-10-08__release-v9.11`) — 2026-10-12
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+ST-14's suppression predicate (`Positions.js` ~592, `PositionCard.js` ~97) reads `GET /positions`' `grace_days_remaining`, which is null once holding days reach 10, while the grace-alert endpoint uses `max(0, 10 − days)` on the stored GRACE state. A position whose stored state still says GRACE on day 10+ shows "Grace period has ended" but its Last Reviewed flag is not suppressed, though `positions.md` calls the two predicates the same.
+
+**Scope**
+- Either suppress when state is GRACE with null `grace_days_remaining` and holding days ≥ 10, or document the difference in `positions.md` §Last Reviewed Column
+
+**Acceptance Criteria**
+- A Playwright case (stored GRACE, `grace_days_remaining` null, holding days ≥ 10, stale review) behaves as the spec states
+
+---
+
 ### BLG-GOV-379 — Split `execution_prompt.md` into a core plus an appendix so it fits a single read
 **Priority:** P3 (Low)
 **Type:** Governance / Process
@@ -5261,6 +5299,67 @@ In `debrief_service.generate_trade_debrief()`, if the first model attempt return
 
 ---
 
+### BLG-BE-167 — `GET /portfolio` P&L line throws on a US position whose `fill_price` is NULL
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1969 agent-mediated Director of Quality review (EPIC-02, cycle `2026-10-08__release-v9.11`) — 2026-10-12
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.12
+
+**Problem**
+`portfolio_service.py` (P&L block, ~line 144) reads `pos.get('fill_price', pos['entry_price'])`. When the `fill_price` column exists but is NULL, `.get` returns None and the P&L calculation raises a TypeError. The ST-10 stale-price fallback a few lines above already uses `pos.get('fill_price') or pos['entry_price']`, so the two lines now disagree. Pre-existing, not introduced by EPIC-02.
+
+**Scope**
+- Use `or` for the US entry price in the P&L block so it matches the fallback
+
+**Acceptance Criteria**
+- A unit test with a US position whose `fill_price` is None and a live price: `GET /portfolio` returns the row using `entry_price`
+
+---
+
+### BLG-BE-168 — Flag stale prices on `GET /positions` and the Positions page
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Backend Engineering Patterns Owner; Frontend Specifications & UX Documentation Owner
+**Source:** PR #1969 agent-mediated Product Owner review (EPIC-02, cycle `2026-10-08__release-v9.11`) — 2026-10-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.12
+
+**Problem**
+When the live price fetch fails, `position_service.py` (~lines 121–130) silently falls back to the stored `current_price` with no flag, and the Positions page shows that price, P&L and value as live. Since ST-10, `/risk` marks the same position stale, so the two pages disagree.
+
+**Scope**
+- Add `price_is_stale` to `GET /positions` (contract and `openapi.yaml` in the same commit)
+- Show the `risk_dashboard.md` §6.6-style marker on the Positions table and grid price cells (positions.md design pass)
+
+**Acceptance Criteria**
+- A unit test with the fetch mocked to fail returns `price_is_stale: true`
+- Playwright shows the marker on a stale row and none on a live row
+
+---
+
+### BLG-BE-169 — Flag the FX fallback (`DEFAULT_FX_RATE` 1.27) instead of applying it silently
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1969 agent-mediated Product Owner review (EPIC-02, cycle `2026-10-08__release-v9.11`) — 2026-10-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.12
+
+**Problem**
+`utils/pricing.get_live_fx_rate()` returns a hard-coded 1.27 when the FX fetch fails. US current prices, P&L, total value and heat are then converted at a guessed rate with nothing on screen saying so — the same class of issue as the ×1.38 constant ST-10 removed (BLG-BE-154), and against `strategy_rules.md` §11's no-hidden-parameters intent. It also makes the ST-10 stale tooltip ("converted at today's FX rate") untrue in that case.
+
+**Scope**
+- Expose an `fx_is_stale` flag (or a last-known-good cached rate with its timestamp) on `GET /portfolio` and `GET /positions`
+- Show it on the Dashboard and Risk Dashboard; document it in both contracts
+
+**Acceptance Criteria**
+- A unit test with the FX fetch mocked to fail sets the flag and never presents 1.27 as a live rate
+- Playwright shows the indicator
+
+---
+
 ### BLG-FE-211 — Debrief Regenerate leaves the card blank when a successful response has no data
 **Priority:** P3 (Low)
 **Type:** Frontend / Correctness
@@ -5299,6 +5398,45 @@ The debrief failure messages in `TradeDebrief.js` use `text-rose-400` with no li
 
 **Acceptance Criteria**
 - Playwright: the axe scan of the debrief section in its error state reports no colour-contrast violations in either theme
+
+---
+
+### BLG-FE-213 — Recent Trades glyph and amount disagree at a half-penny loss
+**Priority:** P3 (Low)
+**Type:** Frontend / Correctness
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** PR #1969 agent-mediated Director of Quality and Product Owner review (EPIC-02, cycle `2026-10-08__release-v9.11`) — 2026-10-12
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.12
+
+**Problem**
+ST-15's `displayedPnl` (`src/components/dashboard/widgets/RecentTradesWidget.js`) uses `Math.round(x*100)/100`, which rounds −0.005 to −0 (neutral glyph and colour), while `formatCurrency` (`src/lib/format.js`) rounds the absolute value with `toFixed(2)` and renders "−£0.01". Checked in node: `Math.round(-0.5)/100 = -0`, `(0.005).toFixed(2) = '0.01'`.
+
+**Scope**
+- Derive the glyph and colour from the same rounding as `formatCurrency` (e.g. a shared helper in `src/lib/format.js` using the `signOf` test)
+
+**Acceptance Criteria**
+- Playwright: `pnl −0.005` shows the down glyph and rose colour matching "−£0.01"; SC-RTB-06 (0.004 neutral, 0.01 up) still passes
+
+---
+
+### BLG-FE-214 — Make the stale-price explanation reachable on touch, keyboard and screen readers
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design
+**Source:** PR #1969 agent-mediated Product Owner review (EPIC-02, cycle `2026-10-08__release-v9.11`) — 2026-10-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.12
+
+**Problem**
+ST-10's `StaleMarker` (`PositionRiskTable.js`) and the Dashboard Card 2 notice explain staleness only via `title` plus an `aria-label` on a non-focusable span: touch and keyboard users cannot reach it, assistive tech may announce only "stale", and the copy gives no next step or note that value, P&L and heat use that price.
+
+**Scope**
+- A focusable tooltip/popover or `sr-only` description; one line of next-step copy; design-gate review of the wording
+
+**Acceptance Criteria**
+- axe passes on `/risk` with a stale row
+- The explanation is reachable by keyboard focus and exposed as the marker's accessible description (Playwright `toHaveAccessibleDescription`)
 
 ---
 
