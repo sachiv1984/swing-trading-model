@@ -177,8 +177,8 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     await expect(page.getByRole('button', { name: /run tests/i })).toBeVisible({ timeout: 8000 });
   });
 
-  test('SC-SS-01b: Pre-run state shows "124 endpoints" placeholder', async ({ page }) => {
-    // Before running tests, the page shows: "Tests 118 endpoints"
+  test('SC-SS-01b: Pre-run state shows "127 endpoints" placeholder', async ({ page }) => {
+    // Before running tests, the page shows: "Tests 127 endpoints"
     // (totalTests || '115' → '115' before any test run). Baseline corrected v7.7
     // EPIC-11 ST-11 (BLG-QA-102): an AST-verified count of backend/routers/test.py's
     // test_cases list was 98, not the previously-recorded 103 — 5 entries had

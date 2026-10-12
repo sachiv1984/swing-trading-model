@@ -31,7 +31,6 @@ Flow for POST (generate):
    never in monthly_pnl_snapshots, an export or any figure (Condition 5).
 """
 import hashlib
-import inspect
 import json
 import os
 import re
@@ -47,13 +46,14 @@ from database import (
     create_claude_audit_entry,
 )
 from services.reports_service import get_monthly_pnl_report
-# The same model and the same verified checks as the post-trade debrief, the
-# nearest §13 precedent. MODEL_VERSION is imported rather than restated so
-# this module never names a model ID itself: once EPIC-01's ST-09 lands,
-# debrief_service takes the pinned ID from ai_models.py and so does this.
-from services.debrief_service import MODEL_VERSION, numeric_cross_check, scan_prescriptive
+from ai_models import CLAUDE_HAIKU_4_5
+# The same verified checks as the post-trade debrief, the nearest §13 precedent.
+from services.debrief_service import numeric_cross_check, scan_prescriptive
 from utils.upstream_call import anthropic_retryable_exceptions, bounded_upstream_call, get_timeout
 
+# Pinned directly (ai_models.py, EPIC-01 ST-09) so a change to the debrief's
+# model cannot silently change this feature's model or its cost rates below.
+MODEL_VERSION = CLAUDE_HAIKU_4_5
 PROMPT_VERSION = "v1.0"
 ENDPOINT = "POST /reports/monthly-pnl/narrative"
 DAILY_CALL_CAP = 40
@@ -368,13 +368,9 @@ def _call_claude(system: str, user: str) -> tuple:
     return response.content[0].text.strip(), response.usage
 
 
-_AUDIT_PARAMS = set(inspect.signature(create_claude_audit_entry).parameters)
-
-
 def _audit(usage, compliance_check_result: str, latency_ms: int, prompt_text: str, response_text: Optional[str]) -> None:
-    """One claude_audit_log row per model call (Condition 8). prompt_hash and
-    response_length are passed once create_claude_audit_entry accepts them
-    (EPIC-01 ST-06, which merges before this EPIC)."""
+    """One claude_audit_log row per model call (Condition 8), with the prompt
+    hash and response length (DS-27, EPIC-01 ST-06)."""
     input_tokens = getattr(usage, "input_tokens", None) if usage is not None else None
     output_tokens = getattr(usage, "output_tokens", None) if usage is not None else None
     cost_usd = None
@@ -389,11 +385,9 @@ def _audit(usage, compliance_check_result: str, latency_ms: int, prompt_text: st
         cost_usd=cost_usd,
         compliance_check_result=compliance_check_result,
         latency_ms=latency_ms,
+        prompt_hash=hashlib.sha256(prompt_text.encode()).hexdigest()[:16],
+        response_length=len(response_text) if response_text is not None else None,
     )
-    if "prompt_hash" in _AUDIT_PARAMS:
-        kwargs["prompt_hash"] = hashlib.sha256(prompt_text.encode()).hexdigest()[:16]
-    if "response_length" in _AUDIT_PARAMS:
-        kwargs["response_length"] = len(response_text) if response_text is not None else None
     create_claude_audit_entry(**kwargs)
 
 

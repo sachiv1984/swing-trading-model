@@ -304,6 +304,16 @@ class TestGenerateFlow:
         assert flow["audit"].call_args.kwargs["compliance_check_result"] == "model_call_failed"
         flow["upsert"].assert_not_called()
 
+    def test_audit_row_carries_condition_8_fields(self, flow):
+        """Condition 8: every model call's audit row carries the prompt version,
+        tokens, cost, check result, prompt hash and response length."""
+        with patch.object(svc, "_call_claude", return_value=(GOOD_TEXT, _usage())):
+            generate_narrative(YEAR)
+        kw = flow["audit"].call_args.kwargs
+        assert kw["model_id"] == svc.MODEL_VERSION and kw["prompt_version"] == svc.PROMPT_VERSION
+        assert kw["cost_usd"] is not None and kw["compliance_check_result"]
+        assert len(kw["prompt_hash"]) == 16 and kw["response_length"] == len(GOOD_TEXT)
+
     def test_no_api_key_is_unavailable(self, flow):
         with patch.object(svc, "ANTHROPIC_API_KEY", ""), pytest.raises(NarrativeUnavailable):
             generate_narrative(YEAR)
@@ -433,8 +443,8 @@ class TestS13BoundarySuite:
 
     @pytest.mark.parametrize("text", ["Buy AAPL now.", "You could sell them before April.", "Add to it next week."])
     def test_b_mpn_04_instrument_directives_detected(self, text):
-        """D4: instrument directives are caught by the output scan."""
-        assert scan_language(text) != []
+        """D4: instrument directives are caught by the output scan's own category."""
+        assert "instrument_directive" in scan_language(text)
 
     def test_b_mpn_04_representative_output_is_clean(self):
         assert scan_language(GOOD_TEXT) == [] and scan_language(build_fallback_text(INPUTS)) == []
