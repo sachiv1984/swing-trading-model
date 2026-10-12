@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-12 (session — 3 new item(s) added: BLG-OPS-184, BLG-BE-170, BLG-BE-171, from the PR #1970 review, EPIC-03, v9.11); prior — 2026-10-12 (session — 7 new item(s) added: BLG-BE-167, BLG-BE-168, BLG-BE-169, BLG-FE-213, BLG-FE-214, BLG-QA-220, BLG-SPEC-192, from the PR #1969 review, EPIC-02, v9.11); prior — 2026-10-12 (session — 7 new item(s) added: BLG-BE-164, BLG-BE-165, BLG-BE-166, BLG-FE-211, BLG-FE-212, BLG-AI-11, BLG-AI-12, from the PR #1968 review, EPIC-01, v9.11); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (session — 1 new item(s) added: BLG-OPS-185, from the PR #1971 review, EPIC-06, v9.11); prior — 2026-10-12 (session — 3 new item(s) added: BLG-OPS-184, BLG-BE-170, BLG-BE-171, from the PR #1970 review, EPIC-03, v9.11); prior — 2026-10-12 (session — 7 new item(s) added: BLG-BE-167, BLG-BE-168, BLG-BE-169, BLG-FE-213, BLG-FE-214, BLG-QA-220, BLG-SPEC-192, from the PR #1969 review, EPIC-02, v9.11); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5213,6 +5213,77 @@ ST-14's suppression predicate (`Positions.js` ~592, `PositionCard.js` ~97) reads
 **Type:** Spec Debt
 **Owner:** Data Model & Domain Schema Owner
 **Source:** ST-30 (BLG-SPEC-173), EPIC-05, cycle `2026-10-08__release-v9.11` — 2026-10-08
+
+---
+
+### BLG-FE-209 — Replay page fails WCAG colour contrast in the light theme
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** ST-37 (BLG-QA-196), EPIC-06, cycle `2026-10-08__release-v9.11` — first axe scan of the Replay page in both themes — 2026-10-08
+**Effort:** S (~0.5-1 day, or as part of BLG-FE-200)
+**Provisional-Target:** TBD
+
+**Problem**
+The axe scan added by ST-37 finds serious `color-contrast` violations on the Replay page (`src/pages/Replay.js`) in the **light** theme only: in Date Range mode (3 nodes), Trade Set mode (5 nodes) and the populated result (20 nodes). The page uses dark-only classes (`bg-slate-800/50` cards, `text-white`/`text-slate-300` text, `text-emerald-400`/`text-rose-400` P&L) that sit on a mid-grey background in the light theme, giving ratios from 1.2:1 to 3.25:1. This is the same gap as `BLG-FE-200` (Reports and Notifications), which `design_system.md` cannot fix without light-mode tokens. The dark theme passes.
+
+**Scope**
+- Apply the light-mode tokens `BLG-FE-200` introduces (or define them, if this lands first) to the Replay page
+- Remove the three `Replay*:light` `color-contrast` entries from `KNOWN_VIOLATIONS` in `tests/e2e/accessibility-axe-scan.spec.js` in the same commit
+
+**Acceptance Criteria**
+- The light-theme Replay axe scans (Date Range, Trade Set, populated result) pass with no `color-contrast` baseline entry
+
+---
+
+### BLG-FE-210 — White text on amber-600 badges fails WCAG contrast outside Replay
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-37 (BLG-QA-196), EPIC-06, cycle `2026-10-08__release-v9.11` — out-of-scope finding while fixing the Replay Risk-Off badge — 2026-10-08
+**Effort:** XS (<1h plus test updates)
+**Provisional-Target:** TBD
+
+**Problem**
+White 12px bold text on `bg-amber-600` measures 3.18:1 (axe `color-contrast`, serious; 4.5:1 needed). ST-37 fixed the Replay page's Risk-Off badge by moving it to `bg-amber-700` (the `BLG-FE-165` precedent). The same class pair remains in pages the axe scan does not cover: `StrategyBenchmark.js` (Risk-Off badges, lines 26–27), `AiChatWidget.js` (line 70) and `AiDailyBriefing.js` (`MONITOR` action, line 14).
+
+**Scope**
+- Move those badges to `bg-amber-700` (or the design-system token for an amber badge with white text)
+- Update any Playwright assertion that names `bg-amber-600` for them
+
+**Acceptance Criteria**
+- No `bg-amber-600 text-white` pair remains in `src/`
+- The affected specs pass; an axe scan of each changed component reports no `color-contrast` finding on the badge
+
+---
+
+### BLG-GOV-383 — Split `release_planning_prompt.md` so it fits a single read
+**Priority:** P3 (Low)
+**Type:** Governance Process — Prompt Size Budget
+**Owner:** Head of Specs Team
+**Source:** ST-35 (BLG-GOV-359), EPIC-06, cycle `2026-10-08__release-v9.11` — required by `shared_standards.md` §11's engine prompt size budget at the v2.60→v2.61 bump — 2026-10-08
+**Effort:** M (~1d)
+**Provisional-Target:** TBD
+
+**Problem**
+`claude/system/release_planning_prompt.md` is 84,469 bytes at v2.61, above `shared_standards.md` §11's 68,500-byte engine prompt budget (≈25,000 tokens, the single-read cap). An engine that cannot read its prompt in one pass risks acting on a partial read. `BLG-GOV-381` tracks the same problem for `post_ship_closure.md`.
+
+**Scope**
+- Move rationale, history and worked examples into a new `claude/system/release_planning_prompt_appendix.md`, following the `roadmap_prompt.md` / `roadmap_prompt_appendix.md` pattern, leaving every mandatory STEP in the core or reached by an explicit pointer
+- Register the appendix in `OPERATIONAL_GUIDE.md` §13 and §14 under the CLAUDE.md §6 checklist
+
+**Acceptance Criteria**
+- The core file is at or under 68,500 bytes (`wc -c`)
+- No mandatory STEP is moved out of the core (every STEP heading in the pre-split file is still in the core or reached by an explicit pointer from it)
+- `governance-drift` reports all versions in sync
+
+---
+
+### BLG-BE-157 — Batch signal sizing gives a zero-ATR signal a 5% allocation
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** ST-39 (BLG-QA-199), EPIC-06, cycle `2026-10-08__release-v9.11` — found while writing mutation-testing cases for `size_batch_inv_vol` — 2026-10-08
 **Effort:** S (~0.5d)
 **Provisional-Target:** TBD
 
@@ -5226,6 +5297,83 @@ ST-14's suppression predicate (`Positions.js` ~592, `PositionCard.js` ~97) reads
 **Acceptance Criteria**
 - The dictionary and `data_model.md` §2 agree with `add_position()` for every price field
 - No spec describes `positions.entry_price` as native currency for US positions
+
+---
+
+`sizing_service.size_batch_inv_vol()` (used by `signal_service.py` for every new signal's suggested shares) gives a signal with `atr_value` 0 or missing an inverse-ATR weight of 0, then clamps every weight to the 5% minimum, so that signal still receives 5% of available cash (before renormalisation) and a non-zero share count. Its own docstring says "Signals with atr_value == 0 get 0 shares". Reproduced 2026-10-08: signals with ATR 1, 0 and 2 and £10,000 cash gave the zero-ATR signal a weight of 0.111 and 22 shares. `tests/test_signal_sizing.py::test_zero_atr_produces_zero_shares` passes only because it uses a batch where every ATR is 0, which takes the early-exit branch; the mixed case is untested.
+
+**Scope**
+- Exclude zero/missing-ATR signals from the clamp and renormalisation, and give them 0 shares with a reason
+- Add a mixed-batch test (some zero-ATR, some valid)
+
+**Acceptance Criteria**
+- In a mixed batch, a zero-ATR signal gets `suggested_shares` 0, `inv_vol_weight` 0 and a reason, and the other signals' weights sum to 1.0
+- The existing all-zero and capping tests still pass
+
+---
+
+### BLG-BE-158 — Batch signal sizing never adds entry fees to total cost
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering; Financial Reporting & Records Owner
+**Source:** ST-39 (BLG-QA-199), EPIC-06, cycle `2026-10-08__release-v9.11` — found while writing mutation-testing cases for `size_batch_inv_vol` — 2026-10-08
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** TBD
+
+**Problem**
+`sizing_service.size_batch_inv_vol()` reads the fee as `calculate_uk_entry_fees(...).get('total_fee', 0)` (and the same for US), but both fee functions return the key `total`, not `total_fee`. The fee is therefore always 0, and every signal's `total_cost` is the gross cost only: no stamp duty or commission for UK, no FX fee for US. Reproduced 2026-10-08: a UK signal of 44 shares at £100 showed `total_cost` 4,400.00 with no fees. Signal costs on the Signals page are understated, and cash checks based on them are optimistic. Note also that `gross_cost` uses `current_price` (native) for US signals while `allocation_gbp` is GBP; confirm the intended currency when fixing.
+
+**Scope**
+- Read the fee functions' `total` key, and confirm the currency basis of `gross_cost` / `total_cost` for US signals
+- Add tests asserting UK and US fees are included
+
+**Acceptance Criteria**
+- A UK batch signal's `total_cost` equals gross cost plus stamp duty and commission; a US signal's includes the FX fee in the documented currency
+- `signal_endpoints.md` states the currency of `total_cost`
+
+---
+
+### BLG-GOV-384 — Let compute_effort_weighted_pvr.py take the window as an argument
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** ST-34 (BLG-GOV-355), EPIC-06, cycle 2026-10-08__release-v9.11 — Head of Specs Team / Product Owner review of ESC-EXEC-20261008-03 — 2026-10-09
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.12
+
+**Problem**
+`scripts/compute_effort_weighted_pvr.py` hard-codes its `VERSION_TO_FOLDER` and `WINDOWS` maps, which stop at v9.7. `roadmap_prompt.md` v9.32 STEP 2.4 now records the effort-weighted PVR at every rebalance, but `scripts/` is outside the roadmap engine's §4 write scope, so the script can only be used for windows already in its maps and every new rebalance falls back to the by-hand method.
+
+**Scope**
+- Add a `--window vA-vB` argument; derive each version's cycle folder from `claude/cycles/*__release-<v>` instead of the hard-coded map
+- Keep the current no-argument run reproducing Appendix F's 5 backfilled readings
+- Update STEP 2.4's script sentence via the CLAUDE.md §6 checklist once the script no longer needs editing per window
+
+**Acceptance Criteria**
+- `python3 scripts/compute_effort_weighted_pvr.py --window v9.6-v9.10` prints 0.327 with 155/155 coverage, with no source edit
+- The no-argument run still prints 0.457 / 0.115 / 0.109 / 0.021 / 0.093
+
+---
+
+### BLG-SPEC-191 — Align Appendix F's effort-weighted PVR table and status with the script and STEP 2.4
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** ST-34 (BLG-GOV-355), EPIC-06, cycle 2026-10-08__release-v9.11 — Head of Specs Team review of ESC-EXEC-20261008-03 (findings N4, N5) — 2026-10-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+`docs/specs/metrics_definitions.md` Appendix F's effort normalisation table has no row for hour-scale bands (`XS (<1h)`), which `scripts/compute_effort_weighted_pvr.py` weights at 0.15, and the script matches a `VS` band that has no midpoint. A by-hand run under `roadmap_prompt.md` STEP 2.4 (which excludes values the table does not cover) can therefore exclude a story the script weights. Appendix F's Status and "Authoritative computation (once adopted) … (not yet wired)" lines are also stale for the effort-weighted sub-metric now that v9.32 STEP 2.4 records it.
+
+**Scope**
+- Add the `<1h → 0.15` row to the normalisation table (or remove the script's extra cases), and resolve the `VS` match
+- Update Appendix F's Status / authoritative-computation lines for the effort-weighted sub-metric only; the D-split and U-pool indicator stay proposal-only
+- Changelog row in `metrics_definitions.md`
+
+**Acceptance Criteria**
+- The table and the script weight exactly the same set of effort values
+- Appendix F names `roadmap_prompt.md` STEP 2.4 (v9.32) as where the effort-weighted reading is recorded; the other two sub-metrics still read proposal-only
 
 ---
 
@@ -5645,5 +5793,27 @@ ST-16 stops the nightly job (and the on-load path) stamping `active_atr_multipli
 **Acceptance Criteria**
 - The rule for behavioural effective dates is written in `strategy_version_registry.py`'s docstring
 - v1.15's window and the `strategy_version_at_entry` stamps agree for every trade entered from 9 October 2026 onwards (query output or test)
+
+---
+
+### BLG-OPS-185 — Add requirements-dev.txt to the local backend setup instructions
+**Priority:** P3 (Low)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** PR #1971 review (EPIC-06, ST-43 / BLG-OPS-178), v9.11 — 2026-10-12
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+ST-43 moved `pytest`, `pytest-cov` and `hypothesis` out of `backend/requirements.txt` into `backend/requirements-dev.txt` and updated every CI test workflow, but the local setup instructions were not updated. `README.md`'s backend setup still runs only `.venv/bin/pip install -r requirements.txt`, so a fresh venv built from it cannot run the CLAUDE.md §9 command `backend/.venv/bin/python3 -m pytest` (No module named pytest). Existing venvs still have pytest installed, which hides the gap. `docs/ops/quarterly_dependency_upgrade_cadence_policy.md`'s verification step has the same stale install command.
+
+**Scope**
+- `README.md` backend setup: install `-r requirements.txt -r requirements-dev.txt`
+- `docs/ops/quarterly_dependency_upgrade_cadence_policy.md` verification step: same change
+- Mention `requirements-dev.txt` in CLAUDE.md §9's description of the venv, if the Head of Specs Team agrees (governance file)
+
+**Acceptance Criteria**
+- Following `README.md` from a fresh clone yields a venv in which `backend/.venv/bin/python3 -m pytest --collect-only -q` succeeds
+- `grep -rn "pip install -r .*requirements.txt" README.md docs/ops/quarterly_dependency_upgrade_cadence_policy.md` shows `requirements-dev.txt` alongside every test-running install
 
 ---

@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-12T09:32:53Z",
+  "last_updated_utc": "2026-10-12T13:23:18Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -699,11 +699,11 @@
       "merge_commit": "e07d2a04"
     },
     "EPIC-06": {
-      "status": "in_progress",
+      "status": "merged",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1971,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-06.md",
       "test_scenarios": [
         "backend/mutmut_pilot_tests/test_pilot.py",
@@ -719,7 +719,7 @@
         "ST-33": {
           "title": "Write-time check that sprint_backlog.md Owner values use canonical role names",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1957,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -749,32 +749,39 @@
         },
         "ST-34": {
           "title": "Give the effort-weighted PVR column its home in product_value_ratio_history.md",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "merged",
           "assigned_to": "Head of Specs Team; Metrics Definitions & Analytics Owner",
           "github_issue": 1958,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "3bdb52e54902aa77815e2ba18dae29da3b0fb78b",
           "delegation_record_id": "ESC-EXEC-20261008-03",
           "blocked_since_utc": "2026-10-08T11:01:30Z",
           "unblock_criteria": "See ESC-EXEC-20261008-03 unblock criteria",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-09T17:43:17Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/roadmap/product_value_ratio_history.md#History",
-            "docs/specs/metrics_definitions.md#PVR Measurement Package — Effort-Weighted PVR, User-Protective/Hygiene D-Split, Leading U-Pool Indicator (ST-31, EPIC-06, v9.8, BLG-GOV-339)"
+            "docs/specs/metrics_definitions.md#PVR Measurement Package — Effort-Weighted PVR, User-Protective/Hygiene D-Split, Leading U-Pool Indicator (ST-31, EPIC-06, v9.8, BLG-GOV-339)",
+            "claude/system/roadmap_prompt.md#STEP 2.4 — Product Value Ratio Diagnostic (Mandatory)"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "AC1_committed",
-          "sign_off_record": null,
-          "notes": "AC1 done (named-file write, §7 rule case (a)): product_value_ratio_history.md ## History gains the effort-weighted ratio, 5 windows backfilled from metrics_definitions.md Appendix F (scripts/compute_effort_weighted_pvr.py reproduces all 5). AC2 (roadmap_prompt.md STEP 2.4) still blocked on BLG-GOV-339 sign-off (ESC-EXEC-20261008-03)."
+          "deviations_filed": true,
+          "last_completed_substep": "AC2_committed",
+          "sign_off_record": {
+            "role": "Head of Specs Team; Product Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "cleared_utc": "2026-10-09T17:43:06Z",
+            "notes": "BLG-GOV-339 sign-off, ESC-EXEC-20261008-03, user-directed. Both Blocked first pass (draft directed a scripts/ edit outside roadmap_prompt.md §4 write scope); Approved second pass with HoST replacement paragraph. HoST evidence: method reproduces Appendix F 0.457/0.115/0.109/0.021/0.093; v9.6-v9.10 = 0.327 effort-weighted vs 0.161 story-count, 155/155 coverage. PO sign-off scoped to the effort-weighted reading only (not D-split or U-pool indicator). Full statements in execution_escalations.md and qa_evidence_EPIC-06.md."
+          },
+          "notes": "AC1 done (named-file write, §7 rule case (a)): product_value_ratio_history.md ## History gains the effort-weighted ratio, 5 windows backfilled from metrics_definitions.md Appendix F (scripts/compute_effort_weighted_pvr.py reproduces all 5). AC2 (roadmap_prompt.md STEP 2.4) still blocked on BLG-GOV-339 sign-off (ESC-EXEC-20261008-03). AC2 done 2026-10-09 (3bdb52e5): ESC-EXEC-20261008-03 resolved, both sign-offs recorded; reclassified delegated_decision -> autonomous on resolution (execution_prompt.md §3.1.D). AC1 commit e8ca73b0; AC2 commit is commit_sha."
         },
         "ST-35": {
           "title": "§13 sign-off ACs must cite every §13 clause that names the feature's subject",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1959,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -804,30 +811,30 @@
         "ST-36": {
           "title": "DoQ sign-off line for stories touching stop, grace, ATR or exit logic",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1960,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": "323a1859",
+          "commit_sha": "323a1859eecde5fe2bec9e6abc614f2c1e47a7a6",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-09T08:21:14Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/system/templates/qa_evidence_template.md#Strategy-Values DoQ Line (ST-36, BLG-GOV-370, EPIC-06, v9.11)"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "template_committed",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC1 template updated (323a1859, §6 checklist complete). AC2 pending: the first qualifying story's DoQ sign-off (EPIC-02 ST-10-ST-14 or EPIC-03 ST-16-ST-18) must complete the line; mark done then."
+          "notes": "Done. AC1: qa_evidence_template.md gains the conditional Strategy-Values DoQ line (323a1859, CLAUDE.md §6 checklist complete). AC2: the first qualifying story signed off after the template change is ST-30 (EPIC-05). qa_evidence_EPIC-05.md (commit 4cde85cf, dated 2026-10-09, autonomous class) completes the line: ST-30's stated stop and grace values were checked against strategy_rules.md §5, §6.2, §7.2/§7.3 and §11, with sections cited; ST-29/31/32 are recorded as not touching that logic. EPIC-02's DoQ block also carries a drafted line for ST-10 to ST-15, which is pending its own sign-off. Deviation check: none."
         },
         "ST-37": {
           "title": "Extend the axe accessibility scan to the Replay page",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1961,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -846,12 +853,12 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC1 Replay scanned in both selector modes + populated result, dark and light (6 scans). AC2 dark finding fixed (Risk-Off badge amber-700); light findings filed BLG-FE-209 (baselined); sibling badges filed BLG-FE-210. ci_pending: check at 3.2.A. Deviation check: none."
+          "notes": "Done. AC1 Replay scanned in both selector modes + populated result, dark and light (6 scans). AC2 dark finding fixed (Risk-Off badge amber-700); light findings filed BLG-FE-209 (baselined); sibling badges filed BLG-FE-210. Playwright CI passed: run 37904158554 on 61632a59 (ci_pending cleared at 3.2.A). Deviation check: none."
         },
         "ST-38": {
           "title": "Fix SC-REP-04a's signed \"+£0.00\" expectation",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1962,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -875,7 +882,7 @@
         "ST-39": {
           "title": "Mutation-test the US-market and batch-sizing paths",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1963,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -898,7 +905,7 @@
         "ST-40": {
           "title": "Make the ceiling/count regression tests read the source they claim to verify",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1964,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -922,7 +929,7 @@
         "ST-41": {
           "title": "Reset the pilot test file's shared database mocks between tests",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1965,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -945,30 +952,36 @@
         "ST-42": {
           "title": "Make the Non-Registry Dependency Check a required status check on main",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1966,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "aecf6b8b819337c3872066f34e879264b2381724",
           "delegation_record_id": "DEL-20261008-02",
           "blocked_since_utc": "2026-10-08T11:01:30Z",
           "unblock_criteria": "gh api read lists 'Non-Registry Dependency Check (ST-29)' under required_status_checks; later non-dependency PR shows the check completing",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-12T08:26:06Z",
+          "acceptance_verified": true,
           "spec_references": [
             ".github/workflows/non-registry-dependency-check.yml"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "signed_utc": "2026-10-12T08:26:06Z",
+            "note": "User (repository admin) added Non-Registry Dependency Check (ST-29) to main's required status checks; read-back 2026-10-09; check completed SUCCESS on PR #1968 (run 38223105681). Recorded in qa_evidence_EPIC-06.md."
+          },
+          "notes": "Done. AC1: main required_status_checks lists Non-Registry Dependency Check (ST-29) alongside the 4 existing contexts (read 2026-10-09, bb876940). AC2: PR #1968 (no dependency files) ran the check to SUCCESS, run 38223105681. DEL-20261008-02 unblocked. Deviation check: none."
         },
         "ST-43": {
           "title": "Move test-only Python packages out of the production build",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1967,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -988,8 +1001,21 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC1 render.yaml buildCommand installs requirements.txt only, which now carries no test-only package (asserted by test); deploy-log confirmation is the staging-only part. AC2 CI test workflows updated to install requirements-dev.txt; ci_pending: confirm all CI test workflows green at 3.2.A. Deviation check: none."
+          "notes": "Done. AC1 render.yaml buildCommand installs requirements.txt only, which now carries no test-only package (asserted by test); AC1 (staging-only) met by the CI route sprint_backlog.md allows: render.yaml buildCommand is pip install -r requirements.txt. AC2 CI test workflows updated to install requirements-dev.txt; CI test workflows green: CI Pytest 37904318426 / Golden Output 37904318496 on cb9d97cd; merged head re-confirmed at DoQ (ci_pending cleared at 3.2.A). Deviation check: none."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "signed_utc": "2026-10-12T09:02:16Z",
+        "notes": "Agent-mediated DoQ review (§5.3, user-directed): Blocked first pass (missing prompt_change_log OG v4.229–v4.231 rows; Strategy-values line uncited for ST-39/ST-41), fixes applied, Approved second pass."
+      },
+      "merge_gate_review": {
+        "pr_comment_review": "issuecomment-6124956155",
+        "follow_ups": "BLG-OPS-185 filed in faa5cc8f (P3, non-blocking)",
+        "dod_acceptance": "Director of Quality Approved + Product Owner Accepted, agent-mediated on explicit user direction, 2026-10-12, conditional on all CI checks green on the final head",
+        "merge": "merged by the human developer 2026-10-12T13:23:18Z (b476fce7)"
       }
     },
     "EPIC-04": {
@@ -1139,11 +1165,11 @@
       }
     },
     "EPIC-05": {
-      "status": "done",
+      "status": "in_progress",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": true,
+      "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_trade_plan_status_enum_parity.py"
@@ -1250,12 +1276,9 @@
     }
   },
   "blocked_items": [
-    "ST-25",
-    "ST-34"
+    "ST-25"
   ],
-  "delegated_items": [
-    "ST-42"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1288,12 +1311,15 @@
     "ST-31",
     "ST-32",
     "ST-33",
+    "ST-34",
     "ST-35",
+    "ST-36",
     "ST-37",
     "ST-38",
     "ST-39",
     "ST-40",
     "ST-41",
+    "ST-42",
     "ST-43"
   ],
   "open_escalations": [
@@ -1305,10 +1331,10 @@
     "epics_merged": [
       "EPIC-01",
       "EPIC-02",
-      "EPIC-03"
+      "EPIC-03",
+      "EPIC-06"
     ],
     "epics_pending": [
-      "EPIC-06",
       "EPIC-04",
       "EPIC-05"
     ],
@@ -1328,7 +1354,11 @@
     "2026-10-12T08:48:18Z: main (EPIC-01 merge, PR #1968) merged into EPIC-03 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-03's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. data_model.md rebuilt with DS-27 (EPIC-01) before DS-28/DS-29, version 2.56 kept; trade_plan_endpoints.md 0.19 with both changelog rows; backlog.md item union; escalations keep EPIC-03's Resolved ESC-EXEC-20261008-01.",
     "2026-10-12T09:33:31Z: main (EPIC-02 merge, PR #1969) merged into EPIC-03 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.25.1 kept with both sides' version notes; delegation_log keeps EPIC-03's Unblocked DEL-20261008-04 and DEL-20261009-01; backlog.md item union; execution_state resolved story by story, summaries recomputed.",
     "2026-10-12: EPIC-03 PR #1970 merged by the human developer at 2026-10-12T12:58:26Z (e07d2a04), after the agent-mediated DoQ/PO acceptance given on user direction. Orphaned post-merge commit check: none.",
-    "2026-10-12: main (EPIC-03 merge, PR #1970) synced into EPIC-05. data_model.md 2.56 (EPIC-03 DS-28/DS-29 added; 2.55 is this EPIC's ST-30) and openapi.yaml 3.26.0 (EPIC-05) over 3.25.1 (EPIC-03) — distinct versions, no renumbering (CLAUDE.md §8 2a)."
+    "2026-10-12: main (EPIC-03 merge, PR #1970) synced into EPIC-05. data_model.md 2.56 (EPIC-03 DS-28/DS-29 added; 2.55 is this EPIC's ST-30) and openapi.yaml 3.26.0 (EPIC-05) over 3.25.1 (EPIC-03) — distinct versions, no renumbering (CLAUDE.md §8 2a).",
+    "2026-10-09: this branch copy still shows ST-16/ST-25 blocked and ESC-EXEC-20261008-01/-02 open; both were resolved on the EPIC-03 and EPIC-04 branches (their own copies). Reconcile by union per CLAUDE.md §8 at merge; not edited here to avoid recording another branch's evidence on EPIC-06.",
+    "2026-10-12T08:50:28Z: main (EPIC-01 merge, PR #1968) merged into EPIC-06 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-06's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. backlog.md item union; escalations keep EPIC-06's Resolved ESC-EXEC-20261008-03; delegation_log takes the furthest-progressed status per entry.",
+    "2026-10-12T09:38:39Z: main (EPIC-02 merge, PR #1969) merged into EPIC-06 per STEP 4 step 3c / CLAUDE.md §8. backlog.md takes main's newer Last Updated chain (items auto-merged); execution_state resolved story by story, summaries recomputed.",
+    "2026-10-12: EPIC-06 PR #1971 merged by the human developer at 2026-10-12T13:23:18Z (b476fce7), after the agent-mediated DoQ/PO acceptance given on user direction (issuecomment-6125015336). merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Stories finished on unmerged EPIC-04/EPIC-05 branches read stale here until their own merges (CLAUDE.md §8 union)."
   ],
   "sealed": false,
   "sealed_utc": null

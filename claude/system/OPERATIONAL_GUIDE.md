@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.228
-**Last Updated:** 2026-10-08 (lifecycle audit AUD-2026-10-08 fixes — post_ship_closure.md v2.38→v2.39, shared_standards.md v3.37→v3.38, lessons_learnt_prompt.md v1.15→v1.16; §13 gains 9 artefact rows and drops a stale embedded version; §14 gains 5 shared-module rows; §10 source-prompt header and §14 rows updated); prior — 2026-10-07 (ESC-CLOSE-20261007-01 — release_planning_prompt.md v2.59→v2.60; §6B source-prompt header and §14 row updated); prior — 2026-10-07 (post-ship closure `2026-10-06__release-v9.10` STEP 8 — execution_prompt.md v3.83→v3.84, delivery_verification_prompt.md v3.13→v3.14, post_ship_closure.md v2.37→v2.38; §8/§9/§10 source-prompt headers and §14 rows updated); prior history retained — see prior entries in version control
+**Version:** 4.232
+**Last Updated:** 2026-10-09 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-34, BLG-GOV-355 — roadmap_prompt.md v9.31→v9.32: STEP 2.4 records the effort-weighted PVR reading); prior — 2026-10-08 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-33, BLG-GOV-375 — sprint_planning_prompt.md v3.21→v3.22, idea_intake_prompt.md v2.10→v2.11, shared_standards.md v3.38→v3.39: canonical Owner role-name write-time check); prior — 2026-10-08 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-35, BLG-GOV-359 — release_planning_prompt.md v2.60→v2.61 and design_gate_prompt.md v1.10→v1.11: §13 clause-citation rule); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -331,7 +331,7 @@ The lifecycle is a deterministic state machine. `.claude_current_state.json` (`s
 
 ## 5. Idea Intake (Integrated — Phase 1 STEP -1.6)
 
-**Source prompt:** `claude/system/idea_intake_prompt.md` (v2.10)
+**Source prompt:** `claude/system/idea_intake_prompt.md` (v2.11)
 **Template:** `claude/system/idea_template.md`
 **Owner:** PMO Lead
 **Trigger:** Automatic — runs as STEP -1.6 of `run roadmap` when fewer than 20 open ideas (status `Submitted` or `Parked-cycle-<n>`) exist in `claude/ideas/ideas_register.md`. Also invocable standalone via `run ideas` for explicit window control.
@@ -398,7 +398,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.31) + `claude/system/roadmap_prompt_appendix.md` (STEP 9 onward, plus detailed rationale for the core's compacted rules)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.32) + `claude/system/roadmap_prompt_appendix.md` (STEP 9 onward, plus detailed rationale for the core's compacted rules)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -569,7 +569,7 @@ Keeps `claude/ideas/ideas_register.md` lean and surfaces revival opportunities.
 
 ## 6.5 Phase 1.5 — Design Gate (Required*)
 
-**Source prompt:** `claude/system/design_gate_prompt.md` (v1.10)  
+**Source prompt:** `claude/system/design_gate_prompt.md` (v1.11)  
 **Owner:** Head of UX & Design (artefacts), PMO Lead (gate record)  
 **Pre-condition:** Phase 1B Publish Gate passed; `sprint_sealed = false`  
 **\*Required** unless all sprint items are confirmed Design Not Applicable
@@ -622,7 +622,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.60)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.61)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -767,7 +767,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.21)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.22)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1377,31 +1377,31 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.228 |
-| Last Updated | 2026-10-08 |
+| Version | 4.232 |
+| Last Updated | 2026-10-09 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
-| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.10 |
+| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.11 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.6 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.18 |
-| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.10 |
+| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.11 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Shared Escalation Subroutine | `claude/system/shared/escalation_subroutine.md` v1.0 |
 | Shared Governance Stack | `claude/system/shared/governance_stack.md` v1.0 |
 | Shared Lock Recovery Procedure | `claude/system/shared/lock_recovery_procedure.md` v1.0 |
 | Shared Preflight Common Checks | `claude/system/shared/preflight_common.md` v1.1 |
 | Shared Publish Gate | `claude/system/shared/publish_gate.md` v1.1 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.31 (+ `roadmap_prompt_appendix.md`) |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.32 (+ `roadmap_prompt_appendix.md`) |
 | Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.0 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.60 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.21 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.61 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.22 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.84 |
-| QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.17 |
+| QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.18 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.14 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.39 |
-| Shared Standards | `claude/system/shared_standards.md` v3.38 |
+| Shared Standards | `claude/system/shared_standards.md` v3.39 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.16 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1518,6 +1518,10 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.232 | 2026-10-09 | **Sprint execution `2026-10-08__release-v9.11` EPIC-06/ST-34 (BLG-GOV-355) — roadmap_prompt.md v9.31→v9.32: effort-weighted PVR reading.** STEP 2.4 also fills `product_value_ratio_history.md`'s `Effort-weighted Ratio` column at each rebalance; diagnostic only, no tier. §6 phase header and §14 row updated. `BLG-GOV-339` sign-off: Head of Specs Team + Product Owner, agent-mediated, user-directed (`ESC-EXEC-20261008-03`). |
+| 4.231 | 2026-10-08 | **Sprint execution `2026-10-08__release-v9.11` EPIC-06/ST-33 (BLG-GOV-375) — 3 source prompts bumped: canonical Owner role names.** `sprint_planning_prompt.md` v3.21→v3.22: STEP 6.2 seal condition — `scripts/check_sprint_backlog_owners.py` exits 0. `shared_standards.md` v3.38→v3.39: §16.11 names that check, replacing 'by inspection'. `idea_intake_prompt.md` v2.10→v2.11: §4 list and §6 slug table use `Metrics Definitions & Analytics Owner` (the agent file's `**Role:**` line). §5 (Idea Intake) and §7 (Sprint Planning) source-prompt headers and three §14 rows updated; §14 self-row and header bumped. Authority: Head of Specs Team (Sprint Execution Engine, ST-33 sealed AC). |
+| 4.230 | 2026-10-08 | **Sprint execution `2026-10-08__release-v9.11` EPIC-06/ST-35 (BLG-GOV-359) — 2 source prompts bumped: §13 clause-citation rule.** `release_planning_prompt.md` v2.60→v2.61: STEP 4 requires an AC that calls for a §13 review, determination or sign-off to cite every `strategy_rules.md` §13 clause naming the feature's subject, not only §13.2, with the gap-risk (§13.3) worked example. `design_gate_prompt.md` v1.10→v1.11: the §13 pre-check applies the same rule. §6B and §6.5 source-prompt headers and §14 Release Engine Source / Design Gate Engine rows updated; §14 self-row and header bumped. Release prompt is over the 68,500-byte budget (shared_standards.md §11): split item BLG-GOV-383 filed. Authority: Head of Specs Team (Sprint Execution Engine, ST-35 sealed AC). |
+| 4.229 | 2026-10-08 | **Sprint execution `2026-10-08__release-v9.11` EPIC-06/ST-36 (BLG-GOV-370) — qa_evidence_template.md v1.17→v1.18: conditional Strategy-Values DoQ line.** §14 QA Evidence Template v1.17→v1.18. §14 self-row Version/Last Updated updated. Change: the Standard Sign-Off Block gains a conditional line requiring every story that touches stop, grace, ATR, exit or position-sizing logic to have its values and formulas checked against `strategy_rules.md` §5–§11, with the sections cited; new 'Strategy-Values DoQ Line' section explains when it applies. No phase-section source-prompt header exists for this template (same as the 1.16 and 1.17 entries), so none was touched. Authority: Head of Specs Team (Sprint Execution Engine, ST-36 sealed AC). |
 | 4.228 | 2026-10-08 | **Lifecycle audit `AUD-2026-10-08`, Head of Specs Team ruling (agent-mediated, user-directed: "Apply the 7 fixes") — 3 source prompts bumped, 2 register tables extended.** `post_ship_closure.md` v2.38→v2.39 (AUD-2026-10-08-001: STEP 8.5 reads `lessons_learnt_prompt.md` §3.5 and §5; closure Friction Log entries use the §5 Friction Item block). `shared_standards.md` v3.37→v3.38 (AUD-2026-10-08-002: §11 engine prompt size budget, 68,500 bytes; AUD-2026-10-08-006: §13 dry-run rows for `run ideas` and `amend cycle` marked not implemented). `lessons_learnt_prompt.md` v1.15→v1.16 (AUD-2026-10-08-004: §3.7 row-completeness reconciliation). This file (AUD-2026-10-08-005): §13 gains 9 rows (`roadmap_prompt_appendix.md`, `lifecycle_schema.json`, `state_schema.json`, `role_share_history.md`, `product_value_ratio_history.md`, `governance_bypass_log.md`, `roadmap_txn.json`, `stage4_issue_manifest.json`, `cycle_record.md`) and the Roadmap Rebalance Prompt row drops its stale `(v9.10)`; §14 gains rows for 5 `claude/system/shared/*.md` modules. §10 source-prompt header v2.38→v2.39; §14 rows and self-row updated. |
 | 4.227 | 2026-10-07 | **ESC-CLOSE-20261007-01 resolution, Head of Specs Team ruling (agent-mediated, user-directed) — release_planning_prompt.md v2.59→v2.60.** §7 gains a §1.3a gate-field carve-out; §1.3a gains bounds on the date-lapsed clear/re-gate edit (Gate criteria field only, same underlying condition, ACs listed not edited, every edit disclosed). §6B source-prompt header and §14 Release Engine Source row updated; §14 self-row and header 4.226→4.227. |
 | 4.226 | 2026-10-07 | **Post-ship closure `2026-10-06__release-v9.10` STEP 8, immediate lessons-learnt actions — 3 source prompts bumped.** `execution_prompt.md` v3.83→v3.84: §3.1.A step 4c Playwright CI conclusion before `done` (LL-v9.10-P3-03); §3.1.B step 2a workflow-viability pre-check for live-fire delegations (LL-v9.10-P3-01); §3.2.A `Pass_with_deviation` self-check before DoQ sign-off (LL-v9.10-P3-02); STEP 5.1 `spec_references` path-existence check (LL-v9.10-P4-01). `delivery_verification_prompt.md` v3.13→v3.14: STEP 2.1/2.3 `Pass_with_deviation` no-remainder variant (carried LL-v9.9-P4-01). `post_ship_closure.md` v2.37→v2.38: STEP 1.5 digest command runnable as written (venv + `PYTHONPATH=backend`, carried v9.9 closure action); STEP 5.1 scan broadened and active-backlog-reference check added (seventh deviation consolidation review). §8/§9/§10 source-prompt headers and §14 rows updated; §14 self-row and header 4.225→4.226. |

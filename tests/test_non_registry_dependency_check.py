@@ -329,3 +329,21 @@ def test_main_exits_non_zero_on_a_violation(tmp_path, monkeypatch, capsys):
 
     assert exit_code == 1
     assert "git+ssh" in out
+
+
+def test_dev_requirements_file_is_scanned_and_clean():
+    """ST-43 (BLG-OPS-178, v9.11): test-only packages live in requirements-dev.txt,
+    which gets the same registry-only check, with its own file label."""
+    dev = REPO_ROOT / "backend" / "requirements-dev.txt"
+    assert dev.exists()
+    assert check_requirements_txt(dev.read_text(), "backend/requirements-dev.txt") == []
+    bad = check_requirements_txt("-r requirements.txt\n", "backend/requirements-dev.txt")
+    assert bad and bad[0].startswith("backend/requirements-dev.txt:1:")
+
+
+def test_production_requirements_carry_no_test_only_package():
+    """ST-43: render.yaml installs requirements.txt only, so no test-only package may sit there."""
+    import re as _re
+    prod = (REPO_ROOT / "backend" / "requirements.txt").read_text().lower()
+    names = {_re.split(r"[=<>\[ ]", l.strip())[0] for l in prod.splitlines() if l.strip() and not l.startswith("#")}
+    assert not names & {"pytest", "pytest-cov", "hypothesis", "mutmut", "coverage"}
