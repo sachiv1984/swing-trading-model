@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.24.1
+  version: 3.25.1
+  # v3.25.1 (2026-10-09, ST-16, EPIC-03, v9.11): POST /positions/nightly-stop-update description — in-grace positions skipped (BLG-BE-143).
+  # v3.25.0 (2026-10-08, ST-19, EPIC-03, v9.11): new GET /market/regime (BLG-BE-140).
   # v3.24.1 (2026-10-08, ST-14, EPIC-02, v9.11): GET /positions/grace-period-alerts selection rule
   # described as grace_days_remaining <= 2 (BLG-BE-147). Description only.
   # v3.24.0 (2026-10-08, ST-13, EPIC-02, v9.11): PositionSummary gains stop_distance_pct
@@ -1680,9 +1682,12 @@ paths:
       tags: [Positions]
       summary: Recompute trailing stops for all open positions (ST-01 v6.2 BLG-FEAT-46)
       description: |
-        Nightly job: recalculates trailing stop for every open position using
-        profit-lock logic (INITIAL_ATR_MULT=5, PROFIT_ATR_MULT=2, ATR_PERIOD=14)
-        and stores result. Stop only ever moves up (ratchet invariant).
+        Nightly job: recalculates trailing stop for every open position past the
+        10-day grace period using profit-lock logic (INITIAL_ATR_MULT=5,
+        PROFIT_ATR_MULT=2, ATR_PERIOD=14) and stores result. Stop only ever moves
+        up (ratchet invariant). In-grace positions keep their stored stop and are
+        reported as skipped with reason "grace period" (strategy_rules.md §6.3
+        v1.15, ST-16 v9.11).
         Result accessible via GET /positions as current_trailing_stop field.
       responses:
         "200":
@@ -3989,6 +3994,34 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/OkMarketStatus"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /market/regime:
+    get:
+      tags: [Market]
+      summary: Get read-only market regime
+      description: |
+        v9.11 ST-19 (BLG-BE-140). US/UK risk-on/risk-off for display, from the cached
+        check_market_regime() result. No position analysis, no writes, no FX call.
+        Canonical contract: docs/specs/api_contracts/market_endpoints.md v0.2
+      responses:
+        "200":
+          description: Market regime retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, enum: [ok] }
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        market: { type: string, enum: [US, UK] }
+                        status: { type: string, enum: [risk_on, risk_off] }
+                  as_of: { type: string, format: date-time, nullable: true }
         "500":
           $ref: "#/components/responses/InternalError"
 

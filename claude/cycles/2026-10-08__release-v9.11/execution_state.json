@@ -471,13 +471,14 @@
       "merge_commit": "843af781"
     },
     "EPIC-03": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1970,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-03.md",
       "test_scenarios": [
+        "tests/test_live_exit_decision.py",
         "tests/test_post_grace_stop_health.py",
         "tests/test_market_regime_endpoint.py",
         "tests/e2e/market-regime-readonly.spec.js",
@@ -485,52 +486,71 @@
         "tests/test_price_alert_db_uniqueness.py",
         "tests/test_price_alerts_service.py",
         "tests/test_ai_endpoint_anomaly_service.py",
-        "tests/e2e/trade-plan.spec.js"
+        "tests/e2e/trade-plan.spec.js",
+        "tests/test_trade_parameter_snapshot.py"
       ],
       "stories": {
         "ST-16": {
           "title": "Rule on and test stop recalculation during grace",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner; Head of Engineering",
           "github_issue": 1940,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "a7d46a5f2f8ab2f258117ec40ce69f4cba7410d1",
           "delegation_record_id": "ESC-EXEC-20261008-01",
           "blocked_since_utc": "2026-10-08T11:01:30Z",
           "unblock_criteria": "See ESC-EXEC-20261008-01 unblock criteria",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T10:36:35Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#6.3 Behaviour during the grace period",
+            "docs/specs/api_contracts/position_endpoints.md#POST /positions/nightly-stop-update"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "decision": "option (b) with two changes: freeze the in-grace stop on both paths; keep already-raised stops; nightly skips only the stop fields",
+            "escalation": "ESC-EXEC-20261008-01",
+            "signed_utc": "2026-10-09T10:34:23Z",
+            "note": "Agent-mediated per execution_prompt.md §5.3 at the user's direction (2026-10-09)."
+          },
+          "notes": "Done. AC1 ruling recorded (ESC-EXEC-20261008-01 resolved, option (b) with two changes); on-load and nightly paths behave the same during grace, asserted by TestInGraceStopParity. AC2 C6.3-02 moved to Asserted with that test. Deviation check: none; follow-ups BLG-BE-160, BLG-BE-161 filed per the ruling. Ruling to be carried into qa_evidence_EPIC-03.md with the ST-36 strategy-values line."
         },
         "ST-17": {
           "title": "Snapshot the strategy parameters in force onto each closed trade",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Financial Reporting & Records Owner; Data Model & Domain Schema Owner",
           "github_issue": 1941,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "commit_sha": "b8cd2f7398c7f08290b8c5daf5a53220c151cce0",
+          "delegation_record_id": "DEL-20261009-01",
+          "blocked_since_utc": "2026-10-09T12:51:19Z",
+          "unblock_criteria": "DS-29 Up Migration applied on staging and production with verification output recorded",
+          "completed_utc": "2026-10-09T12:58:25Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/data_model.md"
+            "docs/specs/data_model.md#DS-29 — Snapshot the strategy parameters in force onto trade_history (v2.56, 2026-10-09)",
+            "tests/test_trade_parameter_snapshot.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "signed_utc": "2026-10-09T12:58:25Z",
+            "note": "User (human, live write access) applied DS-29 on staging and production and supplied identical Verification output for both; recorded in data_model.md DS-29 Live Confirmation."
+          },
+          "notes": "Done. AC1: tests/test_trade_parameter_snapshot.py (6 tests) — code commit 81135387. AC2: DS-29 documented in data_model.md v2.56 and applied live on staging and production, verification output recorded (b8cd2f73); DEL-20261009-01 unblocked in-session. Deviation check: none. Implementation note: an in-grace exit with no stamped multiplier records the §5 initial multiplier (5), per the ST-16 grace-freeze ruling; a post-grace exit with none stamped stays NULL. Follow-up commit e470b1b3: parameter_source is strategy_parameters.py@<version>, as the ST-16 ruling directs."
         },
         "ST-18": {
           "title": "Post-deploy synthetic check for post-grace stops and §11 multipliers",
@@ -555,7 +575,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC: tests/test_post_grace_stop_health.py fails the monitor on a non-§11 multiplier fixture and a missing post-grace stop fixture; workflow alerts via the existing Telegram path (asserted). Live Telegram receipt not named in the AC (sprint note). Deviation check: none."
+          "notes": "Done. AC: tests/test_post_grace_stop_health.py fails the monitor on a non-§11 multiplier fixture and a missing post-grace stop fixture; workflow alerts via the existing Telegram path (asserted). Live Telegram receipt not named in the AC (sprint note). Deviation check: none. Post-review fix 2026-10-12 (BLG-OPS-184, PR #1970 DoQ review): monitor treats a position just past grace with no recompute yet as PENDING for GRACE_PERIOD_DAYS+3 days; 4 new tests."
         },
         "ST-19": {
           "title": "Read-only market-regime source, so viewing regime no longer runs the stop-writing analyze call",
@@ -580,31 +600,37 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC1 Playwright SC-MRR-01a (no /positions/analyze call when rendering regime) + unit test. AC2 contract ## heading, openapi, routers/test.py, SystemStatus 126, SC-SS-01b all in 41bd5b93. ci_pending: check at 3.2.A. Deviation check: none."
+          "notes": "Done. AC1 Playwright SC-MRR-01a (no /positions/analyze call when rendering regime) + unit test. AC2 contract ## heading, openapi, routers/test.py, SystemStatus 126, SC-SS-01b all in 41bd5b93. Playwright CI passed: run 37784740710 on 41bd5b93 (ci_pending cleared at 3.2.A). Deviation check: none."
         },
         "ST-20": {
           "title": "DB-level unique constraint for active price alerts",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Data Model & Domain Schema Owner; Infrastructure & Operations Owner",
           "github_issue": 1944,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "0a2618bdae98a2c8f923aba8d2486c7fd167c488",
           "delegation_record_id": "DEL-20261008-04",
           "blocked_since_utc": "2026-10-08T13:34:42Z",
           "unblock_criteria": "DS-28 Up Migration applied on staging and production with verification output recorded",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-09T13:06:08Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/data_model.md#DS-28",
             "tests/test_price_alert_db_uniqueness.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "code_committed",
-          "sign_off_record": null,
-          "notes": "Code, DS-28 and tests done. AC1 shown by tests/test_price_alert_db_uniqueness.py (real Postgres: concurrent submit blocks on the index and is absorbed; passed locally against a throwaway Postgres 18, runs in CI Phase B). AC2 live migration delegated (DEL-20261008-04)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "signed_utc": "2026-10-09T13:06:08Z",
+            "note": "User (human, live write access) applied DS-28 on staging and production (pre-check passed) and supplied identical Verification output for both; recorded in data_model.md DS-28 Live Confirmation."
+          },
+          "notes": "Done. AC1: tests/test_price_alert_db_uniqueness.py (real Postgres concurrent double-submit absorbed; CI Phase B) — code commit 2c2b9e01. AC2: DS-28 applied live on staging and production, verification output recorded (0a2618bd); DEL-20261008-04 unblocked in-session. Deviation check: none."
         },
         "ST-21": {
           "title": "Make the anomaly-check fingerprint-clear path respect send_alert, or document why not",
@@ -652,8 +678,22 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. Disposition: client-side submit guard (TradePlan.js in-flight flag + switch to update after create), recorded in trade_plan_endpoints.md. Playwright SC-TP-30 (fails on old code: 2 POSTs). No PO accepted-risk line needed (default disposition). ci_pending: check at 3.2.A. Deviation check: none."
+          "notes": "Done. Disposition: client-side submit guard (TradePlan.js in-flight flag + switch to update after create), recorded in trade_plan_endpoints.md. Playwright SC-TP-30 (fails on old code: 2 POSTs). No PO accepted-risk line needed (default disposition). Playwright CI passed: run 37786658704 on 5c750c97 (ci_pending cleared at 3.2.A). Deviation check: none."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "signed_utc": "2026-10-12T08:57:04Z",
+        "notes": "Agent-mediated DoQ review (§5.3, user-directed): Approved on first pass with 3 non-blocking findings (final-head CI confirmation, Last Updated, ST-17 §6.3 citation), applied in this commit."
+      },
+      "merge_gate_review": {
+        "pr_comment_review": "issuecomment-6121880894",
+        "blocking_fix": "BLG-OPS-184 fixed in 3b63929d",
+        "dod_acceptance": "Director of Quality Approved + Product Owner Accepted, agent-mediated on explicit user direction, 2026-10-12 (issuecomment-6122034563)",
+        "st16_strategy_confirmation": "Strategy Rules & System Intent Owner view (agent-mediated, user-directed) endorses ESC-EXEC-20261008-01 ruling (b), 2026-10-12",
+        "merge": "left to the human developer"
       }
     },
     "EPIC-06": {
@@ -833,23 +873,25 @@
         "ST-39": {
           "title": "Mutation-test the US-market and batch-sizing paths",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1963,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "bbb4a5cf129d47ac89f1cb48eb99695daba0a836",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T10:02:23Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 TestSizePositionUSMarket (5) and TestSizeBatchInvVol (6) in the pilot test file. AC2 rerun score recorded (size_position 72.8%, size_batch_inv_vol 64.6%, trailing stop 100%, 0 timeouts). Deviation check: none; two batch defects filed earlier (BLG-BE-157/158, 4db05229). Harness nesting trap fixed in conftest + .gitignore."
         },
         "ST-40": {
           "title": "Make the ceiling/count regression tests read the source they claim to verify",
@@ -1132,23 +1174,26 @@
         "ST-30": {
           "title": "Column provenance annotations in data_model.md",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1954,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "94a14fa708b69a1cb8f0e0d7b78312c4aef0794b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T08:53:59Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#2. Positions Table",
+            "docs/specs/data_model.md#DS-04 — Trade Plan Object (v2.5, 2026-04-30)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Executed early with user approval (2026-10-09): the AC covers only positions and trade_plans, which none of ST-06/ST-17/ST-20 touch, so waiting for their columns added nothing. Findings filed: BLG-BE-159 (Trail Stop apply calls a non-existent PATCH /positions/{id}; add-position stop_price ignored), BLG-SPEC-190 (positions dictionary still says entry_price is native). Done. AC1 every positions (40) and trade_plans (35) field tagged user-entered/derived/system-stamped. AC2 mixed fields carry explicit notes; no field ambiguous. Deviation check: implementation-vs-spec mismatch (entry_price currency) corrected in data_model.md; dictionary remainder filed BLG-SPEC-190."
         },
         "ST-31": {
           "title": "Correct the TradePlan status enum in openapi.yaml",
@@ -1203,12 +1248,10 @@
     }
   },
   "blocked_items": [
-    "ST-16",
     "ST-25",
     "ST-34"
   ],
   "delegated_items": [
-    "ST-20",
     "ST-42"
   ],
   "completed_items": [
@@ -1227,8 +1270,11 @@
     "ST-13",
     "ST-14",
     "ST-15",
+    "ST-16",
+    "ST-17",
     "ST-18",
     "ST-19",
+    "ST-20",
     "ST-21",
     "ST-22",
     "ST-23",
@@ -1236,12 +1282,14 @@
     "ST-27",
     "ST-28",
     "ST-29",
+    "ST-30",
     "ST-31",
     "ST-32",
     "ST-33",
     "ST-35",
     "ST-37",
     "ST-38",
+    "ST-39",
     "ST-40",
     "ST-41",
     "ST-43"
@@ -1270,8 +1318,10 @@
     "2026-10-12T07:57:46Z — ST-02 done on the EPIC-01 copy after the staging run (DEL-20261008-01 unblocked). Summary fields recomputed from this copy's story statuses; entries for stories finished on other EPIC branches (e.g. ST-16, ST-25 on EPIC-03/04; ST-34 on EPIC-06) may read stale here until the CLAUDE.md §8 union at merge.",
     "2026-10-12T08:30:30Z: EPIC-01 merge-gate QA sign-off and PO acceptance comments posted on PR #1968, recorded by the engine on the human owner's explicit in-session direction (OA-6 labelling). Merge left to the human.",
     "2026-10-12T08:38:33Z: EPIC-01 PR #1968 merged by the human at 2026-10-12T08:36:30Z (f5a7048c); merge_gate synced on main. Orphaned post-merge commit check: none. Summary lists on main reflect EPIC-01's copy; stories finished on unmerged EPIC branches (EPIC-02/03/04/05/06) read stale here until their own merges (CLAUDE.md §8 union).",
+    "2026-10-12T08:48:18Z: main (EPIC-01 merge, PR #1968) merged into EPIC-03 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-03's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. data_model.md rebuilt with DS-27 (EPIC-01) before DS-28/DS-29, version 2.56 kept; trade_plan_endpoints.md 0.19 with both changelog rows; backlog.md item union; escalations keep EPIC-03's Resolved ESC-EXEC-20261008-01.",
     "2026-10-12T08:43:42Z: main (EPIC-01 merge, PR #1968) merged into EPIC-02 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-02's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept, never done→blocked), process_notes and test_scenarios unioned, summary fields recomputed. ai_service.py import conflict resolved as the union (EPIC-02 live_holding_days + EPIC-01 ai_sampling/ai_models); delegation_log.md takes main's Unblocked statuses and keeps DEL-20261008-04.",
-    "2026-10-12T09:32:53Z: EPIC-02 PR #1969 merged by the human at 2026-10-12T09:32:07Z (843af781); merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Summary lists on main reflect EPIC-02's copy; stories finished on unmerged EPIC branches (EPIC-03/04/05/06) read stale here until their own merges (CLAUDE.md §8 union)."
+    "2026-10-12T09:32:53Z: EPIC-02 PR #1969 merged by the human at 2026-10-12T09:32:07Z (843af781); merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Summary lists on main reflect EPIC-02's copy; stories finished on unmerged EPIC branches (EPIC-03/04/05/06) read stale here until their own merges (CLAUDE.md §8 union).",
+    "2026-10-12T09:33:31Z: main (EPIC-02 merge, PR #1969) merged into EPIC-03 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.25.1 kept with both sides' version notes; delegation_log keeps EPIC-03's Unblocked DEL-20261008-04 and DEL-20261009-01; backlog.md item union; execution_state resolved story by story, summaries recomputed."
   ],
   "sealed": false,
   "sealed_utc": null
