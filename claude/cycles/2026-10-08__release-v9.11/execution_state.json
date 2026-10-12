@@ -1010,6 +1010,12 @@
         "status": "cleared",
         "signed_utc": "2026-10-12T09:02:16Z",
         "notes": "Agent-mediated DoQ review (§5.3, user-directed): Blocked first pass (missing prompt_change_log OG v4.229–v4.231 rows; Strategy-values line uncited for ST-39/ST-41), fixes applied, Approved second pass."
+      },
+      "merge_gate_review": {
+        "pr_comment_review": "issuecomment-6124956155",
+        "follow_ups": "BLG-OPS-185 filed in faa5cc8f (P3, non-blocking)",
+        "dod_acceptance": "Director of Quality Approved + Product Owner Accepted, agent-mediated on explicit user direction, 2026-10-12, conditional on all CI checks green on the final head",
+        "merge": "left to the human developer"
       }
     },
     "EPIC-04": {
