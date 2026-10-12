@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-09 (session — 2 new item(s) added: BLG-GOV-384, BLG-SPEC-191, from ST-34, EPIC-06, v9.11); prior — 2026-10-08 (session — 2 new item(s) added: BLG-BE-157, BLG-BE-158, from ST-39, EPIC-06, v9.11); prior — 2026-10-08 (session — 1 new item added: BLG-GOV-383, from ST-35, EPIC-06, v9.11); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (session — 7 new item(s) added: BLG-BE-164, BLG-BE-165, BLG-BE-166, BLG-FE-211, BLG-FE-212, BLG-AI-11, BLG-AI-12, from the PR #1968 review, EPIC-01, v9.11); prior — 2026-10-12 (session — 1 new item added: BLG-AI-10, from EPIC-01 DoQ consolidation (ST-08), v9.11); prior — 2026-10-09 (session — 3 new item(s) added: BLG-BE-163 from the ST-02 staging run, EPIC-01; BLG-GOV-384, BLG-SPEC-191 from ST-34, EPIC-06; v9.11); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5273,5 +5273,222 @@ White 12px bold text on `bg-amber-600` measures 3.18:1 (axe `color-contrast`, se
 **Acceptance Criteria**
 - The table and the script weight exactly the same set of effort values
 - Appendix F names `roadmap_prompt.md` STEP 2.4 (v9.32) as where the effort-weighted reading is recorded; the other two sub-metrics still read proposal-only
+
+---
+
+### BLG-BE-162 — Journal summary rejects every request: trade_ids typed as integers but trade IDs are UUIDs
+**Priority:** P1 (High)
+**Type:** Backend Engineering / Correctness
+**Owner:** Backend Engineering Patterns Owner; AI Compliance & Governance Officer
+**Source:** ST-02 staging run (EPIC-01, cycle `2026-10-08__release-v9.11`), staging at `82633f5` — 2026-10-09
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.12
+
+**Problem**
+`POST /ai/journal-summary` declares `trade_ids: list[int]` (`backend/routers/ai.py`), but `trade_history.id` is a UUID, so every request from Trade History fails with HTTP 422 `int_parsing` before reaching the AI. The int assumption also runs through `fetch_journal_notes()` and the `ai_audit_log.trade_ids INTEGER[]` column, and `ai_endpoints.md` documents "array of integers". The Playwright spec (`trade-history-ai-journal-summary.spec.js`) mocks the API, so CI never exercised the real request shape.
+
+**Scope**
+- Type `trade_ids` as UUID strings in the request model, `fetch_journal_notes()` and `log_ai_run()`
+- Migrate `ai_audit_log.trade_ids` from `INTEGER[]` to `UUID[]` via the existing `ensure_*()` pattern, and record the migration in `data_model.md`
+- Update `ai_endpoints.md` and `openapi.yaml` to "array of string (UUID)"
+- Add a backend test that posts real UUID trade IDs, and check the `GET /ai/journal-summary/history?trade_id=` filter
+
+**Acceptance Criteria**
+- A journal summary requested from Trade History on staging returns generated content
+- The run is written to `ai_audit_log` with the UUID trade IDs
+- A backend test posting UUID `trade_ids` passes; integer IDs are rejected with 422
+
+---
+
+### BLG-BE-163 — Retire the unused POST /trade-plans/{plan_id}/generate-thesis endpoint
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Technical Debt
+**Owner:** Backend Engineering Patterns Owner; AI Compliance & Governance Officer
+**Source:** ST-02 staging run (EPIC-01, cycle `2026-10-08__release-v9.11`) — 2026-10-09
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.12
+
+**Problem**
+"Improve with AI" moved from `generate-thesis` to `POST /trade-plans/generate-plan` on 2026-05-25 (`f91a718a`), which fills every plan field, including the thesis, and works before the plan is saved. No UI calls `generate-thesis` now; the "Generate thesis" button is a deliberate no-model template (`trade_plan.md` §5b). The endpoint still makes paid Claude calls, carries a rate limit, audit and cost tracking, and appears in the endpoint test list, and its contract is duplicated in `ai_thesis_generation.md` and `gemini_thesis_generation.md`.
+
+**Scope**
+- Remove the route and `generate_setup_thesis()` (or keep the function only if another caller is found)
+- Remove its `openapi.yaml` path and contract section, and merge the duplicate contract files into one
+- Remove its entry from `backend/routers/test.py`, update the `SystemStatus.js` fallback count and `SC-SS-01b`
+- Update or remove the tests and golden fixtures that reference it
+- Record the retirement in `api_changelog.md`
+
+**Acceptance Criteria**
+- `POST /trade-plans/{plan_id}/generate-thesis` returns 404, and the OpenAPI drift gate passes
+- "Improve with AI" and the template "Generate thesis" button behave as before (Playwright `trade-plan.spec.js` passes)
+- One thesis-generation contract file remains, documenting `generate-plan`
+
+---
+
+### BLG-AI-10 — Check that briefing and chat responses citing a stop include its recalculation time
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** EPIC-01 DoQ consolidation (ST-08, BLG-BE-141), cycle `2026-10-08__release-v9.11` — 2026-10-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.12
+
+**Problem**
+ST-08 puts `stop_calculated_at` in the briefing and chat context and tells the model to state it whenever it cites a stop, but nothing checks the response: a reply quoting a stop without its recalculation time is returned as-is. The AC asked for responses to include the time; only the prompt side is enforced.
+
+**Scope**
+- Add a post-generation check (like the debrief numeric check) that flags a briefing/chat response citing a stop price without a recalculation time
+- Decide the action on failure (append the time from context, or log and count it), with AI Compliance & Governance Officer sign-off
+- Add the check to the boundary-sample audit so sampled outputs are scored on it
+
+**Acceptance Criteria**
+- A fixture response citing a stop without its time is caught; one with the time passes
+- The chosen failure action is applied and tested for both briefing and chat
+
+---
+
+### BLG-BE-164 — A debrief that fails compliance then errors writes two audit rows, one mislabelled
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Backend Engineering Patterns Owner; AI Compliance & Governance Officer
+**Source:** PR #1968 agent-mediated review (EPIC-01, cycle `2026-10-08__release-v9.11`) — Director of Quality finding 1 — 2026-10-12
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.12
+
+**Problem**
+In `debrief_service.generate_trade_debrief()`, if the first model attempt returns text that fails the compliance check and the second attempt raises, the exception branch writes a `model_call_failed` audit row and the later `usage_for_audit is not None` block writes a second row with `compliance_check_result=None`. One request produces two `claude_audit_log` rows, and one of them misstates the outcome.
+
+**Scope**
+- In the exception branch, set the result to `model_call_failed` or clear `usage_for_audit`, so each request writes exactly one row
+- Add a test for the fail-then-raise sequence
+
+**Acceptance Criteria**
+- A fail-then-raise debrief writes exactly one audit row, marked `model_call_failed`
+- Existing debrief audit tests still pass
+
+---
+
+### BLG-BE-165 — Stop recalculation times in briefing and chat are labelled UTC without being converted
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Backend Engineering Patterns Owner
+**Source:** PR #1968 agent-mediated review (EPIC-01, cycle `2026-10-08__release-v9.11`) — Director of Quality finding 3 — 2026-10-12
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.12
+
+**Problem**
+`ai_service.py`'s stop-time formatter (added by ST-08) prints `stop_calculated_at` with a literal "UTC" suffix but never converts it. The column is TIMESTAMPTZ and psycopg returns it in the database session's timezone, so the time shown to the model, and quoted to the user, can be off by the session offset.
+
+**Scope**
+- Convert timezone-aware values with `astimezone(timezone.utc)` before formatting; treat naive values as UTC explicitly
+- Add tests for a non-UTC aware timestamp and a naive one
+
+**Acceptance Criteria**
+- A `stop_calculated_at` of `2026-10-12 09:00+01:00` is rendered as `2026-10-12 08:00 UTC`
+- Existing ST-08 tests still pass
+
+---
+
+### BLG-BE-166 — Run the claude_audit_log column checks once per process, not on every insert
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Performance
+**Owner:** Backend Engineering Patterns Owner; Data Model & Domain Schema Owner
+**Source:** PR #1968 agent-mediated review (EPIC-01, cycle `2026-10-08__release-v9.11`) — Director of Quality finding 4 — 2026-10-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.12
+
+**Problem**
+`create_claude_audit_entry()` now runs four `ensure_*` DDL calls before every insert (`database.py`), extending the ensure-on-every-insert pattern. Each `ALTER TABLE … ADD COLUMN IF NOT EXISTS` opens its own connection and takes an ACCESS EXCLUSIVE lock even when it changes nothing, on every AI call. DS-27 is now applied live, so the per-insert check buys nothing.
+
+**Scope**
+- Skip the ensure calls after the first success in each process, with a module-level flag
+- Check other `ensure_*`-before-insert call sites for the same pattern and list them
+
+**Acceptance Criteria**
+- A second audit insert in the same process runs no DDL (asserted by a test)
+- The first insert still adds missing columns
+
+---
+
+### BLG-FE-211 — Debrief Regenerate leaves the card blank when a successful response has no data
+**Priority:** P3 (Low)
+**Type:** Frontend / Correctness
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** PR #1968 agent-mediated review (EPIC-01, cycle `2026-10-08__release-v9.11`) — Director of Quality finding 5 — 2026-10-12
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.12
+
+**Problem**
+`TradeDebrief.js`'s Regenerate `onSuccess` writes `{ status: "found", data: newDebrief }` straight into the query cache. If a 2xx response carries no `data`, the cache holds `data: undefined` and neither the debrief nor the empty state renders, so the user sees a blank card.
+
+**Scope**
+- Only write to the cache when `newDebrief` is present; otherwise invalidate the query
+- Add a Playwright scenario mocking a 200 with no `data`
+
+**Acceptance Criteria**
+- Playwright: a mocked 200 with no `data` leaves the previous debrief (or the empty state) visible
+- SC-DBF-06a/07a/08a still pass
+
+---
+
+### BLG-FE-212 — Check the debrief error text's colour contrast in light theme
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Head of UX & Design; Frontend Specifications & UX Documentation Owner
+**Source:** PR #1968 agent-mediated review (EPIC-01, cycle `2026-10-08__release-v9.11`) — Product Owner note 4 — 2026-10-12
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.12
+
+**Problem**
+The debrief failure messages in `TradeDebrief.js` use `text-rose-400` with no light-theme variant. SC-DBF-06a's axe scan only covers the normal state, so the error text's contrast in light theme has never been checked, and rose-400 on a light background is likely below 4.5:1.
+
+**Scope**
+- Give the error text a light-theme colour (e.g. `text-rose-600 dark:text-rose-400`)
+- Extend the axe scan to the error state in both themes
+
+**Acceptance Criteria**
+- Playwright: the axe scan of the debrief section in its error state reports no colour-contrast violations in either theme
+
+---
+
+### BLG-AI-11 — Daily briefing can recommend ENTER for a ticker that does not exist
+**Priority:** P2 (Medium)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** ST-02 staging run (2026-10-09) and PR #1968 agent-mediated review (EPIC-01, cycle `2026-10-08__release-v9.11`) — Product Owner note 3 — 2026-10-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.12
+
+**Problem**
+On staging, with only held tickers among the top signals, the daily briefing returned an ENTER action for the placeholder ticker `NEW_SIGNAL`. Nothing in the prompt forbids invented tickers and nothing checks the returned actions against the signals the model was given. An advisory feature recommending a ticker that does not exist undermines trust.
+
+**Scope**
+- Validate each returned action's ticker against held positions and the provided signals; drop or relabel any that match neither, and log it
+- Tell the prompt that actions may only name tickers from the context, and bump `BRIEFING_PROMPT_VERSION`
+
+**Acceptance Criteria**
+- A fixture briefing response with an ENTER for an unknown ticker is not returned as an action, and the drop is logged
+- Golden-fixture tests pass with the recorded prompt-version bump
+
+---
+
+### BLG-AI-12 — Daily briefing reads starting cash as a target cash level
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** ST-02 staging run (2026-10-09) and PR #1968 agent-mediated review (EPIC-01, cycle `2026-10-08__release-v9.11`) — Product Owner note 3 — 2026-10-12
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.12
+
+**Problem**
+The briefing context renders cash as "cash £X of £{initial_cash}". On staging `initial_cash` is 0, and the model reported "£15,006 against a £0 target cash level", treating starting capital as a target. The wording invites that reading whatever the value.
+
+**Scope**
+- Label the figures explicitly (e.g. "available cash £X; starting capital £Y"), and omit starting capital when it is 0 or missing
+- Bump `BRIEFING_PROMPT_VERSION` and update the golden fixture
+
+**Acceptance Criteria**
+- The briefing context no longer uses "of £{initial_cash}", and omits starting capital when it is 0
+- Golden-fixture tests pass with the recorded prompt-version bump
 
 ---

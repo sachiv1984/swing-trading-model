@@ -2695,6 +2695,26 @@ def ensure_claude_audit_log_latency_column() -> None:
         conn.commit()
 
 
+def ensure_claude_audit_log_prompt_hash_columns() -> None:
+    """Add prompt_hash and response_length to claude_audit_log (idempotent).
+    ST-06 (BLG-AI-08, EPIC-01, v9.11, DS-27): AI governance policy requires a
+    prompt hash and the response length on every logged AI response.
+    `prompt_hash` is the SHA-256 of the system prompt plus the user message,
+    truncated to 16 hex characters (non-reversible, same form as
+    gemini_audit_log.input_hash). `response_length` is the response text
+    length in characters. Both nullable; earlier rows and callers that do
+    not pass them are unaffected."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE claude_audit_log ADD COLUMN IF NOT EXISTS prompt_hash VARCHAR(16)"
+            )
+            cur.execute(
+                "ALTER TABLE claude_audit_log ADD COLUMN IF NOT EXISTS response_length INTEGER"
+            )
+        conn.commit()
+
+
 def create_claude_audit_entry(
     endpoint: str,
     model_id: str,
@@ -2704,21 +2724,29 @@ def create_claude_audit_entry(
     cost_usd: float | None = None,
     compliance_check_result: str | None = None,
     latency_ms: int | None = None,
+    prompt_hash: str | None = None,
+    response_length: int | None = None,
 ) -> None:
-    """Insert one row into claude_audit_log. Non-blocking on failure."""
+    """Insert one row into claude_audit_log. Non-blocking on failure.
+
+    A model call that failed is logged with compliance_check_result =
+    'model_call_failed' (ST-06, BLG-AI-08, v9.11)."""
     try:
         ensure_claude_audit_log_table()
         ensure_claude_audit_log_compliance_check_column()
         ensure_claude_audit_log_latency_column()
+        ensure_claude_audit_log_prompt_hash_columns()
         with get_db() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
                     INSERT INTO claude_audit_log
-                        (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, compliance_check_result, latency_ms)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                        (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd,
+                         compliance_check_result, latency_ms, prompt_hash, response_length)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """,
-                    (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, compliance_check_result, latency_ms),
+                    (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd,
+                     compliance_check_result, latency_ms, prompt_hash, response_length),
                 )
             conn.commit()
     except Exception as e:
