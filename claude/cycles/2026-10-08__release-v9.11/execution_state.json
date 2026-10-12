@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-12T08:21:40Z",
+  "last_updated_utc": "2026-10-12T08:30:30Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -281,6 +281,13 @@
         "status": "cleared",
         "signed_utc": "2026-10-12T08:10:19Z",
         "notes": "Agent-mediated DoQ review (§5.3, user-directed): Approved on first pass with 6 non-blocking findings, applied in this commit. BLG-BE-162 ruled a pre-existing P1 defect found and filed by ST-02, not an EPIC-01 deviation; Phase 4 §7 P1 acceptance still to be recorded in verification_report.md."
+      },
+      "merge_gate_record": {
+        "qa_signoff_comment": "https://github.com/sachiv1984/swing-trading-model/pull/1968#issuecomment-6120608649",
+        "po_acceptance_comment": "https://github.com/sachiv1984/swing-trading-model/pull/1968#issuecomment-6120608988",
+        "method": "agent_recorded_on_explicit_human_direction",
+        "recorded_utc": "2026-10-12T08:30:30Z",
+        "merge": "human (pending)"
       }
     },
     "EPIC-02": {
@@ -1097,7 +1104,8 @@
   },
   "process_notes": [
     "2026-10-08: ST-06 blocked_since_utc and DEL-20261008-03 'Delegated at' were first written as 2026-10-08T12:20:00Z, an estimate, not the real time (BLG-GOV-309). Corrected the same session to 2026-10-08T11:18:41Z (the delegation commit 5c753cbc's authored time). This is the only edit made to an earlier delegation_log.md entry, and it corrects a factual value in an entry written minutes earlier.",
-    "2026-10-12T07:57:46Z — ST-02 done on the EPIC-01 copy after the staging run (DEL-20261008-01 unblocked). Summary fields recomputed from this copy's story statuses; entries for stories finished on other EPIC branches (e.g. ST-16, ST-25 on EPIC-03/04; ST-34 on EPIC-06) may read stale here until the CLAUDE.md §8 union at merge."
+    "2026-10-12T07:57:46Z — ST-02 done on the EPIC-01 copy after the staging run (DEL-20261008-01 unblocked). Summary fields recomputed from this copy's story statuses; entries for stories finished on other EPIC branches (e.g. ST-16, ST-25 on EPIC-03/04; ST-34 on EPIC-06) may read stale here until the CLAUDE.md §8 union at merge.",
+    "2026-10-12T08:30:30Z: EPIC-01 merge-gate QA sign-off and PO acceptance comments posted on PR #1968, recorded by the engine on the human owner's explicit in-session direction (OA-6 labelling). Merge left to the human."
   ],
   "sealed": false,
   "sealed_utc": null
