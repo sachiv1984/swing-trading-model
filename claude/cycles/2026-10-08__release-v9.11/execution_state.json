@@ -471,10 +471,10 @@
       "merge_commit": "843af781"
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
       "pr_number": 1970,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -493,7 +493,7 @@
         "ST-16": {
           "title": "Rule on and test stop recalculation during grace",
           "classification": "delegated_decision",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Strategy Rules & System Intent Owner; Head of Engineering",
           "github_issue": 1940,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
@@ -525,7 +525,7 @@
         "ST-17": {
           "title": "Snapshot the strategy parameters in force onto each closed trade",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Financial Reporting & Records Owner; Data Model & Domain Schema Owner",
           "github_issue": 1941,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
@@ -555,7 +555,7 @@
         "ST-18": {
           "title": "Post-deploy synthetic check for post-grace stops and §11 multipliers",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1942,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
@@ -580,7 +580,7 @@
         "ST-19": {
           "title": "Read-only market-regime source, so viewing regime no longer runs the stop-writing analyze call",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1943,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
@@ -605,7 +605,7 @@
         "ST-20": {
           "title": "DB-level unique constraint for active price alerts",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Data Model & Domain Schema Owner; Infrastructure & Operations Owner",
           "github_issue": 1944,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
@@ -635,7 +635,7 @@
         "ST-21": {
           "title": "Make the anomaly-check fingerprint-clear path respect send_alert, or document why not",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1945,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
@@ -659,7 +659,7 @@
         "ST-22": {
           "title": "Guard POST /trade-plans against a double-submitted duplicate plan",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1946,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-03",
@@ -694,7 +694,9 @@
         "dod_acceptance": "Director of Quality Approved + Product Owner Accepted, agent-mediated on explicit user direction, 2026-10-12 (issuecomment-6122034563)",
         "st16_strategy_confirmation": "Strategy Rules & System Intent Owner view (agent-mediated, user-directed) endorses ESC-EXEC-20261008-01 ruling (b), 2026-10-12",
         "merge": "left to the human developer"
-      }
+      },
+      "merged_utc": "2026-10-12T12:58:26Z",
+      "merge_commit": "e07d2a04"
     },
     "EPIC-06": {
       "status": "in_progress",
@@ -1302,10 +1304,10 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
-      "EPIC-02"
+      "EPIC-02",
+      "EPIC-03"
     ],
     "epics_pending": [
-      "EPIC-03",
       "EPIC-06",
       "EPIC-04",
       "EPIC-05"
@@ -1321,7 +1323,8 @@
     "2026-10-12T08:48:18Z: main (EPIC-01 merge, PR #1968) merged into EPIC-03 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-03's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. data_model.md rebuilt with DS-27 (EPIC-01) before DS-28/DS-29, version 2.56 kept; trade_plan_endpoints.md 0.19 with both changelog rows; backlog.md item union; escalations keep EPIC-03's Resolved ESC-EXEC-20261008-01.",
     "2026-10-12T08:43:42Z: main (EPIC-01 merge, PR #1968) merged into EPIC-02 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-02's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept, never done→blocked), process_notes and test_scenarios unioned, summary fields recomputed. ai_service.py import conflict resolved as the union (EPIC-02 live_holding_days + EPIC-01 ai_sampling/ai_models); delegation_log.md takes main's Unblocked statuses and keeps DEL-20261008-04.",
     "2026-10-12T09:32:53Z: EPIC-02 PR #1969 merged by the human at 2026-10-12T09:32:07Z (843af781); merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Summary lists on main reflect EPIC-02's copy; stories finished on unmerged EPIC branches (EPIC-03/04/05/06) read stale here until their own merges (CLAUDE.md §8 union).",
-    "2026-10-12T09:33:31Z: main (EPIC-02 merge, PR #1969) merged into EPIC-03 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.25.1 kept with both sides' version notes; delegation_log keeps EPIC-03's Unblocked DEL-20261008-04 and DEL-20261009-01; backlog.md item union; execution_state resolved story by story, summaries recomputed."
+    "2026-10-12T09:33:31Z: main (EPIC-02 merge, PR #1969) merged into EPIC-03 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.25.1 kept with both sides' version notes; delegation_log keeps EPIC-03's Unblocked DEL-20261008-04 and DEL-20261009-01; backlog.md item union; execution_state resolved story by story, summaries recomputed.",
+    "2026-10-12: EPIC-03 PR #1970 merged by the human developer at 2026-10-12T12:58:26Z (e07d2a04), after the agent-mediated DoQ/PO acceptance given on user direction. Orphaned post-merge commit check: none."
   ],
   "sealed": false,
   "sealed_utc": null
