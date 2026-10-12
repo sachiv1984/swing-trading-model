@@ -34,3 +34,15 @@ Per-story entries are added as stories close; the EPIC-level consolidation block
 - **Daily briefing quality notes (not AC failures, not filed):** (a) the prompt renders cash as "cash £X of £{initial_cash}"; staging's `initial_cash` is 0, so the model reported "£15,006 against a £0 target cash level"; (b) with only held tickers among the top signals, the model emitted an ENTER action for the placeholder ticker `NEW_SIGNAL` — the prompt does not forbid invented tickers.
 - **Deviations:** DEL-20261008-01's instruction to opt in "in Settings" was wrong — sampling is enabled by `AI_OUTPUT_SAMPLING_ENABLED` on the backend (`ai_output_sampling_service.py`); corrected in `delegation_log.md`. No code deviation.
 - **QA findings / disposition:** _(Director of Quality — at EPIC-01 DoQ consolidation)_
+
+---
+
+## ST-06 — claude_audit_log: add prompt_hash and response_length, and log failed model calls
+
+- **Spec references:** `stage4_backlog_slice.md#ST-06`; `docs/specs/data_model.md#DS-27`; `docs/ops/claude_api_log_hygiene_policy.md`; `tests/test_claude_audit_log_prompt_hash.py`
+- **Acceptance criteria** (`stage4_backlog_slice.md#ST-06`):
+  - AC1: successful briefing and chat calls write `prompt_hash` and `response_length`, with unit tests for both endpoints — **Met**, code commit `5c753cbc`; `tests/test_claude_audit_log_prompt_hash.py` 8 passed (re-run 2026-10-12).
+  - AC2: a failed model call writes an audit row marked as failed (`model_call_failed`) — **Met**, same commit and test file.
+  - AC3: migration recorded in `data_model.md` and applied live, with verification output; hygiene policy amended — **Met**. DS-27 recorded in `data_model.md` (v2.53) and `claude_api_log_hygiene_policy.md` amended in `5c753cbc`. Applied live on 2026-10-12 by the user (human, with live write access, acting for the Data Model & Domain Schema Owner, DEL-20261008-03): staging, then production. Verification output, identical in both environments: `prompt_hash` `character varying` 16 `YES`; `response_length` `integer` `NULL` `YES`. Recorded in `data_model.md` DS-27 Live Confirmation.
+- **Deviations:** none.
+- **QA findings / disposition:** _(Director of Quality — at EPIC-01 DoQ consolidation)_

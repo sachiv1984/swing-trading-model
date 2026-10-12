@@ -4,7 +4,7 @@
 **Class:** Class 1
 **Status:** Canonical
 **Version:** 2.53
-**Last Updated:** 2026-10-08 (ST-06, EPIC-01, v9.11, BLG-AI-08 — DS-27: claude_audit_log gains prompt_hash and response_length; failed model calls logged as model_call_failed); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior — 2026-10-06 (ST-05, EPIC-01, v9.10, BLG-BE-137 — DS-11 states the behaviour-only registry coverage rule); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (ST-06, EPIC-01, v9.11 — DS-27 confirmed applied live on staging and production); prior — 2026-10-08 (ST-06, EPIC-01, v9.11, BLG-AI-08 — DS-27: claude_audit_log gains prompt_hash and response_length; failed model calls logged as model_call_failed); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — Position Lifecycle diagram follows strategy_rules.md §9 and the ST-12 grace-first order; ±0.5 ATR bands removed); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -2735,7 +2735,7 @@ Expect 1 row: `stop_calculation_source`, `character varying`, `10`, `YES`.
 - `response_length` — the response text length in characters. Written on successful briefing and chat calls.
 - **Failed calls:** a model call that raises after retries now writes a row with `compliance_check_result = 'model_call_failed'` (no token or cost values), from the briefing, chat and debrief paths. No new column is needed for the marker.
 
-**RISK (no live DB write access in this execution environment):** the sandbox `DATABASE_URL` is staging and read-only. `create_claude_audit_entry()` runs `ensure_claude_audit_log_prompt_hash_columns()` before each insert, so the app adds the columns itself where its role may run DDL. The audit write is non-blocking either way (a failed insert logs a warning and never fails the AI response). The Up Migration is still applied explicitly to **staging and production** by the Data Model & Domain Schema Owner, with verification output (ST-06 AC 3). **Status: PENDING LIVE APPLICATION** (`DEL-20261008-03`).
+**RISK (no live DB write access in this execution environment):** the sandbox `DATABASE_URL` is staging and read-only. `create_claude_audit_entry()` runs `ensure_claude_audit_log_prompt_hash_columns()` before each insert, so the app adds the columns itself where its role may run DDL. The audit write is non-blocking either way (a failed insert logs a warning and never fails the AI response). The Up Migration is still applied explicitly to **staging and production** by the Data Model & Domain Schema Owner, with verification output (ST-06 AC 3). **Status: CONFIRMED APPLIED, 2026-10-12** (staging and production; see Live Confirmation below).
 
 ### Up Migration (v2.52 → v2.53)
 
@@ -2765,10 +2765,20 @@ ORDER BY column_name;
 Expect 2 rows: `prompt_hash`, `character varying`, `16`, `YES`; `response_length`, `integer`, `NULL`, `YES`.
 
 **Sign-off:**
-- Data Model & Domain Schema Owner: migration content is additive, nullable and reversible; no pre-check needed. Live application pending (`DEL-20261008-03`).
+- Data Model & Domain Schema Owner: migration content is additive, nullable and reversible; no pre-check needed. Applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner).
+- **Live Confirmation, applied 2026-10-12:** the Up Migration was run on staging, then production. The Verification query was then run in each environment, and the output was pasted into the execution session. Both environments returned identical results:
+
+```json
+[
+  {"column_name": "prompt_hash", "data_type": "character varying", "character_maximum_length": 16, "is_nullable": "YES"},
+  {"column_name": "response_length", "data_type": "integer", "character_maximum_length": null, "is_nullable": "YES"}
+]
+```
+
+`DEL-20261008-03` unblocked in-session.
 
 ---
 
 **Document Version:** 2.53
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-08 (ST-06, EPIC-01, v9.11, BLG-AI-08 — DS-27 claude_audit_log prompt_hash/response_length; footer brought level with the header); prior — 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — DS-26 stop_calculation_source; header/footer version kept in sync); prior history retained — see prior entries in version control.
+**Last Review:** 2026-10-12 (DS-27 live confirmation recorded); prior — 2026-10-08 (ST-06, EPIC-01, v9.11, BLG-AI-08 — DS-27 claude_audit_log prompt_hash/response_length; footer brought level with the header); prior — 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior history retained — see prior entries in version control.

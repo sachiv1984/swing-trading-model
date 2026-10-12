@@ -63,4 +63,4 @@ Last Updated: 2026-10-12
 - **Spec reference:** `docs/specs/data_model.md#DS-27`; `stage4_backlog_slice.md#ST-06` AC 3
 - **Unblock criteria:** Both verification outputs recorded in `data_model.md` DS-27 (Live Confirmation) and in `qa_evidence_EPIC-01.md` under ST-06. The code is already on the branch: `create_claude_audit_entry()` also adds the columns idempotently, and the audit write never blocks an AI response, so deploy order is not a hard risk.
 - **Commit format required:** `[EPIC-01][ST-06] <description>` pushed to `exec/2026-10-08__release-v9.11/EPIC-01`
-- **Status:** Pending
+- **Status:** Unblocked — 2026-10-12. Unblocked in-session: the user (human, with live write access, acting for the Data Model & Domain Schema Owner) applied the DS-27 Up Migration on staging, then production. The Verification query returned the 2 expected nullable columns (`prompt_hash` character varying(16), `response_length` integer) in both environments. Recorded in `data_model.md` DS-27 Live Confirmation and `qa_evidence_EPIC-01.md` under ST-06.
