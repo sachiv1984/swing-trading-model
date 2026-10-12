@@ -172,7 +172,7 @@ class DailyBriefingResponse(BaseModel):
 @router.post("/daily-briefing", response_model=DailyBriefingResponse)
 def daily_briefing(request: Request):
     """
-    Assemble live portfolio context and call claude-sonnet-4-6 to produce a
+    Assemble live portfolio context and call the briefing model (ai_models.CLAUDE_SONNET_4_6) to produce a
     plain-English daily briefing with an ordered action list.
     Advisory-only — SRB-v1.7. Not integrated with trade execution.
     Rate limit: 10 requests/minute/IP. Contract: docs/specs/api_contracts/ai_endpoints.md v1.5
