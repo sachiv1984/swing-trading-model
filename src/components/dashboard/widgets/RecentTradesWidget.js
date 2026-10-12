@@ -3,6 +3,13 @@ import { Activity, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import { formatCurrency } from "../../../lib/format";
 
+// ST-15 (EPIC-02, v9.11, BLG-FE-204): the glyph, badge and text colour test the
+// P&L as displayed (rounded to 2 dp), so 0.004 -> "£0.00" is break-even, not a
+// winner (dashboard.md §4 Card 5; design_system.md v1.21 zero rule).
+function displayedPnl(trade) {
+  return Math.round((Number(trade.pnl) || 0) * 100) / 100;
+}
+
 export default function RecentTradesWidget({ positions }) {
   const recentTrades = positions
     ?.filter(p => p.status === "closed")
@@ -35,16 +42,16 @@ export default function RecentTradesWidget({ positions }) {
                   data-testid={`recent-trade-badge-${trade.id}`}
                   className={cn(
                     "p-2 rounded-lg",
-                    (trade.pnl || 0) > 0
+                    displayedPnl(trade) > 0
                       ? "bg-emerald-500/20 text-emerald-400"
-                      : (trade.pnl || 0) < 0
+                      : displayedPnl(trade) < 0
                         ? "bg-rose-500/20 text-rose-400"
                         : "bg-slate-500/20 text-slate-300"
                   )}
                 >
-                  {(trade.pnl || 0) > 0 ? (
+                  {displayedPnl(trade) > 0 ? (
                     <TrendingUp className="w-4 h-4" data-testid="recent-trade-glyph-up" aria-hidden="true" />
-                  ) : (trade.pnl || 0) < 0 ? (
+                  ) : displayedPnl(trade) < 0 ? (
                     <TrendingDown className="w-4 h-4" data-testid="recent-trade-glyph-down" aria-hidden="true" />
                   ) : (
                     <Minus className="w-4 h-4" data-testid="recent-trade-glyph-neutral" aria-hidden="true" />
@@ -58,7 +65,7 @@ export default function RecentTradesWidget({ positions }) {
               <div className="text-right">
                 <p className={cn(
                   "font-semibold",
-                  (trade.pnl || 0) > 0 ? "text-emerald-400" : (trade.pnl || 0) < 0 ? "text-rose-400" : "text-slate-300"
+                  displayedPnl(trade) > 0 ? "text-emerald-400" : displayedPnl(trade) < 0 ? "text-rose-400" : "text-slate-300"
                 )}>
                   {formatCurrency(trade.pnl || 0, { signed: true })}
                 </p>

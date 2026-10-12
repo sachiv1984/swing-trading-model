@@ -26,6 +26,7 @@ from database import (
 from utils.pricing import get_current_price, get_live_fx_rate, check_market_regime
 from services.grace_service import compute_grace_days_remaining
 from strategy_parameters import GRACE_PERIOD_DAYS
+from utils.calculations import live_holding_days
 from utils.formatting import decimal_to_float
 from utils.position_lifecycle_states import GRACE, PROFITABLE, LOSING
 
@@ -112,17 +113,18 @@ def get_portfolio_summary() -> Dict:
                     live_price = live_price / 100
                     print(f"   ✓ Converted {pos['ticker']} from pence to pounds: {live_price}")
                 current_price_native = live_price
+                price_is_stale = False
                 print(f"   ✓ Live price: {current_price_native:.2f}")
             else:
-                # Fallback to stored price
-                print(f"   ⚠️  Using stored price for {pos['ticker']}")
-                stored_price = pos.get('current_price', pos['entry_price'])
-                if pos['market'] == 'US' and stored_price < 500:
-                    # Appears to be GBP, convert back to USD estimate
-                    current_price_native = stored_price * 1.38
-                    print(f"   ⚠️  Stored price appears to be GBP, estimated USD: {current_price_native:.2f}")
-                else:
-                    current_price_native = stored_price
+                # ST-10 (BLG-BE-154, v9.11): fall back to the stored price, which
+                # positions.current_price holds in native currency (data_model.md),
+                # then the native entry price. No FX guess: the previous fallback
+                # treated a US price below 500 as GBP and multiplied it by a
+                # hard-coded constant. The position is flagged price_is_stale.
+                print(f"   ⚠️  Live price unavailable for {pos['ticker']}; using stored native price")
+                native_entry = (pos.get('fill_price') or pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
+                current_price_native = pos.get('current_price') or native_entry
+                price_is_stale = True
 
             shares = pos['shares']
             market = pos['market']
@@ -149,16 +151,28 @@ def get_portfolio_summary() -> Dict:
 
             pnl_pct = ((current_price_native - entry_price) / entry_price) * 100 if entry_price > 0 else 0
 
+            # ST-13 (BLG-BE-155, v9.11): stop distance in native currency, so it moves
+            # with price, not FX. The GBP figures below mix the entry FX (stop) and
+            # the live FX (price), which skewed the browser-derived percentage for
+            # US positions. Null when there is no price or no stop.
+            stop_native = float(pos.get("current_stop") or 0)
+            if current_price_native and stop_native > 0:
+                stop_distance_pct = round((current_price_native - stop_native) / current_price_native * 100, 2)
+            else:
+                stop_distance_pct = None
+
             # Convert entry_price and current_stop to GBP for display
             # Spec: risk_dashboard.md §6.2 — all price columns in GBP
             if market == 'US':
                 entry_price_gbp = round(entry_price / stored_fx_rate, 2)
-                current_stop_gbp = round(pos.get("current_stop", 0) / stored_fx_rate, 2)
+                current_stop_gbp = round(stop_native / stored_fx_rate, 2)
             else:
                 entry_price_gbp = round(entry_price, 2)
-                current_stop_gbp = round(pos.get("current_stop", 0), 2)
+                current_stop_gbp = round(stop_native, 2)
 
-            holding_days = pos.get('holding_days', 0)
+            # ST-12 (BLG-BE-153, v9.11): live calendar days from entry_date, not the
+            # stored column, which lags until the next stop recompute writes it.
+            holding_days = live_holding_days(pos)
 
             if holding_days < GRACE_PERIOD_DAYS:
                 display_status = GRACE
@@ -213,6 +227,11 @@ def get_portfolio_summary() -> Dict:
                 "grace_period": grace_period,
                 "grace_days_remaining": grace_days_remaining,
                 "live_fx_rate": live_fx_rate,
+                # ST-10 (BLG-BE-154, v9.11): true when the live price fetch failed
+                # and current_price is the last stored native price at today's FX.
+                "price_is_stale": price_is_stale,
+                # ST-13 (BLG-BE-155, v9.11): native-currency stop distance, %.
+                "stop_distance_pct": stop_distance_pct,
             })
 
         total_value = cash + total_positions_value_gbp
