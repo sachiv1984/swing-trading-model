@@ -356,8 +356,12 @@ class TestDisplayStatus(unittest.TestCase):
 
     def _call_with_holding_days(self, holding_days, pnl_positive=True):
         live_price = 6.00 if pnl_positive else 4.00
+        # ST-12 (BLG-BE-153, v9.11): GET /portfolio derives holding_days from
+        # entry_date, so the entry date must match the days under test.
+        from datetime import date, timedelta
         pos = _uk_position(entry_price=5.00, fill_price=5.00,
-                           holding_days=holding_days)
+                           holding_days=holding_days,
+                           entry_date=(date.today() - timedelta(days=holding_days)).isoformat())
         with patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO), \
              patch(PATCH_GET_POSITIONS, return_value=[pos]), \
              patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27), \

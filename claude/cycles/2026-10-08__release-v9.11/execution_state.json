@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-12T08:38:33Z",
+  "last_updated_utc": "2026-10-12T09:32:53Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -291,11 +291,11 @@
       }
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "merged",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1969,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-02.md",
       "test_scenarios": [
         "tests/test_portfolio_price_integrity.py",
@@ -310,7 +310,7 @@
         "ST-10": {
           "title": "Remove the hard-coded ×1.38 US price fallback from GET /portfolio, and flag stale prices",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1934,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
@@ -336,7 +336,7 @@
         "ST-11": {
           "title": "Position Risk table: GBP entry prices, and grace-period stops shown as not enforced",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1935,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
@@ -361,7 +361,7 @@
         "ST-12": {
           "title": "GET /portfolio computes holding_days live from entry_date",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1936,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
@@ -386,7 +386,7 @@
         "ST-13": {
           "title": "Stop Dist % computed in native currency for US positions",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1937,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
@@ -412,7 +412,7 @@
         "ST-14": {
           "title": "Grace alert filter and \"Day N of 10\" label use calendar days since entry",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1938,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
@@ -433,12 +433,12 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC1 unit tests/test_grace_alert_calendar_days.py + Playwright SC-GP-04 (Day 9 of 10, 2 days left) and SC-GP-05 (Day 10 of 10 ended, design-gate assertion). AC2 no grace reading uses days_in_state (Positions.js alert + suppression, PositionCard.js); grace_period_alert_endpoint.md 1.2.0; positions.md §Grace Period Alert Zone (design gate) + data-source row. ci_pending: 37783382571. Deviation check: none."
+          "notes": "Done. AC1 unit tests/test_grace_alert_calendar_days.py + Playwright SC-GP-04 (Day 9 of 10, 2 days left) and SC-GP-05 (Day 10 of 10 ended, design-gate assertion). AC2 no grace reading uses days_in_state (Positions.js alert + suppression, PositionCard.js); grace_period_alert_endpoint.md 1.2.0; positions.md §Grace Period Alert Zone (design gate) + data-source row. Playwright CI success: run 37783382571. Deviation check: none."
         },
         "ST-15": {
           "title": "Recent Trades glyph treats a P&L that rounds to £0.00 as break-even",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1939,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
@@ -457,9 +457,18 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC: SC-RTB-06 (0.004 -> neutral glyph and colour; 0.01 -> up arrow) in tests/e2e/recent-trades-zero-pnl-badge.spec.js, passing locally. ci_pending: 37783658772. Deviation check: none."
+          "notes": "Done. AC: SC-RTB-06 (0.004 -> neutral glyph and colour; 0.01 -> up arrow) in tests/e2e/recent-trades-zero-pnl-badge.spec.js, passing locally. Playwright CI success: run 37783658772. Deviation check: none."
         }
-      }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "signed_utc": "2026-10-12T08:51:24Z",
+        "notes": "Agent-mediated DoQ review (§5.3, user-directed): Approved on first pass with 3 non-blocking findings (ST-13/ST-14 Strategy-values citations, merged-head CI evidence), applied in this commit."
+      },
+      "merged_utc": "2026-10-12T09:32:07Z",
+      "merge_commit": "843af781"
     },
     "EPIC-03": {
       "status": "in_progress",
@@ -654,28 +663,47 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-06.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "backend/mutmut_pilot_tests/test_pilot.py",
+        "tests/test_motion_timing_500ms_ceiling_regression.py",
+        "tests/test_toast_notification_timing_regression.py",
+        "tests/e2e/reports-performance-tab.spec.js",
+        "tests/e2e/accessibility-axe-scan.spec.js",
+        "tests/e2e/replay-mode.spec.js",
+        "tests/test_non_registry_dependency_check.py",
+        "tests/test_check_sprint_backlog_owners.py"
+      ],
       "stories": {
         "ST-33": {
           "title": "Write-time check that sprint_backlog.md Owner values use canonical role names",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1957,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "dbcf6e58fb4ed3ad4bcb97201c28180a3415c48b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T08:28:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_sprint_backlog_owners.py",
+            "claude/system/shared_standards.md#16.11 sprint_backlog.md Schema",
+            "tests/test_check_sprint_backlog_owners.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "cleared_utc": "2026-10-09T08:28:00Z",
+            "notes": "Approved. AC1 ruling (c): v9.10's sealed sprint_backlog.md carries 10 parenthetical-qualifier Owner values (one also uses 'and' instead of '; ') written after the §16.11 rule landed; the strict check correctly reports them. AC1's 'all v9.10 Owner values pass' clause is narrowed to 'v9.10 qualifier values are reported as non-compliant'; record as Pass_with_deviation with this ruling as the record, no remainder. Rejected (a) weaken check (contradicts §16.11) and (b) edit sealed record. AC2 met; §6 checklist verified line-by-line (OG 4.231)."
+          },
+          "notes": "Done — Pass_with_deviation per Head of Specs Team ruling (c): AC1 negative half met; 'all v9.10 Owner values pass' narrowed (10 v9.10 sealed qualifier values correctly reported, no remainder). AC2 met. Deviation check: AC narrowing recorded via the ruling, no spec deviation."
         },
         "ST-34": {
           "title": "Give the effort-weighted PVR column its home in product_value_ratio_history.md",
@@ -690,97 +718,117 @@
           "unblock_criteria": "See ESC-EXEC-20261008-03 unblock criteria",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "claude/roadmap/product_value_ratio_history.md#History",
+            "docs/specs/metrics_definitions.md#PVR Measurement Package — Effort-Weighted PVR, User-Protective/Hygiene D-Split, Leading U-Pool Indicator (ST-31, EPIC-06, v9.8, BLG-GOV-339)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "AC1_committed",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 done (named-file write, §7 rule case (a)): product_value_ratio_history.md ## History gains the effort-weighted ratio, 5 windows backfilled from metrics_definitions.md Appendix F (scripts/compute_effort_weighted_pvr.py reproduces all 5). AC2 (roadmap_prompt.md STEP 2.4) still blocked on BLG-GOV-339 sign-off (ESC-EXEC-20261008-03)."
         },
         "ST-35": {
           "title": "§13 sign-off ACs must cite every §13 clause that names the feature's subject",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1959,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "c299a1cee709194992c4477af93c8943b0408aaf",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T08:24:42Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/release_planning_prompt.md#STEP 4 — Backlog Slice (commitment)",
+            "claude/system/design_gate_prompt.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "cleared_utc": "2026-10-09T08:24:42Z",
+            "notes": "Owning prompt confirmed: release_planning_prompt.md STEP 4 (slice ACs authored and sealed there; v6.9 defect was in slice AC wording); design_gate_prompt.md pointer correct secondary placement. Worked-example facts verified against decision record :33/:35/:161 and strategy_rules.md:502/:504; 82 days ship-to-review. §6 checklist verified line-by-line. Non-blocking: change-summary row order fixed before commit; size budget handled by BLG-GOV-383."
+          },
+          "notes": "Done. AC1 release_planning_prompt.md STEP 4 rule + gap-risk worked example; design gate pointer. AC2 §6 checklist complete (verified by agent-mediated Head of Specs Team review). Deviation check: none."
         },
         "ST-36": {
           "title": "DoQ sign-off line for stories touching stop, grace, ATR or exit logic",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 1960,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "323a1859",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "claude/system/templates/qa_evidence_template.md#Strategy-Values DoQ Line (ST-36, BLG-GOV-370, EPIC-06, v9.11)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "template_committed",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1 template updated (323a1859, §6 checklist complete). AC2 pending: the first qualifying story's DoQ sign-off (EPIC-02 ST-10-ST-14 or EPIC-03 ST-16-ST-18) must complete the line; mark done then."
         },
         "ST-37": {
           "title": "Extend the axe accessibility scan to the Replay page",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1961,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "61632a595f2b663de4505c3c7b5d7efba8d96815",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T08:18:29Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/accessibility-axe-scan.spec.js",
+            "src/pages/Replay.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 Replay scanned in both selector modes + populated result, dark and light (6 scans). AC2 dark finding fixed (Risk-Off badge amber-700); light findings filed BLG-FE-209 (baselined); sibling badges filed BLG-FE-210. ci_pending: check at 3.2.A. Deviation check: none."
         },
         "ST-38": {
           "title": "Fix SC-REP-04a's signed \"+£0.00\" expectation",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1962,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "e485b0579e1bceccd57ba829ccebc194aad9a831",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-09-29T07:25:58Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/reports-performance-tab.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done — AC pre-met on main (LL-v2.4-P4-02 pre-met path): SC-REP-04a already asserts the unsigned '£0.00' (fixed by e485b057, v9.8 EPIC-01 ST-01, to unblock that PR's CI). Verified 2026-10-09: SC-REP-04a/b/c pass locally (3 passed) and main's latest Playwright run (52ce7f83) succeeded. completed_utc is the prior commit's authored time. qa_evidence_EPIC-06.md entry required at EPIC close. BLG-QA-197 itself is still listed open in backlog.md (grooming item, not edited here). Deviation check: none.",
+          "pre_met": true
         },
         "ST-39": {
           "title": "Mutation-test the US-market and batch-sizing paths",
@@ -806,44 +854,49 @@
         "ST-40": {
           "title": "Make the ceiling/count regression tests read the source they claim to verify",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1964,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "634c7232f65e521a0fa1fd77c00dcd2cb949fe81",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T07:53:31Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_motion_timing_500ms_ceiling_regression.py",
+            "tests/test_toast_notification_timing_regression.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 scratch edit (duration 0.45) fails each component's ceiling test independently (4/4), sources restored. AC2 no test asserts purely on unrelated literals (count tests replaced by a source check). Deviation check: none."
         },
         "ST-41": {
           "title": "Reset the pilot test file's shared database mocks between tests",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1965,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "55edf9d81f19f54692583f62b79ee40a347815a4",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T07:48:16Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/mutmut_pilot_tests/test_pilot.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 each golden-vector test passes alone and in 3 shuffled orders. AC2 unconfigured mock raises AssertionError (TestDatabaseMockIsolation). Deviation check: none."
         },
         "ST-42": {
           "title": "Make the Non-Registry Dependency Check a required status check on main",
@@ -871,23 +924,27 @@
         "ST-43": {
           "title": "Move test-only Python packages out of the production build",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1967,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "cb9d97cd7a2b57f8b2b7b06935988bf224e58fe3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T08:20:03Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/requirements-dev.txt",
+            "render.yaml",
+            "tests/test_non_registry_dependency_check.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 render.yaml buildCommand installs requirements.txt only, which now carries no test-only package (asserted by test); deploy-log confirmation is the staging-only part. AC2 CI test workflows updated to install requirements-dev.txt; ci_pending: confirm all CI test workflows green at 3.2.A. Deviation check: none."
         }
       }
     },
@@ -1113,34 +1170,39 @@
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-05.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_trade_plan_status_enum_parity.py"
+      ],
       "stories": {
         "ST-29": {
           "title": "Reconcile the Monthly Restatement Marker spec with GET /reports/monthly-pnl",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1953,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "4cda1b0d53b99daa7b4d21bdf2d2f86db7e6095a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T07:46:41Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/reports.md#Monthly Restatement Marker (v0.18 — ST-08, BLG-FR-05; field names corrected v0.19 — ST-04, BLG-FE-188)",
+            "docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 reports.md v0.22 and reports_endpoints.md v0.16 agree (undated As reviewed; unavailable = no month carries boolean restated). AC2 shipped UI matches (Reports.js trigger unchanged); remaining backend gap filed BLG-BE-156. AC3 DEV-v9.7-ST04-01 resolved with BLG-SPEC-170. Note: reports.md 0.21 left for ST-25. Deviation check: pre-existing deviation closed (Known Deviation fields updated in same commit)."
         },
         "ST-30": {
           "title": "Column provenance annotations in data_model.md",
@@ -1166,44 +1228,51 @@
         "ST-31": {
           "title": "Correct the TradePlan status enum in openapi.yaml",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1955,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "f19a2689086f684720e3e97c5313853faaeb73cc",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T07:44:48Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/reference/openapi.yaml",
+            "docs/specs/data_model.md#DS-21 — trade_plans_status_check extended to the 7-value workflow status list (v2.43, 2026-09-29)",
+            "tests/test_trade_plan_status_enum_parity.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 4 TradePlan status enum sites = DS-21's 7 values; parity test. AC2 check_openapi_drift passes; freshness check no new finding (pre-existing key drift unchanged; 0 envelope violations). Deviation check: none."
         },
         "ST-32": {
           "title": "Fix the 5 error-response examples that diverge from the canonical envelope",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1956,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "342a58fcf75228134c41f51e6e96da0618d8be9f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-08T13:49:50Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/conventions.md#13.1 Standard Error Envelope",
+            "scripts/check_contract_example_freshness.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done. AC1 all 5 resolved (4 documentation corrected to the envelope the code returns, 1 heading label corrected). AC2 check_contract_example_freshness.py reports 0 error-envelope violations. Deviation check: none."
         }
       }
     }
@@ -1241,7 +1310,17 @@
     "ST-25",
     "ST-26",
     "ST-27",
-    "ST-28"
+    "ST-28",
+    "ST-29",
+    "ST-31",
+    "ST-32",
+    "ST-33",
+    "ST-35",
+    "ST-37",
+    "ST-38",
+    "ST-40",
+    "ST-41",
+    "ST-43"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",
@@ -1250,10 +1329,10 @@
   ],
   "merge_gate": {
     "epics_merged": [
-      "EPIC-01"
+      "EPIC-01",
+      "EPIC-02"
     ],
     "epics_pending": [
-      "EPIC-02",
       "EPIC-03",
       "EPIC-06",
       "EPIC-04",
@@ -1268,7 +1347,10 @@
     "2026-10-12T07:57:46Z — ST-02 done on the EPIC-01 copy after the staging run (DEL-20261008-01 unblocked). Summary fields recomputed from this copy's story statuses; entries for stories finished on other EPIC branches (e.g. ST-16, ST-25 on EPIC-03/04; ST-34 on EPIC-06) may read stale here until the CLAUDE.md §8 union at merge.",
     "2026-10-12T08:30:30Z: EPIC-01 merge-gate QA sign-off and PO acceptance comments posted on PR #1968, recorded by the engine on the human owner's explicit in-session direction (OA-6 labelling). Merge left to the human.",
     "2026-10-12T08:38:33Z: EPIC-01 PR #1968 merged by the human at 2026-10-12T08:36:30Z (f5a7048c); merge_gate synced on main. Orphaned post-merge commit check: none. Summary lists on main reflect EPIC-01's copy; stories finished on unmerged EPIC branches (EPIC-02/03/04/05/06) read stale here until their own merges (CLAUDE.md §8 union).",
-    "2026-10-12T08:55:57Z: main (EPIC-01 merge, PR #1968) merged into EPIC-04 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-04's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. data_model.md: DS-27 (EPIC-01) auto-merged before DS-30, version 2.58 kept, header/footer chains merged; backlog.md item union; escalations keep EPIC-04's Resolved ESC-EXEC-20261008-02. This also satisfies the ST-25 security-checklist precondition that ST-06's prompt_hash/response_length columns are on the branch's base."
+    "2026-10-12T08:55:57Z: main (EPIC-01 merge, PR #1968) merged into EPIC-04 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-04's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. data_model.md: DS-27 (EPIC-01) auto-merged before DS-30, version 2.58 kept, header/footer chains merged; backlog.md item union; escalations keep EPIC-04's Resolved ESC-EXEC-20261008-02. This also satisfies the ST-25 security-checklist precondition that ST-06's prompt_hash/response_length columns are on the branch's base.",
+    "2026-10-12T08:43:42Z: main (EPIC-01 merge, PR #1968) merged into EPIC-02 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-02's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept, never done→blocked), process_notes and test_scenarios unioned, summary fields recomputed. ai_service.py import conflict resolved as the union (EPIC-02 live_holding_days + EPIC-01 ai_sampling/ai_models); delegation_log.md takes main's Unblocked statuses and keeps DEL-20261008-04.",
+    "2026-10-12T09:32:53Z: EPIC-02 PR #1969 merged by the human at 2026-10-12T09:32:07Z (843af781); merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Summary lists on main reflect EPIC-02's copy; stories finished on unmerged EPIC branches (EPIC-03/04/05/06) read stale here until their own merges (CLAUDE.md §8 union).",
+    "2026-10-12T09:41:27Z: main (EPIC-02 merge, PR #1969) merged into EPIC-04 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.27.0 kept with EPIC-02's version notes; backlog.md item union and Last Updated chain merged; execution_state resolved story by story, summaries recomputed."
   ],
   "sealed": false,
   "sealed_utc": null

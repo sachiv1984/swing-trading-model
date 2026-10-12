@@ -492,6 +492,30 @@ def calculate_holding_days(entry_date: str, exit_date: Optional[str] = None) -> 
     return (exit - entry).days
 
 
+
+def live_holding_days(position: dict) -> int:
+    """
+    Calendar days since entry for an open position, computed from
+    `entry_date` now (0 on the entry day), never read from the stored
+    `positions.holding_days` column, which is only refreshed when a stop
+    recompute writes the row and can lag by a day or more.
+
+    ST-12 (BLG-BE-153, EPIC-02, v9.11): GET /portfolio and the other readers
+    (alerts, compliance, AI context) use this so grace and display status
+    follow the calendar (strategy_rules.md §6.2), matching GET /positions'
+    lifecycle state. Falls back to the stored value only when entry_date is
+    missing or unparseable.
+    """
+    from datetime import date
+    raw = position.get("entry_date")
+    try:
+        entry = raw if isinstance(raw, date) else date.fromisoformat(str(raw).split("T")[0].split(" ")[0])
+        if isinstance(entry, datetime):
+            entry = entry.date()
+        return max(0, (date.today() - entry).days)
+    except (TypeError, ValueError):
+        return int(position.get("holding_days") or 0)
+
 # ============================================================================
 # POSITION SIZING (Future use)
 # ============================================================================
