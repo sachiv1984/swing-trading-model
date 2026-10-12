@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-08
+Last Updated: 2026-10-12
 
 # Delegation Log — 2026-10-08__release-v9.11
 
@@ -19,7 +19,7 @@ Last Updated: 2026-10-08
 - **Spec reference:** `stage4_backlog_slice.md#ST-02` AC 1 and AC 2; `docs/specs/api_contracts/ai_endpoints.md`
 - **Unblock criteria:** A dated six-row result table and the sampling evidence, recorded in `qa_evidence_EPIC-01.md` under ST-02. Any feature returning an error or the generic message is a defect and is filed before ST-02 closes.
 - **Commit format required:** `[EPIC-01][ST-02] <description>` pushed to `exec/2026-10-08__release-v9.11/EPIC-01`
-- **Status:** Pending
+- **Status:** Unblocked — 2026-10-12. The user (human, acting for the Infrastructure & Operations Owner) ran all six AI features on staging at `82633f5` on 2026-10-09 (5 generated; journal summary failed with HTTP 422, filed as BLG-BE-162) and confirmed a sampled chat row in `ai_output_boundary_samples` on 2026-10-12. Recorded in `qa_evidence_EPIC-01.md` under ST-02. **Correction:** the "opt in to AI-output sampling in Settings" step above is wrong — there is no Settings toggle; sampling is enabled with the `AI_OUTPUT_SAMPLING_ENABLED` (and `AI_OUTPUT_SAMPLING_RATE`) environment variables on the staging backend.
 
 ## DEL-20261008-02
 
