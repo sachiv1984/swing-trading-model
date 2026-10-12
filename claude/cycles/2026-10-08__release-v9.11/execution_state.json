@@ -293,8 +293,8 @@
     "EPIC-02": {
       "status": "done",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1969,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-02.md",
       "test_scenarios": [
