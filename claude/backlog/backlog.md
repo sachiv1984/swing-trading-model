@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-09 (session — 1 new item added: BLG-BE-163, from the ST-02 staging run, EPIC-01, v9.11); prior — 2026-10-09 (session — 1 new item added: BLG-BE-162, from the ST-02 staging run, EPIC-01, v9.11); prior — 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (session — 1 new item added: BLG-AI-10, from EPIC-01 DoQ consolidation (ST-08), v9.11); prior — 2026-10-09 (session — 1 new item added: BLG-BE-163, from the ST-02 staging run, EPIC-01, v9.11); prior — 2026-10-09 (session — 1 new item added: BLG-BE-162, from the ST-02 staging run, EPIC-01, v9.11); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5173,5 +5173,27 @@ When the live price fetch fails, `portfolio_service.py` (lines ~118-124) treats 
 - `POST /trade-plans/{plan_id}/generate-thesis` returns 404, and the OpenAPI drift gate passes
 - "Improve with AI" and the template "Generate thesis" button behave as before (Playwright `trade-plan.spec.js` passes)
 - One thesis-generation contract file remains, documenting `generate-plan`
+
+---
+
+### BLG-AI-10 — Check that briefing and chat responses citing a stop include its recalculation time
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** EPIC-01 DoQ consolidation (ST-08, BLG-BE-141), cycle `2026-10-08__release-v9.11` — 2026-10-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.12
+
+**Problem**
+ST-08 puts `stop_calculated_at` in the briefing and chat context and tells the model to state it whenever it cites a stop, but nothing checks the response: a reply quoting a stop without its recalculation time is returned as-is. The AC asked for responses to include the time; only the prompt side is enforced.
+
+**Scope**
+- Add a post-generation check (like the debrief numeric check) that flags a briefing/chat response citing a stop price without a recalculation time
+- Decide the action on failure (append the time from context, or log and count it), with AI Compliance & Governance Officer sign-off
+- Add the check to the boundary-sample audit so sampled outputs are scored on it
+
+**Acceptance Criteria**
+- A fixture response citing a stop without its time is caught; one with the time passes
+- The chosen failure action is applied and tested for both briefing and chat
 
 ---

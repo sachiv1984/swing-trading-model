@@ -168,7 +168,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC1-AC3 Playwright SC-DBF-06a (dark+light), 07a, 08a in tests/e2e/trade-debrief.spec.js, all passing locally. ci_pending: 37780192461 (Playwright E2E run on ac85987b; STEP 3.2.A must confirm success before DoQ). Axe check scoped to the debrief section lives in trade-debrief.spec.js, not accessibility-axe-scan.spec.js (sprint note said shared; no conflict with ST-37). Deviation check: none."
+          "notes": "Done. AC1-AC3 Playwright SC-DBF-06a (dark+light), 07a, 08a in tests/e2e/trade-debrief.spec.js, all passing locally. Playwright E2E run 37780192461 on ac85987b: success (ci_pending cleared at STEP 3.2.A, 2026-10-12). Axe check scoped to the debrief section lives in trade-debrief.spec.js, not accessibility-axe-scan.spec.js (sprint note said shared; no conflict with ST-37). Deviation check: none."
         },
         "ST-06": {
           "title": "claude_audit_log: add prompt_hash and response_length, and log failed model calls",
