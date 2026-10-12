@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-12T13:23:18Z",
+  "last_updated_utc": "2026-10-12T13:27:08Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1165,11 +1165,11 @@
       }
     },
     "EPIC-05": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_trade_plan_status_enum_parity.py"
@@ -1358,7 +1358,8 @@
     "2026-10-09: this branch copy still shows ST-16/ST-25 blocked and ESC-EXEC-20261008-01/-02 open; both were resolved on the EPIC-03 and EPIC-04 branches (their own copies). Reconcile by union per CLAUDE.md §8 at merge; not edited here to avoid recording another branch's evidence on EPIC-06.",
     "2026-10-12T08:50:28Z: main (EPIC-01 merge, PR #1968) merged into EPIC-06 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-06's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. backlog.md item union; escalations keep EPIC-06's Resolved ESC-EXEC-20261008-03; delegation_log takes the furthest-progressed status per entry.",
     "2026-10-12T09:38:39Z: main (EPIC-02 merge, PR #1969) merged into EPIC-06 per STEP 4 step 3c / CLAUDE.md §8. backlog.md takes main's newer Last Updated chain (items auto-merged); execution_state resolved story by story, summaries recomputed.",
-    "2026-10-12: EPIC-06 PR #1971 merged by the human developer at 2026-10-12T13:23:18Z (b476fce7), after the agent-mediated DoQ/PO acceptance given on user direction (issuecomment-6125015336). merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Stories finished on unmerged EPIC-04/EPIC-05 branches read stale here until their own merges (CLAUDE.md §8 union)."
+    "2026-10-12: EPIC-06 PR #1971 merged by the human developer at 2026-10-12T13:23:18Z (b476fce7), after the agent-mediated DoQ/PO acceptance given on user direction (issuecomment-6125015336). merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Stories finished on unmerged EPIC-04/EPIC-05 branches read stale here until their own merges (CLAUDE.md §8 union).",
+    "2026-10-12T13:27:08Z: EPIC-05 status restored to done and qa_signed_off to true. The main-into-EPIC-05 merge resolution 3237cb5e (EPIC-06 merge, PR #1971) took main's stale EPIC-05 record and reset both fields; 9e3276d3 had set them after the autonomous-class DoQ sign-off (qa_evidence_EPIC-05.md, 2026-10-09). No story record changed. Found on run sprint resume."
   ],
   "sealed": false,
   "sealed_utc": null
