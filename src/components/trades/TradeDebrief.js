@@ -15,13 +15,18 @@
  *
  * Spec: docs/specs/api_contracts/trade_endpoints.md#GET /trades/{trade_id}/debrief
  * ST-06, EPIC-02, v8.9
+ *
+ * ST-05 (EPIC-01, v9.11, BLG-FE-205): Regenerate uses the outline variant,
+ * the generated time is shown beside it, and a failed regenerate shows an
+ * inline message while the previous debrief stays on screen. Design:
+ * docs/design/2026-10-08__release-v9.11/debrief-regenerate-feedback/decision_record.md
  */
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Sparkles } from "lucide-react";
 import { apiFetch } from "../../api/base44Client";
 import { Button } from "../ui/button";
-import { cn } from "../../lib/utils";
+import { formatRelativeTime } from "../../lib/format";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -59,12 +64,15 @@ export default function TradeDebrief({ tradeId }) {
   const generateMutation = useMutation({
     mutationFn: async () => {
       const res = await apiFetch(`${API_URL}/trades/${tradeId}/debrief`, { method: "POST" });
+      // ST-05: a non-2xx response is a failure, not a "successful" empty result.
+      if (!res.ok) throw new Error(`Debrief generation failed (${res.status})`);
       const json = await res.json();
       return json.data;
     },
-    onSuccess: () => {
+    onSuccess: (newDebrief) => {
       setJustGenerated(true);
-      queryClient.invalidateQueries({ queryKey: ["tradeDebrief", tradeId] });
+      // The POST response is the new debrief; show it (and its generated_at) directly.
+      queryClient.setQueryData(["tradeDebrief", tradeId], { status: "found", data: newDebrief });
     },
   });
 
@@ -84,6 +92,7 @@ export default function TradeDebrief({ tradeId }) {
 
   const notFound = data?.status === "not_found";
   const debrief = data?.status === "found" ? data.data : (justGenerated ? generateMutation.data : null);
+  const generatedLabel = debrief ? formatRelativeTime(debrief.generated_at) : null;
 
   return (
     <div className="space-y-2.5" data-testid="trade-debrief-section">
@@ -130,17 +139,33 @@ export default function TradeDebrief({ tradeId }) {
               </p>
             )}
 
-            <div className="pt-1">
-              <Button
-                size="sm"
-                variant="ghost"
-                data-testid="regenerate-debrief-btn"
-                disabled={generateMutation.isPending || isFetching}
-                onClick={() => generateMutation.mutate()}
-                className={cn("text-xs text-slate-600 dark:text-slate-400 hover:text-slate-300")}
-              >
-                {generateMutation.isPending ? "Regenerating…" : "Regenerate"}
-              </Button>
+            <div className="pt-2 border-t border-slate-700/30 space-y-1.5">
+              <div className="flex items-center justify-between gap-3">
+                {generatedLabel ? (
+                  <span
+                    className="text-xs text-slate-600 dark:text-slate-400"
+                    data-testid="debrief-generated-at"
+                    title={new Date(debrief.generated_at).toLocaleString()}
+                  >
+                    Generated {generatedLabel}
+                  </span>
+                ) : <span />}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  data-testid="regenerate-debrief-btn"
+                  disabled={generateMutation.isPending || isFetching}
+                  onClick={() => generateMutation.mutate()}
+                  className="text-xs"
+                >
+                  {generateMutation.isPending ? "Regenerating…" : "Regenerate"}
+                </Button>
+              </div>
+              {generateMutation.error && (
+                <p className="text-xs text-rose-400" role="status" data-testid="debrief-regenerate-error">
+                  Could not regenerate the debrief. The previous version is still shown. Try again shortly.
+                </p>
+              )}
             </div>
           </div>
         )}

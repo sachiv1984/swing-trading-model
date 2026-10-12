@@ -1,7 +1,7 @@
 **Owner:** Strategy Rules & System Intent Owner (co-reviewer: AI Compliance & Governance Officer)
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-10-06 (agent-mediated review corrections: A1 function name and baseline Fail (BLG-AI-09), A4 framing, B3 expected hits, D1 test files); prior — 2026-10-06 (checklist created)
+**Last Updated:** 2026-10-08 (ST-07, EPIC-01, v9.11, BLG-AI-09 — A1 now Pass for both prompts and A4 recommendation framing in place; automated by tests/test_ai_prompt_advisory_statements.py); prior — 2026-10-06 (agent-mediated review corrections: A1 function name and baseline Fail (BLG-AI-09), A4 framing, B3 expected hits, D1 test files); prior — 2026-10-06 (checklist created); prior history retained — see prior entries in version control
 **Source:** ST-15 (`BLG-GOV-140`), EPIC-04, cycle `2026-10-06__release-v9.10`
 
 # AI Chat and Daily Briefing — §13 Quarterly Self-Audit Checklist
@@ -22,16 +22,16 @@
 
 ## 3. Checklist
 
-Record a Pass, Fail or N/A for each item, with evidence (file and line, command output, or screenshot). Any Fail is filed as a backlog item before the review is signed. A Fail on items A1–A3 or B1–B3 is a §13 boundary breach: escalate to the Strategy Rules & System Intent Owner the same day. Exception: A1's baseline Fail on the briefing prompt (`BLG-AI-09`) was reviewed on 2026-10-06 by the Strategy Rules & System Intent Owner (agent-mediated, §5.3) and is not a §13 breach. The user-facing boundary holds through `advisory: true` (`ai_service.py` `generate_daily_briefing` return) and `AiDisclaimer` (`AiDailyBriefing.js`). Any other A1 Fail is a breach.
+Record a Pass, Fail or N/A for each item, with evidence (file and line, command output, or screenshot). Any Fail is filed as a backlog item before the review is signed. A Fail on items A1–A3 or B1–B3 is a §13 boundary breach: escalate to the Strategy Rules & System Intent Owner the same day. Exception (historical; resolved by ST-07, v9.11): A1's baseline Fail on the briefing prompt (`BLG-AI-09`) was reviewed on 2026-10-06 by the Strategy Rules & System Intent Owner (agent-mediated, §5.3) and is not a §13 breach. The user-facing boundary holds through `advisory: true` (`ai_service.py` `generate_daily_briefing` return) and `AiDisclaimer` (`AiDailyBriefing.js`). Any other A1 Fail is a breach.
 
 ### A. Advisory language
 
 | # | Check | How to verify |
 |---|-------|---------------|
-| A1 | Both system prompts state the output is advisory and that the model cannot execute trades | Read `ai_service.py` `generate_daily_briefing` / `ai_chat` `system_prompt` strings. **Baseline 2026-10-06:** the chat prompt states advisory-only; the briefing prompt does not. This is a known Fail tracked as `BLG-AI-09`, and it stays a Fail until that ships. |
+| A1 | Both system prompts state the output is advisory and that the model cannot execute trades | Read `ai_service.py` `generate_daily_briefing` / `ai_chat` `system_prompt` strings. **Baseline 2026-10-06:** the chat prompt states advisory-only; the briefing prompt did not (known Fail, `BLG-AI-09`). **2026-10-08 (ST-07, v9.11):** Pass for both prompts. The briefing prompt now states advisory-only and no execution (`BRIEFING_PROMPT_VERSION` v1.1). Asserted on every CI run by `tests/test_ai_prompt_advisory_statements.py`. |
 | A2 | No forbidden prescriptive or prediction phrasing in shipped UI copy | `python3 scripts/check_ui_copy_forbidden_phrases.py` exits 0 |
 | A3 | Sampled live outputs contain no prescriptive or prediction language | `python3 scripts/run_ai_output_boundary_sample_audit.py` against `ai_output_boundary_samples` (needs a production credential; record who ran it). Compare with the previous quarter's result. |
-| A4 | Briefing action types are still only `EXIT` / `ENTER` / `MONITOR` / `HOLD`, and the UI presents them as recommendations | Read the briefing system prompt and the `AiDailyBriefing.js` rendering. The prompt itself does not yet use recommendation framing (`BLG-AI-09`). |
+| A4 | Briefing action types are still only `EXIT` / `ENTER` / `MONITOR` / `HOLD`, and the UI presents them as recommendations | Read the briefing system prompt and the `AiDailyBriefing.js` rendering. From v9.11 (ST-07) the prompt frames each action as a recommendation for the user to decide on (`tests/test_ai_prompt_advisory_statements.py`). |
 
 ### B. No automated action
 

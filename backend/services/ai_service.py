@@ -8,6 +8,7 @@ or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
 """
 
+import hashlib
 import logging
 import os
 import json
@@ -21,6 +22,8 @@ from fastapi import HTTPException
 
 from strategy_parameters import GRACE_PERIOD_DAYS
 from utils.calculations import live_holding_days
+from utils.ai_sampling import sample_ai_output
+from ai_models import CLAUDE_HAIKU_4_5, CLAUDE_SONNET_4_6
 from utils.upstream_call import anthropic_retryable_exceptions, bounded_upstream_call, get_timeout
 
 logger = logging.getLogger(__name__)
@@ -47,13 +50,64 @@ def _create_message(api_key: str, **create_kwargs):
     return client.messages.create(**create_kwargs)
 
 
-MODEL_VERSION = "claude-haiku-4-5-20251001"
-MODEL_BRIEFING = "claude-sonnet-4-6"
+MODEL_VERSION = CLAUDE_HAIKU_4_5
+MODEL_BRIEFING = CLAUDE_SONNET_4_6
+
+# Prompt template versions, logged to claude_audit_log and pinned by
+# tests/fixtures/ai_prompt_template_golden_fixtures.json. Bump the matching
+# constant whenever that system_prompt's text changes.
+# Briefing v1.1 (ST-07, BLG-AI-09, v9.11): states advisory-only / no
+# execution and frames actions as recommendations.
+# Briefing v1.2 / chat v1.1 (ST-08, BLG-BE-141, v9.11): each quoted stop
+# carries its recalculation time, and the model is told to state it.
+BRIEFING_PROMPT_VERSION = "v1.2"
+CHAT_PROMPT_VERSION = "v1.1"
 
 # BLG-SEC-01: context_opts.ticker is interpolated into the ai_chat() system prompt.
 # Reject anything outside this charset (in particular \n / \r, which could otherwise
 # forge additional system-prompt lines) before it reaches the prompt.
 _CONTEXT_TICKER_PATTERN = re.compile(r'[A-Z0-9.:/-]{1,20}')
+
+
+def _prompt_hash(system_prompt: str, user_message: str) -> str:
+    """ST-06 (BLG-AI-08, v9.11): SHA-256 of the system prompt plus the user
+    message, first 16 hex characters. Non-reversible, the same form as
+    gemini_audit_log.input_hash (claude_api_log_hygiene_policy.md §3.2)."""
+    return hashlib.sha256(f"{system_prompt}\n{user_message}".encode()).hexdigest()[:16]
+
+
+def _audit_failed_model_call(create_claude_audit_entry, endpoint: str, prompt_version: str,
+                             prompt_hash: str, t0: float) -> None:
+    """ST-06 (BLG-AI-08, v9.11): a model call that fails after retries still
+    writes an audit row, marked compliance_check_result='model_call_failed'.
+    Never raises: the endpoint's own fallback path continues."""
+    try:
+        create_claude_audit_entry(
+            endpoint=endpoint,
+            model_id=MODEL_BRIEFING,
+            prompt_version=prompt_version,
+            compliance_check_result="model_call_failed",
+            latency_ms=int((time.time() - t0) * 1000),
+            prompt_hash=prompt_hash,
+        )
+    except Exception:
+        logger.warning("failed-call audit row not written for %s", endpoint, exc_info=True)
+
+
+def _stop_recalculated_label(position: dict) -> str:
+    """ST-08 (BLG-BE-141, v9.11): when the quoted stop was last recalculated
+    (`positions.stop_calculated_at`, DS-22). NULL means the stop has not
+    been recalculated since entry (for example, during the grace period)."""
+    ts = position.get("stop_calculated_at")
+    if not ts:
+        return "stop not recalculated since entry"
+    if isinstance(ts, str):
+        try:
+            ts = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        except ValueError:
+            return f"stop last recalculated {ts}"
+    return f"stop last recalculated {ts.strftime('%Y-%m-%d %H:%M')} UTC"
+
 
 
 def _validate_context_ticker(context_opts: Optional[dict]) -> None:
@@ -125,8 +179,7 @@ def summarise_journal_notes(
         )
         summary_text = response.content[0].text if response.content else None
         if summary_text:
-            from services.ai_output_sampling_service import maybe_sample_output
-            maybe_sample_output("journal-summary (POST /ai/journal-summary)", summary_text, model)
+            sample_ai_output("journal-summary (POST /ai/journal-summary)", summary_text, model)
         return {"summary": summary_text, "model": model, "message": None}
     except Exception as exc:
         logger.error("summarise_journal_notes failed: %s", exc, exc_info=True)
@@ -143,7 +196,7 @@ def summarise_journal_notes(
 
 def generate_daily_briefing() -> dict:
     """
-    Assembles portfolio context and calls claude-sonnet-4-6 to produce a
+    Assembles portfolio context and calls the briefing model (MODEL_BRIEFING) to produce a
     plain-English daily briefing with ordered action list.
     Returns: { summary, actions, generated_at, advisory, model }
     Advisory-only — SRB-v1.7.
@@ -222,7 +275,8 @@ def generate_daily_briefing() -> dict:
                 alerts.append("RISK-OFF-EXIT-FLAGGED")
             alert_str = f" [{', '.join(alerts)}]" if alerts else ""
             context_lines.append(
-                f"  - {ticker} ({market}): price £{price:.2f}, trailing stop £{stop:.2f},"
+                f"  - {ticker} ({market}): price £{price:.2f}, trailing stop £{stop:.2f}"
+                f" ({_stop_recalculated_label(p)}),"
                 f" P&L {pnl_pct:+.1f}%{alert_str}"
             )
     else:
@@ -246,24 +300,33 @@ def generate_daily_briefing() -> dict:
 
     system_prompt = (
         "You are a trading assistant for a disciplined momentum strategy. "
+        "Your output is advisory only: you cannot execute trades, and nothing you write is acted on automatically. "
+        "The user reviews your briefing and makes every trading decision. "
         "You receive a daily portfolio snapshot and must produce: "
         "(1) a plain-English summary (2-4 sentences) of the key portfolio state, "
-        "(2) an ordered action list in JSON. "
+        "(2) an ordered list of recommended actions in JSON, each one a recommendation for the user to decide on, never an instruction. "
         "Action types: EXIT for stop breach or risk-off regime, ENTER for strong new signals, "
         "MONITOR for near-stop positions, HOLD for stable positions. "
+        "Whenever you mention a position's stop or a stop breach, state when that stop was last "
+        "recalculated, using the time given for that position in the snapshot. "
         "Respond with JSON only, no markdown fences, in this exact shape: "
         '{"summary": "...", "actions": [{"type": "EXIT|ENTER|MONITOR|HOLD", "ticker": "...", "description": "..."}]}'
     )
 
+    prompt_hash = _prompt_hash(system_prompt, context)
     try:
         t0 = time.time()
-        response = _create_message(
-            api_key,
-            model=MODEL_BRIEFING,
-            max_tokens=1024,
-            system=system_prompt,
-            messages=[{"role": "user", "content": context}],
-        )
+        try:
+            response = _create_message(
+                api_key,
+                model=MODEL_BRIEFING,
+                max_tokens=1024,
+                system=system_prompt,
+                messages=[{"role": "user", "content": context}],
+            )
+        except Exception:
+            _audit_failed_model_call(create_claude_audit_entry, "POST /ai/daily-briefing", BRIEFING_PROMPT_VERSION, prompt_hash, t0)
+            raise
         # ST-13 (BLG-BE-128, v9.7): includes retry backoff sleep time by design -- see ai_endpoints.md Implementation constraints
         elapsed_ms = int((time.time() - t0) * 1000)
 
@@ -279,19 +342,20 @@ def generate_daily_briefing() -> dict:
             create_claude_audit_entry(
                 endpoint="POST /ai/daily-briefing",
                 model_id=MODEL_BRIEFING,
-                prompt_version="v1.0",
+                prompt_version=BRIEFING_PROMPT_VERSION,
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
                 cost_usd=cost_usd,
                 latency_ms=elapsed_ms,
+                prompt_hash=prompt_hash,
+                response_length=len(content) if content else 0,
             )
         except Exception:
             pass
 
         parsed = json.loads(content)
         if content and content != "{}":
-            from services.ai_output_sampling_service import maybe_sample_output
-            maybe_sample_output("daily-briefing (POST /ai/daily-briefing)", content, MODEL_BRIEFING)
+            sample_ai_output("daily-briefing (POST /ai/daily-briefing)", content, MODEL_BRIEFING)
         return {
             "summary": parsed.get("summary", ""),
             "actions": parsed.get("actions", []),
@@ -300,6 +364,9 @@ def generate_daily_briefing() -> dict:
             "model": MODEL_BRIEFING,
         }
     except Exception:
+        # ST-03 (BLG-BE-151, v9.11): log the cause before returning the
+        # fallback, so a failure is no longer hidden behind the generic text.
+        logger.error("generate_daily_briefing failed; returning fallback message", exc_info=True)
         return _briefing_error("AI briefing temporarily unavailable. Please try again.", now)
 
 
@@ -386,7 +453,8 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
             risk_off = bool(p.get("risk_off_exit", False))
             pnl = p.get("pnl", 0) or 0
             context_lines.append(
-                f"  {ticker} ({market}): price £{price:.2f}, stop £{stop:.2f}, "
+                f"  {ticker} ({market}): price £{price:.2f}, stop £{stop:.2f} "
+                f"({_stop_recalculated_label(p)}), "
                 f"P&L £{pnl:+.0f}, risk_off={risk_off}"
             )
 
@@ -415,19 +483,26 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
         "You have access to the user's live portfolio snapshot below. "
         "Answer the user's question concisely and accurately based on the data provided. "
         "Do not fabricate data. Your responses are advisory only — you cannot execute trades. "
+        "Whenever you mention a position's stop or a stop breach, state when that stop was last "
+        "recalculated, using the time given for that position in the snapshot. "
         "Keep responses to 2-4 sentences unless more detail is genuinely needed.\n\n"
         f"Portfolio context:\n{portfolio_context}"
     )
 
+    prompt_hash = _prompt_hash(system_prompt, question)
     try:
         t0 = time.time()
-        response = _create_message(
-            api_key,
-            model=MODEL_BRIEFING,
-            max_tokens=512,
-            system=system_prompt,
-            messages=[{"role": "user", "content": question}],
-        )
+        try:
+            response = _create_message(
+                api_key,
+                model=MODEL_BRIEFING,
+                max_tokens=512,
+                system=system_prompt,
+                messages=[{"role": "user", "content": question}],
+            )
+        except Exception:
+            _audit_failed_model_call(create_claude_audit_entry, "POST /ai/chat", CHAT_PROMPT_VERSION, prompt_hash, t0)
+            raise
         # ST-13 (BLG-BE-128, v9.7): includes retry backoff sleep time by design -- see ai_endpoints.md Implementation constraints
         elapsed_ms = int((time.time() - t0) * 1000)
 
@@ -443,18 +518,21 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
             create_claude_audit_entry(
                 endpoint="POST /ai/chat",
                 model_id=MODEL_BRIEFING,
-                prompt_version="v1.0",
+                prompt_version=CHAT_PROMPT_VERSION,
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
                 cost_usd=cost_usd,
                 latency_ms=elapsed_ms,
+                prompt_hash=prompt_hash,
+                response_length=len(content) if content else 0,
             )
         except Exception:
             pass
 
         if content and content != "I was unable to generate a response.":
-            from services.ai_output_sampling_service import maybe_sample_output
-            maybe_sample_output("chat (POST /ai/chat)", content, MODEL_BRIEFING)
+            sample_ai_output("chat (POST /ai/chat)", content, MODEL_BRIEFING)
         return {"response": content, "advisory": True, "model": MODEL_BRIEFING}
     except Exception:
+        # ST-03 (BLG-BE-151, v9.11): log the cause before returning the fallback.
+        logger.error("ai_chat failed; returning fallback message", exc_info=True)
         return {"response": "Unable to get a response. Please try again.", "advisory": True}

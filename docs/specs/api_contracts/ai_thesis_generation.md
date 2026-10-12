@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.1.0
-**Last Updated:** 2026-05-28
+**Version:** 2.1.1
+**Last Updated:** 2026-10-08 (ST-09, EPIC-01, v9.11, BLG-BE-142 — model IDs pinned in backend/ai_models.py; examples show the pinned Haiku 4.5 snapshot claude-haiku-4-5-20251001); prior — 2026-05-28; prior history retained — see prior entries in version control
 **Shipped:** v4.0 — ST-12, EPIC-03, cycle 2026-05-22__release-v4.0
 **Supersedes:** docs/specs/api_contracts/gemini_thesis_generation.md v2.0.0 (renamed in v4.2 ST-08)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -15,7 +15,7 @@
 
 This document defines the **AI Thesis Generation** endpoints — the Arc 5 AI-assisted trade plan authoring feature (SI-05 Phase 1).
 
-The endpoints call Claude Haiku 4.5 (`claude-haiku-4-5`) via the Anthropic SDK to generate trade plan content. Two endpoints are available:
+The endpoints call Claude Haiku 4.5 (pinned snapshot `claude-haiku-4-5-20251001`, from `backend/ai_models.py` since ST-09, v9.11; previously the floating alias `claude-haiku-4-5`) via the Anthropic SDK to generate trade plan content. Two endpoints are available:
 
 - **`POST /trade-plans/{plan_id}/generate-thesis`** — generates a concise 2–3 sentence setup thesis for an existing trade plan (backward-compatible legacy endpoint).
 - **`POST /trade-plans/generate-plan`** — generates a full set of plan fields (thesis, entry rationale, confirmation criteria, early exit conditions, regime context, R-target) from a ticker and optional signal data, without requiring an existing plan record.
@@ -83,7 +83,7 @@ When the Anthropic API key is configured and the API call succeeds:
   "data": {
     "available": true,
     "thesis": "Strong momentum breakout above the 52-week high with confirmed volume surge. ATR expanding and regime firmly Risk On. Entry justified by price holding above the 200 SMA with RSI below overbought territory.",
-    "model_version": "claude-haiku-4-5",
+    "model_version": "claude-haiku-4-5-20251001",
     "prompt_version": "v3.0",
     "input_hash": "a1b2c3d4e5f67890",
     "output_hash": "f0e9d8c7b6a54321"
@@ -97,7 +97,7 @@ When the Anthropic API key is configured and the API call succeeds:
 |-------|------|-------------|
 | available | boolean | Always `true` when thesis is generated |
 | thesis | string | Generated thesis text (2–3 sentences, ≤100 words) |
-| model_version | string | Claude model ID used (e.g. `claude-haiku-4-5`). Matches `MODEL_VERSION` in `gemini_service.py`. |
+| model_version | string | Claude model ID used (e.g. `claude-haiku-4-5-20251001`, pinned in `backend/ai_models.py` — ST-09, v9.11). Matches `MODEL_VERSION` in `gemini_service.py`. |
 | prompt_version | string | Internal prompt template version (e.g. `v3.0`) |
 | input_hash | string | SHA-256 hex prefix (16 chars) of the serialised input payload. Used for audit deduplication. |
 | output_hash | string | SHA-256 hex prefix (16 chars) of the generated thesis text |
@@ -261,7 +261,7 @@ When the Anthropic API key is configured and the API call succeeds:
     "regime_context_at_entry": "risk_on",
     "r_target": 2.5
   },
-  "model_version": "claude-haiku-4-5",
+  "model_version": "claude-haiku-4-5-20251001",
   "prompt_version": "v3.0"
 }
 ```
@@ -272,7 +272,7 @@ When the Anthropic API key is configured and the API call succeeds:
 |-------|------|-------------|
 | available | boolean | Always `true` when generation succeeded |
 | fields | object | Generated plan fields (see sub-schema below) |
-| model_version | string | Claude model ID used (e.g. `claude-haiku-4-5`). Matches `MODEL_VERSION` in `gemini_service.py`. |
+| model_version | string | Claude model ID used (e.g. `claude-haiku-4-5-20251001`, pinned in `backend/ai_models.py` — ST-09, v9.11). Matches `MODEL_VERSION` in `gemini_service.py`. |
 | prompt_version | string | Internal prompt template version (e.g. `v3.0`) |
 
 **Note on usage fields:** Token counts (`input_tokens`, `output_tokens`) and cost are written to `claude_audit_log`, not returned in this response. Query `GET /ai/claude-audit-log` for per-call usage data.
@@ -338,6 +338,7 @@ When the Anthropic API key is absent or the API call fails:
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 2.1.1 | 2026-10-08 | ST-09 (EPIC-01, v9.11, BLG-BE-142): Model is the pinned snapshot `claude-haiku-4-5-20251001` from `backend/ai_models.py`, replacing the floating alias `claude-haiku-4-5`. |
 | 2.1.0 | 2026-05-28 | ST-08 (EPIC-03, v4.2): Rename gemini_thesis_generation.md → ai_thesis_generation.md. Document Claude API usage fields (input_tokens, output_tokens, cache_creation_input_tokens, cache_read_input_tokens) — written to claude_audit_log, not surfaced in response. Clarify model_version description. |
 | 2.0.0 | 2026-05-26 | Switch from Gemini Flash to Claude Haiku 4.5 (claude-haiku-4-5) via Anthropic SDK; update env var to ANTHROPIC_API_KEY; update cost rates ($1.00/1M input, $5.00/1M output); update prompt_version to v3.0; add POST /trade-plans/generate-plan endpoint; retitle document to AI Thesis Generation API Contract |
 | 1.0.0 | 2026-05-25 | Initial contract — ST-12, EPIC-03, v4.0. POST /trade-plans/{plan_id}/generate-thesis with Gemini Flash |
