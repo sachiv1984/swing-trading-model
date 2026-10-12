@@ -51,3 +51,31 @@ Items: 2
 |---|-------------|-------------|--------|
 | 1 | A clean `git merge` resolution reset an EPIC record and spliced two backlog item bodies (`3237cb5e`) | Until `BLG-GOV-385` lands, after every CLAUDE.md §8 merge resolution, diff `execution_state.json` EPIC/story records and `backlog.md` item bodies against both parents before committing | All |
 | 2 | Execution escalations never reached `.claude_current_state.json.open_escalations`, so the SLA reminder was blind to them | Until the Friction Item 2 patch lands, mirror each new `ESC-EXEC-*` into the global `open_escalations` dict and commit it to `main` | All |
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-10-08__release-v9.11
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-10-12
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-10-06__release-v9.10 (`lessons_learnt_cycle.md` `## Phase 4`). It filed 1 friction item and carried 1 from v9.9. Each was re-checked against the current `prompt_change_log.md` by patch ID, and by reading the named target files directly:
+1. **`LL-v9.10-P4-01`, `spec_references` path-existence check at sprint close.** **Applied:** `execution_prompt.md` v3.83→v3.84 (2026-10-07, `prompt_change_log.md` line 31). The text is present at `execution_prompt.md` STEP 5.1 ("`spec_references` path-existence check (LL-v9.10-P4-01…)"). It worked this cycle: v9.11 sprint close confirmed every path resolves, and verification found no stale path. Closed.
+2. **`LL-v9.9-P4-01`, `Pass_with_deviation` no-remainder path (carried from v9.9).** **Applied:** `delivery_verification_prompt.md` v3.13→v3.14 (2026-10-07). The text is present at STEP 2.1/2.3. It was used this cycle for ST-33 without interpretation. Closed.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| ST-02's `Pass_with_deviation` covers a **pre-existing** P1 defect that the story found (journal summary HTTP 422 since 2026-04-18, `BLG-BE-162`), not one it introduced. STEP 2.1 defaults `Pass_with_deviation` to P3 unless the gap is core-behaviour-incomplete. It does not say whether the severity follows the story's own AC gap (a verification story that did its job) or the found defect's backlog priority (P1). The EPIC-01 DoQ chose the latter and routed it to §7's PO+DoQ acceptance, which this run followed. The call held, but it was made by the sign-off comment, not read from the prompt. | Phase 4 | Type B — Semantic Mismatch: The same concept was named or interpreted differently across documents or roles | defer | Recommend that the Head of Specs Team add a sentence to `delivery_verification_prompt.md` STEP 2.1 stating that, when a `Pass_with_deviation` gap is a defect the story *found* rather than introduced, the severity is the found defect's filed backlog priority, and a P1/P2 then takes §7's acceptance path. Low blast radius: one severity call per occurrence, and no behaviour impact. | Head of Specs Team | Next `delivery_verification_prompt.md` revision |
+
+**Recurrence Notes:**
+Gate sequencing was mostly clean. All 6 QA evidence logs were signed and dated before invocation. The first invocation halted correctly on two hard gates: a non-`main` branch and `status = Executing`. Another session had closed the sprint at 14:09Z, but its `main` checkout was still held by that session's leftover git worktree. Removing that worktree, with the user's consent, cleared the gate. This was a session-hygiene matter, not a prompt gap, so no row is filed.
+
+The pre-seal gate (`LL-v2.4-DV-01`) held: the report was assembled with blank §9 dates and a pending §4 P1 record, and the run stopped until the user chose agent-mediated DoQ and PO sign-off with P1 acceptance (2026-10-12). This is the 4th consecutive cycle (v9.8–v9.11) where verification sign-off was agent-mediated on user direction. The pattern is consistent and disclosed.
+
+This is the first P1 accepted at verification in the v9.x series. Severity was not contested: the DoQ, `sprint_close.md` and this run all agree on P1. The friction is only that the prompt does not state the rule.
+
+The 3 test-coverage weaknesses were caught and backlogged by the cycle's own reviews (`BLG-BE-162`, `BLG-QA-219`, `BLG-QA-220`) before verification, as in v9.9 and v9.10. A mocked-API Playwright spec hiding a request-shape defect (TSG-v9.11-01) is a new shape, so it has no recurrence.
+
+Both v9.10 Phase 4 carry-forward rows are closed (applied). One new item this phase.
