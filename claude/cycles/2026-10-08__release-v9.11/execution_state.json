@@ -896,7 +896,7 @@
       "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "tests/e2e/monthly-pnl-narrative.spec.js",
@@ -1103,6 +1103,13 @@
           "sign_off_record": null,
           "notes": "Done. AC1 BLG-GOV-382 filed; scan --as-of 2027-01-04 reports DATE-LAPSED 2027-01-03; STEP 12.6 keyword filter matches (checked). AC2 sequencing note in slice + sprint_backlog.md Merge Order (planning). Deviation check: none."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "signed_utc": "2026-10-12T09:21:02Z",
+        "notes": "Agent-mediated DoQ review (§5.3, user-directed): Blocked first pass (ST-25 row missing gate AC3), fixed, Approved second pass. AI Compliance & Governance Officer block signed agent-mediated the same day (Approved first pass; follow-ups in 6429b46d, BLG-AI-13 filed)."
       }
     },
     "EPIC-05": {

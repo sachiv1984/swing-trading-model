@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-12 (session — 7 new item(s) added: BLG-BE-164, BLG-BE-165, BLG-BE-166, BLG-FE-211, BLG-FE-212, BLG-AI-11, BLG-AI-12, from the PR #1968 review, EPIC-01, v9.11); prior — 2026-10-12 (session — 1 new item added: BLG-AI-10, from EPIC-01 DoQ consolidation (ST-08), v9.11); prior — 2026-10-09 (session — 2 new item(s) added: BLG-BE-163 from the ST-02 staging run, EPIC-01; BLG-QA-219 from the ST-25 DoQ regression run, EPIC-04; v9.11); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (session — 1 new item added: BLG-AI-13, from the ST-25 AI Compliance & Governance Officer review, EPIC-04, v9.11); prior — 2026-10-12 (session — 7 new item(s) added: BLG-BE-164, BLG-BE-165, BLG-BE-166, BLG-FE-211, BLG-FE-212, BLG-AI-11, BLG-AI-12, from the PR #1968 review, EPIC-01, v9.11); prior — 2026-10-12 (session — 1 new item added: BLG-AI-10, from EPIC-01 DoQ consolidation (ST-08), v9.11); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5430,5 +5430,27 @@ The briefing context renders cash as "cash £X of £{initial_cash}". On staging 
 **Acceptance Criteria**
 - The briefing context no longer uses "of £{initial_cash}", and omits starting capital when it is 0
 - Golden-fixture tests pass with the recorded prompt-version bump
+
+---
+
+### BLG-AI-13 — Monthly P&L narrative: widen the instrument-directive scan to inflected and indirect wording
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Sprint Execution, ST-25 / EPIC-04, cycle `2026-10-08__release-v9.11` (agent-mediated AI Compliance & Governance Officer review of the new narrative endpoint) — 2026-10-12
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.12
+
+**Problem**
+`_INSTRUMENT_DIRECTIVE_RE` in `backend/services/monthly_pnl_narrative_service.py` matches only base verb forms followed directly by a pronoun or an upper-case ticker. Inflected or indirect wording passes the D4 scan: "Consider buying MSFT" and "sell the position" both return no finding. Risk is low because the narrative's inputs carry no tickers (§13 Condition 2) and the prescriptive scan still runs, but a model-invented ticker would be caught only if its wording matched.
+
+**Scope**
+- Extend the pattern to inflected forms (buying/selling/shorting, "consider/should buy", "sell the position/holding") without false positives on past-tense reporting ("you sold 9 trades")
+- Add B-MPN-04 cases for the new forms and negative cases for past-tense reporting
+
+**Acceptance Criteria**
+- "Consider buying MSFT" and "sell the position" are reported as `instrument_directive`
+- The representative output and the code-written fallback still scan clean
+- `tests/test_monthly_pnl_narrative.py` passes
 
 ---
