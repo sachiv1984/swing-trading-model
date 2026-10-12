@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.4
-**Last Updated:** 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — v9.10 row added, rolling average window advanced to v9.5–v9.10); prior — 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 — v9.9 row added, rolling average window advanced to v9.4–v9.9); prior — 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 — v9.8 row added, rolling average window advanced to v9.3–v9.8); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — v9.11 row added, rolling average window advanced to v9.6–v9.11); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — v9.10 row added, rolling average window advanced to v9.5–v9.10); prior — 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 — v9.9 row added, rolling average window advanced to v9.4–v9.9); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -118,7 +118,9 @@
 
 | v9.10 | 21      | 21        | 1.00     | All 21 stories done across 4 EPICs (stop-parameter correctness & ATR integrity, stop & exit transparency build-and-ship, lifecycle & gap-risk strategy boundary, AI governance/ops/QA hygiene), sized to 27.90 days (top of capacity band, "use full capacity"); 8 build-and-ship items carried 19.25d (69%) per the rebalance §7.1 pull-forward; P1 Correctness Fast-Track item `BLG-BE-138` shipped; 0 returned, 0 blocked; 4 delegations all unblocked in-session; Verified_with_deviations (2 P3-default QA-evidence deviations, ST-18 and ST-20) |
 
-**Rolling 6-cycle average (v9.5–v9.10):** 1.00
+| v9.11 | 43      | 43        | 1.00     | All 43 stories done across 6 EPICs (post-trade debrief & AI reliability, risk & position display correctness build-and-ship, strategy/records/alert integrity, AI narrative & engagement measurement build-and-ship, spec & contract hygiene, governance/QA/ops hygiene), sized to 27.975 days (top of capacity band, "use full capacity"); P1 Correctness Fast-Track item `BLG-BE-152` and P1 escaped-defect verification `BLG-BE-150` shipped; PO-committed build-and-ship items `BLG-FE-206`, `BLG-BE-154` and `BLG-FEAT-59` shipped; schema changes DS-27–DS-30; 5 delegations all unblocked in-cycle; 3 escalations resolved (1 ~5h past SLA); 0 returned, 0 blocked; Verified_with_deviations (1 accepted pre-existing P1, ST-02 → `BLG-BE-162`; 2 P3-default QA-evidence deviations, ST-08 and ST-33). Concurrent PVR: 0.161, 🔴 Alert (`2026-10-08__scheduled`, 7th consecutive Alert, improving) |
+
+**Rolling 6-cycle average (v9.6–v9.11):** 1.00
 
 ---
 

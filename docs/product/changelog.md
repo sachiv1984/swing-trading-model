@@ -3,11 +3,83 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — v9.10 entry added); prior — 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 — v9.9 entry added); prior — 2026-09-30 (post-ship closure 2026-09-28__release-v9.8 — v9.8 entry added); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — v9.11 entry added); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — v9.10 entry added); prior — 2026-10-06 (post-ship closure 2026-09-30__release-v9.9 — v9.9 entry added); prior history retained — see prior entries in version control
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 > **Authoring convention — `User Impact` column (added v8.8, ST-13, BLG-FE-161):** each `### Changes shipped` table row carries a `User Impact` cell in addition to `Description`. Write `User Impact` only for EPICs that changed something a user can see, click, or notice the effect of — one to two sentences, present tense (or implied second person), no ticket IDs, no implementation nouns (endpoint/table/component names). Leave it `—` for backend/infra/governance/test-coverage rows with no user-facing effect. `Description` is retained unchanged as the engineering record — it is not replaced. `GET /changelog/latest` sources the in-app "What's New" panel from `User Impact` only; rows with a blank/`—` cell are excluded from that feed entirely (`docs/specs/api_contracts/changelog_endpoints.md`).
+
+---
+
+## v9.11 — Debrief Correctness, AI Reliability & Risk-Page Accuracy — 2026-10-12
+Cycle: 2026-10-08__release-v9.11
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-10-08__release-v9.11/verification_report.md
+
+### Changes shipped
+| EPIC | Description | User Impact | Spec sections updated |
+|------|-------------|-------------|----------------------|
+| EPIC-01 | Post-Trade Debrief & AI Reliability — the debrief computes R achieved, R vs target, entry slippage and the stop at exit in code and passes them to the prompt and `source_values` (BLG-BE-152, P1 fast-track; Condition 2 interpretation signed off, `PROMPT_VERSION` bumped); five of six AI features confirmed on staging after the PR #1921 import fix, with an escaped-defect note (BLG-BE-150; journal summary's pre-existing HTTP 422 filed as `BLG-BE-162`); the AI-output sampling hook made fail-safe; a backend import-path isolation test in CI; the debrief Regenerate control redesigned with failure and generated-time feedback; `claude_audit_log` gains `prompt_hash`/`response_length` and logs failed calls (DS-27); the daily-briefing prompt states output is advisory; briefing and chat state when a quoted stop was last recalculated; and every Claude model ID pinned in `backend/ai_models.py` | The trade debrief now states the R achieved against your target and where the trailing stop was at exit, so a profitable stop-out is no longer described as contradictory. The Regenerate button is easier to recognise and shows when regeneration fails and when the debrief was generated, and AI briefings and chat say when a quoted stop was last recalculated. | `docs/specs/api_contracts/trade_endpoints.md#POST /trades/{trade_id}/debrief`; `docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing`, `#AI Output Boundary-Language Sampling Hook`; `docs/specs/frontend/pages/trade_history.md#Post-Trade Debrief`; `docs/specs/data_model.md#DS-27`; `docs/testing/escaped_defect_note_ai_sampling_import_2026-10-08.md` |
+| EPIC-02 | Risk & Position Display Correctness — `GET /portfolio` drops the hard-coded ×1.38 US price fallback and flags stale prices (BLG-BE-154); the Position Risk table shows US entry prices in GBP and grace-period stops as not enforced (BLG-FE-206); `holding_days` computed live from `entry_date`; Stop Dist % computed in native currency for US positions; the grace alert filter and "Day N of 10" label use calendar days since entry; and the Recent Trades glyph treats a P&L that rounds to £0.00 as break-even | The Risk Dashboard no longer substitutes an estimated US price when a live price is unavailable: a price that could not be refreshed is marked as stale. Entry prices appear in pounds, grace-period stops are shown as not yet enforced, stop distance for US positions is accurate, the grace-period day count matches the calendar, and trades that round to £0.00 show as break-even. | `docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio`; `docs/specs/frontend/pages/risk_dashboard.md#6.2`, `#6.2a`, `#6.6`; `docs/specs/api_contracts/grace_period_alert_endpoint.md`; `docs/specs/frontend/pages/positions.md#Grace Period Alert Zone`; `docs/specs/frontend/pages/dashboard.md#Card 5` |
+| EPIC-03 | Strategy, Records & Alert Integrity — a §6.3 ruling that stops are not recalculated during grace, with on-load/nightly parity tested (`ESC-EXEC-20261008-01`); strategy parameters in force snapshotted onto each closed trade (DS-29); a post-deploy synthetic check for post-grace stops and §11 multipliers; a read-only `GET /market/regime` so viewing regime no longer runs the stop-writing analyze call; a DB-level unique index for active price alerts (DS-28); the anomaly-check fingerprint-clear path respects `send_alert`; and `POST /trade-plans` guarded against double-submit | Viewing the market regime no longer recalculates your stops in the background, and submitting the same trade plan twice in quick succession no longer creates a duplicate. | `claude/strategy/strategy_rules.md#6.3`; `docs/specs/api_contracts/position_endpoints.md#POST /positions/nightly-stop-update`; `docs/specs/data_model.md#DS-28`, `#DS-29`; `docs/specs/api_contracts/market_endpoints.md#GET /market/regime`; `docs/specs/api_contracts/trade_plan_endpoints.md#POST /trade-plans` |
+| EPIC-04 | AI Narrative & Engagement Measurement — the AI-assisted monthly P&L narrative on Reports under a CONDITIONAL §13 determination with 12 conditions, security checklist and design decision record (BLG-FEAT-59); its cost estimate and usage counter (DS-30); the AI chat engagement metric set; an AI chat interaction study protocol; and the 2027-01-03 AI feature usage review tracked as `BLG-GOV-382` | The Monthly P&L report can now show an optional, dismissible AI summary of the month, clearly labelled as advisory. | `docs/specs/frontend/pages/reports.md#AI Summary (Monthly P&L Narrative)`; `docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl/narrative`, `#POST /reports/monthly-pnl/narrative`; `docs/specs/data_model.md#DS-30`; `docs/specs/metrics_definitions.md#AI Chat Engagement`, `#AI Monthly P&L Narrative Usage`; `docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md` |
+| EPIC-05 | Spec & Contract Hygiene — the Monthly Restatement Marker spec reconciled with `GET /reports/monthly-pnl` (closes `DEV-v9.7-ST04-01`); column provenance annotations for `positions` and `trade_plans` in `data_model.md`; the TradePlan status enum corrected in `openapi.yaml` with a parity test; and five error-response examples aligned to the canonical envelope | — | `docs/specs/frontend/pages/reports.md#Monthly Restatement Marker`; `docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl`; `docs/specs/data_model.md#2. Positions Table`, `#DS-04`, `#DS-21`; `docs/reference/openapi.yaml`; `docs/specs/api_contracts/conventions.md#13.1 Standard Error Envelope` |
+| EPIC-06 | Governance, QA & Ops Hygiene — a write-time canonical-role check for `sprint_backlog.md` Owner values; the effort-weighted PVR column given its governed home; the §13 clause-citation rule for sign-off ACs; a strategy-values DoQ line for stop/grace/ATR/exit stories; Replay added to the axe scan; the SC-REP-04a zero-P&L expectation fixed; mutation tests for the US-market and batch-sizing paths; regression tests made to read the source they verify; pilot test mock isolation; the Non-Registry Dependency Check made required on `main`; and test-only Python packages moved out of the production build | — | `claude/system/shared_standards.md#16.11`; `claude/roadmap/product_value_ratio_history.md#History`; `claude/system/release_planning_prompt.md#STEP 4`; `claude/system/templates/qa_evidence_template.md#Strategy-Values DoQ Line`; `docs/testing/mutation_testing_pilot_sizing_and_stop_ratchet.md`; `backend/requirements-dev.txt` |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| ST-02 / `BLG-BE-162` (QA evidence; not a canonical-spec `DEV-*` record) | P1 | AC 1 partly met: five of six AI features confirmed on staging; journal summary returns HTTP 422 because `trade_ids` is typed `list[int]` while trade IDs are UUIDs. Pre-existing since 2026-04-18, not introduced this cycle. Code and contract are wrong together; `BLG-BE-162` stays P1, targeted to v9.12 | PO + DoQ (agent-mediated, §5.3) — 2026-10-12 |
+
+2 minor deviations (QA-evidence-classified, P3-default per `verification_report.md §2.1`) — see `verification_report.md §4`: ST-08 AC 1 narrowed to a prompt-side control (tracked as `BLG-AI-10`), and ST-33 AC 1's v9.10 clause narrowed by Head of Specs Team ruling (c) with no remainder. One pre-existing deviation closed: `DEV-v9.7-ST04-01` (ST-29). No P0 or P2 deviations.
+
+### Tech backlog items shipped
+- [ST-01] [U] Post-trade debrief states R achieved, the stop at exit and entry slippage (BLG-BE-152)
+- [ST-02] [D] All six AI features verified after the PR #1921 import fix; escaped-defect note filed (BLG-BE-150)
+- [ST-03] [D] AI-output sampling hook can no longer break or hide AI errors (BLG-BE-151)
+- [ST-04] [D] Backend import-path isolation test (BLG-QA-217)
+- [ST-05] [U] Debrief Regenerate button recognisable, with failure and generated-time feedback (BLG-FE-205)
+- [ST-06] [D] `claude_audit_log` gains `prompt_hash`/`response_length` and logs failed calls (BLG-AI-08)
+- [ST-07] [D] Daily-briefing system prompt states output is advisory and cannot execute trades (BLG-AI-09)
+- [ST-08] [U] AI briefing and chat state when a quoted stop was last recalculated (BLG-BE-141)
+- [ST-09] [D] Every Claude model ID pinned in one backend module (BLG-BE-142)
+- [ST-10] [U] Hard-coded ×1.38 US price fallback removed from `GET /portfolio`; stale prices flagged (BLG-BE-154)
+- [ST-11] [U] Position Risk table: GBP entry prices and grace-period stops shown as not enforced (BLG-FE-206)
+- [ST-12] [U] `GET /portfolio` computes `holding_days` live from `entry_date` (BLG-BE-153)
+- [ST-13] [U] Stop Dist % computed in native currency for US positions (BLG-BE-155)
+- [ST-14] [U] Grace alert filter and "Day N of 10" label use calendar days since entry (BLG-BE-147)
+- [ST-15] [U] Recent Trades glyph treats a P&L that rounds to £0.00 as break-even (BLG-FE-204)
+- [ST-16] [D] Ruling on and test of stop recalculation during grace (BLG-BE-143)
+- [ST-17] [D] Strategy parameters in force snapshotted onto each closed trade (BLG-FR-06)
+- [ST-18] [D] Post-deploy synthetic check for post-grace stops and §11 multipliers (BLG-OPS-179)
+- [ST-19] [D] Read-only market-regime source; viewing regime no longer runs the stop-writing analyze call (BLG-BE-140)
+- [ST-20] [D] DB-level unique constraint for active price alerts (BLG-OPS-175)
+- [ST-21] [D] Anomaly-check fingerprint-clear path respects `send_alert` (BLG-OPS-176)
+- [ST-22] [D] `POST /trade-plans` guarded against a double-submitted duplicate plan (BLG-API-06)
+- [ST-23] [P] Cost estimate for the AI monthly P&L narrative (BLG-FEAT-63)
+- [ST-24] [D] AI chat engagement metric set defined (BLG-FEAT-60)
+- [ST-25] [U] AI-assisted monthly P&L narrative (BLG-FEAT-59)
+- [ST-26] [D] Usage counter for the AI monthly P&L narrative (BLG-SPEC-174)
+- [ST-27] [P] AI chat UI interaction study protocol (BLG-FE-84)
+- [ST-28] [G] 2027-01-03 AI feature usage review tracked (BLG-GOV-366)
+- [ST-29] [D] Monthly Restatement Marker spec reconciled with `GET /reports/monthly-pnl` (BLG-SPEC-170)
+- [ST-30] [D] Column provenance annotations in `data_model.md` (BLG-SPEC-173)
+- [ST-31] [D] TradePlan status enum corrected in `openapi.yaml` (BLG-SPEC-177)
+- [ST-32] [D] Five error-response examples aligned to the canonical envelope (BLG-SPEC-175)
+- [ST-33] [G] Write-time canonical-role check for `sprint_backlog.md` Owner values (BLG-GOV-375)
+- [ST-34] [G] Effort-weighted PVR column given its home in `product_value_ratio_history.md` (BLG-GOV-355)
+- [ST-35] [G] §13 sign-off ACs must cite every §13 clause naming the feature's subject (BLG-GOV-359)
+- [ST-36] [G] Strategy-values DoQ sign-off line for stop, grace, ATR or exit stories (BLG-GOV-370)
+- [ST-37] [D] Replay page added to the axe accessibility scan (BLG-QA-196)
+- [ST-38] [D] SC-REP-04a signed "+£0.00" expectation fixed (BLG-QA-197)
+- [ST-39] [D] Mutation tests for the US-market and batch-sizing paths (BLG-QA-199)
+- [ST-40] [D] Ceiling/count regression tests read the source they claim to verify (BLG-QA-200)
+- [ST-41] [D] Pilot test file's shared database mocks reset between tests (BLG-QA-201)
+- [ST-42] [D] Non-Registry Dependency Check made a required status check on `main` (BLG-OPS-177)
+- [ST-43] [D] Test-only Python packages moved out of the production build (BLG-OPS-178)
+
+Sign-off: Product Owner — 2026-10-12
+QA sign-off: Director of Quality — 2026-10-12
 
 ---
 

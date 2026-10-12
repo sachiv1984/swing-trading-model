@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-07 (44 rows archived — post-ship closure 2026-10-06__release-v9.10: 42 Promoted-Backlog + 2 Rejected not-strong; 1 non-terminal row kept — `IDEA-challenger-20260809-02`, Rejected-but-strong); prior — 2026-10-06 (5 rows archived — post-ship closure 2026-09-30__release-v9.9: 5 Promoted-Backlog; 1 non-terminal row kept — `IDEA-challenger-20260809-02`, Rejected-but-strong); prior — 2026-08-12 (43 rows archived — post-ship closure 2026-08-11__release-v8.6: 1 Promoted-Added, 42 Promoted-Backlog; 1 non-terminal row kept — `IDEA-challenger-20260809-02`, Rejected but present in `rejected_but_strong.md`); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (8 rows archived — post-ship closure 2026-10-08__release-v9.11: 8 Promoted-Backlog from IW-20261008-01; 1 non-terminal row kept — `IDEA-challenger-20260809-02`, Rejected-but-strong); prior — 2026-10-07 (44 rows archived — post-ship closure 2026-10-06__release-v9.10: 42 Promoted-Backlog + 2 Rejected not-strong; 1 non-terminal row kept — `IDEA-challenger-20260809-02`, Rejected-but-strong); prior — 2026-10-06 (5 rows archived — post-ship closure 2026-09-30__release-v9.9: 5 Promoted-Backlog; 1 non-terminal row kept — `IDEA-challenger-20260809-02`, Rejected-but-strong); prior history retained — see prior entries in version control
 
 # Ideas Register Archive — Momentum Trading Assistant
 
@@ -1509,3 +1509,20 @@ Permanent record of terminal ideas rows retired from `claude/ideas/ideas_registe
 | IDEA-qa-testing-20260914-02 | Backfill missing negative-path tests for the 3 newest routers shipped in v9.2/v9.3 | QA & Testing Owner | IW-20260914-01 | 2026-09-14 | Promoted-Backlog | — | — | Backlog (gate-conditional) — filed as BLG-QA-176 | N/A |
 | IDEA-strategy-owner-20260914-01 | Re-confirm §13 boundary review cadence — 2 rejected_but_strong entries have sat "Unmet" 6+ months with no scheduled ATR review | Strategy Rules & System Intent Owner | IW-20260914-01 | 2026-09-14 | Promoted-Backlog | — | — | Backlog (gate-conditional) — filed as BLG-GOV-329 | N/A |
 | IDEA-strategy-owner-20260914-02 | Formal review of whether the SI-02 gate threshold (≥20 linked trades) should scale with observed trade cadence rather than a fixed number | Strategy Rules & System Intent Owner | IW-20260914-01 | 2026-09-14 | Promoted-Backlog | — | — | Backlog (gate-conditional) — filed as BLG-GOV-330 | N/A |
+
+## Archived 2026-10-12 (ideas_housekeeping — post-ship closure 2026-10-08__release-v9.11)
+
+*Terminal classification: 8 rows, all from window IW-20261008-01 (roadmap rebalance `2026-10-08__scheduled`).*
+- *Promoted-Backlog (8): idea lifecycle complete, each tracked by its filed or consolidated backlog item.*
+- *`IDEA-challenger-20260809-02` (Rejected-but-strong) stays in the register.*
+
+| Idea ID | Title | Submitter | Window | Submitted At | Status | Park Count | Park Rationale | Step 4 | Step 5 |
+|---------|-------|-----------|--------|--------------|--------|------------|----------------|--------|--------|
+| IDEA-product-owner-20261008-01 | Risk page shows a live stop and red stop-distance for grace positions, though §5/§6.3 say the stop is not enforced in grace | Product Owner | IW-20261008-01 | 2026-10-08 | Promoted-Backlog | — | — | Backlog (ungated) → BLG-FE-206 (consolidated) | N/A — not advanced (STEP 5 queue empty) |
+| IDEA-product-owner-20261008-02 | Link each Risk Dashboard grace-panel row to that position on the Positions page | Product Owner | IW-20261008-01 | 2026-10-08 | Promoted-Backlog | — | — | Backlog (ungated) → BLG-FE-207 (consolidated) | N/A — not advanced (STEP 5 queue empty) |
+| IDEA-head-of-ux-20261008-01 | Position Risk table prints US entry prices with a $ sign on GBP-converted values (spec §6.2 says GBP) | Head of UX & Design | IW-20261008-01 | 2026-10-08 | Promoted-Backlog | — | — | Backlog (ungated) → BLG-FE-206 (consolidated) | N/A — not advanced (STEP 5 queue empty) |
+| IDEA-head-of-ux-20261008-02 | Align Grace Period panel heading, count badge and entry-date format with risk_dashboard.md §5.2 | Head of UX & Design | IW-20261008-01 | 2026-10-08 | Promoted-Backlog | — | — | Backlog (ungated) → BLG-FE-207 (consolidated) | N/A — not advanced (STEP 5 queue empty) |
+| IDEA-head-of-engineering-20261008-01 | GET /portfolio reads the stored holding_days column; compute it live from entry_date like GET /positions | Head of Engineering | IW-20261008-01 | 2026-10-08 | Promoted-Backlog | — | — | Backlog (ungated) → BLG-BE-153 | N/A — not advanced (STEP 5 queue empty) |
+| IDEA-head-of-engineering-20261008-02 | GET /portfolio fabricates a US price via a hard-coded ×1.38 FX guess when the live price fetch fails; use the stored native price and flag it stale | Head of Engineering | IW-20261008-01 | 2026-10-08 | Promoted-Backlog | — | — | Backlog (ungated) → BLG-BE-154 | N/A — not advanced (STEP 5 queue empty) |
+| IDEA-frontend-specs-20261008-01 | Risk page Stop Dist % mixes live-FX price with entry-FX stop for US positions; compute the distance in native currency | Frontend Specifications & UX Documentation Owner | IW-20261008-01 | 2026-10-08 | Promoted-Backlog | — | — | Backlog (ungated) → BLG-BE-155 | N/A — not advanced (STEP 5 queue empty) |
+| IDEA-frontend-specs-20261008-02 | Reconcile risk_dashboard.md §5.1/§6 data sources with the shipped GET /portfolio fields (grace_period, display_status) | Frontend Specifications & UX Documentation Owner | IW-20261008-01 | 2026-10-08 | Promoted-Backlog | — | — | Backlog (ungated) → BLG-SPEC-189 | N/A — not advanced (STEP 5 queue empty) |

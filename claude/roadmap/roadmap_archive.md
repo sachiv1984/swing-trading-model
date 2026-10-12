@@ -1,13 +1,39 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-07 (post-ship closure 2026-10-06__release-v9.10, manage roadmap STEP 11 — "v9.10 — Committed items" Now-horizon section retired: BLG-BE-138, BLG-FE-193, BLG-FE-198 shipped v9.10); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7, manage roadmap STEP 11 — PO-05 Lightweight Replay Mode retired: shipped v9.7, `BLG-FEAT-74`); prior — 2026-07-27 (post-ship closure 2026-07-24__release-v7.8, manage roadmap STEP 11 — RA:Gated-carry-forward-2026-07-27 retired: BLG-FEAT-73/BLG-FEAT-74 removed from current_roadmap.md §3 per PO perennial-return disposition, Option (b); not shipped, not killed, remain open in backlog.md); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (post-ship closure 2026-10-08__release-v9.11, manage roadmap STEP 11 — "v9.11 — Committed items" Now-horizon section retired: BLG-BE-152, BLG-BE-150, BLG-FE-206, BLG-BE-154 shipped v9.11); prior — 2026-10-07 (post-ship closure 2026-10-06__release-v9.10, manage roadmap STEP 11 — "v9.10 — Committed items" Now-horizon section retired: BLG-BE-138, BLG-FE-193, BLG-FE-198 shipped v9.10); prior — 2026-09-28 (post-ship closure 2026-09-23__release-v9.7, manage roadmap STEP 11 — PO-05 Lightweight Replay Mode retired: shipped v9.7, `BLG-FEAT-74`); prior history retained — see prior entries in version control
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v9.11 — Committed items (Now horizon)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-10-12
+**Shipped version:** v9.11
+**Cycle reference:** 2026-10-08__release-v9.11
+**Verification report:** claude/cycles/2026-10-08__release-v9.11/verification_report.md
+**Decision log reference:** DL-084 (roadmap rebalance `2026-10-08__scheduled` — committed the four items; not a kill/defer decision)
+**Retirement confirmed by:** Product Owner (acceptance recorded in `verification_report.md` §9, agent-mediated per §5.3)
+
+### Original Roadmap Entry
+
+### v9.11 — Committed items (roadmap rebalance `2026-10-08__scheduled`, DL-084) — ✅ Complete — Shipped 2026-10-12 — cycle: 2026-10-08__release-v9.11
+
+*Added by the rebalance, not by Release Planning: the release's full scope, capacity fit and story breakdown are set at `plan release v9.11`. These four items are committed to it.*
+
+| Item | Why it is here | Priority | Effort |
+|------|----------------|----------|--------|
+| `BLG-BE-152` — post-trade debrief gets R achieved, the stop at exit and entry slippage | STEP 8.0 Production Correctness Fast-Track: the debrief cannot state R achieved and never reads the trailing stop at exit, and in production it told the user a correct profitable stop-out "contradicts the exit reason recorded in the system". | P1 | M (~1-2 days) |
+| `BLG-BE-150` — verify all six AI features after the PR #1921 import fix; escaped-defect note | P1 escaped defect: every AI generation that reached the sampling hook failed from v9.4 until PR #1921. The debrief is verified; five features are not. | P1 | S (~0.5 day) |
+| `BLG-FE-206` — Position Risk table: GBP entry-price label; grace stops shown as not enforced | §7.1 sustained-failure pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | S (~0.75-1 day) |
+| `BLG-BE-154` — remove the ×1.38 US price fallback from `GET /portfolio`; flag stale prices | §7.1 sustained-failure pull-forward (PO-committed build-and-ship U-item). Ungated. | P2 | M (~1-1.5 days) |
 
 ---
 

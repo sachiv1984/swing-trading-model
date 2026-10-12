@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-10-07 (post-ship closure 2026-10-06__release-v9.10 — §50 Test Coverage Gaps v9.10 section added, 3 gaps each already tracked by an in-cycle backlog item, TSG sweep 4 Open checked / 0 resolved, endpoint coverage drift 0 gap; see Changelog table for history)
+**Last Updated:** 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — §51 Test Coverage Gaps v9.11 section added, 3 gaps each already tracked by a backlog item, TSG sweep 7 Open checked / 0 resolved, endpoint coverage drift 0 gap; see Changelog table for history)
 
 ---
 
@@ -1298,6 +1298,46 @@ Identified during delivery verification (`verification_report.md §6`): **3 test
 
 ---
 
+## 51. Test Coverage Gaps — v9.11 (2026-10-08__release-v9.11)
+
+Identified during delivery verification (`verification_report.md §6`): **3 test coverage weaknesses, each already tracked by a backlog item**, so no new backlog items were needed. All 39 referenced `test_scenarios` files exist on disk and were confirmed run.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| TSG-v9.11-01 | EPIC-01 | The journal-summary Playwright spec mocks the API, so CI never exercised the real UUID request shape (the escaped defect behind ST-02's P1) | backlog_item_created — `BLG-BE-162` |
+| TSG-v9.11-02 | EPIC-02 | ST-12's compliance and AI-briefing readers of live holding days are guarded only by a source-scan test, not behavioural tests | backlog_item_created — `BLG-QA-220` |
+| TSG-v9.11-03 | EPIC-04 | SC-AC-03 (AI chat submit) is intermittently intercepted by the first-visit ⌘K hint toast (pre-existing) | backlog_item_created — `BLG-QA-219` |
+
+### 51.1 TSG-v9.11-01 — EPIC-01: Journal-summary Playwright spec never exercises the real UUID request shape
+
+**Identified:** 2026-10-12 (delivery verification 2026-10-08__release-v9.11; found by ST-02's staging run)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** The journal-summary Playwright spec mocks the API, so CI never sent real UUID `trade_ids` and the HTTP 422 escaped from 2026-04-18 until ST-02's staging run. Qualifying reason: Core user journey: AI journal summary from Trade History.
+**Backlog item:** BLG-BE-162 (its AC requires a backend test posting real UUID `trade_ids`)
+
+### 51.2 TSG-v9.11-02 — EPIC-02: Live holding-days readers guarded only by a source-scan test
+
+**Identified:** 2026-10-12 (delivery verification 2026-10-08__release-v9.11; first raised at PR #1969 review)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** ST-12's compliance and AI-briefing readers of live holding days have only a source-scan guard, with no behavioural test. Qualifying reason: Spec section partly uncovered: `strategy_rules.md` §6.2 calendar-day grace on two reader paths.
+**Backlog item:** BLG-QA-220
+
+### 51.3 TSG-v9.11-03 — EPIC-04: AI chat submit scenario intercepted by the first-visit hint toast
+
+**Identified:** 2026-10-12 (delivery verification 2026-10-08__release-v9.11; found during the ST-25 DoQ regression run)
+**Status:** Open
+**Owner:** QA & Testing Owner
+**Gap:** SC-AC-03 (AI chat submit) is intermittently intercepted by the first-visit ⌘K hint toast. The failure is pre-existing and reproduces before ST-25's changes. Qualifying reason: Core user journey: AI chat. Scenario reliability.
+**Backlog item:** BLG-QA-219
+
+**Endpoint coverage drift check (STEP 6 advisory):** Post-ship closure re-ran `scripts/check_api_performance_baseline_drift.py`: PASSED, no new drift (150 normalised `openapi.yaml` endpoints, 0 missing from `api_performance_baseline.md`). The new routes this cycle (`GET /market/regime`, `GET`/`POST /reports/monthly-pnl/narrative`) sit under existing path prefixes.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep):** Scanned all 33 pre-existing `### N.N TSG-*` entries for `**Status:** Open` before adding §51. 7 Open entries found (TSG-v9.9-01..04, TSG-v9.10-01..03). Their backlog items (`BLG-QA-204`, `BLG-QA-210`, `BLG-QA-212`, `BLG-QA-213`, `BLG-QA-214`, `BLG-QA-215`, `BLG-QA-216`) are all still open, so 0 were resolved. The 3 new §51 entries are added as Open.
+
+---
+
 ## 12. Guiding Principle
 
 > Specs explain decisions.
@@ -1311,6 +1351,7 @@ Identified during delivery verification (`verification_report.md §6`): **3 test
 
 | Date | Change |
 |------|--------|
+| 2026-10-12 | Post-ship closure `2026-10-08__release-v9.11` — §51 Test Coverage Gaps (v9.11) added: 3 gaps (TSG-v9.11-01..03), each already tracked by a backlog item (`BLG-BE-162`, `BLG-QA-220`, `BLG-QA-219`); endpoint coverage drift check PASSED, 0 gaps; full-document TSG sweep: 7 Open entries checked, 0 resolved; §6/§7: no items resolved by this delivery |
 | 2026-10-07 | Post-ship closure `2026-10-06__release-v9.10` — §50 Test Coverage Gaps (v9.10) added: 3 gaps (TSG-v9.10-01..03), each already tracked by a backlog item filed in-cycle during PR review (`BLG-QA-214`/`215`/`216`); endpoint coverage drift check PASSED, 0 gaps, no new routes; full-document TSG sweep: 4 Open entries checked (TSG-v9.9-01..04), 0 resolved; §6/§7: 0 open items, none resolved this cycle. |
 | 2026-10-06 | Post-ship closure `2026-09-30__release-v9.9` — §49 Test Coverage Gaps (v9.9) added: 4 gaps (TSG-v9.9-01..04), each already tracked by a backlog item filed in-cycle during PR review (`BLG-QA-204`/`210`/`212`/`213`); endpoint coverage drift check PASSED, 0 gaps, no new routes; full-document TSG reconciliation sweep found 0 Open entries. Header `**Last Updated:**` corrected — it had not been advanced at the 2026-09-30 v9.8 closure. |
 | 2026-09-30 | Post-ship closure `2026-09-28__release-v9.8` — §48 Test Coverage Gaps (v9.8) added, 0 new gaps requiring a backlog item this cycle (TSG-v9.8-01/02 both not_applicable); endpoint coverage drift check (`check_api_performance_baseline_drift.py`) PASSED, 0 gaps, no new routes this cycle; full-document TSG reconciliation sweep found 0 Open entries. |

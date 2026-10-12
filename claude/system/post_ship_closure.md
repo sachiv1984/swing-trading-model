@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.39
-**Last Updated:** 2026-10-08 (AUD-2026-10-08-001 — STEP 8.5 now reads lessons_learnt_prompt.md §3.5 and §5, and closure Friction Log entries must use the §5 Friction Item block); prior — 2026-10-07 (post-ship closure `2026-10-06__release-v9.10` STEP 8, immediate lessons-learnt actions — STEP 1.5 digest command now runnable as written (venv + `PYTHONPATH=backend`, carried v9.9 closure action); STEP 5.1 scan broadened to bold-paragraph and Known Deviations table-row records, plus an active-backlog-reference check for open records (seventh consolidation review Findings 1–2)); prior — 2026-10-05 (ESC-CLOSE-20260930-03, Head of Specs Team ruling, agent-mediated per execution_prompt.md §5.3, user-directed — §5 canonical-spec carve-out and STEP 5 item 1 now cover a wholly missing Known Deviations entry/section routed from Delivery Verification STEP 3); prior history retained — see prior entries in version control
+**Version:** 2.40
+**Last Updated:** 2026-10-12 (post-ship closure `2026-10-08__release-v9.11` STEP 8, closure-phase finding LL-v9.11-Closure-01 — STEP 0 Audit Cadence Check modulo condition no longer fires when `last_audit_cycle_count` equals `completed_cycle_count`); prior — 2026-10-08 (AUD-2026-10-08-001 — STEP 8.5 now reads lessons_learnt_prompt.md §3.5 and §5, and closure Friction Log entries must use the §5 Friction Item block); prior — 2026-10-07 (post-ship closure `2026-10-06__release-v9.10` STEP 8, immediate lessons-learnt actions — STEP 1.5 digest command now runnable as written (venv + `PYTHONPATH=backend`, carried v9.9 closure action); STEP 5.1 scan broadened to bold-paragraph and Known Deviations table-row records, plus an active-backlog-reference check for open records (seventh consolidation review Findings 1–2)); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); this prompt is the sole authority for the Post-Ship Closure Engine.
@@ -223,7 +223,7 @@ Confirm: release version, feature name, `cycle_id`, ship date (use today if not 
 **Audit Cadence Check (advisory — non-blocking):**
 Read `completed_cycle_count` and `last_audit_cycle_count` (nullable) from `.claude_current_state.json`.
 AUDIT DUE fires if **either** condition is true:
-- `completed_cycle_count % 3 == 0` (modulo cadence check), **OR**
+- `completed_cycle_count % 3 == 0` (modulo cadence check) **and** `last_audit_cycle_count` ≠ `completed_cycle_count` (an audit already run at this count satisfies the cadence: `run audit` writes `last_audit_cycle_count` from the current `completed_cycle_count`, so equality means the due audit has run — LL-v9.11-Closure-01), **OR**
 - `last_audit_cycle_count` is non-null AND `(completed_cycle_count - last_audit_cycle_count) >= 4` (gap-based fallback; catches missed audits when the modulo condition was suppressed or skipped)
 
 If either condition fires: record for the Advisory Summary block — "⚠ AUDIT DUE — completed_cycle_count = N (last_audit_cycle_count = M). Run `run audit` before next Phase 1B opens."

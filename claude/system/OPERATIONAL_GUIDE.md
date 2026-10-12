@@ -1,11 +1,11 @@
 # Sprint Planning Operational Playbook
 
-<!-- last-governance-version-audit: 2026-09-28__release-v9.8 -->
+<!-- last-governance-version-audit: 2026-10-08__release-v9.11 -->
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.232
-**Last Updated:** 2026-10-09 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-34, BLG-GOV-355 — roadmap_prompt.md v9.31→v9.32: STEP 2.4 records the effort-weighted PVR reading); prior — 2026-10-08 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-33, BLG-GOV-375 — sprint_planning_prompt.md v3.21→v3.22, idea_intake_prompt.md v2.10→v2.11, shared_standards.md v3.38→v3.39: canonical Owner role-name write-time check); prior — 2026-10-08 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-35, BLG-GOV-359 — release_planning_prompt.md v2.60→v2.61 and design_gate_prompt.md v1.10→v1.11: §13 clause-citation rule); prior history retained — see prior entries in version control
+**Version:** 4.233
+**Last Updated:** 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 STEP 8 — execution_prompt.md v3.84→v3.85, delivery_verification_prompt.md v3.14→v3.15 and post_ship_closure.md v2.39→v2.40, immediate lessons-learnt actions); prior — 2026-10-09 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-34, BLG-GOV-355 — roadmap_prompt.md v9.31→v9.32: STEP 2.4 records the effort-weighted PVR reading); prior — 2026-10-08 (sprint execution 2026-10-08__release-v9.11 EPIC-06/ST-33, BLG-GOV-375 — sprint_planning_prompt.md v3.21→v3.22, idea_intake_prompt.md v2.10→v2.11, shared_standards.md v3.38→v3.39: canonical Owner role-name write-time check); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -888,7 +888,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.84)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.85)
 
 ### 8.1 Invocation
 
@@ -977,7 +977,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.14)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.15)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1063,7 +1063,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.39)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.40)
 **Process document:** None — the former process document `docs/team_skills/pmo/processess/post-ship_closure.md` was retired 2026-03-13 (commit `11db3666`, deleted with its whole `processess/` directory); `claude/system/post_ship_closure.md` is the sole authority.
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1377,8 +1377,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.232 |
-| Last Updated | 2026-10-09 |
+| Version | 4.233 |
+| Last Updated | 2026-10-12 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.11 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1396,11 +1396,11 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.61 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.22 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.84 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.85 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.18 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.14 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.15 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.39 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.40 |
 | Shared Standards | `claude/system/shared_standards.md` v3.39 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.16 |
@@ -1518,6 +1518,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.233 | 2026-10-12 | **Post-ship closure `2026-10-08__release-v9.11` STEP 8, immediate lessons-learnt actions — 3 source prompts bumped.** `execution_prompt.md` v3.84→v3.85: ESCALATION HANDLING SUBROUTINE and §7 mirror each `ESC-EXEC-*` record into `.claude_current_state.json.open_escalations` (LL-v9.11-P3-02); §9.2 read-back item (5) for the EPIC `qa_signed_off`/`status` pair after a DoQ sign-off (LL-v9.11-P3-03). `delivery_verification_prompt.md` v3.14→v3.15: STEP 2.1 found-defect severity rule for `Pass_with_deviation` (LL-v9.11-P4-01). `post_ship_closure.md` v2.39→v2.40: STEP 0 Audit Cadence Check modulo condition suppressed when `last_audit_cycle_count` equals `completed_cycle_count` (LL-v9.11-Closure-01). §8, §9 and §10 source-prompt headers and §14 Execution / Verification / Post-Ship Closure rows updated; §14 self-row and header 4.232→4.233. |
 | 4.232 | 2026-10-09 | **Sprint execution `2026-10-08__release-v9.11` EPIC-06/ST-34 (BLG-GOV-355) — roadmap_prompt.md v9.31→v9.32: effort-weighted PVR reading.** STEP 2.4 also fills `product_value_ratio_history.md`'s `Effort-weighted Ratio` column at each rebalance; diagnostic only, no tier. §6 phase header and §14 row updated. `BLG-GOV-339` sign-off: Head of Specs Team + Product Owner, agent-mediated, user-directed (`ESC-EXEC-20261008-03`). |
 | 4.231 | 2026-10-08 | **Sprint execution `2026-10-08__release-v9.11` EPIC-06/ST-33 (BLG-GOV-375) — 3 source prompts bumped: canonical Owner role names.** `sprint_planning_prompt.md` v3.21→v3.22: STEP 6.2 seal condition — `scripts/check_sprint_backlog_owners.py` exits 0. `shared_standards.md` v3.38→v3.39: §16.11 names that check, replacing 'by inspection'. `idea_intake_prompt.md` v2.10→v2.11: §4 list and §6 slug table use `Metrics Definitions & Analytics Owner` (the agent file's `**Role:**` line). §5 (Idea Intake) and §7 (Sprint Planning) source-prompt headers and three §14 rows updated; §14 self-row and header bumped. Authority: Head of Specs Team (Sprint Execution Engine, ST-33 sealed AC). |
 | 4.230 | 2026-10-08 | **Sprint execution `2026-10-08__release-v9.11` EPIC-06/ST-35 (BLG-GOV-359) — 2 source prompts bumped: §13 clause-citation rule.** `release_planning_prompt.md` v2.60→v2.61: STEP 4 requires an AC that calls for a §13 review, determination or sign-off to cite every `strategy_rules.md` §13 clause naming the feature's subject, not only §13.2, with the gap-risk (§13.3) worked example. `design_gate_prompt.md` v1.10→v1.11: the §13 pre-check applies the same rule. §6B and §6.5 source-prompt headers and §14 Release Engine Source / Design Gate Engine rows updated; §14 self-row and header bumped. Release prompt is over the 68,500-byte budget (shared_standards.md §11): split item BLG-GOV-383 filed. Authority: Head of Specs Team (Sprint Execution Engine, ST-35 sealed AC). |
