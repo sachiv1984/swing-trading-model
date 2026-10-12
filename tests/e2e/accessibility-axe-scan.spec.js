@@ -76,6 +76,17 @@ const KNOWN_VIOLATIONS = {
   'NotificationPreferences:dark': new Set([]),
   'NotificationsHistory:dark': new Set([]),
   'ReportsMonthly:light': new Set(['color-contrast']), // BLG-FE-200
+  // ST-37 (BLG-QA-196, EPIC-06, v9.11): Replay page, both selector modes and a populated
+  // result, in both themes. The dark theme has no baseline entries (its one finding, the
+  // Risk-Off badge's contrast, was fixed in the same story). The light-theme color-contrast
+  // findings are the same dark-only-classes gap as BLG-FE-200, filed for Replay as
+  // BLG-FE-209; remove these entries when it closes.
+  'ReplayDateRange:dark': new Set([]),
+  'ReplayTradeSet:dark': new Set([]),
+  'ReplayResult:dark': new Set([]),
+  'ReplayDateRange:light': new Set(['color-contrast']), // BLG-FE-209
+  'ReplayTradeSet:light': new Set(['color-contrast']), // BLG-FE-209
+  'ReplayResult:light': new Set(['color-contrast']), // BLG-FE-209
   'ReportsTaxYear:light': new Set(['color-contrast']), // BLG-FE-200
   'NotificationPreferences:light': new Set(['color-contrast']), // BLG-FE-200
   'NotificationsHistory:light': new Set(['color-contrast']), // BLG-FE-200
@@ -333,3 +344,83 @@ for (const theme of ['dark', 'light']) {
     });
   });
 }
+
+// ---------------------------------------------------------------------------
+// ST-37 (BLG-QA-196, EPIC-06, v9.11) — Replay page (src/pages/Replay.js):
+// Date Range mode, Trade Set mode with the checkbox list, and a populated
+// result, each in dark and light themes. Mocks follow replay-mode.spec.js.
+// ---------------------------------------------------------------------------
+
+const REPLAY_TRADES = [
+  { id: '11111111-1111-1111-1111-111111111111', ticker: 'NVDA', exit_date: '2026-05-12' },
+  { id: '22222222-2222-2222-2222-222222222222', ticker: 'AAPL', exit_date: '2026-04-01' },
+];
+
+const REPLAY_RESULT = {
+  status: 'ok',
+  data: {
+    retrospective_notice: 'Retrospective result — shows what the current rules would have produced over this past period. Not a prediction of future performance.',
+    run: {
+      mode: 'date_range', date_from: '2026-03-01', date_to: '2026-06-30',
+      requested_trade_count: 2, replayed_trade_count: 2, skipped: [],
+      rule_set: { stop_loss_mode: 'profit_lock', atr_mult: 2, initial_atr_mult: 5, profit_atr_mult: 2, min_hold_days: 10, risk_off_mode: 'single' },
+      price_data_source: 'yfinance', price_data_fingerprint: 'sha256:deadbeef',
+    },
+    summary: { trade_count: 2, win_count: 1, win_rate_pct: 50, total_simulated_pnl_gbp: 73.91, excluded_from_gbp_total: 0 },
+    trades: [
+      { trade_id: REPLAY_TRADES[0].id, ticker: 'NVDA', market: 'US', currency: 'USD', entry_date: '2026-03-04', entry_price: 121.5,
+        shares: 10, initial_stop: 110.2, simulated_exit_date: '2026-05-12', simulated_exit_price: 133.1, simulated_exit_reason: 'Stop',
+        holding_days: 69, simulated_pnl_native: 114.0, simulated_pnl_gbp: 89.63, fx_basis: 'entry_fx_rate' },
+      { trade_id: REPLAY_TRADES[1].id, ticker: 'AAPL', market: 'US', currency: 'USD', entry_date: '2026-03-10', entry_price: 170.0,
+        shares: 5, initial_stop: 160.0, simulated_exit_date: '2026-04-01', simulated_exit_price: 166.0, simulated_exit_reason: 'Risk-Off',
+        holding_days: 22, simulated_pnl_native: -20, simulated_pnl_gbp: -15.72, fx_basis: 'entry_fx_rate' },
+    ],
+  },
+};
+
+async function mockReplayRoutes(page) {
+  await page.route(`${API}/trades`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json',
+      body: JSON.stringify({ status: 'ok', data: { total_trades: 2, win_rate: 50, total_pnl: 0, trades: REPLAY_TRADES } }) })
+  );
+  await page.route(`${API}/replay/run`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(REPLAY_RESULT) })
+  );
+}
+
+for (const theme of ['dark', 'light']) {
+  test.describe(`Replay page axe scan — ${theme} theme (ST-37)`, () => {
+    test.beforeEach(async ({ page }) => {
+      await page.addInitScript((t) => window.localStorage.setItem('theme', t), theme);
+      await mockRoutes(page);
+      await mockReplayRoutes(page);
+      await page.goto('/#/Replay');
+      await expect(page.getByRole('heading', { name: 'Replay Mode' })).toBeVisible({ timeout: 10000 });
+      if (theme === 'dark') {
+        await expect(page.locator('html')).toHaveClass(/\bdark\b/);
+      } else {
+        await expect(page.locator('html')).not.toHaveClass(/\bdark\b/);
+      }
+    });
+
+    test(`Replay — Date Range mode (${theme})`, async ({ page }) => {
+      await expect(page.getByTestId('replay-date-range-controls')).toBeVisible();
+      await runAxeScan(page, `ReplayDateRange:${theme}`);
+    });
+
+    test(`Replay — Trade Set mode with the checkbox list (${theme})`, async ({ page }) => {
+      await page.getByTestId('replay-mode-tab-trade-set').click();
+      await expect(page.getByTestId(`replay-trade-checkbox-${REPLAY_TRADES[0].id}`)).toBeVisible({ timeout: 8000 });
+      await runAxeScan(page, `ReplayTradeSet:${theme}`);
+    });
+
+    test(`Replay — populated result (${theme})`, async ({ page }) => {
+      await page.getByTestId('replay-date-from').fill('2026-03-01');
+      await page.getByTestId('replay-date-to').fill('2026-06-30');
+      await page.getByTestId('replay-run-button').click();
+      await expect(page.getByTestId('replay-results-table')).toBeVisible({ timeout: 10000 });
+      await runAxeScan(page, `ReplayResult:${theme}`);
+    });
+  });
+}
+
