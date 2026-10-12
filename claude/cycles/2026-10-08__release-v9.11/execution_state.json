@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-10-08__release-v9.11/stage4_backlog_slice.md (read with claude/cycles/2026-10-08__release-v9.11/stage4_backlog_slice_addendum.md)",
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-10-12T14:04:01Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-10-12T14:09:31Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -288,7 +288,9 @@
         "method": "agent_recorded_on_explicit_human_direction",
         "recorded_utc": "2026-10-12T08:30:30Z",
         "merge": "human — merged 2026-10-12T08:36:30Z, merge commit f5a7048c"
-      }
+      },
+      "merged_utc": "2026-10-12T08:36:30Z",
+      "merge_commit": "f5a7048c"
     },
     "EPIC-02": {
       "status": "merged",
@@ -304,7 +306,8 @@
         "tests/e2e/epic01-v34-lifecycle.spec.js",
         "tests/e2e/position-review-cadence-nudge.spec.js",
         "tests/test_portfolio_integration.py",
-        "tests/e2e/recent-trades-zero-pnl-badge.spec.js"
+        "tests/e2e/recent-trades-zero-pnl-badge.spec.js",
+        "tests/e2e/risk-dashboard.spec.js"
       ],
       "stories": {
         "ST-10": {
@@ -1016,7 +1019,9 @@
         "follow_ups": "BLG-OPS-185 filed in faa5cc8f (P3, non-blocking)",
         "dod_acceptance": "Director of Quality Approved + Product Owner Accepted, agent-mediated on explicit user direction, 2026-10-12, conditional on all CI checks green on the final head",
         "merge": "merged by the human developer 2026-10-12T13:23:18Z (b476fce7)"
-      }
+      },
+      "merged_utc": "2026-10-12T13:23:18Z",
+      "merge_commit": "b476fce7"
     },
     "EPIC-04": {
       "status": "merged",
@@ -1455,8 +1460,9 @@
     "2026-10-12T13:46:07Z: main (EPIC-04 merge, PR #1972) merged into EPIC-05 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.27.0 (EPIC-04) over 3.26.0 (EPIC-05), reports_endpoints.md 0.17 over 0.16, data_model.md 2.58 over 2.55/2.56, reports.md 0.22 (EPIC-05) over 0.21, changelog rows kept from both sides; distinct versions, no renumbering (step 2a). execution_state takes main's copy with EPIC-05's own record (done, qa_signed_off true); process_notes unioned, summaries recomputed. backlog.md item union.",
     "2026-10-12T13:49:15Z: EPIC-05 PR #1973 opened (STEP 3.2.B). Pre-PR checks: API performance baseline drift script exit 0; cross-EPIC commit check clean ([EPIC-05] and [GOVERNANCE] only); no src/components or src/pages changes, so the autonomous-class DoQ sign-off (2026-10-09) stands; spec_references paths all resolve. Branch synced with main after the EPIC-01/02/03/04/06 merges.",
     "2026-10-12T13:56:40Z: agent-mediated Director of Quality and Product Owner review posted on PR #1973 (issuecomment-6125740755), both Approved with Comments. The review found that the 3237cb5e merge resolution (main's EPIC-06 merge into EPIC-05) had auto-merged backlog.md with no conflict but spliced BLG-SPEC-190's body into BLG-BE-157. Both were restored in 936181f7 (BLG-BE-157 byte-identical to origin/main; main checked, no splice). BLG-SPEC-193, BLG-SPEC-194 and BLG-GOV-385 filed in 936181f7. Merge-gate QA sign-off and PO acceptance remain with the human.",
-    "2026-10-12T14:04:01Z: EPIC-05 PR #1973 merged by the human developer at 2026-10-12T14:02:12Z (0b441fae), after the agent-mediated DoQ/PO acceptance (issuecomment-6125740755). merge_gate synced on main at run sprint resume (STEP 4 resume-sync, LL-v3.9-P3-1); all six EPICs merged. Orphaned post-merge commit check: none for EPIC-04 or EPIC-05 (git log origin/main..origin/exec/.../EPIC-0x empty). open_escalations emptied: ESC-EXEC-20261008-01/02/03 all Resolved in execution_escalations.md."
+    "2026-10-12T14:04:01Z: EPIC-05 PR #1973 merged by the human developer at 2026-10-12T14:02:12Z (0b441fae), after the agent-mediated DoQ/PO acceptance (issuecomment-6125740755). merge_gate synced on main at run sprint resume (STEP 4 resume-sync, LL-v3.9-P3-1); all six EPICs merged. Orphaned post-merge commit check: none for EPIC-04 or EPIC-05 (git log origin/main..origin/exec/.../EPIC-0x empty). open_escalations emptied: ESC-EXEC-20261008-01/02/03 all Resolved in execution_escalations.md.",
+    "2026-10-12T14:06:37Z: STEP 5 sprint-close checks. 5.0: all 5 delegation records (DEL-20261008-01..04, DEL-20261009-01) terminal Unblocked. 5.0A: all six EPICs pr_status merged (PRs #1968-#1973). 5.1: 43/43 stories acceptance_verified and deviations_filed true; item count 43 declared (sprint_backlog.md PO sign-off: 'All 43 slice items are in scope') = 43 in execution_state.json; every spec_references and test_scenarios path resolves on disk (LL-v9.10-P4-01), no correction needed; all six qa_evidence sign-off Date fields non-blank; no unpushed commits on any EPIC branch. LL-v9.0-P4-02 backstop: EPIC-02 test_scenarios gains tests/e2e/risk-dashboard.spec.js (named in qa_evidence_EPIC-02.md 'Scenarios run'). EPIC-01 and EPIC-06 merged_utc/merge_commit backfilled from gh pr view (#1968 f5a7048c, #1971 b476fce7). 5.1.B: System Status Report has no SC-* count cells or execution-prompt version reference, so no correction."
   ],
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-10-12T14:09:31Z"
 }
