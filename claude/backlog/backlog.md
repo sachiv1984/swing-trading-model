@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-12 (session — 3 new item(s) added: BLG-OPS-184, BLG-BE-170, BLG-BE-171, from the PR #1970 review, EPIC-03, v9.11); prior — 2026-10-12 (session — 7 new item(s) added: BLG-BE-167, BLG-BE-168, BLG-BE-169, BLG-FE-213, BLG-FE-214, BLG-QA-220, BLG-SPEC-192, from the PR #1969 review, EPIC-02, v9.11); prior — 2026-10-12 (session — 7 new item(s) added: BLG-BE-164, BLG-BE-165, BLG-BE-166, BLG-FE-211, BLG-FE-212, BLG-AI-11, BLG-AI-12, from the PR #1968 review, EPIC-01, v9.11); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (session — 1 new item(s) added: BLG-OPS-185, from the PR #1971 review, EPIC-06, v9.11); prior — 2026-10-12 (session — 3 new item(s) added: BLG-OPS-184, BLG-BE-170, BLG-BE-171, from the PR #1970 review, EPIC-03, v9.11); prior — 2026-10-12 (session — 7 new item(s) added: BLG-BE-167, BLG-BE-168, BLG-BE-169, BLG-FE-213, BLG-FE-214, BLG-QA-220, BLG-SPEC-192, from the PR #1969 review, EPIC-02, v9.11); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5730,5 +5730,27 @@ ST-16 stops the nightly job (and the on-load path) stamping `active_atr_multipli
 **Acceptance Criteria**
 - The rule for behavioural effective dates is written in `strategy_version_registry.py`'s docstring
 - v1.15's window and the `strategy_version_at_entry` stamps agree for every trade entered from 9 October 2026 onwards (query output or test)
+
+---
+
+### BLG-OPS-185 — Add requirements-dev.txt to the local backend setup instructions
+**Priority:** P3 (Low)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** PR #1971 review (EPIC-06, ST-43 / BLG-OPS-178), v9.11 — 2026-10-12
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+ST-43 moved `pytest`, `pytest-cov` and `hypothesis` out of `backend/requirements.txt` into `backend/requirements-dev.txt` and updated every CI test workflow, but the local setup instructions were not updated. `README.md`'s backend setup still runs only `.venv/bin/pip install -r requirements.txt`, so a fresh venv built from it cannot run the CLAUDE.md §9 command `backend/.venv/bin/python3 -m pytest` (No module named pytest). Existing venvs still have pytest installed, which hides the gap. `docs/ops/quarterly_dependency_upgrade_cadence_policy.md`'s verification step has the same stale install command.
+
+**Scope**
+- `README.md` backend setup: install `-r requirements.txt -r requirements-dev.txt`
+- `docs/ops/quarterly_dependency_upgrade_cadence_policy.md` verification step: same change
+- Mention `requirements-dev.txt` in CLAUDE.md §9's description of the venv, if the Head of Specs Team agrees (governance file)
+
+**Acceptance Criteria**
+- Following `README.md` from a fresh clone yields a venv in which `backend/.venv/bin/python3 -m pytest --collect-only -q` succeeds
+- `grep -rn "pip install -r .*requirements.txt" README.md docs/ops/quarterly_dependency_upgrade_cadence_policy.md` shows `requirements-dev.txt` alongside every test-running install
 
 ---
