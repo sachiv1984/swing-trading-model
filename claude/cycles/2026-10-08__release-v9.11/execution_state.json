@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-12T13:34:02Z",
+  "last_updated_utc": "2026-10-12T13:43:19Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1019,10 +1019,10 @@
       }
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
       "pr_number": 1972,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -1034,7 +1034,7 @@
         "ST-23": {
           "title": "Cost estimate for the AI monthly P&L narrative",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1947,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
@@ -1057,7 +1057,7 @@
         "ST-24": {
           "title": "Define the AI chat engagement metric set",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1948,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
@@ -1080,7 +1080,7 @@
         "ST-25": {
           "title": "AI-assisted monthly P&L narrative",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Financial Reporting & Records Owner; Strategy Rules & System Intent Owner; Head of UX & Design",
           "github_issue": 1949,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
@@ -1160,7 +1160,7 @@
         "ST-26": {
           "title": "Usage counter for the AI monthly P&L narrative",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1950,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
@@ -1186,7 +1186,7 @@
         "ST-27": {
           "title": "AI chat UI interaction study protocol",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1951,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
@@ -1209,7 +1209,7 @@
         "ST-28": {
           "title": "Track the 2027-01-03 AI feature usage review",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1952,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
@@ -1241,8 +1241,10 @@
       "merge_gate_review": {
         "pr_comment_review": "issuecomment-6125343366",
         "follow_ups": "BLG-FE-215, BLG-FE-216, BLG-BE-172 filed in ff5e8c90 (P3, non-blocking)",
-        "dod_acceptance": "pending human: agent-mediated DoQ and PO reviews both Approved with Comments; human QA sign-off and PO acceptance not yet recorded"
-      }
+        "dod_acceptance": "Director of Quality Approved + Product Owner Accepted, agent-mediated on the repository owner's explicit direction, recorded post-merge (issuecomment-6125483193)"
+      },
+      "merged_utc": "2026-10-12T13:41:37Z",
+      "merge_commit": "e825c46f"
     },
     "EPIC-05": {
       "status": "in_progress",
@@ -1412,10 +1414,10 @@
       "EPIC-01",
       "EPIC-02",
       "EPIC-03",
-      "EPIC-06"
+      "EPIC-06",
+      "EPIC-04"
     ],
     "epics_pending": [
-      "EPIC-04",
       "EPIC-05"
     ],
     "all_merged": false
@@ -1439,7 +1441,8 @@
     "2026-10-12T08:50:28Z: main (EPIC-01 merge, PR #1968) merged into EPIC-06 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-06's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. backlog.md item union; escalations keep EPIC-06's Resolved ESC-EXEC-20261008-03; delegation_log takes the furthest-progressed status per entry.",
     "2026-10-12T09:38:39Z: main (EPIC-02 merge, PR #1969) merged into EPIC-06 per STEP 4 step 3c / CLAUDE.md §8. backlog.md takes main's newer Last Updated chain (items auto-merged); execution_state resolved story by story, summaries recomputed.",
     "2026-10-12: EPIC-06 PR #1971 merged by the human developer at 2026-10-12T13:23:18Z (b476fce7), after the agent-mediated DoQ/PO acceptance given on user direction (issuecomment-6125015336). merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Stories finished on unmerged EPIC-04/EPIC-05 branches read stale here until their own merges (CLAUDE.md §8 union).",
-    "2026-10-12T13:34:02Z: agent-mediated Director of Quality and Product Owner review posted on PR #1972 (issuecomment-6125343366), both Approved with Comments, no blocking findings; BLG-FE-215, BLG-FE-216, BLG-BE-172 filed in ff5e8c90. Merge-gate QA sign-off and PO acceptance remain with the human."
+    "2026-10-12T13:34:02Z: agent-mediated Director of Quality and Product Owner review posted on PR #1972 (issuecomment-6125343366), both Approved with Comments, no blocking findings; BLG-FE-215, BLG-FE-216, BLG-BE-172 filed in ff5e8c90. Merge-gate QA sign-off and PO acceptance remain with the human.",
+    "2026-10-12T13:43:19Z: EPIC-04 PR #1972 merged by the human developer at 2026-10-12T13:41:37Z (e825c46f), 42/42 checks green on head 602f7275. Merge-gate DoQ/PO acceptance recorded post-merge on the repository owner's explicit direction (issuecomment-6125483193, OA-6 labelling). merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none."
   ],
   "sealed": false,
   "sealed_utc": null
