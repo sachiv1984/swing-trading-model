@@ -38,3 +38,13 @@ Last Updated: 2026-10-09
 - Signed off by: Sprint Execution Engine (autonomous class)
 - Date: 2026-10-09
 - Comments: Autonomous class sign-off — all four qualifying criteria met (all stories autonomous, all AC code-review-verifiable, no frontend changes, engine signer populated). The Director of Quality may review and override before merge (execution_prompt.md §3.2.A). PR not yet opened, by user direction (2026-10-09): opens when the earlier EPICs have merged.
+
+## PR #1973 Review and Acceptance Record
+
+- **Review (2026-10-12):** agent-mediated Director of Quality and Product Owner reviews posted on PR #1973 (issuecomment-6125740755). Both returned ⚠️ Approved with Comments. One defect that would have blocked the merge was found and fixed: the `3237cb5e` merge resolution had spliced BLG-SPEC-190's body into BLG-BE-157 in `backlog.md`. Both items were restored in `936181f7`; BLG-BE-157 is byte-identical to `origin/main`. Follow-ups filed in `936181f7`: `BLG-SPEC-193` (P3, `trade_plan_endpoints.md` still lists 3 plan statuses), `BLG-SPEC-194` (P4, 8 older success-example drifts keep `check_contract_example_freshness.py` at exit 1; ST-31 AC2 read as "no new finding"), and `BLG-GOV-385` (P2, backlog item integrity check after cross-EPIC merges). None blocks this merge.
+- **Director of Quality sign-off (counter-sign of the autonomous-class block above):**
+  - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+  - Date: 2026-10-12
+  - Comments: Approved, on the explicit direction of the repository owner, the human authority for the merge. All four stories' evidence holds as listed in the consolidation block. Condition: every required CI check is green on the final head before merge (5 checks were still running on `6659b3e6` when this was recorded, and this record commit restarts CI).
+- **Product Owner acceptance (2026-10-12):** ✅ Accepted, agent-mediated (Sprint Execution Engine, Product Owner role — §5.3) on the explicit direction of the repository owner. ST-29 to ST-32 meet their sealed ACs. ST-31 AC2 is met as "no new finding" (BLG-SPEC-194). For the next rebalance, please consider `BLG-BE-159` (P2, the Trail Stop apply action always fails).
+- **Merge:** left to the human developer.

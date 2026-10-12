@@ -1354,6 +1354,13 @@
           "sign_off_record": null,
           "notes": "Done. AC1 all 5 resolved (4 documentation corrected to the envelope the code returns, 1 heading label corrected). AC2 check_contract_example_freshness.py reports 0 error-envelope violations. Deviation check: none."
         }
+      },
+      "merge_gate_review": {
+        "pr_comment_review": "issuecomment-6125740755",
+        "follow_ups": "BLG-SPEC-193 (P3), BLG-SPEC-194 (P4), BLG-GOV-385 (P2) filed in 936181f7, non-blocking; BLG-SPEC-190/BLG-BE-157 merge splice repaired in 936181f7",
+        "dod_acceptance": "Director of Quality Approved + Product Owner Accepted, agent-mediated on explicit user direction, 2026-10-12, conditional on all CI checks green on the final head",
+        "signed_utc": "2026-10-12T13:58:32Z",
+        "merge": "left to the human developer"
       }
     }
   },
