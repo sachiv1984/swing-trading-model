@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.12.0
-**Last Updated:** 2026-10-07 (ST-13/ST-14, EPIC-03, v9.10, BLG-GOV-365/BLG-BE-136 — GET /positions/{position_id}/gap-risk: weekend_hold removed from reasons; earnings trigger US-only, after today and on or before the next trading day); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — post-grace position_state follows strategy_rules.md §9's P&L sign; lifecycle_reason loses flat_after_grace); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — GET /positions gains stop_calculation_source; both stop paths use the fixed §11 parameters); prior history retained — see prior entries in version control.
+**Version:** 2.13.0
+**Last Updated:** 2026-10-09 (ST-16, EPIC-03, v9.11, BLG-BE-143 — nightly stop update skips in-grace positions; GET /positions/analyze writes no stop during grace); prior — 2026-10-07 (ST-13/ST-14, EPIC-03, v9.10, BLG-GOV-365/BLG-BE-136 — GET /positions/{position_id}/gap-risk: weekend_hold removed from reasons; earnings trigger US-only, after today and on or before the next trading day); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — post-grace position_state follows strategy_rules.md §9's P&L sign; lifecycle_reason loses flat_after_grace); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.13.0 | 2026-10-09 | ST-16 (BLG-BE-143, EPIC-03, v9.11): `POST /positions/nightly-stop-update` skips the stop recalculation for positions inside the 10-day grace period (result `status: "skipped"`, `reason: "grace period"`; non-stop fields still refreshed), and `GET /positions/analyze` no longer writes `current_stop` during grace. Response shapes unchanged. Strategy Rules & System Intent Owner ruling `ESC-EXEC-20261008-01`, `strategy_rules.md` §6.3 v1.15. |
 | 2.12.0 | 2026-10-07 | ST-13/ST-14 (BLG-GOV-365/BLG-BE-136, EPIC-03, v9.10): `GET /positions/{position_id}/gap-risk` — `reasons` enum shrinks to `["earnings"]`: the standalone `weekend_hold` trigger, which flagged every position on Fridays, is removed under §13 Binding Condition 6. The earnings trigger now applies to US positions only (`strategy_rules.md` §4.2.3), and fires when earnings fall after today and on or before the next trading day (weekday calendar), so a Friday view flags Monday earnings and day 0 is no longer flagged. Strategy Rules & System Intent Owner ruling, `ESC-EXEC-20261006-04`. |
 | 2.11.0 | 2026-10-07 | ST-11 (BLG-SPEC-185, EPIC-03, v9.10): after grace, `position_state` follows `strategy_rules.md` §9: `LOSING` when the native price is at or below entry, `PROFITABLE` above it, with `EXIT ZONE` a sub-state of `PROFITABLE` at entry + 2R. The ±0.5 ATR bands and the post-grace `UNKNOWN` neutral zone are removed, and ATR is no longer an input. `lifecycle_reason` loses `flat_after_grace`; `missing_data` is now its only value. Strategy Rules & System Intent Owner ruling, `ESC-EXEC-20261006-03`. |
 | 2.10.0 | 2026-10-06 | ST-01 (BLG-BE-138, EPIC-01, v9.10): `GET /positions` gains `stop_calculation_source` (`on_load` / `nightly` / `null`, DS-26). Parameter-authority ruling (a): `GET /positions/analyze` and `POST /positions/nightly-stop-update` both use the fixed `strategy_rules.md` §11 values (5×/2× ATR, 10-day grace) from one backend source. The on-load path no longer reads the editable `settings` row. (2.9.0 is EPIC-03's ST-12 on its own branch; skipped so versions stay distinct at merge.) |
@@ -193,7 +194,9 @@ Errors use the standard error envelope from **conventions.md**.
 
 **Purpose** (v6.2 ST-01 BLG-FEAT-46)
 
-Recomputes the trailing stop for every open position using the profit-lock strategy logic and stores the result in the database.
+Recomputes the trailing stop for every open position past the grace period using the profit-lock strategy logic and stores the result in the database.
+
+**Grace period (`strategy_rules.md` §6.3 v1.15; ST-16, v9.11):** a position whose holding days (calendar days from `entry_date`) are below `GRACE_PERIOD_DAYS` (10) keeps its stored stop: the job does not recalculate or ratchet it and writes none of `current_stop`, `stop_calculated_at`, `active_atr_multiplier` or `stop_calculation_source`. It still refreshes `current_price`, `holding_days` and `atr` (plus `atr_source` / `atr_calculated_at` when the ATR was freshly fetched), and reports the position as `{"ticker", "market", "status": "skipped", "reason": "grace period"}`, counted in `skipped`. Trailing starts on day 10 from the stored stop. A stop already raised during grace before v9.11 is kept, never lowered (§7.3). `GET /positions/analyze` uses the same grace test.
 
 **Method & Path**
 
@@ -210,7 +213,7 @@ Recomputes the trailing stop for every open position using the profit-lock strat
 
 Both use the **current** price. The losing stop is not `entry − 5×ATR`; that is the §5 initial stop at entry, stored separately as `initial_stop`. To reproduce a displayed stop: take the position's `atr_value` and `active_atr_multiplier`, compute `current_price − multiplier × atr_value` (floored at entry when profitable), then take the max with the previous stop.
 
-**Ratchet invariant:** `stored_stop = max(previous_stop, newly_calculated_stop)` — stop only ever moves up.
+**Ratchet invariant (past grace):** `stored_stop = max(previous_stop, newly_calculated_stop)` — stop only ever moves up.
 
 **Idempotency**
 
@@ -227,9 +230,9 @@ No body required.
   "status": "ok",
   "data": {
     "run_date": "2026-06-24",
-    "positions_processed": 3,
-    "updated": 3,
-    "skipped": 0,
+    "positions_processed": 2,
+    "updated": 1,
+    "skipped": 1,
     "results": [
       {
         "ticker": "NVDA",
@@ -240,6 +243,12 @@ No body required.
         "stop_moved": true,
         "atr_mult": 2.0,
         "reason": "Profitable (tight 2x ATR)"
+      },
+      {
+        "ticker": "VOD.L",
+        "market": "UK",
+        "status": "skipped",
+        "reason": "grace period"
       }
     ]
   }
@@ -308,7 +317,7 @@ Runs deterministic daily monitoring logic across open positions and returns an a
 
 **Side effects (persistent)**
 
-This is a `GET`, but it is **not** read-only and should not be described as "safe to refresh". Each call, for every open position with a live price, writes `current_price`, `current_stop`, `holding_days`, `pnl` and `pnl_pct`. Past grace, it also writes `stop_calculated_at`, `active_atr_multiplier` and `stop_calculation_source` (`"on_load"`). When the stored ATR is missing and a fresh one is fetched, it writes `atr`, `atr_calculated_at` and `atr_source`. The §7.3 ratchet makes the stop write irreversible: a stop raised by one call is never lowered by a later one, even if the price falls back. Repeated calls with unchanged market data converge on the same stored values. Calls made at different prices can each ratchet the stop higher.
+This is a `GET`, but it is **not** read-only and should not be described as "safe to refresh". Each call, for every open position with a live price, writes `current_price`, `holding_days`, `pnl` and `pnl_pct`. Past grace, it also writes `current_stop`, `stop_calculated_at`, `active_atr_multiplier` and `stop_calculation_source` (`"on_load"`). During grace it writes no stop field: the stored stop is left exactly as it is (`strategy_rules.md` §6.3 v1.15; ST-16, v9.11 — before then the in-grace stop was rewritten, rounded to 2 dp). When the stored ATR is missing and a fresh one is fetched, it writes `atr`, `atr_calculated_at` and `atr_source`. The §7.3 ratchet makes the stop write irreversible: a stop raised by one call is never lowered by a later one, even if the price falls back. Repeated calls with unchanged market data converge on the same stored values. Calls made at different prices can each ratchet the stop higher.
 
 ### Request
 

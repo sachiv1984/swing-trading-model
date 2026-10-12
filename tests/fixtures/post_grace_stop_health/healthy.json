@@ -1,0 +1,5 @@
+[
+  {"ticker": "MU", "status": "open", "grace_period": false, "current_stop": 92.0, "active_atr_multiplier": 2.0},
+  {"ticker": "WDC", "status": "open", "grace_period": false, "current_stop": 45.5, "active_atr_multiplier": 5.0},
+  {"ticker": "SNDK", "status": "open", "grace_period": true, "current_stop": 40.0, "active_atr_multiplier": null}
+]

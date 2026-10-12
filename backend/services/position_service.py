@@ -520,11 +520,15 @@ def analyze_positions() -> Dict:
             print(f"   💾 Updating position in database...")
             position_updates = {
                 'current_price': round(current_price, 4),
-                'current_stop': round(trailing_stop_native, 2),
                 'holding_days': holding_days,
                 'pnl': round(pnl_gbp, 2),
                 'pnl_pct': round(pnl_pct, 2)
             }
+            # ST-16 (BLG-BE-143, EPIC-03, v9.11; strategy_rules.md §6.3 v1.15):
+            # during grace the stored stop is left exactly as it is -- not
+            # rewritten, not even rounded. Trailing starts on day 10.
+            if not grace_period:
+                position_updates['current_stop'] = round(trailing_stop_native, 2)
             # ST-01 (BLG-BE-135, EPIC-01, v9.9): only stamp stop_calculated_at /
             # active_atr_multiplier when the stop was actually recalculated
             # against ATR (grace period carries the stop over unchanged, with
@@ -591,7 +595,10 @@ _ATR_PERIOD = ATR_PERIOD_DAYS
 
 def run_nightly_trailing_stop_update() -> Dict:
     """
-    Nightly job: recompute trailing stop for every open position and store result.
+    Nightly job: recompute trailing stop for every open position past grace and
+    store result. In-grace positions (holding days < GRACE_PERIOD_DAYS) keep
+    their stored stop and are reported as skipped, reason "grace period"
+    (ST-16, strategy_rules.md §6.3 v1.15).
 
     Strategy (strategy_rules.md §7.2, via calculate_trailing_stop):
       - In profit: new_stop = max(current_price − (PROFIT_ATR_MULT × ATR), entry_price)
@@ -643,6 +650,25 @@ def run_nightly_trailing_stop_update() -> Dict:
 
         current_stop_native = pos.get('current_stop', pos.get('initial_stop', 0)) or 0
         holding_days = calculate_holding_days(str(pos['entry_date']))
+        now_utc = datetime.now(timezone.utc)
+
+        # ST-16 (BLG-BE-143, EPIC-03, v9.11; strategy_rules.md §6.3 v1.15):
+        # during grace the stored stop is the §5 initial stop and is neither
+        # recalculated nor ratcheted -- the same grace test as the on-load
+        # path. Only the non-stop fields are refreshed; a stop already raised
+        # before this rule is kept (§7.3).
+        if holding_days < GRACE_PERIOD_DAYS:
+            grace_updates = {
+                'current_price': round(live_price, 4),
+                'atr': round(atr_value, 4),
+                'holding_days': holding_days,
+            }
+            if atr_fresh:
+                grace_updates['atr_source'] = 'fetched'
+                grace_updates['atr_calculated_at'] = now_utc
+            update_position(position_id, grace_updates)
+            results.append({"ticker": pos['ticker'], "market": pos['market'], "status": "skipped", "reason": "grace period"})
+            continue
 
         if pos['market'] == 'US':
             pnl_native = (live_price - entry_price) * pos['shares']
@@ -658,7 +684,6 @@ def run_nightly_trailing_stop_update() -> Dict:
             settings=_SETTINGS,
         )
 
-        now_utc = datetime.now(timezone.utc)
         nightly_updates = {
             'current_stop': round(new_stop_native, 2),
             'current_price': round(live_price, 4),
@@ -1021,6 +1046,37 @@ def add_position(
 # EXIT POSITION
 # ============================================================================
 
+def strategy_parameter_snapshot(position: Dict, holding_days: int) -> Dict:
+    """The strategy parameters in force on a position at exit (ST-17, BLG-FR-06,
+    EPIC-03, v9.11; data_model.md DS-29).
+
+    Copied onto the trade_history row so a closed trade can be tied to the rules
+    that produced its stops, even if strategy_rules.md §11 changes later.
+
+    - active_atr_multiplier: the multiplier behind the stop in force. Taken from
+      the position's own active_atr_multiplier (stamped on every post-grace
+      recompute). A position exited in grace with none stamped is still on its
+      §5 initial stop (frozen in grace, strategy_rules.md §6.3 v1.15), so the
+      initial multiplier applies. Otherwise unknown: NULL, never invented.
+    - atr: the position's stored ATR.
+    - grace_period_days: the §6.2 / §11 grace length.
+    - parameter_source: where the multiplier and grace length come from:
+      strategy_parameters.py, the single source of the fixed §11 values since
+      the v9.10 ruling (named by the ST-16 ruling, ESC-EXEC-20261008-01), with
+      the strategy version in force (strategy_version_registry).
+    """
+    multiplier = position.get('active_atr_multiplier')
+    if multiplier is None and holding_days < GRACE_PERIOD_DAYS:
+        multiplier = INITIAL_ATR_MULTIPLIER
+    atr = position.get('atr')
+    return {
+        'active_atr_multiplier': float(multiplier) if multiplier is not None else None,
+        'atr': float(atr) if atr is not None else None,
+        'grace_period_days': GRACE_PERIOD_DAYS,
+        'parameter_source': f"strategy_parameters.py@{get_current_strategy_version()}",
+    }
+
+
 def exit_position(
     position_id: str,
     exit_price: float,
@@ -1245,6 +1301,7 @@ def exit_position(
         'tags': position.get('tags'),
         'fill_price': position.get('user_fill_price'),
         'planned_entry_price': planned_entry_price,
+        **strategy_parameter_snapshot(position, holding_days),
     }
     
     print(f"   💾 Creating trade history record...")
