@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Superseded
-**Version:** 2.0.0
-**Last Updated:** 2026-05-26
+**Version:** 2.0.1
+**Last Updated:** 2026-10-08 (ST-32, EPIC-05, v9.11, BLG-SPEC-175 — error example corrected to the canonical {status, message} envelope the code returns); prior — 2026-05-26; prior history retained — see prior entries in version control
 **Shipped:** v4.0 — ST-12, EPIC-03, cycle 2026-05-22__release-v4.0
 **Superseded by:** docs/specs/api_contracts/ai_thesis_generation.md v2.1.0 (v4.2 ST-08)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -133,9 +133,12 @@ When the Anthropic API key is absent or the API call fails:
 
 ```json
 {
-  "detail": "Trade plan not found"
+  "status": "error",
+  "message": "Trade plan not found"
 }
 ```
+
+The route catches the `HTTPException` and returns the standard error envelope (`conventions.md` §13.1). *(Example corrected v9.11, ST-32, BLG-SPEC-175: it previously showed FastAPI's default `{"detail": ...}` body, which this route does not return.)*
 
 Returned when `plan_id` does not exist in the current portfolio's trade plans.
 
@@ -334,5 +337,6 @@ When the Anthropic API key is absent or the API call fails:
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 2.0.1 | 2026-10-08 | ST-32 (EPIC-05, v9.11, BLG-SPEC-175): 404 example corrected to the standard error envelope (this superseded file is still scanned by `check_contract_example_freshness.py`). Documentation only. |
 | 2.0.0 | 2026-05-26 | Switch from Gemini Flash to Claude Haiku 4.5 (claude-haiku-4-5) via Anthropic SDK; update env var to ANTHROPIC_API_KEY; update cost rates ($1.00/1M input, $5.00/1M output); update prompt_version to v3.0; add POST /trade-plans/generate-plan endpoint; retitle document to AI Thesis Generation API Contract |
 | 1.0.0 | 2026-05-25 | Initial contract — ST-12, EPIC-03, v4.0. POST /trade-plans/{plan_id}/generate-thesis with Gemini Flash |

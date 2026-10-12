@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.20
-**Last Updated:** 2026-10-08 (ST-09, EPIC-01, v9.11, BLG-BE-142 — model IDs pinned in backend/ai_models.py; examples show the pinned Haiku 4.5 snapshot claude-haiku-4-5-20251001); prior — 2026-10-08 (ST-08, EPIC-01, v9.11, BLG-BE-141 — briefing and chat context carry each stop's stop_calculated_at and the prompts instruct the model to state it; briefing v1.2, chat v1.1); prior — 2026-10-08 (ST-07, EPIC-01, v9.11, BLG-AI-09 — daily briefing system prompt states advisory-only / no execution, actions framed as recommendations; briefing prompt_version v1.1); prior history retained — see prior entries in version control
+**Version:** 1.21
+**Last Updated:** 2026-10-08 (ST-32, EPIC-05, v9.11, BLG-SPEC-175 — POST /ai/journal-summary 'LLM unreachable' heading corrected from 503 to 200; 1.17-1.20 are EPIC-01's); prior — 2026-10-01 (ST-33, EPIC-05, v9.9, BLG-SPEC-168 — corrected 4 citations of the `latency_ms` composition decision from `BLG-BE-128` to the correct `BLG-BE-129`; `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites), documentation only); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to all 5 POST endpoints in this file; flagged undefined double-submit alert-duplication behaviour on check-daily-cost/check-endpoint-anomalies as BLG-OPS-172/173); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -85,9 +85,9 @@ Only closed trades (with `exit_date` set) are included in the summary. If no mat
 | `cached` | boolean | Reserved for future caching; always `false` in v1.0. |
 | `message` | string or null | Informational message when `summary` is null (e.g. "No journal notes found for the selected trades."). |
 
-### Response — 503 Service Unavailable (LLM unreachable)
+### Response — 200 OK when the LLM is unreachable
 
-When the external LLM API is unreachable or returns an error, the endpoint returns HTTP 200 with `summary: null` and a `message` field — it does NOT propagate a 500.
+When the external LLM API is unreachable or returns an error, the endpoint returns HTTP 200 with `summary: null` and a `message` field. It does not propagate a server error.
 
 ```json
 {
@@ -98,6 +98,8 @@ When the external LLM API is unreachable or returns an error, the endpoint retur
   "message": "AI summarisation is currently unavailable. Please try again later."
 }
 ```
+
+*(Heading corrected v9.11, ST-32, BLG-SPEC-175: it previously named a 503 status, but the endpoint returns HTTP 200 with this body. This is an informational response, not an error envelope.)*
 
 ### Error responses
 
@@ -859,6 +861,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.21 | 2026-10-08 | ST-32 (EPIC-05, v9.11, BLG-SPEC-175): `POST /ai/journal-summary` 'LLM unreachable' heading corrected from 503 to 200 (the endpoint returns 200). Documentation only. (1.17–1.20 are EPIC-01's ST-03/07/08/09.) |
 | 1.20 | 2026-10-08 | ST-09 (EPIC-01, v9.11, BLG-BE-142): Every Claude model ID is pinned in `backend/ai_models.py` (`CLAUDE_HAIKU_4_5` = `claude-haiku-4-5-20251001`, `CLAUDE_SONNET_4_6` = `claude-sonnet-4-6`); `tests/test_ai_model_ids_pinned.py` fails on a model literal elsewhere. Debrief and trade-plan generation move from the floating alias `claude-haiku-4-5` to the pinned snapshot, so `model_id`/`model_version` values recorded from v9.11 carry the dated ID. |
 | 1.19 | 2026-10-08 | ST-08 (EPIC-01, v9.11, BLG-BE-141): Briefing and chat context state each stop's last recalculation time (`stop_calculated_at`) and both prompts instruct the model to quote it; `BRIEFING_PROMPT_VERSION` v1.2, `CHAT_PROMPT_VERSION` v1.1. No request/response change. |
 | 1.18 | 2026-10-08 | ST-07 (EPIC-01, v9.11, BLG-AI-09): Daily briefing system prompt states advisory-only / no execution and frames actions as recommendations; `BRIEFING_PROMPT_VERSION` v1.0 → v1.1 (`claude_audit_log.prompt_version`). No request/response change. |

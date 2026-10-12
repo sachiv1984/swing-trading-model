@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-08-04
+**Version:** 1.2
+**Last Updated:** 2026-10-08 (ST-32, EPIC-05, v9.11, BLG-SPEC-175 — error example corrected to the canonical {status, message} envelope the code returns); prior — 2026-08-04; prior history retained — see prior entries in version control
 **Shipped:** v4.6 — ST-04, EPIC-01, cycle 2026-05-30__release-v4.6
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **§13 gate:** PASS — `docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md`
@@ -159,8 +159,10 @@ These three fields are omitted (not present) when `status` is not `"insufficient
 ### Error Response (401)
 
 ```json
-{"detail": "Unauthorized"}
+{"status": "error", "message": "Unauthorized"}
 ```
+
+Returned by the API-key middleware (`backend/main.py`) in the standard error envelope (`conventions.md` §13.1). *(Example corrected v9.11, ST-32, BLG-SPEC-175: it previously showed `{"detail": "Unauthorized"}`.)*
 
 ### Error Response (500 / computation failure)
 
@@ -172,6 +174,7 @@ The endpoint returns 200 with `data.status = "error"` and an `error_detail` fiel
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-10-08 | ST-32 (EPIC-05, v9.11, BLG-SPEC-175): 401 example corrected to the standard error envelope the API-key middleware returns. Documentation only. |
 | 1.1 | 2026-08-04 | ST-05 (v8.2, EPIC-01, BLG-FEAT-86): Added `insufficient_data_streak_days`, `streak_capped`, `trade_count_trend` fields to the response, present only when `status == "insufficient_data"`. See §Insufficient-Data Response Shape. |
 
 ## Known Deviations

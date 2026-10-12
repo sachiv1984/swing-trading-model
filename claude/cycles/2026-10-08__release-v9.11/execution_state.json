@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-12T13:43:19Z",
+  "last_updated_utc": "2026-10-12T13:46:07Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1247,11 +1247,11 @@
       "merge_commit": "e825c46f"
     },
     "EPIC-05": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1973,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "tests/test_trade_plan_status_enum_parity.py"
@@ -1354,6 +1354,13 @@
           "sign_off_record": null,
           "notes": "Done. AC1 all 5 resolved (4 documentation corrected to the envelope the code returns, 1 heading label corrected). AC2 check_contract_example_freshness.py reports 0 error-envelope violations. Deviation check: none."
         }
+      },
+      "merge_gate_review": {
+        "pr_comment_review": "issuecomment-6125740755",
+        "follow_ups": "BLG-SPEC-193 (P3), BLG-SPEC-194 (P4), BLG-GOV-385 (P2) filed in 936181f7, non-blocking; BLG-SPEC-190/BLG-BE-157 merge splice repaired in 936181f7",
+        "dod_acceptance": "Director of Quality Approved + Product Owner Accepted, agent-mediated on explicit user direction, 2026-10-12, conditional on all CI checks green on the final head",
+        "signed_utc": "2026-10-12T13:58:32Z",
+        "merge": "left to the human developer"
       }
     }
   },
@@ -1442,7 +1449,15 @@
     "2026-10-12T09:38:39Z: main (EPIC-02 merge, PR #1969) merged into EPIC-06 per STEP 4 step 3c / CLAUDE.md §8. backlog.md takes main's newer Last Updated chain (items auto-merged); execution_state resolved story by story, summaries recomputed.",
     "2026-10-12: EPIC-06 PR #1971 merged by the human developer at 2026-10-12T13:23:18Z (b476fce7), after the agent-mediated DoQ/PO acceptance given on user direction (issuecomment-6125015336). merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Stories finished on unmerged EPIC-04/EPIC-05 branches read stale here until their own merges (CLAUDE.md §8 union).",
     "2026-10-12T13:34:02Z: agent-mediated Director of Quality and Product Owner review posted on PR #1972 (issuecomment-6125343366), both Approved with Comments, no blocking findings; BLG-FE-215, BLG-FE-216, BLG-BE-172 filed in ff5e8c90. Merge-gate QA sign-off and PO acceptance remain with the human.",
-    "2026-10-12T13:43:19Z: EPIC-04 PR #1972 merged by the human developer at 2026-10-12T13:41:37Z (e825c46f), 42/42 checks green on head 602f7275. Merge-gate DoQ/PO acceptance recorded post-merge on the repository owner's explicit direction (issuecomment-6125483193, OA-6 labelling). merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none."
+    "2026-10-12T13:43:19Z: EPIC-04 PR #1972 merged by the human developer at 2026-10-12T13:41:37Z (e825c46f), 42/42 checks green on head 602f7275. Merge-gate DoQ/PO acceptance recorded post-merge on the repository owner's explicit direction (issuecomment-6125483193, OA-6 labelling). merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none.",
+    "2026-10-09: EPIC-05 qa_signed_off set true and EPIC status set done. The autonomous-class DoQ sign-off (qa_evidence_EPIC-05.md, dated 2026-10-09, commit 4cde85cf) was committed without the same-commit qa_signed_off write that execution_prompt.md §3.2.A requires (OA-1/ST-01). Corrected at the next resume.",
+    "2026-10-12T08:59:00Z: main (EPIC-01 merge, PR #1968) merged into EPIC-05 per STEP 4 step 3c / CLAUDE.md §8. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. data_model.md 2.55, ai_endpoints.md 1.21 and ai_thesis_generation.md 2.1.2 kept (EPIC-05 had reserved EPIC-01's numbers, so no 2a collision); changelog rows unioned; backlog.md item union. EPIC-05's PR stays unopened until the earlier EPICs merge (user direction, 2026-10-09).",
+    "2026-10-12T09:44:03Z: main (EPIC-02 merge, PR #1969) merged into EPIC-05 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.26.0 kept with EPIC-02's version notes; backlog.md takes main's Last Updated chain (items auto-merged); execution_state resolved story by story, summaries recomputed.",
+    "2026-10-12: main (EPIC-03 merge, PR #1970) synced into EPIC-05. data_model.md 2.56 (EPIC-03 DS-28/DS-29 added; 2.55 is this EPIC's ST-30) and openapi.yaml 3.26.0 (EPIC-05) over 3.25.1 (EPIC-03) — distinct versions, no renumbering (CLAUDE.md §8 2a).",
+    "2026-10-12T13:27:08Z: EPIC-05 status restored to done and qa_signed_off to true. The main-into-EPIC-05 merge resolution 3237cb5e (EPIC-06 merge, PR #1971) took main's stale EPIC-05 record and reset both fields; 9e3276d3 had set them after the autonomous-class DoQ sign-off (qa_evidence_EPIC-05.md, 2026-10-09). No story record changed. Found on run sprint resume.",
+    "2026-10-12T13:46:07Z: main (EPIC-04 merge, PR #1972) merged into EPIC-05 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.27.0 (EPIC-04) over 3.26.0 (EPIC-05), reports_endpoints.md 0.17 over 0.16, data_model.md 2.58 over 2.55/2.56, reports.md 0.22 (EPIC-05) over 0.21, changelog rows kept from both sides; distinct versions, no renumbering (step 2a). execution_state takes main's copy with EPIC-05's own record (done, qa_signed_off true); process_notes unioned, summaries recomputed. backlog.md item union.",
+    "2026-10-12T13:49:15Z: EPIC-05 PR #1973 opened (STEP 3.2.B). Pre-PR checks: API performance baseline drift script exit 0; cross-EPIC commit check clean ([EPIC-05] and [GOVERNANCE] only); no src/components or src/pages changes, so the autonomous-class DoQ sign-off (2026-10-09) stands; spec_references paths all resolve. Branch synced with main after the EPIC-01/02/03/04/06 merges.",
+    "2026-10-12T13:56:40Z: agent-mediated Director of Quality and Product Owner review posted on PR #1973 (issuecomment-6125740755), both Approved with Comments. The review found that the 3237cb5e merge resolution (main's EPIC-06 merge into EPIC-05) had auto-merged backlog.md with no conflict but spliced BLG-SPEC-190's body into BLG-BE-157. Both were restored in 936181f7 (BLG-BE-157 byte-identical to origin/main; main checked, no splice). BLG-SPEC-193, BLG-SPEC-194 and BLG-GOV-385 filed in 936181f7. Merge-gate QA sign-off and PO acceptance remain with the human."
   ],
   "sealed": false,
   "sealed_utc": null
