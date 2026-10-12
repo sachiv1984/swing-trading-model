@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-12T07:57:46Z",
+  "last_updated_utc": "2026-10-12T08:02:34Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -173,16 +173,16 @@
         "ST-06": {
           "title": "claude_audit_log: add prompt_hash and response_length, and log failed model calls",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "AI Compliance & Governance Officer; Data Model & Domain Schema Owner",
           "github_issue": 1930,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "686f7c5bca093749242c84d75bb31daed908df4d",
           "delegation_record_id": "DEL-20261008-03",
           "blocked_since_utc": "2026-10-08T11:18:41Z",
           "unblock_criteria": "DS-27 Up Migration applied on staging and production with verification output recorded",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-12T08:02:34Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/data_model.md#DS-27",
             "docs/ops/claude_api_log_hygiene_policy.md",
@@ -190,10 +190,16 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "code_committed",
-          "sign_off_record": null,
-          "notes": "Code, tests, data_model.md DS-27 and hygiene policy v1.2 done; AC1 and AC2 met by tests/test_claude_audit_log_prompt_hash.py. AC3 live migration delegated (DEL-20261008-03)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "signed_utc": "2026-10-12T08:02:34Z",
+            "note": "User (human, live write access) applied DS-27 on staging and production and supplied identical Verification output for both; recorded in data_model.md DS-27 Live Confirmation."
+          },
+          "notes": "Done. AC1/AC2: tests/test_claude_audit_log_prompt_hash.py (8 passed) — code commit 5c753cbc. AC3: DS-27 applied live on staging and production 2026-10-12, verification output recorded (686f7c5b); DEL-20261008-03 unblocked in-session. Deviation check: none."
         },
         "ST-07": {
           "title": "State in the daily-briefing system prompt that output is advisory and cannot execute trades",
@@ -1052,7 +1058,6 @@
     "ST-34"
   ],
   "delegated_items": [
-    "ST-06",
     "ST-42"
   ],
   "completed_items": [
@@ -1061,6 +1066,7 @@
     "ST-03",
     "ST-04",
     "ST-05",
+    "ST-06",
     "ST-07",
     "ST-08",
     "ST-09"
