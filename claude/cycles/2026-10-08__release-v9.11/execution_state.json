@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-12T08:02:34Z",
+  "last_updated_utc": "2026-10-12T08:10:19Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -20,7 +20,7 @@
       "branch": "exec/2026-10-08__release-v9.11/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/test_debrief_service.py",
@@ -248,7 +248,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC: briefing/chat context carries stop_calculated_at per position and prompts instruct the model to state it (tests/test_ai_stop_recalculation_time.py). Prompt-side control: a response omitting the time is not rejected (documented in ai_endpoints.md). Deviation check: none."
+          "notes": "Done. AC: briefing/chat context carries stop_calculated_at per position and prompts instruct the model to state it (tests/test_ai_stop_recalculation_time.py). Prompt-side control: a response omitting the time is not rejected (documented in ai_endpoints.md). Deviation check: AC narrowed to a prompt-side control (responses are not checked) — Pass_with_deviation, tracked by BLG-AI-10 (filed at EPIC-01 DoQ consolidation, 91190de3)."
         },
         "ST-09": {
           "title": "Pin every Claude model ID in one backend module",
@@ -274,6 +274,13 @@
           "sign_off_record": null,
           "notes": "Done. AC: no claude- model literal outside backend/ai_models.py and no unpinned alias in production code; tests/test_ai_model_ids_pinned.py fails if reintroduced (shown by test_reintroduced_literal_is_detected). Deviation check: none."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "signed_utc": "2026-10-12T08:10:19Z",
+        "notes": "Agent-mediated DoQ review (§5.3, user-directed): Approved on first pass with 6 non-blocking findings, applied in this commit. BLG-BE-162 ruled a pre-existing P1 defect found and filed by ST-02, not an EPIC-01 deviation; Phase 4 §7 P1 acceptance still to be recorded in verification_report.md."
       }
     },
     "EPIC-02": {

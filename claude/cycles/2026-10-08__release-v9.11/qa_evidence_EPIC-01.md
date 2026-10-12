@@ -23,7 +23,7 @@ Per-story entries are added as stories close; the EPIC-level consolidation block
   - AC4: AI Compliance & Governance Officer sign-off on the Condition 2 interpretation recorded; `PROMPT_VERSION` bumped — **Met**. [Agent-mediated review — on behalf of AI Compliance & Governance Officer, user-directed], cleared 2026-10-08T11:03:10Z, with 8 binding conditions recorded in `execution_state.json` (`sign_off_record`). Debrief `PROMPT_VERSION` v1.0 → v1.1.
 - **Not yet live:** staging at `82633f5` (ST-02 run, 2026-10-09) does not carry ST-01, so its debrief showed no R figures, as expected. Live wording is checked after merge and deploy.
 - **Deviations:** none (contract updated in the same commit).
-- **QA findings / disposition:** _(Director of Quality — at EPIC-01 DoQ consolidation)_
+- **QA findings / disposition:** Accepted — see EPIC-01 consolidation.
 
 ---
 
@@ -47,7 +47,7 @@ Per-story entries are added as stories close; the EPIC-level consolidation block
   - AC3: escaped-defect note filed — **Met**, commit `d730ac69` (`docs/testing/escaped_defect_note_ai_sampling_import_2026-10-08.md`, citing ST-03, ST-04 and `BLG-QA-218`).
 - **Daily briefing quality notes (not AC failures, not filed):** (a) the prompt renders cash as "cash £X of £{initial_cash}"; staging's `initial_cash` is 0, so the model reported "£15,006 against a £0 target cash level"; (b) with only held tickers among the top signals, the model emitted an ENTER action for the placeholder ticker `NEW_SIGNAL` — the prompt does not forbid invented tickers.
 - **Deviations:** DEL-20261008-01's instruction to opt in "in Settings" was wrong — sampling is enabled by `AI_OUTPUT_SAMPLING_ENABLED` on the backend (`ai_output_sampling_service.py`); corrected in `delegation_log.md`. No code deviation.
-- **QA findings / disposition:** _(Director of Quality — at EPIC-01 DoQ consolidation)_
+- **QA findings / disposition:** Accepted — see EPIC-01 consolidation (Pass_with_deviation, BLG-BE-162).
 
 ---
 
@@ -58,7 +58,7 @@ Per-story entries are added as stories close; the EPIC-level consolidation block
   - AC1: a failure inside the sampling hook, including at import, leaves each AI endpoint's response unchanged — **Met**, `tests/test_ai_sampling_failsafe.py` covers all 6 endpoints for both failure points; 8 of its 10 tests fail on the pre-change code.
   - AC2: daily briefing and chat log the exception (with `exc_info`) when they return their fallback message — **Met**, asserted in the same file.
 - **Deviations:** none.
-- **QA findings / disposition:** _(Director of Quality — at EPIC-01 DoQ consolidation)_
+- **QA findings / disposition:** Accepted — see EPIC-01 consolidation.
 
 ---
 
@@ -69,7 +69,7 @@ Per-story entries are added as stories close; the EPIC-level consolidation block
   - AC1: reintroducing the `ai_output_sampling_service` bare import makes the new test fail — **Met**, shown locally.
   - AC2: the test passes on `main` and runs in CI Phase A — **Met on the branch**: added to `ci-tests.yml` Phase A and passing there (CI Pytest Suite run 38221200370 on `18a7e1ad`, success). It reaches `main` with this EPIC's merge.
 - **Deviations:** none.
-- **QA findings / disposition:** _(Director of Quality — at EPIC-01 DoQ consolidation)_
+- **QA findings / disposition:** Accepted — see EPIC-01 consolidation.
 
 ---
 
@@ -82,7 +82,7 @@ Per-story entries are added as stories close; the EPIC-level consolidation block
   - AC3: after a successful regenerate, the generated timestamp updates — **Met**, Playwright SC-DBF-08a.
 - **CI:** the `ci_pending` note is cleared — Playwright E2E Acceptance Tests run 37780192461 on `ac85987b`: success.
 - **Deviations:** none. The debrief-section axe check lives in `trade-debrief.spec.js`, not the shared `accessibility-axe-scan.spec.js`; no conflict with EPIC-06's ST-37.
-- **QA findings / disposition:** _(Director of Quality — at EPIC-01 DoQ consolidation)_
+- **QA findings / disposition:** Accepted — see EPIC-01 consolidation.
 
 ---
 
@@ -94,7 +94,7 @@ Per-story entries are added as stories close; the EPIC-level consolidation block
   - AC2: a failed model call writes an audit row marked as failed (`model_call_failed`) — **Met**, same commit and test file.
   - AC3: migration recorded in `data_model.md` and applied live, with verification output; hygiene policy amended — **Met**. DS-27 recorded in `data_model.md` (v2.53) and `claude_api_log_hygiene_policy.md` amended in `5c753cbc`. Applied live on 2026-10-12 by the user (human, with live write access, acting for the Data Model & Domain Schema Owner, DEL-20261008-03): staging, then production. Verification output, identical in both environments: `prompt_hash` `character varying` 16 `YES`; `response_length` `integer` `NULL` `YES`. Recorded in `data_model.md` DS-27 Live Confirmation.
 - **Deviations:** none.
-- **QA findings / disposition:** _(Director of Quality — at EPIC-01 DoQ consolidation)_
+- **QA findings / disposition:** Accepted — see EPIC-01 consolidation.
 
 ---
 
@@ -105,7 +105,7 @@ Per-story entries are added as stories close; the EPIC-level consolidation block
   - AC1: the briefing prompt states advisory-only and no execution, frames actions as recommendations, and the golden-fixture tests pass with a recorded `prompt_version` bump — **Met**; `BRIEFING_PROMPT_VERSION` v1.0 → v1.1; golden fixtures pass (Golden Output Regression Gate run 38221200416, success).
   - AC2: self-audit checklist A1 passes for both the chat and briefing prompts — **Met**, `tests/test_ai_prompt_advisory_statements.py`; checklist updated.
 - **Deviations:** none.
-- **QA findings / disposition:** _(Director of Quality — at EPIC-01 DoQ consolidation)_
+- **QA findings / disposition:** Accepted — see EPIC-01 consolidation.
 
 ---
 
@@ -115,7 +115,7 @@ Per-story entries are added as stories close; the EPIC-level consolidation block
 - **Acceptance criteria** (`stage4_backlog_slice.md#ST-08`), commit `a3cbdc74`:
   - AC1: briefing and chat responses that mention a stop include its recalculation time (`stop_calculated_at`), shown by a fixture test — **Met as a prompt-side control, narrowed.** Fixture tests show each position line in the briefing and chat context carries `stop_calculated_at` (or "stop not recalculated since entry"), and both prompts instruct the model to state it whenever it mentions a stop. `BRIEFING_PROMPT_VERSION` v1.1 → v1.2, `CHAT_PROMPT_VERSION` v1.0 → v1.1. Nothing checks the model's *response*: a reply that cites a stop without the time is not rejected (disclosed in `ai_endpoints.md`). The remaining gap is tracked in **BLG-AI-10**.
 - **Deviations:** AC narrowed to the prompt side — BLG-AI-10.
-- **QA findings / disposition:** _(Director of Quality — at EPIC-01 DoQ consolidation)_
+- **QA findings / disposition:** Accepted — see EPIC-01 consolidation (Pass_with_deviation, BLG-AI-10).
 
 ---
 
@@ -123,9 +123,9 @@ Per-story entries are added as stories close; the EPIC-level consolidation block
 
 - **Spec references:** `backend/ai_models.py`; `tests/test_ai_model_ids_pinned.py`
 - **Acceptance criteria** (`stage4_backlog_slice.md#ST-09`), commit `e4ed97eb`:
-  - AC1: no `claude-` model literal outside the new module and no unpinned alias in production code; a test fails if one is reintroduced — **Met**, `tests/test_ai_model_ids_pinned.py` (`test_reintroduced_literal_is_detected`). Staging generate-thesis returned `model_version` `claude-haiku-4-5` (ST-02 run, pre-merge code).
+  - AC1: no `claude-` model literal outside the new module and no unpinned alias in production code; a test fails if one is reintroduced — **Met**, `tests/test_ai_model_ids_pinned.py` (`test_reintroduced_literal_is_detected`). (The staging generate-thesis `model_version` `claude-haiku-4-5` from the ST-02 run is pre-change baseline, not AC evidence; the guard test is the evidence.)
 - **Deviations:** none.
-- **QA findings / disposition:** _(Director of Quality — at EPIC-01 DoQ consolidation)_
+- **QA findings / disposition:** Accepted — see EPIC-01 consolidation.
 
 ---
 
@@ -158,16 +158,16 @@ Per-story entries are added as stories close; the EPIC-level consolidation block
 **QA test coverage:**
 - Scenarios run: the 9 files above. CI on branch head `18a7e1ad`: CI Pytest Suite 38221200370, Golden Output Regression Gate 38221200416, Critical-Path Smoke Tests (Playwright) 38221200380, Portfolio Integration Tests 38221200377, Service Layer Coverage Gate 38221200341, Endpoint Coverage Report 38221200400 — all success. Playwright E2E Acceptance Tests 37780192461 on `ac85987b` (last `src/`/`tests/e2e` change) — success. `tests/test_claude_audit_log_prompt_hash.py` re-run locally 2026-10-12: 8 passed.
 - Regression areas checked: AI endpoints (debrief, briefing, chat, journal summary, generate-plan, generate-thesis), AI audit logging, AI output sampling, backend import paths, Trade History debrief UI.
-- Frontend testing gate (CLAUDE.md §2): the only frontend change is ST-05, and each of its observable ACs has Playwright coverage passing in CI. No AC is "code review only".
+- Frontend testing gate (CLAUDE.md §2): the only frontend code change is ST-05, and each of its observable ACs has Playwright coverage passing in CI. ST-01 is also UI-facing (its debrief text renders in Trade History), but its observable output is wording only, built deterministically and covered exactly by `tests/test_debrief_service.py` fixtures; its live wording is checked on staging after deploy. No AC is "code review only".
 - Known deviations: ST-02 (BLG-BE-162), ST-08 (BLG-AI-10). Every other story's deviation check completed with nothing to file.
 
 **Sign-off:**
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] **Strategy values checked:** ST-01 — §5 initial stop (R = (exit − entry) / (entry − initial stop)), §7 trailing stop at exit, §8.1 stop-loss trigger; ST-08 — §7 stop recalculation (`stop_calculated_at`). Other stories: no stop/grace/ATR/exit/sizing logic touched.
-- Signed off by:
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations — BLG-BE-162 (P1) is a pre-existing defect found and filed by ST-02, not introduced by this EPIC; see Comments
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A: ST-05's `TradeDebrief.js` uses the `apiFetch` wrapper
+- [x] **Strategy values checked:** ST-01 — §5 initial stop (R = (exit − entry) / (entry − initial stop)), §7 trailing stop at exit, §8.1 stop-loss trigger; ST-08 — §7 stop recalculation (`stop_calculated_at`). Other stories: no stop/grace/ATR/exit/sizing logic touched.
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-10-12
+- Comments: Agent-mediated Director of Quality review (§5.3, user-directed). All nine ST rows were reviewed against `stage4_backlog_slice.md`. ST-02 and ST-08 are `Pass_with_deviation`. ST-02: journal summary returned 422 on staging (`trade_ids` typed int, IDs are UUIDs). This defect has existed since 2026-04-18 and was not introduced by EPIC-01. It is filed as BLG-BE-162 (P1) and targeted to v9.12 by the Product Owner (user). It is accepted for this sign-off as a found-and-filed pre-existing defect, and the Phase 4 §7 P1 acceptance must still be recorded in `verification_report.md`. ST-08: prompt-side control only, tracked by BLG-AI-10. Frontend: ST-05 ACs are covered by Playwright SC-DBF-06a/07a/08a (run 37780192461, ac85987b). ST-01's debrief wording is covered by deterministic fixture tests, and its live wording is checked after deploy. CI is green on 18a7e1ad: runs 38221200370/416/380/377/341/400. Story-level authority sign-offs for ST-01, ST-02 and ST-06 are confirmed cleared. Boundary samples are a pre-change baseline, and post-change sampling follows merge. Reviewer re-ran the 8 EPIC pytest files locally: 89 passed.
