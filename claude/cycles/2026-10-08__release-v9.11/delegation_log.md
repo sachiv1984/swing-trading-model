@@ -64,3 +64,25 @@ Last Updated: 2026-10-12
 - **Unblock criteria:** Both verification outputs recorded in `data_model.md` DS-27 (Live Confirmation) and in `qa_evidence_EPIC-01.md` under ST-06. The code is already on the branch: `create_claude_audit_entry()` also adds the columns idempotently, and the audit write never blocks an AI response, so deploy order is not a hard risk.
 - **Commit format required:** `[EPIC-01][ST-06] <description>` pushed to `exec/2026-10-08__release-v9.11/EPIC-01`
 - **Status:** Unblocked — 2026-10-12. Unblocked in-session: the user (human, with live write access, acting for the Data Model & Domain Schema Owner) applied the DS-27 Up Migration on staging, then production. The Verification query returned the 2 expected nullable columns (`prompt_hash` character varying(16), `response_length` integer) in both environments. Recorded in `data_model.md` DS-27 Live Confirmation and `qa_evidence_EPIC-01.md` under ST-06.
+
+
+## DEL-20261008-04
+
+- **ST Item:** ST-20 — DB-level unique constraint for active price alerts
+- **EPIC:** EPIC-03
+- **Classification:** delegated_backend (live migration, Human-Delegation, RISK-03; DS-17 precedent)
+- **Assigned to:** Data Model & Domain Schema Owner (with Infrastructure & Operations Owner)
+- **GitHub Issue:** #1944
+- **Branch:** exec/2026-10-08__release-v9.11/EPIC-03
+- **Delegated at:** 2026-10-08T13:34:42Z
+- **What is needed:** Run the DS-28 Up Migration (`docs/specs/data_model.md` § DS-28, the full `BEGIN … COMMIT` block with its duplicate pre-check) on **staging, then production**. If the pre-check raises, deactivate the listed duplicate active alerts first and re-run. Then run the Verification query in each environment and paste both outputs back:
+  ```sql
+  SELECT indexname, indexdef FROM pg_indexes
+  WHERE tablename = 'price_alerts' AND indexname = 'idx_price_alerts_active_unique';
+  ```
+  Expected: `CREATE UNIQUE INDEX idx_price_alerts_active_unique ON public.price_alerts USING btree (portfolio_id, ticker, condition, threshold_price) WHERE (active = true)`.
+- **Workflow viability (LL-v9.10-P3-01):** Not a workflow dispatch; a manual SQL run in the Supabase SQL editor.
+- **Spec reference:** `docs/specs/data_model.md#DS-28`; `stage4_backlog_slice.md#ST-20` AC 2
+- **Unblock criteria:** Both verification outputs recorded in `data_model.md` DS-28 (Live Confirmation) and in `qa_evidence_EPIC-03.md` under ST-20. AC 1 (concurrent double-submit absorbed at the DB layer) is already shown by `tests/test_price_alert_db_uniqueness.py` against a real Postgres (CI Phase B). Deploy order is not a hard risk: without the index the service behaves as before.
+- **Commit format required:** `[EPIC-03][ST-20] <description>` pushed to `exec/2026-10-08__release-v9.11/EPIC-03`
+- **Status:** Pending
