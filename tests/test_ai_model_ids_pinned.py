@@ -76,6 +76,7 @@ def test_every_constant_is_registered():
     ("services.ai_service", "MODEL_BRIEFING"),
     ("services.debrief_service", "MODEL_VERSION"),
     ("services.gemini_service", "MODEL_VERSION"),
+    ("services.monthly_pnl_narrative_service", "MODEL_VERSION"),
 ])
 def test_call_sites_use_pinned_ids(module_name, attr):
     import importlib

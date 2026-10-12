@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-12 (session — 1 new item(s) added: BLG-OPS-185, from the PR #1971 review, EPIC-06, v9.11); prior — 2026-10-12 (session — 3 new item(s) added: BLG-OPS-184, BLG-BE-170, BLG-BE-171, from the PR #1970 review, EPIC-03, v9.11); prior — 2026-10-12 (session — 7 new item(s) added: BLG-BE-167, BLG-BE-168, BLG-BE-169, BLG-FE-213, BLG-FE-214, BLG-QA-220, BLG-SPEC-192, from the PR #1969 review, EPIC-02, v9.11); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (session — 3 new item(s) added: BLG-FE-215, BLG-FE-216, BLG-BE-172, from the PR #1972 review, EPIC-04, v9.11); prior — 2026-10-12 (session — 1 new item(s) added: BLG-OPS-185, from the PR #1971 review, EPIC-06, v9.11); prior — 2026-10-12 (session — 1 new item added: BLG-AI-13, from the ST-25 AI Compliance & Governance Officer review, EPIC-04, v9.11); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4739,6 +4739,50 @@ ST-18's failing run (37598457966) was dispatched on the EPIC-04 branch: staging 
 
 ---
 
+### BLG-OPS-183 — Make the daily AI cost alert count Claude calls, not only Gemini calls
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** Sprint Execution, ST-25 / EPIC-04, cycle `2026-10-08__release-v9.11` (agent-mediated Cybersecurity & Trust Lead review of the ST-25 AI endpoint security checklist) — 2026-10-09
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v9.12
+
+**Problem**
+`POST /ai/check-daily-cost` → `check_and_alert_daily_cost()` → `database.get_daily_ai_cost()` sums `estimated_cost_usd` from `gemini_audit_log` only. `gemini_audit_log` is written only by `gemini_service._log_audit`, for plan and thesis generation. Every Claude-calling feature (daily briefing, chat, journal summary, post-trade debrief, and ST-25's monthly P&L narrative) logs to `claude_audit_log`, so its spend is never counted, and the $1.00 `AI_DAILY_COST_THRESHOLD` alert can never fire for it. `docs/ops/ai_monthly_pnl_narrative_cost_estimate_2026-10-08.md` (ST-23) relies on this alert ("fires well before this"), as did the first draft of ST-25's security checklist. The per-endpoint anomaly check (`check-endpoint-anomalies`, reading `claude_audit_log`) and `GET /ai/monthly-cost-by-feature` do cover Claude spend.
+
+**Scope**
+- Make `get_daily_ai_cost()` sum today's `claude_audit_log.cost_usd` only, and alert on that. `gemini_service._log_audit` writes both tables on every plan and thesis call, so summing both would count those calls twice; `claude_audit_log` already holds every call.
+- Confirm which scheduler calls `POST /ai/check-daily-cost` and that it runs.
+- Add a correction note to the ST-23 cost estimate's runaway row.
+
+**Acceptance Criteria**
+- A pytest showing a `claude_audit_log` row counted in the daily total, a plan-generation call counted once, and the alert firing when Claude spend passes the threshold
+- The scheduler that calls `POST /ai/check-daily-cost` named in `ai_endpoints.md`, with its last successful run recorded
+- The ST-23 cost estimate notes the corrected coverage
+
+---
+
+### BLG-QA-219 — Stop the ⌘K hint toast intercepting the chat submit click in SC-AC-03
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Sprint Execution, ST-25 / EPIC-04, cycle `2026-10-08__release-v9.11` (DoQ regression run of the shared AI badge's Playwright coverage) — 2026-10-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+`tests/e2e/epic02-v62-ai-briefing-chat.spec.js` SC-AC-03 fails intermittently locally: 2 of 3, 1 of 3 and 3 of 3 in repeated runs on EPIC-04. It fails 1 of 3 on EPIC-04 at `dde0501c`, before any ST-25 change, and 0 of 3 on EPIC-06. The click on `ai-chat-submit` times out because the first-visit sonner toast ("Press ⌘K (or Ctrl K) to search pages, tickers, and trade plans.", `src/Layout.js`) sits over the chat widget's submit button and "intercepts pointer events". Whether the toast is still showing when the test clicks is a matter of timing, which makes this a flaky test, not a regression. CI has passed it on every EPIC-04 run so far.
+
+**Scope**
+- In the spec, suppress or dismiss the hint before interacting: set the hint's "seen" flag with `addInitScript`, or close the toast. Do not change the app.
+- Check the other chat-widget scenarios in the same file for the same exposure.
+
+**Acceptance Criteria**
+- SC-AC-03 passes 10 of 10 with `--repeat-each=10` locally
+- No `test.fixme` quarantine is needed
+
+---
+
 ### BLG-QA-216 — Assert the applied theme in every Reports/Notifications axe scan, not just Reports Monthly
 **Priority:** P3 (Low)
 **Type:** QA / Test Automation
@@ -5213,6 +5257,51 @@ ST-14's suppression predicate (`Positions.js` ~592, `PositionCard.js` ~97) reads
 **Type:** Spec Debt
 **Owner:** Data Model & Domain Schema Owner
 **Source:** ST-30 (BLG-SPEC-173), EPIC-05, cycle `2026-10-08__release-v9.11` — 2026-10-08
+
+---
+
+### BLG-FE-208 — Add a useful / not-useful rating to each AI chat answer
+**Priority:** P3 (Low)
+**Type:** Frontend / UX — AI Advisory Measurement
+**Owner:** Metrics Definitions & Analytics Owner; Frontend Specifications & UX Documentation Owner
+**Source:** ST-24 (BLG-FEAT-60), EPIC-04, cycle `2026-10-08__release-v9.11` — out-of-scope finding while defining the AI chat engagement metrics — 2026-10-08
+**Effort:** S (~0.5d plus a live migration if a new column or table is needed)
+**Provisional-Target:** TBD
+
+**Problem**
+`metrics_definitions.md` § AI Chat Engagement (v1.27.0) defines a Response Acceptance Rate: chat answers rated useful ÷ chat answers rated. The chat widget has no rating control and nothing stores a rating, so the measure is "not instrumented" and the 2027-01-03 AI feature usage review cannot report it.
+
+**Scope**
+- Add a useful / not-useful control to each AI chat answer, following the trade-plan thesis feedback pattern (DS-09 `thesis_feedback`)
+- Store each rating against the answer it rates (for example, a row keyed to the `claude_audit_log` call), with a `data_model.md` DS entry and live migration
+- Document the query that computes the rate in `metrics_definitions.md` § AI Chat Engagement and drop its "not instrumented" status
+
+**Acceptance Criteria**
+- A user can rate each chat answer once, and the rating persists (Playwright + unit test)
+- The Response Acceptance Rate query returns a value from stored ratings, and `null` when none exist
+
+---
+
+### BLG-GOV-382 — Run the 2027-01-03 AI feature usage review
+**Priority:** P3 (Low)
+**Type:** Governance Process — AI Feature Review Cadence
+**Owner:** Metrics Definitions & Analytics Owner; Product Owner
+**Source:** ST-28 (BLG-GOV-366), EPIC-04, cycle `2026-10-08__release-v9.11` — new gated tracking item; `BLG-FEAT-60` is not edited — 2026-10-08
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+**Gate criteria:** AI feature usage review due 2027-01-03 (90 days after the 2026-10-05 baseline review, `docs/ops/ai_feature_usage_review_2026-09-24.md`). Not actionable before that date.
+
+**Problem**
+The 2026-10-05 review found 31 AI calls in 102 days, and the Product Owner chose to build more AI features to try to raise engagement. v9.11 adds the first of them (the monthly P&L narrative, ST-25) and defines the measures to judge it (ST-24 AI chat engagement, ST-26 narrative usage count). Nothing schedules the follow-up review, so it would surface only when someone happens to notice the date.
+
+**Scope**
+- On or after 2027-01-03, query production `claude_audit_log` read-only for the period since 2026-10-05
+- Report the AI chat engagement measures (`metrics_definitions.md` § AI Chat Engagement: sessions per week, questions per session, response acceptance rate if `BLG-FE-208` has shipped) and the monthly P&L narrative usage count (ST-26), each against the 2026-09-24 review baseline
+- File the review as `docs/ops/ai_feature_usage_review_2027-01-03.md` and record a Product Owner decision on further AI investment
+
+**Acceptance Criteria**
+- The review artefact exists with the measures above, compared with the baseline
+- A dated Product Owner decision on further AI investment is recorded in it
 
 ---
 
@@ -5732,6 +5821,28 @@ The briefing context renders cash as "cash £X of £{initial_cash}". On staging 
 
 ---
 
+### BLG-AI-13 — Monthly P&L narrative: widen the instrument-directive scan to inflected and indirect wording
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Sprint Execution, ST-25 / EPIC-04, cycle `2026-10-08__release-v9.11` (agent-mediated AI Compliance & Governance Officer review of the new narrative endpoint) — 2026-10-12
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.12
+
+**Problem**
+`_INSTRUMENT_DIRECTIVE_RE` in `backend/services/monthly_pnl_narrative_service.py` matches only base verb forms followed directly by a pronoun or an upper-case ticker. Inflected or indirect wording passes the D4 scan: "Consider buying MSFT" and "sell the position" both return no finding. Risk is low because the narrative's inputs carry no tickers (§13 Condition 2) and the prescriptive scan still runs, but a model-invented ticker would be caught only if its wording matched.
+
+**Scope**
+- Extend the pattern to inflected forms (buying/selling/shorting, "consider/should buy", "sell the position/holding") without false positives on past-tense reporting ("you sold 9 trades")
+- Add B-MPN-04 cases for the new forms and negative cases for past-tense reporting
+
+**Acceptance Criteria**
+- "Consider buying MSFT" and "sell the position" are reported as `instrument_directive`
+- The representative output and the code-written fallback still scan clean
+- `tests/test_monthly_pnl_narrative.py` passes
+
+---
+
 ### BLG-OPS-184 — Stop the post-grace stop-health monitor alerting on the morning a position's grace ends
 **Priority:** P2 (Medium)
 **Type:** Operations / Monitoring
@@ -5815,5 +5926,70 @@ ST-43 moved `pytest`, `pytest-cov` and `hypothesis` out of `backend/requirements
 **Acceptance Criteria**
 - Following `README.md` from a fresh clone yields a venv in which `backend/.venv/bin/python3 -m pytest --collect-only -q` succeeds
 - `grep -rn "pip install -r .*requirements.txt" README.md docs/ops/quarterly_dependency_upgrade_cadence_policy.md` shows `requirements-dev.txt` alongside every test-running install
+
+---
+
+### BLG-FE-215 — Pluralise the month counts in the monthly P&L summary fallback text
+**Priority:** P3 (Low)
+**Type:** Frontend / UX — Copy
+**Owner:** Frontend Specifications & UX Documentation Owner; Financial Reporting & Records Owner
+**Source:** PR #1972 agent-mediated review (EPIC-04, cycle `2026-10-08__release-v9.11`), Director of Quality / Product Owner finding: ST-25 — 2026-10-12
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+The code-written fallback summary (`build_fallback_text`, `backend/services/monthly_pnl_narrative_service.py`) ends with "{profitable} months ended above zero and {losing} below." It pluralises "closed trade(s)" and "month(s)" earlier in the sentence but not these counts, so a tax year with one profitable month reads "1 months ended above zero". The template in `reports.md` §AI Summary and the design record §2.6 have the same wording. The fallback is shown whenever the AI text fails its checks, so the user sees it when the summary already looks least trustworthy.
+
+**Scope**
+- Pluralise "month"/"months" for the profitable and losing counts in `build_fallback_text`
+- Update the fallback template in `docs/specs/frontend/pages/reports.md` §AI Summary to match
+- Add a unit test case with exactly one profitable month
+
+**Acceptance Criteria**
+- With one profitable month, the fallback text reads "1 month ended above zero" (asserted in `tests/test_monthly_pnl_narrative.py`)
+- The `reports.md` template wording matches the code
+
+---
+
+### BLG-FE-216 — Keep a generated monthly P&L summary visible after switching tax year and back
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** PR #1972 agent-mediated review (EPIC-04, cycle `2026-10-08__release-v9.11`), Director of Quality finding: ST-25 — 2026-10-12
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+`MonthlyNarrativeCard` keeps a newly generated summary in local state, which it resets when the tax year changes. A successful POST does not update the react-query cache entry `["monthlyPnlNarrative", year]`, which still holds the earlier GET result with `narrative: null`. If the user switches to another tax year and back, the card shows the empty "Get a short written summary" state until the background refetch returns. That can prompt an unnecessary Regenerate, which is a real model call counted against the daily cap.
+
+**Scope**
+- After a successful POST, write the returned payload into the query cache for that year (`queryClient.setQueryData`) or invalidate the key
+- Extend `tests/e2e/monthly-pnl-narrative.spec.js` with a generate → switch year → switch back scenario
+
+**Acceptance Criteria**
+- After Generate, switching tax year and back shows the generated summary immediately, with no empty-state render in between (Playwright)
+- No extra POST is made by the round trip
+
+---
+
+### BLG-BE-172 — Show the code-written fallback when the monthly P&L summary's regeneration call fails
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / AI Feature Resilience
+**Owner:** Head of Engineering; Financial Reporting & Records Owner
+**Source:** PR #1972 agent-mediated review (EPIC-04, cycle `2026-10-08__release-v9.11`), Product Owner finding: ST-25 — 2026-10-12
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+In `generate_narrative` (`backend/services/monthly_pnl_narrative_service.py`), if the first model attempt fails the §13 output checks and the regeneration call then raises, the endpoint returns 503 and stores nothing. A failed check on both attempts falls back to the code-written summary, but this path does not, although it has the same figures. The user gets an error in place of a usable, compliant summary. This matches the contract's 503 row (`reports_endpoints.md`), so it is an improvement, not a deviation.
+
+**Scope**
+- When attempt 1 failed its checks and attempt 2's model call raises, store and return the fallback summary (`source: "fallback"`) with a terminal audit result. The cap and audit rules still apply.
+- Keep 503 for a model failure on attempt 1 (no checked output exists)
+- Update the `reports_endpoints.md` 503 row and `metrics_definitions.md` § AI Monthly P&L Narrative Usage if the terminal-result set changes; add a unit test
+
+**Acceptance Criteria**
+- A unit test with attempt 1 failing checks and attempt 2 raising receives `source: "fallback"` and a stored row
+- `count_monthly_pnl_narrative_generations` counts that request exactly once
 
 ---

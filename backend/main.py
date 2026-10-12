@@ -1044,6 +1044,108 @@ def get_monthly_pnl_endpoint(year: Optional[int] = None, format: Optional[str] =
 # Data model: docs/specs/data_model.md §v1.8
 # ---------------------------------------------------------------------------
 
+# ─── Monthly P&L AI narrative (ST-25, EPIC-04, v9.11, BLG-FEAT-59) ──────────
+# Advisory-only AI summary of one tax year's Monthly P&L figures. §13
+# CONDITIONAL — docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md.
+# Contract: reports_endpoints.md §GET/§POST /reports/monthly-pnl/narrative.
+# Security: docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/ai_endpoint_security_checklist.md
+_MONTHLY_NARRATIVE_LIMIT = 10  # requests/minute/IP, same as /ai/daily-briefing
+
+
+class MonthlyNarrativeRequest(BaseModel):
+    year: int
+    regenerate: bool = False
+
+
+def _narrative_year_error(year: int):
+    if year < 1000 or year > 9999:
+        return JSONResponse(status_code=400,
+            content={"status": "error", "message": "year must be a valid four-digit integer"})
+    return None
+
+
+@app.get("/reports/monthly-pnl/narrative")
+def get_monthly_pnl_narrative_endpoint(year: int):
+    """
+    GET /reports/monthly-pnl/narrative?year=YYYY
+
+    The stored AI summary for that tax year, if one was written from the
+    current figures; otherwise narrative/source/generated_at are null. Never
+    calls the model.
+    Spec: reports_endpoints.md §GET /reports/monthly-pnl/narrative (v0.15, ST-25 v9.11)
+    """
+    from services.monthly_pnl_narrative_service import get_stored_narrative
+    err = _narrative_year_error(year)
+    if err:
+        return err
+    try:
+        return {"status": "ok", "data": get_stored_narrative(year)}
+    except ValueError:
+        return JSONResponse(status_code=400,
+            content={"status": "error", "message": "tax year has not started yet"})
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=500,
+            content={"status": "error", "message": "Internal server error"})
+
+
+@app.post("/reports/monthly-pnl/narrative")
+def post_monthly_pnl_narrative_endpoint(body: MonthlyNarrativeRequest, request: Request):
+    """
+    POST /reports/monthly-pnl/narrative  {"year": YYYY, "regenerate": false}
+
+    Returns the stored AI summary for the tax year's current figures, or
+    generates one (regenerate=true always generates). Rate limit 10/min/IP;
+    daily cap of 40 model calls (429); fails closed with 503.
+    Spec: reports_endpoints.md §POST /reports/monthly-pnl/narrative (v0.15, ST-25 v9.11)
+    """
+    from services.rate_limiter import _ai_limiter
+    from services.monthly_pnl_narrative_service import (
+        generate_narrative, NarrativeCapReached, NarrativeUnavailable, NoMonthsInRange,
+    )
+    from datetime import datetime as _dt, timedelta as _td, timezone as _tz
+    client_ip = request.client.host if request.client else "unknown"
+    allowed, retry_after = _ai_limiter.is_allowed(
+        f"monthly-pnl-narrative:{client_ip}", limit=_MONTHLY_NARRATIVE_LIMIT
+    )
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={"status": "error", "message": "Rate limit exceeded. Try again later."},
+            headers={"Retry-After": str(retry_after)},
+        )
+    err = _narrative_year_error(body.year)
+    if err:
+        return err
+    try:
+        return {"status": "ok", "data": generate_narrative(body.year, regenerate=body.regenerate)}
+    except NoMonthsInRange:
+        return JSONResponse(status_code=404,
+            content={"status": "error", "message": "No closed trades in this tax year."})
+    except NarrativeCapReached:
+        now = _dt.now(_tz.utc)
+        midnight = (now + _td(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        return JSONResponse(
+            status_code=429,
+            content={"status": "error", "message": "Daily limit for AI summaries reached. Try again tomorrow."},
+            headers={"Retry-After": str(int((midnight - now).total_seconds()) + 1)},
+        )
+    except NarrativeUnavailable:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=503,
+            content={"status": "error", "message": "AI summary is unavailable right now."})
+    except ValueError:
+        return JSONResponse(status_code=400,
+            content={"status": "error", "message": "tax year has not started yet"})
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=500,
+            content={"status": "error", "message": "Internal server error"})
+
+
 class ReflectionRequest(BaseModel):
     trade_rationale: Optional[str] = None
     what_worked: Optional[str] = None
