@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-09
+Last Updated: 2026-10-12
 
 # QA Evidence — EPIC-02: Risk & Position Display Correctness
 
@@ -21,7 +21,7 @@ Last Updated: 2026-10-09
 
 **QA test coverage:**
 - Scenarios run (locally, 2026-10-08): `tests/e2e/risk-price-integrity.spec.js` with `tests/e2e/risk-dashboard.spec.js` (25 passed); `tests/e2e/epic01-v34-lifecycle.spec.js`, `position-review-cadence-nudge.spec.js`, `lifecycle-badge-grace-calendar-days.spec.js` (27 passed); `tests/e2e/recent-trades-zero-pnl-badge.spec.js` (6 passed); backend full suite 2212 passed, 15 skipped.
-- Real CI (frontend testing gate, LL-v9.10-P3-03): Playwright E2E passed on every story commit — ST-10 run 37781054800 (`2269fe38`), ST-11 run 37781530649 (`31fa13ed`), ST-13 run 37782662654 (`f74e45dc`), ST-14 run 37783382571 (`e22b6ff4`), ST-15 run 37783658772 (`441153b4`, branch head; CI Pytest, Critical-Path Smoke, Portfolio Integration, Golden Output, Service Layer Coverage and Endpoint Coverage also green on this SHA).
+- Real CI (frontend testing gate, LL-v9.10-P3-03): Playwright E2E passed on every story commit — ST-10 run 37781054800 (`2269fe38`), ST-11 run 37781530649 (`31fa13ed`), ST-13 run 37782662654 (`f74e45dc`), ST-14 run 37783382571 (`e22b6ff4`), ST-15 run 37783658772 (`441153b4`, last story commit; CI Pytest, Critical-Path Smoke, Portfolio Integration, Golden Output, Service Layer Coverage and Endpoint Coverage also green on this SHA). Merged head `604cbd42` (after the main→EPIC-02 merge, 2026-10-12): Playwright E2E 38225461992, Critical-Path Smoke 38225462101, CI Pytest 38225462181, Portfolio Integration 38225462000, Golden Output 38225462002, Service Layer Coverage 38225462056, Endpoint Coverage 38225461993 and Governance Sync 38225462057, all success.
 - Regression areas checked: Risk Dashboard (heat gauge, grace panel, prospective heat: `risk-dashboard.spec.js` unchanged and passing), Positions grace alert and review cadence, Dashboard cards, alerts/compliance/AI services (holding-days readers), `GET /portfolio` contract and openapi drift checks.
 - Known deviations: None found — all six stories' deviation checks completed with nothing to file.
 
@@ -31,11 +31,11 @@ Last Updated: 2026-10-09
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] **Strategy values checked (conditional — ST-36, BLG-GOV-370, v9.11):** prepared by the Sprint Execution Engine for the Director of Quality to confirm. ST-11 — §6.3 (stop not enforced during grace; the table now says so). ST-12 — §6.1/§6.2 and §11 (10-day grace counted in calendar days from entry). ST-13 — §7.1/§7.2 (stop distance measured in the stop's own native currency; no multiplier or ATR value changed). ST-14 — §6.2 (grace window by calendar days since entry; alert at ≥ 8 days). ST-10 — no stop, grace, ATR or exit value touched (price source only). ST-15 — none.
-- Signed off by:
-- Date:
-- Comments: Awaiting Director of Quality sign-off. EPIC-02 merges after EPIC-01 (sprint_backlog.md Merge Order).
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
+- [x] **Strategy values checked (conditional — ST-36, BLG-GOV-370, v9.11):** prepared by the Sprint Execution Engine for the Director of Quality to confirm. ST-11 — §6.3 (stop not enforced during grace; the table now says so). ST-12 — §6.1/§6.2 and §11 (10-day grace counted in calendar days from entry). ST-13 — §4.1.5 (stop and price in the instrument's native currency; stop distance computed natively) — §7.1/§7.2 ATR period and multipliers unchanged. ST-14 — §6.2 (grace window = 10 calendar days from entry, days 0–9); the alert threshold (≥ 8 days held, `grace_days_remaining ≤ 2`) is a display rule set in `grace_period_alert_endpoint.md` v1.2.0, not a strategy value. ST-10 — no stop, grace, ATR or exit value touched (price source only). ST-15 — none.
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-10-12
+- Comments: Agent-mediated Director of Quality review (`director_of_quality.md`, execution_prompt.md §5.3), on explicit user direction, 2026-10-12, against EPIC-02 head 604cbd42 (merged with main). All six stories' sealed ACs (`stage4_backlog_slice.md` ST-10..ST-15) were checked against the story diffs 2269fe38, 31fa13ed, 1a95c78e, f74e45dc, e22b6ff4 and 441153b4. Every AC is met as written, so Pass is the correct grading for each row and no Pass_with_deviation is needed. Every observable UI AC has Playwright coverage (SC-RPI-01a–d, 02a–c, 03a, SC-GP-04/05, SC-RTB-06); no AC relies on code review alone. Local run of `tests/test_portfolio_price_integrity.py`, `tests/test_grace_alert_calendar_days.py` and `tests/test_portfolio_integration.py` (stub DATABASE_URL): 47 passed. Real CI on 604cbd42 all green: Playwright E2E 38225461992, Critical-Path Smoke 38225462101, CI Pytest 38225462181, Portfolio Integration 38225462000, Golden Output 38225462002, Service Layer Coverage 38225462056, Endpoint Coverage 38225461993, Governance Sync 38225462057. Strategy values match the rules: 10-calendar-day grace (days 0–9, §6.2/§11) with `holding_days` computed live from `entry_date` (`TestHoldingDaysComputedLive`: stored 9, entry 10 days ago → PROFITABLE); stops not enforced during grace (§6.3); stop distance in native currency (§4.1.5) — AC example (100−92)/100 = 8.0% where the old GBP figures gave (74.07−72.44)/74.07 = 2.20%; no ATR or multiplier change (§7.1/§7.2, f74e45dc touches only `stop_distance_pct` and the GBP display conversion). The grace-alert threshold is a display rule from `grace_period_alert_endpoint.md` v1.2.0, not a strategy value. The review's two Strategy-values citation corrections (ST-13 → §4.1.5; ST-14 threshold attribution) and the merged-head CI refresh were applied in this sign-off edit. No post-open CI-triggered fixes, so no restatement is required. Minor observation, no action: SC-RTB-06 asserts the neutral glyph and badge colour but not the slate colour of the amount text. EPIC-02 merges after EPIC-01 (sprint_backlog.md Merge Order).

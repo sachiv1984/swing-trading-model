@@ -295,7 +295,7 @@
       "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-02.md",
       "test_scenarios": [
         "tests/test_portfolio_price_integrity.py",
@@ -459,6 +459,13 @@
           "sign_off_record": null,
           "notes": "Done. AC: SC-RTB-06 (0.004 -> neutral glyph and colour; 0.01 -> up arrow) in tests/e2e/recent-trades-zero-pnl-badge.spec.js, passing locally. Playwright CI success: run 37783658772. Deviation check: none."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "signed_utc": "2026-10-12T08:51:24Z",
+        "notes": "Agent-mediated DoQ review (§5.3, user-directed): Approved on first pass with 3 non-blocking findings (ST-13/ST-14 Strategy-values citations, merged-head CI evidence), applied in this commit."
       }
     },
     "EPIC-03": {
