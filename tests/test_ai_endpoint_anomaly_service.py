@@ -286,3 +286,37 @@ def test_scheduled_check_latency_fires_on_simulated_feed(monkeypatch):
     assert result["latency_data_source"] == "simulated_feed"
     assert result["latency_anomalies"][0]["is_anomaly"] is True
     assert result["firing_count"] == 1
+
+
+def test_send_alert_false_with_nothing_firing_leaves_the_dedup_fingerprint_alone(monkeypatch):
+    """ST-21 (BLG-OPS-176, v9.11): the clear path is gated on send_alert, like the
+    send path, so send_alert=False has no side effect on persisted dedup state."""
+    import database
+
+    monkeypatch.setattr(database, "get_claude_endpoint_cost_windows", lambda: [])
+    monkeypatch.setattr(database, "get_claude_endpoint_latency_windows", lambda: [])
+    writes = []
+    monkeypatch.setattr(database, "record_alert_fingerprint", lambda key, fp: writes.append((key, fp)))
+    monkeypatch.setattr(database, "ensure_scheduled_alert_dedup_table", lambda: None)
+
+    result = run_scheduled_anomaly_check(send_alert=False)
+
+    assert result["firing_count"] == 0
+    assert result["alert_sent"] is False
+    assert writes == []
+
+
+def test_send_alert_true_with_nothing_firing_still_clears_the_fingerprint(monkeypatch):
+    """ST-21: the scheduled (alerting) check keeps clearing the fingerprint."""
+    import database
+    import services.ai_endpoint_anomaly_service as svc
+
+    monkeypatch.setattr(database, "get_claude_endpoint_cost_windows", lambda: [])
+    monkeypatch.setattr(database, "get_claude_endpoint_latency_windows", lambda: [])
+    writes = []
+    monkeypatch.setattr(database, "record_alert_fingerprint", lambda key, fp: writes.append((key, fp)))
+    monkeypatch.setattr(database, "ensure_scheduled_alert_dedup_table", lambda: None)
+
+    run_scheduled_anomaly_check(send_alert=True)
+
+    assert writes == [(svc._ANOMALY_ALERT_KEY, "")]

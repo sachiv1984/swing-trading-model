@@ -1,0 +1,5 @@
+[
+  {"ticker": "MU", "status": "open", "grace_period": false, "holding_days": 14, "current_stop": 92.0, "active_atr_multiplier": 2.0, "stop_calculated_at": "2026-10-11T22:30:05+00:00"},
+  {"ticker": "AMD", "status": "open", "grace_period": false, "holding_days": 10, "current_stop": 140.5, "active_atr_multiplier": null, "stop_calculated_at": null},
+  {"ticker": "NVDA", "status": "open", "grace_period": false, "holding_days": 12, "current_stop": 118.0, "active_atr_multiplier": null, "stop_calculated_at": null}
+]

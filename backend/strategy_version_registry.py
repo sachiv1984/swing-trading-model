@@ -50,6 +50,9 @@ STRATEGY_VERSION_REGISTRY = [
     {"version": "1.2", "effective_date": date(2026, 2, 18)},
     {"version": "1.3", "effective_date": date(2026, 2, 19)},
     {"version": "1.4", "effective_date": date(2026, 5, 20)},
+    # ST-16 (BLG-BE-143, EPIC-03, v9.11): §6.3 in-grace stop freeze. Behavioural
+    # (the nightly job no longer ratchets in-grace positions), so registered.
+    {"version": "1.15", "effective_date": date(2026, 10, 9)},
 ]
 
 # Change Log versions classified as documentation-only under the 2026-10-06
