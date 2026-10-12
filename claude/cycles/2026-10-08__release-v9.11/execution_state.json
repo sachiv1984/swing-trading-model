@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-12T08:38:33Z",
+  "last_updated_utc": "2026-10-12T09:32:53Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -291,10 +291,10 @@
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
       "pr_number": 1969,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-02.md",
       "test_scenarios": [
@@ -310,7 +310,7 @@
         "ST-10": {
           "title": "Remove the hard-coded ×1.38 US price fallback from GET /portfolio, and flag stale prices",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1934,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
@@ -336,7 +336,7 @@
         "ST-11": {
           "title": "Position Risk table: GBP entry prices, and grace-period stops shown as not enforced",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1935,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
@@ -361,7 +361,7 @@
         "ST-12": {
           "title": "GET /portfolio computes holding_days live from entry_date",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1936,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
@@ -386,7 +386,7 @@
         "ST-13": {
           "title": "Stop Dist % computed in native currency for US positions",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1937,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
@@ -412,7 +412,7 @@
         "ST-14": {
           "title": "Grace alert filter and \"Day N of 10\" label use calendar days since entry",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1938,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
@@ -438,7 +438,7 @@
         "ST-15": {
           "title": "Recent Trades glyph treats a P&L that rounds to £0.00 as break-even",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1939,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-02",
@@ -466,7 +466,9 @@
         "status": "cleared",
         "signed_utc": "2026-10-12T08:51:24Z",
         "notes": "Agent-mediated DoQ review (§5.3, user-directed): Approved on first pass with 3 non-blocking findings (ST-13/ST-14 Strategy-values citations, merged-head CI evidence), applied in this commit."
-      }
+      },
+      "merged_utc": "2026-10-12T09:32:07Z",
+      "merge_commit": "843af781"
     },
     "EPIC-03": {
       "status": "in_progress",
@@ -1251,10 +1253,10 @@
   ],
   "merge_gate": {
     "epics_merged": [
-      "EPIC-01"
+      "EPIC-01",
+      "EPIC-02"
     ],
     "epics_pending": [
-      "EPIC-02",
       "EPIC-03",
       "EPIC-06",
       "EPIC-04",
@@ -1268,7 +1270,8 @@
     "2026-10-12T07:57:46Z — ST-02 done on the EPIC-01 copy after the staging run (DEL-20261008-01 unblocked). Summary fields recomputed from this copy's story statuses; entries for stories finished on other EPIC branches (e.g. ST-16, ST-25 on EPIC-03/04; ST-34 on EPIC-06) may read stale here until the CLAUDE.md §8 union at merge.",
     "2026-10-12T08:30:30Z: EPIC-01 merge-gate QA sign-off and PO acceptance comments posted on PR #1968, recorded by the engine on the human owner's explicit in-session direction (OA-6 labelling). Merge left to the human.",
     "2026-10-12T08:38:33Z: EPIC-01 PR #1968 merged by the human at 2026-10-12T08:36:30Z (f5a7048c); merge_gate synced on main. Orphaned post-merge commit check: none. Summary lists on main reflect EPIC-01's copy; stories finished on unmerged EPIC branches (EPIC-02/03/04/05/06) read stale here until their own merges (CLAUDE.md §8 union).",
-    "2026-10-12T08:43:42Z: main (EPIC-01 merge, PR #1968) merged into EPIC-02 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-02's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept, never done→blocked), process_notes and test_scenarios unioned, summary fields recomputed. ai_service.py import conflict resolved as the union (EPIC-02 live_holding_days + EPIC-01 ai_sampling/ai_models); delegation_log.md takes main's Unblocked statuses and keeps DEL-20261008-04."
+    "2026-10-12T08:43:42Z: main (EPIC-01 merge, PR #1968) merged into EPIC-02 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-02's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept, never done→blocked), process_notes and test_scenarios unioned, summary fields recomputed. ai_service.py import conflict resolved as the union (EPIC-02 live_holding_days + EPIC-01 ai_sampling/ai_models); delegation_log.md takes main's Unblocked statuses and keeps DEL-20261008-04.",
+    "2026-10-12T09:32:53Z: EPIC-02 PR #1969 merged by the human at 2026-10-12T09:32:07Z (843af781); merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Summary lists on main reflect EPIC-02's copy; stories finished on unmerged EPIC branches (EPIC-03/04/05/06) read stale here until their own merges (CLAUDE.md §8 union)."
   ],
   "sealed": false,
   "sealed_utc": null
