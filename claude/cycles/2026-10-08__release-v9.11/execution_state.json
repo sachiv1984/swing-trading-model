@@ -687,6 +687,13 @@
         "status": "cleared",
         "signed_utc": "2026-10-12T08:57:04Z",
         "notes": "Agent-mediated DoQ review (§5.3, user-directed): Approved on first pass with 3 non-blocking findings (final-head CI confirmation, Last Updated, ST-17 §6.3 citation), applied in this commit."
+      },
+      "merge_gate_review": {
+        "pr_comment_review": "issuecomment-6121880894",
+        "blocking_fix": "BLG-OPS-184 fixed in 3b63929d",
+        "dod_acceptance": "Director of Quality Approved + Product Owner Accepted, agent-mediated on explicit user direction, 2026-10-12 (issuecomment-6122034563)",
+        "st16_strategy_confirmation": "Strategy Rules & System Intent Owner view (agent-mediated, user-directed) endorses ESC-EXEC-20261008-01 ruling (b), 2026-10-12",
+        "merge": "left to the human developer"
       }
     },
     "EPIC-06": {
