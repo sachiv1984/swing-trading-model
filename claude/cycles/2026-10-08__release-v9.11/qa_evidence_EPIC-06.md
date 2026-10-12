@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-10-09
+Last Updated: 2026-10-12
 
 # QA Evidence — EPIC-06
 
@@ -35,6 +35,6 @@ Per-story entries are added as stories close; the EPIC-level consolidation block
 - **Delegated action:** performed by the user (repository admin, acting for the Infrastructure & Operations Owner) on 2026-10-09. The engine's token lacked the Administration permission (HTTP 403); after `gh auth login`, the user's `POST .../required_status_checks/contexts` returned `422 already_exists`, i.e. the context was already present.
 - **Acceptance criteria** (`stage4_backlog_slice.md#ST-42`):
   - AC1: `gh api repos/sachiv1984/swing-trading-model/branches/main` lists the check under `protection.required_status_checks` — **Met**, read 2026-10-09T19:10Z: `contexts` = `verify_governance`, `Pytest Phase A (clean tests — no DB required)`, `Endpoint Coverage Report (ST-16)`, `OpenAPI Drift Detection (ST-08)`, `Non-Registry Dependency Check (ST-29)` (all `app_id` 15368, `enforcement_level` `non_admins`, `strict` false). The four pre-existing contexts are retained.
-  - AC2: a PR that does not touch dependency files is not left blocked waiting on the check — **Pending**. No PR to `main` has opened since the change. The workflow triggers on every `pull_request` to `main` with no `paths:` filter, and its last 5 runs succeeded (latest 37764573094); the live evidence is the check completing on the first such PR (expected: the EPIC-06 PR), to be recorded here.
+  - AC2: a PR that does not touch dependency files is not left blocked waiting on the check — **Met** (2026-10-12). PR #1968 (`[EPIC-01]`), whose changed files include no `requirements.txt`, `package.json` or `package-lock.json`, ran `Non-Registry Dependency Check (ST-29)` to completion: SUCCESS, run 38223105681.
 - **Deviations:** none.
 - **QA findings / disposition:** _(Director of Quality — at EPIC-06 DoQ consolidation)_
