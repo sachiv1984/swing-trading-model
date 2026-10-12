@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-12 (session — 1 new item(s) added: BLG-OPS-185, from the PR #1971 review, EPIC-06, v9.11); prior — 2026-10-12 (session — 1 new item added: BLG-AI-13, from the ST-25 AI Compliance & Governance Officer review, EPIC-04, v9.11); prior — 2026-10-12 (session — 3 new item(s) added: BLG-OPS-184, BLG-BE-170, BLG-BE-171, from the PR #1970 review, EPIC-03, v9.11); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (session — 3 new item(s) added: BLG-FE-215, BLG-FE-216, BLG-BE-172, from the PR #1972 review, EPIC-04, v9.11); prior — 2026-10-12 (session — 1 new item(s) added: BLG-OPS-185, from the PR #1971 review, EPIC-06, v9.11); prior — 2026-10-12 (session — 1 new item added: BLG-AI-13, from the ST-25 AI Compliance & Governance Officer review, EPIC-04, v9.11); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5863,5 +5863,70 @@ ST-43 moved `pytest`, `pytest-cov` and `hypothesis` out of `backend/requirements
 **Acceptance Criteria**
 - Following `README.md` from a fresh clone yields a venv in which `backend/.venv/bin/python3 -m pytest --collect-only -q` succeeds
 - `grep -rn "pip install -r .*requirements.txt" README.md docs/ops/quarterly_dependency_upgrade_cadence_policy.md` shows `requirements-dev.txt` alongside every test-running install
+
+---
+
+### BLG-FE-215 — Pluralise the month counts in the monthly P&L summary fallback text
+**Priority:** P3 (Low)
+**Type:** Frontend / UX — Copy
+**Owner:** Frontend Specifications & UX Documentation Owner; Financial Reporting & Records Owner
+**Source:** PR #1972 agent-mediated review (EPIC-04, cycle `2026-10-08__release-v9.11`), Director of Quality / Product Owner finding: ST-25 — 2026-10-12
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+The code-written fallback summary (`build_fallback_text`, `backend/services/monthly_pnl_narrative_service.py`) ends with "{profitable} months ended above zero and {losing} below." It pluralises "closed trade(s)" and "month(s)" earlier in the sentence but not these counts, so a tax year with one profitable month reads "1 months ended above zero". The template in `reports.md` §AI Summary and the design record §2.6 have the same wording. The fallback is shown whenever the AI text fails its checks, so the user sees it when the summary already looks least trustworthy.
+
+**Scope**
+- Pluralise "month"/"months" for the profitable and losing counts in `build_fallback_text`
+- Update the fallback template in `docs/specs/frontend/pages/reports.md` §AI Summary to match
+- Add a unit test case with exactly one profitable month
+
+**Acceptance Criteria**
+- With one profitable month, the fallback text reads "1 month ended above zero" (asserted in `tests/test_monthly_pnl_narrative.py`)
+- The `reports.md` template wording matches the code
+
+---
+
+### BLG-FE-216 — Keep a generated monthly P&L summary visible after switching tax year and back
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** PR #1972 agent-mediated review (EPIC-04, cycle `2026-10-08__release-v9.11`), Director of Quality finding: ST-25 — 2026-10-12
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+`MonthlyNarrativeCard` keeps a newly generated summary in local state, which it resets when the tax year changes. A successful POST does not update the react-query cache entry `["monthlyPnlNarrative", year]`, which still holds the earlier GET result with `narrative: null`. If the user switches to another tax year and back, the card shows the empty "Get a short written summary" state until the background refetch returns. That can prompt an unnecessary Regenerate, which is a real model call counted against the daily cap.
+
+**Scope**
+- After a successful POST, write the returned payload into the query cache for that year (`queryClient.setQueryData`) or invalidate the key
+- Extend `tests/e2e/monthly-pnl-narrative.spec.js` with a generate → switch year → switch back scenario
+
+**Acceptance Criteria**
+- After Generate, switching tax year and back shows the generated summary immediately, with no empty-state render in between (Playwright)
+- No extra POST is made by the round trip
+
+---
+
+### BLG-BE-172 — Show the code-written fallback when the monthly P&L summary's regeneration call fails
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / AI Feature Resilience
+**Owner:** Head of Engineering; Financial Reporting & Records Owner
+**Source:** PR #1972 agent-mediated review (EPIC-04, cycle `2026-10-08__release-v9.11`), Product Owner finding: ST-25 — 2026-10-12
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+In `generate_narrative` (`backend/services/monthly_pnl_narrative_service.py`), if the first model attempt fails the §13 output checks and the regeneration call then raises, the endpoint returns 503 and stores nothing. A failed check on both attempts falls back to the code-written summary, but this path does not, although it has the same figures. The user gets an error in place of a usable, compliant summary. This matches the contract's 503 row (`reports_endpoints.md`), so it is an improvement, not a deviation.
+
+**Scope**
+- When attempt 1 failed its checks and attempt 2's model call raises, store and return the fallback summary (`source: "fallback"`) with a terminal audit result. The cap and audit rules still apply.
+- Keep 503 for a model failure on attempt 1 (no checked output exists)
+- Update the `reports_endpoints.md` 503 row and `metrics_definitions.md` § AI Monthly P&L Narrative Usage if the terminal-result set changes; add a unit test
+
+**Acceptance Criteria**
+- A unit test with attempt 1 failing checks and attempt 2 raising receives `source: "fallback"` and a stored row
+- `count_monthly_pnl_narrative_generations` counts that request exactly once
 
 ---
