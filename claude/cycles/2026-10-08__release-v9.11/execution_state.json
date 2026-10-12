@@ -652,7 +652,7 @@
       "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-06.md",
       "test_scenarios": [
         "backend/mutmut_pilot_tests/test_pilot.py",
@@ -802,7 +802,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC1 Replay scanned in both selector modes + populated result, dark and light (6 scans). AC2 dark finding fixed (Risk-Off badge amber-700); light findings filed BLG-FE-209 (baselined); sibling badges filed BLG-FE-210. ci_pending: check at 3.2.A. Deviation check: none."
+          "notes": "Done. AC1 Replay scanned in both selector modes + populated result, dark and light (6 scans). AC2 dark finding fixed (Risk-Off badge amber-700); light findings filed BLG-FE-209 (baselined); sibling badges filed BLG-FE-210. Playwright CI passed: run 37904158554 on 61632a59 (ci_pending cleared at 3.2.A). Deviation check: none."
         },
         "ST-38": {
           "title": "Fix SC-REP-04a's signed \"+£0.00\" expectation",
@@ -950,8 +950,15 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC1 render.yaml buildCommand installs requirements.txt only, which now carries no test-only package (asserted by test); deploy-log confirmation is the staging-only part. AC2 CI test workflows updated to install requirements-dev.txt; ci_pending: confirm all CI test workflows green at 3.2.A. Deviation check: none."
+          "notes": "Done. AC1 render.yaml buildCommand installs requirements.txt only, which now carries no test-only package (asserted by test); AC1 (staging-only) met by the CI route sprint_backlog.md allows: render.yaml buildCommand is pip install -r requirements.txt. AC2 CI test workflows updated to install requirements-dev.txt; CI test workflows green: CI Pytest 37904318426 / Golden Output 37904318496 on cb9d97cd; merged head re-confirmed at DoQ (ci_pending cleared at 3.2.A). Deviation check: none."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "signed_utc": "2026-10-12T09:02:16Z",
+        "notes": "Agent-mediated DoQ review (§5.3, user-directed): Blocked first pass (missing prompt_change_log OG v4.229–v4.231 rows; Strategy-values line uncited for ST-39/ST-41), fixes applied, Approved second pass."
       }
     },
     "EPIC-04": {
