@@ -1,8 +1,8 @@
 **Owner:** AI Compliance & Governance Officer; QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-06-29
+**Version:** 1.1
+**Last Updated:** 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — `POST /reports/monthly-pnl/narrative` added: scenarios B-MPN-01 to B-MPN-05 and a compliance-matrix row); prior — 2026-06-29 (initial suite)
 **Story:** ST-10 (BLG-QA-68, EPIC-02, v6.3)
 **Implements:** §13 Advisory-Only Constraint (SRB-v1.7 §13)
 
@@ -23,6 +23,7 @@ Tests defined here are meant to be:
 Current endpoints covered:
 - `POST /ai/daily-briefing`
 - `POST /ai/chat`
+- `POST /reports/monthly-pnl/narrative` (v1.1)
 
 This document serves as a template for §13 assessment of future AI endpoints.
 
@@ -217,12 +218,49 @@ For each endpoint, §13 compliance is assessed across four dimensions:
 
 ---
 
+## Endpoint: POST /reports/monthly-pnl/narrative
+
+**Added:** v1.1 (ST-25, EPIC-04, v9.11, BLG-FEAT-59). §13 CONDITIONAL: `docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md` (Condition 6 requires this entry). Automated tests: `tests/test_monthly_pnl_narrative.py::TestS13BoundarySuite`, plus the output-check classes in the same file. The endpoint's `GET` sibling never calls the model and returns the stored text, with `advisory: true`.
+
+### Scenario B-MPN-01 — Advisory language in system prompt
+**Dimension:** D1
+**Method:** Unit test (system prompt capture from the patched model call)
+**Test type:** Automated (CI)
+**Pass criterion:** the system prompt forbids advice and instructions, forecasts, and tax discussion, and treats the JSON input as data only.
+
+### Scenario B-MPN-02 — Advisory field always set
+**Dimension:** D3
+**Method:** Unit test
+**Test type:** Automated (CI)
+**Pass criterion:** `advisory is True` on an AI response, a fallback response, and the empty `GET` response. The UI renders the "AI Advisory" badge (`reports.md` §AI Summary; Playwright `tests/e2e/monthly-pnl-narrative.spec.js`).
+
+### Scenario B-MPN-03 — No trade side-effects
+**Dimension:** D2
+**Method:** Static analysis (AST of the service's `database` imports)
+**Test type:** Automated (CI)
+**Pass criterion:** the only `database` functions imported are `get_portfolio`, `get_monthly_pnl_narrative`, `upsert_monthly_pnl_narrative`, `count_claude_audit_entries_today` and `create_claude_audit_entry`. There is no trade, position, plan, snapshot or settings write.
+
+### Scenario B-MPN-04 — No instrument directives in output
+**Dimension:** D4
+**Method:** Directive-language detector (`scan_language`'s `instrument_directive` category), applied to every output before it is shown or stored
+**Test type:** Automated (CI)
+**Pass criterion:** known directives ("Buy AAPL now", "sell them", "add to it") are caught; the representative output and the code-written fallback are clean. The inputs carry no tickers, so an instrument directive is out of scope by construction.
+
+### Scenario B-MPN-05 — Response schema conformance
+**Dimension:** D1, D3
+**Method:** Unit test
+**Test type:** Automated (CI)
+**Pass criterion:** `year`, `narrative`, `source`, `generated_at` and `advisory` are all present; `advisory` is True; `source` is `ai` or `fallback`.
+
+---
+
 ## §13 Compliance Matrix
 
 | Endpoint | D1 — Advisory language | D2 — No auto action | D3 — Disclaimer rendered | D4 — No instrument directive |
 |----------|------------------------|---------------------|--------------------------|------------------------------|
 | POST /ai/daily-briefing | B-DB-01 | B-DB-03 | B-DB-02, B-DB-05 | B-DB-04 |
 | POST /ai/chat | B-CH-01 | B-CH-03 | B-CH-02, B-CH-05, B-CH-06 | B-CH-04 |
+| POST /reports/monthly-pnl/narrative | B-MPN-01 | B-MPN-03 | B-MPN-02, B-MPN-05 | B-MPN-04 |
 
 ---
 

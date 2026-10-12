@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.56
-**Last Updated:** 2026-10-12 (ST-06, EPIC-01, v9.11 — DS-27 confirmed applied live on staging and production; carried into EPIC-03 by the main merge, DS-27 now sits before DS-28/DS-29); prior — 2026-10-09 (ST-17 and ST-20, EPIC-03, v9.11, BLG-FR-06/BLG-OPS-175 — DS-29: trade_history snapshots the strategy parameters in force at exit; DS-29 and DS-28 confirmed applied live on staging and production; 2.55 is EPIC-05's ST-30); prior — 2026-10-08 (ST-20, EPIC-03, v9.11, BLG-OPS-175 — DS-28: partial unique index idx_price_alerts_active_unique on active price alerts; 2.53 is EPIC-01's DS-27); prior history retained — see prior entries in version control
+**Version:** 2.58
+**Last Updated:** 2026-10-12 (EPIC-03 merged to main, PR #1970, carried into EPIC-04 by the main merge — DS-28 (v2.54) and DS-29 (v2.56) now sit before DS-30 (v2.57); version stays 2.58); prior — 2026-10-12 (ST-06, EPIC-01, v9.11 — DS-27 confirmed applied live on staging and production; carried into EPIC-04 by the main merge, DS-27 sits before DS-30); prior — 2026-10-09 (ST-26, EPIC-04, v9.11, BLG-SPEC-174 — DS-30 documents the narrative usage count query; no schema change); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -2941,6 +2941,79 @@ Expect 4 rows, all `is_nullable = YES`: `active_atr_multiplier` numeric(4,2); `a
 
 ---
 
-**Document Version:** 2.56
+## DS-30 — Add monthly_pnl_narratives (v2.57, 2026-10-09)
+
+**Story:** ST-25 (EPIC-04, v9.11) — `BLG-FEAT-59`. No delegation needed (see Deploy order).
+
+**Rationale:** the AI-assisted Monthly P&L summary (`reports.md` §AI Summary; `reports_endpoints.md` §GET/§POST /reports/monthly-pnl/narrative) is stored so a repeat view makes no model call (security checklist §2, ST-23 cost estimate). One row per portfolio and tax year, overwritten on each generation. `input_hash` is a SHA-256 of the exact figures the text was written from. A row is returned only when it matches the current figures, so a restatement makes stale text unreachable. This is its own table, deliberately not `monthly_pnl_snapshots` (DS-20): §13 Condition 5 keeps the narrative out of the financial record (`docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md`).
+
+**Deploy order:** not a risk. `database.ensure_monthly_pnl_narratives_table()` runs the Up Migration's `CREATE TABLE IF NOT EXISTS` on first use, the same pattern as `trade_debriefs` (DS-16). Applying it ahead of deploy is optional. The Verification query confirms it either way.
+
+### Up Migration (v2.56 → v2.57)
+
+```sql
+CREATE TABLE IF NOT EXISTS monthly_pnl_narratives (
+    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id            UUID NOT NULL,
+    tax_year                INTEGER NOT NULL,
+    input_hash              VARCHAR(64) NOT NULL,
+    narrative_text          TEXT NOT NULL,
+    source                  VARCHAR(10) NOT NULL,
+    compliance_check_result TEXT,
+    model_version           TEXT NOT NULL,
+    prompt_version          TEXT NOT NULL,
+    generated_at            TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_monthly_pnl_narratives_year UNIQUE (portfolio_id, tax_year),
+    CONSTRAINT ck_monthly_pnl_narratives_source CHECK (source IN ('ai', 'fallback'))
+);
+```
+
+| Column | Meaning |
+|--------|---------|
+| `tax_year` | UK tax-year start year (2025 = 2025/26) |
+| `input_hash` | SHA-256 hex of the figures the text was written from |
+| `narrative_text` | The text shown: model text that passed every output check, or the code-written fallback |
+| `source` | `ai` or `fallback` |
+| `compliance_check_result` | The final check outcome (`pass`, `pass_on_regenerate`, `fail_fallback:<reasons>`), as also logged per call in `claude_audit_log` |
+
+### Down Migration (v2.57 → v2.56)
+
+```sql
+DROP TABLE IF EXISTS monthly_pnl_narratives;
+```
+
+Only stored summaries are lost. The next request regenerates them; no figure is affected.
+
+### Verification
+
+```sql
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'monthly_pnl_narratives'
+ORDER BY ordinal_position;
+```
+
+Expect 10 rows, `id` through `generated_at`, with only `compliance_check_result` nullable.
+
+**Usage count (ST-26, v2.58):** generations are counted from `claude_audit_log`, not from this table. This table keeps only the latest summary per tax year, so its row count is not a usage count. A generation is one completed request, which ends with exactly one audit row carrying a terminal result:
+
+```sql
+SELECT COUNT(*) AS generations
+FROM claude_audit_log
+WHERE endpoint = 'POST /reports/monthly-pnl/narrative'
+  AND (compliance_check_result IN ('pass', 'pass_on_regenerate')
+       OR compliance_check_result LIKE 'fail\_fallback:%');
+```
+
+- Implemented as `database.count_monthly_pnl_narrative_generations(date_from, date_to)`, which also returns the `ai`/`fallback` split.
+- Defined in `metrics_definitions.md` § AI Monthly P&L Narrative Usage, the evidence named by the 2027-01-03 AI feature usage review (`BLG-GOV-382`).
+- No new table or column: it reads `claude_audit_log`'s existing `endpoint`, `compliance_check_result` (ST-06, v8.9) and `generated_at`. So there is no migration.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: new, self-contained table, reversible. No foreign key, so no impact on existing tables. Created at runtime by an idempotent ensure-function.
+
+---
+
+**Document Version:** 2.58
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-12 (DS-27 live confirmation recorded, EPIC-01; merged into EPIC-03); prior — 2026-10-09 (ST-17, EPIC-03, v9.11, BLG-FR-06 — DS-29 strategy-parameter snapshot on trade_history); prior — 2026-10-08 (ST-20, EPIC-03, v9.11, BLG-OPS-175 — DS-28 partial unique index on active price alerts; footer brought level with the header); prior history retained — see prior entries in version control
+**Last Review:** 2026-10-12 (EPIC-03 merged in: DS-28 and DS-29 added before DS-30); prior — 2026-10-12 (DS-27 live confirmation recorded, EPIC-01, merged into EPIC-04; EPIC-04 adds DS-30 at v2.57, usage-count query at v2.58); prior — 2026-10-06 (DS-25/DS-26 live confirmation recorded); prior history retained — see prior entries in version control

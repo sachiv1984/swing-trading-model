@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-12T13:23:18Z",
+  "last_updated_utc": "2026-10-12T13:34:02Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -1019,13 +1019,17 @@
       }
     },
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1972,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/monthly-pnl-narrative.spec.js",
+        "tests/test_monthly_pnl_narrative.py",
+        "tests/test_monthly_pnl_narrative_db.py"
+      ],
       "stories": {
         "ST-23": {
           "title": "Cost estimate for the AI monthly P&L narrative",
@@ -1075,45 +1079,109 @@
         },
         "ST-25": {
           "title": "AI-assisted monthly P&L narrative",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "Financial Reporting & Records Owner; Strategy Rules & System Intent Owner; Head of UX & Design",
           "github_issue": 1949,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "bf1a51f051eb37a454bd7205783b373071d57701",
           "delegation_record_id": "ESC-EXEC-20261008-02",
           "blocked_since_utc": "2026-10-08T11:01:30Z",
-          "unblock_criteria": "See ESC-EXEC-20261008-02 unblock criteria",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "unblock_criteria": null,
+          "completed_utc": "2026-10-09T14:33:20Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md",
+            "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/ai_endpoint_security_checklist.md",
+            "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md",
+            "docs/specs/frontend/pages/reports.md#AI Summary (Monthly P&L Narrative)",
+            "docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl/narrative",
+            "docs/specs/api_contracts/reports_endpoints.md#POST /reports/monthly-pnl/narrative",
+            "docs/specs/data_model.md#DS-30",
+            "docs/specs/qa/ai_s13_boundary_test_suite.md#Endpoint: POST /reports/monthly-pnl/narrative",
+            "tests/test_monthly_pnl_narrative.py",
+            "tests/e2e/monthly-pnl-narrative.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "decision": "CONDITIONAL (confirmation route), 12 binding conditions",
+            "record": "docs/product/decisions/decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md",
+            "escalation": "ESC-EXEC-20261008-02",
+            "signed_utc": "2026-10-09T13:28:39Z",
+            "note": "Agent-mediated per execution_prompt.md §5.3 at the user's direction (2026-10-09). First pass Blocked (2 blocking findings), second pass Approved. Addendum step 1 only; steps 2-3 still to record."
+          },
+          "notes": "Addendum step 1 done: §13 CONDITIONAL recorded (ESC-EXEC-20261008-02 resolved), §13.5 roster row (strategy_rules.md v1.16). Step 2 done: AI endpoint security checklist PASS x3 (agent-mediated Cybersecurity & Trust Lead; first pass Blocked, second Approved); found the daily cost alert ignores claude_audit_log, filed BLG-OPS-183. Step 3 in progress: design record approved by Head of UX & Design and Financial Reporting & Records Owner (agent-mediated; UX first pass Blocked, second Approved); awaiting Product Owner approval, then reports.md v0.21. Ship gate: EPIC-01 ST-06 must be on main first (security checklist sequencing gate). Step 3 done: Product Owner approved 2026-10-09 (human, with success-measure and effort trade-off notes); reports.md v0.21 §AI Summary added, Head of Specs Team lifecycle confirmed (agent-mediated). Addendum steps 1-3 complete, so ST-25 is reclassified delegated_decision -> autonomous for the build (LL-v2.3-EX-02). For QA evidence: the PO changed the fallback note wording after the Head of UX & Design approved the record; flag it for UX awareness. Effort risk: the build is 2.5-3d against a 1.5d estimate. BUILD DONE (bf1a51f0). AC1 (optional and dismissible, Playwright): tests/e2e/monthly-pnl-narrative.spec.js SC-MPN-01..09 (01/02: no POST until Generate, including when a stored summary is returned; 04/04b: Hide, survives reload, Show, throwing storage -> visible). AC2 (advisory framing; §13 confirmation cites every clause): the AiDisclaimer badge with the §13 Condition 6 caption, advisory:true, and the determination record. §13 Conditions 3/4 test-covered before DoQ: tests/test_monthly_pnl_narrative.py, 65 tests. Locally: backend 2267 passed; Playwright 114 passed (this and every affected spec). Playwright CI passed: run 37945055540 on bf1a51f0 (ci_pending cleared). Deviation check: none. Implementation notes, all supersets within the approved records: (1) an instrument-directive category was added to the output scan (§13 boundary suite D4); (2) a POST with no API key returns 503 rather than the fallback, because the fallback note means 'checks failed', not 'AI off'. Merge notes: SystemStatus 127 must be re-derived after EPIC-03's +1; reports.md / strategy_rules.md / openapi / data_model / perf-baseline versions are numbered past the sibling branches.",
+          "sign_off_records_additional": [
+            {
+              "role": "Cybersecurity & Trust Lead",
+              "method": "agent_mediated",
+              "status": "cleared",
+              "record": "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/ai_endpoint_security_checklist.md",
+              "signed_utc": "2026-10-09T13:35:44Z"
+            },
+            {
+              "role": "Head of UX & Design",
+              "method": "agent_mediated",
+              "status": "cleared",
+              "record": "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md",
+              "signed_utc": "2026-10-09T13:35:44Z"
+            },
+            {
+              "role": "Financial Reporting & Records Owner",
+              "method": "agent_mediated",
+              "status": "cleared",
+              "record": "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md",
+              "signed_utc": "2026-10-09T13:35:44Z"
+            },
+            {
+              "role": "Product Owner",
+              "method": "human",
+              "status": "cleared",
+              "record": "docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md",
+              "signed_utc": "2026-10-09T13:54:55Z",
+              "note": "Human, in session, approved with two notes (success measure for the 2027-01-03 review; move ST-25+ST-26 to v9.12 whole rather than cut §13 controls if they cannot fit) and a fallback wording change; after an agent-mediated PO recommendation."
+            },
+            {
+              "role": "Head of Specs Team",
+              "method": "agent_mediated",
+              "status": "cleared",
+              "record": "docs/specs/frontend/pages/reports.md v0.21",
+              "signed_utc": "2026-10-09T13:54:55Z",
+              "note": "Lifecycle confirmation; first pass Blocked (states table differed from the record), second Approved."
+            }
+          ]
         },
         "ST-26": {
           "title": "Usage counter for the AI monthly P&L narrative",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1950,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "259d04859f4fa3185b65895936236db595426a59",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-09T14:45:51Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#AI Monthly P&L Narrative Usage",
+            "docs/specs/data_model.md#DS-30",
+            "tests/test_monthly_pnl_narrative.py",
+            "tests/test_monthly_pnl_narrative_db.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Done (259d0485). AC1: database.count_monthly_pnl_narrative_generations() counts generations (one terminal claude_audit_log row per completed request), documented in data_model.md v2.58 DS-30; no new table, so no live-migration delegation was needed (sprint_backlog.md ST-26 note). AC2: metrics_definitions.md v1.28.0 § AI Monthly P&L Narrative Usage defines the count that BLG-GOV-382 already names ('the monthly P&L narrative usage count (ST-26)'), plus the PO success measure (months used). BLG-GOV-382 is not edited: the AC does not name its ID, so the §7 named-file rule (b) does not apply. Tests: TestUsageCountRule; tests/test_monthly_pnl_narrative_db.py (real Postgres, CI Phase B; passed locally on PG 18). Backend 2280 passed. Deviation check: none."
         },
         "ST-27": {
           "title": "AI chat UI interaction study protocol",
@@ -1136,7 +1204,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC1 protocol document with 5 questions (docs/product/ux/ai_chat_interaction_study_protocol.md). AC2 gate satisfied (PO 2026-10-05). Deviation check: none."
+          "notes": "Done (reconciled at resume, execution_prompt.md §10 step 3a: commit b387108c was already pushed while this branch still recorded not_started). AC1: protocol document with 5 study questions (Q1–Q5, §3) and method, data and analysis sections. AC2: gate removed by Product Owner decision 2026-10-05, no action. Documentation-creation story (Case B): spec_references is the created protocol. Deviation check: none."
         },
         "ST-28": {
           "title": "Track the 2027-01-03 AI feature usage review",
@@ -1162,6 +1230,18 @@
           "sign_off_record": null,
           "notes": "Done. AC1 BLG-GOV-382 filed; scan --as-of 2027-01-04 reports DATE-LAPSED 2027-01-03; STEP 12.6 keyword filter matches (checked). AC2 sequencing note in slice + sprint_backlog.md Merge Order (planning). Deviation check: none."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "signed_utc": "2026-10-12T09:21:02Z",
+        "notes": "Agent-mediated DoQ review (§5.3, user-directed): Blocked first pass (ST-25 row missing gate AC3), fixed, Approved second pass. AI Compliance & Governance Officer block signed agent-mediated the same day (Approved first pass; follow-ups in 6429b46d, BLG-AI-13 filed)."
+      },
+      "merge_gate_review": {
+        "pr_comment_review": "issuecomment-6125343366",
+        "follow_ups": "BLG-FE-215, BLG-FE-216, BLG-BE-172 filed in ff5e8c90 (P3, non-blocking)",
+        "dod_acceptance": "pending human: agent-mediated DoQ and PO reviews both Approved with Comments; human QA sign-off and PO acceptance not yet recorded"
       }
     },
     "EPIC-05": {
@@ -1275,9 +1355,7 @@
       }
     }
   },
-  "blocked_items": [
-    "ST-25"
-  ],
+  "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -1304,6 +1382,8 @@
     "ST-22",
     "ST-23",
     "ST-24",
+    "ST-25",
+    "ST-26",
     "ST-27",
     "ST-28",
     "ST-29",
@@ -1343,18 +1423,23 @@
   "process_notes": [
     "2026-10-08: ST-06 blocked_since_utc and DEL-20261008-03 'Delegated at' were first written as 2026-10-08T12:20:00Z, an estimate, not the real time (BLG-GOV-309). Corrected the same session to 2026-10-08T11:18:41Z (the delegation commit 5c753cbc's authored time). This is the only edit made to an earlier delegation_log.md entry, and it corrects a factual value in an entry written minutes earlier.",
     "2026-10-08: execution_state.json is carried on every EPIC branch (EPIC-01 is the owner per sprint_backlog.md Merge Order). Each branch commits the same, monotonically growing copy, so a CLAUDE.md §8 conflict resolves by taking the newer copy (a superset).",
-    "2026-10-09: this branch copy still shows ST-16/ST-25 blocked and ESC-EXEC-20261008-01/-02 open; both were resolved on the EPIC-03 and EPIC-04 branches (their own copies). Reconcile by union per CLAUDE.md §8 at merge; not edited here to avoid recording another branch's evidence on EPIC-06.",
+    "2026-10-09: ST-27 (EPIC-04) reconciled at resume per execution_prompt.md §10 step 3a. Its commit b387108c was on origin/exec/.../EPIC-04, but the branch copy of execution_state.json still recorded not_started. Status, commit_sha and completed_utc were written from the pushed commit, not re-executed.",
     "2026-10-12T07:57:46Z — ST-02 done on the EPIC-01 copy after the staging run (DEL-20261008-01 unblocked). Summary fields recomputed from this copy's story statuses; entries for stories finished on other EPIC branches (e.g. ST-16, ST-25 on EPIC-03/04; ST-34 on EPIC-06) may read stale here until the CLAUDE.md §8 union at merge.",
     "2026-10-12T08:30:30Z: EPIC-01 merge-gate QA sign-off and PO acceptance comments posted on PR #1968, recorded by the engine on the human owner's explicit in-session direction (OA-6 labelling). Merge left to the human.",
     "2026-10-12T08:38:33Z: EPIC-01 PR #1968 merged by the human at 2026-10-12T08:36:30Z (f5a7048c); merge_gate synced on main. Orphaned post-merge commit check: none. Summary lists on main reflect EPIC-01's copy; stories finished on unmerged EPIC branches (EPIC-02/03/04/05/06) read stale here until their own merges (CLAUDE.md §8 union).",
-    "2026-10-12T08:50:28Z: main (EPIC-01 merge, PR #1968) merged into EPIC-06 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-06's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. backlog.md item union; escalations keep EPIC-06's Resolved ESC-EXEC-20261008-03; delegation_log takes the furthest-progressed status per entry.",
+    "2026-10-12T08:55:57Z: main (EPIC-01 merge, PR #1968) merged into EPIC-04 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-04's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. data_model.md: DS-27 (EPIC-01) auto-merged before DS-30, version 2.58 kept, header/footer chains merged; backlog.md item union; escalations keep EPIC-04's Resolved ESC-EXEC-20261008-02. This also satisfies the ST-25 security-checklist precondition that ST-06's prompt_hash/response_length columns are on the branch's base.",
     "2026-10-12T08:43:42Z: main (EPIC-01 merge, PR #1968) merged into EPIC-02 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-02's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept, never done→blocked), process_notes and test_scenarios unioned, summary fields recomputed. ai_service.py import conflict resolved as the union (EPIC-02 live_holding_days + EPIC-01 ai_sampling/ai_models); delegation_log.md takes main's Unblocked statuses and keeps DEL-20261008-04.",
     "2026-10-12T09:32:53Z: EPIC-02 PR #1969 merged by the human at 2026-10-12T09:32:07Z (843af781); merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Summary lists on main reflect EPIC-02's copy; stories finished on unmerged EPIC branches (EPIC-03/04/05/06) read stale here until their own merges (CLAUDE.md §8 union).",
-    "2026-10-12T09:38:39Z: main (EPIC-02 merge, PR #1969) merged into EPIC-06 per STEP 4 step 3c / CLAUDE.md §8. backlog.md takes main's newer Last Updated chain (items auto-merged); execution_state resolved story by story, summaries recomputed.",
+    "2026-10-12T09:41:27Z: main (EPIC-02 merge, PR #1969) merged into EPIC-04 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.27.0 kept with EPIC-02's version notes; backlog.md item union and Last Updated chain merged; execution_state resolved story by story, summaries recomputed.",
     "2026-10-12T08:48:18Z: main (EPIC-01 merge, PR #1968) merged into EPIC-03 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-03's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. data_model.md rebuilt with DS-27 (EPIC-01) before DS-28/DS-29, version 2.56 kept; trade_plan_endpoints.md 0.19 with both changelog rows; backlog.md item union; escalations keep EPIC-03's Resolved ESC-EXEC-20261008-01.",
     "2026-10-12T09:33:31Z: main (EPIC-02 merge, PR #1969) merged into EPIC-03 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.25.1 kept with both sides' version notes; delegation_log keeps EPIC-03's Unblocked DEL-20261008-04 and DEL-20261009-01; backlog.md item union; execution_state resolved story by story, summaries recomputed.",
     "2026-10-12: EPIC-03 PR #1970 merged by the human developer at 2026-10-12T12:58:26Z (e07d2a04), after the agent-mediated DoQ/PO acceptance given on user direction. Orphaned post-merge commit check: none.",
-    "2026-10-12: EPIC-06 PR #1971 merged by the human developer at 2026-10-12T13:23:18Z (b476fce7), after the agent-mediated DoQ/PO acceptance given on user direction (issuecomment-6125015336). merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Stories finished on unmerged EPIC-04/EPIC-05 branches read stale here until their own merges (CLAUDE.md §8 union)."
+    "2026-10-12: main (EPIC-03 merge, PR #1970) synced into EPIC-04. SystemStatus.js fallback and SC-SS-01b re-derived by AST count of backend/routers/test.py: 128 (125 + EPIC-03's 1 + EPIC-04's 2). strategy_rules.md 1.16 (EPIC-04) over 1.15 (EPIC-03), data_model.md 2.58 with DS-28/DS-29 before DS-30, openapi.yaml 3.27.0, api_performance_baseline.md 2.39 with §47 then §48 — no version collision (CLAUDE.md §8 2a).",
+    "2026-10-09: this branch copy still shows ST-16/ST-25 blocked and ESC-EXEC-20261008-01/-02 open; both were resolved on the EPIC-03 and EPIC-04 branches (their own copies). Reconcile by union per CLAUDE.md §8 at merge; not edited here to avoid recording another branch's evidence on EPIC-06.",
+    "2026-10-12T08:50:28Z: main (EPIC-01 merge, PR #1968) merged into EPIC-06 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-06's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. backlog.md item union; escalations keep EPIC-06's Resolved ESC-EXEC-20261008-03; delegation_log takes the furthest-progressed status per entry.",
+    "2026-10-12T09:38:39Z: main (EPIC-02 merge, PR #1969) merged into EPIC-06 per STEP 4 step 3c / CLAUDE.md §8. backlog.md takes main's newer Last Updated chain (items auto-merged); execution_state resolved story by story, summaries recomputed.",
+    "2026-10-12: EPIC-06 PR #1971 merged by the human developer at 2026-10-12T13:23:18Z (b476fce7), after the agent-mediated DoQ/PO acceptance given on user direction (issuecomment-6125015336). merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Stories finished on unmerged EPIC-04/EPIC-05 branches read stale here until their own merges (CLAUDE.md §8 union).",
+    "2026-10-12T13:34:02Z: agent-mediated Director of Quality and Product Owner review posted on PR #1972 (issuecomment-6125343366), both Approved with Comments, no blocking findings; BLG-FE-215, BLG-FE-216, BLG-BE-172 filed in ff5e8c90. Merge-gate QA sign-off and PO acceptance remain with the human."
   ],
   "sealed": false,
   "sealed_utc": null

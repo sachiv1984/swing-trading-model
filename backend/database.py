@@ -3471,6 +3471,155 @@ def get_trade_debrief_by_trade_id(trade_history_id: str) -> Optional[Dict]:
 
 
 # ---------------------------------------------------------------------------
+# monthly_pnl_narratives — the stored AI summary for one tax year's Monthly
+# P&L range (ST-25, EPIC-04, v9.11, BLG-FEAT-59; data_model.md DS-30). One row
+# per (portfolio, tax year), overwritten on each generation. input_hash is a
+# hash of the exact figures the summary was written from: a row is only
+# returned when it matches the current figures, so a restatement makes the
+# stored text unreachable instead of showing a summary of superseded figures.
+# Its own table, deliberately not monthly_pnl_snapshots (§13 Condition 5:
+# the narrative never enters the financial record).
+# ---------------------------------------------------------------------------
+
+def ensure_monthly_pnl_narratives_table() -> None:
+    """Create monthly_pnl_narratives if it does not exist (idempotent).
+
+    Spec: docs/specs/data_model.md#DS-30
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS monthly_pnl_narratives (
+                    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    portfolio_id            UUID NOT NULL,
+                    tax_year                INTEGER NOT NULL,
+                    input_hash              VARCHAR(64) NOT NULL,
+                    narrative_text          TEXT NOT NULL,
+                    source                  VARCHAR(10) NOT NULL,
+                    compliance_check_result TEXT,
+                    model_version           TEXT NOT NULL,
+                    prompt_version          TEXT NOT NULL,
+                    generated_at            TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    CONSTRAINT uq_monthly_pnl_narratives_year UNIQUE (portfolio_id, tax_year),
+                    CONSTRAINT ck_monthly_pnl_narratives_source CHECK (source IN ('ai', 'fallback'))
+                )
+            """)
+        conn.commit()
+
+
+def get_monthly_pnl_narrative(portfolio_id: str, tax_year: int, input_hash: str) -> Optional[Dict]:
+    """The stored narrative for this tax year, only if it was written from the
+    same figures (input_hash match); otherwise None."""
+    ensure_monthly_pnl_narratives_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT * FROM monthly_pnl_narratives "
+                "WHERE portfolio_id = %s AND tax_year = %s AND input_hash = %s",
+                (portfolio_id, tax_year, input_hash),
+            )
+            row = cur.fetchone()
+            return dict(row) if row else None
+
+
+def upsert_monthly_pnl_narrative(portfolio_id: str, tax_year: int, data: dict) -> dict:
+    """Insert or overwrite the narrative for a tax year (regeneration overwrites)."""
+    ensure_monthly_pnl_narratives_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO monthly_pnl_narratives
+                    (portfolio_id, tax_year, input_hash, narrative_text, source,
+                     compliance_check_result, model_version, prompt_version)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (portfolio_id, tax_year) DO UPDATE SET
+                    input_hash = EXCLUDED.input_hash,
+                    narrative_text = EXCLUDED.narrative_text,
+                    source = EXCLUDED.source,
+                    compliance_check_result = EXCLUDED.compliance_check_result,
+                    model_version = EXCLUDED.model_version,
+                    prompt_version = EXCLUDED.prompt_version,
+                    generated_at = NOW()
+                RETURNING *
+                """,
+                (
+                    portfolio_id,
+                    tax_year,
+                    data["input_hash"],
+                    data["narrative_text"],
+                    data["source"],
+                    data.get("compliance_check_result"),
+                    data["model_version"],
+                    data["prompt_version"],
+                ),
+            )
+            row = cur.fetchone()
+        conn.commit()
+    return dict(row)
+
+
+def count_monthly_pnl_narrative_generations(date_from=None, date_to=None) -> Dict:
+    """Usage count for the AI monthly P&L narrative (ST-26, EPIC-04, v9.11,
+    BLG-SPEC-174; metrics_definitions.md § AI Monthly P&L Narrative Usage).
+
+    Counts generations, not model calls: one claude_audit_log row per
+    completed request, the one with the terminal result ('pass',
+    'pass_on_regenerate' or 'fail_fallback:...'). Same rule as
+    monthly_pnl_narrative_service.is_generation_row(). date_from is
+    inclusive, date_to exclusive (dates or timestamps, UTC); None means open.
+
+    Returns {"generations": int, "ai": int, "fallback": int}.
+    """
+    ensure_claude_audit_log_table()
+    ensure_claude_audit_log_compliance_check_column()
+    sql = (
+        "SELECT COUNT(*) AS generations, "
+        "COUNT(*) FILTER (WHERE compliance_check_result IN ('pass', 'pass_on_regenerate')) AS ai, "
+        "COUNT(*) FILTER (WHERE compliance_check_result LIKE 'fail\\_fallback:%%') AS fallback "
+        "FROM claude_audit_log "
+        "WHERE endpoint = 'POST /reports/monthly-pnl/narrative' "
+        "AND (compliance_check_result IN ('pass', 'pass_on_regenerate') "
+        "OR compliance_check_result LIKE 'fail\\_fallback:%%')"
+    )
+    params = []
+    if date_from is not None:
+        sql += " AND generated_at >= %s"
+        params.append(date_from)
+    if date_to is not None:
+        sql += " AND generated_at < %s"
+        params.append(date_to)
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, tuple(params))
+            row = cur.fetchone()
+    return {
+        "generations": int(row["generations"]) if row else 0,
+        "ai": int(row["ai"]) if row else 0,
+        "fallback": int(row["fallback"]) if row else 0,
+    }
+
+
+def count_claude_audit_entries_today(endpoint: str) -> int:
+    """Count today's (UTC) claude_audit_log rows for one endpoint tag.
+
+    Used by the monthly P&L narrative's daily call cap (ST-25 security
+    checklist). Deliberately not wrapped: a failed count raises, so the caller
+    can fail closed and make no model call.
+    """
+    ensure_claude_audit_log_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT COUNT(*) AS c FROM claude_audit_log "
+                "WHERE endpoint = %s AND generated_at >= date_trunc('day', NOW() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC'",
+                (endpoint,),
+            )
+            row = cur.fetchone()
+            return int(row["c"]) if row else 0
+
+
+# ---------------------------------------------------------------------------
 # position_audit_log — audit trail for manual position overrides (ST-06,
 # EPIC-06, v7.9, BLG-BE-73). Distinct from claude_audit_log (Claude API call
 # accounting) and the AI-journal-generation audit trail (BLG-SEC-14, a
