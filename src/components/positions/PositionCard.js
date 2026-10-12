@@ -85,7 +85,8 @@ function PositionCardAlertsRow({ position }) {
 // per this codebase's existing card-vs-page convention (e.g. GAP_RISK_REASON_LABELS
 // above), not factored into a shared module.
 const REVIEW_STALE_THRESHOLD_DAYS = 14;
-const GRACE_SUPPRESSION_DAYS_IN_STATE = 8;
+// ST-14 (BLG-BE-147, v9.11): same predicate as the Grace Period Alert trigger.
+const GRACE_SUPPRESSION_DAYS_REMAINING = 2;
 
 function getReviewCadenceState(position, drawdownActive) {
   const lastReviewedAt = position.last_reviewed_at;
@@ -93,7 +94,8 @@ function getReviewCadenceState(position, drawdownActive) {
   const daysSinceReview = differenceInDays(new Date(), referenceDate);
 
   const state = position.lifecycle_state || position.position_state;
-  const isGraceSuppressed = state === "GRACE" && (position.days_in_state ?? 0) >= GRACE_SUPPRESSION_DAYS_IN_STATE;
+  const isGraceSuppressed = state === "GRACE" && position.grace_days_remaining != null
+    && position.grace_days_remaining <= GRACE_SUPPRESSION_DAYS_REMAINING;
   const suppressed = isGraceSuppressed || drawdownActive;
 
   const flagged = !suppressed && daysSinceReview >= REVIEW_STALE_THRESHOLD_DAYS;

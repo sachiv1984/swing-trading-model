@@ -690,7 +690,7 @@ For Journal View empty states, see the Journal View section above.
 | `GET /positions` | Primary data source for all three views. Returns open positions with live pricing, journal fields, `grace_days_remaining`, `position_state`, `state_entered_at`, `days_in_state`. |
 | `GET /positions/tags` | Tag autocomplete source for the Journal View filter dropdown and for the Position Detail Modal's tag editor |
 | `GET /positions/compliance` | *(v2.3 — ST-01)* Strategy Compliance Panel data source. Returns ATR-based per-position stop compliance, stop age, and size compliance flags. Display-only; §13.3 constraint applies. |
-| `GET /positions/grace-period-alerts` | *(v3.3 — ST-05)* Returns positions in GRACE state with `days_in_state ≥ 8`, including trade plan context. Source for Grace Period Alert Zone. |
+| `GET /positions/grace-period-alerts` | *(v3.3 — ST-05)* Returns positions in GRACE state with `grace_days_remaining ≤ 2` (v2.15 — ST-14; was `days_in_state ≥ 8`), including trade plan context. Source for Grace Period Alert Zone. |
 | `GET /positions/{id}/stop-trail` | *(v3.3 — ST-07)* Returns ATR trail stop calculation for a single position. Source for Trail Stop Modal. |
 | `PUT /positions/{id}` | *(v3.3 — ST-07)* Updates stop price after user confirms trail stop action. |
 | `GET /portfolio/paper-positions` | *(v3.5 — ST-03)* Paper Account Panel data source. Returns Alpaca paper positions with P&L. Returns `{"paper_tracking_enabled": false}` when ALPACA_PAPER_API_KEY absent. |

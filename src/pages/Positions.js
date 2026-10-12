@@ -138,12 +138,16 @@ function GracePeriodAlertZone() {
   return (
     <div role="alert" aria-live="polite" className="space-y-3">
       {visible.map((alert) => {
-        // ST-12 (BLG-FE-196, v9.10): calendar days left from the backend's
-        // grace_days_remaining, replacing 10 − days_in_state (calendar days, §6.2).
-        const daysLeft = alert.grace_days_remaining ?? Math.max(0, 10 - alert.days_in_state);
-        const bodyText = alert.days_in_state >= 10
+        // ST-12 (BLG-FE-196, v9.10) / ST-14 (BLG-BE-147, v9.11): every grace reading
+        // comes from grace_days_remaining (calendar days since entry, §6.2), never
+        // days_in_state. Day number: min(11 − grace_days_remaining, 10), entry day = Day 1.
+        const daysLeft = alert.grace_days_remaining;
+        const dayNumber = daysLeft != null ? Math.min(11 - daysLeft, 10) : null;
+        const bodyText = daysLeft === 0
           ? "Grace period has ended. Your position will transition to LOSING or PROFITABLE on next refresh."
-          : `Your grace period ends in ${daysLeft} day${daysLeft !== 1 ? "s" : ""}. Review your original thesis before the window closes.`;
+          : daysLeft != null
+            ? `Your grace period ends in ${daysLeft} day${daysLeft !== 1 ? "s" : ""}. Review your original thesis before the window closes.`
+            : "Your grace period is ending. Review your original thesis before the window closes.";
         const tp = alert.trade_plan_summary;
 
         return (
@@ -156,9 +160,11 @@ function GracePeriodAlertZone() {
               <div className="flex items-center gap-2 text-amber-300 font-semibold text-sm">
                 <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                 Grace Period Alert — {alert.ticker}
-                <span className="text-xs font-medium text-amber-400 bg-amber-500/20 px-1.5 py-0.5 rounded">
-                  Day {alert.days_in_state} of 10
-                </span>
+                {dayNumber != null && (
+                  <span className="text-xs font-medium text-amber-400 bg-amber-500/20 px-1.5 py-0.5 rounded" data-testid="grace-alert-day-label">
+                    Day {dayNumber} of 10
+                  </span>
+                )}
               </div>
               <button
                 onClick={() => dismiss(alert.position_id)}
@@ -565,7 +571,9 @@ function AlertsCell({ position }) {
 // ---------------------------------------------------------------------------
 
 const REVIEW_STALE_THRESHOLD_DAYS = 14;
-const GRACE_SUPPRESSION_DAYS_IN_STATE = 8;
+// ST-14 (BLG-BE-147, v9.11): the same predicate as the Grace Period Alert
+// trigger — 2 or fewer calendar days of grace left — not days_in_state.
+const GRACE_SUPPRESSION_DAYS_REMAINING = 2;
 
 // AC-04: suppress the flagged/amber state when the position is already
 // surfaced by the Grace Period Alert Zone or the portfolio-level Drawdown
@@ -581,7 +589,8 @@ function getReviewCadenceState(position, drawdownActive) {
   const daysSinceReview = differenceInDays(new Date(), referenceDate);
 
   const state = position.lifecycle_state || position.position_state;
-  const isGraceSuppressed = state === "GRACE" && (position.days_in_state ?? 0) >= GRACE_SUPPRESSION_DAYS_IN_STATE;
+  const isGraceSuppressed = state === "GRACE" && position.grace_days_remaining != null
+    && position.grace_days_remaining <= GRACE_SUPPRESSION_DAYS_REMAINING;
   const suppressed = isGraceSuppressed || drawdownActive;
 
   const flagged = !suppressed && daysSinceReview >= REVIEW_STALE_THRESHOLD_DAYS;
