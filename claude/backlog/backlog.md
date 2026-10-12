@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-08 (session — 2 new item(s) added: BLG-FE-208, BLG-GOV-382, from ST-24/ST-28, EPIC-04, v9.11); prior — 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — 6 items filed from idea intake `IW-20261008-01`: BLG-FE-206, BLG-FE-207, BLG-BE-153, BLG-BE-154, BLG-BE-155, BLG-SPEC-189; BLG-FE-206 and BLG-BE-154 committed to v9.11, DL-084); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-09 (session — 1 new item added: BLG-QA-219, from the ST-25 DoQ regression run, EPIC-04, v9.11); prior — 2026-10-08 (session — 2 new item(s) added: BLG-FE-208, BLG-GOV-382, from ST-24/ST-28, EPIC-04, v9.11); prior — 2026-10-08 (session — 3 new item(s) added: BLG-GOV-379, BLG-GOV-380, BLG-GOV-381, from lifecycle audit AUD-2026-10-08-002); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -4759,6 +4759,27 @@ ST-18's failing run (37598457966) was dispatched on the EPIC-04 branch: staging 
 - A pytest showing a `claude_audit_log` row counted in the daily total, a plan-generation call counted once, and the alert firing when Claude spend passes the threshold
 - The scheduler that calls `POST /ai/check-daily-cost` named in `ai_endpoints.md`, with its last successful run recorded
 - The ST-23 cost estimate notes the corrected coverage
+
+---
+
+### BLG-QA-219 — Stop the ⌘K hint toast intercepting the chat submit click in SC-AC-03
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Sprint Execution, ST-25 / EPIC-04, cycle `2026-10-08__release-v9.11` (DoQ regression run of the shared AI badge's Playwright coverage) — 2026-10-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+`tests/e2e/epic02-v62-ai-briefing-chat.spec.js` SC-AC-03 fails intermittently locally: 2 of 3, 1 of 3 and 3 of 3 in repeated runs on EPIC-04. It fails 1 of 3 on EPIC-04 at `dde0501c`, before any ST-25 change, and 0 of 3 on EPIC-06. The click on `ai-chat-submit` times out because the first-visit sonner toast ("Press ⌘K (or Ctrl K) to search pages, tickers, and trade plans.", `src/Layout.js`) sits over the chat widget's submit button and "intercepts pointer events". Whether the toast is still showing when the test clicks is a matter of timing, which makes this a flaky test, not a regression. CI has passed it on every EPIC-04 run so far.
+
+**Scope**
+- In the spec, suppress or dismiss the hint before interacting: set the hint's "seen" flag with `addInitScript`, or close the toast. Do not change the app.
+- Check the other chat-widget scenarios in the same file for the same exposure.
+
+**Acceptance Criteria**
+- SC-AC-03 passes 10 of 10 with `--repeat-each=10` locally
+- No `test.fixme` quarantine is needed
 
 ---
 
