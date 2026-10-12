@@ -31,6 +31,8 @@ import re
 import time
 from typing import Optional
 
+from utils.ai_sampling import sample_ai_output
+from ai_models import CLAUDE_HAIKU_4_5
 from utils.upstream_call import anthropic_retryable_exceptions, bounded_upstream_call, get_timeout
 
 CLAUDE_COST_PER_INPUT_TOKEN = 1.00 / 1_000_000
@@ -42,7 +44,7 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 # for the lazy-import/graceful-degradation rationale (unchanged from this
 # module's own pre-ST-13 local copy of the same logic).
 _RETRYABLE_CLAUDE_EXCEPTIONS = anthropic_retryable_exceptions()
-MODEL_VERSION = "claude-haiku-4-5"
+MODEL_VERSION = CLAUDE_HAIKU_4_5  # pinned snapshot (ST-09, v9.11); was the floating alias
 PROMPT_VERSION = "v3.0"
 
 # ST-22 (BLG-SEC-33, EPIC-05, v8.8): split into a trusted `system` prompt
@@ -275,11 +277,10 @@ def generate_full_plan(
     _log_audit(plan_id, input_hash, output_hash, usage, endpoint="POST /trade-plans/generate-plan", latency_ms=latency_ms)
 
     if isinstance(fields, dict):
-        from services.ai_output_sampling_service import maybe_sample_output
         for field_name in ("setup_thesis", "entry_rationale", "early_exit_conditions"):
             field_text = fields.get(field_name)
             if field_text:
-                maybe_sample_output(
+                sample_ai_output(
                     f"generate-plan {field_name} (POST /trade-plans/generate-plan)",
                     field_text,
                     MODEL_VERSION,
@@ -348,8 +349,7 @@ def generate_setup_thesis(
     _log_audit(plan_id, input_hash, output_hash, usage, endpoint="POST /trade-plans/{plan_id}/generate-thesis", latency_ms=latency_ms)
 
     if thesis:
-        from services.ai_output_sampling_service import maybe_sample_output
-        maybe_sample_output("generate-thesis (POST /trade-plans/{plan_id}/generate-thesis)", thesis, MODEL_VERSION)
+        sample_ai_output("generate-thesis (POST /trade-plans/{plan_id}/generate-thesis)", thesis, MODEL_VERSION)
 
     return {
         "thesis": thesis,
