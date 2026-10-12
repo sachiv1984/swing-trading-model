@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-09T17:44:00Z",
+  "last_updated_utc": "2026-10-12T08:26:06Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -874,25 +874,31 @@
         "ST-42": {
           "title": "Make the Non-Registry Dependency Check a required status check on main",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1966,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "aecf6b8b819337c3872066f34e879264b2381724",
           "delegation_record_id": "DEL-20261008-02",
           "blocked_since_utc": "2026-10-08T11:01:30Z",
           "unblock_criteria": "gh api read lists 'Non-Registry Dependency Check (ST-29)' under required_status_checks; later non-dependency PR shows the check completing",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-12T08:26:06Z",
+          "acceptance_verified": true,
           "spec_references": [
             ".github/workflows/non-registry-dependency-check.yml"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "signed_utc": "2026-10-12T08:26:06Z",
+            "note": "User (repository admin) added Non-Registry Dependency Check (ST-29) to main's required status checks; read-back 2026-10-09; check completed SUCCESS on PR #1968 (run 38223105681). Recorded in qa_evidence_EPIC-06.md."
+          },
+          "notes": "Done. AC1: main required_status_checks lists Non-Registry Dependency Check (ST-29) alongside the 4 existing contexts (read 2026-10-09, bb876940). AC2: PR #1968 (no dependency files) ran the check to SUCCESS, run 38223105681. DEL-20261008-02 unblocked. Deviation check: none."
         },
         "ST-43": {
           "title": "Move test-only Python packages out of the production build",
@@ -1185,8 +1191,7 @@
   "delegated_items": [
     "ST-02",
     "ST-06",
-    "ST-20",
-    "ST-42"
+    "ST-20"
   ],
   "completed_items": [
     "ST-01",
@@ -1206,15 +1211,6 @@
     "ST-19",
     "ST-21",
     "ST-22",
-    "ST-33",
-    "ST-35",
-    "ST-36",
-    "ST-37",
-    "ST-38",
-    "ST-39",
-    "ST-40",
-    "ST-41",
-    "ST-43",
     "ST-23",
     "ST-24",
     "ST-27",
@@ -1223,7 +1219,17 @@
     "ST-30",
     "ST-31",
     "ST-32",
-    "ST-34"
+    "ST-33",
+    "ST-34",
+    "ST-35",
+    "ST-36",
+    "ST-37",
+    "ST-38",
+    "ST-39",
+    "ST-40",
+    "ST-41",
+    "ST-42",
+    "ST-43"
   ],
   "open_escalations": [
     "ESC-EXEC-20261008-01",
