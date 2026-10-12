@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-12 (post-ship closure 2026-10-08__release-v9.11, manage roadmap STEP 11 — §3 "v9.11 — Committed items" section retired to roadmap_archive.md (all four items shipped); its RA:v9.11 execution-notes block moved to §1 alongside the other release annotations); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — v9.11 marked ✅ Complete in §1 and §3; §1 headers updated (Current Version → v9.11, Next planned release → [TBD] — unscoped, `next_release` equals the release just shipped); §8 Release Summary row added); prior — 2026-10-08 (roadmap rebalance `2026-10-08__scheduled` — §1 Next planned release → v9.11; §3 Now horizon gains a `v9.11` section: BLG-BE-152 (STEP 8.0 Correctness Fast-Track, P1), BLG-BE-150 (P1 escaped-defect verification), BLG-FE-206 and BLG-BE-154 (PO-committed build-and-ship items, §7.1 pull-forward), DL-084); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (Product Owner direction, DL-085 — §1 Next planned release → v9.12; §3 gains a `v9.12` section committing BLG-BE-162 (P1); named in place of a scheduled rebalance); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11, manage roadmap STEP 11 — §3 "v9.11 — Committed items" section retired to roadmap_archive.md (all four items shipped); its RA:v9.11 execution-notes block moved to §1 alongside the other release annotations); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — v9.11 marked ✅ Complete in §1 and §3; §1 headers updated (Current Version → v9.11, Next planned release → [TBD] — unscoped, `next_release` equals the release just shipped); §8 Release Summary row added); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-08 (cycle 2026-10-08__scheduled — Standard tier, CPS=N/A (0 active initiatives, 17th consecutive cycle); STEP 8.0 Correctness Fast-Track promoted BLG-BE-152 (P1 — post-trade debrief lacks R achieved and the stop at exit, and told a user correct trade data was contradictory) to a new v9.11 Now section; 🔴 Product Value Ratio 0.161 (U=25/G=36/D=94/P=0 of 155, v9.6–v9.10) — 7th consecutive Alert, improving; Skill-Silo 87.4% pooled (v9.8–v9.10), improved but above the 40% ceiling — §7.1 pull-forward applied: BLG-FE-206 + BLG-BE-154 committed to v9.11; STEP 8.1 Option (a) — v9.11 section added; reduced-roster idea intake IW-20261008-01 (8 submissions, 4 user-facing roles, user-approved) → 6 backlog items; DL-084)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -11,7 +11,7 @@
 ## 1. Current Version
 
 **v9.11** — Debrief Correctness, AI Reliability & Risk-Page Accuracy — ✅ Complete — Shipped 2026-10-12 — cycle: 2026-10-08__release-v9.11
-**Next planned release:** [TBD] — unscoped (`next_release` equals the release just shipped; a rebalance or scoping decision is needed before `plan release`)
+**Next planned release:** v9.12 — named by Product Owner direction 2026-10-12 in place of a scheduled rebalance (DL-085); scope set at `plan release v9.12`; committed item in §3
 
 <!-- roadmap-annotation-marker: RA:v9.11:2026-10-08__release-v9.11 -->
 
@@ -479,6 +479,14 @@ Today you find stocks through external research and add them to the watchlist ma
 *RA:v9.10-committed-items retired — see roadmap_archive.md 2026-10-07 (post-ship closure 2026-10-06__release-v9.10; all three committed items shipped in v9.10).*
 
 *RA:v9.11-committed-items retired — see roadmap_archive.md 2026-10-12 (post-ship closure 2026-10-08__release-v9.11; all four committed items shipped in v9.11).*
+
+### v9.12 — Committed items (Product Owner direction 2026-10-12, DL-085)
+
+*Added by Product Owner direction at post-ship closure `2026-10-08__release-v9.11`, not by a rebalance or Release Planning. Its purpose is to name the next release so `plan release v9.12` can open without a scheduled rebalance. The release's full scope, capacity fit and story breakdown are set at `plan release v9.12`.*
+
+| Item | Why it is here | Priority | Effort |
+|------|----------------|----------|--------|
+| `BLG-BE-162` — journal summary returns HTTP 422 on UUID `trade_ids` | Condition of the v9.11 verification P1 acceptance (ST-02): stays P1 and is seated in v9.12. | P1 | see backlog item |
 
 <!-- roadmap-annotation-marker: RA:v7.4:2026-07-17__release-v7.4 -->
 

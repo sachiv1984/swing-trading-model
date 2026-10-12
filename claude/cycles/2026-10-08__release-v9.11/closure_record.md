@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-10-12
+Last Updated: 2026-10-12 (follow-up — §6 rows 1, 2, 7 and 9 resolved on Product Owner direction)
 Cycle: 2026-10-08__release-v9.11
 
 ---
@@ -95,15 +95,15 @@ Full detail: `claude/cycles/2026-10-08__release-v9.11/lessons_learnt_closure.md`
 
 | # | Description | Owner | Deadline | Escalation path | Resolution |
 |---|-------------|-------|----------|-----------------|------------|
-| 1 | `BLG-BE-162` (journal summary HTTP 422 on UUID `trade_ids`, P1) must be seated in v9.12 and stay P1. This was the condition of the verification P1 acceptance. | Product Owner | `plan release v9.12` | `verification_report.md` §4 acceptance record | *(open)* |
-| 2 | Verification DoQ sign-off and PO acceptance (including the P1 acceptance) were agent-mediated (§5.3, user-directed) and are marked "Pending human confirmation". This is the 4th consecutive cycle (v9.8–v9.11). Confirm or amend. | Product Owner; Director of Quality | Before `plan release v9.12` | `verification_report.md` §9 | *(open)* |
+| 1 | `BLG-BE-162` (journal summary HTTP 422 on UUID `trade_ids`, P1) must be seated in v9.12 and stay P1. This was the condition of the verification P1 acceptance. | Product Owner | `plan release v9.12` | `verification_report.md` §4 acceptance record | ✅ Resolved 2026-10-12: seated in v9.12 at P1 by Product Owner direction (`current_roadmap.md` §3, DL-085) |
+| 2 | Verification DoQ sign-off and PO acceptance (including the P1 acceptance) were agent-mediated (§5.3, user-directed) and are marked "Pending human confirmation". This is the 4th consecutive cycle (v9.8–v9.11). Confirm or amend. | Product Owner; Director of Quality | Before `plan release v9.12` | `verification_report.md` §9 | ✅ Resolved 2026-10-12: confirmed by the human Product Owner / Director of Quality, together with all other open "pending human confirmation" sign-offs back to v8.0 (`docs/governance/human_signoff_confirmation_2026-10-12.md`) |
 | 3 | `DEV-REPORTS-ST06-01` (P3, `reports.md`) has had no active tracking item since v8.1: `BLG-SPEC-87` was archived without shipping. Restore or re-file it, and update the deviation's backlog reference. (Carried from v9.10 #2.) | Frontend Specifications & UX Documentation Owner | Next `groom backlog` | Deviation consolidation review 2026-10-07, Finding 1 | *(open)* |
 | 4 | `DEV-v3.4-01` (`trade_plan.md` Known Deviations table) still shows target "v3.5", although `BLG-SPEC-31` is COMPLETE in v3.5. Mark it resolved. (Carried from v9.10 #3.) | Frontend Specifications & UX Documentation Owner | Next `trade_plan.md` revision | Deviation consolidation review 2026-10-07, Finding 3 | *(open)* |
 | 5 | Treat `Gate criteria: None`/`N/A` as ungated in `scan_backlog_gate_conditions.py`, then confirm each affected P3 item still deserves a slot. (Carried from v9.10 #4, 2nd cycle.) | Head of Specs Team / Head of Engineering | This closure's STEP 12 review / `BLG-GOV-373` | Deferred (lessons_learnt_closure.md) | *(open)* |
 | 6 | `BLG-GOV-368`: the prompt half was applied in `execution_prompt.md` v3.82; the optional `quality_gate.yml` mirror remains. Narrow or close the item. (Carried from v9.10 #7.) | Head of Specs Team | Next `groom backlog` | Backlog item | *(open)* |
-| 7 | File a backlog item for a "gating item shipped — verify" list in `scan_backlog_gate_conditions.py`, read in Release Planning §1.3a (v9.11 Release Planning FI-1; 26 items found, at least 2 genuinely ready). | Head of Specs Team / Head of Engineering | Before `plan release v9.12` | Deferred (lessons_learnt_closure.md); `/backlog-add` | *(open)* |
+| 7 | File a backlog item for a "gating item shipped — verify" list in `scan_backlog_gate_conditions.py`, read in Release Planning §1.3a (v9.11 Release Planning FI-1; 26 items found, at least 2 genuinely ready). | Head of Specs Team / Head of Engineering | Before `plan release v9.12` | Deferred (lessons_learnt_closure.md); `/backlog-add` | ✅ Filed 2026-10-12 as `BLG-GOV-386` (P2, v9.12) |
 | 8 | `release_planning_prompt.md`: (a) acquire the backlog lock before the first §1.3a edit, or move the edits after STEP 3.9 (FI-2, target 2026-10-20); (b) extend §1.3a bound 5 to gates removed by a Product Owner decision outside Release Planning (FI-3, recurrence on a new branch). | Head of Specs Team | (a) 2026-10-20; (b) before `plan release v9.12` | Deferred (lessons_learnt_closure.md) | *(open)* |
-| 9 | Add a `/reports` case to `categorizeEndpoint()` in `src/pages/SystemStatus.js`. All 6 `/reports/*` test-suite endpoints currently fall into `'Other'`; the STEP 6 new-prefix check cannot catch this. Requires a backlog item and Playwright coverage. | Head of Engineering | `/backlog-add` before `plan release v9.12` | Deferred (lessons_learnt_closure.md) | *(open)* |
+| 9 | Add a `/reports` case to `categorizeEndpoint()` in `src/pages/SystemStatus.js`. All 6 `/reports/*` test-suite endpoints currently fall into `'Other'`; the STEP 6 new-prefix check cannot catch this. Requires a backlog item and Playwright coverage. | Head of Engineering | `/backlog-add` before `plan release v9.12` | Deferred (lessons_learnt_closure.md) | ✅ Filed 2026-10-12 as `BLG-FE-217` (P3, v9.12) |
 | 10 | CLAUDE.md §8 step 2c: after any cross-EPIC merge resolution, run a rollback and item-body splice check against both parents (v9.11 Phase 3 FI-1). | Head of Specs Team | Sprint that seats `BLG-GOV-385` (P2) | Backlog item `BLG-GOV-385` | *(open)* |
 
 ## §7 — Closure Confirmation

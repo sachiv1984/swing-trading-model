@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-12 (groom backlog post-ship closure 2026-10-08__release-v9.11 — 45 items archived: 43 v9.11 shipped items plus BLG-GOV-362 and BLG-OPS-180, both bannered ✅ COMPLETE at the 2026-10-07 closure); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — 43 shipped items marked ✅ COMPLETE (ST-01–ST-43); Phase 4 additions confirmed present (BLG-BE-162, BLG-AI-10, BLG-QA-219, BLG-QA-220, BLG-BE-156); no stale parked items); prior — 2026-10-12 (session — 3 new item(s) added: BLG-SPEC-193, BLG-SPEC-194, BLG-GOV-385, from the PR #1973 review, EPIC-05, v9.11; BLG-SPEC-190 and BLG-BE-157 restored after the 3237cb5e merge spliced them); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (session — 2 new item(s) added: BLG-GOV-386, BLG-FE-217, from post-ship closure 2026-10-08__release-v9.11 §6 rows 7 and 9); prior — 2026-10-12 (groom backlog post-ship closure 2026-10-08__release-v9.11 — 45 items archived: 43 v9.11 shipped items plus BLG-GOV-362 and BLG-OPS-180, both bannered ✅ COMPLETE at the 2026-10-07 closure); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — 43 shipped items marked ✅ COMPLETE (ST-01–ST-43); Phase 4 additions confirmed present (BLG-BE-162, BLG-AI-10, BLG-QA-219, BLG-QA-220, BLG-BE-156); no stale parked items); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5078,5 +5078,49 @@ The CLAUDE.md §8 merge of `main` (EPIC-06, PR #1971) into EPIC-05 (`3237cb5e`) 
 **Acceptance Criteria**
 - The script fails on `3237cb5e`'s `backlog.md` and passes on the repaired file
 - The check is wired into CI and named in CLAUDE.md §8
+
+---
+
+### BLG-GOV-386 — Report gated items whose gating backlog item has shipped, and read that list in Release Planning §1.3a
+**Priority:** P2 (Medium)
+**Type:** Governance Tooling
+**Owner:** Head of Specs Team; Head of Engineering
+**Source:** Post-ship closure `2026-10-08__release-v9.11`, closure_record.md §6 row 7 (v9.11 Release Planning Friction Item 1) — 2026-10-12
+**Effort:** S (~0.5–1d)
+**Provisional-Target:** v9.12
+
+**Problem**
+`scripts/scan_backlog_gate_conditions.py` reports date-lapsed gates and resolution banners, but a gate whose condition is "`BLG-X` shipped/complete" stays gated after `BLG-X` ships, because nothing re-reads it. At v9.11 Release Planning a manual check found 26 gated items whose gate names only items no longer in the active backlog. `BLG-OPS-179` was genuinely ready and `BLG-FE-195` had already been delivered. Ready work is silently excluded from the ungated pool.
+
+**Scope**
+- Add a "gating item shipped — verify" output list to `scan_backlog_gate_conditions.py`: gated items whose `Gate criteria` names one or more `BLG-*` IDs, all of which are absent from the active `backlog.md` (archived or bannered ✅ COMPLETE). Mirror the format of the date-lapsed list.
+- Add unit tests covering: all named items shipped (listed), one still open (not listed), no `BLG-*` reference (not listed).
+- Update `release_planning_prompt.md` §1.3a so the new list is read in the same read-before-fixing-the-pool step as the date-lapsed list (CLAUDE.md §6 checklist applies).
+
+**Acceptance Criteria**
+- Running the script against a fixture where a gate names only an archived item lists that item under the new heading.
+- An item whose gate names at least one still-active item is not listed.
+- `release_planning_prompt.md` §1.3a names the new list, with the version bump, OPERATIONAL_GUIDE.md §14 and `prompt_change_log.md` updates in the same commit.
+
+---
+
+### BLG-FE-217 — Group /reports endpoints on the System Status page instead of "Other"
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** Post-ship closure `2026-10-08__release-v9.11`, closure_record.md §6 row 9 (closure Friction Item 2) — 2026-10-12
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+`categorizeEndpoint()` in `src/pages/SystemStatus.js` has no `/reports` case, so every `/reports/*` endpoint registered in `backend/routers/test.py` (6 today, growing — v9.11 added the monthly P&L narrative routes) falls into the "Other" group. Post-ship closure STEP 6 only flags *new* top-level prefixes, so this pre-existing gap is never surfaced.
+
+**Scope**
+- Add a `/reports` case to `categorizeEndpoint()`, mapping to the existing "Analytics" group or a new "Reports" group (frontend owner's choice, matching the app's nav taxonomy in `src/Layout.js`).
+- Add a Playwright assertion in `tests/e2e/system-status.spec.js` that a `/reports/*` endpoint renders under the chosen group, not "Other".
+
+**Acceptance Criteria**
+- On the System Status page, no `/reports/*` endpoint appears under "Other".
+- A Playwright test asserting the grouping passes in CI.
 
 ---
