@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 3.8
-**Last Updated:** 2026-10-08 (v9.11 design gate — ST-10/BLG-BE-154: Card 2 stale-price sub-line; ST-15/BLG-FE-204: Recent Activity treats a P&L that rounds to £0.00 as break-even); prior — 2026-10-06 (v9.10 design gate — ST-09/BLG-FE-199: conditional Exit Conditions Met row; ST-10/BLG-FE-194: Recent Activity neutral glyph); prior — 2026-10-01 (v9.9 design gate — ST-35/BLG-FE-192: Card 5 icon-badge colour three-way); prior history retained — see prior entries in version control
+**Version:** 3.9
+**Last Updated:** 2026-10-12 (v9.12 design gate — ST-24/BLG-FE-210: AI Daily Briefing MONITOR badge to amber-700); prior — 2026-10-08 (v9.11 design gate — ST-10/BLG-BE-154: Card 2 stale-price sub-line; ST-15/BLG-FE-204: Recent Activity treats a P&L that rounds to £0.00 as break-even); prior — 2026-10-06 (v9.10 design gate — ST-09/BLG-FE-199: conditional Exit Conditions Met row; ST-10/BLG-FE-194: Recent Activity neutral glyph); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v8.8
 **EPIC:** EPIC-03
@@ -267,7 +267,7 @@ Below header bar, above body — this is the first applied instance of the share
 |------|------------|-------|
 | `EXIT` | `#DC2626` (red) | "EXIT" |
 | `ENTER` | `#16A34A` (green) | "ENTER" |
-| `MONITOR` | `#D97706` (amber) | "MONITOR" |
+| `MONITOR` | `#B45309` (amber-700) (v3.9, ST-24, BLG-FE-210: was `#D97706`/`bg-amber-600`, white text 3.19:1, below WCAG AA; `bg-amber-700` is 5.02:1. Same rule as `BLG-FE-165`, v9.1) | "MONITOR" |
 | `HOLD` | `#6B7280` (grey) | "HOLD" |
 
 ### States
@@ -443,6 +443,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.9 | 2026-10-12 | v9.12 design gate — (ST-24, EPIC-03, BLG-FE-210) §5 AI Daily Briefing `MONITOR` action badge `#D97706` → `#B45309` (`bg-amber-700`): white text 3.19:1 → 5.02:1, WCAG AA. Same rule as `BLG-FE-165` (v9.1, §9 v3.4); no new decision record. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 3.8 | 2026-10-08 | v9.11 design gate — (ST-10, EPIC-02, BLG-BE-154) §4 Card 2 stale-price sub-line from `price_is_stale`; design source `docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md`. (ST-15, EPIC-02, BLG-FE-204) §4 Card 5 three-way glyph and colour test the P&L rounded to 2 dp, so a value that displays as £0.00 is break-even; pre-existing `design_system.md` v1.21 rule, no new decision record. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |
 | 3.7 | 2026-10-06 | v9.10 design gate — (ST-09, EPIC-02, BLG-FE-199) §1A new conditional "Exit Conditions Met" full-width row above the five-card grid, sharing the `getExitCondition` predicate with the Positions exit dialog; each row links to `/#/Positions?exit={id}`. (ST-10, EPIC-02, BLG-FE-194) §4 Card 5 icon glyph made three-way (`Minus` for break-even). Head of UX & Design sign-off: 2026-10-06. Product Owner approved: 2026-10-06. Head of Specs Team confirmed. |
 | 3.6 | 2026-10-01 | v9.9 design gate — Card 5 Recent Activity icon-badge colour fix (ST-35, EPIC-06, BLG-FE-192): icon background/foreground changed from two-way (`>= 0`) to three-way colour logic, giving `pnl === 0` a neutral slate treatment instead of the emerald (win) colour, matching the card's own P&L value text and `design_system.md`'s existing zero-neutral rule (§Consistency Rules → Number and Currency Formatting, v1.21). Design source: pre-existing canonical rule, no new decision record required — see Design Source (v3.6) above. Head of UX & Design sign-off: 2026-10-01. Product Owner approved: 2026-10-01. Head of Specs Team confirmed. |

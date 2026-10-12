@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.17
-**Last Updated:** 2026-09-28 (ST-05, EPIC-01, v9.8, BLG-SPEC-158 — §4.2 gains a narrow-width behaviour statement: the list has no card view, it scrolls horizontally); prior — 2026-09-23 (v9.7 design gate — ST-02/BLG-FE-186 §4.5 copy table adds `setup_type`); prior — 2026-09-21 (v9.6 design gate — ST-01/BLG-FEAT-96 new §4.5 Clone as New Plan, ST-02/BLG-FE-180 new §4.6 Stale Plan Marker); prior history retained — see prior entries in version control.
+**Version:** 1.18
+**Last Updated:** 2026-10-12 (v9.12 design gate — ST-24/BLG-FE-210: `research_pending` badge and Abandon Plan button to amber-700); prior — 2026-09-28 (ST-05, EPIC-01, v9.8, BLG-SPEC-158 — §4.2 gains a narrow-width behaviour statement: the list has no card view, it scrolls horizontally); prior — 2026-09-23 (v9.7 design gate — ST-02/BLG-FE-186 §4.5 copy table adds `setup_type`); prior history retained — see prior entries in version control
 **Design Source (v1.16 setup_type copy fix):** docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md
 **Design Source (v1.15 clone as new plan):** docs/design/2026-09-21__release-v9.6/trade-plan-clone/decision_record.md
 **Design Source (v1.15 stale plan marker):** docs/design/2026-09-21__release-v9.6/trade-plan-stale-marker/decision_record.md
@@ -456,7 +456,7 @@ A **"Print / Export PDF"** action (outline button, `Printer` icon) is shown in t
 **Required field:** Abandonment reason (textarea, 3 rows, min 10 chars). Inline validation on blur. Confirmation button disabled until valid.
 
 **Actions:**
-- "Abandon Plan" (primary, amber) — submits `PUT /trade-plans/{id}` with `{status: 'abandoned', abandonment_reason: <text>}`
+- "Abandon Plan" (primary, amber: `bg-amber-700 hover:bg-amber-800 text-white`; v1.18, ST-24: was `bg-amber-600 hover:bg-amber-500`, where white text measured 3.19:1 and lower on hover) — submits `PUT /trade-plans/{id}` with `{status: 'abandoned', abandonment_reason: <text>}`
 - "Cancel" (secondary) — closes modal; no change
 
 **Focus management (v1.3 — ST-07, BLG-FE-136):** Implemented via the existing Radix-based `src/components/ui/dialog.js` `Dialog` primitive (replacing the prior hand-rolled overlay), giving this modal the same focus-trap behaviour as every other dialog in the app: focus moves into the modal on open, Tab/Shift+Tab cycle only among elements inside it, Escape closes without saving, and focus returns to the triggering "Abandon" button on close. Title, body copy, validation, and actions unchanged. Design source: `docs/design/2026-07-30__release-v8.0/abandon-modal-focus-trap/decision_record.md`.
@@ -480,7 +480,7 @@ Applied in Trade Plan List and Trade Plan Detail View:
 | Status | Badge Label | Colour | Hex |
 |--------|------------|--------|-----|
 | `draft` | Draft | Grey | `#6B7280` |
-| `research_pending` | Research Pending | Amber | `#D97706` |
+| `research_pending` | Research Pending | Amber | `#B45309` (amber-700) (v1.18, ST-24, BLG-FE-210: was `#D97706`/`bg-amber-600`, white text 3.19:1, below WCAG AA; `bg-amber-700` is 5.02:1. Same rule as `BLG-FE-165`, v9.1) |
 | `research_complete` | Research Complete | Blue | `#2563EB` |
 | `entry_conditions_set` | Entry Ready | Purple | `#7C3AED` |
 | `active` | Active | Green | `#16A34A` |
@@ -669,6 +669,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.18 | 2026-10-12 | v9.12 design gate — (ST-24, EPIC-03, BLG-FE-210) §9 `research_pending` badge `#D97706` → `#B45309`; the "Abandon Plan" button becomes `bg-amber-700 hover:bg-amber-800` (was `bg-amber-600 hover:bg-amber-500`). White text 3.19:1 → 5.02:1. Same rule as `BLG-FE-165`; no new decision record. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 1.17 | 2026-09-28 | ST-05 (BLG-SPEC-158, EPIC-01, v9.8): §4.2 List Layout gains a narrow-width behaviour statement — no card/stacked alternative exists, the list scrolls horizontally below `md` (768px), no column is hidden. Corrected "One card or row per trade plan" to "One row per trade plan" (no card view exists). Documentation-only; no implementation change. |
 | 1.16 | 2026-09-23 | v9.7 design gate — ST-02 (EPIC-02, BLG-FE-186): §4.5's Copied/Reset table gains `setup_type` (copied unchanged, including `null`) and a footnote establishing that a copied value always wins over the watchlisted-signal auto-fill default. Fixes a bug where cloning a plan whose ticker also carries a live watchlisted signal silently overwrote the source's Setup Type. Design source: `docs/design/2026-09-23__release-v9.7/trade-plan-clone-setup-type/decision_record.md`. Authority: Head of Specs Team. |
 | 1.15 | 2026-09-21 | v9.6 design gate — ST-01 (EPIC-01, BLG-FEAT-96): new §4.5 Clone as New Plan (list-row link + detail-header button, `?clone_from=` route, copy/reset field table, banner, failure toast) and the §2 route row; corrects the sealed slice's non-existent `planned` status to `draft`. ST-02 (EPIC-01, BLG-FE-180): new §4.6 Stale Plan Marker (pre-entry statuses, `updated_at` age > 14 days, Clock + amber text matching the Watchlist staleness language, display-only). §4.2 Status/Actions columns and §7 action buttons updated. Design sources under `docs/design/2026-09-21__release-v9.6/`. **Note:** rows for 1.13 and 1.14 were not appended to this table by the v9.5 stories (only the header `Last Updated` was) — recoverable via version control. Authority: Head of Specs Team. |

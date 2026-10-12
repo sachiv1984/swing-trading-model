@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.8
-**Last Updated:** 2026-10-06 (ST-07, EPIC-02, v9.10, BLG-FE-197 — §Initial Stop implemented in TradeEntry.js; Output no longer lists a submitted stop price; sizing empty-state copy and test references added); prior — 2026-10-06 (v9.10 design gate — ST-07/BLG-FE-197: Stop Price input replaced by a read-only system initial stop; ATR field relabelled; risk and sizing driven only by the system stop); prior — 2026-09-15 (v9.4 sprint execution — ST-28/BLG-FEAT-95: swapped the advisory's icon from AlertTriangle to Info after CI found it collided with an unrelated test's icon-absence assertion); prior history retained — see prior entries in version control
+**Version:** 1.9
+**Last Updated:** 2026-10-12 (v9.12 design gate — ST-17/BLG-BE-146: ATR preview drives the stop, risk and sizing before save; ST-18/BLG-FE-203: currency unit on the ATR label and an inline implausible-ATR error that disables submit); prior — 2026-10-06 (ST-07, EPIC-02, v9.10, BLG-FE-197 — §Initial Stop implemented in TradeEntry.js; Output no longer lists a submitted stop price; sizing empty-state copy and test references added); prior — 2026-10-06 (v9.10 design gate — ST-07/BLG-FE-197: Stop Price input replaced by a read-only system initial stop; ATR field relabelled; risk and sizing driven only by the system stop); prior history retained — see prior entries in version control
+**Design Source (v1.9):** docs/design/2026-10-12__release-v9.12/trade-entry-atr-preview/decision_record.md
 **Design Source (v1.7):** docs/design/2026-10-06__release-v9.10/trade-entry-system-stop/decision_record.md
 **Design Source (v1.4):** docs/design/2026-09-14__release-v9.4/trade-plan-required-nudge/decision_record.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -47,8 +48,11 @@ Users rely on this form to:
 - Format: 1.XXXX
 - Max 6 decimal places
 
-### ATR (14-day) (v1.7 — ST-07)
+### ATR (14-day) (v1.7 — ST-07; v1.9 — ST-17/ST-18)
 - Number input. Label "ATR (14-day)", placeholder "Fetched automatically if blank". Replaces "ATR Value (Optional)" / "For stop suggestion".
+- **Unit in the label (v1.9, ST-18, BLG-FE-203):** "ATR (14-day, £)" for UK and "ATR (14-day, $)" for US. It stays "ATR (14-day)" until the market is known. A typed ATR is native currency.
+- **ATR preview (v1.9, ST-17, BLG-BE-146):** once the ticker and market are known and the field is blank, Trade Entry calls `GET /market/atr/{ticker}?market=UK|US`, reusing the existing 300 ms input debounce (no new timing parameter). It is not called while a typed ATR is present. The fetched value is **never placed into the input**, so `atr_source` at save stays `system`. A hint shows under the field (`data-testid="atr-fetched-hint"`, `text-xs text-slate-600 dark:text-slate-400`): "Fetched: {atr} (14-day, {as_of d MMM})". It is hidden when the user types an ATR. A typed ATR always takes precedence.
+- **Implausible typed ATR (v1.9, ST-18):** a typed ATR where `5 × ATR ≥ entry price` would put the stop at or below zero. It shows an inline error per the canonical form-validation pattern (`design_system.md` §Error States: blur-or-submit trigger, below the field, `text-xs text-rose-700 dark:text-rose-400`), `data-testid="atr-implausible-error"`: "This ATR puts the stop at or below zero. Check the unit: ATR is in {£|$}, not pence or cents." While it shows, **submit is disabled**, and the field has `aria-invalid="true"` and `aria-describedby` set to the message. `POST /portfolio/position` rejects the same input with a 400.
 - If left blank, the backend fetches the 14-day ATR at save (falling back to 2% of entry if the fetch fails; ST-02 records this as `atr_source`).
 - The former "Suggested stop: … (n× ATR)" hint is removed and superseded by Initial Stop below.
 
@@ -59,11 +63,13 @@ Users rely on this form to:
 | State | Value | Caption (muted `text-xs`) |
 |-------|-------|---------------------------|
 | Entry + ATR present | `Entry − {mult}× ATR`, native currency, 2 dp, `text-rose-400` | "Entry − {mult}× ATR (§5). This is the stop that will be stored." |
-| Entry present, ATR blank | "Calculated on save" | "The system fetches the 14-day ATR for {TICKER} and sets the stop at Entry − {mult}× ATR." |
+| Entry present, ATR blank, preview fetching (v1.9) | "Fetching ATR…" (muted) | — |
+| Entry present, ATR blank, preview ATR available (v1.9, ST-17) | `Entry − {mult}× ATR` using the fetched ATR, native currency, 2 dp, `text-rose-400` | "Entry − {mult}× ATR (§5), using the fetched 14-day ATR. The stop is recalculated at save and may differ slightly if prices update before then." |
+| Entry present, ATR blank, preview `null` or failed | "Calculated on save" | "The system fetches the 14-day ATR for {TICKER} and sets the stop at Entry − {mult}× ATR." (no error banner) |
 | Entry blank | "—" | — |
 
 - **Trade plan prefill:** a plan `stop_price` is not placed into any input. A muted note under this panel (`data-testid="plan-stop-reference"`): "Trade plan stop: {value}. Shown for reference; the stored stop follows the strategy formula."
-- **Risk (to stop)** summary row: computed from this system stop only. Shows "Calculated on save" when ATR is blank.
+- **Risk (to stop)** summary row: computed from this system stop only. Shows "Calculated on save" when ATR is blank and no preview ATR is available (v1.9: the preview stop is used when shown).
 - **On save:** the success toast appends "Initial stop {value}." from the response's `initial_stop` (existing toast-timing standard).
 - **Implemented (v1.8, ST-07):** `src/pages/TradeEntry.js`. The submitted payload carries no `stop_price`. A Watchlist prefill's stop is likewise not placed into any input. The Position Sizing widget's empty state (`data-testid="sizing-empty-hint"`) reads "Enter an entry price and ATR to size this position." and does not show a result fetched for an earlier stop. Playwright: `tests/e2e/trade-entry-system-stop.spec.js` (SC-TES-01..06). Backend pin: `tests/test_add_position_stop_handling.py`.
 
@@ -121,7 +127,7 @@ The calculator is decision support — it does not block form submission regardl
 
 ### Widget inputs
 - **Risk %** — number input, pre-populated from `settings.default_risk_percent` on form load. Editable by the user within the widget. Represents percentage of portfolio value to risk on this trade (e.g. `1.00` = 1%).
-- **Entry Price, Stop Price, FX Rate** — read passively from the corresponding form fields above. The widget does not duplicate these inputs. **(v1.7, ST-07):** the Stop Price is the read-only system initial stop (§Initial Stop), passed as `null` while ATR is blank.
+- **Entry Price, Stop Price, FX Rate** — read passively from the corresponding form fields above. The widget does not duplicate these inputs. **(v1.7, ST-07):** the Stop Price is the read-only system initial stop (§Initial Stop), passed as `null` while ATR is blank. **(v1.9, ST-17):** when the ATR field is blank and a preview ATR is available, the preview stop is passed.
 
 ### Calculation trigger
 The widget calls `POST /portfolio/size` 300ms after the user stops typing in any of: Entry Price, Stop Price, FX Rate, or the Risk % field within the widget. The frontend owns and implements the debounce. The backend performs all calculations — the frontend must not derive or recalculate any returned value.
@@ -276,6 +282,7 @@ All validation failures show inline error messages:
 - FX rate missing for US trades
 - Tag format or tag count errors
 - Entry note exceeding character limit
+- Typed ATR implausible: `5 × ATR ≥ entry price` (v1.9, ST-18). This is the only validation that disables submit. See §ATR (14-day).
 
 ### Error Banner
 Shown when the API request to create a position fails.

@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.12
-**Last Updated:** 2026-10-08 (v9.11 design gate — ST-10/ST-11/ST-13: §6 Position Risk table stale-price marker, GBP entry prices, grace stops shown as not enforced, stop distance from the API); prior — 2026-07-27
+**Version:** 0.1.13
+**Last Updated:** 2026-10-12 (v9.12 design gate — ST-22/BLG-FE-207: §5.2 Grace Period panel rows link to Positions; shipped text aligned to the spec; row layout described); prior — 2026-10-08 (v9.11 design gate — ST-10/ST-11/ST-13: §6 Position Risk table stale-price marker, GBP entry prices, grace stops shown as not enforced, stop distance from the API); prior — 2026-07-27; prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v0.1.12):** docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md
 **Design Source (v0.1.11 correction):** §8b.1 data-dependency premise corrected at implementation — see Metrics Definitions & Analytics Owner amendment recorded in `execution_state.json` for ST-02, EPIC-02, v7.9.
@@ -125,15 +125,19 @@ Colour applies to: gauge fill, threshold label badge, card left-border accent.
 ### 5.2 Display
 
 - Card heading: "Grace Period Positions"
-- Count badge: "N positions in grace period" where N is the count
-- Table:
+- Count badge: "N positions in grace period" where N is the count ("1 position in grace period" when N = 1)
+- Rows, one per position *(v0.1.13: the shipped component renders a list of rows, not a table. Fields and order are unchanged)*:
 
-| Column | Source field | Format |
-|--------|-------------|--------|
+| Field | Source field | Format |
+|-------|-------------|--------|
 | Ticker | `ticker` | Uppercase string |
-| Entry Date | `entry_date` | DD MMM YYYY |
-| Days in Grace | `holding_days` | Integer |
-| Days Remaining | `grace_days_remaining` | Integer, colour-coded |
+| Entry Date | `entry_date` | DD MMM YYYY (`dd MMM yyyy`) |
+| Days in Grace | `holding_days` | "{n}d in grace" |
+| Days Remaining | `grace_days_remaining` | "{n}d remaining" pill, colour-coded (§5.3) |
+
+**Text alignment (v0.1.13 — ST-22, BLG-FE-207):** the shipped heading ("Grace Period"), badge ("N positions") and date format (`dd MMM yy`) are brought into line with the text above. The Product Owner kept the spec's wording rather than amending it to the shipped text.
+
+**Row link (v0.1.13 — ST-22):** each row is a link to `/#/Positions?position={id}` (`positions.md` §Position Deep Link), with `aria-label="Open {TICKER} on Positions"` and a trailing `ChevronRight` icon (14 px, `text-slate-600 dark:text-slate-400`, `aria-hidden`). Hover: `hover:bg-slate-200/60 dark:hover:bg-slate-700/40`. Focus: the default `focus-visible` ring. Design source: `docs/design/2026-10-12__release-v9.12/grace-panel-position-link/decision_record.md`.
 
 ### 5.3 Days Remaining Colour Coding
 
@@ -433,6 +437,7 @@ The following deviations were identified at v1.8 sprint execution and accepted f
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.13 | 2026-10-12 | v9.12 design gate. (ST-22, BLG-FE-207) §5.2: each grace row links to `/#/Positions?position={id}`; the heading, badge and `dd MMM yyyy` date format are aligned to this spec (the Product Owner kept the spec wording); the list-of-rows layout is described in place of "Table". Design source: `docs/design/2026-10-12__release-v9.12/grace-panel-position-link/decision_record.md`. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 0.1.12 | 2026-10-08 | v9.11 design gate. (ST-10, BLG-BE-154) new §6.6 Stale Price Marker driven by `price_is_stale`. (ST-11, BLG-FE-206) §6.2 Entry Price in GBP for every market, money headers state "(GBP)", new §6.2a grace-period stops shown as "Not enforced (grace)" with no distance colour, §6.4 GRACE group sorted by `grace_days_remaining`. (ST-13, BLG-BE-155) Stop Dist % taken from the API's native-currency `stop_distance_pct`. Design source: `docs/design/2026-10-08__release-v9.11/risk-price-integrity/decision_record.md`. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |
 | 0.1.11 | 2026-07-27 | ST-02 (BLG-FEAT-67, EPIC-02, v7.9) implementation: corrected §8b.1's data-dependency premise (Metrics Definitions & Analytics Owner amendment, agent-mediated) — no historical sector/regime data ever existed to aggregate; `sector_regime_history` is a new table, populated going forward only, no retroactive backfill. `insufficient_history: true` is the expected day-one state, not a fallback. Contract: `portfolio_endpoints.md` v2.5.0. |
 | 0.1.10 | 2026-07-27 | v7.9 design gate — §8b Sector & Regime Exposure Trend added (ST-02, BLG-FEAT-67): new full-width panel inserted between §8a Sector Concentration Heat Map and §7 Prospective Heat Indicator; sector concentration trend chart (weekly buckets, top 5 sectors + Other) and US/UK regime status timeline strip; new `GET /portfolio/sector-regime-trend` endpoint; insufficient-history state (<8 weeks); display-only. Corrects the backlog item's stated placement ("Positions or Reports page") to this page, where `SectorHeatMap` actually renders — see §8b placement note. Design source: sector-regime-exposure-trend/ux_spec.md. Approved: Product Owner 2026-07-27. Head of Specs Team confirmed. |

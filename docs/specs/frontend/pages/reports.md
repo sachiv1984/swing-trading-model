@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.22
-**Last Updated:** 2026-10-12 — EPIC-04 merged to main (PR #1972), carried into EPIC-05 by the main merge: §AI Summary (0.21, ST-25) and §Monthly Restatement Marker (0.22, ST-29) both kept; version 0.22 is the highest; prior — 2026-10-08 — ST-29 (EPIC-05, v9.11, BLG-SPEC-170): §Monthly Restatement Marker reconciled with GET /reports/monthly-pnl (undated As reviewed; unavailable signal defined); DEV-v9.7-ST04-01 resolved; prior — 2026-10-09 — v9.11 sprint execution, ST-25 (EPIC-04, BLG-FEAT-59): new §AI Summary (Monthly P&L Narrative) under §Monthly P&L Report; prior history retained — see prior entries in version control
+**Version:** 0.23
+**Last Updated:** 2026-10-12 (v9.12 design gate — ST-23/BLG-FE-200: new §Light Theme; restated marker to `text-amber-700`); prior — 2026-10-12 — EPIC-04 merged to main (PR #1972), carried into EPIC-05 by the main merge: §AI Summary (0.21, ST-25) and §Monthly Restatement Marker (0.22, ST-29) both kept; version 0.22 is the highest; prior — 2026-10-08 — ST-29 (EPIC-05, v9.11, BLG-SPEC-170): §Monthly Restatement Marker reconciled with GET /reports/monthly-pnl (undated As reviewed; unavailable signal defined); DEV-v9.7-ST04-01 resolved; prior history retained — see prior entries in version control
 **Design Source (v0.21 AI summary):** docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md
 **Design Source (v0.20 restated-notice year-scoped link):** docs/design/2026-09-28__release-v9.8/tax-year-restated-notice-year-scoped-link/decision_record.md
 **Design Source (v0.19 fees-not-recorded field-name correction):** docs/design/2026-09-23__release-v9.7/monthly-pnl-fees-surfacing/decision_record.md
@@ -259,6 +259,27 @@ A note at the bottom of the page:
 
 ---
 
+## Light Theme (v0.23 — ST-23, BLG-FE-200)
+
+**Design source:** `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md`
+
+Light mode is a supported theme (`design_system.md` §Theme Modes; ST-23 ruling, resolving RISK-03). Every colour on this page uses a light+dark pair from the light-theme token set in the design source (§3), which ST-23 also adds to `design_system.md`. No bare dark-only class may remain. Dark values are unchanged.
+
+| Role | Class pair |
+|------|------------|
+| Card surface | `bg-white border-slate-200 dark:bg-slate-800/50 dark:border-slate-700/50` |
+| Nested row surface | `bg-slate-50 dark:bg-slate-800/40` |
+| Primary text (headings, figures) | `text-slate-900 dark:text-white` |
+| Strong body text | `text-slate-800 dark:text-slate-200` |
+| Secondary / label text | `text-slate-600 dark:text-slate-400` |
+| Positive / negative P&L | `text-emerald-700 dark:text-emerald-400` / `text-rose-700 dark:text-rose-400` |
+| Warning / information text | `text-amber-700 dark:text-amber-400` |
+| Accent (active tab, link) | `text-cyan-700 dark:text-cyan-400` |
+
+The 700-shade colour tokens are used only on white, `slate-50` or `slate-100` surfaces. Elsewhere they fail AA (`slate-200`: 4.07–4.45:1). Acceptance: the light-theme axe scans of the Monthly tab (with a restated month expanded) and the Tax Year tab pass with no `color-contrast` entry in `KNOWN_VIOLATIONS`.
+
+---
+
 ## API Reference
 
 - **Endpoint:** `GET /reports/tax-year?year=YYYY` — page data
@@ -329,7 +350,7 @@ A UK tax year filter control, matching the Tax Year tab's §Year Selector patter
 
 A closed month (calendar month ended, UK time) has an **immutable, read-only snapshot** of its Realised P&L taken at month-end; months already closed when the feature ships are baselined once with their then-current figures (never retroactively "restated"). The in-progress month has no snapshot and never shows a marker. There is **no acknowledge / re-baseline action** in the UI.
 
-- **Marker:** shown when `restated = true`, the **Month** cell displays `"Restated"` with a history-style icon prefix in `text-amber-600 dark:text-amber-400` (plain text + icon, not red — information, not an error). It is a keyboard-operable button (`aria-expanded`) that expands an inline detail row; collapsed by default (`data-testid` `monthly-restated-marker` / `monthly-restatement-detail`).
+- **Marker:** shown when `restated = true`, the **Month** cell displays `"Restated"` with a history-style icon prefix in `text-amber-700 dark:text-amber-400` (plain text + icon, not red — information, not an error; v0.23, ST-23: was `text-amber-600`, 3.19:1 on white, below AA). It is a keyboard-operable button (`aria-expanded`) that expands an inline detail row; collapsed by default (`data-testid` `monthly-restated-marker` / `monthly-restatement-detail`).
 - **Detail row:** a single **Realised P&L** metric row — As reviewed (`snapshot_realised_pnl_gbp`) | Now (`realised_pnl_gbp`) | Change (`restated_diff_gbp`). The "As reviewed" label is **undated**: `GET /reports/monthly-pnl` returns no snapshot date, and the snapshot is by definition the month-end baseline, so the month itself dates it. *(v0.22 — ST-29, BLG-SPEC-170: `{snapshot_date}` removed; resolves DEV-v9.7-ST04-01.)* Change values use the standard P&L tone rule and the canonical number format (`design_system.md` §Number and Currency Formatting). There is no Trades row — the API returns no snapshot trade count to compare against. Existing expandable-row pattern; default animation only (≤ 200 ms).
 - **Trade-count-only restatement:** `restated` can be `true` while `restated_diff_gbp = 0.00` (only the month's trade count changed). When this occurs (`restated = true` and `restated_diff_gbp = 0`), a muted line appears beneath the Realised P&L metric: `"Trade count for this month has also changed since it was reviewed."` No exact before/after count is shown.
 - **API:** each closed month carries `snapshotted` (bool), `restated` (bool), `snapshot_realised_pnl_gbp` (float | null), `restated_diff_gbp` (float | null) — flat fields, always present for closed months (`reports_endpoints.md` v0.13). The in-progress month has `snapshotted = false` and the remaining three fields `false`/`null`. Persisting snapshots uses the `monthly_pnl_snapshots` table (`data_model.md` DS-20).
@@ -564,6 +585,7 @@ A new **"Reconciliation"** tab (4th tab in the page's tab navigation, alongside 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.23 | 2026-10-12 | v9.12 design gate. (ST-23, BLG-FE-200) Light mode ruled a supported theme (resolves RISK-03). New §Light Theme: every colour uses a light+dark pair from the light-theme token set. The restated marker moves from `text-amber-600` (3.19:1 on white) to `text-amber-700 dark:text-amber-400`. Design source: `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md`. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 0.22 | 2026-10-08 | Sprint execution — ST-29 (EPIC-05, v9.11, BLG-SPEC-170): §Monthly Restatement Marker reconciled with `GET /reports/monthly-pnl` — "As reviewed" is undated (no snapshot date in the API); the unavailable state is "no month carries a boolean `restated`". DEV-v9.7-ST04-01 resolved. Snapshot-store failure blocking the report filed as BLG-BE-156. (0.21 is left for EPIC-04's ST-25 §Monthly P&L Report update, which merges first.) Authority: Frontend Specifications & UX Documentation Owner; API Contracts & Documentation Owner. |
 | 0.21 | 2026-10-09 | v9.11 sprint execution — ST-25 (EPIC-04, BLG-FEAT-59): new §AI Summary (Monthly P&L Narrative). An optional, on-request, dismissible AI summary card below the Monthly Realised P&L table: AiDisclaimer badge with a new `caption` prop; states including a code-written fallback; kept out of every export, snapshot and stored figure; `GET`/`POST /reports/monthly-pnl/narrative`. Design source: `docs/design/2026-10-08__release-v9.11/monthly-pnl-ai-narrative/decision_record.md`. §13 CONDITIONAL (`decisions--2026-10-08__release-v9.11--ST-25-monthly-pnl-narrative-section13-review.md`). Head of UX & Design and Financial Reporting & Records Owner (agent-mediated) confirmed 2026-10-09. Product Owner approved 2026-10-09. Head of Specs Team lifecycle confirmation (agent-mediated) 2026-10-09. |
 | 0.20 | 2026-09-28 | v9.8 design gate — ST-03 (EPIC-01, BLG-FE-190): §Summary Bar restated-months notice now carries the Tax Year tab's selected year through its Monthly tab link; new §Monthly Financial Table Tax Year Filter (default: current tax year; pre-set from the notice link) so the linked-to view always contains the months the notice counted, including non-current tax years. Design source: `docs/design/2026-09-28__release-v9.8/tax-year-restated-notice-year-scoped-link/decision_record.md`. Authority: Head of Specs Team. |

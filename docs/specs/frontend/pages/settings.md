@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.8
-**Last Updated:** 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — ruling (a) applied: the four Strategy Parameters are read-only §11 values; branches (b)/(c) removed); prior — 2026-10-06 (v9.10 design gate — ruling-conditional editability presentation); prior — 2026-07-24
+**Version:** 1.9
+**Last Updated:** 2026-10-12 (v9.12 design gate — ST-20/BLG-FE-201: Strategy Parameter helper text restated to §5–§7.2; ST-26/BLG-SEC-41: new §Last Change Line); prior — 2026-10-06 (ST-01, EPIC-01, v9.10, BLG-BE-138 — ruling (a) applied: the four Strategy Parameters are read-only §11 values; branches (b)/(c) removed); prior — 2026-10-06 (v9.10 design gate — ruling-conditional editability presentation); prior history retained — see prior entries in version control
 **Design Source (§1 Strategy Parameter Editability):** docs/design/2026-10-06__release-v9.10/stop-parameter-settings-presentation/decision_record.md
 **Design Source (§6a AI Spend Trend Chart):** docs/design/2026-07-24__release-v7.8/ai-spend-trend-chart/ux_spec.md
 **Design Source (§6 AI Usage & Costs):** docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md (v1.1 addendum)
@@ -82,24 +82,24 @@ These values define the core risk model, stop logic, and position sizing default
 - **Minimum Hold Days**
   - Type: number
   - Default: `10`
-  - Helper text: "Days before stop can trail"
+  - Helper text: "Grace period in calendar days. Stops are not enforced or recalculated during grace (§6)." *(v1.9, ST-20: was "Days before stop can trail")*
   - Used as the *grace period* before trailing stops become active. With the default of `10`, grace covers days 0–9 inclusive; day 10 is the first day stop logic is active. In general, grace covers days `0` through `min_hold_days − 1`.
 
 - **ATR Period**
   - Type: number
   - Default: `14`
-  - Helper text: "Lookback for ATR calculation"
+  - Helper text: "Lookback for the ATR calculation, in days (§7.1)." *(v1.9, ST-20)*
 
 - **Initial Stop (ATR Multiple)**
   - Type: number, step `0.1`
   - Default: `5.0`
-  - Helper text: "e.g., 5 = Entry − 5×ATR (wide stop for losing positions)"
+  - Helper text: "Stop = price − 5×ATR for new and losing positions (§5, §7.2)." *(v1.9, ST-20: was "e.g., 5 = Entry − 5×ATR …"; after entry the losing stop uses current price)*
   - Applied to positions that are at a loss to give room to recover.
 
 - **Trailing Stop (ATR Multiple)**
   - Type: number, step `0.1`
   - Default: `2.0`
-  - Helper text: "e.g., 2 = High − 2×ATR (tight trailing stop for profitable positions)"
+  - Helper text: "Stop = price − 2×ATR for profitable positions, never below entry (§7.2)." *(v1.9, ST-20: was "e.g., 2 = High − 2×ATR …"; the code uses current price, with the §7.2 entry floor)*
   - Applied to positions that are profitable to protect gains.
 
 - **Default Risk %**
@@ -121,6 +121,7 @@ Introduced by ST-01 (`BLG-BE-138`) under parameter-authority ruling (a).
 - The displayed values come from `src/lib/strategyParameters.js`, the display mirror of the backend source `backend/strategy_parameters.py`; `tests/test_strategy_parameter_parity.py` fails if the two drift. The values no longer come from the settings row, so a stored row cannot show a different number.
 - Save omits these four fields. Any values still stored in the `settings` row are ignored by every stop path (`settings_endpoints.md`).
 - Default Risk % stays editable.
+- **Helper text (v1.9, ST-20, BLG-FE-201):** each helper line states the rule in force in `strategy_rules.md` §5–§7.2 and ends with a period. The "e.g." framing is dropped because the values are fixed. The numbers in the text come from the strategy constants module (ST-21), not literals. Design source: `docs/design/2026-10-12__release-v9.12/settings-copy-and-last-change/decision_record.md`.
 
 > **Important:** Changes to `default_risk_percent` take effect on the next load of the Trade Entry page. No positions are affected.
 
@@ -269,6 +270,20 @@ Added directly below the current-month figure, inside the same card — not a ne
   - A success toast appears: "Settings saved successfully".
   - Button temporarily shows "Saved!".
 
+### Last Change Line (v1.9 — ST-26, BLG-SEC-41)
+
+**Design source:** `docs/design/2026-10-12__release-v9.12/settings-copy-and-last-change/decision_record.md`
+
+Every settings write appends a change-log row (field, old value, new value, timestamp, request source). The page shows the most recent one.
+
+- **Data:** `last_change` on `GET /settings` (recommended; no new route). It is `null` when nothing has been logged.
+- **Placement:** in the save bar, left of the Save button. On narrow screens it wraps above the button, full width. `text-xs text-slate-600 dark:text-slate-400`, `data-testid="settings-last-change"`.
+- **Format:** "Last change: {Field label} {old} → {new} · {d MMM yyyy, HH:mm} · {source}". Values use the canonical number format (`design_system.md` §Number and Currency Formatting). The time is the viewer's local time.
+- **Several fields in one save:** "Last change: {first field label} {old} → {new} and {n} more · {time} · {source}". The full list is in a `title` tooltip.
+- **Source labels:** `settings_page` → "Settings page"; any other source → "API".
+- **Empty:** "No changes recorded yet."
+- **After a save,** the line updates from the refetched settings. Nothing is computed client-side.
+
 ---
 
 ## States
@@ -312,6 +327,7 @@ Added directly below the current-month figure, inside the same card — not a ne
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.9 | 2026-10-12 | v9.12 design gate. (ST-20, BLG-FE-201) §1 helper text for the four fixed Strategy Parameters restated to the rules in force (`strategy_rules.md` §5, §6, §7.1, §7.2), "e.g." framing dropped. (ST-26, BLG-SEC-41) New §Last Change Line in the save bar from `GET /settings` `last_change`. Design source: `docs/design/2026-10-12__release-v9.12/settings-copy-and-last-change/decision_record.md`. Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 1.8 | 2026-10-06 | ST-01 (EPIC-01, BLG-BE-138): parameter-authority ruling (a), 2026-10-06 (`ESC-EXEC-20261006-01`). The four Strategy Parameters are read-only §11 values with the fixed caption; Save omits them. The ruling-conditional (b)/(c) branches are removed, as the design record requires. The Important note no longer says strategy-parameter changes take effect on the next analyze call. |
 | 1.7 | 2026-10-06 | v9.10 design gate — ST-01 (EPIC-01, BLG-BE-138): §1 gains Strategy Parameter Fallbacks and Editability. Fallbacks must equal the §11 values; editability is presented per the pending ST-01 parameter-authority ruling (a/b/c branches). Design source: `docs/design/2026-10-06__release-v9.10/stop-parameter-settings-presentation/decision_record.md`. Head of UX & Design sign-off: 2026-10-06. Product Owner approved: 2026-10-06. Head of Specs Team confirmed. |
 | 1.6 | 2026-07-24 | v7.8 design gate — ST-06 (EPIC-06, BLG-FEAT-82): §6a AI Spend Trend Chart added below the current-month figure, inside the existing §6 card — bar chart of Claude API spend across the last 6 release cycles (or fewer if less history exists), reusing the `analytics.md` §12 Win Rate by Month fixed-axis bar chart pattern. Naming resolved: chart shows Claude spend only (no separate Gemini stream exists, per v1.5 reframing). New spend-by-cycle aggregation endpoint required (not new data collection) — flagged as a sprint-execution implementation dependency requiring an API contract entry in the same commit. Design source: `docs/design/2026-07-24__release-v7.8/ai-spend-trend-chart/ux_spec.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |

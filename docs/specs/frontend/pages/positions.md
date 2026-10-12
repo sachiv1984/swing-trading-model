@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.15
-**Last Updated:** 2026-10-08 (v9.11 design gate — ST-14/BLG-BE-147: §Grace Period Alert Zone trigger, "Day N of 10" label and ended state, and the §Last Reviewed Column suppression rule, use calendar days via `grace_days_remaining` instead of `days_in_state`); prior — 2026-10-07 (ST-13/ST-14, EPIC-03, v9.10, BLG-GOV-365/BLG-BE-136 — §Gap Risk Badge: weekend_hold removed; earnings label and ruled trigger timing stated; data source corrected); prior — 2026-10-07 (ST-11, EPIC-03, v9.10, BLG-SPEC-185 — §Position Lifecycle State Badge: post-grace LOSING/PROFITABLE follow strategy_rules.md §9's P&L sign); prior history retained — see prior entries in version control.
+**Version:** 2.16
+**Last Updated:** 2026-10-12 (v9.12 design gate — ST-10/BLG-BE-159: §Trail Stop Action conditional on the manual-stop ruling; ST-15/BLG-FE-202: §Frozen Stop Indicator; ST-22/BLG-FE-207: §Position Deep Link; ST-24/BLG-FE-210: Gap Risk and AI Advisory badges to amber-700); prior — 2026-10-08 (v9.11 design gate — ST-14/BLG-BE-147: §Grace Period Alert Zone trigger, "Day N of 10" label and ended state, and the §Last Reviewed Column suppression rule, use calendar days via `grace_days_remaining` instead of `days_in_state`); prior — 2026-10-07 (ST-13/ST-14, EPIC-03, v9.10, BLG-GOV-365/BLG-BE-136 — §Gap Risk Badge: weekend_hold removed; earnings label and ruled trigger timing stated; data source corrected); prior history retained — see prior entries in version control
 **Design Source (v9.11 additions):** docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md
 **Design Source (v9.10 additions):** docs/design/2026-10-06__release-v9.10/stop-cell-provenance/decision_record.md, docs/design/2026-10-06__release-v9.10/exit-condition-surfacing/decision_record.md, docs/design/2026-10-06__release-v9.10/lifecycle-badge-grace-calendar-days/decision_record.md, docs/design/2026-10-06__release-v9.10/gap-risk-trigger-label-alignment/decision_record.md
 **Design Source (v8.2 additions):** docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md
@@ -26,6 +26,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.16 | 2026-10-12 | v9.12 design gate. (ST-10, BLG-BE-159) §Trail Stop Action rewritten: no control may propose a lower stop (§7.3); a no-raise note when `trail_difference ≤ 0`; Branch A (manual raise permitted: "Raise stop to …" via `PATCH /positions/{id}/stop`, ratchet-validated) or Branch B (read-only, button renamed "View Trail"), pending the ruling. The story deletes the branch not taken. (ST-15, BLG-FE-202) New §Frozen Stop Indicator from `stop_frozen_reason`: "Stop frozen · ATR unavailable" in amber, post-grace only. (ST-22, BLG-FE-207) New §Position Deep Link `?position={id}`: scroll, 2000 ms highlight, parameter stripped. (ST-24, BLG-FE-210) Gap Risk badge `#D97706` → `#B45309` and AI Advisor "Advisory" badge `bg-amber-600` → `bg-amber-700` (white text 3.19:1 → 5.02:1). Design sources: `docs/design/2026-10-12__release-v9.12/` (trail-stop-action, frozen-stop-indicator, grace-panel-position-link). Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 2.15 | 2026-10-08 | v9.11 design gate (ST-14, EPIC-02, BLG-BE-147): §Grace Period Alert Zone — trigger is `grace_days_remaining ≤ 2` (≥ 8 calendar days since entry), sub-label "Day {min(11 − grace_days_remaining, 10)} of 10", ended state at `grace_days_remaining = 0`, no `days_in_state` fallback. §Last Reviewed Column suppression rule uses the same predicate. Design source: `docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md`. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |
 | 2.12 | 2026-10-06 | ST-06 (BLG-FE-193, EPIC-02, v9.10): §Stop Provenance Line and Per-Row Stop Details finalised. The recalculation-source field is `stop_calculation_source` (`on_load` \| `nightly` \| `null`, `position_endpoints.md` v2.10.0, shipped with ST-01). Implementation: `src/components/positions/StopProvenance.js`, used by both views. Playwright: `tests/e2e/stop-cell-provenance.spec.js` (SC-SCP-01..07). |
 | 2.14 | 2026-10-07 | v9.10 sprint execution (ST-13/ST-14, BLG-GOV-365/BLG-BE-136): §Gap Risk Badge — `weekend_hold` removed (trigger removed under §13 Binding Condition 6; no replacement label). Earnings label "Earnings due by next trading session", with the ruled scope: US positions only, earnings after today and on or before the next trading day, no day 0 (Strategy Rules & System Intent Owner ruling, `ESC-EXEC-20261006-04`). Data source line corrected to the dedicated `GET /positions/{position_id}/gap-risk` endpoint. Playwright SC-GR-03/04/06/08. |
@@ -289,14 +290,16 @@ Two distinct empty states:
 
 ---
 
-## Trail Stop Action (v3.3 — ST-07 IT-03)
+## Trail Stop Action (v3.3 — ST-07 IT-03; revised v2.16 — ST-10, BLG-BE-159)
 
-**Design source:** docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md
+**Design source:** docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md; **v2.16:** `docs/design/2026-10-12__release-v9.12/trail-stop-action/decision_record.md`
+
+> **v2.16 — conditional on ST-10's ruling.** Before v2.16 this section said the confirm button "calls `PUT /positions/{id}`". The shipped code called `PATCH /positions/{id}`. Neither route exists, so every apply failed (BLG-BE-159). ST-10's first sub-step is a Strategy Rules & System Intent Owner ruling on manual stop changes under `strategy_rules.md` §7.3. **Branch A** applies if the ruling permits a manual raise. **Branch B** applies if it does not. The story deletes the branch not taken, and this note, in the same commit as the code.
 
 ### Trail Stop Button
 
 - Placement: Actions column, after "Exit", before "View Journal"
-- Label: "Trail Stop"
+- Label: "Trail Stop" (Branch A) / **"View Trail"** (Branch B)
 - Style: secondary (outlined)
 - **Shown** for positions where `position_state` is `PROFITABLE` or `EXIT ZONE`
 - **Disabled** (with tooltip "No current stop set. Add a stop to use trail management.") when `current_stop` is null
@@ -304,7 +307,7 @@ Two distinct empty states:
 
 ### Trail Stop Modal
 
-Opened by clicking enabled "Trail Stop" button. Data source: `GET /positions/{id}/stop-trail`.
+Opened by clicking the enabled button. Data source: `GET /positions/{id}/stop-trail`.
 
 **Modal header:** "Trail Stop — {TICKER}"
 
@@ -314,18 +317,27 @@ Opened by clicking enabled "Trail Stop" button. Data source: `GET /positions/{id
 |-------|--------|--------|
 | Current Stop | `current_stop` | Native currency, 2dp |
 | ATR Trail Stop | `atr_trail_stop` | Native currency, 2dp |
-| Raise by | `trail_difference` | "+£X.XX" (positive) or "−£X.XX" (amber, negative) |
+| Raise by | `trail_difference` | "+£X.XX" (positive) or "−£X.XX" (negative, `text-amber-700 dark:text-amber-400`) |
 | Trail in R | `trail_r_terms` | "+X.XR" |
 
 **Footnote (static):** "ATR trail stop = current price − (ATR × 2.0). ATR period: 14 days. Multiplier per strategy rules."
 
-**Confirmation button:** "Update stop to {atr_trail_stop}" — calls `PUT /positions/{id}` with new `stop_price`.
+**Both branches (v2.16):**
+- No label or control may propose a lower stop. The former "Lower stop to {value}" label is removed (§7.3).
+- When `trail_difference ≤ 0`: no apply control. Note (`data-testid="trail-stop-no-raise-note"`, `text-xs text-slate-600 dark:text-slate-400`): "The ATR trail stop is at or below your current stop. Stops never move down (§7.3), so there is nothing to apply."
 
-On success: modal closes; position row updates; toast: "Stop updated to {atr_trail_stop}".
+**Branch A — manual raise permitted:**
+- **Confirm button** (primary), shown only when `trail_difference > 0`: "Raise stop to {atr_trail_stop}". Calls `PATCH /positions/{id}/stop` with `{ "stop_price": <native> }`. The server rejects with 400 a value at or below the stored `current_stop`, or at or above the current price. While the request is in flight the button is disabled and labelled "Raising…".
+- On success: the modal closes, the positions query is invalidated, and a success toast reads "Stop raised to {value}." (toast-timing standard).
+- On failure: the modal stays open, and an error toast shows the server's message.
 
-**Cancel / Dismiss:** "Cancel" text link; Escape key; ✕ button — no change made.
+**Branch B — no manual stop change:**
+- No confirm button. Controls: "Close" (secondary), Escape, ✕.
+- Note under the footnote (`data-testid="trail-stop-readonly-note"`): "The system updates stops automatically when positions load and each night. This view is for reference only."
 
-**§13 constraint:** System presents calculation. Human confirms. No automated stop update.
+**Cancel / Dismiss:** "Cancel" text link (Branch A) or "Close" (Branch B); Escape key; ✕ button — no change made.
+
+**§13 constraint:** System presents calculation. Human confirms (Branch A) or only reviews (Branch B). No automated stop update.
 
 ---
 
@@ -489,6 +501,26 @@ The `Init:` line, breach badge and column header are unchanged. **§13:** displa
 
 **§13 constraint:** Display-only reference text. No automated action, no change to the trailing-stop calculation or Trail Stop Modal.
 
+### Frozen Stop Indicator (v2.16 — ST-15, BLG-FE-202)
+
+**Design source:** `docs/design/2026-10-12__release-v9.12/frozen-stop-indicator/decision_record.md`
+
+**Data source:** `stop_frozen_reason` on `GET /positions`: `"atr_unavailable"` or `null`. Written by both the on-load recompute and the nightly job when they keep the stop because ATR was unavailable. Cleared by the next recompute that has an ATR.
+
+**Shown when** `stop_frozen_reason` is set **and** `grace_period` is false. During grace the stop is frozen by rule (§6.3), which the per-row tooltip's grace line already states.
+
+| Element | Spec |
+|---------|------|
+| Table View | Under the trailing-stop value, **in place of** the provenance line |
+| Grid View | Under the Stop tile value, in place of the provenance line |
+| Content | `PauseCircle` icon (12 px, `aria-hidden`) + "Stop frozen · ATR unavailable" |
+| Style | `text-xs text-amber-700 dark:text-amber-400` (a warning: the stop is still enforced at its last level) |
+| Test id | `data-testid="stop-frozen-indicator"` |
+
+**Per-row tooltip:** one extra row after "Last recalculated": "Not updated at the last recalculation because ATR was unavailable. The stop stays at its current level until ATR returns."
+
+The trailing-stop value, `Init:` line, breach badge and column header are unchanged. **§13:** display-only.
+
 ---
 
 ## Alerts Column (v6.2 — ST-05)
@@ -530,14 +562,14 @@ Shown when `gap_risk.flagged = true`. The only trigger is an earnings date that 
 | Element | Spec |
 |---------|------|
 | Label | "GAP RISK" |
-| Background | `#D97706` (amber-600) |
+| Background | `#B45309` (amber-700). *(v2.16 — ST-24, BLG-FE-210: was `#D97706` amber-600, white text 3.19:1, below WCAG AA 4.5:1; now 5.02:1. Same rule as `BLG-FE-165`, v9.1.)* |
 | Text | White, weight 500, 11px |
 | Shape | Rounded pill |
 | `aria-label` | "Gap risk flag: {reason}, average gap {value or insufficient history}" |
 
 **Stacking:** RISK OFF and GAP RISK badges are independent alert types and stack vertically in the same Alerts cell when both apply to a position — this realises the "future alert types" placeholder already noted in the v6.2 Alerts Column design.
 
-**Stacked-state spacing (v7.0 — ST-05):** Minimum `4px` vertical gap between stacked badges (prevents visual merging). Stack order: RISK OFF above GAP RISK. Neither label may truncate — if horizontal space is insufficient (Grid View narrow card), badges wrap to full width individually rather than sharing a row. Reviewed and confirmed distinguishable per existing hue (blue-800 vs amber-600) + mandatory text label; no colour/label change required. Design source: `docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md`.
+**Stacked-state spacing (v7.0 — ST-05):** Minimum `4px` vertical gap between stacked badges (prevents visual merging). Stack order: RISK OFF above GAP RISK. Neither label may truncate — if horizontal space is insufficient (Grid View narrow card), badges wrap to full width individually rather than sharing a row. Reviewed and confirmed distinguishable per existing hue (blue-800 vs amber-600; amber-700 from v2.16) + mandatory text label; no colour/label change required. Design source: `docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md`.
 
 **Grid View badge placement (v7.0 — ST-01):** RISK OFF and GAP RISK badges render in a dedicated alert row within the position card — below the ticker/market header, above the Entry/Current/Trail Stop stat tiles. This is the "alert-icon row" referenced elsewhere in this document (see §Grid View and §Last Reviewed Column). When both badges apply to the same position, they stack vertically in this row per the Stacked-state spacing rule above (RISK OFF above GAP RISK, `4px` minimum gap, full-width wrap rather than truncation). When neither applies, the alert row is omitted entirely (no reserved space, no dash placeholder — unlike the Table View's Alerts column, which always renders a dash when empty). Same visual treatment (colour, label, pill shape) as Table View — no Grid-View-specific styling variant.
 
@@ -579,6 +611,22 @@ Tooltip structure, `aria-label` pattern, colour, stacking and clearing are uncha
 **Deep link:** `/#/Positions?exit={position_id}` opens `ExitModal` for that open position (with pre-selection), then removes the parameter via `replace`. Unknown or closed ids are ignored silently.
 
 **§13:** the pre-selection is a default the user must confirm. No exit is submitted automatically.
+
+---
+
+## Position Deep Link (v2.16 — ST-22, BLG-FE-207)
+
+**Design source:** `docs/design/2026-10-12__release-v9.12/grace-panel-position-link/decision_record.md`
+
+**Link:** `/#/Positions?position={position_id}`. Used by the Risk Dashboard's Grace Period panel rows (`risk_dashboard.md` §5.2).
+
+**Behaviour:**
+1. Find the position in the current view (Table or Grid). The view and the filters are not changed.
+2. Scroll it to the centre of the viewport. The scroll is smooth, or instant under `prefers-reduced-motion`.
+3. Apply `ring-2 ring-cyan-500` and `data-highlighted="true"` to the row or card for **2000 ms**, then remove them with no transition.
+4. Remove the parameter with `replace`, as `?exit=` does.
+
+If the position is not in the list (closed, unknown, or filtered out), the parameter is removed and nothing else happens. **§13:** navigation only.
 
 ---
 
@@ -626,7 +674,7 @@ Rounded pill button: chat icon + "Ask Advisor" text (white on `#1D4ED8` blue-700
 
 | Element | Spec |
 |---------|------|
-| Header | "AI Trade Advisor" + amber "Advisory" badge + ✕ close button |
+| Header | "AI Trade Advisor" + amber "Advisory" badge (`bg-amber-700`, white text, fixed in both themes — v2.16, ST-24, BLG-FE-210: was `bg-amber-600`, 3.19:1) + ✕ close button |
 | Messages area | Scrollable; user bubbles right-aligned (blue); AI bubbles left-aligned (grey) |
 | Input row | Text field ("Ask about your portfolio…") + "Ask" button |
 | Footer | Static advisory text: "AI responses are advisory only. All trade decisions require human confirmation." (`text-slate-600 dark:text-slate-400` italic, 11px, non-dismissible — contrast ≥4.5:1 on both `bg-slate-800` (dark) and `bg-slate-100` (light); was bare `text-slate-400` (dark-only, no light companion) prior to v2.0/BLG-FE-88, and `text-slate-600` (dark-only) prior to v1.9/BLG-UX-02); `data-testid="ai-chat-advisory-footer"` on footer container |
