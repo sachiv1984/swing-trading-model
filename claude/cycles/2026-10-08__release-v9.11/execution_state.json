@@ -1249,8 +1249,8 @@
     "EPIC-05": {
       "status": "done",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1973,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-05.md",
       "test_scenarios": [
@@ -1448,7 +1448,8 @@
     "2026-10-12T09:44:03Z: main (EPIC-02 merge, PR #1969) merged into EPIC-05 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.26.0 kept with EPIC-02's version notes; backlog.md takes main's Last Updated chain (items auto-merged); execution_state resolved story by story, summaries recomputed.",
     "2026-10-12: main (EPIC-03 merge, PR #1970) synced into EPIC-05. data_model.md 2.56 (EPIC-03 DS-28/DS-29 added; 2.55 is this EPIC's ST-30) and openapi.yaml 3.26.0 (EPIC-05) over 3.25.1 (EPIC-03) — distinct versions, no renumbering (CLAUDE.md §8 2a).",
     "2026-10-12T13:27:08Z: EPIC-05 status restored to done and qa_signed_off to true. The main-into-EPIC-05 merge resolution 3237cb5e (EPIC-06 merge, PR #1971) took main's stale EPIC-05 record and reset both fields; 9e3276d3 had set them after the autonomous-class DoQ sign-off (qa_evidence_EPIC-05.md, 2026-10-09). No story record changed. Found on run sprint resume.",
-    "2026-10-12T13:46:07Z: main (EPIC-04 merge, PR #1972) merged into EPIC-05 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.27.0 (EPIC-04) over 3.26.0 (EPIC-05), reports_endpoints.md 0.17 over 0.16, data_model.md 2.58 over 2.55/2.56, reports.md 0.22 (EPIC-05) over 0.21, changelog rows kept from both sides; distinct versions, no renumbering (step 2a). execution_state takes main's copy with EPIC-05's own record (done, qa_signed_off true); process_notes unioned, summaries recomputed. backlog.md item union."
+    "2026-10-12T13:46:07Z: main (EPIC-04 merge, PR #1972) merged into EPIC-05 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.27.0 (EPIC-04) over 3.26.0 (EPIC-05), reports_endpoints.md 0.17 over 0.16, data_model.md 2.58 over 2.55/2.56, reports.md 0.22 (EPIC-05) over 0.21, changelog rows kept from both sides; distinct versions, no renumbering (step 2a). execution_state takes main's copy with EPIC-05's own record (done, qa_signed_off true); process_notes unioned, summaries recomputed. backlog.md item union.",
+    "2026-10-12T13:49:15Z: EPIC-05 PR #1973 opened (STEP 3.2.B). Pre-PR checks: API performance baseline drift script exit 0; cross-EPIC commit check clean ([EPIC-05] and [GOVERNANCE] only); no src/components or src/pages changes, so the autonomous-class DoQ sign-off (2026-10-09) stands; spec_references paths all resolve. Branch synced with main after the EPIC-01/02/03/04/06 merges."
   ],
   "sealed": false,
   "sealed_utc": null
