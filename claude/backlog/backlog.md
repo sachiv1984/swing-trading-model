@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-12 (session — 3 new item(s) added: BLG-FE-215, BLG-FE-216, BLG-BE-172, from the PR #1972 review, EPIC-04, v9.11); prior — 2026-10-12 (session — 1 new item(s) added: BLG-OPS-185, from the PR #1971 review, EPIC-06, v9.11); prior — 2026-10-12 (session — 1 new item added: BLG-AI-13, from the ST-25 AI Compliance & Governance Officer review, EPIC-04, v9.11); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (session — 3 new item(s) added: BLG-SPEC-193, BLG-SPEC-194, BLG-GOV-385, from the PR #1973 review, EPIC-05, v9.11; BLG-SPEC-190 and BLG-BE-157 restored after the 3237cb5e merge spliced them); prior — 2026-10-12 (session — 3 new item(s) added: BLG-FE-215, BLG-FE-216, BLG-BE-172, from the PR #1972 review, EPIC-04, v9.11); prior — 2026-10-12 (session — 1 new item(s) added: BLG-OPS-185, from the PR #1971 review, EPIC-06, v9.11); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5257,9 +5257,21 @@ ST-14's suppression predicate (`Positions.js` ~592, `PositionCard.js` ~97) reads
 **Type:** Spec Debt
 **Owner:** Data Model & Domain Schema Owner
 **Source:** ST-30 (BLG-SPEC-173), EPIC-05, cycle `2026-10-08__release-v9.11` — 2026-10-08
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`add_position()` stores `positions.entry_price` as the entry price **in GBP** (native ÷ `fx_rate` for US positions), and stores the native entry price in `fill_price`; the user's broker fill goes in `user_fill_price`. `data_model.md` §2 was corrected at v2.55 (ST-30). `docs/specs/data_model_positions_dictionary.md` (the canonical field dictionary) still says `entry_price` is native and `fill_price` is the actual execution fill, and its §derivation formulas (`total_cost`, `pnl`) use `entry_price` as if it were native.
+
+**Scope**
+- Correct the dictionary's `entry_price`, `fill_price` and `user_fill_price` rows and the derivation formulas to match the code
+- Check other specs that describe `positions.entry_price` as native
+
+**Acceptance Criteria**
+- The dictionary and `data_model.md` §2 agree with `add_position()` for every price field
+- No spec describes `positions.entry_price` as native currency for US positions
 
 ---
-
 ### BLG-FE-208 — Add a useful / not-useful rating to each AI chat answer
 **Priority:** P3 (Low)
 **Type:** Frontend / UX — AI Advisory Measurement
@@ -5377,18 +5389,6 @@ White 12px bold text on `bg-amber-600` measures 3.18:1 (axe `color-contrast`, se
 **Provisional-Target:** TBD
 
 **Problem**
-`add_position()` stores `positions.entry_price` as the entry price **in GBP** (native ÷ `fx_rate` for US positions), and stores the native entry price in `fill_price`; the user's broker fill goes in `user_fill_price`. `data_model.md` §2 was corrected at v2.55 (ST-30). `docs/specs/data_model_positions_dictionary.md` (the canonical field dictionary) still says `entry_price` is native and `fill_price` is the actual execution fill, and its §derivation formulas (`total_cost`, `pnl`) use `entry_price` as if it were native.
-
-**Scope**
-- Correct the dictionary's `entry_price`, `fill_price` and `user_fill_price` rows and the derivation formulas to match the code
-- Check other specs that describe `positions.entry_price` as native
-
-**Acceptance Criteria**
-- The dictionary and `data_model.md` §2 agree with `add_position()` for every price field
-- No spec describes `positions.entry_price` as native currency for US positions
-
----
-
 `sizing_service.size_batch_inv_vol()` (used by `signal_service.py` for every new signal's suggested shares) gives a signal with `atr_value` 0 or missing an inverse-ATR weight of 0, then clamps every weight to the 5% minimum, so that signal still receives 5% of available cash (before renormalisation) and a non-zero share count. Its own docstring says "Signals with atr_value == 0 get 0 shares". Reproduced 2026-10-08: signals with ATR 1, 0 and 2 and £10,000 cash gave the zero-ATR signal a weight of 0.111 and 22 shares. `tests/test_signal_sizing.py::test_zero_atr_produces_zero_shares` passes only because it uses a batch where every ATR is 0, which takes the early-exit branch; the mixed case is untested.
 
 **Scope**
@@ -5991,5 +5991,70 @@ In `generate_narrative` (`backend/services/monthly_pnl_narrative_service.py`), i
 **Acceptance Criteria**
 - A unit test with attempt 1 failing checks and attempt 2 raising receives `source: "fallback"` and a stored row
 - `count_monthly_pnl_narrative_generations` counts that request exactly once
+
+---
+
+### BLG-SPEC-193 — Trade plan contract still lists 3 plan statuses after openapi.yaml moved to 7
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-31 (BLG-SPEC-177), EPIC-05, cycle `2026-10-08__release-v9.11` — PR #1973 agent-mediated review — 2026-10-12
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-31 corrected every TradePlan `status` enum in `openapi.yaml` to DS-21's 7 values (`draft`, `research_pending`, `research_complete`, `entry_conditions_set`, `active`, `closed`, `abandoned`). The canonical contract `docs/specs/api_contracts/trade_plan_endpoints.md` still documents `draft | active | closed` for the `POST /trade-plans` body field (line 72) and the `GET /trade-plans` `status` filter (line 123). `docs/specs/security/trade_plan_data_sensitivity.md` (line 29) lists 4 values. A reader of the contract would reject 4 statuses the API accepts and the frontend uses.
+
+**Scope**
+- Correct both `trade_plan_endpoints.md` rows to the 7 DS-21 values (or cite DS-21) and add a changelog row
+- Correct the `status` row in `trade_plan_data_sensitivity.md`
+- Optionally extend `tests/test_trade_plan_status_enum_parity.py` to cover the contract table
+
+**Acceptance Criteria**
+- `trade_plan_endpoints.md` and `trade_plan_data_sensitivity.md` list the same 7 statuses as `openapi.yaml` and `data_model.md` DS-21
+- `grep` finds no current-state spec listing the 3- or 4-value set (historical migration notes excepted)
+
+---
+
+### BLG-SPEC-194 — Clear the 8 pre-existing success-example drifts so check_contract_example_freshness.py exits 0
+**Priority:** P4 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-31 / ST-32, EPIC-05, cycle `2026-10-08__release-v9.11` — PR #1973 agent-mediated review — 2026-10-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`scripts/check_contract_example_freshness.py` exits 1 on `main` and on the EPIC-05 branch alike. Error-envelope violations are now 0 (ST-32), but 8 contract success examples carry keys the resolved `openapi.yaml` schema does not have: `health_endpoints.md` POST /test/endpoints; `position_endpoints.md` GET /positions/analyze; `reports_endpoints.md` GET /reports/tax-year; `saved_filters_endpoints.md` GET /saved-filters; `settings_endpoints.md` POST /settings and PATCH /settings/{settings_id}; `signal_endpoints.md` POST /signals/generate; `strategy_benchmark_endpoints.md` GET /strategy/backtest-rule-change/runs. The script is not a CI gate, so an AC such as ST-31's "both still pass" can only be read as "no new finding", and a real new drift is hard to see among the 8.
+
+**Scope**
+- For each of the 8, decide which side is right (contract example or `openapi.yaml` response schema) and correct it
+- Once the script exits 0, consider adding it to `quality_gate.yml` as a gate
+
+**Acceptance Criteria**
+- `python3 scripts/check_contract_example_freshness.py` exits 0 on `main`
+- Each correction is recorded in the changed contract's changelog
+
+---
+
+### BLG-GOV-385 — Check backlog item integrity after every cross-EPIC merge resolution
+**Priority:** P2 (Medium)
+**Type:** Governance Process / Tooling
+**Owner:** PMO Lead; Head of Specs Team
+**Source:** EPIC-05, cycle `2026-10-08__release-v9.11` — PR #1973 agent-mediated review — 2026-10-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The CLAUDE.md §8 merge of `main` (EPIC-06, PR #1971) into EPIC-05 (`3237cb5e`) reported no conflict on `backlog.md` but spliced two items: BLG-SPEC-190's header kept only its first 5 metadata lines, and its Problem/Scope/AC landed inside BLG-BE-157, which then carried two bodies. Both items end with the same `**Effort:** S (~0.5d)` / `**Provisional-Target:** TBD` lines, so git's line merge treated them as shared context. Merging PR #1973 unrepaired would have put the corrupted P2 item on `main`. No step in §8 or STEP 4 step 3c checks item structure after a clean auto-merge.
+
+**Scope**
+- Add `scripts/check_backlog_item_integrity.py`: every `### BLG-…` item has exactly one `**Problem**`, `**Scope**` and `**Acceptance Criteria**` block and the required metadata fields, and no ID repeats
+- Run it in CI on PRs touching `backlog.md`, and add it to CLAUDE.md §8 step 2b (or a new step) as a mandatory post-merge check
+- Optionally compare each item's text against both merge parents and flag any item that matches neither
+
+**Acceptance Criteria**
+- The script fails on `3237cb5e`'s `backlog.md` and passes on the repaired file
+- The check is wired into CI and named in CLAUDE.md §8
 
 ---
