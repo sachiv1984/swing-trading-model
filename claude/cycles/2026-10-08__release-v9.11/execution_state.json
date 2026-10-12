@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-08T11:04:00Z",
+  "last_updated_utc": "2026-10-12T07:57:46Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -68,26 +68,33 @@
         "ST-02": {
           "title": "Verify all six AI features after the PR #1921 import fix, and file the escaped-defect note",
           "classification": "delegated_qa",
-          "status": "blocked_qa",
+          "status": "done",
           "assigned_to": "AI Compliance & Governance Officer; Infrastructure & Operations Owner",
           "github_issue": 1926,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "72b54414ce4e0920d313e4e03bcf293155c4869a",
           "delegation_record_id": "DEL-20261008-01",
           "blocked_since_utc": "2026-10-08T12:55:32Z",
           "unblock_criteria": "Dated six-feature staging run and sampling evidence recorded in qa_evidence_EPIC-01.md",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-12T07:57:46Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/testing/escaped_defect_note_ai_sampling_import_2026-10-08.md",
-            "docs/specs/api_contracts/ai_endpoints.md#AI Output Boundary-Language Sampling Hook (ST-23, BLG-AI-06, v9.4)"
+            "docs/specs/api_contracts/ai_endpoints.md#AI Output Boundary-Language Sampling Hook (ST-23, BLG-AI-06, v9.4)",
+            "docs/specs/api_contracts/ai_thesis_generation.md#POST /trade-plans/{plan_id}/generate-thesis"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.C.3",
-          "sign_off_record": null,
-          "notes": "AC3 escaped-defect note filed (docs/testing/escaped_defect_note_ai_sampling_import_2026-10-08.md), citing ST-03, ST-04, BLG-QA-218. AC1/AC2 await the staging run (DEL-20261008-01)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "signed_utc": "2026-10-12T07:57:46Z",
+            "note": "User (human) ran the six AI features on staging at 82633f5 (2026-10-09) and confirmed a sampled chat row in ai_output_boundary_samples (2026-10-12). Recorded in qa_evidence_EPIC-01.md."
+          },
+          "notes": "Done. AC1: 5/6 generated on staging at 82633f5; journal summary 422 (trade_ids typed int, IDs are UUIDs) filed as BLG-BE-162 (d67f8a9e); generate-thesis has no UI caller, retirement filed as BLG-BE-163 (f7cd9c00). AC2: sampled chat row 2026-10-12T07:56:01Z. AC3: escaped-defect note d730ac69. Deviation: DEL-20261008-01 sampling opt-in instruction corrected (env var, not Settings). DEL-20261008-01 unblocked in-session."
         },
         "ST-03": {
           "title": "Keep the AI-output sampling hook from breaking or hiding errors in AI responses",
@@ -1041,16 +1048,16 @@
   },
   "blocked_items": [
     "ST-16",
-    "ST-34",
-    "ST-25"
+    "ST-25",
+    "ST-34"
   ],
   "delegated_items": [
-    "ST-02",
     "ST-06",
     "ST-42"
   ],
   "completed_items": [
     "ST-01",
+    "ST-02",
     "ST-03",
     "ST-04",
     "ST-05",
@@ -1076,7 +1083,8 @@
     "all_merged": false
   },
   "process_notes": [
-    "2026-10-08: ST-06 blocked_since_utc and DEL-20261008-03 'Delegated at' were first written as 2026-10-08T12:20:00Z, an estimate, not the real time (BLG-GOV-309). Corrected the same session to 2026-10-08T11:18:41Z (the delegation commit 5c753cbc's authored time). This is the only edit made to an earlier delegation_log.md entry, and it corrects a factual value in an entry written minutes earlier."
+    "2026-10-08: ST-06 blocked_since_utc and DEL-20261008-03 'Delegated at' were first written as 2026-10-08T12:20:00Z, an estimate, not the real time (BLG-GOV-309). Corrected the same session to 2026-10-08T11:18:41Z (the delegation commit 5c753cbc's authored time). This is the only edit made to an earlier delegation_log.md entry, and it corrects a factual value in an entry written minutes earlier.",
+    "2026-10-12T07:57:46Z — ST-02 done on the EPIC-01 copy after the staging run (DEL-20261008-01 unblocked). Summary fields recomputed from this copy's story statuses; entries for stories finished on other EPIC branches (e.g. ST-16, ST-25 on EPIC-03/04; ST-34 on EPIC-06) may read stale here until the CLAUDE.md §8 union at merge."
   ],
   "sealed": false,
   "sealed_utc": null
