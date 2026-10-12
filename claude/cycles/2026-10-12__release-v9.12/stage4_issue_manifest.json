@@ -1,0 +1,722 @@
+[
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-01",
+  "story_id": "ST-01",
+  "s2_id": "S2-01",
+  "source": "BLG-BE-162",
+  "title": "Accept UUID trade IDs in the journal summary, end to end",
+  "priority": "P1",
+  "effort": "S (~0.5d; calibrated to 1.0d — live migration plus staging verification)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-01",
+  "story_id": "ST-02",
+  "s2_id": "S2-02",
+  "source": "BLG-AI-11",
+  "title": "Drop briefing actions that name a ticker outside the context",
+  "priority": "P2",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-01",
+  "story_id": "ST-03",
+  "s2_id": "S2-03",
+  "source": "BLG-AI-12",
+  "title": "Label available cash and starting capital separately in the briefing context",
+  "priority": "P3",
+  "effort": "XS (<1h plus tests)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-01",
+  "story_id": "ST-04",
+  "s2_id": "S2-04",
+  "source": "BLG-AI-10",
+  "title": "Check that briefing and chat responses citing a stop include its recalculation time",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-01",
+  "story_id": "ST-05",
+  "s2_id": "S2-05",
+  "source": "BLG-AI-13",
+  "title": "Widen the monthly P&L narrative's instrument-directive scan to inflected and indirect wording",
+  "priority": "P3",
+  "effort": "XS (<1h plus tests)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-01",
+  "story_id": "ST-06",
+  "s2_id": "S2-06",
+  "source": "BLG-OPS-183",
+  "title": "Make the daily AI cost alert count Claude calls",
+  "priority": "P2",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-01",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-02",
+  "story_id": "ST-07",
+  "s2_id": "S2-07",
+  "source": "BLG-BE-157",
+  "title": "Give zero-ATR signals no allocation in batch sizing",
+  "priority": "P2",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-02",
+  "story_id": "ST-08",
+  "s2_id": "S2-08",
+  "source": "BLG-BE-158",
+  "title": "Include entry fees in batch signal total cost",
+  "priority": "P2",
+  "effort": "XS (<1h plus tests)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-02",
+  "story_id": "ST-09",
+  "s2_id": "S2-09",
+  "source": "BLG-QA-205",
+  "title": "Assert the §4.1.5 FX defaulting/echo and §4.1.6 insufficient-cash sizing results in CI",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-02",
+  "story_id": "ST-10",
+  "s2_id": "S2-10",
+  "source": "BLG-BE-159",
+  "title": "Make the Trail Stop action work against a real route, or remove it; stop ignoring a supplied entry stop",
+  "priority": "P2",
+  "effort": "S (~0.5-1d)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-02",
+  "story_id": "ST-11",
+  "s2_id": "S2-11",
+  "source": "BLG-BE-160",
+  "title": "Never let 2-dp rounding lower a stored stop",
+  "priority": "P3",
+  "effort": "XS (<0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-02",
+  "story_id": "ST-12",
+  "s2_id": "S2-12",
+  "source": "BLG-BE-145",
+  "title": "Recompute US positions with a NULL fill_price without error, and add US parity cases",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-02",
+  "story_id": "ST-13",
+  "s2_id": "S2-13",
+  "source": "BLG-BE-149",
+  "title": "Decide Risk page LOSING/PROFITABLE on native P&L, matching the lifecycle badge",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-02",
+  "story_id": "ST-14",
+  "s2_id": "S2-14",
+  "source": "BLG-BE-148",
+  "title": "Use the US exchange calendar for the gap-risk \"next trading session\"",
+  "priority": "P3",
+  "effort": "S (~1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-02",
+  "story_id": "ST-15",
+  "s2_id": "S2-15",
+  "source": "BLG-FE-202",
+  "title": "Show the user when a position's stop is frozen for lack of ATR",
+  "priority": "P3",
+  "effort": "S (~1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-02",
+  "story_id": "ST-16",
+  "s2_id": "S2-16",
+  "source": "BLG-BE-144",
+  "title": "Keep first-time Settings saves from writing NULL strategy columns; snapshot §11 values on trade plans",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-02",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-03",
+  "story_id": "ST-17",
+  "s2_id": "S2-17",
+  "source": "BLG-BE-146",
+  "title": "Add an ATR preview endpoint so Trade Entry shows the stop, risk and size before save",
+  "priority": "P3",
+  "effort": "S (~1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-03",
+  "story_id": "ST-18",
+  "s2_id": "S2-18",
+  "source": "BLG-FE-203",
+  "title": "Show the currency unit on Trade Entry's ATR field and reject implausible typed ATRs",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-03",
+  "story_id": "ST-19",
+  "s2_id": "S2-19",
+  "source": "BLG-QA-206",
+  "title": "Cover the §4.1.7 sizing-widget behaviours with Playwright",
+  "priority": "P3",
+  "effort": "M (~1d)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-03",
+  "story_id": "ST-20",
+  "s2_id": "S2-20",
+  "source": "BLG-FE-201",
+  "title": "Correct the Settings helper text for the fixed strategy parameters",
+  "priority": "P3",
+  "effort": "XS (<0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-03",
+  "story_id": "ST-21",
+  "s2_id": "S2-21",
+  "source": "BLG-GOV-369",
+  "title": "Strategy-copy conformance: a frontend constants module, a CI lint for UI text restating §5–§11, and a named owner",
+  "priority": "P3",
+  "effort": "S (~1-1.5 days)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-03",
+  "story_id": "ST-22",
+  "s2_id": "S2-22",
+  "source": "BLG-FE-207",
+  "title": "Link each Grace Period row to its position, and align the panel's text and date format with the spec",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-03",
+  "story_id": "ST-23",
+  "s2_id": "S2-23",
+  "source": "BLG-FE-200",
+  "title": "Make the Reports and Notifications pages pass WCAG colour contrast in the light theme",
+  "priority": "P3",
+  "effort": "M (~2-3 days)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-03",
+  "story_id": "ST-24",
+  "s2_id": "S2-24",
+  "source": "BLG-FE-210",
+  "title": "Move white-on-amber-600 badges to a passing contrast outside Replay",
+  "priority": "P3",
+  "effort": "XS (<1h plus test updates)",
+  "labels": [
+   "sprint",
+   "EPIC-03",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-04",
+  "story_id": "ST-25",
+  "s2_id": "S2-25",
+  "source": "BLG-OPS-184",
+  "title": "Stop the post-grace stop-health monitor alerting on the morning a position's grace ends",
+  "priority": "P2",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-04",
+  "story_id": "ST-26",
+  "s2_id": "S2-26",
+  "source": "BLG-SEC-41",
+  "title": "Audit trail for strategy-parameter changes in Settings",
+  "priority": "P3",
+  "effort": "S (~1 day; calibrated to 1.5d — new table, live migration)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-04",
+  "story_id": "ST-27",
+  "s2_id": "S2-27",
+  "source": "BLG-SEC-42",
+  "title": "Re-assess the bundled `REACT_APP_API_KEY` against its actual write scope",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-04",
+  "story_id": "ST-28",
+  "s2_id": "S2-28",
+  "source": "BLG-TECH-22",
+  "title": "Apply the in-range dependency patch/minor bumps from the October 2026 quarterly review",
+  "priority": "P3",
+  "effort": "S (~0.5-1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-04",
+  "story_id": "ST-29",
+  "s2_id": "S2-29",
+  "source": "BLG-OPS-181",
+  "title": "Find out why a staging-deploy.yml hook deploy of a governance-only commit never went live",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-04",
+  "story_id": "ST-30",
+  "s2_id": "S2-30",
+  "source": "BLG-OPS-182",
+  "title": "Live-fire the stale-staging check from main against a deliberate divergence",
+  "priority": "P3",
+  "effort": "XS (<1h; calibrated to 0.5d — deliberate staging divergence and restore)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-04",
+  "story_id": "ST-31",
+  "s2_id": "S2-31",
+  "source": "BLG-OPS-185",
+  "title": "Add requirements-dev.txt to the local backend setup instructions",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-04",
+  "story_id": "ST-32",
+  "s2_id": "S2-32",
+  "source": "BLG-GOV-371",
+  "title": "Inventory the scheduled GitHub workflows: owner, cron, tables written, monthly minutes",
+  "priority": "P3",
+  "effort": "S (~1 day)",
+  "labels": [
+   "sprint",
+   "EPIC-04",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-05",
+  "story_id": "ST-33",
+  "s2_id": "S2-33",
+  "source": "BLG-SPEC-176",
+  "title": "Reconcile DELETE /trade-plans/{id}'s success envelope with conventions.md §12",
+  "priority": "P4",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-05",
+  "story_id": "ST-34",
+  "s2_id": "S2-34",
+  "source": "BLG-SPEC-178",
+  "title": "Triage the drift detector's new live-vs-doc findings",
+  "priority": "P3",
+  "effort": "S (~1d)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-05",
+  "story_id": "ST-35",
+  "s2_id": "S2-35",
+  "source": "BLG-SPEC-179",
+  "title": "Name the Gap Risk Badge's real data source in positions.md",
+  "priority": "P3",
+  "effort": "XS (<0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-05",
+  "story_id": "ST-36",
+  "s2_id": "S2-36",
+  "source": "BLG-SPEC-181",
+  "title": "Replace positions.stop_price with current_stop in the action-rate spec and docstring",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-05",
+  "story_id": "ST-37",
+  "s2_id": "S2-37",
+  "source": "BLG-SPEC-182",
+  "title": "Refresh the Gap Risk Flag §13 decision record to match strategy_rules.md v1.14",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-05",
+  "story_id": "ST-38",
+  "s2_id": "S2-38",
+  "source": "BLG-SPEC-183",
+  "title": "Settle positions.entry_price's currency in the specs",
+  "priority": "P3",
+  "effort": "S (~0.5d; includes a read-only live sample check)",
+  "labels": [
+   "sprint",
+   "EPIC-05",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-06",
+  "story_id": "ST-39",
+  "s2_id": "S2-39",
+  "source": "BLG-GOV-385",
+  "title": "Check backlog item integrity after every cross-EPIC merge resolution",
+  "priority": "P2",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-06",
+  "story_id": "ST-40",
+  "s2_id": "S2-40",
+  "source": "BLG-GOV-386",
+  "title": "Report gated items whose gating backlog item has shipped, and read that list in Release Planning §1.3a",
+  "priority": "P2",
+  "effort": "S (~0.5–1d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-06",
+  "story_id": "ST-41",
+  "s2_id": "S2-41",
+  "source": "BLG-GOV-363",
+  "title": "Script the execution_state.json read-back check from execution_prompt.md §9.2",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-06",
+  "story_id": "ST-42",
+  "s2_id": "S2-42",
+  "source": "BLG-GOV-367",
+  "title": "Name one Skill-Silo aggregation method in roadmap_prompt.md §7.1",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-06",
+  "story_id": "ST-43",
+  "s2_id": "S2-43",
+  "source": "BLG-GOV-364",
+  "title": "Rule on reduced-roster idea-intake windows, and cap them if permitted",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-06",
+  "story_id": "ST-44",
+  "s2_id": "S2-44",
+  "source": "BLG-GOV-372",
+  "title": "Add a split-credit secondary tally to compute_role_share_history.py",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-06",
+  "story_id": "ST-45",
+  "s2_id": "S2-45",
+  "source": "BLG-QA-212",
+  "title": "Add unit tests for compute_role_share_history.py and a STEP 7.1 pin",
+  "priority": "P3",
+  "effort": "S (~0.5 day)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-06",
+  "story_id": "ST-46",
+  "s2_id": "S2-46",
+  "source": "BLG-QA-209",
+  "title": "Scope utils.* test stubs so a reordered run passes",
+  "priority": "P3",
+  "effort": "M (~1d; 11 test files reference `sys.modules[\"utils…\"]`, grep-confirmed 2026-10-12)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-06",
+  "story_id": "ST-47",
+  "s2_id": "S2-47",
+  "source": "BLG-QA-213",
+  "title": "Guard the positions.fees_paid NOT NULL invariant in the entry flow and SQL seeds",
+  "priority": "P3",
+  "effort": "S (~0.5d)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ },
+ {
+  "cycle": "2026-10-12__release-v9.12",
+  "epic": "EPIC-06",
+  "story_id": "ST-48",
+  "s2_id": "S2-48",
+  "source": "BLG-QA-202",
+  "title": "Remove the leaked sandbox /tmp path from backend/setup.cfg",
+  "priority": "P3",
+  "effort": "XS (<1h)",
+  "labels": [
+   "sprint",
+   "EPIC-06",
+   "cycle:2026-10-12__release-v9.12"
+  ]
+ }
+]

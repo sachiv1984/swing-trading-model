@@ -1,0 +1,11 @@
+{
+  "cycle_id": "2026-10-12__release-v9.12",
+  "release": "v9.12",
+  "txn_id": "BLTX-20261012-01",
+  "state": "committed",
+  "prepared_utc": "2026-10-12T14:48:58Z",
+  "marker": "RP:v9.12:2026-10-12__release-v9.12",
+  "target_file": "claude/backlog/backlog.md",
+  "committed_utc": "2026-10-12T14:49:07Z",
+  "notes": "Idempotency search: marker RP:v9.12:2026-10-12__release-v9.12 not present in claude/backlog/backlog.md (0 matches). Release slice written to claude/cycles/2026-10-12__release-v9.12/stage4_backlog_slice.md, which carries the marker (v9.8-v9.11 practice). No global reprioritisation and no backlog.md edits this run (the §1.3a date-lapsed list was empty)."
+}

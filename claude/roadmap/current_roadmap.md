@@ -488,6 +488,15 @@ Today you find stocks through external research and add them to the watchlist ma
 |------|----------------|----------|--------|
 | `BLG-BE-162` — journal summary returns HTTP 422 on UUID `trade_ids` | Condition of the v9.11 verification P1 acceptance (ST-02): stays P1 and is seated in v9.12. | P1 | see backlog item |
 
+<!-- roadmap-annotation-marker: RA:v9.12:2026-10-12__release-v9.12 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-10-12__release-v9.12
+- Plan published: 2026-10-12
+- Cycle folder: claude/cycles/2026-10-12__release-v9.12/
+- Backlog slice: claude/cycles/2026-10-12__release-v9.12/stage4_backlog_slice.md
+- Status at annotation: Committed (48 stories, 6 EPICs, 27.95d; `BLG-BE-162` seated as ST-01 at P1)
+
 <!-- roadmap-annotation-marker: RA:v7.4:2026-07-17__release-v7.4 -->
 
 -----
