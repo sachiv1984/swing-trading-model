@@ -63,3 +63,33 @@ def test_workflow_alerts_through_the_existing_telegram_path():
     assert "api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" in alert["run"]
     run_step = next(s for s in steps if s.get("id") == "check")
     assert "scripts/check_post_grace_stop_health.py" in run_step["run"]
+
+
+# BLG-OPS-184 (v9.11): a position just past grace has no multiplier until the
+# next nightly run recomputes it (ST-16 stamps nothing during grace). That is
+# pending, not a violation, for GRACE_PERIOD_DAYS + PENDING_TOLERANCE_DAYS days.
+def test_day10_position_awaiting_first_recompute_passes(capsys):
+    assert stop_health.main(["--fixture", str(FIX / "day10_awaiting_recompute.json")]) == 0
+    out = capsys.readouterr().out
+    assert "PENDING: 2 position(s) just past grace, awaiting first stop recompute: AMD, NVDA" in out
+    assert "OK: 3 post-grace position(s)" in out
+
+
+def test_pending_window_ends_after_the_tolerance():
+    last = stop_health.GRACE_PERIOD_DAYS + stop_health.PENDING_TOLERANCE_DAYS
+    base = {"ticker": "Z", "grace_period": False, "current_stop": 10, "active_atr_multiplier": None, "stop_calculated_at": None}
+    assert stop_health.find_violations([{**base, "holding_days": last}]) == []
+    v = stop_health.find_violations([{**base, "holding_days": last + 1}])
+    assert v and "not a §11 value" in v[0]
+
+
+def test_null_multiplier_after_a_recompute_is_still_a_violation():
+    v = stop_health.find_violations([{"ticker": "Q", "grace_period": False, "holding_days": 10, "current_stop": 10,
+                                      "active_atr_multiplier": None, "stop_calculated_at": "2026-10-12T22:30:00+00:00"}])
+    assert v and "not a §11 value" in v[0]
+
+
+def test_pending_position_still_needs_a_stop():
+    v = stop_health.find_violations([{"ticker": "R", "grace_period": False, "holding_days": 10, "current_stop": None,
+                                      "active_atr_multiplier": None, "stop_calculated_at": None}])
+    assert v == ["R: post-grace position has no stop (current_stop=None)"]

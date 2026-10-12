@@ -575,7 +575,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "Done. AC: tests/test_post_grace_stop_health.py fails the monitor on a non-§11 multiplier fixture and a missing post-grace stop fixture; workflow alerts via the existing Telegram path (asserted). Live Telegram receipt not named in the AC (sprint note). Deviation check: none."
+          "notes": "Done. AC: tests/test_post_grace_stop_health.py fails the monitor on a non-§11 multiplier fixture and a missing post-grace stop fixture; workflow alerts via the existing Telegram path (asserted). Live Telegram receipt not named in the AC (sprint note). Deviation check: none. Post-review fix 2026-10-12 (BLG-OPS-184, PR #1970 DoQ review): monitor treats a position just past grace with no recompute yet as PENDING for GRACE_PERIOD_DAYS+3 days; 4 new tests."
         },
         "ST-19": {
           "title": "Read-only market-regime source, so viewing regime no longer runs the stop-writing analyze call",

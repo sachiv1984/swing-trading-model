@@ -16,6 +16,15 @@ Checks every open position whose grace period is over (grace_period false):
 Grace positions are skipped: their stop is not enforced and
 active_atr_multiplier is null by design (position_endpoints.md).
 
+Awaiting first recompute (BLG-OPS-184, v9.11): since ST-16 (strategy_rules.md
+§6.3 v1.15) nothing stamps active_atr_multiplier during grace, so a position
+that has just left grace has a null multiplier and a null stop_calculated_at
+until the next nightly run (22:30 UTC weekdays) recomputes it. Such a position
+is reported as pending, not as a violation, while its holding days are at most
+GRACE_PERIOD_DAYS + PENDING_TOLERANCE_DAYS (covers a weekend and one missed
+nightly run). Past that window a null multiplier is a violation again. Check 1
+(a stop is present) applies throughout.
+
 Input: --fixture <json file>, or --api-url/--api-key (GET {api_url}/positions).
 Accepts either a bare array or {"data": [...]}.
 Exit 0 = healthy, 1 = violations found (printed one per line), 2 = could
@@ -29,15 +38,27 @@ import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "backend"))
-from strategy_parameters import INITIAL_ATR_MULTIPLIER, PROFIT_ATR_MULTIPLIER  # noqa: E402
+from strategy_parameters import GRACE_PERIOD_DAYS, INITIAL_ATR_MULTIPLIER, PROFIT_ATR_MULTIPLIER  # noqa: E402
 
 ALLOWED_MULTIPLIERS = (INITIAL_ATR_MULTIPLIER, PROFIT_ATR_MULTIPLIER)
+PENDING_TOLERANCE_DAYS = 3
 
 
 def _positions(payload):
     if isinstance(payload, dict):
         payload = payload.get("data", payload.get("positions", []))
     return [p for p in payload if (p.get("status") or "open") == "open"]
+
+
+def awaiting_first_recompute(p):
+    """True for a position just past grace that no path has recomputed yet (BLG-OPS-184)."""
+    if p.get("active_atr_multiplier") is not None or p.get("stop_calculated_at"):
+        return False
+    try:
+        days = int(p.get("holding_days"))
+    except (TypeError, ValueError):
+        return False
+    return GRACE_PERIOD_DAYS <= days <= GRACE_PERIOD_DAYS + PENDING_TOLERANCE_DAYS
 
 
 def find_violations(positions):
@@ -53,6 +74,8 @@ def find_violations(positions):
             stop_ok = False
         if not stop_ok:
             violations.append(f"{ticker}: post-grace position has no stop (current_stop={stop!r})")
+        if awaiting_first_recompute(p):
+            continue
         mult = p.get("active_atr_multiplier")
         try:
             mult_ok = mult is not None and any(abs(float(mult) - a) < 1e-9 for a in ALLOWED_MULTIPLIERS)
@@ -87,6 +110,10 @@ def main(argv=None):
         return 2
     violations = find_violations(positions)
     checked = sum(1 for p in positions if p.get("grace_period") is not True)
+    pending = [p.get("ticker", "?") for p in positions
+               if p.get("grace_period") is not True and awaiting_first_recompute(p)]
+    if pending:
+        print(f"PENDING: {len(pending)} position(s) just past grace, awaiting first stop recompute: {', '.join(pending)}")
     if violations:
         print(f"FAIL: {len(violations)} stop-health violation(s) across {checked} post-grace position(s):")
         for v in violations:
