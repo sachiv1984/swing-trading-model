@@ -1,0 +1,3 @@
+[
+  {"ticker": "DELL", "status": "open", "grace_period": false, "current_stop": null, "active_atr_multiplier": 2.0}
+]

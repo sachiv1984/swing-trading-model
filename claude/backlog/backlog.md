@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-12 (session — 7 new item(s) added: BLG-BE-167, BLG-BE-168, BLG-BE-169, BLG-FE-213, BLG-FE-214, BLG-QA-220, BLG-SPEC-192, from the PR #1969 review, EPIC-02, v9.11); prior — 2026-10-12 (session — 7 new item(s) added: BLG-BE-164, BLG-BE-165, BLG-BE-166, BLG-FE-211, BLG-FE-212, BLG-AI-11, BLG-AI-12, from the PR #1968 review, EPIC-01, v9.11); prior — 2026-10-12 (session — 1 new item added: BLG-AI-10, from EPIC-01 DoQ consolidation (ST-08), v9.11); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-12 (session — 3 new item(s) added: BLG-OPS-184, BLG-BE-170, BLG-BE-171, from the PR #1970 review, EPIC-03, v9.11); prior — 2026-10-12 (session — 7 new item(s) added: BLG-BE-167, BLG-BE-168, BLG-BE-169, BLG-FE-213, BLG-FE-214, BLG-QA-220, BLG-SPEC-192, from the PR #1969 review, EPIC-02, v9.11); prior — 2026-10-12 (session — 7 new item(s) added: BLG-BE-164, BLG-BE-165, BLG-BE-166, BLG-FE-211, BLG-FE-212, BLG-AI-11, BLG-AI-12, from the PR #1968 review, EPIC-01, v9.11); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5314,6 +5314,44 @@ White 12px bold text on `bg-amber-600` measures 3.18:1 (axe `color-contrast`, se
 
 ---
 
+### BLG-BE-160 — Rounding the stored stop to 2 dp can lower it, breaching the §7.3 ratchet
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** ST-16 (BLG-BE-143), EPIC-03, cycle `2026-10-08__release-v9.11` — raised in the Strategy Rules & System Intent Owner's ruling on `ESC-EXEC-20261008-01` (2026-10-09)
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`add_position()` stores `initial_stop` and `current_stop` unrounded in `DECIMAL(10,4)` columns. The post-grace stop writes, `analyze_positions()` (`'current_stop': round(trailing_stop_native, 2)`) and `run_nightly_trailing_stop_update()` (`round(new_stop_native, 2)`), round to 2 dp after the `max()`. When `calculate_trailing_stop` keeps the stored stop (no rise), rounding can lower it by up to 0.005. `strategy_rules.md` §7.3 says stops "must never move downwards" and that the rule is absolute. ST-16 removed the in-grace write, so this now affects only positions past grace.
+
+**Scope**
+- Write the stop at the column's own precision (4 dp), or round only a genuinely new stop and never round below the stored value
+
+**Acceptance Criteria**
+- A test with a 4-dp stored stop that the recompute keeps shows the written value is never below the stored one, on both the on-load and nightly paths
+
+---
+
+### BLG-BE-161 — Standalone `position_manager.py` still ratchets the stop during grace
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Strategy alignment
+**Owner:** Strategy Rules & System Intent Owner; Head of Engineering
+**Source:** ST-16 (BLG-BE-143), EPIC-03, cycle `2026-10-08__release-v9.11` — raised in the Strategy Rules & System Intent Owner's ruling on `ESC-EXEC-20261008-01` (2026-10-09)
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`strategy_rules.md` §6.3 (v1.15) says the stored stop is not recalculated or ratcheted during the 10-day grace period. The live paths, `services/strategy_engine.py` and `services/replay_service.py` all follow this. The legacy standalone tool `backend/position_manager.py` does not: in grace it applies `max(current_stop, current_price − 5 × ATR)`. It is not on the live path, and is already an accepted exception for §7.2's multipliers.
+
+**Scope**
+- Either align it with §6.3 (no trailing during grace) or record it as an explicit exception next to the existing §7.2 one
+
+**Acceptance Criteria**
+- `position_manager.py` matches §6.3, or `strategy_rules.md` names it as an exception with the Owner's sign-off
+
+---
+
 ### BLG-BE-162 — Journal summary rejects every request: trade_ids typed as integers but trade IDs are UUIDs
 **Priority:** P1 (High)
 **Type:** Backend Engineering / Correctness
@@ -5628,5 +5666,69 @@ The briefing context renders cash as "cash £X of £{initial_cash}". On staging 
 **Acceptance Criteria**
 - The briefing context no longer uses "of £{initial_cash}", and omits starting capital when it is 0
 - Golden-fixture tests pass with the recorded prompt-version bump
+
+---
+
+### BLG-OPS-184 — Stop the post-grace stop-health monitor alerting on the morning a position's grace ends
+**Priority:** P2 (Medium)
+**Type:** Operations / Monitoring
+**Owner:** Infrastructure & Operations Owner; Backend Engineering Patterns Owner
+**Source:** PR #1970 agent-mediated review (EPIC-03, cycle `2026-10-08__release-v9.11`), Director of Quality finding 1: ST-18 × ST-16 interaction — 2026-10-12
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.12
+
+**Problem**
+ST-16 stops the nightly job (and the on-load path) stamping `active_atr_multiplier` while a position is in grace. The first post-grace stamp happens only at the next nightly run (22:30 UTC, weekdays) or an on-load `/positions/analyze` call, and after ST-19 no frontend screen calls `/positions/analyze`. ST-18's `scripts/check_post_grace_stop_health.py` runs at 07:30 UTC on weekdays and after every deploy, and flags any post-grace position whose `active_atr_multiplier` is null. So every position raises a false Telegram alert on the first check after its day 10: the same morning on a weekday, or Monday morning when day 10 falls on a weekend. Repeated false alerts teach the user to ignore the monitor.
+
+**Scope**
+- Choose one fix and record it in the script docstring: (a) the monitor treats a null multiplier as pending, not a violation, while `stop_calculated_at` is null and the position is no more than 3 calendar days past grace (covers weekends and one missed nightly); or (b) stamp the multiplier at the grace boundary, e.g. the nightly job processes positions with `holding_days == GRACE_PERIOD_DAYS - 1` so that the stop is in place at day 10. Option (b) changes live stop behaviour and needs a Strategy Rules & System Intent Owner ruling first
+- Add a fixture for a position on day 10 with a null multiplier and no `stop_calculated_at`
+
+**Acceptance Criteria**
+- `tests/test_post_grace_stop_health.py` passes the new day-10 fixture and still fails `non_s11_multiplier.json` and `missing_stop.json`
+- A post-grace position whose multiplier stays null beyond the tolerance window is still reported as a violation (test)
+
+---
+
+### BLG-BE-170 — Price-alert duplicate fallback returns 500 when the threshold has more than 4 decimal places
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Backend Engineering Patterns Owner; Data Model & Domain Schema Owner
+**Source:** PR #1970 agent-mediated review (EPIC-03, cycle `2026-10-08__release-v9.11`), Director of Quality finding 2: ST-20 (DS-28) — 2026-10-12
+**Effort:** XS (<1h plus test)
+**Provisional-Target:** v9.12
+
+**Problem**
+`price_alerts.threshold_price` is `NUMERIC(10,4)`, so a threshold such as 100.12345 is stored as 100.1235. `create_price_alert()` compares `threshold_price = %s` with the unrounded float, both in the ST-09 dedup SELECT and in ST-20's unique-violation fallback SELECT. On a second submit of the same >4-dp threshold, the dedup SELECT misses, the INSERT hits `idx_price_alerts_active_unique`, the fallback SELECT also misses, and `_price_alert_row(None)` raises, so the request returns 500. Before DS-28 the same input created a silent duplicate. `CreatePriceAlertRequest.threshold_price` is an unconstrained `float`.
+
+**Scope**
+- Round `threshold_price` to 4 dp in `create_price_alert()` before both SELECTs and the INSERT (or compare with `%s::numeric(10,4)`)
+- If the fallback SELECT still finds no row, raise a clear error rather than passing `None` to `_price_alert_row`
+
+**Acceptance Criteria**
+- Submitting the same threshold with 5+ decimal places twice returns the existing alert both times, with one active row (test, including the real-Postgres DS-28 suite)
+- No code path calls `_price_alert_row(None)`
+
+---
+
+### BLG-BE-171 — Use the deploy date, not the ruling date, as strategy v1.15's effective date
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Strategy Records
+**Owner:** Strategy Rules & System Intent Owner; Financial Reporting & Records Owner
+**Source:** PR #1970 agent-mediated review (EPIC-03, cycle `2026-10-08__release-v9.11`), Director of Quality finding 3: ST-16 — 2026-10-12
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.12
+
+**Problem**
+`strategy_version_registry.py` registers v1.15 (the §6.3 in-grace stop freeze) with `effective_date` 2026-10-09, the ruling date from the `strategy_rules.md` Change Log. The behaviour reaches production only when PR #1970 deploys. SI-04 attributes trades to a version by `entry_date` window, so positions entered between 9 October and the deploy fall in the v1.15 cohort. Those positions are stamped `strategy_version_at_entry = "1.4"` by the code running at the time, and the old nightly job ratcheted their stops during grace. The two attribution methods disagree for that window, and the v1.15 cohort contains trades produced by v1.4 rules.
+
+**Scope**
+- Strategy Rules & System Intent Owner rules whether a behavioural version's effective date is the ruling date or the production deploy date, and records the rule in the registry docstring
+- If the ruling is the deploy date: set v1.15's `effective_date` (and the Change Log date, if `tests/test_strategy_version_registry.py` requires them to match) to the actual deploy date
+- List any trades entered in the gap and confirm their attribution
+
+**Acceptance Criteria**
+- The rule for behavioural effective dates is written in `strategy_version_registry.py`'s docstring
+- v1.15's window and the `strategy_version_at_entry` stamps agree for every trade entered from 9 October 2026 onwards (query output or test)
 
 ---
