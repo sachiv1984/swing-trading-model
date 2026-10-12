@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-08T10:59:53Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-12T09:32:53Z",
+  "last_updated_utc": "2026-10-12T13:23:18Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-02",
@@ -699,10 +699,10 @@
       "merge_commit": "e07d2a04"
     },
     "EPIC-06": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
       "pr_number": 1971,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-08__release-v9.11/qa_evidence_EPIC-06.md",
       "test_scenarios": [
@@ -719,7 +719,7 @@
         "ST-33": {
           "title": "Write-time check that sprint_backlog.md Owner values use canonical role names",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1957,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -750,7 +750,7 @@
         "ST-34": {
           "title": "Give the effort-weighted PVR column its home in product_value_ratio_history.md",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Head of Specs Team; Metrics Definitions & Analytics Owner",
           "github_issue": 1958,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -781,7 +781,7 @@
         "ST-35": {
           "title": "§13 sign-off ACs must cite every §13 clause that names the feature's subject",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1959,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -811,7 +811,7 @@
         "ST-36": {
           "title": "DoQ sign-off line for stories touching stop, grace, ATR or exit logic",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1960,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -834,7 +834,7 @@
         "ST-37": {
           "title": "Extend the axe accessibility scan to the Replay page",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1961,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -858,7 +858,7 @@
         "ST-38": {
           "title": "Fix SC-REP-04a's signed \"+£0.00\" expectation",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1962,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -882,7 +882,7 @@
         "ST-39": {
           "title": "Mutation-test the US-market and batch-sizing paths",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1963,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -905,7 +905,7 @@
         "ST-40": {
           "title": "Make the ceiling/count regression tests read the source they claim to verify",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1964,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -929,7 +929,7 @@
         "ST-41": {
           "title": "Reset the pilot test file's shared database mocks between tests",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1965,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -952,7 +952,7 @@
         "ST-42": {
           "title": "Make the Non-Registry Dependency Check a required status check on main",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1966,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -981,7 +981,7 @@
         "ST-43": {
           "title": "Move test-only Python packages out of the production build",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1967,
           "branch": "exec/2026-10-08__release-v9.11/EPIC-06",
@@ -1015,7 +1015,7 @@
         "pr_comment_review": "issuecomment-6124956155",
         "follow_ups": "BLG-OPS-185 filed in faa5cc8f (P3, non-blocking)",
         "dod_acceptance": "Director of Quality Approved + Product Owner Accepted, agent-mediated on explicit user direction, 2026-10-12, conditional on all CI checks green on the final head",
-        "merge": "left to the human developer"
+        "merge": "merged by the human developer 2026-10-12T13:23:18Z (b476fce7)"
       }
     },
     "EPIC-04": {
@@ -1331,10 +1331,10 @@
     "epics_merged": [
       "EPIC-01",
       "EPIC-02",
-      "EPIC-03"
+      "EPIC-03",
+      "EPIC-06"
     ],
     "epics_pending": [
-      "EPIC-06",
       "EPIC-04",
       "EPIC-05"
     ],
@@ -1353,7 +1353,8 @@
     "2026-10-12T09:38:39Z: main (EPIC-02 merge, PR #1969) merged into EPIC-06 per STEP 4 step 3c / CLAUDE.md §8. backlog.md takes main's newer Last Updated chain (items auto-merged); execution_state resolved story by story, summaries recomputed.",
     "2026-10-12T08:48:18Z: main (EPIC-01 merge, PR #1968) merged into EPIC-03 per STEP 4 step 3c / CLAUDE.md §8 before EPIC-03's DoQ review and PR. execution_state.json resolved story by story (most-progressed record kept), process_notes and test_scenarios unioned, summaries recomputed. data_model.md rebuilt with DS-27 (EPIC-01) before DS-28/DS-29, version 2.56 kept; trade_plan_endpoints.md 0.19 with both changelog rows; backlog.md item union; escalations keep EPIC-03's Resolved ESC-EXEC-20261008-01.",
     "2026-10-12T09:33:31Z: main (EPIC-02 merge, PR #1969) merged into EPIC-03 per STEP 4 step 3c / CLAUDE.md §8. openapi.yaml 3.25.1 kept with both sides' version notes; delegation_log keeps EPIC-03's Unblocked DEL-20261008-04 and DEL-20261009-01; backlog.md item union; execution_state resolved story by story, summaries recomputed.",
-    "2026-10-12: EPIC-03 PR #1970 merged by the human developer at 2026-10-12T12:58:26Z (e07d2a04), after the agent-mediated DoQ/PO acceptance given on user direction. Orphaned post-merge commit check: none."
+    "2026-10-12: EPIC-03 PR #1970 merged by the human developer at 2026-10-12T12:58:26Z (e07d2a04), after the agent-mediated DoQ/PO acceptance given on user direction. Orphaned post-merge commit check: none.",
+    "2026-10-12: EPIC-06 PR #1971 merged by the human developer at 2026-10-12T13:23:18Z (b476fce7), after the agent-mediated DoQ/PO acceptance given on user direction (issuecomment-6125015336). merge_gate synced on main (STEP 4 mid-session re-sync, AUD-2026-08-21-010). Orphaned post-merge commit check: none. Stories finished on unmerged EPIC-04/EPIC-05 branches read stale here until their own merges (CLAUDE.md §8 union)."
   ],
   "sealed": false,
   "sealed_utc": null
