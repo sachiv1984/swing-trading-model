@@ -253,7 +253,7 @@ Returns a generated thesis when `ANTHROPIC_API_KEY` is configured. Returns a gra
   "status": "ok",
   "data": {
     "thesis": "Strong momentum breakout above 52-week high with volume confirmation...",
-    "model_version": "claude-haiku-4-5",
+    "model_version": "claude-haiku-4-5-20251001",
     "prompt_version": "v3.0",
     "input_hash": "a3f2c1d4e5b6...",
     "output_hash": "9f8e7d6c5b4a...",
@@ -335,7 +335,7 @@ Returns all fields when `ANTHROPIC_API_KEY` is configured. Returns a graceful er
     "regime_context_at_entry": "risk_on",
     "r_target": 2.5
   },
-  "model_version": "claude-haiku-4-5",
+  "model_version": "claude-haiku-4-5-20251001",
   "prompt_version": "v3.0"
 }
 ```
@@ -551,6 +551,7 @@ score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
 | Version | Date | Summary |
 |---------|------|---------|
 | 0.19 | 2026-10-08 | ST-22 (EPIC-03, v9.11, BLG-API-06): `POST /trade-plans` double-submit disposition recorded — client-side submit guard on the Trade Plan page; no server change. |
+| 0.18 | 2026-10-08 | ST-09 (EPIC-01, v9.11, BLG-BE-142): `model_version` examples show the pinned snapshot `claude-haiku-4-5-20251001`. |
 | 0.16 | 2026-09-18 | ST-29 (EPIC-04, v9.5, BLG-SPEC-142): Added a "Lifecycle diagram" cross-reference to `docs/specs/data_model.md §Position & Trade Plan Lifecycle State Diagram`, canonical for `status` transitions. No functional change — documentation only. |
 | 0.15 | 2026-09-10 | ST-20 (EPIC-04, v9.3, BLG-SPEC-76): `trade_tags` row now cross-references the new canonical `docs/specs/trade_tagging_taxonomy.md` — confirms trade tagging is intentionally free-text (not a closed taxonomy) and consolidates the format rules this row already stated with the same rules documented in `journal_components.md` and now referenced from `analytics_endpoints.md`'s reporting side. No schema/behaviour change. |
 | 0.14 | 2026-08-21 | ST-07 (EPIC-02, v9.0, BLG-FEAT-93): Documented that `PUT /trade-plans/{id}` does NOT apply `POST`'s null→`"Other"` `setup_type` default — `null`/omitted leaves the existing value unchanged, per every other field's semantics. Product Owner accept-as-is decision: `docs/product/decisions/setup-type-other-conflation-decision--2026-08-21.md`. No schema/behaviour change to the endpoint itself, documentation only. |
