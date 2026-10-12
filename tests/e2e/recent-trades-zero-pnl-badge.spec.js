@@ -13,6 +13,8 @@
  *   SC-RTB-04  missing pnl (null) is treated as 0 -> neutral badge
  *   SC-RTB-05  glyph: zero/missing pnl -> neutral Minus; winner -> TrendingUp; loser -> TrendingDown
  *              (ST-10, BLG-FE-194, EPIC-02, cycle 2026-10-06__release-v9.10)
+ *   SC-RTB-06  pnl 0.004 (displays as £0.00) -> neutral glyph and colour; pnl 0.01 -> up arrow
+ *              (ST-15, BLG-FE-204, EPIC-02, cycle 2026-10-08__release-v9.11)
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
  *
@@ -34,17 +36,23 @@ const CLOSED_TRADES = [
   { id: 'rt-null', ticker: 'NULL', market: 'US', status: 'closed', exit_date: '2026-09-27', pnl: null, shares: 3 },
 ];
 
+// ST-15: the widget shows the 5 most recent trades, so the rounding cases use their own list.
+const ROUNDING_TRADES = [
+  { id: 'rt-tiny', ticker: 'TINY', market: 'US', status: 'closed', exit_date: '2026-09-26', pnl: 0.004, shares: 2 },
+  { id: 'rt-cent', ticker: 'CENT', market: 'US', status: 'closed', exit_date: '2026-09-25', pnl: 0.01, shares: 2 },
+];
+
 async function mockFallback(page) {
   await page.route(new RegExp(`${API}/`), (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
   );
 }
 
-async function gotoDashboardWithTrades(page) {
+async function gotoDashboardWithTrades(page, trades = CLOSED_TRADES) {
   await mockFallback(page);
   // GET /positions returns a raw array (src/api/base44Client.js positions.list, raw: true).
   await page.route(`${API}/positions`, (route) =>
-    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(CLOSED_TRADES) })
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(trades) })
   );
   await page.goto('/#/Dashboard');
   await expect(page.getByRole('heading', { name: 'Recent Trades' })).toBeVisible({ timeout: 10000 });
@@ -96,5 +104,17 @@ test.describe('Recent Trades icon badge colour', () => {
     await expect(glyph('rt-win', 'up')).toBeVisible();
     await expect(glyph('rt-win', 'neutral')).toHaveCount(0);
     await expect(glyph('rt-loss', 'down')).toBeVisible();
+  });
+
+  test('SC-RTB-06: a P&L that rounds to £0.00 is break-even; £0.01 is still a winner (ST-15)', async ({ page }) => {
+    await gotoDashboardWithTrades(page, ROUNDING_TRADES);
+    const tiny = page.getByTestId('recent-trade-badge-rt-tiny');
+    await expect(tiny.getByTestId('recent-trade-glyph-neutral')).toBeVisible({ timeout: 8000 });
+    await expect(tiny.getByTestId('recent-trade-glyph-up')).toHaveCount(0);
+    await expect(tiny).toHaveClass(/bg-slate-500\/20/);
+    await expect(tiny).not.toHaveClass(/emerald/);
+    const cent = page.getByTestId('recent-trade-badge-rt-cent');
+    await expect(cent.getByTestId('recent-trade-glyph-up')).toBeVisible();
+    await expect(cent).toHaveClass(/bg-emerald-500\/20/);
   });
 });
