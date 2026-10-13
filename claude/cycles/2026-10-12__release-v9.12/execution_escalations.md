@@ -53,7 +53,8 @@ Last Updated: 2026-10-13
 - **Unblock criteria:** A dated Head of Specs Team + Product Owner ruling (A, B or C) recorded in this escalation's resolution. The Product Owner half must be confirmed by the human Product Owner. On (B), the engine applies the cap to `idea_intake_prompt.md` (and STEP -1.6 if needed) with the CLAUDE.md §6 checklist.
 - **SLA due-by:** 2026-10-14T09:21:40Z (24h — Lifecycle)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary (2026-10-13T09:57:26Z):** ruling **(B): permit reduced-roster windows under conditions, with a no-two-consecutive cap.** The Head of Specs Team position was agent-mediated per `execution_prompt.md` §5.3 (charter §3, §5; first pass). It was **confirmed by the human Product Owner in-session on 2026-10-13** (AskUserQuestion, option "B — permit with cap"). Grounds: option C fails the charter §5 "enforced consistently" bar, since 3 of the last 6 windows ran reduced, each for its own ad hoc reason, and §10 "All agent roles submit" contradicted the §2.1 step 2a roster rule. Option A is too rigid: IW-20260930-01's two-role review produced BLG-BE-135, seated at v9.9. Applied by ST-43: `idea_intake_prompt.md` gains §4.1 (PO authorisation, roster rule, no-two-consecutive cap, disclosure; a hard gate in both modes), and the §2.1 step 2a, §10 and STEP 0 wording follows it. `roadmap_prompt.md` STEP -1.6 bounds the standalone pre-run exception by §4.1. Both carry the CLAUDE.md §6 checklist. The most recent window (IW-20261008-01) was reduced, so the next window must be full roster. ST-43 is reclassified `autonomous`.
 
 ## ESC-EXEC-20261013-04
 

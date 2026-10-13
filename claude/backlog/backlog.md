@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-13 (session — 10 new items added from Sprint Execution EPIC-01, 2026-10-12__release-v9.12: BLG-AI-14, BLG-SPEC-195, BLG-AI-15, and from the PR #2022 review BLG-AI-16 to BLG-AI-19, BLG-OPS-186, BLG-OPS-187, BLG-QA-221); prior — 2026-10-12 (session — 2 new item(s) added: BLG-GOV-386, BLG-FE-217, from post-ship closure 2026-10-08__release-v9.11 §6 rows 7 and 9); prior — 2026-10-12 (groom backlog post-ship closure 2026-10-08__release-v9.11 — 45 items archived: 43 v9.11 shipped items plus BLG-GOV-362 and BLG-OPS-180, both bannered ✅ COMPLETE at the 2026-10-07 closure); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (session — 1 new item added from Sprint Execution EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-387, from the ST-44 PMO Lead observation); prior — 2026-10-13 (session — 10 new items added from Sprint Execution EPIC-01, 2026-10-12__release-v9.12: BLG-AI-14, BLG-SPEC-195, BLG-AI-15, and from the PR #2022 review BLG-AI-16 to BLG-AI-19, BLG-OPS-186, BLG-OPS-187, BLG-QA-221); prior — 2026-10-12 (session — 2 new item(s) added: BLG-GOV-386, BLG-FE-217, from post-ship closure 2026-10-08__release-v9.11 §6 rows 7 and 9); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -492,6 +492,25 @@ Several direct dependencies are a major version, or a breaking minor series, beh
 
 **Acceptance Criteria**
 - [ ] A dated assessment covers all 8 packages, with a decision for each and a backlog item for each upgrade it approves
+
+---
+
+### BLG-GOV-387 — Correct the v9.8–v9.10 rolling line's compound Owner count in role_share_history.md (17 of 21, not 19)
+**Priority:** P3 (Low)
+**Type:** Governance Process / Workforce Metrics
+**Owner:** PMO Lead
+**Source:** ST-44/EPIC-06, cycle `2026-10-12__release-v9.12`, PMO Lead observation in the agent-mediated approval recorded in `ESC-EXEC-20261013-04` — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`claude/roadmap/role_share_history.md`'s rolling 3-cycle aggregate line for v9.8–v9.10 says 19 of v9.10's 21 Owner values are compound. `scripts/compute_role_share_history.py` finds 17: 21 Owner values, of which 4 have no `"; "` separator. ST-44's named-file write covered only the split-credit column, so the prose was left as it is.
+
+**Scope**
+- Re-derive the count with the script and correct the figure in the rolling-aggregate line at the next §7.2 append, or in a PMO Lead edit
+
+**Acceptance Criteria**
+- The v9.8–v9.10 rolling line's compound count matches the script's output for v9.10
 
 ---
 
