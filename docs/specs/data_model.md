@@ -3142,7 +3142,7 @@ Up Migration: "Success. No rows returned" in both. No integer values were cleare
 
 **Rationale:** when no ATR is available, both stop recompute paths keep the stored stop. Until now only `GET /positions/analyze`'s response said so (`atr_unavailable`), and the nightly job skipped the position silently, so nothing reached `GET /positions`. The user could not tell that a stop had stopped trailing. This column records the reason the last post-grace recompute kept the stop, so `GET /positions` can return it (`stop_frozen_reason`) and the Positions page can show the frozen-stop indicator. It is an enum, not a boolean, so a later reason needs no new column (design record `docs/design/2026-10-12__release-v9.12/frozen-stop-indicator/decision_record.md` §2.1).
 
-**RISK (no live DB write access in this execution environment):** as with DS-25/DS-26, the sandbox `DATABASE_URL` is read-only staging. Both recompute paths write this column after this change, so the Up Migration must be applied to **staging and production** before EPIC-02 deploys. Otherwise every post-grace stop recompute fails. **Status: PENDING** (DEL-20261013-04).
+**RISK (no live DB write access in this execution environment):** as with DS-25/DS-26, the sandbox `DATABASE_URL` is read-only staging. Both recompute paths write this column after this change, so the Up Migration must be applied to **staging and production** before EPIC-02 deploys. Otherwise every post-grace stop recompute fails. **Status: APPLIED ON STAGING 2026-10-13; production pending** (DEL-20261013-04).
 
 ### Up Migration (v2.60 → v2.61)
 
@@ -3172,7 +3172,8 @@ Expect 1 row: `stop_frozen_reason`, `character varying`, `20`, `YES`.
 
 **Sign-off:**
 - Data Model & Domain Schema Owner: migration content is additive, nullable and reversible; no pre-check needed. To be applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner).
-- **Live Confirmation:** pending.
+- **Live Confirmation — staging, applied 2026-10-13:** Up Migration returned "Success. No rows returned". Verification: `stop_frozen_reason`, `character varying`, `20`, `YES` (1 row). Supplied in-session by the user (human, acting for the Data Model & Domain Schema Owner), DEL-20261013-04.
+- **Live Confirmation — production:** pending.
 
 ## Drift Detector Triage (2026-10-13, v2.60)
 
