@@ -102,3 +102,57 @@ def test_v9_8_regression_pin():
     assert sum(a["counts"].values()) == 39 == a["st_headings"]
     assert a["counts"]["Head of Specs Team"] == 12
     assert a["unattributed"] == [] and a["other_level_headings"] == []
+
+
+# ST-44 (BLG-GOV-372, EPIC-06, v9.12) — split-credit secondary tally, per the
+# Director of HR + PMO Lead approval conditions (ESC-EXEC-20261013-04).
+ROLES = role_share.canonical_roles()
+
+
+def test_two_role_compound_splits_half_each():
+    credit, unmatched = role_share.split_credit({"Head of Engineering; Head of UX & Design": 1}, ROLES)
+    assert credit == {"Head of Engineering": 0.5, "Head of UX & Design": 0.5}
+    assert unmatched == []
+
+
+def test_three_role_compound_splits_a_third_each():
+    credit, _ = role_share.split_credit({"Head of Specs Team; PMO Lead; Director of Quality": 3}, ROLES)
+    assert all(abs(c - 1.0) < 1e-9 for c in credit.values()) and len(credit) == 3
+
+
+def test_qualifiers_stripped_and_repeats_counted_once():
+    assert role_share.owner_roles("Strategy Rules & System Intent Owner (ruling); Head of Specs Team; "
+                                  "Strategy Rules & System Intent Owner (sign-off)") == [
+        "Strategy Rules & System Intent Owner", "Head of Specs Team"]
+    credit, unmatched = role_share.split_credit(
+        {"Strategy Rules & System Intent Owner (ruling); Strategy Rules & System Intent Owner": 1}, ROLES)
+    assert credit == {"Strategy Rules & System Intent Owner": 1.0} and unmatched == []
+
+
+def test_unmatched_name_is_credited_and_reported():
+    credit, unmatched = role_share.split_credit({"Product Owner and Head of Specs Team; PMO Lead": 1}, ROLES)
+    assert unmatched == ["Product Owner and Head of Specs Team"]
+    assert sum(credit.values()) == 1.0
+
+
+def test_raw_tally_is_unchanged_and_split_credit_conserves_story_count():
+    for cycle in ["2026-09-15__release-v9.5", "2026-09-21__release-v9.6", "2026-09-23__release-v9.7",
+                  "2026-09-28__release-v9.8", "2026-09-30__release-v9.9", "2026-10-06__release-v9.10"]:
+        a = role_share.analyse((ROOT / "claude" / "cycles" / cycle / "sprint_backlog.md").read_text())
+        credit, _ = role_share.split_credit(a["counts"], ROLES)
+        assert abs(sum(credit.values()) - sum(a["counts"].values())) < 1e-9, cycle
+
+
+def test_v9_9_split_credit_top_role():
+    a = role_share.analyse((ROOT / "claude" / "cycles" / "2026-09-30__release-v9.9" / "sprint_backlog.md").read_text())
+    credit, _ = role_share.split_credit(a["counts"], ROLES)
+    top = max(credit, key=credit.get)
+    assert (top, round(credit[top], 2)) == ("Head of Specs Team", 8.0)
+    assert "Head of Specs Team" not in a["counts"]  # raw tally: no solo bucket at v9.9
+
+
+def test_json_carries_both_tallies(tmp_path):
+    data = json.loads(_run(_write(tmp_path, FIXTURE), "--json").stdout)["2026-01-01__release-v0.1"]
+    assert data["by_role"]["Head of Engineering; Head of UX & Design"] == 1
+    assert data["split_credit"] == {"Head of Specs Team": 2.0, "Head of Engineering": 0.5, "Head of UX & Design": 0.5}
+    assert data["split_unmatched"] == []
