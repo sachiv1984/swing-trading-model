@@ -54,3 +54,18 @@ Last Updated: 2026-10-13
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-10-13
 - Comments: [Agent-mediated review — on behalf of the Director of Quality, user-directed ("run this review"), pending human confirmation at the PR merge gate.] First pass: ⚠️ Approved with Comments, with no blocking defects. Two fix-now items were applied in `1b4068ff`, and four backlog items were filed (above). The review verified with cited evidence: §11 values 5× / 2× / 10 (`strategy_parameters.py:21-23`, `strategy_rules.md` §11); the full backend suite at the reviewed head, 2599 passed, 21 skipped (stub DB URL); the NYSE 2026–2027 holiday sets match the published schedule; and each changed function's only callers (`add_position` → `main.py`, `create_settings` → `main.py`, `get_gap_risk` → `main.py`, `size_batch_inv_vol` → `signal_service.py`). Frontend testing gate: Playwright for every observable AC (SC-TS-01..07, SC-SCP-08..10), with real CI runs cited above. The Escape-dismiss interaction AC was observed passing in real CI. `Pass_with_deviation` self-check: no AC was narrowed or partly met (ST-12's literal-scope note is an intent decision, graded `Pass with notes`).
+
+## Product Owner Acceptance
+
+- **Accepted by:** Product Owner (human, in-session, 2026-10-13: "Give DOQ and PO acceptance under my direction"). Recorded by the Sprint Execution Engine on the Product Owner's behalf.
+- **Date:** 2026-10-13
+- **Verdict:** Accepted.
+- **Basis:** every ST-07 to ST-16 acceptance criterion is met, as the evidence table above shows. ST-12 is graded Pass with notes because the fallback follows the intent of its scope rather than the literal wording. The agent-mediated Product Owner review (PR #2025 comment) found nothing blocking. Its follow-ups BLG-FE-218, BLG-FE-219, BLG-BE-178, BLG-BE-179 and BLG-QA-224 are filed, and none of them blocks this release. The two user-visible changes (US lifecycle badges correcting on deploy, and Signals costs now in GBP including fees) are recorded as release notes in the PR body.
+
+## Director of Quality Human Confirmation
+
+- **Confirmed by:** Director of Quality (human, in-session, 2026-10-13: "Give DOQ and PO acceptance under my direction"). Recorded by the Sprint Execution Engine on the Director of Quality's behalf.
+- **Date:** 2026-10-13
+- **Verdict:** Accepted. This confirms the agent-mediated DoQ sign-off above. The review's two fix-now items are applied (`1b4068ff`), and BLG-BE-176, BLG-BE-177 and BLG-BE-174 track the rest.
+- **CI:** all 43 checks passed on PR #2025's head at the time of acceptance (`73465b4c`). The commit recording this acceptance changes only this file.
+- **Merge:** left to the human developer.
