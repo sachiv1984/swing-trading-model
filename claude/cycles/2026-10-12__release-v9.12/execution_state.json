@@ -233,8 +233,8 @@
     "EPIC-02": {
       "status": "done",
       "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 2025,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-12__release-v9.12/qa_evidence_EPIC-02.md",
       "test_scenarios": [
@@ -1426,7 +1426,8 @@
     "2026-10-13T09:15:52Z: ESC-EXEC-20261013-02 resolved and DEL-20261013-02 unblocked post-merge (ST-06 AC 2 run record; ST-01 final-code staging check via costed journal-summary claude_audit_log row). Production and staging count queries returned identical results (1 row, $0.001628), disclosed in DEL-20261013-02.",
     "2026-10-13 EPIC-06 ST-39: a .claude/skills/lessons_learnt.md commit-check lesson (2026-04-28) says to open a PR after every exec-branch push; not applied, because execution_prompt.md §3.2.B forbids opening a PR before the DoQ sign-off Date is set.",
     "2026-10-13 EPIC-06 PR #2023 merged by the human Product Owner at 2026-10-13T14:44:32Z (merge commit ccce1fc3). STEP 4 orphaned post-merge commit check: none. STEP 4 step 3c sibling sync: no other EPIC branch exists yet (EPIC-02..05 not started), so nothing to propagate.",
-    "2026-10-13 EPIC-05 PR #2024 merged by the human Product Owner at 2026-10-13T17:15:51Z (merge commit a35aaffe). STEP 4 orphaned post-merge commit check: none (origin/main..origin/exec/2026-10-12__release-v9.12/EPIC-05 is empty). STEP 4 step 3c sibling sync: no pending EPIC branch exists yet (EPIC-02..04 not started), so nothing to propagate."
+    "2026-10-13 EPIC-05 PR #2024 merged by the human Product Owner at 2026-10-13T17:15:51Z (merge commit a35aaffe). STEP 4 orphaned post-merge commit check: none (origin/main..origin/exec/2026-10-12__release-v9.12/EPIC-05 is empty). STEP 4 step 3c sibling sync: no pending EPIC branch exists yet (EPIC-02..04 not started), so nothing to propagate.",
+    "2026-10-13 EPIC-02 PR #2025 opened. Agent-mediated Director of Quality and Product Owner review (user-directed) posted as one PR comment, labelled agent-mediated (OA-6): both Approved with Comments, 0 blocking. Fix-now in 1b4068ff; backlog BLG-BE-176..179, BLG-FE-218/219, BLG-QA-224 in c005a5dc. Merge left to the human."
   ],
   "sealed": false,
   "sealed_utc": null
