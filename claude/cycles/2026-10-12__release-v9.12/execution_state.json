@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T07:26:11Z",
+  "last_updated_utc": "2026-10-13T07:39:17Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -22,7 +22,20 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-12__release-v9.12/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_journal_summary_uuid_trade_ids.py",
+        "tests/test_ai_audit_service.py",
+        "tests/test_rate_limit_endpoints.py",
+        "tests/test_briefing_actions_and_cash_context.py",
+        "tests/test_ai_prompt_template_golden_fixtures.py",
+        "tests/test_ai_stop_time_check.py",
+        "tests/test_ai_stop_recalculation_time.py",
+        "tests/test_claude_audit_log_prompt_hash.py",
+        "tests/test_run_ai_output_boundary_sample_audit.py",
+        "tests/test_monthly_pnl_narrative.py",
+        "tests/test_daily_cost_counts_claude_calls.py",
+        "tests/test_daily_cost_alert.py"
+      ],
       "stories": {
         "ST-01": {
           "title": "Accept UUID trade IDs in the journal summary, end to end",
@@ -46,70 +59,83 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.engine_commit_pushed",
           "sign_off_record": null,
-          "notes": "Engine-written code, test and docs (AC 3, AC 4 doc half). Live migration and staging run delegated: DEL-20261013-01."
+          "notes": "Engine-written code, test and docs (AC 3, AC 4 doc half). Live migration and staging run delegated: DEL-20261013-01. Engine commit ae6ade40ef6b74931c3a525a9e045bab6c6917df (2026-10-13T07:27:38Z) pushed; commit_sha is set when the delegation unblocks."
         },
         "ST-02": {
           "title": "Drop briefing actions that name a ticker outside the context",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1975,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8f83d7e9b3fba97cdcffcdd18469290c4db7d4ed",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-13T07:32:41Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing",
+            "tests/test_briefing_actions_and_cash_context.py",
+            "tests/fixtures/ai_prompt_template_golden_fixtures.json"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1: actions naming a ticker outside open positions/context signals dropped and logged (test_unknown_ticker_enter_is_dropped_and_logged). AC2: golden fixtures pass with BRIEFING_PROMPT_VERSION v1.3 (combined ST-02/ST-03 bump per sprint_backlog.md ST-02 Notes)."
         },
         "ST-03": {
           "title": "Label available cash and starting capital separately in the briefing context",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1976,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8f83d7e9b3fba97cdcffcdd18469290c4db7d4ed",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-13T07:32:41Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing",
+            "tests/test_briefing_actions_and_cash_context.py",
+            "tests/fixtures/ai_prompt_template_golden_fixtures.json"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1: context reads \"available cash £X; starting capital £Y\", starting capital omitted when 0/None, no \"of £\". AC2: golden fixtures pass with the combined v1.3 bump. Chat context wording (\"of £Y initial capital\") is outside this AC and unchanged."
         },
         "ST-04": {
           "title": "Check that briefing and chat responses citing a stop include its recalculation time",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1977,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8f83d7e9b3fba97cdcffcdd18469290c4db7d4ed",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-13T07:32:41Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing",
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat",
+            "scripts/run_ai_output_boundary_sample_audit.py",
+            "tests/test_ai_stop_time_check.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": {
             "role": "AI Compliance & Governance Officer",
             "method": "agent_mediated",
@@ -117,49 +143,57 @@
             "signed_utc": "2026-10-13T07:25:55Z",
             "notes": "Failure-action ruling: (A) append the time from context combined with (B) log and count. Approved first pass with 8 binding conditions. ESC-EXEC-20261013-01."
           },
-          "notes": "Reclassified delegated_decision -> autonomous after the AI Compliance & Governance Officer failure-action ruling (ESC-EXEC-20261013-01, resolved 2026-10-13)."
+          "notes": "Reclassified delegated_decision -> autonomous after the AI Compliance & Governance Officer failure-action ruling (ESC-EXEC-20261013-01, resolved 2026-10-13). Ruling ESC-EXEC-20261013-01 (A+B, 8 conditions) implemented. AC1: TestDetection. AC2: TestBriefing/TestChat (exact note, unchanged model text, no duplicate, warning log, compliance_check_result, raw sampling, fail-open). AC3: scan_stop_time_missing() in the boundary-sample audit, own [STOP-TIME-MISSING] count, exit code unaffected."
         },
         "ST-05": {
           "title": "Widen the monthly P&L narrative's instrument-directive scan to inflected and indirect wording",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1978,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "a9b9dd28a969b736c3f39a04121a49d86ccb622f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-13T07:33:35Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/qa/ai_s13_boundary_test_suite.md#Scenario B-MPN-04 — No instrument directives in output",
+            "tests/test_monthly_pnl_narrative.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1-3: 8 inflected/indirect positives, 5 past-tense negatives; representative output and fallback still clean. AC4: tests/test_monthly_pnl_narrative.py passes (92 passed, 4 skipped with test_monthly_pnl_narrative_db.py)."
         },
         "ST-06": {
           "title": "Make the daily AI cost alert count Claude calls",
           "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
+          "status": "blocked_backend",
+          "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1979,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-01",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20261013-02",
+          "blocked_since_utc": "2026-10-13T07:36:52Z",
+          "unblock_criteria": "(1) Any external scheduler confirmed or ruled out; (2) one successful ai-daily-cost-check.yml run ID and date after EPIC-01 reaches main, recorded in ai_endpoints.md \"Last successful run\" and qa_evidence_EPIC-01.md.",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/check-daily-cost",
+            ".github/workflows/ai-daily-cost-check.yml",
+            "docs/ops/ai_monthly_pnl_narrative_cost_estimate_2026-10-08.md",
+            "tests/test_daily_cost_counts_claude_calls.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.engine_commit_pushed",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Engine commit 7bfcfb281eaa11c50b0c8be12706bc723ebfb84d (2026-10-13T07:38:48Z): AC1 (pytest) and AC3 (cost-estimate correction) met; AC2 scheduler named (new ai-daily-cost-check.yml; none existed). AC2 last-successful-run half delegated: DEL-20261013-02 (can only run once on main)."
         }
       }
     },
@@ -1103,9 +1137,15 @@
   },
   "blocked_items": [],
   "delegated_items": [
-    "ST-01"
+    "ST-01",
+    "ST-06"
   ],
-  "completed_items": [],
+  "completed_items": [
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05"
+  ],
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [],

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-12 (session — 2 new item(s) added: BLG-GOV-386, BLG-FE-217, from post-ship closure 2026-10-08__release-v9.11 §6 rows 7 and 9); prior — 2026-10-12 (groom backlog post-ship closure 2026-10-08__release-v9.11 — 45 items archived: 43 v9.11 shipped items plus BLG-GOV-362 and BLG-OPS-180, both bannered ✅ COMPLETE at the 2026-10-07 closure); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — 43 shipped items marked ✅ COMPLETE (ST-01–ST-43); Phase 4 additions confirmed present (BLG-BE-162, BLG-AI-10, BLG-QA-219, BLG-QA-220, BLG-BE-156); no stale parked items); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (session — 1 new item added: BLG-AI-14, from Sprint Execution ST-03 / EPIC-01, 2026-10-12__release-v9.12); prior — 2026-10-12 (session — 2 new item(s) added: BLG-GOV-386, BLG-FE-217, from post-ship closure 2026-10-08__release-v9.11 §6 rows 7 and 9); prior — 2026-10-12 (groom backlog post-ship closure 2026-10-08__release-v9.11 — 45 items archived: 43 v9.11 shipped items plus BLG-GOV-362 and BLG-OPS-180, both bannered ✅ COMPLETE at the 2026-10-07 closure); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5122,5 +5122,27 @@ The CLAUDE.md §8 merge of `main` (EPIC-06, PR #1971) into EPIC-05 (`3237cb5e`) 
 **Acceptance Criteria**
 - On the System Status page, no `/reports/*` endpoint appears under "Other".
 - A Playwright test asserting the grouping passes in CI.
+
+---
+
+### BLG-AI-14 — AI chat context: label available cash and starting capital separately (as ST-03 did for the briefing)
+**Priority:** P4 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Sprint Execution, ST-03 / EPIC-01, cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.13
+
+**Problem**
+ST-03 (`BLG-AI-12`) relabelled the daily-briefing context to "available cash £X; starting capital £Y", omitting starting capital when it is 0, because "cash £X of £{initial_cash}" was read as a target cash level. `ai_chat()` in `backend/services/ai_service.py` still renders "Cash: £X of £{initial_cash} initial capital". On staging, where `initial_cash` is 0, that reads "of £0 initial capital", which carries the same risk of misreading. ST-03's AC covered the briefing only.
+
+**Scope**
+- Apply the same labelling to the chat context (reuse `_briefing_cash_line()` or an equivalent helper)
+- Bump `CHAT_PROMPT_VERSION` if the golden-fixture procedure requires it, and update `tests/fixtures/ai_prompt_template_golden_fixtures.json`
+- Update the context list in `docs/specs/api_contracts/ai_endpoints.md` §POST /ai/chat
+
+**Acceptance Criteria**
+- The chat context no longer uses "of £{initial_cash}", and omits starting capital when it is 0
+- Golden-fixture and chat tests pass with any recorded prompt-version bump
 
 ---
