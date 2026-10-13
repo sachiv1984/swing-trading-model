@@ -202,10 +202,12 @@ def get_positions_with_prices() -> List[Dict]:
         # Display ticker without .L suffix
         display_ticker = pos['ticker'].replace('.L', '') if pos['market'] == 'UK' else pos['ticker']
         
-        # Determine status
+        # Determine status. ST-13 (BLG-BE-149, v9.12): on native P&L, the same test
+        # position_state uses (native price above native entry), so FX movement
+        # cannot make the Risk page and the lifecycle badge disagree.
         if grace_period:
             display_status = GRACE
-        elif pnl_gbp > 0:
+        elif pnl_native > 0:
             display_status = PROFITABLE
         else:
             display_status = LOSING

@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.11.0
-**Last Updated:** 2026-10-13 (ST-10, EPIC-02, v9.12, BLG-BE-159 — POST /portfolio/position rejects a supplied stop_price with 400); prior — 2026-10-08 (ST-13, EPIC-02, v9.11, BLG-BE-155 — GET /portfolio positions gain native-currency stop_distance_pct); prior — 2026-10-08 (ST-12, EPIC-02, v9.11, BLG-BE-153 — holding_days computed live from entry_date); prior history retained — see prior entries in version control
+**Version:** 2.11.1
+**Last Updated:** 2026-10-13 (ST-13, EPIC-02, v9.12, BLG-BE-149 — `display_status` basis stated: native P&L, matching `position_state`); prior — 2026-10-13 (ST-10, EPIC-02, v9.12, BLG-BE-159 — POST /portfolio/position rejects a supplied stop_price with 400); prior — 2026-10-08 (ST-13, EPIC-02, v9.11, BLG-BE-155 — GET /portfolio positions gain native-currency stop_distance_pct); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -132,6 +132,8 @@ The position objects returned here are a **summary shape**. Key omissions versus
 **`current_price`** is always expressed in GBP, regardless of the instrument's native currency. For US positions, the live USD price is converted to GBP using `live_fx_rate` at time of call. If the live price fetch fails, `current_price` is the last stored native price (`positions.current_price`, or the native entry price when none is stored) converted at `live_fx_rate`, and `price_is_stale` is `true`. There is no FX estimate: the previous fallback, which multiplied a US stored price below 500 by a hard-coded 1.38, was removed in v9.11 (ST-10, BLG-BE-154).
 
 **`holding_days`** *(v9.11 — ST-12, BLG-BE-153)* is computed on every call as calendar days from `entry_date` to today (0 on the entry day), not read from the stored `positions.holding_days` column, which only changes when a stop recompute writes the row. `grace_period`, `grace_days_remaining` and `display_status` all follow from it, so a position whose 10th calendar day has arrived is post-grace here even if the stored column still says 9, matching `GET /positions`' lifecycle state.
+
+**`display_status`** *(v2.11.1 — ST-13, BLG-BE-149)*: `GRACE` before day 10; after that `PROFITABLE` when native P&L is above 0 and `LOSING` otherwise. Native P&L is `(current native price − native entry) × shares`, where the native entry is `fill_price` for US positions (else `entry_price × fx_rate`) and `entry_price` for UK. FX movement never changes the status, so the Risk page agrees with the lifecycle badge (`position_state`, `position_endpoints.md`) for every position.
 
 **`stop_distance_pct`** *(number or null, v9.11 — ST-13, BLG-BE-155)* is `(current price − current stop) / current price × 100` computed in the **native currency** (USD for US, GBP for UK), rounded to 2 d.p. It moves with price, not FX: deriving it from the GBP `current_price` (live FX) and `current_stop` (entry FX) would mix two rates. `null` when there is no current stop or no price. Negative when the price is below the stop. The Risk Dashboard's Stop Dist % column shows this value (`risk_dashboard.md` §6.2).
 
@@ -659,6 +661,7 @@ Errors use the standard error envelope from **conventions.md**.
 | 2.9.2 | 2026-10-08 | ST-12 (EPIC-02, v9.11, BLG-BE-153): `holding_days` on `GET /portfolio` is computed live from `entry_date`, so `grace_period` and `display_status` no longer lag the stored column. No shape change. |
 | 2.10.0 | 2026-10-08 | ST-13 (EPIC-02, v9.11, BLG-BE-155): `GET /portfolio` position objects gain `stop_distance_pct`, computed in native currency. A position with a null `current_stop` no longer fails the request. |
 | 2.11.0 | 2026-10-13 | ST-10 (EPIC-02, v9.12, BLG-BE-159): `POST /portfolio/position` rejects a non-null `stop_price` with `400` (it was accepted and silently ignored; the stored stop has always been `entry − 5 × ATR`). Removed from the request example and optional fields; added to validation rules and errors. Strategy Rules & System Intent Owner ruling ESC-EXEC-20261013-06. |
+| 2.11.1 | 2026-10-13 | ST-13 (EPIC-02, v9.12, BLG-BE-149): `display_status` basis stated (native P&L, the same test as `position_state`). The code now reads `pnl_native`, and a US row with a NULL `fill_price` takes its native entry as `entry_price × fx_rate`. The sign is unchanged where `fill_price` is set. No shape change. |
 
 ---
 

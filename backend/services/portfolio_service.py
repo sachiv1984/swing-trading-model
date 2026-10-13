@@ -122,7 +122,7 @@ def get_portfolio_summary() -> Dict:
                 # treated a US price below 500 as GBP and multiplied it by a
                 # hard-coded constant. The position is flagged price_is_stale.
                 print(f"   ⚠️  Live price unavailable for {pos['ticker']}; using stored native price")
-                native_entry = (pos.get('fill_price') or pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
+                native_entry = (pos.get('fill_price') or pos['entry_price'] * (pos.get('fx_rate') or live_fx_rate)) if pos['market'] == 'US' else pos['entry_price']
                 current_price_native = pos.get('current_price') or native_entry
                 price_is_stale = True
 
@@ -141,7 +141,12 @@ def get_portfolio_summary() -> Dict:
             total_positions_value_gbp += current_value_gbp
 
             # Calculate P&L
-            entry_price = pos.get('fill_price', pos['entry_price']) if market == 'US' else pos['entry_price']
+            # ST-13 (BLG-BE-149, v9.12): native entry. entry_price is GBP for every
+            # market, so a US row with a NULL fill_price converts it back.
+            if market == 'US':
+                entry_price = pos.get('fill_price') or pos['entry_price'] * (pos.get('fx_rate') or live_fx_rate)
+            else:
+                entry_price = pos['entry_price']
             pnl_native = (current_price_native - entry_price) * shares
 
             if market == 'US':
@@ -174,9 +179,10 @@ def get_portfolio_summary() -> Dict:
             # stored column, which lags until the next stop recompute writes it.
             holding_days = live_holding_days(pos)
 
+            # ST-13 (BLG-BE-149, v9.12): on native P&L, matching position_state.
             if holding_days < GRACE_PERIOD_DAYS:
                 display_status = GRACE
-            elif pnl_gbp > 0:
+            elif pnl_native > 0:
                 display_status = PROFITABLE
             else:
                 display_status = LOSING
