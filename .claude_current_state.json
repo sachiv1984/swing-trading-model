@@ -1,10 +1,10 @@
 {
   "active_cycle": "2026-10-12__release-v9.12",
   "cycle_name": "v9.12 — Journal Summary Fix, Stop & Sizing Correctness, Trade Entry Preview",
-  "status": "Sprint_Planning_Complete",
-  "prior_status": "Design_Gate_Passed",
-  "engine": "Sprint Planning",
-  "last_updated_utc": "2026-10-13T07:00:36Z",
+  "status": "Executing",
+  "prior_status": "Sprint_Planning_Complete",
+  "engine": "Sprint Execution",
+  "last_updated_utc": "2026-10-13T07:26:11Z",
   "execution_state_path": "claude/cycles/2026-10-12__release-v9.12/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-10-12__release-v9.12/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -222,6 +222,19 @@
       "resolved_utc": "2026-10-07T12:20:35Z",
       "resolved_by": "Head of Specs Team (agent-mediated per execution_prompt.md §5.3, user-directed 2026-10-07)",
       "resolution_summary": "Option (a) narrowed: release_planning_prompt.md v2.60 — §7 gate-field carve-out; §1.3a bounds (Gate criteria field + dated note only, date-lapsed items read this run, same underlying condition on re-gate, ACs listed not edited, every edit disclosed). Also settles v9.10 RP Friction Item 3 (no AC edits)."
+    },
+    "ESC-EXEC-20261013-01": {
+      "cycle": "2026-10-12__release-v9.12",
+      "summary": "ST-04/EPIC-01 - AI Compliance & Governance Officer ruling on the stop-time check's failure action",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "AI Compliance & Governance Officer",
+      "raised_utc": "2026-10-13T07:25:00Z",
+      "sla_due_utc": "2026-10-14T07:25:00Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-13T07:25:55Z",
+      "resolved_by": "AI Compliance & Governance Officer (agent-mediated, execution_prompt.md §5.3)",
+      "resolution_summary": "(A) append the time from context combined with (B) log and count; 8 binding conditions. See claude/cycles/2026-10-12__release-v9.12/execution_escalations.md."
     }
   },
   "deferred_escalations": {
