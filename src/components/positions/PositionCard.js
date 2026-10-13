@@ -38,7 +38,7 @@ function GapRiskCardBadge({ gapRisk, ticker, positionId }) {
       aria-describedby={descId}
       aria-label={`Gap risk flag: ${reasonText}, average gap ${statText}`}
       className="inline-flex items-center w-fit text-xs px-2 py-0.5 rounded-full font-medium text-white"
-      style={{ backgroundColor: "#D97706" }}
+      style={{ backgroundColor: "#B45309" }}
       data-testid="gap-risk-badge"
     >
       GAP RISK

@@ -41,6 +41,18 @@
 
 const { test, expect } = require('@playwright/test');
 
+// v9.12 ST-24 (BLG-FE-210): axe color-contrast scoped to one badge.
+const AxeBuilder = require('@axe-core/playwright').default;
+async function expectNoContrastViolation(page, selector) {
+  // Wait out finite CSS/JS animations (dialog open, colour transitions), so axe
+  // reads settled colours rather than a mid-fade frame.
+  await page.waitForFunction(() => document.getAnimations()
+    .every((a) => a.playState !== 'running' || a.effect?.getTiming().iterations === Infinity));
+  await page.waitForTimeout(200);
+  const results = await new AxeBuilder({ page }).include(selector).withRules(['color-contrast']).analyze();
+  expect(results.violations).toEqual([]);
+}
+
 const API = 'http://localhost:8000';
 
 // ---------------------------------------------------------------------------
@@ -356,6 +368,9 @@ test.describe('ST-10 — Trade plan status badges and abandonment UI', () => {
     await page.getByPlaceholder(/min 10 characters/i).fill('Setup invalidated by market conditions shift');
     const submitBtn = page.getByRole('button', { name: /abandon plan/i }).last();
     await expect(submitBtn).toBeEnabled();
+    // v9.12 ST-24 (BLG-FE-210): the enabled Abandon Plan button is white on amber-700.
+    await expect(page.getByRole('button', { name: /^abandon plan$/i }).last()).toHaveCSS('background-color', 'rgb(180, 83, 9)'); // amber-700 actually renders
+    await expectNoContrastViolation(page, 'button[class*="bg-amber-700"]');
   });
 
   test('SC-E03-15b: Reason under 10 characters shows the canonical validation error text and colour token (ST-21, EPIC-04, v8.3, BLG-SPEC-108)', async ({ page }) => {

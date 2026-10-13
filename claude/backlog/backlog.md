@@ -5765,3 +5765,47 @@ ST-21 moved the frontend display mirror of the `strategy_rules.md` §11 paramete
 - `settings.md` names `src/constants/strategy.js`, and no canonical spec under `docs/specs/` names `src/lib/strategyParameters.js`
 
 ---
+
+### BLG-FE-220 — Fix the Strategy Benchmark Rebalance badge's contrast and settle tinted vs filled exit-reason badges
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-24/EPIC-03, cycle `2026-10-12__release-v9.12` (v9.12 design gate observation, `design_gate.md` line ~142, filed at execution per `sprint_backlog.md` Outstanding Actions) — 2026-10-13
+**Effort:** XS (<1h plus test updates)
+**Provisional-Target:** TBD
+
+**Problem**
+On the Strategy Benchmark Trade Log, the Rebalance exit badge is `bg-teal-600 text-white`, about 3.7:1, below WCAG AA for its small text. ST-24 moved the Risk-Off badge on the same table to `bg-amber-700` (5.02:1) but did not touch teal, which is outside its amber scope. `strategy_benchmark.md` §7 also describes tinted exit-reason badges, while the shipped table uses filled ones.
+
+**Scope**
+- Decide tinted vs filled badges with the Head of UX & Design, and align `strategy_benchmark.md` §7 and `src/pages/StrategyBenchmark.js`
+- Move Rebalance to a passing token (e.g. `bg-teal-700`, measured first)
+- Update `tests/e2e/strategy-benchmark.spec.js` SC-SB-04a's `bg-teal-600` assertion and add a scoped axe color-contrast check
+
+**Acceptance Criteria**
+- Every exit-reason badge on the Trade Log passes a scoped axe color-contrast scan in both themes
+- `strategy_benchmark.md` §7 matches the shipped badge style
+
+---
+
+### BLG-FE-221 — A coloured className on `<Button>` never renders: Button's default bg-primary wins
+**Priority:** P2 (Medium)
+**Type:** Frontend / Accessibility
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** ST-24/EPIC-03, cycle `2026-10-12__release-v9.12` — 2026-10-13 (found by ST-24's scoped axe scan of the Trade Plan "Abandon Plan" button)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`src/lib/utils.js` `cn()` is plain `clsx`, with no `tailwind-merge`, so a `<Button className="bg-emerald-600 …">` keeps the default variant's `bg-primary` as well. In the built CSS `.bg-primary` comes after every colour `bg-*` utility (e.g. `.bg-amber-700` at offset ~26.7k, `.bg-emerald-600` ~29.1k, `.bg-primary` ~30.4k), and the same holds for `hover:bg-primary/90`, so the custom colour never shows. The Trade Plan "Abandon Plan" button rendered `#fafafa` behind white text in dark mode (contrast 1.04:1). ST-24 fixed that one button with `!bg-amber-700 hover:!bg-amber-800`. Other `<Button>`s with a colour fill and no `variant` override are affected the same way, for example `src/pages/Screener.js` (lines ~333 and ~1065, `bg-emerald-600`) and `src/pages/TradePlans.js` (~385, `bg-rose-600`).
+
+**Scope**
+- Fix at the root: add `tailwind-merge` to `cn()` (the shadcn default), or give coloured buttons a variant with no background; then remove ST-24's `!` workaround
+- Audit every `<Button>` with a colour `bg-*` className and confirm each renders its intended fill
+- Add a Playwright `toHaveCSS('background-color', …)` or scoped axe check for at least the affected buttons
+
+**Acceptance Criteria**
+- Every `<Button>` with a colour `bg-*` className renders that colour (asserted for the listed sites)
+- No `!bg-` workaround remains for this cause
+
+---

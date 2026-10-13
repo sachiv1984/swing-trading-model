@@ -23,8 +23,8 @@ const EXIT_REASON_BADGE = {
   Stop:             { label: 'Stop',      cls: 'bg-red-600 text-white' },
   stop:             { label: 'Stop',      cls: 'bg-red-600 text-white' },
   trailing_stop:    { label: 'Stop',      cls: 'bg-red-600 text-white' },
-  'Risk-Off':       { label: 'Risk-Off',  cls: 'bg-amber-600 text-white' },
-  risk_off:         { label: 'Risk-Off',  cls: 'bg-amber-600 text-white' },
+  'Risk-Off':       { label: 'Risk-Off',  cls: 'bg-amber-700 text-white' },
+  risk_off:         { label: 'Risk-Off',  cls: 'bg-amber-700 text-white' },
   Rebalance:        { label: 'Rebalance', cls: 'bg-teal-600 text-white' },
   exit_rebalance:   { label: 'Rebalance', cls: 'bg-teal-600 text-white' },
 };
