@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-13 (session — 4 new items added from Sprint Execution EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-196, BLG-SPEC-197, BLG-QA-223 (ST-34 drift triage), BLG-SPEC-198 (ST-38 ruling condition C2)); prior — 2026-10-13 (session — 2 new items added from the PR #2023 review, EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-388, BLG-QA-222); prior — 2026-10-13 (session — 1 new item added from Sprint Execution EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-387, from the ST-44 PMO Lead observation); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (session — 1 new item added from the PR #2024 review, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-199); prior — 2026-10-13 (session — 4 new items added from Sprint Execution EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-196, BLG-SPEC-197, BLG-QA-223 (ST-34 drift triage), BLG-SPEC-198 (ST-38 ruling condition C2)); prior — 2026-10-13 (session — 2 new items added from the PR #2023 review, EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-388, BLG-QA-222); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5491,5 +5491,26 @@ DS-17's `idx_positions_open_ticker_entry_date_unique` was confirmed live in prod
 - `metrics_definitions.md` Position Risk names `fill_price` (US) or `entry_price` (UK) as the native entry, with a version bump
 - The dictionary's §5.2 and the `pnl` row state the same FX basis and fee treatment as the code that produces the displayed figure, or a code change brings the code to the spec with Data Model & Domain Schema Owner sign-off
 - The decision is recorded with its rationale
+
+---
+
+### BLG-SPEC-199 — Align the positions data dictionary's nullability with data_model.md v2.60
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** PR #2024 agent-mediated Director of Quality review (EPIC-05, cycle `2026-10-12__release-v9.12`) — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-34 (v9.12) corrected `data_model.md` §2's Fields table to say `holding_days`, `pnl`, `pnl_pct`, `status`, `created_at` and `updated_at` are nullable (each has a `DEFAULT` but no `NOT NULL`, in the documented `CREATE TABLE` and live). It also corrected `risk_off_exit` to `NOT NULL DEFAULT FALSE`. `data_model_positions_dictionary.md` (v0.4) still marks all six as `NO` (rows at lines ~79–111) and has no `risk_off_exit` row. The two canonical documents now disagree on these columns. Separately, `docs/specs/si02_gap_analysis.md:108` still derives risk as `(entry_price − initial_stop) × shares` "in native currency", but `positions.entry_price` is GBP (ST-38); for US positions the native entry is `fill_price`.
+
+**Scope**
+- Set the six dictionary rows' Nullable to `YES`, with the same "DEFAULT but no NOT NULL" note `data_model.md` v2.60 uses, and add a `risk_off_exit` row (`NOT NULL DEFAULT FALSE`). Dictionary version bump.
+- Correct `si02_gap_analysis.md`'s risk derivation to use `fill_price` for US positions (or add a dated correction note, if that document is treated as historical)
+
+**Acceptance Criteria**
+- For every positions column, the dictionary's Nullable value equals `data_model.md` §2's
+- No spec describes `positions.entry_price` as native currency for US positions (`metrics_definitions.md` Position Risk is handled under BLG-SPEC-198)
 
 ---
