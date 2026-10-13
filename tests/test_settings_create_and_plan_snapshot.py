@@ -18,7 +18,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
-from tests._real_database import real_database_imports  # noqa: E402
+from tests._real_database import load_real_database, real_database_imports  # noqa: E402
 
 with real_database_imports():
     from fastapi.testclient import TestClient  # noqa: E402
@@ -28,6 +28,12 @@ with real_database_imports():
 from strategy_parameters import GRACE_PERIOD_DAYS, INITIAL_ATR_MULTIPLIER, PROFIT_ATR_MULTIPLIER  # noqa: E402
 
 CLIENT = TestClient(main.app, raise_server_exceptions=False)
+
+# A private copy of the real database module. main may already have been
+# imported under conftest's stub by an earlier test file (its create_settings
+# is then a MagicMock), so the route's create_settings is patched to this
+# copy's real function rather than relying on import order.
+REAL_DB = load_real_database("database_real_for_test_settings_create")
 
 STRATEGY_COLUMNS = ("min_hold_days", "atr_period", "atr_multiplier_initial", "atr_multiplier_trailing")
 
@@ -54,7 +60,8 @@ class _RecordingDb:
 
 def _post_settings(body):
     db = _RecordingDb()
-    with patch.dict(main.create_settings.__globals__, {"get_db": db}):
+    with patch.object(main, "create_settings", REAL_DB.create_settings), \
+         patch.object(REAL_DB, "get_db", db):
         response = CLIENT.post("/settings", json=body)
     return response, db.executed
 

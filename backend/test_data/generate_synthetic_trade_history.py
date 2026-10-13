@@ -142,7 +142,9 @@ def _create_and_close(base_url, trade, requests_module):
         "entry_date": trade["entry_date"],
         "shares": trade["shares"],
         "entry_price": trade["entry_price"],
-        "stop_price": trade["stop_price"],
+        # No stop_price: POST /portfolio/position rejects one with 400 since ST-10
+        # (BLG-BE-159, v9.12); the system sets the initial stop. trade["stop_price"]
+        # is still used below for the R calculation.
         "entry_note": trade["entry_note"],
     }, timeout=30)
     if not pos_resp.ok or pos_resp.json().get("status") != "ok":

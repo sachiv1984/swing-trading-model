@@ -22,6 +22,7 @@
  *   SC-TS-04  Positive difference: no apply control, read-only note, no stop-write request
  *   SC-TS-05  Negative difference: no-raise note, no "Lower stop" label
  *   SC-TS-06  Close button and Escape dismiss the modal
+ *   SC-TS-07  Zero difference (trail_difference = 0): no-raise note shown (spec: <= 0)
  *
  * Infrastructure: page.route() network interception — no live backend required.
  * ROUTING NOTE: App uses HashRouter. ALL navigation via page.goto('/#/Positions')
@@ -276,7 +277,8 @@ test.describe('ST-03 — Trail Stop modal', () => {
     await page.locator('[title="View Trail"]').click();
     const dialog = page.getByRole('dialog');
     await expect(dialog).toBeVisible({ timeout: 5000 });
-    await expect(dialog.locator('dd').filter({ hasText: '$' + trailData.atr_trail_stop.toFixed(2) })).toBeVisible({ timeout: 5000 });
+    // .first(): with a zero difference the Current Stop and ATR Trail Stop cells show the same value.
+    await expect(dialog.locator('dd').filter({ hasText: '$' + trailData.atr_trail_stop.toFixed(2) }).first()).toBeVisible({ timeout: 5000 });
     return dialog;
   }
 
@@ -303,6 +305,12 @@ test.describe('ST-03 — Trail Stop modal', () => {
       'The ATR trail stop is at or below your current stop. Stops never move down (§7.3), so there is nothing to apply.'
     );
     await expect(dialog.getByText(/lower stop/i)).toHaveCount(0);
+    await expect(dialog.getByRole('button', { name: /raise stop|update stop|lower stop/i })).toHaveCount(0);
+  });
+
+  test('SC-TS-07: zero difference shows the no-raise note', async ({ page }) => {
+    const dialog = await openTrailModal(page, { current_stop: 760.00, atr_trail_stop: 760.00, trail_difference: 0, trail_r_terms: 0 });
+    await expect(dialog.getByTestId('trail-stop-no-raise-note')).toBeVisible();
     await expect(dialog.getByRole('button', { name: /raise stop|update stop|lower stop/i })).toHaveCount(0);
   });
 
