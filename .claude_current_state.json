@@ -248,6 +248,29 @@
       "resolved_utc": "2026-10-13T09:15:52Z",
       "resolved_by": "Infrastructure & Operations Owner (user, in-session): dispatched ai-daily-cost-check.yml and supplied production/staging evidence",
       "resolution_summary": "Run 38374258055 succeeded against production at 90099bec; request_count 0 correct (only row today written 09:12:10, after the run); post-merge journal-summary claude_audit_log row $0.001628. DEL-20261013-02 Unblocked."
+    },
+    "ESC-EXEC-20261013-03": {
+      "cycle": "2026-10-12__release-v9.12",
+      "summary": "ST-43/EPIC-06 - Head of Specs Team + Product Owner ruling on reduced-roster idea-intake windows (BLG-GOV-364); HoST position (agent-mediated): option B, permit with a no-two-consecutive cap, pending human PO confirmation",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Head of Specs Team; Product Owner",
+      "raised_utc": "2026-10-13T09:21:40Z",
+      "sla_due_utc": "2026-10-14T09:21:40Z",
+      "blocks_execution": false,
+      "disposition": "Open"
+    },
+    "ESC-EXEC-20261013-04": {
+      "cycle": "2026-10-12__release-v9.12",
+      "summary": "ST-44/EPIC-06 - Director of HR + PMO Lead approval of the split-credit tally method (BLG-GOV-372, RISK-06 named-file write)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Director of HR; PMO Lead",
+      "raised_utc": "2026-10-13T09:21:40Z",
+      "sla_due_utc": "2026-10-14T09:21:40Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-13T09:31:30Z",
+      "resolved_by": "Director of HR + PMO Lead (agent-mediated, execution_prompt.md §5.3)",
+      "resolution_summary": "Both Approved with 5 binding conditions (canonical '; ' split, qualifier strip, dedupe, unmatched-token warnings; raw tally stays primary for §7.2; rightmost Split-Credit Top Role column + per-cycle sub-tables; back-fill 6 cycles with raw columns byte-identical; split/conservation tests). ST-44 implemented at 5fb078ea on exec/2026-10-12__release-v9.12/EPIC-06."
     }
   },
   "deferred_escalations": {
