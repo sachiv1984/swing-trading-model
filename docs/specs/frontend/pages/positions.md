@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.18
-**Last Updated:** 2026-10-13 (ST-10, EPIC-02, v9.12, BLG-BE-159 — §Trail Stop Action: Branch B ruled, read-only "View Trail"; Branch A deleted); prior — 2026-10-13 (ST-35, EPIC-05, v9.12, BLG-SPEC-179 — §Gap Risk Badge: confirmed the data source is `GET /positions/{position_id}/gap-risk` and stated that `gap_risk.*` names the endpoint's `data` object, not a `GET /positions` field); prior — 2026-10-12 (v9.12 design gate — ST-10/BLG-BE-159: §Trail Stop Action conditional on the manual-stop ruling; ST-15/BLG-FE-202: §Frozen Stop Indicator; ST-22/BLG-FE-207: §Position Deep Link; ST-24/BLG-FE-210: Gap Risk and AI Advisory badges to amber-700); prior history retained — see prior entries in version control
+**Version:** 2.19
+**Last Updated:** 2026-10-13 (ST-14, EPIC-02, v9.12, BLG-BE-148 — §Gap Risk Badge: next trading session is the next NYSE session on the US market date); prior — 2026-10-13 (ST-10, EPIC-02, v9.12, BLG-BE-159 — §Trail Stop Action: Branch B ruled, read-only "View Trail"; Branch A deleted); prior — 2026-10-13 (ST-35, EPIC-05, v9.12, BLG-SPEC-179 — §Gap Risk Badge: confirmed the data source is `GET /positions/{position_id}/gap-risk` and stated that `gap_risk.*` names the endpoint's `data` object, not a `GET /positions` field); prior history retained — see prior entries in version control
 **Design Source (v9.11 additions):** docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md
 **Design Source (v9.10 additions):** docs/design/2026-10-06__release-v9.10/stop-cell-provenance/decision_record.md, docs/design/2026-10-06__release-v9.10/exit-condition-surfacing/decision_record.md, docs/design/2026-10-06__release-v9.10/lifecycle-badge-grace-calendar-days/decision_record.md, docs/design/2026-10-06__release-v9.10/gap-risk-trigger-label-alignment/decision_record.md
 **Design Source (v8.2 additions):** docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md
@@ -26,6 +26,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.19 | 2026-10-13 | v9.12 sprint execution (ST-14, EPIC-02, BLG-BE-148): §Gap Risk Badge and §Gap Risk Reason Labels — "next trading day" is the next NYSE session on the US market date (Revised Ruling 3, `ESC-EXEC-20261013-07`). Label text unchanged. |
 | 2.18 | 2026-10-13 | v9.12 sprint execution (ST-10, EPIC-02, BLG-BE-159): §Trail Stop Action — the Strategy Rules & System Intent Owner ruled Branch B (ESC-EXEC-20261013-06: no manual stop change). Branch A ("Raise stop to …", `PATCH /positions/{id}/stop`) and the conditional note are deleted. The button is "View Trail", and the modal is read-only with the no-raise note. |
 | 2.17 | 2026-10-13 | v9.12 sprint execution (ST-35, BLG-SPEC-179): §Gap Risk Badge — data source confirmed as `GET /positions/{position_id}/gap-risk` (already corrected at 2.14); the trigger line now says `gap_risk.*` refers to that endpoint's `data` object and that `GET /positions` has no `gap_risk` field. The v6.9 UX spec's §9 API Dependency row was corrected to match (`ux_spec.md` v1.2). Documentation only. |
 | 2.16 | 2026-10-12 | v9.12 design gate. (ST-10, BLG-BE-159) §Trail Stop Action rewritten: no control may propose a lower stop (§7.3); a no-raise note when `trail_difference ≤ 0`; Branch A (manual raise permitted: "Raise stop to …" via `PATCH /positions/{id}/stop`, ratchet-validated) or Branch B (read-only, button renamed "View Trail"), pending the ruling. The story deletes the branch not taken. (ST-15, BLG-FE-202) New §Frozen Stop Indicator from `stop_frozen_reason`: "Stop frozen · ATR unavailable" in amber, post-grace only. (ST-22, BLG-FE-207) New §Position Deep Link `?position={id}`: scroll, 2000 ms highlight, parameter stripped. (ST-24, BLG-FE-210) Gap Risk badge `#D97706` → `#B45309` and AI Advisor "Advisory" badge `bg-amber-600` → `bg-amber-700` (white text 3.19:1 → 5.02:1). Design sources: `docs/design/2026-10-12__release-v9.12/` (trail-stop-action, frozen-stop-indicator, grace-panel-position-link). Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
@@ -554,7 +555,7 @@ No alert: dash ("—").
 
 **Data source:** `GET /positions/{position_id}/gap-risk`, fetched per position (`src/hooks/useGapRisk.js`); server-computed from the DS-04 earnings calendar and historical OHLCV. (v9.10: corrected from "`gap_risk` object from `GET /positions`", which was never shipped.)
 
-Shown when the endpoint's `data.flagged` is `true` (this section writes the response's `data` object as `gap_risk`; `GET /positions` itself carries no `gap_risk` field). The only trigger is an earnings date that falls after today and on or before the position's next trading day, for a US position (v9.10 — ST-13 ruling, ST-14). The weekend-hold trigger was removed. See §Gap Risk Reason Labels below.
+Shown when the endpoint's `data.flagged` is `true` (this section writes the response's `data` object as `gap_risk`; `GET /positions` itself carries no `gap_risk` field). The only trigger is an earnings date that falls after today (the US market date) and on or before the next NYSE session, for a US position (v9.10 — ST-13 ruling, ST-14; v9.12 — ST-14, NYSE calendar). The weekend-hold trigger was removed. See §Gap Risk Reason Labels below.
 
 | Element | Spec |
 |---------|------|
@@ -580,7 +581,7 @@ Shown when the endpoint's `data.flagged` is `true` (this section writes the resp
 
 | `reasons` value | Label (Table and Grid View) |
 |-----------------|-----------------------------|
-| `earnings` | "Earnings due by next trading session". Shown for a US position when earnings fall after today and on or before the next trading day: tomorrow on Monday to Thursday, Monday on Friday to Sunday. Earnings today (day 0) are not flagged. UK positions are never flagged (ST-13 ruling; `strategy_rules.md` §4.2.3 is US-only). |
+| `earnings` | "Earnings due by next trading session". Shown for a US position when earnings fall after today and on or before the next NYSE session: usually tomorrow on Monday to Thursday and Monday on Friday to Sunday, and the day after an NYSE holiday when one intervenes (e.g. Tuesday on the Friday before a Monday holiday). Computed server-side (`position_endpoints.md` v2.15.0). Earnings today (day 0) are not flagged. UK positions are never flagged (ST-13 ruling; `strategy_rules.md` §4.2.3 is US-only). |
 | ~~`weekend_hold`~~ | Removed (v9.10 ST-14 disposition: trigger removed). The value and label are gone, and the enum shrank in `position_endpoints.md` v2.12.0 / `openapi.yaml` 3.22.0. |
 
 Tooltip structure, `aria-label` pattern, colour, stacking and clearing are unchanged.

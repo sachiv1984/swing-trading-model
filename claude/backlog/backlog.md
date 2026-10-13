@@ -5098,6 +5098,33 @@ In `generate_narrative` (`backend/services/monthly_pnl_narrative_service.py`), i
 
 ---
 
+### BLG-BE-174 — Gap-risk weekend statistic: pick it by the exchange calendar and count ordinary weekends
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** ST-14 (EPIC-02, cycle `2026-10-12__release-v9.12`), Strategy Rules & System Intent Owner ruling ESC-EXEC-20261013-07 (non-binding recommendations, verified by the engine) — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Three defects in the gap-risk statistic and earnings date, outside ST-14's scope lock (binding condition 8):
+1. `_compute_gap_stats` (`backend/services/gap_risk_service.py`) classifies a gap as a weekend gap only when `(cur_date − prev_date).days > 3`. A Friday-to-Monday gap is exactly 3 days, so ordinary weekends fall into the overnight set and the "weekend" set holds only 4+ day closures, contrary to the function's docstring.
+2. `get_gap_risk` chooses the weekend statistic with `today.weekday() >= 4`. That ignores the NYSE calendar ST-14 introduced: for example, a Thursday view before Good Friday shows the overnight statistic.
+3. `earnings_service.py` converts `earningsTimestamp` with `datetime.utcfromtimestamp(...).date()`, so a release after about 20:00 ET (19:00 EST) rolls to the next date.
+
+**Scope**
+- Classify a gap as multi-day when it spans one or more non-session days, using the ST-14 calendar
+- Select the statistic by whether the next session follows a non-session day
+- Convert the earnings timestamp to the America/New_York date
+- Re-confirm Binding Condition 4 (retrospective statistic only) in the §13 record's next addendum, if the statistic's definition changes
+
+**Acceptance Criteria**
+- A Friday-to-Monday gap is counted in the weekend set (unit test)
+- A Thursday view before Good Friday uses the weekend statistic (unit test)
+- An `earningsTimestamp` of 21:00 ET maps to that ET date (unit test)
+
+---
+
 ### BLG-BE-175 — Exiting a US position with a NULL fill_price fails in the P&L arithmetic
 **Priority:** P3 (Low)
 **Type:** Backend / Robustness
