@@ -49,35 +49,19 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
-# Evict stub modules other test files leave in sys.modules (conftest.py's
-# MagicMock stub covers "database"; test_alerts_service.py / test_formatting.py
-# / test_plan_vs_reality.py / test_trade_service.py replace "utils.formatting"
-# and/or "utils" with stubs) — same defensive pattern as
-# test_signal_write_sanitization.py / test_api_contracts.py.
-#
-# utils.formatting must be evicted (not just loaded separately) because
 # generate_rebalance_exit_signals() does its own LOCAL
 # `from utils.formatting import decimal_to_float` at call time (see
-# services/signal_service.py) — this re-resolves sys.modules["utils.formatting"]
-# on every call regardless of any patch.object() applied to the
-# services.signal_service module's own attribute, so eviction is the only way
-# to guarantee the real implementation is what actually executes. Evicting
-# "utils" (the package) forces backend/utils/__init__.py to re-run too, which
-# itself does `from .pricing import (...)` — so "utils.pricing" must be
-# evicted as well, or that import silently reuses a stale stub left by
-# another test file and breaks with an ImportError.
+# services/signal_service.py), which resolves sys.modules["utils.formatting"]
+# on every call. That is always the real module now: utils stubs are scoped to
+# their own imports and conftest.py fails any file that leaves one installed
+# (ST-46, BLG-QA-209), so the former utils.* evictions here are gone.
 # services.signal_service itself is intentionally left untouched (see module
 # docstring) since create_rebalance_exit_signal IS a true module-global lookup
 # there (no local shadowing) and patch.object works correctly for it.
 #
 # "database" is NOT evicted (ST-14, BLG-QA-190): the real create_rebalance_exit_signal
 # comes from a private copy of backend/database.py instead, so conftest's
-# sys.modules["database"] stub stays in place for every later test file. The
-# utils.* evictions above recover from stubs other files leave behind (tracked
-# separately as BLG-QA-209) and are unchanged.
-sys.modules.pop("utils.formatting", None)
-sys.modules.pop("utils.pricing", None)
-sys.modules.pop("utils", None)
+# sys.modules["database"] stub stays in place for every later test file.
 
 from tests._real_database import load_real_database  # noqa: E402
 

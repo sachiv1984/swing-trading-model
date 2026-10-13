@@ -23,16 +23,9 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
-# test_alerts_service.py installs a fake types.ModuleType("utils") stub and
-# replaces sys.modules["utils.calculations"] with a MagicMock stub at
-# collection time (alphabetically earlier, per its own ST-25/BLG-QA-105
-# docstring). Evict both the submodule and the parent stub so Python
-# re-imports the real utils package (backend/utils/) and binds the fee
-# functions below to the real implementation rather than the MagicMock —
-# same pattern already used by tests/test_nightly_computations.py and
-# tests/test_trailing_stop_breakeven_floor.py for the same reason.
-sys.modules.pop("utils.calculations", None)
-sys.modules.pop("utils", None)
+# No sys.modules eviction needed (ST-46, BLG-QA-209): utils stubs are scoped to
+# their own imports and conftest.py fails any file that leaves one installed, so
+# the imports below always bind the real fee functions.
 
 from services.sizing_service import _floor_4dp  # noqa: E402
 from utils.calculations import (  # noqa: E402

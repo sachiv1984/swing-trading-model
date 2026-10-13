@@ -11,7 +11,6 @@ Database stub registered by tests/conftest.py (BLG-QA-20).
 """
 
 import sys
-import types
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -20,44 +19,15 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 
 # Database stub is registered by tests/conftest.py (BLG-QA-20).
 
-if "utils.pricing" not in sys.modules:
-    _pricing_stub = types.ModuleType("utils.pricing")
-    sys.modules["utils.pricing"] = _pricing_stub
-for _fn in ("check_market_regime", "get_current_price", "get_live_fx_rate", "calculate_atr"):
-    if not hasattr(sys.modules["utils.pricing"], _fn):
-        setattr(sys.modules["utils.pricing"], _fn, MagicMock())
-
-if "utils.calculations" not in sys.modules:
-    _calcs_stub = types.ModuleType("utils.calculations")
-    sys.modules["utils.calculations"] = _calcs_stub
-for _fn in (
-    "calculate_initial_stop", "calculate_trailing_stop", "calculate_position_pnl",
-    "calculate_holding_days", "calculate_uk_entry_fees", "calculate_us_entry_fees",
-    "calculate_uk_exit_fees", "calculate_us_exit_fees", "calculate_position_size",
-    "calculate_realized_pnl", "should_exit_position", "calculate_exit_proceeds",
-    "calculate_portfolio_pnl",
-):
-    if not hasattr(sys.modules["utils.calculations"], _fn):
-        setattr(sys.modules["utils.calculations"], _fn, MagicMock())
-
-if "utils.formatting" not in sys.modules:
-    _fmt_stub = types.ModuleType("utils.formatting")
-    sys.modules["utils.formatting"] = _fmt_stub
-if not hasattr(sys.modules["utils.formatting"], "decimal_to_float"):
-    sys.modules["utils.formatting"].decimal_to_float = MagicMock(side_effect=lambda x: x)
-
-# Register utils as a package with submodule attributes
-if "utils" not in sys.modules:
-    sys.modules["utils"] = types.ModuleType("utils")
-sys.modules["utils"].pricing = sys.modules["utils.pricing"]
-sys.modules["utils"].calculations = sys.modules["utils.calculations"]
-sys.modules["utils"].formatting = sys.modules["utils.formatting"]
-
-# ---------------------------------------------------------------------------
-# Import the module under test
-# ---------------------------------------------------------------------------
-
-from services.trade_service import get_trade_history_with_stats  # noqa: E402
+# ST-46 (BLG-QA-209, EPIC-06, v9.12): no utils.* stubs. This file used to
+# install module-level stubs for utils.pricing/calculations/formatting that
+# stayed in sys.modules for the rest of the session. They were guarded
+# ("if not in sys.modules"), so in the default order the real modules were
+# usually already loaded and the stubs never went in. The tests patch only
+# the two database reads below, and the real decimal_to_float passes floats
+# through. Tests patch the imported module object (patch.object).
+import services.trade_service as trade_service  # noqa: E402
+get_trade_history_with_stats = trade_service.get_trade_history_with_stats
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -103,8 +73,8 @@ class TestFeeDragFormula(unittest.TestCase):
         """Call get_trade_history_with_stats with one trade and return its fee_drag_pct."""
         trade = _make_trade(exit_fees=exit_fees, gross_proceeds=gross_proceeds)
         with (
-            patch('services.trade_service.get_portfolio', return_value=PORTFOLIO),
-            patch('services.trade_service.get_trade_history_with_stops', return_value=[trade]),
+            patch.object(trade_service, 'get_portfolio', return_value=PORTFOLIO),
+            patch.object(trade_service, 'get_trade_history_with_stops', return_value=[trade]),
         ):
             result = get_trade_history_with_stats()
         return result["trades"][0]["fee_drag_pct"]
@@ -166,8 +136,8 @@ class TestAvgFeeDragAggregation(unittest.TestCase):
 
     def _run(self, trades_raw):
         with (
-            patch('services.trade_service.get_portfolio', return_value=PORTFOLIO),
-            patch('services.trade_service.get_trade_history_with_stops', return_value=trades_raw),
+            patch.object(trade_service, 'get_portfolio', return_value=PORTFOLIO),
+            patch.object(trade_service, 'get_trade_history_with_stops', return_value=trades_raw),
         ):
             return get_trade_history_with_stats()
 
@@ -193,8 +163,8 @@ class TestAvgFeeDragAggregation(unittest.TestCase):
     def test_empty_trade_list(self):
         """No trades at all → avg_fee_drag_pct = None"""
         with (
-            patch('services.trade_service.get_portfolio', return_value=PORTFOLIO),
-            patch('services.trade_service.get_trade_history_with_stops', return_value=[]),
+            patch.object(trade_service, 'get_portfolio', return_value=PORTFOLIO),
+            patch.object(trade_service, 'get_trade_history_with_stops', return_value=[]),
         ):
             result = get_trade_history_with_stats()
         self.assertIsNone(result["avg_fee_drag_pct"])

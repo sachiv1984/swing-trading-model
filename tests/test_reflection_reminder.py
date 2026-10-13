@@ -38,15 +38,19 @@ _config_stub.TELEGRAM_CHAT_ID = ""
 _pricing_stub = types.ModuleType("utils.pricing")
 _pricing_stub.check_market_regime = MagicMock()
 _pricing_stub.get_current_price = MagicMock()
-_utils_stub = types.ModuleType("utils")
-_utils_stub.pricing = _pricing_stub
+# ST-46 (BLG-QA-209): scoped_stub_modules instead of patch.dict, and a stub utils package
+# whose unstubbed submodules (utils.calculations, ...) load from their real files. This
+# file used to get those from test_alerts_service.py's leaked stubs; and patch.dict
+# would evict numpy, first imported inside the block by the real utils.calculations.
+from tests._scoped_utils_stubs import scoped_stub_modules, stub_utils_package  # noqa: E402
+_utils_stub = stub_utils_package(pricing=_pricing_stub)
 
 _spec = _ilu.spec_from_file_location(
     "alerts_service_st04",
     Path(__file__).parent.parent / "backend" / "services" / "alerts_service.py",
 )
 alerts_service = _ilu.module_from_spec(_spec)
-with patch.dict(sys.modules, {"config": _config_stub, "utils": _utils_stub, "utils.pricing": _pricing_stub}):
+with scoped_stub_modules({"config": _config_stub, "utils": _utils_stub, "utils.pricing": _pricing_stub}):
     _spec.loader.exec_module(alerts_service)
 
 _evaluate = alerts_service._evaluate_reflection_reminders
