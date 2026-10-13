@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T15:33:58Z",
+  "last_updated_utc": "2026-10-13T15:36:55Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -942,24 +942,35 @@
         },
         "ST-38": {
           "title": "Settle positions.entry_price's currency in the specs",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
-          "assigned_to": "Data Model & Domain Schema Owner",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 2011,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "e19ae10c33232c92da875f1b780f74df34671c82",
           "delegation_record_id": null,
-          "blocked_since_utc": "2026-10-13T15:33:58Z",
+          "blocked_since_utc": null,
           "unblock_criteria": "Data Model & Domain Schema Owner decision (doc fix vs code fix) recorded in ESC-EXEC-20261013-05",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-13T15:36:45Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#2. Positions Table",
+            "docs/specs/data_model_positions_dictionary.md#5. Key Derivation Rules",
+            "docs/specs/data_model.md#DS-23 — Re-apply NOT NULL on positions.fees_paid (v2.46, 2026-10-05)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-10-13",
+            "reference": "ESC-EXEC-20261013-05",
+            "retries": 0
+          },
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261013-05 resolved (Data Model & Domain Schema Owner, agent-mediated, Approved with conditions C1-C3, all met). AC1: data_model.md §2, dictionary v0.4 and DS-23 all state entry_price GBP (value passed to database.create_position()). AC2: dictionary US total_cost = fill_price*shares/fx_rate + fees_paid, matching position_service.py (worked example 801.20). AC3: decision recorded in data_model.md §2 with sign-off. Staging US sample empty (0 US rows). BLG-SPEC-198 filed (C2). Deviation check: none; pnl code/spec divergence tracked as BLG-SPEC-198."
         }
       }
     },
@@ -1252,9 +1263,7 @@
       }
     }
   },
-  "blocked_items": [
-    "ST-38"
-  ],
+  "blocked_items": [],
   "delegated_items": [
     "ST-34"
   ],
@@ -1269,6 +1278,7 @@
     "ST-35",
     "ST-36",
     "ST-37",
+    "ST-38",
     "ST-39",
     "ST-40",
     "ST-41",

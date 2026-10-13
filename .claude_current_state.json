@@ -283,7 +283,10 @@
       "raised_utc": "2026-10-13T15:33:58Z",
       "sla_due_utc": "2026-10-14T15:33:58Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-13T15:36:45Z",
+      "resolved_by": "Data Model & Domain Schema Owner (agent-mediated, execution_prompt.md §5.3)",
+      "resolution_summary": "Approved with conditions: doc fix. positions.entry_price is GBP; fill_price is the native entry; user_fill_price is the broker fill. C1 dictionary rows plus §5.1/§5.2; C2 pnl live-FX/no-fee divergence filed as BLG-SPEC-198; C3 version bump. ST-38 reclassified autonomous."
     }
   },
   "deferred_escalations": {
