@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.28.0
-**Last Updated:** 2026-10-09 (ST-26, EPIC-04, v9.11, BLG-SPEC-174 — added AI Monthly P&L Narrative Usage: the generation count named as evidence for the 2027-01-03 AI feature usage review, BLG-GOV-382); prior — 2026-10-08 (ST-24, EPIC-04, v9.11, BLG-FEAT-60 — added AI Chat Engagement: sessions per week, questions per session, response acceptance rate); prior — 2026-09-30 (ST-31, EPIC-06, v9.8, BLG-GOV-339 — added Appendix F's PVR Measurement Package: Effort-Weighted PVR (backfilled + cross-validated for the last 5 windows), User-Protective/Hygiene D-Split definition, and Leading U-Pool Indicator definition; roadmap_prompt.md STEP 2.4/§7.1 unchanged, per BLG-GOV-339's own proposal-only restriction); prior history retained — see prior entries in version control
+**Version:** 1.29.0
+**Last Updated:** 2026-10-13 (ST-36, EPIC-05, v9.12, BLG-SPEC-181 — Trailing Stop Action Rate join and Position Risk data sources no longer cite the dropped `positions.stop_price` column); prior — 2026-10-09 (ST-26, EPIC-04, v9.11, BLG-SPEC-174 — added AI Monthly P&L Narrative Usage: the generation count named as evidence for the 2027-01-03 AI feature usage review, BLG-GOV-382); prior — 2026-10-08 (ST-24, EPIC-04, v9.11, BLG-FEAT-60 — added AI Chat Engagement: sessions per week, questions per session, response acceptance rate); prior history retained — see prior entries in version control
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -684,7 +684,7 @@ where:
 
 ### Data Sources
 - `positions.entry_price` — native currency
-- `positions.stop_price` — native currency
+- `positions.initial_stop` — native currency (the stop set at entry; the old `positions.stop_price` column was dropped by DS-24)
 - `positions.shares`
 - `positions.fx_rate` — GBP/USD rate at entry (1.0 for GBP positions)
 - `positions.market` — `"UK"` or `"US"` (determines fx_adjustment)
@@ -1107,7 +1107,7 @@ CREATE TABLE trailing_stop_recommendation_log (
 );
 ```
 
-The action-rate query joins each log row to the earliest `PATCH /positions/{id}` that set `stop_price >= recommended_stop` within the capture window — **24 hours from `recommended_at`, Product Owner-confirmed at v7.0 sprint planning (delegated authority, consistent with the `2026-07-10__release-v6.9` sign-off precedent)**. No separate PATCH-side capture table was needed: `positions.stop_price` (the current value) and `positions.updated_at` (set on every `update_position()` call) already provide the join target — `stop_price >= recommended_stop AND updated_at BETWEEN recommended_at AND recommended_at + INTERVAL '24 hours'`.
+The action-rate query joins each log row to the earliest `PATCH /positions/{id}` that set `current_stop >= recommended_stop` within the capture window — **24 hours from `recommended_at`, Product Owner-confirmed at v7.0 sprint planning (delegated authority, consistent with the `2026-07-10__release-v6.9` sign-off precedent)**. No separate PATCH-side capture table was needed: `positions.current_stop` (the live stop column) and `positions.updated_at` (set on every `update_position()` call) already provide the join target — `current_stop >= recommended_stop AND updated_at BETWEEN recommended_at AND recommended_at + INTERVAL '24 hours'`.
 
 **Still open (not part of ST-07's scope — capture only):** no dedicated `GET /analytics/...` endpoint computes and returns `trailing_stop_action_rate` yet; the join above is documented and computable ad hoc against the two tables, but exposing it as a first-class metric endpoint is separate follow-up work.
 
@@ -1126,7 +1126,7 @@ The rate itself is bounded by construction (`0.0`–`1.0`, or `null` per the Ret
 | Insufficient sample | Denominator (recommendations generated) `< 5` in the reporting window | Reading is not statistically meaningful — display as "insufficient data", do not treat as a genuine low/high rate |
 | Expected range (sufficient sample) | `0.05 ≤ rate ≤ 0.95` with denominator `≥ 5` | Normal operating range — no action needed |
 | Anomalously low | `rate < 0.05` with denominator `≥ 10` | Recommendations are being generated but essentially never applied — investigate UI friction on the confirm action or a possible mismatch between `recommended_stop` and what users are actually setting |
-| Anomalously high | `rate > 0.95` with denominator `≥ 10` | Near-universal application — plausible if the confirm flow is low-friction, but also consistent with the join over-matching (e.g. capture window too wide, or unrelated PATCHes coincidentally clearing the `stop_price >= recommended_stop` condition); spot-check a sample of joined rows before trusting the reading |
+| Anomalously high | `rate > 0.95` with denominator `≥ 10` | Near-universal application — plausible if the confirm flow is low-friction, but also consistent with the join over-matching (e.g. capture window too wide, or unrelated PATCHes coincidentally clearing the `current_stop >= recommended_stop` condition); spot-check a sample of joined rows before trusting the reading |
 | Stale capture | No new `trailing_stop_recommendation_log` row for `> 30 days` while ≥1 open position is `PROFITABLE`/`EXIT ZONE`-eligible | Capture pipeline likely broken (endpoint not being hit, or `log_trailing_stop_recommendation()` failing silently) — treat any rate computed after this point as unreliable until confirmed |
 | Capture window | Fixed at `24 hours` from `recommended_at` (Product Owner-confirmed, v7.0 planning) | Not itself a tolerance band, restated here for completeness — a PATCH landing after 24h is correctly excluded from the numerator, not a data quality issue |
 
@@ -1391,6 +1391,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-10-13 | 1.29.0 | ST-36 (EPIC-05, v9.12, BLG-SPEC-181): Trailing Stop Action Rate — the join condition and its anomaly note use `positions.current_stop`, the live stop column; `positions.stop_price` was dropped by DS-24 (`data_model.md`). Position Risk's data sources list `positions.initial_stop` (the entry stop the metric uses) instead of `stop_price`. No formula change. | Metrics Definitions & Analytics Owner |
 | 2026-10-09 | 1.28.0 | ST-26 (EPIC-04, v9.11, BLG-SPEC-174): Added AI Monthly P&L Narrative Usage. A generation is one completed request that stored a new summary (one terminal `claude_audit_log` row), not a model call. Defines the SQL query and three measures (generations, distinct months used, fallback rate); the months-used measure carries the Product Owner's success test. Named as evidence for the 2027-01-03 review (BLG-GOV-382). | Metrics Definitions & Analytics Owner |
 | 2026-10-08 | 1.27.0 | ST-24 (EPIC-04, v9.11, BLG-FEAT-60): Added AI Chat Engagement — chat session (30-minute gap) and three measures: sessions per week, questions per session, response acceptance rate (not yet instrumented; rating control filed as a backlog item). Baseline from the 2026-09-24 usage review. | Metrics Definitions & Analytics Owner |
 | 2026-09-30 | 1.26.0 | ST-31 (EPIC-06, v9.8, BLG-GOV-339): Added the PVR Measurement Package to Appendix F — (1) Effort-Weighted PVR, backfilled and cross-validated against `product_value_ratio_history.md`'s recorded counts for the last 5 windows (v7.5–v9.7), via new `scripts/compute_effort_weighted_pvr.py`; the two ratios diverge meaningfully in places (e.g. `v9.1–v9.5`: 0.046 story-count vs 0.021 effort-weighted, since that window's U-items ran disproportionately small); (2) a definitions-only user-protective vs. hygiene split of the `D` bucket, forward-looking, no historical re-tag; (3) a definitions-only "ungated build-and-ship U-pool" leading indicator, to be first computed at the next rebalance. `roadmap_prompt.md` STEP 2.4/§7.1 unchanged — `BLG-GOV-339`'s own scope note restricts any live tagging/computation change there to proposal-only pending Head of Specs Team + Product Owner sign-off. Metrics Definitions & Analytics Canonical Owner sign-off cleared 2026-09-30. | Metrics Definitions & Analytics Canonical Owner |

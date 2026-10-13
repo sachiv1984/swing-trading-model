@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-13 (session — 2 new items added from the PR #2023 review, EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-388, BLG-QA-222); prior — 2026-10-13 (session — 1 new item added from Sprint Execution EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-387, from the ST-44 PMO Lead observation); prior — 2026-10-13 (session — 10 new items added from Sprint Execution EPIC-01, 2026-10-12__release-v9.12: BLG-AI-14, BLG-SPEC-195, BLG-AI-15, and from the PR #2022 review BLG-AI-16 to BLG-AI-19, BLG-OPS-186, BLG-OPS-187, BLG-QA-221); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (session — 1 new item added from the BLG-SPEC-199 fix on PR #2024, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-200); prior — 2026-10-13 (session — 1 new item added from the PR #2024 review, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-199); prior — 2026-10-13 (session — 4 new items added from Sprint Execution EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-196, BLG-SPEC-197, BLG-QA-223 (ST-34 drift triage), BLG-SPEC-198 (ST-38 ruling condition C2)); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5400,5 +5400,141 @@ All the new SQL in EPIC-01 is verified only through mocks or a hand-written fake
 
 **Acceptance Criteria**
 - The Phase B tests pass in CI and fail if the casts or the table name are wrong
+
+---
+
+### BLG-SPEC-196 — Re-apply NOT NULL on positions.portfolio_id and positions.total_cost
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-34/EPIC-05, cycle `2026-10-12__release-v9.12` (drift-detector triage of BLG-SPEC-178, read-only staging reads authorised by the user) — 2026-10-13
+**Effort:** S (~0.5d; pre-check, migration and live confirmation in two environments)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model.md`'s `CREATE TABLE positions` declares `portfolio_id UUID NOT NULL` and `total_cost DECIMAL(12, 2) NOT NULL`, and its Fields table says both are not nullable. On live staging (2026-10-13), both columns are nullable, so a row without a portfolio or a cost basis can be written. Production has not been checked. The other 6 positions nullable mismatches from BLG-SPEC-178 finding 3 were documentation errors and were fixed in `data_model.md` v2.60; these 2 are genuine enforcement gaps.
+
+**Scope**
+- Read-only pre-check on staging and production: count rows where `portfolio_id IS NULL` or `total_cost IS NULL`
+- If both counts are 0, add a DS-xx migration (`ALTER TABLE positions ALTER COLUMN ... SET NOT NULL`, reversible) and apply it to staging, then production, per the DS-23 pattern
+- If any row is NULL, record the rows' origin and a backfill decision before migrating
+- Remove the "nullable on live staging" notes on both Fields rows once applied
+
+**Acceptance Criteria**
+- `information_schema.columns` reports `is_nullable = NO` for both columns in staging and production, with the output recorded in the DS-xx Live Confirmation
+- `scripts/check_data_model_drift.py` no longer reports either column as a nullable mismatch
+
+---
+
+### BLG-SPEC-197 — Apply DS-17's open-position unique index to staging
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-34/EPIC-05, cycle `2026-10-12__release-v9.12` (drift-detector triage of BLG-SPEC-178, read-only staging reads authorised by the user); BLG-SPEC-178 finding 1 — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+DS-17's `idx_positions_open_ticker_entry_date_unique` was confirmed live in production on 2026-09-23, but it does not exist on staging (`pg_indexes`, 2026-10-13). The staging reset workflow (`reset-and-seed-staging.yml`) clears data but never applies DS-17, so staging has not had the index since it was introduced. Staging therefore accepts duplicate open positions that production rejects, and staging tests cannot catch a regression in the duplicate guard.
+
+**Scope**
+- Run DS-17's duplicate pre-check on staging, then its Up Migration
+- Record the staging Live Confirmation in DS-17
+- Decide whether `reset-and-seed-staging.yml`'s migrate step should also apply DS-17 (`CREATE UNIQUE INDEX IF NOT EXISTS`) so a future staging rebuild keeps it
+
+**Acceptance Criteria**
+- `pg_indexes` on staging lists `idx_positions_open_ticker_entry_date_unique` with DS-17's definition
+- DS-17 records the staging confirmation alongside the production one
+
+---
+
+### BLG-QA-223 — Stop check_data_model_drift.py reading index names from rollback blocks
+**Priority:** P4 (Trivial)
+**Type:** QA / Test Tooling
+**Owner:** QA & Testing Owner; Data Model & Domain Schema Owner
+**Source:** ST-34/EPIC-05, cycle `2026-10-12__release-v9.12` (drift-detector triage of BLG-SPEC-178, read-only staging reads authorised by the user); BLG-SPEC-178 finding 5 — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`scripts/check_data_model_drift.py` collects every `CREATE INDEX` name in `data_model.md`, including those inside "Reversible:" and Down Migration blocks. A rollback that recreates a superseded index is then reported as a missing live index. `idx_trade_plans_ticker` (replaced by `idx_trade_plans_ticker_upper` in v2.22) is reported on every run for this reason. Each run therefore needs the same false positive to be ruled out by hand.
+
+**Scope**
+- Exclude SQL inside blocks introduced by `Reversible:` or under a `Down Migration` heading from index and CHECK-constraint name parsing
+- Add a unit test with a fixture containing a rollback-only index name
+- Keep each run's `--json` output (for example, a dated file under `docs/ops/` committed with the triage that uses it), so later triage can name every finding. The v9.9 run kept no output, which left 3 of finding 5's 11 names unidentifiable at ST-34 (v9.12; agent-mediated Director of Quality review, condition C1)
+
+**Acceptance Criteria**
+- Running the detector against `data_model.md` no longer reports `idx_trade_plans_ticker`
+- A unit test fails if a rollback-only index name is reported again
+- The detector's documented usage, or the triage procedure, says where a run's `--json` output is kept, and the next triage cites it
+
+---
+
+### BLG-SPEC-198 — Open-position pnl: code uses the live FX rate and does not deduct fees; the dictionary says entry-time FX, fees deducted
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner; Metrics Definitions & Analytics Owner
+**Source:** ST-38/EPIC-05, cycle `2026-10-12__release-v9.12` — Data Model & Domain Schema Owner ruling on `ESC-EXEC-20261013-05`, condition C2 (agent-mediated, §5.3) — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model_positions_dictionary.md` §5.2 (v0.4) defines open-position `pnl` for US positions as `(current_price − fill_price) × shares / fx_rate − fees_paid`, using the **entry-time** `fx_rate`. The live computation in `backend/services/portfolio_service.py` (around lines 141–146) divides native P&L by `live_fx_rate` and does not subtract `fees_paid`, and `utils/calculations.py`'s `calculate_position_pnl()` takes a `live_fx_rate` too. Spec and code therefore disagree on both the FX rate and the fee deduction, so a reader of the dictionary cannot reproduce the displayed unrealised P&L. ST-38 corrected only the entry-price currency in these formulas.
+
+**Scope**
+- Decide which is canonical, including whether currency movement since entry belongs in unrealised P&L. Check `metrics_definitions.md` and the Positions/Portfolio frontend specs for the displayed definition
+- Align the losing side. A code change that alters displayed P&L needs a design pass
+- Also correct `metrics_definitions.md` Position Risk's data sources. They still label `positions.entry_price` "native currency", which contradicts the GBP ruling (ST-38, v9.12). For US positions the native entry is `fill_price`; the formula `(entry − stop)` must not mix GBP `entry_price` with the native `initial_stop` (agent-mediated Director of Quality review of EPIC-05, condition C2)
+
+**Acceptance Criteria**
+- `metrics_definitions.md` Position Risk names `fill_price` (US) or `entry_price` (UK) as the native entry, with a version bump
+- The dictionary's §5.2 and the `pnl` row state the same FX basis and fee treatment as the code that produces the displayed figure, or a code change brings the code to the spec with Data Model & Domain Schema Owner sign-off
+- The decision is recorded with its rationale
+
+---
+
+### BLG-SPEC-199 — Align the positions data dictionary's nullability with data_model.md v2.60
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** PR #2024 agent-mediated Director of Quality review (EPIC-05, cycle `2026-10-12__release-v9.12`) — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Resolved (2026-10-13, PR #2024, before merge):** fixed on the EPIC-05 branch at the user's request. The dictionary is now v0.5: the six Nullable values match `data_model.md` v2.60 and there is a `risk_off_exit` row. `si02_gap_analysis.md` is now v1.1, with the US risk derivation using `fill_price`. Not fixed here: `metrics_definitions.md` Position Risk (BLG-SPEC-198), and 11 newer columns still missing from the dictionary (listed in its v0.5 coverage note).
+
+**Problem**
+ST-34 (v9.12) corrected `data_model.md` §2's Fields table to say `holding_days`, `pnl`, `pnl_pct`, `status`, `created_at` and `updated_at` are nullable (each has a `DEFAULT` but no `NOT NULL`, in the documented `CREATE TABLE` and live). It also corrected `risk_off_exit` to `NOT NULL DEFAULT FALSE`. `data_model_positions_dictionary.md` (v0.4) still marks all six as `NO` (rows at lines ~79–111) and has no `risk_off_exit` row. The two canonical documents now disagree on these columns. Separately, `docs/specs/si02_gap_analysis.md:108` still derives risk as `(entry_price − initial_stop) × shares` "in native currency", but `positions.entry_price` is GBP (ST-38); for US positions the native entry is `fill_price`.
+
+**Scope**
+- Set the six dictionary rows' Nullable to `YES`, with the same "DEFAULT but no NOT NULL" note `data_model.md` v2.60 uses, and add a `risk_off_exit` row (`NOT NULL DEFAULT FALSE`). Dictionary version bump.
+- Correct `si02_gap_analysis.md`'s risk derivation to use `fill_price` for US positions (or add a dated correction note, if that document is treated as historical)
+
+**Acceptance Criteria**
+- For every positions column, the dictionary's Nullable value equals `data_model.md` §2's
+- No spec describes `positions.entry_price` as native currency for US positions (`metrics_definitions.md` Position Risk is handled under BLG-SPEC-198)
+
+---
+
+### BLG-SPEC-200 — Add the 11 missing positions columns to the positions data dictionary
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** BLG-SPEC-199 fix on PR #2024 (EPIC-05, cycle `2026-10-12__release-v9.12`), user request — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model_positions_dictionary.md` (v0.5) does not describe 11 `positions` columns that `data_model.md` §2 documents: `user_fill_price`, `position_state`, `state_entered_at`, `state_history`, `stop_calculated_at`, `atr_calculated_at`, `active_atr_multiplier`, `atr_source`, `stop_calculation_source`, `strategy_version_at_entry`, `last_reviewed_at`. Its v0.5 coverage note sends readers to `data_model.md` for them. The dictionary is meant to be the canonical per-field reference, so readers have to consult two documents. It also still carries an `exit_note` row for a column that does not exist live, kept only for traceability.
+
+**Scope**
+- Add a dictionary row for each of the 11 columns (SQL type, Nullable, description), taken from `data_model.md` §2 and its DS-xx migration sections, in the matching §3.x subsection
+- Decide whether to remove the `exit_note` row or keep it as a marked historical row
+- Remove the v0.5 coverage note once every column is listed; version bump
+
+**Acceptance Criteria**
+- Every column in `data_model.md` §2's Fields table has a dictionary row, with the same type and Nullable value
+- The dictionary lists no column that `data_model.md` §2 does not, other than an explicitly marked historical row
 
 ---

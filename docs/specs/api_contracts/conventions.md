@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.4
-**Last Updated:** 2026-09-08 (v1.4 — §14.4 cross-references the new deprecated_endpoint_sunset_tracker.md, ST-43/EPIC-05/v9.2)
+**Version:** 1.5
+**Last Updated:** 2026-10-13 (v1.5 — §12.1 lists DELETE /trade-plans/{id} and DELETE /ticker-universe/{ticker} as named exceptions to the DELETE envelope, ST-33/EPIC-05/v9.12); prior — 2026-09-08 (v1.4 — §14.4 cross-references the new deprecated_endpoint_sunset_tracker.md, ST-43/EPIC-05/v9.2); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## 1. Authentication & Authorization
@@ -242,6 +242,17 @@ Successful `DELETE` operations return HTTP 200 with the standard success envelop
 - `id` echoes the identifier of the deleted record.
 - DELETE endpoints are **non-idempotent**: a second call to the same resource returns `404 Not Found`.
 
+### 12.1 Named exceptions
+
+These DELETE endpoints return a success envelope without the `data.deleted`/`data.id` object. In each case the contract and the live route agree, and the shape is kept as is because existing clients already read it. The `404`-on-repeat rule above still applies to both.
+
+| Endpoint | Success body (HTTP 200) | Contract |
+|---|---|---|
+| `DELETE /trade-plans/{id}` | `{"status": "ok", "message": "Trade plan deleted"}` | `trade_plan_endpoints.md` §DELETE /trade-plans/{id} |
+| `DELETE /ticker-universe/{ticker}` | `{"status": "ok"}` (soft delete: sets `active=FALSE`) | `ticker_universe_api_contract.md` §DELETE /ticker-universe/{ticker} |
+
+A new DELETE endpoint follows the standard envelope above. Adding an endpoint to this table needs API Contracts & Documentation Owner sign-off.
+
 ---
 
 ## 14. API Endpoint Deprecation-Window Policy
@@ -286,5 +297,6 @@ A deprecation-window policy exception (shorter notice, or removal without a depr
 
 | Date | Version | Summary |
 |---|---|---|
+| 2026-10-13 | 1.5 | Added §12.1 Named exceptions: `DELETE /trade-plans/{id}` (`{status, message}`) and `DELETE /ticker-universe/{ticker}` (`{status}`) keep their documented, live-verified envelopes; new DELETE endpoints use the standard one (ST-33, EPIC-05, v9.12, BLG-SPEC-176) |
 | 2026-09-08 | 1.4 | §14.4 cross-references the new `deprecated_endpoint_sunset_tracker.md` as the live "pending sunset" register (ST-43, EPIC-05, v9.2, BLG-SPEC-119) |
 | 2026-08-06 | 1.3 | Added §14 API Endpoint Deprecation-Window Policy — genuinely new policy, no endpoint has ever been formally deprecated (ST-20, EPIC-04, v8.3, BLG-SPEC-96) |
