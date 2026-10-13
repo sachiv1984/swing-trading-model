@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.235
-**Last Updated:** 2026-10-13 (Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-41 (BLG-GOV-363) — execution_prompt.md v3.85→v3.86); prior — 2026-10-13 (Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-40 (BLG-GOV-386) — release_planning_prompt.md v2.61→v2.62); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 STEP 8 — execution_prompt.md v3.84→v3.85, delivery_verification_prompt.md v3.14→v3.15 and post_ship_closure.md v2.39→v2.40, immediate lessons-learnt actions); prior history retained — see prior entries in version control
+**Version:** 4.236
+**Last Updated:** 2026-10-13 (Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-42 (BLG-GOV-367) — roadmap_prompt.md v9.32→v9.33); prior — 2026-10-13 (Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-41 (BLG-GOV-363) — execution_prompt.md v3.85→v3.86); prior — 2026-10-13 (Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-40 (BLG-GOV-386) — release_planning_prompt.md v2.61→v2.62); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -398,7 +398,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.32) + `claude/system/roadmap_prompt_appendix.md` (STEP 9 onward, plus detailed rationale for the core's compacted rules)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.33) + `claude/system/roadmap_prompt_appendix.md` (STEP 9 onward, plus detailed rationale for the core's compacted rules)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1377,7 +1377,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.235 |
+| Version | 4.236 |
 | Last Updated | 2026-10-13 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.11 |
@@ -1391,7 +1391,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Shared Lock Recovery Procedure | `claude/system/shared/lock_recovery_procedure.md` v1.0 |
 | Shared Preflight Common Checks | `claude/system/shared/preflight_common.md` v1.1 |
 | Shared Publish Gate | `claude/system/shared/publish_gate.md` v1.1 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.32 (+ `roadmap_prompt_appendix.md`) |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.33 (+ `roadmap_prompt_appendix.md`) |
 | Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.62 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.22 |
@@ -1518,6 +1518,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.236 | 2026-10-13 | **Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-42 (BLG-GOV-367) — roadmap_prompt.md v9.32→v9.33.** ST-42 (BLG-GOV-367): §7.1 names the pooled Skill-Silo method; method-break note restates the last 4 readings (99.0/87.4/84.8/91.2%, directions unchanged); compute_rebalance_diagnostics.py labels method: pooled and gains --silo-history. Source-prompt header and §14 row updated; §14 self-row and header 4.235→4.236. |
 | 4.235 | 2026-10-13 | **Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-41 (BLG-GOV-363) — execution_prompt.md v3.85→v3.86.** ST-41 (BLG-GOV-363): §9.2 references scripts/check_execution_state_consistency.py as the mechanical read-back for items (2)–(5) plus commit_sha/completed_utc on done stories. Source-prompt header and §14 row updated; §14 self-row and header 4.234→4.235. |
 | 4.234 | 2026-10-13 | **Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-40 (BLG-GOV-386) — release_planning_prompt.md v2.61→v2.62.** ST-40 (BLG-GOV-386): §1.3a reads the new "gating item shipped — verify" scan list alongside the date-lapsed list; dispositions recorded in run_manifest.md; not a clearance, and the gate-field edit carve-out is not extended. Source-prompt header and §14 row updated; §14 self-row and header 4.233→4.234. |
 | 4.233 | 2026-10-12 | **Post-ship closure `2026-10-08__release-v9.11` STEP 8, immediate lessons-learnt actions — 3 source prompts bumped.** `execution_prompt.md` v3.84→v3.85: ESCALATION HANDLING SUBROUTINE and §7 mirror each `ESC-EXEC-*` record into `.claude_current_state.json.open_escalations` (LL-v9.11-P3-02); §9.2 read-back item (5) for the EPIC `qa_signed_off`/`status` pair after a DoQ sign-off (LL-v9.11-P3-03). `delivery_verification_prompt.md` v3.14→v3.15: STEP 2.1 found-defect severity rule for `Pass_with_deviation` (LL-v9.11-P4-01). `post_ship_closure.md` v2.39→v2.40: STEP 0 Audit Cadence Check modulo condition suppressed when `last_audit_cycle_count` equals `completed_cycle_count` (LL-v9.11-Closure-01). §8, §9 and §10 source-prompt headers and §14 Execution / Verification / Post-Ship Closure rows updated; §14 self-row and header 4.232→4.233. |

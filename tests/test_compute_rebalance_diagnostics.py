@@ -4,7 +4,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
-from compute_rebalance_diagnostics import parse_cycles, pvr_diagnostic, skill_silo_diagnostic  # noqa: E402
+from compute_rebalance_diagnostics import parse_cycles, pvr_diagnostic, skill_silo_diagnostic, skill_silo_history  # noqa: E402
 
 FIXTURE = """\
 ## v3.0 — Fixture Cycle C — 2026-01-03
@@ -84,3 +84,27 @@ def test_real_changelog_reproduces_cited_pvr_figure():
     assert result["window_cycles"][-1].endswith("release-v9.4")
     assert (result["U"], result["G"], result["D"], result["P"], result["total"]) == (16, 41, 109, 4, 170)
     assert result["user_value_ratio"] == 0.094
+
+
+def test_skill_silo_uses_pooled_method_not_plain_mean():
+    """ST-42 (BLG-GOV-367): roadmap_prompt.md §7.1 names the pooled method.
+    Cycles C (4 stories, 3 governance = 75%) and B (3 stories, 1 governance =
+    33.3%) pool to 4/7 = 57.1%, whereas the plain mean would be 54.2%."""
+    result = skill_silo_diagnostic(parse_cycles(FIXTURE), window=2)
+    assert result["method"] == "pooled"
+    assert result["governance_pct"] == 57.1
+    assert result["governance_pct"] != round((75.0 + 100 / 3) / 2, 1)
+
+
+def test_real_changelog_restated_skill_silo_readings_are_pooled():
+    """ST-42: the four readings restated in roadmap_prompt.md §7.1's method-break
+    note (v9.3-v9.5 97/98, v9.5-v9.7 90/103, v9.6-v9.8 84/99, v9.7-v9.9 93/102)."""
+    changelog = Path(__file__).resolve().parent.parent / "docs" / "product" / "changelog.md"
+    cycles = parse_cycles(changelog.read_text())
+    start = next(i for i, c in enumerate(cycles) if c["cycle"].endswith("release-v9.9"))
+    history = skill_silo_history(cycles[start:], window=3, readings=5)
+    by_newest = {h["window_cycles"][0].split("release-")[1]: h for h in history}
+    expected = {"v9.9": (93, 102, 91.2), "v9.8": (84, 99, 84.8), "v9.7": (90, 103, 87.4), "v9.5": (97, 98, 99.0)}
+    for newest, (gov, total, pct) in expected.items():
+        h = by_newest[newest]
+        assert (h["G"] + h["D"] + h["P"], h["total"], h["governance_pct"]) == (gov, total, pct), newest
