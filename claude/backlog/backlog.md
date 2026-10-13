@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-13 (session — 2 new items added: BLG-AI-14, BLG-SPEC-195, from Sprint Execution EPIC-01 (ST-03; ST-06 DoQ review), 2026-10-12__release-v9.12); prior — 2026-10-12 (session — 2 new item(s) added: BLG-GOV-386, BLG-FE-217, from post-ship closure 2026-10-08__release-v9.11 §6 rows 7 and 9); prior — 2026-10-12 (groom backlog post-ship closure 2026-10-08__release-v9.11 — 45 items archived: 43 v9.11 shipped items plus BLG-GOV-362 and BLG-OPS-180, both bannered ✅ COMPLETE at the 2026-10-07 closure); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (session — 3 new items added: BLG-AI-14, BLG-SPEC-195, BLG-AI-15, from Sprint Execution EPIC-01 (ST-03; ST-06 DoQ review; ST-01 staging run), 2026-10-12__release-v9.12); prior — 2026-10-12 (session — 2 new item(s) added: BLG-GOV-386, BLG-FE-217, from post-ship closure 2026-10-08__release-v9.11 §6 rows 7 and 9); prior — 2026-10-12 (groom backlog post-ship closure 2026-10-08__release-v9.11 — 45 items archived: 43 v9.11 shipped items plus BLG-GOV-362 and BLG-OPS-180, both bannered ✅ COMPLETE at the 2026-10-07 closure); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5165,5 +5165,29 @@ ST-03 (`BLG-AI-12`) relabelled the daily-briefing context to "available cash £X
 **Acceptance Criteria**
 - The contract describes only model selection that exists in code
 - A test pins the cost rates to the model used, or the contract states the endpoint is Haiku-only
+
+---
+
+### BLG-AI-15 — Journal summary: add an output-language scan so summaries cannot suggest trading changes
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Sprint Execution, ST-01 / EPIC-01 staging run (cycle `2026-10-12__release-v9.12`), user-confirmed in-session — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.13
+
+**Problem**
+The first working staging journal summary (2026-10-13, after the ST-01 fix) ended with "...limits visibility into whether setups are working, or if stop placements need adjustment". That is borderline advisory wording about the user's stops. `scan_prescriptive` and `scan_prediction` do not flag it. Unlike the post-trade debrief and the monthly P&L narrative, `POST /ai/journal-summary` runs no output-language check at all: the prompt's "Do not make investment recommendations" is its only control. Until v9.12 every request failed with 422, so this went unnoticed.
+
+**Scope**
+- Add a post-generation language check to `summarise_journal_notes()`, reusing the debrief / monthly-narrative pattern (prescriptive scan, plus a check for wording that suggests changing stops, sizing or setups)
+- Decide the failure action with AI Compliance & Governance Officer sign-off: regenerate once, then use a code-written fallback, or return the text with the result logged. Record the outcome in `claude_audit_log.compliance_check_result` (the journal summary writes a row from v9.12)
+- Tighten the prompt if needed, and bump `JOURNAL_SUMMARY_PROMPT_VERSION` if its text changes
+- Update `ai_endpoints.md` §POST /ai/journal-summary and add scenarios to `docs/specs/qa/ai_s13_boundary_test_suite.md`
+
+**Acceptance Criteria**
+- A fixture summary containing "stop placements need adjustment" (and a plainly prescriptive one) is caught, and the chosen failure action is applied and tested
+- A descriptive fixture summary passes unchanged
+- Each call's check result is recorded in `claude_audit_log.compliance_check_result`
 
 ---
