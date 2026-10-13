@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.60
-**Last Updated:** 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — v2.60: `entry_price` currency decision recorded under §2, doc fix; DS-23's reconstruction note no longer calls the currency ambiguous; chart-seed pence convention noted); prior — 2026-10-13 (ST-34, EPIC-05, v9.12, BLG-SPEC-178 — v2.60: drift-detector triage recorded; positions Fields nullability corrected for 7 columns; notifications.updated_at removed; live index/constraint notes under §5, §6 and trade_reflections); prior — 2026-10-13 (ST-01, EPIC-01, v9.12, BLG-BE-162 — DS-31 (v2.59): `ai_audit_log.trade_ids` `INTEGER[]` → `UUID[]`); prior history retained — see prior entries in version control
+**Version:** 2.61
+**Last Updated:** 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — DS-32 (v2.61): `positions.stop_frozen_reason`, added to §2 DDL and Fields); prior — 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — v2.60: `entry_price` currency decision recorded under §2, doc fix; DS-23's reconstruction note no longer calls the currency ambiguous; chart-seed pence convention noted); prior — 2026-10-13 (ST-34, EPIC-05, v9.12, BLG-SPEC-178 — v2.60: drift-detector triage recorded; positions Fields nullability corrected for 7 columns; notifications.updated_at removed; live index/constraint notes under §5, §6 and trade_reflections); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -95,7 +95,8 @@ CREATE TABLE positions (
     atr_calculated_at TIMESTAMPTZ,
     active_atr_multiplier DECIMAL(4, 2),
     atr_source VARCHAR(10) CHECK (atr_source IN ('fetched', 'user', 'fallback')),
-    stop_calculation_source VARCHAR(10) CHECK (stop_calculation_source IN ('on_load', 'nightly'))
+    stop_calculation_source VARCHAR(10) CHECK (stop_calculation_source IN ('on_load', 'nightly')),
+    stop_frozen_reason VARCHAR(20) CHECK (stop_frozen_reason IN ('atr_unavailable'))
 );
 
 CREATE INDEX idx_positions_portfolio ON positions(portfolio_id);
@@ -145,6 +146,7 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | active_atr_multiplier | DECIMAL(4,2) | YES | derived | The ATR multiplier (`calculate_trailing_stop()`'s own `atr_multiplier` return value — currently 2 or 5, depending on profitability) used to produce the current `current_stop`. `NULL` if never recomputed since this column was added. Added v2.44 (DS-22). |
 | atr_source | VARCHAR(10) | YES | system-stamped | Where the stored `atr` came from: `fetched` (computed from market data), `user` (typed at entry), or `fallback` (no ATR could be fetched at entry, so 2% of the entry price was substituted). `NULL` for positions entered before this column was added and not freshly recomputed since. Written at entry and whenever ATR is freshly fetched on recompute. Added v2.50 (DS-25). |
 | stop_calculation_source | VARCHAR(10) | YES | system-stamped | Which path last recalculated `current_stop` against ATR: `on_load` (`GET /positions/analyze`) or `nightly` (`POST /positions/nightly-stop-update`). Written together with `stop_calculated_at`; the grace-period carry-over writes neither. `NULL` until the first recompute after this column was added. Added v2.51 (DS-26). |
+| stop_frozen_reason | VARCHAR(20) | YES | system-stamped | Why the last post-grace recompute kept `current_stop` instead of recalculating it: `atr_unavailable` (no ATR could be fetched and none was stored). Written by both `GET /positions/analyze` and `POST /positions/nightly-stop-update`; cleared to `NULL` by the next post-grace recompute that has an ATR. Never written during grace (the stop is frozen there by rule, §6.3). Drives the Positions frozen-stop indicator (`positions.md` §Frozen Stop Indicator). Added v2.61 (DS-32). |
 | strategy_version_at_entry | VARCHAR(10) | YES | system-stamped | Active `strategy_rules.md` version at entry (`get_current_strategy_version()`), forward-only. Added v8.0 (ST-01). *(Row added v2.55 — ST-30; the column was live but missing from this table.)* |
 | risk_off_exit | BOOLEAN | NO | derived | `NOT NULL DEFAULT FALSE` (`ensure_risk_off_exit_column()`; Nullable corrected YES → NO in v2.60). Risk-off exit alert flag, set and cleared by the nightly risk-off job from the market regime (ST-05). *(Row added v2.55 — ST-30.)* |
 | last_reviewed_at | TIMESTAMPTZ | YES | system-stamped | When the user last marked the position reviewed (`PATCH /positions/{id}/mark-reviewed`); null if never. The timestamp is system-stamped; the action is the user's. *(Row added v2.55 — ST-30.)* |
@@ -3134,6 +3136,44 @@ Up Migration: "Success. No rows returned" in both. No integer values were cleare
 
 `DEL-20261013-01` steps 2–3 were then completed the same day: a staging journal-summary run from Trade History returned generated content, and `ai_audit_log` run `f7ab028e-c76b-421c-b77c-23d964316e77` recorded 14 UUID `trade_ids`. `DEL-20261013-01` Unblocked.
 
+## DS-32 — Add stop_frozen_reason to positions (v2.61, 2026-10-13)
+
+**Story:** ST-15 (EPIC-02, v9.12) — `BLG-FE-202`. Delegation `DEL-20261013-04`.
+
+**Rationale:** when no ATR is available, both stop recompute paths keep the stored stop. Until now only `GET /positions/analyze`'s response said so (`atr_unavailable`), and the nightly job skipped the position silently, so nothing reached `GET /positions`. The user could not tell that a stop had stopped trailing. This column records the reason the last post-grace recompute kept the stop, so `GET /positions` can return it (`stop_frozen_reason`) and the Positions page can show the frozen-stop indicator. It is an enum, not a boolean, so a later reason needs no new column (design record `docs/design/2026-10-12__release-v9.12/frozen-stop-indicator/decision_record.md` §2.1).
+
+**RISK (no live DB write access in this execution environment):** as with DS-25/DS-26, the sandbox `DATABASE_URL` is read-only staging. Both recompute paths write this column after this change, so the Up Migration must be applied to **staging and production** before EPIC-02 deploys. Otherwise every post-grace stop recompute fails. **Status: PENDING** (DEL-20261013-04).
+
+### Up Migration (v2.60 → v2.61)
+
+```sql
+ALTER TABLE positions
+    ADD COLUMN IF NOT EXISTS stop_frozen_reason VARCHAR(20)
+    CHECK (stop_frozen_reason IN ('atr_unavailable'));
+```
+
+Additive and nullable, with no default and no backfill. A frozen position is marked on its next post-grace recompute without ATR.
+
+### Down Migration (v2.61 → v2.60)
+
+```sql
+ALTER TABLE positions DROP COLUMN IF EXISTS stop_frozen_reason;
+```
+
+### Verification
+
+```sql
+SELECT column_name, data_type, character_maximum_length, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'positions' AND column_name = 'stop_frozen_reason';
+```
+
+Expect 1 row: `stop_frozen_reason`, `character varying`, `20`, `YES`.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: migration content is additive, nullable and reversible; no pre-check needed. To be applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner).
+- **Live Confirmation:** pending.
+
 ## Drift Detector Triage (2026-10-13, v2.60)
 
 **Story:** ST-34 (EPIC-05, `2026-10-12__release-v9.12`), BLG-SPEC-178. Triage of the findings `scripts/check_data_model_drift.py` reported on its first run (ST-28, v9.9, 2026-10-01) beyond the 5 known divergence classes.
@@ -3168,6 +3208,6 @@ Up Migration: "Success. No rows returned" in both. No integer values were cleare
 
 ---
 
-**Document Version:** 2.60
+**Document Version:** 2.61
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — v2.60: `entry_price` currency decision recorded under §2, doc fix; DS-23's reconstruction note no longer calls the currency ambiguous; chart-seed pence convention noted); prior — 2026-10-13 (ST-34, EPIC-05, v9.12, BLG-SPEC-178 — v2.60: drift-detector triage recorded; positions Fields nullability corrected for 7 columns; notifications.updated_at removed; live index/constraint notes under §5, §6 and trade_reflections); prior — 2026-10-13 (ST-01, EPIC-01, v9.12: DS-31 added after DS-30; version 2.59); prior history retained — see prior entries in version control
+**Last Review:** 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — DS-32 (v2.61): `positions.stop_frozen_reason`, added to §2 DDL and Fields); prior — 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — v2.60: `entry_price` currency decision recorded under §2, doc fix; DS-23's reconstruction note no longer calls the currency ambiguous; chart-seed pence convention noted); prior — 2026-10-13 (ST-34, EPIC-05, v9.12, BLG-SPEC-178 — v2.60: drift-detector triage recorded; positions Fields nullability corrected for 7 columns; notifications.updated_at removed; live index/constraint notes under §5, §6 and trade_reflections); prior history retained — see prior entries in version control

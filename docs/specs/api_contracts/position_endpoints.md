@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.15.0
-**Last Updated:** 2026-10-13 (ST-14, EPIC-02, v9.12, BLG-BE-148 — gap-risk window uses the NYSE session calendar on the US market date); prior — 2026-10-13 (ST-13, EPIC-02, v9.12, BLG-BE-149 — `display_status` and `position_state` both decided on native P&L; a US row's native entry is `fill_price`, else `entry_price × fx_rate`); prior — 2026-10-09 (ST-16, EPIC-03, v9.11, BLG-BE-143 — nightly stop update skips in-grace positions; GET /positions/analyze writes no stop during grace); prior history retained — see prior entries in version control
+**Version:** 2.16.0
+**Last Updated:** 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — `GET /positions` gains `stop_frozen_reason` (DS-32); both recompute paths write it); prior — 2026-10-13 (ST-14, EPIC-02, v9.12, BLG-BE-148 — gap-risk window uses the NYSE session calendar on the US market date); prior — 2026-10-13 (ST-13, EPIC-02, v9.12, BLG-BE-149 — `display_status` and `position_state` both decided on native P&L; a US row's native entry is `fill_price`, else `entry_price × fx_rate`); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.16.0 | 2026-10-13 | ST-15 (BLG-FE-202, EPIC-02, v9.12): `GET /positions` gains `stop_frozen_reason` (`"atr_unavailable"` \| `null`, DS-32). `GET /positions/analyze` writes it on a post-grace recompute (set without ATR, cleared with ATR). `POST /positions/nightly-stop-update`'s "ATR unavailable" skip now writes `stop_frozen_reason` only (no stop, ATR or timestamp), and a nightly recompute with ATR clears it. |
 | 2.15.0 | 2026-10-13 | ST-14 (BLG-BE-148, EPIC-02, v9.12): `GET /positions/{position_id}/gap-risk` — the window runs to the next **NYSE session** (weekends, NYSE full-closure holidays and dated one-off closures excluded; early closes count), measured from the **US market date**. `days_until` is computed from the earnings date. A Friday view before a Monday holiday now flags Tuesday earnings. No shape change. Strategy Rules & System Intent Owner ruling `ESC-EXEC-20261013-07` (v9.12 addendum to the §13 record). |
 | 2.14.0 | 2026-10-13 | ST-13 (BLG-BE-149, EPIC-02, v9.12): `display_status` on `GET /positions` is decided on native P&L, the same basis as `position_state`, and its field note states this. `position_state` compares the native price with the **native** entry (`fill_price`, else `entry_price × fx_rate` for US). The implementation had compared the GBP `entry_price` with a USD price, which showed a US position down by up to about 20% in dollars as `PROFITABLE`. Values change for US rows only; no shape change. |
 | 2.13.0 | 2026-10-09 | ST-16 (BLG-BE-143, EPIC-03, v9.11): `POST /positions/nightly-stop-update` skips the stop recalculation for positions inside the 10-day grace period (result `status: "skipped"`, `reason: "grace period"`; non-stop fields still refreshed), and `GET /positions/analyze` no longer writes `current_stop` during grace. Response shapes unchanged. Strategy Rules & System Intent Owner ruling `ESC-EXEC-20261008-01`, `strategy_rules.md` §6.3 v1.15. |
@@ -118,6 +119,7 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
     "active_atr_multiplier": 2.0,
     "atr_source": "fetched",
     "stop_calculation_source": "nightly",
+    "stop_frozen_reason": null,
     "fx_rate": 1.3642,
     "live_fx_rate": 1.3650,
     "current_trailing_stop": 560.50,
@@ -174,6 +176,7 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
 | `active_atr_multiplier` | `number` \| `null`. The ATR multiplier used to produce the current stop — `2` while profitable (tight trail), `5` while at a loss (wide stop), per `strategy_rules.md` §7.2. `null` during the grace period (no real recompute has run) or if never recomputed since this field was added. (v9.9 ST-01 BLG-BE-135) |
 | `atr_source` | `string` \| `null`. Where `atr_value` came from: `"fetched"` (computed from market data), `"user"` (typed at entry) or `"fallback"` (no ATR could be fetched at entry, so 2% of the entry price was substituted). Written at entry and whenever a recompute freshly fetches ATR; a recompute that reuses the stored ATR leaves it unchanged. `null` for positions entered before DS-25 and not freshly recomputed since. (v9.10 ST-02 BLG-BE-139) |
 | `stop_calculation_source` | `string` \| `null`. Which path last recalculated the stop against ATR: `"on_load"` (`GET /positions/analyze`) or `"nightly"` (`POST /positions/nightly-stop-update`). Set together with `stop_calculated_at`. `null` until the first post-grace recompute after DS-26. Both paths use the same fixed §11 parameters (ST-01 ruling (a)), so this records provenance, not a different formula. (v9.10 ST-01 BLG-BE-138) |
+| `stop_frozen_reason` | `string` \| `null`. `"atr_unavailable"` when the last post-grace recompute (`GET /positions/analyze` or `POST /positions/nightly-stop-update`) kept the stored stop because no ATR was available; `null` otherwise. Cleared by the next post-grace recompute that has an ATR. Never set during grace, where the stop is frozen by rule (§6.3). An enum so later reasons need no new field. The Positions page shows "Stop frozen · ATR unavailable" when it is set and `grace_period` is false (`positions.md` §Frozen Stop Indicator). Stored in `positions.stop_frozen_reason` (DS-32). (v9.12 ST-15 BLG-FE-202) |
 
 > **Note:** For a summary view of open positions alongside portfolio totals, use `GET /portfolio`. This endpoint returns the full enriched position object including native prices, stop context, and journal fields; `GET /portfolio` returns a lighter position shape.
 
@@ -199,6 +202,8 @@ Errors use the standard error envelope from **conventions.md**.
 Recomputes the trailing stop for every open position past the grace period using the profit-lock strategy logic and stores the result in the database.
 
 **Grace period (`strategy_rules.md` §6.3 v1.15; ST-16, v9.11):** a position whose holding days (calendar days from `entry_date`) are below `GRACE_PERIOD_DAYS` (10) keeps its stored stop: the job does not recalculate or ratchet it and writes none of `current_stop`, `stop_calculated_at`, `active_atr_multiplier` or `stop_calculation_source`. It still refreshes `current_price`, `holding_days` and `atr` (plus `atr_source` / `atr_calculated_at` when the ATR was freshly fetched), and reports the position as `{"ticker", "market", "status": "skipped", "reason": "grace period"}`, counted in `skipped`. Trailing starts on day 10 from the stored stop. A stop already raised during grace before v9.11 is kept, never lowered (§7.3). `GET /positions/analyze` uses the same grace test.
+
+**No ATR (ST-15, BLG-FE-202, v9.12):** when no ATR can be fetched and none is stored, the position is reported as `{"ticker", "status": "skipped", "reason": "ATR unavailable"}` and its stop is kept. Past grace, the job writes only `stop_frozen_reason = "atr_unavailable"` for it (DS-32), so `GET /positions` can show the frozen-stop indicator. A recompute with an ATR writes `stop_frozen_reason = null`.
 
 **Method & Path**
 
@@ -319,7 +324,7 @@ Runs deterministic daily monitoring logic across open positions and returns an a
 
 **Side effects (persistent)**
 
-This is a `GET`, but it is **not** read-only and should not be described as "safe to refresh". Each call, for every open position with a live price, writes `current_price`, `holding_days`, `pnl` and `pnl_pct`. Past grace, it also writes `current_stop`, `stop_calculated_at`, `active_atr_multiplier` and `stop_calculation_source` (`"on_load"`). During grace it writes no stop field: the stored stop is left exactly as it is (`strategy_rules.md` §6.3 v1.15; ST-16, v9.11 — before then the in-grace stop was rewritten, rounded to 2 dp). When the stored ATR is missing and a fresh one is fetched, it writes `atr`, `atr_calculated_at` and `atr_source`. The §7.3 ratchet makes the stop write irreversible: a stop raised by one call is never lowered by a later one, even if the price falls back. Repeated calls with unchanged market data converge on the same stored values. Calls made at different prices can each ratchet the stop higher.
+This is a `GET`, but it is **not** read-only and should not be described as "safe to refresh". Each call, for every open position with a live price, writes `current_price`, `holding_days`, `pnl` and `pnl_pct`. Past grace, it also writes `current_stop`, `stop_calculated_at`, `active_atr_multiplier` and `stop_calculation_source` (`"on_load"`), and `stop_frozen_reason` (`"atr_unavailable"` when no ATR was available and the stop was kept, else `null`; v9.12 ST-15). During grace it writes no stop field: the stored stop is left exactly as it is (`strategy_rules.md` §6.3 v1.15; ST-16, v9.11 — before then the in-grace stop was rewritten, rounded to 2 dp). When the stored ATR is missing and a fresh one is fetched, it writes `atr`, `atr_calculated_at` and `atr_source`. The §7.3 ratchet makes the stop write irreversible: a stop raised by one call is never lowered by a later one, even if the price falls back. Repeated calls with unchanged market data converge on the same stored values. Calls made at different prices can each ratchet the stop higher.
 
 ### Request
 

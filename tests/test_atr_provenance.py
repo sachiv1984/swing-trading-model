@@ -224,9 +224,11 @@ class TestNightlyProvenance(_Patcher):
         _, mock_update = self._run(_open_position(), fetched_atr=6.0)
         assert "atr_calculated_at" in mock_update.call_args.args[1]
 
-    def test_no_atr_at_all_skips_and_writes_nothing(self):
+    def test_no_atr_at_all_skips_and_writes_only_the_frozen_reason(self):
+        # ST-15 (BLG-FE-202, v9.12): the skip keeps the stop and now records why.
+        # Nothing else is written: no stop, ATR or timestamp.
         result, mock_update = self._run(_open_position(atr=None), fetched_atr=None)
-        mock_update.assert_not_called()
+        mock_update.assert_called_once_with("pos-1", {"stop_frozen_reason": "atr_unavailable"})
         assert result["results"][0]["status"] == "skipped"
 
 
@@ -285,3 +287,48 @@ class TestUsPositionWithNullFillPrice(_Patcher):
         self._use_real_calcs("calculate_position_pnl")
         result = position_service.get_positions_with_prices()
         assert result[0]["pnl"] is not None
+
+
+class TestStopFrozenReason(_Patcher):
+    """ST-15 (BLG-FE-202, EPIC-02, v9.12, DS-32): both recompute paths record a stop
+    kept for lack of ATR as stop_frozen_reason = 'atr_unavailable', clear it on the
+    next recompute with an ATR, and GET /positions returns it."""
+
+    def _nightly(self, position, fetched_atr):
+        return TestNightlyProvenance._run(self, position, fetched_atr)
+
+    def test_nightly_skip_sets_it(self):
+        _, mock_update = self._nightly(_open_position(atr=None), fetched_atr=None)
+        assert mock_update.call_args.args[1] == {"stop_frozen_reason": "atr_unavailable"}
+
+    def test_nightly_recompute_with_atr_clears_it(self):
+        _, mock_update = self._nightly(_open_position(stop_frozen_reason="atr_unavailable"), fetched_atr=6.0)
+        assert mock_update.call_args.args[1]["stop_frozen_reason"] is None
+
+    def test_nightly_skip_in_grace_does_not_set_it(self):
+        pos = _open_position(atr=None, entry_date=date.today() - timedelta(days=3))
+        _, mock_update = self._nightly(pos, fetched_atr=None)
+        mock_update.assert_not_called()
+
+    def test_on_load_without_atr_sets_it(self):
+        _, mock_update = _AnalyzeRun._run(self, _open_position(atr=None), price=110.0, fetched_atr=None)
+        assert mock_update.call_args.args[1]["stop_frozen_reason"] == "atr_unavailable"
+
+    def test_on_load_with_atr_clears_it(self):
+        pos = _open_position(stop_frozen_reason="atr_unavailable")
+        _, mock_update = _AnalyzeRun._run(self, pos, price=110.0, fetched_atr=None)
+        assert mock_update.call_args.args[1]["stop_frozen_reason"] is None
+
+    def test_on_load_in_grace_leaves_it_alone(self):
+        pos = _open_position(atr=None, entry_date=date.today() - timedelta(days=3))
+        _, mock_update = _AnalyzeRun._run(self, pos, price=110.0, fetched_atr=None)
+        assert "stop_frozen_reason" not in mock_update.call_args.args[1]
+
+    @pytest.mark.parametrize("reason", ["atr_unavailable", None])
+    def test_get_positions_returns_it(self, reason):
+        self._patch("get_portfolio", return_value={"id": "portfolio-1"})
+        self._patch("get_positions", return_value=[_open_position(stop_frozen_reason=reason)])
+        self._patch("get_live_fx_rate", return_value=1.0)
+        self._patch("get_current_price", return_value=110.0)
+        self._patch("get_sector_and_industry", return_value=(None, None))
+        assert position_service.get_positions_with_prices()[0]["stop_frozen_reason"] == reason

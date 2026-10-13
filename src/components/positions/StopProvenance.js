@@ -4,6 +4,7 @@
 // docs/design/2026-10-06__release-v9.10/stop-cell-provenance/decision_record.md
 // Display-only (§13): explains an already-computed stop, no action.
 import { format } from "date-fns";
+import { PauseCircle } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../ui/tooltip";
 import { formatCurrency } from "../../lib/format";
 import { ATR_PERIOD_DAYS, PROFIT_ATR_MULTIPLIER } from "../../lib/strategyParameters";
@@ -37,7 +38,28 @@ export function stopProvenanceText(position, currency) {
   return m == null ? `ATR ${atr}${suffix}` : `${formatMultiplier(m)} ATR ${atr}${suffix}`;
 }
 
+// ST-15 (BLG-FE-202, v9.12): the last post-grace recompute kept the stop for lack
+// of ATR. Spec: positions.md §Frozen Stop Indicator. In grace the stop is frozen by
+// rule (§6.3), which the tooltip's grace line already says, so nothing extra shows.
+export function isStopFrozen(position) {
+  return Boolean(position?.stop_frozen_reason) && !position?.grace_period;
+}
+
+export function StopFrozenIndicator() {
+  return (
+    <span
+      className="inline-flex items-center gap-1 text-xs font-normal text-amber-700 dark:text-amber-400"
+      data-testid="stop-frozen-indicator"
+    >
+      <PauseCircle className="w-3 h-3" aria-hidden="true" />
+      Stop frozen · ATR unavailable
+    </span>
+  );
+}
+
+/** The provenance line, or the frozen-stop indicator in its place (ST-15). */
 export function StopProvenanceLine({ position, currency }) {
+  if (isStopFrozen(position)) return <StopFrozenIndicator />;
   return (
     <span className="text-xs font-normal text-slate-600 dark:text-slate-400" data-testid="stop-provenance">
       {stopProvenanceText(position, currency)}
@@ -76,6 +98,9 @@ function StopDetailsContent({ position, currency }) {
       )}
       <p>A stop never loosens: the stop shown is the highest level reached (§7.3).</p>
       <p>{lastRecalculatedText(position)}</p>
+      {isStopFrozen(position) && (
+        <p>Not updated at the last recalculation because ATR was unavailable. The stop stays at its current level until ATR returns.</p>
+      )}
       {position?.grace_period && <p>Grace period: the stop is tracked but not enforced (§6.3).</p>}
     </>
   );

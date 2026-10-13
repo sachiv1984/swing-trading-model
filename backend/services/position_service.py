@@ -257,6 +257,9 @@ def get_positions_with_prices() -> List[Dict]:
         # ST-01 (BLG-BE-138, v9.10): 'on_load' / 'nightly' (DS-26); NULL until
         # the first recompute after the column was added.
         stop_calculation_source = pos.get('stop_calculation_source')
+        # ST-15 (BLG-FE-202, v9.12, DS-32): 'atr_unavailable' when the last
+        # post-grace recompute kept the stop for lack of ATR; NULL otherwise.
+        stop_frozen_reason = pos.get('stop_frozen_reason')
 
         # Build position dict
         positions_list.append({
@@ -307,6 +310,7 @@ def get_positions_with_prices() -> List[Dict]:
             "active_atr_multiplier": active_atr_multiplier,
             "atr_source": atr_source,
             "stop_calculation_source": stop_calculation_source,
+            "stop_frozen_reason": stop_frozen_reason,
             "fx_rate": pos.get('fx_rate', 1.0),
             "live_fx_rate": live_fx_rate,
             "total_cost": round(pos.get('total_cost', 0), 2),
@@ -567,6 +571,10 @@ def analyze_positions() -> Dict:
                 position_updates['active_atr_multiplier'] = atr_mult
                 # ST-01 (v9.10, DS-26): which path last recalculated the stop.
                 position_updates['stop_calculation_source'] = 'on_load'
+            # ST-15 (BLG-FE-202, v9.12, DS-32): record a stop kept for lack of
+            # ATR, and clear it on the next post-grace recompute that has one.
+            if not grace_period:
+                position_updates['stop_frozen_reason'] = 'atr_unavailable' if atr_unavailable else None
             update_position(str(pos['id']), position_updates)
         
         # Add to actions
@@ -671,6 +679,11 @@ def run_nightly_trailing_stop_update() -> Dict:
         if not atr_value or atr_value == 0:
             atr_value = pos.get('atr', 0)
         if not atr_value or atr_value == 0:
+            # ST-15 (BLG-FE-202, v9.12, DS-32): the stop is kept, so record why,
+            # for GET /positions' frozen-stop indicator. Post-grace only: during
+            # grace the stop is frozen by rule (§6.3), not for lack of ATR.
+            if calculate_holding_days(str(pos['entry_date'])) >= GRACE_PERIOD_DAYS:
+                update_position(position_id, {'stop_frozen_reason': 'atr_unavailable'})
             results.append({"ticker": pos['ticker'], "status": "skipped", "reason": "ATR unavailable"})
             continue
 
@@ -725,6 +738,8 @@ def run_nightly_trailing_stop_update() -> Dict:
             'active_atr_multiplier': atr_mult,
             # ST-01 (v9.10, DS-26): which path last recalculated the stop.
             'stop_calculation_source': 'nightly',
+            # ST-15 (v9.12, DS-32): an ATR was available, so the stop is not frozen.
+            'stop_frozen_reason': None,
         }
         # ST-02 (BLG-BE-139, EPIC-01, v9.10): a freshly fetched ATR is
         # 'fetched'. When the fetch failed and the stored ATR was reused, its
