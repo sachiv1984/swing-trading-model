@@ -34,6 +34,7 @@ from database import (
     bulk_delete_trade_plans,
 )
 from strategy_version_registry import get_current_strategy_version
+from strategy_parameters import GRACE_PERIOD_DAYS, INITIAL_ATR_MULTIPLIER, PROFIT_ATR_MULTIPLIER
 
 _DEFAULT_BULK_ARCHIVE_REASON = "Bulk archived via Trade Plans bulk-action toolbar"
 
@@ -233,16 +234,20 @@ def create_plan(body: TradePlanCreate):
             except Exception:
                 plan_data["portfolio_value_at_entry"] = None
 
-            # Capture effective_settings_snapshot from current settings
+            # Capture effective_settings_snapshot. ST-16 (BLG-BE-144, v9.12): the
+            # stop parameters are the fixed strategy_rules.md §11 values
+            # (backend/strategy_parameters.py, ruling (a), ESC-EXEC-20261006-01),
+            # never the editable settings row, which no stop path reads. Only
+            # default_risk_percent is a user setting.
             try:
                 settings_list = get_settings()
                 if settings_list:
                     s = settings_list[0]
                     plan_data["effective_settings_snapshot"] = {
                         "default_risk_percent": float(s["default_risk_percent"]) if s.get("default_risk_percent") is not None else None,
-                        "atr_multiplier_initial": float(s["atr_multiplier_initial"]) if s.get("atr_multiplier_initial") is not None else None,
-                        "atr_multiplier_trailing": float(s["atr_multiplier_trailing"]) if s.get("atr_multiplier_trailing") is not None else None,
-                        "min_hold_days": int(s["min_hold_days"]) if s.get("min_hold_days") is not None else None,
+                        "atr_multiplier_initial": INITIAL_ATR_MULTIPLIER,
+                        "atr_multiplier_trailing": PROFIT_ATR_MULTIPLIER,
+                        "min_hold_days": GRACE_PERIOD_DAYS,
                         "captured_at": datetime.now(timezone.utc).isoformat(),
                     }
                 else:
