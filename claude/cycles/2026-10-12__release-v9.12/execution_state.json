@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T17:41:55Z",
+  "last_updated_utc": "2026-10-13T17:48:46Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -246,7 +246,9 @@
         "tests/test_strategy_parameter_parity.py",
         "tests/test_atr_provenance.py",
         "tests/test_display_status_native_basis.py",
-        "tests/test_gap_risk.py"
+        "tests/test_gap_risk.py",
+        "tests/test_settings_create_and_plan_snapshot.py",
+        "tests/e2e/stop-cell-provenance.spec.js"
       ],
       "stories": {
         "ST-07": {
@@ -466,44 +468,54 @@
         "ST-15": {
           "title": "Show the user when a position's stop is frozen for lack of ATR",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "engine",
           "github_issue": 1988,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "commit_sha": "52debab3697edf66df13708df37577ea4b1c3d37",
+          "delegation_record_id": "DEL-20261013-04",
+          "blocked_since_utc": "2026-10-13T17:48:46Z",
+          "unblock_criteria": "DS-32 applied on staging and production; Verification output recorded in data_model.md DS-32 Live Confirmation (DEL-20261013-04)",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Frozen Stop Indicator (v2.16 — ST-15, BLG-FE-202)",
+            "docs/specs/api_contracts/position_endpoints.md#GET /positions",
+            "docs/specs/data_model.md#DS-32 — Add stop_frozen_reason to positions (v2.61, 2026-10-13)",
+            "tests/e2e/stop-cell-provenance.spec.js",
+            "tests/test_atr_provenance.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Code pushed in 52debab3 (authored 2026-10-13T17:48:22Z). AC1: indicator visible on Positions in Table and Grid views (Playwright SC-SCP-08/09; 25/25 local); contract and openapi updated in the same commit. AC2: nightly ATR-unavailable skip sets stop_frozen_reason (tests/test_atr_provenance.py::TestStopFrozenReason). Design-gate extra: no indicator during grace (SC-SCP-10). Deviation check: none. Blocked only on the live DS-32 migration (DEL-20261013-04); classification stays autonomous for the code."
         },
         "ST-16": {
           "title": "Keep first-time Settings saves from writing NULL strategy columns; snapshot §11 values on trade plans",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1989,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "ece97a44a57b8d8a3f5cd416bed4ea7f2c8521ad",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-13T17:47:39Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/settings_endpoints.md#POST /settings",
+            "docs/specs/data_model/si02_data_schema.md#effective_settings_snapshot (Gap 4)",
+            "tests/test_settings_create_and_plan_snapshot.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC1: API test of the create path (POST /settings through the real create_settings with a recording connection): the four strategy columns are absent from the INSERT, so they keep their defaults. AC2: snapshot carries §11 values 5.0/2.0/10 even when the settings row disagrees or is NULL. 4 of 5 fail on prior code. RISK-05: ST-26 (EPIC-04) builds on this path. Deviation check: none."
         }
       }
     },
@@ -1337,7 +1349,9 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [],
+  "delegated_items": [
+    "ST-15"
+  ],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1353,6 +1367,7 @@
     "ST-12",
     "ST-13",
     "ST-14",
+    "ST-16",
     "ST-33",
     "ST-34",
     "ST-35",
