@@ -349,7 +349,7 @@ Content-Type: application/json
 
 Checks today's Claude API spend against the configured daily cost threshold. If the threshold is exceeded, sends a Telegram alert (at most once per UTC day).
 
-**Scheduler (ST-06, v9.12, BLG-OPS-183):** `.github/workflows/ai-daily-cost-check.yml`, GitHub Actions, cron `15 */6 * * *` (every 6 hours) plus `workflow_dispatch`, using the `API_URL`/`API_KEY` repository secrets (the same pattern as `ai-endpoint-anomaly-check.yml`; Render cron needs a paid tier). Before v9.12 no scheduler called this endpoint. Every 6 hours rather than daily because scheduled runs start hours late and the total is per calendar day; the per-day de-duplication means repeat checks send no second alert. **Last successful run:** pending — recorded after the workflow reaches `main` (`DEL-20261013-02`).
+**Scheduler (ST-06, v9.12, BLG-OPS-183):** `.github/workflows/ai-daily-cost-check.yml`, GitHub Actions, cron `15 */6 * * *` (every 6 hours) plus `workflow_dispatch`, using the `API_URL`/`API_KEY` repository secrets (the same pattern as `ai-endpoint-anomaly-check.yml`; Render cron needs a paid tier). Before v9.12 no scheduler called this endpoint, and none runs outside this repository (confirmed by the Infrastructure & Operations Owner, 2026-10-13, `DEL-20261013-02`). Every 6 hours rather than daily because scheduled runs start hours late and the total is per calendar day; the per-day de-duplication means repeat checks send no second alert. **Last successful run:** pending — recorded after the workflow reaches `main` (`DEL-20261013-02`).
 
 **§13 Status:** N/A — operational monitoring endpoint. No AI output generated; no display surface.
 

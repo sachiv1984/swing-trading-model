@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T07:57:07Z",
+  "last_updated_utc": "2026-10-13T08:14:47Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -193,7 +193,7 @@
           "deviations_filed": false,
           "last_completed_substep": "3.1.B.engine_commit_pushed",
           "sign_off_record": null,
-          "notes": "Engine commit 7bfcfb281eaa11c50b0c8be12706bc723ebfb84d (2026-10-13T07:38:48Z): AC1 (pytest) and AC3 (cost-estimate correction) met; AC2 scheduler named (new ai-daily-cost-check.yml; none existed). AC2 last-successful-run half delegated: DEL-20261013-02 (can only run once on main)."
+          "notes": "Engine commit 7bfcfb281eaa11c50b0c8be12706bc723ebfb84d (2026-10-13T07:38:48Z): AC1 (pytest) and AC3 (cost-estimate correction) met; AC2 scheduler named (new ai-daily-cost-check.yml; none existed). AC2 last-successful-run half delegated: DEL-20261013-02 (can only run once on main). 2026-10-13: DEL-20261013-02 step 1 answered — no external scheduler (user, for Infrastructure & Operations Owner); recorded in ai_endpoints.md. Open: first successful ai-daily-cost-check.yml run (post-merge only)."
         }
       }
     },

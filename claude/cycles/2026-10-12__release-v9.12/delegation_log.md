@@ -35,4 +35,4 @@ Last Updated: 2026-10-13
 - **Spec reference:** `docs/specs/api_contracts/ai_endpoints.md#POST /ai/check-daily-cost` (Scheduler paragraph); `stage4_backlog_slice.md#ST-06` AC 2
 - **Unblock criteria:** (1) answered; (2) one successful `ai-daily-cost-check.yml` run ID and date, recorded in the contract's "Last successful run" line and in `qa_evidence_EPIC-01.md` under ST-06.
 - **Commit format required:** `[EPIC-01][ST-06] <description>` pushed to `exec/2026-10-12__release-v9.12/EPIC-01` (or a `[GOVERNANCE]` commit on `main` if EPIC-01 has merged)
-- **Status:** Pending
+- **Status:** In Progress — 2026-10-13. Step (1) answered in-session: the user (human, acting for the Infrastructure & Operations Owner) confirmed that no external scheduler calls `POST /ai/check-daily-cost`, so `ai-daily-cost-check.yml` is its only scheduler. Step (2), the first successful workflow run, is still open; it is possible only after EPIC-01 merges to `main`.
