@@ -1,0 +1,35 @@
+# .github/workflows/ai-daily-cost-check.yml
+# Daily Claude API cost threshold check — Telegram delivery.
+# ST-06 (BLG-OPS-183, EPIC-01, v9.12): POST /ai/check-daily-cost had no
+# scheduler — no workflow called it and Render cron requires a paid tier (see
+# render.yaml). Same GitHub Actions pattern and secrets as
+# ai-endpoint-anomaly-check.yml.
+#
+# Every 6 hours rather than once a day: the endpoint sums today's spend
+# (claude_audit_log, generated_at >= CURRENT_DATE), and scheduled runs here
+# start hours late (the 07:00 anomaly check has run at 12:00-16:00 UTC), so
+# one late daily run could land on the next day and miss a runaway. The
+# endpoint de-duplicates the alert per UTC day (BLG-OPS-172), so repeat
+# checks never send a second message.
+name: AI Daily Cost Check
+
+on:
+  schedule:
+    - cron: '15 */6 * * *'  # 00:15, 06:15, 12:15, 18:15 UTC
+  workflow_dispatch:         # Allow manual trigger for testing
+
+jobs:
+  check-daily-cost:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger daily AI cost check
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          echo "Triggering daily AI cost check at $(date -u)..."
+          curl -f --max-time 120 -X POST "${API_URL}/ai/check-daily-cost" \
+            -H "X-API-Key: ${API_KEY}" \
+            -H "Content-Type: application/json"
+          echo ""
+          echo "Daily AI cost check trigger complete."

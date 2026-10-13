@@ -139,10 +139,31 @@ _TAX_PATTERNS = [
 ]
 # §13 boundary suite D4: no instrument directive (the inputs carry no tickers,
 # so any buy/sell wording is out of scope by construction).
-# Verbs match in any case; a ticker must be upper case (so "sell the" or
-# "add to their" do not match a ticker by accident).
+# Verbs match in any case; a ticker must be upper case (so "add to their"
+# does not match a ticker by accident).
+# ST-05 (BLG-AI-13, v9.12), tightened after the PR #2022 review (BLG-AI-19):
+# a directive is a base (imperative/modal) verb form with an object; a
+# gerund counts only after a directive cue ("Consider buying MSFT", "think
+# about selling the holding") or before a ticker ("Shorting NVDA"). Bare
+# gerunds and past progressive are descriptive ("Selling the position early
+# cost you £40", "you were adding to the position", "Adding to that, ..."),
+# as is past tense ("you sold 9 trades"). exit/close/trim count with a
+# holding object ("exit the position"). "fell short this" and the market
+# names UK/US are not tickers.
+_DIRECTIVE_OBJECT = (
+    r"(?:(?i:it|them|this|that|more|now)\b"
+    r"|(?i:the|your|this|that|these|those|some|a|an) (?i:positions?|holdings?|stocks?|shares?|stakes?)\b"
+    r"|(?!(?:UK|US)\b)[A-Z]{1,5}\b)"
+)
+_HOLDING_OBJECT = r"(?i:the|your|this|that|these|those) (?i:positions?|holdings?|stocks?|shares?|stakes?)\b"
+_GERUND = r"(?i:buying|selling|shorting|going long|adding to|exiting|closing|trimming)"
+_DIRECTIVE_CUE = (r"(?i:consider|considering|try|keep|start|recommend|suggest|think about|worth"
+                  r"|should be|could be|might be|time for)")
 _INSTRUMENT_DIRECTIVE_RE = re.compile(
-    r"\b(?i:buy|sell|short|go long|add to) (?:(?i:it|them|this|that|more|now)\b|[A-Z]{1,5}\b)"
+    r"(?<!fell )(?<!falls )(?<!fall )\b(?i:buy|sell|short|go long|add to) " + _DIRECTIVE_OBJECT
+    + r"|\b(?i:exit|close|trim) " + _HOLDING_OBJECT
+    + r"|\b" + _DIRECTIVE_CUE + r" " + _GERUND + r" " + _DIRECTIVE_OBJECT
+    + r"|\b" + _GERUND + r" (?!(?:UK|US)\b)[A-Z]{1,5}\b"
 )
 _FORWARD_RE = re.compile("|".join(_FORWARD_PATTERNS), re.IGNORECASE)
 _TAX_RE = re.compile("|".join(_TAX_PATTERNS), re.IGNORECASE)

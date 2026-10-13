@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.58
-**Last Updated:** 2026-10-12 (EPIC-04 merged to main, PR #1972, carried into EPIC-05 by the main merge — DS-30 (v2.57, v2.58) added after DS-29; version 2.58 is the highest, and 2.55 is this EPIC's ST-30 provenance change); prior — 2026-10-12 (EPIC-03 merged to main, PR #1970, carried into EPIC-05 by the main merge — DS-28 (v2.54) and DS-29 (v2.56) added; version 2.56 is the highest, and 2.55 is this EPIC's ST-30 provenance change); prior — 2026-10-08 (ST-30, EPIC-05, v9.11, BLG-SPEC-173 — provenance (user-entered / derived / system-stamped) on every positions and trade_plans field; positions gains 3 missing rows, trade_plans field reference rebuilt to all 35 live columns and 7 statuses; entry_price/fill_price currency corrected; 2.53/2.54 are EPIC-01's DS-27 and EPIC-03's DS-28); prior history retained — see prior entries in version control
+**Version:** 2.59
+**Last Updated:** 2026-10-13 (ST-01, EPIC-01, v9.12, BLG-BE-162 — DS-31 (v2.59): `ai_audit_log.trade_ids` `INTEGER[]` → `UUID[]`); prior — 2026-10-12 (EPIC-04 merged to main, PR #1972, carried into EPIC-05 by the main merge — DS-30 (v2.57, v2.58) added after DS-29; version 2.58 is the highest, and 2.55 is this EPIC's ST-30 provenance change); prior — 2026-10-12 (EPIC-03 merged to main, PR #1970, carried into EPIC-05 by the main merge — DS-28 (v2.54) and DS-29 (v2.56) added; version 2.56 is the highest, and 2.55 is this EPIC's ST-30 provenance change); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -3039,6 +3039,95 @@ WHERE endpoint = 'POST /reports/monthly-pnl/narrative'
 
 ---
 
-**Document Version:** 2.58
+## DS-31 — Store journal-summary trade IDs as UUIDs in ai_audit_log (v2.59, 2026-10-13)
+
+**Story:** ST-01 (EPIC-01, v9.12) — `BLG-BE-162`. Delegation `DEL-20261013-01`.
+
+**Rationale:** `ai_audit_log` records each `POST /ai/journal-summary` run (BLG-AI-01; `services/ai_audit_service.py`). Its `trade_ids` column was `INTEGER[]`, but `trade_history.id` is a UUID, so the column could never hold a real trade ID. The request model had the same integer type, so every request from Trade History failed with HTTP 422 before reaching the AI or this table. The column becomes `UUID[]`, matching `trade_history.id`.
+
+**Table reference — `ai_audit_log`** (created by `ensure_ai_audit_table()` at startup; not previously documented here):
+
+| Column | Type | Nullable | Description |
+|--------|------|----------|-------------|
+| run_id | UUID | NO | Primary key |
+| invoked_at | TIMESTAMP | NO | Request time (UTC) |
+| trade_ids | UUID[] | YES | `trade_history.id` values summarised; `NULL` for a date-range request. `INTEGER[]` before v2.59. GIN index `idx_ai_audit_trade_ids` |
+| date_from / date_to | DATE | YES | Date range used when `trade_ids` was not given |
+| trade_count | INTEGER | NO | Closed trades whose notes were included (default 0) |
+| model_version | VARCHAR(100) | YES | Model used (`docs/specs/ai_journal_model_contract.md`) |
+| output_hash | VARCHAR(64) | YES | SHA-256 of the summary text; `NULL` when none was produced |
+| summary_produced | BOOLEAN | NO | Whether a summary was returned (default false) |
+| duration_ms | INTEGER | YES | Request duration |
+
+**Existing integer values:** any `trade_ids` row written while the column was `INTEGER[]` names no trade (no `trade_history.id` is an integer), so the migration clears those values to `NULL` rather than casting. The rest of each row (time, count, model, hash) is kept. The Pre-check reports how many rows this affects.
+
+**Deploy order:** `ensure_ai_audit_table()` runs the Up Migration's guarded block at startup, so the app converts the column itself where its role may run DDL. It is idempotent, and a no-op once the column is `UUID[]`. Until the column is converted, the audit insert fails (it casts to `uuid[]`). That failure is non-blocking: the router catches it and still returns the summary. The Up Migration is still applied explicitly to **staging and production** by the Data Model & Domain Schema Owner, with verification output (ST-01 AC 4). **Status: CONFIRMED APPLIED, 2026-10-13** (staging and production; see Live Confirmation below).
+
+### Pre-check
+
+```sql
+SELECT udt_name AS current_type,
+       (SELECT COUNT(*) FROM ai_audit_log WHERE trade_ids IS NOT NULL) AS rows_with_trade_ids
+FROM information_schema.columns
+WHERE table_name = 'ai_audit_log' AND column_name = 'trade_ids';
+```
+
+Expect `current_type` = `_int4` before the migration. `rows_with_trade_ids` is the number of rows whose integer IDs will be cleared.
+
+### Up Migration (v2.58 → v2.59)
+
+```sql
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'ai_audit_log'
+          AND column_name = 'trade_ids'
+          AND udt_name = '_int4'
+    ) THEN
+        ALTER TABLE ai_audit_log ALTER COLUMN trade_ids TYPE UUID[] USING NULL;
+    END IF;
+END $$;
+```
+
+The GIN index `idx_ai_audit_trade_ids` is rebuilt automatically by the type change.
+
+### Down Migration (v2.59 → v2.58)
+
+```sql
+ALTER TABLE ai_audit_log ALTER COLUMN trade_ids TYPE INTEGER[] USING NULL;
+```
+
+UUIDs cannot be cast to integers, so stored trade IDs are lost on rollback; the rest of each row is kept. Roll back the code first: the v2.58 code writes integers.
+
+### Verification
+
+```sql
+SELECT column_name, data_type, udt_name, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'ai_audit_log' AND column_name = 'trade_ids';
+```
+
+Expect 1 row: `trade_ids`, `ARRAY`, `_uuid`, `YES`.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: type change on a column no live row used (0 rows with `trade_ids` in either environment), reversible. Applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner).
+- **Live Confirmation, applied 2026-10-13:** the Pre-check, Up Migration and Verification were run on staging, then production, in the Supabase SQL editor, and the output was pasted into the execution session. Both environments returned identical results. Pre-check (before the migration):
+
+```json
+[{"current_type": "_int4", "rows_with_trade_ids": 0}]
+```
+
+Up Migration: "Success. No rows returned" in both. No integer values were cleared, because none existed. Verification (after):
+
+```json
+[{"column_name": "trade_ids", "data_type": "ARRAY", "udt_name": "_uuid", "is_nullable": "YES"}]
+```
+
+`DEL-20261013-01` steps 2–3 were then completed the same day: a staging journal-summary run from Trade History returned generated content, and `ai_audit_log` run `f7ab028e-c76b-421c-b77c-23d964316e77` recorded 14 UUID `trade_ids`. `DEL-20261013-01` Unblocked.
+
+---
+
+**Document Version:** 2.59
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-12 (EPIC-04 merged in: DS-30 added after DS-29; version 2.58); prior — 2026-10-12 (EPIC-03 merged in: DS-28 and DS-29 added; version 2.56); prior — 2026-10-08 (ST-30, EPIC-05, v9.11, BLG-SPEC-173 — field provenance for positions and trade_plans; footer brought level with the header); prior history retained — see prior entries in version control
+**Last Review:** 2026-10-13 (ST-01, EPIC-01, v9.12: DS-31 added after DS-30; version 2.59); prior — 2026-10-12 (EPIC-04 merged in: DS-30 added after DS-29; version 2.58); prior — 2026-10-12 (EPIC-03 merged in: DS-28 and DS-29 added; version 2.56); prior history retained — see prior entries in version control

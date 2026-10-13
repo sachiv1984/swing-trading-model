@@ -73,7 +73,7 @@ class TestLogAiSummaryRun:
         with patch(_PATCH_TARGET, return_value=conn):
             from services.ai_audit_service import log_ai_summary_run
             run_id = log_ai_summary_run(
-                trade_ids=[1, 2, 3],
+                trade_ids=["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
                 date_from=None,
                 date_to=None,
                 trade_count=3,
@@ -142,9 +142,9 @@ class TestQueryAuditLog:
         conn, cur = self._make_conn_with_rows([])
         with patch(_PATCH_TARGET, return_value=conn):
             from services.ai_audit_service import query_audit_log
-            query_audit_log(trade_id=42)
+            query_audit_log(trade_id="3fa85f64-5717-4562-b3fc-2c963f66afa6")
         sql = cur.execute.call_args[0][0]
-        assert "ANY(trade_ids)" in sql
+        assert "%s::uuid = ANY(trade_ids)" in sql
 
     def test_filter_by_date_range(self):
         conn, cur = self._make_conn_with_rows([])

@@ -59,7 +59,8 @@ class TestSuccessfulCallsWriteHashAndLength:
         assert kw["endpoint"] == "POST /ai/daily-briefing"
         assert kw["prompt_hash"] == _expected_hash(sent) and len(kw["prompt_hash"]) == 16
         assert kw["response_length"] == len(body)
-        assert kw.get("compliance_check_result") is None
+        # ST-04 (BLG-AI-10, v9.12): the stop-time check's result; no stop cited.
+        assert kw.get("compliance_check_result") == "pass"
 
     def test_chat(self, db):
         _, sent = _run("ai_chat", "What do I hold?", text="You hold nothing.")

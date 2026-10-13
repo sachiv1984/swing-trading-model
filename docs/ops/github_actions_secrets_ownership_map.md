@@ -1,7 +1,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Reference Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-10-08 (ST-18, EPIC-03, v9.11, BLG-OPS-179 — post-deploy-stop-health.yml added to the API_URL, API_KEY and Telegram rows); prior — 2026-09-22 (ST-15, BLG-OPS-163, EPIC-04, v9.6 — initial version)
+**Last Updated:** 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — ai-daily-cost-check.yml added to the API_URL and API_KEY rows); prior — 2026-10-08 (ST-18, EPIC-03, v9.11, BLG-OPS-179 — post-deploy-stop-health.yml added to the API_URL, API_KEY and Telegram rows); prior — 2026-09-22 (ST-15, BLG-OPS-163, EPIC-04, v9.6 — initial version)
 
 ---
 
@@ -19,8 +19,8 @@ Every `secrets.*` reference across `.github/workflows/*.yml`, current as of this
 
 | Secret | Consuming workflow(s) | Environment | Required access level |
 |---|---|---|---|
-| `API_KEY` | `ai-endpoint-anomaly-check.yml`, `alert-evaluation.yml`, `api-key-cross-environment-check.yml`, `backtest.yml`, `daily-snapshot.yml`, `nightly-stop-update-staleness-check.yml`, `nightly-stop-update.yml`, `post-deploy-stop-health.yml`, `rebalance-exit.yml`, `risk-off-alerts.yml`, `screener-refresh.yml`, `si05-weekly-digest.yml` | Production | Read-write — the production `X-API-Key`; several consumers call mutating `POST` endpoints (e.g. `nightly-stop-update.yml`, `rebalance-exit.yml`) |
-| `API_URL` | `ai-endpoint-anomaly-check.yml`, `alert-evaluation.yml`, `api-key-cross-environment-check.yml`, `backtest.yml`, `daily-snapshot.yml`, `health-check-alert.yml`, `nightly-stop-update-staleness-check.yml`, `nightly-stop-update.yml`, `post-deploy-stop-health.yml`, `rebalance-exit.yml`, `risk-off-alerts.yml`, `screener-refresh.yml`, `si05-weekly-digest.yml`, `st08-proxy-ip-verification.yml` | Production | N/A — a config value (the production API base URL), not a credential; stored as a secret only to avoid publishing the internal hostname |
+| `API_KEY` | `ai-daily-cost-check.yml`, `ai-endpoint-anomaly-check.yml`, `alert-evaluation.yml`, `api-key-cross-environment-check.yml`, `backtest.yml`, `daily-snapshot.yml`, `nightly-stop-update-staleness-check.yml`, `nightly-stop-update.yml`, `post-deploy-stop-health.yml`, `rebalance-exit.yml`, `risk-off-alerts.yml`, `screener-refresh.yml`, `si05-weekly-digest.yml` | Production | Read-write — the production `X-API-Key`; several consumers call mutating `POST` endpoints (e.g. `nightly-stop-update.yml`, `rebalance-exit.yml`) |
+| `API_URL` | `ai-daily-cost-check.yml`, `ai-endpoint-anomaly-check.yml`, `alert-evaluation.yml`, `api-key-cross-environment-check.yml`, `backtest.yml`, `daily-snapshot.yml`, `health-check-alert.yml`, `nightly-stop-update-staleness-check.yml`, `nightly-stop-update.yml`, `post-deploy-stop-health.yml`, `rebalance-exit.yml`, `risk-off-alerts.yml`, `screener-refresh.yml`, `si05-weekly-digest.yml`, `st08-proxy-ip-verification.yml` | Production | N/A — a config value (the production API base URL), not a credential; stored as a secret only to avoid publishing the internal hostname |
 | `DATABASE_URL` | *(none live — see Aliasing note)* | — | Retired alias; superseded by `PROD_DATABASE_URL` |
 | `GITHUB_TOKEN` | `audit-cadence-reminder.yml`, `deploy.yml`, `execution-state-schema-check.yml`, `governance_sync.yml`, `secret-scanning.yml`, `update-visual-snapshots.yml` | N/A (GitHub-internal) | Auto-provisioned per run by GitHub Actions; scope is set per-workflow via that workflow's own `permissions:` block (e.g. `governance_sync.yml`: `issues: write`; `deploy.yml`: `contents: write`, `pages: write`, `id-token: write`) — not manually managed or rotated |
 | `GITLEAKS_LICENSE` | `secret-scanning.yml` | N/A | License key (Gitleaks Pro) — no data access; loss of this secret degrades scan coverage, not a security exposure |

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-12 (session — 2 new item(s) added: BLG-GOV-386, BLG-FE-217, from post-ship closure 2026-10-08__release-v9.11 §6 rows 7 and 9); prior — 2026-10-12 (groom backlog post-ship closure 2026-10-08__release-v9.11 — 45 items archived: 43 v9.11 shipped items plus BLG-GOV-362 and BLG-OPS-180, both bannered ✅ COMPLETE at the 2026-10-07 closure); prior — 2026-10-12 (post-ship closure 2026-10-08__release-v9.11 — 43 shipped items marked ✅ COMPLETE (ST-01–ST-43); Phase 4 additions confirmed present (BLG-BE-162, BLG-AI-10, BLG-QA-219, BLG-QA-220, BLG-BE-156); no stale parked items); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (session — 10 new items added from Sprint Execution EPIC-01, 2026-10-12__release-v9.12: BLG-AI-14, BLG-SPEC-195, BLG-AI-15, and from the PR #2022 review BLG-AI-16 to BLG-AI-19, BLG-OPS-186, BLG-OPS-187, BLG-QA-221); prior — 2026-10-12 (session — 2 new item(s) added: BLG-GOV-386, BLG-FE-217, from post-ship closure 2026-10-08__release-v9.11 §6 rows 7 and 9); prior — 2026-10-12 (groom backlog post-ship closure 2026-10-08__release-v9.11 — 45 items archived: 43 v9.11 shipped items plus BLG-GOV-362 and BLG-OPS-180, both bannered ✅ COMPLETE at the 2026-10-07 closure); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5122,5 +5122,222 @@ The CLAUDE.md §8 merge of `main` (EPIC-06, PR #1971) into EPIC-05 (`3237cb5e`) 
 **Acceptance Criteria**
 - On the System Status page, no `/reports/*` endpoint appears under "Other".
 - A Playwright test asserting the grouping passes in CI.
+
+---
+
+### BLG-AI-14 — AI chat context: label available cash and starting capital separately (as ST-03 did for the briefing)
+**Priority:** P4 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Sprint Execution, ST-03 / EPIC-01, cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.13
+
+**Problem**
+ST-03 (`BLG-AI-12`) relabelled the daily-briefing context to "available cash £X; starting capital £Y", omitting starting capital when it is 0, because "cash £X of £{initial_cash}" was read as a target cash level. `ai_chat()` in `backend/services/ai_service.py` still renders "Cash: £X of £{initial_cash} initial capital". On staging, where `initial_cash` is 0, that reads "of £0 initial capital", which carries the same risk of misreading. ST-03's AC covered the briefing only.
+
+**Scope**
+- Apply the same labelling to the chat context (reuse `_briefing_cash_line()` or an equivalent helper)
+- Bump `CHAT_PROMPT_VERSION` if the golden-fixture procedure requires it, and update `tests/fixtures/ai_prompt_template_golden_fixtures.json`
+- Update the context list in `docs/specs/api_contracts/ai_endpoints.md` §POST /ai/chat
+
+**Acceptance Criteria**
+- The chat context no longer uses "of £{initial_cash}", and omits starting capital when it is 0
+- Golden-fixture and chat tests pass with any recorded prompt-version bump
+
+---
+
+### BLG-SPEC-195 — Journal summary: remove the stale AI_MODEL override line, or cost the model actually used
+**Priority:** P4 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner; Backend Engineering Patterns Owner
+**Source:** Agent-mediated Director of Quality review (second pass) of EPIC-01, ST-06, cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.13
+
+**Problem**
+`ai_endpoints.md` §POST /ai/journal-summary says "Default model: `claude-haiku-4-5-20251001`. Override via `AI_MODEL` env var." No such override exists: `summarise_journal_notes()` uses `MODEL_VERSION = CLAUDE_HAIKU_4_5`, and the router never passes a model. ST-06 (v9.12) added `claude_audit_log` cost logging for the journal summary at Haiku 4.5 rates regardless of the `model` argument. That is correct today, but the costing would be wrong if an override were ever added.
+
+**Scope**
+- Remove the `AI_MODEL` override sentence from the contract (or implement the override and cost by model)
+- If a non-Haiku model can ever be passed, select the cost rates by model in `_audit_journal_summary_call()`
+
+**Acceptance Criteria**
+- The contract describes only model selection that exists in code
+- A test pins the cost rates to the model used, or the contract states the endpoint is Haiku-only
+
+---
+
+### BLG-AI-15 — Journal summary: add an output-language scan so summaries cannot suggest trading changes
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** Sprint Execution, ST-01 / EPIC-01 staging run (cycle `2026-10-12__release-v9.12`), user-confirmed in-session — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.13
+
+**Problem**
+The first working staging journal summary (2026-10-13, after the ST-01 fix) ended with "...limits visibility into whether setups are working, or if stop placements need adjustment". That is borderline advisory wording about the user's stops. `scan_prescriptive` and `scan_prediction` do not flag it. Unlike the post-trade debrief and the monthly P&L narrative, `POST /ai/journal-summary` runs no output-language check at all: the prompt's "Do not make investment recommendations" is its only control. Until v9.12 every request failed with 422, so this went unnoticed.
+
+**Scope**
+- Add a post-generation language check to `summarise_journal_notes()`, reusing the debrief / monthly-narrative pattern (prescriptive scan, plus a check for wording that suggests changing stops, sizing or setups)
+- Decide the failure action with AI Compliance & Governance Officer sign-off: regenerate once, then use a code-written fallback, or return the text with the result logged. Record the outcome in `claude_audit_log.compliance_check_result` (the journal summary writes a row from v9.12)
+- Tighten the prompt if needed, and bump `JOURNAL_SUMMARY_PROMPT_VERSION` if its text changes
+- Update `ai_endpoints.md` §POST /ai/journal-summary and add scenarios to `docs/specs/qa/ai_s13_boundary_test_suite.md`
+
+**Acceptance Criteria**
+- A fixture summary containing "stop placements need adjustment" (and a plainly prescriptive one) is caught, and the chosen failure action is applied and tested
+- A descriptive fixture summary passes unchanged
+- Each call's check result is recorded in `claude_audit_log.compliance_check_result`
+
+---
+
+### BLG-AI-16 — Daily briefing: check the summary text for tickers outside the context
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** PR #2022 agent-mediated review (EPIC-01, cycle `2026-10-12__release-v9.12`), Product Owner finding 3 — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.13
+
+**Problem**
+ST-02 (`BLG-AI-11`) drops briefing *actions* whose ticker is not an open position or context signal, but the briefing `summary` prose is returned unfiltered. The model can still write about an invented ticker such as `NEW_SIGNAL` in the summary, unlogged and uncounted, so BLG-AI-11's trust problem is only partly solved.
+
+**Scope**
+- Scan the briefing `summary` for upper-case ticker-like tokens not in the context's positions or signals
+- Decide the action with AI Compliance & Governance Officer sign-off (log and count, or append a code-written caveat, or regenerate)
+- Record the result alongside the stop-time result in `claude_audit_log.compliance_check_result`
+
+**Acceptance Criteria**
+- A fixture summary naming an unknown ticker is caught and the chosen action is applied and tested
+- A summary naming only context tickers passes unchanged
+
+---
+
+### BLG-AI-17 — Briefing ticker filter: treat UK `.L` and bare tickers as the same instrument
+**Priority:** P2 (Medium)
+**Type:** AI Compliance / Correctness
+**Owner:** Backend Engineering Patterns Owner; AI Compliance & Governance Officer
+**Source:** PR #2022 agent-mediated review (EPIC-01, cycle `2026-10-12__release-v9.12`), Director of Quality finding 1 — 2026-10-13
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.13
+
+**Problem**
+ST-02's `_filter_actions_to_context()` (`backend/services/ai_service.py`) needs an exact, case-insensitive ticker match. If the model writes `VOD` for a held `VOD.L` (or the reverse), a valid EXIT or MONITOR action for a held UK position is silently dropped and only a server warning is logged. Elsewhere the codebase already treats bare and `.L` UK tickers as the same instrument (`database.py`, trade-plan lookup with `ticker_bare` / `ticker_bare + ".L"`).
+
+**Scope**
+- Normalise both sides (upper case, strip a trailing `.L`) before matching in `_filter_actions_to_context()`
+- Apply the same normalisation to the stop-time check's ticker attribution
+
+**Acceptance Criteria**
+- A fixture action for `VOD` is kept when `VOD.L` is held, and the reverse
+- Tests cover the suffixed case
+
+---
+
+### BLG-AI-18 — Stop-time check: attribute chat stop citations to the focused ticker, and case-normalise action tickers
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** PR #2022 agent-mediated review (EPIC-01, cycle `2026-10-12__release-v9.12`), Product Owner finding 4 and Director of Quality finding 6 — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.13
+
+**Problem**
+ST-04's stop-time check (`_append_missing_stop_times`) gets no `own_ticker` from `ai_chat()`, even when `context_opts.ticker` focuses the chat on one position. The commonest chat case, "Your stop is at £450" asked from a position, is therefore only counted as `unattributed` and gets no recalculation time. `own_ticker` matching is also case-sensitive, so an action with ticker `aapl` (kept by the case-insensitive ST-02 filter) gets no note either. The note is appended after the whole field, apart from the sentence it qualifies, and not visibly marked as system-added.
+
+**Scope**
+- Pass `context_opts.ticker` as `own_ticker` for chat, extending the `ESC-EXEC-20261013-01` ruling with AI Compliance & Governance Officer sign-off
+- Case-normalise `own_ticker` against the position tickers
+- Ask the Head of UX & Design whether the appended note needs visible "system-added" styling, using the `[STOP-TIME-MISSING]` rate as input
+
+**Acceptance Criteria**
+- A ticker-focused chat reply citing a stop without the ticker gets the note
+- An action with a lower-case held ticker gets the note
+- Tests cover both
+
+---
+
+### BLG-AI-19 — Monthly P&L narrative: stop the directive scan flagging retrospective and discourse wording
+**Priority:** P3 (Low)
+**Type:** AI Compliance / Correctness
+**Owner:** AI Compliance & Governance Officer; Backend Engineering Patterns Owner
+**Source:** PR #2022 agent-mediated review (EPIC-01, cycle `2026-10-12__release-v9.12`), Director of Quality finding 2 and Product Owner finding 5 — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.13
+
+**Problem**
+ST-05 widened `_INSTRUMENT_DIRECTIVE_RE` (`backend/services/monthly_pnl_narrative_service.py`) to inflected forms. It now also flags descriptive prose that matched nothing before v9.12: "Selling the position early cost you £40.", "You were adding to the position in week 2.", "You were selling the position into strength." and "Adding to that, your win rate rose to 60%.". ("...fell short this month" was already a false positive.) A match forces regenerate-then-fallback, so users get the generic text and pay for a second call on legitimate narratives. BLG-AI-13's scope asked for no false positives on past-tense reporting, but ST-05's restated AC tested only the simple past. Meanwhile "exit/close/trim the position" still pass the scan.
+
+**Scope**
+- Exclude gerund-subject and past-progressive forms (sentence-initial "Selling...", "were/was adding|selling|buying") and discourse phrases ("Adding to that", "fell short")
+- Consider adding exit/close/trim + holding noun as directives
+- Add the examples above as B-MPN-04 negative cases and update `ai_s13_boundary_test_suite.md`
+
+**Acceptance Criteria**
+- The listed retrospective and discourse sentences are not reported
+- All ST-05 positive cases are still reported
+- The representative output and the fallback still scan clean
+
+---
+
+### BLG-OPS-186 — Daily AI cost check: close the last-hours-of-day blind spot
+**Priority:** P3 (Low)
+**Type:** Operations / Monitoring
+**Owner:** Infrastructure & Operations Owner
+**Source:** PR #2022 agent-mediated review (EPIC-01, cycle `2026-10-12__release-v9.12`), Director of Quality finding 3 — 2026-10-13
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** v9.13
+
+**Problem**
+`ai-daily-cost-check.yml` (ST-06) runs at 00:15, 06:15, 12:15 and 18:15 UTC, and `get_daily_ai_cost()` sums today's spend only (`generated_at >= CURRENT_DATE`). Spend after the last run of the day (later still if GitHub delays it) is never compared against that day's total, because the 00:15 run starts a new day, which leaves a blind spot of about 6 hours every day.
+
+**Scope**
+- Either have the first run of each day also check the previous UTC day, or alert on a rolling 24-hour window (keeping the per-day de-duplication)
+- Update `ai_endpoints.md` §POST /ai/check-daily-cost
+
+**Acceptance Criteria**
+- Spend between the last run and midnight is checked against its own day's threshold
+- A test covers the day-boundary case
+
+---
+
+### BLG-OPS-187 — Daily AI cost alert: stop reporting $0 on query failure, and alert when the scheduler fails
+**Priority:** P2 (Medium)
+**Type:** Operations / Monitoring
+**Owner:** Infrastructure & Operations Owner
+**Source:** PR #2022 agent-mediated review (EPIC-01, cycle `2026-10-12__release-v9.12`), Director of Quality finding 4 and Product Owner finding 8 — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.13
+
+**Problem**
+`get_daily_ai_cost()` catches every exception and returns `{"total_cost_usd": 0.0, "request_count": 0}` with no log line. Since ST-06 it is the alert's only cost source, so a failed query (missing column, connection error) reports $0, the alert never fires, and `ai-daily-cost-check.yml` still passes because the endpoint returns HTTP 200. A failed workflow run (bad secret, API down) only produces GitHub's default email. Either way the alert can go silent again, which is the failure BLG-OPS-183 set out to fix.
+
+**Scope**
+- Log the exception and return an explicit error status (or non-200) from `POST /ai/check-daily-cost` when the cost query fails
+- Make the workflow fail on an error status, and send a Telegram message when the workflow itself fails (the same could apply to `ai-endpoint-anomaly-check.yml`)
+
+**Acceptance Criteria**
+- A simulated query failure is logged, reported as an error and fails the workflow step
+- A failed run sends a notification beyond GitHub's default email
+
+---
+
+### BLG-QA-221 — Real-Postgres tests for the ai_audit_log UUID[] path and the claude_audit_log daily cost sum
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner; Backend Engineering Patterns Owner
+**Source:** PR #2022 agent-mediated review (EPIC-01, cycle `2026-10-12__release-v9.12`), Director of Quality finding 5 — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.13
+
+**Problem**
+All the new SQL in EPIC-01 is verified only through mocks or a hand-written fake: the `ANY(%s::uuid[])` notes query, the `%s::uuid[]` audit insert, the history filter's `%s::uuid = ANY(trade_ids)`, the DS-31 `ALTER ... TYPE UUID[] USING NULL`, and `SUM(cost_usd) FROM claude_audit_log`. The ST-01 staging run exercised the notes query and the insert. The history filter's UUID path and the cost sum have no real-database evidence.
+
+**Scope**
+- Add Pytest Phase B (real Postgres) tests: DS-31 conversion from an INTEGER[] table, an insert and history filter with UUIDs, and a daily cost sum over claude_audit_log rows across a day boundary
+
+**Acceptance Criteria**
+- The Phase B tests pass in CI and fail if the casts or the table name are wrong
 
 ---

@@ -242,7 +242,7 @@ def get_trade_history_by_date_range(portfolio_id: str, date_from, date_to) -> Li
             return cur.fetchall()
 
 
-def fetch_journal_notes(trade_ids: Optional[List[int]] = None, date_from=None, date_to=None) -> List[Dict]:
+def fetch_journal_notes(trade_ids: Optional[List[str]] = None, date_from=None, date_to=None) -> List[Dict]:
     """Fetch entry_note/exit_note for closed trades, filtered by trade_ids OR a
     date_from/date_to range (mutually exclusive at the call site — trade_ids
     takes precedence when both would otherwise be considered).
@@ -255,6 +255,9 @@ def fetch_journal_notes(trade_ids: Optional[List[int]] = None, date_from=None, d
     claude/agents/backend_engineering_patterns_owner.md §"Routers must be
     thin. No business logic, no SQL, no calculations in a router."
     Used by POST /ai/journal-summary.
+
+    ST-01 (BLG-BE-162, EPIC-01, v9.12): trade_ids are trade_history UUIDs
+    (strings), cast to uuid[] in the query.
     """
     with get_db() as conn:
         with conn.cursor() as cur:
@@ -263,9 +266,9 @@ def fetch_journal_notes(trade_ids: Optional[List[int]] = None, date_from=None, d
                     """
                     SELECT entry_note, exit_note
                     FROM trade_history
-                    WHERE id = ANY(%s) AND exit_date IS NOT NULL
+                    WHERE id = ANY(%s::uuid[]) AND exit_date IS NOT NULL
                     """,
-                    (trade_ids,),
+                    ([str(t) for t in trade_ids],),
                 )
             else:
                 params: list = []
@@ -2623,16 +2626,24 @@ def purge_gemini_audit_log_older_than_90_days() -> int:
 
 
 def get_daily_ai_cost() -> dict:
-    """Return today's Claude API spend total from gemini_audit_log."""
+    """Return today's Claude API spend total from claude_audit_log.
+
+    ST-06 (BLG-OPS-183, EPIC-01, v9.12): this read gemini_audit_log, which only
+    plan and thesis generation write, so briefing, chat, journal summary,
+    debrief and the monthly P&L narrative were never counted and the daily
+    alert could not fire for them. Every Claude call writes claude_audit_log
+    (plan/thesis write both tables), so summing claude_audit_log alone counts
+    each call exactly once.
+    """
     try:
-        ensure_gemini_audit_log_table()
+        ensure_claude_audit_log_table()
         with get_db() as conn:
             with conn.cursor() as cur:
                 cur.execute("""
                     SELECT
-                        COALESCE(SUM(estimated_cost_usd), 0.0) AS total_cost,
+                        COALESCE(SUM(cost_usd), 0.0) AS total_cost,
                         COUNT(*) AS request_count
-                    FROM gemini_audit_log
+                    FROM claude_audit_log
                     WHERE generated_at >= CURRENT_DATE
                 """)
                 row = cur.fetchone()
