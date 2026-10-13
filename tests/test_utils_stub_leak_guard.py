@@ -88,3 +88,20 @@ def test_parent_package_attribute_not_left_pointing_at_stubbed_copy():
     from services import trade_service as after
     assert after is not stubbed
     assert sys.modules.get("services.trade_service") is before
+
+
+def test_module_level_database_swap_still_fails_collection(tmp_path):
+    """PR #2023 review (ST-46): the utils guard must not displace ST-14's
+    database collection guard. Both run in the one pytest_make_collect_report hook."""
+    result = _run_with_repo_conftest(tmp_path, (
+        "import sys, types\n"
+        "sys.modules['database'] = types.ModuleType('database')\n"
+        "def test_ok():\n    assert True\n"
+    ))
+    assert result.returncode != 0
+    assert "replaced sys.modules['database']" in result.stdout
+
+
+def test_conftest_defines_a_single_collect_report_hook():
+    source = (ROOT / "tests" / "conftest.py").read_text()
+    assert source.count("def pytest_make_collect_report(") == 1

@@ -124,12 +124,23 @@ _LEAK_HINT = (
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_make_collect_report(collector):
+    # One hook for both leak guards: a second module-level function with this
+    # name would silently replace this one (PR #2023 review, ST-46).
     outcome = yield
-    if isinstance(collector, pytest.Module) and sys.modules.get("database") is not _database_stub:
+    if not isinstance(collector, pytest.Module):
+        return
+    problems = []
+    if sys.modules.get("database") is not _database_stub:
         sys.modules["database"] = _database_stub
+        problems.append(_LEAK_HINT)
+    leaked = leaked_utils_stubs()
+    if leaked:
+        _evict(leaked)
+        problems.append(f"{_UTILS_LEAK_HINT}: {leaked}")
+    if problems:
         report = outcome.get_result()
         report.outcome = "failed"
-        report.longrepr = f"{collector.nodeid}: importing this test file {_LEAK_HINT}"
+        report.longrepr = f"{collector.nodeid}: importing this test file " + "; and ".join(problems)
 
 
 @pytest.fixture(autouse=True)
@@ -177,18 +188,6 @@ def leaked_utils_stubs() -> list:
 def _evict(names):
     for name in names:
         sys.modules.pop(name, None)
-
-
-@pytest.hookimpl(hookwrapper=True)
-def pytest_make_collect_report(collector):
-    outcome = yield
-    if isinstance(collector, pytest.Module):
-        leaked = leaked_utils_stubs()
-        if leaked:
-            _evict(leaked)
-            report = outcome.get_result()
-            report.outcome = "failed"
-            report.longrepr = f"{collector.nodeid}: importing this test file {_UTILS_LEAK_HINT}: {leaked}"
 
 
 @pytest.fixture(autouse=True)
