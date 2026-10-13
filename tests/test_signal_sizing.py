@@ -145,5 +145,58 @@ class TestSignalSizingInvVol(unittest.TestCase):
         self.assertEqual(result[0]["suggested_shares"], 0, "zero ATR must yield 0 shares")
 
 
+class TestBatchSizingZeroAtrAndFees(unittest.TestCase):
+    """BLG-BE-157 (ST-07) and BLG-BE-158 (ST-08), cycle 2026-10-12__release-v9.12."""
+
+    _SETTINGS = {
+        "uk_commission": 9.95, "stamp_duty_rate": 0.005,
+        "us_commission": 0.0, "fx_fee_rate": 0.0015,
+    }
+
+    def _call(self, signals, available_cash, fx_rate=1.0):
+        import services.sizing_service as _sz
+        with patch.object(_sz, "get_settings", MagicMock(return_value=[self._SETTINGS])):
+            return _sz.size_batch_inv_vol(signals, available_cash=available_cash, fx_rate=fx_rate)
+
+    @staticmethod
+    def _uk(atr, price=100.0):
+        return {"atr_value": atr, "price_gbp": price, "current_price": price, "market": "UK", "status": "new"}
+
+    def test_mixed_batch_zero_atr_gets_no_allocation(self):
+        """ST-07 AC 1: ATRs 1, 0, 2 — the zero-ATR signal gets 0 shares, weight 0 and a reason."""
+        result = self._call([self._uk(1.0), self._uk(0.0), self._uk(2.0)], available_cash=10_000.0)
+        zero = result[1]
+        self.assertEqual(zero["suggested_shares"], 0)
+        self.assertEqual(zero["inv_vol_weight"], 0)
+        self.assertEqual(zero["allocation_gbp"], 0)
+        self.assertEqual(zero["total_cost"], 0)
+        self.assertTrue(zero["reason"])
+        self.assertAlmostEqual(result[0]["inv_vol_weight"] + result[2]["inv_vol_weight"], 1.0, places=6)
+        self.assertGreater(result[0]["suggested_shares"], 0)
+        self.assertGreater(result[2]["suggested_shares"], 0)
+
+    def test_missing_atr_treated_as_zero(self):
+        """ST-07: a missing atr_value is excluded the same way as 0."""
+        sig = self._uk(1.0)
+        del sig["atr_value"]
+        result = self._call([sig, self._uk(2.0)], available_cash=10_000.0)
+        self.assertEqual(result[0]["suggested_shares"], 0)
+        self.assertEqual(result[0]["inv_vol_weight"], 0)
+        self.assertAlmostEqual(result[1]["inv_vol_weight"], 1.0, places=6)
+
+    def test_uk_total_cost_includes_stamp_duty_and_commission(self):
+        """ST-08 AC 1 (UK): 100 shares at £100 → £10,000 + £50 stamp duty + £9.95 commission."""
+        result = self._call([self._uk(5.0)], available_cash=10_000.0)
+        self.assertEqual(result[0]["suggested_shares"], 100)
+        self.assertEqual(result[0]["total_cost"], 10_059.95)
+
+    def test_us_total_cost_includes_fx_fee_in_gbp(self):
+        """ST-08 AC 1 (US): 100 shares at $100, fx 1.25 → ($10,000 + $15.00 FX fee) / 1.25 = £8,012.00."""
+        sig = {"atr_value": 5.0, "price_gbp": 80.0, "current_price": 100.0, "market": "US", "status": "new"}
+        result = self._call([sig], available_cash=8_000.0, fx_rate=1.25)
+        self.assertEqual(result[0]["suggested_shares"], 100)
+        self.assertEqual(result[0]["total_cost"], 8_012.00)
+
+
 if __name__ == "__main__":
     unittest.main()

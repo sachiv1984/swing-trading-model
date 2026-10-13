@@ -444,12 +444,20 @@ def size_batch_inv_vol(signals: list, available_cash: float, fx_rate: float = 1.
       3. Re-normalise capped weights so they sum to 1.0
       4. allocation_gbp_i = available_cash * normalised_weight_i
       5. suggested_shares_i = floor(allocation_gbp_i / price_gbp_i)  (whole shares)
+      6. total_cost_i = gross cost + estimated entry fees, in GBP (BLG-BE-158).
+         US: (shares * current_price + US fees) / fx_rate, the US fees (commission
+         plus FX fee) being computed on the USD gross. UK: shares * current_price
+         (pounds) + stamp duty + commission.
+
+    A signal with zero or missing ATR takes no part in steps 2-3: it gets weight 0,
+    0 shares and a reason, and the other signals' weights still sum to 1.0
+    (BLG-BE-157). Otherwise the 5% minimum clamp would hand it an allocation.
 
     Args:
         signals:        List of signal dicts, each with 'atr_value', 'price_gbp',
                         'current_price', and 'market' fields (from generate_momentum_signals).
         available_cash: Portfolio cash available for allocation (GBP).
-        fx_rate:        Live GBP/USD rate; used only for fee estimation on US stocks.
+        fx_rate:        Live GBP/USD rate; converts a US signal's USD cost to GBP.
 
     Returns:
         Same list of signals with 'suggested_shares', 'allocation_gbp', 'total_cost'
@@ -476,10 +484,13 @@ def size_batch_inv_vol(signals: list, available_cash: float, fx_rate: float = 1.
 
     raw_weights = [v / total_inv_atr for v in inv_atrs]
 
-    # Step 2 — cap to [min, max]
-    capped = [max(_INV_VOL_MIN_WEIGHT, min(_INV_VOL_MAX_WEIGHT, w)) for w in raw_weights]
+    # Step 2 — cap to [min, max]; a zero-ATR signal stays at 0 (BLG-BE-157)
+    capped = [
+        max(_INV_VOL_MIN_WEIGHT, min(_INV_VOL_MAX_WEIGHT, w)) if inv > 0 else 0.0
+        for w, inv in zip(raw_weights, inv_atrs)
+    ]
 
-    # Step 3 — re-normalise so sum == 1.0
+    # Step 3 — re-normalise so the valid-ATR weights sum to 1.0
     cap_total = sum(capped)
     normalised = [w / cap_total for w in capped]
 
@@ -487,7 +498,15 @@ def size_batch_inv_vol(signals: list, available_cash: float, fx_rate: float = 1.
     settings_list = get_settings()
     settings = settings_list[0] if settings_list else {}
 
-    for sig, weight in zip(signals, normalised):
+    for sig, weight, inv in zip(signals, normalised, inv_atrs):
+        if inv == 0:
+            sig['suggested_shares'] = 0
+            sig['allocation_gbp'] = 0
+            sig['total_cost'] = 0
+            sig['inv_vol_weight'] = 0
+            sig['reason'] = 'Inv-vol sizing: ATR unavailable for this signal'
+            continue
+
         allocation_gbp = available_cash * weight
         price_gbp = sig.get('price_gbp', 0) or 0
 
@@ -503,14 +522,17 @@ def size_batch_inv_vol(signals: list, available_cash: float, fx_rate: float = 1.
         raw_shares = allocation_gbp / price_gbp
         whole_shares = int(math.floor(raw_shares))
 
-        # Fee estimation
+        # Fee estimation. The fee functions return their sum under 'total'
+        # (BLG-BE-158). gross_cost is native: USD for US, pounds for UK.
         gross_cost = whole_shares * (sig.get('current_price', price_gbp))
         if sig.get('market') == 'US':
-            fee = calculate_us_entry_fees(gross_cost, settings).get('total_fee', 0)
+            fee = calculate_us_entry_fees(gross_cost, settings)['total']
+            total_cost_gbp = (gross_cost + fee) / fx_rate if fx_rate else 0
         else:
-            fee = calculate_uk_entry_fees(gross_cost, settings).get('total_fee', 0)
+            fee = calculate_uk_entry_fees(gross_cost, settings)['total']
+            total_cost_gbp = gross_cost + fee
 
-        total_cost = round(gross_cost + fee, 2) if whole_shares > 0 else 0
+        total_cost = round(total_cost_gbp, 2) if whole_shares > 0 else 0
 
         sig['suggested_shares'] = whole_shares
         sig['allocation_gbp'] = round(allocation_gbp, 2)

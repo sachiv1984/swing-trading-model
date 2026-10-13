@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.7
-**Last Updated:** 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /signals); prior — 2026-06-24
+**Version:** 1.8
+**Last Updated:** 2026-10-13 (ST-07/ST-08, EPIC-02, v9.12, BLG-BE-157/158 — `total_cost` stated in GBP with entry fees; zero-ATR signals get no allocation); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /signals); prior — 2026-06-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -111,11 +111,13 @@ Response uses the standard success envelope from **conventions.md**.
 | `atr_value` | ATR at generation time. Stored for auditability; not updated after generation |
 | `initial_stop` | Suggested stop in native currency: `current_price − (atr_multiplier_initial × ATR)`. Uses `atr_multiplier_initial` at generation time |
 | `volatility` | Volatility measure computed at generation time. Stored for auditability; not used for position sizing |
-| `allocation_gbp` | Estimated GBP cost of the inv-vol position size (from `sizing_service.size_batch_inv_vol()` — includes estimated fees). (v6.2 ST-04 BLG-FEAT-48: changed from fixed risk-based `size_position()` to inverse-volatility batch sizing. Manual sizing via `POST /portfolio/size` remains unchanged.) |
+| `allocation_gbp` | GBP share of available cash assigned to the signal by inverse-volatility weighting (`available_cash × inv_vol_weight`, from `sizing_service.size_batch_inv_vol()`). Excludes fees; see `total_cost`. (v6.2 ST-04 BLG-FEAT-48: changed from fixed risk-based `size_position()` to inverse-volatility batch sizing. Manual sizing via `POST /portfolio/size` remains unchanged.) |
 | `relative_strength_pct` | **Supplementary (ST-09, display-only).** Stock momentum % minus benchmark momentum % over `lookback_days`. US benchmark: SPY; UK benchmark: ^FTSE. Labelled "vs. benchmark (informational)" in UI. Does **not** affect `rank` or signal ordering. `null` if benchmark data unavailable. |
 | `week52_high_proximity_pct` | **Supplementary (ST-09, display-only).** `(current_native_price − 52w_high) / 52w_high × 100`. Negative value means price is below the 52-week high. `null` if insufficient history. |
 | `avg_daily_volume_20d` | **Supplementary (ST-09, display-only).** Average daily trading volume over the last 20 trading days (integer, native exchange units). `null` if data unavailable. |
 | `price_vs_50d_ma` | **Supplementary (ST-09, display-only).** `(current_native_price − 50d_MA) / 50d_MA × 100`. Positive = above MA, negative = below MA. Does **not** affect `rank`. `null` if insufficient history. |
+| `total_cost` | **GBP**, for both markets: the estimated cost of `suggested_shares` including estimated entry fees (`sizing_service.size_batch_inv_vol()`). UK: `suggested_shares × current_price + stamp duty + commission`. US: `(suggested_shares × current_price + commission + FX fee) / fx_rate`, the US fees being computed on the USD gross and converted at the generation-time `fx_rate`. `0` when `suggested_shares` is 0. (v1.8, BLG-BE-158: before v1.8 the fees were read from a non-existent key and were always 0, and a US value was left in USD.) |
+| `inv_vol_weight` | The signal's normalised inverse-volatility weight. A signal with zero or missing ATR is excluded from the 5%–20% clamp and renormalisation: it gets `inv_vol_weight` 0, `suggested_shares` 0 and a `reason`, and the other signals' weights sum to 1.0 (v1.8, BLG-BE-157). |
 | `reason` | Human-readable sizing note. Set when sizing produces `suggested_shares = 0` (e.g. invalid initial stop, or `sizing_service.size_position()` returns `valid: false`). `null` when sizing completes normally. |
 
 ### Validation rules & constraints
@@ -364,6 +366,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.8 | 2026-10-13 | ST-07/ST-08 (EPIC-02, v9.12; BLG-BE-157, BLG-BE-158): `total_cost` field note added: GBP for both markets, including estimated entry fees (UK stamp duty and commission; US commission and FX fee converted at `fx_rate`). `inv_vol_weight` field note added: zero/missing-ATR signals get weight 0, 0 shares and a reason. `allocation_gbp` description corrected (excludes fees). API Contracts & Documentation Owner. |
 | 1.5 | 2026-06-19 | ST-01 (BLG-BE-36, v6.0): Replace cash-allocation sizing model with risk-based `sizing_service.size_position()` per `strategy_rules.md §4.1`. `suggested_shares` now reflects `portfolio_value × risk_percent / stop_distance` — independent of concurrent signal count. `allocation_gbp` is now estimated_cost from the canonical sizing calculator. `reason` field updated: no longer describes cap-overshoot; now set when sizing produces 0 shares (invalid stop, or sizing invalid). `allocation_insufficient` status is legacy — no longer generated. `volatility` field description corrected (not used for sizing). API Contracts & Documentation Owner. |
 | 1.4 | 2026-06-03 | Hotfix: Revise `allocation_insufficient` semantics — now only fires when total cash < price of 1 share. When 20% cap prevents 1 share but total cash is sufficient, signal stays `new` with `suggested_shares = 1` and `reason` note. Update `reason` field description accordingly. |
 | 1.3 | 2026-06-03 | ST-06 (BLG-FEAT-43, v5.0): Add `allocation_insufficient` status for signals where 1 share exceeds position allocation; add `reason` field with human-readable explanation; `reason` is `null` for all other statuses. DB: `signals` table extended with nullable `reason` column; `signals_status_check` constraint extended. Frontend: `SignalCard` displays reason inline with orange styling. API Contracts & Documentation Owner. |
