@@ -446,6 +446,24 @@ class TestS13BoundarySuite:
         """D4: instrument directives are caught by the output scan's own category."""
         assert "instrument_directive" in scan_language(text)
 
+    @pytest.mark.parametrize("text", [
+        "Consider buying MSFT.", "You could sell the position.", "Selling the holding would lock this in.",
+        "Shorting NVDA here is an option.", "Going long AAPL is possible.", "Adding to your position is an option.",
+        "Think about buying more.", "Buys TSLA on dips.",
+    ])
+    def test_b_mpn_04_inflected_and_indirect_directives_detected(self, text):
+        """ST-05 (BLG-AI-13, v9.12): inflected and indirect wording is caught."""
+        assert "instrument_directive" in scan_language(text)
+
+    @pytest.mark.parametrize("text", [
+        "In the 2025/26 tax year you sold 9 trades.", "You bought 3 positions in May 2025.",
+        "You shorted no positions this year.", "The selling price averaged £12.40.",
+        "Positions held for a short period made up most trades.",
+    ])
+    def test_b_mpn_04_past_tense_reporting_not_detected(self, text):
+        """ST-05: past-tense reporting is not an instrument directive (negative cases)."""
+        assert "instrument_directive" not in scan_language(text)
+
     def test_b_mpn_04_representative_output_is_clean(self):
         assert scan_language(GOOD_TEXT) == [] and scan_language(build_fallback_text(INPUTS)) == []
 
