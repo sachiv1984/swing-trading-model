@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-13 (session — 2 new items added from the PR #2023 review, EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-388, BLG-QA-222); prior — 2026-10-13 (session — 1 new item added from Sprint Execution EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-387, from the ST-44 PMO Lead observation); prior — 2026-10-13 (session — 10 new items added from Sprint Execution EPIC-01, 2026-10-12__release-v9.12: BLG-AI-14, BLG-SPEC-195, BLG-AI-15, and from the PR #2022 review BLG-AI-16 to BLG-AI-19, BLG-OPS-186, BLG-OPS-187, BLG-QA-221); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (session — 3 new items added from Sprint Execution EPIC-05 ST-34 drift triage, 2026-10-12__release-v9.12: BLG-SPEC-196, BLG-SPEC-197, BLG-QA-223); prior — 2026-10-13 (session — 2 new items added from the PR #2023 review, EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-388, BLG-QA-222); prior — 2026-10-13 (session — 1 new item added from Sprint Execution EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-387, from the ST-44 PMO Lead observation); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5400,5 +5400,71 @@ All the new SQL in EPIC-01 is verified only through mocks or a hand-written fake
 
 **Acceptance Criteria**
 - The Phase B tests pass in CI and fail if the casts or the table name are wrong
+
+---
+
+### BLG-SPEC-196 — Re-apply NOT NULL on positions.portfolio_id and positions.total_cost
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-34/EPIC-05, cycle `2026-10-12__release-v9.12` (drift-detector triage of BLG-SPEC-178, read-only staging reads authorised by the user) — 2026-10-13
+**Effort:** S (~0.5d; pre-check, migration and live confirmation in two environments)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model.md`'s `CREATE TABLE positions` declares `portfolio_id UUID NOT NULL` and `total_cost DECIMAL(12, 2) NOT NULL`, and its Fields table says both are not nullable. On live staging (2026-10-13), both columns are nullable, so a row without a portfolio or a cost basis can be written. Production has not been checked. The other 6 positions nullable mismatches from BLG-SPEC-178 finding 3 were documentation errors and were fixed in `data_model.md` v2.60; these 2 are genuine enforcement gaps.
+
+**Scope**
+- Read-only pre-check on staging and production: count rows where `portfolio_id IS NULL` or `total_cost IS NULL`
+- If both counts are 0, add a DS-xx migration (`ALTER TABLE positions ALTER COLUMN ... SET NOT NULL`, reversible) and apply it to staging, then production, per the DS-23 pattern
+- If any row is NULL, record the rows' origin and a backfill decision before migrating
+- Remove the "nullable on live staging" notes on both Fields rows once applied
+
+**Acceptance Criteria**
+- `information_schema.columns` reports `is_nullable = NO` for both columns in staging and production, with the output recorded in the DS-xx Live Confirmation
+- `scripts/check_data_model_drift.py` no longer reports either column as a nullable mismatch
+
+---
+
+### BLG-SPEC-197 — Apply DS-17's open-position unique index to staging
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-34/EPIC-05, cycle `2026-10-12__release-v9.12` (drift-detector triage of BLG-SPEC-178, read-only staging reads authorised by the user); BLG-SPEC-178 finding 1 — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+DS-17's `idx_positions_open_ticker_entry_date_unique` was confirmed live in production on 2026-09-23, but it does not exist on staging (`pg_indexes`, 2026-10-13). The staging reset workflow (`reset-and-seed-staging.yml`) clears data but never applies DS-17, so staging has not had the index since it was introduced. Staging therefore accepts duplicate open positions that production rejects, and staging tests cannot catch a regression in the duplicate guard.
+
+**Scope**
+- Run DS-17's duplicate pre-check on staging, then its Up Migration
+- Record the staging Live Confirmation in DS-17
+- Decide whether `reset-and-seed-staging.yml`'s migrate step should also apply DS-17 (`CREATE UNIQUE INDEX IF NOT EXISTS`) so a future staging rebuild keeps it
+
+**Acceptance Criteria**
+- `pg_indexes` on staging lists `idx_positions_open_ticker_entry_date_unique` with DS-17's definition
+- DS-17 records the staging confirmation alongside the production one
+
+---
+
+### BLG-QA-223 — Stop check_data_model_drift.py reading index names from rollback blocks
+**Priority:** P4 (Trivial)
+**Type:** QA / Test Tooling
+**Owner:** QA & Testing Owner; Data Model & Domain Schema Owner
+**Source:** ST-34/EPIC-05, cycle `2026-10-12__release-v9.12` (drift-detector triage of BLG-SPEC-178, read-only staging reads authorised by the user); BLG-SPEC-178 finding 5 — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`scripts/check_data_model_drift.py` collects every `CREATE INDEX` name in `data_model.md`, including those inside "Reversible:" and Down Migration blocks. A rollback that recreates a superseded index is then reported as a missing live index. `idx_trade_plans_ticker` (replaced by `idx_trade_plans_ticker_upper` in v2.22) is reported on every run for this reason. Each run therefore needs the same false positive to be ruled out by hand.
+
+**Scope**
+- Exclude SQL inside blocks introduced by `Reversible:` or under a `Down Migration` heading from index and CHECK-constraint name parsing
+- Add a unit test with a fixture containing a rollback-only index name
+
+**Acceptance Criteria**
+- Running the detector against `data_model.md` no longer reports `idx_trade_plans_ticker`
+- A unit test fails if a rollback-only index name is reported again
 
 ---

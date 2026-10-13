@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.59
-**Last Updated:** 2026-10-13 (ST-01, EPIC-01, v9.12, BLG-BE-162 — DS-31 (v2.59): `ai_audit_log.trade_ids` `INTEGER[]` → `UUID[]`); prior — 2026-10-12 (EPIC-04 merged to main, PR #1972, carried into EPIC-05 by the main merge — DS-30 (v2.57, v2.58) added after DS-29; version 2.58 is the highest, and 2.55 is this EPIC's ST-30 provenance change); prior — 2026-10-12 (EPIC-03 merged to main, PR #1970, carried into EPIC-05 by the main merge — DS-28 (v2.54) and DS-29 (v2.56) added; version 2.56 is the highest, and 2.55 is this EPIC's ST-30 provenance change); prior history retained — see prior entries in version control
+**Version:** 2.60
+**Last Updated:** 2026-10-13 (ST-34, EPIC-05, v9.12, BLG-SPEC-178 — v2.60: drift-detector triage recorded; positions Fields nullability corrected for 7 columns; notifications.updated_at removed; live index/constraint notes under §5, §6 and trade_reflections); prior — 2026-10-13 (ST-01, EPIC-01, v9.12, BLG-BE-162 — DS-31 (v2.59): `ai_audit_log.trade_ids` `INTEGER[]` → `UUID[]`); prior — 2026-10-12 (EPIC-04 merged to main, PR #1972, carried into EPIC-05 by the main merge — DS-30 (v2.57, v2.58) added after DS-29; version 2.58 is the highest, and 2.55 is this EPIC's ST-30 provenance change); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -109,7 +109,7 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | Field | Type | Nullable | Provenance | Description |
 |-------|------|----------|------------|-------------|
 | id | UUID | NO | system-stamped | Primary key |
-| portfolio_id | UUID | NO | system-stamped | FK to portfolios |
+| portfolio_id | UUID | NO | system-stamped | FK to portfolios. *(Documented `NOT NULL`, but nullable on live staging as of 2026-10-13; re-applying it is tracked as BLG-SPEC-196. See §Drift Detector Triage.)* |
 | ticker | VARCHAR(20) | NO | user-entered | Stock symbol (e.g., "PLTR", "FRES.L") |
 | market | VARCHAR(5) | NO | user-entered | "US" or "UK" |
 | entry_date | DATE | NO | user-entered | Position entry date |
@@ -118,25 +118,25 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | fill_currency | VARCHAR(3) | YES | derived | `"GBP"` or `"USD"`, set from `market` |
 | fx_rate | DECIMAL(10,6) | YES | user-entered | GBP/USD rate at entry. User-entered when supplied; otherwise the system stores the live rate at entry (1.0 for UK) — **user-entered or system-stamped**, see note |
 | shares | DECIMAL(10,4) | NO | user-entered | Number of shares (fractional allowed); user-entered at entry, reduced by the system on a partial exit |
-| total_cost | DECIMAL(12,2) | NO | derived | Total cost including fees in GBP |
+| total_cost | DECIMAL(12,2) | NO | derived | Total cost including fees in GBP. *(Documented `NOT NULL`, but nullable on live staging as of 2026-10-13; re-applying it is tracked as BLG-SPEC-196.)* |
 | fees_paid | DECIMAL(10,2) | NO | derived | Total entry fees in GBP (commission + stamp duty for UK, FX fee + commission for US), reduced proportionally on partial exit. Every write path supplies a value. **`NOT NULL`, no default** — re-applied live on staging and production 2026-10-05 (DS-23). An insert that omits it fails rather than recording an unknown fee as £0 (see note below). |
 | fee_type | VARCHAR(20) | YES | derived | Fee calculation method (`stamp_duty` for UK, `fx_fee` for US), set from `market` |
 | initial_stop | DECIMAL(10,4) | YES | derived | Stop price at entry, native currency: entry − 5 × ATR (`strategy_rules.md` §5/§11). Always computed; the `stop_price` the add-position request accepts is not used *(see note, v2.55)* |
 | current_stop | DECIMAL(10,4) | YES | derived | Current trailing stop, native currency. Written only by the stop recompute paths (on-load and nightly); no API lets a user set it *(see note, v2.55)* |
 | current_price | DECIMAL(10,4) | YES | system-stamped | Last known price in native currency: the entry price at entry, then the last live price fetched by the on-load recompute |
 | atr | DECIMAL(10,4) | YES | user-entered | ATR value. **User-entered or derived**: typed at entry (`atr_source = 'user'`), fetched from market data (`fetched`) or the 2%-of-entry fallback (`fallback`); `atr_source` says which |
-| holding_days | INTEGER | NO | system-stamped | Calendar days held, written by the stop recompute paths. Can lag a day or more: `GET /portfolio` and the alert, compliance and AI readers compute it live from `entry_date` instead (v9.11, ST-12) |
-| pnl | DECIMAL(12,2) | NO | derived | Unrealised (open) or realised (closed) P&L in GBP |
-| pnl_pct | DECIMAL(10,2) | NO | derived | P&L as percentage of entry cost. Also returned as `pnl_percent` by the API |
-| status | VARCHAR(20) | NO | system-stamped | `'open'` or `'closed'`; set to `'closed'` by the exit flow |
+| holding_days | INTEGER | YES | system-stamped | Calendar days held, written by the stop recompute paths. Can lag a day or more: `GET /portfolio` and the alert, compliance and AI readers compute it live from `entry_date` instead (v9.11, ST-12) |
+| pnl | DECIMAL(12,2) | YES | derived | Unrealised (open) or realised (closed) P&L in GBP |
+| pnl_pct | DECIMAL(10,2) | YES | derived | P&L as percentage of entry cost. Also returned as `pnl_percent` by the API |
+| status | VARCHAR(20) | YES | system-stamped | `'open'` or `'closed'`; set to `'closed'` by the exit flow |
 | exit_date | DATE | YES | user-entered | Exit date (null while open); user-entered at exit, defaulting to today |
 | exit_price | DECIMAL(10,4) | YES | user-entered | Exit price in native currency (null while open) |
 | exit_reason | VARCHAR(50) | YES | user-entered | Reason for exit (null while open); user-chosen at exit, defaulting to `Manual Exit` |
 | entry_note | TEXT | YES | user-entered | Journal note at entry |
 | tags | TEXT[] | YES | user-entered | Strategy/classification tags |
 | user_fill_price | DECIMAL(10,4) | YES | user-entered | User-provided actual broker fill price in native currency (optional). Used to compute slippage. Null when not provided (pre-v2.1 trades). |
-| created_at | TIMESTAMP | NO | system-stamped | Record creation timestamp |
-| updated_at | TIMESTAMP | NO | system-stamped | Last update timestamp |
+| created_at | TIMESTAMP | YES | system-stamped | Record creation timestamp |
+| updated_at | TIMESTAMP | YES | system-stamped | Last update timestamp. *(Nullable YES from v2.60: the column has a `DEFAULT` but no `NOT NULL`, in the `CREATE TABLE` above and live; the same applies to `holding_days`, `pnl`, `pnl_pct`, `status` and `created_at`. See §Drift Detector Triage.)* |
 | position_state | VARCHAR(20) | YES | derived | Lifecycle state: `GRACE`, `LOSING`, `PROFITABLE`, `EXIT ZONE`, `UNKNOWN`. Null for closed positions. Computed by `PositionLifecycleService`. Added v2.6. |
 | state_entered_at | TIMESTAMP | YES | system-stamped | Timestamp when current `position_state` was assigned. Updated on each state transition. Null for closed positions. Added v2.6. |
 | state_history | JSONB | NO | system-stamped | Ordered array of `{state, entered_at}` objects recording all state transitions. Default `[]`. Never truncated — full audit trail. Added v2.6. |
@@ -146,7 +146,7 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | atr_source | VARCHAR(10) | YES | system-stamped | Where the stored `atr` came from: `fetched` (computed from market data), `user` (typed at entry), or `fallback` (no ATR could be fetched at entry, so 2% of the entry price was substituted). `NULL` for positions entered before this column was added and not freshly recomputed since. Written at entry and whenever ATR is freshly fetched on recompute. Added v2.50 (DS-25). |
 | stop_calculation_source | VARCHAR(10) | YES | system-stamped | Which path last recalculated `current_stop` against ATR: `on_load` (`GET /positions/analyze`) or `nightly` (`POST /positions/nightly-stop-update`). Written together with `stop_calculated_at`; the grace-period carry-over writes neither. `NULL` until the first recompute after this column was added. Added v2.51 (DS-26). |
 | strategy_version_at_entry | VARCHAR(10) | YES | system-stamped | Active `strategy_rules.md` version at entry (`get_current_strategy_version()`), forward-only. Added v8.0 (ST-01). *(Row added v2.55 — ST-30; the column was live but missing from this table.)* |
-| risk_off_exit | BOOLEAN | YES | derived | Risk-off exit alert flag, set and cleared by the nightly risk-off job from the market regime (ST-05). *(Row added v2.55 — ST-30.)* |
+| risk_off_exit | BOOLEAN | NO | derived | `NOT NULL DEFAULT FALSE` (`ensure_risk_off_exit_column()`; Nullable corrected YES → NO in v2.60). Risk-off exit alert flag, set and cleared by the nightly risk-off job from the market regime (ST-05). *(Row added v2.55 — ST-30.)* |
 | last_reviewed_at | TIMESTAMPTZ | YES | system-stamped | When the user last marked the position reviewed (`PATCH /positions/{id}/mark-reviewed`); null if never. The timestamp is system-stamped; the action is the user's. *(Row added v2.55 — ST-30.)* |
 
 **Provenance (v2.55 — ST-30, BLG-SPEC-173):** every field above is tagged **user-entered** (the value comes from what the user typed or chose), **derived** (computed by the system from other fields or market data) or **system-stamped** (identifiers, timestamps, lifecycle markers and provenance flags written by the system). Fields that are genuinely mixed carry the qualifier in their description: `fx_rate` (user-entered when supplied, otherwise the live rate), `atr` (user, fetched or fallback, recorded in `atr_source`) and `shares` (user-entered, reduced on partial exit). Two findings surfaced while annotating, both filed: the add-position request's `stop_price` is accepted but never stored (the initial stop is always 5 × ATR), and the Trail Stop modal's apply action calls `PATCH /positions/{id}`, which does not exist, so no path lets a user set `current_stop` (`BLG-BE-159`). The `entry_price`/`fill_price` currency descriptions were corrected to match `add_position()`; `data_model_positions_dictionary.md` still carries the old native-currency wording (`BLG-SPEC-190`).
@@ -297,6 +297,8 @@ CREATE INDEX idx_portfolio_history_portfolio ON portfolio_history(portfolio_id);
 CREATE INDEX idx_portfolio_history_date ON portfolio_history(snapshot_date DESC);
 ```
 
+> **Live indexes (staging, 2026-10-13, v2.60):** `idx_portfolio_history_portfolio` does not exist live. `portfolio_id` lookups are served by the `UNIQUE (portfolio_id, snapshot_date)` index (`portfolio_history_portfolio_id_snapshot_date_key`), whose leading column is `portfolio_id`, so no index is missing in effect. Live `idx_portfolio_history_date` is on `(portfolio_id, snapshot_date DESC)`, not `(snapshot_date DESC)` as written above. See §Drift Detector Triage.
+
 ### Notes
 - The `UNIQUE (portfolio_id, snapshot_date)` constraint makes `POST /portfolio/snapshot` an idempotent upsert.
 - A minimum of 30 snapshots is required for the portfolio-method Sharpe ratio calculation.
@@ -329,6 +331,8 @@ CREATE TABLE settings (
         CHECK (default_risk_percent > 0 AND default_risk_percent <= 100)
 );
 ```
+
+> **Live constraint name (staging, 2026-10-13, v2.60):** the `default_risk_percent` CHECK exists live with the same definition under Postgres's generated name `settings_default_risk_percent_check`, not `settings_risk_percent_check`. Use the live name in any future `DROP CONSTRAINT`. See §Drift Detector Triage.
 
 ### Fields
 
@@ -488,8 +492,7 @@ CREATE TABLE notifications (
     delivery_attempted_at TIMESTAMPTZ,
     delivery_attempts INTEGER NOT NULL DEFAULT 0,
     delivery_error TEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX idx_notifications_portfolio ON notifications(portfolio_id);
@@ -516,7 +519,8 @@ CREATE UNIQUE INDEX uq_notifications_reflection_reminder_trade
 | delivery_attempts | INTEGER | NO | Count of delivery attempts (success or failure). Incremented on each attempt. |
 | delivery_error | TEXT | YES | Error message from last failed delivery attempt. Cleared on success. |
 | created_at | TIMESTAMPTZ | NO | Notification creation timestamp |
-| updated_at | TIMESTAMPTZ | NO | Last update timestamp |
+
+*(v2.60: an `updated_at` column was documented here, but the table has never had one. `alerts_service.py`'s `CREATE TABLE notifications` does not create it, no code writes it, and it is absent live. The row was removed; read and delivery changes are tracked by `read`, `delivered` and `delivery_attempted_at`.)*
 
 ### Delivery retry model (ADR-003)
 
@@ -680,7 +684,7 @@ stateDiagram-v2
     closed --> [*]
 ```
 
-Plain-text equivalent: `positions.status` is `open` or `closed` — a position row is never deleted, just transitioned (the "Lifecycle note" at the top of the Positions Table section above). While `open`, `position_state` (DS-05) is recomputed on every `GET /positions` call by `PositionLifecycleService.compute_position_state()` (`backend/services/position_lifecycle_service.py`) in priority order `GRACE` (fewer than 10 calendar days, any price — v9.10 ST-12) → `LOSING` (native price ≤ entry) → `EXIT ZONE` (price ≥ entry + 2R) → `PROFITABLE` (price > entry), with `UNKNOWN` only when entry price, current price or entry date is missing. Post-grace states follow `strategy_rules.md` §9's P&L sign; `EXIT ZONE` is a display sub-state of §9 PROFITABLE (v9.10 ST-11, BLG-SPEC-185, `docs/specs/position_lifecycle_states_registry.md`). The diagram above shows the transitions this order permits between consecutive recomputations; a position never returns to `GRACE` once the grace window elapses (calendar days only increase), except from `UNKNOWN` if the missing data is restored while still in grace. `state_history` (DS-05) is an append-only audit trail of every transition, never truncated. `EXIT ZONE` and `UNKNOWN` are both display-only — §13: no automated action is taken on any `position_state` value. On `open` → `closed`, `POST /positions/{id}/exit` creates the corresponding `trade_history` row (§3 above) — the position row itself is retained, not deleted, matching the Positions Table's own "serves both open and closed positions" convention.
+Plain-text equivalent: `positions.status` is `open` or `closed` — a position row is never deleted, just transitioned (the "Lifecycle note" at the top of the Positions Table section above). While `open`, `position_state` (DS-05) is recomputed on every `GET /positions` call by `PositionLifecycleService.compute_position_state()` (`backend/services/position_lifecycle_service.py`) in priority order `GRACE` (fewer than 10 calendar days, any price — v9.10 ST-12) → `LOSING` (native price ≤ entry) → `EXIT ZONE` (price ≥ entry + 2R) → `PROFITABLE` (price > entry), with `UNKNOWN` only when entry price, current price or entry date is missing. Post-grace states follow `strategy_rules.md` §9's P&L sign; `EXIT ZONE` is a display sub-state of §9 PROFITABLE (v9.10 ST-11, BLG-SPEC-196, `docs/specs/position_lifecycle_states_registry.md`). The diagram above shows the transitions this order permits between consecutive recomputations; a position never returns to `GRACE` once the grace window elapses (calendar days only increase), except from `UNKNOWN` if the missing data is restored while still in grace. `state_history` (DS-05) is an append-only audit trail of every transition, never truncated. `EXIT ZONE` and `UNKNOWN` are both display-only — §13: no automated action is taken on any `position_state` value. On `open` → `closed`, `POST /positions/{id}/exit` creates the corresponding `trade_history` row (§3 above) — the position row itself is retained, not deleted, matching the Positions Table's own "serves both open and closed positions" convention.
 
 ### How the two lifecycles connect
 
@@ -859,6 +863,8 @@ CREATE TABLE trade_reflections (
 
 CREATE INDEX idx_trade_reflections_trade ON trade_reflections(trade_id);
 ```
+
+> **Live indexes (staging, 2026-10-13, v2.60):** `idx_trade_reflections_trade` does not exist live. It would duplicate the unique index behind `UNIQUE (trade_id)`, which is named `trade_reflections_trade_id_key` live, not `uq_trade_reflections_trade`. See §Drift Detector Triage.
 
 #### Field definitions
 
@@ -3126,8 +3132,38 @@ Up Migration: "Success. No rows returned" in both. No integer values were cleare
 
 `DEL-20261013-01` steps 2–3 were then completed the same day: a staging journal-summary run from Trade History returned generated content, and `ai_audit_log` run `f7ab028e-c76b-421c-b77c-23d964316e77` recorded 14 UUID `trade_ids`. `DEL-20261013-01` Unblocked.
 
+## Drift Detector Triage (2026-10-13, v2.60)
+
+**Story:** ST-34 (EPIC-05, `2026-10-12__release-v9.12`), BLG-SPEC-178. Triage of the findings `scripts/check_data_model_drift.py` reported on its first run (ST-28, v9.9, 2026-10-01) beyond the 5 known divergence classes.
+
+**Evidence (read-only, staging):** on 2026-10-13, with the user's explicit permission and the session forced read-only (`default_transaction_read_only=on`), the detector was re-run (`--json`) against this document and against the revision it first ran on (`aba5e44b`). One catalog query (`pg_indexes`, `information_schema.tables`, `pg_constraint` for 7 tables and `settings`) and one count query on `positions` were also run. No production database was read.
+
+| # | Finding | Disposition | Action |
+|---|---------|-------------|--------|
+| 1 | DS-17's `idx_positions_open_ticker_entry_date_unique` absent on staging | **Needs live action.** Still absent on staging. The staging reset workflow clears data but has never applied DS-17, and DS-17's live confirmation was run on production only. | Apply to staging: BLG-SPEC-197. Re-confirm that production still has it: Human-Delegation to the Data Model & Domain Schema Owner (ST-34, `delegation_log.md`). |
+| 2 | 3 undocumented `positions` columns: `last_reviewed_at`, `risk_off_exit`, `strategy_version_at_entry` | **Documentation fix — already applied (v2.55).** All three have Fields rows. They are not orphans: each has a live writer (`PATCH /positions/{id}/mark-reviewed`; the nightly risk-off job via `update_positions_risk_off_exit()`; `get_current_strategy_version()` at entry). Staging counts on 2026-10-13 (2 rows): `last_reviewed_at` 0 non-null, `risk_off_exit` 2, `strategy_version_at_entry` 0. With only 2 rows, these counts cannot show a column is always NULL; the live writers are what rule out dropping them. | None for the columns. `risk_off_exit`'s Fields row said nullable; live is `NOT NULL DEFAULT FALSE` (`ensure_risk_off_exit_column()`), corrected in v2.60. |
+| 3 | 8 `positions` nullable mismatches (Fields table NO, live YES) | **Split.** `portfolio_id` and `total_cost` have `NOT NULL` in the `CREATE TABLE` but are nullable live: **needs live action**. `created_at`, `holding_days`, `pnl`, `pnl_pct`, `status` and `updated_at` have only a `DEFAULT` in the `CREATE TABLE` and are nullable live: the Fields table was wrong, so **documentation fix**. (BLG-SPEC-178 listed `status` with the explicit-`NOT NULL` group; the `CREATE TABLE` has `DEFAULT 'open'` and a CHECK, but no `NOT NULL`.) | `portfolio_id`, `total_cost`: BLG-SPEC-196 (pre-check, migration). The other 6 Fields rows corrected to YES in v2.60. Whether to add `NOT NULL` to `status`/`created_at` is a separate hardening choice, noted in BLG-SPEC-196. |
+| 4 | `notifications.updated_at` documented but not live | **Documentation fix.** `alerts_service.py`'s `CREATE TABLE notifications` has never created it and no code writes it. `GET /notifications` (`alerts_endpoints.md`) does not return it. | Removed from §9's `CREATE TABLE` and Fields table in v2.60. The v1.8 → v1.9 migration block is left as historical text. |
+| 5 | 10 documented index names and 1 CHECK constraint name not found live | Checked one by one below. | See below. |
+
+**Finding 5, name by name.** The detector, re-run against the original revision `aba5e44b`, now reports 8 of the 11 names missing. The same 8 are reported against this document. The other 3 are present live today, most likely created since 2026-10-01 by a backend `ensure_*` path. The v9.9 run did not record its 11 names, so these 3 cannot be identified. Every documented name other than the 8 below is confirmed present by the detector.
+
+| Name | Live state (staging) | Disposition |
+|------|----------------------|-------------|
+| `idx_positions_open_ticker_entry_date_unique` | Absent | Needs live action: finding 1 above. |
+| `idx_trade_plans_ticker` | Absent. `idx_trade_plans_ticker_upper` is present. | **False positive.** The name appears only in the v2.21 → v2.22 migration's "Reversible:" rollback block. The detector reads rollback SQL: BLG-QA-223. |
+| `idx_portfolio_history_portfolio` | Absent. The `UNIQUE (portfolio_id, snapshot_date)` index leads on `portfolio_id`. | **Documentation fix.** No index is missing in effect. Note added under §5; it also records that live `idx_portfolio_history_date` is `(portfolio_id, snapshot_date DESC)`. |
+| `idx_trade_reflections_trade` | Absent. `trade_reflections_trade_id_key` (UNIQUE `trade_id`) is present. | **Documentation fix.** Redundant with the unique index. Note added; the live unique constraint name differs from the documented `uq_trade_reflections_trade`. |
+| `settings_risk_percent_check` | Present as `settings_default_risk_percent_check`, same definition | **Documentation fix (name only).** Note added under §6. |
+| `idx_position_audit_log_position_id` | Table `position_audit_log` does not exist on staging | **Matches known pattern.** The table and index are created together on first use by `database.py`'s `ensure_*` function (`CREATE ... IF NOT EXISTS`). Absent until that path runs. |
+| `idx_sector_regime_history_portfolio_date` | Table `sector_regime_history` does not exist on staging | **Matches known pattern.** Same lazy `ensure_*` creation. |
+| `idx_trade_plan_audit_log_trade_plan_id` | Table `trade_plan_audit_log` does not exist on staging | **Matches known pattern.** Same lazy `ensure_*` creation. |
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: pending. Agent-mediated review per `execution_prompt.md` §5.3 is recorded in `qa_evidence_EPIC-05.md`; finding 1's production read is a Human-Delegation.
+
 ---
 
-**Document Version:** 2.59
+**Document Version:** 2.60
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-13 (ST-01, EPIC-01, v9.12: DS-31 added after DS-30; version 2.59); prior — 2026-10-12 (EPIC-04 merged in: DS-30 added after DS-29; version 2.58); prior — 2026-10-12 (EPIC-03 merged in: DS-28 and DS-29 added; version 2.56); prior history retained — see prior entries in version control
+**Last Review:** 2026-10-13 (ST-34, EPIC-05, v9.12, BLG-SPEC-178 — v2.60: drift-detector triage recorded; positions Fields nullability corrected for 7 columns; notifications.updated_at removed; live index/constraint notes under §5, §6 and trade_reflections); prior — 2026-10-13 (ST-01, EPIC-01, v9.12: DS-31 added after DS-30; version 2.59); prior — 2026-10-12 (EPIC-04 merged in: DS-30 added after DS-29; version 2.58); prior history retained — see prior entries in version control
