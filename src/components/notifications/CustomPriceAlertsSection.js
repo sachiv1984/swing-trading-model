@@ -136,7 +136,7 @@ function CreateForm({ onSave, onCancel }) {
           onChange={(e) => handleTickerChange(e.target.value)}
           placeholder="e.g. AAPL"
           className={cn(
-            "bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-9 w-40",
+            "bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 placeholder:text-slate-600 dark:text-slate-400 h-9 w-40",
             tickerError && "!border-rose-500/60"
           )}
         />
@@ -173,7 +173,7 @@ function CreateForm({ onSave, onCancel }) {
           onChange={(e) => handleThresholdChange(e.target.value)}
           placeholder="0.00"
           className={cn(
-            "bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-9 w-40",
+            "bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 placeholder:text-slate-600 dark:text-slate-400 h-9 w-40",
             thresholdError && "!border-rose-500/60"
           )}
         />

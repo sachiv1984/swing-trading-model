@@ -62,6 +62,8 @@ class TestContradictions:
         '"20-day ATR"',
         '"ATR (20-day, £)"',
         '"ATR period: 21 days"',
+        '"ATR (20d)"',
+        '"20d ATR"',
         '"the grace period ends (7 calendar days)"',
         '"a 5-day grace window"',
         "Day {n} of 7",
@@ -75,6 +77,7 @@ class TestContradictions:
         '"ATR × 2.0"',
         "const stop = price - 5 * signal.atr_value;",
         '"14-day ATR"',
+        '"ATR (14d)"',
         '"grace period ends (10 calendar days, §6)"',
         "Day {n} of 10",
         "formatPercent(atrPct * 100)",
@@ -88,6 +91,7 @@ class TestLiterals:
     @pytest.mark.parametrize("line", [
         '<p>entry − 5×ATR</p>',
         '"ATR (14-day)"',
+        '<p>ATR (14d)</p>',
         "Day {dayNumber} of 10",
         "price - 5 * signal.atr_value",
     ])
@@ -97,6 +101,7 @@ class TestLiterals:
     @pytest.mark.parametrize("line", [
         "<p>entry − {INITIAL_ATR_MULTIPLIER}×ATR</p>",
         "`ATR (${ATR_PERIOD_DAYS}-day)`",
+        "<p>ATR ({ATR_PERIOD_DAYS}d)</p>",
         "Day {dayNumber} of {GRACE_PERIOD_DAYS}",
         '"vs 200-day MA"',
     ])

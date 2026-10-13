@@ -115,7 +115,11 @@ def _same(a: float, b: float) -> bool:
 # Patterns are applied per line of comment-stripped source.
 MULT_BEFORE = re.compile(NUM + TIMES + r"ATR\b", re.I)          # "5×ATR", "5 × ATR"
 MULT_AFTER = re.compile(r"\bATR" + TIMES + NUM, re.I)            # "ATR × 2.0"
-ATR_PERIOD = re.compile(NUM + r"[- ]day\s+ATR\b|\bATR\s*\(" + NUM + r"[- ]day|\bATR period:?\s*" + NUM, re.I)
+ATR_PERIOD = re.compile(
+    NUM + r"[- ]day\s+ATR\b|\bATR\s*\(" + NUM + r"[- ]day|\bATR period:?\s*" + NUM
+    + r"|\bATR\s*\(\s*" + NUM + r"\s*d\b|" + NUM + r"d\s+ATR\b",  # "ATR (14d)", "14d ATR"
+    re.I,
+)
 GRACE_LEN = re.compile(
     r"\bgrace[^.\"'`]{0,40}?\(?\b" + NUM + r"\s+(?:calendar\s+|trading\s+)?days?\b"
     r"|\b" + NUM + r"[- ](?:calendar[- ])?day\s+grace\b",

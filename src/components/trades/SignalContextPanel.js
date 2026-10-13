@@ -3,7 +3,7 @@
 import { TrendingUp, BarChart2 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
-import { INITIAL_ATR_MULTIPLIER } from "../../constants/strategy";
+import { INITIAL_ATR_MULTIPLIER, ATR_PERIOD_DAYS } from "../../constants/strategy";
 
 /**
  * Read-only Signal Context Panel shown in trade plan creation form (§5a, trade_plan.md v0.5).
@@ -82,7 +82,7 @@ export default function SignalContextPanel({ signal, market }) {
 
         {signal.atr_value != null && (
           <div>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">ATR (14d)</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">ATR ({ATR_PERIOD_DAYS}d)</p>
             <p className="text-sm font-semibold text-white">
               {formatCurrency(signal.atr_value, { currency: panelCurrency })}
             </p>
