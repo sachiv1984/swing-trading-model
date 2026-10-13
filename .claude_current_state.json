@@ -4,7 +4,7 @@
   "status": "Executing",
   "prior_status": "Sprint_Planning_Complete",
   "engine": "Sprint Execution",
-  "last_updated_utc": "2026-10-13T07:26:11Z",
+  "last_updated_utc": "2026-10-13T08:24:00Z",
   "execution_state_path": "claude/cycles/2026-10-12__release-v9.12/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-10-12__release-v9.12/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -235,6 +235,16 @@
       "resolved_utc": "2026-10-13T07:25:55Z",
       "resolved_by": "AI Compliance & Governance Officer (agent-mediated, execution_prompt.md §5.3)",
       "resolution_summary": "(A) append the time from context combined with (B) log and count; 8 binding conditions. See claude/cycles/2026-10-12__release-v9.12/execution_escalations.md."
+    },
+    "ESC-EXEC-20261013-02": {
+      "cycle": "2026-10-12__release-v9.12",
+      "summary": "ST-06/EPIC-01 - first ai-daily-cost-check.yml run (possible only on main) must be recorded post-merge, before Sprint Close (Product Owner ruling 2026-10-13)",
+      "trigger_type": "Human-Delegation",
+      "owning_authority": "Infrastructure & Operations Owner",
+      "raised_utc": "2026-10-13T08:24:00Z",
+      "sla_due_utc": "2026-10-16T08:24:00Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "deferred_escalations": {
