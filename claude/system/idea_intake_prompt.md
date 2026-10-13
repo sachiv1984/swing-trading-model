@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.11
-**Last Updated:** 2026-10-08 (ST-33, EPIC-06, v9.11, BLG-GOV-375 — canonical Owner role names: write-time check scripts/check_sprint_backlog_owners.py); prior — 2026-10-05 (ESC-CLOSE-20260930-01 Product Owner ruling, agent-mediated and confirmed by the human Product Owner 2026-10-05 — §2.1 step 2a build-and-ship candidate requirement and reduced-roster rule; STEP 4 Notes tally line); prior — 2026-09-19 (roadmap rebalance `2026-09-19__scheduled` STEP 11 Friction Item 2 — §2.0 step 6 codebase overlap check); prior history retained — see prior entries in version control
+**Version:** 2.12
+**Last Updated:** 2026-10-13 (ST-43, EPIC-06, v9.12, BLG-GOV-364 — new §4.1 Reduced-Roster Windows: PO authorisation, roster rule, no-two-consecutive cap, disclosure; §2.1 step 2a, §10 and STEP 0 aligned); prior — 2026-10-08 (ST-33, EPIC-06, v9.11, BLG-GOV-375 — canonical Owner role names: write-time check scripts/check_sprint_backlog_owners.py); prior — 2026-10-05 (ESC-CLOSE-20260930-01 Product Owner ruling, agent-mediated and confirmed by the human Product Owner 2026-10-05 — §2.1 step 2a build-and-ship candidate requirement and reduced-roster rule; STEP 4 Notes tally line); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -89,6 +89,17 @@ The following agent roles are eligible and expected to submit ideas (all roles d
 **Minimum submissions per agent:** 2 net-new ideas per window (ideas that have not been submitted in a prior window, or that were previously parked and are being resubmitted with updated content).
 
 A resubmitted parked idea counts as 1 net-new idea only if it has been materially updated since it was last parked.
+
+### 4.1 Reduced-Roster Windows
+
+**Ruling (ST-43, BLG-GOV-364, v9.12; Head of Specs Team position, agent-mediated per `execution_prompt.md` §5.3, confirmed by the human Product Owner 2026-10-13, `ESC-EXEC-20261013-03`).** A window may be opened for fewer than all roles in `eligible_agents` (a *reduced-roster window*) only when all of the following hold:
+
+1. **Authorised:** the Product Owner authorises it in-session, and the reason is recorded in `ideas_window.json` `reduced_roster_reason`.
+2. **Roster rule:** if a build-and-ship pull-forward is mandatory (§2.1 step 2a), at least one user-facing role participates.
+3. **Cap — no two consecutive:** the most recently closed window was full roster. A reduced-roster window may never directly follow another reduced-roster window, whether the window was opened standalone or inline by `roadmap_prompt.md` STEP -1.6.
+4. **Disclosure:** the window summary opens with a **Reduced-roster disclosure** listing the participating roles (n of N), the reason, the authorising role and date, and "Preceding window: `<window_id>` — full roster".
+
+Each participating role keeps the §4 minimum. Roles not opened are not a §2.3 shortfall. If condition 3 fails, the window must open full roster. This is a hard gate in both `strict` and `standard` modes. At this ruling the most recent window, `IW-20261008-01`, was reduced, so the next window must be full roster.
 
 ---
 
@@ -248,6 +259,8 @@ Create or update `claude/ideas/ideas_window.json`:
 
 Populate `eligible_agents` by reading all agent files in `claude/agents/` and extracting the role names.
 
+For a reduced-roster window (§4.1), also record `roster: "reduced"`, `participating_agents: [...]` and `reduced_roster_reason`. Otherwise record `roster: "full"`.
+
 Create `claude/ideas/ideas_register.md` if it does not exist (use the header from `shared_standards.md §16.5`).
 
 Announce the open window to the user:
@@ -315,7 +328,7 @@ For each agent:
 
    A build-and-ship candidate goes through §2.0 steps 5–6 like any other submission. A topic dropped for overlap does not satisfy this step: read another surface instead. If no genuine candidate survives, record `<role> — no build-and-ship candidate; surface reviewed: <path>` in the window summary's Notes rather than fabricating one. The role then meets its minimum from its normal domain. If the same role cited the same surface for "none found" in the previous window, say what was re-checked. Submissions from any other role that pass the same test also count toward the window's tally in Notes.
 
-   **Roster rule:** this rule applies to a window opened for fewer than all roles in `eligible_agents`. §4 and STEP 0 do not provide for that, so when it happens the window summary must disclose it, as `IW-20260928-01` and `IW-20260930-01` did. Such a window must include at least one user-facing role if a build-and-ship pull-forward is mandatory at the time. A pull-forward is mandatory when either of these holds:
+   **Roster rule:** this rule applies to a reduced-roster window permitted under §4.1. Such a window must include at least one user-facing role if a build-and-ship pull-forward is mandatory at the time. A pull-forward is mandatory when either of these holds:
    - the latest row of `claude/roadmap/product_value_ratio_history.md` is in the Product Value Alert tier, or meets `roadmap_prompt.md` STEP 2.4's sustained-Advisory clause;
    - the most recent completed rebalance recorded a §7.1 Skill-Silo sustained-failure pull-forward.
 
@@ -463,7 +476,7 @@ Register rows are never deleted. Status is managed in-place.
 - **Parked ideas persist.** A parked idea row is never deleted by the intake engine. It stays until the roadmap engine or the submitting agent withdraws it.
 - **Parked cycle count is authoritative.** The `Parked-cycle-<n>` Status and the Park Count column in `ideas_register.md` are the single sources of truth for how many consecutive roadmap runs an idea has remained parked. The roadmap engine's stale idea expiry logic keys on these values.
 - **Displacement is not required at submission time.** The "What Would You Stop?" field invites thinking — it is not a gate. Displacement is determined in STEP 5 of the roadmap engine where all candidates and constraints are visible simultaneously.
-- **All agent roles submit.** Domain breadth matters — a narrow domain does not exempt an agent from the minimum. If no net-new ideas exist, the agent records that explicitly rather than submitting nothing.
+- **All agent roles submit, except in a reduced-roster window permitted under §4.1.** Domain breadth matters — a narrow domain does not exempt an agent from the minimum. If no net-new ideas exist, the agent records that explicitly rather than submitting nothing.
 
 ---
 
