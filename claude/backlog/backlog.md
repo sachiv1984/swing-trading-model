@@ -5145,6 +5145,85 @@ Three defects in the gap-risk statistic and earnings date, outside ST-14's scope
 
 ---
 
+### BLG-BE-176 — Lifecycle badge and Risk page disagree for a US row with no fill_price and no fx_rate
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering
+**Source:** EPIC-02 PR review (agent-mediated Director of Quality, user-directed), cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`classify_position()` (`backend/services/position_lifecycle_service.py`) returns UNKNOWN for a US row whose `fill_price` and `fx_rate` are both NULL (ST-13, v9.12), while `native_entry_price()` (`position_service.py`) and `portfolio_service.get_portfolio_summary()` fall back to the live FX rate, so `display_status` still shows PROFITABLE/LOSING for the same row. ST-13's goal was that the two agree.
+
+**Scope**
+- Use one fallback on all paths (either all UNKNOWN, or all live-rate), decided against `position_endpoints.md`'s `position_state` field note
+- Add a unit test for this row
+
+**Acceptance Criteria**
+- For a US row with NULL `fill_price` and NULL `fx_rate`, `display_status` and `position_state` agree (unit test)
+
+---
+
+### BLG-BE-177 — Frozen-stop marker is not written when the on-load recompute has no live price
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Improvement
+**Owner:** Head of Engineering
+**Source:** EPIC-02 PR review (agent-mediated Director of Quality, user-directed), cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+On the on-load path, `stop_frozen_reason` (ST-15, DS-32) is written only inside `if live_price:` (`analyze_positions`, `backend/services/position_service.py`). A post-grace position with no live price and no ATR keeps its stop but is never marked frozen until the nightly job runs.
+
+**Scope**
+- Write the marker when the stop is kept for lack of ATR even without a live price, or document the exclusion in `position_endpoints.md`
+
+**Acceptance Criteria**
+- Unit test: no live price and no ATR, post-grace → `stop_frozen_reason = 'atr_unavailable'` (or the contract states the exclusion)
+
+---
+
+### BLG-BE-178 — Batch signal sizing can allocate more than available cash once fees are added
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering; Financial Reporting & Records Owner
+**Source:** EPIC-02 PR review (agent-mediated Product Owner, user-directed), cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`size_batch_inv_vol()` floors shares from each signal's allocation of `available_cash` and then adds entry fees to `total_cost` (BLG-BE-158, v9.12). The weights sum to 1.0, so the sum of `total_cost` across a batch can exceed `available_cash` by up to the fees.
+
+**Scope**
+- Size against cash net of estimated fees (or reduce shares until fees fit), per signal or per batch
+- Unit tests for UK, US and mixed batches
+
+**Acceptance Criteria**
+- For UK, US and mixed batches, the sum of `total_cost` is ≤ `available_cash` (unit test)
+
+---
+
+### BLG-BE-179 — Tag lifecycle transitions caused by the v9.12 badge currency correction
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Data Quality
+**Owner:** Head of Engineering; Metrics Definitions & Analytics Owner
+**Source:** EPIC-02 PR review (agent-mediated Product Owner, user-directed), cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-13 (v9.12) corrected `classify_position()` to compare native with native for US positions. On first load after deploy, affected US positions change state (e.g. PROFITABLE→LOSING, or in/out of EXIT ZONE) with no market move. Each change writes a `state_history` / `position_state_history` entry and resets `days_in_state`, which later lifecycle analytics will read as real transitions.
+
+**Scope**
+- Mark transitions on the first post-deploy recompute with a reason such as `basis_correction`, or exclude them from days-in-state and lifecycle analytics
+- Document the convention in `data_model.md`
+
+**Acceptance Criteria**
+- Correction transitions are identifiable or excluded (unit test)
+
+---
+
 ### BLG-SPEC-193 — Trade plan contract still lists 3 plan statuses after openapi.yaml moved to 7
 **Priority:** P3 (Low)
 **Type:** Spec Debt
@@ -5251,6 +5330,48 @@ The CLAUDE.md §8 merge of `main` (EPIC-06, PR #1971) into EPIC-05 (`3237cb5e`) 
 **Acceptance Criteria**
 - On the System Status page, no `/reports/*` endpoint appears under "Other".
 - A Playwright test asserting the grouping passes in CI.
+
+---
+
+### BLG-FE-218 — Align the View Trail modal wording with the read-only ruling
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Copy
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** EPIC-02 PR review (agent-mediated Product Owner, user-directed), cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-10 (v9.12) made the Trail Stop modal read-only and renamed the button "View Trail", but the modal heading still reads "Trail Stop — {TICKER}", the "Raise by" label suggests an action the user cannot take (and shows negative values), and the disabled-button tooltip says "Add a stop to use trail management", although a stop can no longer be added (an entry `stop_price` is rejected with 400).
+
+**Scope**
+- Heading "View Trail — {TICKER}"; rename "Raise by" (e.g. "Difference vs current stop"); reword the disabled tooltip
+- Update `positions.md` §Trail Stop Action (design pass with the Head of UX & Design)
+- Update Playwright SC-TS-* assertions
+
+**Acceptance Criteria**
+- The three texts are changed in `positions.md` and `Positions.js`, and Playwright asserts the new heading and label
+
+---
+
+### BLG-FE-219 — Label signal cost as including fees, and make the zero-ATR sizing reason plain English
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Copy
+**Owner:** Frontend Specifications & UX Documentation Owner; Head of Engineering
+**Source:** EPIC-02 PR review (agent-mediated Product Owner, user-directed), cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+Since BLG-BE-158 (v9.12) a signal's `total_cost` is GBP including entry fees, but SignalCard still labels it "Allocation Cost" (`src/components/signals/SignalCard.js`). The new zero-ATR `reason` (BLG-BE-157), which sprint planning recorded as API-only, is displayed by SignalCard's existing `reason` line as "⚠ Inv-vol sizing: ATR unavailable for this signal", which is jargon. No Playwright test covers the reason line.
+
+**Scope**
+- Label the value "Total cost (incl. fees)"
+- Reword the zero-ATR reason in plain English (backend string and `signal_endpoints.md`)
+- Playwright test for the reason line
+
+**Acceptance Criteria**
+- The label and reason text are changed, and Playwright asserts the reason line for a zero-ATR signal
 
 ---
 
@@ -5536,6 +5657,25 @@ DS-17's `idx_positions_open_ticker_entry_date_unique` was confirmed live in prod
 - Running the detector against `data_model.md` no longer reports `idx_trade_plans_ticker`
 - A unit test fails if a rollback-only index name is reported again
 - The detector's documented usage, or the triage procedure, says where a run's `--json` output is kept, and the next triage cites it
+
+---
+
+### BLG-QA-224 — Make SC-TS-* Playwright scenario IDs unique across tests/e2e
+**Priority:** P3 (Low)
+**Type:** QA / Test Traceability
+**Owner:** QA & Testing Owner
+**Source:** EPIC-02 PR review (agent-mediated Product Owner, user-directed), cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`tests/e2e/epic01-v34-lifecycle.spec.js` (Trail Stop modal, SC-TS-01..07) and `tests/e2e/epic01-v62-stops-alerts.spec.js` (trailing-stop column, SC-TS-01..06) use the same IDs for different scenarios. ST-10 (v9.12) added SC-TS-04..07 to the first file, widening the overlap. Evidence citing an SC-TS ID is ambiguous. `docs/System_status_report.md` and `docs/specs/Specs_Index.md` cite SC-TS-01..03 for the v3.4 file.
+
+**Scope**
+- Give one file a distinct prefix and update every citation in `docs/` and `claude/cycles/` that refers to the renamed IDs
+
+**Acceptance Criteria**
+- No scenario ID is used in more than one file under `tests/e2e` (a script or test checks this)
 
 ---
 
