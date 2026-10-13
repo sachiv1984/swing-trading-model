@@ -139,9 +139,10 @@ def journal_summary_history(
 @router.post("/check-daily-cost")
 def check_daily_cost():
     """
-    Check today's Claude API spend against the configured threshold.
-    Sends Telegram alert if threshold exceeded.
-    Intended to be called by a daily scheduler (Render cron / external scheduler).
+    Check today's Claude API spend (claude_audit_log) against the configured
+    threshold. Sends Telegram alert if threshold exceeded, at most once per day.
+    Called every 6 hours by .github/workflows/ai-daily-cost-check.yml
+    (ST-06, BLG-OPS-183, v9.12).
     """
     from services.gemini_service import check_and_alert_daily_cost
     return check_and_alert_daily_cost(threshold_usd=AI_DAILY_COST_THRESHOLD)

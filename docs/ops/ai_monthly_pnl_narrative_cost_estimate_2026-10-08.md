@@ -1,7 +1,7 @@
 **Owner:** Financial Reporting & Records Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-10-08 (ST-23, EPIC-04, v9.11, BLG-FEAT-63 — estimate produced before ST-25 is built)
+**Last Updated:** 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — correction note: the daily cost alert did not cover this endpoint until v9.12); prior — 2026-10-08 (ST-23, EPIC-04, v9.11, BLG-FEAT-63 — estimate produced before ST-25 is built)
 **Source:** ST-23 (`BLG-FEAT-63`), EPIC-04, cycle `2026-10-08__release-v9.11`
 **Feeds:** ST-25 (`BLG-FEAT-59`, AI-assisted monthly P&L narrative): the cost-gating input to its AI endpoint security checklist (`docs/specs/security/ai_endpoint_security_checklist.md`)
 
@@ -51,7 +51,7 @@ The narrative is generated on request from the Monthly P&L view. The scenarios a
 | Current adoption | ~3 | $0.01–0.02 | $0.03–0.07 | All six AI features together averaged about 9 calls a month in the 102 days to 2026-10-05, 74% of them in launch week |
 | Monthly review habit | ~10 | $0.04–0.07 | $0.11–0.22 | One look after each month closes, plus a few regenerations |
 | Heavy use | ~120 (4 a day) | $0.44–0.88 | $1.32–2.63 | Upper bound for one user |
-| Runaway (rate limit at 10/min/IP, sustained 1 hour) | 600 in one hour | $2.19–4.38 | $6.57–13.14 | What the rate limit alone allows in an hour; the daily cost alert (`POST /ai/check-daily-cost`, $1.00 threshold) fires well before this |
+| Runaway (rate limit at 10/min/IP, sustained 1 hour) | 600 in one hour | $2.19–4.38 | $6.57–13.14 | What the rate limit alone allows in an hour; the daily cost alert (`POST /ai/check-daily-cost`, $1.00 threshold) fires well before this — **see the correction below** |
 
 For scale: the whole AI feature set cost about $0.17 in its first 102 days.
 
@@ -62,6 +62,8 @@ For scale: the whole AI feature set cost about $0.17 in its first 102 days.
 3. **Rate limit at 10 requests per minute per IP**, the same as `POST /ai/daily-briefing`.
 4. **Log every call to `claude_audit_log`** (cost, tokens, `prompt_version`, compliance result, and the `prompt_hash` / `response_length` columns added by ST-06), so the existing daily cost alert and `GET /ai/monthly-cost-by-feature` cover it with no new monitoring. ST-26's usage counter reads the same rows.
 5. **No new budget line.** At the recommended settings, expected spend is under $0.10 a month and the heavy-use bound is under $1 a month, inside the existing $1.00 daily alert threshold. Revisit at the 2027-01-03 AI feature usage review (ST-28) with real data.
+
+> **Correction (2026-10-13, ST-06, EPIC-01, v9.12, BLG-OPS-183):** when this estimate was written, the daily cost alert did **not** cover this endpoint, or any Claude feature other than plan and thesis generation. `POST /ai/check-daily-cost` summed `gemini_audit_log`, which only plan and thesis generation write, and no scheduler called the endpoint at all. So the runaway row's "fires well before this" and item 4's "the existing daily cost alert ... covers it" were not true through v9.11. From v9.12 the alert sums `claude_audit_log` (every Claude call, plan/thesis counted once) and runs every 6 hours from `.github/workflows/ai-daily-cost-check.yml`, so both statements hold once that release is deployed. `GET /ai/monthly-cost-by-feature` and the per-endpoint anomaly check already read `claude_audit_log` and were unaffected.
 
 ## Re-estimation Trigger
 

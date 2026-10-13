@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.23
-**Last Updated:** 2026-10-13 (ST-02/ST-03/ST-04, EPIC-01, v9.12, BLG-AI-11/12/10 — daily briefing drops actions naming a ticker outside the context and labels cash and starting capital separately (`BRIEFING_PROMPT_VERSION` v1.3); briefing and chat append a code-written stop recalculation time when a cited stop lacks one); prior — 2026-10-13 (ST-01, EPIC-01, v9.12, BLG-BE-162 — `POST /ai/journal-summary` `trade_ids` and `GET /ai/journal-summary/history` `trade_id` are UUID strings; history response and data source corrected to the real `ai_audit_log` record); prior — 2026-10-08 (ST-32, EPIC-05, v9.11, BLG-SPEC-175 — POST /ai/journal-summary 'LLM unreachable' heading corrected from 503 to 200; 1.17-1.20 are EPIC-01's); prior history retained — see prior entries in version control
+**Version:** 1.24
+**Last Updated:** 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — `POST /ai/check-daily-cost` sums `claude_audit_log`, so every Claude feature counts toward the daily alert; scheduler named: `ai-daily-cost-check.yml`, every 6 hours); prior — 2026-10-13 (ST-02/ST-03/ST-04, EPIC-01, v9.12, BLG-AI-11/12/10 — daily briefing drops actions naming a ticker outside the context and labels cash and starting capital separately (`BRIEFING_PROMPT_VERSION` v1.3); briefing and chat append a code-written stop recalculation time when a cited stop lacks one); prior — 2026-10-13 (ST-01, EPIC-01, v9.12, BLG-BE-162 — `POST /ai/journal-summary` `trade_ids` and `GET /ai/journal-summary/history` `trade_id` are UUID strings; history response and data source corrected to the real `ai_audit_log` record); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -347,13 +347,15 @@ Content-Type: application/json
 
 ## POST /ai/check-daily-cost
 
-Checks today's Claude API spend against the configured daily cost threshold. If the threshold is exceeded, sends a Telegram alert. Intended to be called by a daily scheduler (Render cron or external scheduler).
+Checks today's Claude API spend against the configured daily cost threshold. If the threshold is exceeded, sends a Telegram alert (at most once per UTC day).
+
+**Scheduler (ST-06, v9.12, BLG-OPS-183):** `.github/workflows/ai-daily-cost-check.yml`, GitHub Actions, cron `15 */6 * * *` (every 6 hours) plus `workflow_dispatch`, using the `API_URL`/`API_KEY` repository secrets (the same pattern as `ai-endpoint-anomaly-check.yml`; Render cron needs a paid tier). Before v9.12 no scheduler called this endpoint. Every 6 hours rather than daily because scheduled runs start hours late and the total is per calendar day; the per-day de-duplication means repeat checks send no second alert. **Last successful run:** pending — recorded after the workflow reaches `main` (`DEL-20261013-02`).
 
 **§13 Status:** N/A — operational monitoring endpoint. No AI output generated; no display surface.
 
 **Idempotency**
 
-- Read-only against `gemini_audit_log`; the audit log itself is not written by this endpoint. **Undefined behaviour:** if `threshold_exceeded` is true, a repeated/double-submitted call re-evaluates the same threshold and can send a duplicate Telegram alert — there is no de-duplication or already-alerted-today guard. Filed as BLG-OPS-172.
+- Read-only against `claude_audit_log`; the audit log itself is not written by this endpoint. The alert is de-duplicated per UTC day (BLG-OPS-172, v9.9): a repeated call on a day an alert was already sent returns `alert_sent: false` and sends nothing; the only write is that day's alert fingerprint.
 
 ### Request
 
@@ -378,8 +380,8 @@ No request body required. Threshold is read from the `AI_DAILY_COST_THRESHOLD` e
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `total_cost_usd` | float | Sum of `estimated_cost_usd` in `gemini_audit_log` for today (`generated_at >= CURRENT_DATE`). |
-| `request_count` | integer | Number of Claude API requests logged today. |
+| `total_cost_usd` | float | Sum of `cost_usd` in `claude_audit_log` for today (`generated_at >= CURRENT_DATE`). Covers every Claude-calling feature. |
+| `request_count` | integer | Number of `claude_audit_log` rows logged today (each Claude call, including a failed call's row). |
 | `threshold_usd` | float | Configured daily cost threshold (from `AI_DAILY_COST_THRESHOLD` env var). |
 | `threshold_exceeded` | boolean | `true` when `total_cost_usd >= threshold_usd`. |
 | `alert_sent` | boolean | `true` when threshold exceeded AND Telegram credentials (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`) are configured and alert delivery succeeded. |
@@ -394,7 +396,7 @@ When `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` is absent, no alert is sent even
 
 ### Implementation constraints
 
-- Daily spend is sourced from `gemini_audit_log` table (tracks Claude API calls).
+- Daily spend is sourced from `claude_audit_log` only (ST-06, v9.12, BLG-OPS-183). Until v9.12 it read `gemini_audit_log`, which only plan and thesis generation write, so briefing, chat, journal summary, debrief and the monthly P&L narrative never counted. Plan and thesis generation write both tables, so `gemini_audit_log` is deliberately not added: each call is counted once.
 - Threshold configurable via `AI_DAILY_COST_THRESHOLD` env var; default `1.00` USD.
 - Telegram alert format includes: date, daily spend, request count, threshold.
 - If Telegram delivery fails (network error), `alert_sent: false`; endpoint still returns 200.
@@ -881,6 +883,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.24 | 2026-10-13 | ST-06 (EPIC-01, v9.12, BLG-OPS-183): `POST /ai/check-daily-cost` sums today's `claude_audit_log.cost_usd` instead of `gemini_audit_log`, so all Claude spend counts toward the daily alert and plan/thesis calls count once. Scheduler named: new `.github/workflows/ai-daily-cost-check.yml` (every 6 hours); none existed. Idempotency note corrected to the BLG-OPS-172 per-day de-duplication shipped in v9.9. Response shape unchanged; `openapi.yaml` 3.28.1 description only. |
 | 1.23 | 2026-10-13 | ST-02, ST-03, ST-04 (EPIC-01, v9.12; BLG-AI-11, BLG-AI-12, BLG-AI-10): `POST /ai/daily-briefing` returns only actions whose ticker is an open position or a context signal (others dropped and logged), and its context labels "available cash" and "starting capital" (omitted when 0); one combined `BRIEFING_PROMPT_VERSION` bump v1.2 → v1.3, golden fixture updated. Briefing and `POST /ai/chat` gain the post-generation stop-time check (AI Compliance & Governance Officer ruling `ESC-EXEC-20261013-01`): a cited stop without its recalculation time gets a code-written note appended, and every miss is logged and counted in `claude_audit_log.compliance_check_result`. No request/response schema change; no `openapi.yaml` change. |
 | 1.22 | 2026-10-13 | ST-01 (EPIC-01, v9.12, BLG-BE-162): `POST /ai/journal-summary` `trade_ids` is an array of string (UUID), matching `trade_history.id`; it was typed integer, so every request from Trade History failed with 422. Integers are now rejected with 422. `GET /ai/journal-summary/history` `trade_id` is a UUID string, and its response fields and data source are corrected to the real `ai_audit_log` record. `ai_audit_log.trade_ids` migrated `INTEGER[]` → `UUID[]` (DS-31). `openapi.yaml` 3.28.0 in the same commit. |
 | 1.21 | 2026-10-08 | ST-32 (EPIC-05, v9.11, BLG-SPEC-175): `POST /ai/journal-summary` 'LLM unreachable' heading corrected from 503 to 200 (the endpoint returns 200). Documentation only. (1.17–1.20 are EPIC-01's ST-03/07/08/09.) |
