@@ -38,7 +38,7 @@
   "sprint2_gate_confirmed_utc": "2026-08-18T00:00:00Z",
   "sprint2_close_utc": "2026-08-20T11:58:57Z",
   "verification_utc": "2026-10-12T14:17:36Z",
-  "last_sync_utc": "2026-10-13T07:00:36Z",
+  "last_sync_utc": "2026-10-13T10:30:00Z",
   "blocked_sla_breached": false,
   "last_deviation_consolidation_review_utc": "2026-10-07T11:21:38Z",
   "deviation_consolidation_review_cycle_count": 1,
@@ -257,7 +257,10 @@
       "raised_utc": "2026-10-13T09:21:40Z",
       "sla_due_utc": "2026-10-14T09:21:40Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-13T09:56:00Z",
+      "resolved_by": "Head of Specs Team (agent-mediated, §5.3) + Product Owner (human, in-session)",
+      "resolution_summary": "Ruling (B): reduced-roster idea-intake windows permitted only with PO authorisation, roster rule, no-two-consecutive cap and disclosure. Applied by ST-43 at 16f2e331 (idea_intake_prompt.md §4.1 v2.12; roadmap_prompt.md STEP -1.6 v9.34). Next window must be full roster."
     },
     "ESC-EXEC-20261013-04": {
       "cycle": "2026-10-12__release-v9.12",
