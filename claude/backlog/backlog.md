@@ -5809,3 +5809,83 @@ On the Strategy Benchmark Trade Log, the Rebalance exit badge is `bg-teal-600 te
 - No `!bg-` workaround remains for this cause
 
 ---
+
+### BLG-FE-222 — Normalise the Trade Entry ticker the same way for the ATR preview and for save
+**Priority:** P3 (Low)
+**Type:** Frontend / Backend Correctness
+**Owner:** Head of Engineering
+**Source:** ST-17/EPIC-03, cycle `2026-10-12__release-v9.12`, agent-mediated Director of Quality review (follow-up 1) — 2026-10-13
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /market/atr/{ticker}` trims and upper-cases the ticker; `POST /portfolio/position` does neither (`AddPositionRequest.ticker` has no validator), and Trade Entry upper-cases on change but does not trim, nor upper-case a prefilled ticker. With `"AAPL "`, the preview fetches the ATR for `AAPL` while save calls `calculate_atr("AAPL ")`, so the shown stop can differ from the stored one. ST-17's AC 2 test covers only already-normalised input. Related minor inconsistency: the `?position=` deep link requires `status === "open"` while `?exit=` uses `!== "closed"` (follow-up 6).
+
+**Scope**
+- Normalise (trim, upper-case) the ticker once, server-side in `AddPositionRequest`/`add_position()`, and in Trade Entry before both the preview and the submit
+- Extend `tests/test_market_atr_preview_endpoint.py` AC 2 cases with untrimmed and lower-case input
+- Align the two Positions deep links' status test
+
+**Acceptance Criteria**
+- For an untrimmed or lower-case ticker, the preview stop equals the saved `initial_stop` (backend test)
+- `?position=` and `?exit=` use the same open-position test
+
+---
+
+### BLG-GOV-389 — Decide whether the strategy-copy lint should fail CI, and whether the 200-day MA belongs in the constants module
+**Priority:** P3 (Low)
+**Type:** Governance Process / Strategy Conformance
+**Owner:** Head of Specs Team; Frontend Specifications & UX Documentation Owner
+**Source:** ST-21/EPIC-03, cycle `2026-10-12__release-v9.12`, agent-mediated Director of Quality review (follow-ups 2 and 3) — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`scripts/check_strategy_copy.py` runs in CI job `strategy-copy` without `--strict`, so a future contradiction is only a warning (BLG-GOV-369's scope asked for a CI warning; `tests/test_check_strategy_copy.py` does pin the current clean tree). The lint also deliberately skips the 200-day MA (`strategy_rules.md` §8.2), which is inside ST-21's §5–§11 title scope but not a §11 parameter; `SignalContextPanel.js` still writes "200-day MA" as a literal.
+
+**Scope**
+- Head of Specs Team rules: (a) warning only, or `--strict` in CI; (b) whether the regime MA length joins `src/constants/strategy.js` and the lint
+- Apply the ruling to the workflow, the lint and the constants module
+
+**Acceptance Criteria**
+- A dated ruling on (a) and (b), applied
+
+---
+
+### BLG-FE-223 — Inputs apply dark:text-slate-400 to typed text instead of the placeholder
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** EPIC-03, cycle `2026-10-12__release-v9.12`, agent-mediated Director of Quality review (follow-up 4) — 2026-10-13
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Several inputs use `placeholder:text-slate-600 dark:text-slate-400`. The `dark:` variant applies to the typed text, not the placeholder (`dark:placeholder:` was intended), so typed values render slate-400 in dark mode and placeholder colour is unpaired. Seen on the Trade Entry inputs and the Notifications inputs.
+
+**Scope**
+- Replace with `placeholder:text-slate-600 dark:placeholder:text-slate-400` and an explicit typed-text pair (`text-slate-900 dark:text-white`) across `src/`
+
+**Acceptance Criteria**
+- No input class string uses a bare `dark:text-*` intended for its placeholder (grep check); typed text passes contrast in both themes
+
+---
+
+### BLG-FE-224 — Move amber-600 text on light surfaces to amber-700
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-24/EPIC-03, cycle `2026-10-12__release-v9.12`, agent-mediated Director of Quality review (follow-up 5) — 2026-10-13
+**Effort:** S (~0.5 day plus test updates)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-24 fixed white text on amber-600 fills. `text-amber-600` used as text on light surfaces remains (about 3.2:1 on white, below AA; `design_system.md` §Light-Theme Colour Tokens rule 3): WatchlistRow, PositionSizingWidget, WhatIfSizingPreview, TradePlans (~285, stale marker), Positions/PositionCard. Some tests assert the class (e.g. `trade-plan-stale-marker.spec.js` SC-TPS-05, `position-sizing-concentration.spec.js` V-SIZE-01, `position-review-cadence-nudge.spec.js`).
+
+**Scope**
+- Move each to `text-amber-700 dark:text-amber-400` and update the asserting tests in the same commit
+
+**Acceptance Criteria**
+- No `text-amber-600` remains in `src/` outside Replay; scoped axe color-contrast scans of the changed elements pass in the light theme
+
+---

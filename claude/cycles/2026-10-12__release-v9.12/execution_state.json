@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T22:49:13Z",
+  "last_updated_utc": "2026-10-13T23:18:55Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -539,7 +539,7 @@
       "merge_commit": "61317385"
     },
     "EPIC-03": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
@@ -556,7 +556,16 @@
         "tests/test_check_strategy_copy.py",
         "tests/test_strategy_parameter_parity.py",
         "tests/e2e/grace-panel-position-link.spec.js",
-        "tests/e2e/risk-dashboard.spec.js"
+        "tests/e2e/risk-dashboard.spec.js",
+        "tests/e2e/accessibility-axe-scan.spec.js",
+        "tests/e2e/strategy-benchmark.spec.js",
+        "tests/e2e/gap-risk-flag.spec.js",
+        "tests/e2e/epic01-v70-grid-badge-parity.spec.js",
+        "tests/e2e/trade-plan-stale-marker.spec.js",
+        "tests/e2e/epic03-v34-frontend.spec.js",
+        "tests/e2e/epic02-v62-ai-briefing-chat.spec.js",
+        "tests/e2e/ai-briefing-progressive-disclosure.spec.js",
+        "tests/e2e/notification-inputs-light-theme.spec.js"
       ],
       "stories": {
         "ST-17": {
@@ -695,7 +704,7 @@
             "retries": 0,
             "note": "Approved with conditions, first pass; charter text applied verbatim in ST-21 commit"
           },
-          "notes": "b96bb99f. ESC-EXEC-20261013-08 raised at EPIC-03 start (RISK-06) and resolved: Director of HR ruling (agent-mediated, §5.3), Approved with conditions; reclassified autonomous. AC1: no strategy-number literals in TradeEntry.js, Settings.js, Positions.js, SignalContextPanel.js; src/lib/strategyParameters.js moved to src/constants/strategy.js, one source (parity test asserts the old module is gone). AC2: scripts/check_strategy_copy.py (reads §11 from strategy_rules.md) runs in CI job strategy-copy, 0 contradictions and 0 literals; tests/test_check_strategy_copy.py pins it. AC3: charter v1.1 §7 Strategy-copy conformance, text verbatim from the ruling; all 5 binding conditions met (exact text; Scope corrected; applied in this commit citing the ESC, no other charter bumped; Strategy Rules/Head of Specs/Base44 charters untouched; CI job named strategy-copy, module path unchanged). Out-of-scope: BLG-SPEC-201 filed (settings.md names the old path). Design gate: no visible change intended; text rendered identically (Positions/Signals/TradeEntry/Settings Playwright pass locally). Deviation check: none. Playwright CI run 38477375924 success on head b96bb99f."
+          "notes": "b96bb99f. ESC-EXEC-20261013-08 raised at EPIC-03 start (RISK-06) and resolved: Director of HR ruling (agent-mediated, §5.3), Approved with conditions; reclassified autonomous. AC1: no strategy-number literals in TradeEntry.js, Settings.js, Positions.js, SignalContextPanel.js; src/lib/strategyParameters.js moved to src/constants/strategy.js, one source (parity test asserts the old module is gone). AC2: scripts/check_strategy_copy.py (reads §11 from strategy_rules.md) runs in CI job strategy-copy, 0 contradictions and 0 literals; tests/test_check_strategy_copy.py pins it. AC3: charter v1.1 §7 Strategy-copy conformance, text verbatim from the ruling; all 5 binding conditions met (exact text; Scope corrected; applied in this commit citing the ESC, no other charter bumped; Strategy Rules/Head of Specs/Base44 charters untouched; CI job named strategy-copy, module path unchanged). Out-of-scope: BLG-SPEC-201 filed (settings.md names the old path). Design gate: no visible change intended; text rendered identically (Positions/Signals/TradeEntry/Settings Playwright pass locally). Deviation check: none. Playwright CI run 38477375924 success on head b96bb99f. DoQ review first-pass must-fix applied in f3f732fd (see qa_evidence_EPIC-03.md)."
         },
         "ST-22": {
           "title": "Link each Grace Period row to its position, and align the panel's text and date format with the spec",
@@ -720,49 +729,60 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "01cefbe8. AC1: clicking a grace row opens Positions showing that position (SC-GPL-01: in viewport, data-highlighted=true, ring, param stripped); 2000 ms removal (SC-GPL-02, controlled clock); Table view (SC-GPL-03); unknown id ignored (SC-GPL-04). Design gate extra (data-highlighted Playwright) covered, no backlog item needed. AC2: heading/badge/date aligned to risk_dashboard.md §5.2 (Product Owner kept spec wording), asserted by SC-GPL-05 and SC-RD-07. Local 15/15 over 3 repeats; Positions/Risk specs pass. Deviation check: none. ci_pending: Playwright run on head 01cefbe8."
+          "notes": "01cefbe8. AC1: clicking a grace row opens Positions showing that position (SC-GPL-01: in viewport, data-highlighted=true, ring, param stripped); 2000 ms removal (SC-GPL-02, controlled clock); Table view (SC-GPL-03); unknown id ignored (SC-GPL-04). Design gate extra (data-highlighted Playwright) covered, no backlog item needed. AC2: heading/badge/date aligned to risk_dashboard.md §5.2 (Product Owner kept spec wording), asserted by SC-GPL-05 and SC-RD-07. Local 15/15 over 3 repeats; Positions/Risk specs pass. Deviation check: none. Playwright CI run 38480286770 success on head 01cefbe8."
         },
         "ST-23": {
           "title": "Make the Reports and Notifications pages pass WCAG colour contrast in the light theme",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1996,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
+          "commit_sha": "6b4861ca93923a7010c4380ffa5629f76a991fb0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-13T23:03:53Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/design_system.md#Light-Theme Colour Tokens (v1.23, ST-23, EPIC-03, v9.12, BLG-FE-200)",
+            "docs/frontend/design_system.md#6. Dark and Light Themes",
+            "tests/e2e/accessibility-axe-scan.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "6b4861ca. Light mode supported (design gate) so AC 1 applies, AC 2 not applicable (addendum). AC1: decision record §3 token table added to docs/specs/frontend/design_system.md v1.23; docs/frontend/design_system.md §6 corrected (v1.1); light pairs applied to Reports and Notifications; the four :light color-contrast KNOWN_VIOLATIONS entries removed in the same commit; light-theme axe scans of Reports Monthly/Tax Year and Notification Preferences/History pass (45 nodes before, 0 after), dark scans still pass. Replay baseline untouched (BLG-FE-209). Local: 206/207 Reports/Notifications specs (SC-NOTIF-02b timing, local-only). Deviation check: none. Playwright CI run 38481892579 success on head 6b4861ca. DoQ review first-pass must-fix applied in f3f732fd (see qa_evidence_EPIC-03.md)."
         },
         "ST-24": {
           "title": "Move white-on-amber-600 badges to a passing contrast outside Replay",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1997,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
+          "commit_sha": "0128205af5f27bf3b99f2e34314c7d618b4360fa",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-13T23:18:32Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Gap Risk Badge",
+            "docs/specs/frontend/pages/strategy_benchmark.md",
+            "docs/specs/frontend/pages/trade_plan.md",
+            "docs/specs/frontend/pages/dashboard.md",
+            "tests/e2e/strategy-benchmark.spec.js",
+            "tests/e2e/gap-risk-flag.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "0128205a. AC1: no bg-amber-600 text-white pair (nor any bg-amber-600) in src/ outside Replay; the addendum's three extra sites moved too (TradePlans research_pending, TradePlan Abandon amber-700/hover amber-800, Gap Risk #B45309 in Positions.js and PositionCard.js); strategy-benchmark.spec.js line-267 assertion updated in the same commit. AC2: affected specs pass; a scoped axe color-contrast scan of each changed badge reports nothing (SC-SB-04a, SC-GR-02, SC-GVP-04, SC-TPS-05, SC-E03-15, SC-AC-06, SC-PD-01). Finding: the Abandon button never rendered its custom fill (Button bg-primary wins; cn() has no tailwind-merge) - fixed here with !bg-amber-700, systemic cause filed BLG-FE-221. Design gate teal observation filed BLG-FE-220. Deviation check: none. Playwright CI run 38483457947 success on head 0128205a."
         }
       }
     },
@@ -1441,6 +1461,8 @@
     "ST-20",
     "ST-21",
     "ST-22",
+    "ST-23",
+    "ST-24",
     "ST-33",
     "ST-34",
     "ST-35",
