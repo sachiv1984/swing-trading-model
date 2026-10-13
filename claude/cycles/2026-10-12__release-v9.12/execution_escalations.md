@@ -38,3 +38,36 @@ Last Updated: 2026-10-13
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-10-13T09:15:52Z):** closed post-merge on the evidence recorded in `DEL-20261013-02` (now Unblocked). `ai-daily-cost-check.yml` run 38374258055 succeeded at 09:09 UTC against production deployed at `90099bec`. Production's only `claude_audit_log` row for the day (09:12:10) post-dates that run, so `request_count: 0` was correct. A post-merge staging journal summary wrote a costed `claude_audit_log` row (`POST /ai/journal-summary`, v1.0, $0.001628). `ai_endpoints.md` "Last successful run" is filled in. Closed before Sprint Close, as the Product Owner required.
+
+## ESC-EXEC-20261013-03
+
+- **Raised at:** 2026-10-13T09:21:40Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-10-12__release-v9.12
+- **Step:** STEP 3.1.D (EPIC-06 execution loop, raised at sprint start per `sprint_backlog.md` ST-43 Notes)
+- **ST/EPIC item:** ST-43 / EPIC-06 (BLG-GOV-364)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** `idea_intake_prompt.md` §4 and STEP 0 assume every role in `eligible_agents` is exercised, yet `IW-20260928-01` (3 roles) and `IW-20260930-01` (2 roles) ran with a disclosed reduced roster. v2.10's roster rule (§2.1 step 2a) constrains such a window while a build-and-ship pull-forward is mandatory, but whether reduced-roster windows are permitted at all, and how they interact with `roadmap_prompt.md` STEP -1.6's standalone pre-run exception, has never been ruled on. ST-43's AC needs a recorded ruling first: (A) prohibit reduced-roster windows; (B) permit them under stated conditions with a cap (e.g. no two consecutive reduced windows); or (C) permit them with disclosure only, as today. Any adopted change ships with the full CLAUDE.md §6 checklist.
+- **Engine recommendation (non-binding):** none yet; a Head of Specs Team position is being drafted (agent-mediated, §5.3) for the human Product Owner to confirm.
+- **Owning authority:** Head of Specs Team; Product Owner
+- **Unblock criteria:** A dated Head of Specs Team + Product Owner ruling (A, B or C) recorded in this escalation's resolution. The Product Owner half must be confirmed by the human Product Owner. On (B), the engine applies the cap to `idea_intake_prompt.md` (and STEP -1.6 if needed) with the CLAUDE.md §6 checklist.
+- **SLA due-by:** 2026-10-14T09:21:40Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Open
+
+## ESC-EXEC-20261013-04
+
+- **Raised at:** 2026-10-13T09:21:40Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-10-12__release-v9.12
+- **Step:** STEP 3.1.D (EPIC-06 execution loop)
+- **ST/EPIC item:** ST-44 / EPIC-06 (BLG-GOV-372)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-44 adds a split-credit secondary tally to `scripts/compute_role_share_history.py` and a split-credit column to `claude/roadmap/role_share_history.md`. The write is authorised by the §7 plan-authorised named-file rule (case a, `sprint_backlog.md` Named-file writes). The story stays `delegated_decision` under the release plan's RISK-06 mitigation (`ESC-CLOSE-20261006-01`), so its owners must approve the method before it lands: equal split of each compound story's credit across its named roles (BLG-GOV-372 Scope), the raw tally remaining primary for roadmap §7.2, and the column's placement in `role_share_history.md`.
+- **Engine recommendation (non-binding):** approve the equal-split method as scoped in BLG-GOV-372. The column is additive, history rows are back-filled by the script, and the raw primary tally §7.2 reads is unchanged.
+- **Owning authority:** Director of HR; PMO Lead
+- **Unblock criteria:** A dated Director of HR + PMO Lead approval (agent-mediated per §5.3 permitted) recorded in this escalation's resolution. The engine then implements ST-44 after ST-45, extending ST-45's test file.
+- **SLA due-by:** 2026-10-14T09:21:40Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Resolved
+- **Resolution summary (2026-10-13T09:30:53Z):** Director of HR and PMO Lead approval, agent-mediated per `execution_prompt.md` §5.3, dated 2026-10-13: **both Approved, with conditions** on the first pass. Charter grounds: `director_of_hr.md` §2, §3.2, §4.1, §4.3; `pmo_lead.md` §5.2, GI-3, GI-5. v9.9 check: all 35 Owner strings compound, Head of Specs Team solo bucket 0; split credit 8.0/35 = 22.9%. 5 binding conditions: (1) split only on `"; "`, strip trailing parenthetical qualifiers, dedupe roles within a string, check tokens against `check_sprint_backlog_owners.py`'s canonical roles and warn on unmatched tokens rather than crediting them silently; (2) the raw tally stays primary and is the only figure §7.2's 40% ceiling reads, with no `roadmap_prompt.md` change; (3) one rightmost History column "Split-Credit Top Role" (`<role> — <credit 2dp> (<share 1dp>%)`, ties "tied with"), plus a separate "Split-credit" sub-table per cycle breakdown; (4) back-fill all 6 recorded cycles as a one-time ST-44 write, with existing raw columns byte-identical; (5) tests for a 2-role split (0.5), a 3-role split (1/3), qualifier stripping and dedupe, and per-cycle conservation (credits sum to the story count). PMO Lead observation (not an ST-44 change): the v9.8–v9.10 rolling line's "19 of v9.10's 21 Owner values are compound" should read 17. That correction is outside ST-44's named-file AC, so it is filed separately. ST-44 is reclassified `autonomous` and continues after ST-45.
