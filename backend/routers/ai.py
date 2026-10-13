@@ -19,6 +19,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional, List, Any
 from datetime import date
+from uuid import UUID
 from database import fetch_journal_notes
 from services.ai_service import summarise_journal_notes
 from services.ai_audit_service import log_ai_summary_run, query_audit_log
@@ -34,7 +35,10 @@ router = APIRouter(prefix="/ai", tags=["AI"])
 
 
 class JournalSummaryRequest(BaseModel):
-    trade_ids: Optional[list[int]] = None
+    # ST-01 (BLG-BE-162, v9.12): trade_history.id is a UUID. Typed as int,
+    # every request from Trade History failed with 422 before reaching the AI.
+    # Integer IDs are now the ones rejected with 422.
+    trade_ids: Optional[list[UUID]] = None
     date_from: Optional[date] = None
     date_to: Optional[date] = None
 
@@ -74,8 +78,9 @@ def journal_summary(body: JournalSummaryRequest, request: Request):
             content={"status": "error", "message": "Provide trade_ids or at least one of date_from / date_to."},
         )
 
+    trade_ids = [str(t) for t in body.trade_ids] if body.trade_ids else None
     rows = fetch_journal_notes(
-        trade_ids=body.trade_ids, date_from=body.date_from, date_to=body.date_to
+        trade_ids=trade_ids, date_from=body.date_from, date_to=body.date_to
     )
 
     notes = []
@@ -90,7 +95,7 @@ def journal_summary(body: JournalSummaryRequest, request: Request):
     # Audit log — record every invocation (BLG-AI-01)
     try:
         log_ai_summary_run(
-            trade_ids=body.trade_ids,
+            trade_ids=trade_ids,
             date_from=body.date_from,
             date_to=body.date_to,
             trade_count=len(rows),
@@ -111,7 +116,7 @@ def journal_summary(body: JournalSummaryRequest, request: Request):
 
 @router.get("/journal-summary/history")
 def journal_summary_history(
-    trade_id: Optional[int] = Query(default=None, description="Filter by trade ID"),
+    trade_id: Optional[UUID] = Query(default=None, description="Filter by trade ID (UUID)"),
     date_from: Optional[date] = Query(default=None),
     date_to: Optional[date] = Query(default=None),
     limit: int = Query(default=50, ge=1, le=200),
@@ -123,7 +128,7 @@ def journal_summary_history(
     Returns audit records newest first — no summary text stored, only metadata.
     """
     records = query_audit_log(
-        trade_id=trade_id,
+        trade_id=str(trade_id) if trade_id else None,
         date_from=date_from,
         date_to=date_to,
         limit=limit,

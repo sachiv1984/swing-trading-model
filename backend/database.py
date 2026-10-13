@@ -242,7 +242,7 @@ def get_trade_history_by_date_range(portfolio_id: str, date_from, date_to) -> Li
             return cur.fetchall()
 
 
-def fetch_journal_notes(trade_ids: Optional[List[int]] = None, date_from=None, date_to=None) -> List[Dict]:
+def fetch_journal_notes(trade_ids: Optional[List[str]] = None, date_from=None, date_to=None) -> List[Dict]:
     """Fetch entry_note/exit_note for closed trades, filtered by trade_ids OR a
     date_from/date_to range (mutually exclusive at the call site — trade_ids
     takes precedence when both would otherwise be considered).
@@ -255,6 +255,9 @@ def fetch_journal_notes(trade_ids: Optional[List[int]] = None, date_from=None, d
     claude/agents/backend_engineering_patterns_owner.md §"Routers must be
     thin. No business logic, no SQL, no calculations in a router."
     Used by POST /ai/journal-summary.
+
+    ST-01 (BLG-BE-162, EPIC-01, v9.12): trade_ids are trade_history UUIDs
+    (strings), cast to uuid[] in the query.
     """
     with get_db() as conn:
         with conn.cursor() as cur:
@@ -263,9 +266,9 @@ def fetch_journal_notes(trade_ids: Optional[List[int]] = None, date_from=None, d
                     """
                     SELECT entry_note, exit_note
                     FROM trade_history
-                    WHERE id = ANY(%s) AND exit_date IS NOT NULL
+                    WHERE id = ANY(%s::uuid[]) AND exit_date IS NOT NULL
                     """,
-                    (trade_ids,),
+                    ([str(t) for t in trade_ids],),
                 )
             else:
                 params: list = []

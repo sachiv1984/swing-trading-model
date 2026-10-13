@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.27.0
+  version: 3.28.0
+  # v3.28.0 (2026-10-13, ST-01, EPIC-01, v9.12): POST /ai/journal-summary trade_ids and
+  # GET /ai/journal-summary/history trade_id are UUID strings (BLG-BE-162). No new endpoint.
   # v3.27.0 (2026-10-09, ST-25, EPIC-04, v9.11): new GET and POST
   # /reports/monthly-pnl/narrative — AI-assisted Monthly P&L summary (BLG-FEAT-59).
   # Numbered 3.27.0 because 3.23–3.26 are taken by EPIC-02/03/05 on their branches.
@@ -3338,9 +3340,10 @@ paths:
                 trade_ids:
                   type: array
                   items:
-                    type: integer
+                    type: string
+                    format: uuid
                   nullable: true
-                  description: Closed trade IDs to summarise. If provided, date range is ignored.
+                  description: Closed trade IDs (trade_history.id, UUID) to summarise. If provided, date range is ignored. Integers are rejected with 422.
                 date_from:
                   type: string
                   format: date
@@ -3378,7 +3381,7 @@ paths:
                     nullable: true
                     description: Informational message when summary is null.
         "422":
-          description: Neither trade_ids nor a date range provided.
+          description: Neither trade_ids nor a date range provided, or a trade_ids element is not a UUID.
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -3393,8 +3396,8 @@ paths:
       parameters:
         - name: trade_id
           in: query
-          schema: { type: integer }
-          description: Filter by trade ID
+          schema: { type: string, format: uuid }
+          description: Filter by trade ID (UUID); records whose trade_ids contains it
         - name: date_from
           in: query
           schema: { type: string, format: date }
@@ -3419,7 +3422,7 @@ paths:
                       records: { type: array, items: { type: object } }
                       count: { type: integer }
         "422":
-          description: limit out of range
+          description: limit out of range, or trade_id not a UUID
 
   /ai/check-daily-cost:
     post:

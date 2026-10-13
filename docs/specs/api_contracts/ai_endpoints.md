@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.21
-**Last Updated:** 2026-10-08 (ST-32, EPIC-05, v9.11, BLG-SPEC-175 — POST /ai/journal-summary 'LLM unreachable' heading corrected from 503 to 200; 1.17-1.20 are EPIC-01's); prior — 2026-10-01 (ST-33, EPIC-05, v9.9, BLG-SPEC-168 — corrected 4 citations of the `latency_ms` composition decision from `BLG-BE-128` to the correct `BLG-BE-129`; `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites), documentation only); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added an Idempotency subsection to all 5 POST endpoints in this file; flagged undefined double-submit alert-duplication behaviour on check-daily-cost/check-endpoint-anomalies as BLG-OPS-172/173); prior history retained — see prior entries in version control
+**Version:** 1.22
+**Last Updated:** 2026-10-13 (ST-01, EPIC-01, v9.12, BLG-BE-162 — `POST /ai/journal-summary` `trade_ids` and `GET /ai/journal-summary/history` `trade_id` are UUID strings; history response and data source corrected to the real `ai_audit_log` record); prior — 2026-10-08 (ST-32, EPIC-05, v9.11, BLG-SPEC-175 — POST /ai/journal-summary 'LLM unreachable' heading corrected from 503 to 200; 1.17-1.20 are EPIC-01's); prior — 2026-10-01 (ST-33, EPIC-05, v9.9, BLG-SPEC-168 — corrected 4 citations of the `latency_ms` composition decision from `BLG-BE-128` to the correct `BLG-BE-129`; `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites), documentation only); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -49,7 +49,7 @@ Content-Type: application/json
 
 ```json
 {
-  "trade_ids": [1, 2, 3],
+  "trade_ids": ["3fa85f64-5717-4562-b3fc-2c963f66afa6", "9b2e7c1d-0a4f-4e6b-8d3c-5f1a2b3c4d5e"],
   "date_from": "2026-01-01",
   "date_to": "2026-03-31"
 }
@@ -57,7 +57,7 @@ Content-Type: application/json
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `trade_ids` | array of integers | Optional | Specific closed trade IDs to summarise. If provided, `date_from`/`date_to` are ignored. |
+| `trade_ids` | array of string (UUID) | Optional | Specific closed trade IDs (`trade_history.id`) to summarise. If provided, `date_from`/`date_to` are ignored. Integers and non-UUID strings are rejected with HTTP 422. |
 | `date_from` | string (YYYY-MM-DD) | Optional | Start date for trade filter (inclusive). Used when `trade_ids` not provided. |
 | `date_to` | string (YYYY-MM-DD) | Optional | End date for trade filter (inclusive). Used when `trade_ids` not provided. |
 
@@ -105,7 +105,7 @@ When the external LLM API is unreachable or returns an error, the endpoint retur
 
 | Status | Condition |
 |--------|-----------|
-| 422 | Neither `trade_ids` nor a date range provided. |
+| 422 | Neither `trade_ids` nor a date range provided, or a `trade_ids` element is not a UUID string (e.g. an integer). |
 | 401 | Missing or invalid API key. |
 
 ### Implementation constraints (hard rules — SRB-v1.7)
@@ -541,7 +541,7 @@ Query the AI journal summary audit log. Returns metadata records for past `POST 
 
 | Query Parameter | Type | Required | Description |
 |-----------------|------|----------|-------------|
-| `trade_id` | integer | No | Filter records where trade_id matches |
+| `trade_id` | string (UUID) | No | Filter records whose `trade_ids` contains this trade UUID. A non-UUID value is rejected with 422. |
 | `date_from` | date (ISO 8601) | No | Filter by `invoked_at >= date_from` |
 | `date_to` | date (ISO 8601) | No | Filter by `invoked_at <= date_to` |
 | `limit` | integer (1–200) | No | Maximum records to return (default: 50) |
@@ -554,11 +554,15 @@ Query the AI journal summary audit log. Returns metadata records for past `POST 
   "data": {
     "records": [
       {
-        "id": 1,
-        "trade_id": 42,
-        "invoked_at": "2026-06-01T10:00:00+00:00",
-        "model": "claude-sonnet-4-6",
-        "cost_usd": 0.0012
+        "run_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
+        "invoked_at": "2026-10-13T10:00:00",
+        "trade_ids": ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
+        "date_from": null,
+        "date_to": null,
+        "trade_count": 1,
+        "model_version": "claude-haiku-4-5-20251001",
+        "output_hash": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+        "summary_produced": true
       }
     ],
     "count": 1
@@ -570,20 +574,23 @@ Query the AI journal summary audit log. Returns metadata records for past `POST 
 |-------|------|-------------|
 | `records` | array | Audit log entries, newest first |
 | `count` | integer | Length of returned records array |
-| `records[].id` | integer | Audit record ID |
-| `records[].trade_id` | integer or null | Trade this summary was generated for |
-| `records[].invoked_at` | string (ISO 8601) | UTC timestamp of the Claude API call |
-| `records[].model` | string | Model identifier used |
-| `records[].cost_usd` | float or null | Estimated cost in USD |
+| `records[].run_id` | string (UUID) | Audit record ID |
+| `records[].invoked_at` | string (ISO 8601) | UTC timestamp of the summary request |
+| `records[].trade_ids` | array of string (UUID) or null | Trades included; `null` for a date-range request |
+| `records[].date_from` / `records[].date_to` | string (date) or null | Date range used when `trade_ids` was not given |
+| `records[].trade_count` | integer | Closed trades whose notes were included |
+| `records[].model_version` | string or null | Model identifier used |
+| `records[].output_hash` | string or null | SHA-256 of the summary text; `null` when no summary was produced |
+| `records[].summary_produced` | boolean | Whether a summary was returned |
 
 **Error responses**
 
 | Status | Condition |
 |--------|-----------|
-| 422 | `limit` out of range (< 1 or > 200) |
+| 422 | `limit` out of range (< 1 or > 200), or `trade_id` not a UUID |
 
 **Backend:** `backend/routers/ai.py` (`journal_summary_history`)
-**Data source:** `gemini_audit_log` table (queried via `query_audit_log`)
+**Data source:** `ai_audit_log` table (`services/ai_audit_service.py::query_audit_log`; schema migration DS-31 in `data_model.md`). *(Corrected v1.22, ST-01: this section previously named `gemini_audit_log` and a record shape (`id`, `trade_id`, `model`, `cost_usd`) the endpoint never returned.)*
 
 ---
 
@@ -861,6 +868,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.22 | 2026-10-13 | ST-01 (EPIC-01, v9.12, BLG-BE-162): `POST /ai/journal-summary` `trade_ids` is an array of string (UUID), matching `trade_history.id`; it was typed integer, so every request from Trade History failed with 422. Integers are now rejected with 422. `GET /ai/journal-summary/history` `trade_id` is a UUID string, and its response fields and data source are corrected to the real `ai_audit_log` record. `ai_audit_log.trade_ids` migrated `INTEGER[]` → `UUID[]` (DS-31). `openapi.yaml` 3.28.0 in the same commit. |
 | 1.21 | 2026-10-08 | ST-32 (EPIC-05, v9.11, BLG-SPEC-175): `POST /ai/journal-summary` 'LLM unreachable' heading corrected from 503 to 200 (the endpoint returns 200). Documentation only. (1.17–1.20 are EPIC-01's ST-03/07/08/09.) |
 | 1.20 | 2026-10-08 | ST-09 (EPIC-01, v9.11, BLG-BE-142): Every Claude model ID is pinned in `backend/ai_models.py` (`CLAUDE_HAIKU_4_5` = `claude-haiku-4-5-20251001`, `CLAUDE_SONNET_4_6` = `claude-sonnet-4-6`); `tests/test_ai_model_ids_pinned.py` fails on a model literal elsewhere. Debrief and trade-plan generation move from the floating alias `claude-haiku-4-5` to the pinned snapshot, so `model_id`/`model_version` values recorded from v9.11 carry the dated ID. |
 | 1.19 | 2026-10-08 | ST-08 (EPIC-01, v9.11, BLG-BE-141): Briefing and chat context state each stop's last recalculation time (`stop_calculated_at`) and both prompts instruct the model to quote it; `BRIEFING_PROMPT_VERSION` v1.2, `CHAT_PROMPT_VERSION` v1.1. No request/response change. |

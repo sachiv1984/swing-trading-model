@@ -59,7 +59,9 @@ def test_journal_summary_rate_limit_returns_429_after_10_requests():
     key = f"journal-summary:{_TEST_IP}"
     _reset(key)
     try:
-        body = {"trade_ids": [1]}
+        # ST-01 (BLG-BE-162, v9.12): trade_ids are UUIDs; an integer body now
+        # fails validation (422) before the limiter is reached.
+        body = {"trade_ids": ["3fa85f64-5717-4562-b3fc-2c963f66afa6"]}
         for _ in range(ai_router._JOURNAL_SUMMARY_LIMIT):
             resp = CLIENT.post("/ai/journal-summary", json=body)
             assert resp.status_code != 429

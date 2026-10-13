@@ -6,7 +6,8 @@ Records each AI summary run in a persistent DB table for governance tracking.
 Fields logged per run:
   - run_id (UUID)
   - invoked_at (timestamp)
-  - trade_ids (array of IDs included, or null if date-range query)
+  - trade_ids (array of trade_history UUIDs included, or null if date-range query;
+    UUID[] since DS-31 — ST-01, BLG-BE-162, v9.12)
   - date_from / date_to (when trade_ids not used)
   - trade_count (number of trades included)
   - model_version (LLM model used — see docs/specs/ai_journal_model_contract.md)
@@ -26,6 +27,25 @@ from typing import Optional, List
 from database import get_db
 
 
+# DS-31 (ST-01, BLG-BE-162, v9.12): trade_history.id is a UUID, so trade_ids
+# was never able to hold a real trade ID as INTEGER[]. Idempotent: a no-op
+# once the column is UUID[]. Any integer values present referred to no trade,
+# so they are cleared rather than cast. docs/specs/data_model.md DS-31.
+_DS31_TRADE_IDS_TO_UUID_SQL = """
+    DO $$
+    BEGIN
+        IF EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'ai_audit_log'
+              AND column_name = 'trade_ids'
+              AND udt_name = '_int4'
+        ) THEN
+            ALTER TABLE ai_audit_log ALTER COLUMN trade_ids TYPE UUID[] USING NULL;
+        END IF;
+    END $$;
+"""
+
+
 def ensure_ai_audit_table() -> None:
     """Create the ai_audit_log table if it does not already exist."""
     with get_db() as conn:
@@ -34,7 +54,7 @@ def ensure_ai_audit_table() -> None:
                 CREATE TABLE IF NOT EXISTS ai_audit_log (
                     run_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                     invoked_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    trade_ids INTEGER[],
+                    trade_ids UUID[],
                     date_from DATE,
                     date_to DATE,
                     trade_count INTEGER NOT NULL DEFAULT 0,
@@ -55,11 +75,12 @@ def ensure_ai_audit_table() -> None:
                 ALTER TABLE ai_audit_log
                 ADD COLUMN IF NOT EXISTS duration_ms INTEGER
             """)
+            cur.execute(_DS31_TRADE_IDS_TO_UUID_SQL)
         conn.commit()
 
 
 def log_ai_summary_run(
-    trade_ids: Optional[List[int]],
+    trade_ids: Optional[List[str]],
     date_from: Optional[date],
     date_to: Optional[date],
     trade_count: int,
@@ -84,7 +105,7 @@ def log_ai_summary_run(
                 INSERT INTO ai_audit_log
                   (run_id, invoked_at, trade_ids, date_from, date_to,
                    trade_count, model_version, output_hash, summary_produced, duration_ms)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s::uuid[], %s, %s, %s, %s, %s, %s, %s)
                 """,
                 (
                     run_id,
@@ -105,14 +126,14 @@ def log_ai_summary_run(
 
 
 def query_audit_log(
-    trade_id: Optional[int] = None,
+    trade_id: Optional[str] = None,
     date_from: Optional[date] = None,
     date_to: Optional[date] = None,
     limit: int = 50,
 ) -> List[dict]:
     """
     Query the audit log. Filters:
-      - trade_id: returns runs where trade_ids contains this value
+      - trade_id: returns runs where trade_ids contains this trade UUID
       - date_from / date_to: filter by invoked_at range
     Returns list of audit record dicts, newest first.
     """
@@ -120,8 +141,8 @@ def query_audit_log(
     params = []
 
     if trade_id is not None:
-        filters.append("%s = ANY(trade_ids)")
-        params.append(trade_id)
+        filters.append("%s::uuid = ANY(trade_ids)")
+        params.append(str(trade_id))
     if date_from is not None:
         filters.append("invoked_at >= %s")
         params.append(datetime.combine(date_from, datetime.min.time()))
