@@ -31,7 +31,7 @@ Last Updated: 2026-10-13
 - ST-15 live migration: Data Model & Domain Schema Owner, human in-session, 2026-10-13 (`DEL-20261013-04` Unblocked).
 
 **Frontend testing gate (CLAUDE.md §2):**
-- ST-10 observable ACs: Playwright SC-TS-01..06, real CI run 38439982441 (success). SC-TS-06 (Escape dismiss) is the interaction-timing sub-class (LL-v8.3-P3-02), and it was observed passing in that real CI run, not only locally.
+- ST-10 observable ACs: Playwright SC-TS-01..07, real CI run 38439982441 (success; SC-TS-07, the zero-difference case added after the PR review, passed locally 7/7 and runs in the branch's next CI). SC-TS-06 (Escape dismiss) is the interaction-timing sub-class (LL-v8.3-P3-02), and it was observed passing in that real CI run, not only locally.
 - ST-15 observable ACs: Playwright SC-SCP-08..10, real CI run 38441629605 (Playwright E2E Acceptance Tests, success, head `52debab3`).
 - ST-13: value change only, no rendering change (sprint_backlog notes); covered by `tests/test_display_status_native_basis.py`.
 - No AC is "code review only". No testing-gap backlog item was needed, so the same-EPIC cross-story check finds nothing to align.
@@ -42,13 +42,15 @@ Last Updated: 2026-10-13
 - Pre-PR gates: `check_openapi_drift.py` PASSED; `check_api_performance_baseline_drift.py` exit 0 (no new endpoint); `check_backlog_item_integrity.py` OK; no foreign-EPIC commits on the branch (`git log origin/main..HEAD`).
 - Known deviations: none found. Every story's deviation check is complete. ST-13's badge currency fix closes an implementation-vs-contract divergence in the same commit (the contract already said "native").
 
+**PR review (agent-mediated, user-directed, 2026-10-13):** Director of Quality ⚠️ Approved with Comments and Product Owner ⚠️ Approved with Comments, no blocking findings. Fix-now items applied in `1b4068ff`: seed scripts no longer send `stop_price`; ST-16 test made independent of import order; SC-TS-07 for `trail_difference == 0`. Backlog filed in `c005a5dc`: BLG-BE-176 (badge/display_status fallback with NULL fill_price and fx_rate), BLG-BE-177 (frozen marker without a live price), BLG-BE-178 (batch cost can exceed cash after fees), BLG-BE-179 (tag ST-13 correction transitions), BLG-FE-218 (View Trail wording), BLG-FE-219 (signal cost label and plain reason), BLG-QA-224 (duplicate SC-TS IDs). The gap-statistic and earnings-date findings are already BLG-BE-174.
+
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] **Strategy values checked:** ST-07/ST-08/ST-09 — §4.1.3–§4.1.6 sizing, FX and cash; ST-10 — §5 initial stop (5 × ATR from §11), §7.3 ratchet; ST-11 — §7.3; ST-12 — §7.2 breakeven floor on the native entry; ST-13 — §9 lifecycle states; ST-14 — §4.2.3, §13.3; ST-15 — §6.3 grace, §7.1; ST-16 — §11 parameters (5.0 / 2.0 / 10).
-- Signed off by:
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object. The Trail Stop modal fetch uses `API_BASE` with `apiFetch`, unchanged; StopProvenance makes no requests.
+- [x] **Strategy values checked:** ST-07/ST-08/ST-09 — §4.1.3–§4.1.6 sizing, FX and cash; ST-10 — §5 initial stop (5 × ATR from §11), §7.3 ratchet; ST-11 — §7.3; ST-12 — §7.2 breakeven floor on the native entry; ST-13 — §9 lifecycle states; ST-14 — §4.2.3, §13.3; ST-15 — §6.3 grace, §7.1; ST-16 — §11 parameters (5.0 / 2.0 / 10).
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-10-13
+- Comments: [Agent-mediated review — on behalf of the Director of Quality, user-directed ("run this review"), pending human confirmation at the PR merge gate.] First pass: ⚠️ Approved with Comments, with no blocking defects. Two fix-now items were applied in `1b4068ff`, and four backlog items were filed (above). The review verified with cited evidence: §11 values 5× / 2× / 10 (`strategy_parameters.py:21-23`, `strategy_rules.md` §11); the full backend suite at the reviewed head, 2599 passed, 21 skipped (stub DB URL); the NYSE 2026–2027 holiday sets match the published schedule; and each changed function's only callers (`add_position` → `main.py`, `create_settings` → `main.py`, `get_gap_risk` → `main.py`, `size_batch_inv_vol` → `signal_service.py`). Frontend testing gate: Playwright for every observable AC (SC-TS-01..07, SC-SCP-08..10), with real CI runs cited above. The Escape-dismiss interaction AC was observed passing in real CI. `Pass_with_deviation` self-check: no AC was narrowed or partly met (ST-12's literal-scope note is an intent decision, graded `Pass with notes`).

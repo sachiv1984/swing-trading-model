@@ -235,7 +235,7 @@
       "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-12__release-v9.12/qa_evidence_EPIC-02.md",
       "test_scenarios": [
         "tests/test_signal_sizing.py",
@@ -525,6 +525,15 @@
           "sign_off_record": null,
           "notes": "AC1: API test of the create path (POST /settings through the real create_settings with a recording connection): the four strategy columns are absent from the INSERT, so they keep their defaults. AC2: snapshot carries §11 values 5.0/2.0/10 even when the settings row disagrees or is NULL. 4 of 5 fail on prior code. RISK-05: ST-26 (EPIC-04) builds on this path. Deviation check: none."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-10-13",
+        "reference": "qa_evidence_EPIC-02.md",
+        "retries": 0,
+        "note": "user-directed; pending human confirmation at merge gate"
       }
     },
     "EPIC-03": {
