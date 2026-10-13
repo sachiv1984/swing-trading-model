@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T17:48:46Z",
+  "last_updated_utc": "2026-10-13T18:16:30Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -231,7 +231,7 @@
       "merge_commit": "90099bec"
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
@@ -468,7 +468,7 @@
         "ST-15": {
           "title": "Show the user when a position's stop is frozen for lack of ATR",
           "classification": "autonomous",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1988,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
@@ -476,8 +476,8 @@
           "delegation_record_id": "DEL-20261013-04",
           "blocked_since_utc": "2026-10-13T17:48:46Z",
           "unblock_criteria": "DS-32 applied on staging and production; Verification output recorded in data_model.md DS-32 Live Confirmation (DEL-20261013-04)",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-13T17:48:22Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/positions.md#Frozen Stop Indicator (v2.16 — ST-15, BLG-FE-202)",
             "docs/specs/api_contracts/position_endpoints.md#GET /positions",
@@ -488,9 +488,16 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.commit",
-          "sign_off_record": null,
-          "notes": "Code pushed in 52debab3 (authored 2026-10-13T17:48:22Z). AC1: indicator visible on Positions in Table and Grid views (Playwright SC-SCP-08/09; 25/25 local); contract and openapi updated in the same commit. AC2: nightly ATR-unavailable skip sets stop_frozen_reason (tests/test_atr_provenance.py::TestStopFrozenReason). Design-gate extra: no indicator during grace (SC-SCP-10). Deviation check: none. Blocked only on the live DS-32 migration (DEL-20261013-04); classification stays autonomous for the code."
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "date": "2026-10-13",
+            "reference": "DEL-20261013-04",
+            "retries": 0
+          },
+          "notes": "Code pushed in 52debab3 (authored 2026-10-13T17:48:22Z). AC1: indicator visible on Positions in Table and Grid views (Playwright SC-SCP-08/09; 25/25 local); contract and openapi updated in the same commit. AC2: nightly ATR-unavailable skip sets stop_frozen_reason (tests/test_atr_provenance.py::TestStopFrozenReason). Design-gate extra: no indicator during grace (SC-SCP-10). Deviation check: none. Blocked only on the live DS-32 migration (DEL-20261013-04); classification stays autonomous for the code. Unblocked in-session: DS-32 confirmed applied on staging and production (user-supplied Verification output); DEL-20261013-04 Unblocked."
         },
         "ST-16": {
           "title": "Keep first-time Settings saves from writing NULL strategy columns; snapshot §11 values on trade plans",
@@ -1349,9 +1356,7 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [
-    "ST-15"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1367,6 +1372,7 @@
     "ST-12",
     "ST-13",
     "ST-14",
+    "ST-15",
     "ST-16",
     "ST-33",
     "ST-34",
