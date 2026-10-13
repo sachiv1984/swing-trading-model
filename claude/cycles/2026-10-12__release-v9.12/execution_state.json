@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T09:09:44Z",
+  "last_updated_utc": "2026-10-13T09:15:52Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -186,7 +186,7 @@
           "commit_sha": "7c49f038d4ab18f72ee7853b1bfb8127a3829f81",
           "delegation_record_id": "DEL-20261013-02",
           "blocked_since_utc": "2026-10-13T07:36:52Z",
-          "unblock_criteria": "Post-merge (DEL-20261013-02, tightened 2026-10-13): (a) successful ai-daily-cost-check.yml run with the production deploy commit at/after the EPIC-01 merge; (b) request_count consistent with claude_audit_log today; (c) staging journal-summary run producing a claude_audit_log row (endpoint POST /ai/journal-summary, non-null cost_usd). Closes ESC-EXEC-20261013-02.",
+          "unblock_criteria": null,
           "completed_utc": "2026-10-13T08:24:08Z",
           "acceptance_verified": true,
           "spec_references": [
@@ -207,7 +207,7 @@
             "signed_utc": "2026-10-13T08:24:08Z",
             "notes": "Accepted for the merge gate with AC 2's last-successful-run half completed post-merge (workflow can run only on main). Tracked by ESC-EXEC-20261013-02 (Open) and DEL-20261013-02 (In Progress); must be recorded before Sprint Close."
           },
-          "notes": "Engine commit 7bfcfb281eaa11c50b0c8be12706bc723ebfb84d (2026-10-13T07:38:48Z): AC1 (pytest) and AC3 (cost-estimate correction) met; AC2 scheduler named (new ai-daily-cost-check.yml; none existed). AC2 last-successful-run half delegated: DEL-20261013-02 (can only run once on main). 2026-10-13: DEL-20261013-02 step 1 answered — no external scheduler (user, for Infrastructure & Operations Owner); recorded in ai_endpoints.md. Open: first successful ai-daily-cost-check.yml run (post-merge only). 2026-10-13: Product Owner ruling — done for the merge gate; AC 2 run record post-merge under ESC-EXEC-20261013-02 / DEL-20261013-02 (both stay open until recorded). Implementation commit 7bfcfb28; commit_sha is the ruling-record commit. Deviation check: none — implementation matches ai_endpoints.md v1.24. Reclassified autonomous -> delegated_backend (LL-v2.3-EX-02) when DEL-20261013-02 was raised for the scheduler run record; aligns with delegation_log.md. DoQ review finding: journal summary wrote no claude_audit_log row — fixed in this EPIC (claude_audit_log write added to summarise_journal_notes), so \"every Claude call\" now holds. Journal-summary claude_audit_log fix: commit 4bb38bdd (DoQ review finding). Follow-up BLG-SPEC-195 (stale AI_MODEL contract line)."
+          "notes": "Engine commit 7bfcfb281eaa11c50b0c8be12706bc723ebfb84d (2026-10-13T07:38:48Z): AC1 (pytest) and AC3 (cost-estimate correction) met; AC2 scheduler named (new ai-daily-cost-check.yml; none existed). AC2 last-successful-run half delegated: DEL-20261013-02 (can only run once on main). 2026-10-13: DEL-20261013-02 step 1 answered — no external scheduler (user, for Infrastructure & Operations Owner); recorded in ai_endpoints.md. Open: first successful ai-daily-cost-check.yml run (post-merge only). 2026-10-13: Product Owner ruling — done for the merge gate; AC 2 run record post-merge under ESC-EXEC-20261013-02 / DEL-20261013-02 (both stay open until recorded). Implementation commit 7bfcfb28; commit_sha is the ruling-record commit. Deviation check: none — implementation matches ai_endpoints.md v1.24. Reclassified autonomous -> delegated_backend (LL-v2.3-EX-02) when DEL-20261013-02 was raised for the scheduler run record; aligns with delegation_log.md. DoQ review finding: journal summary wrote no claude_audit_log row — fixed in this EPIC (claude_audit_log write added to summarise_journal_notes), so \"every Claude call\" now holds. Journal-summary claude_audit_log fix: commit 4bb38bdd (DoQ review finding). Follow-up BLG-SPEC-195 (stale AI_MODEL contract line). 2026-10-13: AC 2 run record complete post-merge — run 38374258055 (success, production at 90099bec); DEL-20261013-02 Unblocked, ESC-EXEC-20261013-02 Resolved."
         }
       },
       "sign_off_record": {
@@ -1178,9 +1178,7 @@
     "ST-05",
     "ST-06"
   ],
-  "open_escalations": [
-    "ESC-EXEC-20261013-02"
-  ],
+  "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01"
@@ -1201,7 +1199,8 @@
     "2026-10-13: the user confirmed the Render staging API is switched back to main after the ST-01 check.",
     "ST-06 accepted by the Product Owner with its AC 2 run record post-merge (ESC-EXEC-20261013-02, mirrored to .claude_current_state.json on main at 7812d70e). Check at the first run sprint after EPIC-01 merges.",
     "PR #2022 agent-mediated review (Director of Quality + Product Owner, both Approved with Comments, no must-fix): 7 follow-ups filed (BLG-AI-16..19, BLG-OPS-186/187, BLG-QA-221); DEL-20261013-02 unblock criteria tightened to prove the final code is live (deploy commit, request_count, post-merge journal-summary claude_audit_log row).",
-    "EPIC-01 PR #2022 merged by the human developer at 2026-10-13T09:03:18Z (90099bec). The QA sign-off and Product Owner acceptance comments were recorded on the user's direction just after the merge; see merge_gate_record. Orphaned post-merge commit check: none. Sibling-branch sync (STEP 4 3c): no other v9.12 EPIC branches exist yet."
+    "EPIC-01 PR #2022 merged by the human developer at 2026-10-13T09:03:18Z (90099bec). The QA sign-off and Product Owner acceptance comments were recorded on the user's direction just after the merge; see merge_gate_record. Orphaned post-merge commit check: none. Sibling-branch sync (STEP 4 3c): no other v9.12 EPIC branches exist yet.",
+    "2026-10-13T09:15:52Z: ESC-EXEC-20261013-02 resolved and DEL-20261013-02 unblocked post-merge (ST-06 AC 2 run record; ST-01 final-code staging check via costed journal-summary claude_audit_log row). Production and staging count queries returned identical results (1 row, $0.001628), disclosed in DEL-20261013-02."
   ],
   "sealed": false,
   "sealed_utc": null

@@ -36,4 +36,5 @@ Last Updated: 2026-10-13
 - **Unblock criteria:** After EPIC-01 merges, one successful `ai-daily-cost-check.yml` run, dispatched or scheduled. Its run ID, date and the endpoint's JSON response are recorded in `ai_endpoints.md` ("Last successful run"), in `qa_evidence_EPIC-01.md` under ST-06, and in `DEL-20261013-02` (→ Unblocked). The engine runs `gh run list --workflow ai-daily-cost-check.yml` at the first `run sprint` after the merge.
 - **SLA due-by:** 2026-10-16T08:24:00Z (72h — Human-Delegation)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary (2026-10-13T09:15:52Z):** closed post-merge on the evidence recorded in `DEL-20261013-02` (now Unblocked). `ai-daily-cost-check.yml` run 38374258055 succeeded at 09:09 UTC against production deployed at `90099bec`. Production's only `claude_audit_log` row for the day (09:12:10) post-dates that run, so `request_count: 0` was correct. A post-merge staging journal summary wrote a costed `claude_audit_log` row (`POST /ai/journal-summary`, v1.0, $0.001628). `ai_endpoints.md` "Last successful run" is filled in. Closed before Sprint Close, as the Product Owner required.
