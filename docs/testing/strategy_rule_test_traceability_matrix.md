@@ -1,7 +1,7 @@
 **Owner:** Director of Quality; QA & Testing Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-10-13 (ST-09, BLG-QA-205, EPIC-02, v9.12 — C4.1.5-01/02/03 and C4.1.6-01/02 moved to Asserted by `tests/test_sizing_fx_and_cash.py`); prior — 2026-10-09 (ST-16, BLG-BE-143, EPIC-03, v9.11 — C6.3-02 moved to Asserted by `TestInGraceStopParity` after the §6.3 in-grace ruling); prior — 2026-10-06 (ST-04, BLG-QA-207, EPIC-01, v9.10 — 9 §5/§6/§8 rows moved to Asserted by `tests/test_live_exit_decision.py`); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (ST-19, BLG-QA-206, EPIC-03, v9.12 — C4.1.7-01/02/03/05/06/07/08 moved to Asserted by `tests/e2e/position-sizing-widget-behaviours.spec.js`); prior — 2026-10-13 (ST-09, BLG-QA-205, EPIC-02, v9.12 — C4.1.5-01/02/03 and C4.1.6-01/02 moved to Asserted by `tests/test_sizing_fx_and_cash.py`); prior — 2026-10-09 (ST-16, BLG-BE-143, EPIC-03, v9.11 — C6.3-02 moved to Asserted by `TestInGraceStopParity` after the §6.3 in-grace ruling); prior history retained — see prior entries in version control
 **Source:** ST-11 (BLG-QA-185, EPIC-03, cycle `2026-09-30__release-v9.9`)
 
 ---
@@ -28,11 +28,11 @@
 
 | | Clauses | Share |
 |---|---:|---:|
-| Asserted | 39 | **79.6%** |
-| Partial | 3 | 6.1% |
-| None | 7 | 14.3% |
+| Asserted | 46 | **93.9%** |
+| Partial | 2 | 4.1% |
+| None | 1 | 2.0% |
 | **Total normative clauses** | **49** | |
-| Asserted or partial | 42 | 85.7% |
+| Asserted or partial | 48 | 98.0% |
 
 **% of clauses with an asserting test: 79.6% (39/49)** — 85.7% counting partial coverage. (Was 51.0% before ST-04, v9.10, 67.3% before ST-16, v9.11, which moved C6.3-02 to Asserted once §6.3's in-grace behaviour was ruled, and 69.4% before ST-09, v9.12, which asserted the five §4.1.5/§4.1.6 clauses.)
 
@@ -72,14 +72,14 @@ Follow-ups for every Partial/None clause are filed, grouped by area, as `BLG-QA-
 | C4.1.5-03 | The FX rate used is returned in the sizing response | Asserted | `tests/test_sizing_fx_and_cash.py`::TestFxHandling (live, override and UK 1.0 echoes) | — |
 | C4.1.6-01 | `EstimatedCost > AvailableCash` → insufficient-cash result (`cash_sufficient: false`) | Asserted | `tests/test_sizing_fx_and_cash.py`::TestCashConstraint (UK and US insufficient; sufficient negative case) | — |
 | C4.1.6-02 | Insufficient-cash result may include `MaxAffordableShares` | Asserted | `tests/test_sizing_fx_and_cash.py`::TestCashConstraint::test_insufficient_result_includes_affordable_max_shares, `::test_us_insufficient_result_includes_affordable_max_shares` (present, and affordable including fees) | — |
-| C4.1.7-01 | Calculator always visible in the Position Entry form (no toggle) | Partial | `tests/e2e/position-sizing-concentration.spec.js`, `tests/e2e/what-if-sizing-preview.spec.js` render the widget; no dedicated always-visible / no-toggle assertion | BLG-QA-206 |
-| C4.1.7-02 | Auto-recalculates on entry/stop/risk change, debounced 300ms | None | — | BLG-QA-206 |
-| C4.1.7-03 | Loading state shown between debounce firing and response | None | — | BLG-QA-206 |
+| C4.1.7-01 | Calculator always visible in the Position Entry form (no toggle) | Asserted | `tests/e2e/position-sizing-widget-behaviours.spec.js` SC-PSW-01 (visible on load; no switch, checkbox or activation button) | — |
+| C4.1.7-02 | Auto-recalculates on entry/stop/risk change, debounced 300ms | Asserted | `tests/e2e/position-sizing-widget-behaviours.spec.js` SC-PSW-02 (controlled clock: no call 240 ms after the last keystroke, one call at 300 ms; entry, stop and risk % changes each recalculate) | — |
+| C4.1.7-03 | Loading state shown between debounce firing and response | Asserted | `tests/e2e/position-sizing-widget-behaviours.spec.js` SC-PSW-03 (spinner while a delayed mocked response is pending) | — |
 | C4.1.7-04 | Valid result + empty shares field → auto-filled with SuggestedShares | Asserted | `tests/e2e/smoke-critical-paths.spec.js` PATH-1 (waits on the auto-fill; mocked API) | — |
-| C4.1.7-05 | Valid result + manually entered shares → not overwritten; "use this" affordance shown | None | — | BLG-QA-206 |
-| C4.1.7-06 | INSUFFICIENT_CASH → no auto-fill; MaxAffordableShares informational only | None | — | BLG-QA-206 |
-| C4.1.7-07 | Invalid result → no auto-fill; inline plain-language message | None | — | BLG-QA-206 |
-| C4.1.7-08 | Invalid or cash-constrained result does not block form submission | None | — | BLG-QA-206 |
+| C4.1.7-05 | Valid result + manually entered shares → not overwritten; "use this" affordance shown | Asserted | `tests/e2e/position-sizing-widget-behaviours.spec.js` SC-PSW-05 (manual 7 kept; "Use suggested shares" applies 10 and hides) | — |
+| C4.1.7-06 | INSUFFICIENT_CASH → no auto-fill; MaxAffordableShares informational only | Asserted | `tests/e2e/position-sizing-widget-behaviours.spec.js` SC-PSW-06 (shares stay empty; muted "Max affordable" line; no use button) | — |
+| C4.1.7-07 | Invalid result → no auto-fill; inline plain-language message | Asserted | `tests/e2e/position-sizing-widget-behaviours.spec.js` SC-PSW-07 (`INVALID_RISK_PERCENT` message; shares stay empty) | — |
+| C4.1.7-08 | Invalid or cash-constrained result does not block form submission | Asserted | `tests/e2e/position-sizing-widget-behaviours.spec.js` SC-PSW-08 (invalid and cash-constrained cases both submit) | — |
 
 ### §4.2 Pre-entry advisory checks
 
@@ -135,7 +135,7 @@ Follow-ups for every Partial/None clause are filed, grouped by area, as `BLG-QA-
 | Item | Area | Clauses |
 |------|------|---------|
 | BLG-QA-205 | Backend sizing: FX default/override/echo and §4.1.6 cash-constraint result. **Done** in ST-09, v9.12 | C4.1.5-01, C4.1.5-02, C4.1.5-03, C4.1.6-01, C4.1.6-02 |
-| BLG-QA-206 | Playwright coverage of §4.1.7 sizing-widget behaviours | C4.1.7-01, C4.1.7-02, C4.1.7-03, C4.1.7-05, C4.1.7-06, C4.1.7-07, C4.1.7-08 |
+| BLG-QA-206 | Playwright coverage of §4.1.7 sizing-widget behaviours. **Done** in ST-19, v9.12 | C4.1.7-01, C4.1.7-02, C4.1.7-03, C4.1.7-05, C4.1.7-06, C4.1.7-07, C4.1.7-08 |
 | BLG-QA-207 | Live exit decision and grace-period behaviour (`should_exit_position`, stop persistence at entry). **Done** in ST-04, v9.10; C7.1-02 stays Partial for a behaviour reason, see its row | C5-02, C6.3-01, C6.3-02, C6.3-03, C7.1-02, C8-00, C8.1-01, C8.1-02, C8.2, C8.3 |
 | BLG-QA-208 | Entry required-field set and advisory panel non-blocking at the UI | C4-01, C4.2.6 |
 
