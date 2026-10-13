@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-13 (session — 1 new item added: BLG-AI-14, from Sprint Execution ST-03 / EPIC-01, 2026-10-12__release-v9.12); prior — 2026-10-12 (session — 2 new item(s) added: BLG-GOV-386, BLG-FE-217, from post-ship closure 2026-10-08__release-v9.11 §6 rows 7 and 9); prior — 2026-10-12 (groom backlog post-ship closure 2026-10-08__release-v9.11 — 45 items archived: 43 v9.11 shipped items plus BLG-GOV-362 and BLG-OPS-180, both bannered ✅ COMPLETE at the 2026-10-07 closure); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (session — 2 new items added: BLG-AI-14, BLG-SPEC-195, from Sprint Execution EPIC-01 (ST-03; ST-06 DoQ review), 2026-10-12__release-v9.12); prior — 2026-10-12 (session — 2 new item(s) added: BLG-GOV-386, BLG-FE-217, from post-ship closure 2026-10-08__release-v9.11 §6 rows 7 and 9); prior — 2026-10-12 (groom backlog post-ship closure 2026-10-08__release-v9.11 — 45 items archived: 43 v9.11 shipped items plus BLG-GOV-362 and BLG-OPS-180, both bannered ✅ COMPLETE at the 2026-10-07 closure); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5144,5 +5144,26 @@ ST-03 (`BLG-AI-12`) relabelled the daily-briefing context to "available cash £X
 **Acceptance Criteria**
 - The chat context no longer uses "of £{initial_cash}", and omits starting capital when it is 0
 - Golden-fixture and chat tests pass with any recorded prompt-version bump
+
+---
+
+### BLG-SPEC-195 — Journal summary: remove the stale AI_MODEL override line, or cost the model actually used
+**Priority:** P4 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner; Backend Engineering Patterns Owner
+**Source:** Agent-mediated Director of Quality review (second pass) of EPIC-01, ST-06, cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.13
+
+**Problem**
+`ai_endpoints.md` §POST /ai/journal-summary says "Default model: `claude-haiku-4-5-20251001`. Override via `AI_MODEL` env var." No such override exists: `summarise_journal_notes()` uses `MODEL_VERSION = CLAUDE_HAIKU_4_5`, and the router never passes a model. ST-06 (v9.12) added `claude_audit_log` cost logging for the journal summary at Haiku 4.5 rates regardless of the `model` argument. That is correct today, but the costing would be wrong if an override were ever added.
+
+**Scope**
+- Remove the `AI_MODEL` override sentence from the contract (or implement the override and cost by model)
+- If a non-Haiku model can ever be passed, select the cost rates by model in `_audit_journal_summary_call()`
+
+**Acceptance Criteria**
+- The contract describes only model selection that exists in code
+- A test pins the cost rates to the model used, or the contract states the endpoint is Haiku-only
 
 ---
