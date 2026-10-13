@@ -287,6 +287,32 @@
       "resolved_utc": "2026-10-13T15:36:45Z",
       "resolved_by": "Data Model & Domain Schema Owner (agent-mediated, execution_prompt.md §5.3)",
       "resolution_summary": "Approved with conditions: doc fix. positions.entry_price is GBP; fill_price is the native entry; user_fill_price is the broker fill. C1 dictionary rows plus §5.1/§5.2; C2 pnl live-FX/no-fee divergence filed as BLG-SPEC-198; C3 version bump. ST-38 reclassified autonomous."
+    },
+    "ESC-EXEC-20261013-06": {
+      "cycle": "2026-10-12__release-v9.12",
+      "summary": "ST-10/EPIC-02 - Strategy Rules & System Intent Owner ruling: manual stop raise under strategy_rules.md §7.3 (Trail Stop Branch A vs B) and supplied entry stop_price treatment (BLG-BE-159)",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-10-13T17:22:34Z",
+      "sla_due_utc": "2026-10-16T17:22:34Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-13T17:26:32Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (agent-mediated, execution_prompt.md §5.3, user-directed)",
+      "resolution_summary": "Branch B approved with conditions: no manual stop change; Trail Stop modal read-only, button renamed View Trail; no stop-write route. AC 3: reject supplied entry stop_price with 400 (message cites §5/§11, multiplier from INITIAL_ATR_MULTIPLIER). 8 binding conditions incl. backlog item for the modal hardcoded 2.0 multiplier/missing breakeven floor. ST-10 reclassified autonomous."
+    },
+    "ESC-EXEC-20261013-07": {
+      "cycle": "2026-10-12__release-v9.12",
+      "summary": "ST-14/EPIC-02 - Strategy Rules & System Intent Owner ruling: revise gap-risk Ruling 3 to the US exchange calendar and US market date; §13.3/§13.5 addendum (BLG-BE-148)",
+      "trigger_type": "Strategy",
+      "owning_authority": "Strategy Rules & System Intent Owner",
+      "raised_utc": "2026-10-13T17:22:34Z",
+      "sla_due_utc": "2026-10-16T17:22:34Z",
+      "blocks_execution": false,
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-13T17:26:56Z",
+      "resolved_by": "Strategy Rules & System Intent Owner (agent-mediated, execution_prompt.md §5.3, user-directed)",
+      "resolution_summary": "Revised Ruling 3 approved: NYSE session calendar (in-code, deterministic, no network) on the America/New_York market date; days_until computed from next_earnings_date - T; within §13.3 carve-out, no new §13 review, no strategy_rules.md change. 8 binding conditions; v9.12 addendum appended by ST-14. ST-14 reclassified autonomous."
     }
   },
   "deferred_escalations": {
