@@ -10,6 +10,7 @@
  *   SC-SPF-03  A stored row with the old wrong values (5 / 2 / 3) still shows the §11 values
  *   SC-SPF-04  Saving omits the four fixed fields; Default Risk % is still sent
  *   SC-SPF-05  Trade Entry system initial stop uses 5× ATR regardless of the stored row
+ *   SC-SPF-06  Each helper line states the §5–§7.2 rule in force (v9.12 ST-20, BLG-FE-201; settings.md v1.9 §1)
  *
  * Infrastructure: page.route() network interception — no live backend required.
  */
@@ -105,4 +106,24 @@ test('SC-SPF-05: Trade Entry system stop is entry − 5×ATR even when a stored 
   const panel = page.getByTestId('system-initial-stop');
   await expect(panel).toContainText('Entry − 5× ATR (§5)');
   await expect(page.getByTestId('system-initial-stop-value')).toContainText('80.00'); // 100 − 5 × 4
+});
+
+// v9.12 ST-20 (BLG-FE-201): helper text matches strategy_rules.md §5, §6, §7.1, §7.2.
+// Design source: docs/design/2026-10-12__release-v9.12/settings-copy-and-last-change/decision_record.md §2.1
+const HELPER_TEXT = {
+  'min-hold-days': 'Grace period in calendar days. Stops are not enforced or recalculated during grace (§6).',
+  'atr-period': 'Lookback for the ATR calculation, in days (§7.1).',
+  'atr-multiplier-initial': 'Stop = price − 5×ATR for new and losing positions (§5, §7.2).',
+  'atr-multiplier-trailing': 'Stop = price − 2×ATR for profitable positions, never below entry (§7.2).',
+};
+
+test('SC-SPF-06: each helper line states the rule in force', async ({ page }) => {
+  await stubSettings(page, []);
+  await page.goto('/#/Settings');
+  for (const [id, text] of Object.entries(HELPER_TEXT)) {
+    const cell = page.getByTestId(`strategy-param-${id}`);
+    await expect(cell.locator('p').nth(2)).toHaveText(text, { timeout: 10000 });
+  }
+  await expect(page.getByText('Days before stop can trail')).toHaveCount(0);
+  await expect(page.getByText(/e\.g\., [25] = /)).toHaveCount(0);
 });
