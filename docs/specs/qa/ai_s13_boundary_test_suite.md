@@ -1,8 +1,8 @@
 **Owner:** AI Compliance & Governance Officer; QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-10-13 (ST-05, EPIC-01, v9.12, BLG-AI-13 — B-MPN-04 pass criterion widened to inflected and indirect directive wording, with past-tense negative cases); prior — 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — `POST /reports/monthly-pnl/narrative` added: scenarios B-MPN-01 to B-MPN-05 and a compliance-matrix row); prior — 2026-06-29 (initial suite)
+**Version:** 1.3
+**Last Updated:** 2026-10-13 (ST-05, EPIC-01, v9.12, BLG-AI-13/BLG-AI-19 — B-MPN-04 tightened after the PR #2022 review: gerunds count only after a directive cue or before a ticker; exit/close/trim + holding added; retrospective and discourse negatives); prior — 2026-10-13 (ST-05 — B-MPN-04 widened to inflected and indirect wording); prior — 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — `POST /reports/monthly-pnl/narrative` added: scenarios B-MPN-01 to B-MPN-05 and a compliance-matrix row); prior — 2026-06-29 (initial suite)
 **Story:** ST-10 (BLG-QA-68, EPIC-02, v6.3)
 **Implements:** §13 Advisory-Only Constraint (SRB-v1.7 §13)
 
@@ -244,7 +244,7 @@ For each endpoint, §13 compliance is assessed across four dimensions:
 **Dimension:** D4
 **Method:** Directive-language detector (`scan_language`'s `instrument_directive` category), applied to every output before it is shown or stored
 **Test type:** Automated (CI)
-**Pass criterion:** known directives ("Buy AAPL now", "sell them", "add to it") are caught, as are inflected and indirect forms ("Consider buying MSFT", "sell the position", "shorting NVDA", "adding to your position"; ST-05, v9.12, BLG-AI-13); past-tense reporting ("you sold 9 trades", "you bought 3 positions") is not flagged (negative cases); the representative output and the code-written fallback are clean. The inputs carry no tickers, so an instrument directive is out of scope by construction. Tests: `tests/test_monthly_pnl_narrative.py` (`test_b_mpn_04_*`).
+**Pass criterion:** known directives ("Buy AAPL now", "sell them", "add to it") are caught, as are inflected and indirect forms ("Consider buying MSFT", "sell the position", "shorting NVDA", "consider adding to your position", "exit the position"; ST-05, v9.12, BLG-AI-13). A gerund counts only after a directive cue or before a ticker. Retrospective and discourse wording is not flagged (negative cases): past tense ("you sold 9 trades"), past progressive ("you were adding to the position"), a bare gerund subject ("Selling the position early cost you £40"), "Adding to that, …", "fell short this month", and the market names UK/US (tightened after the PR #2022 review, BLG-AI-19); the representative output and the code-written fallback are clean. The inputs carry no tickers, so an instrument directive is out of scope by construction. Tests: `tests/test_monthly_pnl_narrative.py` (`test_b_mpn_04_*`).
 
 ### Scenario B-MPN-05 — Response schema conformance
 **Dimension:** D1, D3

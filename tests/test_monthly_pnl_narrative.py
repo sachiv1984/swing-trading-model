@@ -447,9 +447,10 @@ class TestS13BoundarySuite:
         assert "instrument_directive" in scan_language(text)
 
     @pytest.mark.parametrize("text", [
-        "Consider buying MSFT.", "You could sell the position.", "Selling the holding would lock this in.",
-        "Shorting NVDA here is an option.", "Going long AAPL is possible.", "Adding to your position is an option.",
-        "Think about buying more.", "Buys TSLA on dips.",
+        "Consider buying MSFT.", "You could sell the position.", "Think about selling the holding.",
+        "Shorting NVDA here is an option.", "Going long AAPL is possible.", "Consider adding to your position.",
+        "Think about buying more.", "It may be worth trimming your holding.",
+        "Exit the position.", "Close the position before April.", "Trim your holding.",
     ])
     def test_b_mpn_04_inflected_and_indirect_directives_detected(self, text):
         """ST-05 (BLG-AI-13, v9.12): inflected and indirect wording is caught."""
@@ -459,9 +460,16 @@ class TestS13BoundarySuite:
         "In the 2025/26 tax year you sold 9 trades.", "You bought 3 positions in May 2025.",
         "You shorted no positions this year.", "The selling price averaged £12.40.",
         "Positions held for a short period made up most trades.",
+        # PR #2022 review (BLG-AI-19): retrospective and discourse wording.
+        "Selling the position early cost you £40.", "You were adding to the position in week 2.",
+        "You were selling the position into strength.", "Buying more in March raised exposure.",
+        "Buying more was not part of the month.", "Selling it at a loss cut drawdown.",
+        "Adding to that, your win rate rose to 60%.", "Your P&L fell short this month.",
+        "The month fell short this time.", "Buying UK shares made up most of the month.",
+        "Most gains came from US trades you closed in May.",
     ])
     def test_b_mpn_04_past_tense_reporting_not_detected(self, text):
-        """ST-05: past-tense reporting is not an instrument directive (negative cases)."""
+        """ST-05: retrospective reporting is not an instrument directive (negative cases)."""
         assert "instrument_directive" not in scan_language(text)
 
     def test_b_mpn_04_representative_output_is_clean(self):
