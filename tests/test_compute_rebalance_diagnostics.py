@@ -108,3 +108,15 @@ def test_real_changelog_restated_skill_silo_readings_are_pooled():
     for newest, (gov, total, pct) in expected.items():
         h = by_newest[newest]
         assert (h["G"] + h["D"] + h["P"], h["total"], h["governance_pct"]) == (gov, total, pct), newest
+
+
+def test_real_changelog_reproduces_step_7_1_figure():
+    """ST-45 (BLG-QA-212): STEP 7.1 real-changelog pin. v9.6-v9.8 window ->
+    84 governance stories of 99 = 84.8% (finding F-1: misstated as 84.0%)."""
+    changelog = Path(__file__).resolve().parent.parent / "docs" / "product" / "changelog.md"
+    cycles = parse_cycles(changelog.read_text())
+    start = next(i for i, c in enumerate(cycles) if c["cycle"].endswith("release-v9.8"))
+    result = skill_silo_diagnostic(cycles[start:], window=3)
+    assert result["window_cycles"][-1].endswith("release-v9.6")
+    assert (result["G"] + result["D"] + result["P"], result["total"]) == (84, 99)
+    assert result["governance_pct"] == 84.8
