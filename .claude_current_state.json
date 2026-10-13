@@ -274,6 +274,16 @@
       "resolved_utc": "2026-10-13T09:31:30Z",
       "resolved_by": "Director of HR + PMO Lead (agent-mediated, execution_prompt.md §5.3)",
       "resolution_summary": "Both Approved with 5 binding conditions (canonical '; ' split, qualifier strip, dedupe, unmatched-token warnings; raw tally stays primary for §7.2; rightmost Split-Credit Top Role column + per-cycle sub-tables; back-fill 6 cycles with raw columns byte-identical; split/conservation tests). ST-44 implemented at 5fb078ea on exec/2026-10-12__release-v9.12/EPIC-06."
+    },
+    "ESC-EXEC-20261013-05": {
+      "cycle": "2026-10-12__release-v9.12",
+      "summary": "ST-38/EPIC-05 - Data Model & Domain Schema Owner decision: positions.entry_price currency, doc fix vs code fix (BLG-SPEC-183)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Data Model & Domain Schema Owner",
+      "raised_utc": "2026-10-13T15:33:58Z",
+      "sla_due_utc": "2026-10-14T15:33:58Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "deferred_escalations": {

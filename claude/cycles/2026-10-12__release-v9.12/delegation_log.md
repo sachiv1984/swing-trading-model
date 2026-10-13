@@ -36,3 +36,28 @@ Last Updated: 2026-10-13
 - **Unblock criteria:** (1) answered; (2) one successful `ai-daily-cost-check.yml` run ID and date, recorded in the contract's "Last successful run" line and in `qa_evidence_EPIC-01.md` under ST-06.
 - **Commit format required:** `[EPIC-01][ST-06] <description>` pushed to `exec/2026-10-12__release-v9.12/EPIC-01` (or a `[GOVERNANCE]` commit on `main` if EPIC-01 has merged)
 - **Status:** Unblocked — 2026-10-13, in-session; post-merge. Step (1): the user, acting for the Infrastructure & Operations Owner, confirmed no external scheduler. Step (2), with the tightened criteria (PR #2022 review): (a) the user confirmed the production deploy is at `90099bec`, the EPIC-01 merge commit, and so is staging. `ai-daily-cost-check.yml` run 38374258055 (workflow_dispatch, 2026-10-13T09:09:07Z, head 90099bec, conclusion success), endpoint response `{"total_cost_usd":0.0,"request_count":0,"threshold_usd":1.0,"threshold_exceeded":false,"alert_sent":false}`. (b) The production `claude_audit_log` count for the day is 1 row / $0.001628, and that row was written at 09:12:10, after the 09:09:12 run, so the run's `request_count: 0` was correct. (c) A post-merge staging journal summary from Trade History wrote `claude_audit_log` `endpoint POST /ai/journal-summary`, `prompt_version v1.0`, `cost_usd 0.00162800`, `generated_at 2026-10-13 09:12:10+00`. The production and staging counts were identical (one row, $0.001628), so the summary was generated against, or both queries read, the same database. In either case the only row today post-dates the run, and only v9.12 code writes journal-summary audit rows. Story commit: `7c49f038` (ST-06 `commit_sha`); evidence recorded in the closing `[GOVERNANCE]` commit on `main`.
+
+## DEL-20261013-03
+
+- **ST Item:** ST-34 — Triage the drift detector's new live-vs-doc findings
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend (production `pg_indexes` read, Human-Delegation — `sprint_backlog.md` ST-34 Notes / Staging-only AC 1, finding 1 only; RISK-01)
+- **Assigned to:** Data Model & Domain Schema Owner
+- **GitHub Issue:** #2007
+- **Branch:** exec/2026-10-12__release-v9.12/EPIC-05
+- **Delegated at:** 2026-10-13T15:32:47Z
+- **What is needed:** Findings 2–5 are triaged and committed (`255f10b4`, `data_model.md` v2.60 §Drift Detector Triage). Finding 1 needs a production read, which this engine has no access to. On **production**, run this read-only query in the Supabase SQL editor and paste the output back:
+  ```sql
+  SELECT tablename, indexname, indexdef FROM pg_indexes
+  WHERE schemaname = 'public'
+    AND indexname IN ('idx_positions_open_ticker_entry_date_unique', 'idx_portfolio_history_portfolio',
+                      'idx_trade_reflections_trade', 'idx_position_audit_log_position_id',
+                      'idx_sector_regime_history_portfolio_date', 'idx_trade_plan_audit_log_trade_plan_id')
+  ORDER BY 1, 2;
+  ```
+  The first name is finding 1 (DS-17, expected present per its 2026-09-23 confirmation). The other five confirm that finding 5's staging dispositions also hold on production. Applying DS-17 to staging is not part of this delegation; it is BLG-SPEC-197.
+- **Workflow viability (LL-v9.10-P3-01):** Not a workflow dispatch. A manual read-only query in the Supabase SQL editor; no GitHub Actions run is involved.
+- **Spec reference:** `docs/specs/data_model.md#Drift Detector Triage (2026-10-13, v2.60)`; `docs/specs/data_model.md#DS-17 — positions unique constraint on (portfolio_id, ticker, entry_date) for open positions (v2.33, 2026-09-14)`; `stage4_backlog_slice.md#ST-34` AC 1
+- **Unblock criteria:** The production query output, recorded in `data_model.md` §Drift Detector Triage (finding 1 row and the finding 5 table) and in `qa_evidence_EPIC-05.md` under ST-34. If DS-17's index is absent on production, finding 1's disposition becomes "needs live action, production" and a new migration-scheduling item is filed before ST-34 closes.
+- **Commit format required:** `[EPIC-05][ST-34] <description>` pushed to `exec/2026-10-12__release-v9.12/EPIC-05`
+- **Status:** Open

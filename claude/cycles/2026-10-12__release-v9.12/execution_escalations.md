@@ -72,3 +72,19 @@ Last Updated: 2026-10-13
 - **Blocks execution:** No
 - **Disposition:** Resolved
 - **Resolution summary (2026-10-13T09:30:53Z):** Director of HR and PMO Lead approval, agent-mediated per `execution_prompt.md` §5.3, dated 2026-10-13: **both Approved, with conditions** on the first pass. Charter grounds: `director_of_hr.md` §2, §3.2, §4.1, §4.3; `pmo_lead.md` §5.2, GI-3, GI-5. v9.9 check: all 35 Owner strings compound, Head of Specs Team solo bucket 0; split credit 8.0/35 = 22.9%. 5 binding conditions: (1) split only on `"; "`, strip trailing parenthetical qualifiers, dedupe roles within a string, check tokens against `check_sprint_backlog_owners.py`'s canonical roles and warn on unmatched tokens rather than crediting them silently; (2) the raw tally stays primary and is the only figure §7.2's 40% ceiling reads, with no `roadmap_prompt.md` change; (3) one rightmost History column "Split-Credit Top Role" (`<role> — <credit 2dp> (<share 1dp>%)`, ties "tied with"), plus a separate "Split-credit" sub-table per cycle breakdown; (4) back-fill all 6 recorded cycles as a one-time ST-44 write, with existing raw columns byte-identical; (5) tests for a 2-role split (0.5), a 3-role split (1/3), qualifier stripping and dedupe, and per-cycle conservation (credits sum to the story count). PMO Lead observation (not an ST-44 change): the v9.8–v9.10 rolling line's "19 of v9.10's 21 Owner values are compound" should read 17. That correction is outside ST-44's named-file AC, so it is filed separately. ST-44 is reclassified `autonomous` and continues after ST-45.
+
+## ESC-EXEC-20261013-05
+
+- **Raised at:** 2026-10-13T15:33:58Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-10-12__release-v9.12
+- **Step:** STEP 3.1.D (EPIC-05 execution loop)
+- **ST/EPIC item:** ST-38 / EPIC-05 (BLG-SPEC-183)
+- **Trigger type:** Lifecycle
+- **Blocking statement:** ST-38 AC 3 requires the doc-fix vs code-fix decision on `positions.entry_price`'s currency to carry Data Model & Domain Schema Owner sign-off. Code evidence: `create_position()` (`backend/services/position_service.py`) takes `entry_price` in native currency, writes `entry_price = entry_price_native / fx_rate` (GBP; unchanged for UK) and `fill_price = entry_price_native`, and `total_cost = (entry_price_native × shares + fees_native) / fx_rate`. Every native-price reader (`position_service.py` lines ~134, 378, 461, 637, 1179; `portfolio_service.py`) already reads `fill_price` for US. `data_model.md` §2 has said GBP since v2.55. `data_model_positions_dictionary.md` v0.3 still says native, including its US `total_cost` and `pnl` derivations. DS-23's reconstruction note calls the currency "ambiguous (BLG-SPEC-183)". Read-only staging aggregate (user-authorised, 2026-10-13): 0 US positions on staging, so the live sample is empty; per `sprint_backlog.md` ST-38 Notes, the AC is met from code and specs.
+- **Engine recommendation (non-binding):** **doc fix.** State GBP for `entry_price` (native in `fill_price`, broker fill in `user_fill_price`) in the dictionary and DS-23; correct the dictionary's US `total_cost` to `fill_price × shares / fx_rate + fees_paid` (equivalently `entry_price × shares + fees_paid`) and its `pnl` derivations to use `fill_price`. Note in `data_model.md` that `backend/test_data/seed_chart_test_data.sql` writes UK prices in pence (test data only). A code fix would change stored values and every reader, and would change displayed values, which needs a design pass (`sprint_backlog.md` ST-38 Notes).
+- **Owning authority:** Data Model & Domain Schema Owner
+- **Unblock criteria:** A dated Data Model & Domain Schema Owner decision (agent-mediated per §5.3 permitted), recorded in this escalation's resolution and in `data_model.md`.
+- **SLA due-by:** 2026-10-14T15:33:58Z (24h — Lifecycle)
+- **Blocks execution:** No
+- **Disposition:** Open
