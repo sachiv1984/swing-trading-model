@@ -19,6 +19,16 @@ Two check classes:
     "is expected to", "predicted to reach", ...) that would suggest the
     output is forecasting rather than describing current/historical state.
 
+A third, separate metric (ST-04, BLG-AI-10, EPIC-01, v9.12; AI Compliance &
+Governance Officer ruling, ESC-EXEC-20261013-01):
+  - Stop-time missing: a sentence citing a stop ("stop"/"stops") in an
+    output that never states a recalculation time ("recalculated" plus a
+    YYYY-MM-DD date, or "not recalculated since entry"). This is a
+    correctness metric, not a §13.2 boundary breach: it is reported as its
+    own [STOP-TIME-MISSING] count and does NOT affect the exit code. Samples
+    are the raw model output, before ai_service's code-written note is
+    appended, so this count is the model's own miss rate.
+
 Sample input: a list of (source, text) tuples. This run's sample is
 documented in the audit's own report — see
 docs/ops/ai_output_boundary_sample_audit_20260910.md for why this quarter's
@@ -111,6 +121,29 @@ def load_real_samples_from_store(limit: int = 10):
         return []
 
 
+_STOP_WORD_RE = re.compile(r"\bstops?\b", re.IGNORECASE)
+_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+|\n")
+_RECALC_TIME_RE = re.compile(r"recalculated\b.*?\d{4}-\d{2}-\d{2}", re.IGNORECASE | re.DOTALL)
+_NOT_RECALCULATED_RE = re.compile(r"not recalculated since entry", re.IGNORECASE)
+
+
+def scan_stop_time_missing(text: str) -> bool:
+    """True if the text cites a stop but states no recalculation time anywhere
+    (ST-04). Context-free: it cannot tell which position a time belongs to,
+    so any stated time clears the whole output."""
+    if not text:
+        return False
+    if _RECALC_TIME_RE.search(text) or _NOT_RECALCULATED_RE.search(text):
+        return False
+    return any(_STOP_WORD_RE.search(s) for s in _SENTENCE_SPLIT_RE.split(text))
+
+
+def stop_time_check_applies(source: str) -> bool:
+    """The stop-time metric covers daily-briefing and chat output only (the
+    two features whose context carries stop_calculated_at)."""
+    return "daily-briefing" in source or "POST /ai/chat" in source
+
+
 def run_audit(sample=None):
     sample = sample if sample is not None else SAMPLE
     results = []
@@ -120,6 +153,7 @@ def run_audit(sample=None):
             "text": text,
             "prescriptive_violation": scan_prescriptive(text),
             "prediction_violation": scan_prediction(text),
+            "stop_time_missing": stop_time_check_applies(source) and scan_stop_time_missing(text),
         })
     return results
 
@@ -135,6 +169,8 @@ def main():
     violations = [r for r in results if r["prescriptive_violation"] or r["prediction_violation"]]
     print(f"AI Output Boundary Sample Audit — {len(results)} samples scanned ({sample_type})")
     print(f"Violations found: {len(violations)}")
+    stop_time_missing = [r for r in results if r["stop_time_missing"]]
+    print(f"Stop-time missing (correctness metric, not a §13.2 violation; exit code unaffected): {len(stop_time_missing)}")
     for r in results:
         flag = ""
         if r["prescriptive_violation"]:
@@ -142,7 +178,8 @@ def main():
         if r["prediction_violation"]:
             flag += " [PREDICTION]"
         status = "VIOLATION" + flag if flag else "clean"
-        print(f"  [{status}] {r['source']}: {r['text'][:80]}")
+        metric = " [STOP-TIME-MISSING]" if r["stop_time_missing"] else ""
+        print(f"  [{status}]{metric} {r['source']}: {r['text'][:80]}")
     return 0 if not violations else 1
 
 

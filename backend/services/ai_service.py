@@ -6,6 +6,15 @@ AI output is display-only — must NOT be used in any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 
 Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
+
+Post-generation stop-time check (ST-04, BLG-AI-10, v9.12; AI Compliance &
+Governance Officer ruling, ESC-EXEC-20261013-01): when a briefing or chat
+response cites a position's stop without its recalculation time, code
+appends "(<TICKER> <_stop_recalculated_label()>)" after the model's text in
+that field. This is a deterministic, code-authored addition built only from
+the context the model was given: model text is never edited, reordered or
+removed, and the boundary-sample hook receives the raw model output.
+Every miss is logged and counted in claude_audit_log.compliance_check_result.
 """
 
 import hashlib
@@ -60,7 +69,10 @@ MODEL_BRIEFING = CLAUDE_SONNET_4_6
 # execution and frames actions as recommendations.
 # Briefing v1.2 / chat v1.1 (ST-08, BLG-BE-141, v9.11): each quoted stop
 # carries its recalculation time, and the model is told to state it.
-BRIEFING_PROMPT_VERSION = "v1.2"
+# Briefing v1.3 (ST-02 + ST-03, BLG-AI-11/12, v9.12, one combined bump):
+# actions may name only tickers from the snapshot; the context labels
+# available cash and starting capital separately.
+BRIEFING_PROMPT_VERSION = "v1.3"
 CHAT_PROMPT_VERSION = "v1.1"
 
 # BLG-SEC-01: context_opts.ticker is interpolated into the ai_chat() system prompt.
@@ -108,6 +120,145 @@ def _stop_recalculated_label(position: dict) -> str:
             return f"stop last recalculated {ts}"
     return f"stop last recalculated {ts.strftime('%Y-%m-%d %H:%M')} UTC"
 
+
+
+def _filter_actions_to_context(actions, allowed_tickers: set) -> list:
+    """ST-02 (BLG-AI-11, v9.12): keep only briefing actions whose ticker is a
+    held position or one of the signals given to the model. The model once
+    returned ENTER for the placeholder ticker NEW_SIGNAL. Dropped actions are
+    logged (ticker and type only)."""
+    if not isinstance(actions, list):
+        return []
+    kept = []
+    for action in actions:
+        ticker = action.get("ticker") if isinstance(action, dict) else None
+        if isinstance(ticker, str) and ticker.strip().upper() in allowed_tickers:
+            kept.append(action)
+        else:
+            logger.warning(
+                "daily briefing: dropped action naming a ticker outside the context "
+                "(type=%s, ticker=%r, prompt_version=%s)",
+                action.get("type") if isinstance(action, dict) else None,
+                ticker, BRIEFING_PROMPT_VERSION,
+            )
+    return kept
+
+
+def _briefing_cash_line(portfolio: dict, position_count: int) -> str:
+    """ST-03 (BLG-AI-12, v9.12): "cash £X of £Y" read as a target cash level
+    (on staging, "£15,006 against a £0 target"). Label each figure, and omit
+    starting capital when it is 0 or missing."""
+    line = f"Portfolio: {position_count} open positions, available cash £{portfolio.get('cash', 0) or 0:,.0f}"
+    initial_cash = portfolio.get("initial_cash") or 0
+    if initial_cash > 0:
+        line += f"; starting capital £{initial_cash:,.0f}"
+    return line
+
+
+# ─── ST-04 (BLG-AI-10, v9.12): post-generation stop-time check ─────────────
+_STOP_WORD_RE = re.compile(r"\bstops?\b", re.IGNORECASE)
+_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+|\n")
+_NOT_RECALCULATED_RE = re.compile(r"not recalculated since entry", re.IGNORECASE)
+
+
+def _stop_time_date(position: dict) -> Optional[str]:
+    """`stop_calculated_at` as YYYY-MM-DD, or None when it is NULL/unparseable."""
+    ts = position.get("stop_calculated_at")
+    if not ts:
+        return None
+    if isinstance(ts, str):
+        try:
+            ts = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        except ValueError:
+            return None
+    return ts.strftime("%Y-%m-%d")
+
+
+def _ticker_in(ticker: str, sentence: str) -> bool:
+    return re.search(rf"(?<![A-Za-z0-9.]){re.escape(ticker)}(?![A-Za-z0-9])", sentence) is not None
+
+
+def _stop_time_present(text: str, position: dict) -> bool:
+    date = _stop_time_date(position)
+    if date:
+        return date in text
+    return _NOT_RECALCULATED_RE.search(text) is not None
+
+
+def _append_missing_stop_times(text, positions: list, endpoint: str, field: str,
+                               prompt_version: str, own_ticker: Optional[str] = None):
+    """Return (text, outcome) for one response field. outcome is None (no
+    miss), "appended" or "unattributed". Per the ESC-EXEC-20261013-01 ruling:
+    a sentence containing the word "stop" or "stops" cites a stop; it is attributed to every
+    open-position ticker it names (whole word), plus `own_ticker` for an
+    action. A cited position whose stop_calculated_at date (or "not
+    recalculated since entry", when NULL) appears nowhere in the field gets
+    its label appended after the model's text. Fails open."""
+    if not isinstance(text, str) or not text:
+        return text, None
+    try:
+        by_ticker = {}
+        for p in positions or []:
+            t = p.get("ticker")
+            if isinstance(t, str) and t and t not in by_ticker:
+                by_ticker[t] = p
+        missing, unattributed = [], False
+        for sentence in _SENTENCE_SPLIT_RE.split(text):
+            if not _STOP_WORD_RE.search(sentence):
+                continue
+            cited = [t for t in by_ticker if _ticker_in(t, sentence)]
+            if own_ticker in by_ticker and own_ticker not in cited:
+                cited.append(own_ticker)
+            if not cited:
+                unattributed = True
+            for t in cited:
+                if t not in missing and not _stop_time_present(text, by_ticker[t]):
+                    missing.append(t)
+        for t in missing:
+            logger.warning("stop-time check: endpoint=%s field=%s ticker=%s action=appended prompt_version=%s",
+                           endpoint, field, t, prompt_version)
+        if unattributed:
+            logger.warning("stop-time check: endpoint=%s field=%s ticker=unattributed action=unattributed_no_append "
+                           "prompt_version=%s", endpoint, field, prompt_version)
+        if missing:
+            notes = " ".join(f"({t} {_stop_recalculated_label(by_ticker[t])})" for t in missing)
+            return f"{text} {notes}", "appended"
+        return text, "unattributed" if unattributed else None
+    except Exception:
+        logger.error("stop-time check failed for %s %s; response returned unchanged", endpoint, field, exc_info=True)
+        return text, "error"
+
+
+def _stop_time_check_result(outcomes) -> str:
+    """claude_audit_log.compliance_check_result for one briefing/chat call."""
+    outcomes = set(outcomes)
+    if "appended" in outcomes:
+        return "stop_time_missing_appended"
+    if "unattributed" in outcomes:
+        return "stop_time_missing_unattributed"
+    if "error" in outcomes:
+        return "stop_time_check_error"
+    return "pass"
+
+
+def _check_briefing_stop_times(parsed: dict, positions: list):
+    """Apply the stop-time check to the briefing summary and each action
+    description. Returns (summary, actions, compliance_check_result)."""
+    endpoint = "POST /ai/daily-briefing"
+    summary, outcome = _append_missing_stop_times(parsed.get("summary", ""), positions, endpoint,
+                                                  "summary", BRIEFING_PROMPT_VERSION)
+    outcomes = [outcome]
+    actions = []
+    for i, action in enumerate(parsed.get("actions", []) or []):
+        if isinstance(action, dict) and isinstance(action.get("description"), str):
+            desc, outcome = _append_missing_stop_times(
+                action["description"], positions, endpoint, f"actions[{i}].description",
+                BRIEFING_PROMPT_VERSION, own_ticker=action.get("ticker"))
+            outcomes.append(outcome)
+            if desc != action["description"]:
+                action = {**action, "description": desc}
+        actions.append(action)
+    return summary, actions, _stop_time_check_result(outcomes)
 
 
 def _validate_context_ticker(context_opts: Optional[dict]) -> None:
@@ -246,8 +397,7 @@ def generate_daily_briefing() -> dict:
         *regime_lines,
         f"Month-end rebalance due today: {'Yes' if is_month_end else 'No'}",
         "",
-        f"Portfolio: {len(positions)} open positions, "
-        f"cash £{portfolio.get('cash', 0):,.0f} of £{portfolio.get('initial_cash', 0):,.0f}",
+        _briefing_cash_line(portfolio, len(positions)),
         "",
     ]
 
@@ -307,6 +457,8 @@ def generate_daily_briefing() -> dict:
         "(2) an ordered list of recommended actions in JSON, each one a recommendation for the user to decide on, never an instruction. "
         "Action types: EXIT for stop breach or risk-off regime, ENTER for strong new signals, "
         "MONITOR for near-stop positions, HOLD for stable positions. "
+        "Every action must name a ticker exactly as it appears in the snapshot's open positions or signals; "
+        "never invent a ticker or use a placeholder. "
         "Whenever you mention a position's stop or a stop breach, state when that stop was last "
         "recalculated, using the time given for that position in the snapshot. "
         "Respond with JSON only, no markdown fences, in this exact shape: "
@@ -335,6 +487,21 @@ def generate_daily_briefing() -> dict:
         input_tokens = usage.input_tokens if usage else None
         output_tokens = usage.output_tokens if usage else None
 
+        # Parsed before the audit write so the row carries the stop-time
+        # result; an unparseable response still gets its audit row and then
+        # takes the fallback path below, as before.
+        try:
+            parsed = json.loads(content)
+        except ValueError:
+            parsed = None
+        stop_time_result = None
+        if isinstance(parsed, dict):
+            allowed_tickers = {str(t).strip().upper() for t in
+                               [p.get("ticker") for p in positions] + [s.get("ticker") for s in top_signals] if t}
+            actions = _filter_actions_to_context(parsed.get("actions", []), allowed_tickers)
+            summary, actions, stop_time_result = _check_briefing_stop_times(
+                {"summary": parsed.get("summary", ""), "actions": actions}, positions)
+
         try:
             cost_usd = None
             if input_tokens and output_tokens:
@@ -349,16 +516,20 @@ def generate_daily_briefing() -> dict:
                 latency_ms=elapsed_ms,
                 prompt_hash=prompt_hash,
                 response_length=len(content) if content else 0,
+                compliance_check_result=stop_time_result,
             )
         except Exception:
             pass
 
-        parsed = json.loads(content)
+        if not isinstance(parsed, dict):
+            raise ValueError("daily briefing response is not a JSON object")
+
+        # Raw model output, before any code-written addition (ST-04 Condition 2).
         if content and content != "{}":
             sample_ai_output("daily-briefing (POST /ai/daily-briefing)", content, MODEL_BRIEFING)
         return {
-            "summary": parsed.get("summary", ""),
-            "actions": parsed.get("actions", []),
+            "summary": summary,
+            "actions": actions,
             "generated_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "advisory": True,
             "model": MODEL_BRIEFING,
@@ -511,6 +682,9 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
         input_tokens = usage.input_tokens if usage else None
         output_tokens = usage.output_tokens if usage else None
 
+        checked, outcome = _append_missing_stop_times(content, positions, "POST /ai/chat", "response",
+                                                      CHAT_PROMPT_VERSION)
+
         try:
             cost_usd = None
             if input_tokens and output_tokens:
@@ -525,13 +699,15 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
                 latency_ms=elapsed_ms,
                 prompt_hash=prompt_hash,
                 response_length=len(content) if content else 0,
+                compliance_check_result=_stop_time_check_result([outcome]),
             )
         except Exception:
             pass
 
+        # Raw model output, before any code-written addition (ST-04 Condition 2).
         if content and content != "I was unable to generate a response.":
             sample_ai_output("chat (POST /ai/chat)", content, MODEL_BRIEFING)
-        return {"response": content, "advisory": True, "model": MODEL_BRIEFING}
+        return {"response": checked, "advisory": True, "model": MODEL_BRIEFING}
     except Exception:
         # ST-03 (BLG-BE-151, v9.11): log the cause before returning the fallback.
         logger.error("ai_chat failed; returning fallback message", exc_info=True)

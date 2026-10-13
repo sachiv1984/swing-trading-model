@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.22
-**Last Updated:** 2026-10-13 (ST-01, EPIC-01, v9.12, BLG-BE-162 — `POST /ai/journal-summary` `trade_ids` and `GET /ai/journal-summary/history` `trade_id` are UUID strings; history response and data source corrected to the real `ai_audit_log` record); prior — 2026-10-08 (ST-32, EPIC-05, v9.11, BLG-SPEC-175 — POST /ai/journal-summary 'LLM unreachable' heading corrected from 503 to 200; 1.17-1.20 are EPIC-01's); prior — 2026-10-01 (ST-33, EPIC-05, v9.9, BLG-SPEC-168 — corrected 4 citations of the `latency_ms` composition decision from `BLG-BE-128` to the correct `BLG-BE-129`; `BLG-BE-128` is a different item (remaining ad hoc `timeout=`/retry call sites), documentation only); prior history retained — see prior entries in version control
+**Version:** 1.23
+**Last Updated:** 2026-10-13 (ST-02/ST-03/ST-04, EPIC-01, v9.12, BLG-AI-11/12/10 — daily briefing drops actions naming a ticker outside the context and labels cash and starting capital separately (`BRIEFING_PROMPT_VERSION` v1.3); briefing and chat append a code-written stop recalculation time when a cited stop lacks one); prior — 2026-10-13 (ST-01, EPIC-01, v9.12, BLG-BE-162 — `POST /ai/journal-summary` `trade_ids` and `GET /ai/journal-summary/history` `trade_id` are UUID strings; history response and data source corrected to the real `ai_audit_log` record); prior — 2026-10-08 (ST-32, EPIC-05, v9.11, BLG-SPEC-175 — POST /ai/journal-summary 'LLM unreachable' heading corrected from 503 to 200; 1.17-1.20 are EPIC-01's); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -172,11 +172,20 @@ No request body required.
 
 ### Context assembled by backend
 
-- Current portfolio state (cash, open position count)
-- Per-position: ticker, market, current price, trailing stop, risk-off flag
+- Current portfolio state: open position count, "available cash £X", and "starting capital £Y" only when `initial_cash` is above 0 (ST-03, v9.12, BLG-AI-12 — the earlier "cash £X of £Y" was read as a target cash level)
+- Per-position: ticker, market, current price, trailing stop with its last recalculation time (ST-08, v9.11), risk-off flag
 - Today's top-5 momentum signals (most recent signal date)
 - Market regime: SPY and FTSE MA200 status
 - Month-end rebalance check
+
+### Post-generation checks (code-authored, deterministic)
+
+Applied to the parsed model output before it is returned. The boundary-sample hook (§AI Output Boundary-Language Sampling Hook) always receives the raw model output, before either check.
+
+1. **Actions limited to context tickers (ST-02, v9.12, BLG-AI-11).** An action is returned only if its `ticker` (case-insensitive) is an open position or one of the top-5 signals in the context. Any other action, including one with no ticker or a placeholder such as `NEW_SIGNAL`, is dropped and logged as a warning (type and ticker only). The system prompt also tells the model that actions may only name snapshot tickers (`BRIEFING_PROMPT_VERSION` v1.3).
+2. **Stop recalculation time (ST-04, v9.12, BLG-AI-10; AI Compliance & Governance Officer ruling `ESC-EXEC-20261013-01`).** `summary` and each `actions[].description` are checked separately. A sentence containing "stop"/"stops" cites a stop, attributed to each open-position ticker it names (whole word) and, for an action, to the action's own `ticker`. If that position's `stop_calculated_at` date (`YYYY-MM-DD`), or "not recalculated since entry" when it is NULL, appears nowhere in the field, code appends `(<TICKER> stop last recalculated YYYY-MM-DD HH:MM UTC)` or `(<TICKER> stop not recalculated since entry)` after the model's text, once per ticker. Model text is never edited or removed. A stop citation with no attributable ticker is logged and nothing is appended. Each miss is logged as a warning (endpoint, field, ticker, action, prompt version; never response text). The check fails open: an error returns the model text unchanged.
+   - `claude_audit_log.compliance_check_result` for the call: `pass` (no miss), `stop_time_missing_appended`, `stop_time_missing_unattributed` (only unattributed misses), or `stop_time_check_error`. It is `NULL` when the model response could not be parsed (the fallback is returned, as before).
+   - No response field is added; the response shape is unchanged.
 
 ### Rate limiting
 
@@ -285,6 +294,10 @@ Each call is independent — the backend loads fresh portfolio and signal state 
 - Per-position: ticker, market, current price, trailing stop with its last recalculation time (`stop_calculated_at`, or "not recalculated since entry" when NULL — ST-08, v9.11), risk-off flag, P&L
 - Latest top-5 momentum signals
 - Optional: focused ticker from `context.ticker`
+
+### Post-generation stop-time check (ST-04, v9.12)
+
+The same code-authored check as `POST /ai/daily-briefing` check 2, applied to `response` (the note is appended after the model's text; `compliance_check_result` takes the same values; the sampling hook receives the raw output). The context's cash wording is unchanged here ("Cash: £X of £Y initial capital"). `CHAT_PROMPT_VERSION` stays v1.1.
 
 ### Rate limiting
 
@@ -868,6 +881,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.23 | 2026-10-13 | ST-02, ST-03, ST-04 (EPIC-01, v9.12; BLG-AI-11, BLG-AI-12, BLG-AI-10): `POST /ai/daily-briefing` returns only actions whose ticker is an open position or a context signal (others dropped and logged), and its context labels "available cash" and "starting capital" (omitted when 0); one combined `BRIEFING_PROMPT_VERSION` bump v1.2 → v1.3, golden fixture updated. Briefing and `POST /ai/chat` gain the post-generation stop-time check (AI Compliance & Governance Officer ruling `ESC-EXEC-20261013-01`): a cited stop without its recalculation time gets a code-written note appended, and every miss is logged and counted in `claude_audit_log.compliance_check_result`. No request/response schema change; no `openapi.yaml` change. |
 | 1.22 | 2026-10-13 | ST-01 (EPIC-01, v9.12, BLG-BE-162): `POST /ai/journal-summary` `trade_ids` is an array of string (UUID), matching `trade_history.id`; it was typed integer, so every request from Trade History failed with 422. Integers are now rejected with 422. `GET /ai/journal-summary/history` `trade_id` is a UUID string, and its response fields and data source are corrected to the real `ai_audit_log` record. `ai_audit_log.trade_ids` migrated `INTEGER[]` → `UUID[]` (DS-31). `openapi.yaml` 3.28.0 in the same commit. |
 | 1.21 | 2026-10-08 | ST-32 (EPIC-05, v9.11, BLG-SPEC-175): `POST /ai/journal-summary` 'LLM unreachable' heading corrected from 503 to 200 (the endpoint returns 200). Documentation only. (1.17–1.20 are EPIC-01's ST-03/07/08/09.) |
 | 1.20 | 2026-10-08 | ST-09 (EPIC-01, v9.11, BLG-BE-142): Every Claude model ID is pinned in `backend/ai_models.py` (`CLAUDE_HAIKU_4_5` = `claude-haiku-4-5-20251001`, `CLAUDE_SONNET_4_6` = `claude-sonnet-4-6`); `tests/test_ai_model_ids_pinned.py` fails on a model literal elsewhere. Debrief and trade-plan generation move from the floating alias `claude-haiku-4-5` to the pinned snapshot, so `model_id`/`model_version` values recorded from v9.11 carry the dated ID. |
