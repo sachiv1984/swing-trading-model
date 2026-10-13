@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-13 (session — 1 new item added from the PR #2024 review, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-199); prior — 2026-10-13 (session — 4 new items added from Sprint Execution EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-196, BLG-SPEC-197, BLG-QA-223 (ST-34 drift triage), BLG-SPEC-198 (ST-38 ruling condition C2)); prior — 2026-10-13 (session — 2 new items added from the PR #2023 review, EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-388, BLG-QA-222); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (session — 1 new item added from the BLG-SPEC-199 fix on PR #2024, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-200); prior — 2026-10-13 (session — 1 new item added from the PR #2024 review, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-199); prior — 2026-10-13 (session — 4 new items added from Sprint Execution EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-196, BLG-SPEC-197, BLG-QA-223 (ST-34 drift triage), BLG-SPEC-198 (ST-38 ruling condition C2)); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5514,5 +5514,27 @@ ST-34 (v9.12) corrected `data_model.md` §2's Fields table to say `holding_days`
 **Acceptance Criteria**
 - For every positions column, the dictionary's Nullable value equals `data_model.md` §2's
 - No spec describes `positions.entry_price` as native currency for US positions (`metrics_definitions.md` Position Risk is handled under BLG-SPEC-198)
+
+---
+
+### BLG-SPEC-200 — Add the 11 missing positions columns to the positions data dictionary
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** BLG-SPEC-199 fix on PR #2024 (EPIC-05, cycle `2026-10-12__release-v9.12`), user request — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model_positions_dictionary.md` (v0.5) does not describe 11 `positions` columns that `data_model.md` §2 documents: `user_fill_price`, `position_state`, `state_entered_at`, `state_history`, `stop_calculated_at`, `atr_calculated_at`, `active_atr_multiplier`, `atr_source`, `stop_calculation_source`, `strategy_version_at_entry`, `last_reviewed_at`. Its v0.5 coverage note sends readers to `data_model.md` for them. The dictionary is meant to be the canonical per-field reference, so readers have to consult two documents. It also still carries an `exit_note` row for a column that does not exist live, kept only for traceability.
+
+**Scope**
+- Add a dictionary row for each of the 11 columns (SQL type, Nullable, description), taken from `data_model.md` §2 and its DS-xx migration sections, in the matching §3.x subsection
+- Decide whether to remove the `exit_note` row or keep it as a marked historical row
+- Remove the v0.5 coverage note once every column is listed; version bump
+
+**Acceptance Criteria**
+- Every column in `data_model.md` §2's Fields table has a dictionary row, with the same type and Nullable value
+- The dictionary lists no column that `data_model.md` §2 does not, other than an explicitly marked historical row
 
 ---
