@@ -5306,10 +5306,9 @@ paths:
       description: |
         Note: unlike most DELETE endpoints in this API, the response body is
         {status, message} -- not the {status, data: {deleted, id}} envelope
-        in conventions.md SS12. Documented as-is (matches
-        trade_plan_endpoints.md exactly); filed as BLG-SPEC-176 for the
-        API Contracts & Documentation Owner to reconcile which side is
-        the intended convention.
+        in conventions.md SS12. This is a named exception (conventions.md
+        SS12.1, BLG-SPEC-176 resolved v9.12): the live route returns exactly
+        this body and existing clients read it.
       tags: [Trade Plans]
       parameters:
         - name: id

@@ -1,9 +1,9 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.19
-**Last Updated:** 2026-10-08 (ST-22, EPIC-03, v9.11, BLG-API-06 — POST /trade-plans double-submit disposition: client-side submit guard; 0.18 is EPIC-01's ST-09); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to all 8 mutating endpoints in this file; flagged undefined double-submit duplicate-plan-creation behaviour on POST /trade-plans as BLG-API-06); prior — 2026-09-18 (ST-29, EPIC-04, v9.5, BLG-SPEC-142 — added lifecycle diagram cross-reference); prior history retained — see prior entries in version control
-**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07); 2026-08-12__release-v8.7 (ST-01/ST-03); 2026-08-14__release-v8.8 (ST-09); 2026-08-18__release-v8.9 (ST-13); 2026-08-21__release-v9.0 (ST-07)
+**Version:** 0.20
+**Last Updated:** 2026-10-13 (ST-33, EPIC-05, v9.12, BLG-SPEC-176 — DELETE /trade-plans/{id} response marked as a named exception to conventions.md §12, §12.1); prior — 2026-10-08 (ST-22, EPIC-03, v9.11, BLG-API-06 — POST /trade-plans double-submit disposition: client-side submit guard; 0.18 is EPIC-01's ST-09); prior — 2026-09-29 (ST-20, EPIC-05, v9.8, BLG-API-04 — added Idempotency subsections to all 8 mutating endpoints in this file; flagged undefined double-submit duplicate-plan-creation behaviour on POST /trade-plans as BLG-API-06); prior history retained — see prior entries in version control
+**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07); 2026-08-12__release-v8.7 (ST-01/ST-03); 2026-08-14__release-v8.8 (ST-09); 2026-08-18__release-v8.9 (ST-13); 2026-08-21__release-v9.0 (ST-07); 2026-10-12__release-v9.12 (ST-33)
 
 ---
 
@@ -206,6 +206,8 @@ Delete a trade plan.
   "message": "Trade plan deleted"
 }
 ```
+
+This body is a named exception to the standard DELETE envelope (`conventions.md` §12.1): it carries `message`, not `data.deleted`/`data.id`. The live route returns exactly this body, asserted by `tests/test_api_contracts.py` (`body["message"] == "Trade plan deleted"`).
 
 ---
 
@@ -550,6 +552,7 @@ score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.20 | 2026-10-13 | ST-33 (EPIC-05, v9.12, BLG-SPEC-176): `DELETE /trade-plans/{id}`'s `{status, message}` body recorded as a named exception to `conventions.md` §12 (§12.1). Live route already matches; no behaviour change. |
 | 0.19 | 2026-10-08 | ST-22 (EPIC-03, v9.11, BLG-API-06): `POST /trade-plans` double-submit disposition recorded — client-side submit guard on the Trade Plan page; no server change. |
 | 0.18 | 2026-10-08 | ST-09 (EPIC-01, v9.11, BLG-BE-142): `model_version` examples show the pinned snapshot `claude-haiku-4-5-20251001`. |
 | 0.16 | 2026-09-18 | ST-29 (EPIC-04, v9.5, BLG-SPEC-142): Added a "Lifecycle diagram" cross-reference to `docs/specs/data_model.md §Position & Trade Plan Lifecycle State Diagram`, canonical for `status` transitions. No functional change — documentation only. |
