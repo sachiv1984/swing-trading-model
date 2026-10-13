@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T08:40:52Z",
+  "last_updated_utc": "2026-10-13T08:48:31Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -186,7 +186,7 @@
           "commit_sha": "7c49f038d4ab18f72ee7853b1bfb8127a3829f81",
           "delegation_record_id": "DEL-20261013-02",
           "blocked_since_utc": "2026-10-13T07:36:52Z",
-          "unblock_criteria": "(1) Any external scheduler confirmed or ruled out; (2) one successful ai-daily-cost-check.yml run ID and date after EPIC-01 reaches main, recorded in ai_endpoints.md \"Last successful run\" and qa_evidence_EPIC-01.md.",
+          "unblock_criteria": "Post-merge (DEL-20261013-02, tightened 2026-10-13): (a) successful ai-daily-cost-check.yml run with the production deploy commit at/after the EPIC-01 merge; (b) request_count consistent with claude_audit_log today; (c) staging journal-summary run producing a claude_audit_log row (endpoint POST /ai/journal-summary, non-null cost_usd). Closes ESC-EXEC-20261013-02.",
           "completed_utc": "2026-10-13T08:24:08Z",
           "acceptance_verified": true,
           "spec_references": [
@@ -1186,7 +1186,8 @@
     "ST-04 decision raised and resolved at sprint start: ESC-EXEC-20261013-01 (agent-mediated AI Compliance & Governance Officer ruling, first pass). No other EPIC-01 escalation needed.",
     "ST-01 AC 1/AC 2: the staging API was temporarily switched in the Render dashboard to deploy exec/2026-10-12__release-v9.12/EPIC-01 (head def0bc0d) so the fix could be checked before merge (staging-deploy.yml deploys main only); the user is switching it back to main.",
     "2026-10-13: the user confirmed the Render staging API is switched back to main after the ST-01 check.",
-    "ST-06 accepted by the Product Owner with its AC 2 run record post-merge (ESC-EXEC-20261013-02, mirrored to .claude_current_state.json on main at 7812d70e). Check at the first run sprint after EPIC-01 merges."
+    "ST-06 accepted by the Product Owner with its AC 2 run record post-merge (ESC-EXEC-20261013-02, mirrored to .claude_current_state.json on main at 7812d70e). Check at the first run sprint after EPIC-01 merges.",
+    "PR #2022 agent-mediated review (Director of Quality + Product Owner, both Approved with Comments, no must-fix): 7 follow-ups filed (BLG-AI-16..19, BLG-OPS-186/187, BLG-QA-221); DEL-20261013-02 unblock criteria tightened to prove the final code is live (deploy commit, request_count, post-merge journal-summary claude_audit_log row)."
   ],
   "sealed": false,
   "sealed_utc": null
