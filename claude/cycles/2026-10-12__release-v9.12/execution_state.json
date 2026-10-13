@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T15:36:55Z",
+  "last_updated_utc": "2026-10-13T15:42:49Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -810,13 +810,15 @@
       }
     },
     "EPIC-05": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-12__release-v9.12/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-12__release-v9.12/qa_evidence_EPIC-05.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_api_contracts.py"
+      ],
       "stories": {
         "ST-33": {
           "title": "Reconcile DELETE /trade-plans/{id}'s success envelope with conventions.md §12",
@@ -846,16 +848,16 @@
         "ST-34": {
           "title": "Triage the drift detector's new live-vs-doc findings",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Data Model & Domain Schema Owner",
           "github_issue": 2007,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-05",
-          "commit_sha": "255f10b4efc7f838a1d41aa280fb15d497358269",
+          "commit_sha": "3f96d2252545c9ba59eb6286d4c7d304e7037366",
           "delegation_record_id": "DEL-20261013-03",
           "blocked_since_utc": "2026-10-13T15:32:47Z",
           "unblock_criteria": "Production pg_indexes output for DS-17 idx_positions_open_ticker_entry_date_unique (finding 1) and the 5 finding-5 names, recorded in data_model.md §Drift Detector Triage and qa_evidence_EPIC-05.md",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-13T15:38:59Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/data_model.md#Drift Detector Triage (2026-10-13, v2.60)",
             "docs/specs/data_model.md#DS-17 — positions unique constraint on (portfolio_id, ticker, entry_date) for open positions (v2.33, 2026-09-14)",
@@ -863,10 +865,17 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.4",
-          "sign_off_record": null,
-          "notes": "Findings 2-5 triaged and committed 255f10b4 (data_model.md v2.60) from user-authorised read-only staging reads (detector re-run vs current doc and vs aba5e44b; one catalog read; one positions count). New items BLG-SPEC-196, BLG-SPEC-197, BLG-QA-223. Finding 1 production read delegated (DEL-20261013-03). Original 11-name list was not recorded at v9.9; 8 still missing are dispositioned individually, 3 now present live."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner",
+            "method": "human_delegation_in_session",
+            "status": "cleared",
+            "date": "2026-10-13",
+            "reference": "DEL-20261013-03",
+            "retries": 0
+          },
+          "notes": "AC1: all 5 findings dispositioned in data_model.md v2.60 §Drift Detector Triage (1 needs live action, staging only; 2 doc fix already applied v2.55 plus risk_off_exit nullability; 3 split: 2 genuine gaps, 6 doc fixes; 4 doc fix; 5 each of the 8 still-missing names individually, plus a production column). The original 11-name list was never recorded; the 3 now present live cannot be named. AC2: genuine gaps filed as BLG-SPEC-196 and BLG-SPEC-197, the detector false positive as BLG-QA-223. Evidence: user-authorised read-only staging reads plus an in-session production pg_indexes read (DEL-20261013-03 Unblocked). Story commits 255f10b4 and 3f96d225. Deviation check: none (spec corrected in place)."
         },
         "ST-35": {
           "title": "Name the Gap Risk Badge's real data source in positions.md",
@@ -972,6 +981,14 @@
           },
           "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261013-05 resolved (Data Model & Domain Schema Owner, agent-mediated, Approved with conditions C1-C3, all met). AC1: data_model.md §2, dictionary v0.4 and DS-23 all state entry_price GBP (value passed to database.create_position()). AC2: dictionary US total_cost = fill_price*shares/fx_rate + fees_paid, matching position_service.py (worked example 801.20). AC3: decision recorded in data_model.md §2 with sign-off. Staging US sample empty (0 US rows). BLG-SPEC-198 filed (C2). Deviation check: none; pnl code/spec divergence tracked as BLG-SPEC-198."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-10-13",
+        "reference": "qa_evidence_EPIC-05.md",
+        "retries": 0
       }
     },
     "EPIC-06": {
@@ -1264,9 +1281,7 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [
-    "ST-34"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1275,6 +1290,7 @@
     "ST-05",
     "ST-06",
     "ST-33",
+    "ST-34",
     "ST-35",
     "ST-36",
     "ST-37",

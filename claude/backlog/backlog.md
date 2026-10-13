@@ -5462,10 +5462,12 @@ DS-17's `idx_positions_open_ticker_entry_date_unique` was confirmed live in prod
 **Scope**
 - Exclude SQL inside blocks introduced by `Reversible:` or under a `Down Migration` heading from index and CHECK-constraint name parsing
 - Add a unit test with a fixture containing a rollback-only index name
+- Keep each run's `--json` output (for example, a dated file under `docs/ops/` committed with the triage that uses it), so later triage can name every finding. The v9.9 run kept no output, which left 3 of finding 5's 11 names unidentifiable at ST-34 (v9.12; agent-mediated Director of Quality review, condition C1)
 
 **Acceptance Criteria**
 - Running the detector against `data_model.md` no longer reports `idx_trade_plans_ticker`
 - A unit test fails if a rollback-only index name is reported again
+- The detector's documented usage, or the triage procedure, says where a run's `--json` output is kept, and the next triage cites it
 
 ---
 
@@ -5483,8 +5485,10 @@ DS-17's `idx_positions_open_ticker_entry_date_unique` was confirmed live in prod
 **Scope**
 - Decide which is canonical, including whether currency movement since entry belongs in unrealised P&L. Check `metrics_definitions.md` and the Positions/Portfolio frontend specs for the displayed definition
 - Align the losing side. A code change that alters displayed P&L needs a design pass
+- Also correct `metrics_definitions.md` Position Risk's data sources. They still label `positions.entry_price` "native currency", which contradicts the GBP ruling (ST-38, v9.12). For US positions the native entry is `fill_price`; the formula `(entry − stop)` must not mix GBP `entry_price` with the native `initial_stop` (agent-mediated Director of Quality review of EPIC-05, condition C2)
 
 **Acceptance Criteria**
+- `metrics_definitions.md` Position Risk names `fill_price` (US) or `entry_price` (UK) as the native entry, with a version bump
 - The dictionary's §5.2 and the `pnl` row state the same FX basis and fee treatment as the code that produces the displayed figure, or a code change brings the code to the spec with Data Model & Domain Schema Owner sign-off
 - The decision is recorded with its rationale
 
