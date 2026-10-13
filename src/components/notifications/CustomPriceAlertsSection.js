@@ -28,13 +28,13 @@ function ConditionText({ alert }) {
 function StatusBadge({ alert }) {
   if (alert.active) {
     return (
-      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400">
+      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
         Active
       </span>
     );
   }
   return (
-    <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-700/50 text-slate-600 dark:text-slate-400">
+    <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400">
       Triggered
     </span>
   );
@@ -46,10 +46,10 @@ function SkeletonRows() {
       {Array.from({ length: 3 }).map((_, i) => (
         <div key={i} className="flex items-center justify-between px-6 py-5">
           <div className="space-y-2">
-            <div className="h-4 w-24 bg-slate-700 rounded animate-pulse" />
-            <div className="h-3 w-32 bg-slate-800 rounded animate-pulse" />
+            <div className="h-4 w-24 bg-slate-300/60 dark:bg-slate-700 rounded animate-pulse" />
+            <div className="h-3 w-32 bg-slate-300/60 dark:bg-slate-800 rounded animate-pulse" />
           </div>
-          <div className="h-7 w-14 bg-slate-700 rounded animate-pulse" />
+          <div className="h-7 w-14 bg-slate-300/60 dark:bg-slate-700 rounded animate-pulse" />
         </div>
       ))}
     </>
@@ -128,7 +128,7 @@ function CreateForm({ onSave, onCancel }) {
   };
 
   return (
-    <div className="px-6 py-5 bg-slate-800/40 border-t border-slate-700/50 space-y-4">
+    <div className="px-6 py-5 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-200 dark:border-slate-700/50 space-y-4">
       <div className="space-y-1">
         <Label className="text-slate-600 dark:text-slate-400 text-xs">Ticker Symbol</Label>
         <Input
@@ -136,7 +136,7 @@ function CreateForm({ onSave, onCancel }) {
           onChange={(e) => handleTickerChange(e.target.value)}
           placeholder="e.g. AAPL"
           className={cn(
-            "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-9 w-40",
+            "bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-9 w-40",
             tickerError && "!border-rose-500/60"
           )}
         />
@@ -154,8 +154,8 @@ function CreateForm({ onSave, onCancel }) {
               className={cn(
                 "px-4 py-2 rounded-lg text-sm font-medium border transition-all capitalize",
                 condition === c
-                  ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 border-cyan-500/40 text-cyan-400"
-                  : "bg-slate-800/50 border-slate-700 text-slate-600 dark:text-slate-400"
+                  ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 border-cyan-500/40 text-cyan-700 dark:text-cyan-400"
+                  : "bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400"
               )}
             >
               {c}
@@ -173,7 +173,7 @@ function CreateForm({ onSave, onCancel }) {
           onChange={(e) => handleThresholdChange(e.target.value)}
           placeholder="0.00"
           className={cn(
-            "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-9 w-40",
+            "bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-9 w-40",
             thresholdError && "!border-rose-500/60"
           )}
         />
@@ -193,7 +193,7 @@ function CreateForm({ onSave, onCancel }) {
         <Button
           variant="ghost"
           onClick={onCancel}
-          className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800 h-8 text-xs"
+          className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 h-8 text-xs"
         >
           Cancel
         </Button>
@@ -217,9 +217,9 @@ function DeleteConfirmRow({ alert, onDeleted, onCancel }) {
   };
 
   return (
-    <div className="px-6 py-4 bg-slate-800/40 border-t border-slate-700/50 space-y-3">
-      <p className="text-sm text-slate-300">
-        Delete price alert for <span className="font-semibold text-white">{alert.ticker}</span>?
+    <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-200 dark:border-slate-700/50 space-y-3">
+      <p className="text-sm text-slate-800 dark:text-slate-300">
+        Delete price alert for <span className="font-semibold text-slate-900 dark:text-white">{alert.ticker}</span>?
       </p>
       <div className="flex gap-2">
         <Button
@@ -232,7 +232,7 @@ function DeleteConfirmRow({ alert, onDeleted, onCancel }) {
         <Button
           variant="ghost"
           onClick={onCancel}
-          className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800 h-8 text-xs"
+          className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 h-8 text-xs"
         >
           Cancel
         </Button>
@@ -279,7 +279,7 @@ export default function CustomPriceAlertsSection() {
     <div className="space-y-4">
       <div className="px-1 flex items-center justify-between">
         <div>
-          <h2 className="text-base font-semibold text-white">Custom Price Alerts</h2>
+          <h2 className="text-base font-semibold text-slate-900 dark:text-white">Custom Price Alerts</h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">
             Get notified when a ticker crosses a price you choose.
           </p>
@@ -294,9 +294,9 @@ export default function CustomPriceAlertsSection() {
         )}
       </div>
 
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 divide-y divide-slate-700/50 overflow-hidden">
+      <div className="rounded-2xl bg-gradient-to-br from-white dark:from-slate-900 to-slate-50 dark:to-slate-800 border border-slate-200 dark:border-slate-700/50 divide-y divide-slate-200 dark:divide-slate-700/50 overflow-hidden">
         {loadError ? (
-          <div className="p-6 text-rose-400 text-sm">
+          <div className="p-6 text-rose-700 dark:text-rose-400 text-sm">
             Unable to load price alerts. Please refresh.
           </div>
         ) : loading ? (
@@ -305,7 +305,7 @@ export default function CustomPriceAlertsSection() {
           <>
             <div className="flex flex-col items-center justify-center py-16 text-center px-6">
               <BellPlus className="w-10 h-10 text-slate-600 mb-3" />
-              <h3 className="text-base font-semibold text-white mb-1">No custom price alerts.</h3>
+              <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-1">No custom price alerts.</h3>
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-5">
                 Create an alert to be notified when a ticker crosses a price you choose.
               </p>
@@ -331,7 +331,7 @@ export default function CustomPriceAlertsSection() {
               <div key={alert.id}>
                 <div className="flex items-center justify-between px-6 py-4">
                   <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-white">{alert.ticker}</span>
+                    <span className="text-sm font-semibold text-slate-900 dark:text-white">{alert.ticker}</span>
                     <ConditionText alert={alert} />
                   </div>
                   <div className="flex items-center gap-3">

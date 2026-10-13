@@ -67,15 +67,14 @@ const KNOWN_VIOLATIONS = {
   // ST-19 (BLG-QA-195, EPIC-04, v9.10): pages added to the scan, keyed
   // "<page>:<theme>". The scan's button-name findings (unlabelled Select
   // triggers on Reports and Notification History, unlabelled preference
-  // Switches) were fixed in the same story. The light-theme color-contrast findings are BLG-FE-200: the pages
-  // use dark-only classes and design_system.md defines no light-mode tokens,
-  // so they could not be fixed in-story. Remove those entries when
-  // BLG-FE-200 closes. The dark theme has no baseline entries.
+  // Switches) were fixed in the same story. The light-theme color-contrast findings
+  // (BLG-FE-200) were fixed in v9.12 ST-23 with the light-theme token pairs in
+  // design_system.md §Light-Theme Colour Tokens, so neither theme has a baseline entry.
   'ReportsMonthly:dark': new Set([]),
   'ReportsTaxYear:dark': new Set([]),
   'NotificationPreferences:dark': new Set([]),
   'NotificationsHistory:dark': new Set([]),
-  'ReportsMonthly:light': new Set(['color-contrast']), // BLG-FE-200
+  'ReportsMonthly:light': new Set([]),
   // ST-37 (BLG-QA-196, EPIC-06, v9.11): Replay page, both selector modes and a populated
   // result, in both themes. The dark theme has no baseline entries (its one finding, the
   // Risk-Off badge's contrast, was fixed in the same story). The light-theme color-contrast
@@ -87,9 +86,9 @@ const KNOWN_VIOLATIONS = {
   'ReplayDateRange:light': new Set(['color-contrast']), // BLG-FE-209
   'ReplayTradeSet:light': new Set(['color-contrast']), // BLG-FE-209
   'ReplayResult:light': new Set(['color-contrast']), // BLG-FE-209
-  'ReportsTaxYear:light': new Set(['color-contrast']), // BLG-FE-200
-  'NotificationPreferences:light': new Set(['color-contrast']), // BLG-FE-200
-  'NotificationsHistory:light': new Set(['color-contrast']), // BLG-FE-200
+  'ReportsTaxYear:light': new Set([]),
+  'NotificationPreferences:light': new Set([]),
+  'NotificationsHistory:light': new Set([]),
 };
 
 async function mockRoutes(page) {

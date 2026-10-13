@@ -37,7 +37,7 @@ const ALERT_META = {
       <>
         Receive a daily digest of portfolio status. This is a daily notification — for a
         7-day summary view, see the{" "}
-        <Link to={createPageUrl("WeeklyDigest")} className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2">
+        <Link to={createPageUrl("WeeklyDigest")} className="text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 underline underline-offset-2">
           Weekly Digest
         </Link>{" "}
         page.
@@ -116,19 +116,19 @@ export default function NotificationPreferences() {
 
       <NotificationTabBar />
 
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 divide-y divide-slate-700/50">
+      <div className="rounded-2xl bg-gradient-to-br from-white dark:from-slate-900 to-slate-50 dark:to-slate-800 border border-slate-200 dark:border-slate-700/50 divide-y divide-slate-200 dark:divide-slate-700/50">
         {loadError ? (
-          <div className="p-6 text-rose-400 text-sm">
+          <div className="p-6 text-rose-700 dark:text-rose-400 text-sm">
             Unable to load preferences. Please refresh.
           </div>
         ) : loading ? (
           Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="flex items-center justify-between px-6 py-5">
               <div className="space-y-2">
-                <div className="h-4 w-48 bg-slate-700 rounded animate-pulse" />
-                <div className="h-3 w-72 bg-slate-800 rounded animate-pulse" />
+                <div className="h-4 w-48 bg-slate-300/60 dark:bg-slate-700 rounded animate-pulse" />
+                <div className="h-3 w-72 bg-slate-300/60 dark:bg-slate-800 rounded animate-pulse" />
               </div>
-              <div className="h-6 w-11 bg-slate-700 rounded-full animate-pulse" />
+              <div className="h-6 w-11 bg-slate-300/60 dark:bg-slate-700 rounded-full animate-pulse" />
             </div>
           ))
         ) : (

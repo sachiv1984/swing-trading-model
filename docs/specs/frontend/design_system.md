@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.22
-**Last Updated:** 2026-09-23 (ST-24, EPIC-06, v9.6, BLG-SPEC-144 — new §Canonical Chart Data Palette added under §Accessibility, cross-referenced from the existing chart contrast checklist); prior — 2026-09-21 (v9.6 design gate — ST-05/BLG-FE-181 empty-state next-action rule added to §Data States; ST-06/BLG-FE-182 new §Number and Currency Formatting in §Consistency Rules); prior — 2026-09-18 (ST-42, EPIC-06, v9.5, BLG-FE-176 — all 9 non-conforming toast call sites brought into line with the Toast Notification Timing standard; non-conforming-screens table marked historical); prior history retained — see prior entries in version control
+**Version:** 1.23
+**Last Updated:** 2026-10-13 (ST-23, EPIC-03, v9.12, BLG-FE-200 — new §Light-Theme Colour Tokens under §Theme & Colors: light mode is a supported theme; token pairs from the v9.12 light-theme decision record §3); prior — 2026-09-23 (ST-24, EPIC-06, v9.6, BLG-SPEC-144 — new §Canonical Chart Data Palette added under §Accessibility, cross-referenced from the existing chart contrast checklist); prior — 2026-09-21 (v9.6 design gate — ST-05/BLG-FE-181 empty-state next-action rule added to §Data States; ST-06/BLG-FE-182 new §Number and Currency Formatting in §Consistency Rules); prior history retained — see prior entries in version control
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.23 (ST-23, EPIC-03, v9.12, BLG-FE-200):** added **§Light-Theme Colour Tokens** under §Theme & Colors. Light mode is a supported theme (Head of UX & Design with the Product Owner, 2026-10-12, resolving RISK-03). The light+dark pairs for card surfaces, nested rows, primary/strong/secondary text, P&L, warning and accent text, with measured contrast and four usage rules. Applied in-story to Reports (Monthly, Tax Year) and Notifications (Preferences, History). Design source: `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md` §3.
 **v1.22 (ST-24, EPIC-06, v9.6, BLG-SPEC-144):** added the **Canonical Chart Data Palette** subsection (§Accessibility, immediately after the v1.6 chart contrast checklist) — an 8-colour categorical palette (Okabe–Ito, 2008) documented with its source and CVD-type rationale, giving the existing checklist's "each series colour meets contrast" and "no two adjacent series rely on hue alone" rules a concrete default to check against, where none existed before. Cross-referenced from this document only (spec debt, `BLG-SPEC-144`) — no chart component adopts it in this story; adoption is a UI change requiring its own design-gate pass (noted as a follow-up, not filed as a new backlog item since the existing `BLG-SPEC-144` item itself already covers "spec + adoption is separate").
 **v1.21 (ST-05 + ST-06, EPIC-01, v9.6, BLG-FE-181 + BLG-FE-182):** (1) §Data States gains the **Next-action rule** — every user-facing empty state renders exactly one primary next-action link/button (`emptyAction`, or the enclosing `DashboardCard`'s `to` link), with a system-populated-only exclusion; the 20-site audit baseline lives in the design record. (2) §Consistency Rules gains **Number and Currency Formatting** — the canonical money/percentage/R-multiple/missing-value formats (typographic minus `−`, en-GB grouping, 2 dp money, signed P&L, `—` for missing) that the shared formatting helper implements; none existed in any spec before, so the story's "identical negative/decimal conventions" AC had nothing to be measured against. Design sources: `docs/design/2026-09-21__release-v9.6/empty-state-next-action/decision_record.md`, `docs/design/2026-09-21__release-v9.6/number-format-convention/decision_record.md`.
 **v1.18 (ST-30, EPIC-04, v9.5, BLG-SPEC-143):** Confirm-and-document re-check of the v9.1 ST-29 empty-state consolidation (§Data States) — swept all 18 page specs currently referencing empty states; confirmed no page re-derives the shared `DataState` mechanism (each supplies page-specific copy following the v1.8 microcopy pattern, which is expected variety, not duplication). Found 5 stray-trailing-period headings; 3 were spec-only staleness (shipped code already matches the no-trailing-period rule, spec corrected: `notifications.md`, `trade_plan.md`, `watchlist.md`) and 2 are genuine shipped-code violations of the v1.8 pattern, filed as `BLG-FE-178`/`BLG-FE-179` rather than fixed inline — this story's design gate scoped it as confirm-and-document only, with any actual copy change requiring its own design-gate pass. No change to this document's own pattern definitions.
@@ -61,6 +62,30 @@ The original specification does not define hex values, but design intent indicat
   - **Exception — elevated/compliance disclaimer text:** surfaces carrying §13 compliance-disclosure weight (e.g. AI Trade Advisor footer, Dashboard Advisory Label) may use a stronger-than-generic value for extra headroom on a compliance-sensitive surface (e.g. `text-slate-700 dark:text-slate-300`); do not collapse an existing elevated instance onto the generic token
   - Icon-only usages (Lucide icon `text-slate-*` classes, WCAG 1.4.11 non-text contrast) are governed separately and are not required to use this token
   - Design source: `docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md` §3, §4, §6 (BLG-FE-87/88/89)
+
+### Light-Theme Colour Tokens (v1.23, ST-23, EPIC-03, v9.12, BLG-FE-200)
+
+Light mode is a supported theme (Head of UX & Design with the Product Owner, 2026-10-12; design source `docs/design/2026-10-12__release-v9.12/light-theme-support/decision_record.md`). The light page background is `bg-slate-100` (`#f1f5f9`) and cards are white. Contrast is measured with the WCAG 2.1 relative-luminance formula. The dark values are the existing ones, unchanged.
+
+| Role | Light | Dark | Light contrast (on white / on slate-100) |
+|------|-------|------|------------------------------------------|
+| Card surface | `bg-white border-slate-200` | `bg-slate-800/50 border-slate-700/50` | — |
+| Nested row surface | `bg-slate-50` | `bg-slate-800/40` | — |
+| Primary text (headings, figures) | `text-slate-900` | `text-white` | 17.85 / 16.30 |
+| Strong body text | `text-slate-800` | `text-slate-200` | 14.63 / 13.35 |
+| Secondary / label text (existing) | `text-slate-600` | `text-slate-400` | 7.58 / 6.92 |
+| Positive P&L | `text-emerald-700` | `text-emerald-400` | 5.48 / 5.01 |
+| Negative P&L | `text-rose-700` | `text-rose-400` | 6.29 / 5.74 |
+| Warning / information text | `text-amber-700` | `text-amber-400` | 5.02 / 4.58 |
+| Accent: active tab, link | `text-cyan-700` | `text-cyan-400` | 5.36 / 4.89 |
+
+**Rules:**
+1. Every themed surface uses the pair as `light dark:dark`, for example `text-emerald-700 dark:text-emerald-400`. A bare dark value is a defect.
+2. The 700-shade colour tokens (emerald, amber, cyan) pass only on white, `slate-50` and `slate-100`. On `slate-200` they measure 4.07–4.45:1 and fail. Measure any other light surface before use.
+3. `text-amber-600` fails on white (3.19:1). Use `text-amber-700 dark:text-amber-400`.
+4. Filled badges with white text keep a fixed, theme-independent background, for example `bg-amber-700` (5.02:1).
+
+Skeleton placeholders keep their own pair, `bg-slate-300/60 dark:bg-slate-700/60` (§Data States). Verified by the light-theme axe scans of Reports (Monthly, Tax Year) and Notifications (Preferences, History) in `tests/e2e/accessibility-axe-scan.spec.js`, which pass with no `color-contrast` baseline entry.
 
 ---
 

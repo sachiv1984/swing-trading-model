@@ -88,11 +88,11 @@ function formatValuesExpanded(obj) {
 
 function TriggeredBadge({ value }) {
   return value ? (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30">
       Yes
     </span>
   ) : (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-600 dark:text-slate-400 border border-slate-600/30">
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-600/30">
       No
     </span>
   );
@@ -100,11 +100,11 @@ function TriggeredBadge({ value }) {
 
 function NotifiedBadge({ value }) {
   return value ? (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
       Yes
     </span>
   ) : (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-600 dark:text-slate-400 border border-slate-600/30">
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-600/30">
       No
     </span>
   );
@@ -117,7 +117,7 @@ function SkeletonRows() {
         <tr key={i}>
           {Array.from({ length: 6 }).map((_, j) => (
             <td key={j} className="px-5 py-4">
-              <div className="h-4 bg-slate-700 rounded animate-pulse" style={{ width: `${60 + (j * 17) % 40}%` }} />
+              <div className="h-4 bg-slate-300/60 dark:bg-slate-700 rounded animate-pulse" style={{ width: `${60 + (j * 17) % 40}%` }} />
             </td>
           ))}
         </tr>
@@ -202,10 +202,10 @@ export default function NotificationsHistory() {
       <div className="flex justify-end items-center gap-3">
         <span className="text-sm text-slate-600 dark:text-slate-400">Filter by type:</span>
         <Select value={filterType} onValueChange={setFilterType}>
-          <SelectTrigger aria-label="Filter by alert type" className="bg-slate-800/50 border-slate-700 text-white w-52">
+          <SelectTrigger aria-label="Filter by alert type" className="bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white w-52">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-slate-800 border-slate-700">
+          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
             <SelectItem value="all">All types</SelectItem>
             <SelectItem value="stop_loss_approach">Stop Loss Approach</SelectItem>
             <SelectItem value="grace_period_warning">Grace Period Warning</SelectItem>
@@ -216,9 +216,9 @@ export default function NotificationsHistory() {
       </div>
 
       {/* Table */}
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 overflow-hidden">
+      <div className="rounded-2xl bg-gradient-to-br from-white dark:from-slate-900 to-slate-50 dark:to-slate-800 border border-slate-200 dark:border-slate-700/50 overflow-hidden">
         {loadError ? (
-          <div className="p-6 text-rose-400 text-sm">
+          <div className="p-6 text-rose-700 dark:text-rose-400 text-sm">
             Unable to load alert history. Please refresh.
           </div>
         ) : (
@@ -230,10 +230,10 @@ export default function NotificationsHistory() {
           >
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-700/50">
+                <tr className="border-b border-slate-200 dark:border-slate-700/50">
                   {/* Date / Time — sortable */}
                   <th
-                    className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap cursor-pointer select-none hover:text-white transition-colors"
+                    className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap cursor-pointer select-none hover:text-slate-900 dark:hover:text-white transition-colors"
                     onClick={toggleSort}
                   >
                     <span className="inline-flex items-center gap-1">
@@ -252,7 +252,7 @@ export default function NotificationsHistory() {
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700/30">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-700/30">
                 {loading ? (
                   <SkeletonRows />
                 ) : sorted.length === 0 ? (
@@ -260,7 +260,7 @@ export default function NotificationsHistory() {
                     <td colSpan={6} className="px-5 py-16 text-center">
                       {filterType === "all" ? (
                         <div>
-                          <p className="text-base font-semibold text-white mb-1">No alert history yet</p>
+                          <p className="text-base font-semibold text-slate-900 dark:text-white mb-1">No alert history yet</p>
                           <p className="text-sm text-slate-600 dark:text-slate-400">Alert evaluations will appear here once the system has run.</p>
                         </div>
                       ) : (
@@ -268,7 +268,7 @@ export default function NotificationsHistory() {
                           <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">No evaluations found for the selected alert type.</p>
                           <button
                             onClick={() => setFilterType("all")}
-                            className="text-sm text-cyan-400 hover:text-cyan-300 underline transition-colors"
+                            className="text-sm text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 underline transition-colors"
                           >
                             Clear filter
                           </button>
@@ -287,19 +287,19 @@ export default function NotificationsHistory() {
                           className={cn(
                             "cursor-pointer transition-colors",
                             isExpanded
-                              ? "bg-slate-800/60"
-                              : "hover:bg-slate-800/30"
+                              ? "bg-white dark:bg-slate-800/60"
+                              : "hover:bg-slate-100 dark:hover:bg-slate-800/30"
                           )}
                         >
-                          <td className="px-5 py-4 text-sm text-slate-300 whitespace-nowrap">
+                          <td className="px-5 py-4 text-sm text-slate-800 dark:text-slate-300 whitespace-nowrap">
                             <span title={ev.evaluation_timestamp}>
                               {formatTimestamp(ev.evaluation_timestamp)}
                             </span>
                           </td>
-                          <td className="px-5 py-4 text-sm text-white font-medium whitespace-nowrap">
+                          <td className="px-5 py-4 text-sm text-slate-900 dark:text-white font-medium whitespace-nowrap">
                             {TYPE_LABELS[ev.rule_type] ?? ev.rule_type}
                           </td>
-                          <td className="px-5 py-4 text-sm text-slate-300 font-mono">
+                          <td className="px-5 py-4 text-sm text-slate-800 dark:text-slate-300 font-mono">
                             {ev.symbol ?? "—"}
                           </td>
                           <td className="px-5 py-4">
@@ -315,13 +315,13 @@ export default function NotificationsHistory() {
 
                         {/* Expanded row */}
                         {isExpanded && (
-                          <tr key={`${ev.id}-expanded`} className="bg-slate-800/60">
+                          <tr key={`${ev.id}-expanded`} className="bg-white dark:bg-slate-800/60">
                             <td colSpan={6} className="px-8 pb-5 pt-0">
-                              <div className="font-mono text-xs text-slate-300 space-y-1 pt-1">
+                              <div className="font-mono text-xs text-slate-800 dark:text-slate-300 space-y-1 pt-1">
                                 {formatValuesExpanded(ev.values_compared).map(({ label, value, isNegative }) => (
                                   <div key={label} className="flex gap-3">
                                     <span className="text-slate-600 dark:text-slate-400 whitespace-pre">{label}</span>
-                                    <span className={isNegative ? "text-amber-400" : undefined}>{String(value)}</span>
+                                    <span className={isNegative ? "text-amber-700 dark:text-amber-400" : undefined}>{String(value)}</span>
                                   </div>
                                 ))}
                               </div>
@@ -345,7 +345,7 @@ export default function NotificationsHistory() {
             variant="outline"
             onClick={handleLoadMore}
             disabled={loadingMore}
-            className="bg-slate-800/50 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700"
+            className="bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700"
           >
             {loadingMore ? "Loading…" : "Load more"}
           </Button>

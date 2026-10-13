@@ -8,14 +8,14 @@ export default function PreferenceRow({ label, description, enabled, saved, erro
       <div className="flex items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-white">{label}</span>
+            <span className="text-sm font-medium text-slate-900 dark:text-white">{label}</span>
             <AnimatePresence>
               {saved && (
                 <motion.span
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="text-xs text-emerald-400"
+                  className="text-xs text-emerald-700 dark:text-emerald-400"
                 >
                   Saved
                 </motion.span>
