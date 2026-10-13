@@ -84,6 +84,7 @@ async def test_all_endpoints(request: Request):
         {"name": "POST /positions/risk-off-alerts", "method": "POST", "url": f"{base_url}/positions/risk-off-alerts", "critical": False},
         {"name": "GET /market/status", "method": "GET", "url": f"{base_url}/market/status", "critical": True},
         {"name": "GET /market/regime", "method": "GET", "url": f"{base_url}/market/regime", "critical": False},
+        {"name": "GET /market/atr/{ticker}", "method": "GET", "url": f"{base_url}/market/atr/AAPL?market=US", "critical": False},
 
         # Alerts (v2.3+)
         {"name": "GET /alerts/rules", "method": "GET", "url": f"{base_url}/alerts/rules", "critical": False},
