@@ -1,7 +1,7 @@
 **Owner:** Strategy Rules & System Intent Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active — CONDITIONAL
-**Last Updated:** 2026-10-13 (ST-37, EPIC-05, v9.12, BLG-SPEC-182 — body refreshed to match strategy_rules.md v1.14 §13.3/§13.5: write-scope note, Binding Conditions 6 and 9, Remediation Item 4 and the §13.3 quotations now record the v1.14 registration as done); prior — 2026-10-07 (v9.10 addendum: ST-13 rulings on UK tickers and day-0 timing; ST-14 weekend-hold disposition and Binding Conditions 1–8 re-confirmation); prior — 2026-10-05 (appendix: wording as applied to strategy_rules.md v1.14 via BLG-GOV-360, after an amended second-pass review); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (ST-14, EPIC-02, v9.12, BLG-BE-148 — v9.12 addendum appended: Revised Ruling 3, NYSE session calendar on the US market date, ESC-EXEC-20261013-07); prior — 2026-10-13 (ST-37, EPIC-05, v9.12, BLG-SPEC-182 — body refreshed to match strategy_rules.md v1.14 §13.3/§13.5: write-scope note, Binding Conditions 6 and 9, Remediation Item 4 and the §13.3 quotations now record the v1.14 registration as done); prior — 2026-10-07 (v9.10 addendum: ST-13 rulings on UK tickers and day-0 timing; ST-14 weekend-hold disposition and Binding Conditions 1–8 re-confirmation); prior history retained — see prior entries in version control
 **Cycle:** 2026-09-30__release-v9.9
 **Story:** ST-20 (EPIC-04)
 **Backlog ref:** BLG-GOV-358 (this review) / BLG-FEAT-65 (feature reviewed, shipped v6.9)
@@ -313,3 +313,38 @@ Binding Condition 9 (canonical registration) was met at v1.14. The §13.3 paragr
 **Determination:** Rulings 1–3 as above. Weekend-hold trigger removed. Binding Conditions 1–8 hold. The feature stays **CONDITIONAL** on the §13.5 roster until the 2027-02-06 re-attestation confirms it, and that re-attestation should record Binding Condition 6 as met.
 **Comments (Strategy Rules & System Intent Owner):** Both rulings take §13.3 and §4.2.3 at their word, which is the conservative reading. The flag is allowed because it tells a human about a known event while they can still act. It is not allowed to show a gap that has already happened, or to warn about markets where no canonical rule recognises the event. The weekend-hold trigger is gone because it gave every position the same warning, which is noise rather than information about a specific position.
 
+## Addendum — v9.12 Ruling on the US Exchange Calendar (ST-14, BLG-BE-148)
+
+**Date:** 2026-10-13
+**Cycle:** 2026-10-12__release-v9.12
+**Story:** ST-14 (EPIC-02, BLG-BE-148)
+**Escalation ref:** ESC-EXEC-20261013-07
+**Ruled by:** Strategy Rules & System Intent Owner (agent-mediated, `claude/system/execution_prompt.md` §5.3, Sprint Execution Engine under the user's explicit direction, 2026-10-13)
+
+This addendum revises Ruling 3 of the v9.10 addendum. It adds no new event type or trigger, so no new §13 review is needed.
+
+### Revised Ruling 3 — The window runs to the next NYSE session, on the US market date
+
+"Today" (`T`) is the current date in America/New_York, so a view at 02:00 UTC uses the previous US date. A US position is flagged when `1 ≤ days_until_earnings ≤ d`, where `days_until_earnings` is the earnings date minus `T` and `d` is the calendar days from `T` to the first NYSE session after `T`. Weekends, NYSE full-closure holidays (under NYSE observance rules; Juneteenth from 2022) and the one-off closures listed in code are not sessions. Early-close days are sessions. A Friday view before a Monday holiday therefore flags Tuesday earnings. The calendar is computed in code from fixed rules, with no network call at request time. A closure not yet listed in code can only shorten the window. Rulings 1 (US only; UK positions never flagged) and 2 (day 0 not flagged, judged on `T`) are unchanged.
+
+### §13.3
+
+The display-only carve-out still applies: the flag is computed on request and tied to a dated earnings event specific to the position's ticker, which §4.2.3 already recognises. Its "falls before that position's next trading session" limb is now measured against NYSE sessions rather than weekdays. That is a closer reading of the limb, not an extension of it. No §13.3 wording change is needed. BLG-GOV-376's replacement third paragraph should cite this addendum when it lands.
+
+### §13.5
+
+The roster row needs no change for this ruling. The 2027-02-06 re-attestation should record this change as covered by the existing clearance (procedure step 2), confirm that the in-code closure list is current, and record Binding Condition 6 as met.
+
+§13.1 and §13.2 apply as they do to every feature.
+
+### Binding Conditions 1–8 Re-Confirmed
+
+Conditions 1–5 and 7 hold: the flag is still a read-only GET with no new consumer, statistic or wording, and it shows no gap after it occurs. Condition 6 holds: the only trigger is still earnings, and only for a position with an event. Condition 8 holds: the module docstring cites this addendum.
+
+### Addendum Sign-Off
+
+**Signed off by:** Sprint Execution Engine (agent-mediated, Strategy Rules & System Intent Owner role — §5.3), on the user's explicit direction, 2026-10-13
+**Determination:** Revised Ruling 3 approved. The feature remains within §13.3's carve-out and stays **CONDITIONAL** on the §13.5 roster.
+**`strategy_rules.md` change required:** None.
+
+**Implementation:** `backend/services/us_market_calendar.py` (rule-based NYSE calendar, dated one-off closure list, `us_market_date()`) and `backend/services/gap_risk_service.py`; tests in `tests/test_gap_risk.py`, including the NYSE published 2026–2027 holiday fixture and a no-network check. Contract: `position_endpoints.md` v2.15.0.

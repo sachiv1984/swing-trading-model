@@ -61,3 +61,19 @@ Last Updated: 2026-10-13
 - **Unblock criteria:** The production query output, recorded in `data_model.md` §Drift Detector Triage (finding 1 row and the finding 5 table) and in `qa_evidence_EPIC-05.md` under ST-34. If DS-17's index is absent on production, finding 1's disposition becomes "needs live action, production" and a new migration-scheduling item is filed before ST-34 closes.
 - **Commit format required:** `[EPIC-05][ST-34] <description>` pushed to `exec/2026-10-12__release-v9.12/EPIC-05`
 - **Status:** Unblocked — 2026-10-13, unblocked in-session: production `pg_indexes` output supplied by the user (human, acting for the Data Model & Domain Schema Owner) in the same session as the delegation. (a) Sign-off: the production result confirms DS-17's `idx_positions_open_ticker_entry_date_unique` is present (`USING btree (portfolio_id, ticker, entry_date) WHERE status = 'open'`), so finding 1 is staging-only (BLG-SPEC-197). `idx_sector_regime_history_portfolio_date` and `idx_trade_plan_audit_log_trade_plan_id` are present; `idx_portfolio_history_portfolio`, `idx_trade_reflections_trade` and `idx_position_audit_log_position_id` are absent. Status `sign_off_cleared`. (b) Push: recorded in `data_model.md` §Drift Detector Triage. Commit SHA: `3f96d2252545c9ba59eb6286d4c7d304e7037366`.
+
+## DEL-20261013-04
+
+- **ST Item:** ST-15 — Show the user when a position's stop is frozen for lack of ATR
+- **EPIC:** EPIC-02
+- **Classification:** delegated_backend (live migration, Human-Delegation; DS-25/DS-26/DS-31 precedent). The story code is engine-autonomous and pushed (`52debab3`).
+- **Assigned to:** Data Model & Domain Schema Owner (with Infrastructure & Operations Owner)
+- **GitHub Issue:** #1988
+- **Branch:** exec/2026-10-12__release-v9.12/EPIC-02
+- **Delegated at:** 2026-10-13T17:48:46Z
+- **What is needed:** Both stop recompute paths now write `positions.stop_frozen_reason`, and `GET /positions` reads it. The sandbox `DATABASE_URL` is read-only staging, so the engine cannot apply DS-32. On **staging, then production**, run the DS-32 Up Migration (`ALTER TABLE positions ADD COLUMN IF NOT EXISTS stop_frozen_reason VARCHAR(20) CHECK (stop_frozen_reason IN ('atr_unavailable'));`), then the Verification query. This must happen **before EPIC-02 deploys**. Otherwise every post-grace stop recompute fails on the unknown column.
+- **Workflow viability (LL-v9.10-P3-01):** Not a workflow dispatch. Manual SQL in the Supabase SQL editor; no GitHub Actions run is involved.
+- **Spec reference:** `docs/specs/data_model.md#DS-32 — Add stop_frozen_reason to positions (v2.61, 2026-10-13)`; `docs/specs/api_contracts/position_endpoints.md#GET /positions`; `stage4_backlog_slice.md#ST-15`
+- **Unblock criteria:** DS-32 Verification output from staging and production (expect `stop_frozen_reason | character varying | 20 | YES`), recorded in DS-32's Live Confirmation.
+- **Commit format required:** `[EPIC-02][ST-15] <description>` (DS-32 Live Confirmation) pushed to `exec/2026-10-12__release-v9.12/EPIC-02`
+- **Status:** Unblocked — 2026-10-13, unblocked in-session by the user (human, acting for the Data Model & Domain Schema Owner), in the same session as the delegation. (a) Sign-off: DS-32 applied on staging, then production. Both Up Migrations returned "Success. No rows returned", and both Verifications returned `stop_frozen_reason | character varying | 20 | YES`. Recorded in `data_model.md` DS-32 Live Confirmation; status `sign_off_cleared`. (b) Push: story commit `52debab3697edf66df13708df37577ea4b1c3d37`; Live Confirmation commit follows on the EPIC-02 branch. Terminal: Unblocked (2026-10-13T18:16:30Z).

@@ -391,11 +391,12 @@ def test_IV01_single_signal_full_allocation():
     assert result[0]["suggested_shares"] == math.floor(10000.0 / 157.48)
 
 
-def test_IV05_zero_atr_signal_gets_minimum_floor_not_zero():
-    """IV-05: ATR=0 for one signal — the min-weight floor (0.05) is applied to
-    the zero-inv-ATR signal before normalisation, so it receives a small non-zero
-    allocation. Full-zero allocation only occurs when ALL signals have ATR=0 (IV-06).
-    The valid-ATR signal receives a higher weight than the zero-ATR signal.
+def test_IV05_zero_atr_signal_gets_no_allocation():
+    """IV-05: ATR=0 for one signal — it takes no part in the min-weight clamp or
+    renormalisation, so it gets weight 0, 0 shares and a reason, and the valid-ATR
+    signal takes the full allocation (BLG-BE-157, ST-07, v9.12; matches the
+    IV-05_zero_atr_signal fixture's expected values). Before v9.12 the 0.05 floor
+    gave the zero-ATR signal a non-zero allocation, which this test used to pin.
     """
     signals = [
         _make_signal("AAPL", atr=0.0, price_gbp=118.11),
@@ -404,15 +405,13 @@ def test_IV05_zero_atr_signal_gets_minimum_floor_not_zero():
     result = size_batch_inv_vol(signals, available_cash=10000.0, fx_rate=1.27)
     aapl = next(s for s in result if s["ticker"] == "AAPL")
     googl = next(s for s in result if s["ticker"] == "GOOGL")
-    # Zero-ATR signal gets the minimum-floor allocation, not zero
-    assert aapl["inv_vol_weight"] >= _IV_MIN - 1e-9, \
-        "Zero-ATR signal should receive the minimum-floor weight"
-    # Valid-ATR signal gets a strictly higher weight than zero-ATR signal
-    assert googl["inv_vol_weight"] > aapl["inv_vol_weight"], \
-        "Valid-ATR signal should receive higher weight than zero-ATR signal"
-    # Weights sum to 1.0
-    total = aapl["inv_vol_weight"] + googl["inv_vol_weight"]
-    assert _approx(total, 1.0, rel_tol=1e-4)
+    assert aapl["inv_vol_weight"] == 0
+    assert aapl["suggested_shares"] == 0
+    assert aapl["allocation_gbp"] == 0
+    assert aapl["reason"]
+    assert _approx(googl["inv_vol_weight"], 1.0, rel_tol=1e-6)
+    assert googl["allocation_gbp"] == 10000.0
+    assert googl["suggested_shares"] == math.floor(10000.0 / 118.11)
 
 
 def test_IV06_all_zero_atr_returns_zero_shares():

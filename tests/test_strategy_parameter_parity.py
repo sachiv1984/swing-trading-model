@@ -18,6 +18,8 @@ Covers:
     source; the frontend display mirror (src/lib/strategyParameters.js)
     matches it.
   - Each path records stop_calculation_source ('on_load' / 'nightly', DS-26).
+  - US parity with a NULL fill_price (ST-12, BLG-BE-145, v9.12).
+  - A stored stop is never rounded down on either path (ST-11, BLG-BE-160, v9.12).
 """
 import importlib.util
 import re
@@ -113,6 +115,54 @@ class TestOnLoadNightlyParity(_Paths):
         nightly = self.nightly_updates(_position(), 130.0)
         assert on_load["current_stop"] == pytest.approx(126.0)  # 130 − 1×4
         assert nightly["current_stop"] == pytest.approx(126.0)
+
+
+class TestUsParity(_Paths):
+    """ST-12 (BLG-BE-145, EPIC-02, v9.12): US case. A US row with a NULL fill_price
+    recomputes on both paths, and both store the same stop. entry_price is GBP
+    (£80 at fx 1.25), so the native entry and breakeven floor is $100."""
+
+    @staticmethod
+    def _us():
+        return _position(ticker="AAPL", market="US", entry_price=80.0, fill_price=None, fx_rate=1.25,
+                         current_stop=85.0, initial_stop=75.0, atr=5.0, total_cost=800.0)
+
+    @pytest.mark.parametrize("price,expected", [(104.0, 100.0), (130.0, 120.0), (90.0, 85.0)],
+                             ids=["profitable-floor-binds", "profitable", "losing-stop-kept"])
+    def test_same_stop_on_both_paths(self, price, expected):
+        on_load = self.on_load_updates(self._us(), price)
+        self.teardown_method(); self.setup_method()
+        nightly = self.nightly_updates(self._us(), price)
+        assert on_load["current_stop"] == pytest.approx(expected)
+        assert nightly["current_stop"] == pytest.approx(expected)
+
+
+class TestStoredStopNeverRoundedDown(_Paths):
+    """ST-11 (BLG-BE-160, EPIC-02, v9.12): a 4-dp stored stop that the recompute keeps
+    is never written back below its stored value (round(101.2345, 2) = 101.23 would
+    move the stop down, which §7.3 forbids)."""
+
+    STORED = 101.2345
+
+    @pytest.mark.parametrize("path", ["on_load", "nightly"])
+    def test_kept_stop_is_not_rounded_below_stored(self, path):
+        # Profitable at 105: max(101.2345, 105 − 2 × 4 = 97, entry 100) keeps the stored stop.
+        pos = _position(current_stop=self.STORED, initial_stop=self.STORED)
+        updates = getattr(self, f"{path}_updates")(pos, 105.0)
+        assert updates["current_stop"] >= self.STORED
+
+    @pytest.mark.parametrize("path", ["on_load", "nightly"])
+    def test_sub_penny_raise_is_not_rounded_below_stored(self, path):
+        # 109.2349 − 8 = 101.2349 > stored, but round(…, 2) = 101.23 < stored.
+        pos = _position(current_stop=self.STORED, initial_stop=self.STORED)
+        updates = getattr(self, f"{path}_updates")(pos, 109.2349)
+        assert updates["current_stop"] >= self.STORED
+
+    @pytest.mark.parametrize("path", ["on_load", "nightly"])
+    def test_real_raise_is_still_stored_at_2dp(self, path):
+        pos = _position(current_stop=self.STORED, initial_stop=self.STORED)
+        updates = getattr(self, f"{path}_updates")(pos, 130.0)
+        assert updates["current_stop"] == pytest.approx(122.0)
 
 
 class TestSettingsRowIgnored(_Paths):

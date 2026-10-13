@@ -6,7 +6,9 @@ earnings fall after today and on or before its next trading day, with
 historical gap statistics — no gap direction or magnitude prediction (§13,
 AC-04). v9.10 (ST-13 ruling, ST-14, BLG-GOV-365/BLG-BE-136): UK positions are
 never flagged, day 0 is not flagged, a Friday view flags Monday earnings, and
-the standalone weekend_hold trigger is removed.
+the standalone weekend_hold trigger is removed. v9.12 (ST-14, BLG-BE-148,
+Revised Ruling 3): the next session comes from the NYSE calendar and "today" is
+the US market date; days_until is computed from next_earnings_date.
 
 CI-safe: earnings_service and yfinance history calls are mocked; no live
 network or database connections.
@@ -15,7 +17,7 @@ Spec: docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id
 """
 
 import sys
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
@@ -47,7 +49,11 @@ STATS = {"avg_gap_pct": 2.3, "event_count": 14, "insufficient_history": False}
 
 
 def _run(days_until, today, market="US", stats=STATS):
-    earnings = {**NO_EARNINGS, "days_until_earnings": days_until}
+    # v9.12: the service computes days_until from next_earnings_date and today.
+    # days_until_earnings is deliberately set to a misleading value to prove the
+    # service no longer reads it.
+    next_date = None if days_until is None else (today + timedelta(days=days_until)).isoformat()
+    earnings = {**NO_EARNINGS, "next_earnings_date": next_date, "days_until_earnings": 99}
     with (
         patch("services.gap_risk_service.get_earnings", return_value=earnings) as m_earn,
         patch("services.gap_risk_service._compute_gap_stats", return_value=stats) as m_stats,
@@ -223,3 +229,105 @@ def test_endpoint_returns_gap_risk_object():
     assert data["flagged"] is True
     assert data["reasons"] == ["earnings"]
     m_gap.assert_called_once_with("AAPL", "US")
+
+
+# --- v9.12 ST-14 (BLG-BE-148): NYSE calendar and US market date ---
+
+from services import us_market_calendar as cal  # noqa: E402
+
+# NYSE's published full-closure holidays (checked 2026-10-13).
+NYSE_PUBLISHED = {
+    2026: {date(2026, 1, 1), date(2026, 1, 19), date(2026, 2, 16), date(2026, 4, 3), date(2026, 5, 25),
+           date(2026, 6, 19), date(2026, 7, 3), date(2026, 9, 7), date(2026, 11, 26), date(2026, 12, 25)},
+    2027: {date(2027, 1, 1), date(2027, 1, 18), date(2027, 2, 15), date(2027, 3, 26), date(2027, 5, 31),
+           date(2027, 6, 18), date(2027, 7, 5), date(2027, 9, 6), date(2027, 11, 25), date(2027, 12, 24)},
+}
+
+
+def test_holiday_rules_match_published_nyse_schedule():
+    for year, published in NYSE_PUBLISHED.items():
+        assert cal.nyse_holidays(year) == published, year
+
+
+def test_friday_before_monday_holiday_flags_tuesday_earnings():
+    """ST-14 AC 1: Friday 2026-09-04, Labor Day Monday 09-07; Tuesday earnings are 4 days out."""
+    friday = date(2026, 9, 4)
+    assert _days_to_next_trading_day(friday) == 4
+    result, _, _ = _run(4, friday)
+    assert result["reasons"] == ["earnings"]
+    result, _, _ = _run(5, friday)
+    assert result["flagged"] is False
+
+
+def test_0200_utc_view_uses_us_market_date():
+    """ST-14 AC 2: 02:00 UTC on Tuesday 2026-10-13 is still Monday 10-12 in New York."""
+    now = datetime(2026, 10, 13, 2, 0, tzinfo=timezone.utc)
+    assert cal.us_market_date(now) == date(2026, 10, 12)
+    # Earnings on Tuesday 10-13: 1 day from the US date (flagged); 0 from the UTC date (not).
+    earnings = {**NO_EARNINGS, "next_earnings_date": "2026-10-13", "days_until_earnings": 0}
+    with patch("services.gap_risk_service.get_earnings", return_value=earnings), \
+         patch("services.gap_risk_service._compute_gap_stats", return_value=STATS):
+        result = get_gap_risk("AAPL", "US", now=now)
+    assert result["reasons"] == ["earnings"]
+
+
+def test_us_market_date_rejects_naive_datetime():
+    import pytest
+    with pytest.raises(ValueError):
+        cal.us_market_date(datetime(2026, 10, 13, 2, 0))
+
+
+def test_thursday_before_good_friday_flags_monday_earnings():
+    thursday = date(2026, 4, 2)  # Good Friday 2026-04-03
+    assert _days_to_next_trading_day(thursday) == 4
+    result, _, _ = _run(4, thursday)
+    assert result["reasons"] == ["earnings"]
+
+
+def test_saturday_new_year_not_observed_on_friday():
+    assert date(2022, 1, 1).weekday() == 5
+    assert cal.is_nyse_session(date(2021, 12, 31))
+    assert date(2021, 12, 31) not in cal.nyse_holidays(2021)
+
+
+def test_juneteenth_only_from_2022():
+    assert date(2021, 6, 18) not in cal.nyse_holidays(2021)  # would be the Friday observance
+    assert date(2022, 6, 20) in cal.nyse_holidays(2022)      # Sunday 19th observed Monday
+
+
+def test_early_close_day_is_a_session():
+    """Wednesday before Thanksgiving: next session is the Friday early close (d=2)."""
+    wednesday = date(2026, 11, 25)
+    assert _days_to_next_trading_day(wednesday) == 2
+    assert _run(2, wednesday)[0]["reasons"] == ["earnings"]   # Friday
+    assert _run(5, wednesday)[0]["flagged"] is False          # Monday
+
+
+def test_view_on_a_holiday():
+    """On Labor Day itself the next session is Tuesday."""
+    assert _days_to_next_trading_day(date(2026, 9, 7)) == 1
+    assert _run(1, date(2026, 9, 7))[0]["reasons"] == ["earnings"]
+
+
+def test_one_off_closures_are_not_sessions():
+    assert not cal.is_nyse_session(date(2025, 1, 9))
+    assert _days_to_next_trading_day(date(2025, 1, 8)) == 2
+
+
+def test_calendar_is_deterministic_with_no_network():
+    """Binding Condition 1: no socket, yfinance or price-history access in the calendar."""
+    import socket
+    with patch.object(socket, "socket", side_effect=AssertionError("network used")), \
+         patch("services.gap_risk_service.yf", side_effect=AssertionError("yfinance used")):
+        first = [cal.days_to_next_nyse_session(date(2026, 1, 1) + timedelta(days=i)) for i in range(800)]
+        cal.nyse_holidays.cache_clear()
+        second = [cal.days_to_next_nyse_session(date(2026, 1, 1) + timedelta(days=i)) for i in range(800)]
+    assert first == second
+    assert max(first) <= 5
+
+
+def test_module_docstrings_cite_v912_addendum():
+    """Binding Condition 8 (extended at v9.12)."""
+    from services import gap_risk_service
+    assert "v9.12 addendum" in gap_risk_service.__doc__
+    assert "ESC-EXEC-20261013-07" in cal.__doc__

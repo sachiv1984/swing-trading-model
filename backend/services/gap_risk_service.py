@@ -3,7 +3,8 @@ Gap Risk Flag Service — ST-02 (BLG-FEAT-65, v6.9)
 
 Governed by the §13 review record
 docs/product/decisions/decisions--2026-09-30__release-v9.9--gap-risk-flag-section13-review.md
-(CONDITIONAL, Binding Conditions 1-9) and its v9.10 addendum (ST-13, BLG-GOV-365).
+(CONDITIONAL, Binding Conditions 1-9), its v9.10 addendum (ST-13, BLG-GOV-365)
+and its v9.12 addendum (ST-14, BLG-BE-148, Revised Ruling 3, ESC-EXEC-20261013-07).
 
 Flags an open position when one known, dated event specific to its ticker falls
 before its next trading session. The only such event is a scheduled earnings
@@ -11,13 +12,19 @@ date (strategy_rules.md §4.2.3, §13.3). Shown with a historical overnight or
 weekend gap statistic from daily OHLCV (yfinance), matching the yfinance-direct
 pattern used by earnings_service.py / sector_service.py.
 
-Trigger rules (Strategy Rules & System Intent Owner ruling, v9.10 ST-13):
+Trigger rules (Strategy Rules & System Intent Owner rulings: v9.10 ST-13; v9.12 ST-14):
   - US positions only, as §4.2.3 is US-only. A UK position is never flagged.
-  - The earnings date is after today and on or before the next trading day
-    (weekday calendar). A Friday view flags Monday earnings. Earnings today
-    (day 0) are not flagged: a before-open release has already gapped, which
-    §13.3 and Binding Condition 3 exclude, and yfinance cannot tell before-open
-    from after-close. The previous session's view already flagged that date.
+  - "Today" (T) is the current US market date (America/New_York), so a 02:00 UTC
+    view uses the previous US day. days_until is the earnings date minus T,
+    computed here, not earnings_service's server-date days_until_earnings.
+  - Flagged when 1 <= days_until <= d, where d is the calendar days from T to the
+    next NYSE session (services/us_market_calendar.py: weekends, NYSE full-closure
+    holidays and dated one-off closures are not sessions; early closes are). A
+    Friday view flags Monday earnings, or Tuesday's before a Monday holiday.
+    Deterministic, with no network call; unannounced closures are not anticipated.
+  - Earnings today (day 0) are not flagged: a before-open release has already
+    gapped, which §13.3 and Binding Condition 3 exclude, and yfinance cannot tell
+    before-open from after-close. The previous session's view already flagged it.
 
 The standalone weekend-hold trigger, which flagged every position each Friday,
 was removed in v9.10 (ST-14, BLG-BE-136) under Binding Condition 6.
@@ -30,12 +37,13 @@ Spec: docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id
       docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md
       docs/specs/frontend/pages/positions.md#Gap Risk Badge
 """
-from datetime import date
+from datetime import date, datetime
 from typing import Dict, Optional
 
 import yfinance as yf
 
 from services.earnings_service import get_earnings, _yf_ticker_symbol
+from services.us_market_calendar import days_to_next_nyse_session, us_market_date
 
 # Minimum historical gap events required before a numeric average is shown.
 # Backend-defined constant (N in ux_spec.md §4) — frontend renders whatever the
@@ -50,17 +58,17 @@ _EARNINGS_TRIGGER_MARKETS = ("US",)
 
 
 def _days_to_next_trading_day(today: date) -> int:
-    """Calendar days from today to the next weekday (Fri -> 3, Sat -> 2, else 1).
+    """Calendar days from the US market date to the next NYSE session (v9.12 Revised Ruling 3)."""
+    return days_to_next_nyse_session(today)
 
-    Weekday calendar only: exchange holidays are not modelled, so the day after a
-    holiday-shortened week is treated as the next session.
-    """
-    weekday = today.weekday()  # Monday=0 ... Sunday=6
-    if weekday == 4:
-        return 3
-    if weekday == 5:
-        return 2
-    return 1
+
+def _days_until(next_earnings_date, today: date) -> Optional[int]:
+    """Earnings date minus the US market date, or None when there is no date."""
+    if not next_earnings_date:
+        return None
+    if isinstance(next_earnings_date, str):
+        next_earnings_date = date.fromisoformat(next_earnings_date[:10])
+    return (next_earnings_date - today).days
 
 
 def _earnings_before_next_session(days_until: Optional[int], today: date) -> bool:
@@ -121,7 +129,8 @@ def _compute_gap_stats(ticker: str, market: str, weekend: bool) -> Dict:
         return {"avg_gap_pct": None, "event_count": 0, "insufficient_history": True}
 
 
-def get_gap_risk(ticker: str, market: str, today: Optional[date] = None) -> Dict:
+def get_gap_risk(ticker: str, market: str, today: Optional[date] = None,
+                 now: Optional[datetime] = None) -> Dict:
     """
     Compute the gap_risk object for a single position.
 
@@ -134,12 +143,14 @@ def get_gap_risk(ticker: str, market: str, today: Optional[date] = None) -> Dict
         "insufficient_history": bool
       }
     """
-    today = today or date.today()
+    # T: the US market date (injectable for tests as `today` or an aware `now`).
+    today = today or us_market_date(now)
     reasons = []
 
     if market in _EARNINGS_TRIGGER_MARKETS:
         earnings = get_earnings(ticker, market)
-        if _earnings_before_next_session(earnings.get("days_until_earnings"), today):
+        days_until = _days_until(earnings.get("next_earnings_date"), today)
+        if _earnings_before_next_session(days_until, today):
             reasons.append("earnings")
 
     if not reasons:

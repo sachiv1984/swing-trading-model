@@ -230,7 +230,7 @@ def create_and_close(trade):
         "entry_date": trade["entry_date"],
         "shares": trade["shares"],
         "entry_price": trade["entry_price"],
-        "stop_price": trade["stop_price"],
+        # No stop_price: rejected with 400 since ST-10 (BLG-BE-159, v9.12).
         "entry_note": "[SEED] ST-11 chart interactivity test data",
     })
     if pos_resp.get("status") != "ok":

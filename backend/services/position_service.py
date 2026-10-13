@@ -74,6 +74,36 @@ from strategy_parameters import (
 # GET POSITIONS
 # ============================================================================
 
+def stop_to_store(new_stop: float, stored_stop: Optional[float]) -> float:
+    """Value to write to positions.current_stop after a recompute (ST-11, BLG-BE-160).
+
+    The stop is stored at 2 dp, but a stored stop can carry more places (an
+    initial stop written by add_position(), or a pre-v9.12 row). When the
+    recompute keeps that stop, or raises it by less than half a penny/cent,
+    round(new, 2) could fall below the stored value. That would move the stop
+    down, which strategy_rules.md §7.3 forbids. Never write below the stored stop.
+    """
+    stored = stored_stop or 0
+    return max(round(new_stop, 2), stored)
+
+
+def native_entry_price(pos: Dict, live_fx_rate: float) -> float:
+    """A position's entry price in its native currency, for stop arithmetic (ST-12, BLG-BE-145).
+
+    UK: entry_price. US: fill_price, the native entry. positions.entry_price is GBP
+    for every market (data_model_positions_dictionary.md v0.4), so a US row with a
+    NULL fill_price is converted back with its stored fx_rate, or the live rate if
+    that is NULL too. pos.get('fill_price', ...) used to return None for such a
+    row, which crashed both stop recompute paths.
+    """
+    if pos['market'] != 'US':
+        return pos['entry_price']
+    fill_price = pos.get('fill_price')
+    if fill_price:
+        return fill_price
+    return pos['entry_price'] * (pos.get('fx_rate') or live_fx_rate)
+
+
 def get_positions_with_prices() -> List[Dict]:
     """
     Get all open positions with live prices and P&L calculations
@@ -130,10 +160,7 @@ def get_positions_with_prices() -> List[Dict]:
             current_price_native = pos.get('current_price', pos['entry_price'])
         
         # Calculate P&L
-        if pos['market'] == 'US':
-            entry_price_display = pos.get('fill_price', pos['entry_price'] * (pos.get('fx_rate', 1.27)))
-        else:
-            entry_price_display = pos['entry_price']
+        entry_price_display = native_entry_price(pos, live_fx_rate)
         
         pnl_native, pnl_gbp, pnl_pct = calculate_position_pnl(
             entry_price=entry_price_display,
@@ -175,10 +202,12 @@ def get_positions_with_prices() -> List[Dict]:
         # Display ticker without .L suffix
         display_ticker = pos['ticker'].replace('.L', '') if pos['market'] == 'UK' else pos['ticker']
         
-        # Determine status
+        # Determine status. ST-13 (BLG-BE-149, v9.12): on native P&L, the same test
+        # position_state uses (native price above native entry), so FX movement
+        # cannot make the Risk page and the lifecycle badge disagree.
         if grace_period:
             display_status = GRACE
-        elif pnl_gbp > 0:
+        elif pnl_native > 0:
             display_status = PROFITABLE
         else:
             display_status = LOSING
@@ -228,6 +257,9 @@ def get_positions_with_prices() -> List[Dict]:
         # ST-01 (BLG-BE-138, v9.10): 'on_load' / 'nightly' (DS-26); NULL until
         # the first recompute after the column was added.
         stop_calculation_source = pos.get('stop_calculation_source')
+        # ST-15 (BLG-FE-202, v9.12, DS-32): 'atr_unavailable' when the last
+        # post-grace recompute kept the stop for lack of ATR; NULL otherwise.
+        stop_frozen_reason = pos.get('stop_frozen_reason')
 
         # Build position dict
         positions_list.append({
@@ -278,6 +310,7 @@ def get_positions_with_prices() -> List[Dict]:
             "active_atr_multiplier": active_atr_multiplier,
             "atr_source": atr_source,
             "stop_calculation_source": stop_calculation_source,
+            "stop_frozen_reason": stop_frozen_reason,
             "fx_rate": pos.get('fx_rate', 1.0),
             "live_fx_rate": live_fx_rate,
             "total_cost": round(pos.get('total_cost', 0), 2),
@@ -375,7 +408,7 @@ def analyze_positions() -> Dict:
         live_price = get_current_price(pos['ticker'])
         
         # Determine entry price
-        entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
+        entry_price = native_entry_price(pos, live_fx_rate)
         
         if live_price:
             # Fix UK stocks: Yahoo returns pence
@@ -458,7 +491,7 @@ def analyze_positions() -> Dict:
             
             if atr_value and atr_value > 0:
                 # Get entry price in native currency
-                entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
+                entry_price_native = entry_price
                 
                 # Calculate trailing stop
                 trailing_stop_native, stop_reason, atr_mult = calculate_trailing_stop(
@@ -528,7 +561,7 @@ def analyze_positions() -> Dict:
             # during grace the stored stop is left exactly as it is -- not
             # rewritten, not even rounded. Trailing starts on day 10.
             if not grace_period:
-                position_updates['current_stop'] = round(trailing_stop_native, 2)
+                position_updates['current_stop'] = stop_to_store(trailing_stop_native, current_stop_native)
             # ST-01 (BLG-BE-135, EPIC-01, v9.9): only stamp stop_calculated_at /
             # active_atr_multiplier when the stop was actually recalculated
             # against ATR (grace period carries the stop over unchanged, with
@@ -538,6 +571,10 @@ def analyze_positions() -> Dict:
                 position_updates['active_atr_multiplier'] = atr_mult
                 # ST-01 (v9.10, DS-26): which path last recalculated the stop.
                 position_updates['stop_calculation_source'] = 'on_load'
+            # ST-15 (BLG-FE-202, v9.12, DS-32): record a stop kept for lack of
+            # ATR, and clear it on the next post-grace recompute that has one.
+            if not grace_period:
+                position_updates['stop_frozen_reason'] = 'atr_unavailable' if atr_unavailable else None
             update_position(str(pos['id']), position_updates)
         
         # Add to actions
@@ -634,7 +671,7 @@ def run_nightly_trailing_stop_update() -> Dict:
         if pos['market'] == 'UK' and live_price > 1000:
             live_price = live_price / 100
 
-        entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
+        entry_price = native_entry_price(pos, live_fx_rate)
 
         # Recalculate ATR at _ATR_PERIOD to ensure freshness
         atr_value = calculate_atr(pos['ticker'], period=_ATR_PERIOD)
@@ -642,6 +679,11 @@ def run_nightly_trailing_stop_update() -> Dict:
         if not atr_value or atr_value == 0:
             atr_value = pos.get('atr', 0)
         if not atr_value or atr_value == 0:
+            # ST-15 (BLG-FE-202, v9.12, DS-32): the stop is kept, so record why,
+            # for GET /positions' frozen-stop indicator. Post-grace only: during
+            # grace the stop is frozen by rule (§6.3), not for lack of ATR.
+            if calculate_holding_days(str(pos['entry_date'])) >= GRACE_PERIOD_DAYS:
+                update_position(position_id, {'stop_frozen_reason': 'atr_unavailable'})
             results.append({"ticker": pos['ticker'], "status": "skipped", "reason": "ATR unavailable"})
             continue
 
@@ -685,7 +727,7 @@ def run_nightly_trailing_stop_update() -> Dict:
         )
 
         nightly_updates = {
-            'current_stop': round(new_stop_native, 2),
+            'current_stop': stop_to_store(new_stop_native, current_stop_native),
             'current_price': round(live_price, 4),
             'atr': round(atr_value, 4),
             'holding_days': holding_days,
@@ -696,6 +738,8 @@ def run_nightly_trailing_stop_update() -> Dict:
             'active_atr_multiplier': atr_mult,
             # ST-01 (v9.10, DS-26): which path last recalculated the stop.
             'stop_calculation_source': 'nightly',
+            # ST-15 (v9.12, DS-32): an ATR was available, so the stop is not frozen.
+            'stop_frozen_reason': None,
         }
         # ST-02 (BLG-BE-139, EPIC-01, v9.10): a freshly fetched ATR is
         # 'fetched'. When the fetch failed and the stored ATR was reused, its
@@ -813,7 +857,6 @@ def add_position(
     entry_price: float,
     fx_rate: Optional[float] = None,
     atr_value: Optional[float] = None,
-    stop_price: Optional[float] = None,
     entry_note: Optional[str] = None,
     tags: Optional[List[str]] = None,
     fill_price: Optional[float] = None,
@@ -830,7 +873,6 @@ def add_position(
         entry_price: Entry price in native currency
         fx_rate: Optional GBP/USD rate (auto-fetched if not provided for US)
         atr_value: Optional ATR value (auto-calculated if not provided)
-        stop_price: Optional custom stop (auto-calculated if not provided)
     
     Returns:
         Dictionary with:

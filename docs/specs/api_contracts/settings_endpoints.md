@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.4.0
-**Last Updated:** 2026-10-06 (ST-03, EPIC-01, v9.10, BLG-SPEC-187 — the four strategy-parameter fields are stored only; changing them affects no stop, per the ST-01 ruling (a)); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /settings); prior — 2026-08-07
+**Version:** 1.4.1
+**Last Updated:** 2026-10-13 (ST-16, EPIC-02, v9.12, BLG-BE-144 — POST /settings keeps column defaults for omitted or null fields); prior — 2026-10-06 (ST-03, EPIC-01, v9.10, BLG-SPEC-187 — the four strategy-parameter fields are stored only; changing them affects no stop, per the ST-01 ruling (a)); prior — 2026-09-29 (ST-21, EPIC-05, v9.8, BLG-API-05 — added a 401 error example to GET /settings); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # settings_endpoints.md
@@ -143,7 +143,7 @@ Create a new settings record. Used to initialise the settings row if one does no
 
 #### Body
 
-All fields are optional. Fields not provided use system defaults.
+All fields are optional. Fields not provided, or sent as `null`, are not inserted, so they keep their column defaults (v1.4.1, ST-16, BLG-BE-144: before v9.12 a field the Settings page omitted was inserted as `NULL`, overriding the default; the page has not sent the four strategy-parameter fields since v9.10).
 
 ```json
 {
@@ -334,6 +334,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4.1 | 2026-10-13 | ST-16 (BLG-BE-144, EPIC-02, v9.12): `POST /settings` no longer inserts omitted or `null` fields, so a first-time save keeps the column defaults for `min_hold_days`, `atr_period`, `atr_multiplier_initial` and `atr_multiplier_trailing`. No shape change. |
 | 1.4.0 | 2026-10-06 | ST-03 (BLG-SPEC-187, EPIC-01, v9.10), following the ST-01 parameter-authority ruling (a): `min_hold_days`, `atr_period`, `atr_multiplier_initial` and `atr_multiplier_trailing` are stored only. No stop path reads them, so changing them affects no open or new position. The Strategy parameter context and field notes now say so and cross-reference `position_endpoints.md`. The request and response shapes are unchanged. No new endpoints. |
 | 1.3.1 | 2026-08-07 | ST-03 (BLG-SPEC-112, EPIC-02, v8.4): `GET /settings` example was missing `created_at`/`updated_at`, both of which the live response includes. Added with representative ISO-8601 values, plus field notes rows. Authority: API Contracts & Documentation Owner. |
 | 1.3.0 | 2026-06-03 | Add `concentration_position_threshold_pct` (default 15%) and `concentration_sector_threshold_pct` (default 30%) to all endpoints. DB columns added via `ensure_settings_concentration_columns` migration. Read by `GET /portfolio/concentration-status`. Settings page gains Risk Limits section. |

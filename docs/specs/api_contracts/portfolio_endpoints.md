@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.10.0
-**Last Updated:** 2026-10-08 (ST-13, EPIC-02, v9.11, BLG-BE-155 — GET /portfolio positions gain native-currency stop_distance_pct); prior — 2026-10-08 (ST-12, EPIC-02, v9.11, BLG-BE-153 — holding_days computed live from entry_date); prior — 2026-10-08 (ST-11, EPIC-02, v9.11, BLG-FE-206 — field note corrected: entry_price and current_stop are GBP for every market); prior history retained — see prior entries in version control
+**Version:** 2.11.1
+**Last Updated:** 2026-10-13 (ST-13, EPIC-02, v9.12, BLG-BE-149 — `display_status` basis stated: native P&L, matching `position_state`); prior — 2026-10-13 (ST-10, EPIC-02, v9.12, BLG-BE-159 — POST /portfolio/position rejects a supplied stop_price with 400); prior — 2026-10-08 (ST-13, EPIC-02, v9.11, BLG-BE-155 — GET /portfolio positions gain native-currency stop_distance_pct); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -133,6 +133,8 @@ The position objects returned here are a **summary shape**. Key omissions versus
 
 **`holding_days`** *(v9.11 — ST-12, BLG-BE-153)* is computed on every call as calendar days from `entry_date` to today (0 on the entry day), not read from the stored `positions.holding_days` column, which only changes when a stop recompute writes the row. `grace_period`, `grace_days_remaining` and `display_status` all follow from it, so a position whose 10th calendar day has arrived is post-grace here even if the stored column still says 9, matching `GET /positions`' lifecycle state.
 
+**`display_status`** *(v2.11.1 — ST-13, BLG-BE-149)*: `GRACE` before day 10; after that `PROFITABLE` when native P&L is above 0 and `LOSING` otherwise. Native P&L is `(current native price − native entry) × shares`, where the native entry is `fill_price` for US positions (else `entry_price × fx_rate`) and `entry_price` for UK. FX movement never changes the status, so the Risk page agrees with the lifecycle badge (`position_state`, `position_endpoints.md`) for every position.
+
 **`stop_distance_pct`** *(number or null, v9.11 — ST-13, BLG-BE-155)* is `(current price − current stop) / current price × 100` computed in the **native currency** (USD for US, GBP for UK), rounded to 2 d.p. It moves with price, not FX: deriving it from the GBP `current_price` (live FX) and `current_stop` (entry FX) would mix two rates. `null` when there is no current stop or no price. Negative when the price is below the stop. The Risk Dashboard's Stop Dist % column shows this value (`risk_dashboard.md` §6.2).
 
 **`price_is_stale`** *(boolean, v9.11 — ST-10, BLG-BE-154)* is `true` when the live price fetch failed for this position and `current_price` (and the values derived from it: `current_value`, `pnl`, `pnl_pct`, and the portfolio-level totals) uses the last stored price. `false` when a live price was used. The Risk Dashboard and Dashboard show a stale marker for it (`risk_dashboard.md` §6.6, `dashboard.md` §4 Card 2). `entry_price` and `current_stop` are in GBP for every market: for US positions they are the native values divided by the entry `fx_rate` (`portfolio_service.py`, `risk_dashboard.md` §6.2). *(Corrected v9.11, ST-11: this note previously said `entry_price` was native currency, which the code has not returned.)* `fx_rate` is the stored rate at time of entry; `live_fx_rate` is the rate used for the current price conversion.
@@ -179,7 +181,6 @@ Create a new position based on user-entered broker execution details. Supports f
   "entry_price": 850.00,
   "fx_rate": 1.3642,
   "atr_value": 15.32,
-  "stop_price": 780.00,
   "entry_note": "Breakout above $800 resistance",
   "tags": ["momentum", "breakout"]
 }
@@ -197,7 +198,6 @@ Create a new position based on user-entered broker execution details. Supports f
 - `market` (string: `"US"` or `"UK"`; default: auto-detect from ticker suffix)
 - `fx_rate` (number; required for US if not auto-detected)
 - `atr_value` (number; auto-fetched by server if not provided)
-- `stop_price` (number; calculated as `entry_price − (5 × ATR)` if not provided)
 - `entry_note` (string, max 500; empty string treated as `null`)
 - `tags` (array; max 10; each max 20 characters; lowercase, numbers, hyphens only)
 - `trade_plan_id` (string, UUID; ST-01 v7.3 — explicit link from the "Start Trade from Plan" action. When provided, this exact trade plan is linked (`position_id` set, `status` set to `active`) in place of the ticker/market best-effort auto-link (BLG-BE-46). Silently ignored if the plan does not exist, belongs to another portfolio, or is already linked to a position — position creation is never blocked by a link failure.)
@@ -238,11 +238,13 @@ Response uses the standard success envelope from **conventions.md**.
 - `shares` must be greater than 0.
 - `entry_price` must be greater than 0.
 - `tags` must follow tag rules (lowercase letters, numbers, hyphens only; max 20 characters each; max 10 tags).
+- `stop_price` is not accepted (ST-10, BLG-BE-159, v9.12). The initial stop is always set by the system at `entry_price − 5 × ATR` (`strategy_rules.md` §5, §11) and returned as `initial_stop`. A request with a non-null `stop_price` is rejected with `400`, never silently ignored. `"stop_price": null`, or omitting the field, is accepted. Strategy Rules & System Intent Owner ruling: `claude/cycles/2026-10-12__release-v9.12/execution_escalations.md` ESC-EXEC-20261013-06.
 
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
 
+- `400` `stop_price` supplied: "stop_price is not accepted. The initial stop is set by the system at entry price − 5 × ATR (strategy_rules.md §5, §11)." The multiplier is read from the §11 constant (`backend/strategy_parameters.py` `INITIAL_ATR_MULTIPLIER`).
 - `400` Insufficient funds
 - `400` Invalid ticker format
 - `400` Invalid date (future date)
@@ -658,6 +660,8 @@ Errors use the standard error envelope from **conventions.md**.
 | 2.9.1 | 2026-10-08 | ST-11 (EPIC-02, v9.11, BLG-FE-206): Field note corrected — `GET /portfolio` returns `entry_price` and `current_stop` in GBP for every market (the note said native currency). Documentation only; no response change. |
 | 2.9.2 | 2026-10-08 | ST-12 (EPIC-02, v9.11, BLG-BE-153): `holding_days` on `GET /portfolio` is computed live from `entry_date`, so `grace_period` and `display_status` no longer lag the stored column. No shape change. |
 | 2.10.0 | 2026-10-08 | ST-13 (EPIC-02, v9.11, BLG-BE-155): `GET /portfolio` position objects gain `stop_distance_pct`, computed in native currency. A position with a null `current_stop` no longer fails the request. |
+| 2.11.0 | 2026-10-13 | ST-10 (EPIC-02, v9.12, BLG-BE-159): `POST /portfolio/position` rejects a non-null `stop_price` with `400` (it was accepted and silently ignored; the stored stop has always been `entry − 5 × ATR`). Removed from the request example and optional fields; added to validation rules and errors. Strategy Rules & System Intent Owner ruling ESC-EXEC-20261013-06. |
+| 2.11.1 | 2026-10-13 | ST-13 (EPIC-02, v9.12, BLG-BE-149): `display_status` basis stated (native P&L, the same test as `position_state`). The code now reads `pnl_native`, and a US row with a NULL `fill_price` takes its native entry as `entry_price × fx_rate`. The sign is unchanged where `fill_price` is set. No shape change. |
 
 ---
 

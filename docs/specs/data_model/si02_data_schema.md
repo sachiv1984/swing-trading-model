@@ -1,8 +1,8 @@
 **Owner:** Data Model & Domain Schema Owner; Head of Specs Team
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-30
+**Version:** 1.1
+**Last Updated:** 2026-10-13 (ST-16, EPIC-02, v9.12, BLG-BE-144 — `effective_settings_snapshot` stop parameters come from the fixed `strategy_rules.md` §11 values, not the settings row); prior — 2026-05-30
 **Cycle:** 2026-05-30__release-v4.5 (EPIC-03, ST-08, BLG-SPEC-37)
 **Source gap analysis:** `docs/specs/si02_gap_analysis.md` v1.0 (produced v4.1, BLG-SPEC-39)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -155,7 +155,7 @@ ALTER TABLE trade_plans
 | Attribute | Value |
 |-----------|-------|
 | Data type | JSONB — captures strategy parameters at plan creation time |
-| Source | Backend: at `POST /trade-plans`, query current `settings` row and store the relevant fields |
+| Source | Backend: at `POST /trade-plans`. `default_risk_percent` comes from the current `settings` row. **Since v1.1 (ST-16, BLG-BE-144, v9.12)** `atr_multiplier_initial`, `atr_multiplier_trailing` and `min_hold_days` are the fixed `strategy_rules.md` §11 values (`backend/strategy_parameters.py`: 5.0, 2.0, 10), per the v9.10 parameter-authority ruling (a), because no stop path reads the settings row's copies. Plans created before v9.12 hold the row's values, which may be `NULL` or differ from §11. |
 | Purpose | Enables retrospective sizing adherence analysis using the settings that were active at entry — replaces the fragile "use current settings as proxy" approach |
 | Backfill | None — historical plans have `NULL`; current `settings` used as proxy for pre-migration plans |
 | Capture point | Backend: in `POST /trade-plans` handler, immediately capture settings before processing |

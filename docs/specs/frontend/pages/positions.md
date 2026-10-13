@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.17
-**Last Updated:** 2026-10-13 (ST-35, EPIC-05, v9.12, BLG-SPEC-179 — §Gap Risk Badge: confirmed the data source is `GET /positions/{position_id}/gap-risk` and stated that `gap_risk.*` names the endpoint's `data` object, not a `GET /positions` field); prior — 2026-10-12 (v9.12 design gate — ST-10/BLG-BE-159: §Trail Stop Action conditional on the manual-stop ruling; ST-15/BLG-FE-202: §Frozen Stop Indicator; ST-22/BLG-FE-207: §Position Deep Link; ST-24/BLG-FE-210: Gap Risk and AI Advisory badges to amber-700); prior — 2026-10-08 (v9.11 design gate — ST-14/BLG-BE-147: §Grace Period Alert Zone trigger, "Day N of 10" label and ended state, and the §Last Reviewed Column suppression rule, use calendar days via `grace_days_remaining` instead of `days_in_state`); prior history retained — see prior entries in version control
+**Version:** 2.19
+**Last Updated:** 2026-10-13 (ST-14, EPIC-02, v9.12, BLG-BE-148 — §Gap Risk Badge: next trading session is the next NYSE session on the US market date); prior — 2026-10-13 (ST-10, EPIC-02, v9.12, BLG-BE-159 — §Trail Stop Action: Branch B ruled, read-only "View Trail"; Branch A deleted); prior — 2026-10-13 (ST-35, EPIC-05, v9.12, BLG-SPEC-179 — §Gap Risk Badge: confirmed the data source is `GET /positions/{position_id}/gap-risk` and stated that `gap_risk.*` names the endpoint's `data` object, not a `GET /positions` field); prior history retained — see prior entries in version control
 **Design Source (v9.11 additions):** docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md
 **Design Source (v9.10 additions):** docs/design/2026-10-06__release-v9.10/stop-cell-provenance/decision_record.md, docs/design/2026-10-06__release-v9.10/exit-condition-surfacing/decision_record.md, docs/design/2026-10-06__release-v9.10/lifecycle-badge-grace-calendar-days/decision_record.md, docs/design/2026-10-06__release-v9.10/gap-risk-trigger-label-alignment/decision_record.md
 **Design Source (v8.2 additions):** docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md
@@ -26,6 +26,8 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.19 | 2026-10-13 | v9.12 sprint execution (ST-14, EPIC-02, BLG-BE-148): §Gap Risk Badge and §Gap Risk Reason Labels — "next trading day" is the next NYSE session on the US market date (Revised Ruling 3, `ESC-EXEC-20261013-07`). Label text unchanged. |
+| 2.18 | 2026-10-13 | v9.12 sprint execution (ST-10, EPIC-02, BLG-BE-159): §Trail Stop Action — the Strategy Rules & System Intent Owner ruled Branch B (ESC-EXEC-20261013-06: no manual stop change). Branch A ("Raise stop to …", `PATCH /positions/{id}/stop`) and the conditional note are deleted. The button is "View Trail", and the modal is read-only with the no-raise note. |
 | 2.17 | 2026-10-13 | v9.12 sprint execution (ST-35, BLG-SPEC-179): §Gap Risk Badge — data source confirmed as `GET /positions/{position_id}/gap-risk` (already corrected at 2.14); the trigger line now says `gap_risk.*` refers to that endpoint's `data` object and that `GET /positions` has no `gap_risk` field. The v6.9 UX spec's §9 API Dependency row was corrected to match (`ux_spec.md` v1.2). Documentation only. |
 | 2.16 | 2026-10-12 | v9.12 design gate. (ST-10, BLG-BE-159) §Trail Stop Action rewritten: no control may propose a lower stop (§7.3); a no-raise note when `trail_difference ≤ 0`; Branch A (manual raise permitted: "Raise stop to …" via `PATCH /positions/{id}/stop`, ratchet-validated) or Branch B (read-only, button renamed "View Trail"), pending the ruling. The story deletes the branch not taken. (ST-15, BLG-FE-202) New §Frozen Stop Indicator from `stop_frozen_reason`: "Stop frozen · ATR unavailable" in amber, post-grace only. (ST-22, BLG-FE-207) New §Position Deep Link `?position={id}`: scroll, 2000 ms highlight, parameter stripped. (ST-24, BLG-FE-210) Gap Risk badge `#D97706` → `#B45309` and AI Advisor "Advisory" badge `bg-amber-600` → `bg-amber-700` (white text 3.19:1 → 5.02:1). Design sources: `docs/design/2026-10-12__release-v9.12/` (trail-stop-action, frozen-stop-indicator, grace-panel-position-link). Head of UX & Design sign-off: 2026-10-12. Product Owner approved: 2026-10-12. Head of Specs Team confirmed. |
 | 2.15 | 2026-10-08 | v9.11 design gate (ST-14, EPIC-02, BLG-BE-147): §Grace Period Alert Zone — trigger is `grace_days_remaining ≤ 2` (≥ 8 calendar days since entry), sub-label "Day {min(11 − grace_days_remaining, 10)} of 10", ended state at `grace_days_remaining = 0`, no `days_in_state` fallback. §Last Reviewed Column suppression rule uses the same predicate. Design source: `docs/design/2026-10-08__release-v9.11/grace-alert-calendar-days/decision_record.md`. Head of UX & Design sign-off: 2026-10-08. Product Owner approved: 2026-10-08. Head of Specs Team confirmed. |
@@ -105,7 +107,7 @@ Displays each open position as a row with:
 - Tags (as colored pills)
 - Actions:
   - **Exit** (opens exit modal)
-  - **Trail Stop** (opens trail stop modal — see §Trail Stop Action; visible only for PROFITABLE/EXIT ZONE positions)
+  - **View Trail** (opens the read-only trail stop modal — see §Trail Stop Action; visible only for PROFITABLE/EXIT ZONE positions)
   - **Recheck Compliance** *(v6.9 — ST-01; see §Compliance Recheck Panel)*
   - **View Journal** (opens position detail modal)
 
@@ -295,12 +297,12 @@ Two distinct empty states:
 
 **Design source:** docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md; **v2.16:** `docs/design/2026-10-12__release-v9.12/trail-stop-action/decision_record.md`
 
-> **v2.16 — conditional on ST-10's ruling.** Before v2.16 this section said the confirm button "calls `PUT /positions/{id}`". The shipped code called `PATCH /positions/{id}`. Neither route exists, so every apply failed (BLG-BE-159). ST-10's first sub-step is a Strategy Rules & System Intent Owner ruling on manual stop changes under `strategy_rules.md` §7.3. **Branch A** applies if the ruling permits a manual raise. **Branch B** applies if it does not. The story deletes the branch not taken, and this note, in the same commit as the code.
+> **v2.18 — ruled: read-only (ST-10, BLG-BE-159).** Before v2.16 this section said the confirm button "calls `PUT /positions/{id}`", and the shipped code called `PATCH /positions/{id}`. Neither route existed, so every apply failed. The Strategy Rules & System Intent Owner ruled on 2026-10-13 (ESC-EXEC-20261013-06) that a user may not set or raise a stop manually: under the §7.3 ratchet a manual raise becomes a permanent, user-chosen floor, which §13.2 excludes, and the modal's formula is not the §7.2 live formula (§12.3). The modal is a read-only comparison. No stop-write route exists.
 
 ### Trail Stop Button
 
 - Placement: Actions column, after "Exit", before "View Journal"
-- Label: "Trail Stop" (Branch A) / **"View Trail"** (Branch B)
+- Label (title and accessible name of the icon button): **"View Trail"**
 - Style: secondary (outlined)
 - **Shown** for positions where `position_state` is `PROFITABLE` or `EXIT ZONE`
 - **Disabled** (with tooltip "No current stop set. Add a stop to use trail management.") when `current_stop` is null
@@ -318,27 +320,22 @@ Opened by clicking the enabled button. Data source: `GET /positions/{id}/stop-tr
 |-------|--------|--------|
 | Current Stop | `current_stop` | Native currency, 2dp |
 | ATR Trail Stop | `atr_trail_stop` | Native currency, 2dp |
-| Raise by | `trail_difference` | "+£X.XX" (positive) or "−£X.XX" (negative, `text-amber-700 dark:text-amber-400`) |
+| Raise by (display only; not an action) | `trail_difference` | "+£X.XX" (positive) or "−£X.XX" (negative, `text-amber-700 dark:text-amber-400`) |
 | Trail in R | `trail_r_terms` | "+X.XR" |
 
 **Footnote (static):** "ATR trail stop = current price − (ATR × 2.0). ATR period: 14 days. Multiplier per strategy rules."
 
-**Both branches (v2.16):**
-- No label or control may propose a lower stop. The former "Lower stop to {value}" label is removed (§7.3).
+**Behaviour:**
+- No label or control may propose a lower stop. The former "Lower stop to {value}" and "Update stop to {value}" labels are removed (§7.3).
 - When `trail_difference ≤ 0`: no apply control. Note (`data-testid="trail-stop-no-raise-note"`, `text-xs text-slate-600 dark:text-slate-400`): "The ATR trail stop is at or below your current stop. Stops never move down (§7.3), so there is nothing to apply."
 
-**Branch A — manual raise permitted:**
-- **Confirm button** (primary), shown only when `trail_difference > 0`: "Raise stop to {atr_trail_stop}". Calls `PATCH /positions/{id}/stop` with `{ "stop_price": <native> }`. The server rejects with 400 a value at or below the stored `current_stop`, or at or above the current price. While the request is in flight the button is disabled and labelled "Raising…".
-- On success: the modal closes, the positions query is invalidated, and a success toast reads "Stop raised to {value}." (toast-timing standard).
-- On failure: the modal stays open, and an error toast shows the server's message.
-
-**Branch B — no manual stop change:**
+**Read-only (no manual stop change):**
 - No confirm button. Controls: "Close" (secondary), Escape, ✕.
 - Note under the footnote (`data-testid="trail-stop-readonly-note"`): "The system updates stops automatically when positions load and each night. This view is for reference only."
 
-**Cancel / Dismiss:** "Cancel" text link (Branch A) or "Close" (Branch B); Escape key; ✕ button — no change made.
+**Dismiss:** "Close" (secondary); Escape key; ✕ button (accessible name "Close") — no change made.
 
-**§13 constraint:** System presents calculation. Human confirms (Branch A) or only reviews (Branch B). No automated stop update.
+**§13 constraint:** System presents the calculation; the human only reviews it. No manual or automated stop update from this modal.
 
 ---
 
@@ -348,7 +345,7 @@ Opened by clicking the enabled button. Data source: `GET /positions/{id}/stop-tr
 
 ### Recheck Compliance Button
 
-- Placement: Actions column (Table View) / card footer (Grid View), after "Trail Stop", before "View Journal"
+- Placement: Actions column (Table View) / card footer (Grid View), after "View Trail", before "View Journal"
 - Label: "Recheck Compliance"
 - Style: secondary (outlined)
 - **Shown** for all open positions in Table View and Grid View
@@ -558,7 +555,7 @@ No alert: dash ("—").
 
 **Data source:** `GET /positions/{position_id}/gap-risk`, fetched per position (`src/hooks/useGapRisk.js`); server-computed from the DS-04 earnings calendar and historical OHLCV. (v9.10: corrected from "`gap_risk` object from `GET /positions`", which was never shipped.)
 
-Shown when the endpoint's `data.flagged` is `true` (this section writes the response's `data` object as `gap_risk`; `GET /positions` itself carries no `gap_risk` field). The only trigger is an earnings date that falls after today and on or before the position's next trading day, for a US position (v9.10 — ST-13 ruling, ST-14). The weekend-hold trigger was removed. See §Gap Risk Reason Labels below.
+Shown when the endpoint's `data.flagged` is `true` (this section writes the response's `data` object as `gap_risk`; `GET /positions` itself carries no `gap_risk` field). The only trigger is an earnings date that falls after today (the US market date) and on or before the next NYSE session, for a US position (v9.10 — ST-13 ruling, ST-14; v9.12 — ST-14, NYSE calendar). The weekend-hold trigger was removed. See §Gap Risk Reason Labels below.
 
 | Element | Spec |
 |---------|------|
@@ -584,7 +581,7 @@ Shown when the endpoint's `data.flagged` is `true` (this section writes the resp
 
 | `reasons` value | Label (Table and Grid View) |
 |-----------------|-----------------------------|
-| `earnings` | "Earnings due by next trading session". Shown for a US position when earnings fall after today and on or before the next trading day: tomorrow on Monday to Thursday, Monday on Friday to Sunday. Earnings today (day 0) are not flagged. UK positions are never flagged (ST-13 ruling; `strategy_rules.md` §4.2.3 is US-only). |
+| `earnings` | "Earnings due by next trading session". Shown for a US position when earnings fall after today and on or before the next NYSE session: usually tomorrow on Monday to Thursday and Monday on Friday to Sunday, and the day after an NYSE holiday when one intervenes (e.g. Tuesday on the Friday before a Monday holiday). Computed server-side (`position_endpoints.md` v2.15.0). Earnings today (day 0) are not flagged. UK positions are never flagged (ST-13 ruling; `strategy_rules.md` §4.2.3 is US-only). |
 | ~~`weekend_hold`~~ | Removed (v9.10 ST-14 disposition: trigger removed). The value and label are gone, and the enum shrank in `position_endpoints.md` v2.12.0 / `openapi.yaml` 3.22.0. |
 
 Tooltip structure, `aria-label` pattern, colour, stacking and clearing are unchanged.

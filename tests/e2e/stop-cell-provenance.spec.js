@@ -13,6 +13,10 @@
  *   SC-SCP-05  ATR present but multiplier null shows "ATR {atr}"; atr_source fallback/user append "estimated"/"entered"
  *   SC-SCP-06  Grid View — provenance line and stop-details trigger present in the Stop tile
  *   SC-SCP-07  Header explainer no longer claims "recalculated daily"
+ * ST-15 (BLG-FE-202, EPIC-02, v9.12) — Frozen Stop Indicator (positions.md §Frozen Stop Indicator)
+ *   SC-SCP-08  Table View — stop_frozen_reason post-grace shows the indicator in place of the provenance line, plus the tooltip row
+ *   SC-SCP-09  Grid View — the same indicator in the Stop tile
+ *   SC-SCP-10  During grace no indicator shows, even with stop_frozen_reason set
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Positions'). Grid View
@@ -203,4 +207,43 @@ test('SC-SCP-07: header explainer no longer claims ATR is recalculated daily', a
   await page.getByRole('button', { name: /why is my stop moving/i }).hover();
   await expect(page.getByText(/recalculated when positions load and by a nightly update/i)).toBeVisible({ timeout: 5000 });
   await expect(page.getByText(/recalculated daily/i)).toHaveCount(0);
+});
+
+// ---------------------------------------------------------------------------
+// ST-15 (BLG-FE-202, v9.12): Frozen Stop Indicator
+// ---------------------------------------------------------------------------
+
+const FROZEN = { ...PROFITABLE, stop_frozen_reason: 'atr_unavailable' };
+const FROZEN_TEXT = 'Stop frozen · ATR unavailable';
+
+test('SC-SCP-08: Table View shows the frozen-stop indicator in place of the provenance line', async ({ page }) => {
+  await gotoPositionsTable(page, [makePosition(FROZEN), makePosition({ ...NULLS, stop_frozen_reason: null })]);
+
+  const row = rowFor(page, 'AAPL');
+  await expect(row.getByTestId('stop-frozen-indicator')).toHaveText(FROZEN_TEXT);
+  await expect(row.getByTestId('stop-provenance')).toHaveCount(0);
+  await expect(row.getByTestId('stop-frozen-indicator')).toHaveClass(/text-amber-700/);
+  // A row without the reason keeps its provenance line.
+  await expect(rowFor(page, 'NVDA').getByTestId('stop-frozen-indicator')).toHaveCount(0);
+  await expect(rowFor(page, 'NVDA').getByTestId('stop-provenance')).toBeVisible();
+
+  const tip = await openStopDetails(page, 'AAPL');
+  await expect(tip).toContainText('Not updated at the last recalculation because ATR was unavailable.');
+});
+
+test('SC-SCP-09: Grid View shows the frozen-stop indicator in the Stop tile', async ({ page }) => {
+  await stubPositionsPage(page, [makePosition(FROZEN)]);
+  await page.goto('/#/Positions');
+  await page.waitForSelector('text=AAPL', { timeout: 8000 });
+
+  await expect(page.getByTestId('stop-frozen-indicator')).toHaveText(FROZEN_TEXT);
+  await expect(page.getByTestId('stop-provenance')).toHaveCount(0);
+});
+
+test('SC-SCP-10: no frozen-stop indicator during grace', async ({ page }) => {
+  await gotoPositionsTable(page, [makePosition({ ...LOSING, stop_frozen_reason: 'atr_unavailable' })]);
+
+  const row = rowFor(page, 'MSFT');
+  await expect(row.getByTestId('stop-provenance')).toBeVisible();
+  await expect(row.getByTestId('stop-frozen-indicator')).toHaveCount(0);
 });

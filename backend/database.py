@@ -617,9 +617,20 @@ def get_settings():
 
 
 def create_settings(data):
-    """Create new settings record"""
+    """Create new settings record.
+
+    ST-16 (BLG-BE-144, v9.12): None values are dropped, as update_settings()
+    already does, so a field the request left out keeps its column default.
+    Since the v9.10 parameter-authority ruling the Settings page no longer sends
+    min_hold_days, atr_period, atr_multiplier_initial or atr_multiplier_trailing,
+    and inserting the request model's None for them wrote NULL over the defaults.
+    """
+    data = {k: v for k, v in data.items() if v is not None}
     with get_db() as conn:
         with conn.cursor() as cur:
+            if not data:
+                cur.execute("INSERT INTO settings DEFAULT VALUES RETURNING *")
+                return dict(cur.fetchone())
             columns = ', '.join(data.keys())
             placeholders = ', '.join(['%s'] * len(data))
             query = f"INSERT INTO settings ({columns}) VALUES ({placeholders}) RETURNING *"

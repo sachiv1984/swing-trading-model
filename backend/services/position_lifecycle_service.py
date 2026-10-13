@@ -68,7 +68,17 @@ def classify_position(position: dict) -> Tuple[str, Optional[str]]:
     if days_held < GRACE_PERIOD_DAYS:
         return GRACE, None
 
+    # ST-13 (BLG-BE-149, v9.12): compare native with native. positions.entry_price
+    # is GBP for every market (data_model_positions_dictionary.md v0.4), while
+    # current_price and initial_stop are native, so a US row's native entry is
+    # fill_price, else entry_price × fx_rate. Comparing the GBP entry with a USD
+    # price showed a US position down by up to ~20% in dollars as PROFITABLE.
     entry_price = position.get("entry_price")
+    if position.get("market") == "US":
+        fx_rate = position.get("fx_rate")
+        entry_price = position.get("fill_price") or (
+            float(entry_price) * float(fx_rate) if entry_price and fx_rate else None
+        )
     current_price = (
         position.get("current_price_native")
         or position.get("current_price")

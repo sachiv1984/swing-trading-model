@@ -51,7 +51,8 @@ class TestErrorToastsCarryDuration8000:
     CASES = [
         ("components/positions/PositionCard.js", "Failed to mark position as reviewed. Please try again."),
         ("hooks/useWatchlistModal.js", "Failed to keep"),
-        ("pages/Positions.js", "Failed to update stop. Please try again."),
+        # ("pages/Positions.js", "Failed to update stop. ...") was removed with the
+        # Trail Stop apply action: the modal is read-only since ST-10 (BLG-BE-159, v9.12).
         ("pages/Positions.js", "Failed to mark position as reviewed. Please try again."),
         ("pages/Settings.js", "Please fix the errors below before saving"),
         ("pages/Settings.js", "Failed to save settings"),
@@ -59,7 +60,7 @@ class TestErrorToastsCarryDuration8000:
         ("pages/Signals.js", "Added to watchlist but failed to update signal status"),
     ]
 
-    def test_all_8_error_toast_sites_have_duration_8000(self):
+    def test_all_7_error_toast_sites_have_duration_8000(self):
         missing = []
         for rel_path, needle in self.CASES:
             source = _read(rel_path)
