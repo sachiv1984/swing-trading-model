@@ -74,6 +74,36 @@ from strategy_parameters import (
 # GET POSITIONS
 # ============================================================================
 
+def stop_to_store(new_stop: float, stored_stop: Optional[float]) -> float:
+    """Value to write to positions.current_stop after a recompute (ST-11, BLG-BE-160).
+
+    The stop is stored at 2 dp, but a stored stop can carry more places (an
+    initial stop written by add_position(), or a pre-v9.12 row). When the
+    recompute keeps that stop, or raises it by less than half a penny/cent,
+    round(new, 2) could fall below the stored value. That would move the stop
+    down, which strategy_rules.md §7.3 forbids. Never write below the stored stop.
+    """
+    stored = stored_stop or 0
+    return max(round(new_stop, 2), stored)
+
+
+def native_entry_price(pos: Dict, live_fx_rate: float) -> float:
+    """A position's entry price in its native currency, for stop arithmetic (ST-12, BLG-BE-145).
+
+    UK: entry_price. US: fill_price, the native entry. positions.entry_price is GBP
+    for every market (data_model_positions_dictionary.md v0.4), so a US row with a
+    NULL fill_price is converted back with its stored fx_rate, or the live rate if
+    that is NULL too. pos.get('fill_price', ...) used to return None for such a
+    row, which crashed both stop recompute paths.
+    """
+    if pos['market'] != 'US':
+        return pos['entry_price']
+    fill_price = pos.get('fill_price')
+    if fill_price:
+        return fill_price
+    return pos['entry_price'] * (pos.get('fx_rate') or live_fx_rate)
+
+
 def get_positions_with_prices() -> List[Dict]:
     """
     Get all open positions with live prices and P&L calculations
@@ -130,10 +160,7 @@ def get_positions_with_prices() -> List[Dict]:
             current_price_native = pos.get('current_price', pos['entry_price'])
         
         # Calculate P&L
-        if pos['market'] == 'US':
-            entry_price_display = pos.get('fill_price', pos['entry_price'] * (pos.get('fx_rate', 1.27)))
-        else:
-            entry_price_display = pos['entry_price']
+        entry_price_display = native_entry_price(pos, live_fx_rate)
         
         pnl_native, pnl_gbp, pnl_pct = calculate_position_pnl(
             entry_price=entry_price_display,
@@ -375,7 +402,7 @@ def analyze_positions() -> Dict:
         live_price = get_current_price(pos['ticker'])
         
         # Determine entry price
-        entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
+        entry_price = native_entry_price(pos, live_fx_rate)
         
         if live_price:
             # Fix UK stocks: Yahoo returns pence
@@ -458,7 +485,7 @@ def analyze_positions() -> Dict:
             
             if atr_value and atr_value > 0:
                 # Get entry price in native currency
-                entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
+                entry_price_native = entry_price
                 
                 # Calculate trailing stop
                 trailing_stop_native, stop_reason, atr_mult = calculate_trailing_stop(
@@ -528,7 +555,7 @@ def analyze_positions() -> Dict:
             # during grace the stored stop is left exactly as it is -- not
             # rewritten, not even rounded. Trailing starts on day 10.
             if not grace_period:
-                position_updates['current_stop'] = round(trailing_stop_native, 2)
+                position_updates['current_stop'] = stop_to_store(trailing_stop_native, current_stop_native)
             # ST-01 (BLG-BE-135, EPIC-01, v9.9): only stamp stop_calculated_at /
             # active_atr_multiplier when the stop was actually recalculated
             # against ATR (grace period carries the stop over unchanged, with
@@ -634,7 +661,7 @@ def run_nightly_trailing_stop_update() -> Dict:
         if pos['market'] == 'UK' and live_price > 1000:
             live_price = live_price / 100
 
-        entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
+        entry_price = native_entry_price(pos, live_fx_rate)
 
         # Recalculate ATR at _ATR_PERIOD to ensure freshness
         atr_value = calculate_atr(pos['ticker'], period=_ATR_PERIOD)
@@ -685,7 +712,7 @@ def run_nightly_trailing_stop_update() -> Dict:
         )
 
         nightly_updates = {
-            'current_stop': round(new_stop_native, 2),
+            'current_stop': stop_to_store(new_stop_native, current_stop_native),
             'current_price': round(live_price, 4),
             'atr': round(atr_value, 4),
             'holding_days': holding_days,

@@ -5098,6 +5098,26 @@ In `generate_narrative` (`backend/services/monthly_pnl_narrative_service.py`), i
 
 ---
 
+### BLG-BE-175 — Exiting a US position with a NULL fill_price fails in the P&L arithmetic
+**Priority:** P3 (Low)
+**Type:** Backend / Robustness
+**Owner:** Head of Engineering
+**Source:** ST-12 (EPIC-02, cycle `2026-10-12__release-v9.12`) — found while fixing BLG-BE-145's recompute paths — 2026-10-13
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`exit_position()` (`backend/services/position_service.py`) reads the native entry as `position.get('fill_price', position['entry_price'])` for US positions. When the key exists but is NULL this returns None, and the realised P&L arithmetic raises. Falling back to `entry_price` would also be wrong, because `positions.entry_price` is GBP for every market (`data_model_positions_dictionary.md` v0.4). ST-12 fixed the same pattern on the on-load, nightly and `GET /positions` paths with `native_entry_price()`, which uses `fill_price`, else `entry_price × fx_rate`. The exit path was left alone because it writes a closed trade's realised P&L, which is outside ST-12's scope.
+
+**Scope**
+- Use `native_entry_price(position, <stored fx_rate, else the exit fx_rate>)` in `exit_position()`
+- Add a unit test for a US exit with a NULL `fill_price`
+
+**Acceptance Criteria**
+- A US position with a NULL `fill_price` exits without error, and its realised P&L uses `entry_price × fx_rate` as the native entry (unit test)
+
+---
+
 ### BLG-SPEC-193 — Trade plan contract still lists 3 plan statuses after openapi.yaml moved to 7
 **Priority:** P3 (Low)
 **Type:** Spec Debt

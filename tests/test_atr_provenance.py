@@ -241,3 +241,47 @@ class TestGetPositionsExposesAtrSource(_Patcher):
         self._patch("get_sector_and_industry", return_value=(None, None))
         result = position_service.get_positions_with_prices()
         assert result[0]["atr_source"] == source
+
+
+class TestUsPositionWithNullFillPrice(_Patcher):
+    """ST-12 (BLG-BE-145, EPIC-02, v9.12): a US row with a NULL fill_price recomputes
+    without error on both paths and on GET /positions. positions.entry_price is GBP,
+    so the native entry is entry_price × fx_rate: $100 here. The §7.2 breakeven floor
+    must use $100, not the GBP £80."""
+
+    def _us(self, **overrides):
+        base = dict(ticker="AAPL", market="US", entry_price=80.0, fill_price=None, fx_rate=1.25,
+                    current_stop=85.0, initial_stop=75.0, atr=5.0, total_cost=800.0)
+        base.update(overrides)
+        return _open_position(**base)
+
+    def test_on_load_recompute_uses_native_entry_floor(self):
+        _, mock_update = _AnalyzeRun._run(self, self._us(), price=104.0)
+        # Profitable: max(stored 85, 104 − 2 × 5 = 94, native entry 100) = 100
+        assert mock_update.call_args.args[1]["current_stop"] == pytest.approx(100.0)
+
+    def test_nightly_recompute_uses_native_entry_floor(self):
+        self._use_real_calcs("calculate_trailing_stop", "calculate_holding_days")
+        self._patch("get_portfolio", return_value={"id": "portfolio-1"})
+        self._patch("get_positions", return_value=[self._us()])
+        self._patch("get_live_fx_rate", return_value=1.30)
+        self._patch("get_current_price", return_value=104.0)
+        self._patch("calculate_atr", return_value=5.0)
+        mock_update = self._patch("update_position")
+        position_service.run_nightly_trailing_stop_update()
+        assert mock_update.call_args.args[1]["current_stop"] == pytest.approx(100.0)
+
+    def test_null_fx_rate_falls_back_to_live_rate(self):
+        _, mock_update = _AnalyzeRun._run(self, self._us(fx_rate=None), price=104.0)
+        # live rate patched to 1.0 by _AnalyzeRun: native entry 80 × 1.0 = 80, so no floor binds
+        assert mock_update.call_args.args[1]["current_stop"] == pytest.approx(94.0)
+
+    def test_get_positions_computes_pnl(self):
+        self._patch("get_portfolio", return_value={"id": "portfolio-1"})
+        self._patch("get_positions", return_value=[self._us()])
+        self._patch("get_live_fx_rate", return_value=1.25)
+        self._patch("get_current_price", return_value=110.0)
+        self._patch("get_sector_and_industry", return_value=(None, None))
+        self._use_real_calcs("calculate_position_pnl")
+        result = position_service.get_positions_with_prices()
+        assert result[0]["pnl"] is not None
