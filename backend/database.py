@@ -2429,7 +2429,7 @@ def ensure_trailing_stop_recommendation_log_table() -> None:
     (GET /positions/{id}/stop-trail), so trailing_stop_action_rate
     (docs/specs/metrics_definitions.md #Trailing Stop Action Rate) is
     computable — numerator/denominator joins each row here to the earliest
-    subsequent PATCH /positions/{id} that set positions.stop_price >=
+    subsequent PATCH /positions/{id} that set positions.current_stop >=
     recommended_stop within the capture window (24h, Product Owner-confirmed
     at sprint planning), using positions.updated_at as the PATCH timestamp.
     Same pattern as pre_entry_validation_log above.
