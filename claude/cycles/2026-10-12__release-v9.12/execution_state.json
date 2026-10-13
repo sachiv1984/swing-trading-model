@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T08:54:26Z",
+  "last_updated_utc": "2026-10-13T09:09:44Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -16,10 +16,10 @@
   ],
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-12__release-v9.12/EPIC-01",
       "pr_number": 2022,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-12__release-v9.12/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -41,7 +41,7 @@
         "ST-01": {
           "title": "Accept UUID trade IDs in the journal summary, end to end",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Data Model & Domain Schema Owner; Infrastructure & Operations Owner",
           "github_issue": 1974,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-01",
@@ -73,7 +73,7 @@
         "ST-02": {
           "title": "Drop briefing actions that name a ticker outside the context",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1975,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-01",
@@ -98,7 +98,7 @@
         "ST-03": {
           "title": "Label available cash and starting capital separately in the briefing context",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1976,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-01",
@@ -123,7 +123,7 @@
         "ST-04": {
           "title": "Check that briefing and chat responses citing a stop include its recalculation time",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1977,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-01",
@@ -155,7 +155,7 @@
         "ST-05": {
           "title": "Widen the monthly P&L narrative's instrument-directive scan to inflected and indirect wording",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1978,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-01",
@@ -179,7 +179,7 @@
         "ST-06": {
           "title": "Make the daily AI cost alert count Claude calls",
           "classification": "delegated_backend",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1979,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-01",
@@ -216,7 +216,19 @@
         "status": "cleared",
         "signed_utc": "2026-10-13T08:40:00Z",
         "notes": "Agent-mediated DoQ review (§5.3, user-directed via 'open the PR'): first pass Blocked (journal summary wrote no claude_audit_log row while ST-06 docs claimed all Claude spend counted) — fixed in 4bb38bdd; second pass Approved. PR QA sign-off comment and Product Owner acceptance remain human."
-      }
+      },
+      "merge_gate_record": {
+        "qa_signoff_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2022#issuecomment-6142198228",
+        "po_acceptance_comment": "https://github.com/sachiv1984/swing-trading-model/pull/2022#issuecomment-6142198528",
+        "method": "agent_recorded_on_explicit_human_direction",
+        "recorded_utc": "2026-10-13T09:09:05Z",
+        "head": "249e3ded",
+        "open_escalation_accepted": "ESC-EXEC-20261013-02 (Product Owner ruling 2026-10-13)",
+        "merge": "human — merged by sachiv1984 at 2026-10-13T09:03:18Z, merge commit 90099bec",
+        "note": "Both gate comments were posted at the user's direction a few minutes AFTER the merge (the engine found the PR already merged when posting). The merge itself was a human decision; the pre-merge evidence was the dated DoQ block in qa_evidence_EPIC-01.md (qa_signed_off true) and the agent-mediated reviews on the PR."
+      },
+      "merged_utc": "2026-10-13T09:03:18Z",
+      "merge_commit": "90099bec"
     },
     "EPIC-02": {
       "status": "not_started",
@@ -1170,9 +1182,10 @@
     "ESC-EXEC-20261013-02"
   ],
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": [
+      "EPIC-01"
+    ],
     "epics_pending": [
-      "EPIC-01",
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
@@ -1187,7 +1200,8 @@
     "ST-01 AC 1/AC 2: the staging API was temporarily switched in the Render dashboard to deploy exec/2026-10-12__release-v9.12/EPIC-01 (head def0bc0d) so the fix could be checked before merge (staging-deploy.yml deploys main only); the user is switching it back to main.",
     "2026-10-13: the user confirmed the Render staging API is switched back to main after the ST-01 check.",
     "ST-06 accepted by the Product Owner with its AC 2 run record post-merge (ESC-EXEC-20261013-02, mirrored to .claude_current_state.json on main at 7812d70e). Check at the first run sprint after EPIC-01 merges.",
-    "PR #2022 agent-mediated review (Director of Quality + Product Owner, both Approved with Comments, no must-fix): 7 follow-ups filed (BLG-AI-16..19, BLG-OPS-186/187, BLG-QA-221); DEL-20261013-02 unblock criteria tightened to prove the final code is live (deploy commit, request_count, post-merge journal-summary claude_audit_log row)."
+    "PR #2022 agent-mediated review (Director of Quality + Product Owner, both Approved with Comments, no must-fix): 7 follow-ups filed (BLG-AI-16..19, BLG-OPS-186/187, BLG-QA-221); DEL-20261013-02 unblock criteria tightened to prove the final code is live (deploy commit, request_count, post-merge journal-summary claude_audit_log row).",
+    "EPIC-01 PR #2022 merged by the human developer at 2026-10-13T09:03:18Z (90099bec). The QA sign-off and Product Owner acceptance comments were recorded on the user's direction just after the merge; see merge_gate_record. Orphaned post-merge commit check: none. Sibling-branch sync (STEP 4 3c): no other v9.12 EPIC branches exist yet."
   ],
   "sealed": false,
   "sealed_utc": null
