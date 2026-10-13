@@ -1,8 +1,8 @@
 **Owner:** Data Model Domain & Schema Owner
 **Class:** Class 1 Canonical Specification
 **Status:** Active
-**Version:** 0.3
-**Last Updated:** 2026-10-05 (PR #1892 review correction — `fees_paid` row notes the proportional reduction on partial exit); prior — 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — `fees_paid` row: NOT NULL re-applied live, no default (the documented `0` default never existed live)); prior — 2026-03-17
+**Version:** 0.4
+**Last Updated:** 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — `entry_price` is GBP, `fill_price` the native entry, `user_fill_price` the broker fill; US `total_cost` and the `pnl` derivations use `fill_price`; `fx_rate` 1.0 for UK. Doc fix per the Data Model & Domain Schema Owner ruling, `ESC-EXEC-20261013-05`); prior — 2026-10-05 (PR #1892 review correction — `fees_paid` row notes the proportional reduction on partial exit); prior — 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — `fees_paid` row: NOT NULL re-applied live, no default (the documented `0` default never existed live)); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -50,12 +50,12 @@ The `positions` table serves **both open and closed positions** within a single 
 | Field | SQL Type | Nullable | Description |
 |-------|----------|----------|-------------|
 | `entry_date` | DATE | NO | Calendar date on which the position was opened. Used for `holding_days` calculation and tax-year attribution of open positions. |
-| `entry_price` | DECIMAL(10,4) | NO | The intended entry price in native currency (USD for US, GBP for UK). This is the price used for position sizing and stop calculations — it may differ from `fill_price` if slippage occurred. |
-| `fill_price` | DECIMAL(10,4) | YES | Actual execution fill price in native currency. NULL if not recorded. When present, this reflects real execution; `entry_price` reflects the signal/intended price. Added in migration v1.1→v1.2. |
-| `fill_currency` | VARCHAR(3) | YES | Currency of the fill: `"GBP"` or `"USD"`. NULL if `fill_price` is not recorded. Added in migration v1.1→v1.2. |
-| `fx_rate` | DECIMAL(10,6) | YES | GBP/USD exchange rate at time of entry. Applied to US positions only. NULL for UK positions. Used to convert US position cost to GBP for `total_cost`. |
+| `entry_price` | DECIMAL(10,4) | NO | Entry price **in GBP** for every market: the request's native entry price divided by `fx_rate` for US positions, unchanged for UK (`add_position()` writes `entry_price_gbp`). The native entry price is `fill_price`; the broker's actual fill is `user_fill_price`. *(Corrected v0.4: earlier versions said native currency; Data Model & Domain Schema Owner ruling, doc fix, `ESC-EXEC-20261013-05`.)* |
+| `fill_price` | DECIMAL(10,4) | YES | The entry price in **native** currency (USD for US, GBP for UK), copied from the request's `entry_price` and set on every insert by `add_position()`. Stop, P&L and display readers use it as the native entry for US positions. It is not the broker fill: that is `user_fill_price`, the request's optional `fill_price`, NULL when not supplied. |
+| `fill_currency` | VARCHAR(3) | YES | Currency of `fill_price`: `"GBP"` or `"USD"`, set from `market` on every insert. |
+| `fx_rate` | DECIMAL(10,6) | YES | GBP/USD exchange rate at time of entry: the user-supplied rate, else the live rate at entry, for US positions; `1.0` for UK positions. Converts the native entry and fees to GBP for `entry_price`, `fees_paid` and `total_cost`. |
 | `shares` | DECIMAL(10,4) | NO | Number of shares held. Fractional shares allowed (4 decimal places). Changed from INTEGER to DECIMAL in migration v1.2→v1.3. |
-| `total_cost` | DECIMAL(12,2) | NO | Total cost of the position **in GBP**, including fees. Derivation: for UK positions `total_cost = (entry_price × shares) + fees_paid`; for US positions `total_cost = (entry_price × shares / fx_rate) + fees_paid`. This is the GBP book cost used for all P&L and analytics calculations. |
+| `total_cost` | DECIMAL(12,2) | NO | Total cost of the position **in GBP**, including fees. Derivation at entry: UK `total_cost = entry_price × shares + fees_paid`; US `total_cost = fill_price × shares / fx_rate + fees_paid`, which equals `entry_price × shares + fees_paid` because `entry_price` is already GBP (§5.1). Reduced proportionally on partial exit, with `fees_paid`; stored rounded to 2 dp. |
 | `fees_paid` | DECIMAL(10,2) | NO | Total fees paid at entry, in GBP, reduced proportionally on partial exit. `NOT NULL`, no default — re-applied live 2026-10-05 (`data_model.md` DS-23); an insert that omits it fails rather than recording £0. |
 | `fee_type` | VARCHAR(20) | YES | Fee calculation method applied (e.g. `"flat"`, `"percent"`). Informational — does not affect `fees_paid` which is always the computed amount. Added in migration v1.1→v1.2. |
 
@@ -77,7 +77,7 @@ The `positions` table serves **both open and closed positions** within a single 
 |-------|----------|----------|-------------|
 | `current_price` | DECIMAL(10,4) | YES | Most recently recorded price in native currency. Updated by the daily price refresh process. NULL before first price update or after position closure. |
 | `holding_days` | INTEGER | NO | Calendar days held, measured from `entry_date` to the current date (open positions) or `exit_date` (closed positions). Updated daily for open positions. Default `0`. |
-| `pnl` | DECIMAL(12,2) | NO | P&L in GBP. **Unrealised** for open positions; **realised** for closed positions. Derivation (open): `(current_price − entry_price) × shares × fx_rate_factor − fees_paid`, where `fx_rate_factor = 1/fx_rate` for US positions and `1` for UK positions. Derivation (closed): `(exit_price − entry_price) × shares × fx_rate_factor − fees_paid`. Always GBP-denominated. Default `0`. |
+| `pnl` | DECIMAL(12,2) | NO | P&L in GBP. **Unrealised** for open positions; **realised** for closed positions. The native entry is `fill_price` for US and `entry_price` for UK (§5.2). Derivation (open): `(current_price − native_entry) × shares × fx_rate_factor − fees_paid`, where `fx_rate_factor = 1/fx_rate` for US positions and `1` for UK positions. Derivation (closed): `(exit_price − native_entry) × shares × fx_rate_factor − fees_paid`. Always GBP-denominated. Default `0`. The live computation differs on the FX rate and fee deduction: BLG-SPEC-198. |
 | `pnl_pct` | DECIMAL(10,2) | NO | P&L as a percentage of `total_cost`. Formula: `pnl / total_cost × 100`. Also returned as `pnl_percent` by the API layer (alias). Default `0`. |
 
 ---
@@ -129,8 +129,11 @@ The `positions` table serves **both open and closed positions** within a single 
 
 ```
 UK position:  total_cost = (entry_price × shares) + fees_paid
-US position:  total_cost = (entry_price × shares / fx_rate) + fees_paid
+US position:  total_cost = (fill_price × shares / fx_rate) + fees_paid
+           ≡ (entry_price × shares) + fees_paid      (entry_price is GBP = fill_price / fx_rate)
 ```
+
+Worked US example: `fill_price` $100, 10 shares, $1.50 FX fee, `fx_rate` 1.25. `position_service.py` computes `(1000 + 1.50) / 1.25` = £801.20; `entry_price` = £80, `fees_paid` = £1.20; `1000 / 1.25 + 1.20` = £801.20. (The pre-v0.4 formula `entry_price × shares / fx_rate` divided by the rate twice: £641.20.) Partial exits reduce `total_cost` and `fees_paid` proportionally, so the identity holds at entry, not necessarily after a partial exit.
 
 `total_cost` is the GBP book cost. It is the denominator for `pnl_pct`.
 
@@ -138,10 +141,12 @@ US position:  total_cost = (entry_price × shares / fx_rate) + fees_paid
 
 ```
 Open position (UK):   pnl = (current_price − entry_price) × shares − fees_paid
-Open position (US):   pnl = (current_price − entry_price) × shares / fx_rate − fees_paid
+Open position (US):   pnl = (current_price − fill_price) × shares / fx_rate − fees_paid
 Closed position (UK): pnl = (exit_price − entry_price) × shares − fees_paid
-Closed position (US): pnl = (exit_price − entry_price) × shares / fx_rate − fees_paid
+Closed position (US): pnl = (exit_price − fill_price) × shares / fx_rate − fees_paid
 ```
+
+For US positions the native entry is `fill_price`; `entry_price` is GBP and must not be subtracted from a native price (v0.4). The live computation (`portfolio_service.py`) uses the live FX rate and does not deduct `fees_paid`; that divergence is tracked as BLG-SPEC-198.
 
 The `fx_rate` used in `pnl` derivation is the **entry-time rate** stored in the `positions` row, not a live rate. For open US positions, if `fx_rate` is NULL, implementations should use the current spot rate and note this as estimated.
 
@@ -172,12 +177,13 @@ Closed trades are attributed to the UK tax year containing their `exit_date`. Th
 
 | Field | Currency |
 |-------|----------|
-| `entry_price`, `fill_price`, `current_price`, `exit_price`, `initial_stop`, `current_stop`, `atr` | Native (USD for US, GBP for UK) |
-| `fx_rate` | GBP/USD rate (applied to US positions only) |
+| `fill_price`, `user_fill_price`, `current_price`, `exit_price`, `initial_stop`, `current_stop`, `atr` | Native (USD for US, GBP for UK) |
+| `entry_price` | Always GBP (`fill_price / fx_rate` for US) |
+| `fx_rate` | GBP/USD rate (US positions; `1.0` for UK) |
 | `total_cost`, `fees_paid`, `pnl` | Always GBP |
 | `pnl_pct` | Percentage (dimensionless) |
 
-All GBP-denominated fields use `DECIMAL(12,2)`. All native-currency price fields use `DECIMAL(10,4)`.
+`total_cost`, `fees_paid` and `pnl` use `DECIMAL(12,2)`. Price fields, including the GBP `entry_price`, use `DECIMAL(10,4)`.
 
 ---
 
@@ -198,3 +204,4 @@ All GBP-denominated fields use `DECIMAL(12,2)`. All native-currency price fields
 | 0.1 | 2026-03-17 | Initial version. ST-15 — EPIC-05 (Documentation & Standards Pack). v2.0 sprint cycle 2026-03-17__release-v2.0. Data Model Domain & Schema Owner. Reviewed by Head of Engineering. |
 | 0.2 | 2026-10-05 | `fees_paid` row corrected: `NOT NULL` re-applied live on staging and production (`data_model.md` DS-23, ST-30, EPIC-05, v9.9, BLG-SPEC-165); the documented `Default 0` removed — no default ever existed live. Data Model & Domain Schema Owner (agent-mediated, §5.3); live change by the user. |
 | 0.3 | 2026-10-05 | `fees_paid` row: notes that fees are reduced proportionally on partial exit, matching `data_model.md` (PR #1892 agent-mediated Director of Quality review). |
+| 0.4 | 2026-10-13 | ST-38 (EPIC-05, v9.12, BLG-SPEC-183; also covers BLG-SPEC-190's scope): `entry_price` documented as GBP for every market, matching what `add_position()` writes; `fill_price` is the native entry and `user_fill_price` the broker fill; `fx_rate` 1.0 for UK; `fill_currency` always set; US `total_cost` (§5.1, with a worked example) and the `pnl` derivations (§5.2) use `fill_price`; §6 currency table corrected. Doc fix, Data Model & Domain Schema Owner ruling (agent-mediated, §5.3), `ESC-EXEC-20261013-05`. |

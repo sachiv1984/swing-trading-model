@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-13 (session — 3 new items added from Sprint Execution EPIC-05 ST-34 drift triage, 2026-10-12__release-v9.12: BLG-SPEC-196, BLG-SPEC-197, BLG-QA-223); prior — 2026-10-13 (session — 2 new items added from the PR #2023 review, EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-388, BLG-QA-222); prior — 2026-10-13 (session — 1 new item added from Sprint Execution EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-387, from the ST-44 PMO Lead observation); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (session — 4 new items added from Sprint Execution EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-196, BLG-SPEC-197, BLG-QA-223 (ST-34 drift triage), BLG-SPEC-198 (ST-38 ruling condition C2)); prior — 2026-10-13 (session — 2 new items added from the PR #2023 review, EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-388, BLG-QA-222); prior — 2026-10-13 (session — 1 new item added from Sprint Execution EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-387, from the ST-44 PMO Lead observation); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5466,5 +5466,26 @@ DS-17's `idx_positions_open_ticker_entry_date_unique` was confirmed live in prod
 **Acceptance Criteria**
 - Running the detector against `data_model.md` no longer reports `idx_trade_plans_ticker`
 - A unit test fails if a rollback-only index name is reported again
+
+---
+
+### BLG-SPEC-198 — Open-position pnl: code uses the live FX rate and does not deduct fees; the dictionary says entry-time FX, fees deducted
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner; Metrics Definitions & Analytics Owner
+**Source:** ST-38/EPIC-05, cycle `2026-10-12__release-v9.12` — Data Model & Domain Schema Owner ruling on `ESC-EXEC-20261013-05`, condition C2 (agent-mediated, §5.3) — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`data_model_positions_dictionary.md` §5.2 (v0.4) defines open-position `pnl` for US positions as `(current_price − fill_price) × shares / fx_rate − fees_paid`, using the **entry-time** `fx_rate`. The live computation in `backend/services/portfolio_service.py` (around lines 141–146) divides native P&L by `live_fx_rate` and does not subtract `fees_paid`, and `utils/calculations.py`'s `calculate_position_pnl()` takes a `live_fx_rate` too. Spec and code therefore disagree on both the FX rate and the fee deduction, so a reader of the dictionary cannot reproduce the displayed unrealised P&L. ST-38 corrected only the entry-price currency in these formulas.
+
+**Scope**
+- Decide which is canonical, including whether currency movement since entry belongs in unrealised P&L. Check `metrics_definitions.md` and the Positions/Portfolio frontend specs for the displayed definition
+- Align the losing side. A code change that alters displayed P&L needs a design pass
+
+**Acceptance Criteria**
+- The dictionary's §5.2 and the `pnl` row state the same FX basis and fee treatment as the code that produces the displayed figure, or a code change brings the code to the spec with Data Model & Domain Schema Owner sign-off
+- The decision is recorded with its rationale
 
 ---
