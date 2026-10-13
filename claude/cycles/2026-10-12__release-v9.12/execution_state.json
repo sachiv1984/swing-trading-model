@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T08:14:47Z",
+  "last_updated_utc": "2026-10-13T08:20:35Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -40,16 +40,16 @@
         "ST-01": {
           "title": "Accept UUID trade IDs in the journal summary, end to end",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Data Model & Domain Schema Owner; Infrastructure & Operations Owner",
           "github_issue": 1974,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "5b667160f21304334a27800f9e03d5ba9c2688fd",
           "delegation_record_id": "DEL-20261013-01",
           "blocked_since_utc": "2026-10-13T07:25:55Z",
           "unblock_criteria": "DS-31 Verification output from staging and production (AC 4); a dated staging journal-summary run returning generated content (AC 1); the ai_audit_log row with UUID trade_ids (AC 2). Recorded in DS-31 Live Confirmation and qa_evidence_EPIC-01.md.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-13T08:20:32Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/data_model.md#DS-31 — Store journal-summary trade IDs as UUIDs in ai_audit_log (v2.59, 2026-10-13)",
             "docs/specs/api_contracts/ai_endpoints.md#POST /ai/journal-summary",
@@ -58,10 +58,16 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.ds31_applied_staging_and_production",
-          "sign_off_record": null,
-          "notes": "Engine-written code, test and docs (AC 3, AC 4 doc half). Live migration and staging run delegated: DEL-20261013-01. Engine commit ae6ade40ef6b74931c3a525a9e045bab6c6917df (2026-10-13T07:27:38Z) pushed; commit_sha is set when the delegation unblocks. 2026-10-13: AC 4 live half done — DS-31 applied and verified on staging and production (0 rows affected in each; column now _uuid), recorded in data_model.md DS-31 Live Confirmation. Open: AC 1 staging run, AC 2 audit row."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner; Infrastructure & Operations Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "signed_utc": "2026-10-13T08:20:32Z",
+            "notes": "User (human) applied and verified DS-31 on staging and production, ran the staging journal summary (generated content, 14 trades) and supplied ai_audit_log run f7ab028e (14 UUID trade_ids). DEL-20261013-01."
+          },
+          "notes": "Engine-written code, test and docs (AC 3, AC 4 doc half). Live migration and staging run delegated: DEL-20261013-01. Engine commit ae6ade40ef6b74931c3a525a9e045bab6c6917df (2026-10-13T07:27:38Z) pushed; commit_sha is set when the delegation unblocks. 2026-10-13: AC 4 live half done — DS-31 applied and verified on staging and production (0 rows affected in each; column now _uuid), recorded in data_model.md DS-31 Live Confirmation. Open: AC 1 staging run, AC 2 audit row. 2026-10-13: AC 1 and AC 2 confirmed on staging (EPIC-01 branch deployed via a temporary Render branch switch); DEL-20261013-01 Unblocked. Implementation commit ae6ade40ef6b74931c3a525a9e045bab6c6917df; commit_sha is the evidence commit. Deviation check: none — implementation matches ai_endpoints.md v1.22 and DS-31."
         },
         "ST-02": {
           "title": "Drop briefing actions that name a ticker outside the context",
@@ -1137,10 +1143,10 @@
   },
   "blocked_items": [],
   "delegated_items": [
-    "ST-01",
     "ST-06"
   ],
   "completed_items": [
+    "ST-01",
     "ST-02",
     "ST-03",
     "ST-04",
@@ -1161,7 +1167,8 @@
   },
   "process_notes": [
     "STEP 1: all 48 GitHub issues (#1974-#2021) already existed from sync gh at planning seal; no issues created.",
-    "ST-04 decision raised and resolved at sprint start: ESC-EXEC-20261013-01 (agent-mediated AI Compliance & Governance Officer ruling, first pass). No other EPIC-01 escalation needed."
+    "ST-04 decision raised and resolved at sprint start: ESC-EXEC-20261013-01 (agent-mediated AI Compliance & Governance Officer ruling, first pass). No other EPIC-01 escalation needed.",
+    "ST-01 AC 1/AC 2: the staging API was temporarily switched in the Render dashboard to deploy exec/2026-10-12__release-v9.12/EPIC-01 (head def0bc0d) so the fix could be checked before merge (staging-deploy.yml deploys main only); the user is switching it back to main."
   ],
   "sealed": false,
   "sealed_utc": null
