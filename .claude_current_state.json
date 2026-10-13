@@ -322,7 +322,10 @@
       "raised_utc": "2026-10-13T19:24:13Z",
       "sla_due_utc": "2026-10-14T19:24:13Z",
       "blocks_execution": false,
-      "disposition": "Open"
+      "disposition": "Resolved",
+      "resolved_utc": "2026-10-13T19:30:58Z",
+      "resolved_by": "Director of HR (agent-mediated, execution_prompt.md §5.3)",
+      "resolution_summary": "Approved with conditions, first pass. Exact charter text: a Strategy-copy conformance subsection at the end of §7 of frontend_specs_ux_documentation_owner.md (role owns the check, specs and triage; Engineering owns src/constants/strategy.js and the lint; Strategy Rules owner owns the rules), Scope line corrected to docs/specs/frontend/, v1.1. Applied in ST-21's commit. See execution_escalations.md."
     }
   },
   "deferred_escalations": {
