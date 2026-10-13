@@ -111,6 +111,18 @@ export default function TradeEntry() {
     };
   }, [previewTicker, formData.market, atrBlank]);
 
+  // ST-18 (BLG-FE-203, v9.12): a typed ATR where 5× ATR ≥ entry puts the stop
+  // at or below zero (usually an ATR typed in pence or cents). The inline error
+  // shows on blur or a submit attempt and disables submit while shown
+  // (position_form.md v1.9 §ATR (14-day), §Validation Errors).
+  const [atrTouched, setAtrTouched] = useState(false);
+  const atrImplausible =
+    parseFloat(formData.atr_value) > 0 &&
+    parseFloat(formData.entry_price) > 0 &&
+    INITIAL_ATR_MULTIPLIER * parseFloat(formData.atr_value) >= parseFloat(formData.entry_price);
+  const showAtrError = atrTouched && atrImplausible;
+  const marketKnown = previewTicker !== "";
+
   const [tagInput, setTagInput] = useState("");
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
 
@@ -300,6 +312,10 @@ export default function TradeEntry() {
 
   const handleSubmit = () => {
     if (!isFormValid) return;
+    if (atrImplausible) {
+      setAtrTouched(true);
+      return;
+    }
 
     // Note: fees are NOT passed here — the backend calculates authoritative fees
     // via POST /portfolio/position. No stop is sent: the backend sets the
@@ -460,16 +476,26 @@ export default function TradeEntry() {
           {/* ATR & system initial stop (ST-07, BLG-FE-197, v9.10 — position_form.md §ATR (14-day), §Initial Stop) */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="trade-entry-atr" className="text-slate-600 dark:text-slate-400">ATR (14-day)</Label>
+              <Label htmlFor="trade-entry-atr" className="text-slate-600 dark:text-slate-400">
+                {marketKnown ? `ATR (14-day, ${costs.currencySymbol})` : "ATR (14-day)"}
+              </Label>
               <Input
                 id="trade-entry-atr"
                 type="number"
                 step="0.01"
                 value={formData.atr_value}
                 onChange={(e) => handleChange("atr_value", e.target.value)}
+                onBlur={() => setAtrTouched(true)}
+                aria-invalid={showAtrError ? "true" : undefined}
+                aria-describedby={showAtrError ? "atr-implausible-error" : undefined}
                 placeholder="Fetched automatically if blank"
                 className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400"
               />
+              {showAtrError && (
+                <p id="atr-implausible-error" data-testid="atr-implausible-error" className="text-xs text-rose-700 dark:text-rose-400">
+                  This ATR puts the stop at or below zero. Check the unit: ATR is in {costs.currencySymbol}, not pence or cents.
+                </p>
+              )}
               {atrBlank && atrPreview.status === "ready" && (
                 <p data-testid="atr-fetched-hint" className="text-xs text-slate-600 dark:text-slate-400">
                   Fetched: {formatCurrency(atrPreview.atr, { currency: currencyForMarket(formData.market) })} (14-day
@@ -723,7 +749,7 @@ export default function TradeEntry() {
         </Link>
         <Button
           onClick={handleSubmit}
-          disabled={!isFormValid || createMutation.isPending}
+          disabled={!isFormValid || showAtrError || createMutation.isPending}
           className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25 disabled:opacity-50"
         >
           {createMutation.isPending ? (

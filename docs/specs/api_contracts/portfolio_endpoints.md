@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.11.1
-**Last Updated:** 2026-10-13 (ST-13, EPIC-02, v9.12, BLG-BE-149 — `display_status` basis stated: native P&L, matching `position_state`); prior — 2026-10-13 (ST-10, EPIC-02, v9.12, BLG-BE-159 — POST /portfolio/position rejects a supplied stop_price with 400); prior — 2026-10-08 (ST-13, EPIC-02, v9.11, BLG-BE-155 — GET /portfolio positions gain native-currency stop_distance_pct); prior history retained — see prior entries in version control
+**Version:** 2.12.0
+**Last Updated:** 2026-10-13 (ST-18, EPIC-03, v9.12, BLG-FE-203 — POST /portfolio/position rejects a typed atr_value where 5 × ATR ≥ entry_price with 400); prior — 2026-10-13 (ST-13, EPIC-02, v9.12, BLG-BE-149 — `display_status` basis stated: native P&L, matching `position_state`); prior — 2026-10-13 (ST-10, EPIC-02, v9.12, BLG-BE-159 — POST /portfolio/position rejects a supplied stop_price with 400); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -239,12 +239,14 @@ Response uses the standard success envelope from **conventions.md**.
 - `entry_price` must be greater than 0.
 - `tags` must follow tag rules (lowercase letters, numbers, hyphens only; max 20 characters each; max 10 tags).
 - `stop_price` is not accepted (ST-10, BLG-BE-159, v9.12). The initial stop is always set by the system at `entry_price − 5 × ATR` (`strategy_rules.md` §5, §11) and returned as `initial_stop`. A request with a non-null `stop_price` is rejected with `400`, never silently ignored. `"stop_price": null`, or omitting the field, is accepted. Strategy Rules & System Intent Owner ruling: `claude/cycles/2026-10-12__release-v9.12/execution_escalations.md` ESC-EXEC-20261013-06.
+- A typed `atr_value` must satisfy `5 × atr_value < entry_price` (ST-18, BLG-FE-203, v9.12). Otherwise the stop would be at or below zero, usually because the ATR was typed in pence or cents, and the request is rejected with `400`. A blank `atr_value` (fetched at save) is not checked against this rule.
 
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
 
 - `400` `stop_price` supplied: "stop_price is not accepted. The initial stop is set by the system at entry price − 5 × ATR (strategy_rules.md §5, §11)." The multiplier is read from the §11 constant (`backend/strategy_parameters.py` `INITIAL_ATR_MULTIPLIER`).
+- `400` implausible typed ATR: "atr_value {atr} puts the initial stop at or below zero: 5 × ATR must be less than the entry price ({entry}). ATR is in £, not pence or cents." (`$` for a US position). The multiplier is read from the §11 constant.
 - `400` Insufficient funds
 - `400` Invalid ticker format
 - `400` Invalid date (future date)
@@ -662,6 +664,7 @@ Errors use the standard error envelope from **conventions.md**.
 | 2.10.0 | 2026-10-08 | ST-13 (EPIC-02, v9.11, BLG-BE-155): `GET /portfolio` position objects gain `stop_distance_pct`, computed in native currency. A position with a null `current_stop` no longer fails the request. |
 | 2.11.0 | 2026-10-13 | ST-10 (EPIC-02, v9.12, BLG-BE-159): `POST /portfolio/position` rejects a non-null `stop_price` with `400` (it was accepted and silently ignored; the stored stop has always been `entry − 5 × ATR`). Removed from the request example and optional fields; added to validation rules and errors. Strategy Rules & System Intent Owner ruling ESC-EXEC-20261013-06. |
 | 2.11.1 | 2026-10-13 | ST-13 (EPIC-02, v9.12, BLG-BE-149): `display_status` basis stated (native P&L, the same test as `position_state`). The code now reads `pnl_native`, and a US row with a NULL `fill_price` takes its native entry as `entry_price × fx_rate`. The sign is unchanged where `fill_price` is set. No shape change. |
+| 2.12.0 | 2026-10-13 | ST-18 (EPIC-03, v9.12, BLG-FE-203): `POST /portfolio/position` rejects a typed `atr_value` where `5 × atr_value ≥ entry_price` with `400` (the stop would be at or below zero). Matches Trade Entry's inline implausible-ATR error (`position_form.md` v1.9). No shape change. |
 
 ---
 
