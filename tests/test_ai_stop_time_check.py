@@ -112,6 +112,12 @@ class TestDetection:
         out, outcome = _check("Within 3% of trailing stop — watch closely.", own_ticker="NVDA")
         assert out.endswith(f" {NVDA_NOTE}") and outcome == "appended"
 
+    def test_unparseable_timestamp_quoted_raw_counts_as_present(self):
+        from services.ai_service import _append_missing_stop_times
+        positions = [{"ticker": "MU", "stop_calculated_at": "yesterday evening"}]
+        text = "MU's stop (stop last recalculated yesterday evening) is close."
+        assert _append_missing_stop_times(text, positions, "POST /ai/chat", "response", "v1.1") == (text, None)
+
     def test_fails_open(self, caplog):
         from services import ai_service
         with patch.object(ai_service, "_stop_time_present", side_effect=RuntimeError("boom")), \
@@ -153,6 +159,14 @@ class TestBriefing:
         result, _ = _run("generate_daily_briefing", text=body)
         assert result["summary"] == "Two positions are near their stops."
         assert _audit_result(db) == "stop_time_missing_unattributed"
+
+    def test_ticker_filter_failure_fails_open_and_still_audits(self, db):
+        from services import ai_service
+        body = json.dumps({"summary": "All quiet.", "actions": [{"type": "HOLD", "ticker": "NVDA", "description": "d"}]})
+        with patch.object(ai_service, "_filter_actions_to_context", side_effect=RuntimeError("boom")):
+            result, _ = _run("generate_daily_briefing", text=body)
+        assert result["summary"] == "All quiet." and [a["ticker"] for a in result["actions"]] == ["NVDA"]
+        db.create_claude_audit_entry.assert_called_once()
 
     def test_unparseable_response_still_audited_then_falls_back(self, db):
         result, _ = _run("generate_daily_briefing", text="not json")

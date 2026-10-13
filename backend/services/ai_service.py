@@ -5,7 +5,7 @@ Provides journal summarisation, daily briefing, and chat advisory via Anthropic.
 AI output is display-only — must NOT be used in any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 
-Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
+Contract: docs/specs/api_contracts/ai_endpoints.md v1.25
 
 Post-generation stop-time check (ST-04, BLG-AI-10, v9.12; AI Compliance &
 Governance Officer ruling, ESC-EXEC-20261013-01): when a briefing or chat
@@ -74,6 +74,13 @@ MODEL_BRIEFING = CLAUDE_SONNET_4_6
 # available cash and starting capital separately.
 BRIEFING_PROMPT_VERSION = "v1.3"
 CHAT_PROMPT_VERSION = "v1.1"
+# Journal summary v1.0 (ST-06, BLG-OPS-183, v9.12): first recorded version of
+# the existing, unchanged prompt, now that its calls are logged to
+# claude_audit_log.
+JOURNAL_SUMMARY_PROMPT_VERSION = "v1.0"
+# Haiku 4.5 list pricing, the same rates as gemini_service.CLAUDE_COST_PER_*_TOKEN.
+_HAIKU_COST_PER_INPUT_TOKEN = 1.00 / 1_000_000
+_HAIKU_COST_PER_OUTPUT_TOKEN = 5.00 / 1_000_000
 
 # BLG-SEC-01: context_opts.ticker is interpolated into the ai_chat() system prompt.
 # Reject anything outside this charset (in particular \n / \r, which could otherwise
@@ -182,6 +189,10 @@ def _stop_time_present(text: str, position: dict) -> bool:
     date = _stop_time_date(position)
     if date:
         return date in text
+    raw = position.get("stop_calculated_at")
+    if isinstance(raw, str) and raw:
+        # Unparseable timestamp: the label quotes it raw, so look for it raw.
+        return raw in text
     return _NOT_RECALCULATED_RE.search(text) is not None
 
 
@@ -278,6 +289,33 @@ def _validate_context_ticker(context_opts: Optional[dict]) -> None:
         )
 
 
+def _audit_journal_summary_call(create_claude_audit_entry, model: str, prompt_hash: str, t0: float,
+                                usage=None, response_text: Optional[str] = None,
+                                compliance_check_result: Optional[str] = None) -> None:
+    """One claude_audit_log row per journal-summary model call (ST-06). Never raises."""
+    try:
+        input_tokens = getattr(usage, "input_tokens", None) if usage else None
+        output_tokens = getattr(usage, "output_tokens", None) if usage else None
+        cost_usd = None
+        if input_tokens is not None and output_tokens is not None:
+            cost_usd = round(input_tokens * _HAIKU_COST_PER_INPUT_TOKEN
+                             + output_tokens * _HAIKU_COST_PER_OUTPUT_TOKEN, 8)
+        create_claude_audit_entry(
+            endpoint="POST /ai/journal-summary",
+            model_id=model,
+            prompt_version=JOURNAL_SUMMARY_PROMPT_VERSION,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            cost_usd=cost_usd,
+            latency_ms=int((time.time() - t0) * 1000),
+            prompt_hash=prompt_hash,
+            response_length=len(response_text) if response_text else (None if compliance_check_result else 0),
+            compliance_check_result=compliance_check_result,
+        )
+    except Exception:
+        logger.warning("journal-summary audit row not written", exc_info=True)
+
+
 def summarise_journal_notes(
     notes: list[str],
     model: Optional[str] = None,
@@ -321,14 +359,28 @@ def summarise_journal_notes(
         f"Journal entries:\n{combined}"
     )
 
+    # ST-06 (BLG-OPS-183, v9.12): the journal summary wrote no claude_audit_log
+    # row, so its spend was invisible to the daily cost alert, the monthly
+    # cost views and the endpoint anomaly check. Each call now writes one,
+    # including a failed call (no cost). The audit write never fails the summary.
+    from database import create_claude_audit_entry
+    prompt_hash = _prompt_hash("", prompt)
+    t0 = time.time()
     try:
-        response = _create_message(
-            api_key,
-            model=model,
-            max_tokens=512,
-            messages=[{"role": "user", "content": prompt}],
-        )
+        try:
+            response = _create_message(
+                api_key,
+                model=model,
+                max_tokens=512,
+                messages=[{"role": "user", "content": prompt}],
+            )
+        except Exception:
+            _audit_journal_summary_call(create_claude_audit_entry, model, prompt_hash, t0,
+                                        compliance_check_result="model_call_failed")
+            raise
         summary_text = response.content[0].text if response.content else None
+        _audit_journal_summary_call(create_claude_audit_entry, model, prompt_hash, t0,
+                                    usage=response.usage, response_text=summary_text)
         if summary_text:
             sample_ai_output("journal-summary (POST /ai/journal-summary)", summary_text, model)
         return {"summary": summary_text, "model": model, "message": None}
@@ -496,9 +548,15 @@ def generate_daily_briefing() -> dict:
             parsed = None
         stop_time_result = None
         if isinstance(parsed, dict):
-            allowed_tickers = {str(t).strip().upper() for t in
-                               [p.get("ticker") for p in positions] + [s.get("ticker") for s in top_signals] if t}
-            actions = _filter_actions_to_context(parsed.get("actions", []), allowed_tickers)
+            actions = parsed.get("actions", [])
+            try:
+                allowed_tickers = {str(t).strip().upper() for t in
+                                   [p.get("ticker") for p in positions] + [s.get("ticker") for s in top_signals] if t}
+                actions = _filter_actions_to_context(actions, allowed_tickers)
+            except Exception:
+                # Fail open, as the stop-time check does: never turn a valid
+                # briefing into the fallback or skip its audit row.
+                logger.error("daily briefing ticker filter failed; actions returned unfiltered", exc_info=True)
             summary, actions, stop_time_result = _check_briefing_stop_times(
                 {"summary": parsed.get("summary", ""), "actions": actions}, positions)
 

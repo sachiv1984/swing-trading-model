@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.24
-**Last Updated:** 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — `POST /ai/check-daily-cost` sums `claude_audit_log`, so every Claude feature counts toward the daily alert; scheduler named: `ai-daily-cost-check.yml`, every 6 hours); prior — 2026-10-13 (ST-02/ST-03/ST-04, EPIC-01, v9.12, BLG-AI-11/12/10 — daily briefing drops actions naming a ticker outside the context and labels cash and starting capital separately (`BRIEFING_PROMPT_VERSION` v1.3); briefing and chat append a code-written stop recalculation time when a cited stop lacks one); prior — 2026-10-13 (ST-01, EPIC-01, v9.12, BLG-BE-162 — `POST /ai/journal-summary` `trade_ids` and `GET /ai/journal-summary/history` `trade_id` are UUID strings; history response and data source corrected to the real `ai_audit_log` record); prior history retained — see prior entries in version control
+**Version:** 1.25
+**Last Updated:** 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — `POST /ai/journal-summary` writes a `claude_audit_log` row per model call, so the daily cost alert really does cover every Claude feature; feature-tag taxonomy completed); prior — 2026-10-13 (ST-06, EPIC-01, v9.12, BLG-OPS-183 — `POST /ai/check-daily-cost` sums `claude_audit_log`, so every Claude feature counts toward the daily alert; scheduler named: `ai-daily-cost-check.yml`, every 6 hours); prior — 2026-10-13 (ST-02/ST-03/ST-04, EPIC-01, v9.12, BLG-AI-11/12/10 — daily briefing drops actions naming a ticker outside the context and labels cash and starting capital separately (`BRIEFING_PROMPT_VERSION` v1.3); briefing and chat append a code-written stop recalculation time when a cited stop lacks one); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -115,6 +115,7 @@ When the external LLM API is unreachable or returns an error, the endpoint retur
 - Default model: `claude-haiku-4-5-20251001`. Override via `AI_MODEL` env var.
 - If LLM API is unreachable: return HTTP 200 with `summary: null` and informational `message`. Do not raise HTTP 500.
 - Endpoint is read-only: no trade data is modified.
+- **Claude audit row (ST-06, v9.12, BLG-OPS-183):** each model call writes one `claude_audit_log` row: `endpoint` `POST /ai/journal-summary`, the model ID, `prompt_version` `v1.0`, tokens, `cost_usd` (Haiku 4.5 at $1/M input and $5/M output tokens), `latency_ms`, `prompt_hash` (SHA-256 of an empty system prompt plus the prompt, first 16 hex characters) and `response_length`. A call that fails after retries writes a row with `compliance_check_result = 'model_call_failed'` and no cost. No summary text is stored, so the "must not be stored" rule above still holds. Before v9.12 the journal summary wrote only `ai_audit_log`, which has no cost column, so its spend was missing from the daily cost alert, `GET /ai/monthly-cost`, `GET /ai/monthly-cost-by-feature` and the endpoint anomaly check. An audit failure is logged and never affects the summary.
 
 ---
 
@@ -674,6 +675,8 @@ Added for ST-14 (BLG-OPS-96, EPIC-03, v9.3). Read-only, sourced from the same `c
 | `POST /trades/{trade_id}/debrief` | Post-trade debrief | `backend/services/debrief_service.py` |
 | `POST /trade-plans/generate-plan` | Trade plan generation | `backend/services/gemini_service.py` |
 | `POST /trade-plans/{plan_id}/generate-thesis` | Thesis generation | `backend/services/gemini_service.py` |
+| `POST /ai/journal-summary` | AI journal summary (from v9.12, ST-06) | `backend/services/ai_service.py` |
+| `POST /reports/monthly-pnl/narrative` | Monthly P&L AI summary (from v9.11, ST-25) | `backend/services/monthly_pnl_narrative_service.py` |
 
 ### Request
 
@@ -883,6 +886,7 @@ Not a new endpoint — this is internal instrumentation, not part of this contra
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.25 | 2026-10-13 | ST-06 (EPIC-01, v9.12, BLG-OPS-183), from the agent-mediated Director of Quality review: `POST /ai/journal-summary` wrote no `claude_audit_log` row, so v1.24's "covers every Claude-calling feature" was not yet true for it. Each journal-summary model call now writes one (cost, tokens, prompt hash, latency; failed calls marked `model_call_failed`). The feature-tag taxonomy gains `POST /ai/journal-summary` and the previously unlisted `POST /reports/monthly-pnl/narrative` (v9.11). No request/response change. |
 | 1.24 | 2026-10-13 | ST-06 (EPIC-01, v9.12, BLG-OPS-183): `POST /ai/check-daily-cost` sums today's `claude_audit_log.cost_usd` instead of `gemini_audit_log`, so all Claude spend counts toward the daily alert and plan/thesis calls count once. Scheduler named: new `.github/workflows/ai-daily-cost-check.yml` (every 6 hours); none existed. Idempotency note corrected to the BLG-OPS-172 per-day de-duplication shipped in v9.9. Response shape unchanged; `openapi.yaml` 3.28.1 description only. |
 | 1.23 | 2026-10-13 | ST-02, ST-03, ST-04 (EPIC-01, v9.12; BLG-AI-11, BLG-AI-12, BLG-AI-10): `POST /ai/daily-briefing` returns only actions whose ticker is an open position or a context signal (others dropped and logged), and its context labels "available cash" and "starting capital" (omitted when 0); one combined `BRIEFING_PROMPT_VERSION` bump v1.2 → v1.3, golden fixture updated. Briefing and `POST /ai/chat` gain the post-generation stop-time check (AI Compliance & Governance Officer ruling `ESC-EXEC-20261013-01`): a cited stop without its recalculation time gets a code-written note appended, and every miss is logged and counted in `claude_audit_log.compliance_check_result`. No request/response schema change; no `openapi.yaml` change. |
 | 1.22 | 2026-10-13 | ST-01 (EPIC-01, v9.12, BLG-BE-162): `POST /ai/journal-summary` `trade_ids` is an array of string (UUID), matching `trade_history.id`; it was typed integer, so every request from Trade History failed with 422. Integers are now rejected with 422. `GET /ai/journal-summary/history` `trade_id` is a UUID string, and its response fields and data source are corrected to the real `ai_audit_log` record. `ai_audit_log.trade_ids` migrated `INTEGER[]` → `UUID[]` (DS-31). `openapi.yaml` 3.28.0 in the same commit. |
