@@ -1,8 +1,8 @@
 **Owner:** Data Model & Domain Schema Owner; Head of Specs Team
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-27
+**Version:** 1.1
+**Last Updated:** 2026-10-13 (BLG-SPEC-199, PR #2024 review, EPIC-05, v9.12 — Gap 2's risk derivation uses `fill_price` as the native entry for US positions); prior — 2026-05-27
 **Cycle:** 2026-05-26__release-v4.1 (ST-12, BLG-SPEC-39)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -105,7 +105,7 @@ CREATE INDEX idx_trade_plans_signal ON trade_plans(signal_id) WHERE signal_id IS
 
 **Current state:** `default_risk_percent` exists in `settings` but is not captured per-trade. The actual risk % used for sizing any given entry cannot be recovered from stored data (only calculable at entry time from `total_cost`, `initial_stop`, `entry_price`, `shares` — all available, but the inverse calculation is noisy due to rounding and GBP/USD conversion).
 
-**Derivation feasibility:** Risk amount = `(entry_price - initial_stop) × shares` in native currency. Divide by portfolio value at entry to get risk %. Portfolio value at entry is NOT stored directly (it must be reconstructed from `portfolio_history` snapshots if available for that date). This reconstruction is possible but fragile.
+**Derivation feasibility:** Risk amount = `(native_entry - initial_stop) × shares` in native currency, where `native_entry` is `fill_price` for US positions and `entry_price` for UK. *(Corrected 2026-10-13, BLG-SPEC-199: `positions.entry_price` is GBP for every market (`data_model.md` v2.60, ST-38), so subtracting the native `initial_stop` from it is wrong for US positions.)* Divide by portfolio value at entry to get risk %. Portfolio value at entry is NOT stored directly (it must be reconstructed from `portfolio_history` snapshots if available for that date). This reconstruction is possible but fragile.
 
 **Proposed addition:**
 ```sql

@@ -51,4 +51,5 @@ Last Updated: 2026-10-13
   - ST-34 is graded Pass_with_deviation. All of finding 5's names were checked (same detector, same revision `aba5e44b`; the script is unchanged since). But 3 of the original 11 cannot be named because the v9.9 run kept no output. The deviation is disclosed and tracked by BLG-QA-223.
   - The stale "native currency" label for `entry_price` in `metrics_definitions.md` Position Risk contradicts ST-38's GBP ruling. It is added to BLG-SPEC-198.
   - First-pass review, Approved with conditions C1 (ST-34 regrade plus a tracking item) and C2 (`metrics_definitions.md` label item). Both conditions were applied before this block was completed.
+  - Post-sign-off fix (2026-10-13): **BLG-SPEC-199** came from the PR #2024 review and was fixed in this PR at the user's request. The positions dictionary is now v0.5, with Nullable matching `data_model.md` v2.60 for every column it lists and a `risk_off_exit` row added. `si02_gap_analysis.md` is now v1.1. The fix is documentation only, and no story's AC or result changes.
   - This is an agent-mediated review. Human QA sign-off and Product Owner acceptance on the PR are still required before merge.

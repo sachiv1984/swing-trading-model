@@ -5502,6 +5502,8 @@ DS-17's `idx_positions_open_ticker_entry_date_unique` was confirmed live in prod
 **Effort:** XS (<1h)
 **Provisional-Target:** TBD
 
+**Resolved (2026-10-13, PR #2024, before merge):** fixed on the EPIC-05 branch at the user's request. The dictionary is now v0.5: the six Nullable values match `data_model.md` v2.60 and there is a `risk_off_exit` row. `si02_gap_analysis.md` is now v1.1, with the US risk derivation using `fill_price`. Not fixed here: `metrics_definitions.md` Position Risk (BLG-SPEC-198), and 11 newer columns still missing from the dictionary (listed in its v0.5 coverage note).
+
 **Problem**
 ST-34 (v9.12) corrected `data_model.md` §2's Fields table to say `holding_days`, `pnl`, `pnl_pct`, `status`, `created_at` and `updated_at` are nullable (each has a `DEFAULT` but no `NOT NULL`, in the documented `CREATE TABLE` and live). It also corrected `risk_off_exit` to `NOT NULL DEFAULT FALSE`. `data_model_positions_dictionary.md` (v0.4) still marks all six as `NO` (rows at lines ~79–111) and has no `risk_off_exit` row. The two canonical documents now disagree on these columns. Separately, `docs/specs/si02_gap_analysis.md:108` still derives risk as `(entry_price − initial_stop) × shares` "in native currency", but `positions.entry_price` is GBP (ST-38); for US positions the native entry is `fill_price`.
 

@@ -1,8 +1,8 @@
 **Owner:** Data Model Domain & Schema Owner
 **Class:** Class 1 Canonical Specification
 **Status:** Active
-**Version:** 0.4
-**Last Updated:** 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — `entry_price` is GBP, `fill_price` the native entry, `user_fill_price` the broker fill; US `total_cost` and the `pnl` derivations use `fill_price`; `fx_rate` 1.0 for UK. Doc fix per the Data Model & Domain Schema Owner ruling, `ESC-EXEC-20261013-05`); prior — 2026-10-05 (PR #1892 review correction — `fees_paid` row notes the proportional reduction on partial exit); prior — 2026-10-05 (ST-30, EPIC-05, v9.9, BLG-SPEC-165 — `fees_paid` row: NOT NULL re-applied live, no default (the documented `0` default never existed live)); prior history retained — see prior entries in version control
+**Version:** 0.5
+**Last Updated:** 2026-10-13 (BLG-SPEC-199, PR #2024 review, EPIC-05, v9.12 — Nullable for holding_days, pnl, pnl_pct, status, created_at and updated_at set to YES, and a risk_off_exit row added, matching data_model.md v2.60; exit_note marked as not live; coverage note added); prior — 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — `entry_price` is GBP, `fill_price` the native entry, `user_fill_price` the broker fill; US `total_cost` and the `pnl` derivations use `fill_price`; `fx_rate` 1.0 for UK. Doc fix per the Data Model & Domain Schema Owner ruling, `ESC-EXEC-20261013-05`); prior — 2026-10-05 (PR #1892 review correction — `fees_paid` row notes the proportional reduction on partial exit); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -26,6 +26,8 @@ The `positions` table serves **both open and closed positions** within a single 
 ---
 
 ## 3. Field Dictionary
+
+> **Coverage (v0.5):** for every column listed here, Nullable matches `data_model.md` §2. This dictionary does not yet list 11 newer `positions` columns that `data_model.md` §2 documents: `user_fill_price`, `position_state`, `state_entered_at`, `state_history`, `stop_calculated_at`, `atr_calculated_at`, `active_atr_multiplier`, `atr_source`, `stop_calculation_source`, `strategy_version_at_entry`, `last_reviewed_at`. Use `data_model.md` §2 for those.
 
 ### 3.1 Primary Key and Foreign Keys
 
@@ -76,9 +78,9 @@ The `positions` table serves **both open and closed positions** within a single 
 | Field | SQL Type | Nullable | Description |
 |-------|----------|----------|-------------|
 | `current_price` | DECIMAL(10,4) | YES | Most recently recorded price in native currency. Updated by the daily price refresh process. NULL before first price update or after position closure. |
-| `holding_days` | INTEGER | NO | Calendar days held, measured from `entry_date` to the current date (open positions) or `exit_date` (closed positions). Updated daily for open positions. Default `0`. |
-| `pnl` | DECIMAL(12,2) | NO | P&L in GBP. **Unrealised** for open positions; **realised** for closed positions. The native entry is `fill_price` for US and `entry_price` for UK (§5.2). Derivation (open): `(current_price − native_entry) × shares × fx_rate_factor − fees_paid`, where `fx_rate_factor = 1/fx_rate` for US positions and `1` for UK positions. Derivation (closed): `(exit_price − native_entry) × shares × fx_rate_factor − fees_paid`. Always GBP-denominated. Default `0`. The live computation differs on the FX rate and fee deduction: BLG-SPEC-198. |
-| `pnl_pct` | DECIMAL(10,2) | NO | P&L as a percentage of `total_cost`. Formula: `pnl / total_cost × 100`. Also returned as `pnl_percent` by the API layer (alias). Default `0`. |
+| `holding_days` | INTEGER | YES | Calendar days held, measured from `entry_date` to the current date (open positions) or `exit_date` (closed positions). Updated daily for open positions. Default `0`. Nullable `YES` from v0.5: the column has a `DEFAULT` but no `NOT NULL`, matching `data_model.md` v2.60 and the live schema. |
+| `pnl` | DECIMAL(12,2) | YES | P&L in GBP. **Unrealised** for open positions; **realised** for closed positions. The native entry is `fill_price` for US and `entry_price` for UK (§5.2). Derivation (open): `(current_price − native_entry) × shares × fx_rate_factor − fees_paid`, where `fx_rate_factor = 1/fx_rate` for US positions and `1` for UK positions. Derivation (closed): `(exit_price − native_entry) × shares × fx_rate_factor − fees_paid`. Always GBP-denominated. Default `0`. The live computation differs on the FX rate and fee deduction: BLG-SPEC-198. Nullable `YES` from v0.5: the column has a `DEFAULT` but no `NOT NULL`, matching `data_model.md` v2.60 and the live schema. |
+| `pnl_pct` | DECIMAL(10,2) | YES | P&L as a percentage of `total_cost`. Formula: `pnl / total_cost × 100`. Also returned as `pnl_percent` by the API layer (alias). Default `0`. Nullable `YES` from v0.5: the column has a `DEFAULT` but no `NOT NULL`, matching `data_model.md` v2.60 and the live schema. |
 
 ---
 
@@ -86,10 +88,11 @@ The `positions` table serves **both open and closed positions** within a single 
 
 | Field | SQL Type | Nullable | Description |
 |-------|----------|----------|-------------|
-| `status` | VARCHAR(20) | NO | Lifecycle state: `'open'` or `'closed'`. Constrained by CHECK. Default `'open'`. All `exit_*` fields are NULL while `status = 'open'`. Do not query across status boundaries without explicit filtering. |
+| `status` | VARCHAR(20) | YES | Lifecycle state: `'open'` or `'closed'`. Constrained by CHECK. Default `'open'`. All `exit_*` fields are NULL while `status = 'open'`. Do not query across status boundaries without explicit filtering. Nullable `YES` from v0.5: the column has a `DEFAULT` but no `NOT NULL`, matching `data_model.md` v2.60 and the live schema. |
 | `exit_date` | DATE | YES | Date the position was closed. NULL while open. **This field drives UK tax-year attribution** — the tax year is determined by `exit_date` for closed trades (see `docs/specs/api_contracts/reports_endpoints.md`). |
 | `exit_price` | DECIMAL(10,4) | YES | Exit execution price in native currency. NULL while open. |
 | `exit_reason` | VARCHAR(50) | YES | Reason for exit (e.g. `"stop_hit"`, `"target_reached"`, `"manual_close"`). NULL while open. Informational. |
+| `risk_off_exit` | BOOLEAN | NO | Risk-off exit alert flag, set and cleared by the nightly risk-off job from the market regime. `NOT NULL DEFAULT FALSE` (`ensure_risk_off_exit_column()`). Added v0.5, matching `data_model.md` §2. |
 
 ---
 
@@ -98,7 +101,7 @@ The `positions` table serves **both open and closed positions** within a single 
 | Field | SQL Type | Nullable | Description |
 |-------|----------|----------|-------------|
 | `entry_note` | TEXT | YES | Free-text journal note recorded at position entry. NULL if not provided. Added in migration v1.3→v1.4. |
-| `exit_note` | TEXT | YES | Free-text journal note recorded at position exit. NULL while open or if not provided. Added in migration v1.3→v1.4. |
+| `exit_note` | TEXT | YES | **Not a live `positions` column** (`data_model.md` §2, BLG-SPEC-149). Exit journal notes are stored in `trade_history.exit_note`. Row kept for traceability; see the coverage note at the top of this section. |
 | `tags` | TEXT[] | YES | Array of strategy or classification tags (e.g. `['momentum', 'earnings-play']`). NULL if no tags applied. Indexed with GIN for array containment queries. Added in migration v1.3→v1.4. |
 
 ---
@@ -107,8 +110,8 @@ The `positions` table serves **both open and closed positions** within a single 
 
 | Field | SQL Type | Nullable | Description |
 |-------|----------|----------|-------------|
-| `created_at` | TIMESTAMP | NO | Record creation timestamp (UTC). Set on insert, never modified. Default `CURRENT_TIMESTAMP`. |
-| `updated_at` | TIMESTAMP | NO | Last update timestamp (UTC). Updated on every row modification. Default `CURRENT_TIMESTAMP`. |
+| `created_at` | TIMESTAMP | YES | Record creation timestamp (UTC). Set on insert, never modified. Default `CURRENT_TIMESTAMP`. Nullable `YES` from v0.5: the column has a `DEFAULT` but no `NOT NULL`, matching `data_model.md` v2.60 and the live schema. |
+| `updated_at` | TIMESTAMP | YES | Last update timestamp (UTC). Updated on every row modification. Default `CURRENT_TIMESTAMP`. Nullable `YES` from v0.5: the column has a `DEFAULT` but no `NOT NULL`, matching `data_model.md` v2.60 and the live schema. |
 
 ---
 
@@ -205,3 +208,4 @@ Closed trades are attributed to the UK tax year containing their `exit_date`. Th
 | 0.2 | 2026-10-05 | `fees_paid` row corrected: `NOT NULL` re-applied live on staging and production (`data_model.md` DS-23, ST-30, EPIC-05, v9.9, BLG-SPEC-165); the documented `Default 0` removed — no default ever existed live. Data Model & Domain Schema Owner (agent-mediated, §5.3); live change by the user. |
 | 0.3 | 2026-10-05 | `fees_paid` row: notes that fees are reduced proportionally on partial exit, matching `data_model.md` (PR #1892 agent-mediated Director of Quality review). |
 | 0.4 | 2026-10-13 | ST-38 (EPIC-05, v9.12, BLG-SPEC-183; also covers BLG-SPEC-190's scope): `entry_price` documented as GBP for every market, matching what `add_position()` writes; `fill_price` is the native entry and `user_fill_price` the broker fill; `fx_rate` 1.0 for UK; `fill_currency` always set; US `total_cost` (§5.1, with a worked example) and the `pnl` derivations (§5.2) use `fill_price`; §6 currency table corrected. Doc fix, Data Model & Domain Schema Owner ruling (agent-mediated, §5.3), `ESC-EXEC-20261013-05`. |
+| 0.5 | 2026-10-13 | BLG-SPEC-199 (PR #2024 agent-mediated Director of Quality review, EPIC-05, v9.12): `holding_days`, `pnl`, `pnl_pct`, `status`, `created_at` and `updated_at` Nullable `NO` → `YES` (each has a `DEFAULT` but no `NOT NULL`), matching `data_model.md` v2.60. Added a `risk_off_exit` row (`NOT NULL DEFAULT FALSE`). `exit_note` marked as not a live column (BLG-SPEC-149). Coverage note lists the 11 newer columns documented only in `data_model.md` §2. |
