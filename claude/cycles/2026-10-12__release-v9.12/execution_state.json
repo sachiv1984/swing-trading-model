@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T08:48:31Z",
+  "last_updated_utc": "2026-10-13T08:54:26Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -174,7 +174,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "AC1-3: 8 inflected/indirect positives, 5 past-tense negatives; representative output and fallback still clean. AC4: tests/test_monthly_pnl_narrative.py passes (92 passed, 4 skipped with test_monthly_pnl_narrative_db.py)."
+          "notes": "AC1-3: 8 inflected/indirect positives, 5 past-tense negatives; representative output and fallback still clean. AC4: tests/test_monthly_pnl_narrative.py passes (92 passed, 4 skipped with test_monthly_pnl_narrative_db.py). PR #2022 review fix: f88a9ac2 tightened the regex (no flags on retrospective/discourse wording; exit/close/trim added); 11 positive / 16 negative B-MPN-04 cases. Resolves BLG-AI-19 (filed and fixed same day; grooming should archive it)."
         },
         "ST-06": {
           "title": "Make the daily AI cost alert count Claude calls",
