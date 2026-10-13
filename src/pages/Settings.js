@@ -12,7 +12,7 @@ import { api } from "../api/base44Client";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
 import AiSpendTrendChart from "../components/charts/AiSpendTrendChart";
-import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS, INITIAL_ATR_MULTIPLIER, PROFIT_ATR_MULTIPLIER } from "../lib/strategyParameters";
+import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS, INITIAL_ATR_MULTIPLIER, PROFIT_ATR_MULTIPLIER } from "../constants/strategy";
 
 // ST-01 (BLG-BE-138, v9.10, ruling (a)): fixed by strategy_rules.md §11, not user settings.
 const FIXED_STRATEGY_FIELDS = ["min_hold_days", "atr_period", "atr_multiplier_initial", "atr_multiplier_trailing"];

@@ -5746,3 +5746,22 @@ ST-34 (v9.12) corrected `data_model.md` §2's Fields table to say `holding_days`
 - The dictionary lists no column that `data_model.md` §2 does not, other than an explicitly marked historical row
 
 ---
+
+### BLG-SPEC-201 — Point settings.md at the moved strategy constants module
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Frontend
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-21/EPIC-03, cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-21 moved the frontend display mirror of the `strategy_rules.md` §11 parameters from `src/lib/strategyParameters.js` to `src/constants/strategy.js` (Head of Specs Team interpretation, 2026-10-13), leaving one module. `docs/specs/frontend/pages/settings.md` §Strategy Parameter Presentation (line ~121) still says the displayed values come from `src/lib/strategyParameters.js`, which no longer exists. Sprint Execution may not edit a canonical spec beyond deviation documentation, so the path was not changed in ST-21's commit.
+
+**Scope**
+- Replace the path in `settings.md` with `src/constants/strategy.js`; version bump and changelog row
+
+**Acceptance Criteria**
+- `settings.md` names `src/constants/strategy.js`, and no canonical spec under `docs/specs/` names `src/lib/strategyParameters.js`
+
+---

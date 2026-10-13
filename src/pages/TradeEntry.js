@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { base44, apiFetch, api } from "../api/base44Client";
-import { INITIAL_ATR_MULTIPLIER } from "../lib/strategyParameters";
+import { INITIAL_ATR_MULTIPLIER, ATR_PERIOD_DAYS } from "../constants/strategy";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
@@ -477,7 +477,7 @@ export default function TradeEntry() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="trade-entry-atr" className="text-slate-600 dark:text-slate-400">
-                {marketKnown ? `ATR (14-day, ${costs.currencySymbol})` : "ATR (14-day)"}
+                {marketKnown ? `ATR (${ATR_PERIOD_DAYS}-day, ${costs.currencySymbol})` : `ATR (${ATR_PERIOD_DAYS}-day)`}
               </Label>
               <Input
                 id="trade-entry-atr"
@@ -498,7 +498,7 @@ export default function TradeEntry() {
               )}
               {atrBlank && atrPreview.status === "ready" && (
                 <p data-testid="atr-fetched-hint" className="text-xs text-slate-600 dark:text-slate-400">
-                  Fetched: {formatCurrency(atrPreview.atr, { currency: currencyForMarket(formData.market) })} (14-day
+                  Fetched: {formatCurrency(atrPreview.atr, { currency: currencyForMarket(formData.market) })} ({ATR_PERIOD_DAYS}-day
                   {atrPreview.asOf && !Number.isNaN(new Date(atrPreview.asOf).getTime())
                     ? `, ${format(new Date(atrPreview.asOf), "d MMM")}`
                     : ""})
@@ -514,7 +514,7 @@ export default function TradeEntry() {
                   </p>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
                     {costs.stopFromPreview
-                      ? `Entry − ${INITIAL_ATR_MULTIPLIER}× ATR (§5), using the fetched 14-day ATR. The stop is recalculated at save and may differ slightly if prices update before then.`
+                      ? `Entry − ${INITIAL_ATR_MULTIPLIER}× ATR (§5), using the fetched ${ATR_PERIOD_DAYS}-day ATR. The stop is recalculated at save and may differ slightly if prices update before then.`
                       : `Entry − ${INITIAL_ATR_MULTIPLIER}× ATR (§5). This is the stop that will be stored.`}
                   </p>
                 </>
@@ -524,7 +524,7 @@ export default function TradeEntry() {
                 <>
                   <p className="text-sm font-semibold text-slate-300" data-testid="system-initial-stop-value">Calculated on save</p>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
-                    The system fetches the 14-day ATR for {formData.ticker || "this ticker"} and sets the stop at Entry − {INITIAL_ATR_MULTIPLIER}× ATR.
+                    The system fetches the {ATR_PERIOD_DAYS}-day ATR for {formData.ticker || "this ticker"} and sets the stop at Entry − {INITIAL_ATR_MULTIPLIER}× ATR.
                   </p>
                 </>
               ) : (

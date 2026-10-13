@@ -3,6 +3,7 @@
 import { TrendingUp, BarChart2 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { formatCurrency, formatPercent, currencyForMarket } from "../../lib/format";
+import { INITIAL_ATR_MULTIPLIER } from "../../constants/strategy";
 
 /**
  * Read-only Signal Context Panel shown in trade plan creation form (§5a, trade_plan.md v0.5).
@@ -17,7 +18,7 @@ export default function SignalContextPanel({ signal, market }) {
   const suggestedStop = signal.initial_stop != null
     ? signal.initial_stop
     : signal.current_price != null && signal.atr_value != null
-      ? signal.current_price - 5 * signal.atr_value
+      ? signal.current_price - INITIAL_ATR_MULTIPLIER * signal.atr_value
       : null;
 
   const maPercent = signal.price_vs_50d_ma ?? null;
@@ -94,7 +95,7 @@ export default function SignalContextPanel({ signal, market }) {
             <p className="text-sm font-semibold text-rose-400">
               {formatCurrency(suggestedStop, { currency: panelCurrency })}
             </p>
-            <p className="text-xs text-slate-600">entry − 5×ATR</p>
+            <p className="text-xs text-slate-600">entry − {INITIAL_ATR_MULTIPLIER}×ATR</p>
           </div>
         )}
       </div>

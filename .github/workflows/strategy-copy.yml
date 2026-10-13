@@ -1,0 +1,45 @@
+name: "Strategy Copy Lint"
+
+# [EPIC-03][ST-21] (BLG-GOV-369, v9.12) — UI text in src/ that restates
+# strategy_rules.md §5–§11 (ATR multiples, ATR period, grace length, stop
+# formulas) must agree with the rules, and the pages ST-21 names
+# (TradeEntry.js, Settings.js, Positions.js, SignalContextPanel.js) take those
+# numbers from src/constants/strategy.js, not literals.
+# scripts/check_strategy_copy.py reads the expected values from §11 itself.
+# Findings are emitted as warnings (BLG-GOV-369 scope: CI warning); the
+# Frontend Specifications & UX Documentation Owner triages each one
+# (charter §7, Strategy-copy conformance; Director of HR ruling
+# ESC-EXEC-20261013-08). tests/test_check_strategy_copy.py pins the clean state.
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'claude/strategy/strategy_rules.md'
+      - 'scripts/check_strategy_copy.py'
+      - '.github/workflows/strategy-copy.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'claude/strategy/strategy_rules.md'
+      - 'scripts/check_strategy_copy.py'
+
+jobs:
+  strategy-copy:
+    name: strategy-copy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check UI strategy text against strategy_rules.md §5–§11
+        run: python3 scripts/check_strategy_copy.py
