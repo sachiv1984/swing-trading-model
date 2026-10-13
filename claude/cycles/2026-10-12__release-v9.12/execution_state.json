@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T07:39:17Z",
+  "last_updated_utc": "2026-10-13T07:57:07Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -59,9 +59,9 @@
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": "3.1.B.engine_commit_pushed",
+          "last_completed_substep": "3.1.B.ds31_applied_staging_and_production",
           "sign_off_record": null,
-          "notes": "Engine-written code, test and docs (AC 3, AC 4 doc half). Live migration and staging run delegated: DEL-20261013-01. Engine commit ae6ade40ef6b74931c3a525a9e045bab6c6917df (2026-10-13T07:27:38Z) pushed; commit_sha is set when the delegation unblocks."
+          "notes": "Engine-written code, test and docs (AC 3, AC 4 doc half). Live migration and staging run delegated: DEL-20261013-01. Engine commit ae6ade40ef6b74931c3a525a9e045bab6c6917df (2026-10-13T07:27:38Z) pushed; commit_sha is set when the delegation unblocks. 2026-10-13: AC 4 live half done — DS-31 applied and verified on staging and production (0 rows affected in each; column now _uuid), recorded in data_model.md DS-31 Live Confirmation. Open: AC 1 staging run, AC 2 audit row."
         },
         "ST-02": {
           "title": "Drop briefing actions that name a ticker outside the context",

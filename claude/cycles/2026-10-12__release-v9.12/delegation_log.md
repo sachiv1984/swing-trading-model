@@ -19,7 +19,7 @@ Last Updated: 2026-10-13
 - **Spec reference:** `docs/specs/data_model.md#DS-31 — Store journal-summary trade IDs as UUIDs in ai_audit_log (v2.59, 2026-10-13)`; `docs/specs/api_contracts/ai_endpoints.md#POST /ai/journal-summary`; `stage4_backlog_slice.md#ST-01` AC 1, AC 2, AC 4
 - **Unblock criteria:** DS-31 Verification output from staging and production (AC 4); a dated staging journal-summary run returning generated content (AC 1); the `ai_audit_log` row with UUID `trade_ids` (AC 2). All recorded in DS-31's Live Confirmation and in `qa_evidence_EPIC-01.md` under ST-01.
 - **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-10-12__release-v9.12/EPIC-01`
-- **Status:** Pending
+- **Status:** In Progress — 2026-10-13. Step (1) done in-session: the user (human, acting for the Data Model & Domain Schema Owner) ran the DS-31 Pre-check, Up Migration and Verification on staging, then production. Both Pre-checks showed `_int4` with 0 rows holding `trade_ids`, and both Verifications showed `trade_ids | ARRAY | _uuid | YES`, as recorded in DS-31's Live Confirmation. Steps (2) staging journal-summary run (AC 1) and (3) `ai_audit_log` row (AC 2) are still open.
 
 ## DEL-20261013-02
 

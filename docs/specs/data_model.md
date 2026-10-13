@@ -3061,7 +3061,7 @@ WHERE endpoint = 'POST /reports/monthly-pnl/narrative'
 
 **Existing integer values:** any `trade_ids` row written while the column was `INTEGER[]` names no trade (no `trade_history.id` is an integer), so the migration clears those values to `NULL` rather than casting. The rest of each row (time, count, model, hash) is kept. The Pre-check reports how many rows this affects.
 
-**Deploy order:** `ensure_ai_audit_table()` runs the Up Migration's guarded block at startup, so the app converts the column itself where its role may run DDL. It is idempotent, and a no-op once the column is `UUID[]`. Until the column is converted, the audit insert fails (it casts to `uuid[]`). That failure is non-blocking: the router catches it and still returns the summary. The Up Migration is still applied explicitly to **staging and production** by the Data Model & Domain Schema Owner, with verification output (ST-01 AC 4). **Status: PENDING** (`DEL-20261013-01`).
+**Deploy order:** `ensure_ai_audit_table()` runs the Up Migration's guarded block at startup, so the app converts the column itself where its role may run DDL. It is idempotent, and a no-op once the column is `UUID[]`. Until the column is converted, the audit insert fails (it casts to `uuid[]`). That failure is non-blocking: the router catches it and still returns the summary. The Up Migration is still applied explicitly to **staging and production** by the Data Model & Domain Schema Owner, with verification output (ST-01 AC 4). **Status: CONFIRMED APPLIED, 2026-10-13** (staging and production; see Live Confirmation below).
 
 ### Pre-check
 
@@ -3111,7 +3111,20 @@ WHERE table_name = 'ai_audit_log' AND column_name = 'trade_ids';
 Expect 1 row: `trade_ids`, `ARRAY`, `_uuid`, `YES`.
 
 **Sign-off:**
-- Data Model & Domain Schema Owner: pending — applied with `DEL-20261013-01`.
+- Data Model & Domain Schema Owner: type change on a column no live row used (0 rows with `trade_ids` in either environment), reversible. Applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner).
+- **Live Confirmation, applied 2026-10-13:** the Pre-check, Up Migration and Verification were run on staging, then production, in the Supabase SQL editor, and the output was pasted into the execution session. Both environments returned identical results. Pre-check (before the migration):
+
+```json
+[{"current_type": "_int4", "rows_with_trade_ids": 0}]
+```
+
+Up Migration: "Success. No rows returned" in both. No integer values were cleared, because none existed. Verification (after):
+
+```json
+[{"column_name": "trade_ids", "data_type": "ARRAY", "udt_name": "_uuid", "is_nullable": "YES"}]
+```
+
+`DEL-20261013-01` steps 2–3 (the staging journal-summary run and the `ai_audit_log` row) remain open.
 
 ---
 
