@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-13 (session — 1 new item added from Sprint Execution EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-387, from the ST-44 PMO Lead observation); prior — 2026-10-13 (session — 10 new items added from Sprint Execution EPIC-01, 2026-10-12__release-v9.12: BLG-AI-14, BLG-SPEC-195, BLG-AI-15, and from the PR #2022 review BLG-AI-16 to BLG-AI-19, BLG-OPS-186, BLG-OPS-187, BLG-QA-221); prior — 2026-10-12 (session — 2 new item(s) added: BLG-GOV-386, BLG-FE-217, from post-ship closure 2026-10-08__release-v9.11 §6 rows 7 and 9); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (session — 2 new items added from the PR #2023 review, EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-388, BLG-QA-222); prior — 2026-10-13 (session — 1 new item added from Sprint Execution EPIC-06, 2026-10-12__release-v9.12: BLG-GOV-387, from the ST-44 PMO Lead observation); prior — 2026-10-13 (session — 10 new items added from Sprint Execution EPIC-01, 2026-10-12__release-v9.12: BLG-AI-14, BLG-SPEC-195, BLG-AI-15, and from the PR #2022 review BLG-AI-16 to BLG-AI-19, BLG-OPS-186, BLG-OPS-187, BLG-QA-221); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -511,6 +511,48 @@ Several direct dependencies are a major version, or a breaking minor series, beh
 
 **Acceptance Criteria**
 - The v9.8–v9.10 rolling line's compound count matches the script's output for v9.10
+
+---
+
+### BLG-GOV-388 — Gate scan: count an item as shipped only on a ✅ COMPLETE banner line, not a prose mention
+**Priority:** P3 (Low)
+**Type:** Governance Tooling
+**Owner:** Head of Specs Team; Head of Engineering
+**Source:** PR #2023 agent-mediated Director of Quality review (ST-40/EPIC-06, cycle `2026-10-12__release-v9.12`) — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-40's `gating_item_shipped()` in `scripts/scan_backlog_gate_conditions.py` treats an active item as shipped if the string `✅ COMPLETE` appears anywhere in its body. A prose mention therefore counts as a banner. Today the only occurrence in `backlog.md` is inside BLG-GOV-386's own Scope text ("archived or bannered ✅ COMPLETE"), so any gate naming BLG-GOV-386 would be wrongly listed as "gating item shipped". The list is advisory and never clears a gate, so the impact is a false prompt to re-read, not a wrong scope decision.
+
+**Scope**
+- Match the banner only in its conventional positions (the `###` heading line or a line starting `> ✅ COMPLETE` / `**Status:** ✅ COMPLETE`), not as a substring anywhere in the body
+- Add a test where an item mentions `✅ COMPLETE` in prose and is still treated as open
+
+**Acceptance Criteria**
+- An item whose only `✅ COMPLETE` occurrence is in prose is not treated as shipped
+- Existing `tests/test_scan_backlog_gate_conditions_gating_item_shipped.py` cases still pass
+
+---
+
+### BLG-QA-222 — Extend the utils.* leak guard to attributes patched on the real utils modules
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; QA & Testing Owner
+**Source:** PR #2023 agent-mediated Director of Quality review (ST-46/EPIC-06, cycle `2026-10-12__release-v9.12`), non-blocking finding — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-46's conftest guard checks only *which module object* sits under `utils` / `utils.*` in `sys.modules`. A test that does `sys.modules["utils.calculations"].some_fn = MagicMock()` without restoring it leaks just as badly, but passes the guard. `tests/test_live_exit_decision.py:25` and `tests/test_position_trade_plan_link.py:64` still carry workarounds (loading a private copy of `utils/calculations.py`) for exactly this shape.
+
+**Scope**
+- Snapshot the public callables of the real `utils.*` modules at session start, and fail any file or test that leaves one replaced, as the module-identity guard does
+- Then remove the private-copy workarounds where they become unnecessary
+
+**Acceptance Criteria**
+- The guard fails a test that replaces an attribute on a real `utils.*` module without restoring it
+- Default and reverse-order full suites still pass
 
 ---
 
