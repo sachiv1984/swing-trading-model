@@ -313,6 +313,16 @@
       "resolved_utc": "2026-10-13T17:26:56Z",
       "resolved_by": "Strategy Rules & System Intent Owner (agent-mediated, execution_prompt.md §5.3, user-directed)",
       "resolution_summary": "Revised Ruling 3 approved: NYSE session calendar (in-code, deterministic, no network) on the America/New_York market date; days_until computed from next_earnings_date - T; within §13.3 carve-out, no new §13 review, no strategy_rules.md change. 8 binding conditions; v9.12 addendum appended by ST-14. ST-14 reclassified autonomous."
+    },
+    "ESC-EXEC-20261013-08": {
+      "cycle": "2026-10-12__release-v9.12",
+      "summary": "ST-21/EPIC-03 - Director of HR ruling on the strategy-copy conformance duty in the Frontend Specifications & UX Documentation Owner charter (RISK-06)",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Director of HR",
+      "raised_utc": "2026-10-13T19:24:13Z",
+      "sla_due_utc": "2026-10-14T19:24:13Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "deferred_escalations": {
