@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T14:28:51Z",
+  "last_updated_utc": "2026-10-13T14:45:02Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -947,10 +947,10 @@
       }
     },
     "EPIC-06": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-12__release-v9.12/EPIC-06",
       "pr_number": 2023,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-12__release-v9.12/qa_evidence_EPIC-06.md",
       "test_scenarios": [
@@ -966,7 +966,7 @@
         "ST-39": {
           "title": "Check backlog item integrity after every cross-EPIC merge resolution",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2012,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-06",
@@ -992,7 +992,7 @@
         "ST-40": {
           "title": "Report gated items whose gating backlog item has shipped, and read that list in Release Planning §1.3a",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2013,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-06",
@@ -1017,7 +1017,7 @@
         "ST-41": {
           "title": "Script the execution_state.json read-back check from execution_prompt.md §9.2",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2014,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-06",
@@ -1042,7 +1042,7 @@
         "ST-42": {
           "title": "Name one Skill-Silo aggregation method in roadmap_prompt.md §7.1",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2015,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-06",
@@ -1067,7 +1067,7 @@
         "ST-43": {
           "title": "Rule on reduced-roster idea-intake windows, and cap them if permitted",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Head of Specs Team; Product Owner",
           "github_issue": 2016,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-06",
@@ -1098,7 +1098,7 @@
         "ST-44": {
           "title": "Add a split-credit secondary tally to compute_role_share_history.py",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "Director of HR; PMO Lead",
           "github_issue": 2017,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-06",
@@ -1130,7 +1130,7 @@
         "ST-45": {
           "title": "Add unit tests for compute_role_share_history.py and a STEP 7.1 pin",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2018,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-06",
@@ -1155,7 +1155,7 @@
         "ST-46": {
           "title": "Scope utils.* test stubs so a reordered run passes",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2019,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-06",
@@ -1180,7 +1180,7 @@
         "ST-47": {
           "title": "Guard the positions.fees_paid NOT NULL invariant in the entry flow and SQL seeds",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2020,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-06",
@@ -1204,7 +1204,7 @@
         "ST-48": {
           "title": "Remove the leaked sandbox /tmp path from backend/setup.cfg",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 2021,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-06",
@@ -1258,14 +1258,14 @@
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
-      "EPIC-01"
+      "EPIC-01",
+      "EPIC-06"
     ],
     "epics_pending": [
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
-      "EPIC-05",
-      "EPIC-06"
+      "EPIC-05"
     ],
     "all_merged": false
   },
@@ -1278,7 +1278,8 @@
     "PR #2022 agent-mediated review (Director of Quality + Product Owner, both Approved with Comments, no must-fix): 7 follow-ups filed (BLG-AI-16..19, BLG-OPS-186/187, BLG-QA-221); DEL-20261013-02 unblock criteria tightened to prove the final code is live (deploy commit, request_count, post-merge journal-summary claude_audit_log row).",
     "EPIC-01 PR #2022 merged by the human developer at 2026-10-13T09:03:18Z (90099bec). The QA sign-off and Product Owner acceptance comments were recorded on the user's direction just after the merge; see merge_gate_record. Orphaned post-merge commit check: none. Sibling-branch sync (STEP 4 3c): no other v9.12 EPIC branches exist yet.",
     "2026-10-13T09:15:52Z: ESC-EXEC-20261013-02 resolved and DEL-20261013-02 unblocked post-merge (ST-06 AC 2 run record; ST-01 final-code staging check via costed journal-summary claude_audit_log row). Production and staging count queries returned identical results (1 row, $0.001628), disclosed in DEL-20261013-02.",
-    "2026-10-13 EPIC-06 ST-39: a .claude/skills/lessons_learnt.md commit-check lesson (2026-04-28) says to open a PR after every exec-branch push; not applied, because execution_prompt.md §3.2.B forbids opening a PR before the DoQ sign-off Date is set."
+    "2026-10-13 EPIC-06 ST-39: a .claude/skills/lessons_learnt.md commit-check lesson (2026-04-28) says to open a PR after every exec-branch push; not applied, because execution_prompt.md §3.2.B forbids opening a PR before the DoQ sign-off Date is set.",
+    "2026-10-13 EPIC-06 PR #2023 merged by the human Product Owner at 2026-10-13T14:44:32Z (merge commit ccce1fc3). STEP 4 orphaned post-merge commit check: none. STEP 4 step 3c sibling sync: no other EPIC branch exists yet (EPIC-02..05 not started), so nothing to propagate."
   ],
   "sealed": false,
   "sealed_utc": null
