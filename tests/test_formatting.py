@@ -16,13 +16,11 @@ from pathlib import Path
 
 import numpy as np
 
-# Loaded directly from file rather than `from utils.formatting import decimal_to_float`:
-# tests/test_alerts_service.py and tests/test_trade_service.py replace
-# sys.modules["utils.formatting"] with a passthrough MagicMock stub at import
-# time and never restore it, which leaks into every test collected afterward
-# in the same pytest process. Bypassing sys.modules here keeps this file's
-# assertions honest regardless of collection order (tracked separately as a
-# test-isolation cleanup item).
+# Loaded directly from file rather than `from utils.formatting import decimal_to_float`.
+# This originally worked around utils.formatting stubs that other files leaked into
+# sys.modules. ST-46 (BLG-QA-209) removed those leaks and added a conftest guard, so
+# the bypass is no longer required. It is kept because it is harmless and keeps
+# this file independent of sys.modules.
 _spec = importlib.util.spec_from_file_location(
     "_formatting_under_test",
     Path(__file__).parent.parent / "backend" / "utils" / "formatting.py",

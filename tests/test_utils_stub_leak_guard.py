@@ -73,3 +73,18 @@ def test_scoped_stub_modules_restores_and_evicts():
 def test_real_utils_modules_are_not_flagged():
     import utils.calculations  # noqa: F401
     assert conftest.leaked_utils_stubs() == []
+
+
+def test_parent_package_attribute_not_left_pointing_at_stubbed_copy():
+    """DoQ review finding (ST-46): after a scoped import of a dotted module,
+    `from <parent> import <child>` must not return the copy built against stubs."""
+    import services
+    before = sys.modules.get("services.trade_service")
+    fmt = types.ModuleType("utils.formatting")
+    fmt.decimal_to_float = lambda x: x
+    with scoped_stub_modules({"utils": stub_utils_package(formatting=fmt), "utils.formatting": fmt},
+                             fresh=("services.trade_service",)):
+        import services.trade_service as stubbed
+    from services import trade_service as after
+    assert after is not stubbed
+    assert sys.modules.get("services.trade_service") is before

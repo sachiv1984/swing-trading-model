@@ -34,8 +34,8 @@ session. Instead, the real create_rebalance_exit_signal is obtained via a
 fresh `database` import and patched onto whatever `services.signal_service`
 module object is already cached (patch.object, restored after each `with`
 block) — this changes no module identities, only attribute values. The real
-decimal_to_float is guaranteed by evicting sys.modules["utils.formatting"]
-up front instead (see inline comment below), since
+decimal_to_float runs because no test file leaves a utils stub installed any
+more (ST-46 conftest guard; see inline comment below), and
 generate_rebalance_exit_signals() re-imports it locally on every call.
 """
 
@@ -123,9 +123,9 @@ def test_generate_rebalance_exit_signals_end_to_end_with_numpy_position_data():
     # the get_positions()-derived data path, matching the documented PR #971
     # defect shape. decimal_to_float is NOT patched here — it doesn't need to
     # be: generate_rebalance_exit_signals() re-imports it locally from
-    # utils.formatting on every call (module docstring above explains why this
-    # file evicts sys.modules["utils.formatting"] up front instead), so the
-    # real implementation is what runs regardless. create_rebalance_exit_signal
+    # utils.formatting on every call, and sys.modules["utils.formatting"] is
+    # always the real module (ST-46 conftest guard), so the real
+    # implementation is what runs. create_rebalance_exit_signal
     # IS explicitly pointed at its real implementation (a true module-global
     # lookup in signal_service.py, not locally re-imported) so this test
     # exercises the actual production write path rather than whatever this

@@ -73,11 +73,28 @@ def scoped_stub_modules(stubs: dict, fresh=()):
     try:
         yield
     finally:
-        for name in [n for n in sys.modules if n not in before and n not in names]:
-            if _is_backend_module(sys.modules[name]):
-                del sys.modules[name]
+        evicted = [n for n in sys.modules if n not in before and n not in names
+                   and _is_backend_module(sys.modules[n])]
+        for name in evicted:
+            del sys.modules[name]
         for name, original in saved.items():
             if original is None:
                 sys.modules.pop(name, None)
             else:
                 sys.modules[name] = original
+        # An import binds each dotted module as an attribute of its parent
+        # package (`services.trade_service`). Point that attribute back at the
+        # restored module, or remove it, so `from services import trade_service`
+        # cannot return the copy built against the stubs.
+        for name in list(names) + evicted:
+            parent_name, _, child = name.rpartition(".")
+            parent = sys.modules.get(parent_name) if parent_name else None
+            if parent is None:
+                continue
+            if sys.modules.get(name) is not None:
+                setattr(parent, child, sys.modules[name])
+            elif hasattr(parent, child):
+                try:
+                    delattr(parent, child)
+                except AttributeError:
+                    pass
