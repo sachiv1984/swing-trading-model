@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T19:04:30Z",
+  "last_updated_utc": "2026-10-13T19:24:34Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -539,34 +539,44 @@
       "merge_commit": "61317385"
     },
     "EPIC-03": {
-      "status": "not_started",
-      "branch": null,
+      "status": "in_progress",
+      "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-10-12__release-v9.12/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_market_atr_preview_endpoint.py",
+        "tests/e2e/trade-entry-atr-preview.spec.js",
+        "tests/e2e/system-status.spec.js"
+      ],
       "stories": {
         "ST-17": {
           "title": "Add an ATR preview endpoint so Trade Entry shows the stop, risk and size before save",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1990,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
+          "commit_sha": "a8897d67139329e2c066f3de03b9ea0a3d4a6f8c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-13T19:22:54Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/components/position_form.md#ATR (14-day) (v1.7 — ST-07; v1.9 — ST-17/ST-18)",
+            "docs/specs/frontend/components/position_form.md#Initial Stop (set by system) (v1.7 — ST-07, replaces Stop Price)",
+            "docs/specs/api_contracts/market_endpoints.md#GET /market/atr/{ticker}",
+            "tests/test_market_atr_preview_endpoint.py",
+            "tests/e2e/trade-entry-atr-preview.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "a8897d67. AC1: numeric stop, risk and suggested shares before save with ATR blank (SC-TAP-01, mocked endpoint). AC2: preview stop == saved initial_stop for the same inputs and the same symbol is fetched (tests/test_market_atr_preview_endpoint.py, 8 passed). AC3: null or failed preview keeps 'Calculated on save' (SC-TAP-02/03). AC4: ## contract heading (market_endpoints.md v0.3), openapi.yaml v3.30.0, routers/test.py, SystemStatus.js 128->129 and SC-SS-01b all in a8897d67; api_performance_baseline.md §49. Local Playwright: new spec + existing Trade Entry, sizing and system-status specs 109/109 pass. Deviation check: none. Implementation note (intent agrees, no deviation): position_form.md says atr_source 'stays system'; the stored value for a blank-submitted ATR is the existing 'fetched'/'fallback' (ST-02, v9.10), which is the system-sourced value the spec means. ci_pending: Playwright run 38454388870 (head a8897d67)."
         },
         "ST-18": {
           "title": "Show the currency unit on Trade Entry's ATR field and reject implausible typed ATRs",
@@ -634,14 +644,14 @@
         "ST-21": {
           "title": "Strategy-copy conformance: a frontend constants module, a CI lint for UI text restating §5–§11, and a named owner",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "Head of Specs Team; Frontend Specifications & UX Documentation Owner; Director of HR",
           "github_issue": 1994,
           "branch": null,
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-10-13T19:24:13Z",
+          "unblock_criteria": "Dated Director of HR ruling on the charter text, recorded in ESC-EXEC-20261013-08 resolution",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -650,7 +660,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "ESC-EXEC-20261013-08 raised at EPIC-03 start (RISK-06). Constants module and lint (AC 1, AC 2) proceed; only the charter edit (AC 3) waits on the ruling."
         },
         "ST-22": {
           "title": "Link each Grace Period row to its position, and align the panel's text and date format with the spec",
@@ -1367,7 +1377,9 @@
       }
     }
   },
-  "blocked_items": [],
+  "blocked_items": [
+    "ST-21"
+  ],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -1386,6 +1398,7 @@
     "ST-14",
     "ST-15",
     "ST-16",
+    "ST-17",
     "ST-33",
     "ST-34",
     "ST-35",
@@ -1403,7 +1416,9 @@
     "ST-47",
     "ST-48"
   ],
-  "open_escalations": [],
+  "open_escalations": [
+    "ESC-EXEC-20261013-08"
+  ],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
