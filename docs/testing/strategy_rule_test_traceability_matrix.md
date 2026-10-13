@@ -1,7 +1,7 @@
 **Owner:** Director of Quality; QA & Testing Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-10-09 (ST-16, BLG-BE-143, EPIC-03, v9.11 — C6.3-02 moved to Asserted by `TestInGraceStopParity` after the §6.3 in-grace ruling); prior — 2026-10-06 (ST-04, BLG-QA-207, EPIC-01, v9.10 — 9 §5/§6/§8 rows moved to Asserted by `tests/test_live_exit_decision.py`); prior — 2026-10-05 (ST-11, BLG-QA-185, EPIC-03, v9.9 — initial matrix for `strategy_rules.md` §4–§8); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-13 (ST-09, BLG-QA-205, EPIC-02, v9.12 — C4.1.5-01/02/03 and C4.1.6-01/02 moved to Asserted by `tests/test_sizing_fx_and_cash.py`); prior — 2026-10-09 (ST-16, BLG-BE-143, EPIC-03, v9.11 — C6.3-02 moved to Asserted by `TestInGraceStopParity` after the §6.3 in-grace ruling); prior — 2026-10-06 (ST-04, BLG-QA-207, EPIC-01, v9.10 — 9 §5/§6/§8 rows moved to Asserted by `tests/test_live_exit_decision.py`); prior history retained — see prior entries in version control
 **Source:** ST-11 (BLG-QA-185, EPIC-03, cycle `2026-09-30__release-v9.9`)
 
 ---
@@ -28,19 +28,18 @@
 
 | | Clauses | Share |
 |---|---:|---:|
-| Asserted | 34 | **69.4%** |
-| Partial | 4 | 8.2% |
-| None | 11 | 22.4% |
+| Asserted | 39 | **79.6%** |
+| Partial | 3 | 6.1% |
+| None | 7 | 14.3% |
 | **Total normative clauses** | **49** | |
-| Asserted or partial | 38 | 77.6% |
+| Asserted or partial | 42 | 85.7% |
 
-**% of clauses with an asserting test: 69.4% (34/49)** — 77.6% counting partial coverage. (Was 51.0% before ST-04, v9.10, and 67.3% before ST-16, v9.11, which moved C6.3-02 to Asserted once §6.3's in-grace behaviour was ruled.)
+**% of clauses with an asserting test: 79.6% (39/49)** — 85.7% counting partial coverage. (Was 51.0% before ST-04, v9.10, 67.3% before ST-16, v9.11, which moved C6.3-02 to Asserted once §6.3's in-grace behaviour was ruled, and 69.4% before ST-09, v9.12, which asserted the five §4.1.5/§4.1.6 clauses.)
 
 Where coverage is strong: the backend sizing arithmetic (§4.1.1–§4.1.4), the pre-entry advisory checks (§4.2.1–§4.2.5), and the stop formulas and ratchet (§5, §7.2, §7.3). The last two are covered by golden tests, reconciliation tests and, since ST-12, property-based tests.
 
 Where it is weak:
 - §4.1.7's sizing-widget UI behaviours: debounce, loading state, no-overwrite / "use this", no auto-fill on invalid or insufficient-cash results, and non-blocking submission.
-- The backend §4.1.6 cash-constraint result and §4.1.5 FX defaulting.
 - The on-load half of §7.1-02: the on-load path reuses the stored ATR rather than refetching it. (The live exit decision behind §6.3 and §8 was a gap until ST-04, v9.10, added `tests/test_live_exit_decision.py`.)
 
 Follow-ups for every Partial/None clause are filed, grouped by area, as `BLG-QA-205`–`BLG-QA-208` (see the last column).
@@ -68,11 +67,11 @@ Follow-ups for every Partial/None clause are filed, grouped by area, as `BLG-QA-
 | C4.1.4-01 | Invalid if RiskPercent ≤ 0, PortfolioValue ≤ 0, EntryPrice ≤ 0, StopPrice ≤ 0, or StopDistance ≤ 0 | Asserted | `tests/test_strategy_invariants_property.py::test_invalid_inputs_always_rejected_with_deterministic_reason`, `::test_missing_or_nonpositive_portfolio_value_is_invalid` | — |
 | C4.1.4-02 | If invalid: shares not applied; deterministic reason code returned | Asserted | `tests/test_strategy_invariants_property.py::test_invalid_inputs_always_rejected_with_deterministic_reason` | — |
 | C4.1.4-03 | Missing snapshot → `NO_PORTFOLIO_VALUE_SNAPSHOT` | Asserted | `tests/test_strategy_invariants_property.py::test_missing_or_nonpositive_portfolio_value_is_invalid` | — |
-| C4.1.5-01 | A user-provided FX rate overrides the live rate | Partial | `tests/e2e/what-if-sizing-preview.spec.js` V-WHATIF-05 (request carries the override; mocked API). Backend override path is used but not asserted in the response | BLG-QA-205 |
-| C4.1.5-02 | Default FX is the system-provided live rate | None | — | BLG-QA-205 |
-| C4.1.5-03 | The FX rate used is returned in the sizing response | None | — (`fx_rate_used` is asserted for `add_position`, not for `POST /portfolio/size`) | BLG-QA-205 |
-| C4.1.6-01 | `EstimatedCost > AvailableCash` → insufficient-cash result (`cash_sufficient: false`) | None | — (only `backend/mutmut_pilot_tests/`, not run in CI; Playwright mocks the response) | BLG-QA-205 |
-| C4.1.6-02 | Insufficient-cash result may include `MaxAffordableShares` | None | — (same) | BLG-QA-205 |
+| C4.1.5-01 | A user-provided FX rate overrides the live rate | Asserted | `tests/test_sizing_fx_and_cash.py`::TestFxHandling::test_us_override_replaces_live_rate_and_is_echoed (live rate not read; override drives shares and is echoed); also `tests/e2e/what-if-sizing-preview.spec.js` V-WHATIF-05 (request side, mocked API) | — |
+| C4.1.5-02 | Default FX is the system-provided live rate | Asserted | `tests/test_sizing_fx_and_cash.py`::TestFxHandling::test_us_without_override_uses_live_rate | — |
+| C4.1.5-03 | The FX rate used is returned in the sizing response | Asserted | `tests/test_sizing_fx_and_cash.py`::TestFxHandling (live, override and UK 1.0 echoes) | — |
+| C4.1.6-01 | `EstimatedCost > AvailableCash` → insufficient-cash result (`cash_sufficient: false`) | Asserted | `tests/test_sizing_fx_and_cash.py`::TestCashConstraint (UK and US insufficient; sufficient negative case) | — |
+| C4.1.6-02 | Insufficient-cash result may include `MaxAffordableShares` | Asserted | `tests/test_sizing_fx_and_cash.py`::TestCashConstraint::test_insufficient_result_includes_affordable_max_shares, `::test_us_insufficient_result_includes_affordable_max_shares` (present, and affordable including fees) | — |
 | C4.1.7-01 | Calculator always visible in the Position Entry form (no toggle) | Partial | `tests/e2e/position-sizing-concentration.spec.js`, `tests/e2e/what-if-sizing-preview.spec.js` render the widget; no dedicated always-visible / no-toggle assertion | BLG-QA-206 |
 | C4.1.7-02 | Auto-recalculates on entry/stop/risk change, debounced 300ms | None | — | BLG-QA-206 |
 | C4.1.7-03 | Loading state shown between debounce firing and response | None | — | BLG-QA-206 |
@@ -135,7 +134,7 @@ Follow-ups for every Partial/None clause are filed, grouped by area, as `BLG-QA-
 
 | Item | Area | Clauses |
 |------|------|---------|
-| BLG-QA-205 | Backend sizing: FX default/override/echo and §4.1.6 cash-constraint result | C4.1.5-01, C4.1.5-02, C4.1.5-03, C4.1.6-01, C4.1.6-02 |
+| BLG-QA-205 | Backend sizing: FX default/override/echo and §4.1.6 cash-constraint result. **Done** in ST-09, v9.12 | C4.1.5-01, C4.1.5-02, C4.1.5-03, C4.1.6-01, C4.1.6-02 |
 | BLG-QA-206 | Playwright coverage of §4.1.7 sizing-widget behaviours | C4.1.7-01, C4.1.7-02, C4.1.7-03, C4.1.7-05, C4.1.7-06, C4.1.7-07, C4.1.7-08 |
 | BLG-QA-207 | Live exit decision and grace-period behaviour (`should_exit_position`, stop persistence at entry). **Done** in ST-04, v9.10; C7.1-02 stays Partial for a behaviour reason, see its row | C5-02, C6.3-01, C6.3-02, C6.3-03, C7.1-02, C8-00, C8.1-01, C8.1-02, C8.2, C8.3 |
 | BLG-QA-208 | Entry required-field set and advisory panel non-blocking at the UI | C4-01, C4.2.6 |
