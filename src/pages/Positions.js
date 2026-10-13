@@ -55,6 +55,10 @@ import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS, PROFIT_ATR_MULTIPLIER } from "../co
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
+// ST-22 (BLG-FE-207, v9.12): deep-link highlight hold, then removed with no
+// transition (grace-panel-position-link decision record §2.3).
+const POSITION_HIGHLIGHT_MS = 2000;
+
 // ---------------------------------------------------------------------------
 // ST-01 (IT-01) — Lifecycle state badge
 // ---------------------------------------------------------------------------
@@ -682,6 +686,30 @@ export default function Positions() {
     navigate(location.pathname, { replace: true });
   }, [location.search, location.pathname, positions, navigate]);
 
+  // ST-22 (BLG-FE-207, v9.12): /#/Positions?position={id} brings that open
+  // position into view in the current Table or Grid view, highlights it for
+  // POSITION_HIGHLIGHT_MS, then drops the parameter (positions.md §Position
+  // Deep Link). An id that is not in the list is ignored. Navigation only (§13).
+  const [highlightedPositionId, setHighlightedPositionId] = useState(null);
+  useEffect(() => {
+    const positionId = new URLSearchParams(location.search).get("position");
+    if (!positionId || !Array.isArray(positions)) return;
+    const target = positions.find((p) => String(p.id) === positionId && p.status === "open");
+    if (target) setHighlightedPositionId(String(target.id));
+    navigate(location.pathname, { replace: true });
+  }, [location.search, location.pathname, positions, navigate]);
+
+  useEffect(() => {
+    if (!highlightedPositionId) return undefined;
+    const el = document.querySelector(`[data-position-id="${CSS.escape(highlightedPositionId)}"]`);
+    if (el) {
+      const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      el.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
+    }
+    const timer = setTimeout(() => setHighlightedPositionId(null), POSITION_HIGHLIGHT_MS);
+    return () => clearTimeout(timer);
+  }, [highlightedPositionId]);
+
   const { data: availableTags = [] } = useQuery({
     queryKey: ["position-tags"],
     queryFn: async () => {
@@ -895,6 +923,7 @@ export default function Positions() {
               onExit={setExitingPosition}
               onRecheck={setRecheckingPosition}
               drawdownActive={drawdownActive}
+              highlighted={highlightedPositionId === String(position.id)}
             />
           ))}
         </div>
@@ -956,7 +985,12 @@ export default function Positions() {
                 trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
 
               return (
-                <TableRow key={position.id}>
+                <TableRow
+                  key={position.id}
+                  data-position-id={position.id}
+                  data-highlighted={highlightedPositionId === String(position.id) ? "true" : undefined}
+                  className={highlightedPositionId === String(position.id) ? "ring-2 ring-cyan-500" : undefined}
+                >
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-white">

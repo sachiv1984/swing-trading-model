@@ -39,7 +39,7 @@ export function TableBody({ children }) {
   return <tbody className="divide-y divide-slate-700/30">{children}</tbody>;
 }
 
-export function TableRow({ children, className, onClick }) {
+export function TableRow({ children, className, onClick, ...rest }) {
   return (
     <motion.tr
       initial={{ opacity: 0 }}
@@ -50,6 +50,7 @@ export function TableRow({ children, className, onClick }) {
         className
       )}
       onClick={onClick}
+      {...rest}
     >
       {children}
     </motion.tr>

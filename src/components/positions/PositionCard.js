@@ -150,7 +150,7 @@ function LastReviewedRow({ position, drawdownActive }) {
   );
 }
 
-export default function PositionCard({ position, onEdit, onExit, onRecheck, drawdownActive }) {
+export default function PositionCard({ position, onEdit, onExit, onRecheck, drawdownActive, highlighted = false }) {
   const [showNoteModal, setShowNoteModal] = useState(false);
   const pnl = position.pnl || 0;
   const pnlPercent = position.pnl_percent || 0;
@@ -178,10 +178,14 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      data-position-id={position.id}
+      data-highlighted={highlighted ? "true" : undefined}
       className={cn(
-        "relative overflow-hidden rounded-2xl border p-5 transition-all",
+        "relative overflow-hidden rounded-2xl border p-5 transition-colors",
         "bg-gradient-to-br from-slate-900 to-slate-800 backdrop-blur-sm",
-        "border-slate-700/50 hover:border-slate-600/50"
+        "border-slate-700/50 hover:border-slate-600/50",
+        // ST-22 (BLG-FE-207, v9.12): ?position={id} deep-link highlight (positions.md §Position Deep Link)
+        highlighted && "ring-2 ring-cyan-500"
       )}
     >
       <div className="flex items-start justify-between mb-4">
