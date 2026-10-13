@@ -1,8 +1,8 @@
 **Owner:** Head of UX & Design
 **Class:** Design Artefact (Class 5)
 **Status:** Approved
-**Version:** 1.1
-**Last Updated:** 2026-10-07 (v9.10 ST-14, BLG-BE-136 — §3–§6 trigger and timing aligned with the code after the ST-13 ruling: weekend-hold trigger removed; earnings US-only, after today and on or before the next trading day); prior — 2026-07-10
+**Version:** 1.2
+**Last Updated:** 2026-10-13 (v9.12 ST-35, BLG-SPEC-179 — §9 API Dependency names the shipped `GET /positions/{position_id}/gap-risk` endpoint, not a `gap_risk` field on `GET /positions`); prior — 2026-10-07 (v9.10 ST-14, BLG-BE-136 — §3–§6 trigger and timing aligned with the code after the ST-13 ruling: weekend-hold trigger removed; earnings US-only, after today and on or before the next trading day); prior — 2026-07-10
 **Approved by:** Product Owner — 2026-07-10
 **Story:** ST-02 — Overnight/weekend gap risk flag for open positions (BLG-FEAT-65)
 **Cycle:** 2026-07-10__release-v6.9
@@ -96,7 +96,9 @@ Display-only. The flag surfaces a known calendar event (earnings date) and a his
 
 | Endpoint | Field(s) | Description |
 |----------|----------|--------------|
-| `GET /positions` (existing) | `gap_risk: { flagged: bool, reasons: [...], avg_gap_pct: float \| null, event_count: int, insufficient_history: bool }` | New field on existing read path. If implementation requires a new endpoint instead, the same same-commit `openapi.yaml` / `docs/specs/api_contracts/` / `backend/routers/test.py` registration rules apply per CLAUDE.md. |
+| `GET /positions/{position_id}/gap-risk` | `data: { flagged: bool, reasons: [...], avg_gap_pct: float \| null, event_count: int, insufficient_history: bool }` | Dedicated endpoint, fetched lazily per position (`src/hooks/useGapRisk.js`), with an independent loading state per cell. This was the pre-authorised alternative; `GET /positions` has no `gap_risk` field. Contract: `position_endpoints.md` §GET /positions/{position_id}/gap-risk. |
+
+*(v1.2, 2026-10-13, ST-35, EPIC-05, v9.12, BLG-SPEC-179: this row originally named a new `gap_risk` field on `GET /positions`. That field was never built; the row now names the endpoint that shipped.)*
 
 ## 10. Out of Scope
 
