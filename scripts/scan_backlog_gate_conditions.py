@@ -67,8 +67,22 @@ form) is reported in a separate "already-resolved — verify before
 seating" list, independent of gated/ungated status — a candidate is not
 truly a fresh selection opportunity if it already carries this marker.
 
+Gating-item-shipped detection (ST-40, EPIC-06, v9.12, BLG-GOV-386): a gate
+whose condition is "`BLG-X` shipped/complete" stays gated after `BLG-X`
+ships, because nothing re-reads it. v9.11 Release Planning found 26 such
+items by hand (`BLG-OPS-179` genuinely ready, `BLG-FE-195` already
+delivered). A gated item whose `gate_condition` names one or more `BLG-*`
+IDs (other than its own), every one of which is either absent from the
+active backlog.md (archived) or bannered `✅ COMPLETE`, is reported in a
+separate "gating item shipped — verify" list. As with the date-lapsed list,
+this never clears the gate: a shipped dependency means the condition needs
+re-reading, since some gates also name a soak period or a non-BLG
+condition. An item whose gate names at least one still-active item is not
+listed. Consumed by `release_planning_prompt.md` §1.3a alongside the
+date-lapsed list.
+
 Usage:
-    python3 scripts/scan_backlog_gate_conditions.py [--json] [--as-of YYYY-MM-DD]
+    python3 scripts/scan_backlog_gate_conditions.py [--json] [--as-of YYYY-MM-DD] [--backlog PATH]
 
 Exit code is always 0 — this is a scan/report tool consumed by Release
 Planning's STEP 1, not a hard CI gate (backlog items are allowed to be
@@ -121,6 +135,9 @@ EMBEDDED_GATE_SIGNAL_RE = re.compile(
 # Friction Item 1, v9.7) — a `**Resolution (...):**` or `**Resolved (...):**`
 # block anywhere in the item body, independent of the `✅ COMPLETE` banner
 # convention the original v9.6 sibling check looked for.
+GATE_BLG_REF_RE = re.compile(r"\bBLG-[A-Z]+-\d+\b")
+COMPLETE_BANNER = "✅ COMPLETE"
+
 ALREADY_RESOLVED_RE = re.compile(
     r"\*\*(Resolutions?|Resolved)\s*\(.*?\):\*\*",
     re.IGNORECASE,
@@ -264,19 +281,36 @@ def classify_item(item_id, title, body, as_of):
     return result
 
 
+def gating_item_shipped(results, items):
+    """ST-40 (BLG-GOV-386): return [(result, shipped_ids)] for gated items
+    whose gate names at least one BLG-* ID and all of those IDs are archived
+    (absent from the active backlog) or bannered ✅ COMPLETE."""
+    active_open = {item_id for item_id, title, body in items if COMPLETE_BANNER not in body}
+    shipped = []
+    for r in results:
+        if not r["gated"]:
+            continue
+        refs = sorted(set(GATE_BLG_REF_RE.findall(r["gate_condition"])) - {r["id"]})
+        if refs and not any(ref in active_open for ref in refs):
+            shipped.append((r, refs))
+    return shipped
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--json", action="store_true", help="emit JSON instead of a text report")
     parser.add_argument("--as-of", default=None, help="ISO date to evaluate lapsed gates against (default: today)")
+    parser.add_argument("--backlog", default=str(BACKLOG_PATH), help="backlog file to scan (default: claude/backlog/backlog.md)")
     args = parser.parse_args()
+    backlog_path = Path(args.backlog)
 
     as_of = datetime.date.fromisoformat(args.as_of) if args.as_of else datetime.date.today()
 
-    if not BACKLOG_PATH.exists():
-        print(f"ERROR: {BACKLOG_PATH} not found", file=sys.stderr)
+    if not backlog_path.exists():
+        print(f"ERROR: {backlog_path} not found", file=sys.stderr)
         sys.exit(0)
 
-    text = BACKLOG_PATH.read_text()
+    text = backlog_path.read_text()
     items = parse_items(text)
     results = [classify_item(item_id, title, body, as_of) for item_id, title, body in items]
 
@@ -284,6 +318,7 @@ def main():
     warnings = [r for r in results if r["data_quality_warning"]]
     date_lapsed = [r for r in gated if r["date_lapsed"]]
     already_resolved = [r for r in results if r["already_resolved"]]
+    shipped = gating_item_shipped(results, items)
 
     if args.json:
         print(json.dumps({
@@ -292,11 +327,12 @@ def main():
             "date_lapsed": [{**r, "date_lapsed": r["date_lapsed"].isoformat()} for r in date_lapsed],
             "data_quality_warnings": warnings,
             "already_resolved": already_resolved,
+            "gating_item_shipped": [{**r, "shipped_gating_items": refs} for r, refs in shipped],
             "total_items": len(results),
         }, indent=2, default=str))
         sys.exit(0)
 
-    print(f"Scanned {len(results)} backlog items ({BACKLOG_PATH}), as of {as_of.isoformat()}.")
+    print(f"Scanned {len(results)} backlog items ({backlog_path}), as of {as_of.isoformat()}.")
     print(f"\n{len(gated)} gated/conditional item(s):")
     for r in gated:
         if r["date_lapsed"]:
@@ -311,6 +347,11 @@ def main():
         for r in date_lapsed:
             ambiguous_note = " [AMBIGUOUS — multiple embedded dates disagree on lapsed status; manually confirm which date actually governs this gate]" if r["date_ambiguous"] else ""
             print(f"  {r['id']} — gate date {r['date_lapsed'].isoformat()} — {r['gate_condition']}{ambiguous_note}")
+
+    if shipped:
+        print(f"\n{len(shipped)} item(s) whose gate names only shipped backlog items (gating item shipped — verify; re-read the gate, do not auto-clear):")
+        for r, refs in shipped:
+            print(f"  {r['id']} — gating item(s) {', '.join(refs)} archived or ✅ COMPLETE — {r['gate_condition']}")
 
     if warnings:
         print(f"\n{len(warnings)} data-quality warning(s) (embedded gate language, no formal Gate field):")

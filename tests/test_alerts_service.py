@@ -29,68 +29,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 # Database stub is registered by tests/conftest.py (BLG-QA-20).
 # Config and utils stubs are set up here before importing the service under test.
 
-# ST-25 (BLG-QA-105): sys.modules stubbing below is unavoidably module-level
-# (alerts_service is loaded via spec_from_file_location further down, and its
-# own internal `import utils.pricing` etc. statements resolve against
-# sys.modules at that exec_module() call, so the stubs must already be
-# registered by then). That makes this module-level mutation process-global
-# and permanent for the rest of the pytest session unless explicitly
-# restored -- any test file collected after this one that expects the REAL
-# utils.formatting/utils.pricing/utils.calculations/config (not a Mock) would
-# silently get this file's stubs instead. Snapshot whatever was in
-# sys.modules for each of these names *before* this file overwrites them, so
-# the module-scoped autouse fixture below can put it back once this file's
-# own tests are done -- restoring correctness for every test that executes
-# afterward, even though the mutation is unavoidable at collection time.
-# Matches the spirit of test_trade_service.py's own guarded
-# ("don't stub over an already-registered module") pattern for the same
-# module set, applied here as an explicit restore instead of a pre-check.
-_PATCHED_SYS_MODULES_NAMES = (
-    "config",
-    "utils",
-    "utils.pricing",
-    "utils.calculations",
-    "utils.formatting",
-    "utils.position_lifecycle_states",
-    "utils.retry",
-)
-_pre_existing_sys_modules = {name: sys.modules.get(name) for name in _PATCHED_SYS_MODULES_NAMES}
-
-
-@pytest.fixture(autouse=True, scope="module")
-def _restore_sys_modules_after_this_file():
-    """Restore sys.modules entries this file stubbed, once its own tests finish.
-
-    Module-scoped so it applies to the unittest.TestCase classes below (pytest
-    applies module/session-scoped autouse fixtures to unittest-style tests;
-    function-scoped ones would not fire per-TestCase-method). Runs its
-    teardown after the last test in this file, before pytest moves on to
-    later-collected files' test execution -- see ST-25 note above.
-
-    ST-18 (BLG-QA-139, EPIC-05, v8.6) -- one-directional scope, explicit:
-    this fixture protects test files collected/executed AFTER this one --
-    they get the real config/utils.* modules back, not this file's stubs.
-    It provides NO protection in the other two directions:
-      1. Test files collected/executed BEFORE this one are unaffected either
-         way -- they ran against whatever sys.modules already held, before
-         this file's module-level stubbing ever executed.
-      2. Any code imported WHILE this file's own tests are running (between
-         the module-level stub assignment above and this fixture's teardown)
-         sees the stubs, not the real modules -- that exposure is the
-         intended, unavoidable cost of the module-level stubbing pattern
-         (ST-25 note above), not something this fixture guards against.
-    The restore also uses a point-in-time snapshot taken when this file is
-    first collected (`_pre_existing_sys_modules`) -- if another file between
-    collection and this file's stubbing independently mutated the same
-    sys.modules entries, this fixture restores to that snapshot, not to
-    whatever was live immediately before this file's own stub took effect.
-    """
-    yield
-    for name, original in _pre_existing_sys_modules.items():
-        if original is None:
-            sys.modules.pop(name, None)
-        else:
-            sys.modules[name] = original
+# ST-46 (BLG-QA-209, EPIC-06, v9.12): the config/utils.* stubs below are
+# installed only while alerts_service is loaded (scoped_stub_modules), not
+# left in sys.modules for later-collected files. alerts_service keeps its own
+# references to them, so the tests here behave as before. This replaces the
+# ST-25/ST-18 snapshot-and-restore fixture, which restored only after this
+# file's tests ran, too late for files collected after it.
+from tests._scoped_utils_stubs import scoped_stub_modules, stub_utils_package
 
 _config_stub = types.ModuleType("config")
 _config_stub.DEFAULT_MIN_HOLD_DAYS = 10
@@ -127,7 +72,6 @@ _config_stub.PRICE_FETCH_DELAY_SECONDS = 0.3
 _config_stub.FX_RATE_FETCH_DELAY_SECONDS = 0.2
 _config_stub.MARKET_REGIME_FETCH_DELAY_SECONDS = 0.3
 _config_stub.AI_DAILY_COST_THRESHOLD = 1.00
-sys.modules["config"] = _config_stub
 
 _pricing_stub = types.ModuleType("utils.pricing")
 _pricing_stub.check_market_regime = MagicMock()
@@ -157,12 +101,7 @@ _formatting_stub.decimal_to_float = MagicMock(side_effect=lambda x: x)
 # have no backend-internal dependencies of their own, so they're loaded
 # directly from their real files rather than hand-duplicated as MagicMock
 # stubs like the modules above — this keeps the stub correct even if either
-# real module changes, with zero drift risk. Both are needed here: this
-# stubbed "utils" sys.modules entry persists for the rest of the pytest
-# session (module-level code, not a fixture) and later-collected test files
-# (test_api_contracts.py -> main.py -> routers/screener.py ->
-# services/screener_batch_service.py) reach utils.retry transitively even
-# though this file itself never touches it.
+# real module changes, with zero drift risk.
 import importlib.util as _ilu_extra
 
 
@@ -183,18 +122,19 @@ _retry_stub = _load_real_utils_submodule("retry")
 _calcs_stub.live_holding_days = _load_real_utils_submodule("calculations").live_holding_days
 
 # Register utils as a package and its submodules
-_utils_stub = types.ModuleType("utils")
-_utils_stub.pricing = _pricing_stub
-_utils_stub.calculations = _calcs_stub
-_utils_stub.formatting = _formatting_stub
-_utils_stub.position_lifecycle_states = _position_lifecycle_states_stub
-_utils_stub.retry = _retry_stub
-sys.modules.setdefault("utils", _utils_stub)
-sys.modules["utils.pricing"] = _pricing_stub
-sys.modules["utils.calculations"] = _calcs_stub
-sys.modules["utils.formatting"] = _formatting_stub
-sys.modules["utils.position_lifecycle_states"] = _position_lifecycle_states_stub
-sys.modules["utils.retry"] = _retry_stub
+_utils_stub = stub_utils_package(
+    pricing=_pricing_stub, calculations=_calcs_stub, formatting=_formatting_stub,
+    position_lifecycle_states=_position_lifecycle_states_stub, retry=_retry_stub,
+)
+_STUBS = {
+    "config": _config_stub,
+    "utils": _utils_stub,
+    "utils.pricing": _pricing_stub,
+    "utils.calculations": _calcs_stub,
+    "utils.formatting": _formatting_stub,
+    "utils.position_lifecycle_states": _position_lifecycle_states_stub,
+    "utils.retry": _retry_stub,
+}
 
 # Import alerts_service directly (bypasses services/__init__.py and its DB chain)
 import importlib.util as _ilu
@@ -203,7 +143,8 @@ _spec = _ilu.spec_from_file_location(
     Path(__file__).parent.parent / "backend" / "services" / "alerts_service.py"
 )
 alerts_service = _ilu.module_from_spec(_spec)
-_spec.loader.exec_module(alerts_service)
+with scoped_stub_modules(_STUBS):
+    _spec.loader.exec_module(alerts_service)
 
 _check_regime_change = alerts_service._check_regime_change
 _last_known_regime = alerts_service._last_known_regime

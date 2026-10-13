@@ -349,12 +349,8 @@ class TestStopLossSpecFormulas(unittest.TestCase):
         just the spec-formula self-consistency check above — this is the
         one stop_loss case where an implementation import is warranted,
         since the floor is exactly the behaviour BLG-BE-119 was raised
-        about. sys.modules eviction matches the established pattern (see
-        tests/test_nightly_computations.py) — test_alerts_service.py
-        (collected alphabetically earlier) leaves a MagicMock stub in
-        sys.modules["utils.calculations"] otherwise."""
-        sys.modules.pop("utils.calculations", None)
-        sys.modules.pop("utils", None)
+        about. No sys.modules eviction is needed (ST-46, BLG-QA-209): no
+        file leaves a utils stub installed (conftest.py guard)."""
         from utils.calculations import calculate_trailing_stop
 
         case = self._get("SL-08")

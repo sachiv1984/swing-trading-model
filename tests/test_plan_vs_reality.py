@@ -30,30 +30,30 @@ def _make_db_stub():
     return stub
 
 
-if "database" not in sys.modules:
-    sys.modules["database"] = _make_db_stub()
-
-if "utils.formatting" not in sys.modules:
-    _fmt_stub = types.ModuleType("utils.formatting")
-    _fmt_stub.decimal_to_float = lambda x: x
-    # Guard against clobbering an already-loaded real "utils" package (same
-    # pattern as test_trade_service.py) — unconditionally overwriting
-    # sys.modules["utils"] here silently split module state (e.g.
-    # utils.pricing._market_regime_cache, BLG-BE-97 v8.8 ST-07) across two
-    # live module instances whenever this file was collected after other
-    # test files had already triggered a real `import utils.pricing`.
-    if "utils" not in sys.modules:
-        sys.modules["utils"] = types.ModuleType("utils")
-    sys.modules["utils.formatting"] = _fmt_stub
-
 import os
 import importlib
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend", "services"))
 
+from tests._scoped_utils_stubs import scoped_stub_modules, stub_utils_package  # noqa: E402
+
+# ST-46 (BLG-QA-209, EPIC-06, v9.12): the utils.formatting stub is installed
+# only while plan_vs_reality_service is imported, then removed, so files
+# collected later see the real utils package. The previous module-level stub
+# stayed in sys.modules for the rest of the session. conftest.py always
+# registers the database stub, so the old "if database not in sys.modules"
+# fallback (_make_db_stub) is kept only as the stub passed in here.
+_fmt_stub = types.ModuleType("utils.formatting")
+_fmt_stub.decimal_to_float = lambda x: x
+_utils_stub = stub_utils_package(formatting=_fmt_stub)
+_stubs = {"utils": _utils_stub, "utils.formatting": _fmt_stub}
+if "database" not in sys.modules:
+    _stubs["database"] = _make_db_stub()
+
 # Import the module directly, bypassing services/__init__.py
-_pvr = importlib.import_module("plan_vs_reality_service")
+with scoped_stub_modules(_stubs, fresh=("plan_vs_reality_service",)):
+    _pvr = importlib.import_module("plan_vs_reality_service")
 _compute_entry_delta_pct = _pvr._compute_entry_delta_pct
 compute_plan_vs_reality = _pvr.compute_plan_vs_reality
 

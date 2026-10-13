@@ -124,12 +124,23 @@ _LEAK_HINT = (
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_make_collect_report(collector):
+    # One hook for both leak guards: a second module-level function with this
+    # name would silently replace this one (PR #2023 review, ST-46).
     outcome = yield
-    if isinstance(collector, pytest.Module) and sys.modules.get("database") is not _database_stub:
+    if not isinstance(collector, pytest.Module):
+        return
+    problems = []
+    if sys.modules.get("database") is not _database_stub:
         sys.modules["database"] = _database_stub
+        problems.append(_LEAK_HINT)
+    leaked = leaked_utils_stubs()
+    if leaked:
+        _evict(leaked)
+        problems.append(f"{_UTILS_LEAK_HINT}: {leaked}")
+    if problems:
         report = outcome.get_result()
         report.outcome = "failed"
-        report.longrepr = f"{collector.nodeid}: importing this test file {_LEAK_HINT}"
+        report.longrepr = f"{collector.nodeid}: importing this test file " + "; and ".join(problems)
 
 
 @pytest.fixture(autouse=True)
@@ -138,6 +149,54 @@ def _database_stub_not_leaked(request):
     if sys.modules.get("database") is not _database_stub:
         sys.modules["database"] = _database_stub
         pytest.fail(f"{request.node.nodeid} {_LEAK_HINT}", pytrace=False)
+
+
+# ---------------------------------------------------------------------------
+# sys.modules["utils.*"] leak guard (ST-46, BLG-QA-209, EPIC-06, v9.12)
+#
+# The same leak shape for the utils package: a file that leaves a stand-in
+# `utils` / `utils.<name>` in sys.modules (a types.ModuleType or MagicMock,
+# not the real file under backend/utils/) changes what every later file
+# imports. Reversed file order once failed 32 tests and a collection this
+# way. Every utils entry must be a real module loaded from backend/utils/.
+# Stub only inside tests/_scoped_utils_stubs.py's scoped_stub_modules().
+# ---------------------------------------------------------------------------
+
+_UTILS_DIR = (Path(__file__).resolve().parent.parent / "backend" / "utils").resolve()
+_UTILS_LEAK_HINT = (
+    "left a stand-in utils / utils.* module in sys.modules -- install utils stubs only "
+    "inside tests/_scoped_utils_stubs.py's scoped_stub_modules() (ST-46, BLG-QA-209)"
+)
+
+
+def _is_real_utils_module(module) -> bool:
+    try:
+        return Path(module.__file__).resolve().is_relative_to(_UTILS_DIR)
+    except (AttributeError, TypeError, OSError, ValueError):
+        return False
+
+
+def leaked_utils_stubs() -> list:
+    """Names of utils / utils.* sys.modules entries that are not real backend/utils files."""
+    return sorted(
+        name for name, module in list(sys.modules.items())
+        if (name == "utils" or name.startswith("utils.")) and module is not None
+        and not _is_real_utils_module(module)
+    )
+
+
+def _evict(names):
+    for name in names:
+        sys.modules.pop(name, None)
+
+
+@pytest.fixture(autouse=True)
+def _utils_stubs_not_leaked(request):
+    yield
+    leaked = leaked_utils_stubs()
+    if leaked:
+        _evict(leaked)
+        pytest.fail(f"{request.node.nodeid} {_UTILS_LEAK_HINT}: {leaked}", pytrace=False)
 
 
 # Import mock harness fixtures (BLG-QA-08 / ST-09)

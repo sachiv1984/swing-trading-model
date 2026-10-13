@@ -24,13 +24,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 from services.strategy_engine import compute_atr
 
 # NOTE: utils.pricing is deliberately NOT imported at module level here.
-# tests/test_alerts_service.py and tests/test_trade_service.py replace
-# sys.modules["utils.pricing"] with a MagicMock stub at THEIR module-import
-# time (restored only via a fixture that fires during test execution, not
-# during pytest's upfront collection phase) -- a top-level import in this
-# file would race that stub during collection, depending on file collection
-# order. Importing inside each test function instead defers to run time,
-# after any such stub has already been restored. See ST-14 (this sprint)
+# This originally avoided racing the utils.pricing stubs that
+# tests/test_alerts_service.py and tests/test_trade_service.py left in
+# sys.modules during collection. ST-46 (BLG-QA-209) scoped those stubs and
+# added a conftest guard, so the race no longer exists. Importing inside each
+# test function is kept as harmless defence. See ST-14 (this sprint)
 # for the broader cleanup of this sys.modules swap pattern across the suite.
 
 

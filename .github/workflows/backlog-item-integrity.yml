@@ -1,0 +1,33 @@
+name: "Backlog Item Integrity"
+
+# [EPIC-06][ST-39] (BLG-GOV-385, v9.12) — A clean `git merge` can splice two
+# backlog.md items when both end with the same metadata lines (3237cb5e,
+# v9.11: BLG-SPEC-190's body landed inside BLG-BE-157 with no conflict
+# reported). scripts/check_backlog_item_integrity.py checks every item has
+# exactly one Problem block, at most one Scope/AC block, each required
+# metadata field once, and no repeated ID. CLAUDE.md §8 also runs it after
+# every merge resolution that touches backlog.md.
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'claude/backlog/backlog.md'
+      - 'scripts/check_backlog_item_integrity.py'
+
+jobs:
+  backlog_item_integrity:
+    name: Backlog item integrity check (ST-39)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check backlog.md item structure
+        run: python3 scripts/check_backlog_item_integrity.py claude/backlog/backlog.md

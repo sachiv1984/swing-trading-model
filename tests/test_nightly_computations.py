@@ -46,13 +46,9 @@ def _approx(val, expected, rel_tol=1e-6):
 # Trailing Stop Computation Tests (TS-01 … TS-07)
 # ===========================================================================
 
-# test_alerts_service.py installs a fake types.ModuleType("utils") stub and replaces
-# sys.modules["utils.calculations"] with a MagicMock stub at collection time
-# (alphabetically earlier). Evict both the submodule and the parent stub so Python
-# re-imports the real utils package (backend/utils/) and binds calculate_trailing_stop
-# to the real function rather than the MagicMock.
-sys.modules.pop("utils.calculations", None)
-sys.modules.pop("utils", None)
+# No sys.modules eviction needed (ST-46, BLG-QA-209): utils stubs are scoped to
+# their own imports and conftest.py fails any file that leaves one installed, so
+# this import always binds the real calculate_trailing_stop.
 from utils.calculations import calculate_trailing_stop
 
 

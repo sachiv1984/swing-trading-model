@@ -15,7 +15,12 @@ This script walks the changelog's "## vX.Y" sections newest-first, reads the
 - STEP 2.4: user_value_ratio = U stories / total stories, over the last
   --pvr-window (default 5) cycles.
 - STEP 7.1: governance_pct = (G + D + P) / total * 100, over the last
-  --silo-window (default 3) cycles.
+  --silo-window (default 3) cycles. This is the **pooled** (sum-over-sum)
+  method that roadmap_prompt.md §7.1 names as the only method (ST-42,
+  BLG-GOV-367, v9.12). It is not the plain mean of per-cycle
+  percentages that decision_log.md recorded up to v9.6–v9.8. Output is
+  labelled `method: pooled`, and `--silo-history N` prints the last N
+  rolling readings under that method for trend comparison.
 
 STEP 7.2 (Cross-Role Workload Balance) is a *different* input (sprint_backlog.md
 `**Owner:**` fields, not changelog tags) and is already covered by
@@ -32,6 +37,7 @@ Usage:
     python3 scripts/compute_rebalance_diagnostics.py docs/product/changelog.md --json
     python3 scripts/compute_rebalance_diagnostics.py docs/product/changelog.md \\
         --pvr-window 5 --silo-window 3
+    python3 scripts/compute_rebalance_diagnostics.py docs/product/changelog.md --silo-history 4
 """
 import argparse
 import json
@@ -98,7 +104,15 @@ def skill_silo_diagnostic(cycles, window: int):
         "total": n,
         "governance_pct": pct,
         "skill_silo_alert": alert,
+        "method": "pooled",
     }
+
+
+def skill_silo_history(cycles, window: int, readings: int):
+    """Last `readings` rolling STEP 7.1 readings, newest first, each computed
+    by the pooled method over `window` consecutive cycles (ST-42)."""
+    return [skill_silo_diagnostic(cycles[i:], window) for i in range(readings)
+            if len(cycles[i:i + window]) == window]
 
 
 def main() -> int:
@@ -106,6 +120,8 @@ def main() -> int:
     parser.add_argument("changelog", type=Path, help="Path to docs/product/changelog.md")
     parser.add_argument("--pvr-window", type=int, default=5, help="Cycles for STEP 2.4 (default 5)")
     parser.add_argument("--silo-window", type=int, default=3, help="Cycles for STEP 7.1 (default 3)")
+    parser.add_argument("--silo-history", type=int, default=0, metavar="N",
+                        help="Also emit the last N rolling STEP 7.1 readings (pooled method)")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
 
@@ -116,19 +132,29 @@ def main() -> int:
     cycles = parse_cycles(args.changelog.read_text())
     pvr = pvr_diagnostic(cycles, args.pvr_window)
     silo = skill_silo_diagnostic(cycles, args.silo_window)
+    history = skill_silo_history(cycles, args.silo_window, args.silo_history)
 
     if args.json:
-        print(json.dumps({"step_2_4_product_value_ratio": pvr, "step_7_1_skill_silo": silo}, indent=2))
+        out = {"step_2_4_product_value_ratio": pvr, "step_7_1_skill_silo": silo}
+        if args.silo_history:
+            out["step_7_1_skill_silo_history"] = history
+        print(json.dumps(out, indent=2))
     else:
         print(f"=== STEP 2.4 — Product Value Ratio (last {args.pvr_window} cycles) ===")
         print(f"  Window: {', '.join(pvr['window_cycles'])}")
         print(f"  U={pvr['U']} G={pvr['G']} D={pvr['D']} P={pvr['P']} total={pvr['total']}")
         print(f"  user_value_ratio = {pvr['user_value_ratio']} ({pvr['tier']})")
         print()
-        print(f"=== STEP 7.1 — Skill-Silo Governance % (last {args.silo_window} cycles) ===")
+        print(f"=== STEP 7.1 — Skill-Silo Governance % (last {args.silo_window} cycles, pooled method) ===")
         print(f"  Window: {', '.join(silo['window_cycles'])}")
         print(f"  U={silo['U']} G={silo['G']} D={silo['D']} P={silo['P']} total={silo['total']}")
         print(f"  governance_pct = {silo['governance_pct']}%" + (" — Skill-Silo Alert (>40%)" if silo['skill_silo_alert'] else ""))
+        if history:
+            print()
+            print(f"=== STEP 7.1 — last {len(history)} rolling readings (pooled, newest first) ===")
+            for h in history:
+                gov = h['G'] + h['D'] + h['P']
+                print(f"  {h['window_cycles'][-1]} – {h['window_cycles'][0]}: {gov}/{h['total']} = {h['governance_pct']}%")
     return 0
 
 
