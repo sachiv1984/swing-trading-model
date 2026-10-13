@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T18:16:30Z",
+  "last_updated_utc": "2026-10-13T19:04:30Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -231,10 +231,10 @@
       "merge_commit": "90099bec"
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
       "pr_number": 2025,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-12__release-v9.12/qa_evidence_EPIC-02.md",
       "test_scenarios": [
@@ -255,7 +255,7 @@
         "ST-07": {
           "title": "Give zero-ATR signals no allocation in batch sizing",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1980,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
@@ -280,7 +280,7 @@
         "ST-08": {
           "title": "Include entry fees in batch signal total cost",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1981,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
@@ -304,7 +304,7 @@
         "ST-09": {
           "title": "Assert the §4.1.5 FX defaulting/echo and §4.1.6 insufficient-cash sizing results in CI",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1982,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
@@ -328,7 +328,7 @@
         "ST-10": {
           "title": "Make the Trail Stop action work against a real route, or remove it; stop ignoring a supplied entry stop",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1983,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
@@ -361,7 +361,7 @@
         "ST-11": {
           "title": "Never let 2-dp rounding lower a stored stop",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1984,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
@@ -385,7 +385,7 @@
         "ST-12": {
           "title": "Recompute US positions with a NULL fill_price without error, and add US parity cases",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1985,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
@@ -410,7 +410,7 @@
         "ST-13": {
           "title": "Decide Risk page LOSING/PROFITABLE on native P&L, matching the lifecycle badge",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1986,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
@@ -436,7 +436,7 @@
         "ST-14": {
           "title": "Use the US exchange calendar for the gap-risk \"next trading session\"",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1987,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
@@ -469,7 +469,7 @@
         "ST-15": {
           "title": "Show the user when a position's stop is frozen for lack of ATR",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1988,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
@@ -503,7 +503,7 @@
         "ST-16": {
           "title": "Keep first-time Settings saves from writing NULL strategy columns; snapshot §11 values on trade plans",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1989,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-02",
@@ -534,7 +534,9 @@
         "reference": "qa_evidence_EPIC-02.md",
         "retries": 0,
         "note": "user-directed; pending human confirmation at merge gate"
-      }
+      },
+      "merged_utc": "2026-10-13T19:04:30Z",
+      "merge_commit": "61317385"
     },
     "EPIC-03": {
       "status": "not_started",
@@ -1405,11 +1407,11 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
+      "EPIC-06",
       "EPIC-05",
-      "EPIC-06"
+      "EPIC-02"
     ],
     "epics_pending": [
-      "EPIC-02",
       "EPIC-03",
       "EPIC-04"
     ],
@@ -1427,7 +1429,8 @@
     "2026-10-13 EPIC-06 ST-39: a .claude/skills/lessons_learnt.md commit-check lesson (2026-04-28) says to open a PR after every exec-branch push; not applied, because execution_prompt.md §3.2.B forbids opening a PR before the DoQ sign-off Date is set.",
     "2026-10-13 EPIC-06 PR #2023 merged by the human Product Owner at 2026-10-13T14:44:32Z (merge commit ccce1fc3). STEP 4 orphaned post-merge commit check: none. STEP 4 step 3c sibling sync: no other EPIC branch exists yet (EPIC-02..05 not started), so nothing to propagate.",
     "2026-10-13 EPIC-05 PR #2024 merged by the human Product Owner at 2026-10-13T17:15:51Z (merge commit a35aaffe). STEP 4 orphaned post-merge commit check: none (origin/main..origin/exec/2026-10-12__release-v9.12/EPIC-05 is empty). STEP 4 step 3c sibling sync: no pending EPIC branch exists yet (EPIC-02..04 not started), so nothing to propagate.",
-    "2026-10-13 EPIC-02 PR #2025 opened. Agent-mediated Director of Quality and Product Owner review (user-directed) posted as one PR comment, labelled agent-mediated (OA-6): both Approved with Comments, 0 blocking. Fix-now in 1b4068ff; backlog BLG-BE-176..179, BLG-FE-218/219, BLG-QA-224 in c005a5dc. Merge left to the human."
+    "2026-10-13 EPIC-02 PR #2025 opened. Agent-mediated Director of Quality and Product Owner review (user-directed) posted as one PR comment, labelled agent-mediated (OA-6): both Approved with Comments, 0 blocking. Fix-now in 1b4068ff; backlog BLG-BE-176..179, BLG-FE-218/219, BLG-QA-224 in c005a5dc. Merge left to the human.",
+    "2026-10-13 EPIC-02 PR #2025 merged by the human user at 2026-10-13T19:04:30Z (merge commit 61317385). STEP 4 orphaned post-merge commit check: 1 found, aab25c49 (PO acceptance and DoQ human confirmation in qa_evidence_EPIC-02.md), pushed after the merged head 73465b4c. Reconciled onto main by a clean cherry-pick. STEP 4 step 3c sibling sync: no pending EPIC branch exists yet (EPIC-03/EPIC-04 not started), so nothing to propagate."
   ],
   "sealed": false,
   "sealed_utc": null
