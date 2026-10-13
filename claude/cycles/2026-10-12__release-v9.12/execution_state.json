@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T19:24:34Z",
+  "last_updated_utc": "2026-10-13T19:30:58Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -548,7 +548,9 @@
       "test_scenarios": [
         "tests/test_market_atr_preview_endpoint.py",
         "tests/e2e/trade-entry-atr-preview.spec.js",
-        "tests/e2e/system-status.spec.js"
+        "tests/e2e/system-status.spec.js",
+        "tests/test_add_position_stop_handling.py",
+        "tests/e2e/trade-entry-atr-unit-validation.spec.js"
       ],
       "stories": {
         "ST-17": {
@@ -576,28 +578,34 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": "a8897d67. AC1: numeric stop, risk and suggested shares before save with ATR blank (SC-TAP-01, mocked endpoint). AC2: preview stop == saved initial_stop for the same inputs and the same symbol is fetched (tests/test_market_atr_preview_endpoint.py, 8 passed). AC3: null or failed preview keeps 'Calculated on save' (SC-TAP-02/03). AC4: ## contract heading (market_endpoints.md v0.3), openapi.yaml v3.30.0, routers/test.py, SystemStatus.js 128->129 and SC-SS-01b all in a8897d67; api_performance_baseline.md §49. Local Playwright: new spec + existing Trade Entry, sizing and system-status specs 109/109 pass. Deviation check: none. Implementation note (intent agrees, no deviation): position_form.md says atr_source 'stays system'; the stored value for a blank-submitted ATR is the existing 'fetched'/'fallback' (ST-02, v9.10), which is the system-sourced value the spec means. ci_pending: Playwright run 38454388870 (head a8897d67)."
+          "notes": "a8897d67. AC1: numeric stop, risk and suggested shares before save with ATR blank (SC-TAP-01, mocked endpoint). AC2: preview stop == saved initial_stop for the same inputs and the same symbol is fetched (tests/test_market_atr_preview_endpoint.py, 8 passed). AC3: null or failed preview keeps 'Calculated on save' (SC-TAP-02/03). AC4: ## contract heading (market_endpoints.md v0.3), openapi.yaml v3.30.0, routers/test.py, SystemStatus.js 128->129 and SC-SS-01b all in a8897d67; api_performance_baseline.md §49. Local Playwright: new spec + existing Trade Entry, sizing and system-status specs 109/109 pass. Deviation check: none. Implementation note (intent agrees, no deviation): position_form.md says atr_source 'stays system'; the stored value for a blank-submitted ATR is the existing 'fetched'/'fallback' (ST-02, v9.10), which is the system-sourced value the spec means. Playwright CI run 38454388870 success on head a8897d67."
         },
         "ST-18": {
           "title": "Show the currency unit on Trade Entry's ATR field and reject implausible typed ATRs",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1991,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
+          "commit_sha": "c458317994b8559a55476d11d085827a40ebb916",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-13T19:30:16Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/components/position_form.md#ATR (14-day) (v1.7 — ST-07; v1.9 — ST-17/ST-18)",
+            "docs/specs/frontend/components/position_form.md#Validation Errors",
+            "docs/specs/api_contracts/portfolio_endpoints.md#POST /portfolio/position",
+            "tests/test_add_position_stop_handling.py",
+            "tests/e2e/trade-entry-atr-unit-validation.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.10a",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "c4583179. AC1: label £ (UK) / $ (US), 'ATR (14-day)' before a ticker (SC-TAU-01). AC2: POST /portfolio/position 400 with explanatory message for 5×ATR ≥ entry (TestImplausibleTypedAtrRejected; boundary, above and pence-scale cases; US message names $). AC3: inline error on blur/submit attempt, aria-invalid/aria-describedby, submit disabled (SC-TAU-02..04; SC-TAU-03 plausible ATR stays enabled). Contract portfolio_endpoints.md v2.12.0, openapi.yaml v3.30.1. Local Playwright 29/29. Deviation check: none. ci_pending: Playwright run 38455354747 (head c4583179)."
         },
         "ST-19": {
           "title": "Cover the §4.1.7 sizing-widget behaviours with Playwright",
@@ -643,8 +651,8 @@
         },
         "ST-21": {
           "title": "Strategy-copy conformance: a frontend constants module, a CI lint for UI text restating §5–§11, and a named owner",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "in_progress",
           "assigned_to": "Head of Specs Team; Frontend Specifications & UX Documentation Owner; Director of HR",
           "github_issue": 1994,
           "branch": null,
@@ -659,8 +667,16 @@
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "ESC-EXEC-20261013-08 raised at EPIC-03 start (RISK-06). Constants module and lint (AC 1, AC 2) proceed; only the charter edit (AC 3) waits on the ruling."
+          "sign_off_record": {
+            "role": "Director of HR",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "date": "2026-10-13",
+            "reference": "ESC-EXEC-20261013-08",
+            "retries": 0,
+            "note": "Approved with conditions, first pass; charter text applied verbatim in ST-21 commit"
+          },
+          "notes": "ESC-EXEC-20261013-08 raised at EPIC-03 start (RISK-06) and resolved: Director of HR ruling (agent-mediated, §5.3), Approved with conditions. Reclassified autonomous."
         },
         "ST-22": {
           "title": "Link each Grace Period row to its position, and align the panel's text and date format with the spec",
@@ -1377,9 +1393,7 @@
       }
     }
   },
-  "blocked_items": [
-    "ST-21"
-  ],
+  "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -1399,6 +1413,7 @@
     "ST-15",
     "ST-16",
     "ST-17",
+    "ST-18",
     "ST-33",
     "ST-34",
     "ST-35",
@@ -1416,9 +1431,7 @@
     "ST-47",
     "ST-48"
   ],
-  "open_escalations": [
-    "ESC-EXEC-20261013-08"
-  ],
+  "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
