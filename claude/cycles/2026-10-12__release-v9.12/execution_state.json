@@ -248,7 +248,8 @@
         "tests/test_display_status_native_basis.py",
         "tests/test_gap_risk.py",
         "tests/test_settings_create_and_plan_snapshot.py",
-        "tests/e2e/stop-cell-provenance.spec.js"
+        "tests/e2e/stop-cell-provenance.spec.js",
+        "tests/test_toast_notification_timing_regression.py"
       ],
       "stories": {
         "ST-07": {
@@ -355,7 +356,7 @@
             "reference": "ESC-EXEC-20261013-06",
             "retries": 0
           },
-          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261013-06 resolved (Strategy Rules & System Intent Owner, agent-mediated, user-directed): Branch B, conditions 1-8. AC1: ruling recorded in ESC-EXEC-20261013-06 before the code commit. AC2: modal read-only (Branch B); Playwright SC-TS-01..06 in tests/e2e/epic01-v34-lifecycle.spec.js, 6/6 passed locally (first run: SC-TS-01 page.goto timeout on the cold dev-server compile, passed on rerun). ci_pending: Playwright run 38439982441 on branch head bd666dea (covers 7835b7d5). AC3: non-null stop_price -> 400 (tests/test_add_position_stop_handling.py::TestSuppliedEntryStopRejected). AC4: no route added, so N/A. Design-gate extra (no-raise note) covered by SC-TS-05. Condition 7: BLG-BE-173 filed. Deviation check: none; positions.md v2.18 and portfolio_endpoints.md v2.11.0 updated in the same commit."
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20261013-06 resolved (Strategy Rules & System Intent Owner, agent-mediated, user-directed): Branch B, conditions 1-8. AC1: ruling recorded in ESC-EXEC-20261013-06 before the code commit. AC2: modal read-only (Branch B); Playwright SC-TS-01..06 in tests/e2e/epic01-v34-lifecycle.spec.js, 6/6 passed locally (first run: SC-TS-01 page.goto timeout on the cold dev-server compile, passed on rerun). Playwright CI run 38439982441 success on head bd666dea (covers 7835b7d5); ci_pending cleared. Follow-up commit 47a24a3d (toast-timing regression list). AC3: non-null stop_price -> 400 (tests/test_add_position_stop_handling.py::TestSuppliedEntryStopRejected). AC4: no route added, so N/A. Design-gate extra (no-raise note) covered by SC-TS-05. Condition 7: BLG-BE-173 filed. Deviation check: none; positions.md v2.18 and portfolio_endpoints.md v2.11.0 updated in the same commit."
         },
         "ST-11": {
           "title": "Never let 2-dp rounding lower a stored stop",
@@ -497,7 +498,7 @@
             "reference": "DEL-20261013-04",
             "retries": 0
           },
-          "notes": "Code pushed in 52debab3 (authored 2026-10-13T17:48:22Z). AC1: indicator visible on Positions in Table and Grid views (Playwright SC-SCP-08/09; 25/25 local); contract and openapi updated in the same commit. AC2: nightly ATR-unavailable skip sets stop_frozen_reason (tests/test_atr_provenance.py::TestStopFrozenReason). Design-gate extra: no indicator during grace (SC-SCP-10). Deviation check: none. Blocked only on the live DS-32 migration (DEL-20261013-04); classification stays autonomous for the code. Unblocked in-session: DS-32 confirmed applied on staging and production (user-supplied Verification output); DEL-20261013-04 Unblocked."
+          "notes": "Code pushed in 52debab3 (authored 2026-10-13T17:48:22Z). AC1: indicator visible on Positions in Table and Grid views (Playwright SC-SCP-08/09; 25/25 local); contract and openapi updated in the same commit. AC2: nightly ATR-unavailable skip sets stop_frozen_reason (tests/test_atr_provenance.py::TestStopFrozenReason). Design-gate extra: no indicator during grace (SC-SCP-10). Deviation check: none. Blocked only on the live DS-32 migration (DEL-20261013-04); classification stays autonomous for the code. Unblocked in-session: DS-32 confirmed applied on staging and production (user-supplied Verification output); DEL-20261013-04 Unblocked. Playwright CI run 38441629605 success on head 52debab3."
         },
         "ST-16": {
           "title": "Keep first-time Settings saves from writing NULL strategy columns; snapshot §11 values on trade plans",
