@@ -5077,6 +5077,27 @@ In `generate_narrative` (`backend/services/monthly_pnl_narrative_service.py`), i
 
 ---
 
+### BLG-BE-173 — Trail Stop modal's ATR trail value uses a hardcoded 2.0 multiplier and no breakeven floor
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Correctness
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** ST-10 (EPIC-02, cycle `2026-10-12__release-v9.12`), Strategy Rules & System Intent Owner ruling ESC-EXEC-20261013-06, binding condition 7 — 2026-10-13
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /positions/{id}/stop-trail` (`backend/main.py`, the stop-trail handler) computes `atr_trail_stop` as `current price − 2.0 × stored ATR`, with the 2.0 hardcoded, and without the §7.2 breakeven floor (`max(..., EntryPrice)`) that the live recompute applies (`backend/utils/calculations.py::calculate_trailing_stop`). The read-only View Trail modal (ST-10, Branch B) therefore shows a trail value that can differ from what the system will actually set, and its static footnote restates the 2.0. It is display-only now, so it writes nothing, but it can mislead.
+
+**Scope**
+- Compute `atr_trail_stop` with the same §7.2 formula and §11 multipliers the live recompute uses (`backend/strategy_parameters.py`), including the breakeven floor, or call the shared function
+- Update the modal footnote (`positions.md` §Trail Stop Action) and `position_endpoints.md`'s stop-trail description to match; add a unit test
+
+**Acceptance Criteria**
+- For a profitable position, `atr_trail_stop` equals the value `calculate_trailing_stop` would produce from the same inputs (unit test), including a case where the breakeven floor binds
+- No literal multiplier remains in the handler or the modal footnote
+
+---
+
 ### BLG-SPEC-193 — Trade plan contract still lists 3 plan statuses after openapi.yaml moved to 7
 **Priority:** P3 (Low)
 **Type:** Spec Debt

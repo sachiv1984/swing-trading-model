@@ -201,10 +201,14 @@ function GracePeriodAlertZone() {
 
 // ---------------------------------------------------------------------------
 // ST-03 (IT-03) — Trail Stop modal
+// ST-10 (BLG-BE-159, v9.12): read-only. The Strategy Rules & System Intent Owner
+// ruled (ESC-EXEC-20261013-06, Branch B) that a user may not set or raise a stop
+// manually, so the modal compares the stored stop with the ATR trail and offers no
+// apply action. It never proposes a lower stop (strategy_rules.md §7.3).
+// Spec: positions.md v2.18 §Trail Stop Action.
 // ---------------------------------------------------------------------------
 
 function TrailStopModal({ position, onClose }) {
-  const queryClient = useQueryClient();
   const isEligible = position?.lifecycle_state === "PROFITABLE" || position?.lifecycle_state === "EXIT ZONE";
   const hasStop = position?.current_stop != null || position?.stop_price_native != null || position?.stop_price != null;
   // ST-02 (BLG-BE-103, v8.9): fallback before trailData loads — stop_price_native matches
@@ -224,40 +228,27 @@ function TrailStopModal({ position, onClose }) {
     enabled: !!position?.id && isEligible && hasStop,
   });
 
-  const updateStopMutation = useMutation({
-    mutationFn: ({ id, stop_price }) =>
-      apiFetch(`${API_BASE}/positions/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stop_price }),
-      }).then((r) => r.json()),
-    onSuccess: (_, vars) => {
-      queryClient.invalidateQueries({ queryKey: ["positions"] });
-      toast.success(`Stop updated to ${formatCurrency(vars.stop_price, { currency: modalCurrency })}`);
-      onClose();
-    },
-    onError: () => {
-      toast.error("Failed to update stop. Please try again.", { duration: 8000 });
-    },
-  });
+  useEffect(() => {
+    const onKeyDown = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
 
   const atrTrailStop = trailData?.atr_trail_stop;
   const trailDiff = trailData?.trail_difference;
   const trailR = trailData?.trail_r_terms;
   const isNegativeDiff = trailDiff != null && trailDiff < 0;
-  const confirmLabel = atrTrailStop != null
-    ? (isNegativeDiff ? `Lower stop to ${formatCurrency(atrTrailStop, { currency: modalCurrency })}` : `Update stop to ${formatCurrency(atrTrailStop, { currency: modalCurrency })}`)
-    : "Update stop";
+  const noRaise = trailDiff != null && trailDiff <= 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" role="dialog" aria-modal="true" aria-labelledby="trail-stop-modal-title">
       <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-white">Trail Stop — {position?.ticker}</h2>
+            <h2 id="trail-stop-modal-title" className="text-lg font-semibold text-white">Trail Stop — {position?.ticker}</h2>
             <p className="text-xs text-slate-600 dark:text-slate-400">ATR-based stop trail calculation</p>
           </div>
-          <button onClick={onClose} className="text-slate-600 dark:text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} aria-label="Close" className="text-slate-600 dark:text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
         </div>
 
         {isLoading && (
@@ -284,8 +275,8 @@ function TrailStopModal({ position, onClose }) {
             </div>
             {trailDiff != null && (
               <div className="flex justify-between">
-                <dt className="text-slate-600 dark:text-slate-400">Trail Difference</dt>
-                <dd className={cn("font-medium", isNegativeDiff ? "text-amber-400" : "text-emerald-400")}>
+                <dt className="text-slate-600 dark:text-slate-400">Raise by</dt>
+                <dd className={cn("font-medium", isNegativeDiff ? "text-amber-700 dark:text-amber-400" : "text-emerald-400")}>
                   {formatCurrency(trailDiff, { currency: modalCurrency, signed: true })}
                   {trailR != null && <span className="text-slate-600 dark:text-slate-400 ml-1">({formatR(trailR)})</span>}
                 </dd>
@@ -295,24 +286,25 @@ function TrailStopModal({ position, onClose }) {
         )}
 
         {!isLoading && !isError && trailData && (
-          <p className="text-xs text-slate-600 dark:text-slate-400">
-            ATR trail stop = current price − (ATR × 2.0). ATR period: 14 days. Multiplier per strategy rules.
-          </p>
+          <div className="space-y-2">
+            <p className="text-xs text-slate-600 dark:text-slate-400">
+              ATR trail stop = current price − (ATR × 2.0). ATR period: 14 days. Multiplier per strategy rules.
+            </p>
+            {noRaise && (
+              <p data-testid="trail-stop-no-raise-note" className="text-xs text-slate-600 dark:text-slate-400">
+                The ATR trail stop is at or below your current stop. Stops never move down (§7.3), so there is nothing to apply.
+              </p>
+            )}
+            <p data-testid="trail-stop-readonly-note" className="text-xs text-slate-600 dark:text-slate-400">
+              The system updates stops automatically when positions load and each night. This view is for reference only.
+            </p>
+          </div>
         )}
 
-        <div className="flex flex-col gap-2 pt-2">
-          <Button
-            disabled={!trailData || isLoading || updateStopMutation.isPending || !atrTrailStop}
-            onClick={() => updateStopMutation.mutate({ id: position.id, stop_price: atrTrailStop })}
-            className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 w-full"
-          >
-            {updateStopMutation.isPending ? "Updating…" : confirmLabel}
+        <div className="flex justify-end pt-2">
+          <Button variant="outline" onClick={onClose}>
+            Close
           </Button>
-          {!updateStopMutation.isPending && (
-            <button onClick={onClose} className="text-slate-600 dark:text-slate-400 hover:text-slate-200 text-sm text-center">
-              Cancel
-            </button>
-          )}
         </div>
       </div>
     </div>
@@ -1099,13 +1091,14 @@ export default function Positions() {
                         <BookOpen className="w-4 h-4" />
                       </Button>
 
-                      {/* ST-03 (IT-03): Trail Stop — shown for PROFITABLE/EXIT ZONE; disabled when no stop */}
+                      {/* ST-03 (IT-03): View Trail (renamed from Trail Stop, ST-10 Branch B) — shown for PROFITABLE/EXIT ZONE; disabled when no stop */}
                       {(position.lifecycle_state === "PROFITABLE" || position.lifecycle_state === "EXIT ZONE" ||
                         position.position_state === "PROFITABLE" || position.position_state === "EXIT ZONE") && (
                         <Button
                           variant="ghost"
                           size="icon"
-                          title={(!position.current_stop && !position.stop_price) ? "No current stop set. Add a stop to use trail management." : "Trail Stop"}
+                          title={(!position.current_stop && !position.stop_price) ? "No current stop set. Add a stop to use trail management." : "View Trail"}
+                          aria-label="View Trail"
                           disabled={!position.current_stop && !position.stop_price}
                           className="h-8 w-8 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 disabled:opacity-40"
                           onClick={() => setTrailStopPosition(position)}

@@ -57,6 +57,7 @@ from config import ALLOWED_ORIGINS
 from utils.calculations import calculate_initial_stop
 from utils.formatting import decimal_to_float
 from utils.position_lifecycle_states import GRACE
+from strategy_parameters import INITIAL_ATR_MULTIPLIER
 from pydantic import BaseModel
 from routers import validation, analytics, test, portfolio_size, trades_export, prospective_heat, alerts
 from routers import watchlist as watchlist_router
@@ -617,9 +618,21 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
             pass  # best-effort sync; primary operation already succeeded
     return {"status": "ok", "data": result}
 
+# ST-10 (BLG-BE-159, v9.12): a supplied entry stop is rejected, never silently
+# ignored. Strategy Rules & System Intent Owner ruling ESC-EXEC-20261013-06: the
+# initial stop is system-set (strategy_rules.md §5, §11). The multiplier comes
+# from the §11 constant so the message cannot drift from it.
+STOP_PRICE_NOT_ACCEPTED = (
+    "stop_price is not accepted. The initial stop is set by the system at "
+    f"entry price − {INITIAL_ATR_MULTIPLIER:g} × ATR (strategy_rules.md §5, §11)."
+)
+
+
 @app.post("/portfolio/position")
 def add_position_endpoint(request: AddPositionRequest):
     """Add a new position to the portfolio"""
+    if request.stop_price is not None:
+        raise HTTPException(status_code=400, detail=STOP_PRICE_NOT_ACCEPTED)
     try:
         def _create():
             result = add_position(
@@ -631,7 +644,6 @@ def add_position_endpoint(request: AddPositionRequest):
                 fill_price=request.fill_price,
                 fx_rate=request.fx_rate,
                 atr_value=request.atr_value,
-                stop_price=request.stop_price,
                 entry_note=request.entry_note,
                 tags=request.tags,
                 trade_plan_id=request.trade_plan_id

@@ -20,7 +20,7 @@ class AddPositionRequest(BaseModel):
     current_price: Optional[float] = None
     fx_rate: Optional[float] = None
     atr_value: Optional[float] = None
-    stop_price: Optional[float] = None
+    stop_price: Optional[float] = None  # Rejected with 400 when supplied (ST-10, BLG-BE-159); kept so it is not silently dropped
     fees: Optional[float] = None
     status: Optional[str] = "open"
     entry_note: Optional[str] = None

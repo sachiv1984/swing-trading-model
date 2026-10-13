@@ -18,6 +18,10 @@
  *   SC-TS-01  Trail Stop button visible for PROFITABLE position
  *   SC-TS-02  Trail Stop modal shows trail calculation data
  *   SC-TS-03  Trail Stop button absent for GRACE/LOSING/UNKNOWN states
+ * ST-10 (BLG-BE-159, EPIC-02, v9.12) — read-only "View Trail" modal (ruling ESC-EXEC-20261013-06)
+ *   SC-TS-04  Positive difference: no apply control, read-only note, no stop-write request
+ *   SC-TS-05  Negative difference: no-raise note, no "Lower stop" label
+ *   SC-TS-06  Close button and Escape dismiss the modal
  *
  * Infrastructure: page.route() network interception — no live backend required.
  * ROUTING NOTE: App uses HashRouter. ALL navigation via page.goto('/#/Positions')
@@ -228,13 +232,13 @@ test.describe('ST-03 — Trail Stop modal', () => {
     trail_r_terms: 1.3,
   };
 
-  test('SC-TS-01: Trail Stop button visible for PROFITABLE position with stop set', async ({ page }) => {
+  test('SC-TS-01: View Trail button visible for PROFITABLE position with stop set', async ({ page }) => {
     await stubCommon(page);
     await setupPositions(page, [makePosition({ lifecycle_state: 'PROFITABLE', days_in_state: 10, current_stop: 760 })]);
     await goToTableView(page);
     await expect(page.getByText('NVDA')).toBeVisible({ timeout: 8000 });
-    // ArrowUpDown icon button (trail stop) should be visible
-    const trailBtn = page.locator('[title="Trail Stop"]');
+    // ArrowUpDown icon button (View Trail, renamed from Trail Stop at ST-10) should be visible
+    const trailBtn = page.locator('[title="View Trail"]');
     await expect(trailBtn).toBeVisible({ timeout: 5000 });
   });
 
@@ -246,18 +250,65 @@ test.describe('ST-03 — Trail Stop modal', () => {
     );
     await goToTableView(page);
     await expect(page.getByText('NVDA')).toBeVisible({ timeout: 8000 });
-    await page.locator('[title="Trail Stop"]').click();
+    await page.locator('[title="View Trail"]').click();
     await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 });
     await expect(page.getByText(/trail stop — NVDA/i)).toBeVisible();
     // The ATR trail stop value appears in the dd element (not the button)
     await expect(page.locator('dd').filter({ hasText: '$810.50' })).toBeVisible({ timeout: 5000 });
   });
 
-  test('SC-TS-03: Trail Stop button absent for GRACE state', async ({ page }) => {
+  test('SC-TS-03: View Trail button absent for GRACE state', async ({ page }) => {
     await stubCommon(page);
     await setupPositions(page, [makePosition({ lifecycle_state: 'GRACE', days_in_state: 3, current_stop: 760 })]);
     await goToTableView(page);
     await expect(page.getByText('NVDA')).toBeVisible({ timeout: 8000 });
-    await expect(page.locator('[title="Trail Stop"]')).not.toBeVisible();
+    await expect(page.locator('[title="View Trail"]')).not.toBeVisible();
+  });
+
+  async function openTrailModal(page, trailData) {
+    await stubCommon(page);
+    await setupPositions(page, [makePosition({ lifecycle_state: 'PROFITABLE', days_in_state: 10, current_stop: 760 })]);
+    await page.route(`${API}/positions/pos-001/stop-trail`, (r) =>
+      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: trailData }) })
+    );
+    await goToTableView(page);
+    await expect(page.getByText('NVDA')).toBeVisible({ timeout: 8000 });
+    await page.locator('[title="View Trail"]').click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+    await expect(dialog.locator('dd').filter({ hasText: '$' + trailData.atr_trail_stop.toFixed(2) })).toBeVisible({ timeout: 5000 });
+    return dialog;
+  }
+
+  test('SC-TS-04: positive difference shows no apply control and sends no stop write', async ({ page }) => {
+    const writes = [];
+    page.on('request', (req) => {
+      if (['PATCH', 'PUT'].includes(req.method()) && req.url().includes('/positions/')) writes.push(req.url());
+    });
+    const dialog = await openTrailModal(page, TRAIL_DATA);
+    await expect(dialog.getByTestId('trail-stop-readonly-note')).toHaveText(
+      'The system updates stops automatically when positions load and each night. This view is for reference only.'
+    );
+    await expect(dialog.getByTestId('trail-stop-no-raise-note')).toHaveCount(0);
+    await expect(dialog.getByRole('button', { name: /raise stop|update stop|lower stop/i })).toHaveCount(0);
+    await expect(dialog.getByText('Raise by')).toBeVisible();
+    await dialog.getByRole('button', { name: 'Close', exact: true }).last().click();
+    await expect(dialog).not.toBeVisible();
+    expect(writes).toEqual([]);
+  });
+
+  test('SC-TS-05: negative difference shows the no-raise note and never offers a lower stop', async ({ page }) => {
+    const dialog = await openTrailModal(page, { current_stop: 760.00, atr_trail_stop: 740.25, trail_difference: -19.75, trail_r_terms: -0.5 });
+    await expect(dialog.getByTestId('trail-stop-no-raise-note')).toHaveText(
+      'The ATR trail stop is at or below your current stop. Stops never move down (§7.3), so there is nothing to apply.'
+    );
+    await expect(dialog.getByText(/lower stop/i)).toHaveCount(0);
+    await expect(dialog.getByRole('button', { name: /raise stop|update stop|lower stop/i })).toHaveCount(0);
+  });
+
+  test('SC-TS-06: Escape dismisses the modal', async ({ page }) => {
+    const dialog = await openTrailModal(page, TRAIL_DATA);
+    await page.keyboard.press('Escape');
+    await expect(dialog).not.toBeVisible();
   });
 });

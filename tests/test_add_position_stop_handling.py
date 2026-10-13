@@ -5,9 +5,13 @@ Trade Entry no longer offers a Stop Price input because the backend never
 used one: add_position() stores initial_stop = current_stop =
 entry − INITIAL_ATR_MULTIPLIER × ATR (strategy_rules.md §5), with the
 multiplier taken from the fixed §11 source (backend/strategy_parameters.py,
-ST-01 ruling (a)), and ignores any submitted stop_price. These tests fail if
-a submitted stop ever starts to reach the stored row, or if the stored stop
-stops matching the formula the Trade Entry panel displays.
+ST-01 ruling (a)). These tests fail if the stored stop stops matching the
+formula the Trade Entry panel displays.
+
+ST-10 (BLG-BE-159, EPIC-02, v9.12): a supplied stop_price is no longer silently
+ignored. POST /portfolio/position rejects it with a 400 (Strategy Rules &
+System Intent Owner ruling ESC-EXEC-20261013-06), and add_position() no longer
+takes a stop_price argument at all.
 
 The real calculations module is loaded from its file, for the same
 suite-order reason as tests/test_live_exit_decision.py.
@@ -59,7 +63,7 @@ class TestAddPositionStopHandling:
         return p.start()
 
     def _add(self, *, market="UK", ticker="VOD.L", entry_price=100.0, atr_value=None,
-             fetched_atr=None, stop_price=None, fx_rate=None):
+             fetched_atr=None, fx_rate=None):
         for name in ("calculate_initial_stop", "calculate_uk_entry_fees", "calculate_us_entry_fees"):
             self._patch(name, new=getattr(real_calcs, name))
         self._patch("get_portfolio", return_value={"id": "portfolio-1", "cash": 1_000_000.0})
@@ -73,7 +77,7 @@ class TestAddPositionStopHandling:
         response = position_service.add_position(
             ticker=ticker, market=market, entry_date=str(date.today()),
             shares=10, entry_price=entry_price, atr_value=atr_value,
-            stop_price=stop_price, fx_rate=fx_rate,
+            fx_rate=fx_rate,
         )
         return mock_create.call_args.args[1], response
 
@@ -86,21 +90,56 @@ class TestAddPositionStopHandling:
         assert data["current_stop"] == pytest.approx(90.0)
         assert response["initial_stop"] == pytest.approx(90.0)
 
-    def test_submitted_stop_price_is_ignored(self):
-        data, response = self._add(entry_price=100.0, atr_value=2.0, stop_price=97.5)
-        assert data["initial_stop"] == pytest.approx(90.0)
-        assert data["current_stop"] == pytest.approx(90.0)
-        assert "stop_price" not in data
-        assert response["initial_stop"] == pytest.approx(90.0)
+    def test_add_position_takes_no_stop_price(self):
+        with pytest.raises(TypeError):
+            position_service.add_position(
+                ticker="VOD.L", market="UK", entry_date=str(date.today()),
+                shares=10, entry_price=100.0, atr_value=2.0, stop_price=97.5,
+            )
 
     def test_blank_atr_is_fetched_and_drives_the_stop(self):
-        data, response = self._add(entry_price=100.0, atr_value=None, fetched_atr=4.0, stop_price=99.0)
+        data, response = self._add(entry_price=100.0, atr_value=None, fetched_atr=4.0)
         assert data["atr_source"] == "fetched"
         assert data["initial_stop"] == pytest.approx(80.0)  # 100 − 5 × 4
         assert response["initial_stop"] == pytest.approx(80.0)
 
     def test_us_stop_is_in_native_currency(self):
         data, response = self._add(market="US", ticker="AAPL", entry_price=200.0, atr_value=3.0,
-                                   stop_price=150.0, fx_rate=1.25)
+                                   fx_rate=1.25)
         assert data["initial_stop"] == pytest.approx(185.0)  # 200 − 5 × 3, USD, not GBP-converted
         assert response["initial_stop"] == pytest.approx(185.0)
+
+
+class TestSuppliedEntryStopRejected:
+    """ST-10 AC 3: a supplied entry stop is rejected with a clear error, never silently ignored."""
+
+    @staticmethod
+    def _client():
+        from tests._real_database import real_database_imports
+        with real_database_imports():
+            from fastapi.testclient import TestClient
+            import main
+        return TestClient(main.app, raise_server_exceptions=False), main
+
+    _BODY = {"ticker": "VOD.L", "market": "UK", "entry_date": "2026-10-13", "shares": 10, "entry_price": 100.0}
+
+    def test_supplied_stop_price_returns_400_with_message(self):
+        client, main = self._client()
+        with patch.object(main, "add_position") as mock_add:
+            response = client.post("/portfolio/position", json={**self._BODY, "stop_price": 97.5})
+        assert response.status_code == 400
+        assert "stop_price is not accepted" in response.text
+        assert "entry price − 5 × ATR (strategy_rules.md §5, §11)" in response.text
+        mock_add.assert_not_called()
+
+    def test_message_multiplier_comes_from_section_11_constant(self):
+        _, main = self._client()
+        assert f"− {INITIAL_ATR_MULTIPLIER:g} × ATR" in main.STOP_PRICE_NOT_ACCEPTED
+
+    def test_null_stop_price_is_accepted(self):
+        client, main = self._client()
+        with patch.object(main, "add_position", return_value={"position_id": "p-1"}) as mock_add:
+            response = client.post("/portfolio/position", json={**self._BODY, "stop_price": None})
+        assert response.status_code == 200
+        mock_add.assert_called_once()
+        assert "stop_price" not in mock_add.call_args.kwargs

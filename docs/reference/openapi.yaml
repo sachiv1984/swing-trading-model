@@ -2,7 +2,9 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.28.1
+  version: 3.28.2
+  # v3.28.2 (2026-10-13, ST-10, EPIC-02, v9.12): POST /portfolio/position rejects a non-null
+  # stop_price with 400 (BLG-BE-159). Description only; no new endpoint.
   # v3.28.1 (2026-10-13, ST-06, EPIC-01, v9.12): POST /ai/check-daily-cost description —
   # sums claude_audit_log; scheduler ai-daily-cost-check.yml (BLG-OPS-183). Description only.
   # v3.28.0 (2026-10-13, ST-01, EPIC-01, v9.12): POST /ai/journal-summary trade_ids and
@@ -136,7 +138,9 @@ paths:
       summary: Add a new position
       description: |
         Manual position entry supporting fractional shares.
-        Auto-calculates fees, ATR, and initial stops if not provided.
+        Auto-calculates fees and ATR (if not provided). The initial stop is always
+        system-set at entry_price − 5 × ATR (strategy_rules.md §5, §11); a non-null
+        stop_price is rejected with 400 (ST-10, BLG-BE-159, v9.12).
       requestBody:
         required: true
         content:
@@ -6704,7 +6708,10 @@ components:
         entry_price: { type: number, minimum: 0.01 }
         fx_rate: { type: number, nullable: true }
         atr_value: { type: number, nullable: true }
-        stop_price: { type: number, nullable: true }
+        stop_price:
+          type: number
+          nullable: true
+          description: Not accepted. Must be null or omitted; a non-null value returns 400 (ST-10, BLG-BE-159).
         entry_note: { type: string, maxLength: 500, nullable: true }
         tags:
           type: array

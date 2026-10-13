@@ -813,7 +813,6 @@ def add_position(
     entry_price: float,
     fx_rate: Optional[float] = None,
     atr_value: Optional[float] = None,
-    stop_price: Optional[float] = None,
     entry_note: Optional[str] = None,
     tags: Optional[List[str]] = None,
     fill_price: Optional[float] = None,
@@ -830,7 +829,6 @@ def add_position(
         entry_price: Entry price in native currency
         fx_rate: Optional GBP/USD rate (auto-fetched if not provided for US)
         atr_value: Optional ATR value (auto-calculated if not provided)
-        stop_price: Optional custom stop (auto-calculated if not provided)
     
     Returns:
         Dictionary with:
