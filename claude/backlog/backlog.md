@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-15 (session — ST-29, EPIC-04, 2026-10-12__release-v9.12: BLG-OPS-181 Notes cause line (plan-authorised, sprint_backlog.md ST-29 Notes); 1 new item BLG-OPS-189); prior — 2026-10-15 (session — 1 new item added from Sprint Execution ST-32, EPIC-04, 2026-10-12__release-v9.12: BLG-OPS-188); prior — 2026-10-15 (session — 1 new item added from Sprint Execution ST-31, EPIC-04, 2026-10-12__release-v9.12: BLG-QA-225); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-15 (session — 1 new item added from Sprint Execution ST-28, EPIC-04, 2026-10-12__release-v9.12: BLG-TECH-24); prior — 2026-10-15 (session — ST-29, EPIC-04, 2026-10-12__release-v9.12: BLG-OPS-181 Notes cause line (plan-authorised, sprint_backlog.md ST-29 Notes); 1 new item BLG-OPS-189); prior — 2026-10-15 (session — 1 new item added from Sprint Execution ST-32, EPIC-04, 2026-10-12__release-v9.12: BLG-OPS-188); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -492,6 +492,27 @@ Several direct dependencies are a major version, or a breaking minor series, beh
 
 **Acceptance Criteria**
 - [ ] A dated assessment covers all 8 packages, with a decision for each and a backlog item for each upgrade it approves
+
+---
+
+### BLG-TECH-24 — numpy 2.5 needs Python 3.12; check pinned bumps resolve on the pinned Python before they land
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Infrastructure & Operations Owner
+**Source:** ST-28/EPIC-04, cycle `2026-10-12__release-v9.12` — 2026-10-15
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The October 2026 review (`docs/security/dependency_update_review_2026-10-06.md` §3) listed `numpy` 2.4.6 → 2.5.3 as a batch bump, but numpy 2.5.x requires Python ≥ 3.12. The backend is pinned to 3.11.0 (`backend/.python-version`, CI, `render.yaml`). ST-28 applied it, and the Render staging build and CI Pytest failed with "No matching distribution found for numpy==2.5.3". It was reverted to 2.4.6, the newest 3.11-compatible release. Neither the review nor the bump was checked against the pinned Python, and the sandbox venv runs Python 3.14, so it installed there.
+
+**Scope**
+- Keep numpy at 2.4.x until the backend moves to Python 3.12+. Record that dependency in the next quarterly review.
+- Add a check, in CI or the quarterly review method, that `backend/requirements*.txt` resolve for the pinned Python (`pip download --python-version $(cat backend/.python-version) ...`, or install on a 3.11 runner)
+
+**Acceptance Criteria**
+- A requirements change that does not resolve on the pinned Python fails a check before merge
+- The quarterly review method names the pinned-Python resolve step
 
 ---
 
