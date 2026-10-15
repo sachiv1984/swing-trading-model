@@ -25,6 +25,11 @@ GRACE_PERIOD_DAYS + PENDING_TOLERANCE_DAYS (covers a weekend and one missed
 nightly run). Past that window a null multiplier is a violation again. Check 1
 (a stop is present) applies throughout.
 
+Chosen fix (ST-25, EPIC-04, v9.12): BLG-OPS-184 option (a), the monitor-side
+pending window above. Option (b), stamping the multiplier at the grace boundary
+(holding_days == GRACE_PERIOD_DAYS - 1), was not taken: it changes live stop
+behaviour and would need a Strategy Rules & System Intent Owner ruling first.
+
 Input: --fixture <json file>, or --api-url/--api-key (GET {api_url}/positions).
 Accepts either a bare array or {"data": [...]}.
 Exit 0 = healthy, 1 = violations found (printed one per line), 2 = could

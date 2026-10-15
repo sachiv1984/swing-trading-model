@@ -93,3 +93,10 @@ def test_pending_position_still_needs_a_stop():
     v = stop_health.find_violations([{"ticker": "R", "grace_period": False, "holding_days": 10, "current_stop": None,
                                       "active_atr_multiplier": None, "stop_calculated_at": None}])
     assert v == ["R: post-grace position has no stop (current_stop=None)"]
+
+
+def test_docstring_records_the_chosen_option():
+    # ST-25 (BLG-OPS-184, v9.12) AC 3: the chosen option is recorded in the script docstring.
+    doc = stop_health.__doc__
+    assert "BLG-OPS-184 option (a)" in doc
+    assert "Option (b)" in doc and "was not taken" in doc
