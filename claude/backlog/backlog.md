@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-15 (session — 1 new item added from Sprint Execution ST-31, EPIC-04, 2026-10-12__release-v9.12: BLG-QA-225); prior — 2026-10-13 (session — 1 new item added from the BLG-SPEC-199 fix on PR #2024, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-200); prior — 2026-10-13 (session — 1 new item added from the PR #2024 review, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-199); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-15 (session — 1 new item added from Sprint Execution ST-32, EPIC-04, 2026-10-12__release-v9.12: BLG-OPS-188); prior — 2026-10-15 (session — 1 new item added from Sprint Execution ST-31, EPIC-04, 2026-10-12__release-v9.12: BLG-QA-225); prior — 2026-10-13 (session — 1 new item added from the BLG-SPEC-199 fix on PR #2024, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-200); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -5570,6 +5570,27 @@ ST-05 widened `_INSTRUMENT_DIRECTIVE_RE` (`backend/services/monthly_pnl_narrativ
 **Acceptance Criteria**
 - A simulated query failure is logged, reported as an error and fails the workflow step
 - A failed run sends a notification beyond GitHub's default email
+
+---
+
+### BLG-OPS-188 — Make ci-usage-report.yml's monthly commit succeed (failed on its only scheduled run)
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps Reporting
+**Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
+**Source:** ST-32/EPIC-04, cycle `2026-10-12__release-v9.12` (scheduled-workflow inventory, `docs/ops/scheduled_workflows_inventory.md`) — 2026-10-15
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`ci-usage-report.yml` (ST-17, BLG-OPS-165, v9.6) has run once on its schedule, on 2026-10-01 (run 36861580190), and failed: "Generate report" succeeded and "Commit report" failed. `docs/ops/ci_usage_reports/` still holds only `2026-08.md`, which ST-17 committed by hand, so no monthly report has been produced since. The run's logs have expired. A likely cause is `main`'s branch rule "Changes must be made through a pull request", which a `GITHUB_TOKEN` push cannot bypass. This is not confirmed.
+
+**Scope**
+- Find the cause (re-run with `workflow_dispatch` and read the "Commit report" log)
+- Fix it, for example by opening a PR with the report or by uploading it as an artifact, and produce the missing 2026-09 report
+
+**Acceptance Criteria**
+- A `ci-usage-report.yml` run succeeds and its report reaches `docs/ops/ci_usage_reports/` (or the agreed destination)
+- `docs/ops/ci_usage_reports/2026-09.md` exists
 
 ---
 
