@@ -4,7 +4,7 @@
   "status": "Executing",
   "prior_status": "Sprint_Planning_Complete",
   "engine": "Sprint Execution",
-  "last_updated_utc": "2026-10-13T09:15:52Z",
+  "last_updated_utc": "2026-10-15T08:09:18Z",
   "execution_state_path": "claude/cycles/2026-10-12__release-v9.12/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-10-12__release-v9.12/stage4_backlog_slice.md",
   "design_gate_required": true,
@@ -326,6 +326,16 @@
       "resolved_utc": "2026-10-13T19:30:58Z",
       "resolved_by": "Director of HR (agent-mediated, execution_prompt.md §5.3)",
       "resolution_summary": "Approved with conditions, first pass. Exact charter text: a Strategy-copy conformance subsection at the end of §7 of frontend_specs_ux_documentation_owner.md (role owns the check, specs and triage; Engineering owns src/constants/strategy.js and the lint; Strategy Rules owner owns the rules), Scope line corrected to docs/specs/frontend/, v1.1. Applied in ST-21's commit. See execution_escalations.md."
+    },
+    "ESC-EXEC-20261015-01": {
+      "cycle": "2026-10-12__release-v9.12",
+      "summary": "ST-27/EPIC-04 - Product Owner decision on the bundled REACT_APP_API_KEY: narrower frontend key (a) or accept-risk (b); the key has full write scope (61 write routes) in a public bundle",
+      "trigger_type": "Lifecycle",
+      "owning_authority": "Product Owner (with Cybersecurity & Trust Lead)",
+      "raised_utc": "2026-10-15T08:05:59Z",
+      "sla_due_utc": "2026-10-16T08:05:59Z",
+      "blocks_execution": false,
+      "disposition": "Open"
     }
   },
   "deferred_escalations": {
