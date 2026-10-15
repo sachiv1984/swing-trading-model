@@ -480,6 +480,9 @@ export const api = {
     getStatus: async () => doFetch('/market/status'),
     // ST-19 (BLG-BE-140, v9.11): read-only regime, no position analysis.
     getRegime: async () => doFetch('/market/regime'),
+    // ST-17 (BLG-BE-146, v9.12): read-only 14-day ATR preview for Trade Entry.
+    getAtr: async (ticker, market) =>
+      doFetch(`/market/atr/${encodeURIComponent(ticker)}?market=${encodeURIComponent(market)}`),
   },
 
   signals: {

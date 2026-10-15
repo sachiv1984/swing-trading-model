@@ -48,7 +48,7 @@ from fastapi.responses import JSONResponse
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
-from datetime import timedelta
+from datetime import timedelta, timezone
 import time
 import os
 import requests
@@ -1305,6 +1305,48 @@ def get_market_regime():
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.get("/market/atr/{ticker}")
+def get_market_atr(ticker: str, market: str):
+    """
+    GET /market/atr/{ticker}?market=UK|US (ST-17, BLG-BE-146, EPIC-03, v9.12)
+
+    Read-only 14-day ATR preview for Trade Entry, so the system stop, risk and
+    suggested shares show before save. The ticker is normalised and the ATR
+    fetched exactly as add_position() does (calculate_atr()), so the preview
+    stop equals the initial_stop that save stores for the same inputs. `atr`
+    is native currency, or null when it cannot be fetched (save then falls
+    back to 2% of entry). No write. Contract:
+    docs/specs/api_contracts/market_endpoints.md.
+    """
+    if market not in ("UK", "US"):
+        raise HTTPException(status_code=400, detail="market must be 'UK' or 'US'")
+    symbol = ticker.strip().upper()
+    if not symbol:
+        raise HTTPException(status_code=400, detail="ticker is required")
+    # Same normalisation as add_position(): a .L suffix means UK, and UK
+    # tickers are fetched with the suffix.
+    if symbol.endswith(".L"):
+        market = "UK"
+    elif market == "UK":
+        symbol = f"{symbol}.L"
+    try:
+        atr = calculate_atr(symbol)
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Internal server error")
+    return {
+        "status": "ok",
+        "data": {
+            "ticker": symbol[:-2] if market == "UK" else symbol,
+            "market": market,
+            "atr": float(atr) if atr else None,
+            "atr_period": 14,
+            "as_of": datetime.now(timezone.utc).isoformat(),
+        },
+    }
 
 
 @app.get("/market/status")

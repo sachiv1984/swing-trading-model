@@ -2,10 +2,10 @@
 **Role:** Frontend Specifications & UX Documentation Owner
 **Reports to:** Head of Specs Team
 **Governance alignment:** Head of Specs Team (documentation lifecycle, document classes, headers, naming conventions)
-**Scope:** Front-end specification documents in `specs/frontend/`
+**Scope:** Front-end specification documents in `docs/specs/frontend/`, and conformance of user-visible strategy text to `strategy_rules.md` §5–§11
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-07-21
+**Version:** 1.1
+**Last Updated:** 2026-10-13 (adds strategy-copy conformance duty under §7, Director of HR ruling ESC-EXEC-20261013-08, BLG-GOV-369); prior — 2026-07-21
 
 This document describes the **skills, responsibilities, and operating standards** for the role responsible for owning, maintaining, and evolving the front-end specifications in `specs/frontend/`.
 
@@ -134,6 +134,13 @@ header block, and versioning rules defined in:
 - Inconsistencies are either:
   - Corrected, or
   - Clearly explained with rationale
+
+### Strategy-copy conformance
+- This role owns the check that UI text restating strategy rules (`claude/strategy/strategy_rules.md` §5–§11) matches those rules. This covers frontend specs and user-visible text in shipped pages.
+- The rules themselves belong to the Strategy Rules & System Intent Owner. This role does not reinterpret a rule. When a rule is unclear, or the copy and the rule disagree in a way the rules do not settle, the role raises it with that owner.
+- Frontend specs require page text to take strategy numbers from the shared frontend strategy constants module (`src/constants/strategy.js`), not from literals. Engineering owns the module's code (Head of Engineering).
+- The role triages every finding from the CI strategy-copy lint. Each finding is either a copy fix (spec update plus an engineering change) or a question raised with the Strategy Rules & System Intent Owner. No finding is left untriaged.
+- When `strategy_rules.md` §5–§11 changes, the role confirms that the affected frontend specs and the constants module are updated in the same release, and flags any gap before release sign-off.
 
 ---
 

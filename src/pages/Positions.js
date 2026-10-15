@@ -51,15 +51,20 @@ import StrategyCompliancePanel from "../components/positions/StrategyComplianceP
 import PaperAccountPanel from "../components/positions/PaperAccountPanel";
 import AiChatWidget from "../components/AiChatWidget";
 import { toast } from "sonner";
+import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS, PROFIT_ATR_MULTIPLIER } from "../constants/strategy";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
+
+// ST-22 (BLG-FE-207, v9.12): deep-link highlight hold, then removed with no
+// transition (grace-panel-position-link decision record §2.3).
+const POSITION_HIGHLIGHT_MS = 2000;
 
 // ---------------------------------------------------------------------------
 // ST-01 (IT-01) — Lifecycle state badge
 // ---------------------------------------------------------------------------
 
 const LIFECYCLE_CONFIG = {
-  GRACE:      { label: "GRACE",      bg: "bg-blue-600",   tip: "The stop is tracked but not enforced until the grace period ends (10 calendar days, §6)." },
+  GRACE:      { label: "GRACE",      bg: "bg-blue-600",   tip: `The stop is tracked but not enforced until the grace period ends (${GRACE_PERIOD_DAYS} calendar days, §6).` },
   LOSING:     { label: "LOSING",     bg: "bg-red-600",    tip: "Past grace with P&L at or below zero: wide stop (§7.2). Becomes PROFITABLE when the price rises above entry." },
   PROFITABLE: { label: "PROFITABLE", bg: "bg-green-700",  tip: "Advances to Exit Zone when P&L reaches 2R target" },
   "EXIT ZONE":{ label: "EXIT ZONE",  bg: "bg-violet-600", tip: "Position has reached R-target. Review stop or exit." },
@@ -140,9 +145,9 @@ function GracePeriodAlertZone() {
       {visible.map((alert) => {
         // ST-12 (BLG-FE-196, v9.10) / ST-14 (BLG-BE-147, v9.11): every grace reading
         // comes from grace_days_remaining (calendar days since entry, §6.2), never
-        // days_in_state. Day number: min(11 − grace_days_remaining, 10), entry day = Day 1.
+        // days_in_state. Day number: min(grace + 1 − grace_days_remaining, grace), entry day = Day 1.
         const daysLeft = alert.grace_days_remaining;
-        const dayNumber = daysLeft != null ? Math.min(11 - daysLeft, 10) : null;
+        const dayNumber = daysLeft != null ? Math.min(GRACE_PERIOD_DAYS + 1 - daysLeft, GRACE_PERIOD_DAYS) : null;
         const bodyText = daysLeft === 0
           ? "Grace period has ended. Your position will transition to LOSING or PROFITABLE on next refresh."
           : daysLeft != null
@@ -162,7 +167,7 @@ function GracePeriodAlertZone() {
                 Grace Period Alert — {alert.ticker}
                 {dayNumber != null && (
                   <span className="text-xs font-medium text-amber-400 bg-amber-500/20 px-1.5 py-0.5 rounded" data-testid="grace-alert-day-label">
-                    Day {dayNumber} of 10
+                    Day {dayNumber} of {GRACE_PERIOD_DAYS}
                   </span>
                 )}
               </div>
@@ -288,7 +293,7 @@ function TrailStopModal({ position, onClose }) {
         {!isLoading && !isError && trailData && (
           <div className="space-y-2">
             <p className="text-xs text-slate-600 dark:text-slate-400">
-              ATR trail stop = current price − (ATR × 2.0). ATR period: 14 days. Multiplier per strategy rules.
+              ATR trail stop = current price − (ATR × {PROFIT_ATR_MULTIPLIER.toFixed(1)}). ATR period: {ATR_PERIOD_DAYS} days. Multiplier per strategy rules.
             </p>
             {noRaise && (
               <p data-testid="trail-stop-no-raise-note" className="text-xs text-slate-600 dark:text-slate-400">
@@ -506,7 +511,7 @@ function GapRiskBadge({ ticker, gapRisk }) {
       aria-describedby={descId}
       aria-label={`Gap risk flag: ${reasonText}, average gap ${statText}`}
       className="inline-flex items-center w-fit text-xs px-2 py-0.5 rounded-full font-medium text-white"
-      style={{ backgroundColor: "#D97706" }}
+      style={{ backgroundColor: "#B45309" }}
       data-testid="gap-risk-badge"
     >
       GAP RISK
@@ -680,6 +685,30 @@ export default function Positions() {
     if (target) setExitingPosition(target);
     navigate(location.pathname, { replace: true });
   }, [location.search, location.pathname, positions, navigate]);
+
+  // ST-22 (BLG-FE-207, v9.12): /#/Positions?position={id} brings that open
+  // position into view in the current Table or Grid view, highlights it for
+  // POSITION_HIGHLIGHT_MS, then drops the parameter (positions.md §Position
+  // Deep Link). An id that is not in the list is ignored. Navigation only (§13).
+  const [highlightedPositionId, setHighlightedPositionId] = useState(null);
+  useEffect(() => {
+    const positionId = new URLSearchParams(location.search).get("position");
+    if (!positionId || !Array.isArray(positions)) return;
+    const target = positions.find((p) => String(p.id) === positionId && p.status === "open");
+    if (target) setHighlightedPositionId(String(target.id));
+    navigate(location.pathname, { replace: true });
+  }, [location.search, location.pathname, positions, navigate]);
+
+  useEffect(() => {
+    if (!highlightedPositionId) return undefined;
+    const el = document.querySelector(`[data-position-id="${CSS.escape(highlightedPositionId)}"]`);
+    if (el) {
+      const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      el.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
+    }
+    const timer = setTimeout(() => setHighlightedPositionId(null), POSITION_HIGHLIGHT_MS);
+    return () => clearTimeout(timer);
+  }, [highlightedPositionId]);
 
   const { data: availableTags = [] } = useQuery({
     queryKey: ["position-tags"],
@@ -894,6 +923,7 @@ export default function Positions() {
               onExit={setExitingPosition}
               onRecheck={setRecheckingPosition}
               drawdownActive={drawdownActive}
+              highlighted={highlightedPositionId === String(position.id)}
             />
           ))}
         </div>
@@ -955,7 +985,12 @@ export default function Positions() {
                 trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
 
               return (
-                <TableRow key={position.id}>
+                <TableRow
+                  key={position.id}
+                  data-position-id={position.id}
+                  data-highlighted={highlightedPositionId === String(position.id) ? "true" : undefined}
+                  className={highlightedPositionId === String(position.id) ? "ring-2 ring-cyan-500" : undefined}
+                >
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-white">
@@ -1055,7 +1090,7 @@ export default function Positions() {
                     {position.grace_days_remaining !== null &&
                     position.grace_days_remaining !== undefined ? (
                       <span className="text-xs font-medium px-2 py-1 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/25 whitespace-nowrap">
-                        Day {(position.holding_days ?? 0) + 1} of 10
+                        Day {(position.holding_days ?? 0) + 1} of {GRACE_PERIOD_DAYS}
                       </span>
                     ) : (
                       <span className="text-slate-600">—</span>

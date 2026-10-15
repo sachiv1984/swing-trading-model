@@ -5,13 +5,13 @@ import { createPageUrl } from "../../utils";
 import { formatDistanceToNow } from "date-fns";
 
 const ICON_MAP = {
-  stop_loss_approach: { Icon: ShieldAlert, color: "text-rose-400", bg: "bg-rose-500/10" },
-  grace_period_warning: { Icon: Clock, color: "text-amber-400", bg: "bg-amber-500/10" },
-  market_regime_change: { Icon: TrendingDown, color: "text-violet-400", bg: "bg-violet-500/10" },
-  daily_portfolio_summary: { Icon: BarChart2, color: "text-cyan-400", bg: "bg-cyan-500/10" },
-  custom_price_alert: { Icon: Bell, color: "text-amber-400", bg: "bg-amber-500/10" },
+  stop_loss_approach: { Icon: ShieldAlert, color: "text-rose-700 dark:text-rose-400", bg: "bg-rose-500/10" },
+  grace_period_warning: { Icon: Clock, color: "text-amber-700 dark:text-amber-400", bg: "bg-amber-500/10" },
+  market_regime_change: { Icon: TrendingDown, color: "text-violet-700 dark:text-violet-400", bg: "bg-violet-500/10" },
+  daily_portfolio_summary: { Icon: BarChart2, color: "text-cyan-700 dark:text-cyan-400", bg: "bg-cyan-500/10" },
+  custom_price_alert: { Icon: Bell, color: "text-amber-700 dark:text-amber-400", bg: "bg-amber-500/10" },
   // ST-04 (EPIC-01, v9.6, BLG-FEAT-98): journal/pencil glyph in the existing icon slot.
-  reflection_reminder: { Icon: NotebookPen, color: "text-emerald-400", bg: "bg-emerald-500/10" },
+  reflection_reminder: { Icon: NotebookPen, color: "text-emerald-700 dark:text-emerald-400", bg: "bg-emerald-500/10" },
 };
 
 function relativeTime(iso) {
@@ -45,7 +45,7 @@ export default function NotificationRow({ notification, onMarkRead }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <p className="text-sm font-medium text-white truncate">{notification.title}</p>
+            <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{notification.title}</p>
             <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 truncate">{notification.message}</p>
           </div>
           <span
@@ -60,7 +60,7 @@ export default function NotificationRow({ notification, onMarkRead }) {
           {!notification.read && (
             <button
               onClick={onMarkRead}
-              className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+              className="text-xs text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors"
             >
               Mark as read
             </button>
@@ -82,7 +82,7 @@ export default function NotificationRow({ notification, onMarkRead }) {
                   `&market=${notification.context.ticker.toUpperCase().endsWith(".L") ? "UK" : "US"}` +
                   `&price_alert_id=${encodeURIComponent(notification.context.price_alert_id)}`
                 }
-                className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+                className="text-xs text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors"
               >
                 Create Trade Plan
               </Link>
@@ -93,13 +93,13 @@ export default function NotificationRow({ notification, onMarkRead }) {
           {notification.alert_type === "reflection_reminder" && notification.context?.trade_id && (
             <Link
               to={`${createPageUrl("TradeHistory")}?reflect=${encodeURIComponent(notification.context.trade_id)}`}
-              className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+              className="text-xs text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors"
             >
               Write reflection
             </Link>
           )}
           {notification._error && (
-            <span className="text-xs text-rose-400">Failed to mark as read.</span>
+            <span className="text-xs text-rose-700 dark:text-rose-400">Failed to mark as read.</span>
           )}
         </div>
       </div>

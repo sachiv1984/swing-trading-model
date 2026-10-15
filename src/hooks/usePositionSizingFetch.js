@@ -44,6 +44,12 @@ export function useSessionRiskPercent(sessionKey, defaultRiskPercent) {
 }
 
 /**
+ * Trade Entry's input debounce. ST-17 (BLG-BE-146, v9.12): the ATR preview
+ * reuses it rather than adding a new timing parameter (position_form.md v1.9).
+ */
+export const INPUT_DEBOUNCE_MS = 300;
+
+/**
  * Debounced (300ms) POST /portfolio/size call. `isReady()` and
  * `buildRequest()` are supplied by the caller since "is there enough valid
  * input yet" and "what does the request body look like" differ between the
@@ -106,7 +112,7 @@ export function useDebouncedSizing(isReady, buildRequest, deps, options = {}) {
       } finally {
         setSizingLoading(false);
       }
-    }, 300);
+    }, INPUT_DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { PauseCircle } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../ui/tooltip";
 import { formatCurrency } from "../../lib/format";
-import { ATR_PERIOD_DAYS, PROFIT_ATR_MULTIPLIER } from "../../lib/strategyParameters";
+import { ATR_PERIOD_DAYS, PROFIT_ATR_MULTIPLIER } from "../../constants/strategy";
 
 function formatMultiplier(m) {
   return Number.isInteger(m) ? `${m}×` : `${m.toFixed(1)}×`;

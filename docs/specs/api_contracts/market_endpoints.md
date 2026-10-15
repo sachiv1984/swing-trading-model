@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.2
-**Last Updated:** 2026-10-08 (ST-19, EPIC-03, v9.11, BLG-BE-140 — added GET /market/regime, the read-only regime source for the Dashboard regime widgets); prior — 2026-03-08 (initial canonical specification)
+**Version:** 0.3
+**Last Updated:** 2026-10-13 (ST-17, EPIC-03, v9.12, BLG-BE-146 — added GET /market/atr/{ticker}, the read-only 14-day ATR preview for Trade Entry); prior — 2026-10-08 (ST-19, EPIC-03, v9.11, BLG-BE-140 — added GET /market/regime, the read-only regime source for the Dashboard regime widgets); prior — 2026-03-08 (initial canonical specification)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -24,6 +24,8 @@ Global response envelopes, error shape, and conventions are defined in **convent
 ## Endpoints
 
 - [GET /market/status](#get-marketstatus)
+- [GET /market/regime](#get-marketregime)
+- [GET /market/atr/{ticker}](#get-marketatrticker)
 
 ---
 
@@ -174,9 +176,76 @@ If the index data is unavailable, `check_market_regime()` defaults to risk-on fo
 
 ---
 
+## GET /market/atr/{ticker}
+
+**Purpose**
+
+Return a ticker's 14-day ATR so Trade Entry can show the system initial stop, the risk and the suggested shares before save. Added in v9.12 (ST-17, BLG-BE-146). Design source: `docs/design/2026-10-12__release-v9.12/trade-entry-atr-preview/decision_record.md`. Frontend spec: `docs/specs/frontend/components/position_form.md` v1.9 §ATR (14-day), §Initial Stop.
+
+**Method & Path**
+
+- `GET /market/atr/{ticker}?market=UK|US`
+
+**Idempotency**
+
+- Read-only, with no side effects. It writes nothing and reads no position. Each call fetches price history.
+
+### Request
+
+| Parameter | In | Type | Required | Description |
+|-----------|----|------|----------|-------------|
+| `ticker` | path | string | Yes | Ticker symbol. A UK ticker may be given with or without `.L`. |
+| `market` | query | string | Yes | `UK` or `US`. A ticker ending `.L` is treated as `UK` whatever `market` says, as `POST /portfolio/position` does. |
+
+The ticker is normalised exactly as `POST /portfolio/position` normalises it (upper case; `.L` added for UK), and the ATR is fetched through the same `calculate_atr()` call. The stop computed from this ATR (`entry − 5 × atr`, `strategy_rules.md` §5, §11) therefore equals the `initial_stop` that save stores for the same inputs, unless prices update in between.
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "ticker": "AAPL",
+    "market": "US",
+    "atr": 3.1372,
+    "atr_period": 14,
+    "as_of": "2026-10-13T10:15:02.123456+00:00"
+  }
+}
+```
+
+#### Field notes
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ticker` | string | Display ticker (no `.L` suffix for UK) |
+| `market` | string | `UK` or `US` after normalisation |
+| `atr` | float \| null | 14-day ATR in native currency (GBP for UK, USD for US), not rounded. `null` when it cannot be fetched; save then falls back to 2% of entry (`atr_source = fallback`). |
+| `atr_period` | integer | Always `14` |
+| `as_of` | ISO 8601 datetime (UTC) | When the ATR was fetched |
+
+Trade Entry never places the returned ATR into its ATR input, so `atr_source` at save stays `fetched` (the field is submitted blank).
+
+### Errors
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `400` | `market` is not `UK` or `US`, or the ticker is blank |
+| `500` | Unexpected failure fetching the ATR |
+
+```json
+{
+  "status": "error",
+  "message": "market must be 'UK' or 'US'"
+}
+```
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
 | 0.1 | 2026-03-08 | Initial canonical specification. Endpoint existed in implementation since v1.7; spec authored per ST-16 (v1.9 Sprint 1, EPIC-06). |
 | 0.2 | 2026-10-08 | ST-19 (EPIC-03, v9.11, BLG-BE-140): Added `GET /market/regime`, a read-only regime source, so viewing the regime no longer runs the stop-writing `GET /positions/analyze`. |
+| 0.3 | 2026-10-13 | ST-17 (EPIC-03, v9.12, BLG-BE-146): Added `GET /market/atr/{ticker}`, the read-only 14-day ATR preview that lets Trade Entry show the stop, risk and size before save. |

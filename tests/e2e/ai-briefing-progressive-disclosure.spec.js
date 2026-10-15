@@ -19,6 +19,18 @@
 
 const { test, expect } = require('@playwright/test');
 
+// v9.12 ST-24 (BLG-FE-210): axe color-contrast scoped to one badge.
+const AxeBuilder = require('@axe-core/playwright').default;
+async function expectNoContrastViolation(page, selector) {
+  // Wait out finite CSS/JS animations (dialog open, colour transitions), so axe
+  // reads settled colours rather than a mid-fade frame.
+  await page.waitForFunction(() => document.getAnimations()
+    .every((a) => a.playState !== 'running' || a.effect?.getTiming().iterations === Infinity));
+  await page.waitForTimeout(200);
+  const results = await new AxeBuilder({ page }).include(selector).withRules(['color-contrast']).analyze();
+  expect(results.violations).toEqual([]);
+}
+
 const STORAGE_KEY = 'ai-briefing-collapsed-sections-v1'; // gitleaks:allow
 
 const BRIEFING_PAYLOAD = {
@@ -109,6 +121,9 @@ test.describe('SC-PD-01 — All three sections visible after briefing loads', ()
     await expect(page.getByText('Market Context', { exact: true })).toBeVisible({ timeout: 3000 });
     await expect(page.getByText('Signals', { exact: true })).toBeVisible({ timeout: 3000 });
     await expect(page.getByText('Ask the AI', { exact: true })).toBeVisible({ timeout: 3000 });
+    // v9.12 ST-24 (BLG-FE-210): the MONITOR action badge is white on amber-700.
+    await expect(page.getByText('MONITOR', { exact: true }).first()).toHaveClass(/bg-amber-700/);
+    await expectNoContrastViolation(page, '.bg-amber-700');
   });
 });
 

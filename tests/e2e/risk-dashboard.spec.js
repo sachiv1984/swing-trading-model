@@ -209,8 +209,8 @@ test.describe('Group B — Grace Period Panel', () => {
     await expect(row3).toContainText('5d remaining');
     await expect(row3.locator('[class*="text-emerald-400"]')).toBeVisible();
 
-    // Count badge shows "3 positions"
-    await expect(page.locator('text=3 positions')).toBeVisible();
+    // Count badge (risk_dashboard.md §5.2; text aligned in v9.12 ST-22)
+    await expect(page.getByText('3 positions in grace period', { exact: true })).toBeVisible();
   });
 
   // SC-RD-08

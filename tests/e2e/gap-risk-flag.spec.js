@@ -11,7 +11,7 @@
  * sign-off) is a governance gate, not a testable UI behaviour.
  *
  *   SC-GR-01  No flag — Alerts column shows "—"
- *   SC-GR-02  Earnings-flagged — "GAP RISK" badge shown, amber-600 background
+ *   SC-GR-02  Earnings-flagged — "GAP RISK" badge shown, amber-700 background
  *   SC-GR-03  No weekend-hold label anywhere (v9.10 ST-14: trigger removed)
  *   SC-GR-04  Tooltip / aria-label exposes reason + historical average gap
  *   SC-GR-05  Insufficient history — badge still shown; tooltip shows "insufficient history"
@@ -30,6 +30,18 @@
 'use strict';
 
 const { test, expect } = require('@playwright/test');
+
+// v9.12 ST-24 (BLG-FE-210): axe color-contrast scoped to one badge.
+const AxeBuilder = require('@axe-core/playwright').default;
+async function expectNoContrastViolation(page, selector) {
+  // Wait out finite CSS/JS animations (dialog open, colour transitions), so axe
+  // reads settled colours rather than a mid-fade frame.
+  await page.waitForFunction(() => document.getAnimations()
+    .every((a) => a.playState !== 'running' || a.effect?.getTiming().iterations === Infinity));
+  await page.waitForTimeout(200);
+  const results = await new AxeBuilder({ page }).include(selector).withRules(['color-contrast']).analyze();
+  expect(results.violations).toEqual([]);
+}
 
 function makePosition(overrides = {}) {
   return {
@@ -109,14 +121,16 @@ test('SC-GR-01: No flag — Alerts column shows a dash', async ({ page }) => {
   await expect(page.locator('[data-testid="gap-risk-badge"]')).not.toBeVisible({ timeout: 5000 });
 });
 
-test('SC-GR-02: Earnings-flagged position shows "GAP RISK" badge with amber-600 background', async ({ page }) => {
+test('SC-GR-02: Earnings-flagged position shows "GAP RISK" badge with amber-700 background', async ({ page }) => {
   const pos = makePosition();
   await gotoPositionsTable(page, [pos], EARNINGS_FLAG);
 
   const badge = page.locator('[data-testid="gap-risk-badge"]').first();
   await expect(badge).toBeVisible({ timeout: 5000 });
   await expect(badge).toContainText('GAP RISK');
-  await expect(badge).toHaveCSS('background-color', 'rgb(217, 119, 6)'); // #D97706
+  // v9.12 ST-24 (BLG-FE-210): #B45309 (amber-700, 5.02:1 with white), was #D97706.
+  await expect(badge).toHaveCSS('background-color', 'rgb(180, 83, 9)'); // #B45309
+  await expectNoContrastViolation(page, '[data-testid="gap-risk-badge"]');
 });
 
 // v9.10 ST-14 (BLG-BE-136): the standalone weekend_hold trigger is removed, so no

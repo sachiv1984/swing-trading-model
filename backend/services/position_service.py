@@ -898,7 +898,20 @@ def add_position(
     # Validate market
     if market not in ['US', 'UK']:
         raise ValueError("Market must be 'US' or 'UK'")
-    
+
+    # ST-18 (BLG-FE-203, EPIC-03, v9.12): a typed ATR whose stop multiple meets
+    # or exceeds the entry price would store a stop at or below zero — usually
+    # an ATR typed in pence or cents. Rejected (400 via the endpoint's
+    # ValueError handler), matching Trade Entry's inline error
+    # (position_form.md v1.9 §ATR (14-day)).
+    if atr_value and atr_value > 0 and INITIAL_ATR_MULTIPLIER * atr_value >= entry_price:
+        currency = '£' if market == 'UK' or ticker.endswith('.L') else '$'
+        raise ValueError(
+            f"atr_value {atr_value:g} puts the initial stop at or below zero: "
+            f"{INITIAL_ATR_MULTIPLIER:g} × ATR must be less than the entry price ({entry_price:g}). "
+            f"ATR is in {currency}, not pence or cents."
+        )
+
     # Auto-detect market from ticker if needed
     if ticker.endswith('.L') and market == 'US':
         market = 'UK'

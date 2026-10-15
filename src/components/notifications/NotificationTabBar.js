@@ -13,7 +13,7 @@ export default function NotificationTabBar() {
   const currentPath = pathname;
 
   return (
-    <div className="flex gap-1 border-b border-slate-700/50">
+    <div className="flex gap-1 border-b border-slate-200 dark:border-slate-700/50">
       {tabs.map((tab) => {
         const isActive = currentPath === tab.path;
         return (
@@ -23,8 +23,8 @@ export default function NotificationTabBar() {
             className={cn(
               "px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors",
               isActive
-                ? "border-cyan-400 text-cyan-400"
-                : "border-transparent text-slate-600 dark:text-slate-400 hover:text-white"
+                ? "border-cyan-400 text-cyan-700 dark:text-cyan-400"
+                : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             )}
           >
             {tab.label}

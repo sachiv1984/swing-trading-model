@@ -67,7 +67,7 @@ export default function AiChatWidget() {
           <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700">
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-white">AI Trade Advisor</span>
-              <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-amber-600 text-white">
+              <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-amber-700 text-white">
                 Advisory
               </span>
             </div>

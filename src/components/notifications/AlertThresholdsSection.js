@@ -43,10 +43,10 @@ function SkeletonRows() {
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="flex items-center justify-between px-6 py-5">
           <div className="space-y-2">
-            <div className="h-4 w-44 bg-slate-700 rounded animate-pulse" />
-            <div className="h-3 w-32 bg-slate-800 rounded animate-pulse" />
+            <div className="h-4 w-44 bg-slate-300/60 dark:bg-slate-700 rounded animate-pulse" />
+            <div className="h-3 w-32 bg-slate-300/60 dark:bg-slate-800 rounded animate-pulse" />
           </div>
-          <div className="h-7 w-14 bg-slate-700 rounded animate-pulse" />
+          <div className="h-7 w-14 bg-slate-300/60 dark:bg-slate-700 rounded animate-pulse" />
         </div>
       ))}
     </>
@@ -94,13 +94,13 @@ function CreateForm({ onSave, onCancel }) {
   };
 
   return (
-    <div className="px-6 py-5 bg-slate-800/40 border-t border-slate-700/50 space-y-4">
+    <div className="px-6 py-5 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-200 dark:border-slate-700/50 space-y-4">
       <div className="space-y-1">
         <Label className="text-slate-600 dark:text-slate-400 text-xs">Alert Type</Label>
         <select
           value={alertType}
           onChange={(e) => { setAlertType(e.target.value); setValidationError(null); }}
-          className="bg-slate-800/50 border border-slate-700 text-white text-sm rounded px-3 py-2 w-full"
+          className="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm rounded px-3 py-2 w-full"
         >
           {Object.entries(TYPE_LABELS).map(([value, label]) => (
             <option key={value} value={value}>{label}</option>
@@ -120,7 +120,7 @@ function CreateForm({ onSave, onCancel }) {
             onChange={(e) => handleThresholdChange(e.target.value)}
             placeholder="5"
             className={cn(
-              'bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-9 w-40',
+              'bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 placeholder:text-slate-600 dark:text-slate-400 h-9 w-40',
               validationError && '!border-rose-500/60'
             )}
           />
@@ -145,7 +145,7 @@ function CreateForm({ onSave, onCancel }) {
         <Button
           variant="ghost"
           onClick={onCancel}
-          className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800 h-8 text-xs"
+          className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 h-8 text-xs"
         >
           Cancel
         </Button>
@@ -191,11 +191,11 @@ function EditForm({ rule, onSave, onCancel }) {
   };
 
   return (
-    <div className="px-6 py-5 bg-slate-800/40 border-t border-slate-700/50 space-y-4">
+    <div className="px-6 py-5 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-200 dark:border-slate-700/50 space-y-4">
       {/* Alert type — display only when editing */}
       <div className="space-y-1">
         <Label className="text-slate-600 dark:text-slate-400 text-xs">Alert Type</Label>
-        <p className="text-sm text-white font-medium">{TYPE_LABELS[rule?.type] ?? "—"}</p>
+        <p className="text-sm text-slate-900 dark:text-white font-medium">{TYPE_LABELS[rule?.type] ?? "—"}</p>
       </div>
 
       {/* Threshold field — only for stop_loss_approach */}
@@ -211,7 +211,7 @@ function EditForm({ rule, onSave, onCancel }) {
             onChange={(e) => handleThresholdChange(e.target.value)}
             placeholder="5"
             className={cn(
-              "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-9 w-40",
+              "bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 placeholder:text-slate-600 dark:text-slate-400 h-9 w-40",
               validationError && "!border-rose-500/60"
             )}
           />
@@ -238,7 +238,7 @@ function EditForm({ rule, onSave, onCancel }) {
         <Button
           variant="ghost"
           onClick={onCancel}
-          className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800 h-8 text-xs"
+          className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 h-8 text-xs"
         >
           Cancel
         </Button>
@@ -280,13 +280,13 @@ export default function AlertThresholdsSection() {
     <div className="space-y-4">
       {/* Section heading */}
       <div className="px-1">
-        <h2 className="text-base font-semibold text-white">Alert Thresholds</h2>
+        <h2 className="text-base font-semibold text-slate-900 dark:text-white">Alert Thresholds</h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">Configure trigger thresholds for individual alert rules.</p>
       </div>
 
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 divide-y divide-slate-700/50 overflow-hidden">
+      <div className="rounded-2xl bg-gradient-to-br from-white dark:from-slate-900 to-slate-50 dark:to-slate-800 border border-slate-200 dark:border-slate-700/50 divide-y divide-slate-200 dark:divide-slate-700/50 overflow-hidden">
         {loadError ? (
-          <div className="p-6 text-rose-400 text-sm">
+          <div className="p-6 text-rose-700 dark:text-rose-400 text-sm">
             Unable to load alert rules. Please refresh.
           </div>
         ) : loading ? (
@@ -295,7 +295,7 @@ export default function AlertThresholdsSection() {
           <>
             <div className="flex flex-col items-center justify-center py-16 text-center px-6">
               <BellPlus className="w-10 h-10 text-slate-600 mb-3" />
-              <h3 className="text-base font-semibold text-white mb-1">No alert rules configured</h3>
+              <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-1">No alert rules configured</h3>
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-5">Add an alert rule to receive notifications.</p>
               {!showCreateForm && (
                 <Button
@@ -319,7 +319,7 @@ export default function AlertThresholdsSection() {
               {/* Row */}
               <div className="flex items-center justify-between px-6 py-4">
                 <div className="flex flex-col">
-                  <span className="text-sm font-semibold text-white">
+                  <span className="text-sm font-semibold text-slate-900 dark:text-white">
                     {TYPE_LABELS[rule.type] ?? rule.type}
                   </span>
                   <ThresholdText rule={rule} />
@@ -329,7 +329,7 @@ export default function AlertThresholdsSection() {
                     variant="ghost"
                     size="sm"
                     onClick={() => setOpenEditId(openEditId === rule.id ? null : rule.id)}
-                    className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800 h-7 w-7 p-0"
+                    className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 h-7 w-7 p-0"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                   </Button>

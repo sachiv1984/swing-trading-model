@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { base44, apiFetch, api } from "../api/base44Client";
-import { INITIAL_ATR_MULTIPLIER } from "../lib/strategyParameters";
+import { INITIAL_ATR_MULTIPLIER, ATR_PERIOD_DAYS } from "../constants/strategy";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
@@ -17,6 +17,8 @@ import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
 import { formatCurrency, currencyForMarket } from "../lib/format";
 import PositionSizingWidget from '../components/trades/PositionSizingWidget';
+import { INPUT_DEBOUNCE_MS } from "../hooks/usePositionSizingFetch";
+import { format } from "date-fns";
 import SetupThesisDigestPanel from '../components/trades/SetupThesisDigestPanel';
 import { isStartTradeEligible, STATUS_CONFIG } from "./TradePlans";
 
@@ -73,6 +75,53 @@ export default function TradeEntry() {
     },
     enabled: !planPrefill,
   });
+
+  // ST-17 (BLG-BE-146, v9.12): ATR preview — position_form.md v1.9 §ATR (14-day).
+  // Once the ticker is known and the ATR field is blank, fetch the 14-day ATR
+  // (GET /market/atr/{ticker}) after the same 300 ms input debounce, so the
+  // stop, risk and sizing show before save. The fetched value is never placed
+  // into the input: the field is submitted blank, so the backend still fetches
+  // the ATR itself at save. A typed ATR always takes precedence.
+  // status: idle | loading | ready | none
+  const [atrPreview, setAtrPreview] = useState({ status: "idle" });
+  const previewTicker = formData.ticker.trim();
+  const atrBlank = String(formData.atr_value).trim() === "";
+
+  useEffect(() => {
+    if (!previewTicker || !atrBlank) {
+      setAtrPreview({ status: "idle" });
+      return undefined;
+    }
+    let cancelled = false;
+    setAtrPreview({ status: "loading" });
+    const timer = setTimeout(async () => {
+      try {
+        const res = await api.market.getAtr(previewTicker, formData.market);
+        if (cancelled) return;
+        const atr = typeof res?.atr === "number" && res.atr > 0 ? res.atr : null;
+        setAtrPreview(atr != null ? { status: "ready", atr, asOf: res.as_of } : { status: "none" });
+      } catch {
+        // No error banner: a failed fetch falls back to "Calculated on save".
+        if (!cancelled) setAtrPreview({ status: "none" });
+      }
+    }, INPUT_DEBOUNCE_MS);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [previewTicker, formData.market, atrBlank]);
+
+  // ST-18 (BLG-FE-203, v9.12): a typed ATR where 5× ATR ≥ entry puts the stop
+  // at or below zero (usually an ATR typed in pence or cents). The inline error
+  // shows on blur or a submit attempt and disables submit while shown
+  // (position_form.md v1.9 §ATR (14-day), §Validation Errors).
+  const [atrTouched, setAtrTouched] = useState(false);
+  const atrImplausible =
+    parseFloat(formData.atr_value) > 0 &&
+    parseFloat(formData.entry_price) > 0 &&
+    INITIAL_ATR_MULTIPLIER * parseFloat(formData.atr_value) >= parseFloat(formData.entry_price);
+  const showAtrError = atrTouched && atrImplausible;
+  const marketKnown = previewTicker !== "";
 
   const [tagInput, setTagInput] = useState("");
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
@@ -209,7 +258,10 @@ export default function TradeEntry() {
     const shares = parseFloat(formData.shares) || 0;
     const price = parseFloat(formData.entry_price) || 0;
     const fxRate = parseFloat(formData.fx_rate) || 1;
-    const atr = parseFloat(formData.atr_value) || 0;
+    const typedAtr = parseFloat(formData.atr_value) || 0;
+    // ST-17: with the field blank, the previewed ATR drives the stop.
+    const stopFromPreview = atrBlank && atrPreview.status === "ready";
+    const atr = stopFromPreview ? atrPreview.atr : typedAtr;
 
     const grossValue = shares * price;
     const grossValueGBP = formData.market === "US" ? grossValue / fxRate : grossValue;
@@ -248,6 +300,7 @@ export default function TradeEntry() {
       fxFee,
       totalCost,
       systemStop,
+      stopFromPreview,
       riskPerShare,
       totalRisk: totalRiskGBP,
       currencySymbol: formData.market === "UK" ? "£" : "$",
@@ -259,6 +312,10 @@ export default function TradeEntry() {
 
   const handleSubmit = () => {
     if (!isFormValid) return;
+    if (atrImplausible) {
+      setAtrTouched(true);
+      return;
+    }
 
     // Note: fees are NOT passed here — the backend calculates authoritative fees
     // via POST /portfolio/position. No stop is sent: the backend sets the
@@ -419,16 +476,34 @@ export default function TradeEntry() {
           {/* ATR & system initial stop (ST-07, BLG-FE-197, v9.10 — position_form.md §ATR (14-day), §Initial Stop) */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="trade-entry-atr" className="text-slate-600 dark:text-slate-400">ATR (14-day)</Label>
+              <Label htmlFor="trade-entry-atr" className="text-slate-600 dark:text-slate-400">
+                {marketKnown ? `ATR (${ATR_PERIOD_DAYS}-day, ${costs.currencySymbol})` : `ATR (${ATR_PERIOD_DAYS}-day)`}
+              </Label>
               <Input
                 id="trade-entry-atr"
                 type="number"
                 step="0.01"
                 value={formData.atr_value}
                 onChange={(e) => handleChange("atr_value", e.target.value)}
+                onBlur={() => setAtrTouched(true)}
+                aria-invalid={showAtrError ? "true" : undefined}
+                aria-describedby={showAtrError ? "atr-implausible-error" : undefined}
                 placeholder="Fetched automatically if blank"
                 className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400"
               />
+              {showAtrError && (
+                <p id="atr-implausible-error" data-testid="atr-implausible-error" className="text-xs text-rose-700 dark:text-rose-400">
+                  This ATR puts the stop at or below zero. Check the unit: ATR is in {costs.currencySymbol}, not pence or cents.
+                </p>
+              )}
+              {atrBlank && atrPreview.status === "ready" && (
+                <p data-testid="atr-fetched-hint" className="text-xs text-slate-600 dark:text-slate-400">
+                  Fetched: {formatCurrency(atrPreview.atr, { currency: currencyForMarket(formData.market) })} ({ATR_PERIOD_DAYS}-day
+                  {atrPreview.asOf && !Number.isNaN(new Date(atrPreview.asOf).getTime())
+                    ? `, ${format(new Date(atrPreview.asOf), "d MMM")}`
+                    : ""})
+                </p>
+              )}
             </div>
             <div className="space-y-2" data-testid="system-initial-stop">
               <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Initial Stop (set by system)</p>
@@ -438,14 +513,18 @@ export default function TradeEntry() {
                     {formatCurrency(costs.systemStop, { currency: currencyForMarket(formData.market) })}
                   </p>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
-                    Entry − {INITIAL_ATR_MULTIPLIER}× ATR (§5). This is the stop that will be stored.
+                    {costs.stopFromPreview
+                      ? `Entry − ${INITIAL_ATR_MULTIPLIER}× ATR (§5), using the fetched ${ATR_PERIOD_DAYS}-day ATR. The stop is recalculated at save and may differ slightly if prices update before then.`
+                      : `Entry − ${INITIAL_ATR_MULTIPLIER}× ATR (§5). This is the stop that will be stored.`}
                   </p>
                 </>
+              ) : parseFloat(formData.entry_price) > 0 && atrBlank && atrPreview.status === "loading" ? (
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-400" data-testid="system-initial-stop-value">Fetching ATR…</p>
               ) : parseFloat(formData.entry_price) > 0 ? (
                 <>
                   <p className="text-sm font-semibold text-slate-300" data-testid="system-initial-stop-value">Calculated on save</p>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
-                    The system fetches the 14-day ATR for {formData.ticker || "this ticker"} and sets the stop at Entry − {INITIAL_ATR_MULTIPLIER}× ATR.
+                    The system fetches the {ATR_PERIOD_DAYS}-day ATR for {formData.ticker || "this ticker"} and sets the stop at Entry − {INITIAL_ATR_MULTIPLIER}× ATR.
                   </p>
                 </>
               ) : (
@@ -670,7 +749,7 @@ export default function TradeEntry() {
         </Link>
         <Button
           onClick={handleSubmit}
-          disabled={!isFormValid || createMutation.isPending}
+          disabled={!isFormValid || showAtrError || createMutation.isPending}
           className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25 disabled:opacity-50"
         >
           {createMutation.isPending ? (

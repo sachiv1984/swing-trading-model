@@ -5746,3 +5746,203 @@ ST-34 (v9.12) corrected `data_model.md` §2's Fields table to say `holding_days`
 - The dictionary lists no column that `data_model.md` §2 does not, other than an explicitly marked historical row
 
 ---
+
+### BLG-SPEC-201 — Point settings.md at the moved strategy constants module
+**Priority:** P4 (Trivial)
+**Type:** Spec Debt / Frontend
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-21/EPIC-03, cycle `2026-10-12__release-v9.12` — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-21 moved the frontend display mirror of the `strategy_rules.md` §11 parameters from `src/lib/strategyParameters.js` to `src/constants/strategy.js` (Head of Specs Team interpretation, 2026-10-13), leaving one module. `docs/specs/frontend/pages/settings.md` §Strategy Parameter Presentation (line ~121) still says the displayed values come from `src/lib/strategyParameters.js`, which no longer exists. Sprint Execution may not edit a canonical spec beyond deviation documentation, so the path was not changed in ST-21's commit.
+
+**Scope**
+- Replace the path in `settings.md` with `src/constants/strategy.js`; version bump and changelog row
+
+**Acceptance Criteria**
+- `settings.md` names `src/constants/strategy.js`, and no canonical spec under `docs/specs/` names `src/lib/strategyParameters.js`
+
+---
+
+### BLG-FE-220 — Fix the Strategy Benchmark Rebalance badge's contrast and settle tinted vs filled exit-reason badges
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-24/EPIC-03, cycle `2026-10-12__release-v9.12` (v9.12 design gate observation, `design_gate.md` line ~142, filed at execution per `sprint_backlog.md` Outstanding Actions) — 2026-10-13
+**Effort:** XS (<1h plus test updates)
+**Provisional-Target:** TBD
+
+**Problem**
+On the Strategy Benchmark Trade Log, the Rebalance exit badge is `bg-teal-600 text-white`, about 3.7:1, below WCAG AA for its small text. ST-24 moved the Risk-Off badge on the same table to `bg-amber-700` (5.02:1) but did not touch teal, which is outside its amber scope. `strategy_benchmark.md` §7 also describes tinted exit-reason badges, while the shipped table uses filled ones.
+
+**Scope**
+- Decide tinted vs filled badges with the Head of UX & Design, and align `strategy_benchmark.md` §7 and `src/pages/StrategyBenchmark.js`
+- Move Rebalance to a passing token (e.g. `bg-teal-700`, measured first)
+- Update `tests/e2e/strategy-benchmark.spec.js` SC-SB-04a's `bg-teal-600` assertion and add a scoped axe color-contrast check
+
+**Acceptance Criteria**
+- Every exit-reason badge on the Trade Log passes a scoped axe color-contrast scan in both themes
+- `strategy_benchmark.md` §7 matches the shipped badge style
+
+---
+
+### BLG-FE-221 — A coloured className on `<Button>` never renders: Button's default bg-primary wins
+**Priority:** P2 (Medium)
+**Type:** Frontend / Accessibility
+**Owner:** Head of Engineering; Frontend Specifications & UX Documentation Owner
+**Source:** ST-24/EPIC-03, cycle `2026-10-12__release-v9.12` — 2026-10-13 (found by ST-24's scoped axe scan of the Trade Plan "Abandon Plan" button)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`src/lib/utils.js` `cn()` is plain `clsx`, with no `tailwind-merge`, so a `<Button className="bg-emerald-600 …">` keeps the default variant's `bg-primary` as well. In the built CSS `.bg-primary` comes after every colour `bg-*` utility (e.g. `.bg-amber-700` at offset ~26.7k, `.bg-emerald-600` ~29.1k, `.bg-primary` ~30.4k), and the same holds for `hover:bg-primary/90`, so the custom colour never shows. The Trade Plan "Abandon Plan" button rendered `#fafafa` behind white text in dark mode (contrast 1.04:1). ST-24 fixed that one button with `!bg-amber-700 hover:!bg-amber-800`. Other `<Button>`s with a colour fill and no `variant` override are affected the same way, for example `src/pages/Screener.js` (lines ~333 and ~1065, `bg-emerald-600`) and `src/pages/TradePlans.js` (~385, `bg-rose-600`).
+
+**Scope**
+- Fix at the root: add `tailwind-merge` to `cn()` (the shadcn default), or give coloured buttons a variant with no background; then remove ST-24's `!` workaround
+- Audit every `<Button>` with a colour `bg-*` className and confirm each renders its intended fill
+- Add a Playwright `toHaveCSS('background-color', …)` or scoped axe check for at least the affected buttons
+
+**Acceptance Criteria**
+- Every `<Button>` with a colour `bg-*` className renders that colour (asserted for the listed sites)
+- No `!bg-` workaround remains for this cause
+
+---
+
+### BLG-FE-222 — Normalise the Trade Entry ticker the same way for the ATR preview and for save
+**Priority:** P3 (Low)
+**Type:** Frontend / Backend Correctness
+**Owner:** Head of Engineering
+**Source:** ST-17/EPIC-03, cycle `2026-10-12__release-v9.12`, agent-mediated Director of Quality review (follow-up 1) — 2026-10-13
+**Effort:** XS (<1h plus tests)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /market/atr/{ticker}` trims and upper-cases the ticker; `POST /portfolio/position` does neither (`AddPositionRequest.ticker` has no validator), and Trade Entry upper-cases on change but does not trim, nor upper-case a prefilled ticker. With `"AAPL "`, the preview fetches the ATR for `AAPL` while save calls `calculate_atr("AAPL ")`, so the shown stop can differ from the stored one. ST-17's AC 2 test covers only already-normalised input. Related minor inconsistency: the `?position=` deep link requires `status === "open"` while `?exit=` uses `!== "closed"` (follow-up 6).
+
+**Scope**
+- Normalise (trim, upper-case) the ticker once, server-side in `AddPositionRequest`/`add_position()`, and in Trade Entry before both the preview and the submit
+- Extend `tests/test_market_atr_preview_endpoint.py` AC 2 cases with untrimmed and lower-case input
+- Align the two Positions deep links' status test
+
+**Acceptance Criteria**
+- For an untrimmed or lower-case ticker, the preview stop equals the saved `initial_stop` (backend test)
+- `?position=` and `?exit=` use the same open-position test
+
+---
+
+### BLG-GOV-389 — Decide whether the strategy-copy lint should fail CI, and whether the 200-day MA belongs in the constants module
+**Priority:** P3 (Low)
+**Type:** Governance Process / Strategy Conformance
+**Owner:** Head of Specs Team; Frontend Specifications & UX Documentation Owner
+**Source:** ST-21/EPIC-03, cycle `2026-10-12__release-v9.12`, agent-mediated Director of Quality review (follow-ups 2 and 3) — 2026-10-13
+**Effort:** XS (<1h)
+**Provisional-Target:** TBD
+
+**Problem**
+`scripts/check_strategy_copy.py` runs in CI job `strategy-copy` without `--strict`, so a future contradiction is only a warning (BLG-GOV-369's scope asked for a CI warning; `tests/test_check_strategy_copy.py` does pin the current clean tree). The lint also deliberately skips the 200-day MA (`strategy_rules.md` §8.2), which is inside ST-21's §5–§11 title scope but not a §11 parameter; `SignalContextPanel.js` still writes "200-day MA" as a literal.
+
+**Scope**
+- Head of Specs Team rules: (a) warning only, or `--strict` in CI; (b) whether the regime MA length joins `src/constants/strategy.js` and the lint
+- Apply the ruling to the workflow, the lint and the constants module
+
+**Acceptance Criteria**
+- A dated ruling on (a) and (b), applied
+
+---
+
+### BLG-FE-223 — Inputs apply dark:text-slate-400 to typed text instead of the placeholder
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** EPIC-03, cycle `2026-10-12__release-v9.12`, agent-mediated Director of Quality review (follow-up 4) — 2026-10-13
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+Several inputs use `placeholder:text-slate-600 dark:text-slate-400`. The `dark:` variant applies to the typed text, not the placeholder (`dark:placeholder:` was intended), so typed values render slate-400 in dark mode and placeholder colour is unpaired. Seen on the Trade Entry inputs and the Notifications inputs.
+
+**Scope**
+- Replace with `placeholder:text-slate-600 dark:placeholder:text-slate-400` and an explicit typed-text pair (`text-slate-900 dark:text-white`) across `src/`
+
+**Acceptance Criteria**
+- No input class string uses a bare `dark:text-*` intended for its placeholder (grep check); typed text passes contrast in both themes
+
+---
+
+### BLG-FE-224 — Move amber-600 text on light surfaces to amber-700
+**Priority:** P3 (Low)
+**Type:** Frontend / Accessibility
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-24/EPIC-03, cycle `2026-10-12__release-v9.12`, agent-mediated Director of Quality review (follow-up 5) — 2026-10-13
+**Effort:** S (~0.5 day plus test updates)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-24 fixed white text on amber-600 fills. `text-amber-600` used as text on light surfaces remains (about 3.2:1 on white, below AA; `design_system.md` §Light-Theme Colour Tokens rule 3): WatchlistRow, PositionSizingWidget, WhatIfSizingPreview, TradePlans (~285, stale marker), Positions/PositionCard. Some tests assert the class (e.g. `trade-plan-stale-marker.spec.js` SC-TPS-05, `position-sizing-concentration.spec.js` V-SIZE-01, `position-review-cadence-nudge.spec.js`).
+
+**Scope**
+- Move each to `text-amber-700 dark:text-amber-400` and update the asserting tests in the same commit
+
+**Acceptance Criteria**
+- No `text-amber-600` remains in `src/` outside Replay; scoped axe color-contrast scans of the changed elements pass in the light theme
+
+---
+
+### BLG-BE-180 — Reject a fetched ATR that puts the initial stop at or below zero
+**Priority:** P2 (Medium)
+**Type:** Backend / Strategy correctness
+**Owner:** Backend & Data Owner
+**Source:** PR #2026 (EPIC-03, cycle `2026-10-12__release-v9.12`), agent-mediated Director of Quality review — 2026-10-15
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-18 added a guard in `add_position()` (`backend/services/position_service.py` ~907) that rejects a *typed* ATR when 5 × ATR ≥ entry. A *fetched* ATR (field left blank) has no such check: on a low-priced, volatile ticker where 5 × the 14-day ATR meets or exceeds the entry price, `calculate_initial_stop()` returns a stop at or below zero and save stores it silently. Trade Entry's ST-17 preview shows the same value (`TradeEntry.js` ~288, `systemStop = price - atr * 5`, no lower bound), so the user sees a negative "Initial Stop (set by system)" with no explanation.
+
+**Scope**
+- Decide the rule with the strategy owner (reject with 400, or apply a floor), recorded in `strategy_rules.md` §5 if it changes stop behaviour
+- Apply it in `add_position()` for fetched and fallback ATRs, and show a matching inline message on Trade Entry when the previewed stop is ≤ 0
+
+**Acceptance Criteria**
+- A backend test with a mocked fetched ATR where 5 × ATR ≥ entry does not store a stop ≤ 0
+- Playwright: with a mocked preview ATR where 5 × ATR ≥ entry, Trade Entry shows no negative stop and explains why
+
+---
+
+### BLG-FE-225 — Cache the Trade Entry ATR preview per ticker and market
+**Priority:** P3 (Low)
+**Type:** Frontend / Performance
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** PR #2026 (EPIC-03, cycle `2026-10-12__release-v9.12`), agent-mediated Director of Quality review — 2026-10-15
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-17's preview (`src/pages/TradeEntry.js` ~90–112) calls `GET /market/atr/{ticker}` from a bare `useEffect` after each 300 ms pause in typing. Nothing is cached, so editing the ticker and changing it back, toggling market, or clearing and re-entering the ATR field refetches, and each fetch is an uncached Alpaca/Yahoo call on the backend. The rest of the page uses react-query.
+
+**Scope**
+- Move the preview to `useQuery` keyed on `["market-atr", normalisedTicker, market]` with a staleTime (e.g. 5 minutes), keeping the debounce and the idle/loading/ready/none states
+
+**Acceptance Criteria**
+- Playwright: entering the same ticker twice within the staleTime issues one `GET /market/atr` request; SC-TAP-01..05 still pass
+
+---
+
+### BLG-SPEC-202 — Define or remove the 2R Exit Zone threshold the Positions page states
+**Priority:** P3 (Low)
+**Type:** Specification / Strategy copy
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** PR #2026 (EPIC-03, cycle `2026-10-12__release-v9.12`), agent-mediated Director of Quality review — 2026-10-15
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The PROFITABLE lifecycle tooltip in `src/pages/Positions.js` (~69) says "Advances to Exit Zone when P&L reaches 2R target". `strategy_rules.md` has no 2R or R-multiple rule, so the ST-21 strategy-copy lint cannot check it and the constants module has no value for it. Either the UI restates a rule the strategy does not define, or the rule exists only in code.
+
+**Scope**
+- Find where the Exit Zone threshold is computed; with the strategy owner, either add it to `strategy_rules.md` §11 (then to `src/constants/strategy.js` and the lint) or reword the tooltip to describe the shipped behaviour without a rule number
+
+**Acceptance Criteria**
+- The tooltip's threshold is either defined in `strategy_rules.md` and imported from `src/constants/strategy.js`, or no longer stated as a number; `scripts/check_strategy_copy.py` passes

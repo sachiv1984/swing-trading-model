@@ -1,6 +1,8 @@
-import { Clock, ShieldAlert, AlertCircle } from "lucide-react";
+import { Clock, ShieldAlert, AlertCircle, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { cn } from "../../lib/utils";
+import { createPageUrl } from "../../utils";
 
 function daysColor(days) {
   if (days <= 1) return "text-rose-400 bg-rose-500/10 border-rose-500/30";
@@ -19,10 +21,10 @@ export default function GracePeriodPanel({ positions = [], error }) {
         <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500/30 to-orange-500/30">
           <ShieldAlert className="w-5 h-5 text-amber-400" />
         </div>
-        <h3 className="text-sm font-medium text-slate-300">Grace Period</h3>
+        <h3 className="text-sm font-medium text-slate-300">Grace Period Positions</h3>
         {!error && gracePosts.length > 0 && (
           <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
-            {gracePosts.length} position{gracePosts.length > 1 ? "s" : ""}
+            {gracePosts.length} position{gracePosts.length > 1 ? "s" : ""} in grace period
           </span>
         )}
       </div>
@@ -39,25 +41,32 @@ export default function GracePeriodPanel({ positions = [], error }) {
           {gracePosts.map((p) => {
             const days = p.grace_days_remaining ?? null;
             return (
-              <div
+              // ST-22 (BLG-FE-207, v9.12): each row links to the position on
+              // Positions (risk_dashboard.md §5.2; positions.md §Position Deep Link).
+              <Link
                 key={p.id}
+                to={`${createPageUrl("Positions")}?position=${encodeURIComponent(p.id)}`}
+                aria-label={`Open ${p.ticker} on Positions`}
                 data-testid="grace-period-row"
-                className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-slate-800/40 border border-slate-700/30"
+                className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-slate-800/40 border border-slate-700/30 hover:bg-slate-200/60 dark:hover:bg-slate-700/40"
               >
                 <div className="flex items-center gap-3">
                   <span className="font-semibold text-white">{p.ticker}</span>
                   <span className="text-xs text-slate-600 dark:text-slate-400">
-                    {p.entry_date ? format(new Date(p.entry_date), "dd MMM yy") : "—"}
+                    {p.entry_date ? format(new Date(p.entry_date), "dd MMM yyyy") : "—"}
                   </span>
                   <span className="text-xs text-slate-600 dark:text-slate-400">
                     {p.holding_days != null ? `${p.holding_days}d in grace` : "—"}
                   </span>
                 </div>
-                <div className={cn("flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border", daysColor(days ?? 999))}>
-                  <Clock className="w-3 h-3" />
-                  {days === null ? "N/A" : `${days}d remaining`}
+                <div className="flex items-center gap-2">
+                  <div className={cn("flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border", daysColor(days ?? 999))}>
+                    <Clock className="w-3 h-3" />
+                    {days === null ? "N/A" : `${days}d remaining`}
+                  </div>
+                  <ChevronRight size={14} className="text-slate-600 dark:text-slate-400" aria-hidden="true" />
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

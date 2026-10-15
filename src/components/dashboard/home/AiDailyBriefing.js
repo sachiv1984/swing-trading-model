@@ -11,7 +11,7 @@ const STORAGE_KEY = 'ai-briefing-collapsed-sections-v1';
 const TYPE_COLOURS = {
   EXIT: 'bg-red-600 text-white',
   ENTER: 'bg-green-700 text-white',
-  MONITOR: 'bg-amber-600 text-white',
+  MONITOR: 'bg-amber-700 text-white',
   HOLD: 'bg-slate-600 text-white',
 };
 

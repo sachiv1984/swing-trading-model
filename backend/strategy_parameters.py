@@ -6,7 +6,7 @@ Parameter-authority ruling, 2026-10-06 (ESC-EXEC-20261006-01, outcome (a)):
 these values are fixed by the strategy rules. They are not read from the
 editable `settings` row. Changing one is a §12.3 strategy change, made here,
 in strategy_rules.md §11 and in the frontend display mirror
-src/lib/strategyParameters.js (tests/test_strategy_parameter_parity.py fails
+src/constants/strategy.js (tests/test_strategy_parameter_parity.py fails
 if the two drift).
 
 Every live stop path imports from here: analyze_positions,

@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2) — Living Reference
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-06
+**Version:** 1.1
+**Last Updated:** 2026-10-13 (ST-23, EPIC-03, v9.12, BLG-FE-200 — §6 corrected: light mode is a supported theme; points to the canonical light-theme token table); prior — 2026-05-06
 **Source:** BLG-FE-21 (v3.2 ST-14)
 **Depends on:** docs/frontend/component_inventory.md (v1.0)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -195,9 +195,9 @@ Framer Motion is used only in `PageHeader.js`. All other animations are Tailwind
 
 ---
 
-## 6. Dark Mode
+## 6. Dark and Light Themes
 
-The app is dark-only in practice. Light mode is partially scaffolded via Tailwind's `dark:` prefix in `PageHeader.js` but no light theme is implemented elsewhere. Arc 2 should not assume light mode support.
+Dark is the default theme, and light mode is a supported theme (Head of UX & Design with the Product Owner, 2026-10-12, v9.12). The header toggle in `Layout.js` switches it, and the choice persists. Every themed class is written as a `light dark:dark` pair. The canonical light-theme token table and its usage rules are in `docs/specs/frontend/design_system.md` §Light-Theme Colour Tokens; this reference does not repeat them. (Corrected in v9.12 ST-23: the earlier text said the app was dark-only in practice, which had been stale since the v6.7 light-theme token work.)
 
 ---
 
@@ -205,4 +205,5 @@ The app is dark-only in practice. Light mode is partially scaffolded via Tailwin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-10-13 | ST-23 (EPIC-03, v9.12, BLG-FE-200): §6 corrected — light mode is supported; points to the canonical token table in `docs/specs/frontend/design_system.md`. |
 | 1.0 | 2026-05-06 | Initial design system document. v3.2 ST-14 (BLG-FE-21). Captures current patterns at start of Arc 2 Sprint 2. |

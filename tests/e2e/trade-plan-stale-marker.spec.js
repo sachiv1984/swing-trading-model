@@ -19,6 +19,18 @@
 
 const { test, expect } = require('@playwright/test');
 
+// v9.12 ST-24 (BLG-FE-210): axe color-contrast scoped to one badge.
+const AxeBuilder = require('@axe-core/playwright').default;
+async function expectNoContrastViolation(page, selector) {
+  // Wait out finite CSS/JS animations (dialog open, colour transitions), so axe
+  // reads settled colours rather than a mid-fade frame.
+  await page.waitForFunction(() => document.getAnimations()
+    .every((a) => a.playState !== 'running' || a.effect?.getTiming().iterations === Infinity));
+  await page.waitForTimeout(200);
+  const results = await new AxeBuilder({ page }).include(selector).withRules(['color-contrast']).analyze();
+  expect(results.violations).toEqual([]);
+}
+
 const API = 'http://localhost:8000';
 const HOUR = 3600 * 1000;
 const DAY = 24 * HOUR;
@@ -92,4 +104,7 @@ test('SC-TPS-05: The marker is display-only text alongside the unchanged status 
   await expect(row.getByRole('button', { name: /keep/i })).toHaveCount(0);
   // Status badge is unchanged and still present
   await expect(row.getByText('Research Pending', { exact: true })).toBeVisible();
+  // v9.12 ST-24 (BLG-FE-210): the Research Pending badge is white on amber-700.
+  await expect(row.getByText('Research Pending', { exact: true })).toHaveClass(/bg-amber-700/);
+  await expectNoContrastViolation(page, '[class*="bg-amber-700"]');
 });

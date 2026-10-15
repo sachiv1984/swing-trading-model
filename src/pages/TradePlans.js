@@ -21,7 +21,7 @@ const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 // docs/design/2026-08-14__release-v8.8/research-status-badge-single-source/decision_record.md
 export const STATUS_CONFIG = {
   draft:                 { label: "Draft",              bg: "bg-gray-500",    text: "text-white" },
-  research_pending:      { label: "Research Pending",   bg: "bg-amber-600",   text: "text-white" },
+  research_pending:      { label: "Research Pending",   bg: "bg-amber-700",   text: "text-white" },
   research_complete:     { label: "Research Complete",  bg: "bg-blue-600",    text: "text-white" },
   entry_conditions_set:  { label: "Entry Ready",        bg: "bg-violet-600",  text: "text-white" },
   active:                { label: "Active",             bg: "bg-green-700",   text: "text-white" },

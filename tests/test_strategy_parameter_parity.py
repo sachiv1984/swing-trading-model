@@ -15,8 +15,9 @@ Covers:
     stay put and fail this test.
   - The settings row no longer influences the on-load stop (it used to).
   - Grace length, exit-decision default and calculation defaults all equal the
-    source; the frontend display mirror (src/lib/strategyParameters.js)
-    matches it.
+    source; the frontend display mirror (src/constants/strategy.js, moved
+    from src/lib/strategyParameters.js by ST-21, v9.12) matches it, and the
+    old module is gone so one source remains.
   - Each path records stop_calculation_source ('on_load' / 'nightly', DS-26).
   - US parity with a NULL fill_price (ST-12, BLG-BE-145, v9.12).
   - A stored stop is never rounded down on either path (ST-11, BLG-BE-160, v9.12).
@@ -225,7 +226,7 @@ class TestEveryPathUsesTheSource:
 class TestFrontendMirror:
 
     def test_mirror_matches_the_backend_source(self):
-        text = (ROOT / "src" / "lib" / "strategyParameters.js").read_text()
+        text = (ROOT / "src" / "constants" / "strategy.js").read_text()
         values = {k: float(v) for k, v in re.findall(r"export const (\w+) = ([\d.]+);", text)}
         assert values == {
             "GRACE_PERIOD_DAYS": sp.GRACE_PERIOD_DAYS,
@@ -233,3 +234,12 @@ class TestFrontendMirror:
             "INITIAL_ATR_MULTIPLIER": sp.INITIAL_ATR_MULTIPLIER,
             "PROFIT_ATR_MULTIPLIER": sp.PROFIT_ATR_MULTIPLIER,
         }
+
+    def test_one_frontend_source_remains(self):
+        # ST-21 (BLG-GOV-369, v9.12): the mirror moved; the old module must not linger.
+        assert not (ROOT / "src" / "lib" / "strategyParameters.js").exists()
+        offenders = [
+            str(p.relative_to(ROOT)) for p in (ROOT / "src").rglob("*.js")
+            if "strategyParameters" in p.read_text(encoding="utf-8") and p.name != "strategy.js"
+        ]
+        assert offenders == []

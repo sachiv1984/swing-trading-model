@@ -12,7 +12,7 @@ import { api } from "../api/base44Client";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
 import AiSpendTrendChart from "../components/charts/AiSpendTrendChart";
-import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS, INITIAL_ATR_MULTIPLIER, PROFIT_ATR_MULTIPLIER } from "../lib/strategyParameters";
+import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS, INITIAL_ATR_MULTIPLIER, PROFIT_ATR_MULTIPLIER } from "../constants/strategy";
 
 // ST-01 (BLG-BE-138, v9.10, ruling (a)): fixed by strategy_rules.md §11, not user settings.
 const FIXED_STRATEGY_FIELDS = ["min_hold_days", "atr_period", "atr_multiplier_initial", "atr_multiplier_trailing"];
@@ -196,6 +196,9 @@ export default function Settings() {
         iconColor="bg-cyan-500/20 text-cyan-400"
       >
         <div className="space-y-6">
+          {/* ST-20 (BLG-FE-201, v9.12): each helper line states the rule in force
+              (strategy_rules.md §5–§7.2); numbers come from the constants module
+              (settings.md v1.9 §1). */}
           <p data-testid="strategy-params-fixed-caption" className="text-xs text-slate-600 dark:text-slate-400">
             These parameters are fixed by the strategy rules (§11) and are shown for reference.
           </p>
@@ -203,24 +206,24 @@ export default function Settings() {
             <div className="space-y-2" data-testid="strategy-param-min-hold-days">
               <p className="text-sm text-slate-600 dark:text-slate-400">Minimum Hold Days</p>
               <p className="text-sm font-medium text-slate-900 dark:text-white">{GRACE_PERIOD_DAYS}</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">Days before stop can trail</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Grace period in calendar days. Stops are not enforced or recalculated during grace (§6).</p>
             </div>
             <div className="space-y-2" data-testid="strategy-param-atr-period">
               <p className="text-sm text-slate-600 dark:text-slate-400">ATR Period</p>
               <p className="text-sm font-medium text-slate-900 dark:text-white">{ATR_PERIOD_DAYS}</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">Lookback for ATR calculation</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Lookback for the ATR calculation, in days (§7.1).</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2" data-testid="strategy-param-atr-multiplier-initial">
               <p className="text-sm text-slate-600 dark:text-slate-400">Initial Stop (ATR Multiple)</p>
               <p className="text-sm font-medium text-slate-900 dark:text-white">{INITIAL_ATR_MULTIPLIER.toFixed(1)}</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">e.g., 5 = Entry − 5×ATR (wide stop for losing positions)</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Stop = price − {INITIAL_ATR_MULTIPLIER}×ATR for new and losing positions (§5, §7.2).</p>
             </div>
             <div className="space-y-2" data-testid="strategy-param-atr-multiplier-trailing">
               <p className="text-sm text-slate-600 dark:text-slate-400">Trailing Stop (ATR Multiple)</p>
               <p className="text-sm font-medium text-slate-900 dark:text-white">{PROFIT_ATR_MULTIPLIER.toFixed(1)}</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">e.g., 2 = High − 2×ATR (tight trailing stop for profitable positions)</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Stop = price − {PROFIT_ATR_MULTIPLIER}×ATR for profitable positions, never below entry (§7.2).</p>
             </div>
           </div>
 

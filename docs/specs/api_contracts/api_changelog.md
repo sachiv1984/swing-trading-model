@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.15.0
-**Last Updated:** 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — v9.11.0 entry: GET and POST /reports/monthly-pnl/narrative); prior — 2026-09-25 (ST-01b, EPIC-01, v9.7, BLG-FEAT-74 — v9.7.0 entry: new file replay_endpoints.md v1.0, POST /replay/run); prior — 2026-09-22 (ST-10, EPIC-03, v9.6, BLG-BE-118 — v9.6.0 entry: strategy_benchmark_endpoints.md v1.3, `offset` param + 400 INVALID_PARAMS validation on GET /strategy/backtest-rule-change/runs); prior history retained — see prior entries in version control
+**Version:** 1.16.0
+**Last Updated:** 2026-10-13 (ST-17, EPIC-03, v9.12, BLG-BE-146 — v9.12.0 entry: GET /market/atr/{ticker}); prior — 2026-10-09 (ST-25, EPIC-04, v9.11, BLG-FEAT-59 — v9.11.0 entry: GET and POST /reports/monthly-pnl/narrative); prior — 2026-09-25 (ST-01b, EPIC-01, v9.7, BLG-FEAT-74 — v9.7.0 entry: new file replay_endpoints.md v1.0, POST /replay/run); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
@@ -37,6 +37,17 @@ Rules:
 **Sign-off:** Head of Specs Team — Approved. Formalising an already-consistently-used structure (rather than introducing a new one requiring migration) is the right scope for this story — the conformance check confirms there was nothing to migrate. Sprint Execution Engine (agent-mediated, Head of Specs Team role — §5.3), 2026-09-08.
 
 ---
+
+## v9.12.0 (2026-10-13 — Release v9.12)
+
+### market_endpoints.md — v0.3 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-17
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /market/atr/{ticker} | Returns a ticker's 14-day ATR in native currency (or `null`), fetched as `POST /portfolio/position` fetches it, so Trade Entry can show the system stop, risk and suggested shares before save (BLG-BE-146). Read-only. |
 
 ## v9.11.0 (2026-10-09 — Release v9.11)
 

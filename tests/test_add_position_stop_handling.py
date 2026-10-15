@@ -81,6 +81,13 @@ class TestAddPositionStopHandling:
         )
         return mock_create.call_args.args[1], response
 
+    def _add_with_cleanup(self, **kwargs):
+        self.setup_method()
+        try:
+            return self._add(**kwargs)
+        finally:
+            self.teardown_method()
+
     def test_multiplier_is_the_fixed_section_11_value(self):
         assert INITIAL_ATR_MULTIPLIER == 5.0
 
@@ -143,3 +150,45 @@ class TestSuppliedEntryStopRejected:
         assert response.status_code == 200
         mock_add.assert_called_once()
         assert "stop_price" not in mock_add.call_args.kwargs
+
+
+class TestImplausibleTypedAtrRejected:
+    """ST-18 (BLG-FE-203, EPIC-03, v9.12) AC 2: a typed ATR whose 5× multiple meets
+    or exceeds the entry price is rejected with a 400 and an explanatory message."""
+
+    _BODY = {"ticker": "VOD.L", "market": "UK", "entry_date": "2026-10-13", "shares": 10, "entry_price": 10.0}
+
+    @staticmethod
+    def _client():
+        return TestSuppliedEntryStopRejected._client()
+
+    @pytest.mark.parametrize("atr_value", [2.0, 2.5, 150.0])  # 5 × ATR == 10, > 10, pence-scale
+    def test_endpoint_returns_400_with_message(self, atr_value):
+        client, main = self._client()
+        with patch("services.position_service.create_position") as mock_create, \
+             patch("services.position_service.get_portfolio", return_value={"id": "portfolio-1", "cash": 1_000_000.0}):
+            response = client.post("/portfolio/position", json={**self._BODY, "atr_value": atr_value})
+        assert response.status_code == 400
+        detail = response.json()["detail"]
+        assert "puts the initial stop at or below zero" in detail
+        assert f"{INITIAL_ATR_MULTIPLIER:g} × ATR must be less than the entry price" in detail
+        assert "ATR is in £, not pence or cents." in detail
+        mock_create.assert_not_called()
+
+    def test_us_message_names_dollars(self):
+        with patch.object(position_service, "get_portfolio", return_value={"id": "portfolio-1", "cash": 1_000_000.0}):
+            with pytest.raises(ValueError, match=r"ATR is in \$, not pence or cents\."):
+                position_service.add_position(
+                    ticker="AAPL", market="US", entry_date=str(date.today()),
+                    shares=10, entry_price=10.0, atr_value=2.0,
+                )
+
+    def test_plausible_typed_atr_is_stored(self):
+        data, response = TestAddPositionStopHandling()._add_with_cleanup(entry_price=10.0, atr_value=1.5)
+        assert data["atr_source"] == "user"
+        assert response["initial_stop"] == pytest.approx(2.5)  # 10 − 5 × 1.5
+
+    def test_blank_atr_is_not_checked_against_entry(self):
+        # A fetched ATR is never rejected here: the check applies to typed input only.
+        data, _ = TestAddPositionStopHandling()._add_with_cleanup(entry_price=10.0, atr_value=None, fetched_atr=3.0)
+        assert data["atr_source"] == "fetched"

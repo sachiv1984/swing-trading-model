@@ -27,6 +27,18 @@
 
 const { test, expect } = require('@playwright/test');
 
+// v9.12 ST-24 (BLG-FE-210): axe color-contrast scoped to one badge.
+const AxeBuilder = require('@axe-core/playwright').default;
+async function expectNoContrastViolation(page, selector) {
+  // Wait out finite CSS/JS animations (dialog open, colour transitions), so axe
+  // reads settled colours rather than a mid-fade frame.
+  await page.waitForFunction(() => document.getAnimations()
+    .every((a) => a.playState !== 'running' || a.effect?.getTiming().iterations === Infinity));
+  await page.waitForTimeout(200);
+  const results = await new AxeBuilder({ page }).include(selector).withRules(['color-contrast']).analyze();
+  expect(results.violations).toEqual([]);
+}
+
 // ---------------------------------------------------------------------------
 // Shared route stubs
 // ---------------------------------------------------------------------------
@@ -364,5 +376,8 @@ test.describe('ST-09 — AI Chat Widget', () => {
     const footer = page.getByTestId('ai-chat-advisory-footer');
     await expect(footer).toBeVisible({ timeout: 5000 });
     await expect(footer).toContainText(/advisory/i);
+    // v9.12 ST-24 (BLG-FE-210): the Advisory badge is white on amber-700.
+    await expect(page.getByTestId('ai-chat-panel').getByText('Advisory', { exact: true })).toHaveClass(/bg-amber-700/);
+    await expectNoContrastViolation(page, '[data-testid="ai-chat-panel"] .bg-amber-700');
   });
 });

@@ -25,6 +25,18 @@
 
 const { test, expect } = require('@playwright/test');
 
+// v9.12 ST-24 (BLG-FE-210): axe color-contrast scoped to one badge.
+const AxeBuilder = require('@axe-core/playwright').default;
+async function expectNoContrastViolation(page, selector) {
+  // Wait out finite CSS/JS animations (dialog open, colour transitions), so axe
+  // reads settled colours rather than a mid-fade frame.
+  await page.waitForFunction(() => document.getAnimations()
+    .every((a) => a.playState !== 'running' || a.effect?.getTiming().iterations === Infinity));
+  await page.waitForTimeout(200);
+  const results = await new AxeBuilder({ page }).include(selector).withRules(['color-contrast']).analyze();
+  expect(results.violations).toEqual([]);
+}
+
 // ---------------------------------------------------------------------------
 // Seed data
 // ---------------------------------------------------------------------------
@@ -264,7 +276,9 @@ test.describe('SC-SB-04 — Panel 3 toggle modes and exit reason badges', () => 
 
     // Stop (red), Risk-Off (amber), Rebalance (teal) — all 3 backtest rows present.
     await expect(table.getByText('Stop', { exact: true })).toHaveClass(/bg-red-600/);
-    await expect(table.getByText('Risk-Off', { exact: true })).toHaveClass(/bg-amber-600/);
+    // v9.12 ST-24 (BLG-FE-210): white on amber-700 (5.02:1), not amber-600 (3.19:1).
+    await expect(table.getByText('Risk-Off', { exact: true })).toHaveClass(/bg-amber-700/);
+    await expectNoContrastViolation(page, '[data-testid="benchmark-trade-table"] .bg-amber-700');
     await expect(table.getByText('Rebalance', { exact: true })).toHaveClass(/bg-teal-600/);
 
     // Actual-only trade (AAPL) must not be visible in backtest-only mode.

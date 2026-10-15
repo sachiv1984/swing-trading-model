@@ -12,7 +12,7 @@
  *   SC-GVP-01  RISK OFF badge shown in Grid View when risk_off_exit=true (ST-02/AC-01)
  *   SC-GVP-02  RISK OFF badge uses spec colour #1E40AF / "RISK OFF" label (ST-02/AC-02)
  *   SC-GVP-03  No RISK OFF badge when risk_off_exit=false (ST-02/AC-01)
- *   SC-GVP-04  GAP RISK badge shown in Grid View, amber-600 background (parity w/ SC-GR-08)
+ *   SC-GVP-04  GAP RISK badge shown in Grid View, amber-700 background (parity w/ SC-GR-08)
  *   SC-GVP-05  Both badges coexist, stacked in the dedicated alert row (ST-02/AC-03, ST-05)
  *   SC-GVP-06  Initial Stop and trailing stop values both shown on the card (ST-03/AC-01)
  *   SC-GVP-07  Breach icon shown when current_price <= current_trailing_stop (ST-03/AC-02)
@@ -31,6 +31,18 @@
 'use strict';
 
 const { test, expect } = require('@playwright/test');
+
+// v9.12 ST-24 (BLG-FE-210): axe color-contrast scoped to one badge.
+const AxeBuilder = require('@axe-core/playwright').default;
+async function expectNoContrastViolation(page, selector) {
+  // Wait out finite CSS/JS animations (dialog open, colour transitions), so axe
+  // reads settled colours rather than a mid-fade frame.
+  await page.waitForFunction(() => document.getAnimations()
+    .every((a) => a.playState !== 'running' || a.effect?.getTiming().iterations === Infinity));
+  await page.waitForTimeout(200);
+  const results = await new AxeBuilder({ page }).include(selector).withRules(['color-contrast']).analyze();
+  expect(results.violations).toEqual([]);
+}
 
 function makePosition(overrides = {}) {
   const merged = {
@@ -136,14 +148,16 @@ test('SC-GVP-03: No RISK OFF badge when risk_off_exit=false', async ({ page }) =
 // ST-02 (v6.9 parity) — GAP RISK badge (Grid View)
 // ---------------------------------------------------------------------------
 
-test('SC-GVP-04: GAP RISK badge shown in Grid View with amber-600 background', async ({ page }) => {
+test('SC-GVP-04: GAP RISK badge shown in Grid View with amber-700 background', async ({ page }) => {
   const pos = makePosition();
   await stubGridView(page, [pos], EARNINGS_FLAG);
 
   const badge = page.locator('[data-testid="gap-risk-badge"]').first();
   await expect(badge).toBeVisible({ timeout: 5000 });
   await expect(badge).toContainText('GAP RISK');
-  await expect(badge).toHaveCSS('background-color', 'rgb(217, 119, 6)'); // #D97706
+  // v9.12 ST-24 (BLG-FE-210): #B45309 (amber-700, 5.02:1 with white), was #D97706.
+  await expect(badge).toHaveCSS('background-color', 'rgb(180, 83, 9)'); // #B45309
+  await expectNoContrastViolation(page, '[data-testid="gap-risk-badge"]');
 });
 
 // ---------------------------------------------------------------------------
