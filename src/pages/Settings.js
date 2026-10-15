@@ -12,6 +12,7 @@ import { api } from "../api/base44Client";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
 import AiSpendTrendChart from "../components/charts/AiSpendTrendChart";
+import SettingsLastChange from "../components/settings/SettingsLastChange";
 import { GRACE_PERIOD_DAYS, ATR_PERIOD_DAYS, INITIAL_ATR_MULTIPLIER, PROFIT_ATR_MULTIPLIER } from "../constants/strategy";
 
 // ST-01 (BLG-BE-138, v9.10, ruling (a)): fixed by strategy_rules.md §11, not user settings.
@@ -74,9 +75,9 @@ export default function Settings() {
   const saveMutation = useMutation({
     mutationFn: async (data) => {
       if (data.id) {
-        return base44.entities.Settings.update(data.id, data);
+        return base44.entities.Settings.update(data.id, data, { requestSource: "settings_page" });
       } else {
-        return base44.entities.Settings.create(data);
+        return base44.entities.Settings.create(data, { requestSource: "settings_page" });
       }
     },
     onSuccess: (data) => {
@@ -128,6 +129,7 @@ export default function Settings() {
   const handleSave = () => {
     const payload = { ...formData };
     FIXED_STRATEGY_FIELDS.forEach((f) => delete payload[f]);
+    delete payload.last_change;  // ST-26: read-only, from GET /settings
     saveMutation.mutate(payload);
   };
 
@@ -164,28 +166,32 @@ export default function Settings() {
         title="Settings"
         description="Configure your strategy parameters and preferences"
         actions={
-          <Button
-            onClick={handleSave}
-            disabled={saveMutation.isPending}
-            className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25"
-          >
-            {saveMutation.isPending ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Saving...
-              </>
-            ) : saved ? (
-              <>
-                <CheckCircle2 className="w-4 h-4 mr-2" />
-                Saved!
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4 mr-2" />
-                Save Settings
-              </>
-            )}
-          </Button>
+          <div className="flex flex-wrap items-center justify-end gap-3 w-full sm:w-auto">
+            {/* ST-26 (BLG-SEC-41, v9.12): last-change line, from the refetched settings (settings.md §Last Change Line) */}
+            <SettingsLastChange lastChange={settings?.[0]?.last_change ?? null} />
+            <Button
+              onClick={handleSave}
+              disabled={saveMutation.isPending}
+              className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25"
+            >
+              {saveMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : saved ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  Saved!
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 mr-2" />
+                  Save Settings
+                </>
+              )}
+            </Button>
+          </div>
         }
       />
 

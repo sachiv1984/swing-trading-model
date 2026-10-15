@@ -42,7 +42,7 @@ from utils.correlation_id import (  # noqa: E402
 )
 install_correlation_id_log_record_factory()
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from typing import Optional, List
@@ -98,6 +98,7 @@ from database import (
     get_settings,
     create_settings,
     update_settings,
+    get_last_settings_change,
     create_trade_history,
     update_position_note,
     update_position_tags,
@@ -503,6 +504,11 @@ def root():
     return {"status": "ok", "message": "Trading Assistant API v1.0"}
 
 
+def _settings_request_source(header_value):
+    """ST-26: 'settings_page' only when the Settings page says so; any other caller is 'api'."""
+    return "settings_page" if header_value == "settings_page" else "api"
+
+
 @app.get("/settings")
 def get_settings_endpoint():
     """Get user settings"""
@@ -516,6 +522,8 @@ def get_settings_endpoint():
             }
         
         settings_list = [decimal_to_float(s) for s in settings]
+        # ST-26 (BLG-SEC-41, v9.12): the most recent logged save, or None.
+        settings_list[0]["last_change"] = get_last_settings_change()
         return {
             "status": "ok",
             "data": settings_list
@@ -527,11 +535,11 @@ def get_settings_endpoint():
 
 
 @app.post("/settings")
-def create_settings_endpoint(request: SettingsRequest):
-    """Create new settings"""
+def create_settings_endpoint(request: SettingsRequest, x_request_source: Optional[str] = Header(None)):
+    """Create new settings. X-Request-Source: settings_page tags the change-log rows (ST-26)."""
     try:
         settings_data = request.dict()
-        new_settings = create_settings(settings_data)
+        new_settings = create_settings(settings_data, request_source=_settings_request_source(x_request_source))
         return {
             "status": "ok",
             "data": decimal_to_float(new_settings)
@@ -543,11 +551,11 @@ def create_settings_endpoint(request: SettingsRequest):
 
 
 @app.patch("/settings/{settings_id}")
-def update_settings_endpoint(settings_id: str, request: SettingsRequest):
-    """Update existing settings"""
+def update_settings_endpoint(settings_id: str, request: SettingsRequest, x_request_source: Optional[str] = Header(None)):
+    """Update existing settings. X-Request-Source: settings_page tags the change-log rows (ST-26)."""
     try:
         settings_data = {k: v for k, v in request.dict().items() if v is not None}
-        updated_settings = update_settings(settings_id, settings_data)
+        updated_settings = update_settings(settings_id, settings_data, request_source=_settings_request_source(x_request_source))
         return {
             "status": "ok",
             "data": decimal_to_float(updated_settings)

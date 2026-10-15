@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.61
-**Last Updated:** 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — DS-32 (v2.61): `positions.stop_frozen_reason`, added to §2 DDL and Fields); prior — 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — v2.60: `entry_price` currency decision recorded under §2, doc fix; DS-23's reconstruction note no longer calls the currency ambiguous; chart-seed pence convention noted); prior — 2026-10-13 (ST-34, EPIC-05, v9.12, BLG-SPEC-178 — v2.60: drift-detector triage recorded; positions Fields nullability corrected for 7 columns; notifications.updated_at removed; live index/constraint notes under §5, §6 and trade_reflections); prior history retained — see prior entries in version control
+**Version:** 2.62
+**Last Updated:** 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — DS-33 (v2.62): new `settings_change_log` table, settings-write audit trail; note under §6); prior — 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — DS-32 (v2.61): `positions.stop_frozen_reason`, added to §2 DDL and Fields); prior — 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — v2.60: `entry_price` currency decision recorded under §2, doc fix; DS-23's reconstruction note no longer calls the currency ambiguous; chart-seed pence convention noted); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -335,6 +335,8 @@ CREATE TABLE settings (
         CHECK (default_risk_percent > 0 AND default_risk_percent <= 100)
 );
 ```
+
+> **Change log (v2.62, DS-33):** every settings write is recorded in `settings_change_log` (field, old value, new value, timestamp, request source). See DS-33.
 
 > **Live constraint name (staging, 2026-10-13, v2.60):** the `default_risk_percent` CHECK exists live with the same definition under Postgres's generated name `settings_default_risk_percent_check`, not `settings_risk_percent_check`. Use the live name in any future `DROP CONSTRAINT`. See §Drift Detector Triage.
 
@@ -3175,6 +3177,74 @@ Expect 1 row: `stop_frozen_reason`, `character varying`, `20`, `YES`.
 - **Live Confirmation — staging, applied 2026-10-13:** Up Migration returned "Success. No rows returned". Verification: `stop_frozen_reason`, `character varying`, `20`, `YES` (1 row). Supplied in-session by the user (human, acting for the Data Model & Domain Schema Owner), DEL-20261013-04.
 - **Live Confirmation — production, applied 2026-10-13:** Up Migration returned "Success. No rows returned". Verification: `stop_frozen_reason`, `character varying`, `20`, `YES` (1 row), identical to staging. Supplied in-session by the user, DEL-20261013-04.
 
+## DS-33 — Add settings_change_log (v2.62, 2026-10-15)
+
+**Story:** ST-26 (EPIC-04, v9.12) — `BLG-SEC-41`. Delegation `DEL-20261015-01`.
+
+**Rationale:** settings writes overwrite values in place and nothing recorded who changed what or when. This table is an append-only audit trail: `POST /settings` and `PATCH /settings/{settings_id}` add one row per changed field in the same transaction as the write (`settings_endpoints.md` v1.5.0 §Settings change log), and `GET /settings` returns the latest save as `last_change` for the Settings page's last-change line (`settings.md` §Last Change Line). Values are stored as text so one column fits every settings type.
+
+**RISK (no live DB write access in this execution environment):** as with DS-32, the sandbox `DATABASE_URL` is read-only staging. After this change every settings write inserts into this table and `GET /settings` reads it, so the Up Migration must be applied to **staging and production before EPIC-04 deploys**. Otherwise settings saves and `GET /settings` fail. **Status: CONFIRMED APPLIED, 2026-10-15** (staging and production, with RLS enabled; see Live Confirmation below; DEL-20261015-01).
+
+### Up Migration (v2.61 → v2.62)
+
+```sql
+CREATE TABLE IF NOT EXISTS settings_change_log (
+    id BIGSERIAL PRIMARY KEY,
+    settings_id UUID NOT NULL REFERENCES settings(id) ON DELETE CASCADE,
+    batch_id UUID NOT NULL,
+    field VARCHAR(64) NOT NULL,
+    old_value TEXT,
+    new_value TEXT,
+    changed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    request_source VARCHAR(32) NOT NULL CHECK (request_source IN ('settings_page', 'api'))
+);
+CREATE INDEX IF NOT EXISTS idx_settings_change_log_changed_at
+    ON settings_change_log (changed_at DESC, id DESC);
+ALTER TABLE settings_change_log ENABLE ROW LEVEL SECURITY;
+```
+
+Additive. No backfill: history starts at the first write after the migration.
+
+**Row Level Security (added 2026-10-15, at the staging run):** Supabase exposes `public` tables through its REST API under the anon and authenticated keys, and flagged this `CREATE TABLE` for having no RLS. RLS is enabled with **no policies**, so those roles get no access. The app does not use that path (no Supabase client or anon key in the repo); the backend connects directly with `DATABASE_URL` as the table owner, which bypasses RLS because it is not `FORCE`d.
+
+### Fields
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | BIGSERIAL | NO | Primary key; also the order of rows within one save |
+| settings_id | UUID | NO | The settings row written (FK `settings.id`) |
+| batch_id | UUID | NO | Shared by every row one request wrote |
+| field | VARCHAR(64) | NO | Settings column name |
+| old_value | TEXT | YES | Value before the write, as text (numbers without trailing zeros); `NULL` for a column set on creation |
+| new_value | TEXT | YES | Value after the write, as text |
+| changed_at | TIMESTAMPTZ | NO | Database time of the write |
+| request_source | VARCHAR(32) | NO | `settings_page` (request sent `X-Request-Source: settings_page`) or `api` |
+
+### Down Migration (v2.62 → v2.61)
+
+```sql
+DROP TABLE IF EXISTS settings_change_log;
+```
+
+Deploy the pre-ST-26 backend first; the current backend writes and reads this table.
+
+### Verification
+
+```sql
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'settings_change_log'
+ORDER BY ordinal_position;
+SELECT indexname FROM pg_indexes WHERE tablename = 'settings_change_log' ORDER BY 1;
+```
+
+Expect 8 columns: `id` bigint NO, `settings_id` uuid NO, `batch_id` uuid NO, `field` character varying NO, `old_value` text YES, `new_value` text YES, `changed_at` timestamp with time zone NO, `request_source` character varying NO. Expect 2 indexes: `idx_settings_change_log_changed_at` and `settings_change_log_pkey`.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: migration content is additive and reversible; no pre-check needed. To be applied by the user (human, with live write access, acting for the Data Model & Domain Schema Owner), DEL-20261015-01.
+- **Live Confirmation — staging, applied 2026-10-15 (with RLS enabled):** Up Migration returned "Success. No rows returned". Index verification: `idx_settings_change_log_changed_at`, `settings_change_log_pkey` (2 rows, as expected). Column verification: 8 rows exactly as expected (`id` bigint NO, `settings_id` uuid NO, `batch_id` uuid NO, `field` character varying NO, `old_value` text YES, `new_value` text YES, `changed_at` timestamp with time zone NO, `request_source` character varying NO). Role check: `postgres` has `rolbypassrls = true`; the SQL editor ran as `postgres`, so the table is owned by `postgres` (the editor showed only the last statement's result). Not yet confirmed: which role the deployed backend's `DATABASE_URL` uses. If it is `postgres` (or the pooler user `postgres.<ref>`), RLS does not block it. The first settings save on staging after EPIC-04 deploys is the end-to-end proof. Supplied in-session by the user (human, acting for the Data Model & Domain Schema Owner), DEL-20261015-01.
+- **Live Confirmation — production, applied 2026-10-15 (with RLS enabled):** Up Migration returned "Success. No rows returned". Index verification: `idx_settings_change_log_changed_at`, `settings_change_log_pkey`. Column verification: 8 rows identical to staging. Role check: `postgres` has `rolbypassrls = true`. The deployed backend's `DATABASE_URL` role is still to be confirmed as for staging. Supplied in-session by the user, DEL-20261015-01.
+
 ## Drift Detector Triage (2026-10-13, v2.60)
 
 **Story:** ST-34 (EPIC-05, `2026-10-12__release-v9.12`), BLG-SPEC-178. Triage of the findings `scripts/check_data_model_drift.py` reported on its first run (ST-28, v9.9, 2026-10-01) beyond the 5 known divergence classes.
@@ -3209,6 +3279,6 @@ Expect 1 row: `stop_frozen_reason`, `character varying`, `20`, `YES`.
 
 ---
 
-**Document Version:** 2.61
+**Document Version:** 2.62
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — DS-32 (v2.61): `positions.stop_frozen_reason`, added to §2 DDL and Fields); prior — 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — v2.60: `entry_price` currency decision recorded under §2, doc fix; DS-23's reconstruction note no longer calls the currency ambiguous; chart-seed pence convention noted); prior — 2026-10-13 (ST-34, EPIC-05, v9.12, BLG-SPEC-178 — v2.60: drift-detector triage recorded; positions Fields nullability corrected for 7 columns; notifications.updated_at removed; live index/constraint notes under §5, §6 and trade_reflections); prior history retained — see prior entries in version control
+**Last Review:** 2026-10-15 (ST-26, EPIC-04, v9.12, BLG-SEC-41 — DS-33 (v2.62): new `settings_change_log` table, settings-write audit trail; note under §6); prior — 2026-10-13 (ST-15, EPIC-02, v9.12, BLG-FE-202 — DS-32 (v2.61): `positions.stop_frozen_reason`, added to §2 DDL and Fields); prior — 2026-10-13 (ST-38, EPIC-05, v9.12, BLG-SPEC-183 — v2.60: `entry_price` currency decision recorded under §2, doc fix; DS-23's reconstruction note no longer calls the currency ambiguous; chart-seed pence convention noted); prior history retained — see prior entries in version control

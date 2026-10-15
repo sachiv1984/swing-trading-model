@@ -1,9 +1,9 @@
 **Owner:** Head of Engineering
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-09-04 (ST-08, BLG-TECH-18, EPIC-02, v9.1 — §3.1 amended with the actual root cause of the build regression, found via re-investigation: not the suspected eslint-config-react-app peer conflict); prior — 2026-08-21 (first quarterly pass recorded, ST-27, BLG-OPS-98, EPIC-05, v9.0)
-**Story:** ST-27 (BLG-OPS-98, EPIC-05, v9.0); ST-08 (BLG-TECH-18, EPIC-02, v9.1)
+**Version:** 1.2
+**Last Updated:** 2026-10-15 (ST-31, BLG-OPS-185, EPIC-04, v9.12 — verification install command now includes `requirements-dev.txt`); prior — 2026-09-04 (ST-08, BLG-TECH-18, EPIC-02, v9.1 — §3.1 amended with the actual root cause of the build regression); prior — 2026-08-21 (first quarterly pass recorded, ST-27, BLG-OPS-98, EPIC-05, v9.0)
+**Story:** ST-27 (BLG-OPS-98, EPIC-05, v9.0); ST-08 (BLG-TECH-18, EPIC-02, v9.1); ST-31 (BLG-OPS-185, EPIC-04, v9.12)
 
 ---
 
@@ -63,7 +63,7 @@ Re-investigation found the `eslint-config-react-app` "Failed to load config" err
 | `pytest` | 9.0.3 | 9.1.1 |
 | `pytest-cov` | 7.0.0 | 7.1.0 |
 
-**Verification:** `backend/.venv/bin/pip install -r requirements.txt` (clean install, no dependency resolution conflicts), then `backend/.venv/bin/python3 -m pytest -q --ignore=tests/e2e` from repo root — **1260 passed, 5 skipped**, identical to the pre-bump baseline. Zero regressions.
+**Verification:** `backend/.venv/bin/pip install -r requirements.txt -r requirements-dev.txt` (clean install, no dependency resolution conflicts; at this pass the test packages were still in `requirements.txt`, and since ST-43 (v9.11) they live in `requirements-dev.txt`, so later passes must install both), then `backend/.venv/bin/python3 -m pytest -q --ignore=tests/e2e` from repo root — **1260 passed, 5 skipped**, identical to the pre-bump baseline. Zero regressions.
 
 **Deferred (named exceptions, not applied this pass):**
 - `anthropic` 0.105.2 → 1.0.0 — major version, AI service integration; requires its own story to review the 1.0 migration guide.

@@ -1,8 +1,8 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Supporting Document (Class 2) — Living Reference
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-06
+**Version:** 1.1
+**Last Updated:** 2026-10-15 (ST-27, EPIC-04, v9.12, BLG-SEC-42 — `REACT_APP_API_KEY` reclassified: full write scope, public bundle; Product Owner accept-risk recorded, ESC-EXEC-20261015-01); prior — 2026-05-06 (initial version)
 **Source:** BLG-SEC-05 (v3.2 ST-15)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -25,13 +25,30 @@
 | Anthropic API Key | `ANTHROPIC_API_KEY` | Anthropic Claude API | Render environment variables | AI analysis (weekly digest, live assistant) | Unknown (pre-v3.0) |
 | Telegram Bot Token | `TELEGRAM_BOT_TOKEN` | Telegram Bot API | Render environment variables | Alert delivery | Unknown (pre-v3.0) |
 | Telegram Chat ID | `TELEGRAM_CHAT_ID` | Telegram Bot API | Render environment variables | Alert delivery (destination chat) | Unknown (pre-v3.0) |
-| Frontend API Key | `REACT_APP_API_KEY` | Internal backend | CI/build environment | Frontend → backend auth header | Unknown |
+| Frontend API Key | `REACT_APP_API_KEY` | Internal backend | CI/build environment; embedded in the public GitHub Pages bundle | Frontend → backend auth header. **Full read and write scope:** the same value as the backend `API_KEY`, accepted on every route except `OPTIONS` and `GET /health` (see §1.1) | Unknown |
 
 ### Storage Notes
 
 All backend secrets are stored as Render environment variables (encrypted at rest by Render). They are never committed to source code or `.env` files in the repository.
 
-Frontend secrets (`REACT_APP_API_KEY`) are embedded in the built JS bundle — treat as a low-sensitivity authentication token, not a high-value secret.
+Frontend secrets (`REACT_APP_API_KEY`) are embedded in the built JS bundle, which is served publicly from GitHub Pages, so the key is readable by anyone who loads the app. It is **not** a low-sensitivity token (the v1.0 wording): it carries the backend's full write scope. See §1.1.
+
+### 1.1 Frontend API Key: Write Scope and Accepted Risk
+
+**Classification (v1.1, ST-27, BLG-SEC-42, 2026-10-15):** full-write-scope credential, publicly exposed by design.
+
+**Write scope (verified 2026-10-15 against `backend/main.py` `api_key_middleware`):** the backend checks a single `API_KEY` on every request except `OPTIONS` (CORS preflight) and `GET /health`. The frontend sends that same value, so `REACT_APP_API_KEY` authorises all 150 routes, of which 61 are writes (`POST`/`PUT`/`PATCH`/`DELETE`). These include:
+- settings writes (`POST /settings`, `PATCH /settings/{settings_id}`)
+- position entry and exit, and cash transactions
+- stop recomputation (`GET /positions/analyze`, which writes stops; `POST /positions/nightly-stop-update`)
+- signal generation, alert evaluation and backtest import
+- `POST /ops/purge-audit-logs`
+
+**Decision: Product Owner accept-risk (option (b) of ESC-EXEC-20261015-01), 2026-10-15.** The Product Owner (human, in-session) accepted the risk rather than scoping a narrower frontend key (option (a)).
+- **Reason:** single-user app with no other users' data at risk. Option (a) needs a second key, a route allowlist and new secrets on Render, GitHub Pages and GitHub Actions, beyond this story's scope.
+- **What the acceptance covers:** anyone who reads the bundle can call any authenticated route, including the writes above. Settings writes are audit-logged in `settings_change_log` (DS-33, BLG-SEC-41) with `request_source` `api` for non-UI callers, so a settings change made outside the Settings page is visible.
+- **Review triggers:** revisit this decision, and treat option (a) as required, if any of these occurs: a second user or shared access; a live (non-paper) broker or real-money integration; any sign of calls not made by the owner (unexpected settings-log `api` rows, unexplained positions or cash transactions, Render logs from unknown clients); or at each quarterly dependency/security review.
+- **Rotation note:** the §2 trigger "public exposure" cannot apply literally to a key that is public by design. Read it as "evidence of use by anyone other than the owner", one of the review triggers above.
 
 ---
 
@@ -99,4 +116,5 @@ If a credential is suspected compromised:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-10-15 | ST-27 (BLG-SEC-42, EPIC-04, v9.12): `REACT_APP_API_KEY` reclassified from low-sensitivity to full write scope (all 150 routes, 61 writes, one shared `API_KEY`), exposed in the public bundle. New §1.1 records the scope, the Product Owner accept-risk decision (ESC-EXEC-20261015-01 option (b)), and review triggers. |
 | 1.0 | 2026-05-06 | Initial credential policy document. v3.2 ST-15 (BLG-SEC-05). All known production credentials inventoried. |

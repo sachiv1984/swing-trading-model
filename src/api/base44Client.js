@@ -306,8 +306,8 @@ export const base44 = {
     },
     Settings: {
       list: async () => api.settings.list(),
-      create: async (data) => api.settings.create(data),
-      update: async (id, data) => api.settings.update(id, data),
+      create: async (data, opts) => api.settings.create(data, opts),
+      update: async (id, data, opts) => api.settings.update(id, data, opts),
     },
     MarketRegime: {
       list: async () => {
@@ -491,14 +491,18 @@ export const api = {
 
   settings: {
     list: async () => doFetch('/settings'),
-    create: async (settingsData) =>
+    // ST-26 (BLG-SEC-41, v9.12): requestSource "settings_page" sends X-Request-Source,
+    // which tags the write's settings_change_log rows; other callers are logged as "api".
+    create: async (settingsData, { requestSource } = {}) =>
       doFetch('/settings', {
         method: 'POST',
+        headers: requestSource ? { 'X-Request-Source': requestSource } : {},
         body: JSON.stringify(settingsData),
       }),
-    update: async (id, settingsData) =>
+    update: async (id, settingsData, { requestSource } = {}) =>
       doFetch(`/settings/${id}`, {
         method: 'PATCH',
+        headers: requestSource ? { 'X-Request-Source': requestSource } : {},
         body: JSON.stringify(settingsData),
       }),
   },

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-13 (session — 1 new item added from the BLG-SPEC-199 fix on PR #2024, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-200); prior — 2026-10-13 (session — 1 new item added from the PR #2024 review, EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-199); prior — 2026-10-13 (session — 4 new items added from Sprint Execution EPIC-05, 2026-10-12__release-v9.12: BLG-SPEC-196, BLG-SPEC-197, BLG-QA-223 (ST-34 drift triage), BLG-SPEC-198 (ST-38 ruling condition C2)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-15 (session — 2 new items added from the PR #2027 review, EPIC-04, 2026-10-12__release-v9.12: BLG-BE-181, BLG-QA-226); prior — 2026-10-15 (session — 1 new item added from Sprint Execution ST-28, EPIC-04, 2026-10-12__release-v9.12: BLG-TECH-24); prior — 2026-10-15 (session — ST-29, EPIC-04, 2026-10-12__release-v9.12: BLG-OPS-181 Notes cause line (plan-authorised, sprint_backlog.md ST-29 Notes); 1 new item BLG-OPS-189); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -492,6 +492,27 @@ Several direct dependencies are a major version, or a breaking minor series, beh
 
 **Acceptance Criteria**
 - [ ] A dated assessment covers all 8 packages, with a decision for each and a backlog item for each upgrade it approves
+
+---
+
+### BLG-TECH-24 — numpy 2.5 needs Python 3.12; check pinned bumps resolve on the pinned Python before they land
+**Priority:** P3 (Low)
+**Type:** Tech Debt / Dependencies
+**Owner:** Head of Engineering; Infrastructure & Operations Owner
+**Source:** ST-28/EPIC-04, cycle `2026-10-12__release-v9.12` — 2026-10-15
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+The October 2026 review (`docs/security/dependency_update_review_2026-10-06.md` §3) listed `numpy` 2.4.6 → 2.5.3 as a batch bump, but numpy 2.5.x requires Python ≥ 3.12. The backend is pinned to 3.11.0 (`backend/.python-version`, CI, `render.yaml`). ST-28 applied it, and the Render staging build and CI Pytest failed with "No matching distribution found for numpy==2.5.3". It was reverted to 2.4.6, the newest 3.11-compatible release. Neither the review nor the bump was checked against the pinned Python, and the sandbox venv runs Python 3.14, so it installed there.
+
+**Scope**
+- Keep numpy at 2.4.x until the backend moves to Python 3.12+. Record that dependency in the next quarterly review.
+- Add a check, in CI or the quarterly review method, that `backend/requirements*.txt` resolve for the pinned Python (`pip download --python-version $(cat backend/.python-version) ...`, or install on a 3.11 runner)
+
+**Acceptance Criteria**
+- A requirements change that does not resolve on the pinned Python fails a check before merge
+- The quarterly review method names the pinned-Python resolve step
 
 ---
 
@@ -4012,6 +4033,10 @@ The per-row "How this stop was set" tooltip formats `stop_calculated_at` in the 
 - The cause is recorded against this item
 - If it is a filter: the staging deploy notes say whether a `workflow_dispatch` deploy of a non-code commit is expected to go live
 
+**Notes**
+- **Cause found (ST-29, EPIC-04, v9.12, 2026-10-15, Render dashboard read by the user, acting for the Infrastructure & Operations Owner; DEL-20261015-02):** not a Build Filter (none set) and not a failed build (none). Two configuration faults: (1) `RENDER_STAGING_DEPLOY_HOOK` holds the **staging frontend's** deploy hook, not the backend's. Today's hook call (07:39:19 UTC, `dep-db8869u89jmc73cjn4n0`) appears only as a frontend deploy at that second. `wait_for_staging_deploy_live.py` polls the **backend**, which the hook never deploys, so every `staging-deploy.yml` run has timed out since 2026-09-03 (last success run 33769711448). With Render auto-deploy off (correct for the hook approach), the staging backend moved only by manual deploy: `90099bec` went live on 2026-10-13 09:11 UTC from a manual deploy. (2) The staging frontend's branch was `exec/2026-09-09__release-v9.3/EPIC-02`, not `main`, so each hook deploy rebuilt that branch's tip, `76283f43` (2026-09-10). The user is resetting it to `main` (2026-10-15). `dep-db310hp42hec7387gh90` (this item's 2026-10-07 case) fits the same cause: a frontend deploy while the backend was watched. A `workflow_dispatch` deploy of a non-code commit is therefore not blocked by any filter; it failed for the same reason as every other run. Fix filed as BLG-OPS-189.
+- **Second finding (ST-29, 2026-10-15):** after both staging services were deployed to `efdd9494` (Render API drift check: both up to date), `staging-smoke-test.yml` still read `deployed_commit_sha = 90099bec` from `STAGING_API_URL` (runs 38714787907, 38715664252). None of the three Render services (staging frontend, staging backend, production backend) was on `90099bec`, and the staging backend had no manual `RENDER_GIT_COMMIT`. The user overwrote `STAGING_API_URL` with the staging backend's URL, and run 38721722314 passed. The secret had pointed at another host answering as `90099bec`, so earlier staging smoke results may not have tested `srv-d6rtdg94tr6s73ce2j6g`. Which host that was is not identified. BLG-OPS-189's scope covers checking it.
+
 ---
 
 ### BLG-OPS-182 — Live-fire the stale-staging check from main against a deliberate staging/main divergence
@@ -5573,6 +5598,51 @@ ST-05 widened `_INSTRUMENT_DIRECTIVE_RE` (`backend/services/monthly_pnl_narrativ
 
 ---
 
+### BLG-OPS-188 — Make ci-usage-report.yml's monthly commit succeed (failed on its only scheduled run)
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps Reporting
+**Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
+**Source:** ST-32/EPIC-04, cycle `2026-10-12__release-v9.12` (scheduled-workflow inventory, `docs/ops/scheduled_workflows_inventory.md`) — 2026-10-15
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`ci-usage-report.yml` (ST-17, BLG-OPS-165, v9.6) has run once on its schedule, on 2026-10-01 (run 36861580190), and failed: "Generate report" succeeded and "Commit report" failed. `docs/ops/ci_usage_reports/` still holds only `2026-08.md`, which ST-17 committed by hand, so no monthly report has been produced since. The run's logs have expired. A likely cause is `main`'s branch rule "Changes must be made through a pull request", which a `GITHUB_TOKEN` push cannot bypass. This is not confirmed.
+
+**Scope**
+- Find the cause (re-run with `workflow_dispatch` and read the "Commit report" log)
+- Fix it, for example by opening a PR with the report or by uploading it as an artifact, and produce the missing 2026-09 report
+
+**Acceptance Criteria**
+- A `ci-usage-report.yml` run succeeds and its report reaches `docs/ops/ci_usage_reports/` (or the agreed destination)
+- `docs/ops/ci_usage_reports/2026-09.md` exists
+
+---
+
+### BLG-OPS-189 — Point staging-deploy.yml at both staging services' deploy hooks and wait on the one it deployed
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-29/EPIC-04, cycle `2026-10-12__release-v9.12` (BLG-OPS-181 cause, DEL-20261015-02) — 2026-10-15
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`staging-deploy.yml` calls one deploy hook, `RENDER_STAGING_DEPLOY_HOOK`, and that secret holds the staging **frontend's** hook. `wait_for_staging_deploy_live.py` then waits for the staging **backend** (`srv-d6rtdg94tr6s73ce2j6g`) to go live on the pushed commit. The backend is never hook-deployed, so every run has failed since 2026-09-03, and with Render auto-deploy off the staging backend changes only by manual deploy. Staging has two services, and one hook can deploy only one of them.
+
+**Scope**
+- Two secrets, `RENDER_STAGING_BACKEND_DEPLOY_HOOK` and `RENDER_STAGING_FRONTEND_DEPLOY_HOOK`, each copied from that service's Settings → Deploy Hook; retire `RENDER_STAGING_DEPLOY_HOOK`
+- `staging-deploy.yml` calls both; the wait step checks both services (or each hook's returned deploy ID) reach the pushed commit
+- Check the hook response's deploy ID belongs to the expected service (Render API `GET /v1/services/{id}/deploys`), so a mis-pasted hook fails loudly
+- Make the smoke test confirm the host behind `STAGING_API_URL` is `srv-d6rtdg94tr6s73ce2j6g` (e.g. compare its `deployed_commit_sha` with the Render API's live deploy for that service), so a stale URL fails loudly. Until 2026-10-15 the secret pointed at an unidentified host on `90099bec` (BLG-OPS-181 Notes)
+- Update `docs/ops/staging_deploy_notes.md` §4 and `docs/ops/github_actions_secrets_ownership_map.md`
+
+**Acceptance Criteria**
+- A `staging-deploy.yml` run on `main` succeeds, with both staging services live on the run's commit
+- A test fails if the workflow calls only one hook or waits on a service it did not deploy
+
+---
+
 ### BLG-QA-221 — Real-Postgres tests for the ai_audit_log UUID[] path and the claude_audit_log daily cost sum
 **Priority:** P3 (Low)
 **Type:** QA / Test Automation
@@ -5676,6 +5746,27 @@ DS-17's `idx_positions_open_ticker_entry_date_unique` was confirmed live in prod
 
 **Acceptance Criteria**
 - No scenario ID is used in more than one file under `tests/e2e` (a script or test checks this)
+
+---
+
+### BLG-QA-225 — Keep a bare `pytest` from the repo root out of backend/mutmut_pilot_tests
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** QA & Testing Owner
+**Source:** ST-31/EPIC-04, cycle `2026-10-12__release-v9.12` (AC 1 fresh-clone verification) — 2026-10-15
+**Effort:** XS (<0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+With no path argument, `backend/.venv/bin/python3 -m pytest --collect-only -q` from the repo root collects `backend/mutmut_pilot_tests/test_pilot.py` (the ST-15/v9.8 mutation-testing pilot, meant to run only from `backend/` via `mutmut run`) before `tests/`. Its standalone conftest and module-level `import database` leave `sys.modules["database"]` as something other than `tests/conftest.py`'s stub, so the BLG-QA-190 leak guard fails collection of the first `tests/` file (`tests/test_add_position_stop_handling.py`) with "replaced sys.modules['database'] ... without restoring it". Result: 2690 collected, 1 error. `pytest tests/` collects cleanly (2674), and CI always passes `tests/`, so CI is unaffected, but CLAUDE.md §9 and `README.md` both show the bare form.
+
+**Scope**
+- Make a bare root `pytest` collect only `tests/` (for example a root pytest config with `testpaths = tests`), confirming that `cd backend && python3 -m mutmut run` still selects `mutmut_pilot_tests/test_pilot.py` with the same rootdir and node IDs
+- Or make the pilot's conftest restore `sys.modules["database"]`, if the config route breaks mutmut
+
+**Acceptance Criteria**
+- `backend/.venv/bin/python3 -m pytest --collect-only -q` from the repo root exits 0
+- The mutmut pilot's pytest selection still collects its tests from `backend/`
 
 ---
 
@@ -5946,3 +6037,48 @@ The PROFITABLE lifecycle tooltip in `src/pages/Positions.js` (~69) says "Advance
 
 **Acceptance Criteria**
 - The tooltip's threshold is either defined in `strategy_rules.md` and imported from `src/constants/strategy.js`, or no longer stated as a number; `scripts/check_strategy_copy.py` passes
+
+---
+
+### BLG-BE-181 — Keep GET /settings working when the settings change-log read fails
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** PR #2027 review (Director of Quality, agent-mediated), ST-26/EPIC-04, cycle `2026-10-12__release-v9.12` — 2026-10-15
+**Effort:** XS (<1h)
+**Provisional-Target:** v9.13
+
+**Problem**
+Since ST-26, `GET /settings` (`backend/main.py` `get_settings_endpoint`) calls `get_last_settings_change()` inside the endpoint's single `try`. Any failure of that read becomes a 500 for the whole settings read: the `settings_change_log` table missing in an environment, a permission error, or a bad row. Every page that loads settings then fails, not just the last-change line. The migration is applied on staging and production, so this is latent. It bites on any new or rebuilt environment, and on any future change to the table.
+
+**Scope**
+- Wrap the `get_last_settings_change()` call so a failure logs a warning and returns `last_change: null`; the rest of the settings payload is unaffected
+- Add a test: when `get_last_settings_change` raises, `GET /settings` returns 200 with the settings row and `last_change` null
+
+**Acceptance Criteria**
+- With the change-log read raising, `GET /settings` returns 200 and the settings data, with `last_change: null` (test)
+- The failure is logged at warning level or above
+
+---
+
+### BLG-QA-226 — Run the settings change-log SQL against a real Postgres in CI
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; Head of Engineering
+**Source:** PR #2027 review (Director of Quality, agent-mediated), ST-26/EPIC-04, cycle `2026-10-12__release-v9.12` — 2026-10-15
+**Effort:** S (~0.5d)
+**Provisional-Target:** v9.13
+
+**Problem**
+`tests/test_settings_change_log.py` mocks the cursor. The SQL that ST-26 added in `backend/database.py` is never executed in CI: the `SELECT ... FOR UPDATE`, the `INSERT INTO settings_change_log`, and the `batch_id` subquery in `get_last_settings_change()`. `ci-tests.yml` Pytest Phase B starts a real `postgres:15` service, but no test creates the DS-33 schema in it. A typo or type mismatch in that SQL would first show up on staging or production as a failed settings save, because the log insert shares the save's transaction.
+
+**Scope**
+- In Phase B, create `settings` and the DS-33 `settings_change_log` table (from `data_model.md` DS-33) and run `create_settings` / `update_settings` / `get_last_settings_change` against it
+- Skip cleanly when no real `DATABASE_URL` is available, as the existing Phase A/B split expects
+
+**Acceptance Criteria**
+- A Phase B test saves settings twice against real Postgres and asserts the log rows (field, old, new, source, shared `batch_id`) and the `last_change` payload
+- A deliberately broken column name in the insert makes that test fail in CI
+
+---
+

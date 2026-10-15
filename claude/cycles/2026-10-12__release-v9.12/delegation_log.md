@@ -77,3 +77,67 @@ Last Updated: 2026-10-13
 - **Unblock criteria:** DS-32 Verification output from staging and production (expect `stop_frozen_reason | character varying | 20 | YES`), recorded in DS-32's Live Confirmation.
 - **Commit format required:** `[EPIC-02][ST-15] <description>` (DS-32 Live Confirmation) pushed to `exec/2026-10-12__release-v9.12/EPIC-02`
 - **Status:** Unblocked — 2026-10-13, unblocked in-session by the user (human, acting for the Data Model & Domain Schema Owner), in the same session as the delegation. (a) Sign-off: DS-32 applied on staging, then production. Both Up Migrations returned "Success. No rows returned", and both Verifications returned `stop_frozen_reason | character varying | 20 | YES`. Recorded in `data_model.md` DS-32 Live Confirmation; status `sign_off_cleared`. (b) Push: story commit `52debab3697edf66df13708df37577ea4b1c3d37`; Live Confirmation commit follows on the EPIC-02 branch. Terminal: Unblocked (2026-10-13T18:16:30Z).
+
+## DEL-20261015-01
+
+- **ST Item:** ST-26 — Audit trail for strategy-parameter changes in Settings
+- **EPIC:** EPIC-04
+- **Classification:** delegated_backend (live migration, Human-Delegation; DS-32 precedent, RISK-01). The story code, tests and docs are engine-autonomous.
+- **Assigned to:** Data Model & Domain Schema Owner (with Infrastructure & Operations Owner)
+- **GitHub Issue:** #1999
+- **Branch:** exec/2026-10-12__release-v9.12/EPIC-04
+- **Delegated at:** 2026-10-15T08:05:59Z
+- **What is needed:** Every `POST /settings` and `PATCH /settings/{settings_id}` now inserts into the new `settings_change_log` table in the same transaction, and `GET /settings` reads it for `last_change`. The sandbox `DATABASE_URL` is read-only staging, so the engine cannot apply DS-33. On **staging, then production**, run the DS-33 Up Migration in `docs/specs/data_model.md` (`CREATE TABLE IF NOT EXISTS settings_change_log (...)` plus `idx_settings_change_log_changed_at`), then the two Verification queries. This must happen **before EPIC-04 deploys to production**. Otherwise settings saves and `GET /settings` fail.
+- **Workflow viability (LL-v9.10-P3-01):** Not a workflow dispatch. Manual SQL in the Supabase SQL editor; no GitHub Actions run is involved.
+- **Spec reference:** `docs/specs/data_model.md#DS-33 — Add settings_change_log (v2.62, 2026-10-15)`; `docs/specs/api_contracts/settings_endpoints.md#GET /settings`; `stage4_backlog_slice.md#ST-26` AC 3
+- **Unblock criteria:** DS-33 Verification output from staging and production (8 columns as listed; indexes `idx_settings_change_log_changed_at` and `settings_change_log_pkey`), recorded in DS-33's Live Confirmation and in `qa_evidence_EPIC-04.md` under ST-26.
+- **Commit format required:** `[EPIC-04][ST-26] <description>` (DS-33 Live Confirmation) pushed to `exec/2026-10-12__release-v9.12/EPIC-04`
+- **Status:** Unblocked — 2026-10-15, unblocked in-session by the user (human, acting for the Data Model & Domain Schema Owner), in the same session as the delegation. (a) Sign-off: DS-33 applied on staging, then production, each with Row Level Security enabled (no policies) after Supabase flagged the table; both Up Migrations returned "Success. No rows returned", both column verifications returned the 8 expected rows and both index checks `idx_settings_change_log_changed_at`, `settings_change_log_pkey`. Recorded in `data_model.md` DS-33 Live Confirmation; status `sign_off_cleared`. (b) Push: story commit `87dea43a30b84f39ecec663d92db22235687b825`; Live Confirmation commit `6fb36482fff03267fad035d36d51c9760217afc1`. Terminal: Unblocked (2026-10-15T08:57:10Z).
+
+## DEL-20261015-02
+
+- **ST Item:** ST-29 — Find out why a staging-deploy.yml hook deploy of a governance-only commit never went live
+- **EPIC:** EPIC-04
+- **Classification:** delegated_backend (Render dashboard read, Human-Delegation; `sprint_backlog.md` ST-29 Notes, RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #2002
+- **Branch:** exec/2026-10-12__release-v9.12/EPIC-04
+- **Delegated at:** 2026-10-15T08:05:59Z
+- **What is needed:** In the Render dashboard, for the **staging backend** service: (1) the final state of deploy `dep-db310hp42hec7387gh90` (BLG-OPS-181); (2) Settings → Build Filters (included/ignored paths), which the repo cannot see; (3) the deploy history since 2026-10-12. **New evidence (engine, 2026-10-15):** the symptom is not limited to governance-only commits. Every `staging-deploy.yml` run since 2026-09-03 has failed, the last 10 (2026-10-12 to 2026-10-15) on the same step: the Render hook is accepted, then "Timed out after 480s waiting for staging backend to deploy <sha>". These include code merges (EPIC-01 `90099bec`, EPIC-02 `61317385`, EPIC-03 `1200e1b0`). Staging went live on `90099bec` some time after its run timed out and has stayed there, so it is now 4 EPIC merges behind `main`. Scheduled `staging-smoke-test.yml` runs on `main` report `STALE STAGING DEPLOY` (staging `90099bec`, expected `1b4068ff`) and Telegram alerts are sent (e.g. run 38676419956, message 1350). Please record which it is for these recent deploys: skipped by a filter, failed build, build slower than 480s, or queued behind another deploy.
+- **Workflow viability (LL-v9.10-P3-01):** `staging-deploy.yml`: no success in the last 10 runs; last success run 33769711448 (2026-09-03). The failure is the subject of this item, so it is not a prerequisite to fix first.
+- **Spec reference:** `docs/ops/staging_deploy_notes.md`; `.github/workflows/staging-deploy.yml`; `stage4_backlog_slice.md#ST-29`
+- **Unblock criteria:** The cause, from the dashboard, supplied in-session or in a comment on #2002. The engine records it as a `Notes` line on `BLG-OPS-181` (named-file write, `sprint_backlog.md` ST-29 Notes) and, if it is a Build Filter, states in `docs/ops/staging_deploy_notes.md` whether a `workflow_dispatch` deploy of a non-code commit is expected to go live (AC 2). If the cause needs a fix outside ST-29 (e.g. a longer wait or a filter change), a backlog item is filed.
+- **Commit format required:** `[EPIC-04][ST-29] <description>` pushed to `exec/2026-10-12__release-v9.12/EPIC-04`
+- **Status:** Unblocked — 2026-10-15, unblocked in-session by the user (human, acting for the Infrastructure & Operations Owner) from the Render dashboard, same session as the delegation. (a) Sign-off: no Build Filters, no failed builds, backend branch `main`; staging frontend deploy at 2026-10-15 07:39:19 UTC (= the hook call), backend last deploy 2026-10-13 09:11 UTC (manual, after a branch test reset to main); frontend branch was `exec/2026-09-09__release-v9.3/EPIC-02`. Cause: the hook secret is the frontend's, and the wait polls the backend. Status `sign_off_cleared`. (b) Push: `745cc1f72b5159084c08b2b23cb423b65ec6e590` (BLG-OPS-181 Notes, staging_deploy_notes.md v1.3, BLG-OPS-189 filed). Terminal: Unblocked (2026-10-15T09:36:47Z).
+
+## DEL-20261015-03
+
+- **ST Item:** ST-30 — Live-fire the stale-staging check from main against a deliberate divergence
+- **EPIC:** EPIC-04
+- **Classification:** delegated_backend (control of staging deploys and a real Telegram receipt, Human-Delegation; `sprint_backlog.md` ST-30 Notes, RISK-01)
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #2003
+- **Branch:** exec/2026-10-12__release-v9.12/EPIC-04
+- **Delegated at:** 2026-10-15T08:05:59Z
+- **What is needed:** (1) Bring staging level with `main` (prerequisite; see below). (2) Deliberately put staging behind `main` on a deploy-path commit (e.g. redeploy an older commit from the Render dashboard). (3) Run `staging-smoke-test.yml` on `main` (`gh workflow run staging-smoke-test.yml --ref main`); confirm it fails with `STALE STAGING DEPLOY` and the Telegram alert arrives. (4) Restore staging to `main`'s commit and run it again; confirm it passes. Supply both run URLs and confirm the Telegram receipt.
+- **Workflow viability (LL-v9.10-P3-01):** `staging-smoke-test.yml` on `main`: most recent success run 38406834420 (2026-10-13T13:40Z). 7 of the last 10 scheduled runs failed, all because staging is genuinely stale, not a workflow fault: `STALE STAGING DEPLOY`, staging on `90099bec` (the Telegram alert step works, e.g. run 38676419956). **Prerequisite:** the passing run (AC 2) needs staging deployed at `main`'s latest staging-deploying commit, which `staging-deploy.yml` has not achieved since 2026-09-03 (DEL-20261015-02). Restoring staging manually from the dashboard is acceptable for this item. These scheduled failures are an accidental divergence; they do not count as the deliberate one AC 1 asks for.
+- **Spec reference:** `scripts/staging_smoke_test.py`; `.github/workflows/staging-smoke-test.yml`; `stage4_backlog_slice.md#ST-30`
+- **Unblock criteria:** A failing `main` run URL showing `STALE STAGING DEPLOY` for the deliberate divergence with the Telegram alert received (AC 1), and a passing `main` run URL after restore (AC 2), recorded in `qa_evidence_EPIC-04.md` under ST-30.
+- **Commit format required:** `[EPIC-04][ST-30] <description>` (evidence record) pushed to `exec/2026-10-12__release-v9.12/EPIC-04`
+- **Status:** Unblocked — 2026-10-15, unblocked in-session by the user (human, acting for the Infrastructure & Operations Owner), same session as the delegation. Prerequisite met after the ST-29 fixes (frontend branch reset to `main`, `STAGING_API_URL` reset; baseline pass 38721722314). (a) Sign-off: deliberate rollback of the staging backend to `90099bec` → run 38722585429 failed with `STALE STAGING DEPLOY`, Telegram message 1355 received by the user (11:46 local); restore to `efdd9494` → run 38723949916 passed. Status `sign_off_cleared`. (b) Push: `4e685901aca319cc288878c0959d70074ba67253` (evidence in `qa_evidence_EPIC-04.md`). Terminal: Unblocked (2026-10-15T10:58:43Z).
+
+## DEL-20261015-04
+
+- **ST Item:** ST-28 — Apply the in-range dependency patch/minor bumps from the October 2026 quarterly review
+- **EPIC:** EPIC-04
+- **Classification:** delegated_qa (Director of Quality sign-off) with a Human-Delegation for AC 2's staging check (`sprint_backlog.md` ST-28 Notes)
+- **Assigned to:** Infrastructure & Operations Owner (staging check); Director of Quality (sign-off)
+- **GitHub Issue:** #2001
+- **Branch:** exec/2026-10-12__release-v9.12/EPIC-04
+- **Delegated at:** 2026-10-15T08:20:11Z
+- **What is needed:** Once the bumped build (commit `2909e67e`, yfinance 1.7.0) is live on staging, call `GET /market/atr/AAPL?market=US` and `GET /market/atr/VOD?market=UK` and confirm a current price fetch works for both tickers (e.g. `GET /positions` on a seeded US and UK position, or Trade Entry's ATR preview). Supply the responses. Local supporting evidence (not a substitute): on yfinance 1.7.0, the backend's own `get_current_price`/`calculate_atr` returned AAPL 342.96 / ATR 6.58 and VOD.L 120.40 / ATR 0.032 (pence-to-pounds conversion, existing convention) on 2026-10-15.
+- **Workflow viability (LL-v9.10-P3-01):** depends on `staging-deploy.yml`, which has no success in its last 10 runs (last success 33769711448, 2026-09-03); staging is stuck on `90099bec`. Prerequisite: DEL-20261015-02 (ST-29), or a manual Render "Deploy latest commit" after EPIC-04 merges. Staging deploys from `main`, so this check can only run after merge.
+- **Spec reference:** `docs/security/dependency_update_review_2026-10-06.md` §3; `stage4_backlog_slice.md#ST-28` AC 2
+- **Unblock criteria:** the two staging responses recorded in `qa_evidence_EPIC-04.md` under ST-28; AC 1's full CI (pytest and all Playwright shards) green on the EPIC-04 PR; Director of Quality disposition.
+- **Commit format required:** `[EPIC-04][ST-28] <description>` (evidence record)
+- **Status:** Unblocked — 2026-10-15, unblocked in-session. (a) Sign-off: staging check by the user (human, acting for the Infrastructure & Operations Owner): staging backend deployed at `2fb6f888` from the EPIC-04 branch; AAPL/US ATR 6.5814 and VOD/UK ATR 0.03197, both `status: ok`. AC 1 CI: Playwright all shards 38704880394, CI Pytest 38725364575. Director of Quality disposition Pass_with_deviation (BLG-TECH-24), agent-mediated (§5.3), user-directed. Status `sign_off_cleared`. (b) Push: `a50395a6` (evidence in `qa_evidence_EPIC-04.md`). Terminal: Unblocked (2026-10-15T12:08:10Z).
