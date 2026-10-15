@@ -140,4 +140,4 @@ Last Updated: 2026-10-13
 - **Spec reference:** `docs/security/dependency_update_review_2026-10-06.md` §3; `stage4_backlog_slice.md#ST-28` AC 2
 - **Unblock criteria:** the two staging responses recorded in `qa_evidence_EPIC-04.md` under ST-28; AC 1's full CI (pytest and all Playwright shards) green on the EPIC-04 PR; Director of Quality disposition.
 - **Commit format required:** `[EPIC-04][ST-28] <description>` (evidence record)
-- **Status:** Pending
+- **Status:** Pending (Director of Quality disposition and the PR's full CI). Staging check received 2026-10-15 from the user (human, acting for the Infrastructure & Operations Owner): staging backend deployed at `2fb6f888` from the EPIC-04 branch; AAPL/US ATR 6.5814 and VOD/UK ATR 0.03197, both `status: ok`. Recorded in `qa_evidence_EPIC-04.md` under ST-28 AC 2.
