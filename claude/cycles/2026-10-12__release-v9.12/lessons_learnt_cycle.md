@@ -50,3 +50,44 @@ Items: 2
 |---|-------------|-------------|--------|
 | 1 | A dependency bump passed its Playwright run but broke the pytest CI suite and the Render build on the pinned Python 3.11 | Until the Friction Item 1 patch lands, record every CI workflow's conclusion for a story's SHA (not only Playwright) before `done`, especially for `backend/**` or `requirements*.txt` changes | Sprint Planning; All |
 | 2 | Merge-gate confirmation records were committed to EPIC branches after a human merge in the same session | Until the Friction Item 2 patch lands, run `gh pr view --json state` before every commit to an EPIC branch with an open PR, and commit the record on `main` if it has merged | All |
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-10-12__release-v9.12
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-10-15
+**Reviewed by:** PMO Lead
+**Invocation context:** invoking_routine `delivery_verification_prompt.md` (STEP 8.5); cycle_id `2026-10-12__release-v9.12`; phase Phase 4; prior_cycle_id `2026-10-08__release-v9.11`.
+**Prior cycle checked:** 2026-10-08__release-v9.11 (`lessons_learnt_cycle.md` `## Phase 4`). It filed 1 friction item. It was re-checked by patch ID against `prompt_change_log.md` as of this run, and by reading the named target file directly (BLG-GOV-312, LL-v9.1-Closure-01):
+1. **`LL-v9.11-P4-01`, `Pass_with_deviation` found-defect severity.** **Applied:** `delivery_verification_prompt.md` v3.14→v3.15 (2026-10-12, `prompt_change_log.md` line 18). The text is present at STEP 2.1 ("Found-defect severity (LL-v9.11-P4-01 …)"). It was applied this run without interpretation: none of ST-06, ST-28 or ST-34 is a found pre-existing defect filed above P3, so all three keep the P3 default. Closed.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| `sprint_close.md`'s `Pass_with_deviation` table gives `BLG-QA-223` (ST-34) a Priority of P3, but the backlog item itself is filed at P4 (Trivial). The column carries the QA-evidence deviation's STEP 2.1 P3 default, while the tracking item has its own lower priority, and the table does not say which one it shows. This run found the mismatch only by reading the backlog entry. It did not change the verification status, since both are below the §7 hard-block threshold. Blast radius: one row. A reader of `sprint_close.md` or the post-ship closure record would take the tracking item to be P3. If the two ever straddled P2/P3, the same ambiguity would hide a §7 hard block. Recovery cost: low (single file fix). | Phase 4 | Type B — Semantic Mismatch: The same concept was named or interpreted differently across documents or roles | defer | `execution_prompt.md` STEP 5.3 ("Deviations filed this sprint" item): when `sprint_close.md` lists `Pass_with_deviation` results, show the deviation's severity and the tracking backlog item's own `**Priority:**` as separate columns, and cross-check the second against `backlog.md` before writing. | Head of Specs Team | Post-ship closure `2026-10-12__release-v9.12` STEP 8 |
+
+**What worked well:**
+- All six QA evidence logs were signed and dated before invocation, and `sprint_close.md`'s readiness statement was all `Yes`. Every preflight gate passed on the first invocation, unlike v9.11's two halts.
+- Sprint close's own path-existence check (`LL-v9.10-P4-01`) meant all 56 `test_scenarios` paths and every `spec_references` path resolved, so no correction was needed here.
+- The cycle's own PR reviews had already backlogged every test-coverage weakness this run found (`BLG-QA-221`, `BLG-QA-226`), so no new TSG item was needed.
+
+**Recurrence Notes:**
+None against the prior cycle. The friction item is new relative to v9.11 Phase 4, and the single v9.11 Phase 4 row is dispositioned **Applied** above, so no prior-cycle row is left without a disposition (AUD-2026-10-08-004 row-completeness).
+
+Severity calls were not contested: the DoQ sign-offs, `sprint_close.md` and this run agree on P3 for all three `Pass_with_deviation` results. The pre-seal gate (`LL-v2.4-DV-01`) held. The report was assembled with blank §9 dates, and the run stopped until the user chose agent-mediated DoQ and PO sign-off (2026-10-15). This is the 5th consecutive cycle (v9.8–v9.12) where verification sign-off was agent-mediated on user direction. The pattern is consistent and disclosed.
+
+### Phase 4 Recurrence Escalations
+
+None.
+
+### Phase 4 Escalations
+
+None. The friction item has a named file, section, owner and target.
+
+### Phase 4 Carry-Forward
+
+Items: 1
+
+| # | Observation | Implication | Engine |
+|---|-------------|-------------|--------|
+| 1 | A `Pass_with_deviation` tracking item's backlog priority (P4) differed from the priority shown for it in `sprint_close.md` (P3) | Until the patch lands, check each `Pass_with_deviation` tracking item's `**Priority:**` in `backlog.md` when writing or reading the sprint-close deviation table | All |
