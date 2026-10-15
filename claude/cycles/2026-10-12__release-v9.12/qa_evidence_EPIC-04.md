@@ -72,7 +72,12 @@ Per-story entries are recorded as each story completes or is delegated (STEP 3.1
 
 ## Bundled frontend API key re-assessment
 
-- **Story:** ST-27 (BLG-SEC-42), delegated_decision. Open: ESC-EXEC-20261015-01 (Product Owner decision).
+- **Story:** ST-27 (BLG-SEC-42), delegated_decision, reclassified autonomous on resolution
+- **Spec references:** `docs/operations/credential_policy.md` v1.1 §1.1
+- **Commit:** `8aae01e672095fbe5081817db57895ccf7f619d2`
+- **Acceptance criteria and evidence:**
+  - AC 1, `credential_policy.md`'s classification states the key's write scope and the decision taken: the inventory row and new §1.1 state full read and write scope (single `API_KEY` on all 150 routes, 61 writes, verified against `api_key_middleware`) and the Product Owner accept-risk (ESC-EXEC-20261015-01, option (b), human, 2026-10-15) with its reason and review triggers. Pass (document inspection).
+- **Deviations:** none found.
 
 ## Staging hook-deploy investigation
 

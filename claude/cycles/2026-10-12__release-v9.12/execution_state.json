@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-15T08:57:25Z",
+  "last_updated_utc": "2026-10-15T09:03:29Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -859,24 +859,32 @@
         },
         "ST-27": {
           "title": "Re-assess the bundled `REACT_APP_API_KEY` against its actual write scope",
-          "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "Cybersecurity & Trust Lead; Product Owner",
           "github_issue": 2000,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "8aae01e672095fbe5081817db57895ccf7f619d2",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-10-15T08:05:59Z",
           "unblock_criteria": "Dated Product Owner decision (a) narrower frontend key or (b) accept-risk, recorded in ESC-EXEC-20261015-01; then credential_policy.md states the write scope and decision.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-10-15T09:03:12Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/operations/credential_policy.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Engine-verified scope: one API_KEY gates all 150 routes (61 write) except OPTIONS and GET /health; bundle public on GitHub Pages. PO accept-risk is always-human.",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.resolved",
+          "sign_off_record": {
+            "role": "Product Owner",
+            "method": "human_in_session",
+            "status": "cleared",
+            "signed_utc": "2026-10-15T09:03:12Z",
+            "notes": "Option (b) accept-risk, ESC-EXEC-20261015-01."
+          },
+          "notes": "Engine-verified scope: one API_KEY gates all 150 routes (61 write) except OPTIONS and GET /health; bundle public on GitHub Pages. PO accept-risk is always-human. Resolved: PO chose (b) accept-risk; credential_policy.md v1.1 §1.1 (8aae01e6). Reclassified delegated_decision -> autonomous.",
           "escalation_id": "ESC-EXEC-20261015-01"
         },
         "ST-28": {
@@ -1472,9 +1480,7 @@
       }
     }
   },
-  "blocked_items": [
-    "ST-27"
-  ],
+  "blocked_items": [],
   "delegated_items": [
     "ST-28",
     "ST-29",
@@ -1507,6 +1513,7 @@
     "ST-24",
     "ST-25",
     "ST-26",
+    "ST-27",
     "ST-31",
     "ST-32",
     "ST-33",
@@ -1526,9 +1533,7 @@
     "ST-47",
     "ST-48"
   ],
-  "open_escalations": [
-    "ESC-EXEC-20261015-01"
-  ],
+  "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",

@@ -157,4 +157,5 @@ Last Updated: 2026-10-13
 - **Unblock criteria:** A dated Product Owner decision, (a) or (b), recorded in this escalation's resolution. The engine then updates `credential_policy.md` (the key's write scope and the decision) in ST-27's commit, citing this escalation, and files the follow-up item if (a). A Product Owner accept-risk is a human decision (`execution_prompt.md` §5.3, always-human gates), so it is not agent-mediated.
 - **SLA due-by:** 2026-10-16T08:05:59Z (24h — Lifecycle)
 - **Blocks execution:** No
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary (2026-10-15T09:03:12Z):** Product Owner decision (human, in-session, 2026-10-15): **option (b), accept-risk.** Recorded in `docs/operations/credential_policy.md` v1.1 §1.1 by ST-27 (commit `8aae01e6`): the key is reclassified as full write scope (one shared `API_KEY`, all 150 routes, 61 writes) exposed in the public bundle. Reason: single-user app, no other users' data at risk; option (a) is beyond the story's scope. Review triggers: a second user, a live broker integration, evidence of use by anyone but the owner, and each quarterly security review. Option (a) was not filed as a backlog item; the Product Owner chose (b) alone. ST-27 reclassified `autonomous` and done.
