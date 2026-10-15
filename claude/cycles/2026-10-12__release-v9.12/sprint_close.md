@@ -149,7 +149,7 @@ Rolled up from `execution_state.json.process_notes` (19 entries, 2026-10-13 to 2
   - The item count matches: 48 declared in `sprint_backlog.md` ("All 48 slice items are in scope") and 48 in `execution_state.json`.
   - No EPIC branch has unpushed commits.
   - `scripts/check_execution_state_consistency.py` exits 0.
-- **Stale cell left unedited.** In `qa_evidence_EPIC-01.md`, the ST-06 row's Deviations cell still calls ESC-EXEC-20261013-02 "Open" and DEL-20261013-02 "In Progress". The Result cell of the same row records both as closed. The signed-off file was left unedited, and both records read Resolved/Unblocked in their own files.
+- **Stale cell corrected after the seal.** In `qa_evidence_EPIC-01.md`, the ST-06 row's Deviations cell still called ESC-EXEC-20261013-02 "Open" and DEL-20261013-02 "In Progress", although the Result cell of the same row records both as closed. It was corrected on the user's direction on 2026-10-15, after the seal. The sign-off is unchanged. The sealed `execution_state.json` process note still records it as uncorrected.
 - **System Status Report corrections.** None were needed. `docs/System_status_report.md` has no SC-* scenario-count cells or execution-prompt version reference that this sprint made stale. A new Sprint section was added (STEP 5.3A).
 
 ## Deviations Filed This Sprint
