@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-15T12:06:04Z",
+  "last_updated_utc": "2026-10-15T12:08:10Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -788,11 +788,11 @@
       "pr_url": "https://github.com/sachiv1984/swing-trading-model/pull/2026"
     },
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-10-12__release-v9.12/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-12__release-v9.12/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "tests/test_post_grace_stop_health.py",
@@ -890,16 +890,16 @@
         "ST-28": {
           "title": "Apply the in-range dependency patch/minor bumps from the October 2026 quarterly review",
           "classification": "delegated_qa",
-          "status": "blocked_qa",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner; Head of Engineering",
           "github_issue": 2001,
           "branch": "exec/2026-10-12__release-v9.12/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "4736cf27e71b062e13a43fdc26fcc0a16aa8fd27",
           "delegation_record_id": "DEL-20261015-04",
           "blocked_since_utc": "2026-10-15T08:20:12Z",
           "unblock_criteria": "EPIC-04 PR full CI green (pytest + all Playwright shards); staging yfinance price/ATR check for a US and a UK ticker (DEL-20261015-04); Director of Quality disposition in qa_evidence_EPIC-04.md.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-10-15T12:08:10Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/security/dependency_update_review_2026-10-06.md",
             "backend/requirements.txt",
@@ -907,10 +907,16 @@
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.C.qa_evidence",
-          "sign_off_record": null,
-          "notes": "Engine commit 2909e67e2fbe7d47d1d6b8d933f09aeedb42dfd4 (2026-10-15T08:19:45Z): 8 backend + 20 frontend bumps at exact reviewed versions. Local full pytest 2668/21 skipped; 84/84 Playwright incl. focus-restoration. 2026-10-15 correction: numpy 2.5.3 requires Python 3.12 (backend pinned 3.11.0); Render staging build and CI Pytest failed from 2909e67e (engine had checked only Playwright CI). Reverted to numpy 2.4.6 in 4736cf27; CI Pytest run 38725094192 green. AC 1 Pass_with_deviation, BLG-TECH-24. AC 2 Pass: staging deploy of 2fb6f888 (EPIC-04 branch), AAPL/US ATR 6.5814 and VOD/UK ATR 0.03197, user-run 2026-10-15. Awaiting PR full CI and DoQ disposition."
+          "deviations_filed": true,
+          "last_completed_substep": "3.2.A.doq_signoff",
+          "sign_off_record": {
+            "role": "Director of Quality",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "signed_utc": "2026-10-15T12:08:10Z",
+            "notes": "Pass_with_deviation (BLG-TECH-24). AC 2 staging check by the user acting for the Infrastructure & Operations Owner (DEL-20261015-04)."
+          },
+          "notes": "Engine commit 2909e67e2fbe7d47d1d6b8d933f09aeedb42dfd4 (2026-10-15T08:19:45Z): 8 backend + 20 frontend bumps at exact reviewed versions. Local full pytest 2668/21 skipped; 84/84 Playwright incl. focus-restoration. 2026-10-15 correction: numpy 2.5.3 requires Python 3.12 (backend pinned 3.11.0); Render staging build and CI Pytest failed from 2909e67e (engine had checked only Playwright CI). Reverted to numpy 2.4.6 in 4736cf27; CI Pytest run 38725094192 green. AC 1 Pass_with_deviation, BLG-TECH-24. AC 2 Pass: staging deploy of 2fb6f888 (EPIC-04 branch), AAPL/US ATR 6.5814 and VOD/UK ATR 0.03197, user-run 2026-10-15. Awaiting PR full CI and DoQ disposition. Done: AC 1 CI Playwright all shards 38704880394 (2909e67e), CI Pytest 38725364575 (2fb6f888); DoQ agent-mediated Pass_with_deviation 2026-10-15."
         },
         "ST-29": {
           "title": "Find out why a staging-deploy.yml hook deploy of a governance-only commit never went live",
@@ -1020,6 +1026,14 @@
           "sign_off_record": null,
           "notes": "Case B (new doc artefact). 23 scheduled workflows, owner/cron/writes/minutes-month, review at each run audit stated. Out-of-scope finding filed: BLG-OPS-188 (ci-usage-report.yml failed its only scheduled run at Commit report)."
         }
+      },
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-10-15",
+        "reference": "qa_evidence_EPIC-04.md",
+        "retries": 0
       }
     },
     "EPIC-05": {
@@ -1494,9 +1508,7 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [
-    "ST-28"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "ST-01",
     "ST-02",
@@ -1525,6 +1537,7 @@
     "ST-25",
     "ST-26",
     "ST-27",
+    "ST-28",
     "ST-29",
     "ST-30",
     "ST-31",
