@@ -5889,3 +5889,60 @@ ST-24 fixed white text on amber-600 fills. `text-amber-600` used as text on ligh
 - No `text-amber-600` remains in `src/` outside Replay; scoped axe color-contrast scans of the changed elements pass in the light theme
 
 ---
+
+### BLG-BE-180 — Reject a fetched ATR that puts the initial stop at or below zero
+**Priority:** P2 (Medium)
+**Type:** Backend / Strategy correctness
+**Owner:** Backend & Data Owner
+**Source:** PR #2026 (EPIC-03, cycle `2026-10-12__release-v9.12`), agent-mediated Director of Quality review — 2026-10-15
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-18 added a guard in `add_position()` (`backend/services/position_service.py` ~907) that rejects a *typed* ATR when 5 × ATR ≥ entry. A *fetched* ATR (field left blank) has no such check: on a low-priced, volatile ticker where 5 × the 14-day ATR meets or exceeds the entry price, `calculate_initial_stop()` returns a stop at or below zero and save stores it silently. Trade Entry's ST-17 preview shows the same value (`TradeEntry.js` ~288, `systemStop = price - atr * 5`, no lower bound), so the user sees a negative "Initial Stop (set by system)" with no explanation.
+
+**Scope**
+- Decide the rule with the strategy owner (reject with 400, or apply a floor), recorded in `strategy_rules.md` §5 if it changes stop behaviour
+- Apply it in `add_position()` for fetched and fallback ATRs, and show a matching inline message on Trade Entry when the previewed stop is ≤ 0
+
+**Acceptance Criteria**
+- A backend test with a mocked fetched ATR where 5 × ATR ≥ entry does not store a stop ≤ 0
+- Playwright: with a mocked preview ATR where 5 × ATR ≥ entry, Trade Entry shows no negative stop and explains why
+
+---
+
+### BLG-FE-225 — Cache the Trade Entry ATR preview per ticker and market
+**Priority:** P3 (Low)
+**Type:** Frontend / Performance
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** PR #2026 (EPIC-03, cycle `2026-10-12__release-v9.12`), agent-mediated Director of Quality review — 2026-10-15
+**Effort:** S (~0.5 day)
+**Provisional-Target:** TBD
+
+**Problem**
+ST-17's preview (`src/pages/TradeEntry.js` ~90–112) calls `GET /market/atr/{ticker}` from a bare `useEffect` after each 300 ms pause in typing. Nothing is cached, so editing the ticker and changing it back, toggling market, or clearing and re-entering the ATR field refetches, and each fetch is an uncached Alpaca/Yahoo call on the backend. The rest of the page uses react-query.
+
+**Scope**
+- Move the preview to `useQuery` keyed on `["market-atr", normalisedTicker, market]` with a staleTime (e.g. 5 minutes), keeping the debounce and the idle/loading/ready/none states
+
+**Acceptance Criteria**
+- Playwright: entering the same ticker twice within the staleTime issues one `GET /market/atr` request; SC-TAP-01..05 still pass
+
+---
+
+### BLG-SPEC-202 — Define or remove the 2R Exit Zone threshold the Positions page states
+**Priority:** P3 (Low)
+**Type:** Specification / Strategy copy
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** PR #2026 (EPIC-03, cycle `2026-10-12__release-v9.12`), agent-mediated Director of Quality review — 2026-10-15
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** TBD
+
+**Problem**
+The PROFITABLE lifecycle tooltip in `src/pages/Positions.js` (~69) says "Advances to Exit Zone when P&L reaches 2R target". `strategy_rules.md` has no 2R or R-multiple rule, so the ST-21 strategy-copy lint cannot check it and the constants module has no value for it. Either the UI restates a rule the strategy does not define, or the rule exists only in code.
+
+**Scope**
+- Find where the Exit Zone threshold is computed; with the strategy owner, either add it to `strategy_rules.md` §11 (then to `src/constants/strategy.js` and the lint) or reword the tooltip to describe the shipped behaviour without a rule number
+
+**Acceptance Criteria**
+- The tooltip's threshold is either defined in `strategy_rules.md` and imported from `src/constants/strategy.js`, or no longer stated as a number; `scripts/check_strategy_copy.py` passes
