@@ -13,6 +13,8 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-10-15 | `claude/system/OPERATIONAL_GUIDE.md` | v4.239→v4.240 | Source-prompt header and §14 row updated for release_planning_prompt.md v2.64 | Head of Specs Team (agent-mediated, user-directed) |
+| 2026-10-15 | `claude/system/release_planning_prompt.md` | v2.63→v2.64 | §1.3a: acquire `claude/backlog/.lock` (STEP 3.9 procedure) before the first in-place gate edit; STEP 3.9 re-enters it (v9.11 Release Planning FI-2) | Head of Specs Team (agent-mediated per execution_prompt.md §5.3, user-directed; closes post-ship closure `2026-10-12__release-v9.12` §6 row 4) |
 | 2026-10-15 | `claude/system/OPERATIONAL_GUIDE.md` | v4.238→v4.239 | Source-prompt headers and §14 rows updated for execution_prompt.md v3.87, release_planning_prompt.md v2.63 and post_ship_closure.md v2.41 | Head of Specs Team (post-ship closure `2026-10-12__release-v9.12` STEP 8) |
 | 2026-10-15 | `claude/system/post_ship_closure.md` | v2.40→v2.41 | STEP 8: a deferred action needing a prompt change is applied now or tracked by a backlog item with a sprint target, never a "before `plan release`" deadline (LL-v9.12-Release-01) | Head of Specs Team (post-ship closure `2026-10-12__release-v9.12` STEP 8) |
 | 2026-10-15 | `claude/system/release_planning_prompt.md` | v2.62→v2.63 | STEP 4 calibration check applies to the ready pool before §1.4c selection (LL-v9.12-Release-03); §1.3a bound 5 covers gates removed by a Product Owner decision outside Release Planning (v9.11 closure #8(b)) | Head of Specs Team (post-ship closure `2026-10-12__release-v9.12` STEP 8) |

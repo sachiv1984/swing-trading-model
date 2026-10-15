@@ -4,8 +4,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.239
-**Last Updated:** 2026-10-15 (Post-ship closure `2026-10-12__release-v9.12` STEP 8 — execution_prompt.md v3.86→v3.87, release_planning_prompt.md v2.62→v2.63, post_ship_closure.md v2.40→v2.41); prior — 2026-10-13 (Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-43 (BLG-GOV-364) — roadmap_prompt.md v9.33→v9.34); prior — 2026-10-13 (Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-43 (BLG-GOV-364) — idea_intake_prompt.md v2.11→v2.12); prior history retained — see prior entries in version control
+**Version:** 4.240
+**Last Updated:** 2026-10-15 (Head of Specs Team ruling — release_planning_prompt.md v2.63→v2.64, §1.3a backlog lock before first gate edit); prior — 2026-10-15 (Post-ship closure `2026-10-12__release-v9.12` STEP 8 — execution_prompt.md v3.86→v3.87, release_planning_prompt.md v2.62→v2.63, post_ship_closure.md v2.40→v2.41); prior — 2026-10-13 (Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-43 (BLG-GOV-364) — roadmap_prompt.md v9.33→v9.34); prior history retained — see prior entries in version control
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -622,7 +622,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.63)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.64)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1377,7 +1377,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.239 |
+| Version | 4.240 |
 | Last Updated | 2026-10-15 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.12 |
@@ -1393,7 +1393,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Shared Publish Gate | `claude/system/shared/publish_gate.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.34 (+ `roadmap_prompt_appendix.md`) |
 | Roadmap Engine Appendix | `claude/system/roadmap_prompt_appendix.md` v1.0 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.63 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.64 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.22 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.87 |
@@ -1518,6 +1518,7 @@ Living references introduced in v3.2: `component_inventory.md`, `design_system.m
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.240 | 2026-10-15 | **Head of Specs Team ruling (user-directed), closing post-ship closure `2026-10-12__release-v9.12` §6 row 4 — release_planning_prompt.md v2.63→v2.64.** §1.3a acquires the backlog lock before its first gate edit; STEP 3.9 re-enters it (v9.11 Release Planning FI-2). Source-prompt header and §14 row updated; §14 self-row and header 4.239→4.240. |
 | 4.239 | 2026-10-15 | **Post-ship closure `2026-10-12__release-v9.12` STEP 8, immediate lessons-learnt actions — 3 source prompts bumped.** `execution_prompt.md` v3.86→v3.87: §3.1.A step 4d every CI workflow for the story SHA (LL-v9.12-P3-01); §3.2.B step 7 and STEP 4 merged-PR check before merge-gate record commits (LL-v9.12-P3-02); §5.3 separate deviation and tracking-item priorities (LL-v9.12-P4-01). `release_planning_prompt.md` v2.62→v2.63: STEP 4 calibration before §1.4c selection (LL-v9.12-Release-03); §1.3a bound 5 covers gates removed outside Release Planning (v9.11 closure #8(b)). `post_ship_closure.md` v2.40→v2.41: STEP 8 no "before `plan release`" deadline on deferred prompt changes (LL-v9.12-Release-01). §8/§9/§10-equivalent source-prompt headers and §14 rows updated; §14 self-row and header 4.238→4.239. |
 | 4.238 | 2026-10-13 | **Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-43 (BLG-GOV-364) — roadmap_prompt.md v9.33→v9.34.** ST-43 (BLG-GOV-364): STEP -1.6 standalone pre-run exception bounded by idea_intake_prompt.md §4.1; inline windows full roster unless §4.1 met. Source-prompt header and §14 row updated; §14 self-row and header 4.237→4.238. |
 | 4.237 | 2026-10-13 | **Sprint execution `2026-10-12__release-v9.12` EPIC-06/ST-43 (BLG-GOV-364) — idea_intake_prompt.md v2.11→v2.12.** ST-43 (BLG-GOV-364): new §4.1 Reduced-Roster Windows (PO authorisation, roster rule, no-two-consecutive cap, disclosure; hard gate); §2.1 step 2a, §10, STEP 0 aligned. HoST ruling, confirmed by the human PO 2026-10-13. Source-prompt header and §14 row updated; §14 self-row and header 4.236→4.237. |

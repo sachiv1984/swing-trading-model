@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.63
-**Last Updated:** 2026-10-15 (post-ship closure `2026-10-12__release-v9.12` STEP 8, immediate lessons-learnt actions — STEP 4 calibration check applies to the ready pool before §1.4c selection (LL-v9.12-Release-03); §1.3a bound 5 covers gates removed by a Product Owner decision outside Release Planning (v9.11 closure action #8(b))); prior — 2026-10-13 (ST-40, EPIC-06, v9.12, BLG-GOV-386 — §1.3a reads the scripted "gating item shipped — verify" list alongside the date-lapsed list); prior — 2026-10-08 (ST-35, EPIC-06, v9.11, BLG-GOV-359 — STEP 4 §13 clause-citation rule for ACs, with the gap-risk §13.3 worked example); prior history retained — see prior entries in version control
+**Version:** 2.64
+**Last Updated:** 2026-10-15 (Head of Specs Team ruling, user-directed, closing post-ship closure `2026-10-12__release-v9.12` §6 row 4 — §1.3a acquires the backlog lock before its first gate edit; STEP 3.9 re-enters it); prior — 2026-10-15 (post-ship closure `2026-10-12__release-v9.12` STEP 8, immediate lessons-learnt actions — STEP 4 calibration check applies to the ready pool before §1.4c selection (LL-v9.12-Release-03); §1.3a bound 5 covers gates removed by a Product Owner decision outside Release Planning (v9.11 closure action #8(b))); prior — 2026-10-13 (ST-40, EPIC-06, v9.12, BLG-GOV-386 — §1.3a reads the scripted "gating item shipped — verify" list alongside the date-lapsed list); prior history retained — see prior entries in version control
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -558,6 +558,8 @@ This replaces ad hoc reading of each candidate's fields, which produced 3 self-c
 
 **Date-lapsed gates must be read before the ready pool is fixed (ST-27, EPIC-07, v9.6, BLG-GOV-345).** The script also reports a separate "date-lapsed — verify" list: gated items whose `gate_condition` text contains an embedded date that has already passed as of the scan's as-of date. A lapsed date is **not** a clearance — the script cannot itself verify whether the underlying condition is actually met, only that the date text is stale. Before finalising the scope candidate list: read this list in full, and for each item either (a) verify the condition is now genuinely met and clear the gate (remove the `Gate` field, add a dated note explaining the clearance), or (b) re-gate it with a new, concrete dated condition — never leave a lapsed-date item's stale gate text as-is once it has been read. Record which disposition was applied to each date-lapsed item in `run_manifest.md`, alongside the existing gated-item count. This closes the gap found at `2026-09-19__scheduled` (Friction Item 1) where `BLG-FEAT-59`/`60`/`63`/`BLG-FE-84`/`BLG-GOV-90`/`BLG-GOV-188` sat excluded from the ready pool across `v9.3`–`v9.5` purely because their gate text's date had passed, with nothing prompting a re-check.
 
+**Backlog lock before the first gate edit (v9.11 Release Planning Friction Item 2; Head of Specs Team ruling, agent-mediated per `execution_prompt.md` §5.3, user-directed, 2026-10-15).** Before the first in-place edit to `backlog.md` under this section, acquire `claude/backlog/.lock` using STEP 3.9's acquisition procedure: the same lock contents and `state.json` update, and the same halt if another cycle holds the lock. STEP 3.9 then finds the lock owned by this cycle and re-enters it, and STEP 4's postcondition releases it as usual. A run that makes no gate edit acquires the lock at STEP 3.9 as before. Moving the edits to STEP 4 was rejected: the edits must land before the ready pool is fixed, for the same reason `ESC-CLOSE-20261007-01` rejected deferring them to `groom backlog`.
+
 **Bounds on the date-lapsed gate edit (ESC-CLOSE-20261007-01, Head of Specs Team ruling, agent-mediated per `execution_prompt.md` §5.3, user-directed, 2026-10-07).** The clear or re-gate edit above is authorised by §7's gate-field carve-out, within these limits:
 1. **Scope.** Only items on this run's scripted "date-lapsed — verify" list that were actually read this run.
 2. **Fields.** Only the `**Gate criteria:**` field, plus one dated note directly beneath it. Do not edit Priority, Status, Owner, Effort, Provisional-Target, Type, Source, Problem, Scope or Acceptance Criteria. Do not move the item between sections.
@@ -784,7 +786,7 @@ artifacts.backlog_lock: acquired
 ```
 
 2. If `claude/backlog/.lock` exists:
-   - Read `owner_cycle_id`. If `== <cycle_id>`: re-entrant — proceed (`artifacts.backlog_lock = acquired`).
+   - Read `owner_cycle_id`. If `== <cycle_id>`: re-entrant — proceed (`artifacts.backlog_lock = acquired`). This is the expected case when §1.3a acquired the lock for a gate edit.
    - If `!= <cycle_id>`: record ⛔ Blocker (PMO Lead; unblock: "manually release or declare stale"), include lock contents as evidence. If `--auto-escalate=true`: invoke Escalation Handling Subroutine.
 
 ```yaml

@@ -5,7 +5,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-10-15 (session — 1 new item added: BLG-GOV-390, ESC-CLOSE-20261015-01 ruling); prior — 2026-10-15 (groom backlog, post-ship closure 2026-10-12__release-v9.12 STEP 12 — 48 v9.12 shipped items archived to backlog_archive.md); prior — 2026-10-15 (post-ship closure 2026-10-12__release-v9.12 STEP 3 — 48 shipped items marked ✅ COMPLETE (pending archival at STEP 12)); prior history retained — see prior entries in version control
+**Last Updated:** 2026-10-15 (session — post-ship closure `2026-10-12__release-v9.12` §6 follow-ups: BLG-SPEC-203 added (re-files BLG-SPEC-87 for DEV-REPORTS-ST06-01); BLG-GOV-368 closed as met; BLG-QA-223 priority P4 confirmed); prior — 2026-10-15 (session — 1 new item added: BLG-GOV-390, ESC-CLOSE-20261015-01 ruling); prior — 2026-10-15 (groom backlog, post-ship closure 2026-10-12__release-v9.12 STEP 12 — 48 v9.12 shipped items archived to backlog_archive.md); prior history retained — see prior entries in version control
 **Last rebalance:** 2026-10-06 (cycle 2026-10-06__scheduled — DL-083; 0 active roadmap initiatives, CPS=N/A; STEP 8.0 Correctness Fast-Track: BLG-BE-138 (P1) → v9.10 Now horizon; §7.1 Skill-Silo sustained-failure pull-forward: BLG-FE-193 + BLG-FE-198 committed to v9.10; idea intake IW-20261006-01 (44 submissions, full 22-role roster) → 25 backlog items, 2 rejected)
 
 > ⚠️ Standing Notice
@@ -3133,6 +3133,7 @@ The ST-20 determination (CONDITIONAL) finds §13.3's literal text ("Exposing a g
 ---
 
 ### BLG-GOV-368 — Pre-PR check that an EPIC branch carries no other EPIC's commits
+**✅ COMPLETE — 2026-10-15 — closed as met: `execution_prompt.md` v3.81→v3.82 §3.2.B cross-EPIC commit pre-PR hard gate (LL-v9.9-P3-01, post-ship closure `2026-09-30__release-v9.9`, 2026-10-06), shipped with the full CLAUDE.md §6 checklist (`prompt_change_log.md`; `OPERATIONAL_GUIDE.md` v4.221). The optional `quality_gate.yml` mirror is declined by Head of Specs Team ruling (agent-mediated, user-directed, 2026-10-15): AC 1's CI clause applies only "if the workflow option is adopted", and the prompt gate has held since (v9.10–v9.12 had no cross-EPIC PR). Closes post-ship closure `2026-10-12__release-v9.12` §6 row 7.**
 **Priority:** P2 (Medium)
 **Type:** Governance Process
 **Owner:** Head of Specs Team
@@ -4703,6 +4704,8 @@ DS-17's `idx_positions_open_ticker_entry_date_unique` was confirmed live in prod
 - A unit test fails if a rollback-only index name is reported again
 - The detector's documented usage, or the triage procedure, says where a run's `--json` output is kept, and the next triage cites it
 
+**Notes:** Priority confirmed P4 (2026-10-15, owner decision on user direction, closing post-ship closure `2026-10-12__release-v9.12` §6 row 6). `sprint_close.md`'s P3 is the ST-34 `Pass_with_deviation` default severity, a separate figure (`execution_prompt.md` v3.87 §5.3 now shows both). The 3 unnamed finding-5 names cannot be recovered, so this item's value is preventing a recurrence, which is tooling hygiene.
+
 ---
 
 ### BLG-QA-224 — Make SC-TS-* Playwright scenario IDs unique across tests/e2e
@@ -5080,5 +5083,28 @@ Since ST-26, `GET /settings` (`backend/main.py` `get_settings_endpoint`) calls `
 - New tests pass under `backend/.venv/bin/python3 -m pytest`
 
 **Notes:** `BLG-GOV-373` (known-false-positive allow-list for date-lapse matches) is a separate problem and keeps its own scope.
+
+---
+
+### BLG-SPEC-203 — Reports unrealised P&L is a nightly snapshot while the Positions page is live (re-files archived BLG-SPEC-87)
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Integrity
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Re-file of `BLG-SPEC-87` (archived at `2026-08-03__release-v8.1` without shipping) for open deviation `DEV-REPORTS-ST06-01`; deviation consolidation review 2026-10-07 Finding 1; post-ship closure `2026-10-12__release-v9.12` §6 row 3 — 2026-10-15
+**Effort:** S (~0.5d)
+**Provisional-Target:** TBD
+
+**Problem**
+`get_estimated_unrealised_pnl()` (`backend/services/reports_service.py`) still sums the `positions.pnl` column, which is written once per night by `run_nightly_trailing_stop_update()`. The Positions page computes `pnl` against the live price on every request. So `GET /reports/monthly-pnl` and `GET /reports/tax-year` can show a different unrealised P&L from the Positions page for the same position at the same moment, with no in-app sign that one is a snapshot (−£126.25 vs −£115.06 in production, 2026-07-14). Confirmed still present in code on 2026-10-15. The deviation has had no active tracking item since `BLG-SPEC-87` was archived.
+
+**Scope**
+- Decide one direction: (a) compute the figure live via `get_positions_with_prices()`, or (b) keep the snapshot and add an explicit "as of last nightly update" caveat to `unrealised_note`
+- Implement it, and update `reports.md` §Unrealised P&L Card
+- Mark `DEV-REPORTS-ST06-01` resolved in `reports.md` Known Deviations
+
+**Acceptance Criteria**
+- If (a): the Reports and Positions unrealised figures match at the same moment (verified on staging)
+- If (b): the `unrealised_note` text states the snapshot time basis and is reviewed by the Head of UX & Design
+- `DEV-REPORTS-ST06-01` is marked resolved, citing this item
 
 ---
