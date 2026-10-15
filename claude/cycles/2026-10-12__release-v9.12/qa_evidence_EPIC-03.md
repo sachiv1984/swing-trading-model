@@ -43,11 +43,11 @@ Last Updated: 2026-10-13
 
 ## Standard Sign-Off Block
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
-- [ ] **Strategy values checked:** ST-17 — §5 initial stop, §11 multiplier (5) for the preview stop; ST-18 — §5/§11 (5 × ATR ≥ entry rule); ST-19 — §4.1.7 sizing-widget behaviour; ST-20 — §5, §6, §7.1, §7.2 helper text, §11 values; ST-21 — §11 parameters (constants module and lint expected values), §5–§11 copy; ST-22 — §6 grace (Day N of grace, 2-day alert threshold unchanged); ST-23/ST-24 — N/A (colour only).
-- Signed off by:
-- Date:
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object
+- [x] **Strategy values checked:** ST-17 — §5 initial stop, §11 multiplier (5) for the preview stop; ST-18 — §5/§11 (5 × ATR ≥ entry rule); ST-19 — §4.1.7 sizing-widget behaviour; ST-20 — §5, §6, §7.1, §7.2 helper text, §11 values; ST-21 — §11 parameters (constants module and lint expected values), §5–§11 copy; ST-22 — §6 grace (Day N of grace, 2-day alert threshold unchanged); ST-23/ST-24 — N/A (colour only).
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-10-15
+- Comments: [Agent-mediated review — on behalf of the Director of Quality, user-directed ("option 1: sign agent-mediated and open the PR", 2026-10-15), pending human confirmation at the PR merge gate.] First pass: Blocked on two findings — (1) typed text in the Notifications alert-threshold and custom price-alert inputs rendered white on the new white light-theme background (ST-23); (2) a surviving `ATR (14d)` literal in SignalContextPanel that the strategy-copy lint did not catch (ST-21). Both fixed in `f3f732fd` (inputs set to `text-slate-900` in light, covered by `tests/e2e/notification-inputs-light-theme.spec.js` SC-NIL-01..03; literal replaced with `ATR_PERIOD_DAYS` and the lint's `ATR (Nd)` pattern added with tests). Second pass: Approved with Comments; its one condition (green CI on the fix commit) is met by Playwright run 38485250721 on `f3f732fd`. Every ST-17 to ST-24 AC is in the evidence table with Playwright and/or pytest evidence; full backend suite 2647 passed, 21 skipped, 0 failed. Follow-ups filed: BLG-SPEC-201, BLG-FE-220, BLG-FE-221 (Button `bg-primary` overrides coloured classes — Abandon Plan fixed locally with `!` modifier), BLG-FE-222, BLG-FE-223, BLG-FE-224, BLG-GOV-389. Merge-gate note: ESC-EXEC-20261013-08 (ST-21 charter duty) was resolved agent-mediated by the Director of HR role on first pass; the charter text in `claude/agents/frontend_specs_ux_documentation_owner.md` v1.1 should get human Director of HR confirmation before merge. No open escalations. No P0/P1 deviations.

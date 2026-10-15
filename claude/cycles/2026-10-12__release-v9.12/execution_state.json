@@ -5,7 +5,7 @@
   "invoked_utc": "2026-10-13T07:21:28Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-10-13T23:18:55Z",
+  "last_updated_utc": "2026-10-15T07:15:44Z",
   "merge_order": [
     "EPIC-01",
     "EPIC-06",
@@ -543,7 +543,7 @@
       "branch": "exec/2026-10-12__release-v9.12/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-10-12__release-v9.12/qa_evidence_EPIC-03.md",
       "test_scenarios": [
         "tests/test_market_atr_preview_endpoint.py",
